@@ -1,0 +1,52 @@
+{
+  "item_count": 2,
+  "item_for_swap_count": 0,
+  "item_type_count": 2,
+  "item_type_for_swap_count": 0,
+  "items": [
+    {
+      "id": 48527092,
+      "quantity": 1,
+      "type": {
+        "id": 11331,
+        "title": "2 Sapèque",
+        "category": "coin",
+        "issuer": {
+          "code": "indochine",
+          "name": "Indochina francesa"
+        }
+      },
+      "issue": {
+        "id": 63444,
+        "is_dated": true,
+        "year": 1887,
+        "gregorian_year": 1887,
+        "mint_letter": "A",
+        "mintage": 5000000
+      },
+      "for_swap": false,
+      "grade": "vf",
+      "price": {
+        "value": 93,
+        "currency": "USD"
+      },
+      "collection": {
+        "id": 1001,
+        "name": "Colección principal"
+      }
+    },
+    {
+      "id": 48527093,
+      "quantity": 1,
+      "type": {
+        "id": 420,
+        "title": "5 Cents - Victoria",
+        "issuer": {
+          "code": "canada",
+          "name": "Canadá"
+        }
+      },
+      "for_swap": false
+    }
+  ]
+}

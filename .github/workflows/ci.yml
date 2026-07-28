@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust with the WASM target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Test the workspace
+        run: cargo test --workspace
+      - name: Check the platform-free domain crate for WASM
+        run: cargo check -p domain --target wasm32-unknown-unknown

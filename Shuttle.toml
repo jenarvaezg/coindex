@@ -1,0 +1,5 @@
+[build]
+assets = [
+  "backend/static/*",
+  "data/series/*",
+]

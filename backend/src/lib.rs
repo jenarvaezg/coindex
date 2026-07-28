@@ -1,0 +1,541 @@
+mod config;
+mod repository;
+mod seeds;
+mod sync;
+mod views;
+
+use std::collections::BTreeMap;
+use std::sync::Arc;
+use std::time::Duration;
+
+use axum::body::Body;
+use axum::extract::{Form, Path, Query, State};
+use axum::http::header::{CACHE_CONTROL, CONTENT_TYPE, ORIGIN};
+use axum::http::{HeaderMap, HeaderValue, StatusCode};
+use axum::response::{Html, IntoResponse, Response};
+use axum::routing::{get, post};
+use axum::{Json, Router};
+use domain::{Album, Series, build_album};
+use numista::{ClientConfig, NumistaClient};
+use reqwest::redirect::Policy;
+use serde::{Deserialize, Serialize};
+use sqlx::PgPool;
+use thiserror::Error;
+
+pub use config::{AppConfig, ConfigError};
+use repository::{PostgresCallPolicy, Repository, RepositoryError};
+use seeds::{SeedError, load_series};
+use sync::{NumistaApi, SyncError, SyncService};
+
+const CSS: &str = include_str!("../static/site.css");
+const MAX_IMAGE_BYTES: u64 = 12 * 1024 * 1024;
+
+#[derive(Clone)]
+pub struct AppState {
+    config: AppConfig,
+    repository: Repository,
+    series: Arc<Vec<Series>>,
+    sync: SyncService,
+    image_client: reqwest::Client,
+}
+
+#[derive(Debug, Error)]
+pub enum StartupError {
+    #[error(transparent)]
+    Config(#[from] ConfigError),
+    #[error(transparent)]
+    Seed(#[from] SeedError),
+    #[error("database migration failed: {0}")]
+    Migration(#[from] sqlx::migrate::MigrateError),
+    #[error("could not initialize Numista client for `{user}`: {source}")]
+    NumistaClient {
+        user: String,
+        source: numista::ClientError,
+    },
+    #[error("could not initialize image proxy client: {0}")]
+    ImageClient(reqwest::Error),
+}
+
+#[derive(Debug, Error)]
+enum AppError {
+    #[error("unknown user `{0}`")]
+    UnknownUser(String),
+    #[error("unknown series `{0}`")]
+    UnknownSeries(String),
+    #[error("unknown slot `{0}`")]
+    UnknownSlot(String),
+    #[error("unknown collected item `{0}`")]
+    UnknownItem(u64),
+    #[error("mutating requests require the configured same-origin Origin")]
+    CrossOriginPost,
+    #[error("invalid image side `{0}`")]
+    InvalidImageSide(String),
+    #[error("no cached image for type {type_id} ({side})")]
+    MissingImage { type_id: u32, side: String },
+    #[error("cached image URL is not trusted")]
+    UnsafeImageUrl,
+    #[error("upstream image response was not an image")]
+    InvalidImageResponse,
+    #[error("upstream image is too large")]
+    ImageTooLarge,
+    #[error("upstream image request failed: {0}")]
+    ImageRequest(#[from] reqwest::Error),
+    #[error(transparent)]
+    Repository(#[from] RepositoryError),
+    #[error(transparent)]
+    Sync(#[from] SyncError),
+}
+
+#[derive(Debug, Deserialize)]
+struct SyncQuery {
+    #[serde(default)]
+    dry_run: bool,
+}
+
+#[derive(Debug, Deserialize)]
+struct OverrideForm {
+    item_id: u64,
+    slot_id: String,
+}
+
+#[derive(Debug, Serialize)]
+struct Health {
+    status: &'static str,
+    api_calls_this_month: u32,
+    monthly_budget: u32,
+}
+
+pub async fn bootstrap(
+    pool: PgPool,
+    users_secret: &str,
+    budget_secret: Option<&str>,
+    origin_secret: &str,
+) -> Result<Router, StartupError> {
+    sqlx::migrate!("./migrations").run(&pool).await?;
+    let config = AppConfig::parse(users_secret, budget_secret, origin_secret)?;
+    let series = Arc::new(load_series()?);
+    let repository = Repository::new(pool.clone());
+    let policy = Arc::new(PostgresCallPolicy::new(pool, config.monthly_budget));
+    let mut clients: BTreeMap<String, Arc<dyn NumistaApi>> = BTreeMap::new();
+    for user in config.users() {
+        let client = NumistaClient::with_reqwest(
+            ClientConfig::new(&user.api_key),
+            policy.clone(),
+            policy.clone(),
+        )
+        .map_err(|source| StartupError::NumistaClient {
+            user: user.key.clone(),
+            source,
+        })?;
+        clients.insert(user.key.clone(), Arc::new(client));
+    }
+    let image_client = reqwest::Client::builder()
+        .timeout(Duration::from_secs(20))
+        .redirect(Policy::none())
+        .build()
+        .map_err(StartupError::ImageClient)?;
+    let sync = SyncService::new(repository.clone(), clients);
+    Ok(build_router(AppState {
+        config,
+        repository,
+        series,
+        sync,
+        image_client,
+    }))
+}
+
+pub fn build_router(state: AppState) -> Router {
+    Router::new()
+        .route("/", get(index_handler))
+        .route("/u/{user}/series/{series_id}", get(series_handler))
+        .route("/u/{user}/unmatched", get(unmatched_handler))
+        .route("/u/{user}/override", post(override_handler))
+        .route("/u/{user}/sync", post(sync_handler))
+        .route("/img/type/{type_id}/{side}", get(image_handler))
+        .route("/api/album/{user}", get(album_handler))
+        .route("/health", get(health_handler))
+        .route("/static/site.css", get(css_handler))
+        .with_state(state)
+}
+
+async fn index_handler(State(state): State<AppState>) -> Result<Html<String>, AppError> {
+    let mut albums = Vec::new();
+    for user in state.config.users() {
+        albums.push((user.key.clone(), album_for(&state, &user.key).await?));
+    }
+    Ok(Html(views::index(&state.config, &albums).into_string()))
+}
+
+async fn series_handler(
+    State(state): State<AppState>,
+    Path((user, series_id)): Path<(String, String)>,
+) -> Result<Html<String>, AppError> {
+    require_user(&state, &user)?;
+    let definition = state
+        .series
+        .iter()
+        .find(|series| series.id.to_string() == series_id)
+        .ok_or_else(|| AppError::UnknownSeries(series_id.clone()))?;
+    let album = album_for(&state, &user).await?;
+    let series_album = album
+        .series
+        .iter()
+        .find(|series| series.series_id.to_string() == series_id)
+        .ok_or_else(|| AppError::UnknownSeries(series_id))?;
+    Ok(Html(
+        views::series(&user, definition, series_album, &state.series).into_string(),
+    ))
+}
+
+async fn unmatched_handler(
+    State(state): State<AppState>,
+    Path(user): Path<String>,
+) -> Result<Html<String>, AppError> {
+    require_user(&state, &user)?;
+    let album = album_for(&state, &user).await?;
+    Ok(Html(
+        views::unmatched(&user, &album, &state.series).into_string(),
+    ))
+}
+
+async fn override_handler(
+    State(state): State<AppState>,
+    Path(user): Path<String>,
+    headers: HeaderMap,
+    Form(form): Form<OverrideForm>,
+) -> Result<Response, AppError> {
+    validate_same_origin(&headers, &state.config.origin)?;
+    require_user(&state, &user)?;
+    let items = state.repository.load_items(&user).await?;
+    if !items.iter().any(|item| item.id == form.item_id) {
+        return Err(AppError::UnknownItem(form.item_id));
+    }
+    let slot_id = form.slot_id.trim();
+    if !slot_id.is_empty()
+        && !state
+            .series
+            .iter()
+            .flat_map(|series| &series.slots)
+            .any(|slot| slot.id.to_string() == slot_id)
+    {
+        return Err(AppError::UnknownSlot(slot_id.to_owned()));
+    }
+    state
+        .repository
+        .upsert_override(
+            &user,
+            form.item_id,
+            (!slot_id.is_empty()).then_some(slot_id),
+        )
+        .await?;
+    Ok((
+        StatusCode::SEE_OTHER,
+        [("location", format!("/u/{user}/unmatched"))],
+    )
+        .into_response())
+}
+
+async fn sync_handler(
+    State(state): State<AppState>,
+    Path(user): Path<String>,
+    headers: HeaderMap,
+    Query(query): Query<SyncQuery>,
+) -> Result<Html<String>, AppError> {
+    validate_same_origin(&headers, &state.config.origin)?;
+    let user_config = require_user(&state, &user)?;
+    let report = state.sync.run(user_config, query.dry_run).await?;
+    Ok(Html(views::sync_report(&user, &report).into_string()))
+}
+
+async fn album_handler(
+    State(state): State<AppState>,
+    Path(user): Path<String>,
+) -> Result<Json<Album>, AppError> {
+    require_user(&state, &user)?;
+    Ok(Json(album_for(&state, &user).await?))
+}
+
+async fn health_handler(State(state): State<AppState>) -> Result<Json<Health>, AppError> {
+    let used = state.repository.monthly_usage().await?;
+    Ok(Json(Health {
+        status: "ok",
+        api_calls_this_month: used,
+        monthly_budget: state.config.monthly_budget,
+    }))
+}
+
+async fn css_handler() -> impl IntoResponse {
+    ([(CONTENT_TYPE, "text/css; charset=utf-8")], CSS)
+}
+
+async fn image_handler(
+    State(state): State<AppState>,
+    Path((type_id, side)): Path<(u32, String)>,
+) -> Result<Response, AppError> {
+    let metadata = state
+        .repository
+        .cached_type(type_id)
+        .await?
+        .ok_or_else(|| AppError::MissingImage {
+            type_id,
+            side: side.clone(),
+        })?;
+    let coin_side = match side.as_str() {
+        "obverse" => metadata.obverse.as_ref(),
+        "reverse" => metadata.reverse.as_ref(),
+        "edge" => metadata.edge.as_ref(),
+        _ => return Err(AppError::InvalidImageSide(side)),
+    };
+    let source = coin_side
+        .and_then(|side| side.picture.as_deref().or(side.thumbnail.as_deref()))
+        .ok_or_else(|| AppError::MissingImage {
+            type_id,
+            side: side.clone(),
+        })?;
+    let url = trusted_image_url(source)?;
+
+    let response = state.image_client.get(url).send().await?;
+    if !response.status().is_success() {
+        return Ok(StatusCode::BAD_GATEWAY.into_response());
+    }
+    if response
+        .content_length()
+        .is_some_and(|size| size > MAX_IMAGE_BYTES)
+    {
+        return Err(AppError::ImageTooLarge);
+    }
+    let content_type = response
+        .headers()
+        .get(CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        .filter(|value| value.starts_with("image/"))
+        .ok_or(AppError::InvalidImageResponse)?
+        .to_owned();
+    let bytes = response.bytes().await?;
+    if bytes.len() as u64 > MAX_IMAGE_BYTES {
+        return Err(AppError::ImageTooLarge);
+    }
+    let mut proxied = Response::new(Body::from(bytes));
+    *proxied.status_mut() = StatusCode::OK;
+    proxied.headers_mut().insert(
+        CONTENT_TYPE,
+        HeaderValue::from_str(&content_type).map_err(|_| AppError::InvalidImageResponse)?,
+    );
+    proxied.headers_mut().insert(
+        CACHE_CONTROL,
+        HeaderValue::from_static("public, max-age=86400, stale-while-revalidate=604800"),
+    );
+    Ok(proxied)
+}
+
+async fn album_for(state: &AppState, user: &str) -> Result<Album, AppError> {
+    let items = state.repository.load_items(user).await?;
+    let type_meta = state.repository.load_type_meta().await?;
+    let overrides = state.repository.load_overrides(user).await?;
+    Ok(build_album(&state.series, &items, &type_meta, &overrides))
+}
+
+fn require_user<'a>(state: &'a AppState, user: &str) -> Result<&'a config::UserConfig, AppError> {
+    state
+        .config
+        .user(user)
+        .ok_or_else(|| AppError::UnknownUser(user.to_owned()))
+}
+
+fn trusted_image_url(source: &str) -> Result<reqwest::Url, AppError> {
+    let url = reqwest::Url::parse(source).map_err(|_| AppError::UnsafeImageUrl)?;
+    let trusted = url.scheme() == "https"
+        && url
+            .host_str()
+            .is_some_and(|host| host == "numista.com" || host.ends_with(".numista.com"));
+    if trusted && url.username().is_empty() && url.password().is_none() {
+        Ok(url)
+    } else {
+        Err(AppError::UnsafeImageUrl)
+    }
+}
+
+fn validate_same_origin(headers: &HeaderMap, expected_origin: &str) -> Result<(), AppError> {
+    let origin = headers
+        .get(ORIGIN)
+        .and_then(|value| value.to_str().ok())
+        .ok_or(AppError::CrossOriginPost)?;
+    if config::canonical_origin(origin).as_deref() == Some(expected_origin) {
+        Ok(())
+    } else {
+        Err(AppError::CrossOriginPost)
+    }
+}
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        let status = match self {
+            Self::UnknownUser(_)
+            | Self::UnknownSeries(_)
+            | Self::UnknownSlot(_)
+            | Self::UnknownItem(_)
+            | Self::InvalidImageSide(_)
+            | Self::MissingImage { .. } => StatusCode::NOT_FOUND,
+            Self::CrossOriginPost => StatusCode::FORBIDDEN,
+            Self::UnsafeImageUrl | Self::InvalidImageResponse => StatusCode::BAD_GATEWAY,
+            Self::ImageTooLarge => StatusCode::PAYLOAD_TOO_LARGE,
+            Self::Sync(_) => StatusCode::SERVICE_UNAVAILABLE,
+            Self::ImageRequest(_) | Self::Repository(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+        (status, self.to_string()).into_response()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use axum::body::Body;
+    use axum::http::{Request, StatusCode};
+    use tower::ServiceExt;
+
+    use super::{
+        AppConfig, AppState, Repository, SyncService, build_router, trusted_image_url,
+        validate_same_origin,
+    };
+    use sqlx::postgres::PgPoolOptions;
+    use std::collections::BTreeMap;
+    use std::sync::Arc;
+
+    #[tokio::test]
+    async fn router_serves_handwritten_css_without_database_or_network() {
+        let pool = PgPoolOptions::new()
+            .connect_lazy("postgres://unused:unused@localhost/unused")
+            .unwrap();
+        let state = AppState {
+            config: AppConfig::parse("jose:1:a,padre:2:b", None, "http://localhost:8000").unwrap(),
+            repository: Repository::new(pool.clone()),
+            series: Arc::new(Vec::new()),
+            sync: SyncService::new(Repository::new(pool), BTreeMap::new()),
+            image_client: reqwest::Client::new(),
+        };
+        let response = build_router(state)
+            .oneshot(
+                Request::builder()
+                    .uri("/static/site.css")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.headers()["content-type"],
+            "text/css; charset=utf-8"
+        );
+    }
+
+    #[test]
+    fn image_proxy_accepts_only_https_numista_hosts_without_credentials() {
+        assert!(trusted_image_url("https://en.numista.com/catalogue/photos/a.jpg").is_ok());
+        assert!(trusted_image_url("http://en.numista.com/a.jpg").is_err());
+        assert!(trusted_image_url("https://numista.com.evil.example/a.jpg").is_err());
+        assert!(trusted_image_url("https://user:pass@en.numista.com/a.jpg").is_err());
+    }
+
+    #[test]
+    fn mutating_forms_require_the_configured_canonical_origin() {
+        let mut headers = axum::http::HeaderMap::new();
+        headers.insert("origin", "https://coindex.example".parse().unwrap());
+        assert!(validate_same_origin(&headers, "https://coindex.example").is_ok());
+
+        headers.insert("origin", "http://coindex.example".parse().unwrap());
+        assert!(validate_same_origin(&headers, "https://coindex.example").is_err());
+        headers.insert("origin", "https://coindex.example:8443".parse().unwrap());
+        assert!(validate_same_origin(&headers, "https://coindex.example").is_err());
+        headers.insert("origin", "https://evil.example".parse().unwrap());
+        assert!(validate_same_origin(&headers, "https://coindex.example").is_err());
+        headers.remove("origin");
+        assert!(validate_same_origin(&headers, "https://coindex.example").is_err());
+    }
+
+    #[tokio::test]
+    #[ignore = "set TEST_DATABASE_URL to run the isolated Postgres integration check"]
+    async fn postgres_bootstrap_health_override_and_type_cache() {
+        let database_url =
+            std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL must be set");
+        let pool = PgPoolOptions::new()
+            .max_connections(4)
+            .connect(&database_url)
+            .await
+            .unwrap();
+        sqlx::migrate!("./migrations").run(&pool).await.unwrap();
+        let repository = Repository::new(pool.clone());
+        let user_key = "coindex_backend_integration";
+        let item_id = 8_000_000_001_u64;
+        let type_id = 2_000_000_001_u32;
+        sqlx::query("DELETE FROM type_meta WHERE type_id = $1")
+            .bind(type_id as i32)
+            .execute(&pool)
+            .await
+            .unwrap();
+
+        repository
+            .upsert_override(user_key, item_id, Some("integration-slot"))
+            .await
+            .unwrap();
+        repository.store_sync(user_key, &[], None).await.unwrap();
+        assert_eq!(
+            repository.load_overrides(user_key).await.unwrap()[0]
+                .slot_id
+                .as_ref()
+                .unwrap()
+                .to_string(),
+            "integration-slot"
+        );
+
+        let claim = repository
+            .claim_type_fetch(type_id)
+            .await
+            .unwrap()
+            .expect("integration type id must be uncached");
+        claim
+            .cache(&numista::NumistaType {
+                id: Some(type_id),
+                title: Some("Integration type".to_owned()),
+                ..numista::NumistaType::default()
+            })
+            .await
+            .unwrap();
+        assert!(repository.cached_type(type_id).await.unwrap().is_some());
+
+        let app = super::bootstrap(
+            pool.clone(),
+            "jose:1:key-one,padre:2:key-two",
+            Some("1500"),
+            "http://localhost:8000",
+        )
+        .await
+        .unwrap();
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/health")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+
+        sqlx::query("DELETE FROM manual_overrides WHERE user_key = $1")
+            .bind(user_key)
+            .execute(&pool)
+            .await
+            .unwrap();
+        sqlx::query("DELETE FROM collected_items WHERE user_key = $1")
+            .bind(user_key)
+            .execute(&pool)
+            .await
+            .unwrap();
+        sqlx::query("DELETE FROM type_meta WHERE type_id = $1")
+            .bind(type_id as i32)
+            .execute(&pool)
+            .await
+            .unwrap();
+    }
+}

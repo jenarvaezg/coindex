@@ -1,0 +1,222 @@
+{
+  "id": "lunar-iii",
+  "name": "Lunar Series III",
+  "mint": "Perth Mint",
+  "issuer_code": "australie",
+  "metal": "Silver",
+  "notes": "Serie curada de monedas de plata bullion de 1 oz. Los IDs de tipo de Numista quedan vacíos hasta confirmarlos manualmente.",
+  "slots": [
+    {
+      "id": "lunar-iii-2019-pig-1oz",
+      "label": "Cerdo — 2019",
+      "year": 2019,
+      "motif": "Cerdo",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2019,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["pig"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2020-mouse-1oz",
+      "label": "Ratón — 2020",
+      "year": 2020,
+      "motif": "Ratón",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2020,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["mouse"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y denominación Mouse usada por Perth Mint."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2021-ox-1oz",
+      "label": "Buey — 2021",
+      "year": 2021,
+      "motif": "Buey",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2021,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["ox"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2022-tiger-1oz",
+      "label": "Tigre — 2022",
+      "year": 2022,
+      "motif": "Tigre",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2022,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["tiger"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2023-rabbit-1oz",
+      "label": "Conejo — 2023",
+      "year": 2023,
+      "motif": "Conejo",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2023,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["rabbit"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2024-dragon-1oz",
+      "label": "Dragón — 2024",
+      "year": 2024,
+      "motif": "Dragón",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2024,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["dragon"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2025-snake-1oz",
+      "label": "Serpiente — 2025",
+      "year": 2025,
+      "motif": "Serpiente",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2025,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["snake"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2026-horse-1oz",
+      "label": "Caballo — 2026",
+      "year": 2026,
+      "motif": "Caballo",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Issued",
+      "numista_type_ids": [],
+      "matchers": [
+        {
+          "issuer_code": "australie",
+          "year": 2026,
+          "weight_oz": 1.0,
+          "finish": "Bullion",
+          "title_contains": ["horse"],
+          "confidence": 0.85,
+          "explanation": "Emisor, año y motivo inglés de la moneda."
+        }
+      ]
+    },
+    {
+      "id": "lunar-iii-2027-goat-1oz",
+      "label": "Cabra — 2027",
+      "year": 2027,
+      "motif": "Cabra",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Expected",
+      "numista_type_ids": [],
+      "matchers": []
+    },
+    {
+      "id": "lunar-iii-2028-monkey-1oz",
+      "label": "Mono — 2028",
+      "year": 2028,
+      "motif": "Mono",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Expected",
+      "numista_type_ids": [],
+      "matchers": []
+    },
+    {
+      "id": "lunar-iii-2029-rooster-1oz",
+      "label": "Gallo — 2029",
+      "year": 2029,
+      "motif": "Gallo",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Expected",
+      "numista_type_ids": [],
+      "matchers": []
+    },
+    {
+      "id": "lunar-iii-2030-dog-1oz",
+      "label": "Perro — 2030",
+      "year": 2030,
+      "motif": "Perro",
+      "weight_oz": 1.0,
+      "finish": "Bullion",
+      "release_status": "Expected",
+      "numista_type_ids": [],
+      "matchers": []
+    }
+  ]
+}

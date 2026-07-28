@@ -1,0 +1,47 @@
+{
+  "id": 420,
+  "url": "https://es.numista.com/420",
+  "title": "5 Cents - Victoria",
+  "issuer": {
+    "code": "canada",
+    "name": "Canadá"
+  },
+  "min_year": 1858,
+  "max_year": 1901,
+  "shape": "Redonda",
+  "composition": {
+    "text": "Plata (.925)"
+  },
+  "weight": 1.167,
+  "size": 15.494,
+  "thickness": 0.7,
+  "orientation": "coin",
+  "obverse": {
+    "engravers": [
+      "Leonard Charles Wyon"
+    ],
+    "description": "Retrato de Victoria",
+    "picture": "https://en.numista.com/catalogue/photos/canada/1009-original.jpg",
+    "thumbnail": "https://en.numista.com/catalogue/photos/canada/1009-135.jpg"
+  },
+  "reverse": {
+    "engravers": [
+      "Leonard Charles Wyon"
+    ],
+    "description": "Valor facial entre ramas de arce",
+    "picture": "https://en.numista.com/catalogue/photos/canada/1010-original.jpg",
+    "thumbnail": "https://en.numista.com/catalogue/photos/canada/1010-135.jpg"
+  },
+  "edge": {
+    "description": "Estriado"
+  },
+  "references": [
+    {
+      "catalogue": {
+        "id": 3,
+        "code": "KM"
+      },
+      "number": "2"
+    }
+  ]
+}
