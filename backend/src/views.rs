@@ -99,6 +99,12 @@ pub fn series(
                     dd { (owned) " / " (issued) " emitidas" }
                     dt { "Próximas" }
                     dd { (future) " por emitir" }
+                    dt { "Metal" }
+                    dd { (definition.metal_label()) }
+                    dt { "Acabado" }
+                    dd { (series_finish_label(definition)) }
+                    dt { "Peso" }
+                    dd { (series_weight_label(definition)) }
                 }
             }
             section class="plate-grid" aria-label="Casillas de la serie" {
@@ -287,7 +293,12 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
                     span class="silhouette" aria-hidden="true" {}
                 }
                 @if owned_items.is_some_and(|items| items.iter().any(|item| matches!(item.match_source, Some(MatchSource::Heuristic { .. })))) {
-                    span class="heuristic" title="Emparejamiento heurístico" { "?" }
+                    a
+                        class="heuristic"
+                        href=(format!("#review-{}", album_slot.slot.id))
+                        title="Emparejamiento heurístico: revisar o corregir"
+                        aria-label="Revisar o corregir emparejamiento heurístico"
+                    { "?" }
                 }
             }
             div class="slot-copy" {
@@ -296,7 +307,7 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
                 p { (album_slot.slot.year) " · " (album_slot.slot.weight_oz) " oz" }
             }
             @if let Some(items) = owned_items {
-                details class="match-review" {
+                details class="match-review" id=(format!("review-{}", album_slot.slot.id)) {
                     summary { "Revisar piezas" }
                     @for item in items {
                         form method="post" action=(format!("/u/{}/override", user_key)) {
@@ -317,6 +328,37 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
                 }
             }
         }
+    }
+}
+
+fn series_finish_label(series: &Series) -> &'static str {
+    let Some(first) = series.slots.first().map(|slot| &slot.finish) else {
+        return "Sin datos";
+    };
+    if series.slots.iter().any(|slot| slot.finish != *first) {
+        return "Varios";
+    }
+    match first {
+        domain::Finish::Bullion => "Bullion",
+        domain::Finish::Proof => "Proof",
+        domain::Finish::Coloured => "Coloreado",
+        domain::Finish::Gilded => "Dorado",
+        domain::Finish::Antiqued => "Envejecido",
+    }
+}
+
+fn series_weight_label(series: &Series) -> String {
+    let Some(first) = series.slots.first().map(|slot| slot.weight_oz) else {
+        return "Sin datos".to_owned();
+    };
+    if series
+        .slots
+        .iter()
+        .any(|slot| (slot.weight_oz - first).abs() > 0.001)
+    {
+        "Varios".to_owned()
+    } else {
+        format!("{first} oz")
     }
 }
 
@@ -405,6 +447,8 @@ mod tests {
             issuer_code: "issuer".to_owned(),
             metal: domain::Metal::Silver,
             notes: None,
+            incomplete: false,
+            sources: std::collections::BTreeMap::new(),
             slots: Vec::new(),
         };
         let album = SeriesAlbum {
@@ -442,6 +486,8 @@ mod tests {
             issuer_code: "issuer".to_owned(),
             metal: domain::Metal::Silver,
             notes: None,
+            incomplete: false,
+            sources: std::collections::BTreeMap::new(),
             slots: vec![slot("owned", SlotStatus::Missing).slot],
         };
         definition.slots[0].release_status = ReleaseStatus::Issued;
@@ -480,7 +526,39 @@ mod tests {
         assert_eq!(html.matches("name=\"item_id\"").count(), 2);
         assert_eq!(html.matches("No pertenece a una casilla").count(), 2);
         assert!(html.contains("Emparejamiento heurístico"));
+        assert!(html.contains("href=\"#review-owned\""));
+        assert!(html.contains("id=\"review-owned\""));
         assert!(!html.contains("select name=\"slot_id\" required"));
+    }
+
+    #[test]
+    fn renders_physical_series_specifications_in_the_field_card() {
+        let mut definition = domain::Series {
+            id: SeriesId::new("field"),
+            name: "Field".to_owned(),
+            mint: "Mint".to_owned(),
+            issuer_code: "issuer".to_owned(),
+            metal: domain::Metal::Silver,
+            notes: None,
+            incomplete: false,
+            sources: std::collections::BTreeMap::new(),
+            slots: vec![slot("issued", SlotStatus::Missing).slot],
+        };
+        definition.slots[0].release_status = ReleaseStatus::Issued;
+        let album = SeriesAlbum {
+            series_id: definition.id.clone(),
+            name: definition.name.clone(),
+            slots: vec![AlbumSlot {
+                slot: definition.slots[0].clone(),
+                status: SlotStatus::Missing,
+            }],
+        };
+
+        let html = series("jose", &definition, &album, &[]).into_string();
+
+        assert!(html.contains("<dt>Metal</dt><dd>Plata</dd>"));
+        assert!(html.contains("<dt>Acabado</dt><dd>Bullion</dd>"));
+        assert!(html.contains("<dt>Peso</dt><dd>1 oz</dd>"));
     }
 
     #[test]

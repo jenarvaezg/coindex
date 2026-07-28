@@ -1,6 +1,8 @@
+use std::collections::BTreeMap;
+
 use domain::{
-    CatalogValidationError, Finish, Matcher, Metal, ReleaseStatus, Series, SeriesId, Slot, SlotId,
-    validate_catalog,
+    CatalogValidationError, Finish, Matcher, Metal, ReleaseStatus, Series, SeriesId,
+    SeriesValidationError, Slot, SlotId, validate_catalog,
 };
 use serde_json::Value;
 
@@ -12,6 +14,8 @@ fn valid_series() -> Series {
         issuer_code: "australie".into(),
         metal: Metal::Silver,
         notes: None,
+        incomplete: false,
+        sources: BTreeMap::new(),
         slots: vec![Slot {
             id: SlotId::new("lunar-iii-2024-dragon-1oz"),
             label: "Dragón — 2024".into(),
@@ -93,6 +97,93 @@ fn matcher_title_terms_default_when_the_json_omits_them() {
 }
 
 #[test]
+fn series_deserializes_incomplete_and_slot_sources_as_runtime_data() {
+    let series: Series = serde_json::from_str(
+        r#"{
+            "id":"field-series",
+            "name":"Field Series",
+            "mint":"Field Mint",
+            "issuer_code":"field",
+            "metal":"Silver",
+            "notes":null,
+            "incomplete":true,
+            "sources":{"field-series-2026-one":"https://mint.example/one"},
+            "slots":[{
+                "id":"field-series-2026-one",
+                "label":"One — 2026",
+                "year":2026,
+                "motif":"One",
+                "weight_oz":1.0,
+                "finish":"Bullion",
+                "release_status":"Issued",
+                "numista_type_ids":[],
+                "matchers":[]
+            }]
+        }"#,
+    )
+    .unwrap();
+
+    assert!(series.incomplete);
+    assert_eq!(
+        series
+            .sources
+            .get(&SlotId::new("field-series-2026-one"))
+            .map(String::as_str),
+        Some("https://mint.example/one")
+    );
+}
+
+#[test]
+fn seed_schema_rejects_unknown_fields_at_every_nested_level() {
+    let mut with_matcher = valid_series();
+    with_matcher.slots[0].matchers.push(Matcher {
+        issuer_code: Some("australie".into()),
+        year: Some(2024),
+        weight_oz: None,
+        finish: None,
+        title_contains: Vec::new(),
+        confidence: 0.8,
+        explanation: "verified fallback".into(),
+    });
+
+    let mut top_level = serde_json::to_value(&with_matcher).unwrap();
+    top_level
+        .as_object_mut()
+        .unwrap()
+        .insert("incmplete".into(), Value::Bool(true));
+    assert!(serde_json::from_value::<Series>(top_level).is_err());
+
+    let mut slot_level = serde_json::to_value(&with_matcher).unwrap();
+    slot_level["slots"][0]
+        .as_object_mut()
+        .unwrap()
+        .insert("release_stats".into(), Value::String("Issued".into()));
+    assert!(serde_json::from_value::<Series>(slot_level).is_err());
+
+    let mut matcher_level = serde_json::to_value(&with_matcher).unwrap();
+    matcher_level["slots"][0]["matchers"][0]
+        .as_object_mut()
+        .unwrap()
+        .insert("confidnce".into(), Value::from(0.9));
+    assert!(serde_json::from_value::<Series>(matcher_level).is_err());
+}
+
+#[test]
+fn source_keys_must_reference_slots_in_the_same_series() {
+    let mut series = valid_series();
+    series.sources.insert(
+        SlotId::new("lunar-iii-missing-slot"),
+        "https://mint.example/missing".into(),
+    );
+
+    assert!(matches!(
+        series.validate(),
+        Err(SeriesValidationError::UnknownSourceSlot { slot_id })
+            if slot_id == SlotId::new("lunar-iii-missing-slot")
+    ));
+}
+
+#[test]
 fn catalog_validation_rejects_ids_and_explicit_types_reused_across_series() {
     let first = valid_series();
     let mut duplicate_series = valid_series();
@@ -141,6 +232,8 @@ fn lunar_seed_has_the_twelve_specified_slots_and_release_states() {
     ];
 
     assert_eq!(series.slots.len(), expected.len());
+    assert!(!series.incomplete);
+    assert!(series.sources.is_empty());
     for (slot, (year, motif)) in series.slots.iter().zip(expected) {
         assert_eq!((slot.year, slot.motif.as_str()), (year, motif));
         assert_eq!(slot.weight_oz, 1.0);
@@ -164,12 +257,10 @@ fn lunar_seed_has_the_twelve_specified_slots_and_release_states() {
 #[test]
 fn tudor_seed_contains_only_verified_bullion_releases_and_is_marked_incomplete() {
     let source = include_str!("../../../data/series/tudor-beasts.json");
-    let raw: Value = serde_json::from_str(source).unwrap();
     let series: Series = serde_json::from_str(source).unwrap();
 
-    assert_eq!(raw["incomplete"], true);
-    let sources = raw["sources"].as_object().unwrap();
-    assert_eq!(sources.len(), 9);
+    assert!(series.incomplete);
+    assert_eq!(series.sources.len(), 9);
     assert_eq!(series.slots.len(), 9);
     let expected = [
         (2022, "León de Inglaterra"),
@@ -193,12 +284,7 @@ fn tudor_seed_contains_only_verified_bullion_releases_and_is_marked_incomplete()
                 && matcher.weight_oz == Some(slot.weight_oz)
                 && matcher.finish == Some(slot.finish.clone())
         }));
-        assert!(
-            sources[slot.id.as_str()]
-                .as_str()
-                .unwrap()
-                .starts_with("https://www.royalmint.com/")
-        );
+        assert!(series.sources[&slot.id].starts_with("https://www.royalmint.com/"));
     }
     series.validate().unwrap();
     let lunar: Series =

@@ -69,6 +69,7 @@ pub enum ReleaseStatus {
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct Matcher {
     #[serde(default)]
     pub issuer_code: Option<String>,
@@ -85,6 +86,7 @@ pub struct Matcher {
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct Series {
     pub id: SeriesId,
     pub name: String,
@@ -92,10 +94,15 @@ pub struct Series {
     pub issuer_code: String,
     pub metal: Metal,
     pub notes: Option<String>,
+    #[serde(default)]
+    pub incomplete: bool,
+    #[serde(default)]
+    pub sources: BTreeMap<SlotId, String>,
     pub slots: Vec<Slot>,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct Slot {
     pub id: SlotId,
     pub label: String,
@@ -481,6 +488,8 @@ pub enum SeriesValidationError {
     InvalidWeight { slot_id: SlotId, weight_oz: f32 },
     #[error("Numista type id `{type_id}` is assigned more than once in the series")]
     DuplicateNumistaTypeId { type_id: u32 },
+    #[error("source key `{slot_id}` does not reference a slot in the series")]
+    UnknownSourceSlot { slot_id: SlotId },
     #[error("matcher {matcher_index} in slot `{slot_id}` is invalid: {reason}")]
     InvalidMatcher {
         slot_id: SlotId,
@@ -522,6 +531,13 @@ impl Series {
             }
             for (matcher_index, matcher) in slot.matchers.iter().enumerate() {
                 validate_matcher(&slot.id, matcher_index, matcher)?;
+            }
+        }
+        for source_slot_id in self.sources.keys() {
+            if !slot_ids.contains(source_slot_id) {
+                return Err(SeriesValidationError::UnknownSourceSlot {
+                    slot_id: source_slot_id.clone(),
+                });
             }
         }
         Ok(())

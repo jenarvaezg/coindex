@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use domain::{
     CollectedItem, Finish, ManualOverride, MatchSource, Matcher, Metal, ReleaseStatus, Series,
     SeriesId, Slot, SlotId, SlotStatus, TypeMeta, TypeMetaIndex, UnmatchedReason, build_album,
@@ -25,6 +27,8 @@ fn series(slots: Vec<Slot>) -> Series {
         issuer_code: "australie".into(),
         metal: Metal::Silver,
         notes: None,
+        incomplete: false,
+        sources: BTreeMap::new(),
         slots,
     }
 }

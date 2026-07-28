@@ -378,10 +378,11 @@ fn domain_item(item: &CollectedItem) -> Result<DomainItem, RepositoryError> {
         id,
         quantity: item.quantity.unwrap_or(1).max(1),
         type_id: item_type,
-        title: item
-            .item_type
-            .as_ref()
-            .and_then(|item_type| item_type.title.clone()),
+        title: matching_title(
+            item.item_type
+                .as_ref()
+                .and_then(|item_type| item_type.title.as_deref()),
+        ),
         issuer_code: item
             .item_type
             .as_ref()
@@ -402,7 +403,7 @@ fn domain_item(item: &CollectedItem) -> Result<DomainItem, RepositoryError> {
 fn domain_type_meta(id: u32, meta: &NumistaType) -> TypeMeta {
     TypeMeta {
         id,
-        title: meta.title.clone(),
+        title: matching_title(meta.title.as_deref()),
         issuer_code: meta.issuer.as_ref().and_then(|issuer| issuer.code.clone()),
         min_year: meta.min_year,
         max_year: meta.max_year,
@@ -415,14 +416,75 @@ fn infer_finish(meta: &NumistaType) -> Option<Finish> {
     let title = meta.title.as_deref()?.to_ascii_lowercase();
     if title.contains("proof") {
         Some(Finish::Proof)
-    } else if title.contains("colour") || title.contains("color") {
+    } else if title.contains("colour")
+        || title.contains("color")
+        || title.contains("coloread")
+        || title.contains("coloriz")
+        || is_lunar_colour_variant(&title, meta.series.as_deref())
+    {
         Some(Finish::Coloured)
-    } else if title.contains("gild") {
+    } else if title.contains("gild") || title.contains("dorad") || title.contains("chapado en oro")
+    {
         Some(Finish::Gilded)
-    } else if title.contains("antiqu") {
+    } else if title.contains("antiqu") || title.contains("acabado antiguo") {
         Some(Finish::Antiqued)
+    } else if title.contains("bullion")
+        || matches!(
+            meta.series.as_deref(),
+            Some("Lunar Series III" | "The Royal Tudor Beasts")
+        )
+    {
+        Some(Finish::Bullion)
     } else {
         None
+    }
+}
+
+fn is_lunar_colour_variant(title: &str, series: Option<&str>) -> bool {
+    series == Some("Lunar Series III")
+        && [
+            "blue", "golden", "lilac", "purple", "red", "teal", "white", "yellow",
+        ]
+        .iter()
+        .any(|colour| title.contains(&format!("year of the {colour} ")))
+}
+
+fn matching_title(title: Option<&str>) -> Option<String> {
+    let title = title?;
+    let aliases: BTreeSet<&str> = title
+        .to_lowercase()
+        .split(|character: char| !character.is_alphanumeric())
+        .filter_map(|word| match word {
+            "buey" => Some("ox"),
+            "caballo" => Some("horse"),
+            "cabra" => Some("goat"),
+            "cerdo" => Some("pig"),
+            "conejo" => Some("rabbit"),
+            "dragón" => Some("dragon"),
+            "galgo" => Some("greyhound"),
+            "gallo" => Some("rooster"),
+            "inglaterra" => Some("england"),
+            "león" => Some("lion"),
+            "mono" => Some("monkey"),
+            "pantera" => Some("panther"),
+            "perro" => Some("dog"),
+            "ratón" => Some("mouse"),
+            "real" => Some("royal"),
+            "reina" => Some("queen"),
+            "serpiente" => Some("snake"),
+            "tigre" => Some("tiger"),
+            "toro" => Some("bull"),
+            "unicornio" => Some("unicorn"),
+            _ => None,
+        })
+        .collect();
+    if aliases.is_empty() {
+        Some(title.to_owned())
+    } else {
+        Some(format!(
+            "{title} [{}]",
+            aliases.into_iter().collect::<Vec<_>>().join(" ")
+        ))
     }
 }
 
@@ -432,9 +494,12 @@ fn to_i64(field: &'static str, value: u64) -> Result<i64, RepositoryError> {
 
 #[cfg(test)]
 mod tests {
-    use numista::NumistaType;
+    use domain::{Finish, SlotStatus, TypeMetaIndex, build_album};
+    use numista::{CollectedItem, NumistaType};
 
-    use super::infer_finish;
+    use crate::seeds::load_series;
+
+    use super::{domain_item, domain_type_meta, infer_finish, matching_title};
 
     #[test]
     fn ordinary_catalog_titles_do_not_invent_a_finish() {
@@ -444,5 +509,116 @@ mod tests {
         };
 
         assert_eq!(infer_finish(&metadata), None);
+    }
+
+    #[test]
+    fn spanish_lunar_motifs_add_every_committed_english_alias() {
+        let cases = [
+            ("Cerdo", "pig"),
+            ("Ratón", "mouse"),
+            ("Buey", "ox"),
+            ("Tigre", "tiger"),
+            ("Conejo", "rabbit"),
+            ("Dragón", "dragon"),
+            ("Serpiente", "snake"),
+            ("Caballo", "horse"),
+            ("Cabra", "goat"),
+            ("Mono", "monkey"),
+            ("Gallo", "rooster"),
+            ("Perro", "dog"),
+        ];
+
+        for (spanish, english) in cases {
+            let title = matching_title(Some(spanish)).unwrap();
+            assert!(
+                title.contains(english),
+                "expected `{spanish}` to add alias `{english}`, got `{title}`"
+            );
+        }
+    }
+
+    #[test]
+    fn production_metadata_only_matches_the_committed_bullion_slot_for_the_ordinary_variant() {
+        let series = load_series().unwrap();
+        let candidates = [
+            (
+                386_213,
+                "1 Dólar - Isabel II (Año del Dragón; Plata)",
+                31.107,
+                Finish::Bullion,
+                true,
+            ),
+            (
+                404_044,
+                "1 Dollar - Elizabeth II (Year of the Dragon - Silver Proof High Relief)",
+                31.107,
+                Finish::Proof,
+                false,
+            ),
+            (
+                394_043,
+                "1 Dollar - Elizabeth II (Year of the Dragon - Coloured)",
+                31.107,
+                Finish::Coloured,
+                false,
+            ),
+            (
+                404_285,
+                "1 Dollar - Elizabeth II (Year of the Dragon - Silver Gilded)",
+                31.107,
+                Finish::Gilded,
+                false,
+            ),
+            (
+                482_185,
+                "2 Dollars - Elizabeth II (Year of the Dragon - Silver Antiqued)",
+                62.213,
+                Finish::Antiqued,
+                false,
+            ),
+        ];
+
+        for (type_id, title, weight, expected_finish, should_match) in candidates {
+            let raw_type = serde_json::json!({
+                "id": type_id,
+                "title": title,
+                "issuer": {"code": "australie", "name": "Australia"},
+                "min_year": 2024,
+                "max_year": 2024,
+                "weight": weight,
+                "series": "Lunar Series III"
+            });
+            let metadata: NumistaType = serde_json::from_value(raw_type).unwrap();
+            let adapted_metadata = domain_type_meta(type_id, &metadata);
+            assert_eq!(adapted_metadata.finish, Some(expected_finish));
+
+            let raw_item = serde_json::json!({
+                "id": u64::from(type_id),
+                "quantity": 1,
+                "type": {
+                    "id": type_id,
+                    "title": title,
+                    "issuer": {"code": "australie", "name": "Australia"}
+                },
+                "issue": {"year": 2024, "gregorian_year": 2024}
+            });
+            let item: CollectedItem = serde_json::from_value(raw_item).unwrap();
+            let item = domain_item(&item).unwrap();
+            let metadata = TypeMetaIndex::from([(type_id, adapted_metadata)]);
+
+            let album = build_album(&series, &[item], &metadata, &[]);
+            let dragon = album
+                .series
+                .iter()
+                .flat_map(|series| &series.slots)
+                .find(|slot| slot.slot.id.as_str() == "lunar-iii-2024-dragon-1oz")
+                .unwrap();
+
+            assert_eq!(
+                matches!(dragon.status, SlotStatus::Owned { .. }),
+                should_match,
+                "unexpected match result for Numista type {type_id}: {title}"
+            );
+        }
     }
 }

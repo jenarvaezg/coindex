@@ -11,11 +11,29 @@ env:
 jobs:
   rust:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: coindex_test_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Rust with the WASM target
         run: rustup target add wasm32-unknown-unknown
       - name: Test the workspace
         run: cargo test --workspace
+      - name: Test PostgreSQL acceptance paths
+        env:
+          COINDEX_ALLOW_DESTRUCTIVE_DB_TEST: "1"
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/coindex_test_ci
+        run: cargo test -p coindex-backend -- --ignored --test-threads=1
       - name: Check the platform-free domain crate for WASM
         run: cargo check -p domain --target wasm32-unknown-unknown

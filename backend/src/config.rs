@@ -4,6 +4,7 @@ use std::fmt;
 use thiserror::Error;
 
 pub const DEFAULT_MONTHLY_BUDGET: u32 = 1_500;
+const PHASE_ONE_USERS: [&str; 2] = ["jose", "padre"];
 
 #[derive(Clone, Eq, PartialEq)]
 pub struct UserConfig {
@@ -29,6 +30,8 @@ pub enum ConfigError {
     InvalidUser { position: usize },
     #[error("duplicate user key `{0}`")]
     DuplicateUser(String),
+    #[error("COINDEX_USERS must define the fixed Phase 1 users `jose` and `padre`")]
+    UnexpectedUserKeys,
     #[error("user key `{0}` may contain only lowercase ASCII letters, digits, `_`, and `-`")]
     InvalidUserKey(String),
     #[error("Numista user id for user `{key}` is invalid: {value}")]
@@ -89,6 +92,12 @@ impl AppConfig {
                     api_key: parts[2].trim().to_owned(),
                 },
             );
+        }
+        if !PHASE_ONE_USERS
+            .iter()
+            .all(|required| parsed.contains_key(*required))
+        {
+            return Err(ConfigError::UnexpectedUserKeys);
         }
 
         let monthly_budget = match budget {
@@ -192,6 +201,11 @@ mod tests {
             )
             .unwrap_err(),
             ConfigError::InvalidBudget("0".to_owned())
+        );
+        assert_eq!(
+            AppConfig::parse("alice:123:key,bob:456:key", None, "https://coindex.example",)
+                .unwrap_err(),
+            ConfigError::UnexpectedUserKeys
         );
     }
 

@@ -26,22 +26,46 @@ pub enum SeedError {
 pub fn load_series() -> Result<Vec<Series>, SeedError> {
     let mut series = Vec::with_capacity(SEEDS.len());
     for (file, contents) in SEEDS {
-        let value: Series =
-            serde_json::from_str(contents).map_err(|source| SeedError::Parse { file, source })?;
-        series.push(value);
+        series.push(parse_seed(file, contents)?);
     }
     validate_catalog(&series)?;
     Ok(series)
 }
 
+fn parse_seed(file: &'static str, contents: &str) -> Result<Series, SeedError> {
+    serde_json::from_str(contents).map_err(|source| SeedError::Parse { file, source })
+}
+
 #[cfg(test)]
 mod tests {
-    use super::load_series;
+    use super::{load_series, parse_seed};
 
     #[test]
     fn embedded_seeds_form_a_valid_global_catalog() {
         let series = load_series().unwrap();
 
         assert_eq!(series.len(), 2);
+    }
+
+    #[test]
+    fn seed_typo_reports_the_filename_and_unknown_field() {
+        let error = parse_seed(
+            "typo.json",
+            r#"{
+                "id":"field",
+                "name":"Field",
+                "mint":"Mint",
+                "issuer_code":"field",
+                "metal":"Silver",
+                "notes":null,
+                "incmplete":true,
+                "slots":[]
+            }"#,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(error.contains("typo.json"));
+        assert!(error.contains("unknown field `incmplete`"));
     }
 }

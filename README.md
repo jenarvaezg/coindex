@@ -34,15 +34,15 @@ COINDEX_ORIGIN = "http://localhost:8000"
 NUMISTA_MONTHLY_BUDGET = "1500"
 ```
 
-`COINDEX_USERS` debe contener exactamente dos entradas
-`clave:id_de_usuario_numista:api_key`. Las claves solo usan minúsculas, números, `_` o
-`-`. Las API keys viven en los Secrets de Shuttle y en memoria; no se guardan en Postgres.
+`COINDEX_USERS` debe contener exactamente las dos entradas fijas de Fase 1,
+`jose:id_de_usuario_numista:api_key` y `padre:id_de_usuario_numista:api_key`.
+Las API keys viven en los Secrets de Shuttle y en memoria; no se guardan en Postgres.
 No subas `Secrets.dev.toml` ni `Secrets.toml`.
 
 `COINDEX_ORIGIN` es obligatorio y debe ser el origen público exacto, incluido esquema y
 puerto cuando no sea el predeterminado. Usa `http://localhost:8000` en local y, en
 producción, la URL HTTPS asignada al proyecto, por ejemplo
-`https://coindex-xxxx.shuttleapp.rs`.
+`https://coindex-xxxx.shuttle.app`.
 
 Para producción, configura los mismos secretos con la gestión de secretos de Shuttle.
 

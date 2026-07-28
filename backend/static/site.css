@@ -177,6 +177,7 @@ h3 { font-size: 1.6rem; }
   background: var(--rust);
   color: white;
   font: 800 1rem/1 sans-serif;
+  text-decoration: none;
 }
 
 .slot-copy h2 { margin-bottom: 0.25rem; }

@@ -4,6 +4,9 @@ mod seeds;
 mod sync;
 mod views;
 
+#[cfg(test)]
+mod acceptance_tests;
+
 use std::collections::BTreeMap;
 use std::sync::Arc;
 use std::time::Duration;
@@ -244,6 +247,12 @@ async fn sync_handler(
     validate_same_origin(&headers, &state.config.origin)?;
     let user_config = require_user(&state, &user)?;
     let report = state.sync.run(user_config, query.dry_run).await?;
+    tracing::info!(
+        user = %user,
+        dry_run = report.dry_run,
+        collection_items = report.collection_items,
+        "Numista sync completed"
+    );
     Ok(Html(views::sync_report(&user, &report).into_string()))
 }
 
@@ -369,7 +378,7 @@ fn validate_same_origin(headers: &HeaderMap, expected_origin: &str) -> Result<()
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        let status = match self {
+        let status = match &self {
             Self::UnknownUser(_)
             | Self::UnknownSeries(_)
             | Self::UnknownSlot(_)
@@ -382,6 +391,11 @@ impl IntoResponse for AppError {
             Self::Sync(_) => StatusCode::SERVICE_UNAVAILABLE,
             Self::ImageRequest(_) | Self::Repository(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
+        if status.is_server_error() {
+            tracing::error!(status = status.as_u16(), error = %self, "request failed");
+        } else {
+            tracing::warn!(status = status.as_u16(), error = %self, "request rejected");
+        }
         (status, self.to_string()).into_response()
     }
 }
