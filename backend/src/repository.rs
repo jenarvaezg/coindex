@@ -6,7 +6,7 @@ use domain::{
 };
 use numista::{ApiCall, BudgetGate, CallRecorder, CollectedItem, NumistaType, PolicyError};
 use serde_json::Value;
-use sqlx::{PgPool, Postgres, Row, Transaction};
+use sqlx::{PgPool, Postgres, Transaction};
 use thiserror::Error;
 
 const BUDGET_LOCK_ID: i64 = 0x0043_4F49_4E44_4558;
@@ -52,29 +52,29 @@ impl Repository {
     }
 
     pub async fn load_items(&self, user_key: &str) -> Result<Vec<DomainItem>, RepositoryError> {
-        let rows = sqlx::query("SELECT raw FROM collected_items WHERE user_key = $1 ORDER BY id")
-            .bind(user_key)
-            .fetch_all(&self.pool)
-            .await?;
+        let rows = sqlx::query!(
+            "SELECT raw FROM collected_items WHERE user_key = $1 ORDER BY id",
+            user_key
+        )
+        .fetch_all(&self.pool)
+        .await?;
 
         rows.into_iter()
             .map(|row| {
-                let raw: Value = row.try_get("raw")?;
-                let item: CollectedItem = serde_json::from_value(raw)?;
+                let item: CollectedItem = serde_json::from_value(row.raw)?;
                 domain_item(&item)
             })
             .collect()
     }
 
     pub async fn load_type_meta(&self) -> Result<TypeMetaIndex, RepositoryError> {
-        let rows = sqlx::query("SELECT type_id, raw FROM type_meta ORDER BY type_id")
+        let rows = sqlx::query!("SELECT type_id, raw FROM type_meta ORDER BY type_id")
             .fetch_all(&self.pool)
             .await?;
         let mut index = TypeMetaIndex::new();
         for row in rows {
-            let type_id: i32 = row.try_get("type_id")?;
-            let raw: Value = row.try_get("raw")?;
-            let meta: NumistaType = serde_json::from_value(raw)?;
+            let type_id = row.type_id;
+            let meta: NumistaType = serde_json::from_value(row.raw)?;
             let id = u32::try_from(type_id).map_err(|_| RepositoryError::NumericRange {
                 field: "type_id",
                 value: type_id.unsigned_abs() as u64,
@@ -88,22 +88,21 @@ impl Repository {
         &self,
         user_key: &str,
     ) -> Result<Vec<ManualOverride>, RepositoryError> {
-        let rows = sqlx::query(
+        let rows = sqlx::query!(
             "SELECT item_id, slot_id FROM manual_overrides WHERE user_key = $1 ORDER BY item_id",
+            user_key
         )
-        .bind(user_key)
         .fetch_all(&self.pool)
         .await?;
         rows.into_iter()
             .map(|row| {
-                let item_id: i64 = row.try_get("item_id")?;
-                let slot_id: Option<String> = row.try_get("slot_id")?;
+                let item_id = row.item_id;
                 Ok(ManualOverride {
                     item_id: u64::try_from(item_id).map_err(|_| RepositoryError::NumericRange {
                         field: "item_id",
                         value: item_id.unsigned_abs(),
                     })?,
-                    slot_id: slot_id.map(SlotId::new),
+                    slot_id: row.slot_id.map(SlotId::new),
                 })
             })
             .collect()
@@ -116,15 +115,15 @@ impl Repository {
         slot_id: Option<&str>,
     ) -> Result<(), RepositoryError> {
         let item_id = to_i64("item_id", item_id)?;
-        sqlx::query(
+        sqlx::query!(
             "INSERT INTO manual_overrides (user_key, item_id, slot_id, created_at)
              VALUES ($1, $2, $3, now())
              ON CONFLICT (user_key, item_id)
              DO UPDATE SET slot_id = EXCLUDED.slot_id, created_at = now()",
+            user_key,
+            item_id,
+            slot_id
         )
-        .bind(user_key)
-        .bind(item_id)
-        .bind(slot_id)
         .execute(&self.pool)
         .await?;
         Ok(())
@@ -147,11 +146,12 @@ impl Repository {
                 })
             })
             .collect::<Result<Vec<_>, _>>()?;
-        let cached: Vec<i32> =
-            sqlx::query_scalar("SELECT type_id FROM type_meta WHERE type_id = ANY($1)")
-                .bind(&ids)
-                .fetch_all(&self.pool)
-                .await?;
+        let cached = sqlx::query_scalar!(
+            "SELECT type_id FROM type_meta WHERE type_id = ANY($1)",
+            &ids[..]
+        )
+        .fetch_all(&self.pool)
+        .await?;
         let cached = cached.into_iter().collect::<HashSet<_>>();
         Ok(ids
             .into_iter()
@@ -167,8 +167,7 @@ impl Repository {
         raw_items: Option<&[Value]>,
     ) -> Result<(), RepositoryError> {
         let mut tx = self.pool.begin().await?;
-        sqlx::query("DELETE FROM collected_items WHERE user_key = $1")
-            .bind(user_key)
+        sqlx::query!("DELETE FROM collected_items WHERE user_key = $1", user_key)
             .execute(&mut *tx)
             .await?;
         for item in items {
@@ -192,19 +191,19 @@ impl Repository {
                 })
                 .cloned()
                 .unwrap_or(serde_json::to_value(item)?);
-            sqlx::query(
+            sqlx::query!(
                 "INSERT INTO collected_items
                  (id, user_key, type_id, quantity, issue_year, grade, collection_name, raw, synced_at)
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())",
+                id,
+                user_key,
+                type_id,
+                quantity,
+                normalized.issue_year.or(normalized.gregorian_year),
+                normalized.grade.as_deref(),
+                normalized.collection_name.as_deref(),
+                raw
             )
-            .bind(id)
-            .bind(user_key)
-            .bind(type_id)
-            .bind(quantity)
-            .bind(normalized.issue_year.or(normalized.gregorian_year))
-            .bind(&normalized.grade)
-            .bind(&normalized.collection_name)
-            .bind(raw)
             .execute(&mut *tx)
             .await?;
         }
@@ -223,15 +222,15 @@ impl Repository {
             })?;
         let mut transaction = self.pool.begin().await?;
         let lock_id = TYPE_FETCH_LOCK_PREFIX | i64::from(type_id);
-        sqlx::query("SELECT pg_advisory_xact_lock($1)")
-            .bind(lock_id)
+        sqlx::query!("SELECT pg_advisory_xact_lock($1)", lock_id)
             .execute(&mut *transaction)
             .await?;
-        let cached: bool =
-            sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM type_meta WHERE type_id = $1)")
-                .bind(database_type_id)
-                .fetch_one(&mut *transaction)
-                .await?;
+        let cached = sqlx::query_scalar!(
+            r#"SELECT EXISTS(SELECT 1 FROM type_meta WHERE type_id = $1) as "cached!""#,
+            database_type_id
+        )
+        .fetch_one(&mut *transaction)
+        .await?;
         if cached {
             transaction.commit().await?;
             return Ok(None);
@@ -247,8 +246,7 @@ impl Repository {
             field: "type_id",
             value: u64::from(type_id),
         })?;
-        let raw: Option<Value> = sqlx::query_scalar("SELECT raw FROM type_meta WHERE type_id = $1")
-            .bind(type_id)
+        let raw = sqlx::query_scalar!("SELECT raw FROM type_meta WHERE type_id = $1", type_id)
             .fetch_optional(&self.pool)
             .await?;
         raw.map(serde_json::from_value)
@@ -257,10 +255,10 @@ impl Repository {
     }
 
     pub async fn monthly_usage(&self) -> Result<u32, RepositoryError> {
-        let used: i64 = sqlx::query_scalar(
-            "SELECT count(*) FROM api_call_log
+        let used = sqlx::query_scalar!(
+            r#"SELECT count(*) as "used!" FROM api_call_log
              WHERE called_at >= date_trunc('month', now())
-               AND called_at < date_trunc('month', now()) + interval '1 month'",
+               AND called_at < date_trunc('month', now()) + interval '1 month'"#,
         )
         .fetch_one(&self.pool)
         .await?;
@@ -279,13 +277,13 @@ impl TypeFetchClaim {
             .raw_json()
             .cloned()
             .unwrap_or(serde_json::to_value(metadata)?);
-        sqlx::query(
+        sqlx::query!(
             "INSERT INTO type_meta (type_id, raw, fetched_at)
              VALUES ($1, $2, now())
              ON CONFLICT (type_id) DO NOTHING",
+            self.type_id,
+            raw
         )
-        .bind(self.type_id)
-        .bind(raw)
         .execute(&mut *self.transaction)
         .await?;
         self.transaction.commit().await?;
@@ -302,10 +300,10 @@ impl PostgresCallPolicy {
     }
 
     async fn used(&self) -> Result<i64, sqlx::Error> {
-        sqlx::query_scalar(
-            "SELECT count(*) FROM api_call_log
+        sqlx::query_scalar!(
+            r#"SELECT count(*) as "used!" FROM api_call_log
              WHERE called_at >= date_trunc('month', now())
-               AND called_at < date_trunc('month', now()) + interval '1 month'",
+               AND called_at < date_trunc('month', now()) + interval '1 month'"#,
         )
         .fetch_one(&self.pool)
         .await
@@ -337,15 +335,14 @@ impl CallRecorder for PostgresCallPolicy {
             .begin()
             .await
             .map_err(|error| PolicyError::new(error.to_string()))?;
-        sqlx::query("SELECT pg_advisory_xact_lock($1)")
-            .bind(BUDGET_LOCK_ID)
+        sqlx::query!("SELECT pg_advisory_xact_lock($1)", BUDGET_LOCK_ID)
             .execute(&mut *tx)
             .await
             .map_err(|error| PolicyError::new(error.to_string()))?;
-        let used: i64 = sqlx::query_scalar(
-            "SELECT count(*) FROM api_call_log
+        let used = sqlx::query_scalar!(
+            r#"SELECT count(*) as "used!" FROM api_call_log
              WHERE called_at >= date_trunc('month', now())
-               AND called_at < date_trunc('month', now()) + interval '1 month'",
+               AND called_at < date_trunc('month', now()) + interval '1 month'"#,
         )
         .fetch_one(&mut *tx)
         .await
@@ -356,11 +353,13 @@ impl CallRecorder for PostgresCallPolicy {
                 self.monthly_budget
             )));
         }
-        sqlx::query("INSERT INTO api_call_log (endpoint, called_at) VALUES ($1, now())")
-            .bind(&call.endpoint)
-            .execute(&mut *tx)
-            .await
-            .map_err(|error| PolicyError::new(error.to_string()))?;
+        sqlx::query!(
+            "INSERT INTO api_call_log (endpoint, called_at) VALUES ($1, now())",
+            &call.endpoint
+        )
+        .execute(&mut *tx)
+        .await
+        .map_err(|error| PolicyError::new(error.to_string()))?;
         tx.commit()
             .await
             .map_err(|error| PolicyError::new(error.to_string()))?;

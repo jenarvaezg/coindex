@@ -44,10 +44,10 @@ impl PostgresCallPolicy {
     }
 
     async fn monthly_usage(&self) -> Result<i64, PolicyError> {
-        sqlx::query_scalar(
-            "SELECT count(*) FROM api_call_log
+        sqlx::query_scalar!(
+            "SELECT count(*) AS \"count!\" FROM api_call_log
              WHERE called_at >= date_trunc('month', now())
-               AND called_at < date_trunc('month', now()) + interval '1 month'",
+               AND called_at < date_trunc('month', now()) + interval '1 month'"
         )
         .fetch_one(&self.pool)
         .await
@@ -74,15 +74,14 @@ impl CallRecorder for PostgresCallPolicy {
             .begin()
             .await
             .map_err(|error| PolicyError::new(error.to_string()))?;
-        sqlx::query("SELECT pg_advisory_xact_lock($1)")
-            .bind(BUDGET_LOCK_ID)
+        sqlx::query!("SELECT pg_advisory_xact_lock($1)", BUDGET_LOCK_ID)
             .execute(&mut *transaction)
             .await
             .map_err(|error| PolicyError::new(error.to_string()))?;
-        let used: i64 = sqlx::query_scalar(
-            "SELECT count(*) FROM api_call_log
+        let used: i64 = sqlx::query_scalar!(
+            "SELECT count(*) AS \"count!\" FROM api_call_log
              WHERE called_at >= date_trunc('month', now())
-               AND called_at < date_trunc('month', now()) + interval '1 month'",
+               AND called_at < date_trunc('month', now()) + interval '1 month'"
         )
         .fetch_one(&mut *transaction)
         .await
@@ -90,11 +89,13 @@ impl CallRecorder for PostgresCallPolicy {
         if used >= i64::from(self.monthly_budget) {
             return Err(budget_exhausted(used, self.monthly_budget));
         }
-        sqlx::query("INSERT INTO api_call_log (endpoint, called_at) VALUES ($1, now())")
-            .bind(&call.endpoint)
-            .execute(&mut *transaction)
-            .await
-            .map_err(|error| PolicyError::new(error.to_string()))?;
+        sqlx::query!(
+            "INSERT INTO api_call_log (endpoint, called_at) VALUES ($1, now())",
+            &call.endpoint
+        )
+        .execute(&mut *transaction)
+        .await
+        .map_err(|error| PolicyError::new(error.to_string()))?;
         transaction
             .commit()
             .await

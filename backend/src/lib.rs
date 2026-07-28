@@ -455,7 +455,7 @@ mod tests {
 
     #[tokio::test]
     #[ignore = "set TEST_DATABASE_URL to run the isolated Postgres integration check"]
-    async fn postgres_bootstrap_health_override_and_type_cache() {
+    async fn postgres_health_override_and_type_cache() {
         let database_url =
             std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL must be set");
         let pool = PgPoolOptions::new()
@@ -463,13 +463,11 @@ mod tests {
             .connect(&database_url)
             .await
             .unwrap();
-        sqlx::migrate!("./migrations").run(&pool).await.unwrap();
         let repository = Repository::new(pool.clone());
         let user_key = "coindex_backend_integration";
         let item_id = 8_000_000_001_u64;
         let type_id = 2_000_000_001_u32;
-        sqlx::query("DELETE FROM type_meta WHERE type_id = $1")
-            .bind(type_id as i32)
+        sqlx::query!("DELETE FROM type_meta WHERE type_id = $1", type_id as i32)
             .execute(&pool)
             .await
             .unwrap();
@@ -503,14 +501,18 @@ mod tests {
             .unwrap();
         assert!(repository.cached_type(type_id).await.unwrap().is_some());
 
-        let app = super::bootstrap(
-            pool.clone(),
-            "jose:1:key-one,padre:2:key-two",
-            Some("1500"),
-            "http://localhost:8000",
-        )
-        .await
-        .unwrap();
+        let app = build_router(AppState {
+            config: AppConfig::parse(
+                "jose:1:key-one,padre:2:key-two",
+                Some("1500"),
+                "http://localhost:8000",
+            )
+            .unwrap(),
+            repository: repository.clone(),
+            series: Arc::new(Vec::new()),
+            sync: SyncService::new(repository.clone(), BTreeMap::new()),
+            image_client: reqwest::Client::new(),
+        });
         let response = app
             .oneshot(
                 Request::builder()
@@ -522,18 +524,15 @@ mod tests {
             .unwrap();
         assert_eq!(response.status(), StatusCode::OK);
 
-        sqlx::query("DELETE FROM manual_overrides WHERE user_key = $1")
-            .bind(user_key)
+        sqlx::query!("DELETE FROM manual_overrides WHERE user_key = $1", user_key)
             .execute(&pool)
             .await
             .unwrap();
-        sqlx::query("DELETE FROM collected_items WHERE user_key = $1")
-            .bind(user_key)
+        sqlx::query!("DELETE FROM collected_items WHERE user_key = $1", user_key)
             .execute(&pool)
             .await
             .unwrap();
-        sqlx::query("DELETE FROM type_meta WHERE type_id = $1")
-            .bind(type_id as i32)
+        sqlx::query!("DELETE FROM type_meta WHERE type_id = $1", type_id as i32)
             .execute(&pool)
             .await
             .unwrap();

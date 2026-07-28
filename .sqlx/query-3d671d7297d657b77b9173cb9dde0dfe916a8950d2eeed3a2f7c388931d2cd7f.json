@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO api_call_log (endpoint, called_at) VALUES ($1, now())",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "3d671d7297d657b77b9173cb9dde0dfe916a8950d2eeed3a2f7c388931d2cd7f"
+}

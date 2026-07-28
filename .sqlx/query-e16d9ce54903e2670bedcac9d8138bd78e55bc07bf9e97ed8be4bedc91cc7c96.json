@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO manual_overrides (user_key, item_id, slot_id, created_at)\n             VALUES ($1, $2, $3, now())\n             ON CONFLICT (user_key, item_id)\n             DO UPDATE SET slot_id = EXCLUDED.slot_id, created_at = now()",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e16d9ce54903e2670bedcac9d8138bd78e55bc07bf9e97ed8be4bedc91cc7c96"
+}

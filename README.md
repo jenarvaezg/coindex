@@ -57,6 +57,14 @@ shuttle run
 Shuttle provisiona Postgres y ejecuta las migraciones al arrancar. Abre
 `http://localhost:8000/health` para comprobar la base de datos y el consumo mensual.
 
+Las consultas SQL se comprueban en compilación y su metadata offline vive en `.sqlx/`.
+Después de modificar una consulta o migración, instala `sqlx-cli`, aplica las migraciones
+en un Postgres de desarrollo y regenera la metadata:
+
+```bash
+cargo sqlx prepare --workspace -- --all-targets
+```
+
 La sincronización solo ocurre al pulsar el botón. “Calcular gasto” ejecuta el modo seco:
 no hace peticiones y muestra un **límite inferior**, no un total exacto. Puede contar los
 tipos ausentes del snapshot local, pero no puede saber si la colección remota contiene

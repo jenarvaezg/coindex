@@ -3,6 +3,5 @@
 Secrets.toml
 Secrets.dev.toml
 /.shuttle/
-/.numista-api-call-ledger.jsonl
 *.log
 .DS_Store

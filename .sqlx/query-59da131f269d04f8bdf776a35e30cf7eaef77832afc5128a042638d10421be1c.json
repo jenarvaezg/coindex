@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT count(*) as \"used!\" FROM api_call_log\n             WHERE called_at >= date_trunc('month', now())\n               AND called_at < date_trunc('month', now()) + interval '1 month'",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "used!",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "59da131f269d04f8bdf776a35e30cf7eaef77832afc5128a042638d10421be1c"
+}
