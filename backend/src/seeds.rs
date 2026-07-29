@@ -17,7 +17,7 @@ const SEEDS: [(&str, &str); 2] = [
     ),
 ];
 
-const COLLECTION_CATALOG_SEEDS: [(&str, &str); 4] = [
+const COLLECTION_CATALOG_SEEDS: [(&str, &str); 16] = [
     (
         "nikola-tesla-serbia-1oz.json",
         include_str!("../../data/collection-catalogs/nikola-tesla-serbia-1oz.json"),
@@ -33,6 +33,58 @@ const COLLECTION_CATALOG_SEEDS: [(&str, &str); 4] = [
     (
         "us-independence-250th-spain-10-euros.json",
         include_str!("../../data/collection-catalogs/us-independence-250th-spain-10-euros.json"),
+    ),
+    (
+        "outstanding-personalities-russia-2-roubles.json",
+        include_str!(
+            "../../data/collection-catalogs/outstanding-personalities-russia-2-roubles.json"
+        ),
+    ),
+    (
+        "architectural-monuments-russia-3-roubles.json",
+        include_str!(
+            "../../data/collection-catalogs/architectural-monuments-russia-3-roubles.json"
+        ),
+    ),
+    (
+        "red-data-book-russia.json",
+        include_str!("../../data/collection-catalogs/red-data-book-russia.json"),
+    ),
+    (
+        "united-russian-state-500th-3-roubles.json",
+        include_str!("../../data/collection-catalogs/united-russian-state-500th-3-roubles.json"),
+    ),
+    (
+        "lunar-ii-perth-1oz-bullion.json",
+        include_str!("../../data/collection-catalogs/lunar-ii-perth-1oz-bullion.json"),
+    ),
+    (
+        "australian-koala-perth-1oz.json",
+        include_str!("../../data/collection-catalogs/australian-koala-perth-1oz.json"),
+    ),
+    (
+        "australian-kookaburra-perth-1oz.json",
+        include_str!("../../data/collection-catalogs/australian-kookaburra-perth-1oz.json"),
+    ),
+    (
+        "rwanda-lunar-50-francs.json",
+        include_str!("../../data/collection-catalogs/rwanda-lunar-50-francs.json"),
+    ),
+    (
+        "rwanda-nautical-50-francs.json",
+        include_str!("../../data/collection-catalogs/rwanda-nautical-50-francs.json"),
+    ),
+    (
+        "gothic-horror-uk-1oz.json",
+        include_str!("../../data/collection-catalogs/gothic-horror-uk-1oz.json"),
+    ),
+    (
+        "saltwater-crocodile-australia-1oz.json",
+        include_str!("../../data/collection-catalogs/saltwater-crocodile-australia-1oz.json"),
+    ),
+    (
+        "tudor-beasts-uk-1oz-proof.json",
+        include_str!("../../data/collection-catalogs/tudor-beasts-uk-1oz-proof.json"),
     ),
 ];
 
@@ -101,7 +153,7 @@ mod tests {
     fn embedded_collection_catalog_is_versioned_sourced_and_complete() {
         let catalogs = load_collection_catalogs().unwrap();
 
-        assert_eq!(catalogs.len(), 4);
+        assert_eq!(catalogs.len(), 16);
         let catalog = catalogs
             .iter()
             .find(|catalog| catalog.id.as_str() == "nikola-tesla-serbia-1oz")

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "rwanda-lunar-50-francs",
+  "name": "Rwanda Lunar Ounce · 50 francos",
+  "issuer_code": "rwanda",
+  "family": "Lunar ounce",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=4744",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2017-year-of-the-rooster",
+      "label": "Year of the Rooster",
+      "year": 2017,
+      "numista_type_id": 107917
+    },
+    {
+      "id": "2018-year-of-the-dog",
+      "label": "Year of the Dog",
+      "year": 2018,
+      "numista_type_id": 133446
+    },
+    {
+      "id": "2019-year-of-the-pig",
+      "label": "Year of the Pig",
+      "year": 2019,
+      "numista_type_id": 158491
+    },
+    {
+      "id": "2020-year-of-the-rat",
+      "label": "Year of the Rat",
+      "year": 2020,
+      "numista_type_id": 188048
+    },
+    {
+      "id": "2021-year-of-the-ox",
+      "label": "Year of the Ox",
+      "year": 2021,
+      "numista_type_id": 245390
+    },
+    {
+      "id": "2022-year-of-the-tiger",
+      "label": "Year of the Tiger",
+      "year": 2022,
+      "numista_type_id": 312890
+    },
+    {
+      "id": "2023-year-of-the-rabbit",
+      "label": "Year of the Rabbit",
+      "year": 2023,
+      "numista_type_id": 339003
+    },
+    {
+      "id": "2024-year-of-the-dragon",
+      "label": "Year of the Dragon",
+      "year": 2024,
+      "numista_type_id": 390022
+    },
+    {
+      "id": "2026-year-of-the-horse",
+      "label": "Year of the Horse",
+      "year": 2026,
+      "numista_type_id": 484287
+    }
+  ]
+}

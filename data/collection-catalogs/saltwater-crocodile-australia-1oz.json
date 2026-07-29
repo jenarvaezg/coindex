@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "saltwater-crocodile-australia-1oz",
+  "name": "Australian Saltwater Crocodile · 1 oz",
+  "issuer_code": "australie",
+  "family": "Australian Saltwater Crocodile",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=10511",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2014-australian-saltwater-crocodile",
+      "label": "Australian Saltwater Crocodile",
+      "year": 2014,
+      "numista_type_id": 60709
+    }
+  ]
+}

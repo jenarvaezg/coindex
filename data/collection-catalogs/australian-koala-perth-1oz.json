@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "id": "australian-koala-perth-1oz",
+  "name": "Australian Koala · Perth Mint · 1 oz",
+  "issuer_code": "australie",
+  "family": "Australian Koala",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=10445",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2011-koala-silver-bullion-coin",
+      "label": "Koala - Silver Bullion Coin",
+      "year": 2011,
+      "numista_type_id": 25340
+    },
+    {
+      "id": "2012-koala-silver-bullion-coin",
+      "label": "Koala Silver Bullion Coin",
+      "year": 2012,
+      "numista_type_id": 32572
+    },
+    {
+      "id": "2013-koala-silver-bullion-coin",
+      "label": "Koala - Silver Bullion Coin",
+      "year": 2013,
+      "numista_type_id": 42672
+    },
+    {
+      "id": "2014-koala-silver-bullion-coin",
+      "label": "Koala - Silver Bullion Coin",
+      "year": 2014,
+      "numista_type_id": 54800
+    },
+    {
+      "id": "2015-australian-koala",
+      "label": "Australian Koala",
+      "year": 2015,
+      "numista_type_id": 68298
+    },
+    {
+      "id": "2016-koala-silver-bullion-coin",
+      "label": "Koala - Silver Bullion Coin",
+      "year": 2016,
+      "numista_type_id": 85886
+    },
+    {
+      "id": "2017-koala-silver-bullion-coin",
+      "label": "Koala - Silver Bullion Coin",
+      "year": 2017,
+      "numista_type_id": 100525
+    },
+    {
+      "id": "2018-koala-silver-bullion-coin",
+      "label": "Koala - Silver Bullion Coin",
+      "year": 2018,
+      "numista_type_id": 132621
+    },
+    {
+      "id": "2019-koala",
+      "label": "Koala",
+      "year": 2019,
+      "numista_type_id": 160928
+    },
+    {
+      "id": "2020-koala-bullion-coin",
+      "label": "Koala - Bullion Coin",
+      "year": 2020,
+      "numista_type_id": 194185
+    },
+    {
+      "id": "2021-koala-bullion-coin",
+      "label": "Koala - Bullion Coin",
+      "year": 2021,
+      "numista_type_id": 281802
+    },
+    {
+      "id": "2022-koala-bullion-coin",
+      "label": "Koala - Bullion Coin",
+      "year": 2022,
+      "numista_type_id": 319477
+    },
+    {
+      "id": "2023-6th-portrait-in-the-name-of-koala-bullion-coin",
+      "label": "6th Portrait; In the name of - Koala - Bullion Coin",
+      "year": 2023,
+      "numista_type_id": 358743
+    },
+    {
+      "id": "2024-australian-koala",
+      "label": "Australian Koala",
+      "year": 2024,
+      "numista_type_id": 413950
+    },
+    {
+      "id": "2025-australian-koala",
+      "label": "Australian Koala",
+      "year": 2025,
+      "numista_type_id": 459669
+    },
+    {
+      "id": "2026-australian-koala",
+      "label": "Australian Koala",
+      "year": 2026,
+      "numista_type_id": 576543
+    }
+  ]
+}

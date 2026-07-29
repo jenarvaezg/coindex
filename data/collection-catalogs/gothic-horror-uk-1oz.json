@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "gothic-horror-uk-1oz",
+  "name": "Gothic Horror · Reino Unido · 1 oz",
+  "issuer_code": "royaume-uni",
+  "family": "Gothic Horror",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=12002",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2025-count-dracula-1oz-fine-silver",
+      "label": "Count Dracula; 1oz Fine Silver",
+      "year": 2025,
+      "numista_type_id": 519925
+    }
+  ]
+}

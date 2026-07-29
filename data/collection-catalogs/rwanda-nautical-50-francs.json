@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "rwanda-nautical-50-francs",
+  "name": "Rwanda Nautical Ounce · 50 francos",
+  "issuer_code": "rwanda",
+  "family": "Nautical Ounce",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=5228",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2017-santa-maria",
+      "label": "Santa Maria",
+      "year": 2017,
+      "numista_type_id": 127972
+    },
+    {
+      "id": "2018-hms-endeavour",
+      "label": "HMS Endeavour",
+      "year": 2018,
+      "numista_type_id": 139377
+    },
+    {
+      "id": "2019-victoria",
+      "label": "Victoria",
+      "year": 2019,
+      "numista_type_id": 172069
+    },
+    {
+      "id": "2020-mayflower",
+      "label": "Mayflower",
+      "year": 2020,
+      "numista_type_id": 220874
+    },
+    {
+      "id": "2021-sedov",
+      "label": "Sedov",
+      "year": 2021,
+      "numista_type_id": 301537
+    },
+    {
+      "id": "2022-uss-constitution",
+      "label": "USS Constitution",
+      "year": 2022,
+      "numista_type_id": 362115
+    },
+    {
+      "id": "2023-great-eastern",
+      "label": "Great Eastern",
+      "year": 2023,
+      "numista_type_id": 415674
+    },
+    {
+      "id": "2024-cutty-sark",
+      "label": "Cutty Sark",
+      "year": 2024,
+      "numista_type_id": 442604
+    },
+    {
+      "id": "2025-hms-victory",
+      "label": "HMS Victory",
+      "year": 2025,
+      "numista_type_id": 471438
+    },
+    {
+      "id": "2026-kruzenshtern",
+      "label": "Kruzenshtern",
+      "year": 2026,
+      "numista_type_id": 592517
+    }
+  ]
+}

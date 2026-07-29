@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "id": "architectural-monuments-russia-3-roubles",
+  "name": "Monumentos arquitectónicos de Rusia · 3 rublos",
+  "issuer_code": "russie",
+  "family": "Architectural Monuments of Russia",
+  "weight_millioz": 1121,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=1452",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "1993-bell-tower-ivan-the-great",
+      "label": "Bell-Tower \"Ivan the Great\"",
+      "year": 1993,
+      "numista_type_id": 64120
+    },
+    {
+      "id": "1993-cathedral-of-intercession-on-the-moat",
+      "label": "Cathedral of Intercession on the Moat",
+      "year": 1993,
+      "numista_type_id": 64121
+    },
+    {
+      "id": "1994-intercession-church-on-the-nerli-river",
+      "label": "Intercession Church on the Nerli-River",
+      "year": 1994,
+      "numista_type_id": 28136
+    },
+    {
+      "id": "1994-cathedral-of-the-nativity-of-the-mother-of-god-in-suzdal",
+      "label": "Cathedral of the Nativity of the Mother of God in Suzdal",
+      "year": 1994,
+      "numista_type_id": 69529
+    },
+    {
+      "id": "1994-kremlin-in-ryazan",
+      "label": "Kremlin in Ryazan",
+      "year": 1994,
+      "numista_type_id": 69587
+    },
+    {
+      "id": "1994-smolny-institute-and-cloister-in-st-petersburg",
+      "label": "Smolny Institute and Cloister in St. Petersburg",
+      "year": 1994,
+      "numista_type_id": 69588
+    },
+    {
+      "id": "1995-golden-gate-vladimir",
+      "label": "Golden Gate, Vladimir",
+      "year": 1995,
+      "numista_type_id": 28137
+    },
+    {
+      "id": "1995-first-russian-national-library",
+      "label": "First Russian National Library",
+      "year": 1995,
+      "numista_type_id": 28961
+    },
+    {
+      "id": "1995-belgorod",
+      "label": "Belgorod",
+      "year": 1995,
+      "numista_type_id": 31340
+    },
+    {
+      "id": "1995-smolensk-kremlin",
+      "label": "Smolensk Kremlin",
+      "year": 1995,
+      "numista_type_id": 31343
+    },
+    {
+      "id": "1995-wooden-architecture-of-kizhi",
+      "label": "Wooden Architecture of Kizhi",
+      "year": 1995,
+      "numista_type_id": 67608
+    },
+    {
+      "id": "1996-church-of-elijah-the-prophet-in-yaroslavl",
+      "label": "Church of Elijah the Prophet in Yaroslavl",
+      "year": 1996,
+      "numista_type_id": 28139
+    },
+    {
+      "id": "1996-winter-palace",
+      "label": "Winter Palace",
+      "year": 1996,
+      "numista_type_id": 28963
+    },
+    {
+      "id": "1996-tobolsk-kremlin",
+      "label": "Tobolsk Kremlin",
+      "year": 1996,
+      "numista_type_id": 70071
+    },
+    {
+      "id": "1996-kazan-kremlin",
+      "label": "Kazan Kremlin",
+      "year": 1996,
+      "numista_type_id": 70072
+    },
+    {
+      "id": "1997-monastery-of-the-nativity-birth-giver-of-god-hermitage",
+      "label": "Monastery of the Nativity Birth-Giver-of-God Hermitage",
+      "year": 1997,
+      "numista_type_id": 37213
+    },
+    {
+      "id": "1997-solovetsky-monastery",
+      "label": "Solovetsky Monastery",
+      "year": 1997,
+      "numista_type_id": 39856
+    },
+    {
+      "id": "1997-monastery-of-the-virgins-saint-entrance-presentation",
+      "label": "Monastery of the Virgin’s Saint Entrance Presentation",
+      "year": 1997,
+      "numista_type_id": 70120
+    },
+    {
+      "id": "1998-merchant-s-wife",
+      "label": "Merchant's Wife",
+      "year": 1998,
+      "numista_type_id": 45928
+    },
+    {
+      "id": "1998-evgraf-davydov",
+      "label": "Evgraf Davydov",
+      "year": 1998,
+      "numista_type_id": 49187
+    },
+    {
+      "id": "1998-russian-scaevola",
+      "label": "Russian Scaevola",
+      "year": 1998,
+      "numista_type_id": 49188
+    },
+    {
+      "id": "1998-archangel",
+      "label": "Archangel",
+      "year": 1998,
+      "numista_type_id": 49189
+    },
+    {
+      "id": "1998-savvino-storozhevsky-monastery",
+      "label": "Savvino Storozhevsky Monastery",
+      "year": 1998,
+      "numista_type_id": 70687
+    },
+    {
+      "id": "1998-nilo-stolobenskaya-hermitage",
+      "label": "Nilo Stolobenskaya Hermitage",
+      "year": 1998,
+      "numista_type_id": 70688
+    },
+    {
+      "id": "1999-mosque-mardjany-kazan",
+      "label": "Mosque \"Mardjany\", Kazan",
+      "year": 1999,
+      "numista_type_id": 28146
+    },
+    {
+      "id": "1999-yuryev-monastery-novgorod",
+      "label": "Yuryev Monastery, Novgorod",
+      "year": 1999,
+      "numista_type_id": 38590
+    },
+    {
+      "id": "1999-kuskovo-country-estate-moscow",
+      "label": "Kuskovo Country Estate, Moscow",
+      "year": 1999,
+      "numista_type_id": 70932
+    },
+    {
+      "id": "1999-monument-of-friendship-ufa",
+      "label": "Monument of Friendship, Ufa",
+      "year": 1999,
+      "numista_type_id": 70933
+    },
+    {
+      "id": "2000-ugreshsky-saint-nicholas-monastery",
+      "label": "Ugreshsky-Saint Nicholas Monastery",
+      "year": 2000,
+      "numista_type_id": 71559
+    },
+    {
+      "id": "2000-nizhny-novgorod-kremlin",
+      "label": "Nizhny Novgorod Kremlin",
+      "year": 2000,
+      "numista_type_id": 71560
+    },
+    {
+      "id": "2000-tsarskoye-selo",
+      "label": "Tsarskoye Selo",
+      "year": 2000,
+      "numista_type_id": 71561
+    },
+    {
+      "id": "2002-iversky-monastery",
+      "label": "Iversky Monastery",
+      "year": 2002,
+      "numista_type_id": 37214
+    },
+    {
+      "id": "2002-saint-john-nunnery",
+      "label": "Saint John Nunnery",
+      "year": 2002,
+      "numista_type_id": 73018
+    },
+    {
+      "id": "2002-church-of-the-savior-miraculous",
+      "label": "Church of the Savior Miraculous",
+      "year": 2002,
+      "numista_type_id": 73020
+    },
+    {
+      "id": "2002-kideksha",
+      "label": "Kideksha",
+      "year": 2002,
+      "numista_type_id": 73021
+    },
+    {
+      "id": "2003-kremlin-of-pskov",
+      "label": "Kremlin of Pskov",
+      "year": 2003,
+      "numista_type_id": 38592
+    },
+    {
+      "id": "2003-ipatyevsky-monastery",
+      "label": "Ipatyevsky Monastery",
+      "year": 2003,
+      "numista_type_id": 38983
+    },
+    {
+      "id": "2003-saint-daniel-monastery",
+      "label": "Saint Daniel Monastery",
+      "year": 2003,
+      "numista_type_id": 40237
+    },
+    {
+      "id": "2003-saint-trinity-seraphim-diveyevsky-monastery",
+      "label": "Saint Trinity Seraphim-Diveyevsky Monastery",
+      "year": 2003,
+      "numista_type_id": 73125
+    },
+    {
+      "id": "2004-wooden-architecture",
+      "label": "Wooden Architecture",
+      "year": 2004,
+      "numista_type_id": 30539
+    },
+    {
+      "id": "2004-church-of-the-st-virgin-nativity",
+      "label": "Church of the St. Virgin Nativity",
+      "year": 2004,
+      "numista_type_id": 39900
+    },
+    {
+      "id": "2004-epiphany-cathedral",
+      "label": "Epiphany Cathedral",
+      "year": 2004,
+      "numista_type_id": 40236
+    },
+    {
+      "id": "2004-church-of-the-sign-of-the-holy-mother-of-god",
+      "label": "Church of the Sign of the Holy Mother of God",
+      "year": 2004,
+      "numista_type_id": 75081
+    },
+    {
+      "id": "2005-kropotkinskaya",
+      "label": "«Kropotkinskaya»",
+      "year": 2005,
+      "numista_type_id": 29017
+    },
+    {
+      "id": "2005-virgin-monastery-of-raifa",
+      "label": "Virgin Monastery of Raifa",
+      "year": 2005,
+      "numista_type_id": 38982
+    },
+    {
+      "id": "2005-novosibirsk-state-academic-opera-and-ballet-theatre",
+      "label": "Novosibirsk State Academic Opera and Ballet Theatre",
+      "year": 2005,
+      "numista_type_id": 76690
+    },
+    {
+      "id": "2005-saint-nicholas-cathedral",
+      "label": "Saint Nicholas Cathedral",
+      "year": 2005,
+      "numista_type_id": 76691
+    },
+    {
+      "id": "2005-rusakov-workers-club",
+      "label": "Rusakov Workers' Club",
+      "year": 2005,
+      "numista_type_id": 76692
+    },
+    {
+      "id": "2006-state-bank-nizhny-novgorod",
+      "label": "State Bank, Nizhny Novgorod",
+      "year": 2006,
+      "numista_type_id": 28972
+    },
+    {
+      "id": "2007-kazan-railway-station",
+      "label": "Kazan Railway Station",
+      "year": 2007,
+      "numista_type_id": 29025
+    },
+    {
+      "id": "2007-nevyansk-inclined-tower",
+      "label": "Nevyansk Inclined Tower",
+      "year": 2007,
+      "numista_type_id": 78379
+    },
+    {
+      "id": "2008-assumption-church",
+      "label": "Assumption Church",
+      "year": 2008,
+      "numista_type_id": 28973
+    },
+    {
+      "id": "2008-saint-vladimir-cathedral",
+      "label": "Saint Vladimir Cathedral",
+      "year": 2008,
+      "numista_type_id": 30541
+    },
+    {
+      "id": "2008-saint-nicholas-cathedral",
+      "label": "Saint Nicholas Cathedral",
+      "year": 2008,
+      "numista_type_id": 39904
+    },
+    {
+      "id": "2008-cathedral-of-saint-demetrius",
+      "label": "Cathedral of Saint Demetrius",
+      "year": 2008,
+      "numista_type_id": 42408
+    },
+    {
+      "id": "2008-house-of-n-i-sevastyanov",
+      "label": "House of N. I. Sevastyanov",
+      "year": 2008,
+      "numista_type_id": 79321
+    },
+    {
+      "id": "2008-cathedral-of-nativity-of-our-lady",
+      "label": "Cathedral of Nativity of Our Lady",
+      "year": 2008,
+      "numista_type_id": 79323
+    },
+    {
+      "id": "2009-tula-kremlin",
+      "label": "Tula Kremlin",
+      "year": 2009,
+      "numista_type_id": 30547
+    },
+    {
+      "id": "2009-odygitriya-church",
+      "label": "Odygitriya Church",
+      "year": 2009,
+      "numista_type_id": 36296
+    },
+    {
+      "id": "2009-vitebsky-railway-station",
+      "label": "Vitebsky Railway Station",
+      "year": 2009,
+      "numista_type_id": 49186
+    },
+    {
+      "id": "2009-intercession-cathedral",
+      "label": "Intercession Cathedral",
+      "year": 2009,
+      "numista_type_id": 80877
+    },
+    {
+      "id": "2010-the-holy-trinity-church",
+      "label": "The Holy Trinity Church",
+      "year": 2010,
+      "numista_type_id": 28974
+    },
+    {
+      "id": "2010-the-saviour-s-transfiguration-cathedral",
+      "label": "The Saviour's Transfiguration Cathedral",
+      "year": 2010,
+      "numista_type_id": 36297
+    },
+    {
+      "id": "2010-petrozavodsk",
+      "label": "Petrozavodsk",
+      "year": 2010,
+      "numista_type_id": 40238
+    },
+    {
+      "id": "2010-the-battle-tower-vovnushki",
+      "label": "The Battle Tower \"Vovnushki\"",
+      "year": 2010,
+      "numista_type_id": 82711
+    },
+    {
+      "id": "2011-sergiyevo-kazansky-cathedral",
+      "label": "Sergiyevo-Kazansky Cathedral",
+      "year": 2011,
+      "numista_type_id": 39493
+    },
+    {
+      "id": "2012-kolotsky-assumption-monastery",
+      "label": "Kolotsky Assumption Monastery",
+      "year": 2012,
+      "numista_type_id": 38472
+    },
+    {
+      "id": "2012-ferapontov-luzhetsky-monastery",
+      "label": "Ferapontov Luzhetsky Monastery",
+      "year": 2012,
+      "numista_type_id": 38473
+    },
+    {
+      "id": "2012-cathedral-of-the-saint-virgins-nativity",
+      "label": "Cathedral of the Saint Virgin’s Nativity",
+      "year": 2012,
+      "numista_type_id": 38493
+    },
+    {
+      "id": "2012-savior-s-transfiguration-cathedral-in-belozersk",
+      "label": "Savior's Transfiguration Cathedral in Belozersk",
+      "year": 2012,
+      "numista_type_id": 38494
+    },
+    {
+      "id": "2012-temple-of-saint-martin-the-confessor",
+      "label": "Temple of Saint Martin The Confessor",
+      "year": 2012,
+      "numista_type_id": 40337
+    },
+    {
+      "id": "2013-naval-athedral-of-saint-nicholas-in-kronstadt",
+      "label": "Naval Сathedral of Saint Nicholas in Kronstadt",
+      "year": 2013,
+      "numista_type_id": 52234
+    },
+    {
+      "id": "2013-trinity-cathedral-in-verkhoturye",
+      "label": "Trinity Cathedral in Verkhoturye",
+      "year": 2013,
+      "numista_type_id": 52235
+    },
+    {
+      "id": "2013-the-cathedral-of-virgin-s-saint-entrance-presentation",
+      "label": "The Cathedral of Virgin's Saint Entrance Presentation",
+      "year": 2013,
+      "numista_type_id": 95368
+    },
+    {
+      "id": "2013-the-assumption-cathedral",
+      "label": "The Assumption Cathedral",
+      "year": 2013,
+      "numista_type_id": 95369
+    },
+    {
+      "id": "2014-st-nicholas-cathedral",
+      "label": "St. Nicholas Cathedral",
+      "year": 2014,
+      "numista_type_id": 59859
+    },
+    {
+      "id": "2014-the-church-of-saint-george",
+      "label": "The Church of Saint George",
+      "year": 2014,
+      "numista_type_id": 64890
+    },
+    {
+      "id": "2014-tkhaba-erdy-cathedral",
+      "label": "Tkhaba-Erdy Cathedral",
+      "year": 2014,
+      "numista_type_id": 64891
+    },
+    {
+      "id": "2014-the-house-museum-of-i-s-turgenev",
+      "label": "The House-Museum of I.S. Turgenev",
+      "year": 2014,
+      "numista_type_id": 64892
+    },
+    {
+      "id": "2014-gostiniy-dvor-orenburg",
+      "label": "Gostiniy dvor - Orenburg",
+      "year": 2014,
+      "numista_type_id": 66051
+    },
+    {
+      "id": "2015-saint-sophia-cathedral",
+      "label": "Saint Sophia Cathedral",
+      "year": 2015,
+      "numista_type_id": 70140
+    },
+    {
+      "id": "2015-the-building-of-railway-station-city-of-vladivostok",
+      "label": "The Building of Railway Station, City of Vladivostok",
+      "year": 2015,
+      "numista_type_id": 70141
+    },
+    {
+      "id": "2015-cross-exaltation-cathedral",
+      "label": "Cross-Exaltation Cathedral",
+      "year": 2015,
+      "numista_type_id": 75018
+    },
+    {
+      "id": "2015-saint-ascension-army-cathedral",
+      "label": "Saint Ascension Army Cathedral",
+      "year": 2015,
+      "numista_type_id": 75019
+    },
+    {
+      "id": "2015-the-temple-of-virgins-icon-joy-to-all-the-lamenting",
+      "label": "The Temple of Virgin’s Icon \"Joy to All the Lamenting\"",
+      "year": 2015,
+      "numista_type_id": 82869
+    },
+    {
+      "id": "2016-shoanin-ancient-christian-temple",
+      "label": "Shoanin Ancient Christian Temple",
+      "year": 2016,
+      "numista_type_id": 90201
+    },
+    {
+      "id": "2016-the-loan-treasury-building",
+      "label": "The Loan Treasury Building",
+      "year": 2016,
+      "numista_type_id": 90651
+    },
+    {
+      "id": "2016-juma-jami-mosque",
+      "label": "Juma-Jami Mosque",
+      "year": 2016,
+      "numista_type_id": 93831
+    },
+    {
+      "id": "2016-stock-exchange-building",
+      "label": "Stock Exchange Building,",
+      "year": 2016,
+      "numista_type_id": 97800
+    },
+    {
+      "id": "2017-surb-khach-monastery",
+      "label": "Surb-Khach Monastery",
+      "year": 2017,
+      "numista_type_id": 107292
+    },
+    {
+      "id": "2017-queen-louise-bridge",
+      "label": "Queen Louise Bridge",
+      "year": 2017,
+      "numista_type_id": 117328
+    },
+    {
+      "id": "2017-savior-s-transfiguration-church",
+      "label": "Savior's Transfiguration Church",
+      "year": 2017,
+      "numista_type_id": 162819
+    },
+    {
+      "id": "2018-trinity-monastery",
+      "label": "Trinity Monastery",
+      "year": 2018,
+      "numista_type_id": 136521
+    },
+    {
+      "id": "2018-saint-trinity-cathedral",
+      "label": "Saint Trinity Cathedral",
+      "year": 2018,
+      "numista_type_id": 136522
+    },
+    {
+      "id": "2018-church-of-the-kazan-icon-of-the-mother-of-god",
+      "label": "Church of the Kazan Icon of the Mother of God",
+      "year": 2018,
+      "numista_type_id": 141400
+    },
+    {
+      "id": "2018-saint-vladimirs-cathedral",
+      "label": "Saint Vladimir’s Cathedral",
+      "year": 2018,
+      "numista_type_id": 153799
+    },
+    {
+      "id": "2019-aseyev-estate",
+      "label": "Aseyev Estate",
+      "year": 2019,
+      "numista_type_id": 167168
+    },
+    {
+      "id": "2019-main-narzan-baths",
+      "label": "Main Narzan Baths",
+      "year": 2019,
+      "numista_type_id": 168992
+    },
+    {
+      "id": "2021-bobrenev-monastery",
+      "label": "Bobrenev Monastery",
+      "year": 2021,
+      "numista_type_id": 272715
+    },
+    {
+      "id": "2022-the-holy-trinity-kholki-monastery",
+      "label": "THE HOLY TRINITY KHOLKI MONASTERY",
+      "year": 2022,
+      "numista_type_id": 332172
+    },
+    {
+      "id": "2023-vorontsov-palace",
+      "label": "Vorontsov Palace",
+      "year": 2023,
+      "numista_type_id": 378131
+    },
+    {
+      "id": "2024-great-ascension-church",
+      "label": "Great Ascension Church",
+      "year": 2024,
+      "numista_type_id": 398310
+    }
+  ]
+}

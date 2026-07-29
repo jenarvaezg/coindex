@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "id": "red-data-book-russia",
+  "name": "Libro Rojo de Rusia · 1 y 2 rublos",
+  "issuer_code": "russie",
+  "family": "Red Data Book",
+  "weight_millioz": 547,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=5860",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "1993-amur-tiger",
+      "label": "Amur Tiger",
+      "year": 1993,
+      "numista_type_id": 28067
+    },
+    {
+      "id": "1993-fish-eagle-owl",
+      "label": "Fish Eagle-Owl",
+      "year": 1993,
+      "numista_type_id": 28068
+    },
+    {
+      "id": "1993-markhor",
+      "label": "Markhor",
+      "year": 1993,
+      "numista_type_id": 28070
+    },
+    {
+      "id": "1994-red-breasted-goose",
+      "label": "Red-breasted Goose",
+      "year": 1994,
+      "numista_type_id": 28073
+    },
+    {
+      "id": "1994-central-asian-cobra",
+      "label": "Central Asian Cobra",
+      "year": 1994,
+      "numista_type_id": 28074
+    },
+    {
+      "id": "1994-himalayan-black-bear",
+      "label": "Himalayan Black Bear",
+      "year": 1994,
+      "numista_type_id": 28075
+    },
+    {
+      "id": "1995-far-eastern-stork",
+      "label": "Far Eastern Stork",
+      "year": 1995,
+      "numista_type_id": 69948
+    },
+    {
+      "id": "1995-caucasian-grouse",
+      "label": "Caucasian Grouse",
+      "year": 1995,
+      "numista_type_id": 70044
+    },
+    {
+      "id": "1995-1-rouble-black-sea-bottle-nosed-dolphin-aphalina",
+      "label": "1 Rouble (Black Sea Bottle-Nosed Dolphin (Aphalina))",
+      "year": 1995,
+      "numista_type_id": 70045
+    },
+    {
+      "id": "1996-peregrine-falcon",
+      "label": "Peregrine falcon",
+      "year": 1996,
+      "numista_type_id": 66209
+    },
+    {
+      "id": "1996-1-rouble-turkmenian-eublefar-gecko",
+      "label": "1 Rouble (Turkmenian Eublefar (Gecko))",
+      "year": 1996,
+      "numista_type_id": 70046
+    },
+    {
+      "id": "1996-sand-mole-rat",
+      "label": "Sand Mole-Rat",
+      "year": 1996,
+      "numista_type_id": 70047
+    },
+    {
+      "id": "1997-1-rouble-jeiran-gazella-subgotturossa",
+      "label": "1 Rouble (Jeiran (Gazella subgotturossa))",
+      "year": 1997,
+      "numista_type_id": 66208
+    },
+    {
+      "id": "1997-flamingo",
+      "label": "Flamingo",
+      "year": 1997,
+      "numista_type_id": 70048
+    },
+    {
+      "id": "1997-1-rouble-aurochs-bison",
+      "label": "1 Rouble (Aurochs (Bison))",
+      "year": 1997,
+      "numista_type_id": 70049
+    },
+    {
+      "id": "1998-far-eastern-szink",
+      "label": "Far Eastern Szink",
+      "year": 1998,
+      "numista_type_id": 28142
+    },
+    {
+      "id": "1998-laptev-sea-walrus",
+      "label": "Laptev Sea Walrus",
+      "year": 1998,
+      "numista_type_id": 28929
+    },
+    {
+      "id": "1998-white-neck-goose",
+      "label": "White-Neck Goose",
+      "year": 1998,
+      "numista_type_id": 61055
+    },
+    {
+      "id": "1999-caucasian-viper",
+      "label": "Caucasian viper",
+      "year": 1999,
+      "numista_type_id": 28143
+    },
+    {
+      "id": "1999-rose-colored-gull",
+      "label": "Rose-colored gull",
+      "year": 1999,
+      "numista_type_id": 28144
+    },
+    {
+      "id": "1999-dauriyan-hedgehog",
+      "label": "Dauriyan hedgehog",
+      "year": 1999,
+      "numista_type_id": 64893
+    },
+    {
+      "id": "2000-black-crane",
+      "label": "Black Crane",
+      "year": 2000,
+      "numista_type_id": 71706
+    },
+    {
+      "id": "2000-leopard-runner",
+      "label": "Leopard Runner",
+      "year": 2000,
+      "numista_type_id": 71707
+    },
+    {
+      "id": "2000-russian-desman",
+      "label": "Russian Desman",
+      "year": 2000,
+      "numista_type_id": 71708
+    },
+    {
+      "id": "2001-west-siberian-beaver",
+      "label": "West Siberian Beaver",
+      "year": 2001,
+      "numista_type_id": 72925
+    },
+    {
+      "id": "2001-altai-mountain-ram",
+      "label": "Altai Mountain Ram",
+      "year": 2001,
+      "numista_type_id": 72926
+    },
+    {
+      "id": "2001-sakhalin-sturgeon",
+      "label": "Sakhalin Sturgeon",
+      "year": 2001,
+      "numista_type_id": 72927
+    },
+    {
+      "id": "2002-amur-goral",
+      "label": "Amur Goral",
+      "year": 2002,
+      "numista_type_id": 46136
+    },
+    {
+      "id": "2002-seywal-whale",
+      "label": "Seywal [Whale]",
+      "year": 2002,
+      "numista_type_id": 72924
+    },
+    {
+      "id": "2002-golden-eagle",
+      "label": "Golden Eagle",
+      "year": 2002,
+      "numista_type_id": 73008
+    },
+    {
+      "id": "2003-komandorsky-blue-fox",
+      "label": "Komandorsky Blue Fox",
+      "year": 2003,
+      "numista_type_id": 74093
+    },
+    {
+      "id": "2003-small-cormorant",
+      "label": "Small Cormorant",
+      "year": 2003,
+      "numista_type_id": 74095
+    },
+    {
+      "id": "2003-far-eastern-turtle",
+      "label": "Far-Eastern Turtle",
+      "year": 2003,
+      "numista_type_id": 74096
+    },
+    {
+      "id": "2004-amur-forest-cat",
+      "label": "Amur Forest Cat",
+      "year": 2004,
+      "numista_type_id": 75325
+    },
+    {
+      "id": "2004-rush-toad",
+      "label": "Rush Toad",
+      "year": 2004,
+      "numista_type_id": 75326
+    },
+    {
+      "id": "2004-great-bustard",
+      "label": "Great Bustard",
+      "year": 2004,
+      "numista_type_id": 75327
+    },
+    {
+      "id": "2005-asiatic-wild-dog",
+      "label": "Asiatic Wild Dog",
+      "year": 2005,
+      "numista_type_id": 76833
+    },
+    {
+      "id": "2005-marbled-murrelet",
+      "label": "Marbled Murrelet",
+      "year": 2005,
+      "numista_type_id": 76834
+    },
+    {
+      "id": "2005-white-fish-of-the-volkhov-river",
+      "label": "White-Fish of the Volkhov River",
+      "year": 2005,
+      "numista_type_id": 76835
+    },
+    {
+      "id": "2006-swan-goose",
+      "label": "Swan Goose",
+      "year": 2006,
+      "numista_type_id": 28149
+    },
+    {
+      "id": "2006-mongolian-gazelle-zeren",
+      "label": "Mongolian Gazelle - Zeren",
+      "year": 2006,
+      "numista_type_id": 70247
+    },
+    {
+      "id": "2006-ussury-clawed-newt",
+      "label": "Ussury Clawed Newt",
+      "year": 2006,
+      "numista_type_id": 70248
+    },
+    {
+      "id": "2007-ringed-seal-ladoga-subspecies",
+      "label": "Ringed Seal [Ladoga subspecies]",
+      "year": 2007,
+      "numista_type_id": 70249
+    },
+    {
+      "id": "2007-pallid-harrier",
+      "label": "Pallid Harrier",
+      "year": 2007,
+      "numista_type_id": 70250
+    },
+    {
+      "id": "2007-red-banded-snake",
+      "label": "Red-banded snake",
+      "year": 2007,
+      "numista_type_id": 70251
+    },
+    {
+      "id": "2008-black-capped-marmot",
+      "label": "Black-Capped Marmot",
+      "year": 2008,
+      "numista_type_id": 28150
+    },
+    {
+      "id": "2008-shemaya-fish-of-the-azov-sea-and-black-sea",
+      "label": "Shemaya-Fish of the Azov Sea and Black Sea",
+      "year": 2008,
+      "numista_type_id": 61057
+    },
+    {
+      "id": "2008-emperor-dragon-fly",
+      "label": "Emperor Dragon-Fly",
+      "year": 2008,
+      "numista_type_id": 69861
+    },
+    {
+      "id": "2010-ussuri-sika-deer",
+      "label": "Ussuri Sika Deer",
+      "year": 2010,
+      "numista_type_id": 61812
+    },
+    {
+      "id": "2010-short-tailed-albatross",
+      "label": "Short-Tailed Albatross",
+      "year": 2010,
+      "numista_type_id": 61813
+    },
+    {
+      "id": "2010-gjursa",
+      "label": "Gjursa",
+      "year": 2010,
+      "numista_type_id": 81940
+    },
+    {
+      "id": "2012-yellow-billed-loon",
+      "label": "Yellow-billed Loon",
+      "year": 2012,
+      "numista_type_id": 80766
+    },
+    {
+      "id": "2012-emerald-rosalia-beetle",
+      "label": "Emerald Rosalia Beetle",
+      "year": 2012,
+      "numista_type_id": 80768
+    },
+    {
+      "id": "2012-alpine-weasel",
+      "label": "Alpine Weasel",
+      "year": 2012,
+      "numista_type_id": 95548
+    },
+    {
+      "id": "2014-kulan",
+      "label": "Kulan",
+      "year": 2014,
+      "numista_type_id": 64886
+    },
+    {
+      "id": "2014-glossy-ibis",
+      "label": "Glossy Ibis",
+      "year": 2014,
+      "numista_type_id": 64887
+    },
+    {
+      "id": "2014-northern-sheatfish",
+      "label": "Northern Sheatfish",
+      "year": 2014,
+      "numista_type_id": 64888
+    },
+    {
+      "id": "2016-chinese-windmill",
+      "label": "Chinese Windmill",
+      "year": 2016,
+      "numista_type_id": 88644
+    },
+    {
+      "id": "2016-manul",
+      "label": "Manul",
+      "year": 2016,
+      "numista_type_id": 88645
+    },
+    {
+      "id": "2016-red-kite",
+      "label": "Red Kite",
+      "year": 2016,
+      "numista_type_id": 88646
+    },
+    {
+      "id": "2019-amur-leopard",
+      "label": "Amur Leopard",
+      "year": 2019,
+      "numista_type_id": 161739
+    },
+    {
+      "id": "2019-japanese-crested-ibis",
+      "label": "Japanese Crested Ibis",
+      "year": 2019,
+      "numista_type_id": 161741
+    },
+    {
+      "id": "2019-beluga",
+      "label": "Beluga",
+      "year": 2019,
+      "numista_type_id": 161742
+    },
+    {
+      "id": "2022-taraxacum-leucoglossum",
+      "label": "TARAXACUM LEUCOGLOSSUM",
+      "year": 2022,
+      "numista_type_id": 334103
+    },
+    {
+      "id": "2022-phallus-duplicatus",
+      "label": "PHALLUS DUPLICATUS",
+      "year": 2022,
+      "numista_type_id": 334105
+    },
+    {
+      "id": "2022-viola-incisa",
+      "label": "VIOLA INCISA",
+      "year": 2022,
+      "numista_type_id": 334106
+    },
+    {
+      "id": "2024-siberian-grouse",
+      "label": "SIBERIAN GROUSE",
+      "year": 2024,
+      "numista_type_id": 428164
+    },
+    {
+      "id": "2024-marbled-polecat",
+      "label": "MARBLED POLECAT",
+      "year": 2024,
+      "numista_type_id": 428165
+    },
+    {
+      "id": "2024-wrinkled-ground-beetle",
+      "label": "WRINKLED GROUND BEETLE",
+      "year": 2024,
+      "numista_type_id": 428166
+    }
+  ]
+}

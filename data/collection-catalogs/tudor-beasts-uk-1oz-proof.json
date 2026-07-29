@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "tudor-beasts-uk-1oz-proof",
+  "name": "The Royal Tudor Beasts · Reino Unido · 1 oz proof",
+  "issuer_code": "royaume-uni",
+  "family": "The Royal Tudor Beasts",
+  "weight_millioz": 1000,
+  "finish": "Proof",
+  "source": "https://en.numista.com/catalogue/series.php?id=6888",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2022-seymour-panther-silver-proof",
+      "label": "Seymour Panther; Silver Proof",
+      "year": 2022,
+      "numista_type_id": 307798
+    },
+    {
+      "id": "2022-lion-of-england-silver-proof",
+      "label": "Lion of England; Silver Proof",
+      "year": 2022,
+      "numista_type_id": 321641
+    },
+    {
+      "id": "2023-yale-of-beaufort-silver-proof",
+      "label": "Yale of Beaufort; Silver Proof",
+      "year": 2023,
+      "numista_type_id": 338766
+    },
+    {
+      "id": "2023-bull-of-clarence-silver-proof",
+      "label": "Bull of Clarence; Silver Proof",
+      "year": 2023,
+      "numista_type_id": 357929
+    },
+    {
+      "id": "2024-seymour-unicorn-silver-proof",
+      "label": "Seymour Unicorn; Silver Proof",
+      "year": 2024,
+      "numista_type_id": 379811
+    },
+    {
+      "id": "2024-tudor-dragon-silver-proof",
+      "label": "Tudor Dragon; Silver Proof",
+      "year": 2024,
+      "numista_type_id": 401697
+    },
+    {
+      "id": "2025-queen-s-panther-silver-proof",
+      "label": "Queen's Panther; Silver Proof",
+      "year": 2025,
+      "numista_type_id": 439836
+    },
+    {
+      "id": "2025-greyhound-of-richmond-silver-proof",
+      "label": "Greyhound of Richmond; Silver Proof",
+      "year": 2025,
+      "numista_type_id": 457094
+    },
+    {
+      "id": "2026-queen-s-lion-silver-proof",
+      "label": "Queen's Lion; Silver Proof",
+      "year": 2026,
+      "numista_type_id": 511576
+    },
+    {
+      "id": "2026-royal-dragon-silver-proof",
+      "label": "Royal Dragon; Silver Proof",
+      "year": 2026,
+      "numista_type_id": 577854
+    }
+  ]
+}

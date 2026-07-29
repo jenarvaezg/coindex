@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "id": "lunar-ii-perth-1oz-bullion",
+  "name": "Lunar Series II · Perth Mint · 1 oz bullion",
+  "issuer_code": "australie",
+  "family": "Lunar Series II",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "source": "https://en.numista.com/catalogue/series.php?id=4749",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2008-year-of-the-mouse-silver-bullion-coin",
+      "label": "Year of the Mouse - Silver Bullion Coin",
+      "year": 2008,
+      "numista_type_id": 28575
+    },
+    {
+      "id": "2009-year-of-the-ox-silver-bullion-coin",
+      "label": "Year of the Ox - Silver Bullion Coin",
+      "year": 2009,
+      "numista_type_id": 17378
+    },
+    {
+      "id": "2010-year-of-the-tiger-silver-bullion-coin",
+      "label": "Year of the Tiger - Silver Bullion Coin",
+      "year": 2010,
+      "numista_type_id": 17383
+    },
+    {
+      "id": "2011-year-of-the-rabbit-silver-bullion-coin",
+      "label": "Year of the Rabbit - Silver Bullion Coin",
+      "year": 2011,
+      "numista_type_id": 17388
+    },
+    {
+      "id": "2012-year-of-the-dragon-silver-bullion-coin",
+      "label": "Year of the Dragon - Silver Bullion Coin",
+      "year": 2012,
+      "numista_type_id": 28574
+    },
+    {
+      "id": "2013-year-of-the-snake-silver-bullion-coin",
+      "label": "Year of the Snake - Silver Bullion Coin",
+      "year": 2013,
+      "numista_type_id": 37980
+    },
+    {
+      "id": "2014-year-of-the-horse-silver-bullion-coin",
+      "label": "Year of the Horse - Silver Bullion Coin",
+      "year": 2014,
+      "numista_type_id": 49355
+    },
+    {
+      "id": "2015-year-of-the-goat-silver-bullion-coin",
+      "label": "Year of the Goat - Silver Bullion Coin",
+      "year": 2015,
+      "numista_type_id": 66615
+    },
+    {
+      "id": "2016-year-of-the-monkey-silver-bullion-coin",
+      "label": "Year of the Monkey - Silver Bullion Coin",
+      "year": 2016,
+      "numista_type_id": 80295
+    },
+    {
+      "id": "2017-year-of-the-rooster-silver-bullion-coin",
+      "label": "Year of the Rooster - Silver Bullion Coin",
+      "year": 2017,
+      "numista_type_id": 95688
+    },
+    {
+      "id": "2018-year-of-the-dog-silver-bullion-coin",
+      "label": "Year of the Dog - Silver Bullion Coin",
+      "year": 2018,
+      "numista_type_id": 129091
+    },
+    {
+      "id": "2019-year-of-the-pig-silver-bullion-coin",
+      "label": "Year of the Pig - Silver Bullion Coin",
+      "year": 2019,
+      "numista_type_id": 150358
+    }
+  ]
+}

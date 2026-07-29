@@ -1,0 +1,739 @@
+{
+  "schema_version": 1,
+  "id": "outstanding-personalities-russia-2-roubles",
+  "name": "Personalidades destacadas de Rusia · 2 rublos",
+  "issuer_code": "russie",
+  "family": "Outstanding Personalities of Russia",
+  "weight_millioz": 547,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=5460",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "1994-i-a-krylov",
+      "label": "I.A. Krylov",
+      "year": 1994,
+      "numista_type_id": 28934
+    },
+    {
+      "id": "1994-i-y-repin",
+      "label": "I.Y. Repin",
+      "year": 1994,
+      "numista_type_id": 28935
+    },
+    {
+      "id": "1994-p-p-bazhov",
+      "label": "P.P. Bazhov",
+      "year": 1994,
+      "numista_type_id": 34864
+    },
+    {
+      "id": "1994-n-v-gogol",
+      "label": "N.V. Gogol",
+      "year": 1994,
+      "numista_type_id": 61058
+    },
+    {
+      "id": "1994-f-f-ushakov",
+      "label": "F.F. Ushakov",
+      "year": 1994,
+      "numista_type_id": 65690
+    },
+    {
+      "id": "1995-s-a-yesenin",
+      "label": "S.A. Yesenin",
+      "year": 1995,
+      "numista_type_id": 28930
+    },
+    {
+      "id": "1995-m-i-kutuzov",
+      "label": "M.I. Kutuzov",
+      "year": 1995,
+      "numista_type_id": 28931
+    },
+    {
+      "id": "1995-i-a-bunin",
+      "label": "I.A. Bunin",
+      "year": 1995,
+      "numista_type_id": 28932
+    },
+    {
+      "id": "1995-a-s-griboyedov",
+      "label": "A.S. Griboyedov",
+      "year": 1995,
+      "numista_type_id": 28933
+    },
+    {
+      "id": "1996-n-a-nekrasov",
+      "label": "N.A. Nekrasov",
+      "year": 1996,
+      "numista_type_id": 70073
+    },
+    {
+      "id": "1996-f-m-dostoyevsky",
+      "label": "F.M. Dostoyevsky",
+      "year": 1996,
+      "numista_type_id": 70074
+    },
+    {
+      "id": "1997-n-y-zhukovsky",
+      "label": "N.Y. Zhukovsky",
+      "year": 1997,
+      "numista_type_id": 28937
+    },
+    {
+      "id": "1997-alexei-savrasov",
+      "label": "Alexei Savrasov",
+      "year": 1997,
+      "numista_type_id": 28938
+    },
+    {
+      "id": "1997-a-n-skryabin",
+      "label": "A.N. Skryabin",
+      "year": 1997,
+      "numista_type_id": 70171
+    },
+    {
+      "id": "1997-a-l-tchizhevsky",
+      "label": "A.L. Tchizhevsky",
+      "year": 1997,
+      "numista_type_id": 70172
+    },
+    {
+      "id": "1997-a-nikitin",
+      "label": "A. Nikitin",
+      "year": 1997,
+      "numista_type_id": 70173
+    },
+    {
+      "id": "1997-a-nikitin-70174",
+      "label": "A. Nikitin",
+      "year": 1997,
+      "numista_type_id": 70174
+    },
+    {
+      "id": "1998-constantin-stanislavski",
+      "label": "Constantin Stanislavski",
+      "year": 1998,
+      "numista_type_id": 28145
+    },
+    {
+      "id": "1998-viktor-vasnetsov",
+      "label": "Viktor Vasnetsov",
+      "year": 1998,
+      "numista_type_id": 28939
+    },
+    {
+      "id": "1998-sergei-eisenstein",
+      "label": "Sergei Eisenstein",
+      "year": 1998,
+      "numista_type_id": 28940
+    },
+    {
+      "id": "1998-sergei-eisenstein-28941",
+      "label": "Sergei Eisenstein",
+      "year": 1998,
+      "numista_type_id": 28941
+    },
+    {
+      "id": "1998-constantin-stanislavski-28942",
+      "label": "Constantin Stanislavski",
+      "year": 1998,
+      "numista_type_id": 28942
+    },
+    {
+      "id": "1998-v-m-vasnetsov",
+      "label": "V.M.Vasnetsov",
+      "year": 1998,
+      "numista_type_id": 70344
+    },
+    {
+      "id": "1999-nicholay-rerich",
+      "label": "Nicholay Rerich",
+      "year": 1999,
+      "numista_type_id": 28909
+    },
+    {
+      "id": "1999-nicholay-rerich-28911",
+      "label": "Nicholay Rerich",
+      "year": 1999,
+      "numista_type_id": 28911
+    },
+    {
+      "id": "1999-i-p-pavlov",
+      "label": "I.P. Pavlov",
+      "year": 1999,
+      "numista_type_id": 70948
+    },
+    {
+      "id": "1999-i-p-pavlov-70949",
+      "label": "I.P. Pavlov",
+      "year": 1999,
+      "numista_type_id": 70949
+    },
+    {
+      "id": "1999-k-l-khetagurov",
+      "label": "K.L.Khetagurov",
+      "year": 1999,
+      "numista_type_id": 71107
+    },
+    {
+      "id": "1999-k-p-bryullov",
+      "label": "K.P.Bryullov",
+      "year": 1999,
+      "numista_type_id": 71108
+    },
+    {
+      "id": "1999-k-p-bryullov-71109",
+      "label": "K.P.Bryullov",
+      "year": 1999,
+      "numista_type_id": 71109
+    },
+    {
+      "id": "2000-e-a-baratynsky",
+      "label": "E.A.Baratynsky",
+      "year": 2000,
+      "numista_type_id": 67970
+    },
+    {
+      "id": "2000-s-v-kovalevskaya",
+      "label": "S.V.Kovalevskaya",
+      "year": 2000,
+      "numista_type_id": 71562
+    },
+    {
+      "id": "2000-f-a-vassiliyev",
+      "label": "F.A.Vassiliyev",
+      "year": 2000,
+      "numista_type_id": 71563
+    },
+    {
+      "id": "2000-m-i-chigorin",
+      "label": "M. I. Chigorin",
+      "year": 2000,
+      "numista_type_id": 71564
+    },
+    {
+      "id": "2001-v-i-dal",
+      "label": "V.I. Dal",
+      "year": 2001,
+      "numista_type_id": 28943
+    },
+    {
+      "id": "2002-l-p-orlova",
+      "label": "L.P. Orlova",
+      "year": 2002,
+      "numista_type_id": 73012
+    },
+    {
+      "id": "2003-vladimir-gilyarovsky",
+      "label": "Vladimir Gilyarovsky",
+      "year": 2003,
+      "numista_type_id": 28944
+    },
+    {
+      "id": "2003-i-v-kurchatov",
+      "label": "I. V. Kurchatov",
+      "year": 2003,
+      "numista_type_id": 67973
+    },
+    {
+      "id": "2003-f-i-tyutchev",
+      "label": "F. I. Tyutchev",
+      "year": 2003,
+      "numista_type_id": 73127
+    },
+    {
+      "id": "2004-v-p-chkalov",
+      "label": "V.P. Chkalov",
+      "year": 2004,
+      "numista_type_id": 28946
+    },
+    {
+      "id": "2004-s-n-rerikh",
+      "label": "S.N. Rerikh",
+      "year": 2004,
+      "numista_type_id": 28947
+    },
+    {
+      "id": "2004-m-i-glinka",
+      "label": "M.I. Glinka",
+      "year": 2004,
+      "numista_type_id": 75071
+    },
+    {
+      "id": "2005-m-a-sholokhov",
+      "label": "M.A. Sholokhov",
+      "year": 2005,
+      "numista_type_id": 76735
+    },
+    {
+      "id": "2005-p-k-klodt",
+      "label": "P.K. Klodt",
+      "year": 2005,
+      "numista_type_id": 76737
+    },
+    {
+      "id": "2006-s-a-gerasimov",
+      "label": "S.A. Gerasimov",
+      "year": 2006,
+      "numista_type_id": 28948
+    },
+    {
+      "id": "2006-m-a-vrubel",
+      "label": "M.A. Vrubel",
+      "year": 2006,
+      "numista_type_id": 28949
+    },
+    {
+      "id": "2006-o-k-antonov",
+      "label": "O.K. Antonov",
+      "year": 2006,
+      "numista_type_id": 77025
+    },
+    {
+      "id": "2006-a-a-ivanov",
+      "label": "A.A. Ivanov",
+      "year": 2006,
+      "numista_type_id": 77026
+    },
+    {
+      "id": "2006-d-d-shostakovich",
+      "label": "D.D. Shostakovich",
+      "year": 2006,
+      "numista_type_id": 77027
+    },
+    {
+      "id": "2007-m-m-gerasimov",
+      "label": "M.M. Gerasimov",
+      "year": 2007,
+      "numista_type_id": 28950
+    },
+    {
+      "id": "2007-k-e-tsiolkovsky",
+      "label": "K.E. Tsiolkovsky",
+      "year": 2007,
+      "numista_type_id": 77810
+    },
+    {
+      "id": "2007-v-p-soloviev-sedoy",
+      "label": "V.P. Soloviev-Sedoy",
+      "year": 2007,
+      "numista_type_id": 77811
+    },
+    {
+      "id": "2007-s-p-korolyov",
+      "label": "S.P. Korolyov",
+      "year": 2007,
+      "numista_type_id": 77812
+    },
+    {
+      "id": "2007-v-m-bekhterev",
+      "label": "V.M. Bekhterev",
+      "year": 2007,
+      "numista_type_id": 77813
+    },
+    {
+      "id": "2007-l-euler",
+      "label": "L. Euler",
+      "year": 2007,
+      "numista_type_id": 77814
+    },
+    {
+      "id": "2008-l-d-landau",
+      "label": "L.D. Landau",
+      "year": 2008,
+      "numista_type_id": 68287
+    },
+    {
+      "id": "2008-i-m-frank",
+      "label": "I.M. Frank",
+      "year": 2008,
+      "numista_type_id": 68288
+    },
+    {
+      "id": "2008-v-i-nemirovich-danchenko",
+      "label": "V.I. Nemirovich-Danchenko",
+      "year": 2008,
+      "numista_type_id": 69106
+    },
+    {
+      "id": "2008-v-p-glushko",
+      "label": "V.P. Glushko",
+      "year": 2008,
+      "numista_type_id": 79329
+    },
+    {
+      "id": "2008-d-f-oistrakh",
+      "label": "D.F. Oistrakh",
+      "year": 2008,
+      "numista_type_id": 79330
+    },
+    {
+      "id": "2008-n-n-nosov",
+      "label": "N.N. Nosov",
+      "year": 2008,
+      "numista_type_id": 79343
+    },
+    {
+      "id": "2008-e-v-vuchetich",
+      "label": "E.V. Vuchetich",
+      "year": 2008,
+      "numista_type_id": 79344
+    },
+    {
+      "id": "2009-a-v-koltsov",
+      "label": "A.V. Koltsov",
+      "year": 2009,
+      "numista_type_id": 70252
+    },
+    {
+      "id": "2009-d-i-mendeleyev",
+      "label": "D.I. Mendeleyev",
+      "year": 2009,
+      "numista_type_id": 80316
+    },
+    {
+      "id": "2009-a-n-voronikhin",
+      "label": "A.N. Voronikhin",
+      "year": 2009,
+      "numista_type_id": 80876
+    },
+    {
+      "id": "2010-g-s-ulanova",
+      "label": "G.S. Ulanova",
+      "year": 2010,
+      "numista_type_id": 80874
+    },
+    {
+      "id": "2010-i-i-levitan",
+      "label": "I.I. Levitan",
+      "year": 2010,
+      "numista_type_id": 82717
+    },
+    {
+      "id": "2010-n-i-pirogov",
+      "label": "N.I. Pirogov",
+      "year": 2010,
+      "numista_type_id": 82720
+    },
+    {
+      "id": "2011-m-m-botvinnik",
+      "label": "M.M. Botvinnik",
+      "year": 2011,
+      "numista_type_id": 95592
+    },
+    {
+      "id": "2011-a-i-raykin",
+      "label": "A.I. Raykin",
+      "year": 2011,
+      "numista_type_id": 95593
+    },
+    {
+      "id": "2011-m-v-lomonosov",
+      "label": "M.V. Lomonosov",
+      "year": 2011,
+      "numista_type_id": 95594
+    },
+    {
+      "id": "2012-p-a-stolypin",
+      "label": "P.A. Stolypin",
+      "year": 2012,
+      "numista_type_id": 95540
+    },
+    {
+      "id": "2012-i-n-kramskoy",
+      "label": "I.N. Kramskoy",
+      "year": 2012,
+      "numista_type_id": 95541
+    },
+    {
+      "id": "2012-i-a-goncharov",
+      "label": "I.A. Goncharov",
+      "year": 2012,
+      "numista_type_id": 95542
+    },
+    {
+      "id": "2012-a-i-vasilyev",
+      "label": "A.I. Vasilyev",
+      "year": 2012,
+      "numista_type_id": 95543
+    },
+    {
+      "id": "2012-m-v-nesterov",
+      "label": "M.V. Nesterov",
+      "year": 2012,
+      "numista_type_id": 95544
+    },
+    {
+      "id": "2013-a-dargomyzhsky",
+      "label": "A. Dargomyzhsky",
+      "year": 2013,
+      "numista_type_id": 54488
+    },
+    {
+      "id": "2013-v-vernadsky",
+      "label": "V. Vernadsky",
+      "year": 2013,
+      "numista_type_id": 54489
+    },
+    {
+      "id": "2013-v-s-chernomirdin",
+      "label": "V.S. Chernomirdin",
+      "year": 2013,
+      "numista_type_id": 64916
+    },
+    {
+      "id": "2013-a-i-pokryshkin",
+      "label": "A.I. Pokryshkin",
+      "year": 2013,
+      "numista_type_id": 64918
+    },
+    {
+      "id": "2014-v-n-chelomey",
+      "label": "V.N Chelomey",
+      "year": 2014,
+      "numista_type_id": 64631
+    },
+    {
+      "id": "2015-v-a-serov",
+      "label": "V. A. Serov",
+      "year": 2015,
+      "numista_type_id": 69759
+    },
+    {
+      "id": "2015-s-t-richter",
+      "label": "S. T. Richter",
+      "year": 2015,
+      "numista_type_id": 69760
+    },
+    {
+      "id": "2015-p-i-tchaikovsky",
+      "label": "P.I. Tchaikovsky",
+      "year": 2015,
+      "numista_type_id": 82864
+    },
+    {
+      "id": "2015-a-k-glazunov",
+      "label": "A. K. Glazunov",
+      "year": 2015,
+      "numista_type_id": 82865
+    },
+    {
+      "id": "2016-n-m-karamzin",
+      "label": "N.M. Karamzin",
+      "year": 2016,
+      "numista_type_id": 97798
+    },
+    {
+      "id": "2016-s-s-prokofiev",
+      "label": "S.S. Prokofiev",
+      "year": 2016,
+      "numista_type_id": 97799
+    },
+    {
+      "id": "2016-e-g-gilels",
+      "label": "E.G. Gilels",
+      "year": 2016,
+      "numista_type_id": 99558
+    },
+    {
+      "id": "2016-g-m-tukay",
+      "label": "G.M. Tukay",
+      "year": 2016,
+      "numista_type_id": 99559
+    },
+    {
+      "id": "2017-p-p-semyonov-tyan-shansky",
+      "label": "P.P. Semyonov-Tyan-Shansky",
+      "year": 2017,
+      "numista_type_id": 101685
+    },
+    {
+      "id": "2017-k-d-balmont",
+      "label": "K.D. Balmont",
+      "year": 2017,
+      "numista_type_id": 110873
+    },
+    {
+      "id": "2017-i-k-aivazovsky",
+      "label": "I.K. Aivazovsky",
+      "year": 2017,
+      "numista_type_id": 117327
+    },
+    {
+      "id": "2017-y-p-lyubimov",
+      "label": "Y. P. Lyubimov",
+      "year": 2017,
+      "numista_type_id": 128809
+    },
+    {
+      "id": "2018-m-i-petipa",
+      "label": "M. I. Petipa",
+      "year": 2018,
+      "numista_type_id": 133886
+    },
+    {
+      "id": "2018-m-gorky",
+      "label": "M. Gorky",
+      "year": 2018,
+      "numista_type_id": 133887
+    },
+    {
+      "id": "2018-v-y-struve",
+      "label": "V. Y. Struve",
+      "year": 2018,
+      "numista_type_id": 138786
+    },
+    {
+      "id": "2018-v-s-visotzky",
+      "label": "V.S. Visotzky",
+      "year": 2018,
+      "numista_type_id": 148206
+    },
+    {
+      "id": "2018-a-i-solzhenitsyn",
+      "label": "A.I. Solzhenitsyn",
+      "year": 2018,
+      "numista_type_id": 153797
+    },
+    {
+      "id": "2019-v-v-bianki",
+      "label": "V.V. Bianki",
+      "year": 2019,
+      "numista_type_id": 157874
+    },
+    {
+      "id": "2019-m-t-kalashnikov",
+      "label": "M.T. Kalashnikov",
+      "year": 2019,
+      "numista_type_id": 178572
+    },
+    {
+      "id": "2019-m-karim",
+      "label": "M. Karim",
+      "year": 2019,
+      "numista_type_id": 178574
+    },
+    {
+      "id": "2020-d-i-vinogradov",
+      "label": "D.I. Vinogradov",
+      "year": 2020,
+      "numista_type_id": 192739
+    },
+    {
+      "id": "2020-i-a-bunin",
+      "label": "I. A. Bunin",
+      "year": 2020,
+      "numista_type_id": 237387
+    },
+    {
+      "id": "2020-i-f-krusenstern",
+      "label": "I. F. Krusenstern",
+      "year": 2020,
+      "numista_type_id": 242213
+    },
+    {
+      "id": "2020-a-a-fet",
+      "label": "A.A. Fet",
+      "year": 2020,
+      "numista_type_id": 248201
+    },
+    {
+      "id": "2021-a-d-sakharov",
+      "label": "A. D. Sakharov",
+      "year": 2021,
+      "numista_type_id": 289735
+    },
+    {
+      "id": "2021-f-m-dostoyevsky",
+      "label": "F. M. Dostoyevsky",
+      "year": 2021,
+      "numista_type_id": 307039
+    },
+    {
+      "id": "2021-n-a-nekrasov",
+      "label": "N. A. Nekrasov",
+      "year": 2021,
+      "numista_type_id": 309145
+    },
+    {
+      "id": "2022-n-y-danilevsky",
+      "label": "N. Y. Danilevsky",
+      "year": 2022,
+      "numista_type_id": 344941
+    },
+    {
+      "id": "2023-mikhail-prishvin",
+      "label": "Mikhail Prishvin",
+      "year": 2023,
+      "numista_type_id": 353638
+    },
+    {
+      "id": "2023-feodor-chaliapin",
+      "label": "Feodor Chaliapin",
+      "year": 2023,
+      "numista_type_id": 354571
+    },
+    {
+      "id": "2023-alexander-ostrovsky",
+      "label": "Alexander Ostrovsky",
+      "year": 2023,
+      "numista_type_id": 355275
+    },
+    {
+      "id": "2023-sergei-rachmaninoff",
+      "label": "SERGEI RACHMANINOFF",
+      "year": 2023,
+      "numista_type_id": 356028
+    },
+    {
+      "id": "2023-rasul-gamzatov",
+      "label": "Rasul Gamzatov",
+      "year": 2023,
+      "numista_type_id": 374471
+    },
+    {
+      "id": "2024-e-f-gnesina",
+      "label": "E.F. GNESINA",
+      "year": 2024,
+      "numista_type_id": 412143
+    },
+    {
+      "id": "2024-a-v-vishnevsky",
+      "label": "A. V. VISHNEVSKY",
+      "year": 2024,
+      "numista_type_id": 424011
+    },
+    {
+      "id": "2025-kayum-nasyri",
+      "label": "Kayum Nasyri",
+      "year": 2025,
+      "numista_type_id": 451149
+    },
+    {
+      "id": "2025-alexander-mozhaisky",
+      "label": "Alexander Mozhaisky",
+      "year": 2025,
+      "numista_type_id": 458928
+    },
+    {
+      "id": "2025-evgeny-lamansky",
+      "label": "Evgeny Lamansky",
+      "year": 2025,
+      "numista_type_id": 583173
+    },
+    {
+      "id": "2026-mikhail-saltykov-shchedrin",
+      "label": "Mikhail Saltykov-Shchedrin",
+      "year": 2026,
+      "numista_type_id": 583175
+    },
+    {
+      "id": "2026-nikolay-burdenko",
+      "label": "Nikolay Burdenko",
+      "year": 2026,
+      "numista_type_id": 583294
+    }
+  ]
+}

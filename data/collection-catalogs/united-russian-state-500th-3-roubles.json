@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "united-russian-state-500th-3-roubles",
+  "name": "500 años del Estado Ruso Unificado · 3 rublos",
+  "issuer_code": "ancienne_urss",
+  "family": "500th Anniversary of the United Russian State",
+  "weight_millioz": 1111,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=13245",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "1989-moscow-kremlin",
+      "label": "Moscow Kremlin",
+      "year": 1989,
+      "numista_type_id": 47619
+    },
+    {
+      "id": "1989-first-all-russian-coinage",
+      "label": "First All-Russian Coinage",
+      "year": 1989,
+      "numista_type_id": 48338
+    },
+    {
+      "id": "1990-st-peter-and-paul-fortress",
+      "label": "St. Peter and Paul Fortress",
+      "year": 1990,
+      "numista_type_id": 40619
+    },
+    {
+      "id": "1990-peter-the-great-s-fleet",
+      "label": "Peter the Great's Fleet",
+      "year": 1990,
+      "numista_type_id": 44092
+    }
+  ]
+}
