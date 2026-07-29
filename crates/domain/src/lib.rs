@@ -148,6 +148,8 @@ pub struct TypeMeta {
     #[serde(default)]
     pub display_title: Option<String>,
     #[serde(default)]
+    pub family: Option<String>,
+    #[serde(default)]
     pub issuer_code: Option<String>,
     #[serde(default)]
     pub min_year: Option<i32>,
@@ -160,6 +162,107 @@ pub struct TypeMeta {
 }
 
 pub type TypeMetaIndex = BTreeMap<u32, TypeMeta>;
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct CollectionProposal {
+    pub family: String,
+    pub weight_millioz: u32,
+    pub finish: Option<Finish>,
+    pub distinct_types: usize,
+    pub quantity: u32,
+}
+
+pub fn normalize_weight_millioz(weight_oz: f32) -> Option<u32> {
+    if !weight_oz.is_finite() || weight_oz <= 0.0 {
+        return None;
+    }
+    let measured = (weight_oz * 1_000.0).round() as u32;
+    [250, 500, 1_000, 2_000, 5_000, 10_000]
+        .into_iter()
+        .find(|common| measured.abs_diff(*common) <= 10)
+        .or(Some(measured))
+}
+
+pub fn build_collection_proposals(
+    curated_series: &[Series],
+    items: &[CollectedItem],
+    type_meta: &TypeMetaIndex,
+) -> Vec<CollectionProposal> {
+    let curated_variants: BTreeSet<(String, u32, u8)> = curated_series
+        .iter()
+        .flat_map(|series| {
+            series.slots.iter().filter_map(|slot| {
+                Some((
+                    normalize_family(&series.name)?,
+                    normalize_weight_millioz(slot.weight_oz)?,
+                    finish_key(Some(&slot.finish)),
+                ))
+            })
+        })
+        .collect();
+    let mut grouped: BTreeMap<(String, u32, u8), ProposalAccumulator> = BTreeMap::new();
+
+    for item in items.iter().filter(|item| item.quantity > 0) {
+        let Some(metadata) = type_meta.get(&item.type_id) else {
+            continue;
+        };
+        let Some(family) = metadata.family.as_deref().and_then(normalize_family) else {
+            continue;
+        };
+        let Some(weight_millioz) = metadata.weight_oz.and_then(normalize_weight_millioz) else {
+            continue;
+        };
+        let key = (
+            family.clone(),
+            weight_millioz,
+            finish_key(metadata.finish.as_ref()),
+        );
+        if curated_variants.contains(&key) {
+            continue;
+        }
+        let accumulator = grouped.entry(key).or_insert_with(|| ProposalAccumulator {
+            proposal: CollectionProposal {
+                family,
+                weight_millioz,
+                finish: metadata.finish.clone(),
+                distinct_types: 0,
+                quantity: 0,
+            },
+            type_ids: BTreeSet::new(),
+        });
+        accumulator.type_ids.insert(item.type_id);
+        accumulator.proposal.quantity = accumulator.proposal.quantity.saturating_add(item.quantity);
+    }
+
+    grouped
+        .into_values()
+        .map(|mut accumulator| {
+            accumulator.proposal.distinct_types = accumulator.type_ids.len();
+            accumulator.proposal
+        })
+        .collect()
+}
+
+struct ProposalAccumulator {
+    proposal: CollectionProposal,
+    type_ids: BTreeSet<u32>,
+}
+
+fn normalize_family(family: &str) -> Option<String> {
+    let normalized = family.split_whitespace().collect::<Vec<_>>().join(" ");
+    (!normalized.is_empty()).then_some(normalized)
+}
+
+fn finish_key(finish: Option<&Finish>) -> u8 {
+    match finish {
+        None => 0,
+        Some(Finish::Bullion) => 1,
+        Some(Finish::Proof) => 2,
+        Some(Finish::Coloured) => 3,
+        Some(Finish::Gilded) => 4,
+        Some(Finish::Antiqued) => 5,
+    }
+}
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct ManualOverride {

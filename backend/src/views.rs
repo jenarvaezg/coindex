@@ -1,6 +1,6 @@
 use domain::{
-    Album, AlbumSlot, MatchSource, ReleaseStatus, Series, SeriesAlbum, SlotStatus, TypeMetaIndex,
-    UnmatchedReason,
+    Album, AlbumSlot, CollectionProposal, Finish, MatchSource, ReleaseStatus, Series, SeriesAlbum,
+    SlotStatus, TypeMetaIndex, UnmatchedReason,
 };
 use maud::{DOCTYPE, Markup, html};
 
@@ -29,7 +29,10 @@ pub fn layout(title: &str, body: Markup) -> Markup {
     }
 }
 
-pub fn index(config: &AppConfig, albums: &[(String, Album)]) -> Markup {
+pub fn index(
+    config: &AppConfig,
+    collections: &[(String, Album, Vec<CollectionProposal>)],
+) -> Markup {
     layout(
         "Álbumes",
         html! {
@@ -39,7 +42,7 @@ pub fn index(config: &AppConfig, albums: &[(String, Album)]) -> Markup {
                 p { "Dos colecciones, ordenadas por serie y emisión." }
             }
             @for user in config.users() {
-                @let album = albums.iter().find(|(key, _)| key == &user.key).map(|(_, album)| album);
+                @let collection = collections.iter().find(|(key, _, _)| key == &user.key);
                 section class="user-section" {
                     div class="section-heading" {
                         h2 { (user.key) }
@@ -54,8 +57,12 @@ pub fn index(config: &AppConfig, albums: &[(String, Album)]) -> Markup {
                         }
                     }
                     div class="series-grid" {
-                        @if let Some(album) = album {
-                            @for series in &album.series {
+                        @if let Some((_, album, _)) = collection {
+                            @for series in album.series.iter().filter(|series| {
+                                series.slots.iter().any(|slot| {
+                                    matches!(slot.status, SlotStatus::Owned { .. })
+                                })
+                            }) {
                                 @let (owned, issued, future) = progress(series);
                                 article class="series-card" {
                                     p class="plate-number" { "Lámina · " (series.series_id) }
@@ -70,10 +77,68 @@ pub fn index(config: &AppConfig, albums: &[(String, Album)]) -> Markup {
                             }
                         }
                     }
+                    @if let Some((_, _, proposals)) = collection {
+                        @if !proposals.is_empty() {
+                            div class="proposal-heading" {
+                                p class="eyebrow" { "Propuestas desde las piezas actuales" }
+                                p { "Agrupaciones de solo lectura; no afirman huecos ni emisiones ausentes." }
+                            }
+                            div class="proposal-grid" {
+                                @for proposal in proposals {
+                                    article class="proposal-card" {
+                                        p class="plate-number" { "Evidencia de colección" }
+                                        h3 { (&proposal.family) }
+                                        p class="proposal-variant" {
+                                            (proposal_weight_label(proposal.weight_millioz))
+                                            " · "
+                                            (proposal_finish_label(proposal.finish.as_ref()))
+                                        }
+                                        p class="proposal-count" {
+                                            (proposal.distinct_types)
+                                            @if proposal.distinct_types == 1 {
+                                                " tipo distinto"
+                                            } @else {
+                                                " tipos distintos"
+                                            }
+                                            " · "
+                                            (proposal.quantity)
+                                            @if proposal.quantity == 1 {
+                                                " pieza"
+                                            } @else {
+                                                " piezas"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
     )
+}
+
+fn proposal_weight_label(weight_millioz: u32) -> String {
+    let whole = weight_millioz / 1_000;
+    let fraction = format!("{:03}", weight_millioz % 1_000);
+    let fraction = fraction.trim_end_matches('0');
+    if fraction.is_empty() {
+        format!("{whole} oz")
+    } else {
+        format!("{whole},{fraction} oz")
+    }
+}
+
+fn proposal_finish_label(finish: Option<&Finish>) -> &'static str {
+    match finish {
+        None => "Por confirmar",
+        Some(Finish::Bullion) => "Bullion",
+        Some(Finish::Proof) => "Proof",
+        Some(Finish::Coloured) => "Coloreado",
+        Some(Finish::Gilded) => "Dorado",
+        Some(Finish::Antiqued) => "Envejecido",
+    }
 }
 
 pub fn series(
@@ -297,6 +362,11 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
         ),
         SlotStatus::NotYetIssued => ("slot future", "Sin emitir".to_owned(), None, None),
     };
+    let has_heuristic = owned_items.is_some_and(|items| {
+        items
+            .iter()
+            .any(|item| matches!(item.match_source, Some(MatchSource::Heuristic { .. })))
+    });
     html! {
         article class=(class) {
             div class="coin-image" {
@@ -305,14 +375,6 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
                 } @else {
                     span class="silhouette" aria-hidden="true" {}
                 }
-                @if owned_items.is_some_and(|items| items.iter().any(|item| matches!(item.match_source, Some(MatchSource::Heuristic { .. })))) {
-                    a
-                        class="heuristic"
-                        href=(format!("#review-{}", album_slot.slot.id))
-                        title="Emparejamiento heurístico: revisar o corregir"
-                        aria-label="Revisar o corregir emparejamiento heurístico"
-                    { "?" }
-                }
             }
             div class="slot-copy" {
                 p class="slot-state" { (state) }
@@ -320,8 +382,19 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
                 p { (album_slot.slot.year) " · " (album_slot.slot.weight_oz) " oz" }
             }
             @if let Some(items) = owned_items {
-                details class="match-review" id=(format!("review-{}", album_slot.slot.id)) {
-                    summary { "Revisar piezas" }
+                details
+                    class=(if has_heuristic { "match-review heuristic-review" } else { "match-review" })
+                    id=(format!("review-{}", album_slot.slot.id))
+                {
+                    @if has_heuristic {
+                        summary
+                            class="heuristic"
+                            title="Emparejamiento heurístico: revisar o corregir"
+                            aria-label="Revisar o corregir emparejamiento heurístico"
+                        { "?" }
+                    } @else {
+                        summary { "Revisar piezas" }
+                    }
                     @for item in items {
                         form method="post" action=(format!("/u/{}/override", user_key)) {
                             input type="hidden" name="item_id" value=(item.item_id);
@@ -450,11 +523,12 @@ impl MetalLabel for Series {
 #[cfg(test)]
 mod tests {
     use domain::{
-        Album, AlbumSlot, Finish, ItemRef, MatchSource, ReleaseStatus, SeriesAlbum, SeriesId, Slot,
-        SlotId, SlotStatus, TypeMeta, TypeMetaIndex, UnmatchedReason,
+        Album, AlbumSlot, CollectionProposal, Finish, ItemRef, MatchSource, ReleaseStatus,
+        SeriesAlbum, SeriesId, Slot, SlotId, SlotStatus, TypeMeta, TypeMetaIndex, UnmatchedReason,
     };
 
-    use super::{progress, series, sync_report, unmatched};
+    use super::{index, progress, series, sync_report, unmatched};
+    use crate::config::AppConfig;
     use crate::sync::{SyncCallProjection, SyncReport};
 
     fn slot(id: &str, status: SlotStatus) -> AlbumSlot {
@@ -472,6 +546,78 @@ mod tests {
             },
             status,
         }
+    }
+
+    #[test]
+    fn index_shows_only_owned_curated_series_and_read_only_current_proposals_per_user() {
+        let config = AppConfig::parse(
+            "jose:1:first-key,padre:2:second-key",
+            None,
+            "http://127.0.0.1:8000",
+        )
+        .unwrap();
+        let jose_album = Album {
+            series: vec![
+                SeriesAlbum {
+                    series_id: SeriesId::new("owned-series"),
+                    name: "Serie poseída".to_owned(),
+                    slots: vec![slot(
+                        "owned",
+                        SlotStatus::Owned {
+                            quantity: 1,
+                            items: Vec::new(),
+                        },
+                    )],
+                },
+                SeriesAlbum {
+                    series_id: SeriesId::new("missing-only"),
+                    name: "Serie sin piezas".to_owned(),
+                    slots: vec![slot("missing", SlotStatus::Missing)],
+                },
+            ],
+            unmatched: Vec::new(),
+        };
+        let jose_proposals = vec![CollectionProposal {
+            family: "Lunar Series III".to_owned(),
+            weight_millioz: 250,
+            finish: Some(Finish::Coloured),
+            distinct_types: 1,
+            quantity: 2,
+        }];
+        let padre_proposals = vec![CollectionProposal {
+            family: "Lunar ounce".to_owned(),
+            weight_millioz: 1_000,
+            finish: None,
+            distinct_types: 2,
+            quantity: 3,
+        }];
+
+        let html = index(
+            &config,
+            &[
+                ("jose".to_owned(), jose_album, jose_proposals),
+                (
+                    "padre".to_owned(),
+                    Album {
+                        series: Vec::new(),
+                        unmatched: Vec::new(),
+                    },
+                    padre_proposals,
+                ),
+            ],
+        )
+        .into_string();
+
+        assert!(html.contains("Serie poseída"));
+        assert!(!html.contains("Serie sin piezas"));
+        assert!(html.contains("href=\"/u/jose/series/owned-series\""));
+        assert!(html.contains("Lunar Series III"));
+        assert!(html.contains("0,25 oz · Coloreado"));
+        assert!(html.contains("1 tipo distinto · 2 piezas"));
+        assert!(html.contains("Lunar ounce"));
+        assert!(html.contains("1 oz · Por confirmar"));
+        assert!(html.contains("2 tipos distintos · 3 piezas"));
+        assert!(!html.contains("href=\"/u/jose/series/Lunar Series III\""));
     }
 
     #[test]
@@ -511,6 +657,7 @@ mod tests {
         assert!(html.contains("Tengo"));
         assert!(html.contains("Me falta"));
         assert!(html.contains("Sin emitir"));
+        assert!(html.contains("<summary>Revisar piezas</summary>"));
     }
 
     #[test]
@@ -619,7 +766,9 @@ mod tests {
         assert_eq!(html.matches("name=\"item_id\"").count(), 2);
         assert_eq!(html.matches("No pertenece a una casilla").count(), 2);
         assert!(html.contains("Emparejamiento heurístico"));
-        assert!(html.contains("href=\"#review-owned\""));
+        assert!(html.contains("<summary class=\"heuristic\""));
+        assert_eq!(html.matches("<summary").count(), 1);
+        assert!(!html.contains("href=\"#review-owned\""));
         assert!(html.contains("id=\"review-owned\""));
         assert!(!html.contains("select name=\"slot_id\" required"));
     }
@@ -761,6 +910,7 @@ mod tests {
                 id: 10,
                 title: Some("Onza «Dragón ibérico» — edición especial [dragon]".to_owned()),
                 display_title: Some("Onza «Dragón ibérico» — edición especial".to_owned()),
+                family: None,
                 issuer_code: None,
                 min_year: None,
                 max_year: None,

@@ -405,6 +405,7 @@ fn domain_type_meta(id: u32, meta: &NumistaType) -> TypeMeta {
         id,
         title: matching_title(meta.title.as_deref()),
         display_title: meta.title.clone(),
+        family: meta.series.clone(),
         issuer_code: meta.issuer.as_ref().and_then(|issuer| issuer.code.clone()),
         min_year: meta.min_year,
         max_year: meta.max_year,
@@ -542,6 +543,7 @@ mod tests {
     fn type_metadata_keeps_exact_display_title_when_matching_adds_aliases() {
         let metadata = NumistaType {
             title: Some("50 centavos – Dragón de Komodo".to_owned()),
+            series: Some(" Lunar Series III ".to_owned()),
             ..NumistaType::default()
         };
 
@@ -555,6 +557,7 @@ mod tests {
             adapted.title.as_deref(),
             Some("50 centavos – Dragón de Komodo [dragon]")
         );
+        assert_eq!(adapted.family.as_deref(), Some(" Lunar Series III "));
     }
 
     #[test]

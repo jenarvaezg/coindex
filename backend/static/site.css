@@ -97,13 +97,13 @@ h3 { font-size: 1.6rem; }
 .section-heading { border-bottom: 1px solid var(--line); margin-bottom: 1.2rem; }
 .sync-actions { flex-wrap: wrap; }
 
-.series-grid {
+.series-grid, .proposal-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 1rem;
 }
 
-.series-card, .field-card, .report-card {
+.series-card, .proposal-card, .field-card, .report-card {
   border: 1px solid var(--line);
   padding: 1.25rem;
   background: rgba(255, 252, 242, 0.34);
@@ -112,6 +112,11 @@ h3 { font-size: 1.6rem; }
 
 .series-card h3 a { color: var(--ink); }
 .progress { margin-bottom: 0.25rem; font-size: 1.4rem; }
+.proposal-heading { margin-top: 2rem; max-width: 680px; }
+.proposal-heading p:last-child, .proposal-count { color: var(--muted); }
+.proposal-card { border-style: dashed; box-shadow: none; }
+.proposal-card h3, .proposal-variant { margin-bottom: 0.4rem; }
+.proposal-count { margin-bottom: 0; font-family: "Arial Narrow", "Helvetica Neue", sans-serif; }
 
 .breadcrumb { margin-bottom: 2rem; }
 .series-header { align-items: end; margin-bottom: 3rem; }
@@ -181,8 +186,8 @@ h3 { font-size: 1.6rem; }
 
 .heuristic {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0.65rem;
+  right: 0.65rem;
   display: grid;
   place-items: center;
   width: 1.7rem;
@@ -193,6 +198,8 @@ h3 { font-size: 1.6rem; }
   font: 800 1rem/1 sans-serif;
   text-decoration: none;
 }
+.heuristic::-webkit-details-marker { display: none; }
+.heuristic-review > .heuristic { list-style: none; cursor: pointer; }
 
 .slot-copy h2 { margin-bottom: 0.25rem; }
 .slot-copy p:last-child { color: var(--muted); font-family: "Arial Narrow", sans-serif; }

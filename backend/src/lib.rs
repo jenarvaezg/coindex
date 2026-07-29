@@ -18,7 +18,9 @@ use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
-use domain::{Album, Series, TypeMetaIndex, build_album};
+use domain::{
+    Album, CollectionProposal, Series, TypeMetaIndex, build_album, build_collection_proposals,
+};
 use numista::{ClientConfig, NumistaClient};
 use reqwest::redirect::Policy;
 use serde::{Deserialize, Serialize};
@@ -45,6 +47,7 @@ pub struct AppState {
 struct LoadedAlbum {
     album: Album,
     type_meta: TypeMetaIndex,
+    proposals: Vec<CollectionProposal>,
 }
 
 #[derive(Debug, Error)]
@@ -170,7 +173,7 @@ async fn index_handler(State(state): State<AppState>) -> Result<Html<String>, Ap
     let mut albums = Vec::new();
     for user in state.config.users() {
         let loaded = album_for(&state, &user.key).await?;
-        albums.push((user.key.clone(), loaded.album));
+        albums.push((user.key.clone(), loaded.album, loaded.proposals));
     }
     Ok(Html(views::index(&state.config, &albums).into_string()))
 }
@@ -349,7 +352,12 @@ async fn album_for(state: &AppState, user: &str) -> Result<LoadedAlbum, AppError
     let type_meta = state.repository.load_type_meta().await?;
     let overrides = state.repository.load_overrides(user).await?;
     let album = build_album(&state.series, &items, &type_meta, &overrides);
-    Ok(LoadedAlbum { album, type_meta })
+    let proposals = build_collection_proposals(&state.series, &items, &type_meta);
+    Ok(LoadedAlbum {
+        album,
+        type_meta,
+        proposals,
+    })
 }
 
 fn require_user<'a>(state: &'a AppState, user: &str) -> Result<&'a config::UserConfig, AppError> {
