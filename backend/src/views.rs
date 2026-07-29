@@ -6,7 +6,6 @@ use domain::{
 use maud::{DOCTYPE, Markup, html};
 
 use crate::config::AppConfig;
-use crate::sync::{SyncCallProjection, SyncReport};
 
 pub fn layout(title: &str, body: Markup) -> Markup {
     html! {
@@ -50,9 +49,6 @@ pub fn index(
                         div class="sync-actions" {
                             form method="post" action=(format!("/u/{}/sync", user.key)) {
                                 button type="submit" { "Sincronizar" }
-                            }
-                            form method="post" action=(format!("/u/{}/sync?dry_run=true", user.key)) {
-                                button type="submit" class="quiet" { "Calcular gasto" }
                             }
                             a href=(format!("/u/{}/unmatched", user.key)) { "Sin clasificar" }
                         }
@@ -371,61 +367,6 @@ fn unmatched_reason(reason: Option<&UnmatchedReason>) -> (&'static str, String) 
     }
 }
 
-pub fn sync_report(user_key: &str, report: &SyncReport) -> Markup {
-    layout(
-        if report.dry_run {
-            "Previsión de sincronización"
-        } else {
-            "Sincronización completa"
-        },
-        html! {
-            nav class="breadcrumb" { a href="/" { "← Álbumes" } }
-            section class="report-card" {
-                p class="eyebrow" { (user_key) }
-                h1 {
-                    @if report.dry_run { "Previsión, sin llamadas" } @else { "Colección sincronizada" }
-                }
-                p { (report.collection_items) " piezas en el snapshot." }
-                @match report.calls {
-                    SyncCallProjection::LowerBound {
-                        oauth_token,
-                        collected_items,
-                        local_snapshot_missing_type_metadata,
-                        minimum_total,
-                        ..
-                    } => {
-                        dl class="field-card horizontal" {
-                            dt { "OAuth mínimo" } dd { (oauth_token) }
-                            dt { "Colección" } dd { (collected_items) }
-                            dt { "Tipos ausentes en snapshot (orientativo)" } dd { (local_snapshot_missing_type_metadata) }
-                            dt { "Mínimo total" } dd { (minimum_total) }
-                        }
-                    }
-                    SyncCallProjection::Estimated {
-                        oauth_token,
-                        collected_items,
-                        type_metadata,
-                        total,
-                    } => {
-                        dl class="field-card horizontal" {
-                            dt { "Precisión" } dd { "Estimación post-sync" }
-                            dt { "OAuth" } dd { (oauth_token) }
-                            dt { "Colección" } dd { (collected_items) }
-                            dt { "Tipos" } dd { (type_metadata) }
-                            dt { "Total" } dd { (total) }
-                        }
-                    }
-                }
-                @if report.dry_run {
-                    p class="note" {
-                        "Es un límite inferior, no un total exacto: una colección remota modificada puede contener tipos nuevos desconocidos para el snapshot local."
-                    }
-                }
-            }
-        },
-    )
-}
-
 fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> Markup {
     let (class, state, type_id, owned_items) = match &album_slot.status {
         SlotStatus::Owned { items, quantity } => (
@@ -613,9 +554,8 @@ mod tests {
         TypeMetaIndex, UnmatchedReason,
     };
 
-    use super::{index, progress, series, sync_report, unmatched};
+    use super::{index, progress, series, unmatched};
     use crate::config::AppConfig;
-    use crate::sync::{SyncCallProjection, SyncReport};
 
     fn slot(id: &str, status: SlotStatus) -> AlbumSlot {
         AlbumSlot {
@@ -632,6 +572,24 @@ mod tests {
             },
             status,
         }
+    }
+
+    #[test]
+    fn index_offers_one_real_sync_action_per_user_without_cost_estimates() {
+        let config = AppConfig::parse(
+            "jose:1:first-key,padre:2:second-key",
+            None,
+            "http://127.0.0.1:8000",
+        )
+        .unwrap();
+
+        let html = index(&config, &[]).into_string();
+
+        assert_eq!(html.matches("action=\"/u/jose/sync\"").count(), 1);
+        assert_eq!(html.matches("action=\"/u/padre/sync\"").count(), 1);
+        assert_eq!(html.matches(">Sincronizar</button>").count(), 2);
+        assert!(!html.contains("Calcular gasto"));
+        assert!(!html.contains("dry_run"));
     }
 
     #[test]
@@ -943,28 +901,6 @@ mod tests {
         };
 
         assert_eq!(progress(&album), (1, 1, 1));
-    }
-
-    #[test]
-    fn dry_run_view_calls_out_lower_bound_instead_of_exact_total() {
-        let report = SyncReport {
-            dry_run: true,
-            collection_items: 3,
-            missing_type_ids: vec![10, 20],
-            calls: SyncCallProjection::LowerBound {
-                oauth_token: 1,
-                collected_items: 1,
-                local_snapshot_missing_type_metadata: 2,
-                minimum_total: 2,
-                unknown_remote_type_metadata: true,
-            },
-        };
-
-        let html = sync_report("jose", &report).into_string();
-
-        assert!(html.contains("límite inferior"));
-        assert!(html.contains("Mínimo total"));
-        assert!(!html.contains(">Total<"));
     }
 
     #[test]

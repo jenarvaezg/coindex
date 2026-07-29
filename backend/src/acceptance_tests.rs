@@ -156,7 +156,8 @@ async fn postgres_override_and_metadata_cache_survive_consecutive_syncs() {
     assert_eq!(override_response.status(), StatusCode::SEE_OTHER);
 
     let first_sync = post_sync(app.clone()).await;
-    assert_eq!(first_sync, StatusCode::OK);
+    assert_eq!(first_sync.status(), StatusCode::SEE_OTHER);
+    assert_eq!(first_sync.headers()["location"], "/#proposals-jose");
     assert_eq!(transport.metadata_calls.load(Ordering::SeqCst), 1);
     assert_eq!(api_log_count(&pool, &format!("/types/{TYPE_ID}")).await, 1);
     assert_eq!(
@@ -165,7 +166,8 @@ async fn postgres_override_and_metadata_cache_survive_consecutive_syncs() {
     );
 
     let second_sync = post_sync(app.clone()).await;
-    assert_eq!(second_sync, StatusCode::OK);
+    assert_eq!(second_sync.status(), StatusCode::SEE_OTHER);
+    assert_eq!(second_sync.headers()["location"], "/#proposals-jose");
     assert_eq!(transport.metadata_calls.load(Ordering::SeqCst), 1);
     assert_eq!(api_log_count(&pool, &format!("/types/{TYPE_ID}")).await, 1);
     assert_eq!(
@@ -310,7 +312,7 @@ fn assert_disposable_database_url(database_url: &str) {
     );
 }
 
-async fn post_sync(app: axum::Router) -> StatusCode {
+async fn post_sync(app: axum::Router) -> axum::response::Response {
     app.oneshot(
         Request::post(format!("/u/{USER_KEY}/sync"))
             .header(ORIGIN, ORIGIN_URL)
@@ -319,7 +321,6 @@ async fn post_sync(app: axum::Router) -> StatusCode {
     )
     .await
     .unwrap()
-    .status()
 }
 
 async fn get_album(app: axum::Router) -> Album {

@@ -12,7 +12,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use axum::body::Body;
-use axum::extract::{Form, FromRequest, Path, Query, Request, State};
+use axum::extract::{Form, FromRequest, Path, Request, State};
 use axum::http::header::{CACHE_CONTROL, CONTENT_TYPE, ORIGIN};
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
@@ -98,12 +98,6 @@ enum AppError {
     Repository(#[from] RepositoryError),
     #[error(transparent)]
     Sync(#[from] SyncError),
-}
-
-#[derive(Debug, Deserialize)]
-struct SyncQuery {
-    #[serde(default)]
-    dry_run: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -326,18 +320,20 @@ async fn sync_handler(
     State(state): State<AppState>,
     Path(user): Path<String>,
     headers: HeaderMap,
-    Query(query): Query<SyncQuery>,
-) -> Result<Html<String>, AppError> {
+) -> Result<Response, AppError> {
     validate_same_origin(&headers, &state.config.origin)?;
     let user_config = require_user(&state, &user)?;
-    let report = state.sync.run(user_config, query.dry_run).await?;
+    let report = state.sync.run(user_config, false).await?;
     tracing::info!(
         user = %user,
-        dry_run = report.dry_run,
         collection_items = report.collection_items,
         "Numista sync completed"
     );
-    Ok(Html(views::sync_report(&user, &report).into_string()))
+    Ok((
+        StatusCode::SEE_OTHER,
+        [("location", format!("/#proposals-{user}"))],
+    )
+        .into_response())
 }
 
 async fn album_handler(
@@ -555,6 +551,32 @@ mod tests {
                     .header("origin", "https://evil.example")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .body(Body::from("%not-valid"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::FORBIDDEN);
+    }
+
+    #[tokio::test]
+    async fn sync_route_rejects_cross_origin_requests_before_using_numista_or_database() {
+        let pool = PgPoolOptions::new()
+            .connect_lazy("postgres://unused:unused@localhost/unused")
+            .unwrap();
+        let state = AppState {
+            config: AppConfig::parse("jose:1:a,padre:2:b", None, "http://localhost:8000").unwrap(),
+            repository: Repository::new(pool.clone()),
+            series: Arc::new(Vec::new()),
+            sync: SyncService::new(Repository::new(pool), BTreeMap::new()),
+            image_client: reqwest::Client::new(),
+        };
+
+        let response = build_router(state)
+            .oneshot(
+                Request::post("/u/jose/sync")
+                    .header("origin", "https://evil.example")
+                    .body(Body::empty())
                     .unwrap(),
             )
             .await

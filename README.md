@@ -92,11 +92,9 @@ en un Postgres de desarrollo y regenera la metadata:
 cargo sqlx prepare --workspace -- --all-targets
 ```
 
-La sincronización solo ocurre al pulsar el botón. “Calcular gasto” ejecuta el modo seco:
-no hace peticiones y muestra un **límite inferior**, no un total exacto. Puede contar los
-tipos ausentes del snapshot local, pero no puede saber si la colección remota contiene
-tipos nuevos sin descargarla. El primer sync descarga la colección y solo los tipos no
-cacheados; el segundo no vuelve a pedir esos metadatos.
+La sincronización solo ocurre al pulsar «Sincronizar». Al terminar, la aplicación vuelve
+al índice; el primer sync descarga la colección y solo los tipos no cacheados, mientras
+que los siguientes reutilizan esos metadatos.
 
 ## Rutas
 
