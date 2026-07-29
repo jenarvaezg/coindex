@@ -26,7 +26,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [321688],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -47,7 +47,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [338768],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -68,7 +68,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [368865],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -89,7 +89,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [384446],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -110,7 +110,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [430053],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -131,7 +131,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [440873],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -152,7 +152,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [468043],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -173,7 +173,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [519836],
       "matchers": [
         {
           "issuer_code": "royaume-uni",
@@ -194,7 +194,7 @@
       "weight_oz": 2.0,
       "finish": "Bullion",
       "release_status": "Issued",
-      "numista_type_ids": [],
+      "numista_type_ids": [583080],
       "matchers": [
         {
           "issuer_code": "royaume-uni",

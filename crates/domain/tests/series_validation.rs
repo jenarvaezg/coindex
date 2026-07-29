@@ -263,22 +263,22 @@ fn tudor_seed_contains_only_verified_bullion_releases_and_is_marked_incomplete()
     assert_eq!(series.sources.len(), 9);
     assert_eq!(series.slots.len(), 9);
     let expected = [
-        (2022, "León de Inglaterra"),
-        (2023, "Yale de Beaufort"),
-        (2023, "Toro de Clarence"),
-        (2024, "Unicornio de Seymour"),
-        (2024, "Dragón Tudor"),
-        (2025, "Pantera de la Reina"),
-        (2025, "Galgo de Richmond"),
-        (2026, "León de la Reina"),
-        (2026, "Dragón Real"),
+        (2022, "León de Inglaterra", 321_688),
+        (2023, "Yale de Beaufort", 338_768),
+        (2023, "Toro de Clarence", 368_865),
+        (2024, "Unicornio de Seymour", 384_446),
+        (2024, "Dragón Tudor", 430_053),
+        (2025, "Pantera de la Reina", 440_873),
+        (2025, "Galgo de Richmond", 468_043),
+        (2026, "León de la Reina", 519_836),
+        (2026, "Dragón Real", 583_080),
     ];
-    for (slot, (year, motif)) in series.slots.iter().zip(expected) {
+    for (slot, (year, motif, numista_type_id)) in series.slots.iter().zip(expected) {
         assert_eq!((slot.year, slot.motif.as_str()), (year, motif));
         assert_eq!(slot.weight_oz, 2.0);
         assert_eq!(slot.finish, Finish::Bullion);
         assert_eq!(slot.release_status, ReleaseStatus::Issued);
-        assert!(slot.numista_type_ids.is_empty());
+        assert_eq!(slot.numista_type_ids, [numista_type_id]);
         assert!(slot.matchers.iter().all(|matcher| {
             matcher.issuer_code.as_deref() == Some(series.issuer_code.as_str())
                 && matcher.weight_oz == Some(slot.weight_oz)

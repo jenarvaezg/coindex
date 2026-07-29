@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "queens-beasts-uk-2oz",
+  "name": "The Queen's Beasts · Reino Unido · 2 oz",
+  "issuer_code": "royaume-uni",
+  "family": "The Queen's Beasts",
+  "weight_millioz": 2000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=6870",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2016-lion-of-england",
+      "label": "Lion of England",
+      "year": 2016,
+      "numista_type_id": 90287
+    },
+    {
+      "id": "2017-griffin-of-edward-iii",
+      "label": "Griffin of Edward III",
+      "year": 2017,
+      "numista_type_id": 97460
+    },
+    {
+      "id": "2017-red-dragon-of-wales",
+      "label": "Red Dragon of Wales",
+      "year": 2017,
+      "numista_type_id": 107370
+    },
+    {
+      "id": "2018-unicorn-of-scotland",
+      "label": "Unicorn of Scotland",
+      "year": 2018,
+      "numista_type_id": 127263
+    },
+    {
+      "id": "2018-black-bull-of-clarence",
+      "label": "Black Bull of Clarence",
+      "year": 2018,
+      "numista_type_id": 135553
+    },
+    {
+      "id": "2019-falcon-of-the-plantagenets",
+      "label": "Falcon of the Plantagenets",
+      "year": 2019,
+      "numista_type_id": 150354
+    },
+    {
+      "id": "2019-yale-of-beaufort",
+      "label": "Yale of Beaufort",
+      "year": 2019,
+      "numista_type_id": 161586
+    },
+    {
+      "id": "2020-white-lion-of-mortimer",
+      "label": "White Lion of Mortimer",
+      "year": 2020,
+      "numista_type_id": 180354
+    },
+    {
+      "id": "2020-white-horse-of-hanover",
+      "label": "White Horse of Hanover",
+      "year": 2020,
+      "numista_type_id": 197901
+    },
+    {
+      "id": "2021-white-greyhound-of-richmond",
+      "label": "White Greyhound of Richmond",
+      "year": 2021,
+      "numista_type_id": 237550
+    },
+    {
+      "id": "2021-completer",
+      "label": "Completer",
+      "year": 2021,
+      "numista_type_id": 299474
+    }
+  ]
+}

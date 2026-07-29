@@ -17,10 +17,24 @@ const SEEDS: [(&str, &str); 2] = [
     ),
 ];
 
-const COLLECTION_CATALOG_SEEDS: [(&str, &str); 1] = [(
-    "nikola-tesla-serbia-1oz.json",
-    include_str!("../../data/collection-catalogs/nikola-tesla-serbia-1oz.json"),
-)];
+const COLLECTION_CATALOG_SEEDS: [(&str, &str); 4] = [
+    (
+        "nikola-tesla-serbia-1oz.json",
+        include_str!("../../data/collection-catalogs/nikola-tesla-serbia-1oz.json"),
+    ),
+    (
+        "spain-face-value-18g.json",
+        include_str!("../../data/collection-catalogs/spain-face-value-18g.json"),
+    ),
+    (
+        "queens-beasts-uk-2oz.json",
+        include_str!("../../data/collection-catalogs/queens-beasts-uk-2oz.json"),
+    ),
+    (
+        "us-independence-250th-spain-10-euros.json",
+        include_str!("../../data/collection-catalogs/us-independence-250th-spain-10-euros.json"),
+    ),
+];
 
 #[derive(Debug, Error)]
 pub enum SeedError {
@@ -87,9 +101,11 @@ mod tests {
     fn embedded_collection_catalog_is_versioned_sourced_and_complete() {
         let catalogs = load_collection_catalogs().unwrap();
 
-        assert_eq!(catalogs.len(), 1);
-        let catalog = &catalogs[0];
-        assert_eq!(catalog.id.as_str(), "nikola-tesla-serbia-1oz");
+        assert_eq!(catalogs.len(), 4);
+        let catalog = catalogs
+            .iter()
+            .find(|catalog| catalog.id.as_str() == "nikola-tesla-serbia-1oz")
+            .unwrap();
         assert_eq!(catalog.schema_version, 1);
         assert_eq!(catalog.family, "Nikola Tesla");
         assert_eq!(catalog.weight_millioz, 1_000);
@@ -110,6 +126,41 @@ mod tests {
                 448_067, 493_347, 493_329,
             ]
         );
+    }
+
+    #[test]
+    fn added_collection_catalog_seeds_target_their_exact_proposal_variants() {
+        let catalogs = load_collection_catalogs().unwrap();
+        let find = |id: &str| {
+            catalogs
+                .iter()
+                .find(|catalog| catalog.id.as_str() == id)
+                .unwrap()
+        };
+
+        let spain = find("spain-face-value-18g");
+        assert_eq!(
+            spain.family,
+            "Serie de monedas de plata obtenidas a valor facial"
+        );
+        assert_eq!(spain.weight_millioz, 579);
+        assert_eq!(spain.finish, None);
+        assert_eq!(spain.members.len(), 37);
+
+        let beasts = find("queens-beasts-uk-2oz");
+        assert_eq!(beasts.family, "The Queen's Beasts");
+        assert_eq!(beasts.weight_millioz, 2_000);
+        assert_eq!(beasts.finish, None);
+        assert_eq!(beasts.members.len(), 11);
+
+        let independence = find("us-independence-250th-spain-10-euros");
+        assert_eq!(
+            independence.family,
+            "250th anniversary of the United States Declaration of Independence"
+        );
+        assert_eq!(independence.weight_millioz, 868);
+        assert_eq!(independence.finish, None);
+        assert_eq!(independence.members.len(), 8);
     }
 
     #[test]

@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "id": "spain-face-value-18g",
+  "name": "Plata a valor facial · España · 18 g",
+  "issuer_code": "espagne",
+  "family": "Serie de monedas de plata obtenidas a valor facial",
+  "weight_millioz": 579,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=3347",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "1994-imf-meeting",
+      "label": "Reunión del FMI",
+      "year": 1994,
+      "numista_type_id": 7611
+    },
+    {
+      "id": "1995-council-of-the-eu",
+      "label": "Consejo de la UE",
+      "year": 1995,
+      "numista_type_id": 9094
+    },
+    {
+      "id": "1996-francisco-de-goya",
+      "label": "Francisco de Goya",
+      "year": 1996,
+      "numista_type_id": 9260
+    },
+    {
+      "id": "1997-miguel-de-cervantes",
+      "label": "Miguel de Cervantes",
+      "year": 1997,
+      "numista_type_id": 13634
+    },
+    {
+      "id": "1998-philip-ii-escorial",
+      "label": "Felipe II y El Escorial",
+      "year": 1998,
+      "numista_type_id": 9261
+    },
+    {
+      "id": "1999-xacobeo",
+      "label": "Año Santo Jacobeo",
+      "year": 1999,
+      "numista_type_id": 19499
+    },
+    {
+      "id": "2000-charles-v",
+      "label": "Carlos V",
+      "year": 2000,
+      "numista_type_id": 9169
+    },
+    {
+      "id": "2001-last-peseta",
+      "label": "Última peseta",
+      "year": 2001,
+      "numista_type_id": 14673
+    },
+    {
+      "id": "2002-spanish-presidency-eu",
+      "label": "Presidencia española de la UE",
+      "year": 2002,
+      "numista_type_id": 8285
+    },
+    {
+      "id": "2003-spanish-constitution",
+      "label": "25 años de la Constitución",
+      "year": 2003,
+      "numista_type_id": 8286
+    },
+    {
+      "id": "2004-royal-wedding",
+      "label": "Boda del Príncipe Felipe",
+      "year": 2004,
+      "numista_type_id": 8287
+    },
+    {
+      "id": "2004-isabella-i",
+      "label": "Isabel I de Castilla",
+      "year": 2004,
+      "numista_type_id": 8288
+    },
+    {
+      "id": "2005-don-quixote",
+      "label": "IV centenario del Quijote",
+      "year": 2005,
+      "numista_type_id": 8289
+    },
+    {
+      "id": "2006-christopher-columbus",
+      "label": "Cristóbal Colón",
+      "year": 2006,
+      "numista_type_id": 8234
+    },
+    {
+      "id": "2007-treaty-of-rome",
+      "label": "Tratado de Roma",
+      "year": 2007,
+      "numista_type_id": 8290
+    },
+    {
+      "id": "2008-planet-earth",
+      "label": "Año Internacional del Planeta Tierra",
+      "year": 2008,
+      "numista_type_id": 8235
+    },
+    {
+      "id": "2009-eurozone-anniversary",
+      "label": "X aniversario del euro",
+      "year": 2009,
+      "numista_type_id": 7712
+    },
+    {
+      "id": "2010-spanish-presidency-eu",
+      "label": "Presidencia española de la UE",
+      "year": 2010,
+      "numista_type_id": 10814
+    },
+    {
+      "id": "2010-fifa-world-cup",
+      "label": "Mundial de fútbol de Sudáfrica",
+      "year": 2010,
+      "numista_type_id": 17413
+    },
+    {
+      "id": "2011-international-womens-day",
+      "label": "Día Internacional de la Mujer",
+      "year": 2011,
+      "numista_type_id": 20008
+    },
+    {
+      "id": "2012-euro-circulation",
+      "label": "X aniversario del euro en circulación",
+      "year": 2012,
+      "numista_type_id": 30844
+    },
+    {
+      "id": "2013-juan-carlos-75th-birthday",
+      "label": "75.º cumpleaños de Juan Carlos I",
+      "year": 2013,
+      "numista_type_id": 41380
+    },
+    {
+      "id": "2014-el-greco",
+      "label": "El Greco",
+      "year": 2014,
+      "numista_type_id": 58760
+    },
+    {
+      "id": "2014-accession-felipe-vi",
+      "label": "Proclamación de Felipe VI",
+      "year": 2014,
+      "numista_type_id": 69507
+    },
+    {
+      "id": "2015-don-quixote-part-ii",
+      "label": "IV centenario de la segunda parte del Quijote",
+      "year": 2015,
+      "numista_type_id": 79678
+    },
+    {
+      "id": "2016-miguel-de-cervantes",
+      "label": "IV centenario de la muerte de Cervantes",
+      "year": 2016,
+      "numista_type_id": 86702
+    },
+    {
+      "id": "2017-treaty-european-union",
+      "label": "XXV aniversario del Tratado de la Unión Europea",
+      "year": 2017,
+      "numista_type_id": 111783
+    },
+    {
+      "id": "2018-felipe-vi-50th-birthday",
+      "label": "50.º cumpleaños de Felipe VI",
+      "year": 2018,
+      "numista_type_id": 133929
+    },
+    {
+      "id": "2018-kingdom-of-asturias",
+      "label": "Reino de Asturias",
+      "year": 2018,
+      "numista_type_id": 152027
+    },
+    {
+      "id": "2019-prado-museum",
+      "label": "Bicentenario del Museo del Prado",
+      "year": 2019,
+      "numista_type_id": 186086
+    },
+    {
+      "id": "2020-anonymous-heroes",
+      "label": "Héroes anónimos",
+      "year": 2020,
+      "numista_type_id": 245791
+    },
+    {
+      "id": "2021-xacobeo",
+      "label": "Xacobeo 21-22",
+      "year": 2021,
+      "numista_type_id": 306975
+    },
+    {
+      "id": "2022-circumnavigation",
+      "label": "V centenario de la primera vuelta al mundo",
+      "year": 2022,
+      "numista_type_id": 346815
+    },
+    {
+      "id": "2023-princess-leonor",
+      "label": "Princesa Leonor",
+      "year": 2023,
+      "numista_type_id": 384019
+    },
+    {
+      "id": "2024-proclamation",
+      "label": "X aniversario de la proclamación de Felipe VI",
+      "year": 2024,
+      "numista_type_id": 416857
+    },
+    {
+      "id": "2025-elcano-training-cruise",
+      "label": "Crucero de instrucción Juan Sebastián de Elcano",
+      "year": 2025,
+      "numista_type_id": 466287
+    },
+    {
+      "id": "2026-air-space-academy",
+      "label": "Academia General del Aire y del Espacio",
+      "year": 2026,
+      "numista_type_id": 575616
+    }
+  ]
+}

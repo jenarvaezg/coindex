@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "id": "us-independence-250th-spain-10-euros",
+  "name": "250 aniversario de la Independencia de EE. UU. · España · 10 €",
+  "issuer_code": "espagne",
+  "family": "250th anniversary of the United States Declaration of Independence",
+  "weight_millioz": 868,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=11467",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2025-first-american-dollar",
+      "label": "Primer dólar americano",
+      "year": 2025,
+      "numista_type_id": 502771
+    },
+    {
+      "id": "2025-bald-eagle",
+      "label": "Águila calva",
+      "year": 2025,
+      "numista_type_id": 502767
+    },
+    {
+      "id": "2025-jordi-farragut",
+      "label": "Jordi Farragut",
+      "year": 2025,
+      "numista_type_id": 502766
+    },
+    {
+      "id": "2026-bernardo-de-galvez",
+      "label": "General Bernardo de Gálvez",
+      "year": 2026,
+      "numista_type_id": 564891
+    },
+    {
+      "id": "2026-luis-de-cordova",
+      "label": "Almirante Luis de Córdova",
+      "year": 2026,
+      "numista_type_id": 564890
+    },
+    {
+      "id": "2026-jose-solano-y-bote",
+      "label": "Almirante José Solano y Bote",
+      "year": 2026,
+      "numista_type_id": 564892
+    },
+    {
+      "id": "2026-francisco-de-saavedra",
+      "label": "Francisco de Saavedra y Sangronis",
+      "year": 2026,
+      "numista_type_id": 564893
+    },
+    {
+      "id": "2026-isabella-i",
+      "label": "Isabel I de Castilla",
+      "year": 2026,
+      "numista_type_id": 564894
+    }
+  ]
+}
