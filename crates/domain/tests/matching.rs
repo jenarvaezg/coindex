@@ -82,6 +82,7 @@ fn heuristic_places_an_item_when_curated_type_ids_do_not_match() {
         TypeMeta {
             id: 9898,
             title: Some("Australian Lunar Dragon".into()),
+            display_title: None,
             issuer_code: Some("australie".into()),
             min_year: Some(2024),
             max_year: Some(2024),
@@ -224,6 +225,7 @@ fn unique_highest_confidence_heuristic_wins_regardless_of_catalog_order() {
         TypeMeta {
             id: 9898,
             title: Some("Australian Lunar Dragon".into()),
+            display_title: None,
             issuer_code: Some("australie".into()),
             min_year: Some(2024),
             max_year: Some(2024),

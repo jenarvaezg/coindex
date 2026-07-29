@@ -18,7 +18,7 @@ use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
-use domain::{Album, Series, build_album};
+use domain::{Album, Series, TypeMetaIndex, build_album};
 use numista::{ClientConfig, NumistaClient};
 use reqwest::redirect::Policy;
 use serde::{Deserialize, Serialize};
@@ -40,6 +40,11 @@ pub struct AppState {
     series: Arc<Vec<Series>>,
     sync: SyncService,
     image_client: reqwest::Client,
+}
+
+struct LoadedAlbum {
+    album: Album,
+    type_meta: TypeMetaIndex,
 }
 
 #[derive(Debug, Error)]
@@ -164,7 +169,8 @@ pub fn build_router(state: AppState) -> Router {
 async fn index_handler(State(state): State<AppState>) -> Result<Html<String>, AppError> {
     let mut albums = Vec::new();
     for user in state.config.users() {
-        albums.push((user.key.clone(), album_for(&state, &user.key).await?));
+        let loaded = album_for(&state, &user.key).await?;
+        albums.push((user.key.clone(), loaded.album));
     }
     Ok(Html(views::index(&state.config, &albums).into_string()))
 }
@@ -179,8 +185,9 @@ async fn series_handler(
         .iter()
         .find(|series| series.id.to_string() == series_id)
         .ok_or_else(|| AppError::UnknownSeries(series_id.clone()))?;
-    let album = album_for(&state, &user).await?;
-    let series_album = album
+    let loaded = album_for(&state, &user).await?;
+    let series_album = loaded
+        .album
         .series
         .iter()
         .find(|series| series.series_id.to_string() == series_id)
@@ -195,9 +202,9 @@ async fn unmatched_handler(
     Path(user): Path<String>,
 ) -> Result<Html<String>, AppError> {
     require_user(&state, &user)?;
-    let album = album_for(&state, &user).await?;
+    let loaded = album_for(&state, &user).await?;
     Ok(Html(
-        views::unmatched(&user, &album, &state.series).into_string(),
+        views::unmatched(&user, &loaded.album, &state.series, &loaded.type_meta).into_string(),
     ))
 }
 
@@ -261,7 +268,7 @@ async fn album_handler(
     Path(user): Path<String>,
 ) -> Result<Json<Album>, AppError> {
     require_user(&state, &user)?;
-    Ok(Json(album_for(&state, &user).await?))
+    Ok(Json(album_for(&state, &user).await?.album))
 }
 
 async fn health_handler(State(state): State<AppState>) -> Result<Json<Health>, AppError> {
@@ -337,11 +344,12 @@ async fn image_handler(
     Ok(proxied)
 }
 
-async fn album_for(state: &AppState, user: &str) -> Result<Album, AppError> {
+async fn album_for(state: &AppState, user: &str) -> Result<LoadedAlbum, AppError> {
     let items = state.repository.load_items(user).await?;
     let type_meta = state.repository.load_type_meta().await?;
     let overrides = state.repository.load_overrides(user).await?;
-    Ok(build_album(&state.series, &items, &type_meta, &overrides))
+    let album = build_album(&state.series, &items, &type_meta, &overrides);
+    Ok(LoadedAlbum { album, type_meta })
 }
 
 fn require_user<'a>(state: &'a AppState, user: &str) -> Result<&'a config::UserConfig, AppError> {

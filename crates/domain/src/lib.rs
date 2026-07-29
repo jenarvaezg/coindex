@@ -146,6 +146,8 @@ pub struct TypeMeta {
     #[serde(default)]
     pub title: Option<String>,
     #[serde(default)]
+    pub display_title: Option<String>,
+    #[serde(default)]
     pub issuer_code: Option<String>,
     #[serde(default)]
     pub min_year: Option<i32>,

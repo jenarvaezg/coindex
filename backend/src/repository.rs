@@ -404,6 +404,7 @@ fn domain_type_meta(id: u32, meta: &NumistaType) -> TypeMeta {
     TypeMeta {
         id,
         title: matching_title(meta.title.as_deref()),
+        display_title: meta.title.clone(),
         issuer_code: meta.issuer.as_ref().and_then(|issuer| issuer.code.clone()),
         min_year: meta.min_year,
         max_year: meta.max_year,
@@ -535,6 +536,25 @@ mod tests {
                 "expected `{spanish}` to add alias `{english}`, got `{title}`"
             );
         }
+    }
+
+    #[test]
+    fn type_metadata_keeps_exact_display_title_when_matching_adds_aliases() {
+        let metadata = NumistaType {
+            title: Some("50 centavos – Dragón de Komodo".to_owned()),
+            ..NumistaType::default()
+        };
+
+        let adapted = domain_type_meta(42, &metadata);
+
+        assert_eq!(
+            adapted.display_title.as_deref(),
+            Some("50 centavos – Dragón de Komodo")
+        );
+        assert_eq!(
+            adapted.title.as_deref(),
+            Some("50 centavos – Dragón de Komodo [dragon]")
+        );
     }
 
     #[test]

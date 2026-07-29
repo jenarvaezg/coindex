@@ -1,5 +1,6 @@
 use domain::{
-    Album, AlbumSlot, MatchSource, ReleaseStatus, Series, SeriesAlbum, SlotStatus, UnmatchedReason,
+    Album, AlbumSlot, MatchSource, ReleaseStatus, Series, SeriesAlbum, SlotStatus, TypeMetaIndex,
+    UnmatchedReason,
 };
 use maud::{DOCTYPE, Markup, html};
 
@@ -116,7 +117,12 @@ pub fn series(
     )
 }
 
-pub fn unmatched(user_key: &str, album: &Album, all_series: &[Series]) -> Markup {
+pub fn unmatched(
+    user_key: &str,
+    album: &Album,
+    all_series: &[Series],
+    type_meta: &TypeMetaIndex,
+) -> Markup {
     layout(
         "Sin clasificar",
         html! {
@@ -133,12 +139,25 @@ pub fn unmatched(user_key: &str, album: &Album, all_series: &[Series]) -> Markup
                     p class="empty-state" { "No hay piezas pendientes de clasificación." }
                 }
                 @for item in &album.unmatched {
+                    @let title = type_meta
+                        .get(&item.type_id)
+                        .and_then(|metadata| {
+                            metadata
+                                .display_title
+                                .as_deref()
+                                .or(metadata.title.as_deref())
+                        })
+                        .map(str::to_owned)
+                        .unwrap_or_else(|| format!("Pieza {}", item.item_id));
                     article class="unmatched-item" {
-                        img src=(format!("/img/type/{}/obverse", item.type_id))
-                            alt=(format!("Tipo Numista {}", item.type_id));
+                        (coin_sides(item.type_id, &title))
                         div {
-                            h2 { "Pieza " (item.item_id) }
-                            p { "Tipo " (item.type_id) " · cantidad " (item.quantity) }
+                            h2 { (&title) }
+                            p {
+                                "ID de pieza " (item.item_id)
+                                " · Tipo Numista " (item.type_id)
+                                " · cantidad " (item.quantity)
+                            }
                             @let (reason_class, reason) = unmatched_reason(item.unmatched_reason.as_ref());
                             p class=(format!("unmatched-reason {reason_class}")) { (reason) }
                             form method="post" action=(format!("/u/{}/override", user_key)) {
@@ -259,7 +278,7 @@ pub fn sync_report(user_key: &str, report: &SyncReport) -> Markup {
 }
 
 fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> Markup {
-    let (class, state, image, owned_items) = match &album_slot.status {
+    let (class, state, type_id, owned_items) = match &album_slot.status {
         SlotStatus::Owned { items, quantity } => (
             "slot owned",
             if *quantity > 1 {
@@ -267,19 +286,13 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
             } else {
                 "Tengo".to_owned()
             },
-            items
-                .first()
-                .map(|item| format!("/img/type/{}/obverse", item.type_id)),
+            items.first().map(|item| item.type_id),
             Some(items.as_slice()),
         ),
         SlotStatus::Missing => (
             "slot missing",
             "Me falta".to_owned(),
-            album_slot
-                .slot
-                .numista_type_ids
-                .first()
-                .map(|id| format!("/img/type/{id}/obverse")),
+            album_slot.slot.numista_type_ids.first().copied(),
             None,
         ),
         SlotStatus::NotYetIssued => ("slot future", "Sin emitir".to_owned(), None, None),
@@ -287,8 +300,8 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
     html! {
         article class=(class) {
             div class="coin-image" {
-                @if let Some(image) = image {
-                    img src=(image) alt=(album_slot.slot.label);
+                @if let Some(type_id) = type_id {
+                    (coin_sides(type_id, &album_slot.slot.label))
                 } @else {
                     span class="silhouette" aria-hidden="true" {}
                 }
@@ -326,6 +339,29 @@ fn slot_card(user_key: &str, album_slot: &AlbumSlot, all_series: &[Series]) -> M
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+fn coin_sides(type_id: u32, label: &str) -> Markup {
+    html! {
+        div class="coin-sides" role="group" aria-label=(format!("Anverso y reverso de {label}")) {
+            figure class="coin-side" {
+                img
+                    src=(format!("/img/type/{type_id}/obverse"))
+                    alt=(format!("Anverso de {label}"))
+                    loading="lazy"
+                    decoding="async";
+                figcaption { "Anverso" }
+            }
+            figure class="coin-side" {
+                img
+                    src=(format!("/img/type/{type_id}/reverse"))
+                    alt=(format!("Reverso de {label}"))
+                    loading="lazy"
+                    decoding="async";
+                figcaption { "Reverso" }
             }
         }
     }
@@ -415,7 +451,7 @@ impl MetalLabel for Series {
 mod tests {
     use domain::{
         Album, AlbumSlot, Finish, ItemRef, MatchSource, ReleaseStatus, SeriesAlbum, SeriesId, Slot,
-        SlotId, SlotStatus, UnmatchedReason,
+        SlotId, SlotStatus, TypeMeta, TypeMetaIndex, UnmatchedReason,
     };
 
     use super::{progress, series, sync_report, unmatched};
@@ -475,6 +511,63 @@ mod tests {
         assert!(html.contains("Tengo"));
         assert!(html.contains("Me falta"));
         assert!(html.contains("Sin emitir"));
+    }
+
+    #[test]
+    fn series_cards_show_accessible_obverse_and_reverse_for_known_types() {
+        let definition = domain::Series {
+            id: SeriesId::new("field"),
+            name: "Field".to_owned(),
+            mint: "Mint".to_owned(),
+            issuer_code: "issuer".to_owned(),
+            metal: domain::Metal::Silver,
+            notes: None,
+            incomplete: false,
+            sources: std::collections::BTreeMap::new(),
+            slots: Vec::new(),
+        };
+        let mut owned = slot(
+            "owned",
+            SlotStatus::Owned {
+                quantity: 1,
+                items: vec![ItemRef {
+                    item_id: 1,
+                    type_id: 10,
+                    quantity: 1,
+                    match_source: Some(MatchSource::ExplicitTypeId),
+                    unmatched_reason: None,
+                }],
+            },
+        );
+        owned.slot.label = "Lince ibérico".to_owned();
+        let mut missing = slot("missing", SlotStatus::Missing);
+        missing.slot.label = "Águila imperial".to_owned();
+        missing.slot.numista_type_ids = vec![20];
+        let album = SeriesAlbum {
+            series_id: SeriesId::new("field"),
+            name: "Field".to_owned(),
+            slots: vec![owned, missing, slot("unknown", SlotStatus::Missing)],
+        };
+
+        let html = series("jose", &definition, &album, &[]).into_string();
+
+        for expected in [
+            "/img/type/10/obverse",
+            "/img/type/10/reverse",
+            "/img/type/20/obverse",
+            "/img/type/20/reverse",
+            "alt=\"Anverso de Lince ibérico\"",
+            "alt=\"Reverso de Águila imperial\"",
+        ] {
+            assert!(html.contains(expected), "missing `{expected}` in {html}");
+        }
+        assert_eq!(html.matches("<figcaption>Anverso</figcaption>").count(), 2);
+        assert_eq!(html.matches("<figcaption>Reverso</figcaption>").count(), 2);
+        assert_eq!(
+            html.matches("loading=\"lazy\" decoding=\"async\"").count(),
+            4
+        );
+        assert_eq!(html.matches("class=\"silhouette\"").count(), 1);
     }
 
     #[test]
@@ -639,7 +732,7 @@ mod tests {
             ],
         };
 
-        let html = unmatched("jose", &album, &[]).into_string();
+        let html = unmatched("jose", &album, &[], &TypeMetaIndex::new()).into_string();
 
         assert!(html.contains("manually-excluded"));
         assert!(html.contains("Excluida manualmente"));
@@ -647,5 +740,51 @@ mod tests {
         assert!(html.contains("dangling-override"));
         assert!(html.contains("Sin coincidencia"));
         assert_eq!(html.matches("Guardar asignación").count(), 4);
+    }
+
+    #[test]
+    fn unmatched_uses_exact_cached_titles_with_fallback_and_both_coin_sides() {
+        let item = |item_id, type_id| ItemRef {
+            item_id,
+            type_id,
+            quantity: 1,
+            match_source: None,
+            unmatched_reason: Some(UnmatchedReason::NoMatchingSlot),
+        };
+        let album = Album {
+            series: Vec::new(),
+            unmatched: vec![item(41, 10), item(42, 20)],
+        };
+        let type_meta = TypeMetaIndex::from([(
+            10,
+            TypeMeta {
+                id: 10,
+                title: Some("Onza «Dragón ibérico» — edición especial [dragon]".to_owned()),
+                display_title: Some("Onza «Dragón ibérico» — edición especial".to_owned()),
+                issuer_code: None,
+                min_year: None,
+                max_year: None,
+                weight_oz: None,
+                finish: None,
+            },
+        )]);
+
+        let html = unmatched("jose", &album, &[], &type_meta).into_string();
+
+        assert!(html.contains("<h2>Onza «Dragón ibérico» — edición especial</h2>"));
+        assert!(html.contains("<h2>Pieza 42</h2>"));
+        assert!(html.contains("ID de pieza 41 · Tipo Numista 10"));
+        for expected in [
+            "/img/type/10/obverse",
+            "/img/type/10/reverse",
+            "/img/type/20/obverse",
+            "/img/type/20/reverse",
+            "alt=\"Anverso de Onza «Dragón ibérico» — edición especial\"",
+            "alt=\"Reverso de Pieza 42\"",
+        ] {
+            assert!(html.contains(expected), "missing `{expected}` in {html}");
+        }
+        assert_eq!(html.matches("<figcaption>Anverso</figcaption>").count(), 2);
+        assert_eq!(html.matches("<figcaption>Reverso</figcaption>").count(), 2);
     }
 }

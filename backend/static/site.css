@@ -150,12 +150,26 @@ h3 { font-size: 1.6rem; }
   position: relative;
   display: grid;
   place-items: center;
-  aspect-ratio: 1;
   margin-bottom: 1rem;
 }
 
-.coin-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.missing .coin-image img { filter: grayscale(1); opacity: 0.15; }
+.coin-sides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  width: 100%;
+  gap: 0.35rem;
+}
+.coin-side { min-width: 0; margin: 0; text-align: center; }
+.coin-side img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; }
+.coin-side figcaption {
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font: 700 0.58rem/1.2 "Arial Narrow", "Helvetica Neue", sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.missing .coin-side img { filter: grayscale(1); opacity: 0.15; }
 .silhouette {
   width: 78%;
   aspect-ratio: 1;
@@ -188,12 +202,12 @@ h3 { font-size: 1.6rem; }
 .unmatched-list { display: grid; gap: 1rem; }
 .unmatched-item {
   display: grid;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: minmax(160px, 200px) minmax(0, 1fr);
   gap: 1.3rem;
   padding: 1rem;
   border-top: 1px solid var(--line);
 }
-.unmatched-item img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+.unmatched-item > .coin-sides { align-self: start; }
 .unmatched-item form { display: flex; flex-wrap: wrap; align-items: end; gap: 0.7rem; }
 .unmatched-item label { display: grid; gap: 0.35rem; }
 .unmatched-item select { min-width: min(420px, 70vw); padding: 0.5rem; }
@@ -217,7 +231,8 @@ h3 { font-size: 1.6rem; }
   .masthead, .section-heading, .series-header { align-items: flex-start; flex-direction: column; }
   .masthead p { margin-bottom: 0; }
   main { padding-top: 2rem; }
-  .unmatched-item { grid-template-columns: 80px 1fr; }
+  .unmatched-item { grid-template-columns: 1fr; gap: 0.8rem; }
+  .unmatched-item > .coin-sides { max-width: 220px; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
