@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "id": "nikola-tesla-serbia-1oz",
+  "name": "Nikola Tesla · Serbia · 1 oz",
+  "issuer_code": "serbie",
+  "family": "Nikola Tesla",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=5303",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "alternating-current",
+      "label": "Alternating current",
+      "year": 2018,
+      "numista_type_id": 150352
+    },
+    {
+      "id": "remote-control",
+      "label": "Remote Control",
+      "year": 2019,
+      "numista_type_id": 162242
+    },
+    {
+      "id": "x-rays",
+      "label": "X-Rays",
+      "year": 2020,
+      "numista_type_id": 195591
+    },
+    {
+      "id": "free-energy",
+      "label": "Free Energy",
+      "year": 2021,
+      "numista_type_id": 302302
+    },
+    {
+      "id": "ozone-generator",
+      "label": "Ozone Generator",
+      "year": 2022,
+      "numista_type_id": 334411
+    },
+    {
+      "id": "anti-gravity",
+      "label": "Anti-Gravity",
+      "year": 2023,
+      "numista_type_id": 371257
+    },
+    {
+      "id": "secret-of-the-universe",
+      "label": "Secret of the Universe",
+      "year": 2023,
+      "numista_type_id": 359331
+    },
+    {
+      "id": "tesla-coil",
+      "label": "Tesla Coil",
+      "year": 2023,
+      "numista_type_id": 421848
+    },
+    {
+      "id": "teleforce-direct-energy-weapon",
+      "label": "Teleforce Direct Energy Weapon",
+      "year": 2024,
+      "numista_type_id": 421849
+    },
+    {
+      "id": "hydroelectric-power",
+      "label": "Hydroelectric Power",
+      "year": 2024,
+      "numista_type_id": 448067
+    },
+    {
+      "id": "electromechanics",
+      "label": "Electromechanics",
+      "year": 2025,
+      "numista_type_id": 493347
+    },
+    {
+      "id": "teslas-oscillator",
+      "label": "Tesla's Oscillator",
+      "year": 2025,
+      "numista_type_id": 493329
+    }
+  ]
+}

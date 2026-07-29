@@ -50,6 +50,17 @@ Following does not promote it to a curated series or Album and cannot create Mis
 members.
 _Avoid_: Curated series, Album
 
+**Collection catalog**:
+A curated, sourced reference list of official members for one exact proposal variant key.
+It remains separate from curated series and from the collector's followed disposition.
+_Avoid_: Collection proposal, curated series
+
+**Collection catalog plate**:
+The per-collector comparison between a followed collection proposal and its matching
+collection catalog. It can show owned and Missing catalog members without changing the
+proposal or promoting it to an Album.
+_Avoid_: Album, followed collection proposal
+
 **Ignored proposal**:
 A current collection proposal whose proposal variant key the user has reversibly marked
 as ignored.

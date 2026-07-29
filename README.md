@@ -100,6 +100,7 @@ que los siguientes reutilizan esos metadatos.
 
 - `/`: índice de series y usuarios.
 - `/u/{user}/series/{series_id}`: lámina de una serie.
+- `/u/{user}/followed-collections/{catalog_id}`: lámina curada de una propuesta seguida.
 - `/u/{user}/unmatched`: piezas pendientes de asignación.
 - `/api/album/{user}`: álbum completo en JSON.
 - `/health`: salud y presupuesto mensual.

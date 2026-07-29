@@ -19,8 +19,9 @@ use axum::response::{Html, IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use domain::{
-    Album, CollectionProposal, CollectionProposalKey, ProposalDisposition, Series, TypeMetaIndex,
-    build_album, build_collection_proposals, classify_collection_proposals,
+    Album, CollectedItem as DomainItem, CollectionCatalog, CollectionProposal,
+    CollectionProposalKey, ProposalDisposition, Series, TypeMetaIndex, build_album,
+    build_collection_catalog_album, build_collection_proposals, classify_collection_proposals,
 };
 use numista::{ClientConfig, NumistaClient};
 use reqwest::redirect::Policy;
@@ -30,7 +31,7 @@ use thiserror::Error;
 
 pub use config::{AppConfig, ConfigError};
 use repository::{PostgresCallPolicy, Repository, RepositoryError};
-use seeds::{SeedError, load_series};
+use seeds::{SeedError, load_collection_catalogs, load_series};
 use sync::{NumistaApi, SyncError, SyncService};
 
 const CSS: &str = include_str!("../static/site.css");
@@ -41,6 +42,7 @@ pub struct AppState {
     config: AppConfig,
     repository: Repository,
     series: Arc<Vec<Series>>,
+    collection_catalogs: Arc<Vec<CollectionCatalog>>,
     sync: SyncService,
     image_client: reqwest::Client,
 }
@@ -49,6 +51,7 @@ struct LoadedAlbum {
     album: Album,
     type_meta: TypeMetaIndex,
     proposals: Vec<CollectionProposal>,
+    items: Vec<DomainItem>,
 }
 
 #[derive(Debug, Error)]
@@ -74,6 +77,10 @@ enum AppError {
     UnknownUser(String),
     #[error("unknown series `{0}`")]
     UnknownSeries(String),
+    #[error("unknown collection catalog `{0}`")]
+    UnknownCollectionCatalog(String),
+    #[error("followed collection catalog is not available for this collector")]
+    UnavailableFollowedCollection,
     #[error("unknown slot `{0}`")]
     UnknownSlot(String),
     #[error("unknown collected item `{0}`")]
@@ -131,6 +138,7 @@ pub async fn bootstrap(
     sqlx::migrate!("./migrations").run(&pool).await?;
     let config = AppConfig::parse(users_secret, budget_secret, origin_secret)?;
     let series = Arc::new(load_series()?);
+    let collection_catalogs = Arc::new(load_collection_catalogs()?);
     let repository = Repository::new(pool.clone());
     let policy = Arc::new(PostgresCallPolicy::new(pool, config.monthly_budget));
     let mut clients: BTreeMap<String, Arc<dyn NumistaApi>> = BTreeMap::new();
@@ -156,6 +164,7 @@ pub async fn bootstrap(
         config,
         repository,
         series,
+        collection_catalogs,
         sync,
         image_client,
     }))
@@ -165,6 +174,10 @@ pub fn build_router(state: AppState) -> Router {
     Router::new()
         .route("/", get(index_handler))
         .route("/u/{user}/series/{series_id}", get(series_handler))
+        .route(
+            "/u/{user}/followed-collections/{catalog_id}",
+            get(followed_collection_handler),
+        )
         .route("/u/{user}/unmatched", get(unmatched_handler))
         .route("/u/{user}/override", post(override_handler))
         .route(
@@ -188,9 +201,22 @@ async fn index_handler(State(state): State<AppState>) -> Result<Html<String>, Ap
             .load_collection_proposal_preferences(&user.key)
             .await?;
         let proposals = classify_collection_proposals(loaded.proposals, &preferences);
-        albums.push((user.key.clone(), loaded.album, proposals));
+        let eligible_catalog_ids = state
+            .collection_catalogs
+            .iter()
+            .filter(|catalog| catalog.is_evidenced_by(&loaded.items))
+            .map(|catalog| catalog.id.clone())
+            .collect();
+        albums.push((
+            user.key.clone(),
+            loaded.album,
+            proposals,
+            eligible_catalog_ids,
+        ));
     }
-    Ok(Html(views::index(&state.config, &albums).into_string()))
+    Ok(Html(
+        views::index(&state.config, &albums, &state.collection_catalogs).into_string(),
+    ))
 }
 
 async fn series_handler(
@@ -212,6 +238,41 @@ async fn series_handler(
         .ok_or_else(|| AppError::UnknownSeries(series_id))?;
     Ok(Html(
         views::series(&user, definition, series_album, &state.series).into_string(),
+    ))
+}
+
+async fn followed_collection_handler(
+    State(state): State<AppState>,
+    Path((user, catalog_id)): Path<(String, String)>,
+) -> Result<Html<String>, AppError> {
+    require_user(&state, &user)?;
+    let catalog = state
+        .collection_catalogs
+        .iter()
+        .find(|catalog| catalog.id.as_str() == catalog_id)
+        .ok_or_else(|| AppError::UnknownCollectionCatalog(catalog_id.clone()))?;
+    let loaded = album_for(&state, &user).await?;
+    let key = catalog.key();
+    let current_exact_proposal = loaded
+        .proposals
+        .iter()
+        .any(|proposal| proposal.key() == key);
+    if !current_exact_proposal || !catalog.is_evidenced_by(&loaded.items) {
+        return Err(AppError::UnavailableFollowedCollection);
+    }
+    let preferences = state
+        .repository
+        .load_collection_proposal_preferences(&user)
+        .await?;
+    let followed = preferences.iter().any(|preference| {
+        preference.key == key && preference.disposition == ProposalDisposition::Followed
+    });
+    if !followed {
+        return Err(AppError::UnavailableFollowedCollection);
+    }
+    let catalog_album = build_collection_catalog_album(catalog, &loaded.items);
+    Ok(Html(
+        views::followed_collection(&user, catalog, &catalog_album, &loaded.type_meta).into_string(),
     ))
 }
 
@@ -427,6 +488,7 @@ async fn album_for(state: &AppState, user: &str) -> Result<LoadedAlbum, AppError
         album,
         type_meta,
         proposals,
+        items,
     })
 }
 
@@ -467,6 +529,8 @@ impl IntoResponse for AppError {
         let status = match &self {
             Self::UnknownUser(_)
             | Self::UnknownSeries(_)
+            | Self::UnknownCollectionCatalog(_)
+            | Self::UnavailableFollowedCollection
             | Self::UnknownSlot(_)
             | Self::UnknownItem(_)
             | Self::InvalidImageSide(_)
@@ -512,6 +576,7 @@ mod tests {
             config: AppConfig::parse("jose:1:a,padre:2:b", None, "http://localhost:8000").unwrap(),
             repository: Repository::new(pool.clone()),
             series: Arc::new(Vec::new()),
+            collection_catalogs: Arc::new(Vec::new()),
             sync: SyncService::new(Repository::new(pool), BTreeMap::new()),
             image_client: reqwest::Client::new(),
         };
@@ -541,6 +606,7 @@ mod tests {
             config: AppConfig::parse("jose:1:a,padre:2:b", None, "http://localhost:8000").unwrap(),
             repository: Repository::new(pool.clone()),
             series: Arc::new(Vec::new()),
+            collection_catalogs: Arc::new(Vec::new()),
             sync: SyncService::new(Repository::new(pool), BTreeMap::new()),
             image_client: reqwest::Client::new(),
         };
@@ -568,6 +634,7 @@ mod tests {
             config: AppConfig::parse("jose:1:a,padre:2:b", None, "http://localhost:8000").unwrap(),
             repository: Repository::new(pool.clone()),
             series: Arc::new(Vec::new()),
+            collection_catalogs: Arc::new(Vec::new()),
             sync: SyncService::new(Repository::new(pool), BTreeMap::new()),
             image_client: reqwest::Client::new(),
         };
@@ -675,6 +742,7 @@ mod tests {
             .unwrap(),
             repository: repository.clone(),
             series: Arc::new(Vec::new()),
+            collection_catalogs: Arc::new(Vec::new()),
             sync: SyncService::new(repository.clone(), BTreeMap::new()),
             image_client: reqwest::Client::new(),
         });

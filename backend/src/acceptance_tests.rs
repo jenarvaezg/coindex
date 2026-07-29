@@ -6,7 +6,9 @@ use async_trait::async_trait;
 use axum::body::Body;
 use axum::http::header::{CONTENT_TYPE, ORIGIN};
 use axum::http::{Request, StatusCode};
-use domain::{Album, CollectionProposalKey, MatchSource, ProposalDisposition, SlotStatus};
+use domain::{
+    Album, CollectionCatalogId, CollectionProposalKey, MatchSource, ProposalDisposition, SlotStatus,
+};
 use http_body_util::BodyExt;
 use numista::{
     ClientConfig, CollectedItem, HttpRequest, HttpResponse, HttpTransport, ItemType, NumistaClient,
@@ -18,7 +20,7 @@ use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
 use crate::repository::{PostgresCallPolicy, Repository};
-use crate::seeds::load_series;
+use crate::seeds::{load_collection_catalogs, load_series};
 use crate::sync::{NumistaApi, SyncService};
 use crate::{AppConfig, AppState, build_router};
 
@@ -135,6 +137,7 @@ async fn postgres_override_and_metadata_cache_survive_consecutive_syncs() {
         config,
         repository: repository.clone(),
         series,
+        collection_catalogs: Arc::new(Vec::new()),
         sync: SyncService::new(repository.clone(), clients),
         image_client: reqwest::Client::new(),
     });
@@ -241,6 +244,7 @@ async fn proposal_preferences_are_idempotent_user_scoped_and_survive_sync() {
             .unwrap(),
         repository: repository.clone(),
         series: Arc::new(Vec::new()),
+        collection_catalogs: Arc::new(Vec::new()),
         sync: SyncService::new(repository.clone(), BTreeMap::new()),
         image_client: reqwest::Client::new(),
     });
@@ -297,6 +301,144 @@ async fn proposal_preferences_are_idempotent_user_scoped_and_survive_sync() {
     clean_acceptance_rows(&pool).await;
 }
 
+#[tokio::test]
+#[ignore = "requires disposable Postgres in TEST_DATABASE_URL; see test doc comment"]
+async fn followed_collection_route_requires_current_followed_exact_catalog_evidence() {
+    let database_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL must be set");
+    assert_disposable_database_url(&database_url);
+    let pool = PgPoolOptions::new()
+        .max_connections(2)
+        .connect(&database_url)
+        .await
+        .unwrap();
+    sqlx::migrate!("./migrations").run(&pool).await.unwrap();
+    clean_acceptance_rows(&pool).await;
+    let repository = Repository::new(pool.clone());
+    let official_type_id = 195_591;
+    let unrelated_same_key_type_id = 999_998;
+    for (type_id, title) in [
+        (official_type_id, "1 Dinar - X-Rays"),
+        (unrelated_same_key_type_id, "1 Dollar - Nikola Tesla"),
+    ] {
+        repository
+            .claim_type_fetch(type_id)
+            .await
+            .unwrap()
+            .unwrap()
+            .cache(&numista::NumistaType {
+                id: Some(type_id),
+                title: Some(title.to_owned()),
+                weight: Some(31.103_476_8),
+                series: Some("Nikola Tesla".to_owned()),
+                ..numista::NumistaType::default()
+            })
+            .await
+            .unwrap();
+    }
+    let collected_item = |id, type_id| CollectedItem {
+        id: Some(id),
+        quantity: Some(1),
+        item_type: Some(ItemType {
+            id: Some(type_id),
+            title: Some("Nikola Tesla holding".to_owned()),
+            ..ItemType::default()
+        }),
+        ..CollectedItem::default()
+    };
+    repository
+        .store_sync(USER_KEY, &[collected_item(90_001, official_type_id)], None)
+        .await
+        .unwrap();
+    repository
+        .store_sync("padre", &[collected_item(90_002, official_type_id)], None)
+        .await
+        .unwrap();
+
+    let mut catalogs = load_collection_catalogs().unwrap();
+    let followed_key = catalogs[0].key();
+    repository
+        .upsert_collection_proposal_preference(
+            USER_KEY,
+            &followed_key,
+            ProposalDisposition::Followed,
+        )
+        .await
+        .unwrap();
+    let mut wrong_variant = catalogs[0].clone();
+    wrong_variant.id = CollectionCatalogId::new("nikola-tesla-serbia-2oz");
+    wrong_variant.weight_millioz = 2_000;
+    catalogs.push(wrong_variant);
+
+    let app = build_router(AppState {
+        config: AppConfig::parse("jose:1:key-one,padre:2:key-two", Some("1500"), ORIGIN_URL)
+            .unwrap(),
+        repository: repository.clone(),
+        series: Arc::new(Vec::new()),
+        collection_catalogs: Arc::new(catalogs),
+        sync: SyncService::new(repository.clone(), BTreeMap::new()),
+        image_client: reqwest::Client::new(),
+    });
+
+    let jose = get_followed_collection(app.clone(), USER_KEY, "nikola-tesla-serbia-1oz").await;
+    assert_eq!(jose.status(), StatusCode::OK);
+    let body = jose.into_body().collect().await.unwrap().to_bytes();
+    let html = String::from_utf8(body.to_vec()).unwrap();
+    assert!(html.contains("1 / 12 emisiones"));
+    assert_eq!(html.matches("class=\"slot ").count(), 12);
+
+    assert_eq!(
+        get_followed_collection(app.clone(), "padre", "nikola-tesla-serbia-1oz")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        get_followed_collection(app.clone(), USER_KEY, "not-a-catalog")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        get_followed_collection(app.clone(), USER_KEY, "nikola-tesla-serbia-2oz")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    repository
+        .upsert_collection_proposal_preference(
+            "padre",
+            &followed_key,
+            ProposalDisposition::Followed,
+        )
+        .await
+        .unwrap();
+    repository
+        .store_sync(
+            "padre",
+            &[collected_item(90_003, unrelated_same_key_type_id)],
+            None,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        get_followed_collection(app.clone(), "padre", "nikola-tesla-serbia-1oz")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    repository.store_sync(USER_KEY, &[], None).await.unwrap();
+    assert_eq!(
+        get_followed_collection(app, USER_KEY, "nikola-tesla-serbia-1oz")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    clean_acceptance_rows(&pool).await;
+}
+
 fn assert_disposable_database_url(database_url: &str) {
     let parsed = reqwest::Url::parse(database_url)
         .expect("TEST_DATABASE_URL must be a valid PostgreSQL URL");
@@ -337,6 +479,20 @@ async fn get_album(app: axum::Router) -> Album {
     serde_json::from_slice(&body).unwrap()
 }
 
+async fn get_followed_collection(
+    app: axum::Router,
+    user: &str,
+    catalog_id: &str,
+) -> axum::response::Response {
+    app.oneshot(
+        Request::get(format!("/u/{user}/followed-collections/{catalog_id}"))
+            .body(Body::empty())
+            .unwrap(),
+    )
+    .await
+    .unwrap()
+}
+
 async fn api_log_count(pool: &PgPool, endpoint: &str) -> i64 {
     sqlx::query_scalar!(
         "SELECT count(*) FROM api_call_log WHERE endpoint = $1",
@@ -361,17 +517,21 @@ async fn clean_acceptance_rows(pool: &PgPool) {
         .execute(pool)
         .await
         .unwrap();
-    sqlx::query!("DELETE FROM collected_items WHERE user_key = $1", USER_KEY)
+    for user_key in [USER_KEY, "padre"] {
+        sqlx::query!("DELETE FROM collected_items WHERE user_key = $1", user_key)
+            .execute(pool)
+            .await
+            .unwrap();
+    }
+    for type_id in [TYPE_ID, 195_591, 999_998] {
+        sqlx::query!(
+            "DELETE FROM type_meta WHERE type_id = $1",
+            i32::try_from(type_id).unwrap()
+        )
         .execute(pool)
         .await
         .unwrap();
-    sqlx::query!(
-        "DELETE FROM type_meta WHERE type_id = $1",
-        i32::try_from(TYPE_ID).unwrap()
-    )
-    .execute(pool)
-    .await
-    .unwrap();
+    }
     sqlx::query!(
         "DELETE FROM api_call_log
          WHERE endpoint = $1 OR endpoint = $2",

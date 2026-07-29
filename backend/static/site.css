@@ -110,7 +110,7 @@ h3 { font-size: 1.6rem; }
   box-shadow: 3px 3px 0 var(--paper-deep);
 }
 
-.series-card h3 a { color: var(--ink); }
+.series-card h3 a, .proposal-card h3 a { color: var(--ink); }
 .progress { margin-bottom: 0.25rem; font-size: 1.4rem; }
 .proposal-heading { margin-top: 2rem; max-width: 680px; }
 .proposal-heading p:last-child, .proposal-count { color: var(--muted); }

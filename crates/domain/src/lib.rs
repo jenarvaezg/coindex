@@ -213,6 +213,242 @@ impl CollectionProposalKey {
     }
 }
 
+#[derive(Clone, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[serde(transparent)]
+pub struct CollectionCatalogId(String);
+
+impl CollectionCatalogId {
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl fmt::Display for CollectionCatalogId {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(formatter)
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CollectionCatalog {
+    pub schema_version: u32,
+    pub id: CollectionCatalogId,
+    pub name: String,
+    pub issuer_code: String,
+    pub family: String,
+    pub weight_millioz: u32,
+    pub finish: Option<Finish>,
+    pub source: String,
+    pub updated_at: String,
+    pub members: Vec<CollectionCatalogMember>,
+}
+
+impl CollectionCatalog {
+    pub fn key(&self) -> CollectionProposalKey {
+        CollectionProposalKey {
+            family: self.family.clone(),
+            weight_millioz: self.weight_millioz,
+            finish: self.finish.clone(),
+        }
+    }
+
+    pub fn validate(&self) -> Result<(), CollectionCatalogValidationError> {
+        if self.schema_version != 1 {
+            return Err(CollectionCatalogValidationError::UnsupportedSchemaVersion {
+                version: self.schema_version,
+            });
+        }
+        if !is_slug(self.id.as_str()) {
+            return Err(CollectionCatalogValidationError::InvalidId {
+                kind: "catalog",
+                value: self.id.to_string(),
+            });
+        }
+        validate_collection_catalog_text("catalog.name", &self.name)?;
+        validate_collection_catalog_text("catalog.issuer_code", &self.issuer_code)?;
+        validate_collection_catalog_text("catalog.updated_at", &self.updated_at)?;
+        if CollectionProposalKey::from_canonical_parts(
+            &self.family,
+            self.weight_millioz,
+            finish_code(self.finish.as_ref()),
+        )
+        .as_ref()
+            != Some(&self.key())
+        {
+            return Err(CollectionCatalogValidationError::InvalidVariantKey);
+        }
+        if !is_numista_series_source(&self.source) {
+            return Err(CollectionCatalogValidationError::InvalidSource);
+        }
+        if self.members.is_empty() {
+            return Err(CollectionCatalogValidationError::EmptyMembers);
+        }
+
+        let mut member_ids = BTreeSet::new();
+        let mut type_ids = BTreeSet::new();
+        for member in &self.members {
+            if !is_slug(&member.id) {
+                return Err(CollectionCatalogValidationError::InvalidId {
+                    kind: "member",
+                    value: member.id.clone(),
+                });
+            }
+            if !member_ids.insert(&member.id) {
+                return Err(CollectionCatalogValidationError::DuplicateMemberId {
+                    member_id: member.id.clone(),
+                });
+            }
+            validate_collection_catalog_text(
+                &format!("member[{}].label", member.id),
+                &member.label,
+            )?;
+            if member.numista_type_id == 0 {
+                return Err(CollectionCatalogValidationError::InvalidNumistaTypeId);
+            }
+            if !type_ids.insert(member.numista_type_id) {
+                return Err(CollectionCatalogValidationError::DuplicateNumistaTypeId {
+                    type_id: member.numista_type_id,
+                });
+            }
+        }
+        Ok(())
+    }
+
+    pub fn is_evidenced_by(&self, items: &[CollectedItem]) -> bool {
+        let member_type_ids: BTreeSet<u32> = self
+            .members
+            .iter()
+            .map(|member| member.numista_type_id)
+            .collect();
+        items
+            .iter()
+            .any(|item| item.quantity > 0 && member_type_ids.contains(&item.type_id))
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CollectionCatalogMember {
+    pub id: String,
+    pub label: String,
+    pub year: i32,
+    pub numista_type_id: u32,
+}
+
+#[derive(Clone, Debug, Error, PartialEq)]
+pub enum CollectionCatalogValidationError {
+    #[error("collection catalog schema version `{version}` is not supported")]
+    UnsupportedSchemaVersion { version: u32 },
+    #[error("{kind} id `{value}` must be a nonempty lowercase slug")]
+    InvalidId { kind: &'static str, value: String },
+    #[error("required field `{field}` cannot be blank")]
+    BlankField { field: String },
+    #[error("collection catalog has an invalid proposal variant key")]
+    InvalidVariantKey,
+    #[error("collection catalog source must be an HTTPS Numista series URL")]
+    InvalidSource,
+    #[error("collection catalog must contain at least one member")]
+    EmptyMembers,
+    #[error("member id `{member_id}` is duplicated")]
+    DuplicateMemberId { member_id: String },
+    #[error("Numista type id must be greater than zero")]
+    InvalidNumistaTypeId,
+    #[error("Numista type id `{type_id}` is assigned more than once in the collection catalog")]
+    DuplicateNumistaTypeId { type_id: u32 },
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub enum CollectionCatalogMemberStatus {
+    Owned { quantity: u32, items: Vec<ItemRef> },
+    Missing,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct CollectionCatalogAlbumMember {
+    pub member: CollectionCatalogMember,
+    pub status: CollectionCatalogMemberStatus,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct CollectionCatalogAlbum {
+    pub catalog_id: CollectionCatalogId,
+    pub name: String,
+    pub members: Vec<CollectionCatalogAlbumMember>,
+}
+
+impl CollectionCatalogAlbum {
+    pub fn owned_members(&self) -> usize {
+        self.members
+            .iter()
+            .filter(|member| matches!(member.status, CollectionCatalogMemberStatus::Owned { .. }))
+            .count()
+    }
+}
+
+pub fn build_collection_catalog_album(
+    catalog: &CollectionCatalog,
+    items: &[CollectedItem],
+) -> CollectionCatalogAlbum {
+    CollectionCatalogAlbum {
+        catalog_id: catalog.id.clone(),
+        name: catalog.name.clone(),
+        members: catalog
+            .members
+            .iter()
+            .cloned()
+            .map(|member| {
+                let owned_items: Vec<ItemRef> = items
+                    .iter()
+                    .filter(|item| item.quantity > 0 && item.type_id == member.numista_type_id)
+                    .map(|item| ItemRef {
+                        item_id: item.id,
+                        type_id: item.type_id,
+                        quantity: item.quantity,
+                        match_source: Some(MatchSource::ExplicitTypeId),
+                        unmatched_reason: None,
+                    })
+                    .collect();
+                let quantity = owned_items
+                    .iter()
+                    .fold(0_u32, |total, item| total.saturating_add(item.quantity));
+                let status = if owned_items.is_empty() {
+                    CollectionCatalogMemberStatus::Missing
+                } else {
+                    CollectionCatalogMemberStatus::Owned {
+                        quantity,
+                        items: owned_items,
+                    }
+                };
+                CollectionCatalogAlbumMember { member, status }
+            })
+            .collect(),
+    }
+}
+
+fn validate_collection_catalog_text(
+    field: &str,
+    value: &str,
+) -> Result<(), CollectionCatalogValidationError> {
+    if value.trim().is_empty() {
+        Err(CollectionCatalogValidationError::BlankField {
+            field: field.to_owned(),
+        })
+    } else {
+        Ok(())
+    }
+}
+
+fn is_numista_series_source(source: &str) -> bool {
+    source
+        .strip_prefix("https://en.numista.com/catalogue/series.php?id=")
+        .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_digit()))
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ProposalDisposition {
     Followed,
@@ -866,13 +1102,7 @@ pub fn validate_catalog(series: &[Series]) -> Result<(), CatalogValidationError>
 }
 
 fn validate_id(kind: &'static str, value: &str) -> Result<(), SeriesValidationError> {
-    let valid = value.split('-').all(|segment| {
-        !segment.is_empty()
-            && segment
-                .chars()
-                .all(|character| character.is_ascii_lowercase() || character.is_ascii_digit())
-    });
-    if valid && !value.is_empty() {
+    if is_slug(value) {
         Ok(())
     } else {
         Err(SeriesValidationError::InvalidId {
@@ -880,6 +1110,16 @@ fn validate_id(kind: &'static str, value: &str) -> Result<(), SeriesValidationEr
             value: value.into(),
         })
     }
+}
+
+fn is_slug(value: &str) -> bool {
+    !value.is_empty()
+        && value.split('-').all(|segment| {
+            !segment.is_empty()
+                && segment
+                    .chars()
+                    .all(|character| character.is_ascii_lowercase() || character.is_ascii_digit())
+        })
 }
 
 fn validate_nonblank(field: &str, value: &str) -> Result<(), SeriesValidationError> {

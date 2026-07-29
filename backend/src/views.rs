@@ -1,5 +1,6 @@
 use domain::{
-    Album, AlbumSlot, ClassifiedCollectionProposals, CollectionProposal, Finish, MatchSource,
+    Album, AlbumSlot, ClassifiedCollectionProposals, CollectionCatalog, CollectionCatalogAlbum,
+    CollectionCatalogId, CollectionCatalogMemberStatus, CollectionProposal, Finish, MatchSource,
     ReleaseStatus, Series, SeriesAlbum, SlotStatus, TypeMetaIndex, UnmatchedReason,
     collection_proposal_family_label,
 };
@@ -31,7 +32,13 @@ pub fn layout(title: &str, body: Markup) -> Markup {
 
 pub fn index(
     config: &AppConfig,
-    collections: &[(String, Album, ClassifiedCollectionProposals)],
+    collections: &[(
+        String,
+        Album,
+        ClassifiedCollectionProposals,
+        Vec<CollectionCatalogId>,
+    )],
+    collection_catalogs: &[CollectionCatalog],
 ) -> Markup {
     layout(
         "Álbumes",
@@ -42,7 +49,7 @@ pub fn index(
                 p { "Dos colecciones, ordenadas por serie y emisión." }
             }
             @for user in config.users() {
-                @let collection = collections.iter().find(|(key, _, _)| key == &user.key);
+                @let collection = collections.iter().find(|(key, _, _, _)| key == &user.key);
                 section class="user-section" {
                     div class="section-heading" {
                         h2 { (user.key) }
@@ -54,7 +61,7 @@ pub fn index(
                         }
                     }
                     div class="series-grid" {
-                        @if let Some((_, album, _)) = collection {
+                        @if let Some((_, album, _, _)) = collection {
                             @for series in album.series.iter().filter(|series| {
                                 series.slots.iter().any(|slot| {
                                     matches!(slot.status, SlotStatus::Owned { .. })
@@ -74,7 +81,7 @@ pub fn index(
                             }
                         }
                     }
-                    @if let Some((_, _, proposals)) = collection {
+                    @if let Some((_, _, proposals, eligible_catalog_ids)) = collection {
                         @if !proposals.followed.is_empty()
                             || !proposals.available.is_empty()
                             || !proposals.ignored.is_empty()
@@ -82,13 +89,22 @@ pub fn index(
                             section class="proposal-section" id=(format!("proposals-{}", user.key)) {
                                 div class="proposal-heading" {
                                     p class="eyebrow" { "Propuestas desde las piezas actuales" }
-                                    p { "Se basan solo en tus piezas actuales; seguirlas no inventa huecos ni emisiones ausentes." }
+                                    p {
+                                        "Se basan solo en tus piezas actuales. Seguir una propuesta no inventa huecos; "
+                                        "si existe un catálogo curado, podrás abrir su lámina de referencia."
+                                    }
                                 }
                                 @if !proposals.followed.is_empty() {
                                     h3 class="proposal-section-title" { "Seguidas" }
                                     div class="proposal-grid" {
                                         @for proposal in &proposals.followed {
-                                            (proposal_card(&user.key, proposal, ProposalCardState::Followed))
+                                            (proposal_card(
+                                                &user.key,
+                                                proposal,
+                                                ProposalCardState::Followed,
+                                                collection_catalogs,
+                                                eligible_catalog_ids,
+                                            ))
                                         }
                                     }
                                 }
@@ -96,7 +112,13 @@ pub fn index(
                                     h3 class="proposal-section-title" { "Disponibles" }
                                     div class="proposal-grid" {
                                         @for proposal in &proposals.available {
-                                            (proposal_card(&user.key, proposal, ProposalCardState::Available))
+                                            (proposal_card(
+                                                &user.key,
+                                                proposal,
+                                                ProposalCardState::Available,
+                                                collection_catalogs,
+                                                eligible_catalog_ids,
+                                            ))
                                         }
                                     }
                                 }
@@ -108,7 +130,13 @@ pub fn index(
                                         }
                                         div class="proposal-grid" {
                                             @for proposal in &proposals.ignored {
-                                                (proposal_card(&user.key, proposal, ProposalCardState::Ignored))
+                                                (proposal_card(
+                                                    &user.key,
+                                                    proposal,
+                                                    ProposalCardState::Ignored,
+                                                    collection_catalogs,
+                                                    eligible_catalog_ids,
+                                                ))
                                             }
                                         }
                                     }
@@ -133,12 +161,32 @@ fn proposal_card(
     user_key: &str,
     proposal: &CollectionProposal,
     state: ProposalCardState,
+    collection_catalogs: &[CollectionCatalog],
+    eligible_catalog_ids: &[CollectionCatalogId],
 ) -> Markup {
     let key = proposal.key();
+    let followed_catalog = matches!(state, ProposalCardState::Followed)
+        .then(|| {
+            collection_catalogs
+                .iter()
+                .find(|catalog| catalog.key() == key && eligible_catalog_ids.contains(&catalog.id))
+        })
+        .flatten();
     html! {
         article class="proposal-card" {
             p class="plate-number" { "Evidencia de colección" }
-            h3 { (collection_proposal_family_label(&proposal.family)) }
+            h3 {
+                @if let Some(catalog) = followed_catalog {
+                    a href=(format!(
+                        "/u/{user_key}/followed-collections/{}",
+                        catalog.id
+                    )) {
+                        (collection_proposal_family_label(&proposal.family))
+                    }
+                } @else {
+                    (collection_proposal_family_label(&proposal.family))
+                }
+            }
             p class="proposal-variant" {
                 (proposal_weight_label(proposal.weight_millioz))
                 " · "
@@ -176,6 +224,80 @@ fn proposal_card(
             }
         }
     }
+}
+
+pub fn followed_collection(
+    user_key: &str,
+    catalog: &CollectionCatalog,
+    album: &CollectionCatalogAlbum,
+    type_meta: &TypeMetaIndex,
+) -> Markup {
+    layout(
+        &catalog.name,
+        html! {
+            nav class="breadcrumb" {
+                a href=(format!("/#proposals-{user_key}")) { "← Colecciones seguidas" }
+            }
+            header class="series-header" {
+                div {
+                    p class="eyebrow" { "Catálogo curado" }
+                    h1 { (&catalog.name) }
+                    p {
+                        "Referencia curada de emisiones catalogadas para esta variante; "
+                        "no afirma que sea una serie cerrada."
+                    }
+                    p class="catalog-source" {
+                        "Actualizado el " (&catalog.updated_at) " · "
+                        a href=(&catalog.source) rel="noreferrer" { "Fuente Numista" }
+                    }
+                }
+                dl class="field-card" {
+                    dt { "Progreso" }
+                    dd { (album.owned_members()) " / " (album.members.len()) " emisiones" }
+                    dt { "Peso" }
+                    dd { (proposal_weight_label(catalog.weight_millioz)) }
+                    dt { "Acabado" }
+                    dd { (proposal_finish_label(catalog.finish.as_ref())) }
+                }
+            }
+            section class="plate-grid" aria-label="Emisiones del catálogo curado" {
+                @for album_member in &album.members {
+                    @let (class, state) = match &album_member.status {
+                        CollectionCatalogMemberStatus::Owned { quantity, .. } if *quantity > 1 => {
+                            ("slot owned", format!("Tengo · ×{quantity}"))
+                        }
+                        CollectionCatalogMemberStatus::Owned { .. } => {
+                            ("slot owned", "Tengo".to_owned())
+                        }
+                        CollectionCatalogMemberStatus::Missing => {
+                            ("slot missing", "Me falta".to_owned())
+                        }
+                    };
+                    article class=(class) {
+                        div class="coin-image" {
+                            @if type_meta.contains_key(&album_member.member.numista_type_id) {
+                                (coin_sides(
+                                    album_member.member.numista_type_id,
+                                    &album_member.member.label,
+                                ))
+                            } @else {
+                                span class="silhouette" aria-hidden="true" {}
+                            }
+                        }
+                        div class="slot-copy" {
+                            p class="slot-state" { (state) }
+                            h2 { (&album_member.member.label) }
+                            p {
+                                (album_member.member.year)
+                                " · Numista "
+                                (album_member.member.numista_type_id)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    )
 }
 
 fn proposal_preference_form(
@@ -549,13 +671,14 @@ impl MetalLabel for Series {
 #[cfg(test)]
 mod tests {
     use domain::{
-        Album, AlbumSlot, ClassifiedCollectionProposals, CollectionProposal, Finish, ItemRef,
-        MatchSource, ReleaseStatus, SeriesAlbum, SeriesId, Slot, SlotId, SlotStatus, TypeMeta,
-        TypeMetaIndex, UnmatchedReason,
+        Album, AlbumSlot, ClassifiedCollectionProposals, CollectedItem, CollectionProposal, Finish,
+        ItemRef, MatchSource, ReleaseStatus, SeriesAlbum, SeriesId, Slot, SlotId, SlotStatus,
+        TypeMeta, TypeMetaIndex, UnmatchedReason, build_collection_catalog_album,
     };
 
-    use super::{index, progress, series, unmatched};
+    use super::{followed_collection, index, progress, series, unmatched};
     use crate::config::AppConfig;
+    use crate::seeds::load_collection_catalogs;
 
     fn slot(id: &str, status: SlotStatus) -> AlbumSlot {
         AlbumSlot {
@@ -583,7 +706,7 @@ mod tests {
         )
         .unwrap();
 
-        let html = index(&config, &[]).into_string();
+        let html = index(&config, &[], &[]).into_string();
 
         assert_eq!(html.matches("action=\"/u/jose/sync\"").count(), 1);
         assert_eq!(html.matches("action=\"/u/padre/sync\"").count(), 1);
@@ -622,13 +745,22 @@ mod tests {
             unmatched: Vec::new(),
         };
         let jose_proposals = ClassifiedCollectionProposals {
-            followed: vec![CollectionProposal {
-                family: "SML".to_owned(),
-                weight_millioz: 1_000,
-                finish: Some(Finish::ProofColoured),
-                distinct_types: 1,
-                quantity: 1,
-            }],
+            followed: vec![
+                CollectionProposal {
+                    family: "SML".to_owned(),
+                    weight_millioz: 1_000,
+                    finish: Some(Finish::ProofColoured),
+                    distinct_types: 1,
+                    quantity: 1,
+                },
+                CollectionProposal {
+                    family: "Nikola Tesla".to_owned(),
+                    weight_millioz: 1_000,
+                    finish: None,
+                    distinct_types: 1,
+                    quantity: 1,
+                },
+            ],
             available: vec![CollectionProposal {
                 family: "Lunar Series III".to_owned(),
                 weight_millioz: 250,
@@ -645,6 +777,13 @@ mod tests {
             }],
         };
         let padre_proposals = ClassifiedCollectionProposals {
+            followed: vec![CollectionProposal {
+                family: "Nikola Tesla".to_owned(),
+                weight_millioz: 1_000,
+                finish: None,
+                distinct_types: 1,
+                quantity: 1,
+            }],
             available: vec![CollectionProposal {
                 family: "Lunar ounce".to_owned(),
                 weight_millioz: 1_000,
@@ -654,11 +793,17 @@ mod tests {
             }],
             ..ClassifiedCollectionProposals::default()
         };
+        let collection_catalogs = load_collection_catalogs().unwrap();
 
         let html = index(
             &config,
             &[
-                ("jose".to_owned(), jose_album, jose_proposals),
+                (
+                    "jose".to_owned(),
+                    jose_album,
+                    jose_proposals,
+                    vec![collection_catalogs[0].id.clone()],
+                ),
                 (
                     "padre".to_owned(),
                     Album {
@@ -666,8 +811,10 @@ mod tests {
                         unmatched: Vec::new(),
                     },
                     padre_proposals,
+                    Vec::new(),
                 ),
             ],
+            &collection_catalogs,
         )
         .into_string();
 
@@ -692,6 +839,88 @@ mod tests {
         assert!(html.contains("1 oz · Por confirmar"));
         assert!(html.contains("2 tipos distintos · 3 piezas"));
         assert!(!html.contains("href=\"/u/jose/series/Lunar Series III\""));
+        assert!(html.contains("href=\"/u/jose/followed-collections/nikola-tesla-serbia-1oz\""));
+        assert!(!html.contains("href=\"/u/padre/followed-collections/nikola-tesla-serbia-1oz\""));
+
+        let available_html = index(
+            &config,
+            &[(
+                "padre".to_owned(),
+                Album {
+                    series: Vec::new(),
+                    unmatched: Vec::new(),
+                },
+                ClassifiedCollectionProposals {
+                    available: vec![CollectionProposal {
+                        family: "Nikola Tesla".to_owned(),
+                        weight_millioz: 1_000,
+                        finish: None,
+                        distinct_types: 1,
+                        quantity: 1,
+                    }],
+                    ..ClassifiedCollectionProposals::default()
+                },
+                vec![collection_catalogs[0].id.clone()],
+            )],
+            &collection_catalogs,
+        )
+        .into_string();
+        assert!(
+            !available_html
+                .contains("href=\"/u/padre/followed-collections/nikola-tesla-serbia-1oz\"")
+        );
+    }
+
+    #[test]
+    fn followed_collection_renders_curated_tesla_progress_and_only_cached_images() {
+        let catalog = load_collection_catalogs().unwrap().remove(0);
+        let album = build_collection_catalog_album(
+            &catalog,
+            &[CollectedItem {
+                id: 1,
+                quantity: 1,
+                type_id: 195_591,
+                title: None,
+                issuer_code: None,
+                issue_year: None,
+                gregorian_year: None,
+                grade: None,
+                price: None,
+                for_swap: None,
+                collection_name: None,
+            }],
+        );
+        let type_meta = TypeMetaIndex::from([(
+            195_591,
+            TypeMeta {
+                id: 195_591,
+                title: Some("1 Dinar - X-Rays".to_owned()),
+                display_title: Some("1 Dinar - X-Rays".to_owned()),
+                family: Some("Nikola Tesla".to_owned()),
+                issuer_code: Some("serbie".to_owned()),
+                min_year: Some(2020),
+                max_year: Some(2020),
+                weight_oz: Some(1.0),
+                finish: None,
+            },
+        )]);
+
+        let html = followed_collection("jose", &catalog, &album, &type_meta).into_string();
+
+        assert!(html.contains("1 / 12 emisiones"));
+        assert!(html.contains("<dt>Peso</dt><dd>1 oz</dd>"));
+        assert!(html.contains("<dt>Acabado</dt><dd>Por confirmar</dd>"));
+        assert_eq!(html.matches("class=\"slot ").count(), 12);
+        assert_eq!(html.matches(">Tengo<").count(), 1);
+        assert_eq!(html.matches(">Me falta<").count(), 11);
+        assert_eq!(html.matches("class=\"silhouette\"").count(), 11);
+        assert!(html.contains("/img/type/195591/obverse"));
+        assert!(html.contains("/img/type/195591/reverse"));
+        assert!(html.contains("Catálogo curado"));
+        assert!(html.contains("Actualizado el 2026-07-29"));
+        assert!(html.contains("https://en.numista.com/catalogue/series.php?id=5303"));
+        assert!(!html.contains("name=\"item_id\""));
+        assert!(!html.contains("Guardar asignación"));
     }
 
     #[test]
