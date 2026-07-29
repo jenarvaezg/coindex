@@ -516,22 +516,9 @@ pub fn normalize_weight_millioz(weight_oz: f32) -> Option<u32> {
 }
 
 pub fn build_collection_proposals(
-    curated_series: &[Series],
     items: &[CollectedItem],
     type_meta: &TypeMetaIndex,
 ) -> Vec<CollectionProposal> {
-    let curated_variants: BTreeSet<(String, u32, u8)> = curated_series
-        .iter()
-        .flat_map(|series| {
-            series.slots.iter().filter_map(|slot| {
-                Some((
-                    normalize_family(&series.name)?,
-                    normalize_weight_millioz(slot.weight_oz)?,
-                    finish_key(Some(&slot.finish)),
-                ))
-            })
-        })
-        .collect();
     let mut grouped: BTreeMap<(String, u32, u8), ProposalAccumulator> = BTreeMap::new();
 
     for item in items.iter().filter(|item| item.quantity > 0) {
@@ -552,9 +539,6 @@ pub fn build_collection_proposals(
             weight_millioz,
             finish_key(metadata.finish.as_ref()),
         );
-        if curated_variants.contains(&key) {
-            continue;
-        }
         let accumulator = grouped.entry(key).or_insert_with(|| ProposalAccumulator {
             proposal: CollectionProposal {
                 family,

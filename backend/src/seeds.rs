@@ -17,7 +17,7 @@ const SEEDS: [(&str, &str); 2] = [
     ),
 ];
 
-const COLLECTION_CATALOG_SEEDS: [(&str, &str); 16] = [
+const COLLECTION_CATALOG_SEEDS: [(&str, &str); 17] = [
     (
         "nikola-tesla-serbia-1oz.json",
         include_str!("../../data/collection-catalogs/nikola-tesla-serbia-1oz.json"),
@@ -86,6 +86,10 @@ const COLLECTION_CATALOG_SEEDS: [(&str, &str); 16] = [
         "tudor-beasts-uk-1oz-proof.json",
         include_str!("../../data/collection-catalogs/tudor-beasts-uk-1oz-proof.json"),
     ),
+    (
+        "tudor-beasts-uk-2oz-bullion.json",
+        include_str!("../../data/collection-catalogs/tudor-beasts-uk-2oz-bullion.json"),
+    ),
 ];
 
 #[derive(Debug, Error)]
@@ -153,7 +157,7 @@ mod tests {
     fn embedded_collection_catalog_is_versioned_sourced_and_complete() {
         let catalogs = load_collection_catalogs().unwrap();
 
-        assert_eq!(catalogs.len(), 16);
+        assert_eq!(catalogs.len(), 17);
         let catalog = catalogs
             .iter()
             .find(|catalog| catalog.id.as_str() == "nikola-tesla-serbia-1oz")

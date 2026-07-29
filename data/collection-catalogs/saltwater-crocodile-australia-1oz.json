@@ -14,6 +14,12 @@
       "label": "Australian Saltwater Crocodile",
       "year": 2014,
       "numista_type_id": 60709
+    },
+    {
+      "id": "2015-australian-saltwater-crocodile",
+      "label": "Saltwater Crocodile (proof)",
+      "year": 2015,
+      "numista_type_id": 197437
     }
   ]
 }

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "tudor-beasts-uk-2oz-bullion",
+  "name": "The Royal Tudor Beasts · Reino Unido · 2 oz bullion",
+  "issuer_code": "royaume-uni",
+  "family": "The Royal Tudor Beasts",
+  "weight_millioz": 2000,
+  "finish": "Bullion",
+  "source": "https://en.numista.com/catalogue/series.php?id=6888",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "2022-lion-of-england",
+      "label": "Lion of England",
+      "year": 2022,
+      "numista_type_id": 321688
+    },
+    {
+      "id": "2023-yale-of-beaufort",
+      "label": "Yale of Beaufort",
+      "year": 2023,
+      "numista_type_id": 338768
+    },
+    {
+      "id": "2023-bull-of-clarence",
+      "label": "Bull of Clarence",
+      "year": 2023,
+      "numista_type_id": 368865
+    },
+    {
+      "id": "2024-seymour-unicorn",
+      "label": "Seymour Unicorn",
+      "year": 2024,
+      "numista_type_id": 384446
+    },
+    {
+      "id": "2024-tudor-dragon",
+      "label": "Tudor Dragon",
+      "year": 2024,
+      "numista_type_id": 430053
+    },
+    {
+      "id": "2025-queens-panther",
+      "label": "Queen's Panther",
+      "year": 2025,
+      "numista_type_id": 440873
+    },
+    {
+      "id": "2025-greyhound-of-richmond",
+      "label": "Greyhound of Richmond",
+      "year": 2025,
+      "numista_type_id": 468043
+    },
+    {
+      "id": "2026-queens-lion",
+      "label": "Queen's Lion",
+      "year": 2026,
+      "numista_type_id": 519836
+    },
+    {
+      "id": "2026-royal-dragon",
+      "label": "Royal Dragon",
+      "year": 2026,
+      "numista_type_id": 583080
+    }
+  ]
+}

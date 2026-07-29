@@ -207,12 +207,7 @@ async fn index_handler(State(state): State<AppState>) -> Result<Html<String>, Ap
             .filter(|catalog| catalog.is_evidenced_by(&loaded.items))
             .map(|catalog| catalog.id.clone())
             .collect();
-        albums.push((
-            user.key.clone(),
-            loaded.album,
-            proposals,
-            eligible_catalog_ids,
-        ));
+        albums.push((user.key.clone(), proposals, eligible_catalog_ids));
     }
     Ok(Html(
         views::index(&state.config, &albums, &state.collection_catalogs).into_string(),
@@ -483,7 +478,7 @@ async fn album_for(state: &AppState, user: &str) -> Result<LoadedAlbum, AppError
     let type_meta = state.repository.load_type_meta().await?;
     let overrides = state.repository.load_overrides(user).await?;
     let album = build_album(&state.series, &items, &type_meta, &overrides);
-    let proposals = build_collection_proposals(&state.series, &items, &type_meta);
+    let proposals = build_collection_proposals(&items, &type_meta);
     Ok(LoadedAlbum {
         album,
         type_meta,

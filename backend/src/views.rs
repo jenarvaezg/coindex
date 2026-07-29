@@ -34,7 +34,6 @@ pub fn index(
     config: &AppConfig,
     collections: &[(
         String,
-        Album,
         ClassifiedCollectionProposals,
         Vec<CollectionCatalogId>,
     )],
@@ -49,7 +48,7 @@ pub fn index(
                 p { "Dos colecciones, ordenadas por serie y emisión." }
             }
             @for user in config.users() {
-                @let collection = collections.iter().find(|(key, _, _, _)| key == &user.key);
+                @let collection = collections.iter().find(|(key, _, _)| key == &user.key);
                 section class="user-section" {
                     div class="section-heading" {
                         h2 { (user.key) }
@@ -60,28 +59,7 @@ pub fn index(
                             a href=(format!("/u/{}/unmatched", user.key)) { "Sin clasificar" }
                         }
                     }
-                    div class="series-grid" {
-                        @if let Some((_, album, _, _)) = collection {
-                            @for series in album.series.iter().filter(|series| {
-                                series.slots.iter().any(|slot| {
-                                    matches!(slot.status, SlotStatus::Owned { .. })
-                                })
-                            }) {
-                                @let (owned, issued, future) = progress(series);
-                                article class="series-card" {
-                                    p class="plate-number" { "Lámina · " (series.series_id) }
-                                    h3 {
-                                        a href=(format!("/u/{}/series/{}", user.key, series.series_id)) {
-                                            (series.name)
-                                        }
-                                    }
-                                    p class="progress" { (owned) " / " (issued) " emitidas" }
-                                    p class="future" { (future) " por emitir" }
-                                }
-                            }
-                        }
-                    }
-                    @if let Some((_, _, proposals, eligible_catalog_ids)) = collection {
+                    @if let Some((_, proposals, eligible_catalog_ids)) = collection {
                         @if !proposals.followed.is_empty()
                             || !proposals.available.is_empty()
                             || !proposals.ignored.is_empty()
@@ -165,12 +143,11 @@ fn proposal_card(
     eligible_catalog_ids: &[CollectionCatalogId],
 ) -> Markup {
     let key = proposal.key();
+    let matching_catalog = collection_catalogs
+        .iter()
+        .find(|catalog| catalog.key() == key);
     let followed_catalog = matches!(state, ProposalCardState::Followed)
-        .then(|| {
-            collection_catalogs
-                .iter()
-                .find(|catalog| catalog.key() == key && eligible_catalog_ids.contains(&catalog.id))
-        })
+        .then(|| matching_catalog.filter(|catalog| eligible_catalog_ids.contains(&catalog.id)))
         .flatten();
     html! {
         article class="proposal-card" {
@@ -181,6 +158,10 @@ fn proposal_card(
                         "/u/{user_key}/followed-collections/{}",
                         catalog.id
                     )) {
+                        (collection_proposal_family_label(&proposal.family))
+                    }
+                } @else if let Some(catalog) = matching_catalog {
+                    a href=(&catalog.source) rel="noreferrer" {
                         (collection_proposal_family_label(&proposal.family))
                     }
                 } @else {
@@ -716,34 +697,13 @@ mod tests {
     }
 
     #[test]
-    fn index_shows_only_owned_curated_series_and_read_only_current_proposals_per_user() {
+    fn index_shows_read_only_current_proposals_per_user_without_curated_plates() {
         let config = AppConfig::parse(
             "jose:1:first-key,padre:2:second-key",
             None,
             "http://127.0.0.1:8000",
         )
         .unwrap();
-        let jose_album = Album {
-            series: vec![
-                SeriesAlbum {
-                    series_id: SeriesId::new("owned-series"),
-                    name: "Serie poseída".to_owned(),
-                    slots: vec![slot(
-                        "owned",
-                        SlotStatus::Owned {
-                            quantity: 1,
-                            items: Vec::new(),
-                        },
-                    )],
-                },
-                SeriesAlbum {
-                    series_id: SeriesId::new("missing-only"),
-                    name: "Serie sin piezas".to_owned(),
-                    slots: vec![slot("missing", SlotStatus::Missing)],
-                },
-            ],
-            unmatched: Vec::new(),
-        };
         let jose_proposals = ClassifiedCollectionProposals {
             followed: vec![
                 CollectionProposal {
@@ -800,27 +760,17 @@ mod tests {
             &[
                 (
                     "jose".to_owned(),
-                    jose_album,
                     jose_proposals,
                     vec![collection_catalogs[0].id.clone()],
                 ),
-                (
-                    "padre".to_owned(),
-                    Album {
-                        series: Vec::new(),
-                        unmatched: Vec::new(),
-                    },
-                    padre_proposals,
-                    Vec::new(),
-                ),
+                ("padre".to_owned(), padre_proposals, Vec::new()),
             ],
             &collection_catalogs,
         )
         .into_string();
 
-        assert!(html.contains("Serie poseída"));
-        assert!(!html.contains("Serie sin piezas"));
-        assert!(html.contains("href=\"/u/jose/series/owned-series\""));
+        assert!(!html.contains("Lámina ·"));
+        assert!(!html.contains("series-card"));
         assert!(html.contains("id=\"proposals-jose\""));
         assert!(html.contains("Silver Maple Leaf"));
         assert!(html.contains("1 oz · Proof coloreado"));
@@ -836,9 +786,7 @@ mod tests {
         assert!(html.contains("Rwanda Nautical Ounce"));
         assert!(html.contains(">Restaurar</button>"));
         assert!(html.contains("Rwanda Lunar Ounce"));
-        assert!(html.contains("1 oz · Por confirmar"));
         assert!(html.contains("2 tipos distintos · 3 piezas"));
-        assert!(!html.contains("href=\"/u/jose/series/Lunar Series III\""));
         assert!(html.contains("href=\"/u/jose/followed-collections/nikola-tesla-serbia-1oz\""));
         assert!(!html.contains("href=\"/u/padre/followed-collections/nikola-tesla-serbia-1oz\""));
 
@@ -846,10 +794,6 @@ mod tests {
             &config,
             &[(
                 "padre".to_owned(),
-                Album {
-                    series: Vec::new(),
-                    unmatched: Vec::new(),
-                },
                 ClassifiedCollectionProposals {
                     available: vec![CollectionProposal {
                         family: "Nikola Tesla".to_owned(),
@@ -869,6 +813,9 @@ mod tests {
             !available_html
                 .contains("href=\"/u/padre/followed-collections/nikola-tesla-serbia-1oz\"")
         );
+        assert!(available_html.contains(
+            "href=\"https://en.numista.com/catalogue/series.php?id=5303\" rel=\"noreferrer\""
+        ));
     }
 
     #[test]

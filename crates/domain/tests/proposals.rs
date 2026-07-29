@@ -1,8 +1,7 @@
 use domain::{
     CollectedItem, CollectionProposal, CollectionProposalKey, CollectionProposalPreference, Finish,
-    Metal, ProposalDisposition, ReleaseStatus, Series, SeriesId, Slot, SlotId, TypeMeta,
-    TypeMetaIndex, build_collection_proposals, classify_collection_proposals,
-    collection_proposal_family_label, normalize_weight_millioz,
+    ProposalDisposition, TypeMeta, TypeMetaIndex, build_collection_proposals,
+    classify_collection_proposals, collection_proposal_family_label, normalize_weight_millioz,
 };
 
 fn ounces(grams: f32) -> f32 {
@@ -57,7 +56,7 @@ fn proposals_group_exact_normalized_family_weight_and_finish_variants() {
         (12, metadata(12, "Lunar ounce", 31.1, Some(Finish::Bullion))),
     ]);
 
-    let proposals = build_collection_proposals(&[], &items, &metadata);
+    let proposals = build_collection_proposals(&items, &metadata);
 
     assert_eq!(proposals.len(), 2);
     let unconfirmed = proposals
@@ -86,8 +85,8 @@ fn proposals_are_isolated_to_the_supplied_users_current_items_without_fuzzy_fami
         (20, metadata(20, "Lunar ounce", 31.1, Some(Finish::Bullion))),
     ]);
 
-    let first_user = build_collection_proposals(&[], &[item(1, 10, 1)], &metadata);
-    let second_user = build_collection_proposals(&[], &[item(2, 20, 2)], &metadata);
+    let first_user = build_collection_proposals(&[item(1, 10, 1)], &metadata);
+    let second_user = build_collection_proposals(&[item(2, 20, 2)], &metadata);
 
     assert_eq!(first_user.len(), 1);
     assert_eq!(first_user[0].family, "Lunar Series III");
@@ -103,28 +102,7 @@ fn proposals_are_isolated_to_the_supplied_users_current_items_without_fuzzy_fami
 }
 
 #[test]
-fn only_exact_curated_variants_are_filtered_and_unknown_finish_stays_separate() {
-    let curated = Series {
-        id: SeriesId::new("lunar-iii"),
-        name: "Lunar Series III".to_owned(),
-        mint: "Perth Mint".to_owned(),
-        issuer_code: "australia".to_owned(),
-        metal: Metal::Silver,
-        notes: None,
-        incomplete: false,
-        sources: std::collections::BTreeMap::new(),
-        slots: vec![Slot {
-            id: SlotId::new("lunar-iii-bullion"),
-            label: "Bullion".to_owned(),
-            year: 2026,
-            motif: "Caballo".to_owned(),
-            weight_oz: 1.0,
-            finish: Finish::Bullion,
-            release_status: ReleaseStatus::Issued,
-            numista_type_ids: Vec::new(),
-            matchers: Vec::new(),
-        }],
-    };
+fn curated_variants_also_surface_as_proposals_and_unknown_finish_stays_separate() {
     let metadata = TypeMetaIndex::from([
         (
             10,
@@ -137,13 +115,10 @@ fn only_exact_curated_variants_are_filtered_and_unknown_finish_stays_separate() 
         (12, metadata(12, "Lunar Series III", 31.1, None)),
     ]);
 
-    let proposals = build_collection_proposals(
-        &[curated],
-        &[item(1, 10, 1), item(2, 11, 1), item(3, 12, 1)],
-        &metadata,
-    );
+    let proposals =
+        build_collection_proposals(&[item(1, 10, 1), item(2, 11, 1), item(3, 12, 1)], &metadata);
 
-    assert_eq!(proposals.len(), 2);
+    assert_eq!(proposals.len(), 3);
     assert!(proposals.iter().any(|proposal| {
         proposal.weight_millioz == 250 && proposal.finish == Some(Finish::Coloured)
     }));
@@ -152,7 +127,7 @@ fn only_exact_curated_variants_are_filtered_and_unknown_finish_stays_separate() 
             .iter()
             .any(|proposal| { proposal.weight_millioz == 1_000 && proposal.finish.is_none() })
     );
-    assert!(!proposals.iter().any(|proposal| {
+    assert!(proposals.iter().any(|proposal| {
         proposal.weight_millioz == 1_000 && proposal.finish == Some(Finish::Bullion)
     }));
 }
@@ -186,7 +161,6 @@ fn editorial_aliases_preserve_raw_keys_and_technical_system_years_are_ineligible
         (21, metadata(21, "System 19-2001", 31.1, None)),
     ]);
     let proposals = build_collection_proposals(
-        &[],
         &[
             item(1, 10, 1),
             item(2, 11, 1),

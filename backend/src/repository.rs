@@ -627,7 +627,6 @@ mod tests {
         assert_eq!(adapted.finish, Some(Finish::ProofColoured));
         assert!((adapted.weight_oz.unwrap() - 1.0).abs() < 0.001);
         let proposals = build_collection_proposals(
-            &[],
             &[domain::CollectedItem {
                 id: 1,
                 quantity: 1,
