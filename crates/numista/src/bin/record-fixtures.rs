@@ -7,8 +7,10 @@ use serde_json::Value;
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
-use std::fs::{self, OpenOptions};
+use std::fs::{self, File, OpenOptions};
 use std::io::Write;
+#[cfg(unix)]
+use std::os::unix::fs::{DirBuilderExt, OpenOptionsExt, PermissionsExt};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::sync::Arc;
@@ -154,6 +156,13 @@ async fn run() -> Result<(), String> {
         return Err("nothing selected; provide --user-id and/or --type-id".to_owned());
     }
 
+    let repository_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    arguments.output_dir = validate_private_collection_output(
+        arguments.user_id,
+        &arguments.output_dir,
+        &repository_root,
+    )?;
+
     let monthly_budget =
         parse_environment_or_default("NUMISTA_MONTHLY_BUDGET", DEFAULT_MONTHLY_BUDGET)?;
     let database_url = budget_database_url()?;
@@ -285,6 +294,64 @@ fn deduplicate_type_ids(type_ids: &mut Vec<u32>) {
     type_ids.dedup();
 }
 
+fn validate_private_collection_output(
+    user_id: Option<u64>,
+    output_dir: &Path,
+    repository_cwd: &Path,
+) -> Result<PathBuf, String> {
+    if user_id.is_none() {
+        return Ok(output_dir.to_owned());
+    }
+
+    let repository = fs::canonicalize(repository_cwd)
+        .map_err(|error| format!("could not resolve repository cwd: {error}"))?;
+    create_owner_only_directory(output_dir, true)
+        .map_err(|error| format!("could not create private output directory: {error}"))?;
+    let output = fs::canonicalize(output_dir)
+        .map_err(|error| format!("could not resolve private output directory: {error}"))?;
+    if output == repository || output.starts_with(&repository) {
+        return Err(
+            "private collection output must be outside the repository; pass an explicit \
+             --output-dir"
+                .to_owned(),
+        );
+    }
+    secure_owner_only_tree(&output)?;
+    Ok(output)
+}
+
+fn create_owner_only_directory(path: &Path, recursive: bool) -> std::io::Result<()> {
+    let mut builder = fs::DirBuilder::new();
+    builder.recursive(recursive);
+    #[cfg(unix)]
+    builder.mode(0o700);
+    builder.create(path)
+}
+
+fn secure_owner_only_tree(path: &Path) -> Result<(), String> {
+    let metadata = fs::symlink_metadata(path)
+        .map_err(|error| format!("could not inspect private fixture path: {error}"))?;
+    if metadata.is_dir() {
+        #[cfg(unix)]
+        fs::set_permissions(path, fs::Permissions::from_mode(0o700))
+            .map_err(|error| format!("could not secure private fixture directory: {error}"))?;
+        for entry in fs::read_dir(path)
+            .map_err(|error| format!("could not read private fixture directory: {error}"))?
+        {
+            let entry =
+                entry.map_err(|error| format!("could not read private fixture entry: {error}"))?;
+            secure_owner_only_tree(&entry.path())?;
+        }
+    } else if metadata.is_file() {
+        #[cfg(unix)]
+        fs::set_permissions(path, fs::Permissions::from_mode(0o600))
+            .map_err(|error| format!("could not secure private fixture file: {error}"))?;
+    } else {
+        return Err("private fixture output contains an unsupported entry".to_owned());
+    }
+    Ok(())
+}
+
 fn print_estimate(estimate: SyncCallEstimate) {
     eprintln!(
         "Planned-attempt ceiling: {} calls (oauth={}, collection={}, type_metadata={})",
@@ -409,9 +476,11 @@ fn stage_raw_json(path: &Path, raw: &Value) -> Result<(), String> {
     let mut bytes = serde_json::to_vec_pretty(raw)
         .map_err(|error| format!("could not encode raw JSON for {}: {error}", path.display()))?;
     bytes.push(b'\n');
-    let mut file = OpenOptions::new()
-        .create_new(true)
-        .write(true)
+    let mut options = OpenOptions::new();
+    options.create_new(true).write(true);
+    #[cfg(unix)]
+    options.mode(0o600);
+    let mut file = options
         .open(path)
         .map_err(|error| format!("could not stage {}: {error}", path.display()))?;
     file.write_all(&bytes)
@@ -475,7 +544,7 @@ fn recover_fixture_swap(
 }
 
 fn copy_directory(source: &Path, destination: &Path) -> Result<(), String> {
-    fs::create_dir(destination).map_err(|error| {
+    create_owner_only_directory(destination, false).map_err(|error| {
         format!(
             "could not create fixture stage {}: {error}",
             destination.display()
@@ -495,13 +564,19 @@ fn copy_directory(source: &Path, destination: &Path) -> Result<(), String> {
         if file_type.is_dir() {
             copy_directory(&entry.path(), &target)?;
         } else if file_type.is_file() {
-            fs::copy(entry.path(), &target).map_err(|error| {
+            let mut source_file = File::open(entry.path()).map_err(|error| {
+                format!("could not read fixture {}: {error}", entry.path().display())
+            })?;
+            let mut options = OpenOptions::new();
+            options.create_new(true).write(true);
+            #[cfg(unix)]
+            options.mode(0o600);
+            let mut target_file = options.open(&target).map_err(|error| {
                 format!("could not stage fixture {}: {error}", target.display())
             })?;
-            OpenOptions::new()
-                .read(true)
-                .open(&target)
-                .and_then(|file| file.sync_all())
+            std::io::copy(&mut source_file, &mut target_file)
+                .and_then(|_| target_file.flush())
+                .and_then(|()| target_file.sync_all())
                 .map_err(|error| {
                     format!(
                         "could not sync staged fixture {}: {error}",
@@ -528,15 +603,87 @@ fn sync_directory(path: &Path) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{deduplicate_type_ids, recover_fixture_swap, stage_and_replace};
+    use super::{
+        deduplicate_type_ids, recover_fixture_swap, stage_and_replace,
+        validate_private_collection_output,
+    };
     use serde_json::json;
     use std::fs;
+    #[cfg(unix)]
+    use std::os::unix::fs::PermissionsExt;
 
     #[test]
     fn live_type_ids_are_deduplicated_before_fetching() {
         let mut type_ids = vec![11331, 420, 11331, 420, 99];
         deduplicate_type_ids(&mut type_ids);
         assert_eq!(type_ids, vec![99, 420, 11331]);
+    }
+
+    #[test]
+    fn private_collection_capture_is_rejected_anywhere_inside_repository() {
+        let repository = tempfile::tempdir().unwrap();
+        let output = repository.path().join("fixtures/numista");
+        fs::create_dir_all(&output).unwrap();
+
+        let error =
+            validate_private_collection_output(Some(7), &output, repository.path()).unwrap_err();
+
+        assert!(error.contains("outside the repository"));
+        assert!(!error.contains('7'));
+    }
+
+    #[test]
+    fn private_collection_capture_cannot_escape_a_nested_working_directory_check() {
+        let repository = tempfile::tempdir().unwrap();
+        let nested_working_directory = repository.path().join("backend");
+        fs::create_dir_all(&nested_working_directory).unwrap();
+        let output = nested_working_directory.join("../fixtures/numista");
+
+        let error =
+            validate_private_collection_output(Some(7), &output, repository.path()).unwrap_err();
+
+        assert!(error.contains("outside the repository"));
+    }
+
+    #[test]
+    fn private_collection_capture_is_allowed_in_a_new_directory_outside_repository() {
+        let repository = tempfile::tempdir().unwrap();
+        let output_parent = tempfile::tempdir().unwrap();
+        let output = output_parent.path().join("private-numista");
+
+        let resolved =
+            validate_private_collection_output(Some(7), &output, repository.path()).unwrap();
+
+        assert_eq!(resolved, fs::canonicalize(output).unwrap());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn private_capture_directory_and_json_are_owner_only() {
+        let repository = tempfile::tempdir().unwrap();
+        let output_parent = tempfile::tempdir().unwrap();
+        let output = output_parent.path().join("private-numista");
+        let output =
+            validate_private_collection_output(Some(7), &output, repository.path()).unwrap();
+
+        stage_and_replace(vec![(
+            output.join("collected_items.json"),
+            json!({"items": []}),
+        )])
+        .unwrap();
+
+        assert_eq!(
+            fs::metadata(&output).unwrap().permissions().mode() & 0o777,
+            0o700
+        );
+        assert_eq!(
+            fs::metadata(output.join("collected_items.json"))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o777,
+            0o600
+        );
     }
 
     #[test]

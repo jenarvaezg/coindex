@@ -1,0 +1,107 @@
+{
+  "category": "coin",
+  "commemorated_topic": "Año del Dragón",
+  "composition": {
+    "text": "Plata 999,9"
+  },
+  "demonetization": {
+    "is_demonetized": false
+  },
+  "edge": {
+    "description": "Reed"
+  },
+  "id": 482185,
+  "issuer": {
+    "code": "australie",
+    "name": "Australia"
+  },
+  "max_year": 2024,
+  "min_year": 2024,
+  "mints": [
+    {
+      "id": 21,
+      "name": "Casa de la Moneda de Perth"
+    }
+  ],
+  "object_type": {
+    "id": 3,
+    "name": "Monedas no circulantes"
+  },
+  "obverse": {
+    "description": "Sexto retrato coronado de la reina Isabel II mirando hacia la derecha, con la diadema de Estado de Jorge IV y el collar de la Coronación Victoriana, Anverso conmemorativo.",
+    "designers": [
+      "Jody Clark"
+    ],
+    "lettering": "ELIZABETH II AUSTRALIA 1952-2022\r\n2oz 9999 Ag 2024 2 DOLLARS\r\nJC",
+    "lettering_scripts": [
+      {
+        "name": "Latina"
+      }
+    ],
+    "picture": "https://en.numista.com/catalogue/photos/australie/68a9f01d17cc15.28489896-original.jpg",
+    "picture_copyright": "Perth Mint",
+    "picture_copyright_url": "http://www.perthmint.com.au",
+    "thumbnail": "https://en.numista.com/catalogue/photos/australie/68a9f01d17cc15.28489896-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+    {
+      "catalogue": {
+        "code": "KM",
+        "id": 3
+      },
+      "number": "4792"
+    }
+  ],
+  "reverse": {
+    "description": "El reverso representa un dragón mítico chino con olas estilizadas y niebla sobre una ciudad.",
+    "designers": [
+      "Ing Ing Jong"
+    ],
+    "lettering": "P125\r\nIJ",
+    "lettering_scripts": [
+      {
+        "name": "Latina"
+      }
+    ],
+    "picture": "https://en.numista.com/catalogue/photos/australie/68a9f01e7b7812.02997678-original.jpg",
+    "picture_copyright": "Perth Mint",
+    "picture_copyright_url": "http://www.perthmint.com.au",
+    "thumbnail": "https://en.numista.com/catalogue/photos/australie/68a9f01e7b7812.02997678-180.jpg"
+  },
+  "ruler": [
+    {
+      "group": {
+        "id": 825,
+        "name": "Casa de Windsor"
+      },
+      "id": 6815,
+      "name": "Carlos III",
+      "wikidata_id": "Q43274"
+    }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.69,
+  "tags": [
+    "Animal fantástico",
+    "Calendario chino"
+  ],
+  "technique": {
+    "text": "Acuñación a máquina"
+  },
+  "thickness": 5.86,
+  "title": "2 Dollars - Elizabeth II (6th Portrait; in the name of - Year of the Dragon - Silver Antiqued)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/482185",
+  "value": {
+    "currency": {
+      "full_name": "Dólar (1966-presente)",
+      "id": 243,
+      "name": "Dólar"
+    },
+    "numeric_value": 2,
+    "text": "2 Dollars"
+  },
+  "weight": 62.213
+}

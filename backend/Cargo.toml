@@ -29,9 +29,11 @@ shuttle-runtime = "0.57"
 shuttle-shared-db = { version = "0.57", features = ["postgres", "sqlx"] }
 sqlx = { version = "0.8", default-features = false, features = ["chrono", "json", "macros", "migrate", "postgres", "runtime-tokio-rustls"] }
 thiserror.workspace = true
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
+toml = "1.1"
 tower = "0.5"
 tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [dev-dependencies]
 http-body-util = "0.1"

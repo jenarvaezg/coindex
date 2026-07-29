@@ -1,16 +1,31 @@
 # Numista fixtures
 
-These network-free test fixtures are hand-curated from response examples in Numista's
-official API v3.32 documentation. They are **not empirical captures from the project's
-account** and contain no private collection data or usable access token. Empirical
-replacement requires the account credentials and must not be attempted during automated
-tests or exploratory development.
+The five `type_*_es.json` files for N#386213, N#394043, N#404044, N#404285, and
+N#482185 are public empirical type captures: exact successful API responses requested
+with `lang=es`. They contain public catalog metadata, not private collection data.
 
-Live replacements must only be created deliberately with:
+The other committed fixtures (`oauth_token.json`, `collected_items.json`, and
+`type_420_es.json`) are hand-curated from response examples in Numista's official API
+v3.32 documentation. In particular, `collected_items.json` is not an empirical capture
+of the project's collection. It contains no real private collection data, and
+`oauth_token.json` contains no usable access token. Any deliberately recorded private
+collection capture must remain outside this committed public fixture set.
+
+Public type captures can update this committed fixture set deliberately:
 
 ```console
-cargo run -p numista --bin record-fixtures -- --confirm-live-api --user-id USER_ID --type-id TYPE_ID
+cargo run -p numista --bin record-fixtures -- --confirm-live-api --type-id TYPE_ID
 ```
+
+Private collection captures require an explicit output directory outside the repository:
+
+```console
+cargo run -p numista --bin record-fixtures -- --confirm-live-api \
+  --user-id USER_ID --output-dir /private/tmp/coindex-numista-private
+```
+
+The recorder enforces this boundary before connecting to Postgres or Numista; a confirmed
+collection capture targeting any directory inside the repository is rejected.
 
 The recorder reads `NUMISTA_API_KEY` and never writes that value or the OAuth token to
 disk. A confirmed live run also requires `NUMISTA_BUDGET_DATABASE_URL` (or

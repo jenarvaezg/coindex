@@ -1,0 +1,108 @@
+{
+  "category": "coin",
+  "commemorated_topic": "Año del Dragón",
+  "composition": {
+    "text": "Plata 999,9 (Pad Printed)"
+  },
+  "demonetization": {
+    "is_demonetized": false
+  },
+  "edge": {
+    "description": "Reed"
+  },
+  "id": 394043,
+  "issuer": {
+    "code": "australie",
+    "name": "Australia"
+  },
+  "max_year": 2024,
+  "min_year": 2024,
+  "mints": [
+    {
+      "id": 21,
+      "name": "Casa de la Moneda de Perth"
+    }
+  ],
+  "object_type": {
+    "id": 3,
+    "name": "Monedas no circulantes"
+  },
+  "obverse": {
+    "description": "Sexto retrato coronado de la reina Isabel II mirando hacia la derecha, con la diadema de Estado de Jorge IV y el collar de la Coronación Victoriana, Anverso conmemorativo.",
+    "designers": [
+      "Jody Clark"
+    ],
+    "lettering": "ELIZABETH II AUSTRALIA 1952-2022\r\n1oz 9999 Ag 1 DOLLAR\r\nJC",
+    "lettering_scripts": [
+      {
+        "name": "Latina"
+      }
+    ],
+    "picture": "https://en.numista.com/catalogue/photos/australie/659a3f6b0b9d92.29023586-original.jpg",
+    "picture_copyright": "princet123",
+    "thumbnail": "https://en.numista.com/catalogue/photos/australie/659a3f6b0b9d92.29023586-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+    {
+      "catalogue": {
+        "code": "KM",
+        "id": 3
+      },
+      "number": "4639.1"
+    }
+  ],
+  "reverse": {
+    "description": "El reverso de la moneda representa un dragón de colores con agua cayendo de su boca, olas estilizadas y una perla flameante, símbolo de sabiduría. El diseño incluye el carácter chino de \"dragón\".",
+    "designers": [
+      "Ing Ing Jong"
+    ],
+    "lettering": "龍\r\nDRAGON\r\n2024\r\nP125\r\nIJ",
+    "lettering_scripts": [
+      {
+        "name": "China"
+      },
+      {
+        "name": "Latina"
+      }
+    ],
+    "picture": "https://en.numista.com/catalogue/photos/australie/659a3f6cf03994.66840340-original.jpg",
+    "picture_copyright": "princet123",
+    "thumbnail": "https://en.numista.com/catalogue/photos/australie/659a3f6cf03994.66840340-180.jpg"
+  },
+  "ruler": [
+    {
+      "group": {
+        "id": 825,
+        "name": "Casa de Windsor"
+      },
+      "id": 6815,
+      "name": "Carlos III",
+      "wikidata_id": "Q43274"
+    }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+    "Animal fantástico",
+    "Calendario chino"
+  ],
+  "technique": {
+    "text": "Acuñación a máquina, Coloreado"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Coloured)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/394043",
+  "value": {
+    "currency": {
+      "full_name": "Dólar (1966-presente)",
+      "id": 243,
+      "name": "Dólar"
+    },
+    "numeric_value": 1,
+    "text": "1 Dollar"
+  },
+  "weight": 31.107
+}

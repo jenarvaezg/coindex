@@ -538,57 +538,52 @@ mod tests {
     }
 
     #[test]
-    fn production_metadata_only_matches_the_committed_bullion_slot_for_the_ordinary_variant() {
+    fn empirical_type_fixtures_only_match_the_bullion_slot_for_the_ordinary_variant() {
         let series = load_series().unwrap();
         let candidates = [
             (
+                include_str!("../../fixtures/numista/type_386213_es.json"),
                 386_213,
-                "1 Dólar - Isabel II (Año del Dragón; Plata)",
-                31.107,
+                "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver)",
                 Finish::Bullion,
                 true,
             ),
             (
-                404_044,
-                "1 Dollar - Elizabeth II (Year of the Dragon - Silver Proof High Relief)",
-                31.107,
-                Finish::Proof,
-                false,
-            ),
-            (
+                include_str!("../../fixtures/numista/type_394043_es.json"),
                 394_043,
-                "1 Dollar - Elizabeth II (Year of the Dragon - Coloured)",
-                31.107,
+                "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Coloured)",
                 Finish::Coloured,
                 false,
             ),
             (
+                include_str!("../../fixtures/numista/type_404044_es.json"),
+                404_044,
+                "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver Proof High Relief)",
+                Finish::Proof,
+                false,
+            ),
+            (
+                include_str!("../../fixtures/numista/type_404285_es.json"),
                 404_285,
-                "1 Dollar - Elizabeth II (Year of the Dragon - Silver Gilded)",
-                31.107,
+                "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver Gilded)",
                 Finish::Gilded,
                 false,
             ),
             (
+                include_str!("../../fixtures/numista/type_482185_es.json"),
                 482_185,
-                "2 Dollars - Elizabeth II (Year of the Dragon - Silver Antiqued)",
-                62.213,
+                "2 Dollars - Elizabeth II (6th Portrait; in the name of - Year of the Dragon - Silver Antiqued)",
                 Finish::Antiqued,
                 false,
             ),
         ];
 
-        for (type_id, title, weight, expected_finish, should_match) in candidates {
-            let raw_type = serde_json::json!({
-                "id": type_id,
-                "title": title,
-                "issuer": {"code": "australie", "name": "Australia"},
-                "min_year": 2024,
-                "max_year": 2024,
-                "weight": weight,
-                "series": "Lunar Series III"
-            });
-            let metadata: NumistaType = serde_json::from_value(raw_type).unwrap();
+        for (fixture, type_id, expected_title, expected_finish, should_match) in candidates {
+            let metadata: NumistaType = serde_json::from_str(fixture).unwrap();
+            assert_eq!(metadata.id, Some(type_id));
+            assert_eq!(metadata.title.as_deref(), Some(expected_title));
+            assert_eq!(metadata.series.as_deref(), Some("Lunar Series III"));
+
             let adapted_metadata = domain_type_meta(type_id, &metadata);
             assert_eq!(adapted_metadata.finish, Some(expected_finish));
 
@@ -597,8 +592,8 @@ mod tests {
                 "quantity": 1,
                 "type": {
                     "id": type_id,
-                    "title": title,
-                    "issuer": {"code": "australie", "name": "Australia"}
+                    "title": metadata.title,
+                    "issuer": metadata.issuer
                 },
                 "issue": {"year": 2024, "gregorian_year": 2024}
             });
@@ -607,18 +602,29 @@ mod tests {
             let metadata = TypeMetaIndex::from([(type_id, adapted_metadata)]);
 
             let album = build_album(&series, &[item], &metadata, &[]);
-            let dragon = album
+            let owned_slot_ids: Vec<&str> = album
                 .series
                 .iter()
                 .flat_map(|series| &series.slots)
-                .find(|slot| slot.slot.id.as_str() == "lunar-iii-2024-dragon-1oz")
-                .unwrap();
+                .filter(|slot| matches!(slot.status, SlotStatus::Owned { .. }))
+                .map(|slot| slot.slot.id.as_str())
+                .collect();
 
-            assert_eq!(
-                matches!(dragon.status, SlotStatus::Owned { .. }),
-                should_match,
-                "unexpected match result for Numista type {type_id}: {title}"
-            );
+            if should_match {
+                assert_eq!(
+                    owned_slot_ids,
+                    ["lunar-iii-2024-dragon-1oz"],
+                    "unexpected owned slots for Numista type {type_id}: {expected_title}"
+                );
+                assert!(album.unmatched.is_empty());
+            } else {
+                assert!(
+                    owned_slot_ids.is_empty(),
+                    "unexpected owned slots for Numista type {type_id}: {expected_title}"
+                );
+                assert_eq!(album.unmatched.len(), 1);
+                assert_eq!(album.unmatched[0].type_id, type_id);
+            }
         }
     }
 }

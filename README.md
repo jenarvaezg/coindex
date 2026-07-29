@@ -48,14 +48,41 @@ Para producción, configura los mismos secretos con la gestión de secretos de S
 
 ## Desarrollo local
 
+El ejecutable local usa el mismo `bootstrap`, router, migraciones y ledger de presupuesto
+que producción, sin necesitar la CLI de Shuttle. Crea una sola vez un Postgres persistente:
+
+```bash
+docker run --name coindex-local-postgres \
+  -e POSTGRES_PASSWORD=coindex \
+  -e POSTGRES_DB=coindex_local \
+  -p 127.0.0.1:55432:5432 \
+  -v coindex-local-postgres-data:/var/lib/postgresql/data \
+  -d postgres:17-alpine
+```
+
+En ejecuciones posteriores basta con `docker start coindex-local-postgres`. Protege los
+secretos y arranca Coindex:
+
+```bash
+chmod 600 Secrets.dev.toml
+DATABASE_URL='postgres://postgres:coindex@127.0.0.1:55432/coindex_local?sslmode=disable' \
+  cargo run -p coindex-backend --bin coindex-local
+```
+
+Abre `http://localhost:8000/health`. Las migraciones se aplican al arrancar y los
+metadatos de tipos permanecen cacheados en el volumen de Postgres entre ejecuciones. El
+runner local rechaza direcciones que no sean loopback: la Fase 1 no tiene autenticación y
+no debe exponerse a la red local.
+
+También siguen disponibles las comprobaciones de desarrollo:
+
 ```bash
 cargo test --workspace
 cargo check -p domain --target wasm32-unknown-unknown
-shuttle run
 ```
 
-Shuttle provisiona Postgres y ejecuta las migraciones al arrancar. Abre
-`http://localhost:8000/health` para comprobar la base de datos y el consumo mensual.
+`shuttle run` es una alternativa para comprobar específicamente el entorno de Shuttle,
+pero no es necesario para trabajar en local.
 
 Las consultas SQL se comprueban en compilación y su metadata offline vive en `.sqlx/`.
 Después de modificar una consulta o migración, instala `sqlx-cli`, aplica las migraciones

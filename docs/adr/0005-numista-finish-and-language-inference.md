@@ -1,9 +1,9 @@
-# ADR 0005: Provisional Numista finish and language inference
+# ADR 0005: Numista finish and language inference
 
 ## Status
 
-Provisional until a deliberate authenticated recording confirms the exact `lang=es`
-payloads for the listed ordinary and special-finish types.
+Accepted. Deliberate authenticated recordings confirmed the exact `lang=es` payloads
+for the listed ordinary and special-finish types.
 
 ## Context
 
@@ -39,21 +39,22 @@ Ordinary curated bullion can use the heuristic fallback while proof, coloured, g
 and antiqued variants remain excluded. Unknown series and unmarked circulation or
 collector types retain an unknown finish and cannot satisfy a bullion matcher.
 
-This policy is deliberately auditable and incomplete. The regression currently uses
-catalog-derived synthetic payloads to verify our adapter and matching behavior; it does
-not claim to verify Numista's live response contract. Before extending the convention—or
-marking this ADR accepted—the relevant real response must be captured with the explicit
-fixture recorder and the regression changed to consume that fixture.
+This policy remains deliberately auditable and incomplete. The regression consumes the
+exact recorded type responses, so it verifies the adapter and matching behavior against
+the observed API contract for these five types. Extending the convention to other
+families or finish markers still requires corresponding evidence.
 
 ## Evidence
 
-The public catalog records used to construct the provisional regression are:
+The public empirical fixtures were recorded from type requests using `lang=es`. Despite
+that parameter, all five responses returned English titles, and every response returned
+the exact series value `Lunar Series III`:
 
-- Numista N#386213: ordinary 2024 Lunar III one-ounce silver Dragon.
-- Numista N#404044: one-ounce Silver Proof High Relief.
-- Numista N#394043: one-ounce Coloured.
-- Numista N#404285: one-ounce Silver Gilded.
-- Numista N#482185: two-ounce Silver Antiqued.
+- Numista N#386213: `1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver)`.
+- Numista N#394043: `1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Coloured)`.
+- Numista N#404044: `1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver Proof High Relief)`.
+- Numista N#404285: `1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver Gilded)`.
+- Numista N#482185: `2 Dollars - Elizabeth II (6th Portrait; in the name of - Year of the Dragon - Silver Antiqued)`.
 
-These IDs and labels do not establish that the authenticated API returns the same
-localized titles or exact `series` value. That empirical acceptance item remains open.
+The fixture-driven regression verifies that only N#386213 matches the committed ordinary
+bullion slot; the proof, coloured, gilded, and antiqued types remain excluded.
