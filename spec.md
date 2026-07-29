@@ -1,179 +1,189 @@
 # spec.md — Coindex
 
-> Especificación viva de Coindex y estado de la **Fase 1 (MVP)**.
-> Dirigida a un agente de codificación. Léela completa antes de escribir código.
-> El nombre `coindex` es provisional; si se cambia, cambiarlo en todos los `Cargo.toml`.
+> Especificación viva de Coindex. Dirigida a un agente de codificación: léela completa
+> antes de escribir código.
 >
-> Las secciones 1–14 conservan la especificación inicial. Cuando exista una discrepancia,
-> prevalecen el estado actual de la sección 0 y los ADR aceptados.
+> **PIVOT (29 de julio de 2026): Coindex pasa a ser una app de Android local-first.**
+> Shuttle dejó de funcionar y se descarta el despliegue web. La implementación Rust de
+> este repositorio queda **congelada como referencia ejecutable** (sigue funcionando en
+> local) y como fuente de la lógica de dominio a portar. Las secciones del apéndice
+> histórico describen esa fase web; cuando discrepen con la sección 0 o con los ADR de
+> `docs/adr/`, prevalecen la sección 0 y los ADR.
 
 ---
 
-## 0. Estado actual — 29 de julio de 2026
+## 0. Fase Android — especificación de arranque
 
-Última verificación funcional: el flujo local en `http://127.0.0.1:8000` respondió
-correctamente, la suite completa quedó verde y las pruebas PostgreSQL ignoradas por
-defecto se ejecutaron también contra una base desechable. La disponibilidad del proceso
-local y el estado del worktree deben comprobarse de nuevo al retomar el desarrollo.
+### 0.1 Decisión y forma del producto
 
-### 0.1 Completado
+- **App de Android** instalada por **APK directo** (sideload). Dos usuarios reales: Jose
+  y su padre. Sin Play Store, sin cuenta de desarrollador, sin backend propio.
+- **Local-first**: en el primer arranque el usuario introduce su **API key de Numista**
+  (y su user id); a partir de ahí todo funciona contra la API de Numista y una base
+  **SQLite local**. Cada usuario gasta su propio presupuesto de API (~1.500-2.000
+  llamadas/mes por key), así que desaparece el ledger compartido.
+- **Framework**: recomendación acordada **Kotlin + Jetpack Compose** (la app es
+  Android-only: grids de imágenes + datos locales). Stack sugerido: Room (SQLite),
+  Retrofit o Ktor para la API, Coil para imágenes, EncryptedSharedPreferences/Keystore
+  para la API key. Flutter solo si se quisiera abrir la puerta a iOS más adelante;
+  React Native descartado.
+- **Fuera de alcance**: compartir enlaces/URLs públicas, cuentas, sincronización entre
+  dispositivos, escritura hacia Numista. **Dentro como extra**: exportar una lámina como
+  imagen (render a bitmap + share intent de Android).
+- Firma del APK: generar un keystore y **conservarlo** (las actualizaciones deben ir
+  firmadas con la misma clave). Distribución por release privado de GitHub o similar.
 
-#### Base técnica y ejecución local
+### 0.2 Activos del repo que la app reutiliza tal cual
 
-- Workspace Rust con `domain`, `numista`, `imaging` y `backend`.
-- Backend `axum` con HTML renderizado por `maud`, CSS sin framework y Postgres mediante
-  `sqlx`.
-- Migraciones forward-only y metadata offline de consultas en `.sqlx/`.
-- Arranque local con secretos fuera de git y permisos restrictivos.
-- Dos usuarios fijos (`jose` y `padre`) con inventarios y preferencias aislados.
-- Protección same-origin para todas las mutaciones.
-- `/health` informa del estado y del presupuesto mensual consumido.
-- `domain` compila para `wasm32-unknown-unknown`.
+1. **`data/collection-catalogs/*.json` — 18 catálogos curados** (el activo más caro de
+   reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
+   de versionarse. Se empaquetan como assets de la app. Esquema:
+   - `schema_version: 1`: miembros identificados por `numista_type_id` único; posesión =
+     poseer el tipo. Fuente obligatoria: página de serie de Numista
+     (`catalogue/series.php?id=N`).
+   - `schema_version: 2` (**date runs**, ADR 0009): los miembros repiten un mismo tipo
+     con años distintos (único por `(numista_type_id, year)`); posesión = poseer el tipo
+     **y** que `issue_year` (o `gregorian_year`) del item coincida con el año del
+     miembro. Un item sin año nunca rellena un hueco. La fuente puede ser la ficha del
+     tipo (`catalogue/piecesNNN.html`). Primer date run vivo:
+     `venezuela-5-bolivares.json` (21 fechas de N#10340; al padre le faltan 1904 y 1905).
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 608 tipos
+   (respuestas íntegras de `GET /types/{id}?lang=es`). Costó ~630 llamadas de API;
+   empaquetarlo como seed de la tabla de caché para que ningún usuario las repita.
+   Incluye los 470 tipos referenciados por los catálogos: las láminas muestran todos los
+   diseños (incluidos los "me falta") sin gastar presupuesto.
+3. **`data/series/*.json`** — las dos series curadas históricas (Lunar III, Tudor
+   Beasts). La UI actual ya no las muestra en el índice (ver 0.4); sirven como datos de
+   matchers/fechas futuras. Pueden ignorarse en la primera versión de la app.
+4. **`docs/adr/0001..0009`** — las decisiones de dominio siguen vigentes; la 0007
+   (propuestas desde inventario), 0008 (disposiciones durables) y 0009 (date runs +
+   fallback de familia) son la especificación del comportamiento.
+5. **`crates/domain`** — la lógica a portar (~1.200 líneas, pura, sin I/O, con tests de
+   tabla dorada). Se porta a Kotlin a mano; no compensa un puente FFI.
 
-#### Sincronización con Numista
+### 0.3 Modelo de dominio a portar (invariantes)
 
-- OAuth con `scope=view_collection`, caché del token y presupuesto mensual.
-- Descarga del inventario real de cada usuario y caché persistente de metadatos de tipo.
-- Un segundo sync reutiliza los metadatos ya cacheados.
-- El único botón público es **Sincronizar**: siempre ejecuta un sync real y responde con
-  `303` de vuelta al índice. No existe botón ni página de “Calcular gasto”.
-- Los errores de servidor no exponen diagnósticos SQL ni secretos.
-- Proxy de imágenes limitado a hosts HTTPS de Numista, sin redirects, con timeout y
-  límite de tamaño.
+- **Clave de variante física** (identidad de propuesta, de preferencia y de catálogo):
+  `(familia Numista cruda, peso normalizado en mili-onzas, acabado)`.
+  - Peso: `round(oz*1000)`, con imán a los pesos comunes `[250, 500, 1000, 2000, 5000,
+    10000]` si la diferencia es ≤10 (31,1 g → 1000; 30 g → 965, nunca 1000).
+  - Acabado (`Finish`): inferido del título del tipo con reglas auditables
+    (`proof`+colour → ProofColoured; `proof`; colour/`coloriz`/colores lunares; `gild`/
+    `dorad`; `antiqu`; `bullion` o series Lunar III / Tudor Beasts → Bullion; si no →
+    desconocido). Numista no expone un campo de acabado estable.
+- **Propuestas de colección**: agrupan solo piezas actuales del usuario por clave de
+  variante exacta. Sin familias difusas, sin mezclar pesos ni acabados. Familias
+  técnicas `System YYYY[-YYYY]` excluidas. Cantidades: tipos distintos + piezas.
+- **Fallback de familia** (ADR 0009): si el tipo no tiene `series` en Numista pero algún
+  catálogo sembrado lo referencia como miembro, agrupa bajo la `family` del catálogo.
+  La familia real de Numista siempre gana. Tipos sin familia ni catálogo siguen fuera
+  (huérfanos).
+- **Disposiciones**: cada propuesta está `Available`, `Followed` o `Ignored` (persistente
+  por usuario y clave exacta; reversible; una preferencia sin evidencia actual queda
+  dormida sin materializar propuestas).
+- **Lámina de catálogo**: navegable cuando la propuesta existe, está `Followed`, hay
+  catálogo para esa clave exacta y el usuario posee ≥1 `type_id` oficial del catálogo
+  (la evidencia es por tipo incluso en date runs). Estados `Tengo (×n)` / `Me falta`.
+- **Alias editoriales de familia** (solo presentación, nunca entran en la clave):
+  `SML`→`Silver Maple Leaf`, `Red Data Book`→`Libro Rojo de Rusia`, la serie española a
+  facial→`Monedas españolas de plata a valor facial`, `Lunar ounce`→`Rwanda Lunar
+  Ounce`, `Nautical Ounce`→`Rwanda Nautical Ounce`.
 
-#### Álbumes, matching y revisión
+### 0.4 UI de referencia (la web congelada es el prototipo)
 
-- Motor de matching con prioridad `ManualOverride` → `ExplicitTypeId` → `Heuristic`.
-- Duplicados, ambigüedades, overrides negativos y referencias rotas son auditables.
-- Pantalla de piezas sin clasificar con el título real cacheado, no un identificador como
-  nombre principal.
-- Correcciones manuales persistentes y reversibles.
-- Las láminas muestran anverso y reverso cuando ambas caras están disponibles.
-- El control `?` abre la revisión de emparejamientos heurísticos.
-- Series curadas y versionadas:
-  - **Lunar Series III**.
-  - **The Royal Tudor Beasts**, marcada como incompleta cuando faltan emisiones por
-    confirmar.
-- El índice solo muestra una serie curada a un usuario si ese usuario posee al menos una
-  de sus casillas.
+Índice por usuario: botón **Sincronizar** + acceso a huérfanas/sin clasificar +
+propuestas en tres bloques (Seguidas / Disponibles / Ignoradas plegadas). Sin sección de
+láminas curadas (se retiró; las series curadas viven como catálogos). Cada tarjeta:
+familia (alias), variante (`peso · acabado`), `n tipos · m piezas`, acciones. El título
+enlaza: seguida con catálogo y evidencia → lámina local; resto con catálogo → página de
+la serie en Numista. La lámina: cabecera con progreso `n / m emisiones`, fuente y
+variante; rejilla con anverso/reverso, año y nº Numista por miembro, **los que faltan en
+gris (grayscale + opacidad ~0.45) con su diseño visible**, y todos los miembros enlazan a
+su ficha de Numista. Estética de guía de campo ornitológica (ver apéndice §8): serif,
+paleta de papel, ficha de especificaciones físicas.
 
-#### Propuestas de colección
+### 0.5 API de Numista — todo lo aprendido (válido para la app)
 
-- Las propuestas se derivan exclusivamente de las piezas actuales de cada usuario.
-- La identidad exacta de una propuesta es familia Numista normalizada + peso + acabado.
-- No se proponen a un usuario colecciones que solo posee el otro.
-- No se mezclan variantes de peso o acabado; existe el acabado compuesto
-  `ProofColoured`.
-- Se excluyen familias técnicas como `System 1927-1968`.
-- Alias editoriales ya aplicados:
-  - `SML` → `Silver Maple Leaf`.
-  - `Red Data Book` → `Libro Rojo de Rusia`.
-  - La serie española de plata a facial → `Monedas españolas de plata a valor facial`.
-  - Nombres legibles para las onzas Lunar y Nautical de Ruanda.
-- Cada propuesta puede quedar `Available`, `Followed` o `Ignored`.
-- `Seguir`, `Ignorar`, `Restaurar` y `Dejar de seguir` persisten por usuario y sobreviven
-  a nuevos syncs y reinicios.
-- Una preferencia sin evidencia actual queda dormida; no materializa propuestas falsas.
+- Base `https://api.numista.com/v3`. Auth: cabecera `Numista-API-Key` + token OAuth
+  `client_credentials` con **`scope=view_collection`** (omitirlo da un 401 engañoso;
+  token ~10 min, cachearlo).
+- Endpoints: `GET /users/{id}/collected_items` (sin paginación, ADR 0006),
+  `GET /types/{id}?lang=es`, y `GET /types/{id}/issues` (lista de emisiones por año —
+  la fuente para curar date runs; así se verificaron las 21 fechas del 5 Bolívares).
+- **Disciplina de presupuesto** (portar tal cual): caché permanente de tipos (un tipo
+  descargado no se vuelve a pedir), contador local de llamadas del mes con techo
+  configurable, y tests sin red (fixtures en `fixtures/numista/`).
+- Imágenes: URLs en la respuesta de `/types/{id}`; en la app se cargan directo con Coil
+  (ya no hay proxy). Uso personal con tráfico razonable: aceptado públicamente por el
+  administrador de Numista; sin scraping en runtime.
 
-#### Láminas de colecciones seguidas
+### 0.6 Curación de catálogos (pipeline de desarrollo, no de la app)
 
-- Modelo separado `CollectionCatalog`, versionado y con fuente explícita. No se mezcla con
-  `Series`/`Album`.
-- Una tarjeta seguida solo enlaza a una lámina si:
-  1. la propuesta exacta sigue existiendo;
-  2. la disposición del usuario es `Followed`;
-  3. existe un catálogo curado para esa variante; y
-  4. el usuario posee al menos un `type_id` oficial del catálogo.
-- Primer catálogo completo implementado:
-  **Nikola Tesla · Serbia · 1 oz**, con 12 emisiones oficiales de 2018–2025.
-- En los datos actuales de José la lámina muestra `1 / 12`: X-Rays 2020 como `Tengo` y
-  once emisiones como `Me falta`.
-- Padre, una variante distinta, una preferencia dormida o una pieza de otro emisor con la
-  misma familia/peso reciben 404 y no ven un enlace incorrecto.
-- Las emisiones sin metadata cacheada muestran silueta; la presencia de imagen no altera
-  el estado `Tengo`/`Me falta`.
-- No hay scraping ni descubrimiento de catálogos durante una petición.
+Los catálogos se generan en el repo y viajan con cada actualización de la app. Proceso
+usado (julio 2026) y reglas aprendidas:
 
-#### Verificación completada
+1. Localizar la serie: la ficha de cualquier tipo poseído enlaza `series.php?id=N`.
+2. Listado completo: `catalogue/index.php?se=N&nb=50&p=X`. Cloudflare devuelve 403 a
+   curl en p≥2; un navegador real (Playwright) con `fetch` in-page funciona.
+3. **Verificar cada type_id contra Numista antes de versionarlo** (los listados de
+   terceros traen errores sutiles: años intercambiados, piezas de cuproníquel que
+   parecen plata). La API (`/types/{id}`) es la forma barata de verificar.
+4. **Un catálogo = una variante física** (el peso/acabado que se colecciona): filtrar
+   por denominación + acabado. Excepción: si un diseño de un año solo existe en otro
+   acabado del mismo peso y metal, se incluye (no perder diseños; caso cocodrilo 2015).
+5. Series anuales: **una entrada por año**, sin privies/coloured/gilded/proof/high
+   relief/sets. Cuidado con líneas paralelas: Numista mezcla Perth Mint y Royal
+   Australian Mint en la misma serie (koala, lunar); separar por el campo `mints` de la
+   API.
+6. Criterio del coleccionista (el padre): bullion de diseño estable (Maple, Krugerrand,
+   ASE, Britannia, Philharmonic, Noah's Ark, Kangaroo) = pieza representativa, **sin
+   catálogo de fechas**; series de diseño anual cambiante sí se catalogan y se siguen
+   hacia delante.
 
-- `cargo test --workspace --all-targets`.
-- Pruebas PostgreSQL aisladas contra base desechable, incluidas preferencias y autorización
-  de catálogos seguidos.
-- `cargo clippy --workspace --all-targets -- -D warnings`.
-- `cargo fmt --all -- --check`.
-- `cargo check -p domain --target wasm32-unknown-unknown`.
-- Revisiones independientes de código y seguridad.
+### 0.7 Estado de datos al pivotar (29 jul 2026)
 
-### 0.2 Parcialmente completado
+- 18 catálogos sembrados. Con lámina en uso: valor facial España (24/37 del padre),
+  250 aniversario EE. UU. (3/8), 5 Bolívares (19/21), Personalidades de Rusia (1/121 de
+  Jose), Tudor 2 oz (2-3/9 cada uno), y el resto seguibles.
+- Huérfanas restantes (sin familia ni catálogo): conmemorativas portuguesas en escudos
+  (familias técnicas `System …`; candidatas a catálogos por diseño: 500 escudos
+  1995-2001 al padre le faltan N#13043/N#10207/N#13046), plata venezolana circulante
+  menor, Franco 100 ptas (date run candidato: estrellas 66-70), Koala RAM (N#557132, sin
+  serie en Numista), y piezas sueltas (medallas, conmemorativas aisladas).
+- Presupuesto API de la key de Jose consumido en julio: ~631/1500. Ya no importa tras el
+  pivot (cada usuario la suya), pero el snapshot de caché evita regastarlo.
 
-- **Cobertura de series curadas:** Lunar III y Tudor Beasts funcionan, pero el catálogo
-  editorial no cubre todavía todas las familias presentes en ambos inventarios.
-- **Catálogos para propuestas seguidas:** la infraestructura es genérica, pero solo
-  Nikola Tesla Serbia 1 oz tiene manifiesto completo y lámina navegable.
-- **Imágenes de huecos:** una emisión se muestra con imagen si sus metadatos ya están en
-  la caché global; el resto usa silueta. No se precargan todos los tipos de un catálogo.
-- **Inferencia de acabado:** Numista no expone un campo de acabado estable. Coindex lo
-  infiere desde títulos y reglas auditables; algunos tipos permanecen `Por confirmar`.
-- **Ejecución:** el flujo local está terminado. Shuttle y cualquier despliegue remoto
-  quedan aplazados por decisión del usuario.
+### 0.8 Orden de trabajo sugerido para la app
 
-### 0.3 Pendiente — siguiente trabajo recomendado
+1. Esqueleto Kotlin + Compose + Room; importar assets (`collection-catalogs`,
+   `numista-type-cache.json`) y validarlos al arrancar (fallar ruidosamente, como hoy).
+2. Portar el dominio con sus tests (tabla dorada de matching de propuestas, validación
+   de catálogos v1/v2, date runs, fallback de familia, normalización de peso, acabados).
+3. Onboarding: API key + user id de Numista → Keystore; sync explícito a SQLite con
+   contador de presupuesto.
+4. Índice de propuestas con disposiciones persistentes.
+5. Láminas (v1 y v2), grises + enlaces a Numista incluidos.
+6. Vista de huérfanas/sin clasificar.
+7. Exportar lámina como imagen (share intent).
+8. Firma, APK e instalación en los dos móviles.
 
-#### Prioridad alta
+### 0.9 Cuestiones abiertas de la fase Android
 
-1. Añadir manifiestos curados para las propuestas que los usuarios decidan seguir. Cada
-   manifiesto debe respetar exactamente emisor, peso y acabado y tener fuentes revisables.
-   Candidatas actuales: Queen's Beasts 2 oz, Rwanda Lunar Ounce, Rwanda Nautical Ounce,
-   Kookaburra y las variantes coloreadas realmente presentes.
-2. Hacer que todas las tarjetas seguidas con catálogo sean navegables con la misma
-   experiencia de Nikola Tesla/Tudor Beasts.
-3. Revisar y ampliar alias editoriales cuando aparezcan nuevos nombres internos de
-   Numista poco comprensibles.
-4. Decidir una estrategia explícita para precargar metadata e imágenes de los miembros
-   faltantes sin agotar el presupuesto ni crear un espejo del catálogo.
-
-#### Restricciones conocidas
-
-- La API v3.32 de Numista no ofrece endpoint ni filtro exhaustivo por serie o acabado.
-  `GET /types` puede descubrir candidatos, pero no demostrar cobertura completa.
-- No se hará scraping en runtime. Un catálogo que pueda afirmar “todas las emisiones
-  conocidas” debe ser un manifiesto curado y versionado, o proceder de un feed/autorización
-  expresa de Numista.
-- Los términos de Numista no autorizan claramente una importación masiva y durable. El
-  proyecto debe limitarse a datos mínimos y uso privado salvo permiso escrito.
-- `CollectionProposalKey` no incluye emisor. Hasta que el modelo cambie, la evidencia por
-  `type_id` oficial es obligatoria para evitar mezclar series homónimas.
-- Referencias: `docs/research/numista-series-catalog.md`, ADR 0007 y ADR 0008.
-
-#### Antes de salir de local
-
-1. Incorporar autenticación y autorización reales; las rutas `jose`/`padre` no son una
-   frontera de seguridad en un despliegue público.
-2. Revisar configuración de producción, secretos, migraciones, cabeceras y observabilidad.
-3. Decidir si se retoma Shuttle u otro destino de despliegue.
-4. Añadir pruebas E2E visuales en un navegador estable. La automatización del navegador
-   integrado no estuvo disponible durante la última verificación, aunque sí se probaron
-   HTML, formularios y endpoints reales.
-
-#### Fase 2
-
-- Fotografías y vídeos propios.
-- Procesado de relieve, RTI, normal maps, WASM y wgpu.
-- Compartición pública, estado en URL, PWA y modo offline.
-- Escritura hacia Numista.
-
-### 0.4 Decisiones que sustituyen requisitos iniciales
-
-- **Local primero:** el soporte local es el objetivo actual; Shuttle está diferido.
-- **Sin estimador público:** se elimina el requisito inicial del botón/modo público de
-  cálculo de gasto. El presupuesto se controla internamente y `/health` expone el consumo.
-- **Propuestas no equivalen a series:** seguir una propuesta por sí solo no crea huecos.
-  Solo un `CollectionCatalog` curado puede ofrecer una lámina de referencia con
-  `Tengo`/`Me falta`.
-- **Sin scraping de cecas ni Numista:** se mantienen catálogos locales revisados y
-  versionados.
+1. Nombre definitivo y applicationId.
+2. Cómo expresar en catálogos las emisiones futuras/anunciadas (el modelo v1/v2 exige
+   `numista_type_id`, así que no puede representar "sin emitir" como hacían las series
+   curadas con `release_status`). Posible `schema_version: 3` o campo opcional.
+3. ¿Migrar Lunar III bullion a catálogo v1 (12 tipos verificados) y retirar `data/series`?
+4. Actualización de catálogos dentro de la app sin reinstalar (¿fichero remoto opcional?)
+   — en tensión con el local-first; decidir más adelante.
 
 ---
+
+# Apéndice — especificación histórica de la fase web Rust (congelada)
+
+> Todo lo que sigue describe la implementación Rust/Axum que queda como referencia.
+> Sigue siendo la mejor documentación del dominio (§5), de la API de Numista (§6) y de
+> la estética (§8). No invertir más en este stack salvo curación de datos en `data/`.
 
 ## 1. Contexto
 
