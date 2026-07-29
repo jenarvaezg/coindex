@@ -1,8 +1,177 @@
 # spec.md — Coindex
 
-> Especificación para montar el repositorio y la **Fase 1 (MVP)** de Coindex.
+> Especificación viva de Coindex y estado de la **Fase 1 (MVP)**.
 > Dirigida a un agente de codificación. Léela completa antes de escribir código.
 > El nombre `coindex` es provisional; si se cambia, cambiarlo en todos los `Cargo.toml`.
+>
+> Las secciones 1–14 conservan la especificación inicial. Cuando exista una discrepancia,
+> prevalecen el estado actual de la sección 0 y los ADR aceptados.
+
+---
+
+## 0. Estado actual — 29 de julio de 2026
+
+Última verificación funcional: el flujo local en `http://127.0.0.1:8000` respondió
+correctamente, la suite completa quedó verde y las pruebas PostgreSQL ignoradas por
+defecto se ejecutaron también contra una base desechable. La disponibilidad del proceso
+local y el estado del worktree deben comprobarse de nuevo al retomar el desarrollo.
+
+### 0.1 Completado
+
+#### Base técnica y ejecución local
+
+- Workspace Rust con `domain`, `numista`, `imaging` y `backend`.
+- Backend `axum` con HTML renderizado por `maud`, CSS sin framework y Postgres mediante
+  `sqlx`.
+- Migraciones forward-only y metadata offline de consultas en `.sqlx/`.
+- Arranque local con secretos fuera de git y permisos restrictivos.
+- Dos usuarios fijos (`jose` y `padre`) con inventarios y preferencias aislados.
+- Protección same-origin para todas las mutaciones.
+- `/health` informa del estado y del presupuesto mensual consumido.
+- `domain` compila para `wasm32-unknown-unknown`.
+
+#### Sincronización con Numista
+
+- OAuth con `scope=view_collection`, caché del token y presupuesto mensual.
+- Descarga del inventario real de cada usuario y caché persistente de metadatos de tipo.
+- Un segundo sync reutiliza los metadatos ya cacheados.
+- El único botón público es **Sincronizar**: siempre ejecuta un sync real y responde con
+  `303` de vuelta al índice. No existe botón ni página de “Calcular gasto”.
+- Los errores de servidor no exponen diagnósticos SQL ni secretos.
+- Proxy de imágenes limitado a hosts HTTPS de Numista, sin redirects, con timeout y
+  límite de tamaño.
+
+#### Álbumes, matching y revisión
+
+- Motor de matching con prioridad `ManualOverride` → `ExplicitTypeId` → `Heuristic`.
+- Duplicados, ambigüedades, overrides negativos y referencias rotas son auditables.
+- Pantalla de piezas sin clasificar con el título real cacheado, no un identificador como
+  nombre principal.
+- Correcciones manuales persistentes y reversibles.
+- Las láminas muestran anverso y reverso cuando ambas caras están disponibles.
+- El control `?` abre la revisión de emparejamientos heurísticos.
+- Series curadas y versionadas:
+  - **Lunar Series III**.
+  - **The Royal Tudor Beasts**, marcada como incompleta cuando faltan emisiones por
+    confirmar.
+- El índice solo muestra una serie curada a un usuario si ese usuario posee al menos una
+  de sus casillas.
+
+#### Propuestas de colección
+
+- Las propuestas se derivan exclusivamente de las piezas actuales de cada usuario.
+- La identidad exacta de una propuesta es familia Numista normalizada + peso + acabado.
+- No se proponen a un usuario colecciones que solo posee el otro.
+- No se mezclan variantes de peso o acabado; existe el acabado compuesto
+  `ProofColoured`.
+- Se excluyen familias técnicas como `System 1927-1968`.
+- Alias editoriales ya aplicados:
+  - `SML` → `Silver Maple Leaf`.
+  - `Red Data Book` → `Libro Rojo de Rusia`.
+  - La serie española de plata a facial → `Monedas españolas de plata a valor facial`.
+  - Nombres legibles para las onzas Lunar y Nautical de Ruanda.
+- Cada propuesta puede quedar `Available`, `Followed` o `Ignored`.
+- `Seguir`, `Ignorar`, `Restaurar` y `Dejar de seguir` persisten por usuario y sobreviven
+  a nuevos syncs y reinicios.
+- Una preferencia sin evidencia actual queda dormida; no materializa propuestas falsas.
+
+#### Láminas de colecciones seguidas
+
+- Modelo separado `CollectionCatalog`, versionado y con fuente explícita. No se mezcla con
+  `Series`/`Album`.
+- Una tarjeta seguida solo enlaza a una lámina si:
+  1. la propuesta exacta sigue existiendo;
+  2. la disposición del usuario es `Followed`;
+  3. existe un catálogo curado para esa variante; y
+  4. el usuario posee al menos un `type_id` oficial del catálogo.
+- Primer catálogo completo implementado:
+  **Nikola Tesla · Serbia · 1 oz**, con 12 emisiones oficiales de 2018–2025.
+- En los datos actuales de José la lámina muestra `1 / 12`: X-Rays 2020 como `Tengo` y
+  once emisiones como `Me falta`.
+- Padre, una variante distinta, una preferencia dormida o una pieza de otro emisor con la
+  misma familia/peso reciben 404 y no ven un enlace incorrecto.
+- Las emisiones sin metadata cacheada muestran silueta; la presencia de imagen no altera
+  el estado `Tengo`/`Me falta`.
+- No hay scraping ni descubrimiento de catálogos durante una petición.
+
+#### Verificación completada
+
+- `cargo test --workspace --all-targets`.
+- Pruebas PostgreSQL aisladas contra base desechable, incluidas preferencias y autorización
+  de catálogos seguidos.
+- `cargo clippy --workspace --all-targets -- -D warnings`.
+- `cargo fmt --all -- --check`.
+- `cargo check -p domain --target wasm32-unknown-unknown`.
+- Revisiones independientes de código y seguridad.
+
+### 0.2 Parcialmente completado
+
+- **Cobertura de series curadas:** Lunar III y Tudor Beasts funcionan, pero el catálogo
+  editorial no cubre todavía todas las familias presentes en ambos inventarios.
+- **Catálogos para propuestas seguidas:** la infraestructura es genérica, pero solo
+  Nikola Tesla Serbia 1 oz tiene manifiesto completo y lámina navegable.
+- **Imágenes de huecos:** una emisión se muestra con imagen si sus metadatos ya están en
+  la caché global; el resto usa silueta. No se precargan todos los tipos de un catálogo.
+- **Inferencia de acabado:** Numista no expone un campo de acabado estable. Coindex lo
+  infiere desde títulos y reglas auditables; algunos tipos permanecen `Por confirmar`.
+- **Ejecución:** el flujo local está terminado. Shuttle y cualquier despliegue remoto
+  quedan aplazados por decisión del usuario.
+
+### 0.3 Pendiente — siguiente trabajo recomendado
+
+#### Prioridad alta
+
+1. Añadir manifiestos curados para las propuestas que los usuarios decidan seguir. Cada
+   manifiesto debe respetar exactamente emisor, peso y acabado y tener fuentes revisables.
+   Candidatas actuales: Queen's Beasts 2 oz, Rwanda Lunar Ounce, Rwanda Nautical Ounce,
+   Kookaburra y las variantes coloreadas realmente presentes.
+2. Hacer que todas las tarjetas seguidas con catálogo sean navegables con la misma
+   experiencia de Nikola Tesla/Tudor Beasts.
+3. Revisar y ampliar alias editoriales cuando aparezcan nuevos nombres internos de
+   Numista poco comprensibles.
+4. Decidir una estrategia explícita para precargar metadata e imágenes de los miembros
+   faltantes sin agotar el presupuesto ni crear un espejo del catálogo.
+
+#### Restricciones conocidas
+
+- La API v3.32 de Numista no ofrece endpoint ni filtro exhaustivo por serie o acabado.
+  `GET /types` puede descubrir candidatos, pero no demostrar cobertura completa.
+- No se hará scraping en runtime. Un catálogo que pueda afirmar “todas las emisiones
+  conocidas” debe ser un manifiesto curado y versionado, o proceder de un feed/autorización
+  expresa de Numista.
+- Los términos de Numista no autorizan claramente una importación masiva y durable. El
+  proyecto debe limitarse a datos mínimos y uso privado salvo permiso escrito.
+- `CollectionProposalKey` no incluye emisor. Hasta que el modelo cambie, la evidencia por
+  `type_id` oficial es obligatoria para evitar mezclar series homónimas.
+- Referencias: `docs/research/numista-series-catalog.md`, ADR 0007 y ADR 0008.
+
+#### Antes de salir de local
+
+1. Incorporar autenticación y autorización reales; las rutas `jose`/`padre` no son una
+   frontera de seguridad en un despliegue público.
+2. Revisar configuración de producción, secretos, migraciones, cabeceras y observabilidad.
+3. Decidir si se retoma Shuttle u otro destino de despliegue.
+4. Añadir pruebas E2E visuales en un navegador estable. La automatización del navegador
+   integrado no estuvo disponible durante la última verificación, aunque sí se probaron
+   HTML, formularios y endpoints reales.
+
+#### Fase 2
+
+- Fotografías y vídeos propios.
+- Procesado de relieve, RTI, normal maps, WASM y wgpu.
+- Compartición pública, estado en URL, PWA y modo offline.
+- Escritura hacia Numista.
+
+### 0.4 Decisiones que sustituyen requisitos iniciales
+
+- **Local primero:** el soporte local es el objetivo actual; Shuttle está diferido.
+- **Sin estimador público:** se elimina el requisito inicial del botón/modo público de
+  cálculo de gasto. El presupuesto se controla internamente y `/health` expone el consumo.
+- **Propuestas no equivalen a series:** seguir una propuesta por sí solo no crea huecos.
+  Solo un `CollectionCatalog` curado puede ofrecer una lámina de referencia con
+  `Tengo`/`Me falta`.
+- **Sin scraping de cecas ni Numista:** se mantienen catálogos locales revisados y
+  versionados.
 
 ---
 
@@ -101,9 +270,11 @@ coindex/
 │   ├── migrations/
 │   └── src/
 ├── data/
-│   └── series/
-│       ├── lunar-iii.json
-│       └── tudor-beasts.json
+│   ├── series/
+│   │   ├── lunar-iii.json
+│   │   └── tudor-beasts.json
+│   └── collection-catalogs/
+│       └── nikola-tesla-serbia-1oz.json
 └── fixtures/
     └── numista/                # respuestas reales grabadas, para tests
 ```
@@ -139,7 +310,7 @@ pub struct Slot {
     pub year: i32,
     pub motif: String,           // "Dragón"
     pub weight_oz: f32,          // 1.0, 2.0, 0.5...
-    pub finish: Finish,          // Bullion | Proof | Coloured | Gilded | Antiqued
+    pub finish: Finish,          // Bullion | Proof | Coloured | ProofColoured | Gilded | Antiqued
     pub release_status: ReleaseStatus,   // Issued | Announced | Expected
 
     /// Emparejamiento primario: IDs de tipo de Numista confirmados a mano.
@@ -220,7 +391,9 @@ Requisitos obligatorios del cliente:
 3. **Los tests no tocan la red. Nunca.** Usan los ficheros de `fixtures/numista/`.
    Añade un binario `cargo run -p numista --bin record-fixtures` que sea la *única* forma
    de regrabarlos, ejecutado a mano y de forma consciente.
-4. **Modo `--dry-run` en el sync**, que informa de cuántas llamadas gastaría sin hacerlas.
+4. **Sync explícito y presupuesto interno.** La interfaz no ofrece un estimador ni un
+   modo seco: `Sincronizar` ejecuta el sync real y vuelve al índice. El contador previo a
+   cada llamada y `/health` son la fuente de verdad del consumo.
 
 ### Autenticación
 
@@ -341,6 +514,18 @@ api_call_log(
   endpoint TEXT NOT NULL,
   called_at TIMESTAMPTZ NOT NULL
 )
+
+-- intención persistente sobre propuestas derivadas; la ausencia significa Available
+collection_proposal_preferences(
+  user_key TEXT NOT NULL,
+  family TEXT NOT NULL,
+  weight_millioz INTEGER NOT NULL,
+  finish TEXT NOT NULL,
+  disposition TEXT NOT NULL,     -- followed | ignored
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
+  PRIMARY KEY (user_key, family, weight_millioz, finish)
+)
 ```
 
 Guardar `raw JSONB` es deliberado: nos deja añadir campos al modelo más adelante sin
@@ -352,14 +537,17 @@ volver a gastar presupuesto de API.
 |---|---|---|
 | `GET` | `/` | Índice: una tarjeta por serie y por usuario, con progreso `n/total` |
 | `GET` | `/u/{user}/series/{series_id}` | La lámina: rejilla de casillas |
+| `GET` | `/u/{user}/followed-collections/{catalog_id}` | Lámina de una propuesta seguida con catálogo curado |
 | `GET` | `/u/{user}/unmatched` | Items sin casilla, con formulario de asignación |
 | `POST` | `/u/{user}/override` | Crea o actualiza una corrección manual |
-| `POST` | `/u/{user}/sync` | Dispara el sync contra Numista |
+| `POST` | `/u/{user}/collection-proposal-preference` | Sigue, ignora o restaura una propuesta exacta |
+| `POST` | `/u/{user}/sync` | Ejecuta el sync real y redirige al índice |
 | `GET` | `/img/type/{type_id}/{side}` | Proxy de imagen |
 | `GET` | `/api/album/{user}` | El `Album` en JSON. Existe para que la Fase 2 lo consuma |
 | `GET` | `/health` | Estado, incluido el presupuesto de API consumido este mes |
 
-El sync es síncrono y explícito, disparado por un botón. Nada de cron en Fase 1.
+El sync es síncrono y explícito, disparado por un único botón. No hay estimador público,
+página de costes ni cron en Fase 1.
 
 ---
 
