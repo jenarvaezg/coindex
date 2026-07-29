@@ -30,7 +30,7 @@ cp Secrets.dev.toml.example Secrets.dev.toml
 
 ```toml
 COINDEX_USERS = "jose:123456:api-key-uno,padre:654321:api-key-dos"
-COINDEX_ORIGIN = "http://localhost:8000"
+COINDEX_ORIGIN = "http://127.0.0.1:8000"
 NUMISTA_MONTHLY_BUDGET = "1500"
 ```
 
@@ -40,7 +40,7 @@ Las API keys viven en los Secrets de Shuttle y en memoria; no se guardan en Post
 No subas `Secrets.dev.toml` ni `Secrets.toml`.
 
 `COINDEX_ORIGIN` es obligatorio y debe ser el origen público exacto, incluido esquema y
-puerto cuando no sea el predeterminado. Usa `http://localhost:8000` en local y, en
+puerto cuando no sea el predeterminado. Usa `http://127.0.0.1:8000` en local y, en
 producción, la URL HTTPS asignada al proyecto, por ejemplo
 `https://coindex-xxxx.shuttle.app`.
 
@@ -69,7 +69,7 @@ DATABASE_URL='postgres://postgres:coindex@127.0.0.1:55432/coindex_local?sslmode=
   cargo run -p coindex-backend --bin coindex-local
 ```
 
-Abre `http://localhost:8000/health`. Las migraciones se aplican al arrancar y los
+Abre `http://127.0.0.1:8000/health`. Las migraciones se aplican al arrancar y los
 metadatos de tipos permanecen cacheados en el volumen de Postgres entre ejecuciones. El
 runner local rechaza direcciones que no sean loopback: la Fase 1 no tiene autenticación y
 no debe exponerse a la red local.

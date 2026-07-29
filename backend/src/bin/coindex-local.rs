@@ -11,6 +11,8 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use thiserror::Error;
 
+const DEFAULT_LOCAL_BIND: &str = "127.0.0.1:8000";
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct LocalSecrets {
@@ -48,7 +50,7 @@ impl RuntimeConfig {
         let database_url = database_url
             .filter(|value| !value.trim().is_empty())
             .ok_or(LocalError::MissingDatabaseUrl)?;
-        let bind_value = bind.unwrap_or_else(|| "127.0.0.1:8000".to_owned());
+        let bind_value = bind.unwrap_or_else(|| DEFAULT_LOCAL_BIND.to_owned());
         let bind: SocketAddr = bind_value
             .parse()
             .map_err(|_| LocalError::InvalidBind(bind_value))?;
@@ -174,6 +176,7 @@ async fn main() -> Result<(), LocalError> {
         })?;
     tracing::info!(
         bind = %config.bind,
+        open_url = %secrets.origin,
         secrets_file = %config.secrets_file.display(),
         "Coindex local server ready"
     );
@@ -191,21 +194,21 @@ mod tests {
 
     #[cfg(unix)]
     use super::load_secrets_file;
-    use super::{RuntimeConfig, parse_secrets};
+    use super::{DEFAULT_LOCAL_BIND, RuntimeConfig, parse_secrets};
 
     #[test]
     fn parses_uppercase_shuttle_secret_keys_without_exposing_values() {
         let secrets = parse_secrets(
             r#"
                 COINDEX_USERS = "jose:1:first-secret,padre:2:second-secret"
-                COINDEX_ORIGIN = "http://localhost:8000"
+                COINDEX_ORIGIN = "http://127.0.0.1:8000"
                 NUMISTA_MONTHLY_BUDGET = "1500"
             "#,
         )
         .unwrap();
 
         assert_eq!(secrets.users, "jose:1:first-secret,padre:2:second-secret");
-        assert_eq!(secrets.origin, "http://localhost:8000");
+        assert_eq!(secrets.origin, "http://127.0.0.1:8000");
         assert_eq!(secrets.monthly_budget.as_deref(), Some("1500"));
         let debug = format!("{secrets:?}");
         assert!(!debug.contains("first-secret"));
@@ -221,7 +224,7 @@ mod tests {
         ));
         fs::write(
             &path,
-            "COINDEX_USERS='hidden'\nCOINDEX_ORIGIN='http://localhost:8000'\n",
+            "COINDEX_USERS='hidden'\nCOINDEX_ORIGIN='http://127.0.0.1:8000'\n",
         )
         .unwrap();
         fs::set_permissions(&path, fs::Permissions::from_mode(0o644)).unwrap();
@@ -247,6 +250,10 @@ mod tests {
             std::path::Path::new("Secrets.dev.toml")
         );
         assert_eq!(config.bind.to_string(), "127.0.0.1:8000");
+        assert_eq!(
+            format!("http://{DEFAULT_LOCAL_BIND}"),
+            "http://127.0.0.1:8000"
+        );
         assert!(RuntimeConfig::from_values(None, None, None).is_err());
         assert!(
             RuntimeConfig::from_values(
