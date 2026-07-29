@@ -5,3 +5,4 @@ Secrets.dev.toml
 /.shuttle/
 *.log
 .DS_Store
+.playwright-mcp/
