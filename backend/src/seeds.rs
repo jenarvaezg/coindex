@@ -17,7 +17,7 @@ const SEEDS: [(&str, &str); 2] = [
     ),
 ];
 
-const COLLECTION_CATALOG_SEEDS: [(&str, &str); 17] = [
+const COLLECTION_CATALOG_SEEDS: [(&str, &str); 18] = [
     (
         "nikola-tesla-serbia-1oz.json",
         include_str!("../../data/collection-catalogs/nikola-tesla-serbia-1oz.json"),
@@ -90,6 +90,10 @@ const COLLECTION_CATALOG_SEEDS: [(&str, &str); 17] = [
         "tudor-beasts-uk-2oz-bullion.json",
         include_str!("../../data/collection-catalogs/tudor-beasts-uk-2oz-bullion.json"),
     ),
+    (
+        "venezuela-5-bolivares.json",
+        include_str!("../../data/collection-catalogs/venezuela-5-bolivares.json"),
+    ),
 ];
 
 #[derive(Debug, Error)]
@@ -157,7 +161,7 @@ mod tests {
     fn embedded_collection_catalog_is_versioned_sourced_and_complete() {
         let catalogs = load_collection_catalogs().unwrap();
 
-        assert_eq!(catalogs.len(), 17);
+        assert_eq!(catalogs.len(), 18);
         let catalog = catalogs
             .iter()
             .find(|catalog| catalog.id.as_str() == "nikola-tesla-serbia-1oz")
@@ -217,6 +221,19 @@ mod tests {
         assert_eq!(independence.weight_millioz, 868);
         assert_eq!(independence.finish, None);
         assert_eq!(independence.members.len(), 8);
+
+        let bolivares = find("venezuela-5-bolivares");
+        assert_eq!(bolivares.schema_version, 2);
+        assert_eq!(bolivares.family, "5 Bolívares de Venezuela");
+        assert_eq!(bolivares.weight_millioz, 804);
+        assert_eq!(bolivares.finish, None);
+        assert_eq!(bolivares.members.len(), 21);
+        assert!(
+            bolivares
+                .members
+                .iter()
+                .all(|member| member.numista_type_id == 10_340)
+        );
     }
 
     #[test]

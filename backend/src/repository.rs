@@ -641,6 +641,7 @@ mod tests {
                 collection_name: None,
             }],
             &TypeMetaIndex::from([(507_204, adapted)]),
+            &[],
         );
         assert_eq!(proposals.len(), 1);
         assert_eq!(proposals[0].weight_millioz, 1_000);

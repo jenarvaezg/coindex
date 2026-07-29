@@ -267,7 +267,17 @@ pub fn followed_collection(
                         }
                         div class="slot-copy" {
                             p class="slot-state" { (state) }
-                            h2 { (&album_member.member.label) }
+                            h2 {
+                                a
+                                    href=(format!(
+                                        "https://en.numista.com/catalogue/pieces{}.html",
+                                        album_member.member.numista_type_id
+                                    ))
+                                    rel="noreferrer"
+                                {
+                                    (&album_member.member.label)
+                                }
+                            }
                             p {
                                 (album_member.member.year)
                                 " · Numista "

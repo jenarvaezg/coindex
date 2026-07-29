@@ -56,7 +56,7 @@ fn proposals_group_exact_normalized_family_weight_and_finish_variants() {
         (12, metadata(12, "Lunar ounce", 31.1, Some(Finish::Bullion))),
     ]);
 
-    let proposals = build_collection_proposals(&items, &metadata);
+    let proposals = build_collection_proposals(&items, &metadata, &[]);
 
     assert_eq!(proposals.len(), 2);
     let unconfirmed = proposals
@@ -85,8 +85,8 @@ fn proposals_are_isolated_to_the_supplied_users_current_items_without_fuzzy_fami
         (20, metadata(20, "Lunar ounce", 31.1, Some(Finish::Bullion))),
     ]);
 
-    let first_user = build_collection_proposals(&[item(1, 10, 1)], &metadata);
-    let second_user = build_collection_proposals(&[item(2, 20, 2)], &metadata);
+    let first_user = build_collection_proposals(&[item(1, 10, 1)], &metadata, &[]);
+    let second_user = build_collection_proposals(&[item(2, 20, 2)], &metadata, &[]);
 
     assert_eq!(first_user.len(), 1);
     assert_eq!(first_user[0].family, "Lunar Series III");
@@ -115,8 +115,11 @@ fn curated_variants_also_surface_as_proposals_and_unknown_finish_stays_separate(
         (12, metadata(12, "Lunar Series III", 31.1, None)),
     ]);
 
-    let proposals =
-        build_collection_proposals(&[item(1, 10, 1), item(2, 11, 1), item(3, 12, 1)], &metadata);
+    let proposals = build_collection_proposals(
+        &[item(1, 10, 1), item(2, 11, 1), item(3, 12, 1)],
+        &metadata,
+        &[],
+    );
 
     assert_eq!(proposals.len(), 3);
     assert!(proposals.iter().any(|proposal| {
@@ -169,6 +172,7 @@ fn editorial_aliases_preserve_raw_keys_and_technical_system_years_are_ineligible
             item(5, 21, 1),
         ],
         &metadata,
+        &[],
     );
 
     assert_eq!(
@@ -231,4 +235,79 @@ fn canonical_keys_round_trip_finish_codes_and_classification_keeps_stale_prefere
     assert_eq!(classified.followed[0].family, "SML");
     assert_eq!(classified.available[0].family, "Lunar ounce");
     assert_eq!(classified.ignored[0].family, "Nautical Ounce");
+}
+
+#[test]
+fn catalog_family_fallback_rescues_types_numista_leaves_family_less() {
+    let catalog = domain::CollectionCatalog {
+        schema_version: 2,
+        id: domain::CollectionCatalogId::new("venezuela-5-bolivares"),
+        name: "5 Bolívares · Venezuela".to_owned(),
+        issuer_code: "venezuela".to_owned(),
+        family: "5 Bolívares de Venezuela".to_owned(),
+        weight_millioz: 804,
+        finish: None,
+        source: "https://en.numista.com/catalogue/pieces10340.html".to_owned(),
+        updated_at: "2026-07-29".to_owned(),
+        members: vec![domain::CollectionCatalogMember {
+            id: "1904".to_owned(),
+            label: "1904".to_owned(),
+            year: 1904,
+            numista_type_id: 10_340,
+        }],
+    };
+    let family_less = |id: u32| TypeMeta {
+        id,
+        title: Some("5 Bolívares".to_owned()),
+        display_title: None,
+        family: None,
+        issuer_code: Some("venezuela".to_owned()),
+        min_year: Some(1879),
+        max_year: Some(1936),
+        weight_oz: Some(ounces(25.0)),
+        finish: None,
+    };
+    let metadata = TypeMetaIndex::from([(10_340, family_less(10_340)), (99, family_less(99))]);
+
+    let proposals =
+        build_collection_proposals(&[item(1, 10_340, 2), item(2, 99, 1)], &metadata, &[catalog]);
+
+    // Solo el tipo referenciado por un catálogo se rescata; el resto sigue huérfano.
+    assert_eq!(proposals.len(), 1);
+    assert_eq!(proposals[0].family, "5 Bolívares de Venezuela");
+    assert_eq!(proposals[0].weight_millioz, 804);
+    assert_eq!(proposals[0].quantity, 2);
+
+    // La familia real de Numista siempre gana al fallback del catálogo.
+    let mut with_family = family_less(10_340);
+    with_family.family = Some("Familia oficial".to_owned());
+    let metadata = TypeMetaIndex::from([(10_340, with_family)]);
+    let proposals = build_collection_proposals(
+        &[item(1, 10_340, 1)],
+        &metadata,
+        std::slice::from_ref(&domain::CollectionCatalog {
+            ..build_collection_proposals_catalog_stub()
+        }),
+    );
+    assert_eq!(proposals[0].family, "Familia oficial");
+}
+
+fn build_collection_proposals_catalog_stub() -> domain::CollectionCatalog {
+    domain::CollectionCatalog {
+        schema_version: 2,
+        id: domain::CollectionCatalogId::new("venezuela-5-bolivares"),
+        name: "5 Bolívares · Venezuela".to_owned(),
+        issuer_code: "venezuela".to_owned(),
+        family: "5 Bolívares de Venezuela".to_owned(),
+        weight_millioz: 804,
+        finish: None,
+        source: "https://en.numista.com/catalogue/pieces10340.html".to_owned(),
+        updated_at: "2026-07-29".to_owned(),
+        members: vec![domain::CollectionCatalogMember {
+            id: "1904".to_owned(),
+            label: "1904".to_owned(),
+            year: 1904,
+            numista_type_id: 10_340,
+        }],
+    }
 }

@@ -186,7 +186,7 @@ h3 { font-size: 1.6rem; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.missing .coin-side img { filter: grayscale(1); opacity: 0.15; }
+.missing .coin-side img { filter: grayscale(1); opacity: 0.45; }
 .silhouette {
   width: 78%;
   aspect-ratio: 1;

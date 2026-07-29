@@ -1,0 +1,139 @@
+{
+  "schema_version": 2,
+  "id": "venezuela-5-bolivares",
+  "name": "5 Bolívares · Venezuela · plata 25 g",
+  "issuer_code": "venezuela",
+  "family": "5 Bolívares de Venezuela",
+  "weight_millioz": 804,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/pieces10340.html",
+  "updated_at": "2026-07-29",
+  "members": [
+    {
+      "id": "1879",
+      "label": "1879",
+      "year": 1879,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1886",
+      "label": "1886",
+      "year": 1886,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1887",
+      "label": "1887",
+      "year": 1887,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1888",
+      "label": "1888",
+      "year": 1888,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1889",
+      "label": "1889",
+      "year": 1889,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1900",
+      "label": "1900",
+      "year": 1900,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1901",
+      "label": "1901",
+      "year": 1901,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1902",
+      "label": "1902",
+      "year": 1902,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1903",
+      "label": "1903",
+      "year": 1903,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1904",
+      "label": "1904",
+      "year": 1904,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1905",
+      "label": "1905",
+      "year": 1905,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1910",
+      "label": "1910",
+      "year": 1910,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1911",
+      "label": "1911",
+      "year": 1911,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1912",
+      "label": "1912",
+      "year": 1912,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1919",
+      "label": "1919",
+      "year": 1919,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1921",
+      "label": "1921",
+      "year": 1921,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1924",
+      "label": "1924",
+      "year": 1924,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1926",
+      "label": "1926",
+      "year": 1926,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1929",
+      "label": "1929",
+      "year": 1929,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1935",
+      "label": "1935",
+      "year": 1935,
+      "numista_type_id": 10340
+    },
+    {
+      "id": "1936",
+      "label": "1936",
+      "year": 1936,
+      "numista_type_id": 10340
+    }
+  ]
+}

@@ -478,7 +478,7 @@ async fn album_for(state: &AppState, user: &str) -> Result<LoadedAlbum, AppError
     let type_meta = state.repository.load_type_meta().await?;
     let overrides = state.repository.load_overrides(user).await?;
     let album = build_album(&state.series, &items, &type_meta, &overrides);
-    let proposals = build_collection_proposals(&items, &type_meta);
+    let proposals = build_collection_proposals(&items, &type_meta, &state.collection_catalogs);
     Ok(LoadedAlbum {
         album,
         type_meta,

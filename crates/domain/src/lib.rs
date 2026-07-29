@@ -258,7 +258,7 @@ impl CollectionCatalog {
     }
 
     pub fn validate(&self) -> Result<(), CollectionCatalogValidationError> {
-        if self.schema_version != 1 {
+        if !matches!(self.schema_version, 1 | 2) {
             return Err(CollectionCatalogValidationError::UnsupportedSchemaVersion {
                 version: self.schema_version,
             });
@@ -282,7 +282,11 @@ impl CollectionCatalog {
         {
             return Err(CollectionCatalogValidationError::InvalidVariantKey);
         }
-        if !is_numista_series_source(&self.source) {
+        let source_is_valid = match self.schema_version {
+            1 => is_numista_series_source(&self.source),
+            _ => is_numista_series_source(&self.source) || is_numista_type_source(&self.source),
+        };
+        if !source_is_valid {
             return Err(CollectionCatalogValidationError::InvalidSource);
         }
         if self.members.is_empty() {
@@ -291,6 +295,7 @@ impl CollectionCatalog {
 
         let mut member_ids = BTreeSet::new();
         let mut type_ids = BTreeSet::new();
+        let mut date_slots = BTreeSet::new();
         for member in &self.members {
             if !is_slug(&member.id) {
                 return Err(CollectionCatalogValidationError::InvalidId {
@@ -310,13 +315,31 @@ impl CollectionCatalog {
             if member.numista_type_id == 0 {
                 return Err(CollectionCatalogValidationError::InvalidNumistaTypeId);
             }
-            if !type_ids.insert(member.numista_type_id) {
-                return Err(CollectionCatalogValidationError::DuplicateNumistaTypeId {
+            if self.schema_version == 1 {
+                if !type_ids.insert(member.numista_type_id) {
+                    return Err(CollectionCatalogValidationError::DuplicateNumistaTypeId {
+                        type_id: member.numista_type_id,
+                    });
+                }
+            } else if !date_slots.insert((member.numista_type_id, member.year)) {
+                return Err(CollectionCatalogValidationError::DuplicateMemberYear {
                     type_id: member.numista_type_id,
+                    year: member.year,
                 });
             }
         }
         Ok(())
+    }
+
+    /// Whether a collected item satisfies one catalog member. Schema 1 catalogs
+    /// match by Numista type alone; schema 2 date runs also require the issue
+    /// year recorded on the item.
+    pub fn member_matches(&self, member: &CollectionCatalogMember, item: &CollectedItem) -> bool {
+        item.quantity > 0
+            && item.type_id == member.numista_type_id
+            && (self.schema_version == 1
+                || item.issue_year == Some(member.year)
+                || item.gregorian_year == Some(member.year))
     }
 
     pub fn is_evidenced_by(&self, items: &[CollectedItem]) -> bool {
@@ -350,7 +373,9 @@ pub enum CollectionCatalogValidationError {
     BlankField { field: String },
     #[error("collection catalog has an invalid proposal variant key")]
     InvalidVariantKey,
-    #[error("collection catalog source must be an HTTPS Numista series URL")]
+    #[error(
+        "collection catalog source must be an HTTPS Numista series URL (or a Numista type URL for date runs)"
+    )]
     InvalidSource,
     #[error("collection catalog must contain at least one member")]
     EmptyMembers,
@@ -360,6 +385,8 @@ pub enum CollectionCatalogValidationError {
     InvalidNumistaTypeId,
     #[error("Numista type id `{type_id}` is assigned more than once in the collection catalog")]
     DuplicateNumistaTypeId { type_id: u32 },
+    #[error("date-run member for type `{type_id}` and year `{year}` is duplicated")]
+    DuplicateMemberYear { type_id: u32, year: i32 },
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -404,7 +431,7 @@ pub fn build_collection_catalog_album(
             .map(|member| {
                 let owned_items: Vec<ItemRef> = items
                     .iter()
-                    .filter(|item| item.quantity > 0 && item.type_id == member.numista_type_id)
+                    .filter(|item| catalog.member_matches(&member, item))
                     .map(|item| ItemRef {
                         item_id: item.id,
                         type_id: item.type_id,
@@ -446,6 +473,13 @@ fn validate_collection_catalog_text(
 fn is_numista_series_source(source: &str) -> bool {
     source
         .strip_prefix("https://en.numista.com/catalogue/series.php?id=")
+        .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_digit()))
+}
+
+fn is_numista_type_source(source: &str) -> bool {
+    source
+        .strip_prefix("https://en.numista.com/catalogue/pieces")
+        .and_then(|rest| rest.strip_suffix(".html"))
         .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_digit()))
 }
 
@@ -518,19 +552,34 @@ pub fn normalize_weight_millioz(weight_oz: f32) -> Option<u32> {
 pub fn build_collection_proposals(
     items: &[CollectedItem],
     type_meta: &TypeMetaIndex,
+    catalogs: &[CollectionCatalog],
 ) -> Vec<CollectionProposal> {
+    let catalog_families: BTreeMap<u32, &str> = catalogs
+        .iter()
+        .flat_map(|catalog| {
+            catalog
+                .members
+                .iter()
+                .map(|member| (member.numista_type_id, catalog.family.as_str()))
+        })
+        .collect();
     let mut grouped: BTreeMap<(String, u32, u8), ProposalAccumulator> = BTreeMap::new();
 
     for item in items.iter().filter(|item| item.quantity > 0) {
         let Some(metadata) = type_meta.get(&item.type_id) else {
             continue;
         };
-        let Some(family) = metadata.family.as_deref().and_then(normalize_family) else {
-            continue;
-        };
-        if is_technical_family(&family) {
+        let numista_family = metadata.family.as_deref().and_then(normalize_family);
+        if numista_family.as_deref().is_some_and(is_technical_family) {
             continue;
         }
+        let Some(family) = numista_family.or_else(|| {
+            catalog_families
+                .get(&item.type_id)
+                .map(|family| (*family).to_owned())
+        }) else {
+            continue;
+        };
         let Some(weight_millioz) = metadata.weight_oz.and_then(normalize_weight_millioz) else {
             continue;
         };
