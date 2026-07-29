@@ -52,11 +52,12 @@ pub enum Metal {
     Other,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 pub enum Finish {
     Bullion,
     Proof,
     Coloured,
+    ProofColoured,
     Gilded,
     Antiqued,
 }
@@ -172,6 +173,101 @@ pub struct CollectionProposal {
     pub quantity: u32,
 }
 
+impl CollectionProposal {
+    pub fn key(&self) -> CollectionProposalKey {
+        CollectionProposalKey {
+            family: self.family.clone(),
+            weight_millioz: self.weight_millioz,
+            finish: self.finish.clone(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub struct CollectionProposalKey {
+    pub family: String,
+    pub weight_millioz: u32,
+    pub finish: Option<Finish>,
+}
+
+impl CollectionProposalKey {
+    pub fn from_canonical_parts(
+        family: &str,
+        weight_millioz: u32,
+        finish_code: &str,
+    ) -> Option<Self> {
+        let normalized = normalize_family(family)?;
+        if normalized != family || family.len() > 256 || !(1..=1_000_000).contains(&weight_millioz)
+        {
+            return None;
+        }
+        Some(Self {
+            family: normalized,
+            weight_millioz,
+            finish: finish_from_code(finish_code)?,
+        })
+    }
+
+    pub fn finish_code(&self) -> &'static str {
+        finish_code(self.finish.as_ref())
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ProposalDisposition {
+    Followed,
+    Ignored,
+}
+
+impl ProposalDisposition {
+    pub fn from_code(code: &str) -> Option<Self> {
+        match code {
+            "followed" => Some(Self::Followed),
+            "ignored" => Some(Self::Ignored),
+            _ => None,
+        }
+    }
+
+    pub fn as_code(self) -> &'static str {
+        match self {
+            Self::Followed => "followed",
+            Self::Ignored => "ignored",
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CollectionProposalPreference {
+    pub key: CollectionProposalKey,
+    pub disposition: ProposalDisposition,
+}
+
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct ClassifiedCollectionProposals {
+    pub followed: Vec<CollectionProposal>,
+    pub available: Vec<CollectionProposal>,
+    pub ignored: Vec<CollectionProposal>,
+}
+
+pub fn classify_collection_proposals(
+    proposals: Vec<CollectionProposal>,
+    preferences: &[CollectionProposalPreference],
+) -> ClassifiedCollectionProposals {
+    let preferences: BTreeMap<&CollectionProposalKey, ProposalDisposition> = preferences
+        .iter()
+        .map(|preference| (&preference.key, preference.disposition))
+        .collect();
+    let mut classified = ClassifiedCollectionProposals::default();
+    for proposal in proposals {
+        match preferences.get(&proposal.key()) {
+            Some(ProposalDisposition::Followed) => classified.followed.push(proposal),
+            Some(ProposalDisposition::Ignored) => classified.ignored.push(proposal),
+            None => classified.available.push(proposal),
+        }
+    }
+    classified
+}
+
 pub fn normalize_weight_millioz(weight_oz: f32) -> Option<u32> {
     if !weight_oz.is_finite() || weight_oz <= 0.0 {
         return None;
@@ -209,6 +305,9 @@ pub fn build_collection_proposals(
         let Some(family) = metadata.family.as_deref().and_then(normalize_family) else {
             continue;
         };
+        if is_technical_family(&family) {
+            continue;
+        }
         let Some(weight_millioz) = metadata.weight_oz.and_then(normalize_weight_millioz) else {
             continue;
         };
@@ -253,14 +352,62 @@ fn normalize_family(family: &str) -> Option<String> {
     (!normalized.is_empty()).then_some(normalized)
 }
 
+pub fn collection_proposal_family_label(family: &str) -> &str {
+    match family {
+        "SML" => "Silver Maple Leaf",
+        "Red Data Book" => "Libro Rojo de Rusia",
+        "Serie de monedas de plata obtenidas a valor facial" => {
+            "Monedas españolas de plata a valor facial"
+        }
+        "Lunar ounce" => "Rwanda Lunar Ounce",
+        "Nautical Ounce" => "Rwanda Nautical Ounce",
+        _ => family,
+    }
+}
+
+fn is_technical_family(family: &str) -> bool {
+    family.strip_prefix("System ").is_some_and(|period| {
+        !period.is_empty()
+            && period
+                .split('-')
+                .all(|year| year.len() == 4 && year.bytes().all(|byte| byte.is_ascii_digit()))
+    })
+}
+
 fn finish_key(finish: Option<&Finish>) -> u8 {
     match finish {
         None => 0,
         Some(Finish::Bullion) => 1,
         Some(Finish::Proof) => 2,
         Some(Finish::Coloured) => 3,
-        Some(Finish::Gilded) => 4,
-        Some(Finish::Antiqued) => 5,
+        Some(Finish::ProofColoured) => 4,
+        Some(Finish::Gilded) => 5,
+        Some(Finish::Antiqued) => 6,
+    }
+}
+
+fn finish_code(finish: Option<&Finish>) -> &'static str {
+    match finish {
+        None => "unknown",
+        Some(Finish::Bullion) => "bullion",
+        Some(Finish::Proof) => "proof",
+        Some(Finish::Coloured) => "coloured",
+        Some(Finish::ProofColoured) => "proof_coloured",
+        Some(Finish::Gilded) => "gilded",
+        Some(Finish::Antiqued) => "antiqued",
+    }
+}
+
+fn finish_from_code(code: &str) -> Option<Option<Finish>> {
+    match code {
+        "unknown" => Some(None),
+        "bullion" => Some(Some(Finish::Bullion)),
+        "proof" => Some(Some(Finish::Proof)),
+        "coloured" => Some(Some(Finish::Coloured)),
+        "proof_coloured" => Some(Some(Finish::ProofColoured)),
+        "gilded" => Some(Some(Finish::Gilded)),
+        "antiqued" => Some(Some(Finish::Antiqued)),
+        _ => None,
     }
 }
 

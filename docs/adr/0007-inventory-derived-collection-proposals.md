@@ -25,12 +25,12 @@ never seed a proposal by itself.
 
 Proposals are recomputed after sync. They never emit slots or `Missing`. Curated,
 version-controlled JSON in git remains the source of truth for albums and catalog
-coverage. The current scope has no persistence for accepting or promoting a proposal.
+coverage. Only derived proposal content remains ephemeral; per-user followed and ignored
+dispositions are governed by ADR 0008.
 
 ## Consequences
 
 Users without holdings receive no proposals, and one user's cached catalog metadata
 cannot create another user's collection structure. Physical variants remain isolated, so
-one-ounce/two-ounce and bullion/coloured pieces cannot leak across proposals. A future
-acceptance workflow will require a separate decision without weakening curated JSON as
-the authority for albums.
+one-ounce/two-ounce and bullion/coloured pieces cannot leak across proposals. Persisting a
+user's disposition does not weaken curated JSON as the authority for albums.

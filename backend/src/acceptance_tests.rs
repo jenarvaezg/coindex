@@ -6,7 +6,7 @@ use async_trait::async_trait;
 use axum::body::Body;
 use axum::http::header::{CONTENT_TYPE, ORIGIN};
 use axum::http::{Request, StatusCode};
-use domain::{Album, MatchSource, SlotStatus};
+use domain::{Album, CollectionProposalKey, MatchSource, ProposalDisposition, SlotStatus};
 use http_body_util::BodyExt;
 use numista::{
     ClientConfig, CollectedItem, HttpRequest, HttpResponse, HttpTransport, ItemType, NumistaClient,
@@ -189,6 +189,112 @@ async fn postgres_override_and_metadata_cache_survive_consecutive_syncs() {
     clean_acceptance_rows(&pool).await;
 }
 
+#[tokio::test]
+#[ignore = "requires disposable Postgres in TEST_DATABASE_URL; see test doc comment"]
+async fn proposal_preferences_are_idempotent_user_scoped_and_survive_sync() {
+    let database_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL must be set");
+    assert_disposable_database_url(&database_url);
+    let pool = PgPoolOptions::new()
+        .max_connections(2)
+        .connect(&database_url)
+        .await
+        .unwrap();
+    sqlx::migrate!("./migrations").run(&pool).await.unwrap();
+    clean_acceptance_rows(&pool).await;
+    let repository = Repository::new(pool.clone());
+    let key = CollectionProposalKey::from_canonical_parts("Lunar ounce", 1_000, "proof_coloured")
+        .unwrap();
+
+    repository
+        .upsert_collection_proposal_preference(USER_KEY, &key, ProposalDisposition::Followed)
+        .await
+        .unwrap();
+    repository
+        .upsert_collection_proposal_preference(USER_KEY, &key, ProposalDisposition::Followed)
+        .await
+        .unwrap();
+    repository
+        .upsert_collection_proposal_preference("padre", &key, ProposalDisposition::Ignored)
+        .await
+        .unwrap();
+    repository.store_sync(USER_KEY, &[], None).await.unwrap();
+
+    let preferences = repository
+        .load_collection_proposal_preferences(USER_KEY)
+        .await
+        .unwrap();
+    assert_eq!(preferences.len(), 1);
+    assert_eq!(preferences[0].disposition, ProposalDisposition::Followed);
+    assert_eq!(
+        repository
+            .load_collection_proposal_preferences("padre")
+            .await
+            .unwrap()[0]
+            .disposition,
+        ProposalDisposition::Ignored
+    );
+
+    let app = build_router(AppState {
+        config: AppConfig::parse("jose:1:key-one,padre:2:key-two", Some("1500"), ORIGIN_URL)
+            .unwrap(),
+        repository: repository.clone(),
+        series: Arc::new(Vec::new()),
+        sync: SyncService::new(repository.clone(), BTreeMap::new()),
+        image_client: reqwest::Client::new(),
+    });
+    let fabricated = app
+        .clone()
+        .oneshot(
+            Request::post(format!("/u/{USER_KEY}/collection-proposal-preference"))
+                .header(ORIGIN, ORIGIN_URL)
+                .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .body(Body::from(
+                    "family=Fabricated&weight_millioz=1000&finish=unknown&action=follow",
+                ))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(fabricated.status(), StatusCode::BAD_REQUEST);
+
+    let restored = app
+        .oneshot(
+            Request::post(format!("/u/{USER_KEY}/collection-proposal-preference"))
+                .header(ORIGIN, ORIGIN_URL)
+                .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .body(Body::from(
+                    "family=Lunar+ounce&weight_millioz=1000&finish=proof_coloured&action=restore",
+                ))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(restored.status(), StatusCode::SEE_OTHER);
+    assert_eq!(restored.headers()["location"], "/#proposals-jose");
+
+    repository
+        .delete_collection_proposal_preference(USER_KEY, &key)
+        .await
+        .unwrap();
+    assert!(
+        repository
+            .load_collection_proposal_preferences(USER_KEY)
+            .await
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(
+        repository
+            .load_collection_proposal_preferences("padre")
+            .await
+            .unwrap()
+            .len(),
+        1
+    );
+
+    clean_acceptance_rows(&pool).await;
+}
+
 fn assert_disposable_database_url(database_url: &str) {
     let parsed = reqwest::Url::parse(database_url)
         .expect("TEST_DATABASE_URL must be a valid PostgreSQL URL");
@@ -242,6 +348,14 @@ async fn api_log_count(pool: &PgPool, endpoint: &str) -> i64 {
 }
 
 async fn clean_acceptance_rows(pool: &PgPool) {
+    sqlx::query!(
+        "DELETE FROM collection_proposal_preferences
+         WHERE user_key = $1 OR user_key = 'padre'",
+        USER_KEY
+    )
+    .execute(pool)
+    .await
+    .unwrap();
     sqlx::query!("DELETE FROM manual_overrides WHERE user_key = $1", USER_KEY)
         .execute(pool)
         .await

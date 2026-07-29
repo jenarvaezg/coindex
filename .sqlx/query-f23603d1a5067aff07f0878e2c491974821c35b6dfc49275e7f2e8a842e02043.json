@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT family, weight_millioz, finish, disposition\n             FROM collection_proposal_preferences\n             WHERE user_key = $1\n             ORDER BY family, weight_millioz, finish",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "family",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "weight_millioz",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "finish",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "disposition",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "f23603d1a5067aff07f0878e2c491974821c35b6dfc49275e7f2e8a842e02043"
+}

@@ -12,14 +12,15 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use axum::body::Body;
-use axum::extract::{Form, Path, Query, State};
+use axum::extract::{Form, FromRequest, Path, Query, Request, State};
 use axum::http::header::{CACHE_CONTROL, CONTENT_TYPE, ORIGIN};
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use domain::{
-    Album, CollectionProposal, Series, TypeMetaIndex, build_album, build_collection_proposals,
+    Album, CollectionProposal, CollectionProposalKey, ProposalDisposition, Series, TypeMetaIndex,
+    build_album, build_collection_proposals, classify_collection_proposals,
 };
 use numista::{ClientConfig, NumistaClient};
 use reqwest::redirect::Policy;
@@ -77,6 +78,8 @@ enum AppError {
     UnknownSlot(String),
     #[error("unknown collected item `{0}`")]
     UnknownItem(u64),
+    #[error("invalid or unavailable collection proposal preference")]
+    InvalidCollectionProposalPreference,
     #[error("mutating requests require the configured same-origin Origin")]
     CrossOriginPost,
     #[error("invalid image side `{0}`")]
@@ -107,6 +110,15 @@ struct SyncQuery {
 struct OverrideForm {
     item_id: u64,
     slot_id: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CollectionProposalPreferenceForm {
+    family: String,
+    weight_millioz: u32,
+    finish: String,
+    action: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -161,6 +173,10 @@ pub fn build_router(state: AppState) -> Router {
         .route("/u/{user}/series/{series_id}", get(series_handler))
         .route("/u/{user}/unmatched", get(unmatched_handler))
         .route("/u/{user}/override", post(override_handler))
+        .route(
+            "/u/{user}/collection-proposal-preference",
+            post(collection_proposal_preference_handler),
+        )
         .route("/u/{user}/sync", post(sync_handler))
         .route("/img/type/{type_id}/{side}", get(image_handler))
         .route("/api/album/{user}", get(album_handler))
@@ -173,7 +189,12 @@ async fn index_handler(State(state): State<AppState>) -> Result<Html<String>, Ap
     let mut albums = Vec::new();
     for user in state.config.users() {
         let loaded = album_for(&state, &user.key).await?;
-        albums.push((user.key.clone(), loaded.album, loaded.proposals));
+        let preferences = state
+            .repository
+            .load_collection_proposal_preferences(&user.key)
+            .await?;
+        let proposals = classify_collection_proposals(loaded.proposals, &preferences);
+        albums.push((user.key.clone(), loaded.album, proposals));
     }
     Ok(Html(views::index(&state.config, &albums).into_string()))
 }
@@ -244,6 +265,59 @@ async fn override_handler(
     Ok((
         StatusCode::SEE_OTHER,
         [("location", format!("/u/{user}/unmatched"))],
+    )
+        .into_response())
+}
+
+async fn collection_proposal_preference_handler(
+    State(state): State<AppState>,
+    Path(user): Path<String>,
+    request: Request,
+) -> Result<Response, AppError> {
+    validate_same_origin(request.headers(), &state.config.origin)?;
+    require_user(&state, &user)?;
+    let Form(form) = Form::<CollectionProposalPreferenceForm>::from_request(request, &state)
+        .await
+        .map_err(|_| AppError::InvalidCollectionProposalPreference)?;
+    let key = CollectionProposalKey::from_canonical_parts(
+        &form.family,
+        form.weight_millioz,
+        &form.finish,
+    )
+    .ok_or(AppError::InvalidCollectionProposalPreference)?;
+
+    match form.action.as_str() {
+        "restore" => {
+            state
+                .repository
+                .delete_collection_proposal_preference(&user, &key)
+                .await?;
+        }
+        "follow" | "ignore" => {
+            let loaded = album_for(&state, &user).await?;
+            if !loaded
+                .proposals
+                .iter()
+                .any(|proposal| proposal.key() == key)
+            {
+                return Err(AppError::InvalidCollectionProposalPreference);
+            }
+            let disposition = if form.action == "follow" {
+                ProposalDisposition::Followed
+            } else {
+                ProposalDisposition::Ignored
+            };
+            state
+                .repository
+                .upsert_collection_proposal_preference(&user, &key, disposition)
+                .await?;
+        }
+        _ => return Err(AppError::InvalidCollectionProposalPreference),
+    }
+
+    Ok((
+        StatusCode::SEE_OTHER,
+        [("location", format!("/#proposals-{user}"))],
     )
         .into_response())
 }
@@ -402,6 +476,7 @@ impl IntoResponse for AppError {
             | Self::InvalidImageSide(_)
             | Self::MissingImage { .. } => StatusCode::NOT_FOUND,
             Self::CrossOriginPost => StatusCode::FORBIDDEN,
+            Self::InvalidCollectionProposalPreference => StatusCode::BAD_REQUEST,
             Self::UnsafeImageUrl | Self::InvalidImageResponse => StatusCode::BAD_GATEWAY,
             Self::ImageTooLarge => StatusCode::PAYLOAD_TOO_LARGE,
             Self::Sync(_) => StatusCode::SERVICE_UNAVAILABLE,
@@ -409,22 +484,24 @@ impl IntoResponse for AppError {
         };
         if status.is_server_error() {
             tracing::error!(status = status.as_u16(), error = %self, "request failed");
+            (status, "internal server error").into_response()
         } else {
             tracing::warn!(status = status.as_u16(), error = %self, "request rejected");
+            (status, self.to_string()).into_response()
         }
-        (status, self.to_string()).into_response()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use axum::body::Body;
+    use axum::body::{Body, to_bytes};
     use axum::http::{Request, StatusCode};
+    use axum::response::IntoResponse;
     use tower::ServiceExt;
 
     use super::{
-        AppConfig, AppState, Repository, SyncService, build_router, trusted_image_url,
-        validate_same_origin,
+        AppConfig, AppError, AppState, Repository, RepositoryError, SyncService, build_router,
+        trusted_image_url, validate_same_origin,
     };
     use sqlx::postgres::PgPoolOptions;
     use std::collections::BTreeMap;
@@ -457,6 +534,42 @@ mod tests {
             response.headers()["content-type"],
             "text/css; charset=utf-8"
         );
+    }
+
+    #[tokio::test]
+    async fn proposal_preference_route_checks_origin_before_parsing_form_or_using_database() {
+        let pool = PgPoolOptions::new()
+            .connect_lazy("postgres://unused:unused@localhost/unused")
+            .unwrap();
+        let state = AppState {
+            config: AppConfig::parse("jose:1:a,padre:2:b", None, "http://localhost:8000").unwrap(),
+            repository: Repository::new(pool.clone()),
+            series: Arc::new(Vec::new()),
+            sync: SyncService::new(Repository::new(pool), BTreeMap::new()),
+            image_client: reqwest::Client::new(),
+        };
+
+        let response = build_router(state)
+            .oneshot(
+                Request::post("/u/jose/collection-proposal-preference")
+                    .header("origin", "https://evil.example")
+                    .header("content-type", "application/x-www-form-urlencoded")
+                    .body(Body::from("%not-valid"))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::FORBIDDEN);
+    }
+
+    #[tokio::test]
+    async fn server_errors_do_not_expose_repository_diagnostics() {
+        let response = AppError::Repository(RepositoryError::Database(sqlx::Error::RowNotFound))
+            .into_response();
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+
+        assert_eq!(body.as_ref(), b"internal server error");
     }
 
     #[test]

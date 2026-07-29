@@ -1,6 +1,7 @@
 use domain::{
-    Album, AlbumSlot, CollectionProposal, Finish, MatchSource, ReleaseStatus, Series, SeriesAlbum,
-    SlotStatus, TypeMetaIndex, UnmatchedReason,
+    Album, AlbumSlot, ClassifiedCollectionProposals, CollectionProposal, Finish, MatchSource,
+    ReleaseStatus, Series, SeriesAlbum, SlotStatus, TypeMetaIndex, UnmatchedReason,
+    collection_proposal_family_label,
 };
 use maud::{DOCTYPE, Markup, html};
 
@@ -31,7 +32,7 @@ pub fn layout(title: &str, body: Markup) -> Markup {
 
 pub fn index(
     config: &AppConfig,
-    collections: &[(String, Album, Vec<CollectionProposal>)],
+    collections: &[(String, Album, ClassifiedCollectionProposals)],
 ) -> Markup {
     layout(
         "Álbumes",
@@ -78,34 +79,40 @@ pub fn index(
                         }
                     }
                     @if let Some((_, _, proposals)) = collection {
-                        @if !proposals.is_empty() {
-                            div class="proposal-heading" {
-                                p class="eyebrow" { "Propuestas desde las piezas actuales" }
-                                p { "Agrupaciones de solo lectura; no afirman huecos ni emisiones ausentes." }
-                            }
-                            div class="proposal-grid" {
-                                @for proposal in proposals {
-                                    article class="proposal-card" {
-                                        p class="plate-number" { "Evidencia de colección" }
-                                        h3 { (&proposal.family) }
-                                        p class="proposal-variant" {
-                                            (proposal_weight_label(proposal.weight_millioz))
-                                            " · "
-                                            (proposal_finish_label(proposal.finish.as_ref()))
+                        @if !proposals.followed.is_empty()
+                            || !proposals.available.is_empty()
+                            || !proposals.ignored.is_empty()
+                        {
+                            section class="proposal-section" id=(format!("proposals-{}", user.key)) {
+                                div class="proposal-heading" {
+                                    p class="eyebrow" { "Propuestas desde las piezas actuales" }
+                                    p { "Se basan solo en tus piezas actuales; seguirlas no inventa huecos ni emisiones ausentes." }
+                                }
+                                @if !proposals.followed.is_empty() {
+                                    h3 class="proposal-section-title" { "Seguidas" }
+                                    div class="proposal-grid" {
+                                        @for proposal in &proposals.followed {
+                                            (proposal_card(&user.key, proposal, ProposalCardState::Followed))
                                         }
-                                        p class="proposal-count" {
-                                            (proposal.distinct_types)
-                                            @if proposal.distinct_types == 1 {
-                                                " tipo distinto"
-                                            } @else {
-                                                " tipos distintos"
-                                            }
-                                            " · "
-                                            (proposal.quantity)
-                                            @if proposal.quantity == 1 {
-                                                " pieza"
-                                            } @else {
-                                                " piezas"
+                                    }
+                                }
+                                @if !proposals.available.is_empty() {
+                                    h3 class="proposal-section-title" { "Disponibles" }
+                                    div class="proposal-grid" {
+                                        @for proposal in &proposals.available {
+                                            (proposal_card(&user.key, proposal, ProposalCardState::Available))
+                                        }
+                                    }
+                                }
+                                @if !proposals.ignored.is_empty() {
+                                    details class="ignored-proposals" {
+                                        summary {
+                                            "Propuestas ignoradas · "
+                                            (proposals.ignored.len())
+                                        }
+                                        div class="proposal-grid" {
+                                            @for proposal in &proposals.ignored {
+                                                (proposal_card(&user.key, proposal, ProposalCardState::Ignored))
                                             }
                                         }
                                     }
@@ -117,6 +124,82 @@ pub fn index(
             }
         },
     )
+}
+
+#[derive(Clone, Copy)]
+enum ProposalCardState {
+    Followed,
+    Available,
+    Ignored,
+}
+
+fn proposal_card(
+    user_key: &str,
+    proposal: &CollectionProposal,
+    state: ProposalCardState,
+) -> Markup {
+    let key = proposal.key();
+    html! {
+        article class="proposal-card" {
+            p class="plate-number" { "Evidencia de colección" }
+            h3 { (collection_proposal_family_label(&proposal.family)) }
+            p class="proposal-variant" {
+                (proposal_weight_label(proposal.weight_millioz))
+                " · "
+                (proposal_finish_label(proposal.finish.as_ref()))
+            }
+            p class="proposal-count" {
+                (proposal.distinct_types)
+                @if proposal.distinct_types == 1 {
+                    " tipo distinto"
+                } @else {
+                    " tipos distintos"
+                }
+                " · "
+                (proposal.quantity)
+                @if proposal.quantity == 1 {
+                    " pieza"
+                } @else {
+                    " piezas"
+                }
+            }
+            div class="proposal-actions" {
+                @match state {
+                    ProposalCardState::Followed => {
+                        (proposal_preference_form(user_key, &key, "restore", "Dejar de seguir"))
+                        (proposal_preference_form(user_key, &key, "ignore", "Ignorar"))
+                    }
+                    ProposalCardState::Available => {
+                        (proposal_preference_form(user_key, &key, "follow", "Seguir"))
+                        (proposal_preference_form(user_key, &key, "ignore", "Ignorar"))
+                    }
+                    ProposalCardState::Ignored => {
+                        (proposal_preference_form(user_key, &key, "restore", "Restaurar"))
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn proposal_preference_form(
+    user_key: &str,
+    key: &domain::CollectionProposalKey,
+    action: &str,
+    label: &str,
+) -> Markup {
+    html! {
+        form
+            method="post"
+            action=(format!("/u/{user_key}/collection-proposal-preference"))
+        {
+            input type="hidden" name="family" value=(&key.family);
+            input type="hidden" name="weight_millioz" value=(key.weight_millioz);
+            input type="hidden" name="finish" value=(key.finish_code());
+            input type="hidden" name="action" value=(action);
+            button type="submit" class="quiet" { (label) }
+        }
+    }
 }
 
 fn proposal_weight_label(weight_millioz: u32) -> String {
@@ -136,6 +219,7 @@ fn proposal_finish_label(finish: Option<&Finish>) -> &'static str {
         Some(Finish::Bullion) => "Bullion",
         Some(Finish::Proof) => "Proof",
         Some(Finish::Coloured) => "Coloreado",
+        Some(Finish::ProofColoured) => "Proof coloreado",
         Some(Finish::Gilded) => "Dorado",
         Some(Finish::Antiqued) => "Envejecido",
     }
@@ -451,6 +535,7 @@ fn series_finish_label(series: &Series) -> &'static str {
         domain::Finish::Bullion => "Bullion",
         domain::Finish::Proof => "Proof",
         domain::Finish::Coloured => "Coloreado",
+        domain::Finish::ProofColoured => "Proof coloreado",
         domain::Finish::Gilded => "Dorado",
         domain::Finish::Antiqued => "Envejecido",
     }
@@ -523,8 +608,9 @@ impl MetalLabel for Series {
 #[cfg(test)]
 mod tests {
     use domain::{
-        Album, AlbumSlot, CollectionProposal, Finish, ItemRef, MatchSource, ReleaseStatus,
-        SeriesAlbum, SeriesId, Slot, SlotId, SlotStatus, TypeMeta, TypeMetaIndex, UnmatchedReason,
+        Album, AlbumSlot, ClassifiedCollectionProposals, CollectionProposal, Finish, ItemRef,
+        MatchSource, ReleaseStatus, SeriesAlbum, SeriesId, Slot, SlotId, SlotStatus, TypeMeta,
+        TypeMetaIndex, UnmatchedReason,
     };
 
     use super::{index, progress, series, sync_report, unmatched};
@@ -577,20 +663,39 @@ mod tests {
             ],
             unmatched: Vec::new(),
         };
-        let jose_proposals = vec![CollectionProposal {
-            family: "Lunar Series III".to_owned(),
-            weight_millioz: 250,
-            finish: Some(Finish::Coloured),
-            distinct_types: 1,
-            quantity: 2,
-        }];
-        let padre_proposals = vec![CollectionProposal {
-            family: "Lunar ounce".to_owned(),
-            weight_millioz: 1_000,
-            finish: None,
-            distinct_types: 2,
-            quantity: 3,
-        }];
+        let jose_proposals = ClassifiedCollectionProposals {
+            followed: vec![CollectionProposal {
+                family: "SML".to_owned(),
+                weight_millioz: 1_000,
+                finish: Some(Finish::ProofColoured),
+                distinct_types: 1,
+                quantity: 1,
+            }],
+            available: vec![CollectionProposal {
+                family: "Lunar Series III".to_owned(),
+                weight_millioz: 250,
+                finish: Some(Finish::Coloured),
+                distinct_types: 1,
+                quantity: 2,
+            }],
+            ignored: vec![CollectionProposal {
+                family: "Nautical Ounce".to_owned(),
+                weight_millioz: 1_000,
+                finish: Some(Finish::Bullion),
+                distinct_types: 2,
+                quantity: 3,
+            }],
+        };
+        let padre_proposals = ClassifiedCollectionProposals {
+            available: vec![CollectionProposal {
+                family: "Lunar ounce".to_owned(),
+                weight_millioz: 1_000,
+                finish: None,
+                distinct_types: 2,
+                quantity: 3,
+            }],
+            ..ClassifiedCollectionProposals::default()
+        };
 
         let html = index(
             &config,
@@ -611,10 +716,21 @@ mod tests {
         assert!(html.contains("Serie poseída"));
         assert!(!html.contains("Serie sin piezas"));
         assert!(html.contains("href=\"/u/jose/series/owned-series\""));
+        assert!(html.contains("id=\"proposals-jose\""));
+        assert!(html.contains("Silver Maple Leaf"));
+        assert!(html.contains("1 oz · Proof coloreado"));
+        assert!(html.contains("name=\"family\" value=\"SML\""));
+        assert!(html.contains("name=\"finish\" value=\"proof_coloured\""));
+        assert!(html.contains(">Dejar de seguir</button>"));
         assert!(html.contains("Lunar Series III"));
         assert!(html.contains("0,25 oz · Coloreado"));
         assert!(html.contains("1 tipo distinto · 2 piezas"));
-        assert!(html.contains("Lunar ounce"));
+        assert!(html.contains(">Seguir</button>"));
+        assert!(html.contains(">Ignorar</button>"));
+        assert!(html.contains("<summary>Propuestas ignoradas · 1</summary>"));
+        assert!(html.contains("Rwanda Nautical Ounce"));
+        assert!(html.contains(">Restaurar</button>"));
+        assert!(html.contains("Rwanda Lunar Ounce"));
         assert!(html.contains("1 oz · Por confirmar"));
         assert!(html.contains("2 tipos distintos · 3 piezas"));
         assert!(!html.contains("href=\"/u/jose/series/Lunar Series III\""));

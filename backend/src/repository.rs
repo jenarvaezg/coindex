@@ -2,7 +2,8 @@ use std::collections::{BTreeSet, HashSet};
 
 use async_trait::async_trait;
 use domain::{
-    CollectedItem as DomainItem, Finish, ManualOverride, SlotId, TypeMeta, TypeMetaIndex,
+    CollectedItem as DomainItem, CollectionProposalKey, CollectionProposalPreference, Finish,
+    ManualOverride, ProposalDisposition, SlotId, TypeMeta, TypeMetaIndex,
 };
 use numista::{ApiCall, BudgetGate, CallRecorder, CollectedItem, NumistaType, PolicyError};
 use serde_json::Value;
@@ -44,6 +45,8 @@ pub enum RepositoryError {
     TypeMetadataMismatch { requested: u32, actual: u32 },
     #[error("numeric field `{field}` is outside the supported range: {value}")]
     NumericRange { field: &'static str, value: u64 },
+    #[error("stored collection proposal preference is invalid")]
+    InvalidCollectionProposalPreference,
 }
 
 impl Repository {
@@ -123,6 +126,98 @@ impl Repository {
             user_key,
             item_id,
             slot_id
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn load_collection_proposal_preferences(
+        &self,
+        user_key: &str,
+    ) -> Result<Vec<CollectionProposalPreference>, RepositoryError> {
+        let rows = sqlx::query!(
+            "SELECT family, weight_millioz, finish, disposition
+             FROM collection_proposal_preferences
+             WHERE user_key = $1
+             ORDER BY family, weight_millioz, finish",
+            user_key
+        )
+        .fetch_all(&self.pool)
+        .await?;
+
+        rows.into_iter()
+            .map(|row| {
+                let weight_millioz = u32::try_from(row.weight_millioz)
+                    .map_err(|_| RepositoryError::InvalidCollectionProposalPreference)?;
+                let key = CollectionProposalKey::from_canonical_parts(
+                    &row.family,
+                    weight_millioz,
+                    &row.finish,
+                )
+                .ok_or(RepositoryError::InvalidCollectionProposalPreference)?;
+                let disposition = ProposalDisposition::from_code(&row.disposition)
+                    .ok_or(RepositoryError::InvalidCollectionProposalPreference)?;
+                Ok(CollectionProposalPreference { key, disposition })
+            })
+            .collect()
+    }
+
+    pub async fn upsert_collection_proposal_preference(
+        &self,
+        user_key: &str,
+        key: &CollectionProposalKey,
+        disposition: ProposalDisposition,
+    ) -> Result<(), RepositoryError> {
+        let weight_millioz =
+            i32::try_from(key.weight_millioz).map_err(|_| RepositoryError::NumericRange {
+                field: "weight_millioz",
+                value: u64::from(key.weight_millioz),
+            })?;
+        sqlx::query!(
+            "INSERT INTO collection_proposal_preferences (
+                 user_key, family, weight_millioz, finish, disposition
+             )
+             VALUES ($1, $2, $3, $4, $5)
+             ON CONFLICT (user_key, family, weight_millioz, finish)
+             DO UPDATE SET
+                 disposition = EXCLUDED.disposition,
+                 updated_at = CASE
+                     WHEN collection_proposal_preferences.disposition = EXCLUDED.disposition
+                     THEN collection_proposal_preferences.updated_at
+                     ELSE now()
+                 END",
+            user_key,
+            &key.family,
+            weight_millioz,
+            key.finish_code(),
+            disposition.as_code(),
+        )
+        .execute(&self.pool)
+        .await?;
+        Ok(())
+    }
+
+    pub async fn delete_collection_proposal_preference(
+        &self,
+        user_key: &str,
+        key: &CollectionProposalKey,
+    ) -> Result<(), RepositoryError> {
+        let weight_millioz =
+            i32::try_from(key.weight_millioz).map_err(|_| RepositoryError::NumericRange {
+                field: "weight_millioz",
+                value: u64::from(key.weight_millioz),
+            })?;
+        sqlx::query!(
+            "DELETE FROM collection_proposal_preferences
+             WHERE user_key = $1
+               AND family = $2
+               AND weight_millioz = $3
+               AND finish = $4",
+            user_key,
+            &key.family,
+            weight_millioz,
+            key.finish_code(),
         )
         .execute(&self.pool)
         .await?;
@@ -416,14 +511,17 @@ fn domain_type_meta(id: u32, meta: &NumistaType) -> TypeMeta {
 
 fn infer_finish(meta: &NumistaType) -> Option<Finish> {
     let title = meta.title.as_deref()?.to_ascii_lowercase();
-    if title.contains("proof") {
-        Some(Finish::Proof)
-    } else if title.contains("colour")
+    let proof = title.contains("proof");
+    let coloured = title.contains("colour")
         || title.contains("color")
         || title.contains("coloread")
         || title.contains("coloriz")
-        || is_lunar_colour_variant(&title, meta.series.as_deref())
-    {
+        || is_lunar_colour_variant(&title, meta.series.as_deref());
+    if proof && coloured {
+        Some(Finish::ProofColoured)
+    } else if proof {
+        Some(Finish::Proof)
+    } else if coloured {
         Some(Finish::Coloured)
     } else if title.contains("gild") || title.contains("dorad") || title.contains("chapado en oro")
     {
@@ -496,7 +594,7 @@ fn to_i64(field: &'static str, value: u64) -> Result<i64, RepositoryError> {
 
 #[cfg(test)]
 mod tests {
-    use domain::{Finish, SlotStatus, TypeMetaIndex, build_album};
+    use domain::{Finish, SlotStatus, TypeMetaIndex, build_album, build_collection_proposals};
     use numista::{CollectedItem, NumistaType};
 
     use crate::seeds::load_series;
@@ -511,6 +609,43 @@ mod tests {
         };
 
         assert_eq!(infer_finish(&metadata), None);
+    }
+
+    #[test]
+    fn proof_coloured_title_is_one_distinct_finish_before_single_finish_rules() {
+        let metadata = NumistaType {
+            title: Some(
+                "1 Dollar - Elizabeth II - Year of the Horse - Silver Proof Coloured".to_owned(),
+            ),
+            series: Some("Lunar Series III".to_owned()),
+            weight: Some(31.107),
+            ..NumistaType::default()
+        };
+
+        let adapted = domain_type_meta(507_204, &metadata);
+
+        assert_eq!(adapted.finish, Some(Finish::ProofColoured));
+        assert!((adapted.weight_oz.unwrap() - 1.0).abs() < 0.001);
+        let proposals = build_collection_proposals(
+            &[],
+            &[domain::CollectedItem {
+                id: 1,
+                quantity: 1,
+                type_id: 507_204,
+                title: None,
+                issuer_code: None,
+                issue_year: None,
+                gregorian_year: None,
+                grade: None,
+                price: None,
+                for_swap: None,
+                collection_name: None,
+            }],
+            &TypeMetaIndex::from([(507_204, adapted)]),
+        );
+        assert_eq!(proposals.len(), 1);
+        assert_eq!(proposals[0].weight_millioz, 1_000);
+        assert_eq!(proposals[0].finish, Some(Finish::ProofColoured));
     }
 
     #[test]

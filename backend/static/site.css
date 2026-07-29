@@ -117,6 +117,18 @@ h3 { font-size: 1.6rem; }
 .proposal-card { border-style: dashed; box-shadow: none; }
 .proposal-card h3, .proposal-variant { margin-bottom: 0.4rem; }
 .proposal-count { margin-bottom: 0; font-family: "Arial Narrow", "Helvetica Neue", sans-serif; }
+.proposal-section-title { margin: 1.4rem 0 0.7rem; font-size: 1rem; }
+.proposal-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.proposal-actions form { margin: 0; }
+.ignored-proposals { margin-top: 1.5rem; }
+.ignored-proposals > summary {
+  color: var(--muted);
+  cursor: pointer;
+  font: 700 0.78rem/1.2 "Arial Narrow", "Helvetica Neue", sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ignored-proposals[open] > summary { margin-bottom: 0.8rem; }
 
 .breadcrumb { margin-bottom: 2rem; }
 .series-header { align-items: end; margin-bottom: 3rem; }

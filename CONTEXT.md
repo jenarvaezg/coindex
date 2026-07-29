@@ -10,17 +10,50 @@ The exact catalog family under which Numista groups related coin types. A family
 multiple physical variants and is not necessarily a curated series.
 _Avoid_: Series
 
+**Family display alias**:
+A presentation-only label for a Numista family. It does not change proposal identity,
+grouping, or persisted dispositions.
+_Avoid_: Numista family, proposal variant key
+
 **Physical variant**:
 A distinct form within a Numista family, identified by its normalized weight and finish.
 For example, one-ounce bullion, two-ounce bullion, and one-ounce coloured pieces are
 different physical variants.
 _Avoid_: Family, type
 
+**Composite finish**:
+A physical finish with multiple simultaneous properties, currently Proof coloured. It is
+distinct from Proof and Coloured and participates in proposal identity and grouping.
+_Avoid_: Display label, either component finish
+
+**Proposal variant key**:
+The exact canonical tuple of raw Numista family, normalized weight, and finish that
+identifies a physical variant for proposal grouping and per-user dispositions. It uses
+the same weight normalization as proposal derivation; family display aliases never alter
+it.
+_Avoid_: Family display alias, proposal title
+
 **Collection proposal**:
 A provisional, per-collector grouping of currently owned pieces that share one exact
 Numista family and physical variant. It suggests an organization, not catalog coverage
 or absent pieces.
 _Avoid_: Album, automatic series
+
+**Available proposal**:
+A current collection proposal for which the user has neither followed nor ignored the
+proposal variant key.
+_Avoid_: Followed proposal, ignored proposal
+
+**Followed collection proposal**:
+A current collection proposal whose proposal variant key the user has marked as followed.
+Following does not promote it to a curated series or Album and cannot create Missing
+members.
+_Avoid_: Curated series, Album
+
+**Ignored proposal**:
+A current collection proposal whose proposal variant key the user has reversibly marked
+as ignored.
+_Avoid_: Deleted proposal, permanent exclusion
 
 **Curated series**:
 An intentionally defined collectible sequence whose scope and expected members are

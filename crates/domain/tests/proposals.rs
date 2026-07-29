@@ -1,6 +1,8 @@
 use domain::{
-    CollectedItem, Finish, Metal, ReleaseStatus, Series, SeriesId, Slot, SlotId, TypeMeta,
-    TypeMetaIndex, build_collection_proposals, normalize_weight_millioz,
+    CollectedItem, CollectionProposal, CollectionProposalKey, CollectionProposalPreference, Finish,
+    Metal, ProposalDisposition, ReleaseStatus, Series, SeriesId, Slot, SlotId, TypeMeta,
+    TypeMetaIndex, build_collection_proposals, classify_collection_proposals,
+    collection_proposal_family_label, normalize_weight_millioz,
 };
 
 fn ounces(grams: f32) -> f32 {
@@ -153,4 +155,106 @@ fn only_exact_curated_variants_are_filtered_and_unknown_finish_stays_separate() 
     assert!(!proposals.iter().any(|proposal| {
         proposal.weight_millioz == 1_000 && proposal.finish == Some(Finish::Bullion)
     }));
+}
+
+#[test]
+fn editorial_aliases_preserve_raw_keys_and_technical_system_years_are_ineligible() {
+    let aliases = [
+        ("SML", "Silver Maple Leaf"),
+        ("Red Data Book", "Libro Rojo de Rusia"),
+        (
+            "Serie de monedas de plata obtenidas a valor facial",
+            "Monedas españolas de plata a valor facial",
+        ),
+        ("Lunar ounce", "Rwanda Lunar Ounce"),
+        ("Nautical Ounce", "Rwanda Nautical Ounce"),
+    ];
+    for (raw, display) in aliases {
+        assert_eq!(collection_proposal_family_label(raw), display);
+    }
+    assert_eq!(collection_proposal_family_label("sml"), "sml");
+    assert_eq!(
+        collection_proposal_family_label("System of a Down"),
+        "System of a Down"
+    );
+
+    let metadata = TypeMetaIndex::from([
+        (10, metadata(10, "System 2025", 31.1, None)),
+        (11, metadata(11, "System 1927-1968", 31.1, None)),
+        (12, metadata(12, "System 1969-1980-2001", 31.1, None)),
+        (20, metadata(20, "System of a Down", 31.1, None)),
+        (21, metadata(21, "System 19-2001", 31.1, None)),
+    ]);
+    let proposals = build_collection_proposals(
+        &[],
+        &[
+            item(1, 10, 1),
+            item(2, 11, 1),
+            item(3, 12, 1),
+            item(4, 20, 1),
+            item(5, 21, 1),
+        ],
+        &metadata,
+    );
+
+    assert_eq!(
+        proposals
+            .iter()
+            .map(|proposal| proposal.family.as_str())
+            .collect::<Vec<_>>(),
+        ["System 19-2001", "System of a Down"]
+    );
+}
+
+#[test]
+fn canonical_keys_round_trip_finish_codes_and_classification_keeps_stale_preferences_dormant() {
+    let proposal = |family: &str, finish| CollectionProposal {
+        family: family.to_owned(),
+        weight_millioz: 1_000,
+        finish,
+        distinct_types: 1,
+        quantity: 1,
+    };
+    let followed = proposal("SML", Some(Finish::ProofColoured));
+    let available = proposal("Lunar ounce", None);
+    let ignored = proposal("Nautical Ounce", Some(Finish::Bullion));
+    let stale =
+        CollectionProposalKey::from_canonical_parts("Red Data Book", 2_000, "proof").unwrap();
+    let preferences = vec![
+        CollectionProposalPreference {
+            key: followed.key(),
+            disposition: ProposalDisposition::Followed,
+        },
+        CollectionProposalPreference {
+            key: ignored.key(),
+            disposition: ProposalDisposition::Ignored,
+        },
+        CollectionProposalPreference {
+            key: stale,
+            disposition: ProposalDisposition::Followed,
+        },
+    ];
+
+    assert_eq!(followed.key().finish_code(), "proof_coloured");
+    assert_eq!(
+        CollectionProposalKey::from_canonical_parts("Lunar ounce", 1_000, "unknown")
+            .unwrap()
+            .finish,
+        None
+    );
+    assert!(
+        CollectionProposalKey::from_canonical_parts(" Lunar ounce", 1_000, "unknown").is_none()
+    );
+    assert!(CollectionProposalKey::from_canonical_parts("Lunar ounce", 0, "unknown").is_none());
+    assert!(CollectionProposalKey::from_canonical_parts("Lunar ounce", 1_000, "Proof").is_none());
+
+    let classified =
+        classify_collection_proposals(vec![followed, available, ignored], &preferences);
+
+    assert_eq!(classified.followed.len(), 1);
+    assert_eq!(classified.available.len(), 1);
+    assert_eq!(classified.ignored.len(), 1);
+    assert_eq!(classified.followed[0].family, "SML");
+    assert_eq!(classified.available[0].family, "Lunar ounce");
+    assert_eq!(classified.ignored[0].family, "Nautical Ounce");
 }
