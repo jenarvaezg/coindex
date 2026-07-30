@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,24 +28,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.ui.components.CardAction
+import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
+import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
 import com.jenarvaezg.coindex.ui.theme.Paper
-
-private object Routes {
-    const val INDEX = "index"
-    const val UNCLASSIFIED = "unclassified"
-    const val PLATE = "plate/{catalogId}"
-
-    fun plate(catalogId: String) = "plate/$catalogId"
-}
 
 @Composable
 fun CoindexApp(viewModel: CoindexViewModel) {
@@ -55,6 +48,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val navController = rememberNavController()
     val snackbarHost = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val backStackEntry by navController.currentBackStackEntryAsState()
 
     // Al volver a primer plano se recomprueba, con el suelo de tiempo de shouldCheckForUpdate.
     LifecycleEventEffect(Lifecycle.Event.ON_START) { viewModel.checkForUpdate() }
@@ -70,12 +64,43 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
+    // The plate names itself in the masthead, which means resolving the catalog the route
+    // carries; every other destination knows its own title from the route alone.
+    val route = backStackEntry?.destination?.route
+    val plateCatalogName = backStackEntry
+        ?.takeIf { Routes.isPlate(route) }
+        ?.let { viewModel.catalogName(it.arguments?.getString("catalogId")) }
+
+    // The start destination is the only one with nothing underneath it, and a «Volver» that pops
+    // an empty back stack is a button that teaches you to ignore it. In that gap the masthead
+    // offers settings instead. Onboarding has no masthead actions at all.
+    val atIndex = state.onboarded && route == Routes.INDEX
+    val onBack: (() -> Unit)? =
+        if (state.onboarded && route != null && route != Routes.INDEX) {
+            { navController.popBackStack() }
+        } else {
+            null
+        }
+    val onOpenSettings: (() -> Unit)? =
+        if (atIndex) {
+            { navController.navigate(Routes.SETTINGS) }
+        } else {
+            null
+        }
+
     Scaffold(
         containerColor = Paper.paper,
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             Column {
-                Masthead(navController, state.versionName)
+                Masthead(
+                    subtitle = mastheadSubtitle(
+                        screenTitle(route, plateCatalogName),
+                        state.versionName,
+                    ),
+                    onBack = onBack,
+                    onOpenSettings = onOpenSettings,
+                )
                 (state.update as? UpdateStatus.Available)?.let { available ->
                     UpdateBanner(available, state.updating, viewModel::installUpdate)
                 }
@@ -86,7 +111,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         when {
             state.fatalError != null -> FatalError(state.fatalError!!, content)
             !state.onboarded -> OnboardingScreen(
-                message = state.message,
+                validation = state.validation,
                 onSave = viewModel::saveCredentials,
                 modifier = content,
             )
@@ -100,6 +125,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         state = state.collection,
                         budget = state.budget,
                         syncing = state.syncing,
+                        lastSync = state.lastSync,
                         catalogs = viewModel.catalogs,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
@@ -114,6 +140,31 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 }
                 composable(Routes.UNCLASSIFIED) {
                     UnclassifiedScreen(state = state.collection, onOpenSource = openUrl)
+                }
+                composable(Routes.SETTINGS) {
+                    // Read once per visit: the form owns its own edits from then on, and it
+                    // opens on a clean slate rather than on the last visit's complaint.
+                    val values = remember { viewModel.currentSettings() }
+                    LaunchedEffect(Unit) { viewModel.clearValidation() }
+                    SettingsScreen(
+                        values = values,
+                        budget = state.budget,
+                        versionName = state.versionName,
+                        validation = state.validation,
+                        onSave = { apiKey, userId, budgetCap ->
+                            if (viewModel.saveSettings(apiKey, userId, budgetCap)) {
+                                navController.popBackStack()
+                            }
+                        },
+                        // Popped before the state flips: the NavHost leaves composition on
+                        // sign-out, but the controller outlives it, and a surviving «settings»
+                        // entry would make the masthead say «Ajustes» over the onboarding form
+                        // and drop the collector back into settings once they sign in again.
+                        onSignOut = {
+                            navController.popBackStack(Routes.INDEX, inclusive = false)
+                            viewModel.signOut()
+                        },
+                    )
                 }
                 composable(Routes.PLATE) { entry ->
                     val catalogId = entry.arguments?.getString("catalogId").orEmpty()
@@ -166,9 +217,11 @@ private fun UpdateBanner(
                 )
             }
         }
-        Button(onClick = onInstall, enabled = !updating) {
-            Text(if (updating) "Descargando…" else "Instalar")
-        }
+        PrimaryAction(
+            text = if (updating) "Descargando…" else "Instalar",
+            onClick = onInstall,
+            enabled = !updating,
+        )
     }
     HorizontalDivider(color = Paper.line)
 }
@@ -180,31 +233,37 @@ private fun UpdateBanner(
  * [statusBarsPadding] the title sits under the clock and the system bar swallows the taps
  * meant for «Volver». The paper background is painted before the padding so the inset strip
  * still reads as part of the page.
+ *
+ * The right-hand slot holds at most one action, and only when it does something: [onBack] away
+ * from the start destination, [onOpenSettings] on it.
  */
 @Composable
-private fun Masthead(navController: NavHostController, versionName: String) {
+private fun Masthead(
+    subtitle: String,
+    onBack: (() -> Unit)?,
+    onOpenSettings: (() -> Unit)?,
+) {
     Column(modifier = Modifier.background(Paper.paper).statusBarsPadding()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 12.dp, top = 14.dp, bottom = 6.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("COINDEX", style = MaterialTheme.typography.titleLarge)
-            TextButton(onClick = { navController.popBackStack() }) {
-                Text("Volver", style = MaterialTheme.typography.labelLarge, color = Paper.moss)
+            when {
+                onBack != null -> CardAction(text = "← Volver", onClick = onBack)
+                onOpenSettings != null -> CardAction(text = "Ajustes", onClick = onOpenSettings)
             }
         }
         Text(
-            if (versionName.isEmpty()) {
-                "Inventario de campo · plata bullion"
-            } else {
-                "Inventario de campo · plata bullion · v$versionName"
-            },
+            subtitle,
             style = MaterialTheme.typography.labelMedium,
             color = Paper.muted,
-            modifier = Modifier.padding(start = 20.dp, bottom = 8.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
         )
         HorizontalDivider(thickness = 2.dp, color = Paper.ink)
     }

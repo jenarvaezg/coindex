@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,13 +9,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,14 +30,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
@@ -55,6 +65,9 @@ fun Eyebrow(text: String, modifier: Modifier = Modifier) {
  * and clips it to the button shape: with `contentPadding = 0` a serif title loses its first and
  * last letters, and a title that wraps loses whole lines. Here the text keeps its own metrics
  * and takes the click itself, with the tap area grown by the padding.
+ *
+ * Underlined, because with `primary = ink` the moss is too close to the prose around it to
+ * carry the affordance on its own.
  */
 @Composable
 fun LinkText(
@@ -66,12 +79,107 @@ fun LinkText(
 ) {
     Text(
         text = text,
-        style = style,
+        style = style.copy(textDecoration = TextDecoration.Underline),
         color = color,
         modifier = modifier
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = 6.dp),
     )
+}
+
+/**
+ * Level 1 of the action system: the action a screen exists for.
+ *
+ * Filled ink, as «Sincronizar» always was, and rare enough that the eye finds it without
+ * reading. [share] adds the share mark for the one action that hands the plate to another app.
+ */
+@Composable
+fun PrimaryAction(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    share: Boolean = false,
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RectangleShape,
+        modifier = modifier,
+    ) {
+        if (share) {
+            ShareGlyph(color = Paper.paper, modifier = Modifier.padding(end = 8.dp))
+        }
+        Text(text, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+/**
+ * Level 2: a card's own actions.
+ *
+ * Outlined and compact so the card keeps its weight, but bordered: with `primary = ink` a bare
+ * `TextButton` is the same colour as the prose around it and reads as a caption. The hairline
+ * is the same one the dashed cards use, so the button belongs to the page.
+ */
+@Composable
+fun CardAction(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        shape = RectangleShape,
+        border = BorderStroke(1.dp, Paper.hairline),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = Paper.ink),
+        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+        modifier = modifier,
+    ) {
+        Text(text, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+/**
+ * Level 3: a link that leaves the app.
+ *
+ * A [LinkText] with «↗» appended: the underline says it opens something, the arrow says the
+ * something is a browser rather than another page of this notebook.
+ */
+@Composable
+fun ExternalLink(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
+) {
+    LinkText(
+        // Non-breaking: a title that wraps must not leave the arrow alone on the last line.
+        text = "$text\u00A0↗",
+        style = style,
+        onClick = onClick,
+        modifier = modifier,
+    )
+}
+
+/**
+ * The share mark, drawn rather than imported.
+ *
+ * Material's icon pack is not a dependency of this app and would be the only piece of Material
+ * iconography in a notebook drawn with rules and circles; three dots and two strokes are the
+ * same idea in the guide's own hand.
+ */
+@Composable
+fun ShareGlyph(color: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.size(13.dp)) {
+        val radius = size.minDimension * 0.14f
+        val stroke = size.minDimension * 0.08f
+        val hinge = Offset(radius, size.height / 2)
+        val top = Offset(size.width - radius, radius)
+        val bottom = Offset(size.width - radius, size.height - radius)
+        drawLine(color, hinge, top, strokeWidth = stroke)
+        drawLine(color, hinge, bottom, strokeWidth = stroke)
+        listOf(hinge, top, bottom).forEach { drawCircle(color, radius, it) }
+    }
 }
 
 /** Bordered paper card with the offset shadow of the web prototype. */

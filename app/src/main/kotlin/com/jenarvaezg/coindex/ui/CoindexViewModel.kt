@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
@@ -24,13 +25,24 @@ data class BudgetStatus(val used: Int, val cap: Int) {
     val remaining: Int get() = (cap - used).coerceAtLeast(0)
 }
 
+/** What the settings screen edits, read from the credential store when it opens. */
+data class SettingsValues(val apiKey: String, val userId: String, val budgetCap: Int)
+
+/**
+ * @param message a one-off notice for the snackbar; it is consumed once shown.
+ * @param validation a form error that belongs next to the field that caused it and stays until
+ *   the form is submitted again. Keeping the two apart is what stops a dismissed snackbar from
+ *   also erasing the inline text under the credential fields.
+ */
 data class UiState(
     val onboarded: Boolean = false,
     val loading: Boolean = true,
     val syncing: Boolean = false,
     val collection: CollectionState = CollectionState(),
     val budget: BudgetStatus = BudgetStatus(0, 0),
+    val lastSync: SyncRecord? = null,
     val message: String? = null,
+    val validation: String? = null,
     val fatalError: String? = null,
     val update: UpdateStatus = UpdateStatus.UpToDate,
     val updating: Boolean = false,
@@ -44,10 +56,19 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     /** Curated catalogs shipped with the app; constant for the process lifetime. */
     val catalogs get() = container.repository.catalogs
 
+    /** The name of one curated catalog, for the masthead of its plate. */
+    fun catalogName(catalogId: String?): String? =
+        catalogs.firstOrNull { it.id == catalogId }?.name
+
     private var lastUpdateCheckMillis: Long? = null
 
     init {
-        _state.update { it.copy(versionName = container.installedVersionName()) }
+        _state.update {
+            it.copy(
+                versionName = container.installedVersionName(),
+                lastSync = container.syncLog.last,
+            )
+        }
         start()
         checkForUpdate(force = true)
         pollForUpdates()
@@ -85,22 +106,65 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         val parsedUserId = userId.trim().toLongOrNull()
         if (apiKey.isBlank() || parsedUserId == null || parsedUserId <= 0) {
             _state.update {
-                it.copy(message = "Introduce una API key y un identificador de usuario válidos.")
+                it.copy(validation = "Introduce una API key y un identificador de usuario válidos.")
             }
             return
         }
         container.credentials.save(apiKey.trim(), parsedUserId)
-        _state.update { it.copy(onboarded = true, message = null) }
+        _state.update { it.copy(onboarded = true, validation = null) }
     }
 
+    /** The stored credentials and budget, so the settings screen opens on what is in effect. */
+    fun currentSettings(): SettingsValues {
+        val stored = container.credentials.credentials()
+        return SettingsValues(
+            apiKey = stored?.apiKey.orEmpty(),
+            userId = stored?.userId?.toString().orEmpty(),
+            budgetCap = container.credentials.monthlyBudget,
+        )
+    }
+
+    /**
+     * Saves the settings form as one unit, reporting inline whether it took.
+     *
+     * @return true when everything was stored, so the caller can leave the screen.
+     */
+    fun saveSettings(apiKey: String, userId: String, budgetCap: String): Boolean {
+        val parsedUserId = userId.trim().toLongOrNull()
+        val parsedCap = budgetCap.trim().toIntOrNull()
+        val problem = when {
+            apiKey.isBlank() -> "La API key no puede estar vacía."
+            parsedUserId == null || parsedUserId <= 0 ->
+                "El identificador de usuario es el número de la URL de tu perfil de Numista."
+            parsedCap == null || parsedCap <= 0 ->
+                "El techo de presupuesto tiene que ser un número de llamadas mayor que cero."
+            else -> null
+        }
+        if (problem != null) {
+            _state.update { it.copy(validation = problem) }
+            return false
+        }
+        container.credentials.save(apiKey.trim(), parsedUserId!!)
+        container.credentials.monthlyBudget = parsedCap!!
+        _state.update { it.copy(validation = null, message = "Ajustes guardados.") }
+        viewModelScope.launch { refreshBudget() }
+        return true
+    }
+
+    /**
+     * Forgets the credentials and returns to onboarding.
+     *
+     * The collection stays on the device, and so does the record of when it was last synced:
+     * signing out is «these credentials are wrong», not «throw away what we already have».
+     */
     fun signOut() {
         container.credentials.clear()
-        _state.update { it.copy(onboarded = false) }
+        _state.update { it.copy(onboarded = false, validation = null) }
     }
 
-    fun setBudgetCap(cap: Int) {
-        container.credentials.monthlyBudget = cap
-        viewModelScope.launch { refreshBudget() }
+    /** Drops a stale form error so a screen is never entered with the last visit's complaint. */
+    fun clearValidation() {
+        _state.update { it.copy(validation = null) }
     }
 
     fun setDisposition(key: CollectionProposalKey, disposition: ProposalDisposition?) {
@@ -111,7 +175,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         if (_state.value.syncing) return
         val client = container.numistaClient()
         if (client == null) {
-            _state.update { it.copy(message = "Falta la API key: vuelve al alta.") }
+            _state.update { it.copy(message = "Falta la API key de Numista. Añádela en Ajustes.") }
             return
         }
         val userId = container.credentials.credentials()?.userId ?: return
@@ -119,18 +183,29 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch {
             val outcome = runCatching { container.syncService.run(client, userId) }
             refreshBudget()
-            val message = outcome.fold(
+            outcome.fold(
                 onSuccess = { report ->
-                    buildString {
-                        append("${report.collectionItems} piezas · ")
-                        append("${report.typesFetched} fichas nuevas · ")
-                        append("${report.callsSpent} llamadas")
-                        report.partialFailure?.let { append(" · incompleto: $it") }
+                    // Recorded before it is announced: the snackbar is the copy, not the original.
+                    val record = SyncRecord(
+                        atMillis = System.currentTimeMillis(),
+                        collectionItems = report.collectionItems,
+                        typesFetched = report.typesFetched,
+                        callsSpent = report.callsSpent,
+                        partialFailure = report.partialFailure,
+                    )
+                    container.syncLog.last = record
+                    _state.update {
+                        it.copy(
+                            syncing = false,
+                            lastSync = record,
+                            message = syncReportLabel(record),
+                        )
                     }
                 },
-                onFailure = { error -> error.message ?: error.toString() },
+                onFailure = { error ->
+                    _state.update { it.copy(syncing = false, message = syncErrorLabel(error)) }
+                },
             )
-            _state.update { it.copy(syncing = false, message = message) }
         }
     }
 

@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FieldCard
-import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -92,9 +92,8 @@ fun UnclassifiedScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 8.dp),
                         )
-                        LinkText(
+                        ExternalLink(
                             text = "Ver en Numista",
-                            style = MaterialTheme.typography.bodyLarge,
                             onClick = { onOpenSource(numistaTypeUrl(orphan.item.typeId)) },
                         )
                     }

@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,15 +19,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionProposal
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.BudgetStatus
+import com.jenarvaezg.coindex.ui.components.CardAction
+import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.LinkText
+import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countLabel
+import com.jenarvaezg.coindex.ui.lastSyncLabel
 import com.jenarvaezg.coindex.ui.variantLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -48,6 +51,7 @@ fun IndexScreen(
     state: CollectionState,
     budget: BudgetStatus,
     syncing: Boolean,
+    lastSync: SyncRecord?,
     catalogs: List<CollectionCatalog>,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
@@ -65,7 +69,7 @@ fun IndexScreen(
             horizontal = 20.dp,
             vertical = 24.dp,
         ),
-        verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+        verticalArrangement = Arrangement.spacedBy(PlateMetrics.cardStack),
     ) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -84,20 +88,53 @@ fun IndexScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Button(onClick = onSync, enabled = !syncing) {
-                    Text(if (syncing) "Sincronizando…" else "Sincronizar")
-                }
-                TextButton(onClick = onOpenUnclassified) {
-                    Text("Sin clasificar · ${state.unclassified.size}")
-                }
+                PrimaryAction(
+                    text = if (syncing) "Sincronizando…" else "Sincronizar",
+                    onClick = onSync,
+                    enabled = !syncing,
+                )
+                CardAction(
+                    text = "Sin clasificar · ${state.unclassified.size}",
+                    onClick = onOpenUnclassified,
+                )
             }
         }
         item {
-            Text(
-                "Presupuesto de la API: ${budget.used} / ${budget.cap} llamadas este mes",
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.muted,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    lastSync?.let { lastSyncLabel(it, System.currentTimeMillis()) }
+                        ?: "Todavía no has sincronizado con Numista.",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Paper.muted,
+                )
+                Text(
+                    "Presupuesto de la API: ${budget.used} / ${budget.cap} llamadas este mes",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Paper.muted,
+                )
+            }
+        }
+
+        // An incomplete sync outlives its snackbar: what it left half-done is a property of the
+        // collection on screen, not a notice about something that happened four seconds ago.
+        lastSync?.partialFailure?.let { failure ->
+            item {
+                FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
+                    Eyebrow("Sincronización incompleta")
+                    Text(
+                        "La última sincronización no terminó, así que puede faltar alguna " +
+                            "pieza o ficha. Vuelve a sincronizar cuando puedas.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                    Text(
+                        failure,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Paper.rust,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                }
+            }
         }
 
         if (proposals.isEmpty) {
@@ -136,12 +173,14 @@ fun IndexScreen(
 
         if (proposals.ignored.isNotEmpty()) {
             item {
-                TextButton(onClick = { showIgnored = !showIgnored }) {
-                    Text(
-                        "Propuestas ignoradas · ${proposals.ignored.size}",
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
+                CardAction(
+                    text = if (showIgnored) {
+                        "Ocultar las ignoradas · ${proposals.ignored.size}"
+                    } else {
+                        "Propuestas ignoradas · ${proposals.ignored.size}"
+                    },
+                    onClick = { showIgnored = !showIgnored },
+                )
             }
             if (showIgnored) {
                 items(proposals.ignored, key = { it.key().toString() }) { proposal ->
@@ -216,7 +255,9 @@ private fun ProposalCard(
                 style = MaterialTheme.typography.titleLarge,
                 onClick = { onOpenPlate(plateCatalog.id) },
             )
-            catalog != null -> LinkText(
+            // Two titles that both open something, told apart by the mark: the plate is a
+            // screen of this app, the catalog source is a page on numista.com.
+            catalog != null -> ExternalLink(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 onClick = { onOpenSource(catalog.source) },
@@ -238,29 +279,24 @@ private fun ProposalCard(
             modifier = Modifier.padding(top = 4.dp),
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(top = 12.dp),
         ) {
+            val ignore = { onDisposition(proposal, ProposalDisposition.Ignored) }
+            val clear = { onDisposition(proposal, null) }
             when (cardState) {
                 CardState.Followed -> {
-                    TextButton(onClick = { onDisposition(proposal, null) }) {
-                        Text("Dejar de seguir")
-                    }
-                    TextButton(onClick = { onDisposition(proposal, ProposalDisposition.Ignored) }) {
-                        Text("Ignorar")
-                    }
+                    CardAction(text = "Dejar de seguir", onClick = clear)
+                    CardAction(text = "Ignorar", onClick = ignore)
                 }
                 CardState.Available -> {
-                    TextButton(onClick = { onDisposition(proposal, ProposalDisposition.Followed) }) {
-                        Text("Seguir")
-                    }
-                    TextButton(onClick = { onDisposition(proposal, ProposalDisposition.Ignored) }) {
-                        Text("Ignorar")
-                    }
+                    CardAction(
+                        text = "Seguir",
+                        onClick = { onDisposition(proposal, ProposalDisposition.Followed) },
+                    )
+                    CardAction(text = "Ignorar", onClick = ignore)
                 }
-                CardState.Ignored -> TextButton(onClick = { onDisposition(proposal, null) }) {
-                    Text("Restaurar")
-                }
+                CardState.Ignored -> CardAction(text = "Restaurar", onClick = clear)
             }
         }
     }
