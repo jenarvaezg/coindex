@@ -138,6 +138,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     IndexScreen(
                         state = state.collection,
                         budget = state.budget,
+                        loading = state.loading,
                         syncing = state.syncing,
                         lastSync = state.lastSync,
                         catalogs = viewModel.catalogs,
