@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -100,15 +101,20 @@ fun CoinSides(
     reverseUrl: String?,
     missing: Boolean,
     modifier: Modifier = Modifier,
+    onImageSettled: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        CoinSide("Anverso", label, obverseUrl, missing, Modifier.weight(1f))
-        CoinSide("Reverso", label, reverseUrl, missing, Modifier.weight(1f))
+        CoinSide("Anverso", label, obverseUrl, missing, Modifier.weight(1f), onImageSettled)
+        CoinSide("Reverso", label, reverseUrl, missing, Modifier.weight(1f), onImageSettled)
     }
 }
+
+/** Number of pictures [CoinSides] will actually request for this pair of URLs. */
+fun coinSideImageCount(obverseUrl: String?, reverseUrl: String?): Int =
+    listOfNotNull(obverseUrl, reverseUrl).size
 
 @Composable
 private fun CoinSide(
@@ -117,6 +123,7 @@ private fun CoinSide(
     url: String?,
     missing: Boolean,
     modifier: Modifier = Modifier,
+    onImageSettled: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         if (url == null) {
@@ -126,6 +133,15 @@ private fun CoinSide(
                 model = url,
                 contentDescription = "$caption de $label",
                 contentScale = ContentScale.Fit,
+                // Exporting the whole sheet has to wait for every picture, so both outcomes
+                // report back: a picture that failed will never arrive.
+                onState = { state ->
+                    if (state is AsyncImagePainter.State.Success ||
+                        state is AsyncImagePainter.State.Error
+                    ) {
+                        onImageSettled?.invoke()
+                    }
+                },
                 colorFilter = if (missing) ColorFilter.colorMatrix(GRAYSCALE) else null,
                 modifier = Modifier
                     .fillMaxWidth()

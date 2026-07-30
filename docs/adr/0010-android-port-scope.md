@@ -72,13 +72,24 @@ del ADR 0003.
 Coil carga las URLs de Numista tal cual. El proxy de la fase web existía para poder
 activar COEP en la fase 2 de WASM, que ya no aplica.
 
-### 8. Exportar lámina: por ahora solo lo visible
+### 8. Exportar lámina: la hoja completa, no lo visible
 
-El export a bitmap captura la lámina tal como está compuesta en pantalla. Un catálogo más
-largo que la pantalla (Personalidades de Rusia tiene 121 emisiones) exporta la parte
-visible, no la hoja completa: la rejilla es perezosa y no compone lo que no se ve. Para
-exportar la hoja entera habría que renderizar una versión no perezosa fuera de pantalla y
-esperar a que Coil termine; queda pendiente.
+La rejilla de la pantalla es perezosa, así que capturarla daría solo la parte visible. El
+export compone en su lugar una hoja aparte (`PlateSheet`) que sí es eager, fuera de pantalla,
+con su propia `Density` y un número de columnas cuadrado: 121 emisiones en dos columnas
+serían un bitmap más alto de lo que acepta cualquier GPU o destino de compartición. La
+densidad baja al crecer el catálogo, de modo que los pequeños salen nítidos y los grandes
+caben en unos pocos miles de píxeles.
+
+La captura no usa `GraphicsLayer`: el nodo graba sus comandos de dibujo en un `Picture` sin
+pintarse, y el `Picture` se reproduce sobre un bitmap software. Dos razones: evita el límite
+de tamaño de textura de la GPU, y `Bitmap.createBitmap(Picture, …)` pasa por un bitmap de
+hardware cuya copia a ARGB_8888 devuelve `null` en algunos dispositivos (visto en el
+emulador). Por lo mismo, el `ImageLoader` de Coil desactiva los bitmaps de hardware: un
+`Picture` que contenga alguno no se puede reproducir por software.
+
+El export espera a que todas las imágenes de la hoja se resuelvan —con éxito o con error,
+porque una que falla nunca llega— con un techo de 20 s, y avisa si alguna no cargó.
 
 ## Consecuencias
 

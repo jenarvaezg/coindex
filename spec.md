@@ -170,8 +170,8 @@ ADR 0010 para las decisiones del port.
 5. ✅ Láminas v1 y v2: progreso `n / m emisiones`, ficha de especificaciones, grises al
    45 % para las que faltan y enlaces a Numista.
 6. ✅ Vista de huérfanas, ahora con motivo auditable por pieza (ADR 0010 §3).
-7. ◐ Exportar lámina como imagen: funciona sobre lo visible en pantalla; la hoja completa
-   de un catálogo más largo que la pantalla queda pendiente (ADR 0010 §8).
+7. ✅ Exportar lámina como imagen: compone la hoja completa fuera de pantalla y la comparte
+   como PNG por el share intent de Android (ADR 0010 §8).
 8. ◐ Firma configurada vía `keystore.properties` (fuera del repo). Falta generar el
    keystore definitivo e instalar en los dos móviles.
 

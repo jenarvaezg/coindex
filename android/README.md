@@ -62,10 +62,19 @@ datos local.
 Instalación en el móvil: `adb install -r app/build/outputs/apk/release/app-release.apk`, o
 copiar el APK y permitir la instalación de orígenes desconocidos.
 
+## Exportar lámina
+
+«Exportar lámina como imagen» compone la hoja **completa** fuera de pantalla —con su propia
+densidad, no la del móvil—, espera a que Coil termine con todas las imágenes y la graba en un
+`Picture` que se reproduce sobre un bitmap software. El PNG resultante lleva la cabecera con
+el progreso, todas las emisiones (las que faltan en gris) y la fuente al pie. Un catálogo de
+121 emisiones sale en ocho columnas a menor densidad para que el bitmap no se desmande.
+
+Los bitmaps de hardware están desactivados en Coil: un `Picture` no se puede reproducir sobre
+un canvas software si contiene alguno.
+
 ## Limitaciones conocidas
 
-- **Exportar lámina** captura la lámina tal como está en pantalla. Un catálogo más largo que
-  la pantalla exporta la parte visible, no la hoja entera (ADR 0010 §8).
 - **R8 desactivado** en release: el APK pesa ~29 MB. Activar minificación reduciría mucho el
   tamaño, pero no se ha hecho sin poder verificar en un dispositivo real que nada se rompe.
 - Las series curadas (`data/series`) y el emparejamiento heurístico no se portaron; siguen

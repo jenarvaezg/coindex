@@ -112,6 +112,11 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
+    /** Surfaces a one-off message in the snackbar (export outcomes, validation notes). */
+    fun showMessage(message: String) {
+        _state.update { it.copy(message = message) }
+    }
+
     fun dismissMessage() {
         _state.update { it.copy(message = null) }
     }

@@ -20,14 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -39,7 +34,6 @@ import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
 import com.jenarvaezg.coindex.ui.theme.Paper
-import kotlinx.coroutines.launch
 
 private object Routes {
     const val INDEX = "index"
@@ -107,28 +101,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 }
                 composable(Routes.PLATE) { entry ->
                     val catalogId = entry.arguments?.getString("catalogId").orEmpty()
-                    val scope = rememberCoroutineScope()
-                    val layer = rememberGraphicsLayer()
                     PlateScreen(
                         result = viewModel.plate(catalogId),
                         images = state.collection.images,
                         onOpenSource = openUrl,
-                        onExport = {
-                            scope.launch {
-                                sharePlateImage(context, layer, plateFileName(catalogId))
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Paper.paper)
-                            .drawWithContent {
-                                layer.record(
-                                    density = this,
-                                    layoutDirection = layoutDirection,
-                                    size = IntSize(size.width.toInt(), size.height.toInt()),
-                                ) { this@drawWithContent.drawContent() }
-                                drawLayer(layer)
-                            },
+                        onMessage = viewModel::showMessage,
+                        modifier = Modifier.fillMaxSize().background(Paper.paper),
                     )
                 }
             }
