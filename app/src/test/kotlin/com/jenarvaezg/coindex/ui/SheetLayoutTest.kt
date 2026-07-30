@@ -48,6 +48,25 @@ class SheetLayoutTest {
 
         assertEquals(2, layout.columns)
         assertTrue(layout.width.value > 0f)
+        assertTrue(layout.headerScale >= 1f)
+    }
+
+    @Test
+    fun `the heading grows with the sheet instead of staying at phone size`() {
+        val narrow = SheetLayout.forMemberCount(2)
+        val medium = SheetLayout.forMemberCount(12)
+        val wide = SheetLayout.forMemberCount(121)
+
+        assertTrue(narrow.headerScale < medium.headerScale)
+        assertTrue(medium.headerScale < wide.headerScale)
+
+        // Never smaller than the cell titles it presides over, never a billboard either.
+        listOf(narrow, medium, wide).forEach { layout ->
+            assertTrue(
+                layout.headerScale in 1f..2f,
+                "escala de cabecera fuera de rango: ${layout.headerScale}",
+            )
+        }
     }
 
     @Test

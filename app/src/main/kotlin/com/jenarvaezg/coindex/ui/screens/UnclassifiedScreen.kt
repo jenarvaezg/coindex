@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,6 +19,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -92,12 +92,11 @@ fun UnclassifiedScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 8.dp),
                         )
-                        TextButton(
+                        LinkText(
+                            text = "Ver en Numista",
+                            style = MaterialTheme.typography.bodyLarge,
                             onClick = { onOpenSource(numistaTypeUrl(orphan.item.typeId)) },
-                            contentPadding = PaddingValues(0.dp),
-                        ) {
-                            Text("Ver en Numista", color = Paper.moss)
-                        }
+                        )
                     }
                 }
             }

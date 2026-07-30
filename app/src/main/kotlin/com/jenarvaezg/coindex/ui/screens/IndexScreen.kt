@@ -28,6 +28,7 @@ import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.BudgetStatus
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.variantLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -210,18 +211,16 @@ private fun ProposalCard(
         Eyebrow("Evidencia de colección")
         val title = collectionProposalFamilyLabel(proposal.family)
         when {
-            plateCatalog != null -> TextButton(
+            plateCatalog != null -> LinkText(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
                 onClick = { onOpenPlate(plateCatalog.id) },
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
-            ) {
-                Text(title, style = MaterialTheme.typography.titleLarge, color = Paper.moss)
-            }
-            catalog != null -> TextButton(
+            )
+            catalog != null -> LinkText(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
                 onClick = { onOpenSource(catalog.source) },
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
-            ) {
-                Text(title, style = MaterialTheme.typography.titleLarge, color = Paper.moss)
-            }
+            )
             else -> Text(
                 title,
                 style = MaterialTheme.typography.titleLarge,
