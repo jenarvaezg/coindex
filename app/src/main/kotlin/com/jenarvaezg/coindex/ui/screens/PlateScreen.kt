@@ -41,6 +41,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
@@ -258,16 +259,11 @@ private fun PlateCell(
             color = if (owned != null) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 10.dp),
         )
-        TextButton(
+        LinkText(
+            text = albumMember.member.label,
+            style = MaterialTheme.typography.titleMedium,
             onClick = { onOpenSource(numistaTypeUrl(albumMember.member.numistaTypeId)) },
-            contentPadding = PaddingValues(0.dp),
-        ) {
-            Text(
-                albumMember.member.label,
-                style = MaterialTheme.typography.titleMedium,
-                color = Paper.moss,
-            )
-        }
+        )
         Text(
             "${albumMember.member.year} · Numista ${albumMember.member.numistaTypeId}",
             style = MaterialTheme.typography.labelLarge,

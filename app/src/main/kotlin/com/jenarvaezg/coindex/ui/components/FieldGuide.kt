@@ -2,7 +2,9 @@ package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -14,6 +16,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -21,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -36,6 +44,32 @@ fun Eyebrow(text: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.labelMedium,
         color = Paper.rust,
         modifier = modifier,
+    )
+}
+
+/**
+ * A title that opens something, written as text rather than as a button.
+ *
+ * `TextButton` is the obvious control, but it centres its label inside a fixed minimum height
+ * and clips it to the button shape: with `contentPadding = 0` a serif title loses its first and
+ * last letters, and a title that wraps loses whole lines. Here the text keeps its own metrics
+ * and takes the click itself, with the tap area grown by the padding.
+ */
+@Composable
+fun LinkText(
+    text: String,
+    style: TextStyle,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    color: Color = Paper.moss,
+) {
+    Text(
+        text = text,
+        style = style,
+        color = color,
+        modifier = modifier
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = 6.dp),
     )
 }
 
@@ -126,28 +160,40 @@ private fun CoinSide(
     onImageSettled: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        val frame = Modifier.fillMaxWidth().aspectRatio(1f)
         if (url == null) {
-            Silhouette(Modifier.fillMaxWidth().aspectRatio(1f))
+            Silhouette(frame)
         } else {
-            AsyncImage(
-                model = url,
-                contentDescription = "$caption de $label",
-                contentScale = ContentScale.Fit,
-                // Exporting the whole sheet has to wait for every picture, so both outcomes
-                // report back: a picture that failed will never arrive.
-                onState = { state ->
-                    if (state is AsyncImagePainter.State.Success ||
-                        state is AsyncImagePainter.State.Error
-                    ) {
-                        onImageSettled?.invoke()
-                    }
-                },
-                colorFilter = if (missing) ColorFilter.colorMatrix(GRAYSCALE) else null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .alpha(if (missing) 0.45f else 1f),
-            )
+            // The silhouette waits behind the picture and stays for good if the picture never
+            // arrives: offline or with a dead URL the cell must still read as a coin, not as a
+            // blank. It is dropped on success so a transparent PNG does not sit on a circle.
+            var painted by remember(url) { mutableStateOf(false) }
+            Box(modifier = frame) {
+                if (!painted) {
+                    Silhouette(Modifier.matchParentSize())
+                }
+                AsyncImage(
+                    model = url,
+                    contentDescription = "$caption de $label",
+                    contentScale = ContentScale.Fit,
+                    // Exporting the whole sheet has to wait for every picture, so both outcomes
+                    // report back: a picture that failed will never arrive.
+                    onState = { state ->
+                        when (state) {
+                            is AsyncImagePainter.State.Success -> {
+                                painted = true
+                                onImageSettled?.invoke()
+                            }
+                            is AsyncImagePainter.State.Error -> onImageSettled?.invoke()
+                            else -> Unit
+                        }
+                    },
+                    colorFilter = if (missing) ColorFilter.colorMatrix(GRAYSCALE) else null,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .alpha(if (missing) 0.45f else 1f),
+                )
+            }
         }
         Text(
             text = caption.uppercase(),

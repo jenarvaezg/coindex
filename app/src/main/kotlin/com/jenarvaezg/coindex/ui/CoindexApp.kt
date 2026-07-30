@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -172,9 +173,17 @@ private fun UpdateBanner(
     HorizontalDivider(color = Paper.line)
 }
 
+/**
+ * The notebook's masthead, kept clear of the status bar.
+ *
+ * With targetSdk 36 the window is edge-to-edge and there is no way back: without
+ * [statusBarsPadding] the title sits under the clock and the system bar swallows the taps
+ * meant for «Volver». The paper background is painted before the padding so the inset strip
+ * still reads as part of the page.
+ */
 @Composable
 private fun Masthead(navController: NavHostController, versionName: String) {
-    Column(modifier = Modifier.background(Paper.paper)) {
+    Column(modifier = Modifier.background(Paper.paper).statusBarsPadding()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
