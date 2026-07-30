@@ -136,13 +136,18 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         if (_state.value.updating) return
         val installer = container.updateInstaller
         if (!installer.canInstall()) {
+            val opened = installer.requestInstallPermission()
             _state.update {
                 it.copy(
-                    message = "Concede a Coindex permiso para instalar aplicaciones y vuelve " +
-                        "a pulsar Instalar.",
+                    message = if (opened) {
+                        "Concede a Coindex permiso para instalar aplicaciones y vuelve a " +
+                            "pulsar Instalar."
+                    } else {
+                        "Este dispositivo no permite conceder el permiso de instalación: " +
+                            "descarga el APK desde GitHub e instálalo a mano."
+                    },
                 )
             }
-            installer.requestInstallPermission()
             return
         }
         _state.update { it.copy(updating = true, message = "Descargando la actualización…") }
@@ -152,8 +157,18 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
             }
             outcome.fold(
                 onSuccess = { apk ->
-                    _state.update { it.copy(updating = false, message = null) }
-                    installer.install(apk)
+                    val launched = installer.install(apk)
+                    _state.update {
+                        it.copy(
+                            updating = false,
+                            message = if (launched) {
+                                null
+                            } else {
+                                "No hay instalador de paquetes en este dispositivo: instala " +
+                                    "el APK a mano."
+                            },
+                        )
+                    }
                 },
                 onFailure = { error ->
                     _state.update {

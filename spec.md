@@ -172,8 +172,11 @@ ADR 0010 para las decisiones del port.
 6. ✅ Vista de huérfanas, ahora con motivo auditable por pieza (ADR 0010 §3).
 7. ✅ Exportar lámina como imagen: compone la hoja completa fuera de pantalla y la comparte
    como PNG por el share intent de Android (ADR 0010 §8).
-8. ◐ Firma configurada vía `keystore.properties` (fuera del repo). Falta generar el
-   keystore definitivo e instalar en los dos móviles.
+8. ✅ Firma con keystore fuera del repo, APK firmado verificado con `apksigner` e instalado
+   en el móvil de Jose.
+9. ✅ Distribución y actualización resueltas sin tienda: repo público, releases con el APK y
+   un `update.json`, y actualización desde la propia app (ADR 0011). `scripts/release.sh`
+   publica.
 
 ### 0.9 Cuestiones abiertas de la fase Android
 
@@ -183,7 +186,9 @@ ADR 0010 para las decisiones del port.
    curadas con `release_status`). Posible `schema_version: 3` o campo opcional.
 3. ¿Migrar Lunar III bullion a catálogo v1 (12 tipos verificados) y retirar `data/series`?
 4. Actualización de catálogos dentro de la app sin reinstalar (¿fichero remoto opcional?)
-   — en tensión con el local-first; decidir más adelante.
+   — en tensión con el local-first; decidir más adelante. Nota: los catálogos viajan hoy con
+   cada APK, y con la actualización desde la app (ADR 0011) llegar a los dos móviles ya no
+   requiere reinstalar a mano, así que la urgencia baja.
 
 ---
 

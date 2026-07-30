@@ -31,14 +31,18 @@ class UpdateInstaller(
     /** Whether the user has granted Coindex the special "install unknown apps" permission. */
     fun canInstall(): Boolean = context.packageManager.canRequestPackageInstalls()
 
-    /** Opens the system screen where that permission is granted. */
-    fun requestInstallPermission() {
-        val intent = Intent(
+    /**
+     * Opens the system screen where that permission is granted.
+     *
+     * Returns false when no activity handles the intent — stripped-down builds exist and a
+     * missing Settings app must not take the whole app down with it.
+     */
+    fun requestInstallPermission(): Boolean = startSafely(
+        Intent(
             Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
             Uri.parse("package:${context.packageName}"),
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-    }
+        ),
+    )
 
     suspend fun download(url: String, versionCode: Int): File = withContext(Dispatchers.IO) {
         val directory = File(context.cacheDir, UPDATE_DIR).apply { mkdirs() }
@@ -64,15 +68,20 @@ class UpdateInstaller(
         target
     }
 
-    fun install(apk: File) {
+    /** Hands the APK to the system installer. False if no installer is available. */
+    fun install(apk: File): Boolean {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", apk)
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/vnd.android.package-archive")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
+        return startSafely(
+            Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            },
+        )
     }
+
+    private fun startSafely(intent: Intent): Boolean = runCatching {
+        context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }.isSuccess
 
     /** Drops previously downloaded APKs; they are only needed until the install is confirmed. */
     fun clearDownloads() {

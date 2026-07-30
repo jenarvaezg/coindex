@@ -62,6 +62,27 @@ datos local.
 Instalación en el móvil: `adb install -r app/build/outputs/apk/release/app-release.apk`, o
 copiar el APK y permitir la instalación de orígenes desconocidos.
 
+## Actualizaciones
+
+Coindex se actualiza a sí misma contra las releases públicas de
+[jenarvaezg/coindex](https://github.com/jenarvaezg/coindex/releases) (ADR 0011): al arrancar
+comprueba si hay una versión con `versionCode` mayor que el instalado y, si la hay, el índice
+muestra una tarjeta con las notas y un botón que descarga el APK y lo entrega al instalador
+del sistema. La primera vez, Android pedirá conceder a Coindex el permiso de instalar
+aplicaciones; después basta confirmar cada actualización.
+
+Publicar una versión nueva:
+
+```console
+# 1. sube versionCode y versionName en app/build.gradle.kts
+# 2. commit y push
+./scripts/release.sh "Qué cambia en esta versión"
+```
+
+El script construye el APK firmado, **verifica la firma**, genera el `update.json` que lee la
+app y crea la release. Se niega a publicar si falta `keystore.properties` o si el tag ya
+existe, así que subir `versionCode` no es opcional.
+
 ## Exportar lámina
 
 «Exportar lámina como imagen» compone la hoja **completa** fuera de pantalla —con su propia
