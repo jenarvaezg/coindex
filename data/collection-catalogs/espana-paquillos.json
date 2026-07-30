@@ -1,0 +1,59 @@
+{
+  "schema_version": 5,
+  "id": "espana-paquillos",
+  "name": "Paquillos · 100 pesetas de Franco",
+  "issuer_code": "espagne",
+  "family": "100 Pesetas de Franco",
+  "weight_millioz": 611,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/pieces1885.html",
+  "updated_at": "2026-07-30",
+  "members": [
+    {
+      "id": "estrella-66",
+      "label": "Estrella 66",
+      "year": 1966,
+      "numista_type_id": 1885,
+      "numista_issue_ids": [
+        8508
+      ]
+    },
+    {
+      "id": "estrella-67",
+      "label": "Estrella 67",
+      "year": 1966,
+      "numista_type_id": 1885,
+      "numista_issue_ids": [
+        33204
+      ]
+    },
+    {
+      "id": "estrella-68",
+      "label": "Estrella 68",
+      "year": 1966,
+      "numista_type_id": 1885,
+      "numista_issue_ids": [
+        33205
+      ]
+    },
+    {
+      "id": "estrella-69",
+      "label": "Estrella 69",
+      "year": 1966,
+      "numista_type_id": 1885,
+      "numista_issue_ids": [
+        33206,
+        368163
+      ]
+    },
+    {
+      "id": "estrella-70",
+      "label": "Estrella 70",
+      "year": 1966,
+      "numista_type_id": 1885,
+      "numista_issue_ids": [
+        33207
+      ]
+    }
+  ]
+}

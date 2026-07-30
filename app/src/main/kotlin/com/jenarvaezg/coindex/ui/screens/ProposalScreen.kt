@@ -142,6 +142,8 @@ fun ProposalScreen(
                 title = pieceTitle(state, piece),
                 images = state.images[piece.typeId],
                 onOpenSource = onOpenSource,
+                // Where the year says 1966 six times over, the catalog is what names the piece.
+                emissionLabel = catalog?.emissionLabelFor(piece),
             ) {
                 if (selection.active) {
                     PieceSelectionToggle(

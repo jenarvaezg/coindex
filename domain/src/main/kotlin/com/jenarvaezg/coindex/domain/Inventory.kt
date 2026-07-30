@@ -13,6 +13,14 @@ data class CollectedItem(
     val price: Double? = null,
     val forSwap: Boolean? = null,
     val collectionName: String? = null,
+    /**
+     * The Numista issue this piece is attached to, when the collector recorded one.
+     *
+     * It is what tells apart two rows the year cannot: the six issues of the 100 pesetas of
+     * Franco all say 1966 and differ only by the star on the coin, which Numista files as a
+     * variety of the issue rather than as a year.
+     */
+    val issueId: Int? = null,
 ) {
     /** Year recorded on the piece; a date run never matches a piece without one. */
     val recordedYear: Int? get() = issueYear ?: gregorianYear

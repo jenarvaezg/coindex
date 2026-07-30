@@ -14,6 +14,10 @@ import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 fun CollectedItemEntity.toDomain(): CollectedItem = CollectedItem(
     id = id,
@@ -27,7 +31,29 @@ fun CollectedItemEntity.toDomain(): CollectedItem = CollectedItem(
     price = price,
     forSwap = forSwap,
     collectionName = collectionName,
+    issueId = issueIdFromRaw(raw),
 )
+
+private val lenientJson = Json { ignoreUnknownKeys = true }
+
+/**
+ * The Numista issue id, read from the stored response rather than from a column.
+ *
+ * `raw` keeps the untouched JSON element of each row (see [SyncService]), so every piece already
+ * synced carries its issue id without a migration and without spending API budget again — the
+ * same bargain that lets the finish be inferred on read instead of stored.
+ *
+ * A row with no issue, or one whose JSON cannot be read, has no issue: it fills no member of an
+ * issue run, and it is still a piece everywhere else.
+ */
+internal fun issueIdFromRaw(raw: String): Int? = runCatching {
+    lenientJson.parseToJsonElement(raw)
+        .jsonObject["issue"]
+        ?.jsonObject
+        ?.get("id")
+        ?.jsonPrimitive
+        ?.intOrNull
+}.getOrNull()
 
 /**
  * The finish is inferred here rather than stored, so a later fix to the inference rules

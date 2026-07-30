@@ -57,17 +57,18 @@ fun countLabel(distinctTypes: Int, quantity: Int): String =
         " · " + plural(quantity, "pieza", "piezas")
 
 /**
- * The identity line of one inventory row: the year it records, its Numista type and how many
+ * The identity line of one inventory row: what tells it apart, its Numista type and how many
  * pieces it is.
  *
- * The year is the first thing said, because it is what tells two rows of the same type apart,
- * and «sin año» is a fact about the row rather than a blank: a date run can never fill a year
- * from a row that does not carry one.
+ * The year goes first, because it is usually what tells two rows of the same type apart, and
+ * «sin año» is a fact about the row rather than a blank: a date run can never fill a year from a
+ * row that does not carry one. [emissionLabel] replaces it where the year distinguishes nothing —
+ * the six 100 pesetas of Franco all say 1966 and differ by the star.
  */
-fun pieceLine(item: CollectedItem): String {
-    val year = item.recordedYear?.toString() ?: "Sin año"
+fun pieceLine(item: CollectedItem, emissionLabel: String? = null): String {
+    val head = emissionLabel ?: item.recordedYear?.toString() ?: "Sin año"
     val quantity = if (item.quantity > 1) " · ×${item.quantity}" else ""
-    return "$year · Numista ${item.typeId}$quantity"
+    return "$head · Numista ${item.typeId}$quantity"
 }
 
 /** Why a plate cannot be opened, in terms of what the collector can do about it. */
