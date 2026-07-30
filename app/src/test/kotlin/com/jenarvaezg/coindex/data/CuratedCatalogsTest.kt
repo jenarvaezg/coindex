@@ -20,8 +20,44 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(20, catalogs.size)
+        assertEquals(21, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
+    }
+
+    /**
+     * The father's own closure project: he is missing 1965. Three Numista types make one date
+     * run because all three weigh 10 g, so they share one variant key.
+     *
+     * N#10399 is dated 1945 and was struck in 1947, and Numista indexes the year it was struck
+     * (its `min_year` and `max_year` are both 1947), which is the year a collected row carries.
+     * The label keeps both, because the coin in his hand says 1945.
+     */
+    @Test
+    fun `the venezuelan 2 bolivares date run spans its three types`() {
+        val bolivares = find("venezuela-2-bolivares")
+        assertEquals(2, bolivares.schemaVersion)
+        assertTrue(bolivares.isDateRun)
+        assertEquals("2 Bolívares de Venezuela", bolivares.family)
+        assertEquals(322, bolivares.weightMillioz)
+        assertNull(bolivares.finish)
+        assertEquals(25, bolivares.members.size)
+        // Verificados en numista.com/catalogue/pieces10339.html: 22 años entre 1879 y 1936.
+        assertEquals(
+            listOf(
+                1879, 1886, 1887, 1888, 1889, 1894, 1900, 1902, 1903, 1904, 1905,
+                1911, 1912, 1913, 1919, 1922, 1924, 1926, 1929, 1930, 1935, 1936,
+            ),
+            bolivares.members.filter { it.numistaTypeId == 10_339 }.map { it.year },
+        )
+        assertEquals(
+            listOf(1947),
+            bolivares.members.filter { it.numistaTypeId == 10_399 }.map { it.year },
+        )
+        assertEquals("1945 (1947)", bolivares.members.first { it.year == 1947 }.label)
+        assertEquals(
+            listOf(1960, 1965),
+            bolivares.members.filter { it.numistaTypeId == 7_775 }.map { it.year },
+        )
     }
 
     @Test

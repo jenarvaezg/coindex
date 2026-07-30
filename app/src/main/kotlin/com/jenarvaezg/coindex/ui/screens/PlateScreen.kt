@@ -43,6 +43,7 @@ import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
+import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sharePlateSheet
@@ -277,14 +278,7 @@ private fun PlateCell(
 
 @Composable
 private fun UnavailablePlate(reason: PlateUnavailable, modifier: Modifier = Modifier) {
-    val explanation = when (reason) {
-        PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."
-        PlateUnavailable.NotAProposal ->
-            "Ya no tienes piezas de esta variante, así que la propuesta no existe."
-        PlateUnavailable.NotFollowed -> "Sigue la propuesta para abrir su lámina."
-        PlateUnavailable.NoEvidence ->
-            "Aún no tienes ninguna emisión oficial de este catálogo."
-    }
+    val explanation = plateUnavailableLabel(reason)
     Column(
         modifier = modifier.fillMaxSize().padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),

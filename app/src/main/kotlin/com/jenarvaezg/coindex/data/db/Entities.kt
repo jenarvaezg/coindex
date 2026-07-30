@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.data.db
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 /**
@@ -60,6 +61,43 @@ data class ProposalPreferenceEntity(
     val disposition: String,
     val createdAt: Long,
     val updatedAt: Long,
+)
+
+/**
+ * A grouping the collector made themselves (ADR 0013): a heading and the types under it.
+ *
+ * It is the collector's own organization, not a claim about the catalog, so it lives only on
+ * this device and never travels with the app.
+ */
+@Entity(tableName = "own_groupings")
+data class OwnGroupingEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val createdAt: Long,
+    val updatedAt: Long,
+)
+
+/**
+ * One type under one of those headings.
+ *
+ * By type rather than by collected row: row ids come from Numista and are replaced wholesale on
+ * every sync, so a grouping keyed on them would quietly empty itself.
+ */
+@Entity(
+    tableName = "own_grouping_members",
+    primaryKeys = ["groupingId", "typeId"],
+    foreignKeys = [
+        ForeignKey(
+            entity = OwnGroupingEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["groupingId"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+)
+data class OwnGroupingMemberEntity(
+    val groupingId: Long,
+    val typeId: Int,
 )
 
 /** One row per Numista API request actually sent. The basis of the monthly budget counter. */

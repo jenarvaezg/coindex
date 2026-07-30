@@ -9,10 +9,12 @@ package com.jenarvaezg.coindex.ui
  */
 private const val STRAPLINE = "Inventario de campo · plata bullion"
 
-fun screenTitle(route: String?, catalogName: String? = null): String = when {
+fun screenTitle(route: String?, subjectName: String? = null): String = when {
     route == Routes.UNCLASSIFIED -> "Sin clasificar"
     route == Routes.SETTINGS -> "Ajustes"
-    Routes.isPlate(route) -> catalogName?.let { "Lámina · $it" } ?: "Lámina"
+    Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
+    Routes.isProposal(route) -> subjectName?.let { "Propuesta · $it" } ?: "Propuesta"
+    Routes.isOwnGrouping(route) -> subjectName?.let { "Tu agrupación · $it" } ?: "Tu agrupación"
     // The index, and anything unrecognised: never a blank masthead.
     else -> STRAPLINE
 }

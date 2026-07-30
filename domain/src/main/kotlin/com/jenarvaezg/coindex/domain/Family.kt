@@ -30,6 +30,8 @@ fun collectionProposalFamilyLabel(family: String): String = when {
 
 private fun curatedFamilyLabel(family: String): String = when (family) {
     "SML" -> "Silver Maple Leaf"
+    // The collector calls them paquillos; the key stays the coin's catalog name.
+    "100 Pesetas de Franco" -> "Paquillos · 100 pesetas de Franco"
     "Red Data Book" -> "Libro Rojo de Rusia"
     "Serie de monedas de plata obtenidas a valor facial" ->
         "Monedas españolas de plata a valor facial"

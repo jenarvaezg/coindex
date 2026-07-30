@@ -201,7 +201,7 @@ private fun isNumistaSeriesSource(source: String): Boolean {
     return id.isNotEmpty() && id.all(::isAsciiDigit)
 }
 
-private fun isNumistaTypeSource(source: String): Boolean {
+internal fun isNumistaTypeSource(source: String): Boolean {
     if (!source.startsWith(TYPE_PREFIX) || !source.endsWith(".html")) return false
     val id = source.removePrefix(TYPE_PREFIX).removeSuffix(".html")
     return id.isNotEmpty() && id.all(::isAsciiDigit)

@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,12 +18,24 @@ class MastheadLabelsTest {
 
     @Test
     fun `a plate names the catalog it is showing`() {
-        assertEquals("Lámina · Lunar II", screenTitle(Routes.PLATE, catalogName = "Lunar II"))
+        assertEquals("Lámina · Lunar II", screenTitle(Routes.PLATE, subjectName = "Lunar II"))
     }
 
     @Test
     fun `a plate whose catalog cannot be resolved still says it is a plate`() {
-        assertEquals("Lámina", screenTitle(Routes.PLATE, catalogName = null))
+        assertEquals("Lámina", screenTitle(Routes.PLATE, subjectName = null))
+    }
+
+    @Test
+    fun `a proposal names its family, with the collector's own word for it`() {
+        assertEquals(
+            "Propuesta · Paquillos · 100 pesetas de Franco",
+            screenTitle(
+                Routes.PROPOSAL,
+                subjectName = collectionProposalFamilyLabel("100 Pesetas de Franco"),
+            ),
+        )
+        assertEquals("Propuesta", screenTitle(Routes.PROPOSAL, subjectName = null))
     }
 
     @Test

@@ -22,13 +22,18 @@ object Fixtures {
     fun type(typeId: Int): String = read("type_${typeId}_es.json")
 }
 
-/** The curated catalogs as they ship: read straight from `data/`, not from a copy. */
-object CatalogFiles {
-    private val root = File("../data/collection-catalogs")
-
-    fun all(): List<Pair<String, String>> = root.listFiles()
+/** The curated seeds as they ship: read straight from `data/`, not from a copy. */
+private fun seedFiles(directory: String): List<Pair<String, String>> =
+    File("../data/$directory").listFiles()
         .orEmpty()
         .filter { it.name.endsWith(".json") }
         .sortedBy { it.name }
         .map { it.name to it.readText() }
+
+object CatalogFiles {
+    fun all(): List<Pair<String, String>> = seedFiles("collection-catalogs")
+}
+
+object GroupingFiles {
+    fun all(): List<Pair<String, String>> = seedFiles("groupings")
 }

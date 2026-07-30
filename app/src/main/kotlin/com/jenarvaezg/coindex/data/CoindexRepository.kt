@@ -1,16 +1,21 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.ProposalPreferenceEntity
 import com.jenarvaezg.coindex.domain.ClassifiedCollectionProposals
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.CollectionProposal
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
+import com.jenarvaezg.coindex.domain.CuratedGrouping
+import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.buildOwnGroupingViews
 import com.jenarvaezg.coindex.domain.classifyCollectionProposals
 import com.jenarvaezg.coindex.domain.deriveCollection
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +37,18 @@ data class CollectionState(
     val followedKeys: Set<CollectionProposalKey> = emptySet(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
-)
+    /** The pieces behind each proposal, for the screen that opens one. */
+    val itemsByKey: Map<CollectionProposalKey, List<CollectedItem>> = emptyMap(),
+    /** The collector's own groupings, an extra view over the same pieces (ADR 0013). */
+    val ownGroupings: List<OwnGroupingView> = emptyList(),
+) {
+    /** Every current proposal, whatever the collector decided about it. */
+    fun allProposals(): List<CollectionProposal> =
+        proposals.followed + proposals.available + proposals.ignored
+
+    fun proposalFor(key: CollectionProposalKey): CollectionProposal? =
+        allProposals().firstOrNull { it.key() == key }
+}
 
 /** Why a catalog plate cannot be opened. Navigability is never guessed at in the UI. */
 enum class PlateUnavailable {
@@ -60,15 +76,18 @@ sealed interface PlateResult {
 class CoindexRepository(
     private val database: CoindexDatabase,
     val catalogs: List<CollectionCatalog>,
+    val groupings: List<CuratedGrouping> = emptyList(),
 ) {
     fun observeState(): Flow<CollectionState> = combine(
         database.collectedItems().observeAll(),
         database.typeMeta().observeAll(),
         database.proposalPreferences().observeAll(),
-    ) { items, types, preferences ->
+        database.ownGroupings().observeAll(),
+        database.ownGroupings().observeMembers(),
+    ) { items, types, preferences, ownGroupings, ownMembers ->
         val domainItems = items.map { it.toDomain() }
         val typeMeta = types.associate { it.typeId to it.toDomain() }
-        val derivation = deriveCollection(domainItems, typeMeta, catalogs)
+        val derivation = deriveCollection(domainItems, typeMeta, catalogs, groupings)
         val dispositions = preferences.mapNotNull { it.toDomain() }
         CollectionState(
             items = domainItems,
@@ -82,6 +101,11 @@ class CoindexRepository(
             evidencedCatalogIds = catalogs
                 .filter { catalog -> catalog.isEvidencedBy(domainItems) }
                 .mapTo(mutableSetOf()) { it.id },
+            itemsByKey = derivation.itemsByKey,
+            ownGroupings = buildOwnGroupingViews(
+                ownGroupings.map { it.toDomain(ownMembers) },
+                domainItems,
+            ),
         )
     }
 
@@ -108,6 +132,30 @@ class CoindexRepository(
     /** The catalog matching a proposal variant key, if one was curated for it. */
     fun catalogFor(key: CollectionProposalKey): CollectionCatalog? =
         catalogs.firstOrNull { it.key() == key }
+
+    /** Creates one of the collector's own groupings over the types they picked (ADR 0013). */
+    suspend fun createOwnGrouping(name: String, typeIds: List<Int>): Long =
+        database.ownGroupings().create(name, typeIds.distinct(), System.currentTimeMillis())
+
+    suspend fun addToOwnGrouping(groupingId: Long, typeIds: List<Int>) {
+        val dao = database.ownGroupings()
+        dao.addMembers(typeIds.distinct().map { OwnGroupingMemberEntity(groupingId, it) })
+        dao.touch(groupingId, System.currentTimeMillis())
+    }
+
+    suspend fun renameOwnGrouping(groupingId: Long, name: String) {
+        database.ownGroupings().rename(groupingId, name, System.currentTimeMillis())
+    }
+
+    /** Drops one type from a grouping, and the grouping itself if it was the last one. */
+    suspend fun removeFromOwnGrouping(groupingId: Long, typeId: Int) {
+        database.ownGroupings()
+            .removeMemberOrDelete(groupingId, typeId, System.currentTimeMillis())
+    }
+
+    suspend fun deleteOwnGrouping(groupingId: Long) {
+        database.ownGroupings().delete(groupingId)
+    }
 }
 
 /**
@@ -125,10 +173,8 @@ fun resolvePlate(
     val catalog = catalogs.firstOrNull { it.id == catalogId }
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
     val key = catalog.key()
-    val currentProposal = (state.proposals.followed + state.proposals.available +
-        state.proposals.ignored).any { it.key() == key }
     return when {
-        !currentProposal -> PlateResult.Unavailable(PlateUnavailable.NotAProposal)
+        state.proposalFor(key) == null -> PlateResult.Unavailable(PlateUnavailable.NotAProposal)
         key !in state.followedKeys -> PlateResult.Unavailable(PlateUnavailable.NotFollowed)
         catalog.id !in state.evidencedCatalogIds ->
             PlateResult.Unavailable(PlateUnavailable.NoEvidence)
