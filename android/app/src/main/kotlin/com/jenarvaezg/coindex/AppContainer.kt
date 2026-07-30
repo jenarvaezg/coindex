@@ -9,6 +9,8 @@ import com.jenarvaezg.coindex.data.db.CoindexDatabase
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
+import com.jenarvaezg.coindex.data.update.UpdateChecker
+import com.jenarvaezg.coindex.data.update.UpdateInstaller
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 
@@ -43,6 +45,23 @@ class AppContainer(context: Context) {
     private val budgetGate: CallBudgetGate by lazy {
         CallBudgetGate(database.apiCalls(), monthlyBudget = { credentials.monthlyBudget })
     }
+
+    /**
+     * Self-update against the public GitHub releases. These requests go to GitHub, never to
+     * Numista, so they are outside the API budget gate on purpose.
+     */
+    val updateChecker: UpdateChecker by lazy {
+        UpdateChecker(httpClient, currentVersionCode = installedVersionCode())
+    }
+
+    val updateInstaller: UpdateInstaller by lazy { UpdateInstaller(applicationContext, httpClient) }
+
+    private fun installedVersionCode(): Int = runCatching {
+        applicationContext.packageManager
+            .getPackageInfo(applicationContext.packageName, 0)
+            .longVersionCode
+            .toInt()
+    }.getOrDefault(0)
 
     /** A client bound to the stored API key, or null while onboarding is pending. */
     fun numistaClient(): NumistaClient? {

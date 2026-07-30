@@ -8,6 +8,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.startOfMonthMillis
+import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,8 @@ data class UiState(
     val budget: BudgetStatus = BudgetStatus(0, 0),
     val message: String? = null,
     val fatalError: String? = null,
+    val update: UpdateStatus = UpdateStatus.UpToDate,
+    val updating: Boolean = false,
 )
 
 class CoindexViewModel(private val container: AppContainer) : ViewModel() {
@@ -39,6 +42,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
 
     init {
         start()
+        checkForUpdate()
     }
 
     private fun start() {
@@ -109,6 +113,57 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
                 onFailure = { error -> error.message ?: error.toString() },
             )
             _state.update { it.copy(syncing = false, message = message) }
+        }
+    }
+
+    /**
+     * Looks for a newer APK. Failures are swallowed into [UpdateStatus.Unavailable]: an update
+     * check that cannot reach GitHub must never interrupt looking at the collection.
+     */
+    fun checkForUpdate() {
+        viewModelScope.launch {
+            val status = container.updateChecker.check()
+            _state.update { it.copy(update = status) }
+        }
+    }
+
+    /**
+     * Downloads the published APK and hands it to the system installer, asking for the
+     * special install permission first if it has not been granted yet.
+     */
+    fun installUpdate() {
+        val available = _state.value.update as? UpdateStatus.Available ?: return
+        if (_state.value.updating) return
+        val installer = container.updateInstaller
+        if (!installer.canInstall()) {
+            _state.update {
+                it.copy(
+                    message = "Concede a Coindex permiso para instalar aplicaciones y vuelve " +
+                        "a pulsar Instalar.",
+                )
+            }
+            installer.requestInstallPermission()
+            return
+        }
+        _state.update { it.copy(updating = true, message = "Descargando la actualización…") }
+        viewModelScope.launch {
+            val outcome = runCatching {
+                installer.download(available.apkUrl, available.manifest.versionCode)
+            }
+            outcome.fold(
+                onSuccess = { apk ->
+                    _state.update { it.copy(updating = false, message = null) }
+                    installer.install(apk)
+                },
+                onFailure = { error ->
+                    _state.update {
+                        it.copy(
+                            updating = false,
+                            message = "No se pudo descargar la actualización: ${error.message}",
+                        )
+                    }
+                },
+            )
         }
     }
 

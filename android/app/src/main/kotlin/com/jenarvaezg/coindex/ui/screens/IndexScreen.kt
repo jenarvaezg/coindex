@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionProposal
 import com.jenarvaezg.coindex.domain.ProposalDisposition
@@ -36,6 +37,37 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 private enum class CardState { Followed, Available, Ignored }
 
+/** Announces a published APK. Coindex is sideloaded, so it updates itself. */
+@Composable
+private fun UpdateCard(
+    update: UpdateStatus.Available,
+    updating: Boolean,
+    onInstall: () -> Unit,
+) {
+    FieldCard(modifier = Modifier.fillMaxWidth(), emphasized = true) {
+        Eyebrow("Nueva versión")
+        Text(
+            "Coindex ${update.manifest.versionName}",
+            style = MaterialTheme.typography.titleLarge,
+        )
+        update.manifest.notes?.takeIf(String::isNotBlank)?.let { notes ->
+            Text(
+                notes,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Paper.muted,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+        Button(
+            onClick = onInstall,
+            enabled = !updating,
+            modifier = Modifier.padding(top = 8.dp),
+        ) {
+            Text(if (updating) "Descargando…" else "Instalar")
+        }
+    }
+}
+
 /**
  * The collection index: one card per current proposal, in three blocks.
  *
@@ -48,7 +80,10 @@ fun IndexScreen(
     state: CollectionState,
     budget: BudgetStatus,
     syncing: Boolean,
+    update: UpdateStatus,
+    updating: Boolean,
     catalogs: List<CollectionCatalog>,
+    onInstallUpdate: () -> Unit,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
     onOpenPlate: (catalogId: String) -> Unit,
@@ -98,6 +133,11 @@ fun IndexScreen(
                 style = MaterialTheme.typography.labelLarge,
                 color = Paper.muted,
             )
+        }
+        if (update is UpdateStatus.Available) {
+            item {
+                UpdateCard(update, updating, onInstallUpdate)
+            }
         }
 
         if (proposals.isEmpty) {

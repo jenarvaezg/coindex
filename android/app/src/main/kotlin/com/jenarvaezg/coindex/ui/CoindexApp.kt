@@ -84,7 +84,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         state = state.collection,
                         budget = state.budget,
                         syncing = state.syncing,
+                        update = state.update,
+                        updating = state.updating,
                         catalogs = viewModel.catalogs,
+                        onInstallUpdate = viewModel::installUpdate,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
                         onOpenPlate = { catalogId ->

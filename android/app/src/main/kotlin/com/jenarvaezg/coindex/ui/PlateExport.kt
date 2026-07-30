@@ -55,7 +55,7 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
             }
         }
     }
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.plates", file)
+    val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
     val share = Intent(Intent.ACTION_SEND).apply {
         type = "image/png"
         putExtra(Intent.EXTRA_STREAM, uri)
