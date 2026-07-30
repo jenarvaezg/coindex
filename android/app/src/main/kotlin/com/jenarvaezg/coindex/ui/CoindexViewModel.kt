@@ -8,7 +8,10 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.startOfMonthMillis
+import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
+import kotlinx.coroutines.delay
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +34,7 @@ data class UiState(
     val fatalError: String? = null,
     val update: UpdateStatus = UpdateStatus.UpToDate,
     val updating: Boolean = false,
+    val versionName: String = "",
 )
 
 class CoindexViewModel(private val container: AppContainer) : ViewModel() {
@@ -40,9 +44,23 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     /** Curated catalogs shipped with the app; constant for the process lifetime. */
     val catalogs get() = container.repository.catalogs
 
+    private var lastUpdateCheckMillis: Long? = null
+
     init {
+        _state.update { it.copy(versionName = container.installedVersionName()) }
         start()
-        checkForUpdate()
+        checkForUpdate(force = true)
+        pollForUpdates()
+    }
+
+    /** Keeps looking while the app stays open, so a long session still notices a release. */
+    private fun pollForUpdates() {
+        viewModelScope.launch {
+            while (true) {
+                delay(UPDATE_CHECK_INTERVAL_MILLIS)
+                checkForUpdate()
+            }
+        }
     }
 
     private fun start() {
@@ -120,7 +138,10 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * Looks for a newer APK. Failures are swallowed into [UpdateStatus.Unavailable]: an update
      * check that cannot reach GitHub must never interrupt looking at the collection.
      */
-    fun checkForUpdate() {
+    fun checkForUpdate(force: Boolean = false) {
+        val now = System.currentTimeMillis()
+        if (!force && !shouldCheckForUpdate(lastUpdateCheckMillis, now)) return
+        lastUpdateCheckMillis = now
         viewModelScope.launch {
             val status = container.updateChecker.check()
             _state.update { it.copy(update = status) }

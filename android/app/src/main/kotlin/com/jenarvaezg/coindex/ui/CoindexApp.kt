@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -23,12 +24,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
@@ -50,6 +55,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val snackbarHost = remember { SnackbarHostState() }
     val context = LocalContext.current
 
+    // Al volver a primer plano se recomprueba, con el suelo de tiempo de shouldCheckForUpdate.
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { viewModel.checkForUpdate() }
+
     LaunchedEffect(state.message) {
         state.message?.let { message ->
             snackbarHost.showSnackbar(message)
@@ -64,7 +72,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     Scaffold(
         containerColor = Paper.paper,
         snackbarHost = { SnackbarHost(snackbarHost) },
-        topBar = { Masthead(navController) },
+        topBar = {
+            Column {
+                Masthead(navController, state.versionName)
+                (state.update as? UpdateStatus.Available)?.let { available ->
+                    UpdateBanner(available, state.updating, viewModel::installUpdate)
+                }
+            }
+        },
     ) { padding ->
         val content = Modifier.fillMaxSize().padding(padding)
         when {
@@ -84,10 +99,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         state = state.collection,
                         budget = state.budget,
                         syncing = state.syncing,
-                        update = state.update,
-                        updating = state.updating,
                         catalogs = viewModel.catalogs,
-                        onInstallUpdate = viewModel::installUpdate,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
                         onOpenPlate = { catalogId ->
@@ -117,8 +129,51 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     }
 }
 
+/**
+ * Persistent notice that a newer APK is published.
+ *
+ * It lives in the top bar rather than among the proposals so it is visible on every screen,
+ * and it does not block: a pending update is not a reason to stop looking at the collection.
+ */
 @Composable
-private fun Masthead(navController: NavHostController) {
+private fun UpdateBanner(
+    update: UpdateStatus.Available,
+    updating: Boolean,
+    onInstall: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Paper.paperDeep)
+            .padding(start = 20.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                "NUEVA VERSIÓN ${update.manifest.versionName}",
+                style = MaterialTheme.typography.labelMedium,
+                color = Paper.rust,
+            )
+            update.manifest.notes?.takeIf(String::isNotBlank)?.let { notes ->
+                Text(
+                    notes,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Paper.muted,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        Button(onClick = onInstall, enabled = !updating) {
+            Text(if (updating) "Descargando…" else "Instalar")
+        }
+    }
+    HorizontalDivider(color = Paper.line)
+}
+
+@Composable
+private fun Masthead(navController: NavHostController, versionName: String) {
     Column(modifier = Modifier.background(Paper.paper)) {
         Row(
             modifier = Modifier
@@ -133,7 +188,11 @@ private fun Masthead(navController: NavHostController) {
             }
         }
         Text(
-            "Inventario de campo · plata bullion",
+            if (versionName.isEmpty()) {
+                "Inventario de campo · plata bullion"
+            } else {
+                "Inventario de campo · plata bullion · v$versionName"
+            },
             style = MaterialTheme.typography.labelMedium,
             color = Paper.muted,
             modifier = Modifier.padding(start = 20.dp, bottom = 8.dp),

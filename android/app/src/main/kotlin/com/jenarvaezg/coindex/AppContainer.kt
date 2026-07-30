@@ -56,6 +56,14 @@ class AppContainer(context: Context) {
 
     val updateInstaller: UpdateInstaller by lazy { UpdateInstaller(applicationContext, httpClient) }
 
+    /** Version name of the running APK, shown in the masthead. */
+    fun installedVersionName(): String = runCatching {
+        applicationContext.packageManager
+            .getPackageInfo(applicationContext.packageName, 0)
+            .versionName
+            .orEmpty()
+    }.getOrDefault("")
+
     private fun installedVersionCode(): Int = runCatching {
         applicationContext.packageManager
             .getPackageInfo(applicationContext.packageName, 0)

@@ -65,11 +65,16 @@ copiar el APK y permitir la instalación de orígenes desconocidos.
 ## Actualizaciones
 
 Coindex se actualiza a sí misma contra las releases públicas de
-[jenarvaezg/coindex](https://github.com/jenarvaezg/coindex/releases) (ADR 0011): al arrancar
-comprueba si hay una versión con `versionCode` mayor que el instalado y, si la hay, el índice
-muestra una tarjeta con las notas y un botón que descarga el APK y lo entrega al instalador
-del sistema. La primera vez, Android pedirá conceder a Coindex el permiso de instalar
-aplicaciones; después basta confirmar cada actualización.
+[jenarvaezg/coindex](https://github.com/jenarvaezg/coindex/releases) (ADR 0011). Comprueba si
+hay una versión con `versionCode` mayor que el instalado al abrir la app, al volver a primer
+plano y cada 6 h mientras siga abierta, con un suelo de tiempo para no repetir la consulta en
+cada vuelta. No hay notificaciones: el aviso vive dentro de la app.
+
+Cuando hay versión nueva aparece un **banner fijo bajo la cabecera**, visible en todas las
+pantallas, con la versión, las notas y un botón que descarga el APK y lo entrega al
+instalador del sistema. La primera vez, Android pedirá conceder a Coindex el permiso de
+instalar aplicaciones; después basta confirmar cada actualización. La cabecera muestra siempre
+la versión instalada, así que se ve de un vistazo si la actualización se aplicó.
 
 Publicar una versión nueva:
 
