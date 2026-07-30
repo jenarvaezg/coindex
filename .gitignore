@@ -1,17 +1,15 @@
-/target/
-/.env
-Secrets.toml
-Secrets.dev.toml
-/.shuttle/
-*.log
 .DS_Store
+*.log
 .playwright-mcp/
 
-# Android
-/android/.gradle/
-/android/build/
-/android/*/build/
-/android/local.properties
-/android/keystore.properties
+# Gradle y Android
+.gradle/
+/build/
+/app/build/
+/domain/build/
+local.properties
+
+# Firma: el keystore y sus contraseñas nunca entran en el repositorio
+keystore.properties
 *.jks
 *.keystore

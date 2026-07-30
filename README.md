@@ -1,147 +1,129 @@
 # Coindex
 
-Coindex convierte dos colecciones privadas de Numista en láminas de serie: qué piezas
-están, cuáles faltan y cuáles todavía no se han emitido.
+App de Android local-first que organiza una colección de plata de Numista en propuestas y
+láminas: qué piezas están y cuáles faltan de cada serie catalogada. Dos usuarios reales,
+instalación por APK, sin backend.
 
-> **La versión viva es la app de Android: ver [`android/README.md`](android/README.md).**
-> Desde el pivot del 29 de julio de 2026 (spec §0), Coindex es una app local-first
-> instalada por APK. Lo que sigue documenta la implementación Rust/Shuttle, **congelada**
-> como referencia ejecutable y fuente de la lógica de dominio. Los datos curados de `data/`
-> los comparten las dos: la app los monta como assets sin copiarlos.
+Hubo una primera implementación web en Rust (Axum, Maud, SQLx, Shuttle) que se retiró del
+árbol al portar el dominio a Kotlin. Sigue siendo consultable:
 
-## Requisitos (implementación Rust congelada)
-
-- Rust 1.85 o posterior.
-- El target `wasm32-unknown-unknown`.
-- Shuttle CLI compatible con 0.57.
-- Docker, o un Postgres local, para `shuttle run`.
-
-```bash
-rustup target add wasm32-unknown-unknown
-cargo install cargo-shuttle
+```console
+git checkout rust-frozen
 ```
 
-## Credenciales de Numista
+El apéndice de `spec.md` documenta esa fase, y sigue siendo la mejor descripción del dominio,
+de la API de Numista y de la estética.
 
-Cada una de las dos personas necesita su id de usuario y una API key de Numista. La key se
-solicita y administra desde el área de API de la cuenta de Numista. Coindex usa OAuth
-`client_credentials` con el scope `view_collection`; nunca escribe en la colección.
+## Estructura
 
-Copia el ejemplo local y reemplaza ids y keys:
-
-```bash
-cp Secrets.dev.toml.example Secrets.dev.toml
+```
+├── domain/     # Kotlin puro, sin Android: propuestas, catálogos v1/v2, acabados, pesos
+├── app/        # Compose + Room + Ktor + Coil
+├── data/       # catálogos curados y snapshot de la caché de tipos (assets de la app)
+├── fixtures/   # respuestas grabadas de Numista, que leen los tests
+├── docs/adr/   # decisiones de arquitectura
+└── scripts/    # publicar releases, grabar fixtures
 ```
 
-```toml
-COINDEX_USERS = "jose:123456:api-key-uno,padre:654321:api-key-dos"
-COINDEX_ORIGIN = "http://127.0.0.1:8000"
-NUMISTA_MONTHLY_BUDGET = "1500"
+Los catálogos curados y el snapshot de la caché de tipos **no se copian a los assets**: el
+módulo `app` monta `../data` como directorio de assets, así que se empaquetan desde donde se
+curan.
+
+## Requisitos
+
+- JDK 21. El que trae Android Studio sirve:
+  `export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"`
+- SDK de Android con `platforms;android-36`, `build-tools;36.0.0` y `platform-tools`.
+  `local.properties` apunta al SDK (no se versiona).
+
+El proyecto está en la raíz: se abre directamente con Android Studio, sin elegir subcarpeta.
+
+## Comandos
+
+```console
+./gradlew :domain:test           # tabla dorada del dominio
+./gradlew :app:testDebugUnitTest # cliente de Numista, sync, presupuesto, catálogos reales
+./gradlew :app:assembleDebug     # APK de depuración
+./gradlew :app:assembleRelease   # APK de release (firmado si hay keystore.properties)
 ```
 
-`COINDEX_USERS` debe contener exactamente las dos entradas fijas de Fase 1,
-`jose:id_de_usuario_numista:api_key` y `padre:id_de_usuario_numista:api_key`.
-Las API keys viven en los Secrets de Shuttle y en memoria; no se guardan en Postgres.
-No subas `Secrets.dev.toml` ni `Secrets.toml`.
+Ningún test toca la red: todo sale de `fixtures/numista/` y de `data/`. Para refrescar un
+fixture hay que pedirlo a mano y de forma consciente, porque gasta presupuesto de la API:
 
-`COINDEX_ORIGIN` es obligatorio y debe ser el origen público exacto, incluido esquema y
-puerto cuando no sea el predeterminado. Usa `http://127.0.0.1:8000` en local y, en
-producción, la URL HTTPS asignada al proyecto, por ejemplo
-`https://coindex-xxxx.shuttle.app`.
-
-Para producción, configura los mismos secretos con la gestión de secretos de Shuttle.
-
-## Desarrollo local
-
-El ejecutable local usa el mismo `bootstrap`, router, migraciones y ledger de presupuesto
-que producción, sin necesitar la CLI de Shuttle. Crea una sola vez un Postgres persistente:
-
-```bash
-docker run --name coindex-local-postgres \
-  -e POSTGRES_PASSWORD=coindex \
-  -e POSTGRES_DB=coindex_local \
-  -p 127.0.0.1:55432:5432 \
-  -v coindex-local-postgres-data:/var/lib/postgresql/data \
-  -d postgres:17-alpine
+```console
+export NUMISTA_API_KEY=...
+scripts/record-fixture.py --confirm-live-api --type-id 404044
 ```
 
-En ejecuciones posteriores basta con `docker start coindex-local-postgres`. Protege los
-secretos y arranca Coindex:
+## Primer arranque
 
-```bash
-chmod 600 Secrets.dev.toml
-DATABASE_URL='postgres://postgres:coindex@127.0.0.1:55432/coindex_local?sslmode=disable' \
-  cargo run -p coindex-backend --bin coindex-local
+La app pide la API key de Numista y el identificador de usuario. La key se cifra con una
+clave AES/GCM que vive en el Android Keystore y nunca sale de él; solo el criptograma llega
+a `SharedPreferences`. Cada usuario gasta su propio presupuesto de API, con un techo mensual
+configurable (1500 por defecto) que se cuenta en `api_call_log` antes de cada llamada.
+
+En el primer arranque se siembra la caché de tipos con `data/numista-type-cache.json` (608
+tipos, ~630 llamadas de API que nadie tiene que volver a gastar). Un catálogo curado
+inválido detiene el arranque con el fichero y el motivo: es preferible no arrancar a mostrar
+un «me falta» falso.
+
+## Firmar el APK
+
+```console
+keytool -genkeypair -v -keystore ~/keys/coindex-release.jks \
+  -alias coindex -keyalg RSA -keysize 4096 -validity 10000
+cp keystore.properties.example keystore.properties   # y rellénalo
+./gradlew :app:assembleRelease
 ```
 
-Abre `http://127.0.0.1:8000/health`. Las migraciones se aplican al arrancar y los
-metadatos de tipos permanecen cacheados en el volumen de Postgres entre ejecuciones. El
-runner local rechaza direcciones que no sean loopback: la Fase 1 no tiene autenticación y
-no debe exponerse a la red local.
+**Conserva el keystore y sus contraseñas para siempre.** Una actualización firmada con otra
+clave no se puede instalar encima de la anterior; habría que desinstalar y perder la base de
+datos local.
 
-También siguen disponibles las comprobaciones de desarrollo:
+Instalación en el móvil: `adb install -r app/build/outputs/apk/release/app-release.apk`, o
+copiar el APK y permitir la instalación de orígenes desconocidos.
 
-```bash
-cargo test --workspace
-cargo check -p domain --target wasm32-unknown-unknown
+## Actualizaciones
+
+Coindex se actualiza a sí misma contra las releases públicas de
+[jenarvaezg/coindex](https://github.com/jenarvaezg/coindex/releases) (ADR 0011). Comprueba si
+hay una versión con `versionCode` mayor que el instalado al abrir la app, al volver a primer
+plano y cada 6 h mientras siga abierta, con un suelo de tiempo para no repetir la consulta en
+cada vuelta. No hay notificaciones: el aviso vive dentro de la app.
+
+Cuando hay versión nueva aparece un **banner fijo bajo la cabecera**, visible en todas las
+pantallas, con la versión, las notas y un botón que descarga el APK y lo entrega al
+instalador del sistema. La primera vez, Android pedirá conceder a Coindex el permiso de
+instalar aplicaciones; después basta confirmar cada actualización. La cabecera muestra siempre
+la versión instalada, así que se ve de un vistazo si la actualización se aplicó.
+
+Publicar una versión nueva:
+
+```console
+# 1. sube versionCode y versionName en app/build.gradle.kts
+# 2. commit y push
+./scripts/release.sh "Qué cambia en esta versión"
 ```
 
-`shuttle run` es una alternativa para comprobar específicamente el entorno de Shuttle,
-pero no es necesario para trabajar en local.
+El script construye el APK firmado, **verifica la firma**, genera el `update.json` que lee la
+app y crea la release. Se niega a publicar si falta `keystore.properties` o si el tag ya
+existe, así que subir `versionCode` no es opcional.
 
-Las consultas SQL se comprueban en compilación y su metadata offline vive en `.sqlx/`.
-Después de modificar una consulta o migración, instala `sqlx-cli`, aplica las migraciones
-en un Postgres de desarrollo y regenera la metadata:
+## Exportar lámina
 
-```bash
-cargo sqlx prepare --workspace -- --all-targets
-```
+«Exportar lámina como imagen» compone la hoja **completa** fuera de pantalla —con su propia
+densidad, no la del móvil—, espera a que Coil termine con todas las imágenes y la graba en un
+`Picture` que se reproduce sobre un bitmap software. El PNG resultante lleva la cabecera con
+el progreso, todas las emisiones (las que faltan en gris) y la fuente al pie. Un catálogo de
+121 emisiones sale en ocho columnas a menor densidad para que el bitmap no se desmande.
 
-La sincronización solo ocurre al pulsar «Sincronizar». Al terminar, la aplicación vuelve
-al índice; el primer sync descarga la colección y solo los tipos no cacheados, mientras
-que los siguientes reutilizan esos metadatos.
+Los bitmaps de hardware están desactivados en Coil: un `Picture` no se puede reproducir sobre
+un canvas software si contiene alguno.
 
-## Rutas
+## Limitaciones conocidas
 
-- `/`: índice de series y usuarios.
-- `/u/{user}/series/{series_id}`: lámina de una serie.
-- `/u/{user}/followed-collections/{catalog_id}`: lámina curada de una propuesta seguida.
-- `/u/{user}/unmatched`: piezas pendientes de asignación.
-- `/api/album/{user}`: álbum completo en JSON.
-- `/health`: salud y presupuesto mensual.
-
-Las imágenes pasan por `/img/type/{type_id}/{side}`. El proxy solo utiliza URLs HTTPS
-previamente cacheadas para dominios de Numista y no sigue redirecciones.
-
-## Seguridad en Fase 1
-
-La especificación excluye deliberadamente cuentas y login: esta aplicación es para dos
-usuarios fijos y no debe exponerse como un servicio público sin protección. Los formularios
-que modifican estado exigen que `Origin` coincida canónicamente con `COINDEX_ORIGIN`,
-incluido el esquema, y no se habilita CORS permisivo. No se confía en `Host` ni en
-cabeceras reenviadas para decidirlo. En producción, restringe además el acceso desde la
-configuración de acceso de Shuttle (o una capa privada equivalente). Esa restricción
-perimetral es la protección de acceso de la Fase 1; no la sustituyas por credenciales
-inventadas dentro de Coindex.
-
-## Fixtures y red
-
-Los tests no acceden a la red. La única vía autorizada para actualizar respuestas grabadas
-es el binario explícito:
-
-```bash
-cargo run -p numista --bin record-fixtures -- --help
-```
-
-Ejecutarlo puede consumir cuota real; revisa primero el presupuesto.
-
-## Despliegue
-
-Con los secretos de producción ya configurados:
-
-```bash
-shuttle deploy
-```
-
-Comprueba después `/health`. No despliegues para probar cambios locales ni regrabes
-fixtures como parte de un test.
+- **R8 desactivado** en release: el APK pesa ~29 MB. Activar minificación reduciría mucho el
+  tamaño, pero no se ha hecho sin poder verificar en un dispositivo real que nada se rompe.
+- Las series curadas (`data/series`) y el emparejamiento heurístico no se portaron: sus JSON
+  siguen en `data/series/` como datos inertes, y el código con sus tests vive en el tag
+  `rust-frozen` (ADR 0010 §2).

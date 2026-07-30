@@ -3,11 +3,12 @@
 > Especificación viva de Coindex. Dirigida a un agente de codificación: léela completa
 > antes de escribir código.
 >
-> **PIVOT (29 de julio de 2026): Coindex pasa a ser una app de Android local-first.**
-> Shuttle dejó de funcionar y se descarta el despliegue web. La implementación Rust de
-> este repositorio queda **congelada como referencia ejecutable** (sigue funcionando en
-> local) y como fuente de la lógica de dominio a portar. Las secciones del apéndice
-> histórico describen esa fase web; cuando discrepen con la sección 0 o con los ADR de
+> **PIVOT (29 de julio de 2026): Coindex es una app de Android local-first.**
+> Shuttle dejó de funcionar y se descartó el despliegue web. El dominio se portó a Kotlin y
+> el **30 de julio de 2026 la implementación Rust se retiró del árbol de trabajo**: vive en el
+> tag `rust-frozen` (`git checkout rust-frozen`) para poder consultarla. El apéndice histórico
+> describe esa fase y sigue siendo la mejor documentación del dominio (§5), de la API de
+> Numista (§6) y de la estética (§8); cuando discrepe con la sección 0 o con los ADR de
 > `docs/adr/`, prevalecen la sección 0 y los ADR.
 
 ---
@@ -53,13 +54,14 @@
    Incluye los 470 tipos referenciados por los catálogos: las láminas muestran todos los
    diseños (incluidos los "me falta") sin gastar presupuesto.
 3. **`data/series/*.json`** — las dos series curadas históricas (Lunar III, Tudor
-   Beasts). La UI actual ya no las muestra en el índice (ver 0.4); sirven como datos de
-   matchers/fechas futuras. Pueden ignorarse en la primera versión de la app.
+   Beasts). La app no las lee (ADR 0010 §2): quedan como datos inertes para futuros
+   catálogos. Ya no hay código que las valide en `main`.
 4. **`docs/adr/0001..0009`** — las decisiones de dominio siguen vigentes; la 0007
    (propuestas desde inventario), 0008 (disposiciones durables) y 0009 (date runs +
    fallback de familia) son la especificación del comportamiento.
 5. **`crates/domain`** — la lógica a portar (~1.200 líneas, pura, sin I/O, con tests de
-   tabla dorada). Se porta a Kotlin a mano; no compensa un puente FFI.
+   tabla dorada). Portada a mano a `domain/` en Kotlin (ADR 0010); el original está en el tag
+   `rust-frozen`.
 
 ### 0.3 Modelo de dominio a portar (invariantes)
 
@@ -194,9 +196,11 @@ ADR 0010 para las decisiones del port.
 
 # Apéndice — especificación histórica de la fase web Rust (congelada)
 
-> Todo lo que sigue describe la implementación Rust/Axum que queda como referencia.
-> Sigue siendo la mejor documentación del dominio (§5), de la API de Numista (§6) y de
-> la estética (§8). No invertir más en este stack salvo curación de datos en `data/`.
+> Todo lo que sigue describe la implementación Rust/Axum, retirada del árbol el 30 de julio
+> de 2026 y consultable en el tag `rust-frozen`. Sigue siendo la mejor documentación del
+> dominio (§5), de la API de Numista (§6) y de la estética (§8). Las rutas que menciona
+> (`crates/`, `backend/`, `Cargo.toml`) ya no existen en `main`. No invertir más en este
+> stack; la curación de datos en `data/` sí continúa.
 
 ## 1. Contexto
 

@@ -93,9 +93,15 @@ porque una que falla nunca llega— con un techo de 20 s, y avisa si alguna no c
 
 ## Consecuencias
 
-- El dominio Kotlin (`android/domain`) es puro y sin dependencias de Android, con las
-  tablas doradas portadas de `crates/domain/tests`.
-- El único activo compartido con la implementación congelada es `data/`, montado como
-  assets desde `../../data` en lugar de copiarse.
-- `data/series` y el emparejamiento heurístico dejan de tener cobertura de tests en la
-  app; siguen cubiertos en el workspace Rust congelado.
+- El dominio Kotlin (`domain/`) es puro y sin dependencias de Android, con las tablas doradas
+  portadas de `crates/domain/tests`.
+- Los catálogos y el snapshot de tipos se empaquetan desde `data/` en lugar de copiarse a los
+  assets, así que se curan y se publican en el mismo sitio.
+- `data/series` y el emparejamiento heurístico dejan de tener cobertura de tests: sus JSON
+  quedan como datos inertes y el código con sus tests vive en el tag `rust-frozen`.
+
+## Nota posterior (30 de julio de 2026)
+
+El workspace Rust se retiró del árbol de trabajo una vez la app estuvo instalada y verificada,
+y el proyecto Android subió a la raíz del repositorio. Las rutas `crates/…` que cita este ADR
+se refieren al tag `rust-frozen`.

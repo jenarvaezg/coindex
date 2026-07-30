@@ -2,38 +2,39 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
-env:
-  CARGO_TERM_COLOR: always
-  SQLX_OFFLINE: true
-
 jobs:
-  rust:
+  test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: coindex_test_ci
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v6
-      - name: Install Rust with the WASM target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Test the workspace
-        run: cargo test --workspace
-      - name: Test PostgreSQL acceptance paths
-        env:
-          COINDEX_ALLOW_DESTRUCTIVE_DB_TEST: "1"
-          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/coindex_test_ci
-        run: cargo test -p coindex-backend -- --ignored --test-threads=1
-      - name: Check the platform-free domain crate for WASM
-        run: cargo check -p domain --target wasm32-unknown-unknown
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # El dominio es Kotlin puro: sus tablas doradas no necesitan el SDK de Android.
+      - name: Tests del dominio
+        run: ./gradlew :domain:test
+
+      # Cliente de Numista, sync, presupuesto y catálogos curados reales. Ninguno toca la red:
+      # todo sale de fixtures/numista y de data/.
+      - name: Tests de la app
+        run: ./gradlew :app:testDebugUnitTest
+
+      - name: Compilar el APK de depuración
+        run: ./gradlew :app:assembleDebug
+
+      - name: Publicar los informes de test si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            domain/build/reports/tests/
+            app/build/reports/tests/
