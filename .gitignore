@@ -6,3 +6,12 @@ Secrets.dev.toml
 *.log
 .DS_Store
 .playwright-mcp/
+
+# Android
+/android/.gradle/
+/android/build/
+/android/*/build/
+/android/local.properties
+/android/keystore.properties
+*.jks
+*.keystore

@@ -153,23 +153,31 @@ usado (julio 2026) y reglas aprendidas:
 - Presupuesto API de la key de Jose consumido en julio: ~631/1500. Ya no importa tras el
   pivot (cada usuario la suya), pero el snapshot de caché evita regastarlo.
 
-### 0.8 Orden de trabajo sugerido para la app
+### 0.8 Orden de trabajo de la app — estado a 30 jul 2026
 
-1. Esqueleto Kotlin + Compose + Room; importar assets (`collection-catalogs`,
-   `numista-type-cache.json`) y validarlos al arrancar (fallar ruidosamente, como hoy).
-2. Portar el dominio con sus tests (tabla dorada de matching de propuestas, validación
-   de catálogos v1/v2, date runs, fallback de familia, normalización de peso, acabados).
-3. Onboarding: API key + user id de Numista → Keystore; sync explícito a SQLite con
-   contador de presupuesto.
-4. Índice de propuestas con disposiciones persistentes.
-5. Láminas (v1 y v2), grises + enlaces a Numista incluidos.
-6. Vista de huérfanas/sin clasificar.
-7. Exportar lámina como imagen (share intent).
-8. Firma, APK e instalación en los dos móviles.
+La app vive en `android/` (módulos `domain` puro y `app`). Ver `android/README.md` y el
+ADR 0010 para las decisiones del port.
+
+1. ✅ Esqueleto Kotlin + Compose + Room (AGP 9.3.1, Kotlin 2.4.10, compileSdk 36). Los
+   assets se montan desde `../../data`, sin copiar; los catálogos se validan al arrancar y
+   un fallo detiene la app con el fichero y el motivo.
+2. ✅ Dominio portado con sus tablas doradas (22 tests): propuestas, clave de variante,
+   catálogos v1/v2, date runs, fallback de familia, normalización de peso, acabados. **No**
+   se portan series curadas ni correcciones manuales (ADR 0010 §2).
+3. ✅ Onboarding con API key + user id cifrados con el Android Keystore; sync explícito a
+   Room con contador mensual y techo configurable (19 tests de app, sin red).
+4. ✅ Índice de propuestas en tres bloques con disposiciones persistentes.
+5. ✅ Láminas v1 y v2: progreso `n / m emisiones`, ficha de especificaciones, grises al
+   45 % para las que faltan y enlaces a Numista.
+6. ✅ Vista de huérfanas, ahora con motivo auditable por pieza (ADR 0010 §3).
+7. ◐ Exportar lámina como imagen: funciona sobre lo visible en pantalla; la hoja completa
+   de un catálogo más largo que la pantalla queda pendiente (ADR 0010 §8).
+8. ◐ Firma configurada vía `keystore.properties` (fuera del repo). Falta generar el
+   keystore definitivo e instalar en los dos móviles.
 
 ### 0.9 Cuestiones abiertas de la fase Android
 
-1. Nombre definitivo y applicationId.
+1. ✅ Resuelta: `Coindex`, applicationId `com.jenarvaezg.coindex`.
 2. Cómo expresar en catálogos las emisiones futuras/anunciadas (el modelo v1/v2 exige
    `numista_type_id`, así que no puede representar "sin emitir" como hacían las series
    curadas con `release_status`). Posible `schema_version: 3` o campo opcional.

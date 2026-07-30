@@ -1,0 +1,118 @@
+package com.jenarvaezg.coindex.ui.theme
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/**
+ * Ornithological field-guide palette, carried over from the frozen web prototype so both
+ * renderings of Coindex look like the same notebook.
+ */
+object Paper {
+    val ink = Color(0xFF2D3029)
+    val muted = Color(0xFF696B5E)
+    val paper = Color(0xFFEEE8D7)
+    val paperDeep = Color(0xFFDDD3BB)
+    val line = Color(0xFF7D806C)
+    val moss = Color(0xFF495C49)
+    val rust = Color(0xFF8B553C)
+    val card = Color(0x57FFFCF2)
+    val hairline = Color(0xFF9F9B8B)
+}
+
+/** Dimensions shared by the plate and the index, so cards line up across screens. */
+object PlateMetrics {
+    val gutter = 16.dp
+    val cardPadding = 14.dp
+    val minPlateCell = 168.dp
+}
+
+private val fieldColors = lightColorScheme(
+    primary = Paper.ink,
+    onPrimary = Paper.paper,
+    secondary = Paper.moss,
+    tertiary = Paper.rust,
+    background = Paper.paper,
+    onBackground = Paper.ink,
+    surface = Paper.paper,
+    onSurface = Paper.ink,
+    surfaceVariant = Paper.paperDeep,
+    onSurfaceVariant = Paper.muted,
+    outline = Paper.line,
+)
+
+/**
+ * A guide, not a dashboard: serif for prose, a condensed sans in small caps for data. The
+ * palette is paper-toned in both system themes on purpose — the plate is a printed page.
+ */
+private val fieldTypography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 40.sp,
+        lineHeight = 42.sp,
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 26.sp,
+        lineHeight = 30.sp,
+    ),
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 21.sp,
+        lineHeight = 25.sp,
+    ),
+    titleMedium = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 17.sp,
+        lineHeight = 21.sp,
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontSize = 16.sp,
+        lineHeight = 23.sp,
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily.Serif,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+    ),
+    labelLarge = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+        letterSpacing = 0.8.sp,
+    ),
+    labelMedium = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 11.sp,
+        letterSpacing = 1.4.sp,
+    ),
+    labelSmall = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 10.sp,
+        letterSpacing = 1.2.sp,
+    ),
+)
+
+/** The palette does not follow the system dark theme on purpose: a plate is paper. */
+@Composable
+fun CoindexTheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colorScheme = fieldColors,
+        typography = fieldTypography,
+        content = content,
+    )
+}

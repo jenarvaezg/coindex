@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Field-guide palette, mirrored from the frozen web prototype's site.css. -->
+    <color name="paper">#EEE8D7</color>
+    <color name="ink">#2D3029</color>
+</resources>

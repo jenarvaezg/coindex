@@ -1,10 +1,15 @@
 # Coindex
 
 Coindex convierte dos colecciones privadas de Numista en láminas de serie: qué piezas
-están, cuáles faltan y cuáles todavía no se han emitido. La Fase 1 usa Rust, Axum 0.8,
-Maud, SQLx/Postgres y Shuttle 0.57.
+están, cuáles faltan y cuáles todavía no se han emitido.
 
-## Requisitos
+> **La versión viva es la app de Android: ver [`android/README.md`](android/README.md).**
+> Desde el pivot del 29 de julio de 2026 (spec §0), Coindex es una app local-first
+> instalada por APK. Lo que sigue documenta la implementación Rust/Shuttle, **congelada**
+> como referencia ejecutable y fuente de la lógica de dominio. Los datos curados de `data/`
+> los comparten las dos: la app los monta como assets sin copiarlos.
+
+## Requisitos (implementación Rust congelada)
 
 - Rust 1.85 o posterior.
 - El target `wasm32-unknown-unknown`.

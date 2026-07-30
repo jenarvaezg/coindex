@@ -1,0 +1,52 @@
+package com.jenarvaezg.coindex
+
+import android.content.Context
+import com.jenarvaezg.coindex.data.CallBudgetGate
+import com.jenarvaezg.coindex.data.CoindexRepository
+import com.jenarvaezg.coindex.data.CredentialStore
+import com.jenarvaezg.coindex.data.SyncService
+import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.numista.NumistaClient
+import com.jenarvaezg.coindex.data.seed.CatalogAssets
+import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+
+/**
+ * Manual dependency wiring. The app is small and single-user; a DI framework would add more
+ * indirection than it removes.
+ *
+ * The curated catalogs are parsed and validated here, on the first access, and a failure is
+ * allowed to propagate: shipping a broken catalog must be loud.
+ */
+class AppContainer(context: Context) {
+    private val applicationContext = context.applicationContext
+
+    val database: CoindexDatabase by lazy { CoindexDatabase.open(applicationContext) }
+
+    val credentials: CredentialStore by lazy { CredentialStore(applicationContext) }
+
+    val repository: CoindexRepository by lazy {
+        CoindexRepository(database, CatalogAssets.load(applicationContext.assets))
+    }
+
+    val typeCacheSeed: TypeCacheSeed by lazy {
+        TypeCacheSeed(applicationContext.assets, database.typeMeta())
+    }
+
+    val syncService: SyncService by lazy {
+        SyncService(database.collectedItems(), database.typeMeta(), database.apiCalls())
+    }
+
+    private val httpClient: HttpClient by lazy { HttpClient(OkHttp) }
+
+    private val budgetGate: CallBudgetGate by lazy {
+        CallBudgetGate(database.apiCalls(), monthlyBudget = { credentials.monthlyBudget })
+    }
+
+    /** A client bound to the stored API key, or null while onboarding is pending. */
+    fun numistaClient(): NumistaClient? {
+        val stored = credentials.credentials() ?: return null
+        return NumistaClient(httpClient, stored.apiKey, budgetGate)
+    }
+}
