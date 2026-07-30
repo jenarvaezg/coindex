@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
@@ -122,11 +123,39 @@ fun SpecificationCard(entries: List<Pair<String, String>>, modifier: Modifier = 
 
 private val GRAYSCALE = ColorMatrix().apply { setToSaturation(0f) }
 
+/** What a coin photo is actually mounted on: the translucent card over the paper. */
+private val MOUNT = Paper.card.compositeOver(Paper.paper)
+
+/**
+ * Multiplies a picture by the page it is printed on.
+ *
+ * Catalog photographs are shot on white, and a white rectangle on cream paper is the one thing
+ * that gives away that the plate is a screenshot and not a page. Scaling each channel by the
+ * mount's own maps that white exactly onto the card and leaves the coin where it was.
+ */
+private val PAPER_TINT = ColorMatrix().apply {
+    this[0, 0] = MOUNT.red
+    this[1, 1] = MOUNT.green
+    this[2, 2] = MOUNT.blue
+}
+
+private val GRAYSCALE_ON_PAPER = ColorMatrix(GRAYSCALE.values.copyOf()).apply {
+    timesAssign(PAPER_TINT)
+}
+
+private fun coinColorFilter(missing: Boolean, onPaper: Boolean): ColorFilter? = when {
+    missing && onPaper -> ColorFilter.colorMatrix(GRAYSCALE_ON_PAPER)
+    missing -> ColorFilter.colorMatrix(GRAYSCALE)
+    onPaper -> ColorFilter.colorMatrix(PAPER_TINT)
+    else -> null
+}
+
 /**
  * Obverse and reverse of one type.
  *
  * A missing piece still shows the catalog design, desaturated and faded, so the plate reads as
- * a gap in a collection rather than an empty box.
+ * a gap in a collection rather than an empty box. [onPaper] is for the exported sheet, which is
+ * a printed page rather than a screen and cannot afford the studio white around each photo.
  */
 @Composable
 fun CoinSides(
@@ -136,13 +165,14 @@ fun CoinSides(
     missing: Boolean,
     modifier: Modifier = Modifier,
     onImageSettled: (() -> Unit)? = null,
+    onPaper: Boolean = false,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        CoinSide("Anverso", label, obverseUrl, missing, Modifier.weight(1f), onImageSettled)
-        CoinSide("Reverso", label, reverseUrl, missing, Modifier.weight(1f), onImageSettled)
+        CoinSide("Anverso", label, obverseUrl, missing, Modifier.weight(1f), onImageSettled, onPaper)
+        CoinSide("Reverso", label, reverseUrl, missing, Modifier.weight(1f), onImageSettled, onPaper)
     }
 }
 
@@ -158,6 +188,7 @@ private fun CoinSide(
     missing: Boolean,
     modifier: Modifier = Modifier,
     onImageSettled: (() -> Unit)? = null,
+    onPaper: Boolean = false,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         val frame = Modifier.fillMaxWidth().aspectRatio(1f)
@@ -188,7 +219,7 @@ private fun CoinSide(
                             else -> Unit
                         }
                     },
-                    colorFilter = if (missing) ColorFilter.colorMatrix(GRAYSCALE) else null,
+                    colorFilter = coinColorFilter(missing, onPaper),
                     modifier = Modifier
                         .matchParentSize()
                         .alpha(if (missing) 0.45f else 1f),

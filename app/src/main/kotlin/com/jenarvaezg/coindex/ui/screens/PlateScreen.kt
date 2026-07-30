@@ -169,9 +169,8 @@ private fun PlateSheetExport(
                 images = images,
                 layout = layout,
                 onImageSettled = { settled.intValue += 1 },
-                modifier = Modifier
-                    .background(Paper.paper)
-                    .recordInto(picture),
+                // The sheet paints its own paper; recording it from the outside would drop it.
+                modifier = Modifier.recordInto(picture),
             )
         }
     }
