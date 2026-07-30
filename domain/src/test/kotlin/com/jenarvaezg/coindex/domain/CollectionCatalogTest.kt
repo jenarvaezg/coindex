@@ -77,6 +77,38 @@ private fun item(id: Long, typeId: Int, quantity: Int = 1) =
 private fun datedItem(id: Long, typeId: Int, issueYear: Int?) =
     CollectedItem(id = id, quantity = 1, typeId = typeId, issueYear = issueYear)
 
+/**
+ * The stars of the 100 pesetas of Franco (ADR 0014): one type, one year on every issue, and the
+ * star is a variety of it. The issue ids here are stand-ins; the shipped seed carries the real
+ * ones. The 1969 holds two — the curved and the straight nine — because the collector counts one
+ * star.
+ */
+internal fun issueRunCatalogStub() = CollectionCatalog(
+    schemaVersion = 5,
+    id = "espana-paquillos",
+    name = "Paquillos · 100 pesetas de Franco",
+    issuerCode = "espagne",
+    family = "100 Pesetas de Franco",
+    weightMillioz = 611,
+    finish = null,
+    source = "https://en.numista.com/catalogue/pieces1885.html",
+    updatedAt = "2026-07-30",
+    members = listOf(
+        CollectionCatalogMember("estrella-66", "Estrella 66", 1966, 1_885, listOf(9_001)),
+        CollectionCatalogMember("estrella-69", "Estrella 69", 1966, 1_885, listOf(9_004, 9_005)),
+        CollectionCatalogMember("estrella-70", "Estrella 70", 1966, 1_885, listOf(9_006)),
+    ),
+)
+
+/** A piece attached to one Numista issue, all of them dated the same year. */
+private fun issuedItem(id: Long, typeId: Int, issueId: Int?, quantity: Int = 1) = CollectedItem(
+    id = id,
+    quantity = quantity,
+    typeId = typeId,
+    issueYear = 1966,
+    issueId = issueId,
+)
+
 class CollectionCatalogValidationTest {
     @Test
     fun `validation requires versioned slugged unique sourced exact variants`() {
@@ -165,6 +197,52 @@ class CollectionCatalogValidationTest {
             members = definition.members.take(1),
         )
         assertEquals(CollectionCatalogValidationError.InvalidSource, typePageOnV1.validate())
+    }
+
+    @Test
+    fun `issue runs repeat one type across issues and every member names one`() {
+        val definition = issueRunCatalogStub()
+        assertNull(definition.validate())
+
+        // The type repeats, as it does in a date run, and the shared year is not a duplicate.
+        assertTrue(definition.members.all { it.numistaTypeId == 1_885 && it.year == 1966 })
+
+        val withoutIssue = definition.copy(
+            members = definition.members.map { it.copy(numistaIssueIds = emptyList()) },
+        )
+        assertEquals(
+            CollectionCatalogValidationError.MemberWithoutIssue("estrella-66"),
+            withoutIssue.validate(),
+        )
+
+        // One issue in two slots would let a single piece fill both.
+        val sharedIssue = definition.copy(
+            members = listOf(
+                definition.members[0],
+                definition.members[1].copy(numistaIssueIds = listOf(9_001)),
+            ),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.DuplicateNumistaIssueId(9_001),
+            sharedIssue.validate(),
+        )
+
+        val zeroIssue = definition.copy(
+            members = listOf(definition.members[0].copy(numistaIssueIds = listOf(0))),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.InvalidNumistaIssueId,
+            zeroIssue.validate(),
+        )
+
+        // Naming issues anywhere else is a curation mistake, not a silently ignored field.
+        val issuesOnDateRun = dateRunCatalogStub().let { run ->
+            run.copy(members = listOf(run.members[0].copy(numistaIssueIds = listOf(9_001))))
+        }
+        assertEquals(
+            CollectionCatalogValidationError.IssuesOutsideIssueRun("1904"),
+            issuesOnDateRun.validate(),
+        )
     }
 
     @Test
@@ -283,5 +361,52 @@ class CollectionCatalogAlbumTest {
 
         // Plate reachability stays type-based even while every year is missing.
         assertTrue(definition.isEvidencedBy(listOf(datedItem(4, 10_340, null))))
+    }
+
+    /**
+     * The case the date run cannot express: six issues, one year. Keying on the year would fill
+     * one slot and call the other five missing while they sit in the album.
+     */
+    @Test
+    fun `an issue run matches by issue and ignores the year entirely`() {
+        val definition = issueRunCatalogStub()
+
+        val album = buildCollectionCatalogAlbum(
+            definition,
+            listOf(
+                issuedItem(1, 1_885, 9_001),
+                // The straight nine fills the same star as the curved one.
+                issuedItem(2, 1_885, 9_005),
+                // Same type, same 1966, an issue the catalog does not list.
+                issuedItem(3, 1_885, 9_999),
+                // A piece recorded without an issue fills nothing.
+                issuedItem(4, 1_885, null),
+            ),
+        )
+
+        assertEquals(2, album.ownedMembers())
+        assertEquals("Estrella 66", album.members[0].member.label)
+        assertTrue(album.members[0].status is CollectionCatalogMemberStatus.Owned)
+        assertTrue(album.members[1].status is CollectionCatalogMemberStatus.Owned)
+        assertEquals(CollectionCatalogMemberStatus.Missing, album.members[2].status)
+
+        // Owning both varieties of one star counts one slot, with both pieces behind it.
+        val bothNines = buildCollectionCatalogAlbum(
+            definition,
+            listOf(issuedItem(5, 1_885, 9_004), issuedItem(6, 1_885, 9_005, quantity = 2)),
+        )
+        val nine = bothNines.members[1].status as? CollectionCatalogMemberStatus.Owned
+        assertNotNull(nine)
+        assertEquals(1, bothNines.ownedMembers())
+        assertEquals(3, nine.quantity)
+        assertEquals(2, nine.items.size)
+
+        // The catalog is also what names a piece the row cannot tell apart.
+        assertEquals("Estrella 69", definition.emissionLabelFor(issuedItem(7, 1_885, 9_004)))
+        assertNull(definition.emissionLabelFor(issuedItem(8, 1_885, 9_999)))
+        assertNull(dateRunCatalogStub().emissionLabelFor(datedItem(9, 10_340, 1904)))
+
+        // One owned issue is evidence enough to reach the plate, as one owned type is elsewhere.
+        assertTrue(definition.isEvidencedBy(listOf(issuedItem(10, 1_885, null))))
     }
 }

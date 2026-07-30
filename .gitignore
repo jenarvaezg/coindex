@@ -13,3 +13,6 @@ local.properties
 keystore.properties
 *.jks
 *.keystore
+
+# Credenciales de la API de Numista, para los scripts. Misma regla que el keystore.
+.env

@@ -33,6 +33,7 @@ fun PieceCard(
     images: TypeImages?,
     onOpenSource: (String) -> Unit,
     modifier: Modifier = Modifier,
+    emissionLabel: String? = null,
     extra: @Composable ColumnScope.() -> Unit = {},
 ) {
     FieldCard(modifier = modifier.fillMaxWidth()) {
@@ -47,7 +48,7 @@ fun PieceCard(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    pieceLine(item),
+                    pieceLine(item, emissionLabel),
                     style = MaterialTheme.typography.labelLarge,
                     color = Paper.muted,
                     modifier = Modifier.padding(top = 4.dp),

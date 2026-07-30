@@ -20,17 +20,44 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(21, catalogs.size)
+        assertEquals(22, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
+    }
+
+    /**
+     * The stars of the 100 pesetas, keyed on Numista issues because the year cannot tell them
+     * apart: all six issues of N#1885 are dated 1966 and the star is a variety of the issue.
+     * Ids read from `/types/1885/issues`, one call, and the comment of each one is the star it
+     * carries.
+     */
+    @Test
+    fun `the paquillos are five stars over six numista issues`() {
+        val paquillos = find("espana-paquillos")
+        assertEquals(5, paquillos.schemaVersion)
+        assertTrue(paquillos.isIssueRun)
+        assertEquals("100 Pesetas de Franco", paquillos.family)
+        assertEquals(611, paquillos.weightMillioz)
+        assertEquals(
+            listOf("Estrella 66", "Estrella 67", "Estrella 68", "Estrella 69", "Estrella 70"),
+            paquillos.members.map { it.label },
+        )
+        assertTrue(paquillos.members.all { it.numistaTypeId == 1_885 && it.year == 1966 })
+        // El 69 son dos emisiones —nueve curvo y nueve recto— en una sola casilla.
+        assertEquals(
+            listOf(listOf(8_508), listOf(33_204), listOf(33_205), listOf(33_206, 368_163), listOf(33_207)),
+            paquillos.members.map { it.numistaIssueIds },
+        )
     }
 
     /**
      * The father's own closure project: he is missing 1965. Three Numista types make one date
      * run because all three weigh 10 g, so they share one variant key.
      *
-     * N#10399 is dated 1945 and was struck in 1947, and Numista indexes the year it was struck
-     * (its `min_year` and `max_year` are both 1947), which is the year a collected row carries.
-     * The label keeps both, because the coin in his hand says 1945.
+     * N#10399 is the regression this pins. It is dated 1945 and was struck in 1947, and the
+     * type's `min_year`/`max_year` say 1947, so v0.4.0 shipped a member for 1947 — but the issue
+     * itself carries `year: 1945` with `gregorian_year: 1947`, and `recordedYear` prefers the
+     * date on the coin. The member had to be 1945 or it could never be filled, and the plate
+     * would have reported a coin in his hand as missing.
      */
     @Test
     fun `the venezuelan 2 bolivares date run spans its three types`() {
@@ -50,10 +77,17 @@ class CuratedCatalogsTest {
             bolivares.members.filter { it.numistaTypeId == 10_339 }.map { it.year },
         )
         assertEquals(
-            listOf(1947),
+            listOf(1945),
             bolivares.members.filter { it.numistaTypeId == 10_399 }.map { it.year },
         )
-        assertEquals("1945 (1947)", bolivares.members.first { it.year == 1947 }.label)
+        assertEquals(
+            "1945 (acuñada en 1947)",
+            bolivares.members.first { it.numistaTypeId == 10_399 }.label,
+        )
+        // Ninguna casilla se indexa por el año de acuñación: la llave es la fecha de la moneda.
+        assertTrue(bolivares.members.none { it.year == 1947 })
+        // Y un date run no nombra emisiones; eso es cosa de un issue run.
+        assertTrue(bolivares.members.all { it.numistaIssueIds.isEmpty() })
         assertEquals(
             listOf(1960, 1965),
             bolivares.members.filter { it.numistaTypeId == 7_775 }.map { it.year },

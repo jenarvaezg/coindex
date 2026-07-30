@@ -24,21 +24,13 @@ class CuratedGroupingsTest {
 
     @Test
     fun `every shipped grouping parses and validates`() {
-        assertEquals(4, groupings.size)
+        // Los paquillos se fueron: ya tienen lista de emisiones, así que son catálogo.
+        assertEquals(3, groupings.size)
         groupings.forEach { grouping ->
             assertNull(grouping.validate(), "inválida: ${grouping.id}")
             assertEquals(1, grouping.schemaVersion)
             assertEquals(grouping.family, normalizeFamily(grouping.family))
         }
-    }
-
-    @Test
-    fun `the paquillos are the one spanish type Numista files under no series`() {
-        val paquillos = find("espana-100-pesetas-franco")
-        assertEquals("100 Pesetas de Franco", paquillos.family)
-        assertEquals("espagne", paquillos.issuerCode)
-        // N#1885: 19 g de plata .800, estrellas 66 a 70 dentro de un único tipo.
-        assertEquals(listOf(1_885), paquillos.typeIds)
     }
 
     /**
