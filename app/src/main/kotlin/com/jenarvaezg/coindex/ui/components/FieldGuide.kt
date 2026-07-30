@@ -219,7 +219,8 @@ private val DASH_GAP = 4.dp
  * [dashed] is drawn dashed, and means what a dashed box means on paper: nothing is mounted here
  * yet. It is for absences — a «me falta» cell, a section with no cards in it — never for a card
  * that has pieces behind it. [emphasized] is the opposite end: a double-weight rule for the
- * cells the collector actually owns.
+ * cells the collector actually owns, and it gives way to [dashed], because an absence is never
+ * something to emphasize.
  *
  * (The parameter used to only change the border colour, while its comment promised both a
  * dashed rule and an offset shadow the card never drew.)

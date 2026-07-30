@@ -105,12 +105,12 @@ fun PlateSheet(
             .padding(SHEET_PADDING),
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
     ) {
+        val common = plateCommonFacts(catalog.members)
         SheetHeading(
             catalog = catalog,
-            entries = plateEntries(catalog, ownedMembers),
+            entries = plateEntries(catalog, ownedMembers, common),
             layout = layout,
         )
-        val common = plateCommonFacts(catalog.members)
         members.chunked(layout.columns).forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),

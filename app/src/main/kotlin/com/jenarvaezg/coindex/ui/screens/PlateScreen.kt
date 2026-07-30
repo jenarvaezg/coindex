@@ -54,7 +54,6 @@ import com.jenarvaezg.coindex.ui.sharePlateSheet
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
-import com.jenarvaezg.coindex.ui.variantEntries
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -200,6 +199,9 @@ private fun PlateGrid(
         horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
         verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
     ) {
+        // Read once for the whole plate: the heading says what every cell shares, the cells say
+        // the rest.
+        val common = plateCommonFacts(catalog.members)
         item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Eyebrow("Catálogo curado")
@@ -211,7 +213,7 @@ private fun PlateGrid(
                     color = Paper.muted,
                 )
                 SpecificationCard(
-                    entries = plateEntries(catalog, ownedMembers),
+                    entries = plateEntries(catalog, ownedMembers, common),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 // Exporting the plate is what this screen is for, so it is the only filled
@@ -233,7 +235,6 @@ private fun PlateGrid(
                 )
             }
         }
-        val common = plateCommonFacts(catalog.members)
         items(members, key = { it.member.id }) { albumMember ->
             PlateCell(albumMember, images[albumMember.member.numistaTypeId], common, onOpenSource)
         }

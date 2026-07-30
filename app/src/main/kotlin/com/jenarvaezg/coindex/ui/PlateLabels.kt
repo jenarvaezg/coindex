@@ -42,8 +42,11 @@ fun plateCellFootnote(member: CollectionCatalogMember, common: PlateCommonFacts)
  *
  * Whatever [plateCommonFacts] lifts out of the cells lands here, once.
  */
-fun plateEntries(catalog: CollectionCatalog, ownedMembers: Int): List<Pair<String, String>> {
-    val common = plateCommonFacts(catalog.members)
+fun plateEntries(
+    catalog: CollectionCatalog,
+    ownedMembers: Int,
+    common: PlateCommonFacts = plateCommonFacts(catalog.members),
+): List<Pair<String, String>> {
     return buildList {
         add("Progreso" to "$ownedMembers / ${catalog.members.size} emisiones")
         addAll(variantEntries(catalog.weightMillioz, catalog.finish))

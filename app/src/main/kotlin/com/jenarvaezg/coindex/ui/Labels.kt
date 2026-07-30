@@ -54,12 +54,14 @@ fun variantLabel(weightMillioz: Int?, finish: Finish?): String =
  * Every card used to wear «EVIDENCIA DE COLECCIÓN», which is what the section heading above it
  * already said. The issuer is the one line the card cannot derive from its own title.
  *
- * Two issuers under one heading, or none recorded, leave the eyebrow unsaid: an eyebrow that
- * covers half its card would be worse than no eyebrow at all.
+ * Two issuers under one heading, or one piece whose issuer nobody recorded, leave the eyebrow
+ * unsaid: an eyebrow that covers half its card would be worse than no eyebrow at all. That is
+ * why the unknowns are kept in the list rather than filtered out — one uncached type is enough
+ * to make «Venezuela» a claim about pieces that were never checked.
  */
 fun issuerEyebrow(items: List<CollectedItem>, typeMeta: Map<Int, TypeMeta>): String? =
     items
-        .mapNotNull { item -> typeMeta[item.typeId]?.issuerName }
+        .map { item -> typeMeta[item.typeId]?.issuerName }
         .distinct()
         .singleOrNull()
 

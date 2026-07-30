@@ -14,6 +14,7 @@ import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
@@ -74,6 +75,17 @@ internal fun issuerNameFromRaw(raw: String): String? = runCatching {
 }.getOrNull()
 
 /**
+ * Issuer names already read, kept for as long as the process lives.
+ *
+ * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
+ * carrying its whole Numista response — so parsing on each pass would put a tenth of a second
+ * between tapping «Seguir» and seeing it. A cached type is never refetched, so the answer is
+ * read once; the key carries `fetchedAt` anyway, so a row that is written again is read again.
+ * The empty string stands in for «no issuer», which a [ConcurrentHashMap] cannot hold as null.
+ */
+private val issuerNames = ConcurrentHashMap<Pair<Int, Long>, String>()
+
+/**
  * The finish is inferred here rather than stored, so a later fix to the inference rules
  * applies to types cached long ago without spending API budget again.
  */
@@ -83,7 +95,9 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     displayTitle = title,
     family = family,
     issuerCode = issuerCode,
-    issuerName = issuerNameFromRaw(raw),
+    issuerName = issuerNames
+        .getOrPut(typeId to fetchedAt) { issuerNameFromRaw(raw).orEmpty() }
+        .ifEmpty { null },
     minYear = minYear,
     maxYear = maxYear,
     weightOz = weightGrams?.let(::gramsToOunces),

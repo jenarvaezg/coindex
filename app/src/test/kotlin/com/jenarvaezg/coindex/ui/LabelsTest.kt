@@ -48,9 +48,11 @@ class LabelsTest {
 
         // Two issuers under one heading would be an eyebrow that lies about half its card.
         assertNull(issuerEyebrow(listOf(item(1, 10_340), item(2, 25_340)), types))
-        // A type whose cache row predates the field, or a type not cached at all.
+        // A type whose cache row has no issuer, or a type not cached at all.
         assertNull(issuerEyebrow(listOf(item(3, 1_885)), types))
         assertNull(issuerEyebrow(listOf(item(4, 999_999)), types))
         assertNull(issuerEyebrow(emptyList(), types))
+        // One unchecked piece among Venezuelans: «Venezuela» would be a claim about it too.
+        assertNull(issuerEyebrow(listOf(item(5, 10_340), item(6, 1_885)), types))
     }
 }
