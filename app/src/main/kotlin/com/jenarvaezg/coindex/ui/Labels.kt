@@ -43,11 +43,16 @@ fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, Stri
         listOf("Peso" to weightLabel(weightMillioz), "Acabado" to finishLabel(finish))
     }
 
-fun countLabel(distinctTypes: Int, quantity: Int): String {
-    val types = if (distinctTypes == 1) "1 tipo distinto" else "$distinctTypes tipos distintos"
-    val pieces = if (quantity == 1) "1 pieza" else "$quantity piezas"
-    return "$types · $pieces"
-}
+/** «1 pieza» / «22 piezas». Spanish counts nothing in the singular, so zero takes the plural. */
+fun plural(count: Int, singular: String, plural: String): String =
+    if (count == 1) "$count $singular" else "$count $plural"
+
+/** The API budget is counted on the index, in the settings screen and in the sync report. */
+fun callsLabel(count: Int): String = plural(count, "llamada", "llamadas")
+
+fun countLabel(distinctTypes: Int, quantity: Int): String =
+    plural(distinctTypes, "tipo distinto", "tipos distintos") +
+        " · " + plural(quantity, "pieza", "piezas")
 
 /** Nothing is discarded in silence: every ungrouped piece says why. */
 fun unclassifiedReasonLabel(reason: UnclassifiedReason): String = when (reason) {

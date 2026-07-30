@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
@@ -28,10 +28,13 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  *
  * Each user spends their own API budget, which is what makes the app local-first and removes
  * the shared ledger the web version needed.
+ *
+ * [validation] is the form's own channel, not the snackbar's: the two used to share one field,
+ * so dismissing the snackbar also erased the text explaining what was wrong with the form.
  */
 @Composable
 fun OnboardingScreen(
-    message: String?,
+    validation: String?,
     onSave: (apiKey: String, userId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -69,10 +72,10 @@ fun OnboardingScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
         )
-        message?.let { text ->
+        validation?.let { text ->
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
-        Button(onClick = { onSave(apiKey, userId) }) { Text("Guardar y empezar") }
+        PrimaryAction(text = "Guardar y empezar", onClick = { onSave(apiKey, userId) })
         Text(
             "La API key se obtiene en numista.com › Mi perfil › API. El identificador de " +
                 "usuario aparece en la URL de tu perfil.",

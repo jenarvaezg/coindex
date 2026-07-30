@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -39,9 +38,10 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.ui.components.CoinSides
+import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
-import com.jenarvaezg.coindex.ui.components.LinkText
+import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
@@ -212,19 +212,23 @@ private fun PlateGrid(
                         listOf("Actualizado" to catalog.updatedAt),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                TextButton(onClick = { onOpenSource(catalog.source) }) {
-                    Text("Fuente en Numista", color = Paper.moss)
-                }
-                TextButton(onClick = onExport, enabled = !exporting) {
-                    Text(
-                        if (exporting) {
-                            "Preparando la lámina…"
-                        } else {
-                            "Exportar lámina como imagen"
-                        },
-                        color = Paper.moss,
-                    )
-                }
+                // Exporting the plate is what this screen is for, so it is the only filled
+                // button on it; as a bare text button it read as another section heading.
+                PrimaryAction(
+                    text = if (exporting) {
+                        "Preparando la lámina…"
+                    } else {
+                        "Exportar lámina como imagen"
+                    },
+                    onClick = onExport,
+                    enabled = !exporting,
+                    share = !exporting,
+                )
+                ExternalLink(
+                    text = "Fuente en Numista",
+                    onClick = { onOpenSource(catalog.source) },
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
         items(members, key = { it.member.id }) { albumMember ->
@@ -258,7 +262,7 @@ private fun PlateCell(
             color = if (owned != null) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 10.dp),
         )
-        LinkText(
+        ExternalLink(
             text = albumMember.member.label,
             style = MaterialTheme.typography.titleMedium,
             onClick = { onOpenSource(numistaTypeUrl(albumMember.member.numistaTypeId)) },

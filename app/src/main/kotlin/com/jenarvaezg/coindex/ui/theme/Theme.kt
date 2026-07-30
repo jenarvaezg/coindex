@@ -30,6 +30,15 @@ object Paper {
 /** Dimensions shared by the plate and the index, so cards line up across screens. */
 object PlateMetrics {
     val gutter = 16.dp
+
+    /**
+     * Gap between stacked cards that carry their own action row.
+     *
+     * Wider than [gutter] on purpose: with the actions at the bottom edge of one card and the
+     * next card's title right under them, a thumb aiming for «Ignorar» could land on the card
+     * below — which happened during the UX review itself.
+     */
+    val cardStack = 26.dp
     val cardPadding = 14.dp
     val minPlateCell = 168.dp
 }
