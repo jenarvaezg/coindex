@@ -9,6 +9,8 @@ import kotlinx.serialization.Serializable
  * `schema_version` 1 identifies members by a unique Numista type; owning the type is owning
  * the member. `schema_version` 2 is a date run (ADR 0009): members repeat one type across
  * years, and a member is owned only when the piece also records that year.
+ * `schema_version` 3 is a set issued as a set (ADR 0012): its members span physical variants,
+ * so it declares no weight and no finish and its key carries an absent weight.
  */
 @Serializable
 data class CollectionCatalog(
@@ -17,7 +19,7 @@ data class CollectionCatalog(
     val name: String,
     @SerialName("issuer_code") val issuerCode: String,
     val family: String,
-    @SerialName("weight_millioz") val weightMillioz: Int,
+    @SerialName("weight_millioz") val weightMillioz: Int? = null,
     val finish: Finish? = null,
     val source: String,
     @SerialName("updated_at") val updatedAt: String,
@@ -26,6 +28,9 @@ data class CollectionCatalog(
     fun key(): CollectionProposalKey = CollectionProposalKey(family, weightMillioz, finish)
 
     val isDateRun: Boolean get() = schemaVersion == 2
+
+    /** A set issued as a set: the set is the collectible unit, not any one physical variant. */
+    val isSet: Boolean get() = schemaVersion == 3
 
     /**
      * Whether a collected item satisfies one member. Schema 1 matches by type alone; a date
@@ -47,7 +52,7 @@ data class CollectionCatalog(
     }
 
     fun validate(): CollectionCatalogValidationError? {
-        if (schemaVersion != 1 && schemaVersion != 2) {
+        if (schemaVersion !in 1..3) {
             return CollectionCatalogValidationError.UnsupportedSchemaVersion(schemaVersion)
         }
         if (!isSlug(id)) {
@@ -56,9 +61,16 @@ data class CollectionCatalog(
         blankField("catalog.name", name)?.let { return it }
         blankField("catalog.issuer_code", issuerCode)?.let { return it }
         blankField("catalog.updated_at", updatedAt)?.let { return it }
+        // A set declares no physical variant; anything else must declare exactly one weight.
+        if (isSet && (weightMillioz != null || finish != null)) {
+            return CollectionCatalogValidationError.SetDeclaresVariant
+        }
+        if (!isSet && weightMillioz == null) {
+            return CollectionCatalogValidationError.MissingWeight
+        }
         val canonical = CollectionProposalKey.fromCanonicalParts(
             family,
-            weightMillioz,
+            weightMillioz ?: SPANNING_VARIANTS_WEIGHT,
             finishCode(finish),
         )
         if (canonical != key()) {
@@ -90,7 +102,7 @@ data class CollectionCatalog(
             if (member.numistaTypeId <= 0) {
                 return CollectionCatalogValidationError.InvalidNumistaTypeId
             }
-            if (schemaVersion == 1) {
+            if (!isDateRun) {
                 if (!typeIds.add(member.numistaTypeId)) {
                     return CollectionCatalogValidationError.DuplicateNumistaTypeId(
                         member.numistaTypeId,
@@ -130,6 +142,14 @@ sealed class CollectionCatalogValidationError(val message: String) {
 
     data object InvalidVariantKey : CollectionCatalogValidationError(
         "collection catalog has an invalid proposal variant key",
+    )
+
+    data object SetDeclaresVariant : CollectionCatalogValidationError(
+        "a set catalog spans physical variants, so it cannot declare a weight or a finish",
+    )
+
+    data object MissingWeight : CollectionCatalogValidationError(
+        "collection catalog must declare `weight_millioz` unless it is a set",
     )
 
     data object InvalidSource : CollectionCatalogValidationError(

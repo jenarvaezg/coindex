@@ -33,6 +33,25 @@ the same weight normalization as proposal derivation; family display aliases nev
 it.
 _Avoid_: Family display alias, proposal title
 
+**Absent weight**:
+The weight of a proposal variant key that identifies a set rather than a physical variant,
+because the set spans several of them. It persists as `-1`, never as zero, so that a
+defaulted row stays an invalid weight instead of reading as a set.
+_Avoid_: Zero weight, unknown weight
+
+**Set catalog**:
+A collection catalog whose members were issued together as one product, so the set is the
+collectible unit and no single physical variant identifies it. It declares no weight and no
+finish, and it claims its member types ahead of the family Numista gives them. Fractional
+bullion is not one: a quarter-ounce and a one-ounce piece are the same coin in two sizes.
+_Avoid_: Date run, fractional bullion family, curated series
+
+**Technical family**:
+Numista's `System YYYY[-YYYY]` value, a monetary system rather than a collectible grouping.
+It is the weakest family: any curated catalog naming the type outranks it, but it still
+groups pieces no catalog claims, so a piece is never dropped for having one.
+_Avoid_: Numista family, orphan, unclassified reason
+
 **Collection proposal**:
 A provisional, per-collector grouping of currently owned pieces that share one exact
 Numista family and physical variant. It suggests an organization, not catalog coverage

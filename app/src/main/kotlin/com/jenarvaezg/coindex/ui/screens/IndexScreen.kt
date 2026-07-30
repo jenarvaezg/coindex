@@ -29,8 +29,7 @@ import com.jenarvaezg.coindex.ui.BudgetStatus
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.finishLabel
-import com.jenarvaezg.coindex.ui.weightLabel
+import com.jenarvaezg.coindex.ui.variantLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -230,7 +229,7 @@ private fun ProposalCard(
             )
         }
         Text(
-            "${weightLabel(proposal.weightMillioz)} · ${finishLabel(proposal.finish)}",
+            variantLabel(proposal.weightMillioz, proposal.finish),
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(

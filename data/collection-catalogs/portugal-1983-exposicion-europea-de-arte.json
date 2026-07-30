@@ -1,0 +1,29 @@
+{
+  "schema_version": 3,
+  "id": "portugal-1983-exposicion-europea-de-arte",
+  "name": "XVII Exposición Europea de Arte · Portugal 1983 · plata .835",
+  "issuer_code": "portugal",
+  "family": "XVII Exposición Europea de Arte de 1983",
+  "source": "https://en.numista.com/catalogue/series.php?id=6598",
+  "updated_at": "2026-07-30",
+  "members": [
+    {
+      "id": "500-escudos",
+      "label": "500 escudos · 7 g",
+      "year": 1983,
+      "numista_type_id": 22178
+    },
+    {
+      "id": "750-escudos",
+      "label": "750 escudos · 12,5 g",
+      "year": 1983,
+      "numista_type_id": 22179
+    },
+    {
+      "id": "1000-escudos",
+      "label": "1000 escudos · 21 g",
+      "year": 1983,
+      "numista_type_id": 22180
+    }
+  ]
+}

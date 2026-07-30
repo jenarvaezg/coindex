@@ -3,8 +3,12 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 
-/** `1000` reads as "1 oz", `250` as "0,25 oz", `804` as "0,804 oz". */
-fun weightLabel(weightMillioz: Int): String {
+/**
+ * `1000` reads as "1 oz", `250` as "0,25 oz", `804` as "0,804 oz". An absent weight is a set
+ * issued as a set, which has no single weight to show (ADR 0012).
+ */
+fun weightLabel(weightMillioz: Int?): String {
+    if (weightMillioz == null) return "Conjunto de varias denominaciones"
     val whole = weightMillioz / 1_000
     val fraction = (weightMillioz % 1_000).toString().padStart(3, '0').trimEnd('0')
     return if (fraction.isEmpty()) "$whole oz" else "$whole,$fraction oz"
@@ -20,6 +24,25 @@ fun finishLabel(finish: Finish?): String = when (finish) {
     Finish.Antiqued -> "Envejecido"
 }
 
+/**
+ * The physical variant in one line. A set issued as a set has neither weight nor finish to
+ * show, so it says what it is instead of showing two blanks (ADR 0012).
+ */
+fun variantLabel(weightMillioz: Int?, finish: Finish?): String =
+    if (weightMillioz == null) {
+        weightLabel(null)
+    } else {
+        "${weightLabel(weightMillioz)} · ${finishLabel(finish)}"
+    }
+
+/** Weight and finish as specification rows, omitted entirely for a set. */
+fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, String>> =
+    if (weightMillioz == null) {
+        listOf("Variante" to weightLabel(null))
+    } else {
+        listOf("Peso" to weightLabel(weightMillioz), "Acabado" to finishLabel(finish))
+    }
+
 fun countLabel(distinctTypes: Int, quantity: Int): String {
     val types = if (distinctTypes == 1) "1 tipo distinto" else "$distinctTypes tipos distintos"
     val pieces = if (quantity == 1) "1 pieza" else "$quantity piezas"
@@ -30,9 +53,6 @@ fun countLabel(distinctTypes: Int, quantity: Int): String {
 fun unclassifiedReasonLabel(reason: UnclassifiedReason): String = when (reason) {
     UnclassifiedReason.MissingTypeMetadata ->
         "Ficha del tipo sin descargar: se completará en el próximo sincronizado."
-    is UnclassifiedReason.TechnicalFamily ->
-        "Numista la agrupa en el sistema monetario técnico «${reason.family}», que no es una " +
-            "familia coleccionable."
     UnclassifiedReason.NoFamilyOrCatalog ->
         "Sin familia en Numista y sin catálogo curado que la referencie: candidata a catálogo."
     is UnclassifiedReason.UnknownWeight ->

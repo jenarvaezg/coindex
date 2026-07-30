@@ -37,6 +37,25 @@ class WeightNormalizationTest {
         assertNull(normalizeWeightMillioz(Double.POSITIVE_INFINITY))
         assertNull(normalizeWeightMillioz(0.0001))
     }
+
+    @Test
+    fun `a curated weight pulls its near misses in without disturbing bullion`() {
+        val curated = setOf(450, 579)
+
+        // The 13,96 g Porto 500 escudos joins its 14 g siblings instead of splitting at 449.
+        assertEquals(450, normalizeWeightMillioz(ounces(13.96), curated))
+        assertEquals(450, normalizeWeightMillioz(ounces(14.0), curated))
+        // Without the catalog it stays exactly where Numista puts it.
+        assertEquals(449, normalizeWeightMillioz(ounces(13.96)))
+        // Out of tolerance is left alone: 13,5 g is 434, eleven off the target.
+        assertEquals(434, normalizeWeightMillioz(ounces(13.5), curated))
+        // Bullion snapping is untouched, and 30 g still refuses to become an ounce.
+        assertEquals(1_000, normalizeWeightMillioz(ounces(31.1), curated))
+        assertEquals(965, normalizeWeightMillioz(ounces(30.0), curated))
+        // The nearest target wins when two are in range.
+        assertEquals(1_000, normalizeWeightMillioz(ounces(31.1), setOf(995)))
+        assertEquals(995, normalizeWeightMillioz(ounces(30.95), setOf(995)))
+    }
 }
 
 class CollectionProposalsTest {
@@ -102,7 +121,7 @@ class CollectionProposalsTest {
     }
 
     @Test
-    fun `editorial aliases preserve raw keys and technical system years are ineligible`() {
+    fun `editorial aliases preserve raw keys and technical systems group as the weakest family`() {
         val aliases = listOf(
             "SML" to "Silver Maple Leaf",
             "Red Data Book" to "Libro Rojo de Rusia",
@@ -110,12 +129,15 @@ class CollectionProposalsTest {
                 "Monedas españolas de plata a valor facial",
             "Lunar ounce" to "Rwanda Lunar Ounce",
             "Nautical Ounce" to "Rwanda Nautical Ounce",
+            "System 1981-2001" to "Sistema monetario 1981-2001",
+            "System 2025" to "Sistema monetario 2025",
         )
         for ((raw, display) in aliases) {
             assertEquals(display, collectionProposalFamilyLabel(raw))
         }
         assertEquals("sml", collectionProposalFamilyLabel("sml"))
         assertEquals("System of a Down", collectionProposalFamilyLabel("System of a Down"))
+        assertEquals("System 19-2001", collectionProposalFamilyLabel("System 19-2001"))
 
         val typeMeta = mapOf(
             10 to metadata(10, "System 2025", 31.1, null),
@@ -131,10 +153,73 @@ class CollectionProposalsTest {
             emptyList(),
         )
 
+        // A technical family no longer costs the piece its proposal (ADR 0012); the raw value
+        // stays in the key, and only the label reads as a monetary system.
         assertEquals(
-            listOf("System 19-2001", "System of a Down"),
+            listOf(
+                "System 19-2001",
+                "System 1927-1968",
+                "System 1969-1980-2001",
+                "System 2025",
+                "System of a Down",
+            ),
             proposals.map { it.family },
         )
+    }
+
+    @Test
+    fun `a curated catalog outranks a technical family and a set outranks a real one`() {
+        val setCatalog = setCatalogStub()
+        val annual = portugueseAnnualCatalogStub()
+        fun portuguese(id: Int, grams: Double, family: String? = "System 1981-2001") = TypeMeta(
+            id = id,
+            title = "Escudos",
+            family = family,
+            issuerCode = "portugal",
+            weightOz = ounces(grams),
+        )
+        val typeMeta = mapOf(
+            13_042 to portuguese(13_042, 14.0),
+            13_046 to portuguese(13_046, 13.96),
+            22_178 to portuguese(22_178, 7.0),
+            22_179 to portuguese(22_179, 12.5),
+            // A set catalog claims its types even against a real Numista family.
+            22_180 to portuguese(22_180, 21.0, family = "Familia real de Numista"),
+            9_830 to portuguese(9_830, 7.0),
+        )
+
+        val derivation = deriveCollection(
+            listOf(
+                item(1, 13_042, 1),
+                item(2, 13_046, 1),
+                item(3, 22_178, 2),
+                item(4, 22_179, 2),
+                item(5, 22_180, 2),
+                item(6, 9_830, 1),
+            ),
+            typeMeta,
+            listOf(setCatalog, annual),
+        )
+
+        assertTrue(derivation.unclassified.isEmpty())
+        val set = derivation.proposals.first { it.family == setCatalog.family }
+        assertNull(set.weightMillioz)
+        assertNull(set.finish)
+        assertEquals(3, set.distinctTypes)
+        assertEquals(6, set.quantity)
+
+        // Both 500 escudos land on the catalog's weight, 13,96 g included.
+        val annualProposal = derivation.proposals.first { it.family == annual.family }
+        assertEquals(450, annualProposal.weightMillioz)
+        assertEquals(2, annualProposal.distinctTypes)
+
+        // The piece no catalog claims keeps its technical family and its own weight.
+        val leftover = derivation.proposals.first { it.family == "System 1981-2001" }
+        assertEquals(225, leftover.weightMillioz)
+        assertEquals(1, leftover.distinctTypes)
+
+        assertEquals(setCatalog.key(), set.key())
+        assertEquals(annual.key(), annualProposal.key())
     }
 
     @Test
@@ -220,7 +305,6 @@ class CollectionProposalsTest {
     @Test
     fun `every ungrouped piece is preserved with an auditable reason`() {
         val typeMeta = mapOf(
-            11 to metadata(11, "System 1927-1968", 31.1, null),
             12 to TypeMeta(id = 12, family = "Sin peso", weightOz = null),
             13 to TypeMeta(id = 13, family = null, weightOz = ounces(31.1)),
         )
@@ -228,10 +312,9 @@ class CollectionProposalsTest {
         val derivation = deriveCollection(
             listOf(
                 item(1, 10, 1),
-                item(2, 11, 1),
                 item(3, 12, 1),
                 item(4, 13, 1),
-                item(5, 11, 0),
+                item(5, 12, 0),
             ),
             typeMeta,
             emptyList(),
@@ -241,7 +324,6 @@ class CollectionProposalsTest {
         assertEquals(
             listOf(
                 UnclassifiedReason.MissingTypeMetadata,
-                UnclassifiedReason.TechnicalFamily("System 1927-1968"),
                 UnclassifiedReason.UnknownWeight("Sin peso"),
                 UnclassifiedReason.NoFamilyOrCatalog,
             ),

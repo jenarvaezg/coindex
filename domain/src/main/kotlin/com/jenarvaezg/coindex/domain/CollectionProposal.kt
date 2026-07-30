@@ -1,16 +1,28 @@
 package com.jenarvaezg.coindex.domain
 
 /**
+ * Persisted stand-in for an absent weight (ADR 0012). Deliberately not zero: a truncated or
+ * defaulted row stays an invalid weight and is ignored rather than read as a set.
+ */
+const val SPANNING_VARIANTS_WEIGHT: Int = -1
+
+/**
  * The exact canonical tuple that identifies a physical variant. Proposal grouping, per-user
  * dispositions and curated catalogs all key off this. Editorial family aliases never alter
  * it.
+ *
+ * A null [weightMillioz] means the family is a set issued as a set, whose members span
+ * physical variants, so no single weight identifies it (ADR 0012).
  */
 data class CollectionProposalKey(
     val family: String,
-    val weightMillioz: Int,
+    val weightMillioz: Int?,
     val finish: Finish?,
 ) {
     fun finishCode(): String = finishCode(finish)
+
+    /** The weight as persisted, mapping the absent weight to its sentinel. */
+    fun storedWeightMillioz(): Int = weightMillioz ?: SPANNING_VARIANTS_WEIGHT
 
     companion object {
         /**
@@ -24,11 +36,17 @@ data class CollectionProposalKey(
             finishCode: String,
         ): CollectionProposalKey? {
             val normalized = normalizeFamily(family) ?: return null
-            if (normalized != family || family.length > 256 || weightMillioz !in 1..1_000_000) {
-                return null
-            }
+            val spanning = weightMillioz == SPANNING_VARIANTS_WEIGHT
+            if (normalized != family || family.length > 256) return null
+            if (!spanning && weightMillioz !in 1..1_000_000) return null
             val parsed = finishFromCode(finishCode) ?: return null
-            return CollectionProposalKey(normalized, weightMillioz, parsed.finish)
+            // A set spans finishes as well as weights, so it never carries one.
+            if (spanning && parsed.finish != null) return null
+            return CollectionProposalKey(
+                normalized,
+                weightMillioz.takeUnless { spanning },
+                parsed.finish,
+            )
         }
     }
 }
@@ -40,7 +58,7 @@ data class CollectionProposalKey(
  */
 data class CollectionProposal(
     val family: String,
-    val weightMillioz: Int,
+    val weightMillioz: Int?,
     val finish: Finish?,
     val distinctTypes: Int,
     val quantity: Int,

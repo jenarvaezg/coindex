@@ -8,8 +8,9 @@ fun normalizeFamily(family: String): String? {
 
 /**
  * Numista's technical `System YYYY[-YYYY]` families are monetary systems, not collectible
- * groupings, so they never become proposals. "System of a Down" and "System 19-2001" are
- * not technical: every dash-separated segment must be a four-digit year.
+ * groupings, so a curated catalog outranks them when both name a type (ADR 0012). They are
+ * still families: a piece is never dropped for having one. "System of a Down" and
+ * "System 19-2001" are not technical: every dash-separated segment must be a four-digit year.
  */
 fun isTechnicalFamily(family: String): Boolean {
     val period = family.removePrefix("System ")
@@ -21,7 +22,13 @@ fun isTechnicalFamily(family: String): Boolean {
  * Presentation-only alias for a raw Numista family. Never enters the proposal variant key,
  * grouping or persisted dispositions.
  */
-fun collectionProposalFamilyLabel(family: String): String = when (family) {
+fun collectionProposalFamilyLabel(family: String): String = when {
+    isTechnicalFamily(family) ->
+        "Sistema monetario ${family.removePrefix("System ")}"
+    else -> curatedFamilyLabel(family)
+}
+
+private fun curatedFamilyLabel(family: String): String = when (family) {
     "SML" -> "Silver Maple Leaf"
     "Red Data Book" -> "Libro Rojo de Rusia"
     "Serie de monedas de plata obtenidas a valor facial" ->

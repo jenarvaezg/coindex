@@ -39,6 +39,38 @@ internal fun dateRunCatalogStub() = CollectionCatalog(
     ),
 )
 
+/** The 1983 Portuguese trio: three denominations issued together as one mint set (ADR 0012). */
+internal fun setCatalogStub() = CollectionCatalog(
+    schemaVersion = 3,
+    id = "portugal-1983-exposicion-europea-de-arte",
+    name = "XVII Exposición Europea de Arte · Portugal 1983",
+    issuerCode = "portugal",
+    family = "XVII Exposición Europea de Arte de 1983",
+    source = "https://en.numista.com/catalogue/series.php?id=6598",
+    updatedAt = "2026-07-30",
+    members = listOf(
+        CollectionCatalogMember("500-escudos", "500 escudos · 7 g", 1983, 22_178),
+        CollectionCatalogMember("750-escudos", "750 escudos · 12,5 g", 1983, 22_179),
+        CollectionCatalogMember("1000-escudos", "1000 escudos · 21 g", 1983, 22_180),
+    ),
+)
+
+internal fun portugueseAnnualCatalogStub() = CollectionCatalog(
+    schemaVersion = 1,
+    id = "portugal-500-escudos-plata-500",
+    name = "Conjunto anual · 500 escudos de plata .500 · Portugal 1995-2001",
+    issuerCode = "portugal",
+    family = "500 escudos conmemorativos de plata .500 de Portugal",
+    weightMillioz = 450,
+    finish = null,
+    source = "https://en.numista.com/catalogue/series.php?id=6598",
+    updatedAt = "2026-07-30",
+    members = listOf(
+        CollectionCatalogMember("1995-santo-antonio", "Santo António", 1995, 13_042),
+        CollectionCatalogMember("2001-oporto", "Oporto", 2001, 13_046),
+    ),
+)
+
 private fun item(id: Long, typeId: Int, quantity: Int = 1) =
     CollectedItem(id = id, quantity = quantity, typeId = typeId)
 
@@ -80,8 +112,12 @@ class CollectionCatalogValidationTest {
         assertTrue(unnormalizedFamily.validate()!!.message.contains("variant key"))
 
         assertEquals(
-            CollectionCatalogValidationError.UnsupportedSchemaVersion(3),
-            definition.copy(schemaVersion = 3).validate(),
+            CollectionCatalogValidationError.UnsupportedSchemaVersion(4),
+            definition.copy(schemaVersion = 4).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.MissingWeight,
+            definition.copy(weightMillioz = null).validate(),
         )
         assertEquals(
             CollectionCatalogValidationError.EmptyMembers,
@@ -129,6 +165,68 @@ class CollectionCatalogValidationTest {
             members = definition.members.take(1),
         )
         assertEquals(CollectionCatalogValidationError.InvalidSource, typePageOnV1.validate())
+    }
+
+    @Test
+    fun `a set declares no physical variant and keys on an absent weight`() {
+        val definition = setCatalogStub()
+        assertNull(definition.validate())
+        assertTrue(definition.isSet)
+        assertFalse(definition.isDateRun)
+
+        val key = definition.key()
+        assertNull(key.weightMillioz)
+        assertNull(key.finish)
+        assertEquals(SPANNING_VARIANTS_WEIGHT, key.storedWeightMillioz())
+        assertEquals(
+            key,
+            CollectionProposalKey.fromCanonicalParts(
+                definition.family,
+                SPANNING_VARIANTS_WEIGHT,
+                "unknown",
+            ),
+        )
+
+        assertEquals(
+            CollectionCatalogValidationError.SetDeclaresVariant,
+            definition.copy(weightMillioz = 450).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.SetDeclaresVariant,
+            definition.copy(finish = Finish.Proof).validate(),
+        )
+        // A set names each type once: it is a set, not a date run.
+        assertEquals(
+            CollectionCatalogValidationError.DuplicateNumistaTypeId(22_178),
+            definition.copy(
+                members = definition.members + definition.members[0].copy(id = "bis"),
+            ).validate(),
+        )
+        // Zero stays an invalid weight, so a defaulted row is ignored rather than read as a set.
+        assertNull(CollectionProposalKey.fromCanonicalParts(definition.family, 0, "unknown"))
+        // A set spans finishes too, so a stored finish makes the key uncanonical.
+        assertNull(
+            CollectionProposalKey.fromCanonicalParts(
+                definition.family,
+                SPANNING_VARIANTS_WEIGHT,
+                "proof",
+            ),
+        )
+    }
+
+    @Test
+    fun `a set album counts owned members across denominations`() {
+        val definition = setCatalogStub()
+        val padre = buildCollectionCatalogAlbum(
+            definition,
+            listOf(item(1, 22_178, 2), item(2, 22_179, 2), item(3, 22_180, 2)),
+        )
+        assertEquals(3, padre.ownedMembers())
+        assertTrue(definition.isEvidencedBy(listOf(item(4, 22_180))))
+
+        val partial = buildCollectionCatalogAlbum(definition, listOf(item(5, 22_178)))
+        assertEquals(1, partial.ownedMembers())
+        assertEquals(CollectionCatalogMemberStatus.Missing, partial.members[1].status)
     }
 }
 

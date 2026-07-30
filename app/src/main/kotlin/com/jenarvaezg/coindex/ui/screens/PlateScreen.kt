@@ -42,14 +42,13 @@ import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
-import com.jenarvaezg.coindex.ui.finishLabel
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sharePlateSheet
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
-import com.jenarvaezg.coindex.ui.weightLabel
+import com.jenarvaezg.coindex.ui.variantEntries
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -209,10 +208,8 @@ private fun PlateGrid(
                 SpecificationCard(
                     entries = listOf(
                         "Progreso" to "$ownedMembers / ${members.size} emisiones",
-                        "Peso" to weightLabel(catalog.weightMillioz),
-                        "Acabado" to finishLabel(catalog.finish),
-                        "Actualizado" to catalog.updatedAt,
-                    ),
+                    ) + variantEntries(catalog.weightMillioz, catalog.finish) +
+                        listOf("Actualizado" to catalog.updatedAt),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 TextButton(onClick = { onOpenSource(catalog.source) }) {

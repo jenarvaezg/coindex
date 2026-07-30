@@ -20,8 +20,37 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(18, catalogs.size)
+        assertEquals(20, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
+    }
+
+    @Test
+    fun `the portuguese annual set lists the seven 500 escudos in silver 500`() {
+        val escudos = find("portugal-500-escudos-plata-500")
+        assertEquals(1, escudos.schemaVersion)
+        assertEquals("500 escudos conmemorativos de plata .500 de Portugal", escudos.family)
+        assertEquals(450, escudos.weightMillioz)
+        assertNull(escudos.finish)
+        // Verificados uno a uno en numista.com: KM 686, 702, 701, 705, 723, 725, 733 y
+        // Gomes R 144.01 a R 150.01, un año por moneda entre 1995 y 2001.
+        assertEquals(
+            listOf(13_042, 11_696, 13_043, 13_044, 10_207, 13_045, 13_046),
+            escudos.members.map { it.numistaTypeId },
+        )
+        assertEquals((1995..2001).toList(), escudos.members.map { it.year })
+    }
+
+    @Test
+    fun `the 1983 portuguese trio is a set with no physical variant`() {
+        val trio = find("portugal-1983-exposicion-europea-de-arte")
+        assertEquals(3, trio.schemaVersion)
+        assertTrue(trio.isSet)
+        assertNull(trio.weightMillioz)
+        assertNull(trio.finish)
+        assertNull(trio.key().weightMillioz)
+        // 500, 750 y 1000 escudos de plata .835, emitidas juntas en un mismo estuche.
+        assertEquals(listOf(22_178, 22_179, 22_180), trio.members.map { it.numistaTypeId })
+        assertTrue(trio.members.all { it.year == 1983 })
     }
 
     @Test

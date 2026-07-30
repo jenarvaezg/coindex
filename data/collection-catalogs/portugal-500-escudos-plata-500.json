@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "portugal-500-escudos-plata-500",
+  "name": "Conjunto anual · 500 escudos de plata .500 · Portugal 1995-2001",
+  "issuer_code": "portugal",
+  "family": "500 escudos conmemorativos de plata .500 de Portugal",
+  "weight_millioz": 450,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=6598",
+  "updated_at": "2026-07-30",
+  "members": [
+    {
+      "id": "1995-santo-antonio",
+      "label": "Santo António",
+      "year": 1995,
+      "numista_type_id": 13042
+    },
+    {
+      "id": "1996-banco-de-portugal",
+      "label": "150 años del Banco de Portugal",
+      "year": 1996,
+      "numista_type_id": 11696
+    },
+    {
+      "id": "1997-padre-antonio-vieira",
+      "label": "Padre António Vieira",
+      "year": 1997,
+      "numista_type_id": 13043
+    },
+    {
+      "id": "1998-puente-vasco-da-gama",
+      "label": "Puente Vasco da Gama",
+      "year": 1998,
+      "numista_type_id": 13044
+    },
+    {
+      "id": "1999-traspaso-de-macao",
+      "label": "Traspaso de Macao a China",
+      "year": 1999,
+      "numista_type_id": 10207
+    },
+    {
+      "id": "2000-eca-de-queiros",
+      "label": "Eça de Queirós",
+      "year": 2000,
+      "numista_type_id": 13045
+    },
+    {
+      "id": "2001-oporto-capital-europea-de-la-cultura",
+      "label": "Oporto, Capital Europea de la Cultura",
+      "year": 2001,
+      "numista_type_id": 13046
+    }
+  ]
+}

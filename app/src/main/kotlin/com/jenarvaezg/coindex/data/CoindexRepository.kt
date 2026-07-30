@@ -89,14 +89,14 @@ class CoindexRepository(
     suspend fun setDisposition(key: CollectionProposalKey, disposition: ProposalDisposition?) {
         val dao = database.proposalPreferences()
         if (disposition == null) {
-            dao.delete(key.family, key.weightMillioz, key.finishCode())
+            dao.delete(key.family, key.storedWeightMillioz(), key.finishCode())
             return
         }
         val now = System.currentTimeMillis()
         dao.upsert(
             ProposalPreferenceEntity(
                 family = key.family,
-                weightMillioz = key.weightMillioz,
+                weightMillioz = key.storedWeightMillioz(),
                 finishCode = key.finishCode(),
                 disposition = disposition.asCode(),
                 createdAt = now,

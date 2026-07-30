@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 18 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 20 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. Esquema:
    - `schema_version: 1`: miembros identificados por `numista_type_id` único; posesión =
@@ -48,6 +48,16 @@
      miembro. Un item sin año nunca rellena un hueco. La fuente puede ser la ficha del
      tipo (`catalogue/piecesNNN.html`). Primer date run vivo:
      `venezuela-5-bolivares.json` (21 fechas de N#10340; al padre le faltan 1904 y 1905).
+   - `schema_version: 3` (**conjuntos emitidos como set**, ADR 0012): los miembros abarcan
+     varias variantes físicas, así que el catálogo no declara `weight_millioz` ni `finish`
+     y su clave de variante lleva el **peso ausente** (`-1` al persistirse). Un tipo listado
+     aquí deriva esa clave incluso si Numista le da familia: nombrar los tipos exactos que
+     se emitieron juntos es una afirmación más específica que la agrupación de Numista.
+     Criterio estrecho a propósito: **solo** conjuntos emitidos como un producto. El bullion
+     fraccional no es un conjunto (¼ oz y 1 oz son la misma moneda en dos tamaños y siguen
+     siendo propuestas separadas, como ya hacen Tudor Beasts y Lunar II). Primer conjunto
+     vivo: `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
+     7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres).
 2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 608 tipos
    (respuestas íntegras de `GET /types/{id}?lang=es`). Costó ~630 llamadas de API;
    empaquetarlo como seed de la tabla de caché para que ningún usuario las repita.
@@ -56,9 +66,10 @@
 3. **`data/series/*.json`** — las dos series curadas históricas (Lunar III, Tudor
    Beasts). La app no las lee (ADR 0010 §2): quedan como datos inertes para futuros
    catálogos. Ya no hay código que las valide en `main`.
-4. **`docs/adr/0001..0009`** — las decisiones de dominio siguen vigentes; la 0007
-   (propuestas desde inventario), 0008 (disposiciones durables) y 0009 (date runs +
-   fallback de familia) son la especificación del comportamiento.
+4. **`docs/adr/0001..0012`** — las decisiones de dominio siguen vigentes; la 0007
+   (propuestas desde inventario), 0008 (disposiciones durables), 0009 (date runs +
+   fallback de familia) y 0012 (familias técnicas, pesos de catálogo y conjuntos) son la
+   especificación del comportamiento.
 5. **`crates/domain`** — la lógica a portar (~1.200 líneas, pura, sin I/O, con tests de
    tabla dorada). Portada a mano a `domain/` en Kotlin (ADR 0010); el original está en el tag
    `rust-frozen`.
@@ -68,18 +79,23 @@
 - **Clave de variante física** (identidad de propuesta, de preferencia y de catálogo):
   `(familia Numista cruda, peso normalizado en mili-onzas, acabado)`.
   - Peso: `round(oz*1000)`, con imán a los pesos comunes `[250, 500, 1000, 2000, 5000,
-    10000]` si la diferencia es ≤10 (31,1 g → 1000; 30 g → 965, nunca 1000).
+    10000]` **y a los pesos declarados por los catálogos sembrados** (ADR 0012) si la
+    diferencia es ≤10, ganando el destino más cercano y, en empate, el menor (31,1 g → 1000;
+    30 g → 965, nunca 1000; 13,96 g → 450 porque un catálogo declara 450). Ausente (`-1` al
+    persistirse) en los conjuntos emitidos como set, que no tienen un peso único.
   - Acabado (`Finish`): inferido del título del tipo con reglas auditables
     (`proof`+colour → ProofColoured; `proof`; colour/`coloriz`/colores lunares; `gild`/
     `dorad`; `antiqu`; `bullion` o series Lunar III / Tudor Beasts → Bullion; si no →
     desconocido). Numista no expone un campo de acabado estable.
 - **Propuestas de colección**: agrupan solo piezas actuales del usuario por clave de
-  variante exacta. Sin familias difusas, sin mezclar pesos ni acabados. Familias
-  técnicas `System YYYY[-YYYY]` excluidas. Cantidades: tipos distintos + piezas.
-- **Fallback de familia** (ADR 0009): si el tipo no tiene `series` en Numista pero algún
-  catálogo sembrado lo referencia como miembro, agrupa bajo la `family` del catálogo.
-  La familia real de Numista siempre gana. Tipos sin familia ni catálogo siguen fuera
-  (huérfanos).
+  variante exacta. Sin familias difusas, sin mezclar pesos ni acabados. Cantidades: tipos
+  distintos + piezas.
+- **Precedencia de familia** (ADR 0009 y 0012), de la afirmación más específica a la más
+  débil: catálogo de conjunto (`schema_version: 3`) que nombra el tipo → familia real de
+  Numista → catálogo v1/v2 que referencia el tipo → familia técnica `System YYYY[-YYYY]`.
+  Una familia técnica ya no descarta la pieza: es la familia más débil, y se muestra con el
+  alias de presentación «Sistema monetario YYYY-YYYY». Solo los tipos sin familia y sin
+  catálogo siguen fuera (huérfanos).
 - **Disposiciones**: cada propuesta está `Available`, `Followed` o `Ignored` (persistente
   por usuario y clave exacta; reversible; una preferencia sin evidencia actual queda
   dormida sin materializar propuestas).
@@ -183,9 +199,10 @@ ADR 0010 para las decisiones del port.
 ### 0.9 Cuestiones abiertas de la fase Android
 
 1. ✅ Resuelta: `Coindex`, applicationId `com.jenarvaezg.coindex`.
-2. Cómo expresar en catálogos las emisiones futuras/anunciadas (el modelo v1/v2 exige
+2. Cómo expresar en catálogos las emisiones futuras/anunciadas (el modelo v1/v2/v3 exige
    `numista_type_id`, así que no puede representar "sin emitir" como hacían las series
-   curadas con `release_status`). Posible `schema_version: 3` o campo opcional.
+   curadas con `release_status`). Ojo: `schema_version: 3` ya está ocupado por los conjuntos
+   emitidos como set (ADR 0012), así que esto necesita otra versión o un campo opcional.
 3. ¿Migrar Lunar III bullion a catálogo v1 (12 tipos verificados) y retirar `data/series`?
 4. Actualización de catálogos dentro de la app sin reinstalar (¿fichero remoto opcional?)
    — en tensión con el local-first; decidir más adelante. Nota: los catálogos viajan hoy con

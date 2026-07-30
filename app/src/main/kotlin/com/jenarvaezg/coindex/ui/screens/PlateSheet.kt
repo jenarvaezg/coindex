@@ -23,9 +23,8 @@ import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
-import com.jenarvaezg.coindex.ui.finishLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
-import com.jenarvaezg.coindex.ui.weightLabel
+import com.jenarvaezg.coindex.ui.variantEntries
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -81,12 +80,9 @@ fun PlateSheet(
         Eyebrow("Coindex · catálogo curado")
         Text(catalog.name, style = MaterialTheme.typography.headlineMedium)
         SpecificationCard(
-            entries = listOf(
-                "Progreso" to "$ownedMembers / ${members.size} emisiones",
-                "Peso" to weightLabel(catalog.weightMillioz),
-                "Acabado" to finishLabel(catalog.finish),
-                "Actualizado" to catalog.updatedAt,
-            ),
+            entries = listOf("Progreso" to "$ownedMembers / ${members.size} emisiones") +
+                variantEntries(catalog.weightMillioz, catalog.finish) +
+                listOf("Actualizado" to catalog.updatedAt),
             modifier = Modifier.fillMaxWidth(),
         )
         members.chunked(layout.columns).forEach { row ->
