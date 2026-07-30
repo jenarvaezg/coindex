@@ -25,8 +25,9 @@ import com.jenarvaezg.coindex.domain.CollectionProposal
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.BudgetStatus
+import com.jenarvaezg.coindex.ui.ProposalStance
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.ExternalLink
+import com.jenarvaezg.coindex.ui.components.DispositionActions
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.LinkText
@@ -37,14 +38,13 @@ import com.jenarvaezg.coindex.ui.variantLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
-private enum class CardState { Followed, Available, Ignored }
-
 /**
  * The collection index: one card per current proposal, in three blocks.
  *
  * Proposals are derived from the pieces the collector owns right now. Following one never
- * invents a gap; when a curated catalog exists for that exact variant and at least one of its
- * official types is owned, the title opens the local plate instead of Numista.
+ * invents a gap. Every title opens its proposal, catalog or no catalog: the plate and the
+ * source moved into that screen, because a title that opens something only when a curated
+ * catalog happens to exist is a title that looks broken the rest of the time.
  */
 @Composable
 fun IndexScreen(
@@ -55,8 +55,9 @@ fun IndexScreen(
     catalogs: List<CollectionCatalog>,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
+    onOpenProposal: (CollectionProposal) -> Unit,
+    onOpenOwnGrouping: (groupingId: Long) -> Unit,
     onOpenPlate: (catalogId: String) -> Unit,
-    onOpenSource: (url: String) -> Unit,
     onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -150,24 +151,54 @@ fun IndexScreen(
             }
         }
 
+        // The collector's own headings come first: they are the only ones nobody derived.
+        if (state.ownGroupings.isNotEmpty()) {
+            item {
+                Column {
+                    HorizontalDivider(color = Paper.line)
+                    Text(
+                        "Tus agrupaciones",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 10.dp),
+                    )
+                }
+            }
+            items(state.ownGroupings, key = { "own-${it.id}" }) { grouping ->
+                FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
+                    Eyebrow("Agrupación tuya")
+                    LinkText(
+                        text = grouping.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        onClick = { onOpenOwnGrouping(grouping.id) },
+                    )
+                    Text(
+                        countLabel(grouping.distinctTypes, grouping.quantity),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Paper.muted,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+            }
+        }
+
         proposalBlock(
             title = "Seguidas",
             proposals = proposals.followed,
-            cardState = CardState.Followed,
+            stance = ProposalStance.Followed,
             state = state,
             catalogs = catalogs,
+            onOpenProposal = onOpenProposal,
             onOpenPlate = onOpenPlate,
-            onOpenSource = onOpenSource,
             onDisposition = onDisposition,
         )
         proposalBlock(
             title = "Disponibles",
             proposals = proposals.available,
-            cardState = CardState.Available,
+            stance = ProposalStance.Available,
             state = state,
             catalogs = catalogs,
+            onOpenProposal = onOpenProposal,
             onOpenPlate = onOpenPlate,
-            onOpenSource = onOpenSource,
             onDisposition = onDisposition,
         )
 
@@ -186,11 +217,11 @@ fun IndexScreen(
                 items(proposals.ignored, key = { it.key().toString() }) { proposal ->
                     ProposalCard(
                         proposal = proposal,
-                        cardState = CardState.Ignored,
+                        stance = ProposalStance.Ignored,
                         catalog = catalogs.firstOrNull { it.key() == proposal.key() },
                         evidenced = state.evidencedCatalogIds,
+                        onOpenProposal = onOpenProposal,
                         onOpenPlate = onOpenPlate,
-                        onOpenSource = onOpenSource,
                         onDisposition = onDisposition,
                     )
                 }
@@ -202,11 +233,11 @@ fun IndexScreen(
 private fun androidx.compose.foundation.lazy.LazyListScope.proposalBlock(
     title: String,
     proposals: List<CollectionProposal>,
-    cardState: CardState,
+    stance: ProposalStance,
     state: CollectionState,
     catalogs: List<CollectionCatalog>,
+    onOpenProposal: (CollectionProposal) -> Unit,
     onOpenPlate: (String) -> Unit,
-    onOpenSource: (String) -> Unit,
     onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
 ) {
     if (proposals.isEmpty()) return
@@ -223,11 +254,11 @@ private fun androidx.compose.foundation.lazy.LazyListScope.proposalBlock(
     items(proposals, key = { "$title-${it.key()}" }) { proposal ->
         ProposalCard(
             proposal = proposal,
-            cardState = cardState,
+            stance = stance,
             catalog = catalogs.firstOrNull { it.key() == proposal.key() },
             evidenced = state.evidencedCatalogIds,
+            onOpenProposal = onOpenProposal,
             onOpenPlate = onOpenPlate,
-            onOpenSource = onOpenSource,
             onDisposition = onDisposition,
         )
     }
@@ -236,38 +267,25 @@ private fun androidx.compose.foundation.lazy.LazyListScope.proposalBlock(
 @Composable
 private fun ProposalCard(
     proposal: CollectionProposal,
-    cardState: CardState,
+    stance: ProposalStance,
     catalog: CollectionCatalog?,
     evidenced: Set<String>,
+    onOpenProposal: (CollectionProposal) -> Unit,
     onOpenPlate: (String) -> Unit,
-    onOpenSource: (String) -> Unit,
     onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
 ) {
+    // The plate keeps its shortcut from the card, but as an action rather than as the title:
+    // the same conditions resolvePlate applies, checked here so a dead button is never drawn.
     val plateCatalog = catalog?.takeIf {
-        cardState == CardState.Followed && it.id in evidenced
+        stance == ProposalStance.Followed && it.id in evidenced
     }
     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
         Eyebrow("Evidencia de colección")
-        val title = collectionProposalFamilyLabel(proposal.family)
-        when {
-            plateCatalog != null -> LinkText(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                onClick = { onOpenPlate(plateCatalog.id) },
-            )
-            // Two titles that both open something, told apart by the mark: the plate is a
-            // screen of this app, the catalog source is a page on numista.com.
-            catalog != null -> ExternalLink(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                onClick = { onOpenSource(catalog.source) },
-            )
-            else -> Text(
-                title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 6.dp),
-            )
-        }
+        LinkText(
+            text = collectionProposalFamilyLabel(proposal.family),
+            style = MaterialTheme.typography.titleLarge,
+            onClick = { onOpenProposal(proposal) },
+        )
         Text(
             variantLabel(proposal.weightMillioz, proposal.finish),
             style = MaterialTheme.typography.bodyLarge,
@@ -278,26 +296,10 @@ private fun ProposalCard(
             color = Paper.muted,
             modifier = Modifier.padding(top = 4.dp),
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.padding(top = 12.dp),
-        ) {
-            val ignore = { onDisposition(proposal, ProposalDisposition.Ignored) }
-            val clear = { onDisposition(proposal, null) }
-            when (cardState) {
-                CardState.Followed -> {
-                    CardAction(text = "Dejar de seguir", onClick = clear)
-                    CardAction(text = "Ignorar", onClick = ignore)
-                }
-                CardState.Available -> {
-                    CardAction(
-                        text = "Seguir",
-                        onClick = { onDisposition(proposal, ProposalDisposition.Followed) },
-                    )
-                    CardAction(text = "Ignorar", onClick = ignore)
-                }
-                CardState.Ignored -> CardAction(text = "Restaurar", onClick = clear)
-            }
-        }
+        DispositionActions(
+            stance = stance,
+            onDisposition = { disposition -> onDisposition(proposal, disposition) },
+            onOpenPlate = plateCatalog?.let { curated -> { onOpenPlate(curated.id) } },
+        )
     }
 }

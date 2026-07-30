@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
+import com.jenarvaezg.coindex.data.seed.GroupingAssets
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.data.update.UpdateChecker
 import com.jenarvaezg.coindex.data.update.UpdateInstaller
@@ -32,7 +33,11 @@ class AppContainer(context: Context) {
     val syncLog: SyncLog by lazy { SyncLog(applicationContext) }
 
     val repository: CoindexRepository by lazy {
-        CoindexRepository(database, CatalogAssets.load(applicationContext.assets))
+        CoindexRepository(
+            database = database,
+            catalogs = CatalogAssets.load(applicationContext.assets),
+            groupings = GroupingAssets.load(applicationContext.assets),
+        )
     }
 
     val typeCacheSeed: TypeCacheSeed by lazy {

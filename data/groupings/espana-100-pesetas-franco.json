@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "espana-100-pesetas-franco",
+  "name": "Paquillos · 100 pesetas de Franco",
+  "family": "100 Pesetas de Franco",
+  "issuer_code": "espagne",
+  "source": "https://en.numista.com/catalogue/pieces1885.html",
+  "updated_at": "2026-07-30",
+  "type_ids": [
+    1885
+  ]
+}

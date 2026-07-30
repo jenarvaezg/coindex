@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.data.PlateUnavailable
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 
@@ -53,6 +55,29 @@ fun callsLabel(count: Int): String = plural(count, "llamada", "llamadas")
 fun countLabel(distinctTypes: Int, quantity: Int): String =
     plural(distinctTypes, "tipo distinto", "tipos distintos") +
         " · " + plural(quantity, "pieza", "piezas")
+
+/**
+ * The identity line of one inventory row: the year it records, its Numista type and how many
+ * pieces it is.
+ *
+ * The year is the first thing said, because it is what tells two rows of the same type apart,
+ * and «sin año» is a fact about the row rather than a blank: a date run can never fill a year
+ * from a row that does not carry one.
+ */
+fun pieceLine(item: CollectedItem): String {
+    val year = item.recordedYear?.toString() ?: "Sin año"
+    val quantity = if (item.quantity > 1) " · ×${item.quantity}" else ""
+    return "$year · Numista ${item.typeId}$quantity"
+}
+
+/** Why a plate cannot be opened, in terms of what the collector can do about it. */
+fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
+    PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."
+    PlateUnavailable.NotAProposal ->
+        "Ya no tienes piezas de esta variante, así que la propuesta no existe."
+    PlateUnavailable.NotFollowed -> "Sigue la propuesta para abrir su lámina."
+    PlateUnavailable.NoEvidence -> "Aún no tienes ninguna emisión oficial de este catálogo."
+}
 
 /** Nothing is discarded in silence: every ungrouped piece says why. */
 fun unclassifiedReasonLabel(reason: UnclassifiedReason): String = when (reason) {

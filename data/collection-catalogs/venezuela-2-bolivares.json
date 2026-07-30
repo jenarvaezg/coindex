@@ -1,0 +1,163 @@
+{
+  "schema_version": 2,
+  "id": "venezuela-2-bolivares",
+  "name": "2 Bolívares · Venezuela · plata 10 g",
+  "issuer_code": "venezuela",
+  "family": "2 Bolívares de Venezuela",
+  "weight_millioz": 322,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/pieces10339.html",
+  "updated_at": "2026-07-30",
+  "members": [
+    {
+      "id": "1879",
+      "label": "1879",
+      "year": 1879,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1886",
+      "label": "1886",
+      "year": 1886,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1887",
+      "label": "1887",
+      "year": 1887,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1888",
+      "label": "1888",
+      "year": 1888,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1889",
+      "label": "1889",
+      "year": 1889,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1894",
+      "label": "1894",
+      "year": 1894,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1900",
+      "label": "1900",
+      "year": 1900,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1902",
+      "label": "1902",
+      "year": 1902,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1903",
+      "label": "1903",
+      "year": 1903,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1904",
+      "label": "1904",
+      "year": 1904,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1905",
+      "label": "1905",
+      "year": 1905,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1911",
+      "label": "1911",
+      "year": 1911,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1912",
+      "label": "1912",
+      "year": 1912,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1913",
+      "label": "1913",
+      "year": 1913,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1919",
+      "label": "1919",
+      "year": 1919,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1922",
+      "label": "1922",
+      "year": 1922,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1924",
+      "label": "1924",
+      "year": 1924,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1926",
+      "label": "1926",
+      "year": 1926,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1929",
+      "label": "1929",
+      "year": 1929,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1930",
+      "label": "1930",
+      "year": 1930,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1935",
+      "label": "1935",
+      "year": 1935,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1936",
+      "label": "1936",
+      "year": 1936,
+      "numista_type_id": 10339
+    },
+    {
+      "id": "1947",
+      "label": "1945 (1947)",
+      "year": 1947,
+      "numista_type_id": 10399
+    },
+    {
+      "id": "1960",
+      "label": "1960",
+      "year": 1960,
+      "numista_type_id": 7775
+    },
+    {
+      "id": "1965",
+      "label": "1965",
+      "year": 1965,
+      "numista_type_id": 7775
+    }
+  ]
+}

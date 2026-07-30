@@ -1,12 +1,15 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
+import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
+import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.ProposalPreferenceEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
 import com.jenarvaezg.coindex.domain.CollectionProposalPreference
+import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.gramsToOunces
@@ -40,6 +43,13 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     maxYear = maxYear,
     weightOz = weightGrams?.let(::gramsToOunces),
     finish = inferFinish(title, family),
+)
+
+/** One own grouping with its memberships, stitched from the two flat lists Room observes. */
+fun OwnGroupingEntity.toDomain(members: List<OwnGroupingMemberEntity>): OwnGrouping = OwnGrouping(
+    id = id,
+    name = name,
+    typeIds = members.filter { it.groupingId == id }.map { it.typeId },
 )
 
 /** A stored preference whose parts are no longer canonical is ignored, not guessed at. */

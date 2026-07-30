@@ -67,6 +67,65 @@ interface ProposalPreferenceDao {
     suspend fun delete(family: String, weightMillioz: Int, finishCode: String)
 }
 
+/**
+ * The collector's own groupings.
+ *
+ * Headings and memberships are observed as two flat lists and stitched together in the
+ * repository: a `@Relation` would need a wrapper type whose only purpose is to be unwrapped
+ * again one layer up.
+ */
+@Dao
+interface OwnGroupingDao {
+    @Query("SELECT * FROM own_groupings ORDER BY name")
+    fun observeAll(): Flow<List<OwnGroupingEntity>>
+
+    @Query("SELECT * FROM own_grouping_members")
+    fun observeMembers(): Flow<List<OwnGroupingMemberEntity>>
+
+    @Insert
+    suspend fun insert(grouping: OwnGroupingEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addMembers(members: List<OwnGroupingMemberEntity>)
+
+    @Query("UPDATE own_groupings SET name = :name, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun rename(id: Long, name: String, updatedAt: Long)
+
+    @Query("DELETE FROM own_grouping_members WHERE groupingId = :groupingId AND typeId = :typeId")
+    suspend fun removeMember(groupingId: Long, typeId: Int)
+
+    @Query("DELETE FROM own_groupings WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    /** Creates a grouping and its first types as one unit: an empty grouping is not a thing. */
+    @Transaction
+    suspend fun create(name: String, typeIds: List<Int>, now: Long): Long {
+        val id = insert(OwnGroupingEntity(name = name, createdAt = now, updatedAt = now))
+        addMembers(typeIds.map { typeId -> OwnGroupingMemberEntity(id, typeId) })
+        return id
+    }
+
+    /**
+     * Drops one type, and the grouping with it when that type was the last one: a heading over
+     * nothing would be a card the collector cannot open and cannot get rid of.
+     */
+    @Transaction
+    suspend fun removeMemberOrDelete(groupingId: Long, typeId: Int, now: Long) {
+        removeMember(groupingId, typeId)
+        if (memberCount(groupingId) == 0) {
+            delete(groupingId)
+        } else {
+            touch(groupingId, now)
+        }
+    }
+
+    @Query("SELECT COUNT(*) FROM own_grouping_members WHERE groupingId = :groupingId")
+    suspend fun memberCount(groupingId: Long): Int
+
+    @Query("UPDATE own_groupings SET updatedAt = :updatedAt WHERE id = :id")
+    suspend fun touch(id: Long, updatedAt: Long)
+}
+
 @Dao
 interface ApiCallDao {
     @Insert

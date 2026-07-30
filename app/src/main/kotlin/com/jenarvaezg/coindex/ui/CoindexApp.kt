@@ -33,11 +33,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
+import com.jenarvaezg.coindex.ui.screens.OwnGroupingScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
+import com.jenarvaezg.coindex.ui.screens.ProposalScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -64,12 +67,23 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
-    // The plate names itself in the masthead, which means resolving the catalog the route
-    // carries; every other destination knows its own title from the route alone.
+    // The plate and the proposal name themselves in the masthead, which means reading what the
+    // route carries; every other destination knows its own title from the route alone.
     val route = backStackEntry?.destination?.route
-    val plateCatalogName = backStackEntry
-        ?.takeIf { Routes.isPlate(route) }
-        ?.let { viewModel.catalogName(it.arguments?.getString("catalogId")) }
+    val subjectName = when {
+        Routes.isPlate(route) ->
+            viewModel.catalogName(backStackEntry?.arguments?.getString("catalogId"))
+        Routes.isProposal(route) -> backStackEntry
+            ?.arguments
+            ?.getString("family")
+            ?.let(::collectionProposalFamilyLabel)
+        Routes.isOwnGrouping(route) -> backStackEntry
+            ?.arguments
+            ?.getString("groupingId")
+            ?.toLongOrNull()
+            ?.let { id -> state.collection.ownGroupings.firstOrNull { it.id == id }?.name }
+        else -> null
+    }
 
     // The start destination is the only one with nothing underneath it, and a «Volver» that pops
     // an empty back stack is a button that teaches you to ignore it. In that gap the masthead
@@ -95,7 +109,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             Column {
                 Masthead(
                     subtitle = mastheadSubtitle(
-                        screenTitle(route, plateCatalogName),
+                        screenTitle(route, subjectName),
                         state.versionName,
                     ),
                     onBack = onBack,
@@ -129,17 +143,74 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         catalogs = viewModel.catalogs,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
+                        onOpenProposal = { proposal ->
+                            navController.navigate(Routes.proposal(proposal.key()))
+                        },
+                        onOpenOwnGrouping = { groupingId ->
+                            navController.navigate(Routes.ownGrouping(groupingId))
+                        },
                         onOpenPlate = { catalogId ->
                             navController.navigate(Routes.plate(catalogId))
                         },
-                        onOpenSource = openUrl,
                         onDisposition = { proposal, disposition ->
                             viewModel.setDisposition(proposal.key(), disposition)
                         },
                     )
                 }
+                composable(Routes.OWN_GROUPING) { entry ->
+                    val groupingId = entry.arguments?.getString("groupingId")?.toLongOrNull()
+                    val grouping = state.collection.ownGroupings
+                        .firstOrNull { it.id == groupingId }
+                    OwnGroupingScreen(
+                        state = state.collection,
+                        grouping = grouping,
+                        onOpenSource = openUrl,
+                        onRename = { name ->
+                            grouping?.let { viewModel.renameOwnGrouping(it.id, name) }
+                        },
+                        onRemoveType = { typeId ->
+                            grouping?.let { viewModel.removeFromOwnGrouping(it.id, typeId) }
+                        },
+                        // Undoing it leaves nothing to look at, so the screen goes with it.
+                        onDelete = {
+                            grouping?.let { viewModel.deleteOwnGrouping(it.id) }
+                            navController.popBackStack()
+                        },
+                    )
+                }
+                composable(Routes.PROPOSAL) { entry ->
+                    val key = proposalKeyFromRoute(
+                        family = entry.arguments?.getString("family"),
+                        weight = entry.arguments?.getString("weight"),
+                        finish = entry.arguments?.getString("finish"),
+                    )
+                    // A route that does not describe a canonical key is not guessed at; it is
+                    // the same refusal a stored disposition gets when its parts drift.
+                    if (key == null) {
+                        UnknownProposal(Modifier.fillMaxSize().padding(20.dp))
+                    } else {
+                        ProposalScreen(
+                            state = state.collection,
+                            key = key,
+                            catalog = viewModel.catalogFor(key),
+                            plate = viewModel.plateFor(key),
+                            onOpenPlate = { catalogId ->
+                                navController.navigate(Routes.plate(catalogId))
+                            },
+                            onOpenSource = openUrl,
+                            onDisposition = viewModel::setDisposition,
+                            onCreateGrouping = viewModel::createOwnGrouping,
+                            onAddToGrouping = viewModel::addToOwnGrouping,
+                        )
+                    }
+                }
                 composable(Routes.UNCLASSIFIED) {
-                    UnclassifiedScreen(state = state.collection, onOpenSource = openUrl)
+                    UnclassifiedScreen(
+                        state = state.collection,
+                        onOpenSource = openUrl,
+                        onCreateGrouping = viewModel::createOwnGrouping,
+                        onAddToGrouping = viewModel::addToOwnGrouping,
+                    )
                 }
                 composable(Routes.SETTINGS) {
                     // Read once per visit: the form owns its own edits from then on, and it
@@ -266,6 +337,19 @@ private fun Masthead(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
         )
         HorizontalDivider(thickness = 2.dp, color = Paper.ink)
+    }
+}
+
+/** A proposal route that describes no canonical variant key: said plainly, never guessed at. */
+@Composable
+private fun UnknownProposal(modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("Propuesta desconocida", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            "Ese enlace no describe ninguna variante de tu colección. Vuelve al índice.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Paper.muted,
+        )
     }
 }
 

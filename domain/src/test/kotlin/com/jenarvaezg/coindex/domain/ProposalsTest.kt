@@ -302,6 +302,102 @@ class CollectionProposalsTest {
         assertEquals("Familia oficial", proposals[0].family)
     }
 
+    /**
+     * A curated grouping is the weakest claim there is: it only names types, so it loses to
+     * every family that means something and still rescues the ones Numista files nowhere.
+     */
+    @Test
+    fun `a curated grouping rescues family-less types and loses to every real claim`() {
+        val grouping = CuratedGrouping(
+            schemaVersion = 1,
+            id = "venezuela-medios",
+            name = "Medios",
+            family = "Medios de Venezuela",
+            issuerCode = "venezuela",
+            source = "https://en.numista.com/catalogue/pieces4369.html",
+            updatedAt = "2026-07-30",
+            typeIds = listOf(4_369, 9_488),
+        )
+        fun quarter(id: Int, family: String?) = TypeMeta(
+            id = id,
+            title = "¼ Bolívar",
+            family = family,
+            issuerCode = "venezuela",
+            weightOz = ounces(1.25),
+        )
+
+        // Two types Numista leaves family-less land on one card, because both weigh 1,25 g.
+        val derivation = deriveCollection(
+            listOf(item(1, 4_369, 3), item(2, 9_488, 59)),
+            mapOf(4_369 to quarter(4_369, null), 9_488 to quarter(9_488, null)),
+            emptyList(),
+            listOf(grouping),
+        )
+        assertEquals(1, derivation.proposals.size)
+        assertEquals("Medios de Venezuela", derivation.proposals[0].family)
+        assertEquals(40, derivation.proposals[0].weightMillioz)
+        assertEquals(2, derivation.proposals[0].distinctTypes)
+        assertEquals(62, derivation.proposals[0].quantity)
+        assertTrue(derivation.unclassified.isEmpty())
+
+        // A real Numista family wins; a technical monetary system does not.
+        val real = buildCollectionProposals(
+            listOf(item(1, 4_369, 1)),
+            mapOf(4_369 to quarter(4_369, "Familia oficial")),
+            emptyList(),
+            listOf(grouping),
+        )
+        assertEquals("Familia oficial", real[0].family)
+        val technical = buildCollectionProposals(
+            listOf(item(1, 4_369, 1)),
+            mapOf(4_369 to quarter(4_369, "System 1879-1936")),
+            emptyList(),
+            listOf(grouping),
+        )
+        assertEquals("Medios de Venezuela", technical[0].family)
+
+        // And a catalog outranks the grouping, because it can also say what is missing.
+        val catalog = dateRunCatalogStub()
+        val catalogued = buildCollectionProposals(
+            listOf(item(1, 10_340, 1)),
+            mapOf(10_340 to TypeMeta(id = 10_340, family = null, weightOz = ounces(25.0))),
+            listOf(catalog),
+            listOf(grouping.copy(id = "otra", typeIds = listOf(10_340))),
+        )
+        assertEquals("5 Bolívares de Venezuela", catalogued[0].family)
+    }
+
+    /**
+     * Every proposal keeps the rows it was built from: the screen that opens one shows the
+     * pieces, and «los 5 paquillos» is five rows of one single Numista type.
+     */
+    @Test
+    fun `each proposal keeps the pieces it was derived from`() {
+        val typeMeta = mapOf(
+            1_885 to TypeMeta(id = 1_885, family = "100 Pesetas de Franco", weightOz = ounces(19.0)),
+            10 to metadata(10, "Otra familia", 31.1, Finish.Bullion),
+        )
+        val stars = (1966..1970).mapIndexed { index, year ->
+            CollectedItem(id = index + 1L, quantity = 1, typeId = 1_885, issueYear = year)
+        }
+
+        val derivation = deriveCollection(stars + item(99, 10, 1), typeMeta, emptyList())
+
+        val paquillos = derivation.proposals.first { it.family == "100 Pesetas de Franco" }
+        assertEquals(1, paquillos.distinctTypes)
+        assertEquals(5, paquillos.quantity)
+        assertEquals(
+            (1966..1970).toList(),
+            derivation.itemsByKey.getValue(paquillos.key()).map { it.recordedYear },
+        )
+        // Every proposal has an entry, and no piece is counted under two keys.
+        assertEquals(derivation.proposals.size, derivation.itemsByKey.size)
+        assertEquals(
+            derivation.proposals.sumOf { it.quantity },
+            derivation.itemsByKey.values.sumOf { pieces -> pieces.sumOf { it.quantity } },
+        )
+    }
+
     @Test
     fun `every ungrouped piece is preserved with an auditable reason`() {
         val typeMeta = mapOf(

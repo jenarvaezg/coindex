@@ -13,6 +13,7 @@ import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
 import kotlinx.coroutines.delay
+import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
 import com.jenarvaezg.coindex.domain.ProposalDisposition
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -171,6 +172,48 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch { container.repository.setDisposition(key, disposition) }
     }
 
+    /**
+     * Creates one of the collector's own groupings (ADR 0013).
+     *
+     * A name and at least one piece are required, and the refusal is a message rather than a
+     * silent no-op: a heading over nothing is not something to store.
+     */
+    fun createOwnGrouping(name: String, typeIds: List<Int>) {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty() || typeIds.isEmpty()) {
+            _state.update {
+                it.copy(message = "Ponle un nombre a la agrupación y elige al menos una pieza.")
+            }
+            return
+        }
+        viewModelScope.launch {
+            container.repository.createOwnGrouping(trimmed, typeIds)
+            _state.update { it.copy(message = "Agrupación «$trimmed» creada.") }
+        }
+    }
+
+    fun addToOwnGrouping(groupingId: Long, typeIds: List<Int>) {
+        if (typeIds.isEmpty()) return
+        viewModelScope.launch { container.repository.addToOwnGrouping(groupingId, typeIds) }
+    }
+
+    fun renameOwnGrouping(groupingId: Long, name: String) {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) {
+            _state.update { it.copy(message = "El nombre de la agrupación no puede estar vacío.") }
+            return
+        }
+        viewModelScope.launch { container.repository.renameOwnGrouping(groupingId, trimmed) }
+    }
+
+    fun removeFromOwnGrouping(groupingId: Long, typeId: Int) {
+        viewModelScope.launch { container.repository.removeFromOwnGrouping(groupingId, typeId) }
+    }
+
+    fun deleteOwnGrouping(groupingId: Long) {
+        viewModelScope.launch { container.repository.deleteOwnGrouping(groupingId) }
+    }
+
     fun sync() {
         if (_state.value.syncing) return
         val client = container.numistaClient()
@@ -289,6 +332,19 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
 
     fun plate(catalogId: String): PlateResult =
         resolvePlate(_state.value.collection, container.repository.catalogs, catalogId)
+
+    /** The curated catalog for one variant key, if one was curated for it. */
+    fun catalogFor(key: CollectionProposalKey): CollectionCatalog? =
+        container.repository.catalogFor(key)
+
+    /**
+     * How that catalog's plate resolves right now, or null when there is no catalog at all.
+     *
+     * The proposal screen shows the reason a plate cannot be opened rather than hiding the
+     * catalog, so it needs the same answer the plate itself would give.
+     */
+    fun plateFor(key: CollectionProposalKey): PlateResult? =
+        catalogFor(key)?.let { catalog -> plate(catalog.id) }
 
     private suspend fun refreshBudget() {
         val cap = container.credentials.monthlyBudget
