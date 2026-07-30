@@ -102,12 +102,25 @@ Publicar una versión nueva:
 ```console
 # 1. sube versionCode y versionName en app/build.gradle.kts
 # 2. commit y push
-./scripts/release.sh "Qué cambia en esta versión"
+scripts/release.sh                      # notas a partir de los commits
+scripts/release.sh "Resumen opcional"   # o un resumen tuyo para el banner
 ```
 
-El script construye el APK firmado, **verifica la firma**, genera el `update.json` que lee la
-app y crea la release. Se niega a publicar si falta `keystore.properties` o si el tag ya
-existe, así que subir `versionCode` no es opcional.
+El script comprueba primero, sin compilar nada, que la versión es publicable, y se niega si:
+
+- falta `keystore.properties`, porque el APK saldría sin firmar;
+- el tag ya existe;
+- el `versionCode` no supera el de la release publicada, que es el error silencioso de verdad:
+  subir solo el `versionName` produce una release que ningún móvil llega a ver;
+- el árbol tiene cambios sin commitear, porque la release apuntaría a un commit que no los
+  incluye.
+
+Después construye el APK, **verifica la firma**, genera el `update.json` y crea la release. El
+resumen va al banner de la app y el changelog completo al cuerpo de la release.
+
+**La firma se hace aquí, no en CI**: el keystore no viaja a ningún servicio (ADR 0011). El CI
+compila y prueba en cada push, y anota en el resumen del job si la versión del repositorio es
+publicable, pero nunca publica.
 
 ## Exportar lámina
 

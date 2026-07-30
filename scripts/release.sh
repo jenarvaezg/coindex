@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 # Publica una versión de Coindex como release de GitHub.
 #
-#   ./scripts/release.sh "Notas de la versión"
+#   scripts/release.sh                      # notas a partir de los commits
+#   scripts/release.sh "Resumen de la versión"
 #
-# Construye el APK firmado, comprueba que la firma es la esperada, genera el update.json que
-# lee el actualizador de la app y crea la release con el tag vX.Y.Z.
+# La firma se hace aquí, en la máquina donde vive el keystore: la clave no viaja a ningún
+# servicio (ADR 0011). El script comprueba primero que la versión es publicable, después
+# construye el APK firmado, verifica la firma, genera el update.json que lee el actualizador
+# de la app y crea la release con el tag vX.Y.Z.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-NOTES="${1:-}"
+SUMMARY="${1:-}"
 : "${JAVA_HOME:=/Applications/Android Studio.app/Contents/jbr/Contents/Home}"
 export JAVA_HOME
 ANDROID_HOME="${ANDROID_HOME:-/opt/homebrew/share/android-commandlinetools}"
@@ -28,13 +31,48 @@ if [[ -z "$VERSION_CODE" || -z "$VERSION_NAME" ]]; then
 fi
 TAG="v$VERSION_NAME"
 APK_NAME="coindex-$VERSION_CODE.apk"
+REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
 
+# --- Guardas, antes de gastar un minuto compilando -------------------------------------
 if gh release view "$TAG" >/dev/null 2>&1; then
-  echo "la release $TAG ya existe: sube versionCode y versionName antes de publicar" >&2
+  echo "la release $TAG ya existe: sube versionCode y versionName en app/build.gradle.kts" >&2
   exit 1
 fi
 
-echo "==> Construyendo $TAG (versionCode $VERSION_CODE)"
+# El versionCode es lo que decide si los móviles ven la actualización, así que subir solo el
+# versionName produciría una release que nadie llega a instalar.
+PUBLISHED_CODE=$(
+  curl -sfL "https://github.com/$REPO/releases/latest/download/update.json" 2>/dev/null |
+    python3 -c 'import json,sys; print(json.load(sys.stdin).get("versionCode", 0))' 2>/dev/null ||
+    echo 0
+)
+if (( VERSION_CODE <= PUBLISHED_CODE )); then
+  echo "versionCode $VERSION_CODE no supera el publicado ($PUBLISHED_CODE):" >&2
+  echo "los móviles no verían esta versión. Sube versionCode en app/build.gradle.kts." >&2
+  exit 1
+fi
+
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "el árbol tiene cambios sin commitear: la release apuntaría a un commit que no los" >&2
+  echo "incluye. Haz commit y push antes de publicar." >&2
+  exit 1
+fi
+
+# --- Notas ------------------------------------------------------------------------------
+LAST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -1)
+if [[ -n "$LAST_TAG" ]]; then
+  CHANGELOG=$(git log --no-merges --pretty='- %s' "$LAST_TAG"..HEAD)
+else
+  CHANGELOG=$(git log --no-merges --pretty='- %s')
+fi
+CHANGELOG=${CHANGELOG:-"- Coindex $VERSION_NAME"}
+# El resumen va al banner de la app, que muestra dos líneas; el changelog entero va al
+# cuerpo de la release.
+if [[ -z "$SUMMARY" ]]; then
+  SUMMARY=$(head -1 <<<"$CHANGELOG" | sed 's/^- //')
+fi
+
+echo "==> Construyendo $TAG (versionCode $VERSION_CODE, publicado $PUBLISHED_CODE)"
 ./gradlew :app:assembleRelease
 
 BUILT_APK=app/build/outputs/apk/release/app-release.apk
@@ -47,7 +85,7 @@ cp "$BUILT_APK" "$OUT/$APK_NAME"
 
 # El actualizador lee este fichero: el tag es para humanos y sería un sitio frágil
 # donde codificar el versionCode del que depende la decisión de actualizar.
-python3 - "$OUT/update.json" "$VERSION_CODE" "$VERSION_NAME" "$APK_NAME" "$NOTES" <<'PY'
+python3 - "$OUT/update.json" "$VERSION_CODE" "$VERSION_NAME" "$APK_NAME" "$SUMMARY" <<'PY'
 import json, sys
 path, version_code, version_name, apk_asset, notes = sys.argv[1:6]
 manifest = {
@@ -65,7 +103,9 @@ PY
 echo "==> Publicando release $TAG"
 gh release create "$TAG" \
   --title "Coindex $VERSION_NAME" \
-  --notes "${NOTES:-Coindex $VERSION_NAME}" \
+  --notes "$SUMMARY
+
+$CHANGELOG" \
   "$OUT/$APK_NAME" "$OUT/update.json"
 
 echo "==> Listo. Los móviles verán la actualización en el índice."

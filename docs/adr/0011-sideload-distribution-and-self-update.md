@@ -34,7 +34,17 @@ a compilar nada.
    `versionCode` publicado es mayor que el instalado, muestra una tarjeta en el índice con las
    notas y un botón que descarga el APK y lo entrega al instalador del sistema.
 5. `scripts/release.sh` construye, **verifica la firma**, genera el `update.json` y publica.
-   Se niega a publicar si falta `keystore.properties` o si el tag ya existe.
+   Antes de compilar se niega si falta `keystore.properties`, si el tag ya existe, si el
+   `versionCode` no supera el publicado o si el árbol tiene cambios sin commitear.
+
+### La firma no se automatiza
+
+Se consideró publicar desde CI al empujar un tag. Exige subir el keystore y sus contraseñas
+como secretos del repositorio, y esa clave es la identidad de Coindex para siempre: quien la
+tenga puede publicar un APK que los dos móviles aceptarán como actualización legítima. Con dos
+usuarios y un keystore irreemplazable, el ahorro no compensa sacar la clave de la máquina del
+autor. El CI compila, prueba y anota si la versión del repositorio es publicable; publicar es
+un acto local y deliberado.
 
 ### Lo que esto no hace
 

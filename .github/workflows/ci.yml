@@ -30,6 +30,30 @@ jobs:
       - name: Compilar el APK de depuración
         run: ./gradlew :app:assembleDebug
 
+      # Informativo, nunca bloqueante: no todo commit publica una versión. El que se niega a
+      # publicar una versión que los móviles no verían es scripts/release.sh.
+      - name: Comparar la versión del repo con la publicada
+        if: always()
+        run: |
+          code=$(sed -n 's/^ *versionCode *= *\([0-9]*\).*/\1/p' app/build.gradle.kts | head -1)
+          name=$(sed -n 's/^ *versionName *= *"\([^"]*\)".*/\1/p' app/build.gradle.kts | head -1)
+          published=$(curl -sfL "https://github.com/${{ github.repository }}/releases/latest/download/update.json" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["versionCode"])' 2>/dev/null || echo 0)
+          {
+            echo "### Versión"
+            echo ""
+            echo "| | versionCode | versionName |"
+            echo "|---|---|---|"
+            echo "| repositorio | $code | $name |"
+            echo "| publicado | $published | |"
+            echo ""
+            if [ "$code" -gt "$published" ]; then
+              echo "Publicable con \`scripts/release.sh\`."
+            else
+              echo "Sube \`versionCode\` antes de publicar: los móviles no verían esta versión."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Publicar los informes de test si algo falla
         if: failure()
         uses: actions/upload-artifact@v4
