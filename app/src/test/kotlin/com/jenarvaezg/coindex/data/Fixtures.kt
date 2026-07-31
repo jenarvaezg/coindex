@@ -34,6 +34,11 @@ object CatalogFiles {
     fun all(): List<Pair<String, String>> = seedFiles("collection-catalogs")
 }
 
+/** The seeded type cache as it ships, read from `data/` like the curated seeds. */
+object TypeCacheFile {
+    fun read(): String = File("../data/numista-type-cache.json").readText()
+}
+
 object GroupingFiles {
     fun all(): List<Pair<String, String>> = seedFiles("groupings")
 }
