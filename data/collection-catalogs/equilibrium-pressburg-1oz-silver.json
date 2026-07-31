@@ -6,8 +6,9 @@
   "family": "Equilibrium",
   "weight_millioz": 1000,
   "finish": null,
+  "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=3245",
-  "updated_at": "2026-07-31",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "2018-equilibrium-tokelau",

@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -67,8 +68,10 @@ class PlateLabelsTest {
         family = "5 Bolívares de Venezuela",
         weightMillioz = 804,
         finish = null,
+        seriesStatus = SeriesStatus.Closed,
+        closedNote = "La plata venezolana se acabó en 1965.",
         source = "https://en.numista.com/catalogue/pieces10340.html",
-        updatedAt = "2026-07-29",
+        updatedAt = "2026-08-01",
         members = members,
     )
 
@@ -82,7 +85,7 @@ class PlateLabelsTest {
                 "Peso" to "0,804 oz",
                 "Acabado" to "Sin confirmar",
                 "Tipo" to "Numista 10340",
-                "Actualizado" to "2026-07-29",
+                "Actualizado" to "2026-08-01",
             ),
             entries,
         )
@@ -97,7 +100,7 @@ class PlateLabelsTest {
                 "Progreso" to "2 / 2 emisiones",
                 "Peso" to "0,804 oz",
                 "Acabado" to "Sin confirmar",
-                "Actualizado" to "2026-07-29",
+                "Actualizado" to "2026-08-01",
             ),
             entries,
         )

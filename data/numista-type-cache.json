@@ -29029,6 +29029,160 @@
   },
   "weight": 33.94
  },
+ "29011": {
+  "id": 29011,
+  "url": "https://es.numista.com/29011",
+  "title": "3 Roubles (Bolshoi Theatre)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "ancienne_urss",
+   "name": "Unión Soviética"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 1572,
+    "name": "Soviet Union",
+    "wikidata_id": "Q15180"
+   }
+  ],
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 168,
+    "name": "Sixth Rouble",
+    "full_name": "Sixth Rouble (1961-1991)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1991-00-00"
+  },
+  "size": 39,
+  "thickness": 3.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "El escudo de armas de la Unión Soviética; valor, fecha.",
+   "lettering": "СССР\r\nAg 900\r\n31,1\r\nЛМД\r\n3\r\nРУБЛЯ\r\n1991",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ancienne_urss/1586-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ancienne_urss/1586-180.jpg",
+   "picture_copyright": "Auction House \"Rare Coins\""
+  },
+  "reverse": {
+   "description": "Teatro Bolshoi. Bailarina.",
+   "lettering": "500ЛЕТИЕ ЕДИНОГО РУССКОГО ГОСУДАРСТВА\r\nБОЛЬШОЙ ТЕАТР 1825г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ancienne_urss/1587-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ancienne_urss/1587-180.jpg",
+   "picture_copyright": "Auction House \"Rare Coins\""
+  },
+  "commemorated_topic": "500 aniversario del Estado ruso unido",
+  "related_types": [
+   {
+    "id": 35012,
+    "title": "3 Roubles (Arch of Triumph in Moscow)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 71994,
+    "title": "25 Roubles (Abolition of Serfdom 1861)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 94746,
+    "title": "50 Roubles (Saint Isaac's Cathedral)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 94748,
+    "title": "100 Roubles (Leo Tolstoy)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 94747,
+    "title": "150 Roubles (Patriotic War of 1812)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Danza"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "274"
+   }
+  ],
+  "weight": 34.56,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "29017": {
   "category": "coin",
   "comments": "Fecha de emisión: 03 MAYO 2005<br /><br />\r\nLa estación de metro \"Kropotkinskaya\" (antiguo nombre \"Palacio de los Soviets\"), construida en Moscú en 1935, ha sido inscrita en la lista de monumentos arquitectónicos conservados por la UNESCO.",
@@ -35051,6 +35205,154 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "35012": {
+  "id": 35012,
+  "url": "https://es.numista.com/35012",
+  "title": "3 Roubles (Arch of Triumph in Moscow)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "ancienne_urss",
+   "name": "Unión Soviética"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 1572,
+    "name": "Soviet Union",
+    "wikidata_id": "Q15180"
+   }
+  ],
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 168,
+    "name": "Sixth Rouble",
+    "full_name": "Sixth Rouble (1961-1991)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1991-00-00"
+  },
+  "size": 39,
+  "thickness": 3.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "El escudo de armas de la Unión Soviética; valor, fecha.",
+   "lettering": "СССР\r\nAg 900\r\n31,1\r\nММД\r\n3\r\nРУБЛЯ\r\n1991\r\n31,1\r\n1991",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ancienne_urss/1588-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ancienne_urss/1588-180.jpg",
+   "picture_copyright": "Auction House \"Rare Coins\""
+  },
+  "reverse": {
+   "description": "Arco del Triunfo en Moscú",
+   "lettering": "500·ЛЕТИЕ ЕДИНОГО РУССКОГО ГОСУДАРСТВА\r\n1834 г. МОСКВА\r\n· ТРИУМФАЛЬНАЯ АРКА ·",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ancienne_urss/1589-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ancienne_urss/1589-180.jpg",
+   "picture_copyright": "Auction House \"Rare Coins\""
+  },
+  "commemorated_topic": "500 aniversario del Estado ruso unido",
+  "related_types": [
+   {
+    "id": 29011,
+    "title": "3 Roubles (Bolshoi Theatre)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 71994,
+    "title": "25 Roubles (Abolition of Serfdom 1861)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 94746,
+    "title": "50 Roubles (Saint Isaac's Cathedral)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 94748,
+    "title": "100 Roubles (Leo Tolstoy)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 94747,
+    "title": "150 Roubles (Patriotic War of 1812)",
+    "category": "coin",
+    "country": {
+     "code": "ancienne_urss",
+     "name": "Unión Soviética"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "275"
+   }
+  ],
+  "weight": 34.56,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 6,
+    "name": "Moscow Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "353638": {
   "category": "coin",

@@ -67,6 +67,7 @@ class CatalogSeedsTest {
                   "familly": "Nikola Tesla",
                   "weight_millioz": 1000,
                   "finish": null,
+                  "series_status": "open",
                   "source": "https://en.numista.com/catalogue/series.php?id=5303",
                   "updated_at": "2026-07-29",
                   "members": []
@@ -77,6 +78,55 @@ class CatalogSeedsTest {
 
         assertEquals(CatalogSeedException::class, error!!::class)
         assertEquals(true, error.message!!.contains("typo.json"))
+    }
+
+    /**
+     * Un catálogo que se calla el estado de su serie afirma por omisión que ya no falta nada
+     * (#28), así que callárselo no se tolera: la app no arranca y dice qué fichero es.
+     */
+    @Test
+    fun `a seed that keeps quiet about its series status is rejected`() {
+        val seed = { status: String ->
+            """
+            {
+              "schema_version": 1,
+              "id": "muda",
+              "name": "Muda",
+              "issuer_code": "serbie",
+              "family": "Nikola Tesla",
+              "weight_millioz": 1000,
+              "finish": null,
+              $status
+              "source": "https://en.numista.com/catalogue/series.php?id=5303",
+              "updated_at": "2026-08-01",
+              "members": [
+                {
+                  "id": "alternating-current",
+                  "label": "Alternating current",
+                  "year": 2018,
+                  "numista_type_id": 150352
+                }
+              ]
+            }
+            """.trimIndent()
+        }
+
+        val missing = kotlin.runCatching { CatalogSeeds.parse("muda.json", seed("")) }
+            .exceptionOrNull()
+        assertEquals(CatalogSeedException::class, missing!!::class)
+        assertEquals(true, missing.message!!.contains("muda.json"))
+        assertEquals(true, missing.message!!.contains("series_status"))
+
+        val unknownValue = kotlin.runCatching {
+            CatalogSeeds.parse("muda.json", seed("\"series_status\": \"dormant\","))
+        }.exceptionOrNull()
+        assertEquals(CatalogSeedException::class, unknownValue!!::class)
+        assertEquals(true, unknownValue.message!!.contains("muda.json"))
+
+        assertEquals(
+            SeriesStatus.Open,
+            CatalogSeeds.parse("muda.json", seed("\"series_status\": \"open\",")).seriesStatus,
+        )
     }
 
     @Test
@@ -93,6 +143,7 @@ class CatalogSeedsTest {
                   "family": "Nikola Tesla",
                   "weight_millioz": 1000,
                   "finish": null,
+                  "series_status": "open",
                   "source": "https://en.numista.com/catalogue/series.php?id=5303",
                   "updated_at": "2026-07-29",
                   "members": []
@@ -115,6 +166,7 @@ class CatalogSeedsTest {
               "family": "Nikola Tesla",
               "weight_millioz": 1000,
               "finish": null,
+              "series_status": "open",
               "source": "https://en.numista.com/catalogue/series.php?id=5303",
               "updated_at": "2026-07-29",
               "members": [
@@ -148,6 +200,7 @@ class CatalogSeedsTest {
               "family": "The Royal Tudor Beasts",
               "weight_millioz": 2000,
               "finish": "Bullion",
+              "series_status": "open",
               "source": "https://en.numista.com/catalogue/series.php?id=6118",
               "updated_at": "2026-07-29",
               "members": [

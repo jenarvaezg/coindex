@@ -6,8 +6,10 @@
   "family": "Australian Saltwater Crocodile",
   "weight_millioz": 1000,
   "finish": null,
+  "series_status": "closed",
+  "closed_note": "La Perth Mint solo acuñó la onza en 2014 (bullion) y 2015 (proof): la serie termina en 2017 con el medio onza de plata y el cuarto de onza de oro, y no ha emitido nada desde entonces.",
   "source": "https://en.numista.com/catalogue/series.php?id=10511",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "2014-australian-saltwater-crocodile",

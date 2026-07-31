@@ -6,8 +6,10 @@
   "family": "500th Anniversary of the United Russian State",
   "weight_millioz": 1111,
   "finish": null,
+  "series_status": "closed",
+  "closed_note": "El Banco Estatal de la URSS acuñó el programa entre 1989 y 1991 —dos monedas de 3 rublos de plata .900 por año, seis en total— y se apagó con la URSS.",
   "source": "https://en.numista.com/catalogue/series.php?id=13245",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "1989-moscow-kremlin",
@@ -32,6 +34,18 @@
       "label": "Peter the Great's Fleet",
       "year": 1990,
       "numista_type_id": 44092
+    },
+    {
+      "id": "1991-bolshoi-theatre",
+      "label": "Bolshoi Theatre",
+      "year": 1991,
+      "numista_type_id": 29011
+    },
+    {
+      "id": "1991-arch-of-triumph-in-moscow",
+      "label": "Arch of Triumph in Moscow",
+      "year": 1991,
+      "numista_type_id": 35012
     }
   ]
 }

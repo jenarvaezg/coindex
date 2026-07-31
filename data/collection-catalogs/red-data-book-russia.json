@@ -6,8 +6,9 @@
   "family": "Red Data Book",
   "weight_millioz": 547,
   "finish": null,
+  "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5860",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "1993-amur-tiger",

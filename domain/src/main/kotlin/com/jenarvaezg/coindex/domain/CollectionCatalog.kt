@@ -13,6 +13,9 @@ import kotlinx.serialization.Serializable
  * so it declares no weight and no finish and its key carries an absent weight.
  * `schema_version` 5 identifies members by Numista issue (ADR 0014), for the types whose
  * members share a year and differ by a variety of it.
+ *
+ * Every version declares a [SeriesStatus]: coverage is what a catalog is for, and an open
+ * series has no complete coverage to claim.
  */
 @Serializable
 data class CollectionCatalog(
@@ -23,6 +26,13 @@ data class CollectionCatalog(
     val family: String,
     @SerialName("weight_millioz") val weightMillioz: Int? = null,
     val finish: Finish? = null,
+    /**
+     * Whether the series is still being issued. Required in every schema version: a catalog
+     * that keeps quiet about it claims completeness by omission (#28).
+     */
+    @SerialName("series_status") val seriesStatus: SeriesStatus,
+    /** What sustains the closure, in prose with a URL when there is one. Only when closed. */
+    @SerialName("closed_note") val closedNote: String? = null,
     val source: String,
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CollectionCatalogMember>,
@@ -109,6 +119,15 @@ data class CollectionCatalog(
         }
         if (members.isEmpty()) {
             return CollectionCatalogValidationError.EmptyMembers
+        }
+        // Closing costs proof and opening costs none, so the note is required exactly one way.
+        when (seriesStatus) {
+            SeriesStatus.Closed -> if (closedNote.isNullOrBlank()) {
+                return CollectionCatalogValidationError.ClosedWithoutNote
+            }
+            SeriesStatus.Open -> if (closedNote != null) {
+                return CollectionCatalogValidationError.OpenWithClosedNote
+            }
         }
 
         val memberIds = mutableSetOf<String>()
@@ -211,6 +230,14 @@ sealed class CollectionCatalogValidationError(val message: String) {
 
     data object EmptyMembers : CollectionCatalogValidationError(
         "collection catalog must contain at least one member",
+    )
+
+    data object ClosedWithoutNote : CollectionCatalogValidationError(
+        "a closed collection catalog must say what sustains the closure in `closed_note`",
+    )
+
+    data object OpenWithClosedNote : CollectionCatalogValidationError(
+        "an open collection catalog cannot carry a `closed_note`",
     )
 
     data class DuplicateMemberId(val memberId: String) : CollectionCatalogValidationError(

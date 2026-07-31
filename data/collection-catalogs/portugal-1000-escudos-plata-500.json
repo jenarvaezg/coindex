@@ -6,8 +6,10 @@
   "family": "1000 escudos conmemorativos de plata .500 de Portugal",
   "weight_millioz": 900,
   "finish": null,
+  "series_status": "closed",
+  "closed_note": "El escudo desapareció con el euro: la última conmemorativa de la serie es la de 2001 y Portugal pasó al euro el 1 de enero de 2002.",
   "source": "https://en.numista.com/catalogue/series.php?id=6598",
-  "updated_at": "2026-07-31",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "1992-encuentro-de-dos-mundos",

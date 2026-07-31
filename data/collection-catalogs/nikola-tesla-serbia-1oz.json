@@ -6,8 +6,9 @@
   "family": "Nikola Tesla",
   "weight_millioz": 1000,
   "finish": null,
+  "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5303",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "alternating-current",
