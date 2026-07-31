@@ -233,6 +233,36 @@ class CuratedCatalogsTest {
         assertTrue(equilibrium.members.none { it.numistaTypeId in gold })
     }
 
+    /**
+     * La casilla de 2009 la ocupó durante días **N#426539**, un vigésimo de onza de oro del estuche
+     * del vigésimo aniversario: la clave del catálogo manda sobre la variante de sus miembros
+     * (ADR 0016), así que la lámina lo pintaba como la onza de plata de 2009 y nadie lo veía.
+     *
+     * La de verdad es **N#17382**, y lo que lo prueba no es el título —Numista lo llama «Silver
+     * Set»— sino su reverso: «THE AUSTRALIAN KOOKABURRA · P20 · DB · 1 OZ 999 SILVER 2009», con las
+     * iniciales de Darryl Bellotti, que es quien firmó el diseño propio de 2009, y la marca P20 del
+     * aniversario. Las otras veinte del estuche llevan diseños de años anteriores re-acuñados.
+     *
+     * Y **2005 no es un hueco**: N#20658 es un tipo de 2004-2005, así que ese año vive en la casilla
+     * de 2004 y la serie no tiene agujero.
+     */
+    @Test
+    fun `the kookaburra 2009 slot is the p20 silver ounce and not the gold set`() {
+        val kookaburra = find("australian-kookaburra-perth-1oz")
+        assertEquals(1_000, kookaburra.weightMillioz)
+        assertEquals(36, kookaburra.members.size)
+        assertEquals(17_382, kookaburra.members.single { it.year == 2009 }.numistaTypeId)
+        assertEquals(20_658, kookaburra.members.single { it.year == 2004 }.numistaTypeId)
+        assertTrue(kookaburra.members.none { it.year == 2005 })
+        // El estuche de oro de 2009, veinte vigésimos de onza: ninguno es casilla de esta lámina.
+        val goldSet = listOf(
+            426_539, 458_300, 458_463, 458_703, 458_905, 459_012, 459_137, 459_344, 459_536,
+            460_076, 460_908, 461_129, 462_061, 462_390, 462_552, 462_805, 462_940, 463_069,
+            463_187, 463_319,
+        )
+        assertTrue(kookaburra.members.none { it.numistaTypeId in goldSet })
+    }
+
     @Test
     fun `no two catalogs claim the same proposal variant key`() {
         val keys = catalogs.map { it.key() }

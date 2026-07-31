@@ -7,7 +7,7 @@
   "weight_millioz": 1000,
   "finish": null,
   "source": "https://en.numista.com/catalogue/series.php?id=1552",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-07-31",
   "members": [
     {
       "id": "1990-australian-kookaburra",
@@ -118,10 +118,10 @@
       "numista_type_id": 29124
     },
     {
-      "id": "2009-australian-kookaburra-gold-set",
-      "label": "Australian Kookaburra - Gold Set",
+      "id": "2009-australian-kookaburra-p20",
+      "label": "Australian Kookaburra - P20",
       "year": 2009,
-      "numista_type_id": 426539
+      "numista_type_id": 17382
     },
     {
       "id": "2010-australian-kookaburra",
