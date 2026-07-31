@@ -6,8 +6,10 @@
   "family": "Lunar Series II",
   "weight_millioz": 1000,
   "finish": "Bullion",
+  "series_status": "closed",
+  "closed_note": "El ciclo lunar de doce años se agotó con el cerdo de 2019 y la Perth Mint siguió en 2020 con Lunar Series III, que es otro catálogo.",
   "source": "https://en.numista.com/catalogue/series.php?id=4749",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "2008-year-of-the-mouse-silver-bullion-coin",

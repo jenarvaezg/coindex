@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.data
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.Finish
+import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -20,8 +21,68 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(25, catalogs.size)
+        assertEquals(24, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
+    }
+
+    /**
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los once
+     * cerrados llevan su nota y los trece abiertos no afirman nada más que «N de N catalogadas».
+     *
+     * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
+     * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
+     */
+    @Test
+    fun `every shipped catalog declares whether its series is still open`() {
+        val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
+        assertEquals(11, closed.size)
+        assertEquals(13, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        closed.forEach { catalog ->
+            assertTrue(
+                catalog.closedNote?.isNotBlank() == true,
+                "cerrado sin nota: ${catalog.id}",
+            )
+        }
+        assertTrue(catalogs.none { it.id == "gothic-horror-uk-1oz" })
+        // Las tres que llegaban a 2024 y 2025 y parecían muertas siguen vivas, medido fuera de
+        // Numista: el plan de emisión del Banco de Rusia para 2026 trae Libro Rojo y Monumentos
+        // arquitectónicos, y la decimotercera Tesla salió en 2026.
+        listOf("red-data-book-russia", "architectural-monuments-russia-3-roubles", "nikola-tesla-serbia-1oz")
+            .forEach { assertEquals(SeriesStatus.Open, find(it).seriesStatus) }
+    }
+
+    /**
+     * Cerrar exige que la lista esté completa, y esta no lo estaba: el programa del Banco Estatal
+     * de la URSS son **seis** monedas de 3 rublos de plata .900, dos por año entre 1989 y 1991, y
+     * las dos de 1991 faltaban. Numista no las tiene en la serie 13245 ni les da familia —ninguna
+     * de las dos declara `series`—, así que sin este catálogo salen huérfanas.
+     */
+    @Test
+    fun `the 500th anniversary programme is six three rouble coins and ends in 1991`() {
+        val programme = find("united-russian-state-500th-3-roubles")
+        assertEquals(SeriesStatus.Closed, programme.seriesStatus)
+        assertEquals(6, programme.members.size)
+        assertEquals(
+            listOf(1989, 1989, 1990, 1990, 1991, 1991),
+            programme.members.map { it.year },
+        )
+        assertEquals(
+            listOf(47_619, 48_338, 40_619, 44_092, 29_011, 35_012),
+            programme.members.map { it.numistaTypeId },
+        )
+    }
+
+    /**
+     * La FNMT anunció diez piezas y ocho son de 10 € en plata: la colección de 2025-2026 está
+     * completa, así que este es un cerrado por programa anunciado y no por silencio.
+     */
+    @Test
+    fun `the spanish 250th anniversary collection closes at its eight silver tens`() {
+        val independence = find("us-independence-250th-spain-10-euros")
+        assertEquals(SeriesStatus.Closed, independence.seriesStatus)
+        assertEquals(8, independence.members.size)
+        assertEquals(3, independence.members.count { it.year == 2025 })
+        assertEquals(5, independence.members.count { it.year == 2026 })
     }
 
     /**

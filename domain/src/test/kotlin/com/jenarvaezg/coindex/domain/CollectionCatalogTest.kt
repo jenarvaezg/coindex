@@ -15,8 +15,9 @@ internal fun teslaCatalogStub() = CollectionCatalog(
     family = "Nikola Tesla",
     weightMillioz = 1_000,
     finish = null,
+    seriesStatus = SeriesStatus.Open,
     source = "https://en.numista.com/catalogue/series.php?id=5303",
-    updatedAt = "2026-07-29",
+    updatedAt = "2026-08-01",
     members = listOf(
         CollectionCatalogMember("alternating-current", "Alternating current", 2018, 150_352),
         CollectionCatalogMember("x-rays", "X-Rays", 2020, 195_591),
@@ -31,8 +32,10 @@ internal fun dateRunCatalogStub() = CollectionCatalog(
     family = "5 Bolívares de Venezuela",
     weightMillioz = 804,
     finish = null,
+    seriesStatus = SeriesStatus.Closed,
+    closedNote = "La plata venezolana se acabó en 1965.",
     source = "https://en.numista.com/catalogue/pieces10340.html",
-    updatedAt = "2026-07-29",
+    updatedAt = "2026-08-01",
     members = listOf(
         CollectionCatalogMember("1904", "1904", 1904, 10_340),
         CollectionCatalogMember("1905", "1905", 1905, 10_340),
@@ -46,8 +49,10 @@ internal fun setCatalogStub() = CollectionCatalog(
     name = "XVII Exposición Europea de Arte · Portugal 1983",
     issuerCode = "portugal",
     family = "XVII Exposición Europea de Arte de 1983",
+    seriesStatus = SeriesStatus.Closed,
+    closedNote = "Un estuche de tres monedas para la exposición de 1983, sin más emisiones.",
     source = "https://en.numista.com/catalogue/series.php?id=6598",
-    updatedAt = "2026-07-30",
+    updatedAt = "2026-08-01",
     members = listOf(
         CollectionCatalogMember("500-escudos", "500 escudos · 7 g", 1983, 22_178),
         CollectionCatalogMember("750-escudos", "750 escudos · 12,5 g", 1983, 22_179),
@@ -63,8 +68,10 @@ internal fun portugueseAnnualCatalogStub() = CollectionCatalog(
     family = "500 escudos conmemorativos de plata .500 de Portugal",
     weightMillioz = 450,
     finish = null,
+    seriesStatus = SeriesStatus.Closed,
+    closedNote = "El escudo desapareció con el euro el 1 de enero de 2002.",
     source = "https://en.numista.com/catalogue/series.php?id=6598",
-    updatedAt = "2026-07-30",
+    updatedAt = "2026-08-01",
     members = listOf(
         CollectionCatalogMember("1995-santo-antonio", "Santo António", 1995, 13_042),
         CollectionCatalogMember("2001-oporto", "Oporto", 2001, 13_046),
@@ -91,8 +98,10 @@ internal fun issueRunCatalogStub() = CollectionCatalog(
     family = "100 Pesetas de Franco",
     weightMillioz = 611,
     finish = null,
+    seriesStatus = SeriesStatus.Closed,
+    closedNote = "El tipo solo se acuñó con las estrellas 66 a 70.",
     source = "https://en.numista.com/catalogue/pieces1885.html",
-    updatedAt = "2026-07-30",
+    updatedAt = "2026-08-01",
     members = listOf(
         CollectionCatalogMember("estrella-66", "Estrella 66", 1966, 1_885, listOf(9_001)),
         CollectionCatalogMember("estrella-69", "Estrella 69", 1966, 1_885, listOf(9_004, 9_005)),
@@ -164,6 +173,39 @@ class CollectionCatalogValidationTest {
         assertEquals(
             CollectionCatalogValidationError.InvalidId("catalog", "Nikola_Tesla"),
             definition.copy(id = "Nikola_Tesla").validate(),
+        )
+    }
+
+    /**
+     * Closing costs proof and opening costs none (#28): the note is obligatory one way and
+     * forbidden the other, the same symmetry the issue ids already use outside an issue run.
+     */
+    @Test
+    fun `a closed catalog must say why and an open one cannot`() {
+        val open = teslaCatalogStub()
+        assertNull(open.validate())
+        assertEquals(SeriesStatus.Open, open.seriesStatus)
+        assertNull(open.closedNote)
+
+        assertEquals(
+            CollectionCatalogValidationError.ClosedWithoutNote,
+            open.copy(seriesStatus = SeriesStatus.Closed).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.ClosedWithoutNote,
+            open.copy(seriesStatus = SeriesStatus.Closed, closedNote = "   ").validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.OpenWithClosedNote,
+            open.copy(closedNote = "la serie murió en 2019").validate(),
+        )
+
+        val closed = dateRunCatalogStub()
+        assertNull(closed.validate())
+        assertEquals(SeriesStatus.Closed, closed.seriesStatus)
+        assertEquals(
+            CollectionCatalogValidationError.OpenWithClosedNote,
+            closed.copy(seriesStatus = SeriesStatus.Open).validate(),
         )
     }
 

@@ -6,8 +6,10 @@
   "family": "2 Bolívares de Venezuela",
   "weight_millioz": 322,
   "finish": null,
+  "series_status": "closed",
+  "closed_note": "1965 fue el último año de plata venezolana y la ley de moneda del 4 de diciembre de 1967 pasó el 1 y el 2 bolívares al níquel puro.",
   "source": "https://en.numista.com/catalogue/pieces10339.html",
-  "updated_at": "2026-07-30",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "1879",

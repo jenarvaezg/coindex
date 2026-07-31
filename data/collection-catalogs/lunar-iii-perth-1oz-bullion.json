@@ -6,8 +6,9 @@
   "family": "Lunar Series III",
   "weight_millioz": 1000,
   "finish": "Bullion",
+  "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=4750",
-  "updated_at": "2026-07-31",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "2020-year-of-the-mouse",

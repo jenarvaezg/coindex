@@ -6,8 +6,10 @@
   "family": "The Queen's Beasts",
   "weight_millioz": 2000,
   "finish": null,
+  "series_status": "closed",
+  "closed_note": "Diez bestias anunciadas por la Royal Mint más la completer; la última salió en 2021.",
   "source": "https://en.numista.com/catalogue/series.php?id=6870",
-  "updated_at": "2026-07-29",
+  "updated_at": "2026-08-01",
   "members": [
     {
       "id": "2016-lion-of-england",
