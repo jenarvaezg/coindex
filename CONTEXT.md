@@ -72,6 +72,8 @@ _Avoid_: Curated series, Album
 **Collection catalog**:
 A curated, sourced reference list of official members for one exact proposal variant key.
 It remains separate from curated series and from the collector's followed disposition.
+It **declares** that variant rather than inferring it: for the types it names, its own weight
+and finish are the key, whatever grams Numista records for each one (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
 **Collection catalog plate**:

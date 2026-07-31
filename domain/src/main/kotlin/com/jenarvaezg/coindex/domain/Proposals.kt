@@ -52,10 +52,21 @@ fun deriveCollection(
             }
         }
     }
-    val catalogFamilies: Map<Int, String> = buildMap {
+    /**
+     * A catalog that is not a set is authoritative about the physical variant of its own
+     * members: it declares exactly one weight and one finish, verified by hand, so Numista's
+     * per-type gram value does not get to split them.
+     *
+     * Snapping alone cannot do this. The nineteen 1000 escudos of Portugal are one coin whose
+     * weight Numista records as 27, 28 and 28.2 grams — 868, 900 and 907 milli-ounces, a spread
+     * of 39 against a snap tolerance of 10 that is deliberately tight so a 30 g piece is never
+     * read as an ounce. Without this, one curated catalog produced two cards and counted five
+     * pieces in both.
+     */
+    val catalogsByType: Map<Int, CollectionCatalog> = buildMap {
         for (catalog in catalogs.filterNot { it.isSet }) {
             for (member in catalog.members) {
-                putIfAbsent(member.numistaTypeId, catalog.family)
+                putIfAbsent(member.numistaTypeId, catalog)
             }
         }
     }
@@ -83,7 +94,8 @@ fun deriveCollection(
             continue
         }
         val numistaFamily = metadata.family?.let(::normalizeFamily)
-        val curatedFamily = catalogFamilies[item.typeId] ?: groupingFamilies[item.typeId]
+        val catalog = catalogsByType[item.typeId]
+        val curatedFamily = catalog?.family ?: groupingFamilies[item.typeId]
         val family = when {
             numistaFamily == null -> curatedFamily
             isTechnicalFamily(numistaFamily) -> curatedFamily ?: numistaFamily
@@ -91,6 +103,11 @@ fun deriveCollection(
         }
         if (family == null) {
             unclassified += UnclassifiedItem(item, UnclassifiedReason.NoFamilyOrCatalog)
+            continue
+        }
+        // Its own catalog names the variant, so no weight has to be inferred at all.
+        if (catalog != null && catalog.family == family) {
+            grouped.record(catalog.key(), item)
             continue
         }
         val weightMillioz = metadata.weightOz?.let { weightOz ->

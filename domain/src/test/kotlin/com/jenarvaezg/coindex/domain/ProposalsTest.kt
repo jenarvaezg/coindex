@@ -222,6 +222,57 @@ class CollectionProposalsTest {
         assertEquals(annual.key(), annualProposal.key())
     }
 
+    /**
+     * The 1000 escudos of Portugal are one coin whose weight Numista records three ways: 27, 28
+     * and 28.2 grams. Declaring 900 pulls in 28.2 g, seven milli-ounces away, but never 27 g,
+     * which sits 32 away — and widening the tolerance that far would read a 30 g piece as an
+     * ounce. So snapping can close part of the gap and never all of it. Measured on the real
+     * collection before this rule existed: one catalog produced two cards, and the five lightest
+     * pieces were counted in both.
+     */
+    @Test
+    fun `a catalog claims its members whatever weight numista records for each`() {
+        val catalog = portugueseAnnualCatalogStub().copy(
+            id = "portugal-1000-escudos-plata-500",
+            family = "1000 escudos conmemorativos de plata .500 de Portugal",
+            weightMillioz = 900,
+            members = listOf(
+                CollectionCatalogMember("1992-dos-mundos", "Dos Mundos", 1992, 15_463),
+                CollectionCatalogMember("1995-juan-ii", "D. João II", 1995, 11_697),
+                CollectionCatalogMember("1997-pauliteiros", "Pauliteiros", 1997, 11_120),
+            ),
+        )
+        fun escudo(id: Int, grams: Double) = TypeMeta(
+            id = id,
+            title = "1000 Escudos",
+            family = "System 1981-2001",
+            issuerCode = "portugal",
+            weightOz = ounces(grams),
+        )
+        val typeMeta = mapOf(
+            15_463 to escudo(15_463, 27.0),
+            11_697 to escudo(11_697, 28.0),
+            11_120 to escudo(11_120, 28.2),
+        )
+        // 28.2 g reaches the declared 900 by snapping; 27 g never can.
+        assertEquals(900, normalizeWeightMillioz(ounces(28.0), setOf(900)))
+        assertEquals(900, normalizeWeightMillioz(ounces(28.2), setOf(900)))
+        assertEquals(868, normalizeWeightMillioz(ounces(27.0), setOf(900)))
+
+        val derivation = deriveCollection(
+            listOf(item(1, 15_463, 1), item(2, 11_697, 1), item(3, 11_120, 1)),
+            typeMeta,
+            listOf(catalog),
+        )
+
+        assertTrue(derivation.unclassified.isEmpty())
+        assertEquals(1, derivation.proposals.size)
+        val proposal = derivation.proposals.single()
+        assertEquals(catalog.key(), proposal.key())
+        assertEquals(3, proposal.distinctTypes)
+        assertEquals(3, proposal.quantity)
+    }
+
     @Test
     fun `canonical keys round trip finish codes and stale preferences stay dormant`() {
         fun proposal(family: String, finish: Finish?) = CollectionProposal(
