@@ -137,6 +137,7 @@ un canvas software si contiene alguno.
 
 - **R8 desactivado** en release: el APK pesa ~29 MB. Activar minificación reduciría mucho el
   tamaño, pero no se ha hecho sin poder verificar en un dispositivo real que nada se rompe.
-- Las series curadas (`data/series`) y el emparejamiento heurístico no se portaron: sus JSON
-  siguen en `data/series/` como datos inertes, y el código con sus tests vive en el tag
-  `rust-frozen` (ADR 0010 §2).
+- Las series curadas y el emparejamiento heurístico no se portaron (ADR 0010 §2): el código con
+  sus tests vive en el tag `rust-frozen`, y sus dos JSON (`data/series/lunar-iii.json` y
+  `data/series/tudor-beasts.json`) se retiraron del árbol — quedan en el historial, en el commit
+  `9fc2582`.

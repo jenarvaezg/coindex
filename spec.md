@@ -63,9 +63,11 @@
    empaquetarlo como seed de la tabla de caché para que ningún usuario las repita.
    Incluye los 470 tipos referenciados por los catálogos: las láminas muestran todos los
    diseños (incluidos los "me falta") sin gastar presupuesto.
-3. **`data/series/*.json`** — las dos series curadas históricas (Lunar III, Tudor
-   Beasts). La app no las lee (ADR 0010 §2): quedan como datos inertes para futuros
-   catálogos. Ya no hay código que las valide en `main`.
+3. **`data/series/*.json`** — **retirado**: las dos series curadas históricas (Lunar III,
+   Tudor Beasts) no las leía nadie (ADR 0010 §2) y viajaban en el APK como assets muertos.
+   Tudor Beasts ya tiene dos catálogos curados; el material de Lunar III (doce casillas con
+   etiqueta, motivo y `release_status`, sin un solo `numista_type_id`) queda en el commit
+   `9fc2582` para el catálogo que se cure. Ya no hay código que las valide en `main`.
 4. **`docs/adr/0001..0012`** — las decisiones de dominio siguen vigentes; la 0007
    (propuestas desde inventario), 0008 (disposiciones durables), 0009 (date runs +
    fallback de familia) y 0012 (familias técnicas, pesos de catálogo y conjuntos) son la
