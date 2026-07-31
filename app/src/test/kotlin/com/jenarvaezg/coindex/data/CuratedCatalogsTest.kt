@@ -20,7 +20,7 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(23, catalogs.size)
+        assertEquals(24, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
@@ -172,6 +172,35 @@ class CuratedCatalogsTest {
         assertEquals(21, bolivares.members.size)
         assertTrue(bolivares.members.all { it.numistaTypeId == 10_340 })
         assertEquals(21, bolivares.members.map { it.year }.distinct().size)
+    }
+
+    /**
+     * Lunar Series III runs 2020-2031, not 2019-2030: the 2019 pig closes Lunar II, which this
+     * repo already ships whole. Numista files the Royal Australian Mint's parallel lunar line
+     * under the very same series, so the members are the Perth ones — .9999 and 40,9 mm against
+     * RAM's .999 and 40 mm, and in 2020 RAM even calls the animal a rat where Perth says mouse.
+     *
+     * Seven emitted members and no more: 2027-2031 are announced, and the schema cannot say so
+     * until #46 lands.
+     */
+    @Test
+    fun `lunar iii bullion is the perth line from 2020 to 2026`() {
+        val lunar = find("lunar-iii-perth-1oz-bullion")
+        assertEquals(1, lunar.schemaVersion)
+        assertEquals("Lunar Series III", lunar.family)
+        assertEquals(1_000, lunar.weightMillioz)
+        assertEquals(Finish.Bullion, lunar.finish)
+        assertEquals((2020..2026).toList(), lunar.members.map { it.year })
+        assertEquals(
+            listOf(179_438, 235_118, 307_024, 342_221, 386_213, 441_816, 483_798),
+            lunar.members.map { it.numistaTypeId },
+        )
+        // La línea de la Royal Australian Mint: misma serie en Numista, otra moneda.
+        val royalAustralianMint =
+            listOf(219_663, 266_550, 309_870, 355_589, 406_506, 444_584, 529_884)
+        assertTrue(lunar.members.none { it.numistaTypeId in royalAustralianMint })
+        // El cerdo de 2019 cierra Lunar II; esta empieza en el ratón de 2020.
+        assertEquals(2019, find("lunar-ii-perth-1oz-bullion").members.last().year)
     }
 
     @Test

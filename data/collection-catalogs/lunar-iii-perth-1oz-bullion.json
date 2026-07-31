@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "lunar-iii-perth-1oz-bullion",
+  "name": "Lunar Series III · Perth Mint · 1 oz bullion",
+  "issuer_code": "australie",
+  "family": "Lunar Series III",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "source": "https://en.numista.com/catalogue/series.php?id=4750",
+  "updated_at": "2026-07-31",
+  "members": [
+    {
+      "id": "2020-year-of-the-mouse",
+      "label": "Year of the Mouse",
+      "year": 2020,
+      "numista_type_id": 179438
+    },
+    {
+      "id": "2021-year-of-the-ox",
+      "label": "Year of the Ox",
+      "year": 2021,
+      "numista_type_id": 235118
+    },
+    {
+      "id": "2022-year-of-the-tiger",
+      "label": "Year of the Tiger",
+      "year": 2022,
+      "numista_type_id": 307024
+    },
+    {
+      "id": "2023-year-of-the-rabbit",
+      "label": "Year of the Rabbit",
+      "year": 2023,
+      "numista_type_id": 342221
+    },
+    {
+      "id": "2024-year-of-the-dragon",
+      "label": "Year of the Dragon",
+      "year": 2024,
+      "numista_type_id": 386213
+    },
+    {
+      "id": "2025-year-of-the-snake",
+      "label": "Year of the Snake",
+      "year": 2025,
+      "numista_type_id": 441816
+    },
+    {
+      "id": "2026-year-of-the-horse",
+      "label": "Year of the Horse",
+      "year": 2026,
+      "numista_type_id": 483798
+    }
+  ]
+}
