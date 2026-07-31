@@ -62,8 +62,8 @@ clave AES/GCM que vive en el Android Keystore y nunca sale de él; solo el cript
 a `SharedPreferences`. Cada usuario gasta su propio presupuesto de API, con un techo mensual
 configurable (1500 por defecto) que se cuenta en `api_call_log` antes de cada llamada.
 
-En el primer arranque se siembra la caché de tipos con `data/numista-type-cache.json` (608
-tipos, ~630 llamadas de API que nadie tiene que volver a gastar). Un catálogo curado
+En el primer arranque se siembra la caché de tipos con `data/numista-type-cache.json` (634
+tipos, ~650 llamadas de API que nadie tiene que volver a gastar). Un catálogo curado
 inválido detiene el arranque con el fichero y el motivo: es preferible no arrancar a mostrar
 un «me falta» falso.
 
