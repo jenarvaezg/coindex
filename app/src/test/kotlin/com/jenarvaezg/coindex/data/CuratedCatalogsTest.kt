@@ -20,7 +20,7 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(22, catalogs.size)
+        assertEquals(23, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 

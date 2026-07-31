@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "id": "portugal-1000-escudos-plata-500",
+  "name": "1000 escudos conmemorativos de plata .500 · Portugal 1992-2001",
+  "issuer_code": "portugal",
+  "family": "1000 escudos conmemorativos de plata .500 de Portugal",
+  "weight_millioz": 900,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=6598",
+  "updated_at": "2026-07-31",
+  "members": [
+    {
+      "id": "1992-encuentro-de-dos-mundos",
+      "label": "Encuentro de Dos Mundos",
+      "year": 1992,
+      "numista_type_id": 15463
+    },
+    {
+      "id": "1994-tratado-de-tordesillas",
+      "label": "Tratado de Tordesillas",
+      "year": 1994,
+      "numista_type_id": 22294
+    },
+    {
+      "id": "1994-el-lobo",
+      "label": "El lobo",
+      "year": 1994,
+      "numista_type_id": 25338
+    },
+    {
+      "id": "1995-don-juan-ii",
+      "label": "D. João II",
+      "year": 1995,
+      "numista_type_id": 11697
+    },
+    {
+      "id": "1996-fragata-dom-fernando-ii-e-gloria",
+      "label": "Fragata D. Fernando II e Glória",
+      "year": 1996,
+      "numista_type_id": 22295
+    },
+    {
+      "id": "1996-nuestra-senora-de-la-concepcion",
+      "label": "Nuestra Señora de la Concepción",
+      "year": 1996,
+      "numista_type_id": 11698
+    },
+    {
+      "id": "1997-expediciones-oceanograficas",
+      "label": "Expediciones oceanográficas",
+      "year": 1997,
+      "numista_type_id": 11699
+    },
+    {
+      "id": "1997-credito-publico",
+      "label": "Crédito Público",
+      "year": 1997,
+      "numista_type_id": 19857
+    },
+    {
+      "id": "1997-pauliteiros",
+      "label": "Pauliteiros de Miranda",
+      "year": 1997,
+      "numista_type_id": 11120
+    },
+    {
+      "id": "1998-ano-internacional-de-los-oceanos",
+      "label": "Año Internacional de los Océanos",
+      "year": 1998,
+      "numista_type_id": 11700
+    },
+    {
+      "id": "1998-santa-casa-de-la-misericordia",
+      "label": "Santa Casa de la Misericordia",
+      "year": 1998,
+      "numista_type_id": 20796
+    },
+    {
+      "id": "1998-don-manuel-i",
+      "label": "D. Manuel I",
+      "year": 1998,
+      "numista_type_id": 10658
+    },
+    {
+      "id": "1998-liga-dos-combatentes",
+      "label": "Liga dos Combatentes",
+      "year": 1998,
+      "numista_type_id": 22012
+    },
+    {
+      "id": "1999-revolucion-del-25-de-abril",
+      "label": "Revolución del 25 de abril",
+      "year": 1999,
+      "numista_type_id": 20579
+    },
+    {
+      "id": "1999-milenio-atlantico",
+      "label": "Milenio atlántico",
+      "year": 1999,
+      "numista_type_id": 22296
+    },
+    {
+      "id": "2000-consejo-de-la-union-europea",
+      "label": "Consejo de la Unión Europea",
+      "year": 2000,
+      "numista_type_id": 11701
+    },
+    {
+      "id": "2000-cavalo-lusitano",
+      "label": "Cavalo Lusitano",
+      "year": 2000,
+      "numista_type_id": 11702
+    },
+    {
+      "id": "2000-don-juan-de-castro",
+      "label": "D. João de Castro",
+      "year": 2000,
+      "numista_type_id": 15566
+    },
+    {
+      "id": "2001-eurocopa-2004",
+      "label": "Eurocopa 2004",
+      "year": 2001,
+      "numista_type_id": 19858
+    }
+  ]
+}
