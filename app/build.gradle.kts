@@ -69,6 +69,21 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+// The unit tests read the curated seeds and the recorded Numista responses straight from the repo
+// root —`../data` and `../fixtures`, see `Fixtures.kt`— instead of from a copy on the classpath, so
+// Gradle sees no dependency on either. A catalog or a fixture could change and the cached test
+// result still counted as valid: the suite reported BUILD SUCCESSFUL without running a single test,
+// and only `--rerun` revealed the failure. Declaring both directories as inputs is what makes a
+// data-only change invalidate that cache.
+tasks.withType<Test>().configureEach {
+    inputs.dir(rootProject.layout.projectDirectory.dir("data"))
+        .withPropertyName("curatedSeedData")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(rootProject.layout.projectDirectory.dir("fixtures"))
+        .withPropertyName("recordedNumistaFixtures")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+}
+
 dependencies {
     implementation(project(":domain"))
 
