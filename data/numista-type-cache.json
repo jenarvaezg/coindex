@@ -13504,6 +13504,159 @@
   },
   "weight": 31.1035
  },
+ "17382": {
+  "id": 17382,
+  "url": "https://es.numista.com/17382",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra - Silver Set)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2009,
+  "max_year": 2009,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "ELIZABETH II \r\nAUSTRALIA\r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/5e8ef28d641954.63233522-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5e8ef28d641954.63233522-180.jpg"
+  },
+  "reverse": {
+   "designers": [
+    "Darryl Bellotti"
+   ],
+   "description": "Cucaburra australiana sentada en una rama mirando hacia la izquierda",
+   "lettering": "THE AUSTRALIAN KOOKABURRA \r\nP20   DB\r\n1 OZ 999 SILVER 2009",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/5e8ef28da39f56.60491138-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5e8ef28da39f56.60491138-180.jpg"
+  },
+  "series": "Australian Kookaburra",
+  "commemorated_topic": "20º aniversario de la serie de monedas de lingotes del cucaburra australiano",
+  "comments": "En 2009, la Casa de la Moneda de Perth emitió un juego de 20 monedas de edición limitada que incluía las 19 emisiones de años anteriores de la famosa moneda Kookaburra de un dólar y 1 onza de plata, así como la versión de 2009.<br /><br />\r\nEsta moneda en particular era una reedición de una de las monedas Kookaburra anteriores. Incluía una exclusiva marca de ceca P20.<br /><br />\r\nEn consonancia con la importancia de este hito, el juego se presentó en un lujoso estuche negro metalizado con el logotipo del cisne de la Casa de la Moneda de Perth en relieve en la tapa y un elegante estuche.<br /><br />\r\nLa baja tirada de sólo 10.000 piezas aumenta el valor de colección de esta emisión.",
+  "related_types": [
+   {
+    "id": 136380,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra - Silver Set)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   },
+   {
+    "id": 136379,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra - Silver Set)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   },
+   {
+    "id": 136151,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra - Silver Set)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   },
+   {
+    "id": 228323,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra - Silver Set)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   }
+  ],
+  "tags": [
+   "Ave"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1296"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/australie/60605060868f00.93265732-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/60605060868f00.93265732-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "17383": {
   "category": "coin",
   "commemorated_topic": "Año del Tigre",
@@ -42551,108 +42704,6 @@
    "text": "3 Roubles"
   },
   "weight": 33.94
- },
- "426539": {
-  "category": "coin",
-  "commemorated_topic": "20º aniversario de la serie de monedas de lingotes del cucaburra australiano",
-  "composition": {
-   "text": "Oro 999,9"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "Reed"
-  },
-  "id": 426539,
-  "issuer": {
-   "code": "australie",
-   "name": "Australia"
-  },
-  "max_year": 2009,
-  "min_year": 2009,
-  "mints": [
-   {
-    "id": 21,
-    "name": "Casa de la Moneda de Perth"
-   }
-  ],
-  "object_type": {
-   "id": 3,
-   "name": "Monedas no circulantes"
-  },
-  "obverse": {
-   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha y luciendo la Tiara de las Niñas de Gran Bretaña e Irlanda.",
-   "designers": [
-    "Ian Rank-Broadley"
-   ],
-   "lettering": "ELIZABETH II AUSTRALIA\r\n1/20OZ 9999 GOLD 2009 5 DOLLARS\r\nIRB",
-   "lettering_scripts": [
-    {
-     "name": "Latina"
-    }
-   ],
-   "picture": "https://en.numista.com/catalogue/photos/australie/66a4fa98dbf4e8.14496408-original.jpg",
-   "picture_copyright": "Münzen am Zoo",
-   "picture_copyright_url": "https://www.ma-shops.de/pollandt/",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/66a4fa98dbf4e8.14496408-180.jpg"
-  },
-  "orientation": "medal",
-  "references": [
-   {
-    "catalogue": {
-     "code": "KM",
-     "id": 3
-    },
-    "number": "1303"
-   }
-  ],
-  "reverse": {
-   "description": "Cucaburra en vuelo derecha.",
-   "lettering": "P20",
-   "lettering_scripts": [
-    {
-     "name": "Latina"
-    }
-   ],
-   "picture": "https://en.numista.com/catalogue/photos/australie/66a4fa990326c4.18196580-original.jpg",
-   "picture_copyright": "Münzen am Zoo",
-   "picture_copyright_url": "https://www.ma-shops.de/pollandt/",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/66a4fa990326c4.18196580-180.jpg"
-  },
-  "ruler": [
-   {
-    "group": {
-     "id": 825,
-     "name": "Casa de Windsor"
-    },
-    "id": 1783,
-    "name": "Isabel II",
-    "wikidata_id": "Q9682"
-   }
-  ],
-  "series": "Australian Kookaburra",
-  "shape": "Circular",
-  "size": 14,
-  "tags": [
-   "Ave"
-  ],
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "title": "5 Dollars - Elizabeth II (4th Portrait - Australian Kookaburra - Gold Set)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/426539",
-  "value": {
-   "currency": {
-    "full_name": "Dólar (1966-presente)",
-    "id": 243,
-    "name": "Dólar"
-   },
-   "numeric_value": 5,
-   "text": "5 Dollars"
-  },
-  "weight": 1.55
  },
  "42672": {
   "category": "coin",
