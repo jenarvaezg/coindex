@@ -34,6 +34,8 @@ data class TypeMeta(
     /** Raw Numista `series` value. Never an editorial alias. */
     val family: String? = null,
     val issuerCode: String? = null,
+    /** Numista's own name for the issuer, in the collector's language: «Australia», «España». */
+    val issuerName: String? = null,
     val minYear: Int? = null,
     val maxYear: Int? = null,
     val weightOz: Double? = null,

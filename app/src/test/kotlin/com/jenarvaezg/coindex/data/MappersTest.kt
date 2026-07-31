@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
+import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -16,6 +17,45 @@ import kotlinx.serialization.json.jsonObject
  * on read. If this ever regressed, an issue run would quietly report every star as missing.
  */
 class MappersTest {
+    // Distinct fetchedAt per row: the mapper reads each response once and remembers the answer,
+    // and two different responses for one type are only two rows if they were fetched apart.
+    private fun typeEntity(raw: String, fetchedAt: Long = 0) = TypeMetaEntity(
+        typeId = 404_044,
+        title = null,
+        family = null,
+        issuerCode = "australie",
+        minYear = null,
+        maxYear = null,
+        weightGrams = null,
+        obverseUrl = null,
+        reverseUrl = null,
+        raw = raw,
+        fetchedAt = fetchedAt,
+    )
+
+    @Test
+    fun `the issuer's name comes from the cached type, not from a table of codes`() {
+        // The cache row keeps the whole response, so the 608 seeded types already carry the
+        // name Numista wrote in the collector's own language: `australie` is «Australia».
+        assertEquals(
+            "Australia",
+            typeEntity(Fixtures.type(404_044), fetchedAt = 5).toDomain().issuerName,
+        )
+    }
+
+    @Test
+    fun `a type with no issuer, or unreadable json, simply has no issuer name`() {
+        assertNull(typeEntity("{}", fetchedAt = 1).toDomain().issuerName)
+        assertNull(typeEntity("no es json", fetchedAt = 2).toDomain().issuerName)
+        assertNull(
+            typeEntity("""{"issuer": {"code": "australie"}}""", fetchedAt = 3)
+                .toDomain()
+                .issuerName,
+        )
+        // The code is still the one stored in its column.
+        assertEquals("australie", typeEntity("{}", fetchedAt = 4).toDomain().issuerCode)
+    }
+
     private fun entity(raw: String) = CollectedItemEntity(
         id = 1,
         typeId = 1_885,

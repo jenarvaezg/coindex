@@ -43,6 +43,10 @@ import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
+import com.jenarvaezg.coindex.ui.PlateCommonFacts
+import com.jenarvaezg.coindex.ui.plateCellFootnote
+import com.jenarvaezg.coindex.ui.plateCommonFacts
+import com.jenarvaezg.coindex.ui.plateEntries
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
@@ -50,7 +54,6 @@ import com.jenarvaezg.coindex.ui.sharePlateSheet
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
-import com.jenarvaezg.coindex.ui.variantEntries
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -196,6 +199,9 @@ private fun PlateGrid(
         horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
         verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
     ) {
+        // Read once for the whole plate: the heading says what every cell shares, the cells say
+        // the rest.
+        val common = plateCommonFacts(catalog.members)
         item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Eyebrow("Catálogo curado")
@@ -207,10 +213,7 @@ private fun PlateGrid(
                     color = Paper.muted,
                 )
                 SpecificationCard(
-                    entries = listOf(
-                        "Progreso" to "$ownedMembers / ${members.size} emisiones",
-                    ) + variantEntries(catalog.weightMillioz, catalog.finish) +
-                        listOf("Actualizado" to catalog.updatedAt),
+                    entries = plateEntries(catalog, ownedMembers, common),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 // Exporting the plate is what this screen is for, so it is the only filled
@@ -233,7 +236,7 @@ private fun PlateGrid(
             }
         }
         items(members, key = { it.member.id }) { albumMember ->
-            PlateCell(albumMember, images[albumMember.member.numistaTypeId], onOpenSource)
+            PlateCell(albumMember, images[albumMember.member.numistaTypeId], common, onOpenSource)
         }
     }
 }
@@ -242,6 +245,7 @@ private fun PlateGrid(
 private fun PlateCell(
     albumMember: CollectionCatalogAlbumMember,
     images: TypeImages?,
+    common: PlateCommonFacts,
     onOpenSource: (String) -> Unit,
 ) {
     val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
@@ -268,11 +272,15 @@ private fun PlateCell(
             style = MaterialTheme.typography.titleMedium,
             onClick = { onOpenSource(numistaTypeUrl(albumMember.member.numistaTypeId)) },
         )
-        Text(
-            "${albumMember.member.year} · Numista ${albumMember.member.numistaTypeId}",
-            style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-        )
+        // Only what tells this cell apart: in a date run the title is already the year and the
+        // type is the same one printed once in the specification above.
+        plateCellFootnote(albumMember.member, common)?.let { footnote ->
+            Text(
+                footnote,
+                style = MaterialTheme.typography.labelLarge,
+                color = Paper.muted,
+            )
+        }
     }
 }
 

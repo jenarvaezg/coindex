@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Finish
+import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 
 /**
@@ -16,8 +17,9 @@ fun weightLabel(weightMillioz: Int?): String {
     return if (fraction.isEmpty()) "$whole oz" else "$whole,$fraction oz"
 }
 
+/** The finish as a specification value, under a row whose label already says «acabado». */
 fun finishLabel(finish: Finish?): String = when (finish) {
-    null -> "Por confirmar"
+    null -> "Sin confirmar"
     Finish.Bullion -> "Bullion"
     Finish.Proof -> "Proof"
     Finish.Coloured -> "Coloreado"
@@ -27,6 +29,15 @@ fun finishLabel(finish: Finish?): String = when (finish) {
 }
 
 /**
+ * The same finish where nothing around it says what is unconfirmed.
+ *
+ * «0,611 oz · Por confirmar» read as a finish called that, or as a variant awaiting review; the
+ * unconfirmed thing is the acabado, and on a line of its own it has to say so.
+ */
+fun standaloneFinishLabel(finish: Finish?): String =
+    if (finish == null) "Acabado sin confirmar" else finishLabel(finish)
+
+/**
  * The physical variant in one line. A set issued as a set has neither weight nor finish to
  * show, so it says what it is instead of showing two blanks (ADR 0012).
  */
@@ -34,8 +45,25 @@ fun variantLabel(weightMillioz: Int?, finish: Finish?): String =
     if (weightMillioz == null) {
         weightLabel(null)
     } else {
-        "${weightLabel(weightMillioz)} · ${finishLabel(finish)}"
+        "${weightLabel(weightMillioz)} · ${standaloneFinishLabel(finish)}"
     }
+
+/**
+ * Who issued the pieces behind one proposal, for the eyebrow of its card.
+ *
+ * Every card used to wear «EVIDENCIA DE COLECCIÓN», which is what the section heading above it
+ * already said. The issuer is the one line the card cannot derive from its own title.
+ *
+ * Two issuers under one heading, or one piece whose issuer nobody recorded, leave the eyebrow
+ * unsaid: an eyebrow that covers half its card would be worse than no eyebrow at all. That is
+ * why the unknowns are kept in the list rather than filtered out — one uncached type is enough
+ * to make «Venezuela» a claim about pieces that were never checked.
+ */
+fun issuerEyebrow(items: List<CollectedItem>, typeMeta: Map<Int, TypeMeta>): String? =
+    items
+        .map { item -> typeMeta[item.typeId]?.issuerName }
+        .distinct()
+        .singleOrNull()
 
 /** Weight and finish as specification rows, omitted entirely for a set. */
 fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, String>> =

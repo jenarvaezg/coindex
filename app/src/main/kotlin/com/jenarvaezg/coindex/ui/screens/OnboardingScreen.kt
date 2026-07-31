@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -44,6 +45,9 @@ fun OnboardingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            // The keyboard covers the last third of this form: without it the button and the
+            // note explaining where the two values come from sit behind the keys typing them.
+            .imePadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 28.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -75,7 +79,13 @@ fun OnboardingScreen(
         validation?.let { text ->
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
-        PrimaryAction(text = "Guardar y empezar", onClick = { onSave(apiKey, userId) })
+        // Pressing it with an empty form could only produce the complaint the form can already
+        // see coming, so it waits until there is something to save.
+        PrimaryAction(
+            text = "Guardar y empezar",
+            onClick = { onSave(apiKey, userId) },
+            enabled = apiKey.isNotBlank() && userId.isNotBlank(),
+        )
         Text(
             "La API key se obtiene en numista.com › Mi perfil › API. El identificador de " +
                 "usuario aparece en la URL de tu perfil.",

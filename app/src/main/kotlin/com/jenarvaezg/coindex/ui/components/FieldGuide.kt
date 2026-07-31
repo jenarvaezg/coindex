@@ -30,17 +30,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
@@ -182,7 +187,44 @@ fun ShareGlyph(color: Color, modifier: Modifier = Modifier) {
     }
 }
 
-/** Bordered paper card with the offset shadow of the web prototype. */
+/**
+ * A hairline rule drawn as dashes, in the guide's own hand.
+ *
+ * [Modifier.border] has no dashed form, so the rectangle is stroked by hand with a
+ * [PathEffect.dashPathEffect]; inset by half the stroke so the dashes land inside the card
+ * instead of straddling its edge.
+ */
+private fun Modifier.dashedBorder(color: Color, width: Dp): Modifier = drawBehind {
+    val stroke = width.toPx()
+    val inset = stroke / 2
+    drawRect(
+        color = color,
+        topLeft = Offset(inset, inset),
+        size = Size(size.width - stroke, size.height - stroke),
+        style = Stroke(
+            width = stroke,
+            pathEffect = PathEffect.dashPathEffect(
+                floatArrayOf(DASH_LENGTH.toPx(), DASH_GAP.toPx()),
+            ),
+        ),
+    )
+}
+
+private val DASH_LENGTH = 5.dp
+private val DASH_GAP = 4.dp
+
+/**
+ * Bordered paper card.
+ *
+ * [dashed] is drawn dashed, and means what a dashed box means on paper: nothing is mounted here
+ * yet. It is for absences — a «me falta» cell, a section with no cards in it — never for a card
+ * that has pieces behind it. [emphasized] is the opposite end: a double-weight rule for the
+ * cells the collector actually owns, and it gives way to [dashed], because an absence is never
+ * something to emphasize.
+ *
+ * (The parameter used to only change the border colour, while its comment promised both a
+ * dashed rule and an offset shadow the card never drew.)
+ */
 @Composable
 fun FieldCard(
     modifier: Modifier = Modifier,
@@ -190,13 +232,15 @@ fun FieldCard(
     emphasized: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val outline = if (dashed) {
+        Modifier.dashedBorder(Paper.hairline, 1.dp)
+    } else {
+        Modifier.border(width = if (emphasized) 2.dp else 1.dp, color = Paper.line)
+    }
     Column(
         modifier = modifier
             .background(Paper.card)
-            .border(
-                width = if (emphasized) 2.dp else 1.dp,
-                color = if (dashed) Paper.hairline else Paper.line,
-            )
+            .then(outline)
             .padding(PlateMetrics.cardPadding),
         content = content,
     )
@@ -299,7 +343,17 @@ private fun CoinSide(
     onPaper: Boolean = false,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        val frame = Modifier.fillMaxWidth().aspectRatio(1f)
+        // The mount, drawn rather than inherited from the photograph: catalog pictures are shot
+        // on white but cropped tight and unevenly, so a row of them left ragged white rectangles
+        // of different sizes on the cream card. A square of the same white behind every picture,
+        // ruled with the card's own hairline, makes the white deliberate. On the exported sheet
+        // the mount is the paper's own tone, the one PAPER_TINT maps the studio white onto.
+        val frame = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .background(if (onPaper) MOUNT else Color.White)
+            .border(1.dp, Paper.hairline)
+            .padding(3.dp)
         if (url == null) {
             Silhouette(frame)
         } else {

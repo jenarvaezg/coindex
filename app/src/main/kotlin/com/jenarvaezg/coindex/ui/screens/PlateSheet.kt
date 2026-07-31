@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +26,11 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
+import com.jenarvaezg.coindex.ui.PlateCommonFacts
+import com.jenarvaezg.coindex.ui.plateCellFootnote
+import com.jenarvaezg.coindex.ui.plateCommonFacts
+import com.jenarvaezg.coindex.ui.plateEntries
 import com.jenarvaezg.coindex.ui.theme.Paper
-import com.jenarvaezg.coindex.ui.variantEntries
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -101,11 +105,10 @@ fun PlateSheet(
             .padding(SHEET_PADDING),
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
     ) {
+        val common = plateCommonFacts(catalog.members)
         SheetHeading(
             catalog = catalog,
-            entries = listOf("Progreso" to "$ownedMembers / ${members.size} emisiones") +
-                variantEntries(catalog.weightMillioz, catalog.finish) +
-                listOf("Actualizado" to catalog.updatedAt),
+            entries = plateEntries(catalog, ownedMembers, common),
             layout = layout,
         )
         members.chunked(layout.columns).forEach { row ->
@@ -117,6 +120,7 @@ fun PlateSheet(
                     SheetCell(
                         albumMember = albumMember,
                         images = images[albumMember.member.numistaTypeId],
+                        common = common,
                         onImageSettled = onImageSettled,
                         modifier = Modifier.weight(1f),
                     )
@@ -163,12 +167,16 @@ private fun SheetHeading(
             style = MaterialTheme.typography.headlineMedium.scaledBy(scale * 1.55f),
         )
         HorizontalDivider(thickness = 2.dp * scale, color = Paper.ink)
-        Row(
+        // Flowed rather than divided into equal columns: what the plate has to say about itself
+        // grew with the catalogs that share a type or a year, and six equal columns broke the
+        // date across two lines.
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
+            horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER * 2),
+            verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER * scale * 0.5f),
         ) {
             entries.forEach { (label, value) ->
-                Column(modifier = Modifier.weight(1f)) {
+                Column {
                     Text(
                         label.uppercase(),
                         style = MaterialTheme.typography.labelSmall.scaledBy(scale * 1.15f),
@@ -204,6 +212,7 @@ fun sheetImageCount(
 private fun SheetCell(
     albumMember: CollectionCatalogAlbumMember,
     images: TypeImages?,
+    common: PlateCommonFacts,
     onImageSettled: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -229,10 +238,13 @@ private fun SheetCell(
             modifier = Modifier.padding(top = 8.dp),
         )
         Text(albumMember.member.label, style = MaterialTheme.typography.titleMedium)
-        Text(
-            "${albumMember.member.year} · N#${albumMember.member.numistaTypeId}",
-            style = MaterialTheme.typography.labelSmall,
-            color = Paper.muted,
-        )
+        // Same rule as on screen: whatever every cell of the sheet shares is in the heading.
+        plateCellFootnote(albumMember.member, common)?.let { footnote ->
+            Text(
+                footnote,
+                style = MaterialTheme.typography.labelSmall,
+                color = Paper.muted,
+            )
+        }
     }
 }
