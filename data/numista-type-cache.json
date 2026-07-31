@@ -256,6 +256,126 @@
   },
   "weight": 17
  },
+ "10207": {
+  "category": "coin",
+  "commemorated_topic": "Devolución de Macao a China",
+  "comments": "La soberanía de Macao fue transferida de Portugal a China el 20 de diciembre de 1999.",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 10207,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1999,
+  "min_year": 1999,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Las armas de Portugal sobre el valor y un puente parcial al fondo",
+   "lettering": "REPUBLICA PORTUGUESA INCM\r\n500 \r\nESCUDOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63b5e393f21bc4.83161633-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63b5e393f21bc4.83161633-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "723"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 148.01"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 68217,
+    "maxYear": 1999,
+    "minYear": 1999,
+    "title": "500 Escudos (Return of Macau to China; proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Puente sobre el monumento",
+   "engravers": [
+    "Paula Lourenço"
+   ],
+   "lettering": "葡萄牙 - 澳門\r\n1999 PAULA LOURENÇO",
+   "lettering_scripts": [
+    {
+     "name": "China (simplificada)"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63b5e3944cc5e1.23532329-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63b5e3944cc5e1.23532329-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 30,
+  "tags": [
+   "Puente"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.28,
+  "title": "500 Escudos (Return of Macau to China)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/10207",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 500,
+   "text": "500 escudos"
+  },
+  "weight": 14
+ },
  "10339": {
   "category": "coin",
   "comments": "De las monedas fechadas en 1936, 1.700.000 se acuñaron en 1936 y 800.000 en 1937.",
@@ -2963,6 +3083,230 @@
   },
   "weight": 28
  },
+ "11698": {
+  "category": "coin",
+  "commemorated_topic": "Nuestra Señora de la Concepción - N. S. Da Conceicao Padroeira de Portugal",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 11698,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1996,
+  "min_year": 1996,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo",
+   "lettering": "1646 REPUBLICA PORTUGUESA 1996\r\n1000$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/4105-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/4105-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "696"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 159"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 25339,
+    "maxYear": 1996,
+    "minYear": 1996,
+    "title": "1000 Escudos (Our Lady of Conception; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Virgen con el Niño",
+   "lettering": "N.S.DA CONCEICÃO PADROEIRA DE PORTUGAL\r\nH.BATISTA INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/4106-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/4106-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "title": "1000 Escudos (Our Lady of Conception)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/11698",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28
+ },
+ "11699": {
+  "category": "coin",
+  "commemorated_topic": "Centenario de las expediciones oceanográficas",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 11699,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1997,
+  "min_year": 1997,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo y pez",
+   "lettering": "REPUBLICA PORTUGUESA \r\nS.MACHADO\r\nINCM\r\n1997\r\n1000 ESC.",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63ba9a04c906d6.14394471-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63ba9a04c906d6.14394471-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "695"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 160"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 37652,
+    "maxYear": 1997,
+    "minYear": 1997,
+    "title": "1000 Escudos (Oceanographic Expeditions; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Barco debajo de dos bustos enfrentados",
+   "lettering": "CENTENÁRIO DAS EXPEDIÇÕES OCEANOGRÁFICAS\r\nALBERTO I CARLOS I\r\nYacht Amélia\r\n1896 EXPO'98 1897",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63ba9a055fdad9.57653828-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63ba9a055fdad9.57653828-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "tags": [
+   "Bote o embarcación",
+   "Pez"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "title": "1000 Escudos (Oceanographic Expeditions)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/11699",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28
+ },
  "11700": {
   "category": "coin",
   "commemorated_topic": "Exposición del Año Internacional de los Océanos",
@@ -3084,6 +3428,123 @@
    "text": "1000 escudos"
   },
   "weight": 27
+ },
+ "11701": {
+  "category": "coin",
+  "commemorated_topic": "Portugal ocupa la Presidencia del Consejo de la Unión Europea",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/68589a96cee148.48131021-original.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/68589a96cee148.48131021-180.jpg"
+  },
+  "id": 11701,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 2000,
+  "min_year": 2000,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo y dibujos rupestres",
+   "engravers": [
+    "José João de Brito"
+   ],
+   "lettering": "REPÚBLICA PORTUGUESA\r\nJ.J. BRITO 1000$00 INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/2841-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/2841-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "724"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 169"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 68222,
+    "maxYear": 2000,
+    "minYear": 2000,
+    "title": "1000 Escudos (Council of the European Union; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Diseño estilizado",
+   "lettering": "PRESIDÊNCIA DO CONSELHO DA UNIÃO EUROPEIA\r\n- 2000 -",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/2842-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/2842-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.5,
+  "title": "1000 Escudos (Council of the European Union)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/11701",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28.2
  },
  "11702": {
   "category": "coin",
@@ -4689,6 +5150,143 @@
   },
   "weight": 14
  },
+ "13043": {
+  "category": "coin",
+  "commemorated_topic": "300 aniversario de la muerte del Padre António Vieira",
+  "comments": "Antonio Vieira, nacido el 6 de febrero de 1608 en Lisboa y fallecido el 18 de julio de 1697 en Salvador de Bahía, fue un sacerdote jesuita, escritor y predicador portugués.",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/687b8d78e97f91.23271467-original.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/687b8d78e97f91.23271467-180.jpg"
+  },
+  "id": 13043,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1997,
+  "min_year": 1997,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo superpuesto a sol radiante",
+   "engravers": [
+    "Hélder Batista"
+   ],
+   "lettering": "REPÚBLICA PORTUGUESA\r\n.....500$00.....",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/5895-original.jpg",
+   "picture_copyright": "Ulmo",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/5895-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "701"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 146.01"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 68223,
+    "maxYear": 1997,
+    "minYear": 1997,
+    "title": "500 Escudos (Padre António Vieira; Proof issue)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 87334,
+    "maxYear": 1997,
+    "minYear": 1997,
+    "title": "500 Escudos (Padre Antonio Vieira; Bimetallic foil silver and gold)"
+   }
+  ],
+  "reverse": {
+   "description": "Frente a la cabeza",
+   "lettering": "III CENTENÁRIO DA MORTE\r\n16/997\r\nPADRE ANTÓNIO VIEIRA\r\nINCM\r\nH. BATISTA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/5896-original.jpg",
+   "picture_copyright": "Ulmo",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/5896-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 30,
+  "tags": [
+   "Escudo de armas",
+   "Literatura",
+   "Aniversario de fallecimiento",
+   "Sol"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.5,
+  "title": "500 Escudos (Padre António Vieira)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/13043",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 500,
+   "text": "500 escudos"
+  },
+  "weight": 14
+ },
  "13044": {
   "category": "coin",
   "commemorated_topic": "Inauguración del puente Vasco da Gama",
@@ -4960,6 +5558,133 @@
    "text": "500 escudos"
   },
   "weight": 14
+ },
+ "13046": {
+  "category": "coin",
+  "commemorated_topic": "Capital Europea de la Cultura",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/687b902fb3cff6.63714528-original.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/687b902fb3cff6.63714528-180.jpg"
+  },
+  "id": 13046,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 2001,
+  "min_year": 2001,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Armas y valor nacionales",
+   "lettering": "REPUBLICA PORTUGUESA\r\n500\r\nESC\r\nINCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3463-original.jpg",
+   "picture_copyright": "Ulmo",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3463-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "733"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 150.01"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 68230,
+    "maxYear": 2001,
+    "minYear": 2001,
+    "title": "500 Escudos (Porto-European Culture Capital, Proof issue)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 130035,
+    "maxYear": 2001,
+    "minYear": 2001,
+    "title": "500 Escudos (European Culture Capital; Gold)"
+   }
+  ],
+  "reverse": {
+   "description": "Diseño estilizado",
+   "lettering": "2001\r\nPorto\r\nCAPITAL EUROPEIA DA CULTURA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3464-original.jpg",
+   "picture_copyright": "Ulmo",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3464-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 30.1,
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.2,
+  "title": "500 Escudos (European Culture Capital)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/13046",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 500,
+   "text": "500 escudos"
+  },
+  "weight": 13.96
  },
  "13173": {
   "category": "coin",
@@ -13736,6 +14461,124 @@
   },
   "weight": 17
  },
+ "179438": {
+  "category": "coin",
+  "commemorated_topic": "El año del ratón",
+  "comments": "Emitida por la Casa de la Moneda de Perth - Moneda de 1 Onza de Plata de la Serie Lunar 3.<br /><br />\r\nLa Casa de la Moneda de Perth emitió en 2020 una moneda con una marca de privilegio similar a la del dragón de la serie Kookaburra de 2012. El dragón Lunar Mouse está situado debajo del año en el reverso. La tirada está limitada a 30.000 unidades.<br /><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f30d8067ee87.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f30d8067ee87.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a>",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 179438,
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2020,
+  "min_year": 2020,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "6º retrato coronado de la Reina Isabel II mirando hacia la derecha, llevando la Diadema de Estado Jorge IV y el Collar de Coronación Victoriano",
+   "designers": [
+    "Jody Clark"
+   ],
+   "lettering": "ELIZABETH II AUSTRALIA\r\nJC\r\n1oz 9999 Ag 1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/5f64e8e1901289.08750767-original.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5f64e8e1901289.08750767-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "3905"
+   },
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "3906"
+   }
+  ],
+  "reverse": {
+   "description": "Dos ratones alimentándose de hojas de maíz. Carácter chino de ratón a la derecha",
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "lettering": "鼠\r\nMOUSE\r\n2020\r\nP\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/5f64e8e1c49467.96844142-original.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5f64e8e1c49467.96844142-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.6,
+  "tags": [
+   "Roedor",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.21,
+  "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Mouse - Silver Bullion Coin)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/179438",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.1035
+ },
  "180354": {
   "category": "coin",
   "comments": "El octavo diseño de la serie de lingotes de 2 onzas de las Bestias de la Reina, que comenzó en 2016 con el León de Inglaterra, consta de un total de diez Bestias que representan las estatuas que se erigieron en la Abadía de Westminster con motivo de la Coronación de la Reina en 1953. Las estatuas originales se exhiben actualmente en el Museo Canadiense de Historia de Gatineau, mientras que las réplicas esculpidas por James Woodford se encuentran en el Real Jardín Botánico de Kew, Londres.<br /><br />\r\nEste reverso de Jody Clark se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos.",
@@ -16502,6 +17345,257 @@
   },
   "weight": 62.42
  },
+ "19857": {
+  "category": "coin",
+  "commemorated_topic": "200 aniversario del Crédito Público",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/68588756e8bd33.22910742-original.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/68588756e8bd33.22910742-180.jpg"
+  },
+  "id": 19857,
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "1997-12-01"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1997,
+  "min_year": 1997,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo dentro de diseño hexagonal",
+   "engravers": [
+    "João Duarte"
+   ],
+   "lettering": "REPUBLICA - PORTUGUESA\r\n1000\r\nESCUDOS\r\n1997",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/4607-original.jpg",
+   "picture_copyright": "cncote10",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/4607-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "703"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 162"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 73302,
+    "maxYear": 1997,
+    "minYear": 1997,
+    "title": "1000 Escudos (Credito Publico; proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Diseño hexagonal",
+   "engravers": [
+    "João Duarte"
+   ],
+   "lettering": "II CENTENÁRIO DO CRÉDITO PÚBLICO\r\nINCM\r\nIGCP",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/4901-original.jpg",
+   "picture_copyright": "cncote10",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/4901-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.7,
+  "title": "1000 Escudos (Crédito Público)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/19857",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28
+ },
+ "19858": {
+  "category": "coin",
+  "commemorated_topic": "Eurocopa 2004, Portugal",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "demonetization_date": "2001-12-31",
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6858a265ec5186.15324271-original.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6858a265ec5186.15324271-180.jpg"
+  },
+  "id": 19858,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 2001,
+  "min_year": 2001,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Armas nacionales de Portugal y valor",
+   "lettering": "REPUBLICA PORTUGUESA · 2001\r\n1000 ESCUDOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63b5e26b74ad50.66437965-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63b5e26b74ad50.66437965-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "734"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 172.01"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 41063,
+    "maxYear": 2001,
+    "minYear": 2001,
+    "title": "1000 Escudos (2004 UEFA Euro; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Balón de fútbol delante de la red",
+   "engravers": [
+    "José Simão"
+   ],
+   "lettering": "10° Campeonato Europeu de Futebol · UEFA\r\nEuro 2004™ \r\nPortugal\r\nJosé Simão - INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63b5e26c053219.78549597-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63b5e26c053219.78549597-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "tags": [
+   "Fútbol"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.6,
+  "title": "1000 Escudos (2004 UEFA Euro)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/19858",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28.2
+ },
  "20008": {
   "category": "coin",
   "commemorated_topic": "Centenario del Día Internacional de la Mujer",
@@ -16601,6 +17695,136 @@
    "text": "20 euros"
   },
   "weight": 18
+ },
+ "20579": {
+  "category": "coin",
+  "commemorated_topic": "Revolución de los claveles - 25 aniversario",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "demonetization_date": "2001-12-31",
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/68589551d235c5.61154378-original.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/68589551d235c5.61154378-180.jpg"
+  },
+  "id": 20579,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1999,
+  "min_year": 1999,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Círculos en forma de cruz sobre el valor y la fecha",
+   "engravers": [
+    "José Aurélio"
+   ],
+   "lettering": "REPUBLICA PORTUGUESA\r\n1000\r\nESCUDOS\r\n1999\r\nAURÉLIO INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/5efc7613ad9889.68603274-original.jpg",
+   "picture_copyright": "tolnomur",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/5efc7613ad9889.68603274-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "715"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 167"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 20581,
+    "maxYear": 1999,
+    "minYear": 1999,
+    "title": "1000 Escudos (Revolution of April 25; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Fecha y número de aniversario reflejado",
+   "engravers": [
+    "José Aurélio"
+   ],
+   "lettering": "LIBERDADE\tDEMOCRACIA\r\n25 DE ABRIL\r\n25 ANOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/5efc7614525f51.42575933-original.jpg",
+   "picture_copyright": "tolnomur",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/5efc7614525f51.42575933-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40.1,
+  "tags": [
+   "Revolución o guerra civil"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.4,
+  "title": "1000 Escudos (Revolution of April 25)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/20579",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 27
  },
  "20585": {
   "category": "coin",
@@ -17979,6 +19203,236 @@
   },
   "weight": 28
  },
+ "22295": {
+  "category": "coin",
+  "commemorated_topic": "Fragata D.Fernando II E Gloria",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 22295,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1996,
+  "min_year": 1996,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo, mascarón de proa, casco de barco",
+   "lettering": "REPUBLICA PORTUGUESA\r\n1000 ESCUDOS\r\nS.MACHADO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63b5db357c0e08.52108425-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63b5db357c0e08.52108425-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "688"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 158"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 58708,
+    "maxYear": 1996,
+    "minYear": 1996,
+    "title": "1000 Escudos (D. Fernando II and Gloria frigate; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Barco debajo de dos bustos enfrentados",
+   "engravers": [
+    "Raul de Sousa Machado"
+   ],
+   "lettering": "FRAGATA D.FERNANDO II E GLORIA\r\nDAMÃO - 1843 - 1996 - AVEIRO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63b5db35da8543.19182571-original.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63b5db35da8543.19182571-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "tags": [
+   "Escudo de armas",
+   "Bigote o barba",
+   "Monarca",
+   "Bote o embarcación"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 2.5,
+  "title": "1000 Escudos (D.Fernando II and Gloria Frigate)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/22295",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28
+ },
+ "22296": {
+  "category": "coin",
+  "commemorated_topic": "Milenario de la navegación atlántica",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 22296,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1999,
+  "min_year": 1999,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo sobre el logotipo",
+   "lettering": "REPÚBLICA PORTUGUESA\r\nLISBOA\r\nEXPO '98\r\n1.000\r\nESCUDOS\r\nPAULO-GUILHERME",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/4049-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/4049-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "721"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 168"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 37884,
+    "maxYear": 1999,
+    "minYear": 1999,
+    "title": "1000 Escudos (Atlantic Millennium; Proof issue)"
+   }
+  ],
+  "reverse": {
+   "description": "Cara estilizada mirando al barco",
+   "lettering": "MILENIO DO ATLANTICO\r\nINCM    1999    \r\nPAULO-GUILHERME",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/4050-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/4050-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "title": "1000 Escudos (Atlantic Millennium)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/22296",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28
+ },
  "22502": {
   "category": "coin",
   "commemorated_topic": "Paz",
@@ -18209,6 +19663,137 @@
    "text": "1 Dollar"
   },
   "weight": 23.3276
+ },
+ "235118": {
+  "category": "coin",
+  "commemorated_topic": "Año del Buey",
+  "comments": "Emitida por la Casa de la Moneda de Perth - Moneda de 1 Dólar de 1 Onza de Plata Lunar Serie 3.<br /><br />\r\nEmitida individualmente como moneda proof y como moneda proof de color individual.<br />\r\nTambién se emite en una serie de 3 monedas de prueba junto con una moneda de prueba de plata de 50 céntimos y 2 dólares.<br /><br />\r\nTambién se emite en una serie de 3 monedas de prueba con una versión coloreada y dorada de la moneda.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f7be84d5ff38.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f7be84d5ff38.jpg\" alt=\"\" width=\"200\" height=\"108\" /></a><br /><br />\r\nEsta es la versión coloreada.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f7be864effdf.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f7be864effdf.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br /><br />\r\nEsta es la versión dorada<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f7be87db3b94.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f7be87db3b94.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br /><br />\r\nTodas las imágenes son cortesía de la Casa de la Moneda de Perth.<br />\r\n<a href=\"https://www.perthmint.com/catalogue/lunar-themed-coins.aspx\" rel=\"nofollow\">https://www.perthmint.com/catalogue/lunar-themed-coins.aspx</a><br /><br />\r\nTras el lanzamiento de la <span style=\"font-style:italic;\">moneda de plata de 1 oz Lunar Mouse Dragon Priv</span> y en 2020, la Casa de la Moneda de Perth introdujo la <span style=\"font-style:italic;\">moneda de plata de 1 oz Lunar Ox Dragon Privy</span> para complementar esta serie. La tirada mundial está limitada a 30.000 unidades.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6099f18fb3b3d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6099f18fb3b3d.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a> <a href=\"https://en.numista.com/catalogue/images/6099f198eddd4.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6099f198eddd4.jpg\" alt=\"\" width=\"200\" height=\"195\" /></a>",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 235118,
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2021,
+  "min_year": 2021,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "6º retrato coronado de la Reina Isabel II mirando hacia la derecha, llevando la Diadema de Estado Jorge IV y el Collar de Coronación Victoriano",
+   "designers": [
+    "Jody Clark"
+   ],
+   "lettering": "ELIZABETH II AUSTRALIA\r\nJC\r\n1oz 9999 Ag 1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/5f4df5ef114598.69168393-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5f4df5ef114598.69168393-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "4145"
+   },
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "4145.1"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "id": 179438,
+    "maxYear": 2020,
+    "minYear": 2020,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Mouse - Silver Bullion Coin)"
+   }
+  ],
+  "reverse": {
+   "description": "Dos bueyes de pie, madre y cría, rama arriba, carácter chino para Buey a la izquierda.",
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "lettering": "牛\r\nOX\r\n2021\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/5f4df5ef35dfd2.86133692-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5f4df5ef35dfd2.86133692-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+   "Vaca o bovino",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Ox - Silver Bullion Coin)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/235118",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.1035
  },
  "237387": {
   "category": "coin",
@@ -19250,6 +20835,223 @@
    "text": "10 euros"
   },
   "weight": 10
+ },
+ "25338": {
+  "category": "coin",
+  "commemorated_topic": "Fauna amenazada: el lobo",
+  "comments": "Esta moneda forma parte de un programa conjunto con estos países para conmemorar el 500 aniversario del descubrimiento de América.",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 25338,
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "max_year": 1994,
+  "min_year": 1994,
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "obverse": {
+   "description": "Escudo dentro de globo terráqueo en el centro de emblemas variados",
+   "lettering": "REPUBLICA PORTUGUESA\r\n· 1000 ESC ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/2385-original.jpg",
+   "picture_copyright": "A.Monge da Silva",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/2385-180.jpg"
+  },
+  "orientation": "coin",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "676"
+   },
+   {
+    "catalogue": {
+     "code": "Gomes",
+     "id": 108
+    },
+    "number": "R 156"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "id": 27797,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "25 Pesos (Ibero-American Series - Giant Armadillo)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "id": 34410,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "10 Pesos (Ivory-billed Woodpecker)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "id": 34408,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "5000 Sucres (Galapagos Penguins)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "guatemala",
+     "name": "Guatemala"
+    },
+    "id": 34415,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "1 Quetzal (Pavo de cacho)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "id": 34414,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "5 Nuevos Pesos (Pacific Ridley Sea Turtle)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "id": 34412,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "5 Córdobas (Congo Monkey)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "id": 34421,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "1 Nuevo Sol (Environmental Protection)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "id": 34420,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "1000 Escudos (The Wolf, Proof issue)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "id": 60991,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "2000 Pesetas (Spanish Lynx)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "id": 34419,
+    "maxYear": 1994,
+    "minYear": 1994,
+    "title": "200 Pesos Uruguayos (Pampas deer)"
+   }
+  ],
+  "reverse": {
+   "description": "Lobos grises dentro del círculo",
+   "lettering": "ESPÉCIES EM VIA DE EXTINCAO\r\nO LOBO\r\n1994",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/2386-original.jpg",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/2386-180.jpg"
+  },
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "series": "System 1981-2001",
+  "shape": "Circular",
+  "size": 40,
+  "tags": [
+   "Perro o cánido",
+   "Escudo de armas"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "title": "1000 Escudos (The Wolf)",
+  "type": "Monedas circulantes conmemorativas",
+  "url": "https://es.numista.com/25338",
+  "value": {
+   "currency": {
+    "full_name": "Escudo (1911-2001)",
+    "id": 65,
+    "name": "Escudo"
+   },
+   "numeric_value": 1000,
+   "text": "1000 escudos"
+  },
+  "weight": 28.2
  },
  "25340": {
   "category": "coin",
@@ -28455,6 +30257,141 @@
   },
   "weight": 18
  },
+ "307024": {
+  "category": "coin",
+  "commemorated_topic": "Año del Tigre",
+  "comments": "Emitida por la Casa de la Moneda de Perth - Moneda de 1 Dólar de 1 Onza de Plata Lunar Serie 3.<br /><br />\r\nEmitida individualmente como moneda proof y como moneda proof de color individual.<br />\r\nTambién se emite en una serie de 3 monedas de prueba junto con una moneda de prueba de plata de 50 céntimos y 2 dólares.<br /><br />\r\nTambién se emite en una serie de 3 monedas de prueba con una versión coloreada y dorada de la moneda.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/61b4369868606.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61b4369868606.jpg\" alt=\"\" width=\"200\" height=\"102\" /></a><br /><br />\r\nVersión coloreada<br />\r\n<a href=\"https://en.numista.com/catalogue/images/61a43e7e8e030.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61a43e7e8e030.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br /><br />\r\nVersión Dragon Privy<br />\r\n<a href=\"https://en.numista.com/catalogue/images/61b52ea5e0241.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61b52ea5e0241.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a>",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 307024,
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2022,
+  "min_year": 2022,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "6º retrato coronado de la Reina Isabel II mirando hacia la derecha, luciendo la Diadema de Estado Jorge IV y el Collar de la Coronación Victoriano.",
+   "designers": [
+    "Jody Clark"
+   ],
+   "lettering": "ELIZABETH II AUSTRALIA\r\n1oz 9999 Ag 1 DOLLAR\r\nJC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/61599fd3cadbf4.63013141-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/61599fd3cadbf4.63013141-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "4362"
+   }
+  ],
+  "related_types": [
+   {
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "id": 179438,
+    "maxYear": 2020,
+    "minYear": 2020,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Mouse - Silver Bullion Coin)"
+   },
+   {
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "id": 235118,
+    "maxYear": 2021,
+    "minYear": 2021,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Ox - Silver Bullion Coin)"
+   }
+  ],
+  "reverse": {
+   "description": "Cachorro de tigre siguiendo a su orgulloso y protector progenitor por un terreno rocoso con helechos y bambú.",
+   "designers": [
+    "Jennifer McKenna"
+   ],
+   "lettering": "虎\r\nTIGER\r\n2022\r\nP\r\nJM",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6159a507df85a5.59204604-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6159a507df85a5.59204604-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+   "Gato o felino",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Tiger; Silver Bullion)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/307024",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.1035
+ },
  "307039": {
   "category": "coin",
   "commemorated_topic": "200 aniversario del nacimiento de F. M. Dostoievski",
@@ -31740,6 +33677,109 @@
    "text": "2 Marks"
   },
   "weight": 8
+ },
+ "342221": {
+  "category": "coin",
+  "commemorated_topic": "Año del Conejo",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 342221,
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2023,
+  "min_year": 2023,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "Sexto retrato coronado de la Reina Isabel II mirando hacia la derecha, llevando la Diadema de Estado Jorge IV y el Collar de Coronación Victoriano",
+   "designers": [
+    "Jody Clark"
+   ],
+   "lettering": "ELIZABETH II AUSTRALIA\r\nJC\r\n1OZ 9999 Ag  1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/633bbd57addf78.08597142-original.jpg",
+   "picture_copyright": "DominusDeus",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/633bbd57addf78.08597142-180.jpg"
+  },
+  "orientation": "medal",
+  "reverse": {
+   "description": "Un conejo alerta con las orejas erguidas y otro conejo estirándose\r\nhacia una rama en ciernes, carácter chino para Conejo a la derecha.",
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "lettering": "兔\r\nRABBIT\r\n2023\r\nP\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/633bc4f913fde4.29716288-original.jpg",
+   "picture_copyright": "DominusDeus",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/633bc4f913fde4.29716288-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+   "Conejo",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Elizabeth II (6th Portrait; Posthumous - Year of the Rabbit)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/342221",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.1035
  },
  "344941": {
   "category": "coin",
@@ -36491,6 +38531,117 @@
    "text": "3 Roubles"
   },
   "weight": 34.88
+ },
+ "386213": {
+  "category": "coin",
+  "commemorated_topic": "Año del Dragón",
+  "comments": "<p>BU</p>",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 386213,
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2024,
+  "min_year": 2024,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "Sexto retrato coronado de la reina Isabel II mirando hacia la derecha, con la diadema de Estado de Jorge IV y el collar de la Coronación Victoriana, Anverso conmemorativo.",
+   "designers": [
+    "Jody Clark"
+   ],
+   "lettering": "ELIZABETH II AUSTRALIA 1952-2022\r\n1oz 9999 Ag 1 DOLLAR\r\nJC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/65523f85a05f51.79882036-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/65523f85a05f51.79882036-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "4639"
+   }
+  ],
+  "reverse": {
+   "description": "El reverso representa un dragón mítico chino con olas estilizadas y niebla.",
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "lettering": "龍\r\nDRAGON\r\n2024\r\nP125\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/65523f86290338.28600048-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/65523f86290338.28600048-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+   "Animal fantástico",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Silver)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/386213",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.107
  },
  "387614": {
   "category": "coin",
@@ -41266,6 +43417,116 @@
   },
   "weight": 34.56
  },
+ "441816": {
+  "category": "coin",
+  "commemorated_topic": "Año de la Serpiente",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 441816,
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2025,
+  "min_year": 2025,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda.",
+   "designers": [
+    "Dan Thorne"
+   ],
+   "lettering": "CHARLES III AUSTRALIA\r\nDT\r\n1OZ 9999 Ag  1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/69678b49db5243.82571161-original.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/69678b49db5243.82571161-180.jpg"
+  },
+  "orientation": "medal",
+  "references": [
+   {
+    "catalogue": {
+     "code": "KM",
+     "id": 3
+    },
+    "number": "4811"
+   }
+  ],
+  "reverse": {
+   "description": "Una serpiente enroscada en las rocas.",
+   "designers": [
+    "Sean Rogers"
+   ],
+   "lettering": "蛇\r\nSNAKE\r\n2025\r\nP\r\nSR",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/69678b4a7cfc57.23378079-original.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/69678b4a7cfc57.23378079-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+   "Reptil",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Charles III (1st Portrait - Year of the Snake; Silver)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/441816",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.1035
+ },
  "442604": {
   "category": "coin",
   "commemorated_topic": "En honor del clíper británico de té y lana \"Cutty Sark\" 1869",
@@ -43938,6 +46199,111 @@
    "text": "3 Roubles"
   },
   "weight": 34.56
+ },
+ "483798": {
+  "category": "coin",
+  "commemorated_topic": "Año del caballo",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "edge": {
+   "description": "Reed"
+  },
+  "id": 483798,
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2025-09-03"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "max_year": 2026,
+  "min_year": 2026,
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda",
+   "designers": [
+    "Dan Thorne"
+   ],
+   "lettering": "· CHARLES III AUSTRALIA ·\r\n1oz 9999 Ag 1 DOLLAR\r\nDT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/68b778bdb85a00.54835740-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/68b778bdb85a00.54835740-180.jpg"
+  },
+  "orientation": "medal",
+  "reverse": {
+   "description": "Una yegua galopando junto a su joven potro con montañas y praderas de fondo.",
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "lettering": "馬\r\nHORSE\r\n2026\r\nP\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/68b778c0cc4822.85081849-original.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/68b778c0cc4822.85081849-180.jpg"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    },
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274"
+   }
+  ],
+  "series": "Lunar Series III",
+  "shape": "Circular",
+  "size": 40.9,
+  "tags": [
+   "Caballo o equino",
+   "Calendario chino"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.5,
+  "title": "1 Dollar - Charles III (1st Portrait - Year of the Horse - Silver)",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/483798",
+  "value": {
+   "currency": {
+    "full_name": "Dólar (1966-presente)",
+    "id": 243,
+    "name": "Dólar"
+   },
+   "numeric_value": 1,
+   "text": "1 Dollar"
+  },
+  "weight": 31.107
  },
  "484131": {
   "category": "exonumia",
