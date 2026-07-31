@@ -73,6 +73,7 @@ class FieldReportTest {
         println(header(directory, items, typeMeta, catalogs, groupings))
         println(proposalReport(derivation, catalogs, items))
         println(unclassifiedReport(derivation.unclassified, typeMeta))
+        println(unpublishedReport(items, typeMeta))
     }
 
     /** The same two hops the sync makes: Numista DTO to row, row to domain. */
@@ -182,6 +183,51 @@ class FieldReportTest {
             )
         }
     }
+
+    /**
+     * The types with no year at all, which is the offline trace of an unpublished Numista page.
+     *
+     * A referee has to publish a submission before it becomes publicly visible, and can also ask
+     * for editing or delete it outright — but the API serves the draft meanwhile, with every field
+     * exactly as the contributor left it. Measured over the two collections and the seeded cache,
+     * a missing `min_year` picked out the three unpublished pages and nothing else. It is a trace,
+     * not the state itself: an undated medal that Numista did publish lands here too, and the
+     * answer for it is simply «published, dated nowhere».
+     *
+     * Worth its own section because the damage is invisible from the outside. A draft with no
+     * family piles up in «Sin clasificar» like any orphan, but one with a half-typed family — the
+     * `series: "The"` of N#596807 — becomes a card named after the typo, and only the collector
+     * who owns that piece ever sees it.
+     */
+    private fun unpublishedReport(items: List<CollectedItem>, typeMeta: TypeMetaIndex): String =
+        buildString {
+            val undated = items
+                .map { it.typeId }
+                .distinct()
+                .sorted()
+                .mapNotNull { typeId -> typeMeta[typeId] }
+                .filter { it.minYear == null && it.maxYear == null }
+            appendLine()
+            appendLine("== FICHAS SIN AÑO: POSIBLE PÁGINA SIN PUBLICAR (${undated.size}) ==")
+            if (undated.isEmpty()) {
+                appendLine("· ninguna")
+                return@buildString
+            }
+            appendLine(
+                "Comprueba cada una en numista.com: «This page has not been published yet» " +
+                    "significa que no es verificable, así que no puede entrar en un catálogo " +
+                    "ni en una agrupación, y merece su issue en el repo.",
+            )
+            for (meta in undated) {
+                val family = meta.family
+                val symptom = when {
+                    family == null -> "sin familia: cae en «Sin clasificar» como cualquier huérfana"
+                    else -> "familia «$family»: sale en una tarjeta con ese nombre"
+                }
+                appendLine("· N#${meta.id} ${meta.title ?: "?"}")
+                appendLine("    $symptom")
+            }
+        }
 
     private fun weightLabel(weightMillioz: Int?): String =
         weightMillioz?.let { "${it / 1000.0} oz" } ?: "conjunto"

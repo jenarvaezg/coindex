@@ -76,6 +76,16 @@ It **declares** that variant rather than inferring it: for the types it names, i
 and finish are the key, whatever grams Numista records for each one (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
+**Unpublished type**:
+A Numista type whose page is not publicly visible yet, because a referee has still to publish,
+edit or delete the submission. The API serves it anyway, with every field as the contributor
+left it, so a half-typed family arrives as a real family and becomes a card of its own. It is
+**not verifiable**, and verified is what a curated file requires: an unpublished type never
+enters a collection catalog or a curated grouping, however certain the coin is, because the
+referee may delete the page and take the id with it. Nothing corrects it in the app — the
+editor's fix upstream is the fix. Its offline trace is a type with no year at all.
+_Avoid_: Numista error, manual override, missing type metadata
+
 **Collection catalog plate**:
 The per-collector comparison between a followed collection proposal and its matching
 collection catalog. It can show owned and Missing catalog members without changing the
