@@ -58,8 +58,8 @@
      siendo propuestas separadas, como ya hacen Tudor Beasts y Lunar II). Primer conjunto
      vivo: `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
      7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres).
-2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 608 tipos
-   (respuestas íntegras de `GET /types/{id}?lang=es`). Costó ~630 llamadas de API;
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 634 tipos
+   (respuestas íntegras de `GET /types/{id}?lang=es`). Costó ~650 llamadas de API;
    empaquetarlo como seed de la tabla de caché para que ningún usuario las repita.
    Incluye los 470 tipos referenciados por los catálogos: las láminas muestran todos los
    diseños (incluidos los "me falta") sin gastar presupuesto.

@@ -15723,6 +15723,109 @@
   },
   "weight": 27.07
  },
+ "188952": {
+  "id": 188952,
+  "url": "https://es.numista.com/188952",
+  "title": "5 Dollars - Elizabeth II (Equilibrium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "tokelau",
+   "name": "Tokelau"
+  },
+  "min_year": 2018,
+  "max_year": 2018,
+  "ruler": [
+   {
+    "id": 1087,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 808,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 8632,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1978-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "thickness": 2.8,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "La Efigie de la Reina en medallón, circuito electrónico y la Libra (símbolo del equilibrio).",
+   "lettering": "EQUILIBRIUM\r\nELIZABETH II\r\nIRB\r\nTOKELAU\r\nMMXVIII  2018  MMXVIII",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/5fb4e78b87f2b0.79716137-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/5fb4e78b87f2b0.79716137-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "reverse": {
+   "description": "Símbolo Yin-Yang, equilibrio entre naturaleza y tecnología",
+   "lettering": "5 DOLLARS\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/5fb4e78bec0e87.95294206-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/5fb4e78bec0e87.95294206-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "series": "Equilibrium",
+  "comments": "Los filósofos de la antigua Asia siempre han tenido un tema popular: La armonía. El yin-yang era el símbolo que describía su juego. Esta moneda del Equilibrio se refiere a la necesidad esencial de equilibrio y armonía entre tecnología y naturaleza, civilización y hábitat, dinero y tiempo, trabajo y descanso, Inteligencia artificial e inteligencia humana, etc.",
+  "tags": [
+   "Árbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "267"
+   }
+  ],
+  "weight": 31.31,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "18940": {
   "category": "coin",
   "commemorated_topic": "150 aniversario de la muerte de Sucre",
@@ -16728,6 +16831,109 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "194187": {
+  "id": 194187,
+  "url": "https://es.numista.com/194187",
+  "title": "5 Dollars - Elizabeth II (Equilibrium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "tokelau",
+   "name": "Tokelau"
+  },
+  "min_year": 2019,
+  "max_year": 2019,
+  "ruler": [
+   {
+    "id": 1087,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 808,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 8632,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1978-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "thickness": 2.8,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Efigie de Ian Rank-Broadley de la reina Isabel II mirando hacia la derecha con doble hélice a derecha e izquierda. Peso y pureza arriba y valor abajo.",
+   "lettering": "1oz FINE SILVER 999\r\nELIZABETH II\r\nIRB\r\nTOKELAU\r\n5 DOLLARS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/61b1c49e2396d5.10055772-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/61b1c49e2396d5.10055772-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "reverse": {
+   "description": "Mariposa estilizada con símbolos yin-yang y código genético a derecha e izquierda.",
+   "lettering": "EQUILIBRIUM\r\n2019",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/61b1c49e888e47.11759779-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/61b1c49e888e47.11759779-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "series": "Equilibrium",
+  "comments": "Acuñada por la Casa de la Moneda de Pressburg, Eslovaquia, sobre cospeles certificados LBMA proporcionados por SEMPSA JP, que forma parte del Grupo Heimerle + Meule. La ceca de Pressburg, también llamada Bratislavska Mincovna, tiene su sede en Bratislava (Eslovaquia) y revive la historia tradicional de la antigua ceca del país.<br /><br />\r\nLa serie Equilibrium presentará diseños cambiantes cada año, todos ellos señalando la necesidad de armonía. La primera entrega se centra en la necesidad de armonía entre la naturaleza y la tecnología.<br /><br />\r\nCientíficos de todo el mundo utilizan ya la edición genética para tratar enfermedades, modificar plantas y animales e incluso crear bebés de diseño. Estas técnicas tienen el potencial de revolucionar la medicina, acabar con el hambre, salvar especies amenazadas o simplemente cambiar el color del ala de una mariposa. Son muy prometedoras, pero también suponen un gran peligro de daños irreversibles para la salud de las generaciones futuras, abren las puertas a nuevas formas de desigualdad social, discriminación y conflicto. Recientemente se han utilizado técnicas de ingeniería genética para modificar la línea germinal humana.",
+  "tags": [
+   "Insecto"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "278"
+   }
+  ],
+  "weight": 31.31,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "19499": {
   "category": "coin",
@@ -20170,6 +20376,95 @@
    "text": "2 libras"
   },
   "weight": 31.21
+ },
+ "241862": {
+  "id": 241862,
+  "url": "https://es.numista.com/241862",
+  "title": "5 Dollars - Elizabeth II (Equilibrium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "tokelau",
+   "name": "Tokelau"
+  },
+  "min_year": 2020,
+  "max_year": 2020,
+  "ruler": [
+   {
+    "id": 1087,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 808,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 8632,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1978-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "La efigie de la reina Isabel II",
+   "lettering": "ELIZABETH II \r\nTOKELAU \r\n20 20\r\nIRB\r\n1oz FINE SILVER \r\n999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/5f944432ea0539.68583456-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/5f944432ea0539.68583456-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "reverse": {
+   "description": "Símbolo Yin-Yang, Mano humana y mano robótica",
+   "lettering": "EQUILIBRIUM \r\n5 DOLLARS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/5f9444333ad7e1.12869241-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/5f9444333ad7e1.12869241-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "series": "Equilibrium",
+  "weight": 31.135,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "242195": {
   "category": "coin",
@@ -30516,6 +30811,93 @@
   },
   "weight": 17
  },
+ "307244": {
+  "id": 307244,
+  "url": "https://es.numista.com/307244",
+  "title": "5 Dollars - Elizabeth II (Equilibrium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "tokelau",
+   "name": "Tokelau"
+  },
+  "min_year": 2021,
+  "max_year": 2021,
+  "ruler": [
+   {
+    "id": 1087,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 808,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 8632,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1978-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "La efigie de la reina Isabel II",
+   "lettering": "ELIZABETH II - TOKELAU\r\n20 21\r\nIRB\r\n5 DOLLARS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/615d5df6a365a0.23639151-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/615d5df6a365a0.23639151-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "reverse": {
+   "lettering": "EQUILIBRIUM\r\n1oz FINE SILVER 9999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/615d5df6ee9450.92643850-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/615d5df6ee9450.92643850-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "series": "Equilibrium",
+  "weight": 31.1,
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "307798": {
   "category": "coin",
   "comments": "Primer diseño de la serie Las Bestias de los Tudor, hay un total de diez Bestias que representan las estatuas que se alzan en el palacio de Hampton Court.<br /><br />\r\nEste diseño del reverso de David Lawrence se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos. Límite de emisión: 7.010<br />\r\n<a href=\"https://en.numista.com/catalogue/images/61649e38b62a1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61649e38b62a1.jpg\" alt=\"\" width=\"200\" height=\"199\" /></a><br />\r\n© The Royal Mint, 2022<br /><br />\r\nTambién se emitió un juego de 2 monedas con una edición de reverso esmerilado. Límite de emisión: 1.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/620053a263e88.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/620053a263e88.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/620053b052655.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/620053b052655.jpg\" alt=\"\" width=\"199\" height=\"145\" /></a><br />\r\n© The Royal Mint, 2022",
@@ -32987,6 +33369,93 @@
    "text": "2 Roubles"
   },
   "weight": 17
+ },
+ "334281": {
+  "id": 334281,
+  "url": "https://es.numista.com/334281",
+  "title": "5 Dollars - Elizabeth II (Equilibrium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "tokelau",
+   "name": "Tokelau"
+  },
+  "min_year": 2022,
+  "max_year": 2022,
+  "ruler": [
+   {
+    "id": 1087,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 808,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 8632,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1978-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "La efigie de la reina Isabel II",
+   "lettering": "ELIZABETH II - TOKELAU 2022\r\nIRB\r\n1 oz FINE SILVER 9999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/62d9d9bba38a08.85472847-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/62d9d9bba38a08.85472847-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "reverse": {
+   "lettering": "EQUILIBRIUM - 5 DOLLARS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/62d9d9bcdc3341.53710121-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/62d9d9bcdc3341.53710121-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "series": "Equilibrium",
+  "weight": 31.1,
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "334411": {
   "category": "coin",
@@ -40778,6 +41247,106 @@
   },
   "weight": 34.56
  },
+ "407407": {
+  "id": 407407,
+  "url": "https://es.numista.com/407407",
+  "title": "5 Dollars - Charles III (Equilibrium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "tokelau",
+   "name": "Tokelau"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 6840,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 808,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 8632,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1978-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Dan Thorne"
+   ],
+   "description": "La efigie del rey Carlos III",
+   "lettering": "CHARLES III - 2024 TOKELAU \r\nDT\r\n5 DOLLARS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/66040baeec7141.96613673-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/66040baeec7141.96613673-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "reverse": {
+   "description": "Un ángel y un demonio",
+   "lettering": "EQUILIBRIUM \r\n1 OZ FINE SILVER 9999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/tokelau/66040baf8b3aa7.72981923-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/tokelau/66040baf8b3aa7.72981923-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "series": "Equilibrium",
+  "tags": [
+   "Mitología"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "427"
+   }
+  ],
+  "weight": 31.1,
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "412143": {
   "category": "coin",
   "commemorated_topic": "150 aniversario del nacimiento de E. F. Gnesina",
@@ -45995,6 +46564,92 @@
    "text": "2 libras"
   },
   "weight": 31.21
+ },
+ "477907": {
+  "id": 477907,
+  "url": "https://es.numista.com/477907",
+  "title": "2 Dollars - Charles III (Equilibrium)",
+  "object_type": {
+   "id": 47,
+   "name": "Monedas de colección"
+  },
+  "issuer": {
+   "code": "niue",
+   "name": "Niue"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 6839,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 807,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 Dollars",
+   "numeric_value": 2,
+   "currency": {
+    "id": 8674,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1987-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.5,
+  "thickness": 2.7,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas",
+   "lettering": "NIUE 2025\r\nPUBLIC SEAL OF NIUE\r\nATUA\r\nNIUE TUKULAGI\r\n1 OZ FINE SILVER 9999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/niue/68835f11b8cff4.74027627-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/niue/68835f11b8cff4.74027627-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "reverse": {
+   "lettering": "EQUILIBRIUM\r\n2 DOLLARS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/niue/68835f125e4d18.65026999-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/niue/68835f125e4d18.65026999-180.jpg",
+   "picture_copyright": "Power Coin",
+   "picture_copyright_url": "https://www.powercoin.it/"
+  },
+  "series": "Equilibrium",
+  "weight": 31.31,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5169,
+    "name": "Pressburg Mint"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de colección"
  },
  "48338": {
   "category": "coin",

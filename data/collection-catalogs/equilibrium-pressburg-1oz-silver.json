@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "id": "equilibrium-pressburg-1oz-silver",
+  "name": "Equilibrium · Pressburg Mint · 1 oz de plata",
+  "issuer_code": "tokelau",
+  "family": "Equilibrium",
+  "weight_millioz": 1000,
+  "finish": null,
+  "source": "https://en.numista.com/catalogue/series.php?id=3245",
+  "updated_at": "2026-07-31",
+  "members": [
+    {
+      "id": "2018-equilibrium-tokelau",
+      "label": "Equilibrium · Tokelau",
+      "year": 2018,
+      "numista_type_id": 188952
+    },
+    {
+      "id": "2019-equilibrium-tokelau",
+      "label": "Equilibrium · Tokelau",
+      "year": 2019,
+      "numista_type_id": 194187
+    },
+    {
+      "id": "2020-equilibrium-tokelau",
+      "label": "Equilibrium · Tokelau",
+      "year": 2020,
+      "numista_type_id": 241862
+    },
+    {
+      "id": "2021-equilibrium-tokelau",
+      "label": "Equilibrium · Tokelau",
+      "year": 2021,
+      "numista_type_id": 307244
+    },
+    {
+      "id": "2022-equilibrium-tokelau",
+      "label": "Equilibrium · Tokelau",
+      "year": 2022,
+      "numista_type_id": 334281
+    },
+    {
+      "id": "2023-equilibrium-niue",
+      "label": "Equilibrium · Niue",
+      "year": 2023,
+      "numista_type_id": 356004
+    },
+    {
+      "id": "2024-equilibrium-tokelau",
+      "label": "Equilibrium · Tokelau",
+      "year": 2024,
+      "numista_type_id": 407407
+    },
+    {
+      "id": "2025-equilibrium-niue",
+      "label": "Equilibrium · Niue",
+      "year": 2025,
+      "numista_type_id": 477907
+    }
+  ]
+}

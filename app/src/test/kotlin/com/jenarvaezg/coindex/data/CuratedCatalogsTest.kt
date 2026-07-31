@@ -20,7 +20,7 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(24, catalogs.size)
+        assertEquals(25, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
@@ -201,6 +201,36 @@ class CuratedCatalogsTest {
         assertTrue(lunar.members.none { it.numistaTypeId in royalAustralianMint })
         // El cerdo de 2019 cierra Lunar II; esta empieza en el ratón de 2020.
         assertEquals(2019, find("lunar-ii-perth-1oz-bullion").members.last().year)
+    }
+
+    /**
+     * Equilibrium es una serie de Numista que da **tres** colecciones y no una (#43): ocho onzas
+     * de plata, cinco décimos de onza de oro y cinco onzas de oro. Se cura la de plata, que es la
+     * que el coleccionista persigue, y el oro se queda fuera a propósito: además de fallar la
+     * intención del #33, la onza de oro comparte hoy clave de variante con la de plata —los dos
+     * pesan 31,1 g— hasta que el metal entre en la clave (#62).
+     *
+     * El emisor alterna por año entre Tokelau y Niue sin que el programa cambie de ceca: es un
+     * acuerdo de respaldo legal de la Pressburg Mint, así que las ocho son una tirada anual.
+     */
+    @Test
+    fun `equilibrium is the pressburg silver ounce from 2018 to 2025`() {
+        val equilibrium = find("equilibrium-pressburg-1oz-silver")
+        assertEquals(1, equilibrium.schemaVersion)
+        assertEquals("Equilibrium", equilibrium.family)
+        assertEquals(1_000, equilibrium.weightMillioz)
+        assertNull(equilibrium.finish)
+        assertEquals((2018..2025).toList(), equilibrium.members.map { it.year })
+        assertEquals(
+            listOf(188_952, 194_187, 241_862, 307_244, 334_281, 356_004, 407_407, 477_907),
+            equilibrium.members.map { it.numistaTypeId },
+        )
+        // Las diez de oro de la misma serie: décimo de onza y onza, ninguna es casilla de esta.
+        val gold = listOf(
+            307_242, 334_283, 356_002, 407_410, 477_905,
+            309_842, 334_282, 356_003, 407_409, 477_904,
+        )
+        assertTrue(equilibrium.members.none { it.numistaTypeId in gold })
     }
 
     @Test
