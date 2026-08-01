@@ -158,6 +158,7 @@ class CollectionCatalogValidationTest {
               "issuer_code": "australia",
               "family": "Lunar Series III",
               "weight_millioz": 1000,
+              "metal": "silver",
               "series_status": "open",
               "source": "https://en.numista.com/catalogue/series.php?id=4750",
               "updated_at": "2026-08-01",
