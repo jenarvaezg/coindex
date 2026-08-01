@@ -2,6 +2,9 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
+import com.jenarvaezg.coindex.domain.ItemRef
+import com.jenarvaezg.coindex.domain.MemberStatus
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -146,5 +149,79 @@ class PlateLabelsTest {
         val entries = plateEntries(catalog(issueRun), ownedMembers = 0)
 
         assertEquals("Año" to "1966", entries[entries.size - 2])
+    }
+
+    @Test
+    fun `an unlisted year prevents a different year becoming common`() {
+        val unlisted = CollectionCatalogMember(
+            id = "2023-rabbit",
+            label = "Year of the Rabbit",
+            year = 2023,
+            status = MemberStatus.Unlisted,
+            source = "https://www.perthmint.com/year-of-the-rabbit/",
+            sourceNote = "Acuñada y vendida; Numista no tiene una ficha publicada.",
+        )
+
+        assertEquals(
+            PlateCommonFacts(numistaTypeId = 1_885, year = null),
+            plateCommonFacts(issueRun + unlisted),
+        )
+        assertEquals(
+            "2023",
+            plateCellFootnote(unlisted, plateCommonFacts(issueRun + unlisted)),
+        )
+    }
+
+    @Test
+    fun `unlisted emissions stay outside progress and are explained in prose`() {
+        val unlisted = CollectionCatalogMember(
+            id = "2023-rabbit",
+            label = "Year of the Rabbit",
+            year = 2023,
+            status = MemberStatus.Unlisted,
+            source = "https://www.perthmint.com/year-of-the-rabbit/",
+            sourceNote = "Acuñada y vendida; Numista no tiene una ficha publicada.",
+        )
+        val announced = CollectionCatalogMember(
+            id = "2027-goat",
+            label = "Year of the Goat",
+            status = MemberStatus.Announced,
+            source = "https://www.perthmint.com/lunar-series-iii/",
+            sourceNote = "La ceca anunció el diseño, pero aún no lo ha emitido.",
+        )
+
+        val entries = plateEntries(catalog(dateRun + unlisted + announced), ownedMembers = 1)
+
+        assertEquals("Progreso" to "1 / 2 emisiones", entries[0])
+        assertEquals("Sin emitir" to "1 anunciada", entries[1])
+        assertEquals("Sin ficha" to "1 emisión no medible", entries[2])
+    }
+
+    @Test
+    fun `plate state labels distinguish every album status`() {
+        assertEquals("Me falta", plateMemberStateLabel(CollectionCatalogMemberStatus.Missing))
+        assertEquals("Sin ficha", plateMemberStateLabel(CollectionCatalogMemberStatus.Unlisted))
+        assertEquals(
+            "Sin emitir",
+            plateMemberStateLabel(CollectionCatalogMemberStatus.NotYetIssued),
+        )
+        assertEquals(
+            "Tengo",
+            plateMemberStateLabel(
+                CollectionCatalogMemberStatus.Owned(
+                    quantity = 1,
+                    items = listOf(ItemRef(itemId = 1, typeId = 1_885, quantity = 1)),
+                ),
+            ),
+        )
+        assertEquals(
+            "Tengo · ×2",
+            plateMemberStateLabel(
+                CollectionCatalogMemberStatus.Owned(
+                    quantity = 2,
+                    items = listOf(ItemRef(itemId = 1, typeId = 1_885, quantity = 2)),
+                ),
+            ),
+        )
     }
 }

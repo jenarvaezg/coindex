@@ -13,6 +13,14 @@ sealed interface CollectionCatalogMemberStatus {
     data object Missing : CollectionCatalogMemberStatus
 
     /**
+     * This coin was struck and sold, but Numista has no published type for it (#48).
+     *
+     * The app cannot know whether the collector owns it because every inventory row comes from
+     * Numista and therefore has a type. Calling it `Missing` would claim knowledge we do not have.
+     */
+    data object Unlisted : CollectionCatalogMemberStatus
+
+    /**
      * The issuer named this one and has not struck it, so no money can buy it (#31).
      *
      * The third state the spec §1 promised and the §5 golden table required, and which never
@@ -37,13 +45,16 @@ data class CollectionCatalogAlbum(
         members.count { it.status is CollectionCatalogMemberStatus.Owned }
 
     /**
-     * The denominator of the plate: what the collector could actually buy.
+     * The denominator of the plate: what the app can measure from the Numista-backed inventory.
      *
-     * An announced member in the divisor inflates the gap with a slot nobody can fill. That the
-     * series will have ten is said in prose, not as a divisor.
+     * Announced and unlisted members are both unmeasurable by the app. Their existence is said in
+     * prose, not as a divisor.
      */
     fun issuedMembers(): Int =
-        members.count { it.status !is CollectionCatalogMemberStatus.NotYetIssued }
+        members.count { member ->
+            member.status is CollectionCatalogMemberStatus.Owned ||
+                member.status is CollectionCatalogMemberStatus.Missing
+        }
 
     fun announcedMembers(): Int =
         members.count { it.status is CollectionCatalogMemberStatus.NotYetIssued }
@@ -56,17 +67,26 @@ fun buildCollectionCatalogAlbum(
     catalogId = catalog.id,
     name = catalog.name,
     members = catalog.members.map { member ->
-        val ownedItems = items
-            .filter { item -> catalog.memberMatches(member, item) }
-            .map { item -> ItemRef(item.id, item.typeId, item.quantity) }
         val status = when {
+            // Never inspect inventory for a member the Numista-backed inventory cannot represent.
+            member.isUnlisted -> CollectionCatalogMemberStatus.Unlisted
             // Never `Missing`, by contract: an unstruck slot is not a hole in the collection.
             member.isAnnounced -> CollectionCatalogMemberStatus.NotYetIssued
-            ownedItems.isEmpty() -> CollectionCatalogMemberStatus.Missing
-            else -> CollectionCatalogMemberStatus.Owned(
-                quantity = ownedItems.fold(0) { total, item -> saturatingAdd(total, item.quantity) },
-                items = ownedItems,
-            )
+            else -> {
+                val ownedItems = items
+                    .filter { item -> catalog.memberMatches(member, item) }
+                    .map { item -> ItemRef(item.id, item.typeId, item.quantity) }
+                if (ownedItems.isEmpty()) {
+                    CollectionCatalogMemberStatus.Missing
+                } else {
+                    CollectionCatalogMemberStatus.Owned(
+                        quantity = ownedItems.fold(0) { total, item ->
+                            saturatingAdd(total, item.quantity)
+                        },
+                        items = ownedItems,
+                    )
+                }
+            }
         }
         CollectionCatalogAlbumMember(member, status)
     },

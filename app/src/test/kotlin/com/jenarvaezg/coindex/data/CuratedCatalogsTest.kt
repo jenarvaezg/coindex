@@ -452,8 +452,8 @@ class CuratedCatalogsTest {
         // Se sabe cuál falta y no cuándo, así que no lleva año.
         assertNull(panther.year)
         assertEquals(307_800, panther.designTypeId)
-        assertTrue(panther.announcedSource?.startsWith("https://") == true)
-        assertTrue(panther.announcedNote?.isNotBlank() == true)
+        assertTrue(panther.source?.startsWith("https://") == true)
+        assertTrue(panther.sourceNote?.isNotBlank() == true)
 
         // El padre tiene piezas proof de esta serie: si el diseño emparejara, una de ellas
         // rellenaría una casilla de bullion que no existe.

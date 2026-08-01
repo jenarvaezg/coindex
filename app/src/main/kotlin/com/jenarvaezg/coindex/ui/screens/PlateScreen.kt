@@ -47,6 +47,7 @@ import com.jenarvaezg.coindex.ui.PlateCommonFacts
 import com.jenarvaezg.coindex.ui.plateCellFootnote
 import com.jenarvaezg.coindex.ui.plateCommonFacts
 import com.jenarvaezg.coindex.ui.plateEntries
+import com.jenarvaezg.coindex.ui.plateMemberStateLabel
 import com.jenarvaezg.coindex.ui.plateExportMessage
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
@@ -267,12 +268,7 @@ private fun PlateCell(
     onOpenSource: (String) -> Unit,
 ) {
     val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
-    val stateLabel = when {
-        albumMember.status is CollectionCatalogMemberStatus.NotYetIssued -> "Sin emitir"
-        owned == null -> "Me falta"
-        owned.quantity > 1 -> "Tengo · ×${owned.quantity}"
-        else -> "Tengo"
-    }
+    val stateLabel = plateMemberStateLabel(albumMember.status)
     val typeId = albumMember.member.numistaTypeId
     FieldCard(emphasized = owned != null, dashed = owned == null) {
         CoinSides(

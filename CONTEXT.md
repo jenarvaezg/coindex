@@ -76,6 +76,14 @@ It **declares** that variant rather than inferring it: for the types it names, i
 and finish are the key, whatever grams Numista records for each one (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
+**Unlisted member**:
+A collection-catalog member for a coin that was struck and sold but has no published Numista
+type. Its slot is not measurable from the Numista-backed inventory, so an Album marks it neither
+Owned nor Missing and leaves it outside the plate denominator. An unpublished type awaiting a
+referee can be why the member remains unlisted, but its unstable id is never written into the
+curated catalog.
+_Avoid_: Missing, announced member, unpublished type
+
 **Unpublished type**:
 A Numista type whose page is not publicly visible yet, because a referee has still to publish,
 edit or delete the submission. The API serves it anyway, with every field as the contributor
