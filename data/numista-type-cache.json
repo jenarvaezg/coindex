@@ -43922,6 +43922,123 @@
   },
   "weight": 33.94
  },
+ "404024": {
+  "id": 404024,
+  "url": "https://es.numista.com/404024",
+  "title": "2 Pounds - Charles III (The Lion and The Eagle; 1oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2024,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/65ed103b565725.15896539-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/65ed103b565725.15896539-180.jpg",
+   "picture_copyright": "The Royal Mint, 2024"
+  },
+  "reverse": {
+   "designers": [
+    "John M. Mercanti"
+   ],
+   "description": "Imagen de un león y un águila mirando hacia la derecha dentro de un círculo interior, leyenda arriba y fecha abajo.",
+   "lettering": "1OZ FINE SILVER 999\r\nTHE LION AND THE EAGLE\r\nJM\r\n2024",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/65ed103c2c9630.01446232-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/65ed103c2c9630.01446232-180.jpg",
+   "picture_copyright": "The Royal Mint, 2024"
+  },
+  "comments": "<p>Lanzada en colaboración con GovMint.com y grabada por el duodécimo grabador jefe de la Fábrica de la Moneda de los Estados Unidos, John M. Mercanti. La moneda conmemora la duradera relación entre el Reino Unido y los Estados Unidos de América.<br><br>Esta moneda se acuñó individualmente, la de lingote en 2024 y la de prueba en 2023. El diseño también se acuñó en diversas denominaciones y metales.</p>",
+  "related_types": [
+   {
+    "id": 389220,
+    "title": "2 Pounds - Charles III (The Lion and The Eagle; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2023,
+    "maxYear": 2024
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "2647"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "40619": {
   "category": "coin",
   "commemorated_topic": "500 aniversario del Estado ruso unido",
@@ -44815,6 +44932,145 @@
    "text": "40 euros"
   },
   "weight": 18
+ },
+ "421643": {
+  "id": 421643,
+  "url": "https://es.numista.com/421643",
+  "title": "2 Pounds - Charles III (St George & The Dragon; 1oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/66768a93318de6.54252537-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/66768a93318de6.54252537-180.jpg",
+   "picture_copyright": "The Royal Mint, 2024"
+  },
+  "reverse": {
+   "designers": [
+    "Jody Clark"
+   ],
+   "description": "Representación de una batalla entre San Jorge a caballo y el dragón.",
+   "lettering": "2024\r\n1OZ . FINE SILVER . 999 . 2024 .",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/66768a937d0ca7.07756280-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/66768a937d0ca7.07756280-180.jpg",
+   "picture_copyright": "The Royal Mint, 2024"
+  },
+  "comments": "<p>Acuñada en una onza de plata de ley 999 y acabada según el estándar de lingotes de The Royal Mint.</p>",
+  "related_types": [
+   {
+    "id": 423474,
+    "title": "25 Pounds - Charles III (St George & The Dragon; 1/4 Fine Gold)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   },
+   {
+    "id": 423475,
+    "title": "100 Pounds - Charles III (St George & The Dragon; 1oz Fine Gold)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   },
+   {
+    "id": 423472,
+    "title": "500 Pounds - Charles III (St George & The Dragon; 1 Kilo Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   }
+  ],
+  "tags": [
+   "Animal fantástico",
+   "Caballo o equino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "2717"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "421848": {
   "category": "coin",
@@ -54714,6 +54970,119 @@
   },
   "weight": 17.44
  },
+ "465926": {
+  "id": 465926,
+  "url": "https://es.numista.com/465926",
+  "title": "2 Pounds - Charles III (St George & The Dragon; 1oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2025-04-23"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6808e874609ce6.80502357-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6808e874609ce6.80502357-180.jpg",
+   "picture_copyright": "The Royal Mint, 2025"
+  },
+  "reverse": {
+   "designers": [
+    "George Kruger Gray"
+   ],
+   "description": "Representación de una batalla entre San Jorge a caballo y el dragón.",
+   "lettering": "1OZ . FINE SILVER . 999 . 2025.\r\n2025\r\nKG",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6808e88888d306.87637776-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6808e88888d306.87637776-180.jpg",
+   "picture_copyright": "The Royal Mint, 2025"
+  },
+  "comments": "<p>Reimaginación de un diseño creado originalmente por George Kruger Gray para el Jubileo de Plata de Jorge V. Acuñada en una onza de plata de ley 999 y acabada según el estándar de lingotes de la Royal Mint.</p>",
+  "related_types": [
+   {
+    "id": 10337,
+    "title": "1 Crown - George V (Silver Jubilee)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1935,
+    "maxYear": 1935
+   }
+  ],
+  "tags": [
+   "Animal fantástico",
+   "Caballo o equino",
+   "Armadura"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "466287": {
   "category": "coin",
   "commemorated_topic": "Crucero Princesa de Asturias en prácticas Juan Sebastián de Elcano",
@@ -58823,6 +59192,106 @@
    "text": "2 Roubles"
   },
   "weight": 17
+ },
+ "546643": {
+  "id": 546643,
+  "url": "https://es.numista.com/546643",
+  "title": "2 Pounds - Charles III (The Lion & The Eagle; 1oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2025-12-15"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda y fecha alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6952e29ac9d563.28786917-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6952e29ac9d563.28786917-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
+  },
+  "reverse": {
+   "designers": [
+    "Jonathan Olliffe"
+   ],
+   "description": "Un león británico sobre una roca y un águila estadounidense sobre el mar, rodeados de inscripciones.",
+   "lettering": "THE LION AND THE EAGLE · 2026 1OZ FINE SILVER · 999\r\nJO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6952e29be0a204.21240935-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6952e29be0a204.21240935-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
+  },
+  "comments": "<p style=\"margin-left:0px;\">Emitidos individualmente, celebran la continua amistad entre el Reino Unido y los Estados Unidos.</p>",
+  "tags": [
+   "Gato o felino",
+   "Águila",
+   "Mar"
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "54800": {
   "category": "coin",

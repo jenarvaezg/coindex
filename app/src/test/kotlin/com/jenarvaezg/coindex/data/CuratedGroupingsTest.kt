@@ -25,7 +25,7 @@ class CuratedGroupingsTest {
     @Test
     fun `every shipped grouping parses and validates`() {
         // Los paquillos se fueron: ya tienen lista de emisiones, así que son catálogo.
-        assertEquals(3, groupings.size)
+        assertEquals(5, groupings.size)
         groupings.forEach { grouping ->
             assertNull(grouping.validate(), "inválida: ${grouping.id}")
             assertEquals(1, grouping.schemaVersion)
@@ -46,6 +46,39 @@ class CuratedGroupingsTest {
         assertEquals("Reales de Venezuela", find("venezuela-reales").family)
         assertEquals(listOf(10_398, 7_034, 5_316), find("venezuela-1-bolivar").typeIds)
         assertEquals("1 Bolívar de Venezuela", find("venezuela-1-bolivar").family)
+    }
+
+    /**
+     * Morgan y Peace, el caso limpio de agrupación: los dos tipos comparten los 26,73 g de plata
+     * .900 del acta de 1837, ninguno declara `series` y la única cosa que los junta es que el
+     * coleccionista los llama lo mismo. El programa oficial de 2021 que los reedita es plata .999
+     * moderna y no estos dos, así que la afirmación es nuestra — y por eso no hay cobertura.
+     *
+     * El Silver Eagle se queda fuera aunque también sea un dólar de plata: 31,1 g de .999 es otra
+     * variante física, así que estaría en otro cartón, y de ahí que la familia diga «clásico».
+     */
+    @Test
+    fun `the classic us silver dollar is morgan and peace`() {
+        val dollar = find("us-classic-silver-dollar")
+        assertEquals(listOf(1_492, 5_580), dollar.typeIds)
+        assertEquals("Dólar de plata clásico de EE. UU.", dollar.family)
+        assertEquals("etats-unis", dollar.issuerCode)
+    }
+
+    /**
+     * Lo que la Royal Mint acuñó en una onza de plata y no metió en ninguna gama: el D-Day 80, el
+     * British Lion y The Angel. Las otras dos onzas de 2 £ que parecían sobras con ellas —St George
+     * and the Dragon y The Lion and the Eagle— resultaron ser programas de la propia ceca y salieron
+     * de aquí como catálogo, así que esta agrupación es el residuo de verdad y no la lista entera.
+     *
+     * N#596807 no entra: su ficha está sin publicar (#38) y un borrador se puede borrar con su id.
+     */
+    @Test
+    fun `the loose royal mint ounces are what no range claims`() {
+        val loose = find("uk-royal-mint-1oz-silver-sueltas")
+        assertEquals(listOf(436_016, 476_689, 581_702), loose.typeIds)
+        assertEquals("Onzas de plata sueltas de la Royal Mint", loose.family)
+        assertTrue(596_807 !in loose.typeIds)
     }
 
     /**

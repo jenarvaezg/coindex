@@ -26,13 +26,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(28, catalogs.size)
+        assertEquals(30, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los quince
-     * cerrados llevan su nota y los trece abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los quince abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -41,7 +41,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(15, closed.size)
-        assertEquals(13, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(15, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -115,6 +115,33 @@ class CuratedCatalogsTest {
         assertTrue(capitales.members.any { it.label == "Ceuta" })
         assertTrue(capitales.members.any { it.label == "Melilla" })
         assertEquals(45_425, capitales.members.first { it.label == "Madrid" }.numistaTypeId)
+    }
+
+    /**
+     * Las dos gamas de lingote de la Royal Mint que Numista no agrupa: sus seis tipos declaran
+     * `series: null`, así que sin catálogo salen huérfanas y con él afirman algo que la familia de
+     * Numista no dice (#28). El límite lo pone la propia ceca, no una serie.
+     *
+     * La casilla es el año aunque el diseño no cambie, y ahí se separan las dos: St George reparte
+     * un tipo por año y The Lion and the Eagle mete 2024 y 2025 en N#404024 —el mismo reverso de
+     * Mercanti las dos veces—, así que ésta es un date run y aquélla un catálogo simple.
+     */
+    @Test
+    fun `the two royal mint bullion ranges are one slot per year`() {
+        val george = find("st-george-dragon-uk-1oz-bullion")
+        assertEquals(SeriesStatus.Open, george.seriesStatus)
+        assertEquals(Finish.Bullion, george.finish)
+        assertEquals(1_000, george.weightMillioz)
+        assertEquals(listOf(2024, 2025, 2026), george.members.map { it.year })
+        assertEquals(listOf(421_643, 465_926, 577_892), george.members.map { it.numistaTypeId })
+
+        val eagle = find("lion-eagle-uk-1oz-bullion")
+        assertTrue(eagle.isDateRun)
+        assertEquals(SeriesStatus.Open, eagle.seriesStatus)
+        assertEquals(Finish.Bullion, eagle.finish)
+        assertEquals(1_000, eagle.weightMillioz)
+        assertEquals(listOf(2024, 2025, 2026), eagle.members.map { it.year })
+        assertEquals(listOf(404_024, 404_024, 546_643), eagle.members.map { it.numistaTypeId })
     }
 
     /**
