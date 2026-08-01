@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -73,12 +74,30 @@ class SheetLayoutTest {
     fun `the expected picture count skips types with no cached pictures`() {
         val members = listOf(member("a", 1), member("b", 2), member("c", 3))
         val images = mapOf(
-            1 to TypeImages("obverse", "reverse"),
-            2 to TypeImages("obverse", null),
+            1 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto(picture = "reverse")),
+            2 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto()),
             // Type 3 has no cached pictures at all and requests none.
         )
 
         assertEquals(3, sheetImageCount(members, images))
         assertEquals(0, sheetImageCount(members, emptyMap()))
+    }
+
+    /**
+     * A face is one cell of the sheet whether it is asked for once or twice: the thumbnail and
+     * the original are two attempts at the same picture, and counting both would leave the
+     * export waiting for photographs nobody is going to request.
+     */
+    @Test
+    fun `a face counts once however many sizes of it there are to try`() {
+        val members = listOf(member("a", 1))
+        val images = mapOf(
+            1 to TypeImages(
+                obverse = CoinPhoto(thumbnail = "small", picture = "big"),
+                reverse = CoinPhoto(thumbnail = "small", picture = "big"),
+            ),
+        )
+
+        assertEquals(2, sheetImageCount(members, images))
     }
 }

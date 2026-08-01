@@ -48,6 +48,26 @@ interface TypeMetaDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIfAbsent(type: TypeMetaEntity)
+
+    // Neither face, rather than the obverse alone: a ficha that only has a reverse thumbnail
+    // would otherwise be read, written back with a null obverse, and read again for ever.
+    @Query(
+        "SELECT COUNT(*) FROM type_meta " +
+            "WHERE obverseThumbnailUrl IS NULL AND reverseThumbnailUrl IS NULL",
+    )
+    suspend fun countWithoutThumbnails(): Int
+
+    @Query(
+        "SELECT typeId, raw FROM type_meta " +
+            "WHERE obverseThumbnailUrl IS NULL AND reverseThumbnailUrl IS NULL",
+    )
+    suspend fun rawWithoutThumbnails(): List<TypeRawRow>
+
+    @Query(
+        "UPDATE type_meta SET obverseThumbnailUrl = :obverse, reverseThumbnailUrl = :reverse " +
+            "WHERE typeId = :typeId",
+    )
+    suspend fun setThumbnails(typeId: Int, obverse: String?, reverse: String?)
 }
 
 @Dao

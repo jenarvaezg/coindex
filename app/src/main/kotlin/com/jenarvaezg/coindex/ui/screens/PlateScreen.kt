@@ -47,6 +47,7 @@ import com.jenarvaezg.coindex.ui.PlateCommonFacts
 import com.jenarvaezg.coindex.ui.plateCellFootnote
 import com.jenarvaezg.coindex.ui.plateCommonFacts
 import com.jenarvaezg.coindex.ui.plateEntries
+import com.jenarvaezg.coindex.ui.plateExportMessage
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
@@ -142,11 +143,12 @@ private fun PlateSheetExport(
     val layout = remember(members.size) { SheetLayout.forMemberCount(members.size) }
     val expectedImages = remember(members, images) { sheetImageCount(members, images) }
     val settled = remember { mutableIntStateOf(0) }
+    val loaded = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(catalog.id) {
-        val everyPictureLoaded = withTimeoutOrNull(IMAGE_WAIT_MILLIS) {
+        withTimeoutOrNull(IMAGE_WAIT_MILLIS) {
             snapshotFlow { settled.intValue }.first { it >= expectedImages }
-        } != null
+        }
         // The last picture reports before it is drawn, so let a frame land either way.
         withFrameNanos {}
         withFrameNanos {}
@@ -154,11 +156,12 @@ private fun PlateSheetExport(
             sharePlateSheet(context, picture, plateFileName(catalog.id))
         }
         onFinished(
-            when {
-                outcome.isFailure ->
-                    "No se pudo exportar la lámina: ${outcome.exceptionOrNull()?.message}"
-                everyPictureLoaded -> "Lámina completa exportada · ${members.size} emisiones"
-                else -> "Lámina exportada, pero alguna imagen no llegó a cargar"
+            if (outcome.isFailure) {
+                "No se pudo exportar la lámina: ${outcome.exceptionOrNull()?.message}"
+            } else {
+                // Timing out and failing outright come to the same thing here: whatever had not
+                // painted by now is a hole in the sheet that has just been shared.
+                plateExportMessage(members.size, expectedImages, loaded.intValue)
             },
         )
     }
@@ -172,7 +175,10 @@ private fun PlateSheetExport(
                 ownedMembers = ownedMembers,
                 images = images,
                 layout = layout,
-                onImageSettled = { settled.intValue += 1 },
+                onImageSettled = { painted ->
+                    settled.intValue += 1
+                    if (painted) loaded.intValue += 1
+                },
                 // The sheet paints its own paper; recording it from the outside would drop it.
                 modifier = Modifier.recordInto(picture),
             )
@@ -180,7 +186,14 @@ private fun PlateSheetExport(
     }
 }
 
-private const val IMAGE_WAIT_MILLIS = 20_000L
+/**
+ * How long the export waits for the pictures before capturing whatever is on the sheet.
+ *
+ * Twenty seconds was the whole budget when a refused picture failed instantly. Now a throttled
+ * one is retried with a wait, and four at a time queue behind each other, so the old ceiling
+ * would have cut the retries off exactly on the sheets that need them (issue #67).
+ */
+private const val IMAGE_WAIT_MILLIS = 30_000L
 
 @Composable
 private fun PlateGrid(
@@ -257,8 +270,8 @@ private fun PlateCell(
     FieldCard(emphasized = owned != null, dashed = owned == null) {
         CoinSides(
             label = albumMember.member.label,
-            obverseUrl = images?.obverse,
-            reverseUrl = images?.reverse,
+            obverse = images?.obverse,
+            reverse = images?.reverse,
             missing = owned == null,
         )
         Text(

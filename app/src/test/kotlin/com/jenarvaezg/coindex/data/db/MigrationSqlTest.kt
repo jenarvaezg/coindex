@@ -18,26 +18,39 @@ import kotlinx.serialization.json.jsonPrimitive
  * failure surfaces on this machine instead.
  */
 class MigrationSqlTest {
-    private val schema = File(
-        "schemas/com.jenarvaezg.coindex.data.db.CoindexDatabase/2.json",
+    private fun schema(version: Int) = File(
+        "schemas/com.jenarvaezg.coindex.data.db.CoindexDatabase/$version.json",
     )
 
-    private fun exportedCreateSql(): Map<String, String> {
-        assertTrue(schema.exists(), "falta el esquema exportado ${schema.absolutePath}")
-        return Json.parseToJsonElement(schema.readText())
+    private fun entities(version: Int) = schema(version).let { file ->
+        assertTrue(file.exists(), "falta el esquema exportado ${file.absolutePath}")
+        Json.parseToJsonElement(file.readText())
             .jsonObject.getValue("database")
             .jsonObject.getValue("entities")
             .jsonArray
-            .associate { entity ->
-                val table = entity.jsonObject.getValue("tableName").jsonPrimitive.content
-                val sql = entity.jsonObject.getValue("createSql").jsonPrimitive.content
-                table to sql.replace("\${TABLE_NAME}", table)
-            }
     }
+
+    private fun exportedCreateSql(version: Int): Map<String, String> =
+        entities(version).associate { entity ->
+            val table = entity.jsonObject.getValue("tableName").jsonPrimitive.content
+            val sql = entity.jsonObject.getValue("createSql").jsonPrimitive.content
+            table to sql.replace("\${TABLE_NAME}", table)
+        }
+
+    /** Column name to its declared SQL type, for one table of one exported version. */
+    private fun exportedColumns(version: Int, table: String): Map<String, String> =
+        entities(version)
+            .first { it.jsonObject.getValue("tableName").jsonPrimitive.content == table }
+            .jsonObject.getValue("fields")
+            .jsonArray
+            .associate { field ->
+                field.jsonObject.getValue("columnName").jsonPrimitive.content to
+                    field.jsonObject.getValue("affinity").jsonPrimitive.content
+            }
 
     @Test
     fun `the added tables are created exactly as Room declares them`() {
-        val exported = exportedCreateSql()
+        val exported = exportedCreateSql(2)
         val added = listOf("own_groupings", "own_grouping_members")
 
         assertEquals(
@@ -59,7 +72,30 @@ class MigrationSqlTest {
                 "own_grouping_members",
                 "api_call_log",
             ),
-            exportedCreateSql().keys,
+            exportedCreateSql(2).keys,
         )
+    }
+
+    @Test
+    fun `version 3 adds the two thumbnail columns exactly as Room declares them`() {
+        val added = exportedColumns(3, "type_meta") - exportedColumns(2, "type_meta").keys
+
+        assertEquals(mapOf("obverseThumbnailUrl" to "TEXT", "reverseThumbnailUrl" to "TEXT"), added)
+        assertEquals(
+            added.keys.map { "ALTER TABLE `type_meta` ADD COLUMN `$it` TEXT" },
+            CoindexDatabase.VERSION_3_COLUMNS,
+        )
+    }
+
+    @Test
+    fun `version 3 touches the type cache and nothing else`() {
+        assertEquals(exportedCreateSql(2).keys, exportedCreateSql(3).keys)
+        (exportedCreateSql(3).keys - "type_meta").forEach { table ->
+            assertEquals(
+                exportedColumns(2, table),
+                exportedColumns(3, table),
+                "la versión 3 ha tocado $table",
+            )
+        }
     }
 }

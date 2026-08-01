@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -308,40 +310,49 @@ private fun coinColorFilter(missing: Boolean, onPaper: Boolean): ColorFilter? = 
  * A missing piece still shows the catalog design, desaturated and faded, so the plate reads as
  * a gap in a collection rather than an empty box. [onPaper] is for the exported sheet, which is
  * a printed page rather than a screen and cannot afford the studio white around each photo.
+ *
+ * [onImageSettled] reports each side once it can no longer change, saying whether a photograph
+ * actually arrived: the export waits on the count and has to know how many cells it is about to
+ * freeze empty.
  */
 @Composable
 fun CoinSides(
     label: String,
-    obverseUrl: String?,
-    reverseUrl: String?,
+    obverse: CoinPhoto?,
+    reverse: CoinPhoto?,
     missing: Boolean,
     modifier: Modifier = Modifier,
-    onImageSettled: (() -> Unit)? = null,
+    onImageSettled: ((painted: Boolean) -> Unit)? = null,
     onPaper: Boolean = false,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        CoinSide("Anverso", label, obverseUrl, missing, Modifier.weight(1f), onImageSettled, onPaper)
-        CoinSide("Reverso", label, reverseUrl, missing, Modifier.weight(1f), onImageSettled, onPaper)
+        CoinSide("Anverso", label, obverse, missing, Modifier.weight(1f), onImageSettled, onPaper)
+        CoinSide("Reverso", label, reverse, missing, Modifier.weight(1f), onImageSettled, onPaper)
     }
 }
 
-/** Number of pictures [CoinSides] will actually request for this pair of URLs. */
-fun coinSideImageCount(obverseUrl: String?, reverseUrl: String?): Int =
-    listOfNotNull(obverseUrl, reverseUrl).size
+/** Number of pictures [CoinSides] will actually report for this pair of faces. */
+fun coinSideImageCount(obverse: CoinPhoto?, reverse: CoinPhoto?): Int =
+    listOfNotNull(obverse, reverse).count { it.hasPicture }
 
 @Composable
 private fun CoinSide(
     caption: String,
     label: String,
-    url: String?,
+    photo: CoinPhoto?,
     missing: Boolean,
     modifier: Modifier = Modifier,
-    onImageSettled: (() -> Unit)? = null,
+    onImageSettled: ((painted: Boolean) -> Unit)? = null,
     onPaper: Boolean = false,
 ) {
+    // The thumbnail first and the original behind it, so a refused picture costs a second
+    // request rather than the cell (issue #67).
+    val candidates = photo?.candidates.orEmpty()
+    var attempt by remember(candidates) { mutableIntStateOf(0) }
+    val url = candidates.getOrNull(attempt)
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         // The mount, drawn rather than inherited from the photograph: catalog pictures are shot
         // on white but cropped tight and unevenly, so a row of them left ragged white rectangles
@@ -357,10 +368,10 @@ private fun CoinSide(
         if (url == null) {
             Silhouette(frame)
         } else {
-            // The silhouette waits behind the picture and stays for good if the picture never
+            // The silhouette waits behind the picture and stays for good if no candidate ever
             // arrives: offline or with a dead URL the cell must still read as a coin, not as a
             // blank. It is dropped on success so a transparent PNG does not sit on a circle.
-            var painted by remember(url) { mutableStateOf(false) }
+            var painted by remember(candidates) { mutableStateOf(false) }
             Box(modifier = frame) {
                 if (!painted) {
                     Silhouette(Modifier.matchParentSize())
@@ -370,14 +381,19 @@ private fun CoinSide(
                     contentDescription = "$caption de $label",
                     contentScale = ContentScale.Fit,
                     // Exporting the whole sheet has to wait for every picture, so both outcomes
-                    // report back: a picture that failed will never arrive.
+                    // report back — but only once the last candidate has had its turn.
                     onState = { state ->
                         when (state) {
                             is AsyncImagePainter.State.Success -> {
                                 painted = true
-                                onImageSettled?.invoke()
+                                onImageSettled?.invoke(true)
                             }
-                            is AsyncImagePainter.State.Error -> onImageSettled?.invoke()
+                            is AsyncImagePainter.State.Error ->
+                                if (attempt < candidates.lastIndex) {
+                                    attempt += 1
+                                } else {
+                                    onImageSettled?.invoke(false)
+                                }
                             else -> Unit
                         }
                     },
