@@ -1,11 +1,15 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.domain.CatalogSeeds
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -349,6 +353,47 @@ class CuratedCatalogsTest {
             463_187, 463_319,
         )
         assertTrue(kookaburra.members.none { it.numistaTypeId in goldSet })
+    }
+
+    /**
+     * El primer miembro anunciado del repo (#31): la colección son diez bestias nombradas de
+     * antemano y el Seymour Panther salió en proof en 2022 y **sigue sin salir en bullion**, así
+     * que la décima casilla no es un agujero de curación sino una moneda sin emitir.
+     *
+     * Comprobado en la serie 6888 de numista.com, que tiene nueve «5 Pounds · 2 oz Fine Silver»
+     * —.9999 y ⌀38,61 mm— y ninguna es el Panther. Su 2 oz de 2022 es N#307800, que es plata
+     * .999 de 40 mm: la proof, que es exactamente por qué el `design_type_id` no puede emparejar.
+     */
+    @Test
+    fun `the tenth tudor beast is announced and never counted as missing`() {
+        val tudor = find("tudor-beasts-uk-2oz-bullion")
+        assertEquals(SeriesStatus.Open, tudor.seriesStatus)
+        assertEquals(10, tudor.members.size)
+        assertEquals(9, tudor.members.count { !it.isAnnounced })
+
+        val panther = tudor.members.single { it.isAnnounced }
+        assertEquals("seymour-panther", panther.id)
+        assertNull(panther.numistaTypeId)
+        // Se sabe cuál falta y no cuándo, así que no lleva año.
+        assertNull(panther.year)
+        assertEquals(307_800, panther.designTypeId)
+        assertTrue(panther.announcedSource?.startsWith("https://") == true)
+        assertTrue(panther.announcedNote?.isNotBlank() == true)
+
+        // El padre tiene piezas proof de esta serie: si el diseño emparejara, una de ellas
+        // rellenaría una casilla de bullion que no existe.
+        val album = buildCollectionCatalogAlbum(
+            tudor,
+            listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800)),
+        )
+        assertEquals(0, album.ownedMembers())
+        assertEquals(9, album.issuedMembers())
+        assertEquals(1, album.announcedMembers())
+        assertEquals(
+            CollectionCatalogMemberStatus.NotYetIssued,
+            album.members.last().status,
+        )
+        assertFalse(tudor.isEvidencedBy(listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800))))
     }
 
     @Test

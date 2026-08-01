@@ -119,7 +119,7 @@ fun PlateSheet(
                 row.forEach { albumMember ->
                     SheetCell(
                         albumMember = albumMember,
-                        images = images[albumMember.member.numistaTypeId],
+                        images = albumMember.member.numistaTypeId?.let { images[it] },
                         common = common,
                         onImageSettled = onImageSettled,
                         modifier = Modifier.weight(1f),
@@ -204,7 +204,7 @@ fun sheetImageCount(
     members: List<CollectionCatalogAlbumMember>,
     images: Map<Int, TypeImages>,
 ): Int = members.sumOf { albumMember ->
-    val typeImages = images[albumMember.member.numistaTypeId]
+    val typeImages = albumMember.member.numistaTypeId?.let { images[it] }
     coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
 }
 
@@ -218,6 +218,7 @@ private fun SheetCell(
 ) {
     val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
     val stateLabel = when {
+        albumMember.status is CollectionCatalogMemberStatus.NotYetIssued -> "Sin emitir"
         owned == null -> "Me falta"
         owned.quantity > 1 -> "Tengo · ×${owned.quantity}"
         else -> "Tengo"

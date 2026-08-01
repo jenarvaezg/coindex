@@ -42,7 +42,7 @@ class PlateLabelsTest {
     @Test
     fun `an exported sheet is only called complete when every picture is on it`() {
         assertEquals(
-            "Lámina completa exportada · 19 emisiones",
+            "Lámina completa exportada · 19 casillas",
             plateExportMessage(members = 19, expectedPhotos = 38, loadedPhotos = 38),
         )
     }
@@ -63,7 +63,7 @@ class PlateLabelsTest {
     @Test
     fun `a sheet that asked for no pictures is complete`() {
         assertEquals(
-            "Lámina completa exportada · 3 emisiones",
+            "Lámina completa exportada · 3 casillas",
             plateExportMessage(members = 3, expectedPhotos = 0, loadedPhotos = 0),
         )
     }
