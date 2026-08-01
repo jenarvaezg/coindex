@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "id": "canada-dolar-conmemorativo-plata-500",
+  "name": "Dólar conmemorativo de plata .500 · Canadá 1971-1991",
+  "issuer_code": "canada",
+  "family": "Dólar conmemorativo de plata .500 de Canadá",
+  "weight_millioz": 750,
+  "finish": null,
+  "series_status": "closed",
+  "closed_note": "La Royal Canadian Mint dice en su propia web que «desde 1971 se emite anualmente un Proof Silver Dollar» y que «estas monedas varían en composición y acabado», así que el programa sigue abierto y lo que cierra aquí es la variante: los veintiún años de plata .500 a 23,3276 g, uno por año sin salto de 1971 a 1991. En 1992 la diligencia de Kingston pasó a plata esterlina .925 y 25,175 g (N#23296), que es otra clave de variante y por tanto otra lámina. Cada tipo lleva dentro sus dos emisiones —brillante sin circular y proof—, así que el catálogo no declara acabado. https://www.mint.ca/en/blog/2025-12-history-of-annual-coins-sets",
+  "source": "https://en.numista.com/catalogue/pieces21111.html",
+  "updated_at": "2026-08-01",
+  "members": [
+    {
+      "id": "1971-columbia-britanica",
+      "label": "Columbia Británica",
+      "year": 1971,
+      "numista_type_id": 21111
+    },
+    {
+      "id": "1972-voyageur",
+      "label": "Voyageur",
+      "year": 1972,
+      "numista_type_id": 17839
+    },
+    {
+      "id": "1973-policia-montada",
+      "label": "Policía Montada del Canadá",
+      "year": 1973,
+      "numista_type_id": 19493
+    },
+    {
+      "id": "1974-winnipeg",
+      "label": "Winnipeg",
+      "year": 1974,
+      "numista_type_id": 18797
+    },
+    {
+      "id": "1975-calgary",
+      "label": "Calgary",
+      "year": 1975,
+      "numista_type_id": 11564
+    },
+    {
+      "id": "1976-biblioteca-del-parlamento",
+      "label": "Biblioteca del Parlamento",
+      "year": 1976,
+      "numista_type_id": 1880
+    },
+    {
+      "id": "1977-jubileo-de-plata",
+      "label": "Jubileo de plata",
+      "year": 1977,
+      "numista_type_id": 10973
+    },
+    {
+      "id": "1978-juegos-de-la-commonwealth",
+      "label": "Juegos de la Commonwealth",
+      "year": 1978,
+      "numista_type_id": 19352
+    },
+    {
+      "id": "1979-griffon",
+      "label": "Le Griffon",
+      "year": 1979,
+      "numista_type_id": 16315
+    },
+    {
+      "id": "1980-territorios-articos",
+      "label": "Territorios árticos",
+      "year": 1980,
+      "numista_type_id": 23272
+    },
+    {
+      "id": "1981-ferrocarril-transcanadiense",
+      "label": "Ferrocarril Transcanadiense",
+      "year": 1981,
+      "numista_type_id": 23273
+    },
+    {
+      "id": "1982-centenario-de-regina",
+      "label": "Centenario de Regina",
+      "year": 1982,
+      "numista_type_id": 6786
+    },
+    {
+      "id": "1983-juegos-mundiales-universitarios",
+      "label": "Juegos Mundiales Universitarios",
+      "year": 1983,
+      "numista_type_id": 23275
+    },
+    {
+      "id": "1984-toronto",
+      "label": "Toronto",
+      "year": 1984,
+      "numista_type_id": 23276
+    },
+    {
+      "id": "1985-parques-nacionales",
+      "label": "Parques Nacionales",
+      "year": 1985,
+      "numista_type_id": 23277
+    },
+    {
+      "id": "1986-centenario-de-vancouver",
+      "label": "Centenario de Vancouver",
+      "year": 1986,
+      "numista_type_id": 19865
+    },
+    {
+      "id": "1987-estrecho-de-davis",
+      "label": "Estrecho de Davis",
+      "year": 1987,
+      "numista_type_id": 16314
+    },
+    {
+      "id": "1988-ferrerias-de-saint-maurice",
+      "label": "Ferrerías de Saint-Maurice",
+      "year": 1988,
+      "numista_type_id": 23278
+    },
+    {
+      "id": "1989-rio-mackenzie",
+      "label": "Río Mackenzie",
+      "year": 1989,
+      "numista_type_id": 19502
+    },
+    {
+      "id": "1990-henry-kelsey",
+      "label": "Henry Kelsey",
+      "year": 1990,
+      "numista_type_id": 23279
+    },
+    {
+      "id": "1991-ss-frontenac",
+      "label": "S.S. Frontenac",
+      "year": 1991,
+      "numista_type_id": 15517
+    }
+  ]
+}

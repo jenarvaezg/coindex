@@ -10,6 +10,7 @@ import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -25,12 +26,12 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(26, catalogs.size)
+        assertEquals(28, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los trece
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los quince
      * cerrados llevan su nota y los trece abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -39,7 +40,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(13, closed.size)
+        assertEquals(15, closed.size)
         assertEquals(13, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -422,6 +423,60 @@ class CuratedCatalogsTest {
             album.members.last().status,
         )
         assertFalse(tudor.isEvidencedBy(listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800))))
+    }
+
+    /**
+     * El dólar de plata canadiense son **dos** catálogos y no uno, y lo que los separa no es el
+     * peso —los dos pesan 23,33 g y por tanto declaran los mismos 750 millioz— sino la familia,
+     * que es la primera componente de la clave. Ninguno de los treinta y dos tipos trae `series`
+     * en Numista, así que la familia la aporta el catálogo (ADR 0009) y sin ellos las tres piezas
+     * de las dos colecciones salen huérfanas por «sin familia ni catálogo».
+     *
+     * Los dos cierran por un hecho externo y **distinto**: la .800 porque en 1968 la Royal
+     * Canadian Mint pasó el dólar al níquel (N#3326, 15,62 g), y la .500 porque en 1992 pasó a
+     * plata esterlina (N#23296, .925 y 25,175 g). Ese segundo cierre no es el del programa: la
+     * propia RCM dice que el proof silver dollar se emite todos los años desde 1971 y que su
+     * composición varía, así que lo que cierra es la variante, que es la unidad de catálogo (#43).
+     */
+    @Test
+    fun `the canadian silver dollar is two catalogs told apart by family and not by weight`() {
+        val eightHundred = find("canada-dolar-plata-800")
+        val fiveHundred = find("canada-dolar-conmemorativo-plata-500")
+        for (catalog in listOf(eightHundred, fiveHundred)) {
+            assertEquals(1, catalog.schemaVersion)
+            assertEquals("canada", catalog.issuerCode)
+            assertEquals(750, catalog.weightMillioz)
+            assertNull(catalog.finish)
+            assertEquals(SeriesStatus.Closed, catalog.seriesStatus)
+        }
+        assertNotEquals(eightHundred.key(), fiveHundred.key())
+
+        // Once tipos de 1935 a 1967, verificados por búsqueda de peso 23,2-23,5 g sobre todas las
+        // categorías de numista.com: cinco de circulación y seis conmemorativas circulantes.
+        assertEquals(
+            listOf(447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457),
+            eightHundred.members.map { it.numistaTypeId },
+        )
+        assertEquals(
+            listOf(1935, 1936, 1937, 1939, 1948, 1949, 1953, 1958, 1964, 1965, 1967),
+            eightHundred.members.map { it.year },
+        )
+        // La etiqueta de año es el primer año del tipo cuando el tipo abarca varios (#63):
+        // N#449 cubre 1937-1947, N#451 1948-1952, N#453 1953-1963 y N#456 1965-1966.
+        assertEquals(11, eightHundred.members.size)
+
+        // Veintiún años seguidos, uno por moneda, de 1971 a 1991.
+        assertEquals((1971..1991).toList(), fiveHundred.members.map { it.year })
+        assertEquals(
+            listOf(
+                21_111, 17_839, 19_493, 18_797, 11_564, 1_880, 10_973, 19_352, 16_315, 23_272,
+                23_273, 6_786, 23_275, 23_276, 23_277, 19_865, 16_314, 23_278, 19_502, 23_279,
+                15_517,
+            ),
+            fiveHundred.members.map { it.numistaTypeId },
+        )
+        // La de 1992 es la primera esterlina y no es casilla de nadie.
+        assertTrue(catalogs.none { catalog -> catalog.members.any { it.numistaTypeId == 23_296 } })
     }
 
     @Test
