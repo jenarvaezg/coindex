@@ -21,12 +21,12 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(24, catalogs.size)
+        assertEquals(25, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los once
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los doce
      * cerrados llevan su nota y los trece abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -35,7 +35,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(11, closed.size)
+        assertEquals(12, closed.size)
         assertEquals(13, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -83,6 +83,33 @@ class CuratedCatalogsTest {
         assertEquals(8, independence.members.size)
         assertEquals(3, independence.members.count { it.year == 2025 })
         assertEquals(5, independence.members.count { it.year == 2026 })
+    }
+
+    /**
+     * Las 52 Capitales, que cierran por aritmética: España tiene 50 provincias y el programa de
+     * la FNMT les suma Ceuta y Melilla, así que la lista completa se puede contar sin fiarse de
+     * que Numista haya terminado la serie. Las tres tandas son 12, 20 y 20.
+     *
+     * El acabado importa aquí más que en ningún otro catálogo: Numista no dice «proof» en el
+     * título de ninguna de las 52 —lo dice la FNMT—, así que la finish inferida de la ficha es
+     * `null` y sólo el ADR 0016 hace que la moneda del padre caiga en esta lámina.
+     */
+    @Test
+    fun `the 52 provincial capitals close by arithmetic and are declared proof`() {
+        val capitales = find("espana-capitales-de-provincia-5-euros")
+        assertEquals(SeriesStatus.Closed, capitales.seriesStatus)
+        assertEquals(Finish.Proof, capitales.finish)
+        assertEquals(434, capitales.weightMillioz)
+        assertEquals("Capitales de provincia y ciudades autónomas", capitales.family)
+        assertEquals(52, capitales.members.size)
+        assertEquals(12, capitales.members.count { it.year == 2010 })
+        assertEquals(20, capitales.members.count { it.year == 2011 })
+        assertEquals(20, capitales.members.count { it.year == 2012 })
+        // Ceuta y Melilla son las dos que no son capital de provincia, y la de Madrid es la
+        // única que el padre tiene.
+        assertTrue(capitales.members.any { it.label == "Ceuta" })
+        assertTrue(capitales.members.any { it.label == "Melilla" })
+        assertEquals(45_425, capitales.members.first { it.label == "Madrid" }.numistaTypeId)
     }
 
     /**

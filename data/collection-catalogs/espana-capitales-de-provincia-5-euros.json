@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "id": "espana-capitales-de-provincia-5-euros",
+  "name": "Capitales de Provincia y Ciudades Autónomas · España · 5 € de plata",
+  "issuer_code": "espagne",
+  "family": "Capitales de provincia y ciudades autónomas",
+  "weight_millioz": 434,
+  "finish": "Proof",
+  "series_status": "closed",
+  "closed_note": "El programa de la FNMT es de 52 monedas —las 50 capitales de provincia más Ceuta y Melilla— repartidas en tres tandas: 12 en 2010, 20 en 2011 y 20 en 2012. La ficha de la quinta y última emisión lo dice y la colección se vende completa como tal (https://www.fnmt.es/coleccionista/anos-anteriores/emisiones-2012/serie-capitales-5-emision). España tiene 50 provincias, así que no queda capital sin moneda: la cuenta cierra sola.",
+  "source": "https://en.numista.com/catalogue/series.php?id=5774",
+  "updated_at": "2026-08-01",
+  "members": [
+    {
+      "id": "2010-albacete",
+      "label": "Albacete",
+      "year": 2010,
+      "numista_type_id": 45421
+    },
+    {
+      "id": "2010-alicante",
+      "label": "Alacant / Alicante",
+      "year": 2010,
+      "numista_type_id": 45427
+    },
+    {
+      "id": "2010-almeria",
+      "label": "Almería",
+      "year": 2010,
+      "numista_type_id": 45416
+    },
+    {
+      "id": "2010-avila",
+      "label": "Ávila",
+      "year": 2010,
+      "numista_type_id": 45420
+    },
+    {
+      "id": "2010-barcelona",
+      "label": "Barcelona",
+      "year": 2010,
+      "numista_type_id": 45422
+    },
+    {
+      "id": "2010-ceuta",
+      "label": "Ceuta",
+      "year": 2010,
+      "numista_type_id": 45423
+    },
+    {
+      "id": "2010-huesca",
+      "label": "Huesca",
+      "year": 2010,
+      "numista_type_id": 45417
+    },
+    {
+      "id": "2010-las-palmas-de-gran-canaria",
+      "label": "Las Palmas de Gran Canaria",
+      "year": 2010,
+      "numista_type_id": 45418
+    },
+    {
+      "id": "2010-madrid",
+      "label": "Madrid",
+      "year": 2010,
+      "numista_type_id": 45425
+    },
+    {
+      "id": "2010-melilla",
+      "label": "Melilla",
+      "year": 2010,
+      "numista_type_id": 45424
+    },
+    {
+      "id": "2010-pamplona",
+      "label": "Pamplona / Iruña",
+      "year": 2010,
+      "numista_type_id": 45426
+    },
+    {
+      "id": "2010-santander",
+      "label": "Santander",
+      "year": 2010,
+      "numista_type_id": 45419
+    },
+    {
+      "id": "2011-a-coruna",
+      "label": "A Coruña",
+      "year": 2011,
+      "numista_type_id": 45430
+    },
+    {
+      "id": "2011-badajoz",
+      "label": "Badajoz",
+      "year": 2011,
+      "numista_type_id": 45429
+    },
+    {
+      "id": "2011-bilbao",
+      "label": "Bilbao",
+      "year": 2011,
+      "numista_type_id": 45434
+    },
+    {
+      "id": "2011-burgos",
+      "label": "Burgos",
+      "year": 2011,
+      "numista_type_id": 45441
+    },
+    {
+      "id": "2011-caceres",
+      "label": "Cáceres",
+      "year": 2011,
+      "numista_type_id": 45444
+    },
+    {
+      "id": "2011-cadiz",
+      "label": "Cádiz",
+      "year": 2011,
+      "numista_type_id": 45437
+    },
+    {
+      "id": "2011-castellon-de-la-plana",
+      "label": "Castellón de la Plana",
+      "year": 2011,
+      "numista_type_id": 45443
+    },
+    {
+      "id": "2011-ciudad-real",
+      "label": "Ciudad Real",
+      "year": 2011,
+      "numista_type_id": 45442
+    },
+    {
+      "id": "2011-cordoba",
+      "label": "Córdoba",
+      "year": 2011,
+      "numista_type_id": 45447
+    },
+    {
+      "id": "2011-donostia",
+      "label": "Donostia / San Sebastián",
+      "year": 2011,
+      "numista_type_id": 45448
+    },
+    {
+      "id": "2011-girona",
+      "label": "Girona",
+      "year": 2011,
+      "numista_type_id": 45446
+    },
+    {
+      "id": "2011-leon",
+      "label": "León",
+      "year": 2011,
+      "numista_type_id": 45450
+    },
+    {
+      "id": "2011-logrono",
+      "label": "Logroño",
+      "year": 2011,
+      "numista_type_id": 45433
+    },
+    {
+      "id": "2011-lugo",
+      "label": "Lugo",
+      "year": 2011,
+      "numista_type_id": 45445
+    },
+    {
+      "id": "2011-murcia",
+      "label": "Murcia",
+      "year": 2011,
+      "numista_type_id": 45436
+    },
+    {
+      "id": "2011-oviedo",
+      "label": "Oviedo",
+      "year": 2011,
+      "numista_type_id": 45435
+    },
+    {
+      "id": "2011-palma-de-mallorca",
+      "label": "Palma de Mallorca",
+      "year": 2011,
+      "numista_type_id": 45431
+    },
+    {
+      "id": "2011-santa-cruz-de-tenerife",
+      "label": "Santa Cruz de Tenerife",
+      "year": 2011,
+      "numista_type_id": 45439
+    },
+    {
+      "id": "2011-teruel",
+      "label": "Teruel",
+      "year": 2011,
+      "numista_type_id": 45438
+    },
+    {
+      "id": "2011-zaragoza",
+      "label": "Zaragoza",
+      "year": 2011,
+      "numista_type_id": 45449
+    },
+    {
+      "id": "2012-cuenca",
+      "label": "Cuenca",
+      "year": 2012,
+      "numista_type_id": 45451
+    },
+    {
+      "id": "2012-granada",
+      "label": "Granada",
+      "year": 2012,
+      "numista_type_id": 45456
+    },
+    {
+      "id": "2012-guadalajara",
+      "label": "Guadalajara",
+      "year": 2012,
+      "numista_type_id": 45458
+    },
+    {
+      "id": "2012-huelva",
+      "label": "Huelva",
+      "year": 2012,
+      "numista_type_id": 45461
+    },
+    {
+      "id": "2012-jaen",
+      "label": "Jaén",
+      "year": 2012,
+      "numista_type_id": 45464
+    },
+    {
+      "id": "2012-lleida",
+      "label": "Lleida",
+      "year": 2012,
+      "numista_type_id": 45452
+    },
+    {
+      "id": "2012-malaga",
+      "label": "Málaga",
+      "year": 2012,
+      "numista_type_id": 45466
+    },
+    {
+      "id": "2012-ourense",
+      "label": "Ourense",
+      "year": 2012,
+      "numista_type_id": 45454
+    },
+    {
+      "id": "2012-palencia",
+      "label": "Palencia",
+      "year": 2012,
+      "numista_type_id": 45457
+    },
+    {
+      "id": "2012-pontevedra",
+      "label": "Pontevedra",
+      "year": 2012,
+      "numista_type_id": 45460
+    },
+    {
+      "id": "2012-salamanca",
+      "label": "Salamanca",
+      "year": 2012,
+      "numista_type_id": 45462
+    },
+    {
+      "id": "2012-segovia",
+      "label": "Segovia",
+      "year": 2012,
+      "numista_type_id": 45465
+    },
+    {
+      "id": "2012-sevilla",
+      "label": "Sevilla",
+      "year": 2012,
+      "numista_type_id": 45467
+    },
+    {
+      "id": "2012-soria",
+      "label": "Soria",
+      "year": 2012,
+      "numista_type_id": 45468
+    },
+    {
+      "id": "2012-tarragona",
+      "label": "Tarragona",
+      "year": 2012,
+      "numista_type_id": 45459
+    },
+    {
+      "id": "2012-toledo",
+      "label": "Toledo",
+      "year": 2012,
+      "numista_type_id": 45463
+    },
+    {
+      "id": "2012-valencia",
+      "label": "Valencia",
+      "year": 2012,
+      "numista_type_id": 45453
+    },
+    {
+      "id": "2012-valladolid",
+      "label": "Valladolid",
+      "year": 2012,
+      "numista_type_id": 45469
+    },
+    {
+      "id": "2012-vitoria",
+      "label": "Vitoria",
+      "year": 2012,
+      "numista_type_id": 45455
+    },
+    {
+      "id": "2012-zamora",
+      "label": "Zamora",
+      "year": 2012,
+      "numista_type_id": 45470
+    }
+  ]
+}
