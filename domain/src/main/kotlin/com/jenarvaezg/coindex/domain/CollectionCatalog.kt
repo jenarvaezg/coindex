@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * the member. `schema_version` 2 is a date run (ADR 0009): members repeat one type across
  * years, and a member is owned only when the piece also records that year.
  * `schema_version` 3 is a set issued as a set (ADR 0012): its members span physical variants,
- * so it declares no weight and no finish and its key carries an absent weight.
+ * so it declares no weight, no finish and no metal, and its key carries an absent weight.
  * `schema_version` 5 identifies members by Numista issue (ADR 0014), for the types whose
  * members share a year and differ by a variety of it.
  *
@@ -27,6 +27,12 @@ data class CollectionCatalog(
     @SerialName("weight_millioz") val weightMillioz: Int? = null,
     val finish: Finish? = null,
     /**
+     * The dominant metal of the variant (#40, ADR 0018). Required of everything but a set, and
+     * a statement about **the collection**, not about each member: a curator who puts seven
+     * silver coins and one of cupronickel in the same list is curating, not making a mistake.
+     */
+    val metal: Metal? = null,
+    /**
      * Whether the series is still being issued. Required in every schema version: a catalog
      * that keeps quiet about it claims completeness by omission (#28).
      */
@@ -37,7 +43,8 @@ data class CollectionCatalog(
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CollectionCatalogMember>,
 ) {
-    fun key(): CollectionProposalKey = CollectionProposalKey(family, weightMillioz, finish)
+    fun key(): CollectionProposalKey =
+        CollectionProposalKey(family, weightMillioz, finish, metal)
 
     val isDateRun: Boolean get() = schemaVersion == 2
 
@@ -104,16 +111,22 @@ data class CollectionCatalog(
         blankField("catalog.issuer_code", issuerCode)?.let { return it }
         blankField("catalog.updated_at", updatedAt)?.let { return it }
         // A set declares no physical variant; anything else must declare exactly one weight.
-        if (isSet && (weightMillioz != null || finish != null)) {
+        if (isSet && (weightMillioz != null || finish != null || metal != null)) {
             return CollectionCatalogValidationError.SetDeclaresVariant
         }
         if (!isSet && weightMillioz == null) {
             return CollectionCatalogValidationError.MissingWeight
         }
+        // The metal is part of the key, so a catalog that keeps quiet about it would collide
+        // with the one curated next over the same family, weight and finish (#40).
+        if (!isSet && metal == null) {
+            return CollectionCatalogValidationError.MissingMetal
+        }
         val canonical = CollectionProposalKey.fromCanonicalParts(
             family,
             weightMillioz ?: SPANNING_VARIANTS_WEIGHT,
             finishCode(finish),
+            metalCode(metal),
         )
         if (canonical != key()) {
             return CollectionCatalogValidationError.InvalidVariantKey
@@ -150,6 +163,9 @@ data class CollectionCatalog(
                 return CollectionCatalogValidationError.DuplicateMemberId(member.id)
             }
             blankField("member[${member.id}].label", member.label)?.let { return it }
+            if (member.variantNote != null && member.variantNote.isBlank()) {
+                return CollectionCatalogValidationError.BlankVariantNote(member.id)
+            }
             validateMemberStatus(member)?.let { return it }
             // Only an issued member of an issue run may name issues, and every one of them must
             // name at least one: a member with none could never be owned.
@@ -263,6 +279,16 @@ data class CollectionCatalogMember(
      * Never used for matching — see [CollectionCatalog.memberMatches].
      */
     @SerialName("design_type_id") val designTypeId: Int? = null,
+    /**
+     * Why this member departs from the variant the catalog declares, in prose.
+     *
+     * By ADR 0016 the catalog is authoritative about its members' variant, so the deviation
+     * changes nothing about how the piece is keyed or counted. What it buys is the right to say
+     * so out loud: the suite cross-checks each member's metal against its Numista ficha, and a
+     * member carrying this note is exempt — the same bargain `closed_note` makes when a catalog
+     * closes a series. It never silences anything by itself; a note with no deviation is inert.
+     */
+    @SerialName("variant_note") val variantNote: String? = null,
 ) {
     /** Named by the issuer and not yet struck, so no piece can fill it. */
     val isAnnounced: Boolean get() = status == MemberStatus.Announced
@@ -286,11 +312,19 @@ sealed class CollectionCatalogValidationError(val message: String) {
     )
 
     data object SetDeclaresVariant : CollectionCatalogValidationError(
-        "a set catalog spans physical variants, so it cannot declare a weight or a finish",
+        "a set catalog spans physical variants, so it cannot declare a weight, finish or metal",
     )
 
     data object MissingWeight : CollectionCatalogValidationError(
         "collection catalog must declare `weight_millioz` unless it is a set",
+    )
+
+    data object MissingMetal : CollectionCatalogValidationError(
+        "collection catalog must declare `metal` unless it is a set",
+    )
+
+    data class BlankVariantNote(val memberId: String) : CollectionCatalogValidationError(
+        "member `$memberId` carries an empty `variant_note`: say what deviates, or drop it",
     )
 
     data object InvalidSource : CollectionCatalogValidationError(

@@ -381,7 +381,7 @@ private fun ProposalCard(
             onClick = { onOpenProposal(proposal) },
         )
         Text(
-            variantLabel(proposal.weightMillioz, proposal.finish),
+            variantLabel(proposal.weightMillioz, proposal.finish, proposal.metal),
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(

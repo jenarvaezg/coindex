@@ -279,13 +279,14 @@ class CollectionProposalsTest {
             family = family,
             weightMillioz = 1_000,
             finish = finish,
+            metal = Metal.Silver,
             distinctTypes = 1,
             quantity = 1,
         )
         val followed = proposal("SML", Finish.ProofColoured)
         val available = proposal("Lunar ounce", null)
         val ignored = proposal("Nautical Ounce", Finish.Bullion)
-        val stale = CollectionProposalKey.fromCanonicalParts("Red Data Book", 2_000, "proof")
+        val stale = CollectionProposalKey.fromCanonicalParts("Red Data Book", 2_000, "proof", "silver")
         assertNotNull(stale)
         val preferences = listOf(
             CollectionProposalPreference(followed.key(), ProposalDisposition.Followed),
@@ -295,11 +296,13 @@ class CollectionProposalsTest {
 
         assertEquals("proof_coloured", followed.key().finishCode())
         assertNull(
-            CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown")!!.finish,
+            CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "silver")!!.finish,
         )
-        assertNull(CollectionProposalKey.fromCanonicalParts(" Lunar ounce", 1_000, "unknown"))
-        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 0, "unknown"))
-        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "Proof"))
+        assertNull(CollectionProposalKey.fromCanonicalParts(" Lunar ounce", 1_000, "unknown", "silver"))
+        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 0, "unknown", "silver"))
+        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "Proof", "silver"))
+        // Un código de metal que nadie reconoce descalifica la clave igual que el acabado.
+        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "Plata"))
 
         val classified = classifyCollectionProposals(
             listOf(followed, available, ignored),

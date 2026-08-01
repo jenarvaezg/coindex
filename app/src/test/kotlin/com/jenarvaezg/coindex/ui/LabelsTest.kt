@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Finish
+import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,29 @@ class LabelsTest {
         // A known finish is the same word either way.
         assertEquals("Bullion", finishLabel(Finish.Bullion))
         assertEquals("Bullion", standaloneFinishLabel(Finish.Bullion))
-        assertEquals("0,804 oz · Acabado sin confirmar", variantLabel(804, null))
+        assertEquals("0,804 oz · Acabado sin confirmar", variantLabel(804, null, Metal.Silver))
+    }
+
+    /**
+     * El metal solo se nombra cuando no es plata (#40): decirlo en las 73 tarjetas de plata que
+     * miden las dos colecciones alargaría cada línea para no distinguir nada, y la onza de oro
+     * —la que obligó a meterlo en la clave— es justo la que necesita la palabra.
+     */
+    @Test
+    fun `the metal is named only when it is not silver`() {
+        assertEquals("1 oz · Bullion", variantLabel(1_000, Finish.Bullion, Metal.Silver))
+        // Una ficha sin composición legible tampoco escribe nada: no se sabe, no se afirma.
+        assertEquals("1 oz · Bullion", variantLabel(1_000, Finish.Bullion, null))
+        assertEquals("1 oz · Bullion · Oro", variantLabel(1_000, Finish.Bullion, Metal.Gold))
+        assertEquals(
+            "0,25 oz · Acabado sin confirmar · Cuproníquel",
+            variantLabel(250, null, Metal.Cupronickel),
+        )
+        // Un conjunto no tiene variante física que describir, y el metal no cambia eso.
+        assertEquals(
+            "Conjunto de varias denominaciones",
+            variantLabel(null, null, Metal.Gold),
+        )
     }
 
     private fun item(id: Long, typeId: Int) = CollectedItem(id = id, quantity = 1, typeId = typeId)

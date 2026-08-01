@@ -50,8 +50,8 @@
      `venezuela-fuertes.json` (22 fechas: el venezolano de 1876, N#48672, más las 21 del
      fuerte, N#10340; al padre le faltan 1904 y 1905).
    - `schema_version: 3` (**conjuntos emitidos como set**, ADR 0012): los miembros abarcan
-     varias variantes físicas, así que el catálogo no declara `weight_millioz` ni `finish`
-     y su clave de variante lleva el **peso ausente** (`-1` al persistirse). Un tipo listado
+     varias variantes físicas, así que el catálogo no declara `weight_millioz`, `finish`
+     ni `metal`, y su clave de variante lleva el **peso ausente** (`-1` al persistirse). Un tipo listado
      aquí deriva esa clave incluso si Numista le da familia: nombrar los tipos exactos que
      se emitieron juntos es una afirmación más específica que la agrupación de Numista.
      Criterio estrecho a propósito: **solo** conjuntos emitidos como un producto. El bullion

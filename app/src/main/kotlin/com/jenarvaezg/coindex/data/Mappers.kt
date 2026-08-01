@@ -14,6 +14,7 @@ import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
+import com.jenarvaezg.coindex.domain.inferMetal
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
@@ -75,6 +76,23 @@ internal fun issuerNameFromRaw(raw: String): String? = runCatching {
 }.getOrNull()
 
 /**
+ * Numista's `composition.text`, read from the stored response for the same bargain: the metal of
+ * every type already cached — the 723 seeded among them — without a migration or an API call.
+ *
+ * A column would have frozen the reading. The rules that turn this prose into a [Metal] are
+ * inference, like the finish, so keeping the prose is what lets a better rule fix old rows.
+ */
+internal fun compositionFromRaw(raw: String): String? = runCatching {
+    lenientJson.parseToJsonElement(raw)
+        .jsonObject["composition"]
+        ?.jsonObject
+        ?.get("text")
+        ?.jsonPrimitive
+        ?.contentOrNull
+        ?.takeIf(String::isNotBlank)
+}.getOrNull()
+
+/**
  * Issuer names already read, kept for as long as the process lives.
  *
  * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
@@ -85,9 +103,12 @@ internal fun issuerNameFromRaw(raw: String): String? = runCatching {
  */
 private val issuerNames = ConcurrentHashMap<Pair<Int, Long>, String>()
 
+/** The composition prose, cached on the same terms and for the same reason as [issuerNames]. */
+private val compositions = ConcurrentHashMap<Pair<Int, Long>, String>()
+
 /**
- * The finish is inferred here rather than stored, so a later fix to the inference rules
- * applies to types cached long ago without spending API budget again.
+ * The finish and the metal are inferred here rather than stored, so a later fix to the
+ * inference rules applies to types cached long ago without spending API budget again.
  */
 fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     id = typeId,
@@ -102,6 +123,12 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     maxYear = maxYear,
     weightOz = weightGrams?.let(::gramsToOunces),
     finish = inferFinish(title, family),
+    // Only the parse is cached: the rules run on every read, so improving them fixes old rows.
+    metal = inferMetal(
+        compositions
+            .getOrPut(typeId to fetchedAt) { compositionFromRaw(raw).orEmpty() }
+            .ifEmpty { null },
+    ),
 )
 
 /**
@@ -124,7 +151,8 @@ fun OwnGroupingEntity.toDomain(members: List<OwnGroupingMemberEntity>): OwnGroup
 
 /** A stored preference whose parts are no longer canonical is ignored, not guessed at. */
 fun ProposalPreferenceEntity.toDomain(): CollectionProposalPreference? {
-    val key = CollectionProposalKey.fromCanonicalParts(family, weightMillioz, finishCode)
+    val key = CollectionProposalKey
+        .fromCanonicalParts(family, weightMillioz, finishCode, metalCode)
         ?: return null
     val disposition = ProposalDisposition.fromCode(disposition) ?: return null
     return CollectionProposalPreference(key, disposition)
