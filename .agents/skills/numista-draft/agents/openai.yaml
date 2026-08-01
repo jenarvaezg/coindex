@@ -1,0 +1,4 @@
+interface:
+  display_name: "Numista Draft"
+  short_description: "Prepara borradores Numista con fuentes y sin enviar"
+  default_prompt: "Use $numista-draft to research this Numista contribution, build a field-sourced dossier, validate duplicates and API budget, and prefill a visible review form without saving, uploading, or submitting."

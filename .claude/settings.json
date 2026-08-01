@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "mcp__numista_review_browser__browser_drop",
+      "mcp__numista_review_browser__browser_evaluate",
+      "mcp__numista_review_browser__browser_file_upload",
+      "mcp__numista_review_browser__browser_run_code_unsafe"
+    ]
+  }
+}
