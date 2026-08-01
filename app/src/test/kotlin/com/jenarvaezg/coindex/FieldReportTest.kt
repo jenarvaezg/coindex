@@ -44,7 +44,12 @@ import org.junit.Assume.assumeTrue
  *
  *     COINDEX_FIELD_SNAPSHOT=/private/tmp/coindex-privado/padre \
  *     COINDEX_FIELD_TYPES=/private/tmp/coindex-privado/types \
- *       ./gradlew :app:testDebugUnitTest --tests '*FieldReportTest*'
+ *       ./gradlew :app:testDebugUnitTest --tests '*FieldReportTest*' --rerun
+ *
+ * **`--rerun` no es opcional al cambiar de colección**: la variable de entorno no es una entrada
+ * declarada de la tarea, así que cambiarla sola deja la tarea `UP-TO-DATE` y el XML anterior en
+ * su sitio. Sin ella se lee el informe de una captura creyendo que es el de la otra — el mismo
+ * falso verde de #66, con otra cara.
  *
  * `COINDEX_FIELD_TYPES` is optional and holds `type_<id>_es.json` captures for types the seeded
  * cache lacks. Leaving them out reports those pieces as missing metadata, which is a state a
