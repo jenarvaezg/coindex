@@ -77628,6 +77628,341 @@
   },
   "weight": 15
  },
+ "7964": {
+  "id": 7964,
+  "url": "https://es.numista.com/7964",
+  "title": "10 Gulden - Beatrix (Jan Steen)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "pays-bas",
+   "name": "Países Bajos"
+  },
+  "min_year": 1996,
+  "max_year": 1996,
+  "ruler": [
+   {
+    "id": 1303,
+    "name": "Beatriz",
+    "wikidata_id": "Q29574",
+    "group": {
+     "id": 750,
+     "name": "Casa de Orange-Nassau"
+    }
+   }
+  ],
+  "value": {
+   "text": "10 Gulden",
+   "numeric_value": 10,
+   "currency": {
+    "id": 70,
+    "name": "Gulden",
+    "full_name": "Gulden (decimalized, 1817-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Eric Claus"
+   ],
+   "description": "Busto de la reina Beatriz mirando a la izquierda",
+   "lettering": "BEATRIX KONINGIN DER NEDERLANDEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/pays-bas/64ad65597e06a9.16723583-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/pays-bas/64ad65597e06a9.16723583-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Eric Claus"
+   ],
+   "description": "Autorretrato de Jan Steen tocando el laúd",
+   "lettering": "\"WIJ SCREUWE ALS LEUWE\"\r\nJAN STEEN\r\n10 G\r\n1996",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "10 Gulden",
+   "picture": "https://en.numista.com/catalogue/photos/pays-bas/64ad6559e58b26.74494658-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/pays-bas/64ad6559e58b26.74494658-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "Jan Steen",
+  "comments": "<p><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.laurensschulman.nl/database/beatrix/beatrix-10-gulden-exemplaren/beatrix-10-gulden-1996-lsch-1170/\"><u>LSchulman# 1170</u></a></p><p></p><p>El verso \"We screuwe als Leuwe\" procede del cuadro de Steen '<a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.rijksmuseum.nl/nl/collectie/object/Prinsjesdag--4e7e83f2ca92a1a3dba02fce8728d83f?tab=data\"><i><u>Prinsjesdag</u></i></a><i>' </i>(Eng: día del príncipe). El texto está en la cama.</p><p><a href=\"https://en.numista.com/catalogue/images/679bb993340b2.png\"><img src=\"https://en.numista.com/catalogue/images/miniatures/679bb993340b2.png\"></a></p><p>El <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.museothyssen.org/en/collection/artists/steen-jan-havicksz/self-portrait-playing-lute \"><u>cuadro sin nombre</u></a>muestra a Jan Steen tocando el laúd.</p><p><a href=\"https://en.numista.com/catalogue/images/679bbac0cb0ac.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/679bbac0cb0ac.jpg\"></a></p>",
+  "tags": [
+   "Música",
+   "Pintura",
+   "Artista"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "223"
+   }
+  ],
+  "weight": 15,
+  "orientation": "coin",
+  "edge": {
+   "description": "Inscripción",
+   "lettering": "★ GOD ★ ZIJ ★ MET ★ ONS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 23,
+    "name": "Real Casa de la Moneda de los Países Bajos"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "7965": {
+  "id": 7965,
+  "url": "https://es.numista.com/7965",
+  "title": "10 Gulden - Beatrix (Marshall Plan)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "pays-bas",
+   "name": "Países Bajos"
+  },
+  "min_year": 1997,
+  "max_year": 1997,
+  "ruler": [
+   {
+    "id": 1303,
+    "name": "Beatriz",
+    "wikidata_id": "Q29574",
+    "group": {
+     "id": 750,
+     "name": "Casa de Orange-Nassau"
+    }
+   }
+  ],
+  "value": {
+   "text": "10 Gulden",
+   "numeric_value": 10,
+   "currency": {
+    "id": 70,
+    "name": "Gulden",
+    "full_name": "Gulden (decimalized, 1817-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Berend Strik"
+   ],
+   "description": "Cabeza de la reina Beatriz mirando a la izquierda",
+   "lettering": "BEATRIX KONINGIN DER NEDERLANDEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/pays-bas/66a8c0e023e7b0.39532793-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/pays-bas/66a8c0e023e7b0.39532793-180.jpg",
+   "picture_copyright": "Newtony",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "Cabeza de George C. Marshall mirando a la izquierda dividiendo el valor",
+   "lettering": "EUROPEAN RECOVERY PROGRAM 1947\r\n10 G\r\nGEORGE C. MARSHALL\r\n1997",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "10 Gulden",
+   "picture": "https://en.numista.com/catalogue/photos/pays-bas/66a8c0e0557406.08572480-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/pays-bas/66a8c0e0557406.08572480-180.jpg",
+   "picture_copyright": "Newtony",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "50 aniversario del Plan Marshall",
+  "comments": "<p><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.laurensschulman.nl/database/beatrix/beatrix-10-gulden-exemplaren/beatrix-10-gulden-1997-lsch-1171/\"><u>LSchulman# 1171</u></a></p><p></p><p>El <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://en.wikipedia.org/wiki/Marshall_Plan\"><u>Plan Marshall</u></a> (oficialmente Programa de Recuperación Europea, ERP) fue una iniciativa estadounidense promulgada en 1948 para proporcionar ayuda exterior a Europa Occidental.</p>",
+  "tags": [
+   "Político"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "224"
+   }
+  ],
+  "weight": 15,
+  "orientation": "coin",
+  "edge": {
+   "description": "Inscripción",
+   "lettering": "★ GOD ★ ZIJ ★ MET ★ ONS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 23,
+    "name": "Real Casa de la Moneda de los Países Bajos"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "7966": {
+  "id": 7966,
+  "url": "https://es.numista.com/7966",
+  "title": "10 Gulden - Beatrix (Millennium)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "pays-bas",
+   "name": "Países Bajos"
+  },
+  "min_year": 1999,
+  "max_year": 1999,
+  "ruler": [
+   {
+    "id": 1303,
+    "name": "Beatriz",
+    "wikidata_id": "Q29574",
+    "group": {
+     "id": 750,
+     "name": "Casa de Orange-Nassau"
+    }
+   }
+  ],
+  "value": {
+   "text": "10 Gulden",
+   "numeric_value": 10,
+   "currency": {
+    "id": 70,
+    "name": "Gulden",
+    "full_name": "Gulden (decimalized, 1817-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2002-02-28"
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Hewald Jongenelis"
+   ],
+   "description": "Pequeña cabeza de la reina Beatriz mirando a la izquierda sobre 12 círculos elipsoidales concéntricos. Pequeño agujero en uno de los anillos.",
+   "lettering": "BEATRIX KONINGIN DER NEDERLANDEN\r\n2000\r\n10 GULDEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/pays-bas/63c9b9cd6020c3.91909897-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/pays-bas/63c9b9cd6020c3.91909897-180.jpg",
+   "picture_copyright": "The Coinhouse Auctions"
+  },
+  "reverse": {
+   "engravers": [
+    "Hewald Jongenelis"
+   ],
+   "description": "Pequeña cabeza de la reina Beatriz mirando a la izquierda sobre 12 círculos elipsoidales concéntricos",
+   "lettering": "BEATRIX KONINGIN DER NEDERLANDEN\r\n1999\r\n10 GULDEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/pays-bas/63c9b9cda9ef27.12453773-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/pays-bas/63c9b9cda9ef27.12453773-180.jpg",
+   "picture_copyright": "The Coinhouse Auctions"
+  },
+  "commemorated_topic": "Milenio",
+  "comments": "<p><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.laurensschulman.nl/database/beatrix/beatrix-10-gulden-exemplaren/beatrix-10-gulden-1999-lsch-1172/\"><u>LSchulman# 1172</u></a></p><p></p><p>Los doce anillos representan los doce meses del año. El pequeño agujero en uno de los anillos del lado con el año 2000 representa el día bisiesto.</p>",
+  "tags": [
+   "Milenio"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "228"
+   }
+  ],
+  "weight": 15,
+  "orientation": "medal",
+  "edge": {
+   "description": "Inscripción",
+   "lettering": "★ GOD ★ ZIJ ★ MET ★ ONS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 23,
+    "name": "Real Casa de la Moneda de los Países Bajos"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "79678": {
   "category": "coin",
   "commemorated_topic": "IV centenario del Quijote (II Parte)",

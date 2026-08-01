@@ -118,12 +118,11 @@ data class CollectionCatalog(
         if (canonical != key()) {
             return CollectionCatalogValidationError.InvalidVariantKey
         }
-        val sourceIsValid = if (schemaVersion == 1) {
-            isNumistaSeriesSource(source)
-        } else {
-            isNumistaSeriesSource(source) || isNumistaTypeSource(source)
-        }
-        if (!sourceIsValid) {
+        // A series URL when one proposed the list, and a type page when nothing did: the series
+        // only proposes and the catalog is what affirms coverage (#43), so a boundary that lives
+        // outside Numista is not a lesser catalog (#33). The 10 gulden of Beatrix are five in the
+        // Handboek and no series at all in Numista; requiring one would have forced a fake.
+        if (!isNumistaSeriesSource(source) && !isNumistaTypeSource(source)) {
             return CollectionCatalogValidationError.InvalidSource
         }
         if (members.isEmpty()) {
@@ -295,8 +294,7 @@ sealed class CollectionCatalogValidationError(val message: String) {
     )
 
     data object InvalidSource : CollectionCatalogValidationError(
-        "collection catalog source must be an HTTPS Numista series URL " +
-            "(or a Numista type URL for date runs)",
+        "collection catalog source must be an HTTPS Numista series or type URL",
     )
 
     data object EmptyMembers : CollectionCatalogValidationError(

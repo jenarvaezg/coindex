@@ -25,12 +25,12 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(25, catalogs.size)
+        assertEquals(26, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los doce
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los trece
      * cerrados llevan su nota y los trece abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -39,7 +39,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(12, closed.size)
+        assertEquals(13, closed.size)
         assertEquals(13, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -200,6 +200,34 @@ class CuratedCatalogsTest {
             escudos.members.map { it.numistaTypeId },
         )
         assertEquals((1995..2001).toList(), escudos.members.map { it.year })
+    }
+
+    /**
+     * El primer catálogo al que Numista no le da ninguna serie: las cinco fichas traen
+     * `series: null`, así que la lista no la propuso nadie dentro de Numista y el `source` es la
+     * página de un tipo. Quien delimita es el Handboek van de Nederlandse munten 1795-2001, que
+     * cierra los 10 gulden de Beatrix en cinco piezas correlativas —LSch. 1168 a 1172— y archiva
+     * aparte los de Juliana, que además pesan 25 g y son otra variante física.
+     *
+     * Las cinco caben en un fichero con dos leyes distintas —.720 la de 1994 y .800 las otras
+     * cuatro, todas a 15 g— porque por el ADR 0016 el catálogo es autoridad sobre la variante de
+     * sus propios miembros.
+     */
+    @Test
+    fun `the ten gulden of Beatrix are five and cite a type page because no series proposed them`() {
+        val tientjes = find("paises-bajos-10-gulden-beatrix")
+        assertEquals(1, tientjes.schemaVersion)
+        assertEquals("10 gulden conmemorativos de Beatrix", tientjes.family)
+        assertEquals(482, tientjes.weightMillioz)
+        assertNull(tientjes.finish)
+        assertEquals(SeriesStatus.Closed, tientjes.seriesStatus)
+        assertTrue(tientjes.source.startsWith("https://en.numista.com/catalogue/pieces"))
+        // Verificados uno a uno en numista.com: KM 216, 220, 223, 224 y 228, cinco años sin 1998.
+        assertEquals(
+            listOf(7_962, 7_963, 7_964, 7_965, 7_966),
+            tientjes.members.map { it.numistaTypeId },
+        )
+        assertEquals(listOf(1994, 1995, 1996, 1997, 1999), tientjes.members.map { it.year })
     }
 
     @Test

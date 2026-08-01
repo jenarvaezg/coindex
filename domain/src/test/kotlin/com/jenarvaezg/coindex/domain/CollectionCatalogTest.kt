@@ -247,12 +247,13 @@ class CollectionCatalogValidationTest {
         val badSource = definition.copy(source = "https://en.numista.com/10340")
         assertEquals(CollectionCatalogValidationError.InvalidSource, badSource.validate())
 
-        // A type-page source is only legitimate for a date run.
+        // A type page is legitimate in every version: the types Numista files under no series at
+        // all can still form a catalog, and then there is no series URL to cite (#51).
         val typePageOnV1 = definition.copy(
             schemaVersion = 1,
             members = definition.members.take(1),
         )
-        assertEquals(CollectionCatalogValidationError.InvalidSource, typePageOnV1.validate())
+        assertNull(typePageOnV1.validate())
     }
 
     @Test

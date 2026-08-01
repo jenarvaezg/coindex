@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "paises-bajos-10-gulden-beatrix",
+  "name": "10 gulden conmemorativos de Beatrix · Países Bajos 1994-1999",
+  "issuer_code": "pays-bas",
+  "family": "10 gulden conmemorativos de Beatrix",
+  "weight_millioz": 482,
+  "finish": null,
+  "series_status": "closed",
+  "closed_note": "El florín desapareció con el euro: la del Milenio de 1999 es la última y los Países Bajos pasaron al euro el 1 de enero de 2002. El Handboek van de Nederlandse munten 1795-2001 cierra los 10 gulden de Beatrix en cinco piezas correlativas, LSch. 1168 a 1172: https://www.laurensschulman.nl/database/beatrix/beatrix-10-gulden-exemplaren/",
+  "source": "https://en.numista.com/catalogue/pieces7962.html",
+  "updated_at": "2026-08-01",
+  "members": [
+    {
+      "id": "1994-tratado-benelux",
+      "label": "Tratado Be-Ne-Lux",
+      "year": 1994,
+      "numista_type_id": 7962
+    },
+    {
+      "id": "1995-hugo-de-groot",
+      "label": "Hugo de Groot",
+      "year": 1995,
+      "numista_type_id": 7963
+    },
+    {
+      "id": "1996-jan-steen",
+      "label": "Jan Steen",
+      "year": 1996,
+      "numista_type_id": 7964
+    },
+    {
+      "id": "1997-plan-marshall",
+      "label": "Plan Marshall",
+      "year": 1997,
+      "numista_type_id": 7965
+    },
+    {
+      "id": "1999-milenio",
+      "label": "Milenio",
+      "year": 1999,
+      "numista_type_id": 7966
+    }
+  ]
+}
