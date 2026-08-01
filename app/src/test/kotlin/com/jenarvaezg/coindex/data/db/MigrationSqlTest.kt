@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.data.db
 
+import com.jenarvaezg.coindex.data.CatalogFiles
+import com.jenarvaezg.coindex.domain.CatalogSeeds
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -97,5 +99,61 @@ class MigrationSqlTest {
                 "la versión 3 ha tocado $table",
             )
         }
+    }
+
+    /**
+     * La versión 4 mete el metal en la clave (#40, ADR 0018), y la clave **es** la primary key de
+     * las disposiciones, así que la tabla se reconstruye. Es el primer rehacer de este proyecto:
+     * si la tabla nueva no es letra por letra la que Room deriva de la entidad, la app revienta al
+     * abrir la base de datos del coleccionista.
+     */
+    @Test
+    fun `version 4 rebuilds the dispositions exactly as Room declares them`() {
+        assertEquals(
+            exportedCreateSql(4).getValue("collection_proposal_preferences"),
+            CoindexDatabase.VERSION_4_PREFERENCES_TABLE,
+        )
+        assertEquals(
+            exportedColumns(3, "collection_proposal_preferences") + ("metalCode" to "TEXT"),
+            exportedColumns(4, "collection_proposal_preferences"),
+        )
+    }
+
+    @Test
+    fun `version 4 touches the dispositions and nothing else`() {
+        assertEquals(exportedCreateSql(3).keys, exportedCreateSql(4).keys)
+        (exportedCreateSql(4).keys - "collection_proposal_preferences").forEach { table ->
+            assertEquals(
+                exportedColumns(3, table),
+                exportedColumns(4, table),
+                "la versión 4 ha tocado $table",
+            )
+        }
+    }
+
+    /**
+     * La lista literal que sobrevive a la migración: las claves de los treinta catálogos que
+     * viajaban en esta versión.
+     *
+     * Se compara contra `data/` **hoy**, que es lo único que puede fallar de forma útil — que
+     * alguien curara un catálogo entre escribir la lista y publicarla. En cuanto se cure el
+     * treinta y uno esta comprobación deja de valer: una migración es historia congelada y no
+     * puede seguir a `data/`, así que el día que se rompa lo correcto es borrar **el test**, no
+     * tocar la lista.
+     */
+    @Test
+    fun `the carried-over keys are the catalogs shipped at version 4`() {
+        val shipped = CatalogSeeds.parseAll(CatalogFiles.all()).map { catalog ->
+            PreservedKey(
+                family = catalog.family,
+                weightMillioz = catalog.key().storedWeightMillioz(),
+                finishCode = catalog.key().finishCode(),
+                metalCode = catalog.key().metalCode(),
+            )
+        }
+
+        assertEquals(shipped.toSet(), CoindexDatabase.PRESERVED_KEYS.toSet())
+        // Una clave repetida insertaría la misma fila dos veces y rompería la primary key nueva.
+        assertEquals(CoindexDatabase.PRESERVED_KEYS.size, CoindexDatabase.PRESERVED_KEYS.toSet().size)
     }
 }

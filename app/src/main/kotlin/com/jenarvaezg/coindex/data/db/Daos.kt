@@ -81,10 +81,16 @@ interface ProposalPreferenceDao {
     @Query(
         """
         DELETE FROM collection_proposal_preferences
-        WHERE family = :family AND weightMillioz = :weightMillioz AND finishCode = :finishCode
+        WHERE family = :family AND weightMillioz = :weightMillioz
+          AND finishCode = :finishCode AND metalCode = :metalCode
         """,
     )
-    suspend fun delete(family: String, weightMillioz: Int, finishCode: String)
+    suspend fun delete(
+        family: String,
+        weightMillioz: Int,
+        finishCode: String,
+        metalCode: String,
+    )
 }
 
 /**

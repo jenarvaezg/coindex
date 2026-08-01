@@ -67,6 +67,7 @@ class CatalogSeedsTest {
                   "familly": "Nikola Tesla",
                   "weight_millioz": 1000,
                   "finish": null,
+                  "metal": "silver",
                   "series_status": "open",
                   "source": "https://en.numista.com/catalogue/series.php?id=5303",
                   "updated_at": "2026-07-29",
@@ -96,6 +97,7 @@ class CatalogSeedsTest {
               "family": "Nikola Tesla",
               "weight_millioz": 1000,
               "finish": null,
+              "metal": "silver",
               $status
               "source": "https://en.numista.com/catalogue/series.php?id=5303",
               "updated_at": "2026-08-01",
@@ -143,6 +145,7 @@ class CatalogSeedsTest {
                   "family": "Nikola Tesla",
                   "weight_millioz": 1000,
                   "finish": null,
+                  "metal": "silver",
                   "series_status": "open",
                   "source": "https://en.numista.com/catalogue/series.php?id=5303",
                   "updated_at": "2026-07-29",
@@ -166,6 +169,7 @@ class CatalogSeedsTest {
               "family": "Nikola Tesla",
               "weight_millioz": 1000,
               "finish": null,
+              "metal": "silver",
               "series_status": "open",
               "source": "https://en.numista.com/catalogue/series.php?id=5303",
               "updated_at": "2026-07-29",
@@ -200,6 +204,7 @@ class CatalogSeedsTest {
               "family": "The Royal Tudor Beasts",
               "weight_millioz": 2000,
               "finish": "Bullion",
+              "metal": "silver",
               "series_status": "open",
               "source": "https://en.numista.com/catalogue/series.php?id=6118",
               "updated_at": "2026-07-29",
@@ -216,6 +221,10 @@ class CatalogSeedsTest {
         )
 
         assertEquals(Finish.Bullion, parsed.finish)
-        assertEquals(CollectionProposalKey("The Royal Tudor Beasts", 2_000, Finish.Bullion), parsed.key())
+        assertEquals(Metal.Silver, parsed.metal)
+        assertEquals(
+            CollectionProposalKey("The Royal Tudor Beasts", 2_000, Finish.Bullion, Metal.Silver),
+            parsed.key(),
+        )
     }
 }

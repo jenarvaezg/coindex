@@ -6,6 +6,7 @@
   "family": "Serie de monedas de plata obtenidas a valor facial",
   "weight_millioz": 579,
   "finish": null,
+  "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=3347",
   "updated_at": "2026-08-01",

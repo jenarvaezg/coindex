@@ -8,6 +8,14 @@ import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 
+/** One disposition key the version 4 migration carries across, and the metal it is given. */
+internal data class PreservedKey(
+    val family: String,
+    val weightMillioz: Int,
+    val finishCode: String,
+    val metalCode: String,
+)
+
 @Database(
     entities = [
         CollectedItemEntity::class,
@@ -17,7 +25,7 @@ import androidx.sqlite.execSQL
         OwnGroupingMemberEntity::class,
         ApiCallEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -69,6 +77,104 @@ abstract class CoindexDatabase : RoomDatabase() {
             "ALTER TABLE `type_meta` ADD COLUMN `reverseThumbnailUrl` TEXT",
         )
 
+        /**
+         * Version 4 puts the dominant metal into the proposal key (#40, ADR 0018).
+         *
+         * The key *is* the primary key of `collection_proposal_preferences`, and SQLite cannot
+         * add a column to one, so the table is rebuilt: renamed aside, recreated exactly as Room
+         * declares it, and refilled row by row from the old one.
+         *
+         * Only rows this app can name a metal for are carried across, and that is a literal list
+         * — [PRESERVED_KEYS], the thirty catalogs shipped at this version — rather than a lookup.
+         * A migration is frozen history: reading today's `data/` inside it would silently change
+         * what an old phone does the next time someone curates a catalog. Everything else is
+         * dropped and comes back as **Disponible**, which is the price #55 already named for
+         * touching a key: the two cupronickel proposals of the father's Portuguese systems lose
+         * their card and are re-followed by hand.
+         */
+        /** Every shipped catalog key at version 4: silver, and the 1983 set, which has no metal. */
+        internal val PRESERVED_KEYS: List<PreservedKey> = listOf(
+            PreservedKey("Architectural Monuments of Russia", 1_121, "unknown", "silver"),
+            PreservedKey("Australian Koala", 1_000, "unknown", "silver"),
+            PreservedKey("Australian Kookaburra", 1_000, "unknown", "silver"),
+            PreservedKey("Dólar conmemorativo de plata .500 de Canadá", 750, "unknown", "silver"),
+            PreservedKey("Dólar de plata .800 de Canadá", 750, "unknown", "silver"),
+            PreservedKey("Equilibrium", 1_000, "unknown", "silver"),
+            PreservedKey("Capitales de provincia y ciudades autónomas", 434, "proof", "silver"),
+            PreservedKey("100 Pesetas de Franco", 611, "unknown", "silver"),
+            PreservedKey("The Lion and the Eagle", 1_000, "bullion", "silver"),
+            PreservedKey("Lunar Series II", 1_000, "bullion", "silver"),
+            PreservedKey("Lunar Series III", 1_000, "bullion", "silver"),
+            PreservedKey("Nikola Tesla", 1_000, "unknown", "silver"),
+            PreservedKey("Outstanding Personalities of Russia", 547, "unknown", "silver"),
+            PreservedKey("10 gulden conmemorativos de Beatrix", 482, "unknown", "silver"),
+            PreservedKey(
+                "1000 escudos conmemorativos de plata .500 de Portugal",
+                900,
+                "unknown",
+                "silver",
+            ),
+            PreservedKey("XVII Exposición Europea de Arte de 1983", -1, "unknown", "unknown"),
+            PreservedKey(
+                "500 escudos conmemorativos de plata .500 de Portugal",
+                450,
+                "unknown",
+                "silver",
+            ),
+            PreservedKey("The Queen's Beasts", 2_000, "unknown", "silver"),
+            PreservedKey("Red Data Book", 547, "unknown", "silver"),
+            PreservedKey("Lunar ounce", 1_000, "unknown", "silver"),
+            PreservedKey("Nautical Ounce", 1_000, "unknown", "silver"),
+            PreservedKey("Australian Saltwater Crocodile", 1_000, "unknown", "silver"),
+            PreservedKey(
+                "Serie de monedas de plata obtenidas a valor facial",
+                579,
+                "unknown",
+                "silver",
+            ),
+            PreservedKey("St George and the Dragon", 1_000, "bullion", "silver"),
+            PreservedKey("The Royal Tudor Beasts", 1_000, "proof", "silver"),
+            PreservedKey("The Royal Tudor Beasts", 2_000, "bullion", "silver"),
+            PreservedKey(
+                "500th Anniversary of the United Russian State",
+                1_111,
+                "unknown",
+                "silver",
+            ),
+            PreservedKey(
+                "250th anniversary of the United States Declaration of Independence",
+                868,
+                "unknown",
+                "silver",
+            ),
+            PreservedKey("2 Bolívares de Venezuela", 322, "unknown", "silver"),
+            PreservedKey("Fuertes de Venezuela", 804, "unknown", "silver"),
+        )
+
+        private const val PREFERENCES_BACKUP = "collection_proposal_preferences_pre_v4"
+
+        /**
+         * The rebuilt table, verbatim as Room declares it. Same reason [VERSION_2_TABLES] is kept
+         * as data: a keyword of drift here is a crash at open time on the collector's phone.
+         */
+        internal val VERSION_4_PREFERENCES_TABLE: String =
+            "CREATE TABLE IF NOT EXISTS `collection_proposal_preferences` " +
+                "(`family` TEXT NOT NULL, `weightMillioz` INTEGER NOT NULL, " +
+                "`finishCode` TEXT NOT NULL, `metalCode` TEXT NOT NULL, " +
+                "`disposition` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, " +
+                "`updatedAt` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`family`, `weightMillioz`, `finishCode`, `metalCode`))"
+
+        /** Parameterized, so a family holding a quote — «The Queen's Beasts» — needs no escaping. */
+        internal val VERSION_4_CARRY_OVER: String =
+            "INSERT INTO `collection_proposal_preferences` " +
+                "(`family`, `weightMillioz`, `finishCode`, `metalCode`, " +
+                "`disposition`, `createdAt`, `updatedAt`) " +
+                "SELECT `family`, `weightMillioz`, `finishCode`, ?, " +
+                "`disposition`, `createdAt`, `updatedAt` " +
+                "FROM `$PREFERENCES_BACKUP` " +
+                "WHERE `family` = ? AND `weightMillioz` = ? AND `finishCode` = ?"
+
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(connection: SQLiteConnection) {
                 VERSION_2_TABLES.forEach(connection::execSQL)
@@ -81,9 +187,33 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(connection: SQLiteConnection) {
+                connection.execSQL(
+                    "ALTER TABLE `collection_proposal_preferences` " +
+                        "RENAME TO `$PREFERENCES_BACKUP`",
+                )
+                connection.execSQL(VERSION_4_PREFERENCES_TABLE)
+                val statement = connection.prepare(VERSION_4_CARRY_OVER)
+                try {
+                    for (key in PRESERVED_KEYS) {
+                        statement.reset()
+                        statement.bindText(1, key.metalCode)
+                        statement.bindText(2, key.family)
+                        statement.bindLong(3, key.weightMillioz.toLong())
+                        statement.bindText(4, key.finishCode)
+                        statement.step()
+                    }
+                } finally {
+                    statement.close()
+                }
+                connection.execSQL("DROP TABLE `$PREFERENCES_BACKUP`")
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .build()
     }
 }

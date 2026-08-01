@@ -84,8 +84,8 @@ fun deriveCollection(
     for (item in items.filter { it.quantity > 0 }) {
         val setFamily = setFamilies[item.typeId]
         if (setFamily != null) {
-            // The set is the collectible unit: neither weight nor finish enters its key.
-            grouped.record(CollectionProposalKey(setFamily, null, null), item)
+            // The set is the collectible unit: no part of the variant enters its key.
+            grouped.record(CollectionProposalKey(setFamily, null, null, null), item)
             continue
         }
         val metadata = typeMeta[item.typeId]
@@ -117,7 +117,10 @@ fun deriveCollection(
             unclassified += UnclassifiedItem(item, UnclassifiedReason.UnknownWeight(family))
             continue
         }
-        grouped.record(CollectionProposalKey(family, weightMillioz, metadata.finish), item)
+        grouped.record(
+            CollectionProposalKey(family, weightMillioz, metadata.finish, metadata.metal),
+            item,
+        )
     }
 
     val ordered = grouped.entries.sortedWith(
@@ -125,6 +128,7 @@ fun deriveCollection(
             { (key, _) -> key.family },
             { (key, _) -> key.weightMillioz },
             { (key, _) -> finishOrder(key.finish) },
+            { (key, _) -> metalOrder(key.metal) },
         ),
     )
     val proposals = ordered.map { (key, accumulator) ->
@@ -132,6 +136,7 @@ fun deriveCollection(
             family = key.family,
             weightMillioz = key.weightMillioz,
             finish = key.finish,
+            metal = key.metal,
             distinctTypes = accumulator.typeIds.size,
             quantity = accumulator.quantity,
         )
