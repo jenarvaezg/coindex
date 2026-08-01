@@ -78,6 +78,20 @@ internal fun portugueseAnnualCatalogStub() = CollectionCatalog(
     ),
 )
 
+/**
+ * The tenth Royal Tudor Beast: named by the mint in 2022, struck in proof, and still not issued
+ * in bullion. Its design points at the 2 oz proof — the very piece the father owns and the one
+ * that must never fill this slot.
+ */
+internal fun announcedMemberStub() = CollectionCatalogMember(
+    id = "seymour-panther",
+    label = "Seymour Panther",
+    status = MemberStatus.Announced,
+    announcedSource = "https://britannia-uk.com/royal-tudor-beasts/",
+    announcedNote = "Salió en proof en 2022 y sigue sin salir en bullion.",
+    designTypeId = 307_800,
+)
+
 private fun item(id: Long, typeId: Int, quantity: Int = 1) =
     CollectedItem(id = id, quantity = quantity, typeId = typeId)
 
@@ -284,6 +298,107 @@ class CollectionCatalogValidationTest {
         assertEquals(
             CollectionCatalogValidationError.IssuesOutsideIssueRun("1904"),
             issuesOnDateRun.validate(),
+        )
+    }
+
+    /**
+     * The symmetry of [MemberStatus], both ways round (#31). Nothing is implicit: an absent
+     * `numista_type_id` never *means* announced, and an announced member never carries one —
+     * Numista catalogues struck coins.
+     */
+    @Test
+    fun `an announced member costs its source and forbids a numista type`() {
+        val definition = teslaCatalogStub().let { tesla ->
+            tesla.copy(members = tesla.members + announcedMemberStub())
+        }
+        assertNull(definition.validate())
+
+        fun withPanther(member: CollectionCatalogMember) =
+            definition.copy(members = definition.members.dropLast(1) + member)
+
+        val announced = announcedMemberStub()
+        assertEquals(
+            CollectionCatalogValidationError.AnnouncedWithNumistaType("seymour-panther"),
+            withPanther(announced.copy(numistaTypeId = 307_800)).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.AnnouncedWithoutSource("seymour-panther"),
+            withPanther(announced.copy(announcedSource = null)).validate(),
+        )
+        // A note pasted into the URL field is not a citation.
+        assertEquals(
+            CollectionCatalogValidationError.AnnouncedWithoutSource("seymour-panther"),
+            withPanther(announced.copy(announcedSource = "lo dice la Royal Mint")).validate(),
+        )
+        // The URL of a third party rots, so the claim has to survive it in prose.
+        assertEquals(
+            CollectionCatalogValidationError.AnnouncedWithoutNote("seymour-panther"),
+            withPanther(announced.copy(announcedNote = " ")).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.InvalidDesignTypeId,
+            withPanther(announced.copy(designTypeId = 0)).validate(),
+        )
+        // The design is optional: a calendar slot with no design yet names nothing at all.
+        assertNull(withPanther(announced.copy(designTypeId = null, year = 2027)).validate())
+
+        // And the other direction: an issued member owes its type and its year, and may not
+        // borrow the vocabulary of an announcement.
+        val issued = definition.members[0]
+        assertEquals(
+            CollectionCatalogValidationError.InvalidNumistaTypeId,
+            definition.copy(members = listOf(issued.copy(numistaTypeId = null))).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.IssuedWithoutYear("alternating-current"),
+            definition.copy(members = listOf(issued.copy(year = null))).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.IssuedWithAnnouncement("alternating-current"),
+            definition.copy(
+                members = listOf(issued.copy(announcedSource = "https://example.org/x")),
+            ).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.IssuedWithDesignType("alternating-current"),
+            definition.copy(members = listOf(issued.copy(designTypeId = 307_800))).validate(),
+        )
+    }
+
+    /**
+     * «Announced» composes with every way of identifying a member, which is exactly why it is a
+     * field and not a `schema_version` of its own. What it cannot do is name issues: an issue
+     * run keys on struck emissions, and an unstruck member has none.
+     */
+    @Test
+    fun `an announced member composes with a date run and never fills a slot`() {
+        val definition = dateRunCatalogStub().let { run ->
+            run.copy(
+                seriesStatus = SeriesStatus.Open,
+                closedNote = null,
+                members = run.members + announcedMemberStub(),
+            )
+        }
+        assertNull(definition.validate())
+
+        val album = buildCollectionCatalogAlbum(definition, listOf(datedItem(1, 10_340, 1904)))
+        assertEquals(1, album.ownedMembers())
+        assertEquals(2, album.issuedMembers())
+        assertEquals(1, album.announcedMembers())
+        assertEquals(CollectionCatalogMemberStatus.NotYetIssued, album.members[2].status)
+
+        // The design is never matched on, so the piece it points at fills nothing.
+        assertFalse(definition.memberMatches(definition.members[2], item(9, 307_800)))
+        assertFalse(definition.isEvidencedBy(listOf(item(9, 307_800))))
+
+        val withIssues = issueRunCatalogStub().let { run ->
+            run.copy(
+                members = run.members + announcedMemberStub().copy(numistaIssueIds = listOf(9_009)),
+            )
+        }
+        assertEquals(
+            CollectionCatalogValidationError.IssuesOutsideIssueRun("seymour-panther"),
+            withIssues.validate(),
         )
     }
 

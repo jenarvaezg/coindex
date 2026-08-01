@@ -9,7 +9,17 @@ data class ItemRef(
 
 sealed interface CollectionCatalogMemberStatus {
     data class Owned(val quantity: Int, val items: List<ItemRef>) : CollectionCatalogMemberStatus
+
     data object Missing : CollectionCatalogMemberStatus
+
+    /**
+     * The issuer named this one and has not struck it, so no money can buy it (#31).
+     *
+     * The third state the spec §1 promised and the §5 golden table required, and which never
+     * made it into the Android port. Without it an announced member reads as `Missing`, which
+     * is a «me falta» the collector cannot act on.
+     */
+    data object NotYetIssued : CollectionCatalogMemberStatus
 }
 
 data class CollectionCatalogAlbumMember(
@@ -25,6 +35,18 @@ data class CollectionCatalogAlbum(
 ) {
     fun ownedMembers(): Int =
         members.count { it.status is CollectionCatalogMemberStatus.Owned }
+
+    /**
+     * The denominator of the plate: what the collector could actually buy.
+     *
+     * An announced member in the divisor inflates the gap with a slot nobody can fill. That the
+     * series will have ten is said in prose, not as a divisor.
+     */
+    fun issuedMembers(): Int =
+        members.count { it.status !is CollectionCatalogMemberStatus.NotYetIssued }
+
+    fun announcedMembers(): Int =
+        members.count { it.status is CollectionCatalogMemberStatus.NotYetIssued }
 }
 
 fun buildCollectionCatalogAlbum(
@@ -37,10 +59,11 @@ fun buildCollectionCatalogAlbum(
         val ownedItems = items
             .filter { item -> catalog.memberMatches(member, item) }
             .map { item -> ItemRef(item.id, item.typeId, item.quantity) }
-        val status = if (ownedItems.isEmpty()) {
-            CollectionCatalogMemberStatus.Missing
-        } else {
-            CollectionCatalogMemberStatus.Owned(
+        val status = when {
+            // Never `Missing`, by contract: an unstruck slot is not a hole in the collection.
+            member.isAnnounced -> CollectionCatalogMemberStatus.NotYetIssued
+            ownedItems.isEmpty() -> CollectionCatalogMemberStatus.Missing
+            else -> CollectionCatalogMemberStatus.Owned(
                 quantity = ownedItems.fold(0) { total, item -> saturatingAdd(total, item.quantity) },
                 items = ownedItems,
             )

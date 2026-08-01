@@ -48,7 +48,7 @@ fun deriveCollection(
     val setFamilies: Map<Int, String> = buildMap {
         for (catalog in catalogs.filter { it.isSet }) {
             for (member in catalog.members) {
-                putIfAbsent(member.numistaTypeId, catalog.family)
+                member.numistaTypeId?.let { putIfAbsent(it, catalog.family) }
             }
         }
     }
@@ -66,7 +66,7 @@ fun deriveCollection(
     val catalogsByType: Map<Int, CollectionCatalog> = buildMap {
         for (catalog in catalogs.filterNot { it.isSet }) {
             for (member in catalog.members) {
-                putIfAbsent(member.numistaTypeId, catalog)
+                member.numistaTypeId?.let { putIfAbsent(it, catalog) }
             }
         }
     }

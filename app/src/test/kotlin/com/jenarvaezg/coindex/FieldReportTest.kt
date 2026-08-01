@@ -150,7 +150,7 @@ class FieldReportTest {
             val catalog = catalogsByKey[key]
             val coverage = catalog?.let {
                 val album = buildCollectionCatalogAlbum(it, allItems)
-                "CATÁLOGO ${it.id} ${album.ownedMembers()}/${album.members.size}"
+                "CATÁLOGO ${it.id} ${album.ownedMembers()}/${album.issuedMembers()}"
             } ?: "sin catálogo"
             appendLine(
                 "· ${proposal.family} | ${weightLabel(proposal.weightMillioz)} | " +

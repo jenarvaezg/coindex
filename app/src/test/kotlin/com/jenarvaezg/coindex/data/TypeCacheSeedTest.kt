@@ -91,16 +91,22 @@ class TypeCacheSeedTest {
     private val escudosTypeIds: List<Int> =
         CatalogSeeds.parseAll(CatalogFiles.all())
             .first { it.id == "portugal-1000-escudos-plata-500" }
-            .members.map { it.numistaTypeId }
+            .members.mapNotNull { it.numistaTypeId }
 
     private val snapshot: Map<String, JsonObject> =
         json.parseToJsonElement(TypeCacheFile.read()).jsonObject
             .mapValues { (_, element) -> element.jsonObject }
 
-    /** Every type id the curated files name, catalogs and groupings alike. */
+    /**
+     * Every type id the curated files name, catalogs and groupings alike.
+     *
+     * An announced member names none. Its `design_type_id` is not one either: that is the same
+     * design in **another** variant, so seeding it here would fill the cell with a coin the
+     * catalog does not claim.
+     */
     private val curatedTypeIds: List<Int> =
         CatalogSeeds.parseAll(CatalogFiles.all())
-            .flatMap { catalog -> catalog.members.map { it.numistaTypeId } } +
+            .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } } +
             GroupingSeeds.parseAll(GroupingFiles.all()).flatMap { it.typeIds }
 
     @Test

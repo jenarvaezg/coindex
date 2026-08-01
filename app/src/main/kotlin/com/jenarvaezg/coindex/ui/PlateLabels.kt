@@ -12,11 +12,15 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMember
  */
 data class PlateCommonFacts(val numistaTypeId: Int?, val year: Int?)
 
-fun plateCommonFacts(members: List<CollectionCatalogMember>): PlateCommonFacts =
-    PlateCommonFacts(
-        numistaTypeId = members.map { it.numistaTypeId }.distinct().singleOrNull(),
-        year = members.map { it.year }.distinct().singleOrNull(),
+fun plateCommonFacts(members: List<CollectionCatalogMember>): PlateCommonFacts {
+    // Read off the issued members alone: an announced one has neither type nor, often, a year,
+    // and letting its blanks in would push a shared fact back down into every cell.
+    val issued = members.filterNot { it.isAnnounced }
+    return PlateCommonFacts(
+        numistaTypeId = issued.mapNotNull { it.numistaTypeId }.distinct().singleOrNull(),
+        year = issued.mapNotNull { it.year }.distinct().singleOrNull(),
     )
+}
 
 /**
  * What one cell has left to say under its own title: the year, unless the title is already the
@@ -26,11 +30,12 @@ fun plateCommonFacts(members: List<CollectionCatalogMember>): PlateCommonFacts =
  */
 fun plateCellFootnote(member: CollectionCatalogMember, common: PlateCommonFacts): String? {
     val parts = buildList {
-        if (common.year == null && member.label != member.year.toString()) {
-            add(member.year.toString())
+        val year = member.year
+        if (common.year == null && year != null && member.label != year.toString()) {
+            add(year.toString())
         }
         if (common.numistaTypeId == null) {
-            add("Numista ${member.numistaTypeId}")
+            member.numistaTypeId?.let { typeId -> add("Numista $typeId") }
         }
     }
     return parts.joinToString(" · ").ifEmpty { null }
@@ -48,7 +53,9 @@ fun plateCellFootnote(member: CollectionCatalogMember, common: PlateCommonFacts)
 fun plateExportMessage(members: Int, expectedPhotos: Int, loadedPhotos: Int): String {
     val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
     return when (absent) {
-        0 -> "Lámina completa exportada · $members emisiones"
+        // «Casillas» and not «emisiones»: a plate can draw a slot the mint has not struck, and
+        // the progress line right above it counts only what was.
+        0 -> "Lámina completa exportada · $members casillas"
         1 -> "Lámina exportada, pero una foto no llegó a cargar"
         else -> "Lámina exportada, pero $absent fotos no llegaron a cargar"
     }
@@ -65,8 +72,14 @@ fun plateEntries(
     ownedMembers: Int,
     common: PlateCommonFacts = plateCommonFacts(catalog.members),
 ): List<Pair<String, String>> {
+    val announced = catalog.members.count { it.isAnnounced }
     return buildList {
-        add("Progreso" to "$ownedMembers / ${catalog.members.size} emisiones")
+        // Only what was struck is in the divisor (#31): an announced slot no money can buy would
+        // publish a «me falta» that is nobody's hole to fill.
+        add("Progreso" to "$ownedMembers / ${catalog.members.size - announced} emisiones")
+        if (announced > 0) {
+            add("Sin emitir" to if (announced == 1) "1 anunciada" else "$announced anunciadas")
+        }
         addAll(variantEntries(catalog.weightMillioz, catalog.finish))
         common.numistaTypeId?.let { typeId -> add("Tipo" to "Numista $typeId") }
         common.year?.let { year -> add("Año" to year.toString()) }

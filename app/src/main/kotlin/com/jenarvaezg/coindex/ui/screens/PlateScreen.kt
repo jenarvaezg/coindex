@@ -249,7 +249,12 @@ private fun PlateGrid(
             }
         }
         items(members, key = { it.member.id }) { albumMember ->
-            PlateCell(albumMember, images[albumMember.member.numistaTypeId], common, onOpenSource)
+            PlateCell(
+                albumMember,
+                albumMember.member.numistaTypeId?.let { images[it] },
+                common,
+                onOpenSource,
+            )
         }
     }
 }
@@ -263,10 +268,12 @@ private fun PlateCell(
 ) {
     val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
     val stateLabel = when {
+        albumMember.status is CollectionCatalogMemberStatus.NotYetIssued -> "Sin emitir"
         owned == null -> "Me falta"
         owned.quantity > 1 -> "Tengo · ×${owned.quantity}"
         else -> "Tengo"
     }
+    val typeId = albumMember.member.numistaTypeId
     FieldCard(emphasized = owned != null, dashed = owned == null) {
         CoinSides(
             label = albumMember.member.label,
@@ -280,11 +287,16 @@ private fun PlateCell(
             color = if (owned != null) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 10.dp),
         )
-        ExternalLink(
-            text = albumMember.member.label,
-            style = MaterialTheme.typography.titleMedium,
-            onClick = { onOpenSource(numistaTypeUrl(albumMember.member.numistaTypeId)) },
-        )
+        // An announced member has no Numista page to open: the coin is not in the catalogue.
+        if (typeId != null) {
+            ExternalLink(
+                text = albumMember.member.label,
+                style = MaterialTheme.typography.titleMedium,
+                onClick = { onOpenSource(numistaTypeUrl(typeId)) },
+            )
+        } else {
+            Text(albumMember.member.label, style = MaterialTheme.typography.titleMedium)
+        }
         // Only what tells this cell apart: in a date run the title is already the year and the
         // type is the same one printed once in the specification above.
         plateCellFootnote(albumMember.member, common)?.let { footnote ->

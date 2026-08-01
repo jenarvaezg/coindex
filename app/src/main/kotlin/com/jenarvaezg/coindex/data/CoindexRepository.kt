@@ -126,9 +126,14 @@ class CoindexRepository(
     /**
      * Every Numista type the curated files name, which is exactly the set a plate can be asked
      * to draw and therefore the set the type cache has to hold.
+     *
+     * An announced member names none, and its `design_type_id` is not one either: that is the
+     * design in another variant, and putting it here would seed the cell with the wrong coin.
      */
     fun curatedTypeIds(): Set<Int> = buildSet {
-        catalogs.forEach { catalog -> catalog.members.forEach { add(it.numistaTypeId) } }
+        catalogs.forEach { catalog ->
+            catalog.members.forEach { member -> member.numistaTypeId?.let(::add) }
+        }
         groupings.forEach { addAll(it.typeIds) }
     }
 
