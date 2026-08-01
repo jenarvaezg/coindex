@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.domain.Metal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -54,6 +55,34 @@ class MappersTest {
         )
         // The code is still the one stored in its column.
         assertEquals("australie", typeEntity("{}", fetchedAt = 4).toDomain().issuerCode)
+    }
+
+    /**
+     * El metal se deriva en lectura de `composition.text`, que ya viaja dentro de `raw`: las 723
+     * fichas sembradas lo tienen desde siempre, así que meterlo en la clave (#40) no costó ni una
+     * migración de la caché ni una llamada de presupuesto.
+     */
+    @Test
+    fun `the metal is read from the stored ficha, not from a column`() {
+        assertEquals(
+            Metal.Silver,
+            typeEntity(Fixtures.type(404_044), fetchedAt = 10).toDomain().metal,
+        )
+        assertEquals(
+            Metal.Gold,
+            typeEntity("""{"composition": {"text": "Oro 999,9"}}""", fetchedAt = 11)
+                .toDomain()
+                .metal,
+        )
+    }
+
+    @Test
+    fun `a type with no composition, or unreadable json, simply has no metal`() {
+        assertNull(typeEntity("{}", fetchedAt = 12).toDomain().metal)
+        assertNull(typeEntity("no es json", fetchedAt = 13).toDomain().metal)
+        assertNull(
+            typeEntity("""{"composition": {}}""", fetchedAt = 14).toDomain().metal,
+        )
     }
 
     private fun entity(raw: String) = CollectedItemEntity(

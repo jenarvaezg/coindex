@@ -16,10 +16,20 @@ grouping, or persisted dispositions.
 _Avoid_: Numista family, proposal variant key
 
 **Physical variant**:
-A distinct form within a Numista family, identified by its normalized weight and finish.
-For example, one-ounce bullion, two-ounce bullion, and one-ounce coloured pieces are
-different physical variants.
+A distinct form within a Numista family, identified by its normalized weight, finish and
+dominant metal. For example, one-ounce bullion, two-ounce bullion, and one-ounce coloured
+pieces are different physical variants, and so are the silver ounce and the gold ounce of
+the same series.
 _Avoid_: Family, type
+
+**Dominant metal**:
+What a coin is mostly made of, inferred from Numista's `composition.text` because Numista has
+no metal field. Billon counts as silver. A composition with no dominant metal at all — a
+bimetallic piece, a clad core — is **other**, which is a claim; a composition nobody recorded,
+or one the rules do not recognise, is simply unknown. A collection catalog **declares** its
+own, as it declares weight and finish, and that declaration is about the variant the catalog
+covers rather than about each of its members (ADR 0016, ADR 0018).
+_Avoid_: Alloy, fineness, composition
 
 **Composite finish**:
 A physical finish with multiple simultaneous properties, currently Proof coloured. It is
@@ -27,9 +37,9 @@ distinct from Proof and Coloured and participates in proposal identity and group
 _Avoid_: Display label, either component finish
 
 **Proposal variant key**:
-The exact canonical tuple of raw Numista family, normalized weight, and finish that
-identifies a physical variant for proposal grouping and per-user dispositions. It uses
-the same weight normalization as proposal derivation; family display aliases never alter
+The exact canonical tuple of raw Numista family, normalized weight, finish and dominant
+metal that identifies a physical variant for proposal grouping and per-user dispositions. It
+uses the same weight normalization as proposal derivation; family display aliases never alter
 it.
 _Avoid_: Family display alias, proposal title
 

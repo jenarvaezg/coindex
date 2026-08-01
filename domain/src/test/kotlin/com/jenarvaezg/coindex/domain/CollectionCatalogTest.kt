@@ -16,6 +16,7 @@ internal fun teslaCatalogStub() = CollectionCatalog(
     family = "Nikola Tesla",
     weightMillioz = 1_000,
     finish = null,
+    metal = Metal.Silver,
     seriesStatus = SeriesStatus.Open,
     source = "https://en.numista.com/catalogue/series.php?id=5303",
     updatedAt = "2026-08-01",
@@ -33,6 +34,7 @@ internal fun dateRunCatalogStub() = CollectionCatalog(
     family = "5 Bolívares de Venezuela",
     weightMillioz = 804,
     finish = null,
+    metal = Metal.Silver,
     seriesStatus = SeriesStatus.Closed,
     closedNote = "La plata venezolana se acabó en 1965.",
     source = "https://en.numista.com/catalogue/pieces10340.html",
@@ -69,6 +71,7 @@ internal fun portugueseAnnualCatalogStub() = CollectionCatalog(
     family = "500 escudos conmemorativos de plata .500 de Portugal",
     weightMillioz = 450,
     finish = null,
+    metal = Metal.Silver,
     seriesStatus = SeriesStatus.Closed,
     closedNote = "El escudo desapareció con el euro el 1 de enero de 2002.",
     source = "https://en.numista.com/catalogue/series.php?id=6598",
@@ -123,6 +126,7 @@ internal fun issueRunCatalogStub() = CollectionCatalog(
     family = "100 Pesetas de Franco",
     weightMillioz = 611,
     finish = null,
+    metal = Metal.Silver,
     seriesStatus = SeriesStatus.Closed,
     closedNote = "El tipo solo se acuñó con las estrellas 66 a 70.",
     source = "https://en.numista.com/catalogue/pieces1885.html",
@@ -187,7 +191,7 @@ class CollectionCatalogValidationTest {
     fun `validation requires versioned slugged unique sourced exact variants`() {
         val definition = teslaCatalogStub()
         assertEquals(
-            CollectionProposalKey.fromCanonicalParts("Nikola Tesla", 1_000, "unknown"),
+            CollectionProposalKey.fromCanonicalParts("Nikola Tesla", 1_000, "unknown", "silver"),
             definition.key(),
         )
         assertNull(definition.validate())
@@ -223,6 +227,20 @@ class CollectionCatalogValidationTest {
         assertEquals(
             CollectionCatalogValidationError.MissingWeight,
             definition.copy(weightMillioz = null).validate(),
+        )
+        // Callarse el metal es chocar con el siguiente catálogo de la misma familia (#40).
+        assertEquals(
+            CollectionCatalogValidationError.MissingMetal,
+            definition.copy(metal = null).validate(),
+        )
+        // La nota que exime del cruce tiene que decir algo, como la `closed_note`.
+        assertEquals(
+            CollectionCatalogValidationError.BlankVariantNote(definition.members[0].id),
+            definition.copy(
+                members = definition.members.mapIndexed { index, member ->
+                    if (index == 0) member.copy(variantNote = "  ") else member
+                },
+            ).validate(),
         )
         assertEquals(
             CollectionCatalogValidationError.EmptyMembers,
@@ -517,6 +535,7 @@ class CollectionCatalogValidationTest {
                 definition.family,
                 SPANNING_VARIANTS_WEIGHT,
                 "unknown",
+                "unknown",
             ),
         )
 
@@ -528,6 +547,11 @@ class CollectionCatalogValidationTest {
             CollectionCatalogValidationError.SetDeclaresVariant,
             definition.copy(finish = Finish.Proof).validate(),
         )
+        // Un conjunto abarca metales igual que pesos y acabados, así que tampoco declara uno.
+        assertEquals(
+            CollectionCatalogValidationError.SetDeclaresVariant,
+            definition.copy(metal = Metal.Silver).validate(),
+        )
         // A set names each type once: it is a set, not a date run.
         assertEquals(
             CollectionCatalogValidationError.DuplicateNumistaTypeId(22_178),
@@ -536,13 +560,14 @@ class CollectionCatalogValidationTest {
             ).validate(),
         )
         // Zero stays an invalid weight, so a defaulted row is ignored rather than read as a set.
-        assertNull(CollectionProposalKey.fromCanonicalParts(definition.family, 0, "unknown"))
+        assertNull(CollectionProposalKey.fromCanonicalParts(definition.family, 0, "unknown", "silver"))
         // A set spans finishes too, so a stored finish makes the key uncanonical.
         assertNull(
             CollectionProposalKey.fromCanonicalParts(
                 definition.family,
                 SPANNING_VARIANTS_WEIGHT,
                 "proof",
+                "unknown",
             ),
         )
     }

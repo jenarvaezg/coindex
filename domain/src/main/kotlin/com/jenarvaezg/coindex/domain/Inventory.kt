@@ -40,6 +40,8 @@ data class TypeMeta(
     val maxYear: Int? = null,
     val weightOz: Double? = null,
     val finish: Finish? = null,
+    /** Dominant metal, inferred from `composition.text` like the finish is from the title. */
+    val metal: Metal? = null,
 )
 
 typealias TypeMetaIndex = Map<Int, TypeMeta>

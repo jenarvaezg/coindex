@@ -107,7 +107,12 @@ class CoindexRepository(
     suspend fun setDisposition(key: CollectionProposalKey, disposition: ProposalDisposition?) {
         val dao = database.proposalPreferences()
         if (disposition == null) {
-            dao.delete(key.family, key.storedWeightMillioz(), key.finishCode())
+            dao.delete(
+                key.family,
+                key.storedWeightMillioz(),
+                key.finishCode(),
+                key.metalCode(),
+            )
             return
         }
         val now = System.currentTimeMillis()
@@ -116,6 +121,7 @@ class CoindexRepository(
                 family = key.family,
                 weightMillioz = key.storedWeightMillioz(),
                 finishCode = key.finishCode(),
+                metalCode = key.metalCode(),
                 disposition = disposition.asCode(),
                 createdAt = now,
                 updatedAt = now,

@@ -184,6 +184,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         family = entry.arguments?.getString("family"),
                         weight = entry.arguments?.getString("weight"),
                         finish = entry.arguments?.getString("finish"),
+                        metal = entry.arguments?.getString("metal"),
                     )
                     // A route that does not describe a canonical key is not guessed at; it is
                     // the same refusal a stored disposition gets when its parts drift.

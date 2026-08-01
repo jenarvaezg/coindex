@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Finish
+import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 
@@ -37,16 +38,38 @@ fun finishLabel(finish: Finish?): String = when (finish) {
 fun standaloneFinishLabel(finish: Finish?): String =
     if (finish == null) "Acabado sin confirmar" else finishLabel(finish)
 
+/** The metal as a specification value. Null is unread prose, not an alloy without a name. */
+fun metalLabel(metal: Metal?): String = when (metal) {
+    null -> "Sin confirmar"
+    Metal.Gold -> "Oro"
+    Metal.Silver -> "Plata"
+    Metal.Platinum -> "Platino"
+    Metal.Palladium -> "Paladio"
+    Metal.Copper -> "Cobre"
+    Metal.Bronze -> "Bronce"
+    Metal.Brass -> "Latón"
+    Metal.Cupronickel -> "Cuproníquel"
+    Metal.Nickel -> "Níquel"
+    Metal.Steel -> "Acero"
+    Metal.Zinc -> "Cinc"
+    Metal.Aluminium -> "Aluminio"
+    Metal.Other -> "Sin metal dominante"
+}
+
 /**
  * The physical variant in one line. A set issued as a set has neither weight nor finish to
  * show, so it says what it is instead of showing two blanks (ADR 0012).
+ *
+ * The metal is named only when it is not silver (#40). Silver is what almost every card of these
+ * two collections is made of — 73 of the 75 proposals measured — so printing it everywhere would
+ * add a word to every line to distinguish nothing, while «Oro» on the one card that is gold is
+ * the whole reason the metal entered the key.
  */
-fun variantLabel(weightMillioz: Int?, finish: Finish?): String =
-    if (weightMillioz == null) {
-        weightLabel(null)
-    } else {
-        "${weightLabel(weightMillioz)} · ${standaloneFinishLabel(finish)}"
-    }
+fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
+    if (weightMillioz == null) return weightLabel(null)
+    val line = "${weightLabel(weightMillioz)} · ${standaloneFinishLabel(finish)}"
+    return if (metal == null || metal == Metal.Silver) line else "$line · ${metalLabel(metal)}"
+}
 
 /**
  * Who issued the pieces behind one proposal, for the eyebrow of its card.

@@ -80,7 +80,7 @@ fun ProposalScreen(
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(
-                    variantLabel(key.weightMillioz, key.finish),
+                    variantLabel(key.weightMillioz, key.finish, key.metal),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (proposal != null) {
