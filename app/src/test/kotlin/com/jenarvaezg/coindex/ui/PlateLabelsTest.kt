@@ -97,10 +97,10 @@ class PlateLabelsTest {
 
     private fun catalog(members: List<CollectionCatalogMember>) = CollectionCatalog(
         schemaVersion = 2,
-        id = "venezuela-5-bolivares",
-        name = "5 Bolívares · Venezuela",
+        id = "venezuela-fuertes",
+        name = "Fuertes · Venezuela",
         issuerCode = "venezuela",
-        family = "5 Bolívares de Venezuela",
+        family = "Fuertes de Venezuela",
         weightMillioz = 804,
         finish = null,
         seriesStatus = SeriesStatus.Closed,

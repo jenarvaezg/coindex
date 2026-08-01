@@ -1,16 +1,22 @@
 {
   "schema_version": 2,
-  "id": "venezuela-5-bolivares",
-  "name": "5 Bolívares · Venezuela · plata 25 g",
+  "id": "venezuela-fuertes",
+  "name": "Fuertes · Venezuela · plata 25 g, 1876-1936",
   "issuer_code": "venezuela",
-  "family": "5 Bolívares de Venezuela",
+  "family": "Fuertes de Venezuela",
   "weight_millioz": 804,
   "finish": null,
   "series_status": "closed",
-  "closed_note": "El «fuerte» de plata .900 se acuñó entre 1879 y 1936 y no volvió: Venezuela dejó la plata en 1965 y desde la ley de 1967 acuña en níquel.",
+  "closed_note": "El estándar es uno solo desde 1876: la Ley de Monedas del 11 de mayo de 1871 llamó venezolano a la unidad y la del 31 de marzo de 1879 de Guzmán Blanco la renombró bolívar, así que el venezolano de 1876 (N#48672, 25 g de plata .900, 37 mm) y el fuerte de 1879-1936 (N#10340, 25 g, 37,2 mm) son la misma moneda con dos nombres, y en 1877 y 1878 no se acuñó nada en ese módulo. Los dos ensayos de 1874 —N#352550 de canto estriado y N#352551 de canto liso, también 25 g de plata .900— quedan fuera del denominador: Numista los clasifica como «Monedas de ensayo» y nunca fueron dinero, así que no abren hueco. El fuerte no volvió: Venezuela dejó la plata en 1965 y desde la ley de 1967 acuña en níquel. https://www.monedasdevenezuela.com/numismatica/venezolano-de-oro-cono-monetario-1871-1879/",
   "source": "https://en.numista.com/catalogue/pieces10340.html",
   "updated_at": "2026-08-01",
   "members": [
+    {
+      "id": "1876-venezolano",
+      "label": "1 Venezolano",
+      "year": 1876,
+      "numista_type_id": 48672
+    },
     {
       "id": "1879",
       "label": "1879",

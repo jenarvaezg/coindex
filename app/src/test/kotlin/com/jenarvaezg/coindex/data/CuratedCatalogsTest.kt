@@ -283,16 +283,35 @@ class CuratedCatalogsTest {
         assertEquals(Finish.Proof, tudorProof.finish)
     }
 
+    /**
+     * Los fuertes, que son veintidós años y **dos** tipos: el venezolano de 1876 abre el run tres
+     * años antes del primer 5 bolívares porque es la misma moneda con otro nombre —la ley de 1871
+     * llamó venezolano a la unidad y la del 31 de marzo de 1879 la renombró bolívar—, y por eso la
+     * familia dice «fuertes», que es como la llama el coleccionista, y no la denominación de
+     * veintiuna de sus veintidós casillas.
+     *
+     * Los dos ensayos de 1874 comparten los 25 g de plata .900 y **no** están: son patterns, así
+     * que no abren hueco. Lo dice la `closed_note` para que la lista no parezca corta.
+     */
     @Test
-    fun `the venezuela date run repeats one type across twenty one years`() {
-        val bolivares = find("venezuela-5-bolivares")
-        assertEquals(2, bolivares.schemaVersion)
-        assertTrue(bolivares.isDateRun)
-        assertEquals("5 Bolívares de Venezuela", bolivares.family)
-        assertEquals(804, bolivares.weightMillioz)
-        assertEquals(21, bolivares.members.size)
-        assertTrue(bolivares.members.all { it.numistaTypeId == 10_340 })
-        assertEquals(21, bolivares.members.map { it.year }.distinct().size)
+    fun `the venezuelan fuertes run from the 1876 venezolano to 1936`() {
+        val fuertes = find("venezuela-fuertes")
+        assertEquals(2, fuertes.schemaVersion)
+        assertTrue(fuertes.isDateRun)
+        assertEquals("Fuertes de Venezuela", fuertes.family)
+        assertEquals(804, fuertes.weightMillioz)
+        assertEquals(22, fuertes.members.size)
+        assertEquals(22, fuertes.members.map { it.year }.distinct().size)
+        val venezolano = fuertes.members.first()
+        assertEquals(1876, venezolano.year)
+        assertEquals(48_672, venezolano.numistaTypeId)
+        assertEquals("1 Venezolano", venezolano.label)
+        // Las otras veintiuna siguen siendo un solo tipo, y sus etiquetas siguen siendo el año.
+        val fuerte = fuertes.members.drop(1)
+        assertEquals(21, fuerte.size)
+        assertTrue(fuerte.all { it.numistaTypeId == 10_340 })
+        assertTrue(fuerte.all { it.label == it.year.toString() })
+        assertTrue(fuertes.closedNote!!.contains("352550"), fuertes.closedNote!!)
     }
 
     /**
