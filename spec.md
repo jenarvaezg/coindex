@@ -47,7 +47,8 @@
      **y** que `issue_year` (o `gregorian_year`) del item coincida con el año del
      miembro. Un item sin año nunca rellena un hueco. La fuente puede ser la ficha del
      tipo (`catalogue/piecesNNN.html`). Primer date run vivo:
-     `venezuela-5-bolivares.json` (21 fechas de N#10340; al padre le faltan 1904 y 1905).
+     `venezuela-fuertes.json` (22 fechas: el venezolano de 1876, N#48672, más las 21 del
+     fuerte, N#10340; al padre le faltan 1904 y 1905).
    - `schema_version: 3` (**conjuntos emitidos como set**, ADR 0012): los miembros abarcan
      varias variantes físicas, así que el catálogo no declara `weight_millioz` ni `finish`
      y su clave de variante lleva el **peso ausente** (`-1` al persistirse). Un tipo listado
