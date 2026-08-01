@@ -104,6 +104,17 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     finish = inferFinish(title, family),
 )
 
+/**
+ * The two faces of a type as pictures to ask for.
+ *
+ * `obverseUrl` is the original and the thumbnail column is the small one; a row cached before
+ * version 3 has no thumbnail yet, and falls back to the single URL it does have.
+ */
+fun TypeMetaEntity.toImages(): TypeImages = TypeImages(
+    obverse = CoinPhoto(thumbnail = obverseThumbnailUrl, picture = obverseUrl),
+    reverse = CoinPhoto(thumbnail = reverseThumbnailUrl, picture = reverseUrl),
+)
+
 /** One own grouping with its memberships, stitched from the two flat lists Room observes. */
 fun OwnGroupingEntity.toDomain(members: List<OwnGroupingMemberEntity>): OwnGrouping = OwnGrouping(
     id = id,

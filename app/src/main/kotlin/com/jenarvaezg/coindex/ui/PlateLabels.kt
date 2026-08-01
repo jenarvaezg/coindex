@@ -37,6 +37,24 @@ fun plateCellFootnote(member: CollectionCatalogMember, common: PlateCommonFacts)
 }
 
 /**
+ * What the collector is told once the sheet has been handed to the share sheet.
+ *
+ * The exported plate **is** the product: it gets sent to whoever the collection is being shown
+ * to, holes included. The old message called any sheet complete as long as every picture had
+ * reported back, and a picture that failed reported back exactly like one that arrived — so a
+ * sheet with twelve empty cells announced itself as «lámina completa» (issue #67). Counting the
+ * ones that actually painted is what makes the sentence true.
+ */
+fun plateExportMessage(members: Int, expectedPhotos: Int, loadedPhotos: Int): String {
+    val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
+    return when (absent) {
+        0 -> "Lámina completa exportada · $members emisiones"
+        1 -> "Lámina exportada, pero una foto no llegó a cargar"
+        else -> "Lámina exportada, pero $absent fotos no llegaron a cargar"
+    }
+}
+
+/**
  * The plate's specification block, shared by the screen and the exported sheet so both say the
  * same things in the same order.
  *

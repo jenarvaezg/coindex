@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.data.db.TypeRawRow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -33,6 +34,20 @@ class FakeTypeMetaDao : TypeMetaDao {
     }
     override suspend fun insertIfAbsent(type: TypeMetaEntity) {
         if (rows.value.none { it.typeId == type.typeId }) rows.value = rows.value + type
+    }
+    private fun withoutThumbnails() = rows.value
+        .filter { it.obverseThumbnailUrl == null && it.reverseThumbnailUrl == null }
+    override suspend fun countWithoutThumbnails(): Int = withoutThumbnails().size
+    override suspend fun rawWithoutThumbnails(): List<TypeRawRow> =
+        withoutThumbnails().map { TypeRawRow(it.typeId, it.raw) }
+    override suspend fun setThumbnails(typeId: Int, obverse: String?, reverse: String?) {
+        rows.value = rows.value.map { row ->
+            if (row.typeId == typeId) {
+                row.copy(obverseThumbnailUrl = obverse, reverseThumbnailUrl = reverse)
+            } else {
+                row
+            }
+        }
     }
 }
 

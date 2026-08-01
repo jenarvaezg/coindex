@@ -1,8 +1,11 @@
 package com.jenarvaezg.coindex.data
 
+import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
+import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.GroupingSeeds
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -21,6 +24,74 @@ import kotlin.test.assertTrue
  */
 class TypeCacheSeedTest {
     private val json = Json { ignoreUnknownKeys = true }
+
+    private fun seed(dao: FakeTypeMetaDao) = TypeCacheSeed(dao) { TypeCacheFile.read() }
+
+    /**
+     * The snapshot used to be a **first-install** gift: it was only written into an empty cache,
+     * so every catalog curated afterwards shipped its fichas in the asset and none of them ever
+     * reached a phone that already had the app. A cached type is never re-fetched either, so the
+     * missing fichas had no second route in and their cells stayed silhouettes for good — most
+     * of the plate reported with 7 pictures out of 19 (issue #67).
+     */
+    @Test
+    fun `a cache from an older release is topped up with the types curated since`() = runTest {
+        val dao = FakeTypeMetaDao()
+        seed(dao).topUp(curatedTypeIds.toSet())
+        // The phone of a collector who installed before the 1000 escudos were curated.
+        val stale = dao.rows.value.filterNot { it.typeId in escudosTypeIds }
+        dao.rows.value = stale
+
+        val added = seed(dao).topUp(curatedTypeIds.toSet())
+
+        assertTrue(added > 0, "no se ha añadido ninguna ficha")
+        assertTrue(
+            dao.rows.value.map { it.typeId }.containsAll(escudosTypeIds),
+            "siguen faltando fichas de los 1000 escudos",
+        )
+    }
+
+    @Test
+    fun `a cache that already has every curated type is left alone and never parses the asset`() =
+        runTest {
+            val dao = FakeTypeMetaDao()
+            seed(dao).topUp(curatedTypeIds.toSet())
+            val before = dao.rows.value
+
+            val untouched = TypeCacheSeed(dao) { error("no debería leerse el snapshot") }
+
+            assertEquals(0, untouched.topUp(curatedTypeIds.toSet()))
+            assertEquals(before, dao.rows.value)
+        }
+
+    /** A ficha the collector paid API budget to sync outranks the one that ships in the APK. */
+    @Test
+    fun `topping up never overwrites a type that is already cached`() = runTest {
+        val dao = FakeTypeMetaDao()
+        val synced = TypeMetaEntity(
+            typeId = escudosTypeIds.first(),
+            title = "sincronizado",
+            family = null,
+            issuerCode = null,
+            minYear = null,
+            maxYear = null,
+            weightGrams = null,
+            obverseUrl = null,
+            reverseUrl = null,
+            raw = "{}",
+            fetchedAt = 1,
+        )
+        dao.insertIfAbsent(synced)
+
+        seed(dao).topUp(curatedTypeIds.toSet())
+
+        assertEquals(synced, dao.rows.value.first { it.typeId == synced.typeId })
+    }
+
+    private val escudosTypeIds: List<Int> =
+        CatalogSeeds.parseAll(CatalogFiles.all())
+            .first { it.id == "portugal-1000-escudos-plata-500" }
+            .members.map { it.numistaTypeId }
 
     private val snapshot: Map<String, JsonObject> =
         json.parseToJsonElement(TypeCacheFile.read()).jsonObject

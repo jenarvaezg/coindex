@@ -62,10 +62,15 @@ clave AES/GCM que vive en el Android Keystore y nunca sale de él; solo el cript
 a `SharedPreferences`. Cada usuario gasta su propio presupuesto de API, con un techo mensual
 configurable (1500 por defecto) que se cuenta en `api_call_log` antes de cada llamada.
 
-En el primer arranque se siembra la caché de tipos con `data/numista-type-cache.json` (634
-tipos, ~650 llamadas de API que nadie tiene que volver a gastar). Un catálogo curado
-inválido detiene el arranque con el fichero y el motivo: es preferible no arrancar a mostrar
-un «me falta» falso.
+La caché de tipos se siembra con `data/numista-type-cache.json` (687 tipos, ~650 llamadas de
+API que nadie tiene que volver a gastar). **No solo en la primera instalación**: en cada
+arranque se comparan los tipos que nombran los ficheros curados con los que hay en caché, y si
+falta alguno se rellena desde el snapshot —sin pisar nunca una ficha sincronizada—. Sembrar
+solo al instalar dejaba fuera cada catálogo curado después, y sin ficha una casilla es una
+silueta y una pieza se va a «sin clasificar» (ADR 0017).
+
+Un catálogo curado inválido detiene el arranque con el fichero y el motivo: es preferible no
+arrancar a mostrar un «me falta» falso.
 
 ## Firmar el APK
 
@@ -132,6 +137,17 @@ el progreso, todas las emisiones (las que faltan en gris) y la fuente al pie. Un
 
 Los bitmaps de hardware están desactivados en Coil: un `Picture` no se puede reproducir sobre
 un canvas software si contiene alguno.
+
+Si al terminar falta alguna foto, el aviso lo dice y cuántas: la hoja se comparte tal cual, así
+que llamarla «completa» sin serlo era mentir sobre el producto (ADR 0017).
+
+## Fotos del catálogo
+
+Las fotos son de Numista y se piden con el `ImageLoader` que arma `data/photos/`: se pide la
+**miniatura** (`-180.jpg`) y el original queda de respaldo, de cuatro en cuatro, reintentando
+con espera lo que la CDN estrangula, y con un `User-Agent` propio (`Coindex/<versión>`) porque
+sin ninguno Cloudflare responde `403` a todas. El razonamiento y las medidas están en el
+ADR 0017.
 
 ## Limitaciones conocidas
 

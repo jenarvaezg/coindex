@@ -21,12 +21,6 @@ import com.jenarvaezg.coindex.domain.deriveCollection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-/**
- * Catalog picture URLs for one type. Kept out of the domain, which stays free of anything
- * presentational, and loaded straight from Numista by Coil — there is no proxy any more.
- */
-data class TypeImages(val obverse: String?, val reverse: String?)
-
 /** Everything the screens need, derived from the local snapshot alone. */
 data class CollectionState(
     val items: List<CollectedItem> = emptyList(),
@@ -94,7 +88,7 @@ class CoindexRepository(
             proposals = classifyCollectionProposals(derivation.proposals, dispositions),
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,
-            images = types.associate { it.typeId to TypeImages(it.obverseUrl, it.reverseUrl) },
+            images = types.associate { it.typeId to it.toImages() },
             followedKeys = dispositions
                 .filter { it.disposition == ProposalDisposition.Followed }
                 .mapTo(mutableSetOf()) { it.key },
@@ -127,6 +121,15 @@ class CoindexRepository(
                 updatedAt = now,
             ),
         )
+    }
+
+    /**
+     * Every Numista type the curated files name, which is exactly the set a plate can be asked
+     * to draw and therefore the set the type cache has to hold.
+     */
+    fun curatedTypeIds(): Set<Int> = buildSet {
+        catalogs.forEach { catalog -> catalog.members.forEach { add(it.numistaTypeId) } }
+        groupings.forEach { addAll(it.typeIds) }
     }
 
     /** The catalog matching a proposal variant key, if one was curated for it. */

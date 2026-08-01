@@ -92,7 +92,7 @@ fun PlateSheet(
     ownedMembers: Int,
     images: Map<Int, TypeImages>,
     layout: SheetLayout,
-    onImageSettled: () -> Unit,
+    onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -213,7 +213,7 @@ private fun SheetCell(
     albumMember: CollectionCatalogAlbumMember,
     images: TypeImages?,
     common: PlateCommonFacts,
-    onImageSettled: () -> Unit,
+    onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
@@ -225,8 +225,8 @@ private fun SheetCell(
     FieldCard(modifier = modifier, emphasized = owned != null, dashed = owned == null) {
         CoinSides(
             label = albumMember.member.label,
-            obverseUrl = images?.obverse,
-            reverseUrl = images?.reverse,
+            obverse = images?.obverse,
+            reverse = images?.reverse,
             missing = owned == null,
             onImageSettled = onImageSettled,
             onPaper = true,

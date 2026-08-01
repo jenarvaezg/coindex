@@ -11,6 +11,7 @@ import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
 import com.jenarvaezg.coindex.data.seed.GroupingAssets
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
+import com.jenarvaezg.coindex.data.seed.TypeThumbnailBackfill
 import com.jenarvaezg.coindex.data.update.UpdateChecker
 import com.jenarvaezg.coindex.data.update.UpdateInstaller
 import io.ktor.client.HttpClient
@@ -41,7 +42,11 @@ class AppContainer(context: Context) {
     }
 
     val typeCacheSeed: TypeCacheSeed by lazy {
-        TypeCacheSeed(applicationContext.assets, database.typeMeta())
+        TypeCacheSeed.fromAssets(applicationContext.assets, database.typeMeta())
+    }
+
+    val typeThumbnailBackfill: TypeThumbnailBackfill by lazy {
+        TypeThumbnailBackfill(database.typeMeta())
     }
 
     val syncService: SyncService by lazy {

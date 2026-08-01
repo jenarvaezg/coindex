@@ -17,7 +17,7 @@ import androidx.sqlite.execSQL
         OwnGroupingMemberEntity::class,
         ApiCallEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -54,15 +54,36 @@ abstract class CoindexDatabase : RoomDatabase() {
                 "ON UPDATE NO ACTION ON DELETE CASCADE )",
         )
 
+        /**
+         * Version 3 gives the type cache the thumbnail of each face (issue #67).
+         *
+         * Two nullable columns and nothing else: the rows themselves are filled in afterwards
+         * by `TypeThumbnailBackfill`, from the ficha each one already stores, because SQLite
+         * on the oldest phone this app supports cannot be trusted to have `json_extract`.
+         *
+         * Room compares the migrated table against the exported schema by column name, not by
+         * declaration order, so appended columns match an entity that declares them anywhere.
+         */
+        internal val VERSION_3_COLUMNS: List<String> = listOf(
+            "ALTER TABLE `type_meta` ADD COLUMN `obverseThumbnailUrl` TEXT",
+            "ALTER TABLE `type_meta` ADD COLUMN `reverseThumbnailUrl` TEXT",
+        )
+
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(connection: SQLiteConnection) {
                 VERSION_2_TABLES.forEach(connection::execSQL)
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(connection: SQLiteConnection) {
+                VERSION_3_COLUMNS.forEach(connection::execSQL)
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
     }
 }

@@ -90,7 +90,11 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
             val stored = container.credentials.credentials()
             _state.update { it.copy(onboarded = stored != null) }
             try {
-                container.typeCacheSeed.seedIfNeeded()
+                container.typeCacheSeed.topUp(container.repository.curatedTypeIds())
+                // A cache seeded before version 3 has no thumbnails, and a cached type is never
+                // fetched again: without this the plate would keep asking for the heavy
+                // originals for ever on the phones that already have the collection (#67).
+                container.typeThumbnailBackfill.run()
                 refreshBudget()
                 container.repository.observeState().collect { collection ->
                     _state.update { it.copy(collection = collection, loading = false) }

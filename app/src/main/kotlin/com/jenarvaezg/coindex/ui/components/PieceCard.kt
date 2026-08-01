@@ -40,8 +40,8 @@ fun PieceCard(
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             CoinSides(
                 label = title,
-                obverseUrl = images?.obverse,
-                reverseUrl = images?.reverse,
+                obverse = images?.obverse,
+                reverse = images?.reverse,
                 missing = false,
                 modifier = Modifier.width(150.dp),
             )

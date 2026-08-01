@@ -33,6 +33,9 @@ data class CollectedItemEntity(
  *
  * The finish is deliberately *not* stored: it is inferred from `title` and `family` on read,
  * so improving the inference rules fixes old rows without re-fetching anything.
+ *
+ * The thumbnail URLs arrived in version 3 and are the reason `raw` exists: every row already
+ * held them, unread, so the whole cache could be filled in without a single API call.
  */
 @Entity(tableName = "type_meta")
 data class TypeMetaEntity(
@@ -47,7 +50,12 @@ data class TypeMetaEntity(
     val reverseUrl: String?,
     val raw: String,
     val fetchedAt: Long,
+    val obverseThumbnailUrl: String? = null,
+    val reverseThumbnailUrl: String? = null,
 )
+
+/** The stored ficha of one type, for reading fields the columns never captured. */
+data class TypeRawRow(val typeId: Int, val raw: String)
 
 /** Durable intent about one proposal variant key. Absence means Available (ADR 0008). */
 @Entity(
