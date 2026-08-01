@@ -45350,6 +45350,887 @@
   },
   "weight": 23.33
  },
+ "45416": {
+  "id": 45416,
+  "url": "https://es.numista.com/45416",
+  "title": "5 Euros (Almería)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA ALMERÍA\r\nMUY NOBLE MUY LEAL Y DECIDIDA POR LA LIBERTAD\r\nCIUDAD DE ALMERÍA\r\nM\r\n2010",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4919-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4919-180.jpg"
+  },
+  "reverse": {
+   "description": "El conjunto monumental de la Alcazaba y las murallas del Cerro de San Cristóbal en Almería.",
+   "lettering": "CONJUNTO MONUMENTAL DE LA ALCAZABA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4920-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4920-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Almería",
+  "comments": "Imponente y visible desde cualquier punto de la ciudad, el conjunto monumental de la Alcazaba y las murallas del Cerro de San Cristóbal, fue declarado Bien de Interés Cultural en 2004. Se asienta sobre un cerro aislado que domina toda la bahía de Almería , destacando por su importante capacidad defensiva y por ser la segunda construcción de origen árabe más grande de España después de la Alhambra de Granada. Fue en el año 955 cuando el primer califa de al-Ándalus, adb al-Rahman III, mandó construir la Alcazaba sobre los restos de una fortaleza anterior. El recinto consta de 3 partes diferenciadas, 2 de origen y estilo árabe y una posterior de origen cristiano, mandada construir por los Reyes Católicos tras la toma de la ciudad en 1489.",
+  "tags": [
+   "Castillo o fortificación",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1153"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45417": {
+  "id": 45417,
+  "url": "https://es.numista.com/45417",
+  "title": "5 Euros (Huesca)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA HUESCA\r\nV.V. OSCA\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4921-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4921-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Santa María de Huesca",
+   "lettering": "CATEDRAL DE HUESCA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4922-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4922-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Huesca",
+  "comments": "<p>La Catedral de Santa María de Huesca está situada en el casco antiguo y en lo alto de una colina, en la extensa plaza que lleva su nombre. De estilo gótico, Jaime I consideró indecorosa la celebración del culto cristiano en la antigua mezquita musulmana, por lo que propuso la construcción de una nueva Catedral a finales del siglo XIII, finalizándola en el siglo XVI. Posee un importante tesoro documental y orfebre, así como tres hermosas naves con capillas laterales. En su portada se pueden admirar las figuras de los apóstoles talladas en piedra.</p>",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1154"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45418": {
+  "id": 45418,
+  "url": "https://es.numista.com/45418",
+  "title": "5 Euros (Las Palmas de Gran Canaria)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA LAS PALMAS DE GRAN CANARIA\r\nSEGURA TIENE LA PALMA\r\nM 2010",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4923-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4923-180.jpg"
+  },
+  "reverse": {
+   "description": "La Casa de Colón",
+   "lettering": "5 EURO\r\nCASA DE COLÓN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4924-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4924-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Las Palmas de Gran Canaria",
+  "comments": "<p>La casa de Colón: Antigua casa del Gobernador que el descubridor visitó durante su primer viaje en 1492, está situada en el casco histórico de Vegueta, y desde 1951 se centra en el estudio, investigación y divulgación de la historia de Canarias y sus relaciones con América . Es una maravilla, no sólo por las piezas que alberga en su interior, sino por su arquitectura. Los grandes patios, los revestimientos de madera y los adornos de piedra, reflejan, en gran medida, la influencia isleña. La construcción procede de la integración de varias casas y, a pesar de las diferentes rehabilitaciones, se conservan zonas originales del siglo XVI.</p>",
+  "tags": [
+   "Otra construcción",
+   "Ciudad",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1155"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45419": {
+  "id": 45419,
+  "url": "https://es.numista.com/45419",
+  "title": "5 Euros (Santander)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA SANTANDER\r\nEXCMA. CIUDAD DE SANTANDER MUY NOBLE SIEMPRE. LEAL DECIDIDA SIEMPRE. BENEFICA\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4925-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4925-180.jpg"
+  },
+  "reverse": {
+   "description": "Palacio de la Magdalena.",
+   "lettering": "PALACIO DE LA MAGDALENA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4926-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4926-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Santander",
+  "comments": "Palacio de la Magdalena: Ejemplo vivo de la solidaridad de sus gentes, fue construido en la península de la que recibe su nombre entre 1908 y 1912. El Ayuntamiento lo proyectó como residencia de la Familia Real Española, y se llevó a cabo con la participación de todos los santanderinos por suscripción popular. Siendo el edificio más emblemático de Santander, sin embargo, no tiene un estilo definido, siendo una mezcla de estilos inglés y francés con la incorporación de elementos típicos de la arquitectura montañesa. Su moderna rehabilitación ha contribuido en gran medida a la consolidación de la ciudad como gran destino de congresos a nivel nacional.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1156"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45420": {
+  "id": 45420,
+  "url": "https://es.numista.com/45420",
+  "title": "5 Euros (Ávila)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA ÁVILA\r\nDE LOS LEALES - DE LOS CABALLEROS\r\nÁVILA DEL REY\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5678-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5678-180.jpg"
+  },
+  "reverse": {
+   "description": "Murallas de Ávila.",
+   "lettering": "5 EURO\r\nMURALLA DE ÁVILA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5679-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5679-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Ávila",
+  "comments": "Murallas de Ávila: Símbolo universal y monumento más destacado que acoge y protege la ciudad. Constituye el recinto amurallado medieval mejor conservado de España y, probablemente, de toda Europa, siendo declarado Monumento Histórico-Artístico en 1884. Es el mejor ejemplo de arquitectura militar del románico en España y un modelo único de la arquitectura medieval europea. Su trazado es fundamental para entender una ciudad de la que fue defensa militar, cinturón sanitario, frontera fiscal y soporte de otras arquitecturas. Tiene un perímetro de 2.516 metros, 2.500 almenas, 88 cubos o torres y 9 puertas.",
+  "tags": [
+   "Castillo o fortificación",
+   "Ciudad",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1157"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45421": {
+  "id": 45421,
+  "url": "https://es.numista.com/45421",
+  "title": "5 Euros (Albacete)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA ALBACETE\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4927-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4927-180.jpg"
+  },
+  "reverse": {
+   "description": "Museo Municipal de la Cuchillería de Albacete.",
+   "lettering": "5 EURO\r\nMUSEO MUNICIPAL DE LA CUCHILLERÍA DE ALBACETE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4928-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4928-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Albacete",
+  "comments": "Museo Municipal de la Cuchillería de Albacete: Ubicado en el antiguo palacio conocido como Casa de Hortelano -antigua sede del vicecanciller-, se encuentra junto al Ayuntamiento y la Catedral, en pleno centro de la capital albaceteña. Dedicado a recoger los elementos materiales que conforman la memoria de un arte de esta ciudad y su tierra, el museo fue inaugurado el 6 de septiembre de 2004 con el fin de conservar, difundir y promocionar el patrimonio histórico-artístico y cultural de la provincia .",
+  "tags": [
+   "Museo",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1158"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45422": {
+  "id": 45422,
+  "url": "https://es.numista.com/45422",
+  "title": "5 Euros (Barcelona)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA BARCELONA\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4929-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4929-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Barcelona y Monumento a Colón",
+   "lettering": "CATEDRAL · COLÓN\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4930-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4930-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Barcelona",
+  "comments": "La Santa Iglesia Catedral Metropolitana comenzó a construirse entre los siglos XIII y XV sobre los cimientos de la antigua catedral románica y tiene como titulares a Santa Cruz y Santa Eulalia. La fachada principal es la obra más reciente de la catedral, y está fechada a finales del siglo XIX y principios del XX. El Monumento a Colón es la estatua más famosa de la Ciudad Condal. Situado en el extremo sur de Las Ramblas, es un gigantesco edificio que se eleva 60 metros sobre el cielo con la figura del navegante universal situada en el punto más alto y mirando hacia su gran pasión: el mar.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1159"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45423": {
+  "id": 45423,
+  "url": "https://es.numista.com/45423",
+  "title": "5 Euros (Ceuta)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA CEUTA\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4931-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4931-180.jpg"
+  },
+  "reverse": {
+   "description": "Palacio de la Asamblea.",
+   "lettering": "PALACIO DE LA ASAMBLEA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4932-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4932-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Ceuta",
+  "comments": "Palacio de la Asamblea: Edificio sede del Ayuntamiento de Ceuta se construye en el solar de la antigua Casa Consistorial. Comenzó a construirse en 1914 con el proyecto de José Romero Barrero, y fue inaugurado en 1927 por SS.MM. los Reyes de España D. Alfonso XIII y D.ª Victoria Eugenia. Destacan la escalera imperial -con cerámica de inspiración portuguesa de Ruiz de Luna-, el salón del trono de estilo francés, la rotonda de estilo imperio y el salón de sesiones renacentista español, con un cuidado techo y frescos del pintor Mariano Bertuchi y obras del escultor Cándido Mata Cañamaque.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1160"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45424": {
+  "id": 45424,
+  "url": "https://es.numista.com/45424",
+  "title": "5 Euros (Melilla)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA MELILLA\r\nPRAEFERE PATRIAM LIBERIS PARENTEM DECET\r\nNON PLUS ULTRA\r\n2010 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4933-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4933-180.jpg"
+  },
+  "reverse": {
+   "description": "Plaza Menéndez Pelayo.",
+   "lettering": "PLAZA DE MENÉNDEZ PELAYO\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4934-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4934-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Melilla",
+  "comments": "Plaza representativa de la cosmopolita ciudad de Melilla, en ella destacan el campanario de la Iglesia del Sagrado Corazón -obra neoorrománica de Fernando Guerrero Stracham-, y la llamada Casa de la Reconquista, una de las mejores obras del arquitecto modernista catalán Enrique Nieto. Construida en 1.915, aparece llena de detalles florales y femeninos, con atractivos miradores y torres con cúpulas en las esquinas. Justo delante de la puerta principal de la Iglesia del Sagrado Corazón de Jesús, se encuentra el grupo escultórico de Miguel de Cervantes con su personaje, &quot;El Quijote&quot;, obra esculpida en bronce por Juan Carlos Martínez.",
+  "tags": [
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1161"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "45425": {
   "category": "coin",
   "commemorated_topic": "Madrid",
@@ -45446,6 +46327,4148 @@
    "text": "5 euros"
   },
   "weight": 13.5
+ },
+ "45426": {
+  "id": 45426,
+  "url": "https://es.numista.com/45426",
+  "title": "5 Euros (Pamplona / Iruña)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA PAMPLONA / IRUÑA\r\nM 2010",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4937-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4937-180.jpg"
+  },
+  "reverse": {
+   "description": "Encierro de los Sanfermines",
+   "lettering": "LOS SAN FERMINES EL ENCIERRO\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4938-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4938-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Pamplona",
+  "comments": "Fiesta de interés turístico nacional, &quot;Los Sanfermines&quot; tienen un origen que se remonta varios siglos atrás, aunque su fama mundial es un fenómeno reciente, ligado a la difusión que le dio el escritor Ernest Hemingway en su libro &quot;Fiesta&quot;. Se trata de unas fiestas singulares y, sin duda, el acontecimiento por el que Pamplona es más conocida en el resto del mundo. Los festejos comienzan con el lanzamiento del txupinazo o chupinazo desde el balcón del Ayuntamiento de Pamplona a las 12 horas del 6 de julio y finalizan a las 24 horas del 14 de julio con el &quot;Pobre de mí&quot;, un canto de despedida. Los encierros tienen lugar todos los días entre el 7 y el 14 de julio y comienzan a las ocho de la mañana, con una duración media de dos a tres minutos y un recorrido de 849 metros delante de los toros por el centro histórico de la ciudad.",
+  "tags": [
+   "Vaca o bovino",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1163"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45427": {
+  "id": 45427,
+  "url": "https://es.numista.com/45427",
+  "title": "5 Euros (Alacant / Alicante)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925 (92.5% silver, 7.5% copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad rodeado del nombre del país y de la ciudad. El año de acuñación en la parte superior.",
+   "lettering": "ESPAñA 2010 ALACANT / ALICANTE\r\nA L\r\nL A\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4939-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4939-180.jpg"
+  },
+  "reverse": {
+   "description": "Palacio Municipal",
+   "lettering": "5 EURO\r\nPALACIO MUNICIPAL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4940-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4940-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Alicante",
+  "comments": "Palacio Municipal: Edificio administrativo barroco construido en el siglo XVIII, es actualmente la sede del Ayuntamiento de Alicante, también llamado Palacio Municipal. Es un edificio de planta rectangular, con fachada principal simétrica, compuesto por un cuerpo central de tres plantas flanqueado por dos torres de mayor altura en los extremos, a través de las cuales se realiza la comunicación mediante pasadizos entre las plazas del Ayuntamiento y de la Santa Faz, donde se ubica. Al pie de la escalera principal se encuentra la llamada &quot;cota cero&quot;, punto de referencia que sirve para medir la altitud sobre el nivel del mar de cualquier punto de España.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1164"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45429": {
+  "id": 45429,
+  "url": "https://es.numista.com/45429",
+  "title": "5 Euros (Badajoz)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad rodeado por el nombre del país y de la ciudad. El año de acuñación en la parte inferior.",
+   "lettering": "ESPAñA BADAJOZ\r\nPLUS ULTRA\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4963-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4963-180.jpg"
+  },
+  "reverse": {
+   "description": "Puerta de Palmas.",
+   "lettering": "5 EURO\r\nPUERTA DE PALMAS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4964-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4964-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Badajoz",
+  "comments": "La Puerta de Palmas es uno de los monumentos más representativos de la ciudad de Badajoz. Situada frente al puente del mismo nombre, está formada por dos torres almenadas y un cuerpo central. Las torres tienen forma circular y están rodeadas por cordones labrados en piedra. El cuerpo central presenta dos fachadas completamente diferentes. La exterior, con doble arco de medio punto y realizada en mármol, contiene el escudo de Carlos V, medallones y figuras decorativas. El interior, remodelado en 1960, está presidido por la capilla dedicada a Nuestra Señora de los Ángeles.",
+  "tags": [
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1237"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45430": {
+  "id": 45430,
+  "url": "https://es.numista.com/45430",
+  "title": "5 Euros (A Coruña)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA A CORUÑA\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4975-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4975-180.jpg"
+  },
+  "reverse": {
+   "description": "La Torre de Hércules.",
+   "lettering": "TORRE DE HÉRCULES\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4976-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4976-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "La Coruña",
+  "comments": "La Torre de Hércules está situada en una colina, a la entrada del puerto de A Coruña. Fue construida por los romanos a finales del siglo I d.C. Tiene una altura de 55 metros, de los cuales 34 metros corresponden a la parte del faro construida por los romanos, y 21 metros a la restauración realizada en el siglo XVIII por el arquitecto y Teniente de Marina Eustaquio Giannini. Es el faro más antiguo del mundo en funcionamiento y es el símbolo de la ciudad de A Coruña. Fue declarado Patrimonio de la Humanidad por la UNESCO el 27 de junio de 2009.",
+  "tags": [
+   "Torre",
+   "Mitología",
+   "Ciudad",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1236"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45431": {
+  "id": 45431,
+  "url": "https://es.numista.com/45431",
+  "title": "5 Euros (Palma de Mallorca)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA PALMA\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4943-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4943-180.jpg"
+  },
+  "reverse": {
+   "description": "Castillo de Bellver.",
+   "lettering": "CASTELL DE BELLVER\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4944-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4944-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Palma de Mallorca",
+  "comments": "Castillo de Bellver: Concebido como fortaleza y como residencia real, el Castillo de Bellver fue construido en el siglo XIV por orden de Jaume II, rey de Mallorca. Está situado a 3 kilómetros del centro de Palma, sobre una pequeña colina desde donde se divisa la bahía de Palma y parte de la isla de Mallorca. Es uno de los cuatro únicos castillos europeos de planta circular. Está flanqueado por tres torres semicirculares adosadas al edificio, y por la Torre del Homenaje, a siete metros del castillo. El castillo y el bosque que lo rodea fueron cedidos por el Estado al Ayuntamiento de Palma en 1931, que lo convirtió en sede del &quot;Museu d'Història de la Ciutat&quot; y de la &quot;Col-lecció Despuig d'Escultura Clàssica&quot;.",
+  "tags": [
+   "Castillo o fortificación",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1227"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45433": {
+  "id": 45433,
+  "url": "https://es.numista.com/45433",
+  "title": "5 Euros (Logroño)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA LOGROÑO\r\nCIUDAD DE LOGROÑO MUY NOBLE MUY LEAL\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4969-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4969-180.jpg"
+  },
+  "reverse": {
+   "description": "Puente de Piedra.",
+   "lettering": "PUENTE DE PIEDRA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4970-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4970-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Logroño",
+  "comments": "El Puente de Piedra es uno de los cuatro puentes que cruzan el río Ebro a su paso por Logroño. También es conocido como &quot;Puente de San Juan de Ortega&quot;, en honor al santo al que algunos historiadores consideran el constructor del primer puente de piedra. El puente actual fue diseñado por el ingeniero Fermín Manso de Zúñiga e inaugurado en 1884, tras el derrumbe del antiguo. Consta de 7 arcos y tiene una longitud de 198 metros. El Puente de Piedra es uno de los símbolos de Logroño. Aparece en su escudo, junto a las tres flores de lis que Carlos V concedió a la ciudad por su resistencia al asedio de los franceses en 1521.",
+  "tags": [
+   "Puente",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1232"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45434": {
+  "id": 45434,
+  "url": "https://es.numista.com/45434",
+  "title": "5 Euros (Bilbao)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA BILBAO\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4965-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4965-180.jpg"
+  },
+  "reverse": {
+   "description": "Museo Guggenheim Bilbao.",
+   "lettering": "5 EURO\r\nMUSEO GUGGENHEIM BILBAO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4966-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4966-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Bilbao",
+  "comments": "El Museo Guggenheim Bilbao, diseñado por el arquitecto estadounidense Frank O. Gehry, fue inaugurado en 1997. Su espectacular estructura, realizada en piedra, vidrio y titanio, presenta una imagen escultórica que se integra perfectamente en el paisaje y la ría de Bilbao. La colección del Museo Guggenheim Bilbao está formada por obras de arte moderno y contemporáneo, que se exponen desde diferentes perspectivas, con el objetivo de que el público que lo visita pueda disfrutar del arte y de los valores que representa. El Museo Guggenheim Bilbao forma parte de la Red de Instituciones Guggenheim, de la que también forman parte el Solomon R. Guggenheim Museum de Nueva York, la Peggy Guggenheim Collection de Venecia y el Deutsche Guggenheim de Berlín.",
+  "tags": [
+   "Museo",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1230"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45435": {
+  "id": 45435,
+  "url": "https://es.numista.com/45435",
+  "title": "5 Euros (Oviedo)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA OVIEDO\r\nMUY NOBLE MUY LEAL BENEMERITA INVICTA HEROICA BUENA\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4941-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4941-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Oviedo.",
+   "lettering": "CATEDRAL DE OVIEDO\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4942-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4942-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Oviedo",
+  "comments": "La Catedral de San Salvador de Oviedo, también conocida como Sancta Ovetensis, fue construida desde finales del siglo XIII hasta mediados del siglo XVI, aunque durante los siglos XVII y XVIII se añadieron otros edificios. La Catedral se ubica en el mismo lugar de un antiguo templo románico del que se conservan algunos testimonios, como la torre románica y una estancia llamada Cámara Santa. La Cámara Santa, declarada Patrimonio de la Humanidad por la UNESCO en 1998, conserva la Cruz de la Victoria, símbolo de Asturias, y la Cruz de los Ángeles, símbolo de la ciudad de Oviedo.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1226"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45436": {
+  "id": 45436,
+  "url": "https://es.numista.com/45436",
+  "title": "5 Euros (Murcia)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA MURCIA\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4971-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4971-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Murcia.",
+   "lettering": "CATEDRAL DE MURCIA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4972-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4972-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Murcia",
+  "comments": "La Santa Iglesia Catedral de Santa María de Murcia es un edificio de estilo gótico con importantes elementos renacentistas, barrocos y neoclásicos. Su construcción se inició en el siglo XIV, aunque durante los siglos XVI y XVIII sufrió numerosas reformas. Además de la Capilla de los Vélez, la Capilla de los Junterones, la Puerta de las Cadenas o el Torreón, destaca la monumental fachada principal o imafronte. Diseñada por Jaime Bort en el siglo XVIII, sustituyó a una fachada anterior de mediados del siglo XVI. Está realizada a modo de retablo en piedra y se considera una obra maestra del barroco español.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1233"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45437": {
+  "id": 45437,
+  "url": "https://es.numista.com/45437",
+  "title": "5 Euros (Cádiz)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA CÁDIZ\r\nGADIUM DOMINATORQUE HERCULES FUNDATOR\r\nPLUS ULTRA\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4967-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4967-180.jpg"
+  },
+  "reverse": {
+   "description": "Malecón y Catedral de Cádiz.",
+   "lettering": "MALECÓN Y CATEDRAL\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4968-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4968-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Cádiz",
+  "comments": "Situada en la bahía de su mismo nombre y rodeada por el mar, Cádiz es la capital más meridional de Europa. Desde su fundación por los fenicios hacia el año 1100 a.C., la antigua Gadir, fue ocupada por cartagineses, romanos, visigodos y musulmanes. Su situación estratégica, entre el océano Atlántico y el mar Mediterráneo, ha marcado su historia a lo largo de los siglos. Hoy, la imagen de Cádiz desde el mar, con su monumental Catedral, nos acerca a esta ciudad abierta y cosmopolita que vio nacer en 1812 la primera Constitución española.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1231"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45438": {
+  "id": 45438,
+  "url": "https://es.numista.com/45438",
+  "title": "5 Euros (Teruel)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA TERUEL\r\nM. NOBLE FIDELISIMA HEROICA Y VENCEDORA\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4947-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4947-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Teruel.",
+   "lettering": "CATEDRAL DE TERUEL\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4948-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4948-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Teruel",
+  "comments": "Catedral de Teruel: Situada en el centro de la ciudad, fue románica en sus orígenes, siendo reconstruida durante los siglos XIII y XIV con un estilo gótico mudéjar. Posteriormente, también ha sufrido algunas modificaciones en su construcción. La techumbre que cubre la nave central, obra maestra del arte mudéjar, es Monumento Nacional desde 1911 y el edificio completo también lo es desde 1931. La torre, de estilo románico-mudéjar y con abundante cerámica verdiblanca, la techumbre y la cúpula, mezclas de estilos renacentista y gótico mudéjar, fueron declaradas Patrimonio de la Humanidad por la UNESCO en 1986.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1229"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45439": {
+  "id": 45439,
+  "url": "https://es.numista.com/45439",
+  "title": "5 Euros (Santa Cruz de Tenerife)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA SANTA CRUZ DE TENERIFE\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4945-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4945-180.jpg"
+  },
+  "reverse": {
+   "description": "Auditorio de Tenerife.",
+   "lettering": "5 EURO\r\nAUDITORIO DE TENERIFE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4946-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4946-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Santa Cruz de Tenerife",
+  "comments": "El Auditorio de Tenerife &quot;Adán Martín&quot; alza su escultural figura en el corazón de la ciudad de Santa Cruz de Tenerife. Es obra del arquitecto e ingeniero valenciano Santiago Calatrava, que ha creado un edificio impactante, por su tamaño y por la belleza de sus formas. El gran guardapolvo o ala, construido a cincuenta metros de altura, aporta al Auditorio una imagen de movimiento y plasticidad que destaca sobre el mar. Inaugurado el 26 de septiembre de 2003, es un referente cultural en la ciudad de Santa Cruz de Tenerife y en la isla de Tenerife.",
+  "tags": [
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1228"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45441": {
+  "id": 45441,
+  "url": "https://es.numista.com/45441",
+  "title": "5 Euros (Burgos)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA BURGOS\r\nPRIMA VOCE ET FIDE CAPUT CASTELLAE CAMERA REGIA\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4977-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4977-180.jpg"
+  },
+  "reverse": {
+   "description": "Estatua ecuestre del Cid Campeador y Catedral de Burgos",
+   "lettering": "5 EURO\r\nCID CAMPEADOR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4978-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4978-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Burgos",
+  "comments": "La ciudad de Burgos, antigua capital del reino de Castilla, cruce de caminos y paso obligado de millones de peregrinos a Santiago, posee un rico patrimonio artístico que los siglos han ido dejando en ella. Un ejemplo de ello es la Catedral, joya del arte gótico, declarada Patrimonio de la Humanidad por la UNESCO en 1984. En su interior reposan los restos del Cid y de su esposa Jimena. La memoria del héroe burgalés, hoy mito literario universal, se recuerda también en la estatua ecuestre que se alza en la Plaza del Cid.",
+  "tags": [
+   "Caballo o equino",
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1242"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45442": {
+  "id": 45442,
+  "url": "https://es.numista.com/45442",
+  "title": "5 Euros (Ciudad Real)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA CIUDAD REAL\r\nMUY NOBLE CIUDAD REAL MUY LEAL\r\nM 2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4983-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4983-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Ciudad Real y estatua de Alfonso X el Sabio",
+   "lettering": "CATEDRAL \r\nALFONSO X\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4984-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4984-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Ciudad Real",
+  "comments": "Ciudad Real fue fundada como &quot;Villa Real&quot; en 1255 por el rey Alfonso X el Sabio, en el lugar llamado Pozuelo de Don Gil, recibiendo el título de &quot;Ciudad Real&quot; en 1420, concedido por Juan II. Un monumento en la Plaza del Ayuntamiento recuerda al Rey Sabio que, según la tradición, mandó construir la primitiva iglesia sobre la que hoy se levanta la Catedral de Santa María del Prado, y de la que sólo se conserva la Puerta del Perdón. La Catedral está dedicada a Nuestra Señora del Prado, Patrona de la ciudad.",
+  "tags": [
+   "Escultura",
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1245"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45443": {
+  "id": 45443,
+  "url": "https://es.numista.com/45443",
+  "title": "5 Euros (Castellón de la Plana)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA 2011 CASTELLÓ / CASTELLÓN DE LA PLANA\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4981-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4981-180.jpg"
+  },
+  "reverse": {
+   "description": "Teatro principal",
+   "lettering": "TEATRE PRINCIPAL\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4982-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4982-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Castellón de la Plana",
+  "comments": "Teatro Principal: Construido en el corazón de la ciudad, siguiendo el proyecto del arquitecto Godofredo Ros de Ursinos, fue inaugurado en 1894. El edificio, con una superficie de 1700 m2, ocupa toda una manzana y es uno de los símbolos de la ciudad de Castellón. En 1998, la Generalitat Valenciana obtuvo la propiedad del edificio y comenzó su restauración. Tras un año de reformas, el Teatre Principal volvió a abrir sus puertas, ofreciendo una amplia programación de obras de teatro, ópera, zarzuela y danza.",
+  "tags": [
+   "Teatro",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1244"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45444": {
+  "id": 45444,
+  "url": "https://es.numista.com/45444",
+  "title": "5 Euros (Cáceres)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA CÁCERES\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4979-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4979-180.jpg"
+  },
+  "reverse": {
+   "description": "\"Puerta y arco \"Estrella",
+   "lettering": "5 EURO\r\nARCO DE LA ESTRELLA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4980-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4980-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Cáceres",
+  "comments": "Puerta de la Estrella: Es una de las cinco entradas a la ciudad monumental de Cáceres, ciudad declarada Patrimonio de la Humanidad por la UNESCO en 1986. Situada junto a la Torre de Bujaco, fue construida en 1726 por Manuel Larra Churriguera, transformando otra anterior del siglo XV, conocida como Puerta Nueva. Por esta puerta pasaron los Reyes Católicos, y aquí juraron respetar los fueros y privilegios de la ciudad concedidos por Alfonso IX. En la parte interior del arco, y en un templete, se encuentra la imagen de Nuestra Señora de la Estrella, que da nombre a la Puerta y al Arco.",
+  "tags": [
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1243"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45445": {
+  "id": 45445,
+  "url": "https://es.numista.com/45445",
+  "title": "5 Euros (Lugo)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAÑA LUGO\r\nHOC HIC MYSTERIUM  FIDEI FIRMITER PROFITEMUR\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3480-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3480-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Murallas y Catedral de Lugo.",
+   "lettering": "MURALLAS DE LUGO Y CATEDRAL\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3481-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3481-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Lugo",
+  "comments": "Fundada por los romanos con el nombre de Lucus Augusti, la ciudad de Lugo presume de su historia milenaria y de su rico patrimonio. Destaca la Muralla Romana, única fortificación romana que conserva todo su perímetro. Fue declarada Patrimonio de la Humanidad por la UNESCO en el año 2000. La Catedral de Lugo, cuya construcción se inició en 1129, tiene el privilegio pontificio de la exposición permanente del Santísimo Sacramento. Así se refleja en el escudo de la ciudad y también se ha trasladado al escudo de Galicia.",
+  "tags": [
+   "Castillo o fortificación",
+   "Construcción religiosa",
+   "Ciudad",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1241"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45446": {
+  "id": 45446,
+  "url": "https://es.numista.com/45446",
+  "title": "5 Euros (Girona)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA GIRONA\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3486-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3486-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Casas del Onyar",
+   "lettering": "CASAS DEL ONYAR\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3487-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3487-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Girona",
+  "comments": "Con la Catedral y la iglesia de Sant Feliu emergiendo entre ellas, las Casas del Onyar forman la imagen más representativa de la ciudad de Girona. Fueron construidas entre los siglos XVII y XX sobre los restos de una antigua muralla levantada en la arena del río Onyar, siguiendo el curso del agua. La contemplación de sus fachadas, decoradas con colores terrosos, cremas, rosas y amarillos, se ha convertido en uno de los atractivos de la ciudad catalana.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1239"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45447": {
+  "id": 45447,
+  "url": "https://es.numista.com/45447",
+  "title": "5 Euros (Córdoba)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA CÓRDOBA\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3482-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3482-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Catedral-Mezquita de Córdoba",
+   "lettering": "5 EURO\r\nCATEDRAL MEZQUITA DE CÓRDOBA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3483-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3483-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Córdoba",
+  "comments": "La Catedral-Mezquita de Córdoba es el símbolo más importante de la ciudad de Córdoba y uno de los tesoros del arte andalusí. La mezquita comenzó a construirse en el siglo VIII por Abd al-Rahman I sobre los restos de una antigua basílica cristiana, ampliándose sucesivamente durante los dos siglos siguientes. Llegó a ser la segunda mezquita más grande del mundo. En 1236, tras la conquista de la ciudad por Fernando III el Santo, la mezquita fue consagrada como catedral, aunque hasta el siglo XVI no se inició la construcción del templo dentro del mismo edificio de la mezquita. Esta solución constructiva convierte a la Catedral-Mezquita de Córdoba en un edificio único en el mundo. Fue declarada Patrimonio de la Humanidad por la UNESCO en 1984.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1238"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45448": {
+  "id": 45448,
+  "url": "https://es.numista.com/45448",
+  "title": "5 Euros (Donostia / San Sebastián)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA DONOSTIA - SAN SEBASTIÁN\r\nGANADAS POR FIDELIDAD NOBLEZA Y LEALTAD\r\nS S\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4973-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4973-180.jpg"
+  },
+  "reverse": {
+   "description": "\"Playa de la Concha.",
+   "lettering": "PLAYA DE LA CONCHA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4974-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4974-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "San Sebastián",
+  "comments": "La capital guipuzcoana tiene el honor de ser una de las ciudades más bellas de España. Con un marcado aire aristocrático, ha sabido combinar lo clásico con lo más vanguardista. El Teatro Reina Victoria, el Hotel María Cristina, o el Palacio Miramar, conviven con la arquitectura más actual del Palacio de Congresos Auditorio Kursaal. Su variada actividad cultural, que incluye los festivales internacionales de Cine y Jazz, así como el Iberoamericano de Publicidad, hacen de Donostia-San Sebastián una ciudad cosmopolita cuya visita resulta muy interesante. La Playa de la Concha completa el placer de la visita.",
+  "tags": [
+   "Escudo de armas",
+   "Playa",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1234"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45449": {
+  "id": 45449,
+  "url": "https://es.numista.com/45449",
+  "title": "5 Euros (Zaragoza)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA ZARAGOZA\r\nMN SH\r\nMH MB\r\nML I\r\n2011 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4961-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4961-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral-Basílica de Nuestra Señora del Pilar.",
+   "lettering": "EL PILAR\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4962-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4962-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Zaragoza",
+  "comments": "La Basílica del Pilar, en Zaragoza, está dedicada a la Virgen del Pilar, Patrona de Zaragoza y Aragón. Es un impresionante santuario mariano visitado por miles de peregrinos de todo el mundo. El monumental edificio, que se levanta a orillas del río Ebro, pasó por un largo proceso de construcción que duró varios siglos. En este proceso fue decisiva la intervención del arquitecto Ventura Rodríguez, autor también de la Capilla de la Virgen. El templo conserva en su interior numerosas obras de arte, como el Retablo, el Coro Mayor, el Órgano, o los frescos de Goya y Bayeu.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1235"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45450": {
+  "id": 45450,
+  "url": "https://es.numista.com/45450",
+  "title": "5 Euros (León)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA LEÓN\r\nM\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4957-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4957-180.jpg"
+  },
+  "reverse": {
+   "description": "Real Colegiata de San Isidoro",
+   "lettering": "5 EURO\r\nSAN ISIDORO DE LEÓN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4958-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4958-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "León",
+  "comments": "Real Colegiata de San Isidoro: Está considerada una de las joyas del románico en España. El conjunto arquitectónico fue construido en la ciudad de León durante los siglos XI y XII, añadiendo posteriormente algunos elementos góticos, renacentistas y barrocos. Debe su nombre a San Isidoro de Sevilla, cuyos restos fueron trasladados a la ciudad en 1063. A los pies de la iglesia se encuentra el Panteón Real, conocido como la &quot;Capilla Sixtina&quot; del románico, por sus excepcionales pinturas murales.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1240"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45451": {
+  "id": 45451,
+  "url": "https://es.numista.com/45451",
+  "title": "5 Euros (Cuenca)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA CUENCA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3492-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3492-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Casas Colgadas de Cuenca",
+   "lettering": "CASAS COLGADAS\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3493-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3493-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Cuenca",
+  "comments": "Las Casas Colgadas son el símbolo por excelencia de la ciudad de Cuenca. Aunque se desconoce la fecha exacta de su construcción, su existencia está documentada desde el siglo XV. Suspendidas en la roca, sobre la hoz del río Huécar, forman parte de los numerosos atractivos turísticos y culturales que ofrece la ciudad de Cuenca, declarada Patrimonio de la Humanidad por la UNESCO.",
+  "tags": [
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1260"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45452": {
+  "id": 45452,
+  "url": "https://es.numista.com/45452",
+  "title": "5 Euros (Lleida)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA LLEIDA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3488-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3488-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Catedral Vieja de Lleida (Seu Vella en catalán)",
+   "lettering": "SEU VELLA \r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3489-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3489-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Lérida",
+  "comments": "La Seu Vella o Catedral Vieja de Lleida está situada en lo alto de una colina, desde donde se divisa toda la ciudad. Forma parte del Conjunto Monumental de la Seu Vella y es uno de los más bellos ejemplos del arte catalán de los siglos XIII, XIV y XV, tanto en arquitectura como en escultura y pintura. Su sobriedad, espectacularidad y solemnidad son el reflejo de un pasado lleno de historia.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1265"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45453": {
+  "id": 45453,
+  "url": "https://es.numista.com/45453",
+  "title": "5 Euros (Valencia)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA VALENCIA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5005-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5005-180.jpg"
+  },
+  "reverse": {
+   "description": "Palacio de las Artes Reina Sofía",
+   "lettering": "5 EURO\r\nPALAU DE LES ARTS\r\nREINA SOFÍA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5006-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5006-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Valencia",
+  "comments": "El Palau de les Arts Reina Sofía forma parte del conjunto arquitectónico de la Ciudad de las Artes y las Ciencias de Valencia. Se trata de un impresionante edificio, de más de 40.000 m2 de superficie y 75 metros de altura, construido por el arquitecto valenciano Santiago Calatrava. Rodeado por más de 60.000 m2 de jardín y 11.000 m2 de láminas de agua, en su interior alberga cuatro espacios escénicos para representaciones de ópera, música, ballet y teatro. El Palau de les Arts Reina Sofía es también sede de la Orquestra de la Comunitat Valenciana.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1276"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45454": {
+  "id": 45454,
+  "url": "https://es.numista.com/45454",
+  "title": "5 Euros (Ourense)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA OURENSE\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4991-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4991-180.jpg"
+  },
+  "reverse": {
+   "description": "El Puente del Milenio",
+   "lettering": "PUENTE DEL MILENIO\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4992-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4992-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Orense",
+  "comments": "El Puente del Milenio es el quinto puente que cruza el río Miño en la ciudad de Ourense. Inaugurado en 2001, destaca por su original pasarela peatonal que se eleva más de 20 metros. Desde los miradores instalados a esa altura, se puede disfrutar de una espectacular vista sobre el río Miño y las numerosas instalaciones termales que ofrece la ciudad de Ourense, considerada una de las más importantes de Europa en recursos termales.",
+  "tags": [
+   "Puente",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1267"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45455": {
+  "id": 45455,
+  "url": "https://es.numista.com/45455",
+  "title": "5 Euros (Vitoria)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA VITORIA - GASTEIZ\r\nHAEC EST VICTORIA QUAE VINCIT\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3484-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3484-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Catedral de Santa María",
+   "lettering": "CATEDRAL DE SANTA MARÍA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3485-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3485-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Vitoria",
+  "comments": "La Catedral de Santa María está situada en el corazón de la Ciudad Histórica de Vitoria-Gasteiz. Redescubierta por la ciudadanía y recuperada poco a poco a través de un proceso integral de restauración accesible y colectivo, se ha convertido en seña de identidad y punto de encuentro de toda la sociedad alavesa.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1278"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45456": {
+  "id": 45456,
+  "url": "https://es.numista.com/45456",
+  "title": "5 Euros (Granada)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAÑA GRANADA\r\nCELEBERRIMA Y HEROICA CIUDAD DE GRANADA MUY NOBLE MUY LEAL NOMBRADA GRANDE\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4959-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4959-180.jpg"
+  },
+  "reverse": {
+   "description": "La Alhambra de Granada y Sierra Nevada al fondo.",
+   "lettering": "LA ALHAMBRA - SIERRA NEVADA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4960-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4960-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Granada",
+  "comments": "El conjunto monumental de la Alhambra y el Generalife, declarado Patrimonio de la Humanidad por la UNESCO, con sus palacios, jardines y fuentes, luce su majestuosa silueta sobre la ciudad y la vega granadina. La cadena montañosa de Sierra Nevada, Parque Nacional y Reserva de la Biosfera por sus valores botánicos, paisajísticos y naturales, protege desde sus cumbres la historia y el encanto de este enclave excepcional.",
+  "tags": [
+   "Castillo o fortificación",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1261"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45457": {
+  "id": 45457,
+  "url": "https://es.numista.com/45457",
+  "title": "5 Euros (Palencia)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA PALENCIA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3490-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3490-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "reverse": {
+   "description": "Catedral de Palencia",
+   "lettering": "CATEDRAL DE PALENCIA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3491-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3491-180.jpg",
+   "picture_copyright": "puppy"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Palencia",
+  "comments": "Situada en el centro del casco histórico de la ciudad, la Catedral de Palencia es el resultado de numerosas transformaciones a lo largo de sus más de 1000 años de historia. De estilo gótico en su conjunto, conserva elementos visigóticos, románicos, renacentistas, barrocos y neoclásicos. Por sus enormes dimensiones, es una de las catedrales más grandes de España. Su austero exterior no anuncia el esplendor de su interior. De ahí que reciba el nombre de la Belleza Desconocida.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1268"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45458": {
+  "id": 45458,
+  "url": "https://es.numista.com/45458",
+  "title": "5 Euros (Guadalajara)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA GUADALAJARA\r\nM 2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60679417b09ac1.16776940-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60679417b09ac1.16776940-180.jpg",
+   "picture_copyright": "Kölner Münzkabinett Tyll Kroha Nachfolger UG",
+   "picture_copyright_url": "http://www.koelner-muenzkabinett.de"
+  },
+  "reverse": {
+   "description": "Palacio del Infantado",
+   "lettering": "5 EURO\r\nPALACIO DEL\r\nINFANTADO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60679418236c44.79424386-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60679418236c44.79424386-180.jpg",
+   "picture_copyright": "Kölner Münzkabinett Tyll Kroha Nachfolger UG",
+   "picture_copyright_url": "http://www.koelner-muenzkabinett.de"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Guadalajara",
+  "comments": "El Palacio del Infantado, hoy sede del Museo Provincial de Guadalajara, es la mayor joya arquitectónica de la ciudad. Fue construido en el siglo XV a instancias de don Íñigo López de Mendoza, segundo duque del Infantado, siguiendo las trazas del arquitecto Juan Guas. Es una obra maestra de la transición del estilo gótico al renacentista y uno de los mejores ejemplos de la arquitectura civil española.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1262"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45459": {
+  "id": 45459,
+  "url": "https://es.numista.com/45459",
+  "title": "5 Euros (Tarragona)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA TARRAGONA\r\n2012 \r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/65c86784a07615.52550484-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/65c86784a07615.52550484-180.jpg",
+   "picture_copyright": "CJPcc",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "Acueducto de \"Les Ferreres",
+   "lettering": "ACUEDUCTO DE LES FERRERES\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/65c86787108389.24031618-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/65c86787108389.24031618-180.jpg",
+   "picture_copyright": "CJPcc",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Tarragona",
+  "comments": "El Acueducto de Ferreres forma parte del Conjunto Arqueológico de Tarraco, declarado Patrimonio de la Humanidad por la UNESCO. Está situado a las afueras de la ciudad de Tarragona y tiene una longitud de 217 metros y una altura máxima de 27 metros. Fue construido por los romanos en el siglo I a. C. para abastecer de agua del río Francolí a la ciudad que fue capital de la provincia romana de Hispania Citerior, la mayor del Imperio.",
+  "tags": [
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1274"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45460": {
+  "id": 45460,
+  "url": "https://es.numista.com/45460",
+  "title": "5 Euros (Pontevedra)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA PONTEVEDRA \r\nM 2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4993-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4993-180.jpg"
+  },
+  "reverse": {
+   "description": "Santuario de la Virgen Peregrina",
+   "lettering": "5 EURO\r\nSANTUARIO DE LA VIRGEN PEREGRINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4994-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4994-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Pontevedra",
+  "comments": "El Santuario de la Peregrina, en el que se venera a Nuestra Señora la Peregrina, es uno de los edificios más representativos de la ciudad de Pontevedra. Construido en el siglo XVIII, su planta recuerda la forma de una concha de vieira, símbolo universal del Camino de Santiago. Situado en el centro de la ciudad, en la ruta del Camino Portugués, fue construido con las aportaciones económicas de la Cofradía del Peregrino y está declarado Bien de Interés Cultural.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1269"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45461": {
+  "id": 45461,
+  "url": "https://es.numista.com/45461",
+  "title": "5 Euros (Huelva)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA HUELVA\r\nPORTUS MARIS ET TERRAE CUSTODIA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4985-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4985-180.jpg"
+  },
+  "reverse": {
+   "description": "Monumento a Cristóbal Colón",
+   "lettering": "MONUMENTO A COLÓN\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4986-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4986-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Huelva",
+  "comments": "Situado en la céntrica Plaza de las Monjas, el Monumento de Huelva a Cristóbal Colón, es obra del escultor onubense Elías Rodríguez Picón. Representa la vinculación de la ciudad con el descubrimiento de América y es un homenaje al personaje histórico que protagonizó una de las aventuras más importantes de la historia de la Humanidad.",
+  "tags": [
+   "Escultura",
+   "Escudo de armas",
+   "Explorador",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1263"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45462": {
+  "id": 45462,
+  "url": "https://es.numista.com/45462",
+  "title": "5 Euros (Salamanca)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA SALAMANCA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4995-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4995-180.jpg"
+  },
+  "reverse": {
+   "description": "El puente romano y la silueta de las dos catedrales.",
+   "lettering": "CATEDRALES Y PUENTE ROMANO\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4996-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4996-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Salamanca",
+  "comments": "El puente romano sobre el río Tormes y la silueta de las dos catedrales son las primeras imágenes de Salamanca al entrar en la ciudad. Declarada Patrimonio de la Humanidad por la UNESCO en 1988 y Capital Europea de la Cultura en 2002, se alza majestuosa, orgullosa de su riqueza monumental y de su legado cultural. La Plaza Mayor, la Clerecía, la Universidad, la Casa de las Conchas o el Convento de San Esteban, forman parte del patrimonio salmantino como Antonio de Nebrija y el primer gramático de la lengua castellana, Francisco de Vitoria, Fray Luis de León o Miguel de Unamuno.",
+  "tags": [
+   "Puente",
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1270"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45463": {
+  "id": 45463,
+  "url": "https://es.numista.com/45463",
+  "title": "5 Euros (Toledo)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA TOLEDO\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5001-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5001-180.jpg"
+  },
+  "reverse": {
+   "description": "Puerta del Sol",
+   "lettering": "PUERTA DEL SOL\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5002-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5002-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Toledo",
+  "comments": "La ciudad de Toledo, declarada Patrimonio de la Humanidad por la UNESCO en 1986, se alza sobre un promontorio rocoso, abrazada por el río Tajo. Testigo excepcional de la historia de España, Toledo conserva un rico patrimonio arquitectónico y cultural: iglesias, sinagogas, mezquitas, conventos, palacios, puentes, torres y puertas, como la Puerta del Sol, mudéjar, construida por los Caballeros Hospitalarios para acceder al recinto amurallado. Ciudad medieval, llena de callejuelas y repleta de leyendas, se convirtió en modelo de convivencia e intercambio cultural en los siglos XII y XIII a través de la Escuela de Traductores de Toledo.",
+  "tags": [
+   "Ciudad",
+   "Escudo de armas",
+   "Sol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1275"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45464": {
+  "id": 45464,
+  "url": "https://es.numista.com/45464",
+  "title": "5 Euros (Jaén)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad rodeado por el nombre del país y de la ciudad. El año de acuñación en la parte inferior.",
+   "lettering": "ESPAñA JAÉN\r\nMUY NOBLE MUY LEAL CIUDAD DE JAEN GUARDA Y DEFENDIMIENTO DE LOS REYNOS DE CASTILLA\r\nM\r\n2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4987-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4987-180.jpg"
+  },
+  "reverse": {
+   "description": "Palacio Provincial",
+   "lettering": "PALACIO PROVINCIAL\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4988-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4988-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Jaén",
+  "comments": "El edificio civil más importante e históricamente relevante de la ciudad de Jaén es el Palacio Provincial. Construido en el mismo lugar que ocupó en el siglo XIII la Casa Palacio del rey Fernando III el Santo y, posteriormente, en el siglo XIV, el Convento de San Francisco, hoy alberga la sede de la Diputación Provincial de Jaén.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1264"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45465": {
+  "id": 45465,
+  "url": "https://es.numista.com/45465",
+  "title": "5 Euros (Segovia)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA SEGOVIA\r\n2012 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/603897018eae98.08895265-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/603897018eae98.08895265-180.jpg"
+  },
+  "reverse": {
+   "description": "El Alcázar de Segovia",
+   "lettering": "ALCÁZAR DE SEGOVIA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6038970054b896.36694968-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6038970054b896.36694968-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Segovia",
+  "comments": "Construido sobre una roca, fruto de la erosión de los ríos Eresma y Clamores, el Alcázar de Segovia ha sido a lo largo de su historia Alcázar Regio, Recinto Militar y sede del Real Colegio de Artillería. Esta soberbia fortaleza es, junto con el Acueducto y la Catedral, uno de los símbolos de esta ciudad, declarada Patrimonio de la Humanidad por la UNESCO en 1985. En la actualidad, este magnífico recinto alberga un Museo y el Archivo General Militar de Segovia.",
+  "tags": [
+   "Castillo o fortificación",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1271"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45466": {
+  "id": 45466,
+  "url": "https://es.numista.com/45466",
+  "title": "5 Euros (Málaga)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad rodeado del nombre del país y de la ciudad. El año de acuñación en la parte superior.",
+   "lettering": "ESPAñA 2012 MÁLAGA\r\nSIEMPRE DENODADA, LA PRIMERA EN EL PELIGRO DE LA LIBERTAD, MUY HOSPITALARIA, MUY BENÉFICA\r\nMUY NOBLE Y MUY LEAL CIUDAD DE MÁLAGA\r\nTANTO MONTA\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4989-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4989-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral de Málaga",
+   "lettering": "CATEDRAL DE MÁLAGA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4990-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4990-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Málaga",
+  "comments": "La Catedral de Málaga, construida sobre lo que fue la antigua mezquita aljama, es una de las joyas renacentistas de Andalucía. La construcción del enorme templo, en cuyos planos participaron artistas de la talla de Diego de Siloé y Andrés de Vandelvira, duró más de doscientos años y sufrió numerosas interrupciones, quedando inacabada una de las torres de la fachada. Hoy es una de sus mejores señas de identidad.",
+  "tags": [
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1266"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45467": {
+  "id": 45467,
+  "url": "https://es.numista.com/45467",
+  "title": "5 Euros (Sevilla)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAÑA 2012 SEVILLA\r\nS:CONCILII:NOBILISSIME:CIVITATIS:ISPALENSIS\r\nM\r\nNO DO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4999-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4999-180.jpg"
+  },
+  "reverse": {
+   "description": "Torre del Oro, La Giralda y puente sobre el Guadalquivir.",
+   "lettering": "TORRE DEL ORO \r\n5 EURO\r\nGIRALDA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5000-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5000-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Sevilla",
+  "comments": "Sevilla, capital de Andalucía, es luminosa, alegre y cosmopolita. Su belleza y hospitalidad hacen de esta ciudad una de las más visitadas del mundo. Monumentos como la Catedral, la Giralda, los Reales Alcázares y el Archivo de Indias, declarados Patrimonio de la Humanidad por la UNESCO en 1987, la Torre del Oro, el Parque de María Luisa, la Plaza de España, los barrios de Santa Cruz y Triana o los puentes del Guadalquivir, hacen de la visita a Sevilla una experiencia inolvidable.",
+  "tags": [
+   "Puente",
+   "Construcción religiosa",
+   "Torre",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1272"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45468": {
+  "id": 45468,
+  "url": "https://es.numista.com/45468",
+  "title": "5 Euros (Soria)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA SORIA\r\nSORIA PURA CABEZA DE ESTREMADURA\r\nM\r\n2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5003-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5003-180.jpg"
+  },
+  "reverse": {
+   "description": "Palacio de los Condes de Gómara",
+   "lettering": "PALACIO DE LOS CONDES DE GÓMARA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5004-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5004-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Soria",
+  "comments": "El Palacio de los Condes de Gómara, actual Palacio de Justicia, fue mandado construir en el siglo XVI por Francisco López del Río. Es una joya de la arquitectura civil soriana y forma parte del rico patrimonio monumental de esta ciudad, que ha sido fuente de inspiración para poetas como Antonio Machado, Gustavo Adolfo Bécquer o Gerardo Diego.",
+  "tags": [
+   "Palacio",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1273"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45469": {
+  "id": 45469,
+  "url": "https://es.numista.com/45469",
+  "title": "5 Euros (Valladolid)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAÑA VALLADOLID\r\nM\r\n2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5007-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5007-180.jpg"
+  },
+  "reverse": {
+   "description": "Universidad de Valladolid",
+   "lettering": "UNIVERSIDAD DE VALLADOLID\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5008-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5008-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Valladolid",
+  "comments": "La Universidad de Valladolid fue una de las primeras universidades fundadas en el mundo. Aunque existen diferentes noticias sobre su creación, ya era una realidad en el último cuarto del siglo XIII, gozando de la protección de la corona y, más tarde, también del Papado. En el siglo XVI, la Universidad de Valladolid fue declarada Universidad Mayor del Reino, junto con la de Salamanca y la de Alcalá. Desde entonces, la Universidad ha marcado la vida de esta ciudad que fue cuna de José Zorrilla, Jorge Guillén y Rosa Chacel, y también el último hogar del almirante Cristóbal Colón.",
+  "tags": [
+   "Otra construcción",
+   "Educación",
+   "Ciudad",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1277"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "45470": {
+  "id": 45470,
+  "url": "https://es.numista.com/45470",
+  "title": "5 Euros (Zamora)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de la ciudad.",
+   "lettering": "ESPAñA ZAMORA\r\nM\r\n2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5009-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5009-180.jpg"
+  },
+  "reverse": {
+   "description": "Catedral y Puente de Piedra",
+   "lettering": "CATEDRAL · PUENTE DE PIEDRA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5010-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5010-180.jpg"
+  },
+  "series": "Capitales de provincia y ciudades autónomas",
+  "commemorated_topic": "Zamora",
+  "comments": "La Catedral y el Puente de Piedra son los dos símbolos por excelencia de la ciudad de Zamora. La silueta de la Catedral, con su cúpula dorada, decorada con escamas, y su colosal torre de 37 metros de altura, se alza sobre esta ciudad, que conserva los mayores monumentos románicos de Europa. A sus pies, el río Duero, testigo y memoria de la vida y la evolución de sus habitantes.",
+  "tags": [
+   "Puente",
+   "Construcción religiosa",
+   "Escudo de armas",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1279"
+   }
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "457": {
   "category": "coin",
