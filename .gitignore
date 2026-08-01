@@ -2,6 +2,10 @@
 *.log
 .playwright-mcp/
 
+# Cachés de los scripts Python incluidos en skills del proyecto
+__pycache__/
+*.py[cod]
+
 # Gradle y Android
 .gradle/
 /build/

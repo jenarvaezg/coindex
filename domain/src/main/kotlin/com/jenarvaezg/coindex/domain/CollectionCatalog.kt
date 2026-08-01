@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 /**
  * A curated, sourced reference list of official members for one exact proposal variant key.
  *
- * `schema_version` 1 identifies members by a unique Numista type; owning the type is owning
- * the member. `schema_version` 2 is a date run (ADR 0009): members repeat one type across
- * years, and a member is owned only when the piece also records that year.
+ * For an `issued` member, `schema_version` 1 identifies it by a unique Numista type; owning the
+ * type is owning the member. `schema_version` 2 is a date run (ADR 0009): issued members repeat
+ * one type across years, and a member is owned only when the piece also records that year.
  * `schema_version` 3 is a set issued as a set (ADR 0012): its members span physical variants,
  * so it declares no weight, no finish and no metal, and its key carries an absent weight.
  * `schema_version` 5 identifies members by Numista issue (ADR 0014), for the types whose
@@ -62,7 +62,8 @@ data class CollectionCatalog(
      * **ignores the year entirely**: its members share one, which is exactly why they are keyed
      * on the issue. A piece recorded without an issue fills no member of it.
      *
-     * An announced member has no type, so nothing ever fills it, and its `design_type_id` is
+     * An announced or unlisted member has no type, so nothing ever fills it, and its
+     * `design_type_id` is
      * **never** consulted (#31): the Seymour Panther announced in 2 oz bullion cites its proof
      * cousin, and the father owns proof pieces of that series — matching on it would fill a
      * bullion slot with a coin that does not exist in bullion.
@@ -169,7 +170,7 @@ data class CollectionCatalog(
             validateMemberStatus(member)?.let { return it }
             // Only an issued member of an issue run may name issues, and every one of them must
             // name at least one: a member with none could never be owned.
-            if (isIssueRun && !member.isAnnounced) {
+            if (isIssueRun && member.isIssued) {
                 if (member.numistaIssueIds.isEmpty()) {
                     return CollectionCatalogValidationError.MemberWithoutIssue(member.id)
                 }
@@ -187,7 +188,7 @@ data class CollectionCatalog(
             }
             val typeId = member.numistaTypeId
             when {
-                // An announced member holds no type, so there is no slot of any kind to collide.
+                // A non-issued member holds no type, so there is no slot of any kind to collide.
                 typeId == null -> Unit
                 // An issue run repeats its type across issues, as a date run does across years.
                 isIssueRun -> Unit
@@ -211,34 +212,40 @@ data class CollectionCatalog(
  */
 private fun validateMemberStatus(
     member: CollectionCatalogMember,
+): CollectionCatalogValidationError? = when (member.status) {
+    MemberStatus.Issued -> when {
+        member.numistaTypeId == null || member.numistaTypeId <= 0 ->
+            CollectionCatalogValidationError.InvalidNumistaTypeId
+        member.year == null -> CollectionCatalogValidationError.IssuedWithoutYear(member.id)
+        member.source != null || member.sourceNote != null ->
+            CollectionCatalogValidationError.IssuedWithSource(member.id)
+        member.designTypeId != null ->
+            CollectionCatalogValidationError.IssuedWithDesignType(member.id)
+        else -> null
+    }
+    MemberStatus.Unlisted -> when {
+        member.numistaTypeId != null ->
+            CollectionCatalogValidationError.UnlistedWithNumistaType(member.id)
+        member.year == null -> CollectionCatalogValidationError.UnlistedWithoutYear(member.id)
+        else -> validateStatusProof(member)
+    }
+    MemberStatus.Announced -> when {
+        member.numistaTypeId != null ->
+            CollectionCatalogValidationError.AnnouncedWithNumistaType(member.id)
+        else -> validateStatusProof(member)
+    }
+}
+
+private fun validateStatusProof(
+    member: CollectionCatalogMember,
 ): CollectionCatalogValidationError? {
-    if (!member.isAnnounced) {
-        if (member.numistaTypeId == null || member.numistaTypeId <= 0) {
-            return CollectionCatalogValidationError.InvalidNumistaTypeId
-        }
-        // A struck coin has a verifiable year on its Numista page; only an announced one may
-        // omit it.
-        if (member.year == null) {
-            return CollectionCatalogValidationError.IssuedWithoutYear(member.id)
-        }
-        if (member.announcedSource != null || member.announcedNote != null) {
-            return CollectionCatalogValidationError.IssuedWithAnnouncement(member.id)
-        }
-        if (member.designTypeId != null) {
-            return CollectionCatalogValidationError.IssuedWithDesignType(member.id)
-        }
-        return null
+    // The host is not constrained: Numista cannot sustain either an unstruck coin or the claim
+    // that a struck one has no published type. The issuer or a third party supplies that proof.
+    if (member.source == null || !isHttpsUrl(member.source)) {
+        return CollectionCatalogValidationError.MemberWithoutSource(member.id)
     }
-    if (member.numistaTypeId != null) {
-        return CollectionCatalogValidationError.AnnouncedWithNumistaType(member.id)
-    }
-    // The host is not constrained: numista.com cannot hold an unstruck coin by definition, and
-    // the mint publishes the programme rather than the absence of one release from it.
-    if (member.announcedSource == null || !isHttpsUrl(member.announcedSource)) {
-        return CollectionCatalogValidationError.AnnouncedWithoutSource(member.id)
-    }
-    if (member.announcedNote.isNullOrBlank()) {
-        return CollectionCatalogValidationError.AnnouncedWithoutNote(member.id)
+    if (member.sourceNote.isNullOrBlank()) {
+        return CollectionCatalogValidationError.MemberWithoutSourceNote(member.id)
     }
     if (member.designTypeId != null && member.designTypeId <= 0) {
         return CollectionCatalogValidationError.InvalidDesignTypeId
@@ -251,12 +258,12 @@ data class CollectionCatalogMember(
     val id: String,
     val label: String,
     /**
-     * The year on the coin. Required of an issued member and optional only in an announced one,
+     * The year on the coin. Required when issued or unlisted and optional only when announced,
      * whose source may name the design without a date — writing in a year the mint has not
      * announced would be claiming more than the source says.
      */
     val year: Int? = null,
-    /** Required of an issued member and forbidden in an announced one (see [MemberStatus]). */
+    /** Required only when issued (see [MemberStatus]). */
     @SerialName("numista_type_id") val numistaTypeId: Int? = null,
     /**
      * The Numista issues this member stands for, in an issue run (ADR 0014).
@@ -268,10 +275,10 @@ data class CollectionCatalogMember(
     @SerialName("numista_issue_ids") val numistaIssueIds: List<Int> = emptyList(),
     /** Issued unless the file says otherwise, so no shipped catalog had to be touched (#31). */
     val status: MemberStatus = MemberStatus.Issued,
-    /** Where the announcement was read. HTTPS, any host, and required when announced. */
-    @SerialName("announced_source") val announcedSource: String? = null,
-    /** What the source said, in prose, so the claim outlives the link. Required when announced. */
-    @SerialName("announced_note") val announcedNote: String? = null,
+    /** Proof for a non-issued status. HTTPS, any host, required unless [status] is issued. */
+    val source: String? = null,
+    /** What [source] proves, in prose so the claim outlives the link. */
+    @SerialName("source_note") val sourceNote: String? = null,
     /**
      * The Numista type of the **same design in another variant**, when one exists: the anchor
      * that keeps an unstruck member verifiable, and the picture the plate can put in its cell.
@@ -290,6 +297,11 @@ data class CollectionCatalogMember(
      */
     @SerialName("variant_note") val variantNote: String? = null,
 ) {
+    val isIssued: Boolean get() = status == MemberStatus.Issued
+
+    /** Struck and sold, but with no publicly verifiable Numista type. */
+    val isUnlisted: Boolean get() = status == MemberStatus.Unlisted
+
     /** Named by the issuer and not yet struck, so no piece can fill it. */
     val isAnnounced: Boolean get() = status == MemberStatus.Announced
 }
@@ -364,8 +376,8 @@ sealed class CollectionCatalogValidationError(val message: String) {
         "issued member `$memberId` must declare the year on the coin",
     )
 
-    data class IssuedWithAnnouncement(val memberId: String) : CollectionCatalogValidationError(
-        "issued member `$memberId` cannot carry `announced_source` or `announced_note`",
+    data class IssuedWithSource(val memberId: String) : CollectionCatalogValidationError(
+        "issued member `$memberId` cannot carry `source` or `source_note`",
     )
 
     data class IssuedWithDesignType(val memberId: String) : CollectionCatalogValidationError(
@@ -376,12 +388,20 @@ sealed class CollectionCatalogValidationError(val message: String) {
         "announced member `$memberId` cannot name a `numista_type_id`: it has not been struck",
     )
 
-    data class AnnouncedWithoutSource(val memberId: String) : CollectionCatalogValidationError(
-        "announced member `$memberId` must cite an HTTPS `announced_source`",
+    data class UnlistedWithNumistaType(val memberId: String) : CollectionCatalogValidationError(
+        "unlisted member `$memberId` cannot name a `numista_type_id`: no published type exists",
     )
 
-    data class AnnouncedWithoutNote(val memberId: String) : CollectionCatalogValidationError(
-        "announced member `$memberId` must say in `announced_note` what the source said",
+    data class UnlistedWithoutYear(val memberId: String) : CollectionCatalogValidationError(
+        "unlisted member `$memberId` must declare the year on the coin",
+    )
+
+    data class MemberWithoutSource(val memberId: String) : CollectionCatalogValidationError(
+        "member `$memberId` whose status is not `issued` must cite an HTTPS `source`",
+    )
+
+    data class MemberWithoutSourceNote(val memberId: String) : CollectionCatalogValidationError(
+        "member `$memberId` whose status is not `issued` must say in `source_note` what the source proves",
     )
 
     data object InvalidDesignTypeId : CollectionCatalogValidationError(

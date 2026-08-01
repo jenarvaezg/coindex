@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "numista_review_browser": {
+      "command": "node",
+      "args": [
+        ".playwright-mcp/node_modules/@playwright/mcp/cli.js",
+        "--browser",
+        "chrome",
+        "--user-data-dir",
+        ".playwright-mcp/numista-review-profile",
+        "--allowed-origins",
+        "https://numista.com;https://*.numista.com",
+        "--viewport-size",
+        "1440x1000"
+      ]
+    }
+  }
+}

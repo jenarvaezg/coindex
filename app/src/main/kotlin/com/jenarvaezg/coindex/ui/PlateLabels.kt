@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 
 /**
  * The facts every member of a catalog shares, which therefore belong to the plate and not to
@@ -13,8 +14,8 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 data class PlateCommonFacts(val numistaTypeId: Int?, val year: Int?)
 
 fun plateCommonFacts(members: List<CollectionCatalogMember>): PlateCommonFacts {
-    // Read off the issued members alone: an announced one has neither type nor, often, a year,
-    // and letting its blanks in would push a shared fact back down into every cell.
+    // An announced member has neither type nor, often, a year. An unlisted member does have a
+    // real year, so it participates here even though its absent type is absorbed by mapNotNull.
     val issued = members.filterNot { it.isAnnounced }
     return PlateCommonFacts(
         numistaTypeId = issued.mapNotNull { it.numistaTypeId }.distinct().singleOrNull(),
@@ -61,6 +62,15 @@ fun plateExportMessage(members: Int, expectedPhotos: Int, loadedPhotos: Int): St
     }
 }
 
+/** The state prose shared by the interactive plate and the exported sheet. */
+fun plateMemberStateLabel(status: CollectionCatalogMemberStatus): String = when (status) {
+    CollectionCatalogMemberStatus.Missing -> "Me falta"
+    CollectionCatalogMemberStatus.Unlisted -> "Sin ficha"
+    CollectionCatalogMemberStatus.NotYetIssued -> "Sin emitir"
+    is CollectionCatalogMemberStatus.Owned ->
+        if (status.quantity > 1) "Tengo · ×${status.quantity}" else "Tengo"
+}
+
 /**
  * The plate's specification block, shared by the screen and the exported sheet so both say the
  * same things in the same order.
@@ -73,12 +83,19 @@ fun plateEntries(
     common: PlateCommonFacts = plateCommonFacts(catalog.members),
 ): List<Pair<String, String>> {
     val announced = catalog.members.count { it.isAnnounced }
+    val unlisted = catalog.members.count { it.isUnlisted }
     return buildList {
-        // Only what was struck is in the divisor (#31): an announced slot no money can buy would
-        // publish a «me falta» that is nobody's hole to fill.
-        add("Progreso" to "$ownedMembers / ${catalog.members.size - announced} emisiones")
+        // The divisor is what the app can measure (#48), which is exactly the issued members.
+        val measurable = catalog.members.count { it.isIssued }
+        add("Progreso" to "$ownedMembers / $measurable emisiones")
         if (announced > 0) {
             add("Sin emitir" to if (announced == 1) "1 anunciada" else "$announced anunciadas")
+        }
+        if (unlisted > 0) {
+            add(
+                "Sin ficha" to
+                    if (unlisted == 1) "1 emisión no medible" else "$unlisted emisiones no medibles",
+            )
         }
         addAll(variantEntries(catalog.weightMillioz, catalog.finish))
         common.numistaTypeId?.let { typeId -> add("Tipo" to "Numista $typeId") }

@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.domain
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -90,9 +91,19 @@ internal fun announcedMemberStub() = CollectionCatalogMember(
     id = "seymour-panther",
     label = "Seymour Panther",
     status = MemberStatus.Announced,
-    announcedSource = "https://britannia-uk.com/royal-tudor-beasts/",
-    announcedNote = "Salió en proof en 2022 y sigue sin salir en bullion.",
+    source = "https://britannia-uk.com/royal-tudor-beasts/",
+    sourceNote = "Salió en proof en 2022 y sigue sin salir en bullion.",
     designTypeId = 307_800,
+)
+
+/** A struck and sold coin whose Numista type is not publicly verifiable yet (#48). */
+internal fun unlistedMemberStub() = CollectionCatalogMember(
+    id = "2023-rabbit",
+    label = "Year of the Rabbit",
+    year = 2023,
+    status = MemberStatus.Unlisted,
+    source = "https://www.perthmint.com/year-of-the-rabbit/",
+    sourceNote = "Acuñada y vendida por Perth Mint; Numista todavía no tiene una ficha publicada.",
 )
 
 private fun item(id: Long, typeId: Int, quantity: Int = 1) =
@@ -137,6 +148,46 @@ private fun issuedItem(id: Long, typeId: Int, issueId: Int?, quantity: Int = 1) 
 )
 
 class CollectionCatalogValidationTest {
+    @Test
+    fun `catalog deserialization uses the generalized source pair`() {
+        val contents = """
+            {
+              "schema_version": 1,
+              "id": "lunar-rabbit",
+              "name": "Lunar rabbit",
+              "issuer_code": "australia",
+              "family": "Lunar Series III",
+              "weight_millioz": 1000,
+              "metal": "silver",
+              "series_status": "open",
+              "source": "https://en.numista.com/catalogue/series.php?id=4750",
+              "updated_at": "2026-08-01",
+              "members": [{
+                "id": "2023-rabbit",
+                "label": "Year of the Rabbit",
+                "year": 2023,
+                "status": "unlisted",
+                "source": "https://www.perthmint.com/year-of-the-rabbit/",
+                "source_note": "Acuñada y vendida; Numista no tiene una ficha publicada."
+              }]
+            }
+        """.trimIndent()
+
+        val catalog = CatalogSeeds.parse("rabbit.json", contents)
+
+        assertEquals(MemberStatus.Unlisted, catalog.members.single().status)
+        assertEquals(
+            "https://www.perthmint.com/year-of-the-rabbit/",
+            catalog.members.single().source,
+        )
+        assertFailsWith<CatalogSeedException> {
+            CatalogSeeds.parse(
+                "legacy-rabbit.json",
+                contents.replace("\"source_note\"", "\"announced_note\""),
+            )
+        }
+    }
+
     @Test
     fun `validation requires versioned slugged unique sourced exact variants`() {
         val definition = teslaCatalogStub()
@@ -341,18 +392,18 @@ class CollectionCatalogValidationTest {
             withPanther(announced.copy(numistaTypeId = 307_800)).validate(),
         )
         assertEquals(
-            CollectionCatalogValidationError.AnnouncedWithoutSource("seymour-panther"),
-            withPanther(announced.copy(announcedSource = null)).validate(),
+            CollectionCatalogValidationError.MemberWithoutSource("seymour-panther"),
+            withPanther(announced.copy(source = null)).validate(),
         )
         // A note pasted into the URL field is not a citation.
         assertEquals(
-            CollectionCatalogValidationError.AnnouncedWithoutSource("seymour-panther"),
-            withPanther(announced.copy(announcedSource = "lo dice la Royal Mint")).validate(),
+            CollectionCatalogValidationError.MemberWithoutSource("seymour-panther"),
+            withPanther(announced.copy(source = "lo dice la Royal Mint")).validate(),
         )
         // The URL of a third party rots, so the claim has to survive it in prose.
         assertEquals(
-            CollectionCatalogValidationError.AnnouncedWithoutNote("seymour-panther"),
-            withPanther(announced.copy(announcedNote = " ")).validate(),
+            CollectionCatalogValidationError.MemberWithoutSourceNote("seymour-panther"),
+            withPanther(announced.copy(sourceNote = " ")).validate(),
         )
         assertEquals(
             CollectionCatalogValidationError.InvalidDesignTypeId,
@@ -373,15 +424,62 @@ class CollectionCatalogValidationTest {
             definition.copy(members = listOf(issued.copy(year = null))).validate(),
         )
         assertEquals(
-            CollectionCatalogValidationError.IssuedWithAnnouncement("alternating-current"),
+            CollectionCatalogValidationError.IssuedWithSource("alternating-current"),
             definition.copy(
-                members = listOf(issued.copy(announcedSource = "https://example.org/x")),
+                members = listOf(issued.copy(source = "https://example.org/x")),
             ).validate(),
         )
         assertEquals(
             CollectionCatalogValidationError.IssuedWithDesignType("alternating-current"),
             definition.copy(members = listOf(issued.copy(designTypeId = 307_800))).validate(),
         )
+    }
+
+    @Test
+    fun `an unlisted member costs proof but forbids numista identifiers`() {
+        val definition = teslaCatalogStub().let { catalog ->
+            catalog.copy(members = catalog.members + unlistedMemberStub())
+        }
+        assertNull(definition.validate())
+
+        fun withRabbit(member: CollectionCatalogMember) =
+            definition.copy(members = definition.members.dropLast(1) + member)
+
+        val unlisted = unlistedMemberStub()
+        assertEquals(
+            CollectionCatalogValidationError.UnlistedWithNumistaType("2023-rabbit"),
+            withRabbit(unlisted.copy(numistaTypeId = 123)).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.UnlistedWithoutYear("2023-rabbit"),
+            withRabbit(unlisted.copy(year = null)).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.MemberWithoutSource("2023-rabbit"),
+            withRabbit(unlisted.copy(source = null)).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.MemberWithoutSourceNote("2023-rabbit"),
+            withRabbit(unlisted.copy(sourceNote = " ")).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.IssuesOutsideIssueRun("2023-rabbit"),
+            withRabbit(unlisted.copy(numistaIssueIds = listOf(12))).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.InvalidDesignTypeId,
+            withRabbit(unlisted.copy(designTypeId = 0)).validate(),
+        )
+        assertNull(withRabbit(unlisted.copy(designTypeId = 307_800)).validate())
+    }
+
+    @Test
+    fun `an issue run accepts an unlisted member without numista issues`() {
+        val definition = issueRunCatalogStub().let { catalog ->
+            catalog.copy(members = catalog.members + unlistedMemberStub())
+        }
+
+        assertNull(definition.validate())
     }
 
     /**
@@ -492,6 +590,22 @@ class CollectionCatalogValidationTest {
 }
 
 class CollectionCatalogAlbumTest {
+    @Test
+    fun `an unlisted member is neither missing nor measurable`() {
+        val definition = teslaCatalogStub().let { catalog ->
+            catalog.copy(members = catalog.members + unlistedMemberStub().copy(designTypeId = 307_800))
+        }
+
+        val album = buildCollectionCatalogAlbum(
+            definition,
+            listOf(item(id = 1, typeId = 307_800)),
+        )
+
+        assertEquals(CollectionCatalogMemberStatus.Unlisted, album.members.last().status)
+        assertEquals(0, album.ownedMembers())
+        assertEquals(2, album.issuedMembers())
+    }
+
     @Test
     fun `album uses exact type ids sums quantity and isolates supplied holdings`() {
         val definition = teslaCatalogStub()
