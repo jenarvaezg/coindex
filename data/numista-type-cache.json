@@ -1954,6 +1954,138 @@
   },
   "weight": 30
  },
+ "10973": {
+  "id": 10973,
+  "url": "https://es.numista.com/10973",
+  "title": "1 Dollar - Elizabeth II (Silver Jubilee)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1977,
+  "max_year": 1977,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "SILVER JUBILEE * ELIZABETH II * JUBÍLÉ D'ARGENT\r\n1952·1977",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/68a09c97915dc8.52973095-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/68a09c97915dc8.52973095-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Ago Aarand"
+   ],
+   "designers": [
+    "Raymond Lee"
+   ],
+   "description": "Trono con el nombre del país arriba y la denominación abajo",
+   "lettering": "THRONE OF THE SENATE*CANADA*LE TRÔNE DU SÉNAT\r\nDOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/68a09c99aac076.19644585-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/68a09c99aac076.19644585-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "25 aniversario de la coronación de Isabel II",
+  "tags": [
+   "Coronación",
+   "Monarca"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-806a"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-806b"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-806c"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "118"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "110873": {
   "category": "coin",
   "commemorated_topic": "150 aniversario del nacimiento del poeta K.D. Balmont",
@@ -2829,6 +2961,145 @@
    "text": "100 Pesos"
   },
   "weight": 27.78
+ },
+ "11564": {
+  "id": 11564,
+  "url": "https://es.numista.com/11564",
+  "title": "1 Dollar - Elizabeth II (Calgary)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1975,
+  "max_year": 1975,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/62d3d3fc6aebf4.24734315-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/62d3d3fc6aebf4.24734315-180.jpg",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Donald D. Paterson"
+   ],
+   "description": "Un vaquero de rodeo sobre su caballo en primer plano, plataformas petrolíferas y una ciudad moderna al fondo.",
+   "lettering": "CANADA DOLLAR\r\nDDP\r\nB\r\n1875 CALGARY 1975",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/62d3d3fcc84607.52112114-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/62d3d3fcc84607.52112114-180.jpg",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Centenario de la ciudad de Calgary",
+  "comments": "Ch#RC-804b - Eje de la moneda - Espécimen en lugar del eje normal de la medalla, sólo se conoce uno.",
+  "related_types": [
+   {
+    "id": 341845,
+    "title": "50 Cents - Elizabeth II (Coat of Arms)",
+    "category": "coin",
+    "country": {
+     "code": "canada",
+     "name": "Canadá"
+    },
+    "minYear": 2022,
+    "maxYear": 2022
+   }
+  ],
+  "tags": [
+   "Caballo o equino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-804a"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "97"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "94"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "11696": {
   "category": "coin",
@@ -10762,6 +11033,130 @@
   },
   "weight": 10
  },
+ "15517": {
+  "id": 15517,
+  "url": "https://es.numista.com/15517",
+  "title": "1 Dollar - Elizabeth II (S.S. Frontenac)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Dora de Pédery-Hunt"
+   ],
+   "description": "Cabeza de la reina Isabel II, como a los 64 años, luciendo la diadema real, collar y pendientes, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3bea87529c92.60496207-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3bea87529c92.60496207-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Sheldon Beveridge"
+   ],
+   "designers": [
+    "David Craig"
+   ],
+   "description": "Enviar \"Frontenac\" fecha y denominación abajo",
+   "lettering": "1816 FRONTENAC 1991\r\nCANADA 1991 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3bea89764e09.91990631-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3bea89764e09.91990631-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "175 aniversario del S.S. Frontenac",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-830"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-831"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "179"
+   }
+  ],
+  "weight": 23.327,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "15566": {
   "category": "coin",
   "commemorated_topic": "João de Castro",
@@ -12101,6 +12496,250 @@
    "text": "3 Roubles"
   },
   "weight": 33.94
+ },
+ "16314": {
+  "id": 16314,
+  "url": "https://es.numista.com/16314",
+  "title": "1 Dollar - Elizabeth II (Davis Strait)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1987,
+  "max_year": 1987,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3beb42f2bfb0.02070027-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3beb42f2bfb0.02070027-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Victor Côté"
+   ],
+   "designers": [
+    "Christopher Gorey"
+   ],
+   "description": "Barco \"John Davis\" con mástiles, roca al fondo, fechas abajo, denominación abajo",
+   "lettering": "DÉTROIT DE DAVIS STRAIT\r\n1587-1987\r\nCANADA DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3beb44b24d76.52274224-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3beb44b24d76.52274224-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "400 aniversario del descubrimiento del estrecho de Davis",
+  "comments": "<p><a href=\"https://fr.numista.com/catalogue/images/69232ec37e31e.jpg\"><img src=\"https://fr.numista.com/catalogue/images/miniatures/69232ec37e31e.jpg\"></a></p>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-822"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-823"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "154"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "16315": {
+  "id": 16315,
+  "url": "https://es.numista.com/16315",
+  "title": "1 Dollar - Elizabeth II (Griffon)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1979,
+  "max_year": 1979,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.66,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/8278-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/8278-180.jpg",
+   "picture_copyright": "ECapoe",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Terrence Smith"
+   ],
+   "designers": [
+    "Walter Schluep"
+   ],
+   "description": "El grifo, primer barco que surcó los grandes lagos, navegando a la derecha, denominación y fechas alrededor.",
+   "lettering": "DOLLAR CANADA\r\n1679 GRIFFON 1979",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/8279-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/8279-180.jpg",
+   "picture_copyright": "ECapoe",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "commemorated_topic": "300 aniversario del Grifón",
+  "tags": [
+   "Animal fantástico",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-808"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "124"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "167168": {
   "category": "coin",
@@ -14365,6 +15004,127 @@
   },
   "weight": 18
  },
+ "17839": {
+  "id": 17839,
+  "url": "https://es.numista.com/17839",
+  "title": "1 Dollar - Elizabeth II (2nd portrait; silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1972,
+  "max_year": 1972,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/2661-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/2661-180.jpg"
+  },
+  "reverse": {
+   "engravers": [
+    "Terrence Smith"
+   ],
+   "designers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Voyageur",
+   "lettering": "CANADA\r\n1972\r\nDOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/2662-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/2662-180.jpg"
+  },
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-801"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "64.2a"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "64.2a"
+   }
+  ],
+  "weight": 23.3,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "178572": {
   "category": "coin",
   "commemorated_topic": "Centenario del nacimiento del diseñador de armas M.T. Kalashnikov (10.11.1919)",
@@ -15406,6 +16166,266 @@
    "text": "30 euros"
   },
   "weight": 18
+ },
+ "18797": {
+  "id": 18797,
+  "url": "https://es.numista.com/18797",
+  "title": "1 Dollar - Elizabeth II (Winnipeg)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1974,
+  "max_year": 1974,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6377765f3f5e69.49598525-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6377765f3f5e69.49598525-180.jpg",
+   "picture_copyright": "karrlot"
+  },
+  "reverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Paul Pederson (Canada)"
+   ],
+   "description": "El número 100 con, dentro de cada cero, una vista de la calle principal de Winnipeg, en 1874 (izquierda) o 1974 (derecha), está rodeado de la leyenda \"WINNIPEG\", las fechas \"1874-1974\", la inscripción \"CANADA\" y el valor facial",
+   "lettering": "WINNIPEG\r\n100\r\n1874-1974\r\nCANADA DOLLAR\r\nPP",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/64fe7ba403b538.32891877-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/64fe7ba403b538.32891877-180.jpg",
+   "picture_copyright": "karrlot"
+  },
+  "commemorated_topic": "Centenario de la ciudad de Winnipeg",
+  "references": [
+   {
+    "catalogue": {
+     "id": 2048,
+     "code": "RCM/MRC"
+    },
+    "number": "1207"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-803"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "88a"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Dentado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "1880": {
+  "id": 1880,
+  "url": "https://es.numista.com/1880",
+  "title": "1 Dollar - Elizabeth II (Parliamentary Library)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1976,
+  "max_year": 1976,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/64a8727da589e2.96971912-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/64a8727da589e2.96971912-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "Walter Ott"
+   ],
+   "description": "La Bibliothèque du Parlement d'Ottawa con el nombre del país a la izquierda, el valor a la derecha y las fechas debajo",
+   "lettering": "CANADA DOLLAR\r\n1876-1976",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/64a8727e392286.74427075-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/64a8727e392286.74427075-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "Centenario de la Biblioteca Parlamentaria de Ottawa",
+  "related_types": [
+   {
+    "id": 98890,
+    "title": "1 Dollar - Elizabeth II (Library of Parliament)",
+    "category": "coin",
+    "country": {
+     "code": "canada",
+     "name": "Canadá"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   }
+  ],
+  "tags": [
+   "Otra construcción"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-805a"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-805b"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "106"
+   }
+  ],
+  "weight": 23.3,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "188048": {
   "category": "coin",
@@ -16873,6 +17893,120 @@
   },
   "weight": 11.2
  },
+ "19352": {
+  "id": 19352,
+  "url": "https://es.numista.com/19352",
+  "title": "1 Dollar - Elizabeth II (Commonwealth Games)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1978,
+  "max_year": 1978,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "DOLLAR 1978 CANADA\r\n· ELIZABETH II ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/63d6a6bdebbd36.36697794-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/63d6a6bdebbd36.36697794-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Victor Côté"
+   ],
+   "designers": [
+    "Raymond Taylor"
+   ],
+   "description": "Juegos de la Commonwealth, logotipo en el centro",
+   "lettering": "XI GAMES·XI JEUX\r\nCOMMONWEALTH\r\nEDMONTON 1978",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/63d6a6be5b6489.26867679-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/63d6a6be5b6489.26867679-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "Juegos de la Commonwealth de 1978, Edmonton",
+  "tags": [
+   "Juegos de la Mancomunidad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-807"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "121"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "194185": {
   "category": "coin",
   "commemorated_topic": "Koala",
@@ -17088,6 +18222,128 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "19493": {
+  "id": 19493,
+  "url": "https://es.numista.com/19493",
+  "title": "1 Dollar - Elizabeth II (Royal Canadian Mounted Police)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1973,
+  "max_year": 1973,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.8,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/4582-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/4582-180.jpg"
+  },
+  "reverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Paul Cedarberg"
+   ],
+   "description": "Agente de la RCMP montado a caballo.",
+   "lettering": "CANADA  DOLLAR\r\n1873 - 1973",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/4583-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/4583-180.jpg"
+  },
+  "commemorated_topic": "Centenario de la Real Policía Montada del Canadá",
+  "tags": [
+   "Caballo o equino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-802a"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-802b"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "83"
+   }
+  ],
+  "weight": 23.3,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "19499": {
   "category": "coin",
   "commemorated_topic": "Año Jubilar de Santiago",
@@ -17215,6 +18471,131 @@
    "text": "2000 pesetas"
   },
   "weight": 18
+ },
+ "19502": {
+  "id": 19502,
+  "url": "https://es.numista.com/19502",
+  "title": "1 Dollar - Elizabeth II (MacKenzie River)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1989,
+  "max_year": 1989,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/3071-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/3071-180.jpg",
+   "picture_copyright": "Monéphil",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Sheldon Beveridge"
+   ],
+   "designers": [
+    "John Mardon"
+   ],
+   "description": "Representa a Sir Alexander Mackenzie y sus compañeros en su canoa explorando el río Mackenzie.",
+   "lettering": "CANADA 1989\r\nFLEUVE MACKENZIE RIVER\r\nDOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/3072-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/3072-180.jpg",
+   "picture_copyright": "Monéphil",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "Bicentenario",
+  "tags": [
+   "Bote o embarcación",
+   "Río"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-826"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-827"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "168"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "1952": {
   "category": "coin",
@@ -17954,6 +19335,127 @@
    "text": "1000 escudos"
   },
   "weight": 28.2
+ },
+ "19865": {
+  "id": 19865,
+  "url": "https://es.numista.com/19865",
+  "title": "1 Dollar - Elizabeth II (Centenary of Vancouver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1986,
+  "max_year": 1986,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/3550-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/3550-180.jpg",
+   "picture_copyright": "pfouque"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott",
+    "Victor Côté"
+   ],
+   "designers": [
+    "Elliot John Morrison"
+   ],
+   "description": "Un tren con el nombre del país y la denominación encima",
+   "lettering": "CANADA DOLLAR\r\n1886·VANCOUVER·1986",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/3551-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/3551-180.jpg"
+  },
+  "commemorated_topic": "Centenario de Vancouver.",
+  "comments": "Composición 50% plata, 50% cobre",
+  "tags": [
+   "Tren"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-820"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-821"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "149"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado."
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "20008": {
   "category": "coin",
@@ -18747,6 +20249,153 @@
    "text": "1000 escudos"
   },
   "weight": 28.2
+ },
+ "21111": {
+  "id": 21111,
+  "url": "https://es.numista.com/21111",
+  "title": "1 Dollar - Elizabeth II (British Columbia)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "issuing_entity": {
+   "id": 583,
+   "name": "Banque du Canada",
+   "wikidata_id": "Q806703"
+  },
+  "min_year": 1971,
+  "max_year": 1971,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "1971-00-00"
+  },
+  "size": 36.07,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3be8d21aaf04.95785031-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3be8d21aaf04.95785031-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Patrick Brindley"
+   ],
+   "description": "Escudo de la Columbia Británica\nEn el lado diestro, un ciervo wapití (Cervus canadensis) propiamente dicho y en el lado siniestro un carnero borrego cimarrón (Ovis canadensis) en argento armado y sin gules.",
+   "lettering": "CANADA DOLLAR\r\n1871 1971\r\nBRITISH COLUMBIA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "SPLENDOR SINE OCCASU",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3be8d46e09c8.25748311-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3be8d46e09c8.25748311-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Centenario de la Columbia Británica",
+  "related_types": [
+   {
+    "id": 319538,
+    "title": "1 Dollar - Elizabeth II (Alexander Graham Bell)",
+    "category": "coin",
+    "country": {
+     "code": "canada",
+     "name": "Canadá"
+    },
+    "minYear": 2022,
+    "maxYear": 2022
+   }
+  ],
+  "tags": [
+   "Ciervo o cérvido",
+   "Oveja u ovino",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-800a"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-800b"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "80"
+   }
+  ],
+  "weight": 23.3,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "21377": {
   "category": "coin",
@@ -19897,6 +21546,500 @@
   },
   "weight": 20
  },
+ "23272": {
+  "id": 23272,
+  "url": "https://es.numista.com/23272",
+  "title": "1 Dollar - Elizabeth II (Arctic Territories)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1980,
+  "max_year": 1980,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II  D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/7002-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/7002-180.jpg",
+   "picture_copyright": "GNDM",
+   "picture_copyright_url": "http://archiwum.gndm.pl/"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "Donald D. Paterson"
+   ],
+   "description": "Oso polar por encima de la fecha.",
+   "lettering": "CANADA DOLLAR\r\n1980",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/7003-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/7003-180.jpg",
+   "picture_copyright": "GNDM",
+   "picture_copyright_url": "http://archiwum.gndm.pl/"
+  },
+  "commemorated_topic": "Centenario de los Territorios Árticos",
+  "tags": [
+   "Oso"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-809"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "128"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "23273": {
+  "id": 23273,
+  "url": "https://es.numista.com/23273",
+  "title": "1 Dollar - Elizabeth II (Trans-Canada Railway)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1981,
+  "max_year": 1981,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II  D•G•REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/2216-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/2216-180.jpg",
+   "picture_copyright": "Monéphil",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "Christopher Gorey"
+   ],
+   "description": "El tren y el mapa de Canadá",
+   "lettering": "DOLLAR\r\n1981\r\nCANADA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/2217-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/2217-180.jpg",
+   "picture_copyright": "Monéphil",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "Centenario del Ferrocarril Transcanadiense",
+  "tags": [
+   "Mapa",
+   "Tren"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-810"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "126"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "130"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-811"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "23275": {
+  "id": 23275,
+  "url": "https://es.numista.com/23275",
+  "title": "1 Dollar - Elizabeth II (World University Games)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1983,
+  "max_year": 1983,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II  D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/2663-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/2663-180.jpg"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "Carola Tietz"
+   ],
+   "description": "Logotipo de los Juegos Universitarios de Edmonton con un atleta corriendo, fecha y valor debajo.",
+   "lettering": "UNIVERSIADE - EDMONTON\r\nCANADA 1983 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/2664-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/2664-180.jpg"
+  },
+  "commemorated_topic": "Juegos Mundiales Universitarios de 1983, Edmonton",
+  "tags": [
+   "Educación",
+   "Juguete o juego"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-814"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-815"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "138"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "23276": {
+  "id": 23276,
+  "url": "https://es.numista.com/23276",
+  "title": "1 Dollar - Elizabeth II (Toronto)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1984,
+  "max_year": 1984,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II  D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3be95633c076.71521779-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3be95633c076.71521779-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "David Craig"
+   ],
+   "description": "Persona practicando piragüismo; horizonte de Toronto al fondo",
+   "lettering": "CANADA DOLLAR\r\n1834 TORONTO 1984",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a3be95966e7a5.96942521-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a3be95966e7a5.96942521-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "150 aniversario de Toronto",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-816"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-817"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "140"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "23277": {
   "category": "coin",
   "commemorated_topic": "Centenario de los Parques Nacionales",
@@ -20022,6 +22165,253 @@
    "text": "1 Dollar"
   },
   "weight": 23.3276
+ },
+ "23278": {
+  "id": 23278,
+  "url": "https://es.numista.com/23278",
+  "title": "1 Dollar - Elizabeth II (Saint-Maurice Ironworks)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1988,
+  "max_year": 1988,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II  D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a4001d8269b96.13337524-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a4001d8269b96.13337524-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Sheldon Beveridge"
+   ],
+   "designers": [
+    "Robert-Ralph Carmichael"
+   ],
+   "description": "Herrería (dos herreros con martillos y yunque) en proceso, fecha y denominación abajo",
+   "lettering": "LES FORGES DU SAINT-MAURICE IRONWORKS\r\nCANANDA 1988 DOLLAR\r\nRRC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/6a4001da63fe06.57679669-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6a4001da63fe06.57679669-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "250 aniversario de la fábrica de hierro de Saint-Maurice",
+  "comments": "<p>Composición 50% plata, 50% cobre</p><p><a href=\"https://fr.numista.com/catalogue/images/69233a2f85698.jpg\"><img src=\"https://fr.numista.com/catalogue/images/miniatures/69233a2f85698.jpg\"></a></p>",
+  "tags": [
+   "Museo",
+   "Industria"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-824"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-825"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "161"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "23279": {
+  "id": 23279,
+  "url": "https://es.numista.com/23279",
+  "title": "1 Dollar - Elizabeth II (Henry Kelsey)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1990,
+  "max_year": 1990,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36.07,
+  "thickness": 2.95,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Dora de Pédery-Hunt"
+   ],
+   "description": "Cabeza de la reina Isabel II, como a los 64 años, luciendo la diadema real, collar y pendientes, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II  D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/3552-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/3552-180.jpg",
+   "picture_copyright": "pfouque"
+  },
+  "reverse": {
+   "engravers": [
+    "Ago Aarand"
+   ],
+   "designers": [
+    "David Craig"
+   ],
+   "description": "Henry Kelsey con guías nativos americanos",
+   "lettering": "CANADA      DOLLAR\r\n1690  KELSEY  1990",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/3553-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/3553-180.jpg"
+  },
+  "commemorated_topic": "300 aniversario de las aventuras de Henry Kelsey",
+  "tags": [
+   "Río"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-828"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-829"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "170"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "235118": {
   "category": "coin",
@@ -44540,6 +46930,234 @@
   },
   "weight": 31.1
  },
+ "447": {
+  "id": 447,
+  "url": "https://es.numista.com/447",
+  "title": "1 Dollar - George V (Silver Jubilee)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1935,
+  "max_year": 1935,
+  "ruler": [
+   {
+    "id": 1776,
+    "name": "Jorge V",
+    "wikidata_id": "Q269412"
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Percy Metcalfe"
+   ],
+   "description": "Busto del rey Jorge V, con corona, mirando hacia la izquierda.\n",
+   "lettering": "GEORGIVS V REX IMPERATOR ANNO REGNI XXV",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1075-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1075-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Un voyageur y un aborigen viajando en canoa, llevando fardos de los cuales uno lleva las iniciales \"H.B.\" de Hudson's Bay Company, están rodeados con el valor facial y la inscripción \"CANADA\".",
+   "lettering": "CANADA\r\n1935\r\nDOLLAR\r\nEH",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1076-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1076-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "25 aniversario del reinado de Jorge V",
+  "comments": "Contramarca JOP / J.O.P / J.O.P.<br />\n(Joseph Olivia Patenaude)<br />\n<a href=\"https://en.numista.com/catalogue/images/5b8cb09ad3d17.png\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5b8cb09ad3d17.png\" alt=\"\" width=\"200\" height=\"114\" /></a><br />\n<a href=\"https://en.numista.com/catalogue/images/5b8cba936cee3.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5b8cba936cee3.jpg\" alt=\"\" width=\"200\" height=\"160\" /></a><br />\n<a href=\"https://en.numista.com/catalogue/images/5b8cbab093f2b.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5b8cbab093f2b.jpg\" alt=\"\" width=\"200\" height=\"148\" /></a><br />\n<a href=\"https://en.numista.com/catalogue/images/5b8cb0b6aeffc.png\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5b8cb0b6aeffc.png\" alt=\"\" width=\"200\" height=\"108\" /></a><br />\n<a href=\"https://en.numista.com/catalogue/images/5b8cb0cd64e02.png\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5b8cb0cd64e02.png\" alt=\"\" width=\"200\" height=\"143\" /></a><br /><br />\n<a href=\"http://www.coinscan.com/silverd/page66.html\" rel=\"nofollow\">http://www.coinscan.com/silverd/page66.html</a><br />\n<a href=\"https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=215189\" rel=\"nofollow\">https://www.coincommunity.com/forum/topic.asp?TOPIC_ID=215189</a><br />\naprox. 1.000 a 2.000 con fecha de 1935",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "30"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "29"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/canada/69a4752d4d4377.20414319-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/69a4752d4d4377.20414319-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "448": {
+  "id": 448,
+  "url": "https://es.numista.com/448",
+  "title": "1 Dollar - George V",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1936,
+  "max_year": 1936,
+  "ruler": [
+   {
+    "id": 1776,
+    "name": "Jorge V",
+    "wikidata_id": "Q269412"
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Edgar Bertram MacKennal"
+   ],
+   "description": "Busto del rey Jorge V, con corona, mirando hacia la izquierda.\n",
+   "lettering": "GEORGIVS V DEI GRA: REX ET IND:IMP:",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "GEORGIVS V DEI GRATIA REX ET INDIA IMPERATOR",
+   "picture": "https://en.numista.com/catalogue/photos/canada/1079-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1079-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Un voyageur y un aborigen viajando en canoa, portando fardos de los cuales uno lleva las iniciales \"H.B.\" de Hudson's Bay Company, están rodeados con el valor facial y la inscripción \"CANADA\".",
+   "lettering": "CANADA\r\n1936\r\nDOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1080-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1080-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "comments": "Esta moneda tiene el anverso tal y como aparece normalmente en las monedas canadienses, a diferencia del dólar de 1935.<br /><br />\nEn total, se conocen 13 variedades adicionales de esta moneda, las más raras de las cuales son los tipos JOP, con el matasellos J.O.P. Joseph Oliva Patenaude sobre el año, y las variedades con el &quot;6&quot; fuera.",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "31"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "30"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/canada/69a47547dc4013.34700235-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/69a47547dc4013.34700235-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
  "448067": {
   "category": "coin",
   "composition": {
@@ -44743,6 +47361,345 @@
    "text": "5 Francs"
   },
   "weight": 22.8
+ },
+ "449": {
+  "id": 449,
+  "url": "https://es.numista.com/449",
+  "title": "1 Dollar - George VI (with IND:IMP:)",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1937,
+  "max_year": 1947,
+  "ruler": [
+   {
+    "id": 1777,
+    "name": "Jorge VI",
+    "wikidata_id": "Q280856",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Thomas Humphrey Paget"
+   ],
+   "description": "Cabeza del rey Jorge VI mirando hacia la izquierda.\n\n",
+   "lettering": "GEORGIVS VI D:G:REX ET IND:IMP:",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "GEORGIVS VI DEI GRATIA REX ET INDIA IMPERATOR",
+   "picture": "https://en.numista.com/catalogue/photos/canada/1089-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1089-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Un voyageur y un aborigen viajando en canoa, llevando fardos de los cuales uno lleva las iniciales \"H.B.\" de Hudson's Bay Company, están rodeados con el valor facial y la inscripción \"CANADA\".\n\nObsérvese que en 1946 la moneda se fabricó tanto en la variedad Short Water Lines (SWL) como en la variedad Full Water Lines (FWL). La SWL consta de tres o cuatro líneas de agua cortas a la derecha de la canoa, mientras que la moneda FWL tiene cuatro líneas de agua completas a la derecha de la canoa.",
+   "lettering": "CANADA\r\n1947\r\nDOLLAR\r\nEH",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1090-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1090-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "comments": "Obsérvese que las iniciales del grabador \"HP\" aparecen bajo el retrato del Rey. Existen tres variedades que giran en torno a estas iniciales: doble HP, triple HP y cuádruple HP. Las variedades proceden del doble, triple o cuádruple acuñado de estas iniciales. En 1945, sólo existe la doble HP. Pero para 1947, se pueden encontrar las cuatro variedades.<br /><br />\n<a href=\"https://en.numista.com/catalogue/images/601eb262723c8.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/601eb262723c8.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "37"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "37"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
+ "450": {
+  "id": 450,
+  "url": "https://es.numista.com/450",
+  "title": "1 Dollar - George VI (Royal Visit)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1939,
+  "max_year": 1939,
+  "ruler": [
+   {
+    "id": 1777,
+    "name": "Jorge VI",
+    "wikidata_id": "Q280856",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Thomas Humphrey Paget"
+   ],
+   "description": "Cabeza del rey Jorge VI mirando hacia la izquierda.\n\n",
+   "lettering": "GEORGIVS VI D:G:REX ET IND:IMP\r\nHP",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "GEORGIVS VI DEI GRATIA REX ET INDIA IMPERATOR\r\nHumphrey Paget",
+   "picture": "https://en.numista.com/catalogue/photos/canada/710-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/710-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Los edificios del Parlamento canadiense en Ottawa están rodeados de la inscripción latina \"FIDE SVORVM REGNAT\" (reina por la fe de su pueblo), la inscripción \"CANADA\" y el valor facial",
+   "lettering": "FIDE SVORVM REGNAT\r\nCANADA\r\n1939\r\n1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/711-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/711-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "Visita de Su Majestad el Rey Jorge VI y su futura Majestad la Reina Isabel II a Ottawa",
+  "comments": "Obsérvese que las iniciales del grabador \"HP\" aparecen debajo del retrato del Rey. Existen dos variedades que giran en torno a estas iniciales: doble HP y triple HP. Las variedades proceden del doble o triple marcado de estas iniciales.<br /><br />\nPor ejemplo, una HP doble podría identificarse por dos líneas entre la \"H\".",
+  "tags": [
+   "Edificio del gobierno"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "38"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "38"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "451": {
+  "id": 451,
+  "url": "https://es.numista.com/451",
+  "title": "1 Dollar - George VI (without IND:IMP:)",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1948,
+  "max_year": 1952,
+  "ruler": [
+   {
+    "id": 1777,
+    "name": "Jorge VI",
+    "wikidata_id": "Q280856",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Thomas Humphrey Paget"
+   ],
+   "description": "Cabeza del rey Jorge VI mirando hacia la izquierda.\n",
+   "lettering": "GEORGIVS VI DEI GRATIA REX\r\nHP",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1098-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1098-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Un voyageur y un aborigen viajando en canoa, portando fardos de los cuales uno lleva las iniciales \"HB\" de Hudson's Bay Company, están rodeados con el valor facial y la inscripción \"CANADA\"",
+   "lettering": "CANADA\r\n1948\r\nDOLLAR\r\nEH",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1099-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1099-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/5ac8bd412ba1d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ac8bd412ba1d.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "46"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "45"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
  },
  "451057": {
   "category": "coin",
@@ -45232,6 +48189,127 @@
   },
   "weight": 18
  },
+ "452": {
+  "id": 452,
+  "url": "https://es.numista.com/452",
+  "title": "1 Dollar - George VI (Welcome Newfoundland)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1949,
+  "max_year": 1949,
+  "ruler": [
+   {
+    "id": 1777,
+    "name": "Jorge VI",
+    "wikidata_id": "Q280856",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Thomas Humphrey Paget"
+   ],
+   "description": "Cabeza del rey Jorge VI mirando hacia la izquierda.\n",
+   "lettering": "GEORGIVS VI DEI GRATIA REX",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/717-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/717-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Ernest Maunder"
+   ],
+   "designers": [
+    "Thomas Shingles"
+   ],
+   "description": "El Matthew, el barco en el que los historiadores creen que navegaba John Cabot cuando descubrió Terranova, y la inscripción en latín \"FLOREAT TERRA NOVA\" (que florezca la Tierra Recién Encontrada) debajo, rodeada del valor facial y la inscripción \"CANADA\".",
+   "lettering": "CANADA\r\nFLOREAT TERRA NOVA\r\n1949 \r\nDOLLAR\r\nT.S.",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/716-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/716-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "Unión de Terranova y el Dominio de Canadá.",
+  "comments": "<p>Esta moneda conmemora la unión de Terranova y el Dominio de Canadá el 31 de marzo de 1949.</p><p></p><p>Se decidió emitir monedas con la fecha de 1949 mientras hubiera demanda para ellas, de modo que en 1950 se produjeron 40.718 monedas con la fecha de 1949. La acuñación es combinada para este tipo.</p>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "47"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "46"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/canada/69a47562b14f50.62563997-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/69a47562b14f50.62563997-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "453": {
   "category": "coin",
   "comments": "<a href=\"https://en.numista.com/catalogue/images/601c3120e6201.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/601c3120e6201.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a>",
@@ -45349,6 +48427,125 @@
    "text": "1 Dollar"
   },
   "weight": 23.33
+ },
+ "454": {
+  "id": 454,
+  "url": "https://es.numista.com/454",
+  "title": "1 Dollar - Elizabeth II (British Columbia)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1958,
+  "max_year": 1958,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Thomas Shingles"
+   ],
+   "designers": [
+    "Mary Gillick"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 27 años, con una corona de flores, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II DEI GRATIA REGINA\r\nMG",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/604ed5ddb19eb1.04089311-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/604ed5ddb19eb1.04089311-180.jpg",
+   "picture_copyright": "nathanfriels"
+  },
+  "reverse": {
+   "engravers": [
+    "Thomas Shingles"
+   ],
+   "designers": [
+    "Stephen Trenka"
+   ],
+   "description": "Un tótem ante las montañas costeras.",
+   "lettering": "CANADA       BRITISH COLUMBIA\r\n1858\r\n1958\r\nDOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/604ed5dfd25324.67647960-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/604ed5dfd25324.67647960-180.jpg",
+   "picture_copyright": "nathanfriels"
+  },
+  "commemorated_topic": "Centenario de la Columbia Británica",
+  "comments": "El reverso muestra el diseño de un tótem de las Primeras Naciones de la Costa Noroeste con montañas al fondo. Una historia apócrifa pero muy difundida sostiene que el elemento superior del poste es el Cuervo, utilizado por algunas Primeras Naciones para simbolizar la muerte. Sin embargo, la figura de orejas erguidas, nariz marcada, largas garras y lo que podría ser una lengua fuera no es Cuervo, sino más bien Osa, debajo de su cachorro. Este motivo aparece en muchos tótems. Además, ni Oso ni Cuervo se asocian con la muerte; el primero es un escudo común de los clanes, el segundo es una célebre figura del Embaucador y Creador que ocupa un lugar central en cientos de historias de los pueblos de la Costa Noroeste.",
+  "tags": [
+   "Escultura",
+   "Montaña"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "55"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "56"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "45416": {
   "id": 45416,
@@ -50469,6 +53666,255 @@
   ],
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "455": {
+  "id": 455,
+  "url": "https://es.numista.com/455",
+  "title": "1 Dollar - Elizabeth II (Confederation Conferences)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1964,
+  "max_year": 1964,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Myron Cook"
+   ],
+   "designers": [
+    "Mary Gillick"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 27 años, con una corona de flores, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II DEI GRATIA REGINA M.C.",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/1114-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1114-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Thomas Shingles"
+   ],
+   "designers": [
+    "Dinko Vodanovic"
+   ],
+   "description": "La flor de lis francesa, el trébol irlandés, el cardo escocés y la rosa inglesa en un diseño único rodeado de la leyenda \"CHARLOTTETOWN - QUÉBEC\", las fechas \"1864\" y \"1964\", con el valor en la parte inferior y el nombre del país en la parte superior.",
+   "lettering": "1864 C A N A D A 1964 \r\nCHARLOTTETOWN\r\n·QUÉBEC·\r\nD O L L A R\r\nD.V.  T.S.",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/1115-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/1115-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "Centenario de las Conferencias de Charlottetown y Quebec",
+  "comments": "El anverso ha sido retocado, sobre todo en la prenda. El retoque fue realizado por Myron Cook, que en realidad modificó el trabajo de Thomas Shingles, quien había modificado el de Mary Gillick.",
+  "tags": [
+   "Flor de lis"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "58"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "57"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/canada/69a4759a0b5ec3.74388586-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/69a4759a0b5ec3.74388586-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "456": {
+  "id": 456,
+  "url": "https://es.numista.com/456",
+  "title": "1 Dollar - Elizabeth II (2nd portrait)",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1965,
+  "max_year": 1966,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.84,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (.800 silver .200 copper)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/6995ebece349a0.02118243-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6995ebece349a0.02118243-180.jpg",
+   "picture_copyright": "Zanzibar.Orc.Coins",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Thomas Shingles"
+   ],
+   "designers": [
+    "Emanuel Otto Hahn"
+   ],
+   "description": "Un voyageur y un aborigen viajando en canoa, llevando fardos de los cuales uno lleva las iniciales \"HB\" de Hudson's Bay Company, con la denominación en la parte inferior y el nombre del país en la superior",
+   "lettering": "CANADA\r\n1965\r\nDOLLAR\r\nEH",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/6995ebee1b1485.92282395-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/6995ebee1b1485.92282395-180.jpg",
+   "picture_copyright": "Zanzibar.Orc.Coins",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/5c9a40f91cc9d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5c9a40f91cc9d.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a><br />\n<a href=\"https://en.numista.com/catalogue/images/5c9a9080b9d2b.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5c9a9080b9d2b.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "64.1"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "64"
+   }
+  ],
+  "weight": 23.33,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/canada/697666dc183938.34983067-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/697666dc183938.34983067-180.jpg",
+   "picture_copyright": "DMK Collection"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
  },
  "457": {
   "category": "coin",
@@ -62915,6 +66361,138 @@
    "text": "3 euros"
   },
   "weight": 20
+ },
+ "6786": {
+  "id": 6786,
+  "url": "https://es.numista.com/6786",
+  "title": "1 Dollar - Elizabeth II (Regina Centennial)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1982,
+  "max_year": 1982,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II D·G·REGINA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "ELIZABETH II DEI GRATIA REGINA",
+   "picture": "https://en.numista.com/catalogue/photos/canada/63fd740e8be481.16972197-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/63fd740e8be481.16972197-180.jpg",
+   "picture_copyright": "JLHare",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "designers": [
+    "Huntley Brown"
+   ],
+   "description": "La calavera divide las fechas y la denominación a continuación",
+   "lettering": "REGINA\r\n1882 1982\r\nCANADA DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/63fd740f6d3d47.53839300-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/63fd740f6d3d47.53839300-180.jpg",
+   "picture_copyright": "JLHare",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Centenario de la fundación de la ciudad de Regina, Saskatchewan",
+  "tags": [
+   "Vaca o bovino",
+   "Otra construcción"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-812"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "129"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "133"
+   },
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-813"
+   }
+  ],
+  "weight": 23.3276,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "67970": {
   "category": "coin",

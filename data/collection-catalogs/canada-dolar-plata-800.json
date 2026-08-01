@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "canada-dolar-plata-800",
+  "name": "Dólar de plata .800 · Canadá 1935-1967",
+  "issuer_code": "canada",
+  "family": "Dólar de plata .800 de Canadá",
+  "weight_millioz": 750,
+  "finish": null,
+  "series_status": "closed",
+  "closed_note": "El dólar canadiense de plata .800 se acuñó de 1935 a 1967 con un solo estándar físico —23,33 g y 36 mm— y terminó por una decisión externa a Numista: en agosto de 1968, con la plata disparada, la Royal Canadian Mint pasó el dólar al níquel puro, más pequeño y más ligero (N#3326, 15,62 g y 32,13 mm). Antes de 1935 no hubo dólar canadiense de curso legal: el de 1911 es una prueba (N#181847). Los once tipos son las once entradas de Numista con ese peso en esos años, contadas por búsqueda de peso 23,2-23,5 g sobre todas las categorías. https://www.pcgs.com/news/canadas-nickel-dollars",
+  "source": "https://en.numista.com/catalogue/pieces447.html",
+  "updated_at": "2026-08-01",
+  "members": [
+    {
+      "id": "1935-jubileo-de-plata",
+      "label": "Jubileo de plata de Jorge V",
+      "year": 1935,
+      "numista_type_id": 447
+    },
+    {
+      "id": "1936-jorge-v",
+      "label": "Jorge V",
+      "year": 1936,
+      "numista_type_id": 448
+    },
+    {
+      "id": "1937-jorge-vi-con-ind-imp",
+      "label": "Jorge VI, con IND:IMP:",
+      "year": 1937,
+      "numista_type_id": 449
+    },
+    {
+      "id": "1939-visita-real",
+      "label": "Visita real",
+      "year": 1939,
+      "numista_type_id": 450
+    },
+    {
+      "id": "1948-jorge-vi-sin-ind-imp",
+      "label": "Jorge VI, sin IND:IMP:",
+      "year": 1948,
+      "numista_type_id": 451
+    },
+    {
+      "id": "1949-terranova",
+      "label": "Bienvenida a Terranova",
+      "year": 1949,
+      "numista_type_id": 452
+    },
+    {
+      "id": "1953-isabel-ii-primer-retrato",
+      "label": "Isabel II, primer retrato",
+      "year": 1953,
+      "numista_type_id": 453
+    },
+    {
+      "id": "1958-columbia-britanica",
+      "label": "Columbia Británica",
+      "year": 1958,
+      "numista_type_id": 454
+    },
+    {
+      "id": "1964-conferencias-de-la-confederacion",
+      "label": "Conferencias de la Confederación",
+      "year": 1964,
+      "numista_type_id": 455
+    },
+    {
+      "id": "1965-isabel-ii-segundo-retrato",
+      "label": "Isabel II, segundo retrato",
+      "year": 1965,
+      "numista_type_id": 456
+    },
+    {
+      "id": "1967-centenario-de-la-confederacion",
+      "label": "Centenario de la Confederación",
+      "year": 1967,
+      "numista_type_id": 457
+    }
+  ]
+}
