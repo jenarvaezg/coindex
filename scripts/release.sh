@@ -59,6 +59,11 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 # --- Notas ------------------------------------------------------------------------------
+# `gh release create` crea el tag en el servidor y no en el clon, así que sin este fetch el
+# changelog se calcula desde el tag anterior y repite los commits de la release pasada. No se
+# nota mientras haya un `git pull` entre release y release, que es justo lo que no hay cuando
+# se publican dos seguidas.
+git fetch --tags --quiet
 LAST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -1)
 if [[ -n "$LAST_TAG" ]]; then
   CHANGELOG=$(git log --no-merges --pretty='- %s' "$LAST_TAG"..HEAD)
