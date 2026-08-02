@@ -28,12 +28,16 @@ variants cannot be expressed at all.
 
 ## Decision
 
-**A technical family is the weakest family, never a rejection.** Proposal
-derivation resolves a family in this order: a schema 3 catalog that lists the
-type, then a real Numista family, then a schema 1 or 2 catalog that lists the
-type, then the technical Numista family. Only a type with no family at all and no
-catalog stays unclassified. `UnclassifiedReason.TechnicalFamily` therefore
-disappears; `isTechnicalFamily` survives as a precedence rule, not a filter.
+**A technical family is the weakest family, never a rejection.** As amended by the
+[catalog-family precedence decision](https://github.com/jenarvaezg/coindex/issues/83),
+proposal derivation resolves a family in this order: a schema 3 catalog that lists
+the types issued together, then a schema 1 or 2 catalog selected by the catalog
+routing for that type and piece, then a real Numista family, then the technical
+Numista family. ADR 0013 later inserts a curated grouping immediately before the
+technical family. Only a
+type with no family at all and no matching catalog stays unclassified.
+`UnclassifiedReason.TechnicalFamily` therefore disappears; `isTechnicalFamily`
+survives as a precedence rule, not a filter.
 Technical families reach the collector through the presentation-only alias
 `System 1981-2001` → `Sistema monetario 1981-2001`, which never enters the key.
 

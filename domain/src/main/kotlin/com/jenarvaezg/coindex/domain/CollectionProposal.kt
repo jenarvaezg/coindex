@@ -61,9 +61,9 @@ data class CollectionProposalKey(
 }
 
 /**
- * A provisional grouping of currently owned pieces sharing one exact Numista family and
- * physical variant. It suggests an organization; it never claims catalog coverage and can
- * never report a missing piece.
+ * A provisional grouping of currently owned pieces sharing one exact resolved family and
+ * physical variant. A selected catalog declares the complete key; without one, the remaining
+ * precedence ladder resolves it. A proposal never claims catalog coverage or reports a gap.
  */
 data class CollectionProposal(
     val family: String,

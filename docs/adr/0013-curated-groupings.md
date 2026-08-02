@@ -41,8 +41,10 @@ sequence contains.
 It is the weakest claim in the family ladder, which now resolves in this order:
 
 1. a set catalog naming the exact types issued together (ADR 0012)
-2. the real Numista family
-3. a collection catalog that lists the type (ADR 0009)
+2. a collection catalog selected by the catalog routing for the type and piece (ADR 0009, as
+   amended by the [catalog-family precedence
+   decision](https://github.com/jenarvaezg/coindex/issues/83))
+3. the real Numista family
 4. **a curated grouping that names the type**
 5. Numista's technical `System YYYY` monetary system (ADR 0012)
 

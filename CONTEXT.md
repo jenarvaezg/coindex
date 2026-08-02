@@ -37,10 +37,10 @@ distinct from Proof and Coloured and participates in proposal identity and group
 _Avoid_: Display label, either component finish
 
 **Proposal variant key**:
-The exact canonical tuple of raw Numista family, normalized weight, finish and dominant
-metal that identifies a physical variant for proposal grouping and per-user dispositions. It
-uses the same weight normalization as proposal derivation; family display aliases never alter
-it.
+The exact canonical tuple of resolved family, normalized weight, finish and dominant metal
+that identifies a physical variant for proposal grouping and per-user dispositions. A matching
+catalog declares the resolved family and complete key; without one, the remaining precedence
+ladder resolves the family. Family display aliases never alter the key.
 _Avoid_: Family display alias, proposal title
 
 **Absent weight**:
@@ -64,8 +64,8 @@ _Avoid_: Numista family, orphan, unclassified reason
 
 **Collection proposal**:
 A provisional, per-collector grouping of currently owned pieces that share one exact
-Numista family and physical variant. It suggests an organization, not catalog coverage
-or absent pieces.
+resolved family and physical variant. It suggests an organization, not catalog coverage or
+absent pieces.
 _Avoid_: Album, automatic series
 
 **Available proposal**:
@@ -82,8 +82,8 @@ _Avoid_: Curated series, Album
 **Collection catalog**:
 A curated, sourced reference list of official members for one exact proposal variant key.
 It remains separate from curated series and from the collector's followed disposition.
-It **declares** that variant rather than inferring it: for the types it names, its own weight
-and finish are the key, whatever grams Numista records for each one (ADR 0016).
+It **declares** that variant rather than inferring it: for the types it claims, its own family,
+weight, finish and metal are the key, whatever family or grams Numista records (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
 **Issue-qualified member**:

@@ -41,15 +41,17 @@ what is already known.
 
 ## Decision
 
-A collection catalog that is not a set is **authoritative about the physical variant of its own
-members**. In `deriveCollection`, when a piece's resolved family is the family of a catalog that
-names its type, the proposal key is the catalog's own key — its declared weight and finish — and
-no weight is inferred from Numista at all.
+A collection catalog that is not a set is **authoritative about the family and physical variant
+of the types it claims**. In `deriveCollection`, once catalog routing selects the catalog for a
+piece, the proposal key is the catalog's own key — its declared family, weight, finish and metal
+— and none of those parts is inferred from Numista. A date run retains ADR 0009's type-based
+plate evidence: an undated piece can select its proposal without filling a dated member.
 
-The precedence of ADR 0012 and ADR 0013 for choosing the *family* is unchanged. This rule only
-applies once the catalog's family has already won, so a type with a real Numista family that
-differs from the catalog's keeps the Numista family, and its weight is still inferred: a catalog
-never reaches across into a variant it did not claim.
+The [catalog-family precedence decision](https://github.com/jenarvaezg/coindex/issues/83)
+strengthened the original rule, which only applied after the catalog family had already won.
+A real Numista family still governs types that no catalog claims. Issue-qualified members remain
+the stricter case: they require the exact `issue_id`, and an unmatched issue stays unclassified
+as specified by ADR 0019.
 
 Snapping stays. It still does the job the catalog cannot: a type of the same family that the
 catalog does **not** name — next year's issue, say — lands on the catalog's weight by snapping

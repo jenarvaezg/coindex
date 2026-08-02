@@ -9,7 +9,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5860",
-  "updated_at": "2026-08-01",
+  "updated_at": "2026-08-02",
   "members": [
     {
       "id": "1993-amur-tiger",
@@ -424,6 +424,30 @@
       "label": "WRINKLED GROUND BEETLE",
       "year": 2024,
       "numista_type_id": 428166
+    },
+    {
+      "id": "2026-caucasian-wildcat",
+      "label": "Caucasian Wildcat",
+      "year": 2026,
+      "status": "announced",
+      "source": "https://www.cbr.ru/eng/cash_circulation/memorable_coins/plan/",
+      "source_note": "El plan oficial de emisión de 2026 la nombra en la serie Red Data Book como moneda de 2 rublos, plata .925, proof con color y tirada de 5.000."
+    },
+    {
+      "id": "2026-spectacled-eider",
+      "label": "Spectacled Eider",
+      "year": 2026,
+      "status": "announced",
+      "source": "https://www.cbr.ru/eng/cash_circulation/memorable_coins/plan/",
+      "source_note": "El plan oficial de emisión de 2026 la nombra en la serie Red Data Book como moneda de 2 rublos, plata .925, proof con color y tirada de 5.000."
+    },
+    {
+      "id": "2026-toad-headed-agama",
+      "label": "Toad-headed Agama",
+      "year": 2026,
+      "status": "announced",
+      "source": "https://www.cbr.ru/eng/cash_circulation/memorable_coins/plan/",
+      "source_note": "El plan oficial de emisión de 2026 la nombra en la serie Red Data Book como moneda de 2 rublos, plata .925, proof con color y tirada de 5.000."
     }
   ]
 }

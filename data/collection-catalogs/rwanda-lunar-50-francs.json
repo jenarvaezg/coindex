@@ -9,7 +9,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=4744",
-  "updated_at": "2026-08-01",
+  "updated_at": "2026-08-02",
   "members": [
     {
       "id": "2017-year-of-the-rooster",
@@ -58,6 +58,12 @@
       "label": "Year of the Dragon",
       "year": 2024,
       "numista_type_id": 390022
+    },
+    {
+      "id": "2025-year-of-the-snake",
+      "label": "Year of the Snake",
+      "year": 2025,
+      "numista_type_id": 448800
     },
     {
       "id": "2026-year-of-the-horse",

@@ -16,9 +16,11 @@ proposal from stale state.
 ## Decision
 
 Persist only the per-user followed or ignored disposition for an exact proposal variant
-key: the canonical tuple of raw Numista family, normalized weight, and finish. Disposition
-lookup uses the same weight normalization as proposal derivation. Family display aliases
-are presentation-only and never participate in this key.
+key: the canonical tuple of resolved family, normalized weight, finish and dominant metal. The
+[catalog-family precedence decision](https://github.com/jenarvaezg/coindex/issues/83) later
+made a selected catalog authoritative for that key; without one, the remaining precedence
+ladder resolves the family. Disposition lookup uses the same normalization as proposal
+derivation. Family display aliases are presentation-only and never participate in this key.
 
 Each currently derived proposal is in exactly one mutually exclusive state:
 

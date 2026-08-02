@@ -26,12 +26,14 @@ page, a schema 2 catalog source may be the Numista type page
 (`catalogue/piecesNNN.html`) as well as a series page; schema 1 still requires a
 series page.
 
-When a collected item's type has no Numista family, proposal derivation may fall
-back to the family declared by a seeded collection catalog that lists that type id
-as a member. The catalog never seeds a proposal by itself: without a matching
-holding there is no proposal, preserving ADR 0007. A real Numista family always
-wins over the fallback, and types referenced by no catalog remain outside
-proposals.
+When a collected item's type is claimed by a seeded collection catalog, proposal
+derivation uses the family declared by that catalog. This was originally only a
+fallback for types with no Numista family; the [catalog-family precedence
+decision](https://github.com/jenarvaezg/coindex/issues/83) later made the catalog's
+type claim authoritative even when Numista supplies another real family. The
+catalog never seeds a proposal by itself: without a matching holding there is no
+proposal, preserving ADR 0007. A real Numista family still wins for types that no
+catalog claims, and types named by neither remain outside proposals.
 
 ## Consequences
 

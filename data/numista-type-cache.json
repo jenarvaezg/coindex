@@ -48346,6 +48346,109 @@
   },
   "weight": 22.8
  },
+ "448800": {
+  "id": 448800,
+  "url": "https://es.numista.com/448800",
+  "title": "50 Francs (Year of the Snake)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "issuing_entity": {
+   "id": 938,
+   "name": "Banco Nacional de Ruanda",
+   "wikidata_id": "Q4314980"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas en el centro, con el nombre del emisor encima y el valor debajo.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6779262d9f7582.33581297-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6779262d9f7582.33581297-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "reverse": {
+   "description": "Serpiente con la lengua extendida bajo los caracteres chinos de Serpiente y Pureza",
+   "lettering": "LUNAR OUNCE 2025\r\n1 oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6779262dd3e5e4.81728952-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6779262dd3e5e4.81728952-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "series": "Lunar ounce - Year of the Snake",
+  "related_types": [
+   {
+    "id": 429532,
+    "title": "50 Francs (Leopard)",
+    "category": "coin",
+    "country": {
+     "code": "rwanda",
+     "name": "Ruanda"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   }
+  ],
+  "tags": [
+   "Reptil"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "449": {
   "id": 449,
   "url": "https://es.numista.com/449",

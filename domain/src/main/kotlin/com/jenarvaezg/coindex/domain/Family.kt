@@ -19,8 +19,8 @@ fun isTechnicalFamily(family: String): Boolean {
 }
 
 /**
- * Presentation-only alias for a raw Numista family. Never enters the proposal variant key,
- * grouping or persisted dispositions.
+ * Presentation-only alias for a resolved proposal family. Never enters the proposal variant
+ * key, grouping or persisted dispositions.
  */
 fun collectionProposalFamilyLabel(family: String): String = when {
     isTechnicalFamily(family) ->

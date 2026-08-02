@@ -347,14 +347,74 @@ class CollectionProposalsTest {
         assertEquals(99, derivation.unclassified[0].item.typeId)
         assertEquals(UnclassifiedReason.NoFamilyOrCatalog, derivation.unclassified[0].reason)
 
-        // The real Numista family always beats the catalog fallback.
-        val withFamily = mapOf(10_340 to familyLess(10_340).copy(family = "Familia oficial"))
+    }
+
+    @Test
+    fun `date run type evidence keeps the catalog family before it can fill a year`() {
+        val catalog = dateRunCatalogStub()
+        val metadata = mapOf(
+            10_340 to TypeMeta(
+                id = 10_340,
+                family = "Familia Numista distinta",
+                weightOz = ounces(25.0),
+            ),
+        )
+
+        // ADR 0009 lets an undated holding open the plate by type without filling any dated slot.
         val proposals = buildCollectionProposals(
             listOf(item(1, 10_340, 1)),
-            withFamily,
+            metadata,
             listOf(catalog),
         )
-        assertEquals("Familia oficial", proposals[0].family)
+
+        assertEquals(listOf(catalog.key()), proposals.map { it.key() })
+    }
+
+    @Test
+    fun `a matching catalog outranks a real Numista family without touching unclaimed types`() {
+        val catalog = teslaCatalogStub().copy(
+            family = "Lunar ounce",
+            finish = Finish.ProofColoured,
+            members = listOf(
+                CollectionCatalogMember(
+                    id = "2025-snake",
+                    label = "Year of the Snake",
+                    year = 2025,
+                    numistaTypeId = 448_800,
+                ),
+            ),
+        )
+        val typeMeta = mapOf(
+            448_800 to TypeMeta(
+                id = 448_800,
+                family = "Lunar ounce - Year of the Snake",
+                weightOz = ounces(31.1),
+                finish = Finish.Bullion,
+                metal = Metal.Silver,
+            ),
+            // N#596807 is not claimed by a catalog, so #38 keeps Numista's data sovereign.
+            596_807 to TypeMeta(
+                id = 596_807,
+                family = "The",
+                weightOz = ounces(31.1),
+                finish = Finish.Bullion,
+                metal = Metal.Silver,
+            ),
+        )
+
+        val proposals = buildCollectionProposals(
+            listOf(item(1, 448_800, 1), item(2, 596_807, 1)),
+            typeMeta,
+            listOf(catalog),
+        )
+
+        assertEquals(
+            listOf(
+                catalog.key(),
+                CollectionProposalKey("The", 1_000, Finish.Bullion, Metal.Silver),
+            ),
+            proposals.map { it.key() },
+        )
     }
 
     @Test
