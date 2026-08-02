@@ -75,6 +75,46 @@
       "numista_issue_ids": [
         979731
       ]
+    },
+    {
+      "id": "2027-year-of-the-goat",
+      "label": "Year of the Goat",
+      "year": 2027,
+      "status": "announced",
+      "source": "https://www.perthmint.com/news/collector/coin-releases/animals-of-the-chinese-zodiac/",
+      "source_note": "La guía zodiacal oficial de The Perth Mint asigna 2027 a la cabra. Es el tema programado para ese año dentro del ciclo, no un diseño ni unas especificaciones de emisión publicados individualmente."
+    },
+    {
+      "id": "2028-year-of-the-monkey",
+      "label": "Year of the Monkey",
+      "year": 2028,
+      "status": "announced",
+      "source": "https://www.perthmint.com/news/collector/coin-releases/animals-of-the-chinese-zodiac/",
+      "source_note": "La guía zodiacal oficial de The Perth Mint asigna 2028 al mono. Es el tema programado para ese año dentro del ciclo, no un diseño ni unas especificaciones de emisión publicados individualmente."
+    },
+    {
+      "id": "2029-year-of-the-rooster",
+      "label": "Year of the Rooster",
+      "year": 2029,
+      "status": "announced",
+      "source": "https://www.perthmint.com/news/collector/coin-releases/animals-of-the-chinese-zodiac/",
+      "source_note": "La guía zodiacal oficial de The Perth Mint asigna 2029 al gallo. Es el tema programado para ese año dentro del ciclo, no un diseño ni unas especificaciones de emisión publicados individualmente."
+    },
+    {
+      "id": "2030-year-of-the-dog",
+      "label": "Year of the Dog",
+      "year": 2030,
+      "status": "announced",
+      "source": "https://www.perthmint.com/news/collector/coin-releases/animals-of-the-chinese-zodiac/",
+      "source_note": "La guía zodiacal oficial de The Perth Mint asigna 2030 al perro. Es el tema programado para ese año dentro del ciclo, no un diseño ni unas especificaciones de emisión publicados individualmente."
+    },
+    {
+      "id": "2031-year-of-the-pig",
+      "label": "Year of the Pig",
+      "year": 2031,
+      "status": "announced",
+      "source": "https://www.perthmint.com/news/collector/coin-releases/animals-of-the-chinese-zodiac/",
+      "source_note": "La guía zodiacal oficial de The Perth Mint asigna 2031 al cerdo. Es el tema programado para ese año dentro del ciclo, no un diseño ni unas especificaciones de emisión publicados individualmente."
     }
   ]
 }
