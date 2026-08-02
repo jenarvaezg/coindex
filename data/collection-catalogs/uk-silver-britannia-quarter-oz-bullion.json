@@ -1,0 +1,96 @@
+{
+  "schema_version": 2,
+  "id": "uk-silver-britannia-quarter-oz-bullion",
+  "name": "Silver Britannia · Reino Unido · ¼ oz .999 bullion (años con emisión bullion verificada; sin proof ni Gairsoppa; 2023 parte Elizabeth/Charles)",
+  "issuer_code": "royaume-uni",
+  "family": "Silver Britannia ¼ oz bullion",
+  "weight_millioz": 250,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces384610.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2013-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2013,
+      "numista_type_id": 59310,
+      "numista_issue_ids": [
+        331106
+      ]
+    },
+    {
+      "id": "2014-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2014,
+      "numista_type_id": 329467,
+      "numista_issue_ids": [
+        726962
+      ]
+    },
+    {
+      "id": "2015-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2015,
+      "numista_type_id": 312488,
+      "numista_issue_ids": [
+        698539
+      ]
+    },
+    {
+      "id": "2021-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2021,
+      "numista_type_id": 274495,
+      "numista_issue_ids": [
+        633511
+      ]
+    },
+    {
+      "id": "2023-elizabeth-silver-britannia-quarter",
+      "label": "Elizabeth II",
+      "year": 2023,
+      "numista_type_id": 274495,
+      "numista_issue_ids": [
+        750255
+      ]
+    },
+    {
+      "id": "2023-charles-silver-britannia-quarter",
+      "label": "Charles III",
+      "year": 2023,
+      "numista_type_id": 384610,
+      "numista_issue_ids": [
+        818785
+      ]
+    },
+    {
+      "id": "2024-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2024,
+      "numista_type_id": 384610,
+      "numista_issue_ids": [
+        827048
+      ]
+    },
+    {
+      "id": "2025-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2025,
+      "numista_type_id": 384610,
+      "numista_issue_ids": [
+        903775
+      ]
+    },
+    {
+      "id": "2026-silver-britannia-quarter",
+      "label": "Silver Britannia",
+      "year": 2026,
+      "numista_type_id": 384610,
+      "numista_issue_ids": [
+        979030
+      ]
+    }
+  ]
+}
