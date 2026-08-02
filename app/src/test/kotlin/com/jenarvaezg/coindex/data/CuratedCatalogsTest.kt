@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(44, catalogs.size)
+        assertEquals(46, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * diecisiete cerrados llevan su nota y los veintisiete abiertos no afirman nada más que
+     * dieciocho cerrados llevan su nota y los veintiocho abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,8 +47,8 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(17, closed.size)
-        assertEquals(27, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(18, closed.size)
+        assertEquals(28, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -1237,6 +1237,60 @@ class CuratedCatalogsTest {
         )
         // La de 1992 es la primera esterlina y no es casilla de nadie.
         assertTrue(catalogs.none { catalog -> catalog.members.any { it.numistaTypeId == 23_296 } })
+    }
+
+    /**
+     * El Panda de plata son **dos** catálogos por el corte métrico de 2016 (#109): 1 oz troy
+     * (31,1 g → 1000 millioz) cerrado en 1989-2015, y 30 g (965 millioz) abierto desde 2016.
+     * Un tipo por casilla salvo 2001-2002, que comparten N#19714 y se cualifican por emisión.
+     * Los de 1983-1987 son otra métrica; proof de colección y conmemorativas quedan fuera.
+     */
+    @Test
+    fun `the silver panda splits at the 2016 metric cut into 1oz and 30g catalogs`() {
+        val oneOz = find("china-silver-panda-1oz-bullion")
+        val thirtyG = find("china-silver-panda-30g-bullion")
+        assertEquals(2, oneOz.schemaVersion)
+        assertEquals(2, thirtyG.schemaVersion)
+        assertEquals("chine", oneOz.issuerCode)
+        assertEquals("chine", thirtyG.issuerCode)
+        assertEquals(1_000, oneOz.weightMillioz)
+        assertEquals(965, thirtyG.weightMillioz)
+        assertEquals(Finish.Bullion, oneOz.finish)
+        assertEquals(Finish.Bullion, thirtyG.finish)
+        assertEquals(Metal.Silver, oneOz.metal)
+        assertEquals(Metal.Silver, thirtyG.metal)
+        assertEquals(SeriesStatus.Closed, oneOz.seriesStatus)
+        assertEquals(SeriesStatus.Open, thirtyG.seriesStatus)
+        assertTrue(oneOz.closedNote?.contains("2016") == true)
+        assertNotEquals(oneOz.key(), thirtyG.key())
+
+        assertEquals((1989..2015).toList(), oneOz.members.map { it.year })
+        assertEquals(27, oneOz.members.size)
+        assertEquals(
+            listOf(
+                19_740, 51_539, 30_111, 19_638, 19_654, 59_113, 34_863, 19_675, 19_676,
+                19_678, 19_043, 19_741, 19_714, 19_714, 19_715, 19_716, 19_717, 32_571,
+                39_559, 9_162, 37_959, 23_454, 19_783, 37_955, 42_219, 51_967, 71_394,
+            ),
+            oneOz.members.map { it.numistaTypeId },
+        )
+        assertEquals(listOf(103_629), oneOz.members.single { it.year == 2001 }.numistaIssueIds)
+        assertEquals(listOf(103_630), oneOz.members.single { it.year == 2002 }.numistaIssueIds)
+
+        assertEquals((2016..2026).toList(), thirtyG.members.map { it.year })
+        assertEquals(11, thirtyG.members.size)
+        assertEquals(
+            listOf(
+                80_896, 97_619, 127_720, 154_933, 183_654, 252_620, 311_723, 349_619,
+                390_608, 439_242, 531_574,
+            ),
+            thirtyG.members.map { it.numistaTypeId },
+        )
+        assertEquals(listOf(1_029_431), thirtyG.members.single { it.year == 2026 }.numistaIssueIds)
+
+        // Early metric and gold lookalikes stay out of both plates.
+        val excluded = listOf(19_602, 36_343, 19_637, 32_134, 17_600, 58_472, 17_689)
+        assertTrue(catalogs.none { catalog -> catalog.members.any { it.numistaTypeId in excluded } })
     }
 
     @Test
