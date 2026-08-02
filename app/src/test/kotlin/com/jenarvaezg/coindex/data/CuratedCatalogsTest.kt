@@ -493,33 +493,59 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * La casilla de 2009 la ocupó durante días **N#426539**, un vigésimo de onza de oro del estuche
-     * del vigésimo aniversario: la clave del catálogo manda sobre la variante de sus miembros
-     * (ADR 0016), así que la lámina lo pintaba como la onza de plata de 2009 y nadie lo veía.
-     *
-     * La de verdad es **N#17382**, y lo que lo prueba no es el título —Numista lo llama «Silver
-     * Set»— sino su reverso: «THE AUSTRALIAN KOOKABURRA · P20 · DB · 1 OZ 999 SILVER 2009», con las
-     * iniciales de Darryl Bellotti, que es quien firmó el diseño propio de 2009, y la marca P20 del
-     * aniversario. Las otras veinte del estuche llevan diseños de años anteriores re-acuñados.
-     *
-     * Y **2005 no es un hueco**: N#20658 es un tipo de 2004-2005, así que ese año vive en la casilla
-     * de 2004 y la serie no tiene agujero.
+     * Esta lámina es la emisión BU anual oficial de una onza, sin privy opcional. Las marcas que
+     * forman parte de la emisión anual —P100, P20, P125 y 35th Anniversary— sí pertenecen a ella.
+     * Quedan fuera privies opcionales, color, dorado, high relief, proof o piezas exclusivas de
+     * estuche, y mules. El tipo y la issue se fijan juntos porque varias de esas variantes comparten
+     * tipo o año; 2005 es su propia casilla anual y no una extensión de la de 2004.
      */
     @Test
-    fun `the kookaburra 2009 slot is the p20 silver ounce and not the gold set`() {
+    fun `the kookaburra catalog is the issue-qualified standard annual bullion run`() {
         val kookaburra = find("australian-kookaburra-perth-1oz")
+        assertEquals("Australian Kookaburra · Perth Mint · 1 oz de plata bullion anual estándar", kookaburra.name)
         assertEquals(1_000, kookaburra.weightMillioz)
-        assertEquals(36, kookaburra.members.size)
-        assertEquals(17_382, kookaburra.members.single { it.year == 2009 }.numistaTypeId)
-        assertEquals(20_658, kookaburra.members.single { it.year == 2004 }.numistaTypeId)
-        assertTrue(kookaburra.members.none { it.year == 2005 })
-        // El estuche de oro de 2009, veinte vigésimos de onza: ninguno es casilla de esta lámina.
-        val goldSet = listOf(
-            426_539, 458_300, 458_463, 458_703, 458_905, 459_012, 459_137, 459_344, 459_536,
-            460_076, 460_908, 461_129, 462_061, 462_390, 462_552, 462_805, 462_940, 463_069,
-            463_187, 463_319,
+        assertEquals(Finish.Bullion, kookaburra.finish)
+        assertEquals(Metal.Silver, kookaburra.metal)
+        assertEquals((1990..2026).toList(), kookaburra.members.map { it.year })
+        assertEquals(
+            listOf(
+                Triple(1990, 20_585, 109_614), Triple(1991, 22_330, 119_246),
+                Triple(1992, 20_600, 109_738), Triple(1993, 20_601, 109_741),
+                Triple(1994, 17_335, 361_408), Triple(1995, 17_336, 87_409),
+                Triple(1996, 10_841, 60_606), Triple(1997, 17_339, 135_829),
+                Triple(1998, 17_340, 87_415), Triple(1999, 17_342, 87_417),
+                Triple(2000, 17_343, 87_418), Triple(2001, 17_357, 87_504),
+                Triple(2002, 20_627, 109_808), Triple(2003, 15_415, 372_871),
+                Triple(2004, 57_179, 225_111), Triple(2005, 20_658, 630_201),
+                Triple(2006, 74_351, 261_827), Triple(2007, 191_855, 478_174),
+                Triple(2008, 29_124, 146_935), Triple(2009, 17_382, 367_420),
+                Triple(2010, 17_387, 87_569), Triple(2011, 26_066, 136_475),
+                Triple(2012, 26_278, 137_729), Triple(2013, 42_224, 183_132),
+                Triple(2014, 49_184, 205_638), Triple(2015, 65_421, 243_827),
+                Triple(2016, 80_390, 275_276), Triple(2017, 95_694, 312_279),
+                Triple(2018, 124_796, 366_016), Triple(2019, 161_560, 734_242),
+                Triple(2020, 183_220, 464_715), Triple(2021, 242_195, 587_493),
+                Triple(2022, 308_142, 691_355), Triple(2023, 349_979, 760_315),
+                Triple(2024, 395_644, 835_712), Triple(2025, 451_849, 923_574),
+                Triple(2026, 552_773, 1_055_814),
+            ),
+            kookaburra.members.map { member ->
+                Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
+            },
         )
-        assertTrue(kookaburra.members.none { it.numistaTypeId in goldSet })
+        assertEquals(20_658, kookaburra.members.single { it.year == 2005 }.numistaTypeId)
+
+        // Tipos antes asignados por error a las casillas anuales de 1991 y 1998.
+        val displacedTypes = listOf(571_411, 313_416)
+        assertTrue(kookaburra.members.none { it.numistaTypeId in displacedTypes })
+
+        // El estuche de oro P20: veinte vigésimos de onza, no la onza anual de plata.
+        val goldSetTypes = listOf(
+            426_539, 458_300, 458_463, 458_703, 458_905, 459_012, 459_137, 459_344,
+            459_536, 460_076, 460_908, 461_129, 462_061, 462_390, 462_552, 462_805,
+            462_940, 463_069, 463_187, 463_319,
+        )
+        assertTrue(kookaburra.members.none { it.numistaTypeId in goldSetTypes })
     }
 
     /**

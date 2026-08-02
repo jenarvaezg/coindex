@@ -13610,6 +13610,159 @@
   },
   "weight": 31.635
  },
+ "17343": {
+  "id": 17343,
+  "url": "https://es.numista.com/17343",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 1999,
+  "max_year": 2000,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "ELIZABETH II \r\nAUSTRALIA\r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/8605-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/8605-180.jpg"
+  },
+  "reverse": {
+   "description": "Cucaburra mirando hacia la izquierda, sentada en una rama casi horizontal con 18 hojas a la izquierda. Si hay una marca privada, aparece justo encima de la fecha del año.",
+   "lettering": "THE AUSTRALIAN KOOKABURRA 1 oz. 999 SILVER\r\n· 2000 ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/8606-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/8606-180.jpg"
+  },
+  "series": "Australian Kookaburra",
+  "commemorated_topic": "Cucaburra",
+  "related_types": [
+   {
+    "id": 609,
+    "title": "¼ Dollar \"Washington Quarter\" (Massachusetts)",
+    "category": "coin",
+    "country": {
+     "code": "etats-unis",
+     "name": "Estados Unidos"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   },
+   {
+    "id": 610,
+    "title": "¼ Dollar \"Washington Quarter\" (Maryland)",
+    "category": "coin",
+    "country": {
+     "code": "etats-unis",
+     "name": "Estados Unidos"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   },
+   {
+    "id": 611,
+    "title": "¼ Dollar \"Washington Quarter\" (South Carolina)",
+    "category": "coin",
+    "country": {
+     "code": "etats-unis",
+     "name": "Estados Unidos"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   },
+   {
+    "id": 612,
+    "title": "¼ Dollar \"Washington Quarter\" (New Hampshire)",
+    "category": "coin",
+    "country": {
+     "code": "etats-unis",
+     "name": "Estados Unidos"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   },
+   {
+    "id": 613,
+    "title": "¼ Dollar \"Washington Quarter\" (Virginia)",
+    "category": "coin",
+    "country": {
+     "code": "etats-unis",
+     "name": "Estados Unidos"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "416"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "17357": {
   "category": "coin",
   "commemorated_topic": "Cucaburra",
@@ -20044,6 +20197,121 @@
   },
   "weight": 31.135
  },
+ "20601": {
+  "id": 20601,
+  "url": "https://es.numista.com/20601",
+  "title": "1 Dollar - Elizabeth II (3rd Portrait - Australian Kookaburra)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 1992,
+  "max_year": 1993,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "3er retrato de la Reina Isabel II mirando hacia la derecha llevando la Diadema de Estado del Rey Jorge IV",
+   "lettering": "ELIZABETH II \r\nAUSTRALIA\r\n1 DOLLAR\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/67b06c860e1606.49611816-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/67b06c860e1606.49611816-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Alex Lumsden",
+    "John Bergdahl"
+   ],
+   "description": "Representa a una madre cucaburra que regresa a su nido con una lagartija para alimentar a sus hambrientos polluelos.\r\nalimentar a sus hambrientos polluelos.",
+   "lettering": "THE AUSTRALIAN KOOKABURRA 1 OZ. 999 SILVER\r\n· 1993 ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/67b06c8686acc1.82150378-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/67b06c8686acc1.82150378-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Australian Kookaburra",
+  "commemorated_topic": "Cucaburra",
+  "tags": [
+   "Ave",
+   "Reptil"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "209"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/australie/698dae6248bce7.75745867-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/698dae6248bce7.75745867-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "20627": {
   "category": "coin",
   "commemorated_topic": "Cucaburra",
@@ -21575,6 +21843,318 @@
    "text": "1000 escudos"
   },
   "weight": 28
+ },
+ "22330": {
+  "id": 22330,
+  "url": "https://es.numista.com/22330",
+  "title": "5 Dollars - Elizabeth II (3rd Portrait - Australian Kookaburra)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 1990,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "3er retrato de la Reina Isabel II mirando hacia la derecha llevando la Diadema de Estado del Rey Jorge IV",
+   "lettering": "ELIZABETH II \r\nAUSTRALIA\r\n5 DOLLARS\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/64d11840deeb72.63012060-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/64d11840deeb72.63012060-180.jpg",
+   "picture_copyright": "zeppelin",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Stuart Devlin"
+   ],
+   "description": "Cucaburra sentada en la rama de un árbol",
+   "lettering": "THE AUSTRALIAN KOOKABURRA \r\n1 OZ. 999 SILVER  1991",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/64d11841632e79.17176030-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/64d11841632e79.17176030-180.jpg",
+   "picture_copyright": "zeppelin",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "series": "Australian Kookaburra",
+  "commemorated_topic": "Cucaburra",
+  "related_types": [
+   {
+    "id": 20600,
+    "title": "1 Dollar - Elizabeth II (3rd Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 20601,
+    "title": "1 Dollar - Elizabeth II (3rd Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 1992,
+    "maxYear": 1993
+   },
+   {
+    "id": 17357,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2000,
+    "maxYear": 2001
+   },
+   {
+    "id": 15415,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2002,
+    "maxYear": 2004
+   },
+   {
+    "id": 57179,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2003,
+    "maxYear": 2004
+   },
+   {
+    "id": 74351,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   },
+   {
+    "id": 20661,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra. Gilded Edition)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   },
+   {
+    "id": 17382,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra - Silver Set)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   },
+   {
+    "id": 17387,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 26066,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 26278,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2012,
+    "maxYear": 2012
+   },
+   {
+    "id": 42224,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 49184,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   },
+   {
+    "id": 65421,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 80390,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 95694,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2017,
+    "maxYear": 2017
+   },
+   {
+    "id": 124796,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2018,
+    "maxYear": 2018
+   },
+   {
+    "id": 20585,
+    "title": "5 Dollars - Elizabeth II (3rd Portrait - Australian Kookaburra)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 1990,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Ave"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "138"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/australie/5e6e36aeb3c5f7.84531766-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/5e6e36aeb3c5f7.84531766-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "22502": {
   "category": "coin",
@@ -34434,101 +35014,6 @@
    "text": "3 Roubles"
   },
   "weight": 34.88
- },
- "313416": {
-  "category": "coin",
-  "commemorated_topic": "Cucaburra",
-  "composition": {
-   "text": "Plata 999"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "Reed",
-   "picture": "https://en.numista.com/catalogue/photos/australie/61b137508996a1.40671105-original.jpg",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/61b137508996a1.40671105-180.jpg"
-  },
-  "id": 313416,
-  "issuer": {
-   "code": "australie",
-   "name": "Australia"
-  },
-  "max_year": 1998,
-  "min_year": 1998,
-  "mints": [
-   {
-    "id": 21,
-    "name": "Casa de la Moneda de Perth"
-   }
-  ],
-  "object_type": {
-   "id": 3,
-   "name": "Monedas no circulantes"
-  },
-  "obverse": {
-   "description": "3er retrato de la Reina Isabel II mirando hacia la derecha llevando la Diadema de Estado del Rey Jorge IV",
-   "designers": [
-    "Raphael David Maklouf"
-   ],
-   "lettering": "ELIZABETH II \r\nAUSTRALIA\r\n1 DOLLAR\r\nRDM",
-   "lettering_scripts": [
-    {
-     "name": "Latina"
-    }
-   ],
-   "picture": "https://en.numista.com/catalogue/photos/australie/61b1a4f75bb595.25116047-original.jpg",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/61b1a4f75bb595.25116047-180.jpg"
-  },
-  "orientation": "medal",
-  "reverse": {
-   "description": "Cucaburras adultas y polluelos en la rama izquierda.",
-   "designers": [
-    "Louise Pinder"
-   ],
-   "lettering": "THE AUSTRALIAN KOOKABURRA \r\n1 OZ. 999 SILVER    LP   P  1998",
-   "lettering_scripts": [
-    {
-     "name": "Latina"
-    }
-   ],
-   "picture": "https://en.numista.com/catalogue/photos/australie/61b1a4f82429f7.65990241-original.jpg",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/61b1a4f82429f7.65990241-180.jpg"
-  },
-  "ruler": [
-   {
-    "group": {
-     "id": 825,
-     "name": "Casa de Windsor"
-    },
-    "id": 1783,
-    "name": "Isabel II",
-    "wikidata_id": "Q9682"
-   }
-  ],
-  "series": "Australian Kookaburra",
-  "shape": "Circular",
-  "size": 40.6,
-  "tags": [
-   "Ave"
-  ],
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "thickness": 4,
-  "title": "1 Dollar - Elizabeth II (3rd Portrait - Australian Kookaburra)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/313416",
-  "value": {
-   "currency": {
-    "full_name": "Dólar (1966-presente)",
-    "id": 243,
-    "name": "Dólar"
-   },
-   "numeric_value": 1,
-   "text": "1 Dollar"
-  },
-  "weight": 31.1035
  },
  "31343": {
   "category": "coin",
@@ -60893,117 +61378,6 @@
    "text": "10 euros"
   },
   "weight": 27
- },
- "571411": {
-  "category": "coin",
-  "commemorated_topic": "Cucaburra",
-  "comments": "(en) <p><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://en.numista.com/20600\">https://en.numista.com/20600</a><br>1992 BU version has $1 denomination and no ‘P’ mint mark</p>",
-  "composition": {
-   "text": "Plata 999"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "Reed"
-  },
-  "id": 571411,
-  "issue_terms": {
-   "is_issued": true,
-   "issue_date": "1991-00-00"
-  },
-  "issuer": {
-   "code": "australie",
-   "name": "Australia"
-  },
-  "max_year": 1991,
-  "min_year": 1991,
-  "mints": [
-   {
-    "id": 21,
-    "name": "Casa de la Moneda de Perth"
-   }
-  ],
-  "object_type": {
-   "id": 3,
-   "name": "Monedas no circulantes"
-  },
-  "obverse": {
-   "description": "3er retrato de la Reina Isabel II mirando hacia la derecha llevando la Diadema de Estado del Rey Jorge IV",
-   "designers": [
-    "Raphael David Maklouf"
-   ],
-   "lettering": "ELIZABETH II\r\nAUSTRALIA\r\nRDM\r\n5 DOLLARS",
-   "lettering_scripts": [
-    {
-     "name": "Latina"
-    }
-   ],
-   "picture": "https://en.numista.com/catalogue/photos/australie/69df79fb3adc20.44712551-original.jpg",
-   "picture_copyright": "ivboro",
-   "picture_license_name": "CC BY-NC-SA",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/69df79fb3adc20.44712551-180.jpg"
-  },
-  "orientation": "medal",
-  "references": [
-   {
-    "catalogue": {
-     "code": "KM",
-     "id": 3
-    },
-    "number": "164"
-   }
-  ],
-  "reverse": {
-   "description": "Cucaburra posada en la rama de un árbol.",
-   "lettering": "THE AUSTRALIAN KOOKABURRA 1 OZ. 999 SILVER\r\nP\r\n· 1991 ·",
-   "lettering_scripts": [
-    {
-     "name": "Latina"
-    }
-   ],
-   "picture": "https://en.numista.com/catalogue/photos/australie/69df79fbccaba9.30523034-original.jpg",
-   "picture_copyright": "ivboro",
-   "picture_license_name": "CC BY-NC-SA",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/69df79fbccaba9.30523034-180.jpg"
-  },
-  "ruler": [
-   {
-    "group": {
-     "id": 825,
-     "name": "Casa de Windsor"
-    },
-    "id": 1783,
-    "name": "Isabel II",
-    "wikidata_id": "Q9682"
-   }
-  ],
-  "series": "Australian Kookaburra",
-  "shape": "Circular",
-  "size": 40.6,
-  "tags": [
-   "Ave",
-   "Árbol"
-  ],
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "thickness": 4,
-  "title": "5 Dollars - Elizabeth II (3rd Portrait - Australian Kookaburra)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/571411",
-  "value": {
-   "currency": {
-    "full_name": "Dólar (1966-presente)",
-    "id": 243,
-    "name": "Dólar"
-   },
-   "numeric_value": 5,
-   "text": "5 Dollars"
-  },
-  "weight": 31.135
  },
  "571460": {
   "category": "coin",
