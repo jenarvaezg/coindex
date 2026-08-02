@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
  * For an `issued` member, `schema_version` 1 identifies it by a unique Numista type, optionally
  * refined with one or more Numista issues when a type page covers several physical variants.
  * `schema_version` 2 is a date run (ADR 0009): issued members repeat one type across years, and
- * a member is owned only when the piece also records that year. `schema_version` 3 is a set
+ * a member is owned only when the piece also records that year. It may refine that year with
+ * `numista_issue_ids` when the type page mixes finishes (ADR 0019). `schema_version` 3 is a set
  * issued as a set (ADR 0012): its members span physical variants, so it declares no weight, no
  * finish and no metal, and its key carries an absent weight.
  * `schema_version` 5 identifies members by Numista issue (ADR 0014), for the types whose
@@ -177,10 +178,10 @@ data class CollectionCatalog(
                 return CollectionCatalogValidationError.BlankVariantNote(member.id)
             }
             validateMemberStatus(member)?.let { return it }
-            // Schema 1 may refine an issued type with issues. Schema 5 requires that refinement;
-            // its members would otherwise be indistinguishable. Other schemas and non-issued
-            // members retain their established identities.
-            val issuesAllowed = member.isIssued && (schemaVersion == 1 || isIssueRun)
+            // Schema 1 and date runs may refine an issued type with issues. Schema 5 requires
+            // that refinement; its members would otherwise be indistinguishable. Sets and
+            // non-issued members retain their established identities.
+            val issuesAllowed = member.isIssued && (schemaVersion == 1 || isDateRun || isIssueRun)
             if (isIssueRun && member.isIssued && member.numistaIssueIds.isEmpty()) {
                 return CollectionCatalogValidationError.MemberWithoutIssue(member.id)
             }
@@ -277,12 +278,13 @@ data class CollectionCatalogMember(
     /** Required only when issued (see [MemberStatus]). */
     @SerialName("numista_type_id") val numistaTypeId: Int? = null,
     /**
-     * The Numista issues this member stands for: optional in schema 1 and required in an issue
-     * run (ADR 0014).
+     * The Numista issues this member stands for: optional in schema 1 and in a date run, and
+     * required in an issue run (ADR 0014, ADR 0019).
      *
      * A list rather than one id because a slot can hold several varieties of the same issue and
      * the collector counts them as one: the 1969 star of the 100 pesetas exists with a curved
-     * and a straight nine, and owning either fills the 1969.
+     * and a straight nine, and owning either fills the 1969. On a date run the list keeps a
+     * proof or burnished row of the same type and year from filling the bullion slot.
      */
     @SerialName("numista_issue_ids") val numistaIssueIds: List<Int> = emptyList(),
     /** Issued unless the file says otherwise, so no shipped catalog had to be touched (#31). */

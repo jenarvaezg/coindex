@@ -1,0 +1,418 @@
+{
+  "schema_version": 2,
+  "id": "us-american-silver-eagle-1oz-bullion",
+  "name": "American Silver Eagle · EE. UU. · 1 oz bullion anual (Type 1 1986-2021 y Type 2 desde 2021; sin proof, burnished ni privy)",
+  "issuer_code": "etats-unis",
+  "family": "American Silver Eagle bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces1493.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1986",
+      "label": "American Silver Eagle",
+      "year": 1986,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        63701
+      ]
+    },
+    {
+      "id": "1987",
+      "label": "American Silver Eagle",
+      "year": 1987,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64283
+      ]
+    },
+    {
+      "id": "1988",
+      "label": "American Silver Eagle",
+      "year": 1988,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64285,
+        921073
+      ]
+    },
+    {
+      "id": "1989",
+      "label": "American Silver Eagle",
+      "year": 1989,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64287,
+        921074
+      ]
+    },
+    {
+      "id": "1990",
+      "label": "American Silver Eagle",
+      "year": 1990,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64289,
+        921075
+      ]
+    },
+    {
+      "id": "1991",
+      "label": "American Silver Eagle",
+      "year": 1991,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        63275,
+        921076
+      ]
+    },
+    {
+      "id": "1992",
+      "label": "American Silver Eagle",
+      "year": 1992,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        63700,
+        921077
+      ]
+    },
+    {
+      "id": "1993",
+      "label": "American Silver Eagle",
+      "year": 1993,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64293,
+        921078
+      ]
+    },
+    {
+      "id": "1994",
+      "label": "American Silver Eagle",
+      "year": 1994,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        63699,
+        921079
+      ]
+    },
+    {
+      "id": "1995",
+      "label": "American Silver Eagle",
+      "year": 1995,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        41679,
+        921357
+      ]
+    },
+    {
+      "id": "1996",
+      "label": "American Silver Eagle",
+      "year": 1996,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64298,
+        921358
+      ]
+    },
+    {
+      "id": "1997",
+      "label": "American Silver Eagle",
+      "year": 1997,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64300,
+        921359
+      ]
+    },
+    {
+      "id": "1998",
+      "label": "American Silver Eagle",
+      "year": 1998,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64302,
+        921361
+      ]
+    },
+    {
+      "id": "1999",
+      "label": "American Silver Eagle",
+      "year": 1999,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        51687
+      ]
+    },
+    {
+      "id": "2000",
+      "label": "American Silver Eagle",
+      "year": 2000,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        64303
+      ]
+    },
+    {
+      "id": "2001",
+      "label": "American Silver Eagle",
+      "year": 2001,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        74511
+      ]
+    },
+    {
+      "id": "2002",
+      "label": "American Silver Eagle",
+      "year": 2002,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        51684
+      ]
+    },
+    {
+      "id": "2003",
+      "label": "American Silver Eagle",
+      "year": 2003,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        74513
+      ]
+    },
+    {
+      "id": "2004",
+      "label": "American Silver Eagle",
+      "year": 2004,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        32719
+      ]
+    },
+    {
+      "id": "2005",
+      "label": "American Silver Eagle",
+      "year": 2005,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        32720
+      ]
+    },
+    {
+      "id": "2006",
+      "label": "American Silver Eagle",
+      "year": 2006,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        32721
+      ]
+    },
+    {
+      "id": "2007",
+      "label": "American Silver Eagle",
+      "year": 2007,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        32722
+      ]
+    },
+    {
+      "id": "2008",
+      "label": "American Silver Eagle",
+      "year": 2008,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        32723
+      ]
+    },
+    {
+      "id": "2009",
+      "label": "American Silver Eagle",
+      "year": 2009,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        32724
+      ]
+    },
+    {
+      "id": "2010",
+      "label": "American Silver Eagle",
+      "year": 2010,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        55455
+      ]
+    },
+    {
+      "id": "2011",
+      "label": "American Silver Eagle",
+      "year": 2011,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        93184,
+        921779
+      ]
+    },
+    {
+      "id": "2012",
+      "label": "American Silver Eagle",
+      "year": 2012,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        165936,
+        921770
+      ]
+    },
+    {
+      "id": "2013",
+      "label": "American Silver Eagle",
+      "year": 2013,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        181720,
+        922169
+      ]
+    },
+    {
+      "id": "2014",
+      "label": "American Silver Eagle",
+      "year": 2014,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        220237,
+        922170
+      ]
+    },
+    {
+      "id": "2015",
+      "label": "American Silver Eagle",
+      "year": 2015,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        286252,
+        921772
+      ]
+    },
+    {
+      "id": "2016",
+      "label": "American Silver Eagle",
+      "year": 2016,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        282984,
+        921775,
+        921776
+      ]
+    },
+    {
+      "id": "2017",
+      "label": "American Silver Eagle",
+      "year": 2017,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        319675,
+        921777,
+        921778
+      ]
+    },
+    {
+      "id": "2018",
+      "label": "American Silver Eagle",
+      "year": 2018,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        409274
+      ]
+    },
+    {
+      "id": "2019",
+      "label": "American Silver Eagle",
+      "year": 2019,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        420921
+      ]
+    },
+    {
+      "id": "2020",
+      "label": "American Silver Eagle",
+      "year": 2020,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        653063,
+        921838,
+        921839
+      ]
+    },
+    {
+      "id": "2021-type-1",
+      "label": "Type 1",
+      "year": 2021,
+      "numista_type_id": 1493,
+      "numista_issue_ids": [
+        621729,
+        828155,
+        921840
+      ]
+    },
+    {
+      "id": "2021-type-2",
+      "label": "Type 2",
+      "year": 2021,
+      "numista_type_id": 298883,
+      "numista_issue_ids": [
+        675329,
+        920993
+      ]
+    },
+    {
+      "id": "2022",
+      "label": "American Silver Eagle",
+      "year": 2022,
+      "numista_type_id": 298883,
+      "numista_issue_ids": [
+        706753
+      ]
+    },
+    {
+      "id": "2023",
+      "label": "American Silver Eagle",
+      "year": 2023,
+      "numista_type_id": 298883,
+      "numista_issue_ids": [
+        760579
+      ]
+    },
+    {
+      "id": "2024",
+      "label": "American Silver Eagle",
+      "year": 2024,
+      "numista_type_id": 298883,
+      "numista_issue_ids": [
+        831696
+      ]
+    },
+    {
+      "id": "2025",
+      "label": "American Silver Eagle",
+      "year": 2025,
+      "numista_type_id": 298883,
+      "numista_issue_ids": [
+        923344
+      ]
+    },
+    {
+      "id": "2026",
+      "label": "American Silver Eagle",
+      "year": 2026,
+      "numista_type_id": 298883,
+      "numista_issue_ids": [
+        1059386
+      ]
+    }
+  ]
+}
