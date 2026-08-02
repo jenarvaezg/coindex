@@ -1,0 +1,99 @@
+{
+  "schema_version": 2,
+  "id": "australia-silver-kangaroo-1oz-bullion",
+  "name": "Australian Kangaroo · Australia · 1 oz bullion anual desde 2016 (sin proof, doradas, coloreadas ni high relief; 2019 partido 4.º/6.º retrato)",
+  "issuer_code": "australie",
+  "family": "Australian Kangaroo bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/series.php?id=1550",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2016-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2016,
+      "numista_type_id": 76663,
+      "numista_issue_ids": [
+        267041
+      ]
+    },
+    {
+      "id": "2017-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2017,
+      "numista_type_id": 76663,
+      "numista_issue_ids": [
+        325758
+      ]
+    },
+    {
+      "id": "2018-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2018,
+      "numista_type_id": 76663,
+      "numista_issue_ids": [
+        368364
+      ]
+    },
+    {
+      "id": "2019-4th-portrait",
+      "label": "4th Portrait",
+      "year": 2019,
+      "numista_type_id": 76663,
+      "numista_issue_ids": [
+        488646
+      ]
+    },
+    {
+      "id": "2019-6th-portrait",
+      "label": "6th Portrait",
+      "year": 2019,
+      "numista_type_id": 153925
+    },
+    {
+      "id": "2020-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2020,
+      "numista_type_id": 153925
+    },
+    {
+      "id": "2021-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2021,
+      "numista_type_id": 153925
+    },
+    {
+      "id": "2022-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2022,
+      "numista_type_id": 153925
+    },
+    {
+      "id": "2023-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2023,
+      "numista_type_id": 359552
+    },
+    {
+      "id": "2024-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2024,
+      "numista_type_id": 404064
+    },
+    {
+      "id": "2025-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2025,
+      "numista_type_id": 404064
+    },
+    {
+      "id": "2026-australian-kangaroo",
+      "label": "Australian Kangaroo",
+      "year": 2026,
+      "numista_type_id": 404064
+    }
+  ]
+}

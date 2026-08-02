@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(40, catalogs.size)
+        assertEquals(41, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los dieciséis
-     * cerrados llevan su nota y los veinticuatro abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los veinticinco abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(16, closed.size)
-        assertEquals(24, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(25, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -469,6 +469,103 @@ class CuratedCatalogsTest {
         assertTrue(maple.memberMatches(maple.members.single { it.year == 2007 }, bullion2007))
         assertTrue(maple.members.none { maple.memberMatches(it, proof1989) })
         assertTrue(maple.members.none { maple.memberMatches(it, incuse2018) })
+    }
+
+    /**
+     * Australian Kangaroo 1 oz .9999 (#98): Perth Mint bullion from the 2016 inaugural year.
+     * Four types cover 2016-2026 (N#76663 / N#153925 / N#359552 / N#404064). N#76663 mixes
+     * «Proof in 4 Coin Set» on 2016-2017, so those years are issue-qualified; the clean later
+     * types are not. 2019 splits like the Eagle of 2021 — 4th and 6th portrait are two slots.
+     * Outside: 2015 forerunner .999 (N#105293), gilded, coloured, high relief and Charles proof.
+     */
+    @Test
+    fun `the australian kangaroo is twelve bullion years over four types with 2019 split`() {
+        val kangaroo = find("australia-silver-kangaroo-1oz-bullion")
+        assertEquals(2, kangaroo.schemaVersion)
+        assertTrue(kangaroo.isDateRun)
+        assertEquals("Australian Kangaroo bullion anual", kangaroo.family)
+        assertEquals(
+            "Australian Kangaroo · Australia · 1 oz bullion anual desde 2016 " +
+                "(sin proof, doradas, coloreadas ni high relief; 2019 partido 4.º/6.º retrato)",
+            kangaroo.name,
+        )
+        assertEquals("australie", kangaroo.issuerCode)
+        assertEquals(1_000, kangaroo.weightMillioz)
+        assertEquals(Finish.Bullion, kangaroo.finish)
+        assertEquals(Metal.Silver, kangaroo.metal)
+        assertEquals(SeriesStatus.Open, kangaroo.seriesStatus)
+        assertNull(kangaroo.closedNote)
+        assertEquals("https://en.numista.com/catalogue/series.php?id=1550", kangaroo.source)
+        assertEquals("2026-08-02", kangaroo.updatedAt)
+        assertEquals(12, kangaroo.members.size)
+        assertEquals(
+            listOf(2016, 2017, 2018, 2019, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026),
+            kangaroo.members.map { it.year },
+        )
+        assertEquals(
+            List(4) { 76_663 } + List(4) { 153_925 } + listOf(359_552) + List(3) { 404_064 },
+            kangaroo.members.map { it.numistaTypeId },
+        )
+        assertEquals(
+            listOf("4th Portrait", "6th Portrait"),
+            kangaroo.members.filter { it.year == 2019 }.map { it.label },
+        )
+        // N#76663 mixes proof-in-set; later types are clean bullion rows.
+        assertTrue(kangaroo.members.filter { it.numistaTypeId == 76_663 }.all { it.numistaIssueIds.isNotEmpty() })
+        assertTrue(kangaroo.members.filter { it.numistaTypeId != 76_663 }.all { it.numistaIssueIds.isEmpty() })
+        assertEquals(listOf(267_041), kangaroo.members.single { it.year == 2016 }.numistaIssueIds)
+        assertEquals(listOf(325_758), kangaroo.members.single { it.year == 2017 }.numistaIssueIds)
+        assertEquals(listOf(368_364), kangaroo.members.single { it.year == 2018 }.numistaIssueIds)
+        assertEquals(
+            listOf(488_646),
+            kangaroo.members.single { it.year == 2019 && it.numistaTypeId == 76_663 }.numistaIssueIds,
+        )
+        assertTrue(kangaroo.members.none { it.numistaTypeId == 105_293 }) // 2015 .999 forerunner
+        assertTrue(kangaroo.members.none { it.numistaTypeId == 168_801 }) // gilded
+        assertTrue(kangaroo.members.none { it.numistaTypeId == 393_476 }) // Charles proof
+
+        val bullion2016 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 76_663,
+            issueYear = 2016,
+            issueId = 267_041,
+        )
+        val proofInSet2016 = CollectedItem(
+            id = 2,
+            quantity = 1,
+            typeId = 76_663,
+            issueYear = 2016,
+            issueId = 1_012_796,
+        )
+        val portrait4th2019 = CollectedItem(
+            id = 3,
+            quantity = 1,
+            typeId = 76_663,
+            issueYear = 2019,
+            issueId = 488_646,
+        )
+        val portrait6th2019 = CollectedItem(
+            id = 4,
+            quantity = 1,
+            typeId = 153_925,
+            issueYear = 2019,
+            issueId = null,
+        )
+        assertTrue(kangaroo.memberMatches(kangaroo.members.single { it.year == 2016 }, bullion2016))
+        assertTrue(kangaroo.members.none { kangaroo.memberMatches(it, proofInSet2016) })
+        assertTrue(
+            kangaroo.memberMatches(
+                kangaroo.members.single { it.year == 2019 && it.numistaTypeId == 76_663 },
+                portrait4th2019,
+            ),
+        )
+        assertTrue(
+            kangaroo.memberMatches(
+                kangaroo.members.single { it.year == 2019 && it.numistaTypeId == 153_925 },
+                portrait6th2019,
+            ),
+        )
     }
 
     /**
