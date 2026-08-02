@@ -12,7 +12,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * El cruce de #40 sobre lo que de verdad se publica: los treinta catálogos contra las 723 fichas
+ * El cruce de #40 sobre lo que de verdad se publica: los treinta y un catálogos contra las 728 fichas
  * de la caché sembrada.
  *
  * Es la red que faltaba cuando un vigésimo de onza de **oro** vivió meses dentro del catálogo del
@@ -50,7 +50,7 @@ class CatalogMetalTest {
     @Test
     fun `every catalog that is not a set declares silver today`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(30, declared.size)
+        assertEquals(31, declared.size)
         assertEquals(emptyList(), declared.filterNot { (_, metal) -> metal == Metal.Silver })
         // El único conjunto no declara variante física de ninguna clase (ADR 0012).
         assertEquals(listOf(null), catalogs.filter { it.isSet }.map { it.metal })
