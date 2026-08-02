@@ -1,0 +1,374 @@
+{
+  "schema_version": 2,
+  "id": "canada-silver-maple-leaf-1oz-bullion",
+  "name": "Silver Maple Leaf · Canadá · 1 oz bullion anual desde 1988 (sin proof, reverse proof, incuse, doradas ni aniversario; el privy del mismo tipo rellena el año)",
+  "issuer_code": "canada",
+  "family": "Silver Maple Leaf bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces18655.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1988-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1988,
+      "numista_type_id": 18655,
+      "numista_issue_ids": [
+        106008
+      ]
+    },
+    {
+      "id": "1989-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1989,
+      "numista_type_id": 18655,
+      "numista_issue_ids": [
+        93837
+      ]
+    },
+    {
+      "id": "1990-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1990,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831947
+      ]
+    },
+    {
+      "id": "1991-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1991,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831948
+      ]
+    },
+    {
+      "id": "1992-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1992,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831949
+      ]
+    },
+    {
+      "id": "1993-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1993,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831950
+      ]
+    },
+    {
+      "id": "1994-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1994,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831951
+      ]
+    },
+    {
+      "id": "1995-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1995,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831952
+      ]
+    },
+    {
+      "id": "1996-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1996,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831953
+      ]
+    },
+    {
+      "id": "1997-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1997,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831954
+      ]
+    },
+    {
+      "id": "1998-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1998,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831955,
+        247761,
+        247760,
+        247759,
+        247762
+      ]
+    },
+    {
+      "id": "1999-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 1999,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831956,
+        247763
+      ]
+    },
+    {
+      "id": "2000-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2000,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        814168,
+        247766,
+        247765
+      ]
+    },
+    {
+      "id": "2001-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2001,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831957
+      ]
+    },
+    {
+      "id": "2002-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2002,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831958
+      ]
+    },
+    {
+      "id": "2003-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2003,
+      "numista_type_id": 6735,
+      "numista_issue_ids": [
+        831959
+      ]
+    },
+    {
+      "id": "2004-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2004,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        813991,
+        813990
+      ]
+    },
+    {
+      "id": "2005-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2005,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814007
+      ]
+    },
+    {
+      "id": "2006-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2006,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814012
+      ]
+    },
+    {
+      "id": "2007-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2007,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814014
+      ]
+    },
+    {
+      "id": "2008-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2008,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814017
+      ]
+    },
+    {
+      "id": "2009-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2009,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814021
+      ]
+    },
+    {
+      "id": "2010-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2010,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814026
+      ]
+    },
+    {
+      "id": "2011-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2011,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814028
+      ]
+    },
+    {
+      "id": "2012-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2012,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814030
+      ]
+    },
+    {
+      "id": "2013-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2013,
+      "numista_type_id": 381278,
+      "numista_issue_ids": [
+        814197
+      ]
+    },
+    {
+      "id": "2014-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2014,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        228562
+      ]
+    },
+    {
+      "id": "2015-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2015,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        251079
+      ]
+    },
+    {
+      "id": "2016-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2016,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        278730
+      ]
+    },
+    {
+      "id": "2017-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2017,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        317516
+      ]
+    },
+    {
+      "id": "2018-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2018,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        379727
+      ]
+    },
+    {
+      "id": "2019-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2019,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        421370
+      ]
+    },
+    {
+      "id": "2020-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2020,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        476209
+      ]
+    },
+    {
+      "id": "2021-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2021,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        610680
+      ]
+    },
+    {
+      "id": "2022-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2022,
+      "numista_type_id": 58596,
+      "numista_issue_ids": [
+        700688
+      ]
+    },
+    {
+      "id": "2023-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2023,
+      "numista_type_id": 356135,
+      "numista_issue_ids": [
+        771621
+      ]
+    },
+    {
+      "id": "2024-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2024,
+      "numista_type_id": 401696,
+      "numista_issue_ids": [
+        844201
+      ]
+    },
+    {
+      "id": "2025-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2025,
+      "numista_type_id": 401696,
+      "numista_issue_ids": [
+        902990
+      ]
+    },
+    {
+      "id": "2026-silver-maple-leaf",
+      "label": "Silver Maple Leaf",
+      "year": 2026,
+      "numista_type_id": 401696,
+      "numista_issue_ids": [
+        1053204
+      ]
+    }
+  ]
+}
