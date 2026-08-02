@@ -315,7 +315,7 @@ class CuratedCatalogsTest {
     }
 
     @Test
-    fun `the five visible slots distinguish unlisted and announced coins`() {
+    fun `the six visible slots distinguish issued unlisted and announced coins`() {
         val tesla = find("nikola-tesla-serbia-1oz")
         val energyMedicine = tesla.members.single { it.year == 2026 }
         assertTrue(energyMedicine.isUnlisted)
@@ -334,6 +334,34 @@ class CuratedCatalogsTest {
         val mirozhsky = monuments.members.single { it.year == 2026 }
         assertTrue(mirozhsky.isAnnounced)
         assertEquals("Holy Transfiguration Mirozhsky Monastery in Pskov", mirozhsky.label)
+
+        val rwanda = find("rwanda-lunar-50-francs")
+        val snake = rwanda.members.single { it.year == 2025 }
+        assertEquals("Year of the Snake", snake.label)
+        assertEquals(448_800, snake.numistaTypeId)
+    }
+
+    @Test
+    fun `a numista subseries still fills the curated rwanda lunar catalog`() {
+        val rwanda = find("rwanda-lunar-50-francs")
+        val snake = CollectedItem(id = 1, quantity = 1, typeId = 448_800)
+        val metadata = TypeMeta(
+            id = 448_800,
+            title = "50 Francs (Year of the Snake)",
+            family = "Lunar ounce - Year of the Snake",
+            issuerCode = "rwanda",
+            minYear = 2025,
+            maxYear = 2025,
+            weightOz = 1.0,
+            metal = Metal.Silver,
+        )
+
+        val derivation = deriveCollection(listOf(snake), mapOf(metadata.id to metadata), catalogs)
+
+        assertEquals(listOf(rwanda.key()), derivation.proposals.map { it.key() })
+        assertEquals(listOf(snake), derivation.itemsByKey[rwanda.key()])
+        assertTrue(derivation.unclassified.isEmpty())
+        assertEquals(1, buildCollectionCatalogAlbum(rwanda, listOf(snake)).ownedMembers())
     }
 
     /**

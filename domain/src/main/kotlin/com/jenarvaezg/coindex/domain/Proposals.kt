@@ -37,8 +37,8 @@ data class CollectionDerivation(
  * every piece that could not be grouped.
  *
  * Only pieces currently owned participate. Families resolve in strict order of how specific
- * the claim is (ADR 0012, ADR 0013): a set catalog naming the exact types issued together,
- * then the real Numista family, then a catalog that lists the type (ADR 0009), then a curated
+ * the claim is: a set catalog naming the exact types issued together, then a collection catalog
+ * that claims the piece, then the real Numista family, then a curated
  * grouping that merely says these types belong together, then Numista's technical monetary
  * system. Only a type that none of them names stays unclassified.
  */
@@ -56,9 +56,9 @@ fun deriveCollection(
         }
     }
     /**
-     * A catalog that is not a set is authoritative about the physical variant of its own
-     * members: it declares exactly one weight and one finish, verified by hand, so Numista's
-     * per-type gram value does not get to split them.
+     * A catalog that is not a set is authoritative about the complete proposal key of the types
+     * it claims: family, weight, finish and metal are verified by hand, so Numista's per-type
+     * family or gram value does not get to split them.
      *
      * Snapping alone cannot do this. The nineteen 1000 escudos of Portugal are one coin whose
      * weight Numista records as 27, 28 and 28.2 grams — 868, 900 and 907 milli-ounces, a spread
@@ -124,6 +124,7 @@ fun deriveCollection(
         }
         val curatedFamily = catalog?.family ?: groupingFamilies[item.typeId]
         val family = when {
+            catalog != null -> catalog.family
             numistaFamily == null -> curatedFamily
             isTechnicalFamily(numistaFamily) -> curatedFamily ?: numistaFamily
             else -> numistaFamily
@@ -132,8 +133,8 @@ fun deriveCollection(
             unclassified += UnclassifiedItem(item, UnclassifiedReason.NoFamilyOrCatalog)
             continue
         }
-        // Its own catalog names the variant, so no weight has to be inferred at all.
-        if (catalog != null && catalog.family == family) {
+        // Its own catalog names the family and variant, so neither has to be inferred.
+        if (catalog != null) {
             grouped.record(catalog.key(), item)
             continue
         }
