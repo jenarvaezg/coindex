@@ -86,6 +86,12 @@ It **declares** that variant rather than inferring it: for the types it names, i
 and finish are the key, whatever grams Numista records for each one (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
+**Issue-qualified member**:
+A collection-catalog member whose `numista_issue_ids` narrow a Numista type to the exact
+physical issues the catalog claims. The qualifier is optional in a simple catalog and
+exhaustive in an issue run; an unlisted issue belongs to neither by fallback nor precedence.
+_Avoid_: Issue run, date run, type-wide member
+
 **Unlisted member**:
 A collection-catalog member for a coin that was struck and sold but has no published Numista
 type. Its slot is not measurable from the Numista-backed inventory, so an Album marks it neither

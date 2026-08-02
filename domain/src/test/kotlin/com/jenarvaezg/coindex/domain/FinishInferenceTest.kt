@@ -2,7 +2,9 @@ package com.jenarvaezg.coindex.domain
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class FinishInferenceTest {
     @Test
@@ -189,6 +191,60 @@ class CatalogSeedsTest {
         }.exceptionOrNull()
 
         assertEquals(true, error!!.message!!.contains("is duplicated"))
+    }
+
+    @Test
+    fun `shared types across catalogs require disjoint issue-qualified identities`() {
+        fun seed(id: String, issueIds: String?) = """
+            {
+              "schema_version": 1,
+              "id": "$id",
+              "name": "$id",
+              "issuer_code": "australia",
+              "family": "$id",
+              "weight_millioz": 1000,
+              "metal": "silver",
+              "series_status": "open",
+              "source": "https://en.numista.com/catalogue/series.php?id=4750",
+              "updated_at": "2026-08-02",
+              "members": [{
+                "id": "2020-rat",
+                "label": "Rat",
+                "year": 2020,
+                "numista_type_id": 400000${issueIds?.let { ",\n                \"numista_issue_ids\": $it" } ?: ""}
+              }]
+            }
+        """.trimIndent()
+
+        assertEquals(
+            2,
+            CatalogSeeds.parseAll(
+                listOf(
+                    "one.json" to seed("lunar-one", "[70001]"),
+                    "half.json" to seed("lunar-half", "[70002]"),
+                ),
+            ).size,
+        )
+
+        val unqualified = assertFailsWith<CatalogSeedException> {
+            CatalogSeeds.parseAll(
+                listOf(
+                    "one.json" to seed("lunar-one", "[70001]"),
+                    "half.json" to seed("lunar-half", null),
+                ),
+            )
+        }
+        assertTrue(unqualified.message!!.contains("type `400000`"))
+
+        val overlap = assertFailsWith<CatalogSeedException> {
+            CatalogSeeds.parseAll(
+                listOf(
+                    "one.json" to seed("lunar-one", "[70001, 70002]"),
+                    "half.json" to seed("lunar-half", "[70002]"),
+                ),
+            )
+        }
+        assertTrue(overlap.message!!.contains("issue `70002`"))
     }
 
     @Test

@@ -5,8 +5,12 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Finish
+import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.UnclassifiedReason
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.deriveCollection
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -26,13 +30,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(30, catalogs.size)
+        assertEquals(31, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los quince
-     * cerrados llevan su nota y los quince abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los dieciséis abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -41,7 +45,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(15, closed.size)
-        assertEquals(15, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(16, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -362,12 +366,100 @@ class CuratedCatalogsTest {
             listOf(179_438, 235_118, 307_024, 342_221, 386_213, 441_816, 483_798),
             lunar.members.map { it.numistaTypeId },
         )
+        assertEquals(
+            listOf(
+                listOf(459_056, 698_372),
+                listOf(582_780),
+                listOf(698_366, 698_365),
+                listOf(747_609),
+                listOf(841_265),
+                listOf(923_283),
+                listOf(979_731),
+            ),
+            lunar.members.map { it.numistaIssueIds },
+        )
         // La línea de la Royal Australian Mint: misma serie en Numista, otra moneda.
         val royalAustralianMint =
             listOf(219_663, 266_550, 309_870, 355_589, 406_506, 444_584, 529_884)
         assertTrue(lunar.members.none { it.numistaTypeId in royalAustralianMint })
         // El cerdo de 2019 cierra Lunar II; esta empieza en el ratón de 2020.
         assertEquals(2019, find("lunar-ii-perth-1oz-bullion").members.last().year)
+    }
+
+    /**
+     * La proof coloreada repite tres tipos de bullion entre 2021 y 2023. Son ediciones del mismo
+     * tipo de Numista, separadas por emisión: sin esos ids una pieza proof llenaría la casilla de
+     * bullion, o al revés. Las demás también los declaran para no confundirlas con otros acabados
+     * presentes o futuros del mismo tipo.
+     */
+    @Test
+    fun `lunar iii proof coloured is issue qualified from 2020 to 2026`() {
+        val proofColoured = find("lunar-iii-perth-1oz-proof-coloured")
+        assertEquals(1, proofColoured.schemaVersion)
+        assertEquals("Lunar Series III", proofColoured.family)
+        assertEquals(1_000, proofColoured.weightMillioz)
+        assertEquals(Finish.ProofColoured, proofColoured.finish)
+        assertEquals(Metal.Silver, proofColoured.metal)
+        assertEquals(SeriesStatus.Open, proofColoured.seriesStatus)
+        assertEquals((2020..2026).toList(), proofColoured.members.map { it.year })
+        assertEquals(
+            listOf(185_343, 235_118, 307_024, 342_221, 394_043, 576_294, 507_204),
+            proofColoured.members.map { it.numistaTypeId },
+        )
+        assertEquals(
+            listOf(
+                listOf(467_674),
+                listOf(585_569, 582_778),
+                listOf(698_367, 700_090),
+                listOf(970_595),
+                listOf(833_480),
+                listOf(1_088_982, 1_091_660),
+                listOf(1_002_105),
+            ),
+            proofColoured.members.map { it.numistaIssueIds },
+        )
+
+        val bullion = find("lunar-iii-perth-1oz-bullion")
+        val bullionPiece = CollectedItem(id = 1, quantity = 1, typeId = 342_221, issueId = 747_609)
+        val proofColouredPiece =
+            CollectedItem(id = 2, quantity = 1, typeId = 342_221, issueId = 970_595)
+        val proofPiece = CollectedItem(id = 3, quantity = 1, typeId = 342_221, issueId = 908_897)
+
+        assertEquals(1, buildCollectionCatalogAlbum(bullion, listOf(bullionPiece)).ownedMembers())
+        assertEquals(0, buildCollectionCatalogAlbum(bullion, listOf(proofColouredPiece)).ownedMembers())
+        assertEquals(0, buildCollectionCatalogAlbum(bullion, listOf(proofPiece)).ownedMembers())
+        assertEquals(
+            1,
+            buildCollectionCatalogAlbum(proofColoured, listOf(proofColouredPiece)).ownedMembers(),
+        )
+        assertEquals(0, buildCollectionCatalogAlbum(proofColoured, listOf(bullionPiece)).ownedMembers())
+        assertEquals(0, buildCollectionCatalogAlbum(proofColoured, listOf(proofPiece)).ownedMembers())
+
+        val metadata = TypeMeta(
+            id = 342_221,
+            title = "1 Dollar - Elizabeth II Australian Lunar Year of the Rabbit",
+            family = "Lunar Series III",
+            issuerCode = "australie",
+            minYear = 2023,
+            maxYear = 2023,
+            weightOz = 1.0,
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+        )
+        val derivation = deriveCollection(
+            listOf(bullionPiece, proofColouredPiece, proofPiece),
+            mapOf(metadata.id to metadata),
+            catalogs,
+        )
+        assertEquals(setOf(bullion.key(), proofColoured.key()), derivation.proposals.map { it.key() }.toSet())
+        assertEquals(listOf(bullionPiece), derivation.itemsByKey[bullion.key()])
+        assertEquals(listOf(proofColouredPiece), derivation.itemsByKey[proofColoured.key()])
+        assertEquals(1, derivation.unclassified.size)
+        assertEquals(proofPiece, derivation.unclassified.single().item)
+        assertEquals(
+            UnclassifiedReason.IssueNotClaimedByCatalog,
+            derivation.unclassified.single().reason,
+        )
     }
 
     /**

@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.domain
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -354,6 +355,101 @@ class CollectionProposalsTest {
             listOf(catalog),
         )
         assertEquals("Familia oficial", proposals[0].family)
+    }
+
+    @Test
+    fun `issue-qualified catalogs route a shared type to the exact member only`() {
+        fun qualifiedCatalog(id: String, family: String, issueId: Int) = teslaCatalogStub().copy(
+            id = id,
+            name = family,
+            family = family,
+            finish = Finish.ProofColoured,
+            members = listOf(
+                CollectionCatalogMember(
+                    id = "2020-rat",
+                    label = "Rat",
+                    year = 2020,
+                    numistaTypeId = 400_000,
+                    numistaIssueIds = listOf(issueId),
+                ),
+            ),
+        )
+        val oneOunce = qualifiedCatalog("lunar-1oz", "Lunar Series III", 70_001)
+        val halfOunce = qualifiedCatalog("lunar-half-oz", "Lunar Series III", 70_002)
+            .copy(weightMillioz = 500)
+        val metadata = mapOf(
+            400_000 to TypeMeta(
+                id = 400_000,
+                family = "Lunar Series III",
+                weightOz = ounces(31.1),
+                finish = Finish.ProofColoured,
+                metal = Metal.Silver,
+            ),
+        )
+        val matched = deriveCollection(
+            listOf(
+                CollectedItem(1, 1, 400_000, issueId = 70_001),
+                CollectedItem(2, 1, 400_000, issueId = 70_002),
+            ),
+            metadata,
+            listOf(oneOunce, halfOunce),
+        )
+
+        assertEquals(setOf(oneOunce.key(), halfOunce.key()), matched.proposals.map { it.key() }.toSet())
+        assertTrue(matched.unclassified.isEmpty())
+
+        val unmatched = deriveCollection(
+            listOf(
+                CollectedItem(3, 1, 400_000, issueId = 70_999),
+                CollectedItem(4, 1, 400_000),
+            ),
+            metadata,
+            listOf(oneOunce, halfOunce),
+        )
+        assertTrue(unmatched.proposals.isEmpty())
+        assertEquals(2, unmatched.unclassified.size)
+        assertTrue(
+            unmatched.unclassified.all {
+                it.reason == UnclassifiedReason.IssueNotClaimedByCatalog
+            },
+        )
+    }
+
+    @Test
+    fun `overlapping catalog matches fail independently of catalog order`() {
+        fun catalog(id: String, weightMillioz: Int) = teslaCatalogStub().copy(
+            id = id,
+            family = "Lunar Series III",
+            weightMillioz = weightMillioz,
+            members = listOf(
+                CollectionCatalogMember(
+                    id = "2020-rat",
+                    label = "Rat",
+                    year = 2020,
+                    numistaTypeId = 400_000,
+                    numistaIssueIds = listOf(70_001),
+                ),
+            ),
+        )
+        val first = catalog("lunar-one-ounce", 1_000)
+        val second = catalog("lunar-half-ounce", 500)
+        val owned = CollectedItem(1, 1, 400_000, issueId = 70_001)
+        val metadata = mapOf(
+            400_000 to TypeMeta(
+                id = 400_000,
+                family = "Lunar Series III",
+                weightOz = ounces(31.1),
+                metal = Metal.Silver,
+            ),
+        )
+
+        for (catalogs in listOf(listOf(first, second), listOf(second, first))) {
+            val failure = assertFailsWith<IllegalStateException> {
+                deriveCollection(listOf(owned), metadata, catalogs)
+            }
+            assertTrue(failure.message!!.contains("lunar-half-ounce"))
+            assertTrue(failure.message!!.contains("lunar-one-ounce"))
+        }
     }
 
     /**

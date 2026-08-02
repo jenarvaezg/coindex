@@ -1,7 +1,5 @@
 package com.jenarvaezg.coindex.data.db
 
-import com.jenarvaezg.coindex.data.CatalogFiles
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -131,29 +129,4 @@ class MigrationSqlTest {
         }
     }
 
-    /**
-     * La lista literal que sobrevive a la migración: las claves de los treinta catálogos que
-     * viajaban en esta versión.
-     *
-     * Se compara contra `data/` **hoy**, que es lo único que puede fallar de forma útil — que
-     * alguien curara un catálogo entre escribir la lista y publicarla. En cuanto se cure el
-     * treinta y uno esta comprobación deja de valer: una migración es historia congelada y no
-     * puede seguir a `data/`, así que el día que se rompa lo correcto es borrar **el test**, no
-     * tocar la lista.
-     */
-    @Test
-    fun `the carried-over keys are the catalogs shipped at version 4`() {
-        val shipped = CatalogSeeds.parseAll(CatalogFiles.all()).map { catalog ->
-            PreservedKey(
-                family = catalog.family,
-                weightMillioz = catalog.key().storedWeightMillioz(),
-                finishCode = catalog.key().finishCode(),
-                metalCode = catalog.key().metalCode(),
-            )
-        }
-
-        assertEquals(shipped.toSet(), CoindexDatabase.PRESERVED_KEYS.toSet())
-        // Una clave repetida insertaría la misma fila dos veces y rompería la primary key nueva.
-        assertEquals(CoindexDatabase.PRESERVED_KEYS.size, CoindexDatabase.PRESERVED_KEYS.toSet().size)
-    }
 }

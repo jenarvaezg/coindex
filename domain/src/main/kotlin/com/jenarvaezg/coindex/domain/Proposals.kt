@@ -8,6 +8,9 @@ sealed interface UnclassifiedReason {
     /** Numista records no family and no seeded catalog references the type (ADR 0009). */
     data object NoFamilyOrCatalog : UnclassifiedReason
 
+    /** Catalogs qualify this type by issue, but none claims the piece's recorded issue. */
+    data object IssueNotClaimedByCatalog : UnclassifiedReason
+
     /** Numista records no usable weight, so the physical variant cannot be identified. */
     data class UnknownWeight(val family: String) : UnclassifiedReason
 }
@@ -63,13 +66,15 @@ fun deriveCollection(
      * read as an ounce. Without this, one curated catalog produced two cards and counted five
      * pieces in both.
      */
-    val catalogsByType: Map<Int, CollectionCatalog> = buildMap {
+    val catalogsByType: Map<Int, List<CollectionCatalog>> = buildMap<Int, MutableList<CollectionCatalog>> {
         for (catalog in catalogs.filterNot { it.isSet }) {
             for (member in catalog.members) {
-                member.numistaTypeId?.let { putIfAbsent(it, catalog) }
+                member.numistaTypeId?.let { typeId ->
+                    getOrPut(typeId) { mutableListOf() }.add(catalog)
+                }
             }
         }
-    }
+    }.mapValues { (_, catalogsForType) -> catalogsForType.distinctBy { it.id } }
     val groupingFamilies: Map<Int, String> = buildMap {
         for (grouping in groupings) {
             for (typeId in grouping.typeIds) {
@@ -94,7 +99,29 @@ fun deriveCollection(
             continue
         }
         val numistaFamily = metadata.family?.let(::normalizeFamily)
-        val catalog = catalogsByType[item.typeId]
+        val candidateCatalogs = catalogsByType[item.typeId].orEmpty()
+        val issueQualifiedClaim = candidateCatalogs.any { candidate ->
+            candidate.members.any { member ->
+                member.numistaTypeId == item.typeId && member.numistaIssueIds.isNotEmpty()
+            }
+        }
+        val matchingCatalogs = candidateCatalogs.filter { candidate ->
+            candidate.members.any { member -> candidate.memberMatches(member, item) }
+        }
+        check(matchingCatalogs.size <= 1) {
+            val catalogIds = matchingCatalogs.map { it.id }.sorted().joinToString("`, `")
+            "collected item type `${item.typeId}` and issue `${item.issueId}` " +
+                "matches multiple collection catalogs: `$catalogIds`"
+        }
+        val catalog = matchingCatalogs.singleOrNull()
+            ?: candidateCatalogs.firstOrNull().takeUnless { issueQualifiedClaim }
+        if (catalog == null && issueQualifiedClaim) {
+            unclassified += UnclassifiedItem(
+                item,
+                UnclassifiedReason.IssueNotClaimedByCatalog,
+            )
+            continue
+        }
         val curatedFamily = catalog?.family ?: groupingFamilies[item.typeId]
         val family = when {
             numistaFamily == null -> curatedFamily

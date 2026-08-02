@@ -16001,6 +16001,141 @@
   },
   "weight": 31.1035
  },
+ "185343": {
+  "id": 185343,
+  "url": "https://es.numista.com/185343",
+  "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Mouse - Silver Coloured Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2020,
+  "max_year": 2020,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 3.21,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9 (Pad Printed)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina, Coloreado"
+  },
+  "obverse": {
+   "designers": [
+    "Jody Clark"
+   ],
+   "description": "Sexto retrato de Su Majestad la Reina Isabel II mirando hacia la derecha con la Diadema de Estado del Rey Jorge IV y el Collar de la Coronación Victoriano.",
+   "lettering": "ELIZABETH II AUSTRALIA\r\nJC\r\n1oz 9999 Ag 1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/9928-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/9928-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "reverse": {
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "description": "Dos ratones de colores alimentándose de hojas de maíz. Carácter chino para ratón a la derecha",
+   "lettering": "鼠\r\nMOUSE\r\n2020\r\nP\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/9929-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/9929-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "series": "Lunar Series III",
+  "commemorated_topic": "El año del ratón",
+  "comments": "Perth Mint Chinese Lunar Year Series III Release.",
+  "related_types": [
+   {
+    "id": 179438,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Mouse - Silver Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2020,
+    "maxYear": 2020
+   },
+   {
+    "id": 185215,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Year of the Mouse - Silver Proof Gilded)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2020,
+    "maxYear": 2020
+   }
+  ],
+  "tags": [
+   "Roedor",
+   "Calendario chino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "3905.1"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "186086": {
   "category": "coin",
   "commemorated_topic": "200 aniversario del Museo del Prado",
@@ -42427,6 +42562,114 @@
   },
   "weight": 31.107
  },
+ "394043": {
+  "id": 394043,
+  "url": "https://es.numista.com/394043",
+  "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Year of the Dragon - Coloured)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.9,
+  "thickness": 3.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9 (Pad Printed)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina, Coloreado"
+  },
+  "obverse": {
+   "designers": [
+    "Jody Clark"
+   ],
+   "description": "Sexto retrato coronado de la reina Isabel II mirando hacia la derecha, con la diadema de Estado de Jorge IV y el collar de la Coronación Victoriana, Anverso conmemorativo.",
+   "lettering": "ELIZABETH II AUSTRALIA 1952-2022\r\n1oz 9999 Ag 1 DOLLAR\r\nJC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/659a3f6b0b9d92.29023586-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/659a3f6b0b9d92.29023586-180.jpg",
+   "picture_copyright": "princet123"
+  },
+  "reverse": {
+   "designers": [
+    "Ing Ing Jong"
+   ],
+   "description": "El reverso de la moneda representa un dragón de colores con agua cayendo de su boca, olas estilizadas y una perla flameante, símbolo de sabiduría. El diseño incluye el carácter chino de \"dragón\".",
+   "lettering": "龍\r\nDRAGON\r\n2024\r\nP125\r\nIJ",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/659a3f6cf03994.66840340-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/659a3f6cf03994.66840340-180.jpg",
+   "picture_copyright": "princet123"
+  },
+  "series": "Lunar Series III",
+  "commemorated_topic": "Año del Dragón",
+  "tags": [
+   "Animal fantástico",
+   "Calendario chino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "4639.1"
+   }
+  ],
+  "weight": 31.107,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "39493": {
   "category": "coin",
   "commemorated_topic": "Monumentos arquitectónicos de Rusia",
@@ -61260,6 +61503,122 @@
    "text": "60 Euros"
   },
   "weight": 18
+ },
+ "576294": {
+  "id": 576294,
+  "url": "https://es.numista.com/576294",
+  "title": "1 Dollar - Charles III (1st Portrait - Year of the Snake, Silver Coloured)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2024-09-10"
+  },
+  "size": 40.9,
+  "thickness": 3.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Dan Thorne"
+   ],
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda",
+   "lettering": "CHARLES III AUSTRALIA\r\nDT\r\n1 OZ 9999 Ag 1 DOLLAR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6a03bce3988f59.61853690-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6a03bce3988f59.61853690-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "reverse": {
+   "designers": [
+    "Sean Rogers"
+   ],
+   "description": "Serpiente de colores enroscada sobre rocas\r\nSímbolo chino de la serpiente en la parte superior",
+   "lettering": "蛇\r\nSNAKE\r\n2025\r\nP\r\nSR",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6a03bce4d56f27.08747588-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6a03bce4d56f27.08747588-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "series": "Lunar Series III",
+  "commemorated_topic": "Año de la Serpiente",
+  "comments": "(en) <p>There are two different coloured versions of the 2025 1oz silver Year of the Snake: A teal coloured proof released individually and in a 3-coin 1oz silver set; and a green coloured BU Melbourne Money Expo ANDA Special which was issued in a card.</p><p><a href=\"https://en.numista.com/catalogue/images/6a03b9ed6c3fe.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6a03b9ed6c3fe.jpg\"></a><a href=\"https://en.numista.com/catalogue/images/6a03bc5f518c5.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6a03bc5f518c5.jpg\"></a><a href=\"https://en.numista.com/catalogue/images/6a03bc6d5da7f.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6a03bc6d5da7f.jpg\"></a></p>",
+  "related_types": [
+   {
+    "id": 441816,
+    "title": "1 Dollar - Charles III (1st Portrait - Year of the Snake; Silver)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2025,
+    "maxYear": 2025
+   }
+  ],
+  "tags": [
+   "Reptil",
+   "Calendario chino"
+  ],
+  "weight": 31.107,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "576543": {
   "category": "coin",

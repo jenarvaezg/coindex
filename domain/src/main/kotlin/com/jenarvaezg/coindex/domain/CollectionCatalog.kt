@@ -6,11 +6,12 @@ import kotlinx.serialization.Serializable
 /**
  * A curated, sourced reference list of official members for one exact proposal variant key.
  *
- * For an `issued` member, `schema_version` 1 identifies it by a unique Numista type; owning the
- * type is owning the member. `schema_version` 2 is a date run (ADR 0009): issued members repeat
- * one type across years, and a member is owned only when the piece also records that year.
- * `schema_version` 3 is a set issued as a set (ADR 0012): its members span physical variants,
- * so it declares no weight, no finish and no metal, and its key carries an absent weight.
+ * For an `issued` member, `schema_version` 1 identifies it by a unique Numista type, optionally
+ * refined with one or more Numista issues when a type page covers several physical variants.
+ * `schema_version` 2 is a date run (ADR 0009): issued members repeat one type across years, and
+ * a member is owned only when the piece also records that year. `schema_version` 3 is a set
+ * issued as a set (ADR 0012): its members span physical variants, so it declares no weight, no
+ * finish and no metal, and its key carries an absent weight.
  * `schema_version` 5 identifies members by Numista issue (ADR 0014), for the types whose
  * members share a year and differ by a variety of it.
  *
@@ -57,10 +58,10 @@ data class CollectionCatalog(
     /**
      * Whether a collected item satisfies one member.
      *
-     * Schema 1 matches by type alone; a date run also requires the year recorded on the piece,
-     * so an undated piece never fills a year. An issue run matches by Numista issue and
-     * **ignores the year entirely**: its members share one, which is exactly why they are keyed
-     * on the issue. A piece recorded without an issue fills no member of it.
+     * Schema 1 matches by type and, when declared, Numista issue; a date run also requires the
+     * year recorded on the piece, so an undated piece never fills a year. An issue run matches
+     * by Numista issue and **ignores the year entirely**: its members share one, which is exactly
+     * why they are keyed on the issue. A piece recorded without an issue fills no member of it.
      *
      * An announced or unlisted member has no type, so nothing ever fills it, and its
      * `design_type_id` is
@@ -71,8 +72,11 @@ data class CollectionCatalog(
     fun memberMatches(member: CollectionCatalogMember, item: CollectedItem): Boolean {
         val typeId = member.numistaTypeId ?: return false
         if (item.quantity <= 0 || item.typeId != typeId) return false
+        if (member.numistaIssueIds.isNotEmpty() && item.issueId !in member.numistaIssueIds) {
+            return false
+        }
         return when {
-            isIssueRun -> item.issueId != null && item.issueId in member.numistaIssueIds
+            isIssueRun -> member.numistaIssueIds.isNotEmpty()
             isDateRun -> item.recordedYear == member.year
             else -> true
         }
@@ -90,15 +94,20 @@ data class CollectionCatalog(
     }
 
     /**
-     * Whether the collector owns at least one official type of this catalog. Evidence is by
-     * type even in date runs, so a plate stays reachable while its years are still missing.
+     * Whether the collector owns at least one official identity of this catalog. Evidence
+     * ignores the date in date runs so a plate stays reachable while its years are still
+     * missing, but an issue qualifier remains part of the identity.
      *
      * An announced member contributes nothing — it has no type — and its `design_type_id` is
      * ignored here for the same reason [memberMatches] ignores it.
      */
     fun isEvidencedBy(items: List<CollectedItem>): Boolean {
-        val memberTypeIds = members.mapNotNullTo(mutableSetOf()) { it.numistaTypeId }
-        return items.any { item -> item.quantity > 0 && item.typeId in memberTypeIds }
+        return items.any { item ->
+            item.quantity > 0 && members.any { member ->
+                member.numistaTypeId == item.typeId &&
+                    (member.numistaIssueIds.isEmpty() || item.issueId in member.numistaIssueIds)
+            }
+        }
     }
 
     fun validate(): CollectionCatalogValidationError? {
@@ -168,12 +177,14 @@ data class CollectionCatalog(
                 return CollectionCatalogValidationError.BlankVariantNote(member.id)
             }
             validateMemberStatus(member)?.let { return it }
-            // Only an issued member of an issue run may name issues, and every one of them must
-            // name at least one: a member with none could never be owned.
-            if (isIssueRun && member.isIssued) {
-                if (member.numistaIssueIds.isEmpty()) {
-                    return CollectionCatalogValidationError.MemberWithoutIssue(member.id)
-                }
+            // Schema 1 may refine an issued type with issues. Schema 5 requires that refinement;
+            // its members would otherwise be indistinguishable. Other schemas and non-issued
+            // members retain their established identities.
+            val issuesAllowed = member.isIssued && (schemaVersion == 1 || isIssueRun)
+            if (isIssueRun && member.isIssued && member.numistaIssueIds.isEmpty()) {
+                return CollectionCatalogValidationError.MemberWithoutIssue(member.id)
+            }
+            if (issuesAllowed) {
                 for (issueId in member.numistaIssueIds) {
                     if (issueId <= 0) {
                         return CollectionCatalogValidationError.InvalidNumistaIssueId
@@ -266,7 +277,8 @@ data class CollectionCatalogMember(
     /** Required only when issued (see [MemberStatus]). */
     @SerialName("numista_type_id") val numistaTypeId: Int? = null,
     /**
-     * The Numista issues this member stands for, in an issue run (ADR 0014).
+     * The Numista issues this member stands for: optional in schema 1 and required in an issue
+     * run (ADR 0014).
      *
      * A list rather than one id because a slot can hold several varieties of the same issue and
      * the collector counts them as one: the 1969 star of the 100 pesetas exists with a curved
@@ -421,7 +433,7 @@ sealed class CollectionCatalogValidationError(val message: String) {
     )
 
     data class IssuesOutsideIssueRun(val memberId: String) : CollectionCatalogValidationError(
-        "member `$memberId` names Numista issues, which only an issue run may do",
+        "member `$memberId` names Numista issues, which only an issued schema-1 member or issue run may do",
     )
 }
 
