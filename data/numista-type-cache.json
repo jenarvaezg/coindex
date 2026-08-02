@@ -66970,6 +66970,148 @@
   },
   "weight": 5
  },
+ "5317": {
+  "id": 5317,
+  "url": "https://es.numista.com/5317",
+  "title": "25 Céntimos",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1955,
+  "max_year": 1955,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "25 céntimos",
+   "numeric_value": 0.25,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 16,
+  "thickness": 0.75,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 835 (Copper .165)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas con leyenda encima. Valor, fecha y ley en la parte inferior.",
+   "lettering": "•REPUBLICA DE VENEZUELA•\r\n25 CENTIMOS •1954•GR.1.25 • LEI 835",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/63b5a2d3187284.16094114-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/63b5a2d3187284.16094114-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "reverse": {
+   "description": "Busto a la izquierda, flanqueado por leyenda. Nombre del grabador en la base.",
+   "lettering": "BOLÍVAR LIBERTADOR\r\nBARRE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/63b5a2d38d51e0.22157456-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/63b5a2d38d51e0.22157456-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "comments": "esta moneda se acuñó según las normas de la Unión Latina, a pesar de que ésta ya se había disuelto",
+  "related_types": [
+   {
+    "id": 4369,
+    "title": "¼ Bolívar",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1894,
+    "maxYear": 1948
+   },
+   {
+    "id": 9488,
+    "title": "25 Céntimos",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1960,
+    "maxYear": 1960
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Líder militar",
+   "Político",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "35"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "43"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv25cts-aa"
+   }
+  ],
+  "weight": 1.25,
+  "orientation": "coin",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/6a579fec8ef305.64138341-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/6a579fec8ef305.64138341-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 11,
+    "name": "United States Mint of Philadelphia"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
  "54488": {
   "category": "coin",
   "commemorated_topic": "200 aniversario del nacimiento de Alexander Dargomyzhsky",

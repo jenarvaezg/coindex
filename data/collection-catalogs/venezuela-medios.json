@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "venezuela-medios",
+  "name": "Medios · Venezuela · plata 1,25 g",
+  "issuer_code": "venezuela",
+  "family": "Medios de Venezuela",
+  "weight_millioz": 40,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Esta denominación se acuñó por última vez en 1960 (N#9488); no hubo 1965. La plata venezolana se cerró en 1965 y la ley de moneda del 4 de diciembre de 1967 pasó el cono al níquel. Fuera del denominador queda el ⅕ bolívar de 1879 (N#59789, 1 g, 15 mm): otra variante física, un solo año, y por #33 huérfana permanente —no un hueco de este run—.",
+  "source": "https://en.numista.com/catalogue/pieces4369.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1894",
+      "label": "1894",
+      "year": 1894,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1900",
+      "label": "1900",
+      "year": 1900,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1901",
+      "label": "1901",
+      "year": 1901,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1903",
+      "label": "1903",
+      "year": 1903,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1911",
+      "label": "1911",
+      "year": 1911,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1912",
+      "label": "1912",
+      "year": 1912,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1919",
+      "label": "1919",
+      "year": 1919,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1921",
+      "label": "1921",
+      "year": 1921,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1924",
+      "label": "1924",
+      "year": 1924,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1929",
+      "label": "1929",
+      "year": 1929,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1935",
+      "label": "1935",
+      "year": 1935,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1936",
+      "label": "1936",
+      "year": 1936,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1944",
+      "label": "1944",
+      "year": 1944,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1945",
+      "label": "1945",
+      "year": 1945,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1946",
+      "label": "1946",
+      "year": 1946,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1948",
+      "label": "1948",
+      "year": 1948,
+      "numista_type_id": 4369
+    },
+    {
+      "id": "1954",
+      "label": "1954 (acuñada en 1955)",
+      "year": 1954,
+      "numista_type_id": 5317
+    },
+    {
+      "id": "1960",
+      "label": "1960",
+      "year": 1960,
+      "numista_type_id": 9488
+    }
+  ]
+}

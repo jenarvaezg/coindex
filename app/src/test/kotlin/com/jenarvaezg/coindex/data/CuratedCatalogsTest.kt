@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(48, catalogs.size)
+        assertEquals(49, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veinte cerrados llevan su nota y los veintiocho abiertos no afirman nada más que
+     * veintiún cerrados llevan su nota y los veintiocho abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(20, closed.size)
+        assertEquals(21, closed.size)
         assertEquals(28, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -835,6 +835,50 @@ class CuratedCatalogsTest {
         // Los años de acuñación no abren casilla: viven en la etiqueta.
         assertTrue(reales.members.none { it.year in listOf(1947, 1955) })
         assertTrue(reales.members.all { it.numistaIssueIds.isEmpty() })
+    }
+
+    /**
+     * Los medios: ¼ bolívar / 25 céntimos, 1,25 g de plata .835. La agrupación solo nombraba
+     * N#4369 y N#9488; falta el 1954 (N#5317, acuñado en 1955), el mismo agujero que el 1
+     * bolívar. Dieciocho casillas —dieciséis años del tronco más 1954 y 1960— y el ⅕ de 1879
+     * (N#59789, 1 g) queda fuera por clave de variante y por el mínimo de dos de #33.
+     *
+     * Familia coloquial «Medios de Venezuela», pareja de «Reales de Venezuela»: en la calle
+     * «medio» es el cuarto, así que el fichero no puede llamarse medio-bolívar (#114 / #115).
+     */
+    @Test
+    fun `the venezuelan medios date run spans its three types including 1954`() {
+        val medios = find("venezuela-medios")
+        assertEquals(2, medios.schemaVersion)
+        assertTrue(medios.isDateRun)
+        assertEquals("Medios de Venezuela", medios.family)
+        assertEquals(40, medios.weightMillioz)
+        assertEquals(Metal.Silver, medios.metal)
+        assertNull(medios.finish)
+        assertEquals(SeriesStatus.Closed, medios.seriesStatus)
+        assertEquals(18, medios.members.size)
+        assertEquals(
+            listOf(
+                1894, 1900, 1901, 1903, 1911, 1912, 1919, 1921, 1924, 1929,
+                1935, 1936, 1944, 1945, 1946, 1948,
+            ),
+            medios.members.filter { it.numistaTypeId == 4_369 }.map { it.year },
+        )
+        assertEquals(
+            listOf(1954),
+            medios.members.filter { it.numistaTypeId == 5_317 }.map { it.year },
+        )
+        assertEquals(
+            "1954 (acuñada en 1955)",
+            medios.members.first { it.numistaTypeId == 5_317 }.label,
+        )
+        assertEquals(
+            listOf(1960),
+            medios.members.filter { it.numistaTypeId == 9_488 }.map { it.year },
+        )
+        assertTrue(medios.members.none { it.year == 1955 })
+        assertTrue(medios.members.all { it.numistaIssueIds.isEmpty() })
+        assertTrue(medios.closedNote!!.contains("59789"), medios.closedNote!!)
     }
 
     @Test
