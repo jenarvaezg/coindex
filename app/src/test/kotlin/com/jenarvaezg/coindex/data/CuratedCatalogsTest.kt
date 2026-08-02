@@ -196,6 +196,10 @@ class CuratedCatalogsTest {
         assertEquals(2, philharmonic.schemaVersion)
         assertTrue(philharmonic.isDateRun)
         assertEquals("Vienna Philharmonic bullion anual", philharmonic.family)
+        assertEquals(
+            "Vienna Philharmonic · Austria · 1 oz bullion anual desde 2008",
+            philharmonic.name,
+        )
         assertEquals("autriche", philharmonic.issuerCode)
         assertEquals(1_000, philharmonic.weightMillioz)
         assertEquals(Finish.Bullion, philharmonic.finish)
@@ -203,19 +207,34 @@ class CuratedCatalogsTest {
         assertEquals(SeriesStatus.Open, philharmonic.seriesStatus)
         assertNull(philharmonic.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces9165.html", philharmonic.source)
+        assertEquals("2026-08-02", philharmonic.updatedAt)
         assertEquals((2008..2026).toList(), philharmonic.members.map { it.year })
         assertEquals(List(19) { 9_165 }, philharmonic.members.map { it.numistaTypeId })
         assertTrue(philharmonic.members.all { it.numistaIssueIds.isEmpty() })
 
         val arks = listOf(
-            Triple("armenia-noahs-ark-1oz-bullion", 1_000, 26_279),
-            Triple("armenia-noahs-ark-half-oz-bullion", 500, 31_963),
-            Triple("armenia-noahs-ark-quarter-oz-bullion", 250, 31_623),
+            Triple(
+                "armenia-noahs-ark-1oz-bullion",
+                1_000 to 26_279,
+                "Noah's Ark · Armenia · 1 oz bullion anual desde 2011",
+            ),
+            Triple(
+                "armenia-noahs-ark-half-oz-bullion",
+                500 to 31_963,
+                "Noah's Ark · Armenia · ½ oz bullion anual desde 2011",
+            ),
+            Triple(
+                "armenia-noahs-ark-quarter-oz-bullion",
+                250 to 31_623,
+                "Noah's Ark · Armenia · ¼ oz bullion anual desde 2011",
+            ),
         )
-        for ((id, weight, typeId) in arks) {
+        for ((id, weightAndType, name) in arks) {
+            val (weight, typeId) = weightAndType
             val catalog = find(id)
             assertEquals(2, catalog.schemaVersion)
             assertTrue(catalog.isDateRun)
+            assertEquals(name, catalog.name)
             assertEquals("armenie", catalog.issuerCode)
             assertEquals(weight, catalog.weightMillioz)
             assertEquals(Finish.Bullion, catalog.finish)
@@ -223,6 +242,7 @@ class CuratedCatalogsTest {
             assertEquals(SeriesStatus.Open, catalog.seriesStatus)
             assertNull(catalog.closedNote)
             assertEquals("https://en.numista.com/catalogue/pieces$typeId.html", catalog.source)
+            assertEquals("2026-08-02", catalog.updatedAt)
             assertEquals((2011..2026).toList(), catalog.members.map { it.year })
             assertEquals(List(16) { typeId }, catalog.members.map { it.numistaTypeId })
             assertTrue(catalog.members.all { it.numistaIssueIds.isEmpty() })
