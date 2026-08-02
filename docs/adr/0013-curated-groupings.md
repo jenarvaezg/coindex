@@ -69,17 +69,20 @@ The Venezuelan silver denominations that hunt a year ship as date-run catalogs, 
 groupings: a grouping could never show the hole. The 2 bolívares were the first (25 members
 across three types); the 1 bolívar followed (#113) with 22 members across four types, including
 the trunk N#10338 the old grouping had omitted; the reales (#114) are the same shape — 22
-members across four types, trunk N#17945 plus N#7727 that the old grouping had omitted.
-Publishing the 1 bolívar plate accepts that a bulk row of N#5316 under a single year can still
-report a false Missing for 1960 or 1965 until the collector splits the bag by year in Numista
-— the honest fix for those two cells, not a reason to keep the whole denomination silent.
+members across four types, trunk N#17945 plus N#7727 that the old grouping had omitted; the
+medios (#115) close the set with 18 members across three types, adding the 1954 N#5317 the old
+grouping had omitted. The colloquial pair «Medios de Venezuela» / «Reales de Venezuela» stays,
+because on the street «medio» is the quarter and must not name the half. Publishing the 1
+bolívar plate accepts that a bulk row of N#5316 under a single year can still report a false
+Missing for 1960 or 1965 until the collector splits the bag by year in Numista — the honest
+fix for those two cells, not a reason to keep the whole denomination silent.
 
 ## Consequences
 
 The 81 orphans stop being unreachable by construction: any of them can be given a family by
-curating a file, without inventing a sequence for it. Three groupings ship now — the Venezuelan
-medios, the loose Royal Mint ounces, and the classic US silver dollar. The paquillos, the 1
-bolívar and the reales already graduated to catalogs, and the rest of the list is candidates.
+curating a file, without inventing a sequence for it. Two groupings ship now — the loose Royal
+Mint ounces and the classic US silver dollar. The paquillos and all four Venezuelan silver
+denominations already graduated to catalogs, and the rest of the list is candidates.
 
 A grouping is cheap enough to be tempting, and that is its risk: it is an editorial claim with
 no source of truth behind it beyond the curator's judgement, so it names a representative
