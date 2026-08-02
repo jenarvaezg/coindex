@@ -1,0 +1,198 @@
+{
+  "schema_version": 2,
+  "id": "china-silver-panda-1oz-bullion",
+  "name": "Panda de plata · China · 1 oz bullion anual 1989-2015 (sin proof de colección separada, conmemorativas de banco/expo, ni 1983-1987 de otra métrica)",
+  "issuer_code": "chine",
+  "family": "Panda de plata 1 oz bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "En 2016 la People's Bank of China pasó el Panda de plata del sistema troy (1 oz = 31,1 g) al métrico de 30 g; la variante de 1 oz cierra en 2015. Los de 1983-1985 (.900, 27 g) y el de 1987 (.925, 33,87 g) son otras variantes físicas. Quedan fuera las proof de colección cuando Numista las separa del anual, y las conmemorativas de banco o expo.",
+  "source": "https://en.numista.com/catalogue/pieces19740.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1989-silver-panda",
+      "label": "Panda de plata",
+      "year": 1989,
+      "numista_type_id": 19740,
+      "numista_issue_ids": [
+        103797
+      ]
+    },
+    {
+      "id": "1990-silver-panda",
+      "label": "Panda de plata",
+      "year": 1990,
+      "numista_type_id": 51539,
+      "numista_issue_ids": [
+        212844
+      ]
+    },
+    {
+      "id": "1991-silver-panda",
+      "label": "Panda de plata",
+      "year": 1991,
+      "numista_type_id": 30111,
+      "numista_issue_ids": [
+        149470,
+        427876
+      ]
+    },
+    {
+      "id": "1992-silver-panda",
+      "label": "Panda de plata",
+      "year": 1992,
+      "numista_type_id": 19638,
+      "numista_issue_ids": [
+        103140,
+        489607
+      ]
+    },
+    {
+      "id": "1993-silver-panda",
+      "label": "Panda de plata",
+      "year": 1993,
+      "numista_type_id": 19654
+    },
+    {
+      "id": "1994-silver-panda",
+      "label": "Panda de plata",
+      "year": 1994,
+      "numista_type_id": 59113
+    },
+    {
+      "id": "1995-silver-panda",
+      "label": "Panda de plata",
+      "year": 1995,
+      "numista_type_id": 34863
+    },
+    {
+      "id": "1996-silver-panda",
+      "label": "Panda de plata",
+      "year": 1996,
+      "numista_type_id": 19675
+    },
+    {
+      "id": "1997-silver-panda",
+      "label": "Panda de plata",
+      "year": 1997,
+      "numista_type_id": 19676
+    },
+    {
+      "id": "1998-silver-panda",
+      "label": "Panda de plata",
+      "year": 1998,
+      "numista_type_id": 19678
+    },
+    {
+      "id": "1999-silver-panda",
+      "label": "Panda de plata",
+      "year": 1999,
+      "numista_type_id": 19043
+    },
+    {
+      "id": "2000-silver-panda",
+      "label": "Panda de plata",
+      "year": 2000,
+      "numista_type_id": 19741
+    },
+    {
+      "id": "2001-silver-panda",
+      "label": "Panda de plata",
+      "year": 2001,
+      "numista_type_id": 19714,
+      "numista_issue_ids": [
+        103629
+      ]
+    },
+    {
+      "id": "2002-silver-panda",
+      "label": "Panda de plata",
+      "year": 2002,
+      "numista_type_id": 19714,
+      "numista_issue_ids": [
+        103630
+      ]
+    },
+    {
+      "id": "2003-silver-panda",
+      "label": "Panda de plata",
+      "year": 2003,
+      "numista_type_id": 19715
+    },
+    {
+      "id": "2004-silver-panda",
+      "label": "Panda de plata",
+      "year": 2004,
+      "numista_type_id": 19716
+    },
+    {
+      "id": "2005-silver-panda",
+      "label": "Panda de plata",
+      "year": 2005,
+      "numista_type_id": 19717
+    },
+    {
+      "id": "2006-silver-panda",
+      "label": "Panda de plata",
+      "year": 2006,
+      "numista_type_id": 32571
+    },
+    {
+      "id": "2007-silver-panda",
+      "label": "Panda de plata",
+      "year": 2007,
+      "numista_type_id": 39559
+    },
+    {
+      "id": "2008-silver-panda",
+      "label": "Panda de plata",
+      "year": 2008,
+      "numista_type_id": 9162
+    },
+    {
+      "id": "2009-silver-panda",
+      "label": "Panda de plata",
+      "year": 2009,
+      "numista_type_id": 37959
+    },
+    {
+      "id": "2010-silver-panda",
+      "label": "Panda de plata",
+      "year": 2010,
+      "numista_type_id": 23454
+    },
+    {
+      "id": "2011-silver-panda",
+      "label": "Panda de plata",
+      "year": 2011,
+      "numista_type_id": 19783
+    },
+    {
+      "id": "2012-silver-panda",
+      "label": "Panda de plata",
+      "year": 2012,
+      "numista_type_id": 37955
+    },
+    {
+      "id": "2013-silver-panda",
+      "label": "Panda de plata",
+      "year": 2013,
+      "numista_type_id": 42219
+    },
+    {
+      "id": "2014-silver-panda",
+      "label": "Panda de plata",
+      "year": 2014,
+      "numista_type_id": 51967
+    },
+    {
+      "id": "2015-silver-panda",
+      "label": "Panda de plata",
+      "year": 2015,
+      "numista_type_id": 71394
+    }
+  ]
+}

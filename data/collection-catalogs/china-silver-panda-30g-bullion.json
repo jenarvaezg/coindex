@@ -1,0 +1,114 @@
+{
+  "schema_version": 2,
+  "id": "china-silver-panda-30g-bullion",
+  "name": "Panda de plata · China · 30 g bullion anual desde 2016 (sin proof de colección separada ni conmemorativas de banco/expo)",
+  "issuer_code": "chine",
+  "family": "Panda de plata 30 g bullion anual",
+  "weight_millioz": 965,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces80896.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2016-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2016,
+      "numista_type_id": 80896,
+      "numista_issue_ids": [
+        276339
+      ]
+    },
+    {
+      "id": "2017-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2017,
+      "numista_type_id": 97619,
+      "numista_issue_ids": [
+        315811
+      ]
+    },
+    {
+      "id": "2018-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2018,
+      "numista_type_id": 127720,
+      "numista_issue_ids": [
+        372155
+      ]
+    },
+    {
+      "id": "2019-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2019,
+      "numista_type_id": 154933,
+      "numista_issue_ids": [
+        419768
+      ]
+    },
+    {
+      "id": "2020-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2020,
+      "numista_type_id": 183654,
+      "numista_issue_ids": [
+        465231
+      ]
+    },
+    {
+      "id": "2021-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2021,
+      "numista_type_id": 252620,
+      "numista_issue_ids": [
+        601402
+      ]
+    },
+    {
+      "id": "2022-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2022,
+      "numista_type_id": 311723,
+      "numista_issue_ids": [
+        697111
+      ]
+    },
+    {
+      "id": "2023-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2023,
+      "numista_type_id": 349619,
+      "numista_issue_ids": [
+        759619
+      ]
+    },
+    {
+      "id": "2024-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2024,
+      "numista_type_id": 390608,
+      "numista_issue_ids": [
+        827679
+      ]
+    },
+    {
+      "id": "2025-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2025,
+      "numista_type_id": 439242,
+      "numista_issue_ids": [
+        902894
+      ]
+    },
+    {
+      "id": "2026-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2026,
+      "numista_type_id": 531574,
+      "numista_issue_ids": [
+        1029431
+      ]
+    }
+  ]
+}
