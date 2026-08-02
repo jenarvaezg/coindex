@@ -42442,6 +42442,179 @@
   },
   "weight": 31.135
  },
+ "359552": {
+  "id": 359552,
+  "url": "https://es.numista.com/359552",
+  "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Australian Kangaroo - Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2023,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Jody Clark"
+   ],
+   "description": "Sexto retrato coronado de la Reina Isabel II mirando hacia la derecha, portando la Diadema de Estado de Jorge IV y el Collar de la Coronación Victoriano, anverso conmemorativo especial.",
+   "lettering": "ELIZABETH II 1952 - 2022\r\nAUSTRALIA\r\n1 DOLLAR\r\nJC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/66759892404c25.63817467-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/66759892404c25.63817467-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Stuart Devlin"
+   ],
+   "description": "Canguro rojo mirando hacia la izquierda en el centro. Marca de ceca a la derecha.\r\nLa fecha, la ley y el metal en la parte inferior.",
+   "lettering": "AUSTRALIAN KANGAROO\r\nP\r\n2023 1oz 9999 SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/667598935f0aa3.67685749-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/667598935f0aa3.67685749-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Australian Kangaroo",
+  "commemorated_topic": "Canguro saltarín",
+  "comments": "La moneda, acuñada por la Fábrica de la Moneda de Perth a partir de 1 onza de plata pura (99,99%) en calidad de lingote, se emite como moneda de curso legal en virtud de la Ley de la Moneda Australiana de 1965 y lleva la tradicional marca de ceca \"P\" de la Fábrica de la Moneda de Perth.<br /><br />\r\nLa edición de 2023 de la moneda tiene el anverso conmemorativo especial de la reina Isabel.",
+  "related_types": [
+   {
+    "id": 105293,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 168801,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo; Gilded Edition)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 76663,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2016,
+    "maxYear": 2019
+   },
+   {
+    "id": 153925,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2019,
+    "maxYear": 2022
+   },
+   {
+    "id": 393476,
+    "title": "1 Dollar - Charles III (1st Portrait - Australian Kangaroo - Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   },
+   {
+    "id": 404064,
+    "title": "1 Dollar - Charles III (1st Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2024,
+    "maxYear": 2026
+   }
+  ],
+  "tags": [
+   "Marsupial"
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/australie/69a5523a7a7260.65520141-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/69a5523a7a7260.65520141-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "362115": {
   "category": "coin",
   "commemorated_topic": "USS Constitution",
@@ -47955,6 +48128,183 @@
    {
     "id": 16,
     "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "404064": {
+  "id": 404064,
+  "url": "https://es.numista.com/404064",
+  "title": "1 Dollar - Charles III (1st Portrait - Australian Kangaroo - Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2024,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.9,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Dan Thorne"
+   ],
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda.",
+   "lettering": "CHARLES III\r\nAUSTRALIA\r\n1 DOLLAR\r\nDT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/66759833ed2b62.03669541-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/66759833ed2b62.03669541-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Stuart Devlin"
+   ],
+   "description": "Canguro rojo mirando hacia la izquierda en el centro. Marca de ceca a la derecha.\r\nLa fecha, la ley y el metal en la parte inferior.",
+   "lettering": "AUSTRALIAN KANGAROO\r\nP125\r\n2024 1oz 9999 SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/667598350f8cb7.13509727-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/667598350f8cb7.13509727-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Australian Kangaroo",
+  "commemorated_topic": "Canguro saltarín",
+  "comments": "<p>La moneda, acuñada por la Fábrica de la Moneda de Perth en 1 onza de plata pura al 99,99%, se emite como moneda de curso legal en virtud de la Ley de la Moneda Australiana de 1965 y lleva la marca de ceca especial \"P125\" de la Fábrica de la Moneda de Perth en la edición de 2024.<br><br></p>",
+  "related_types": [
+   {
+    "id": 105293,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 168801,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo; Gilded Edition)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 76663,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2016,
+    "maxYear": 2019
+   },
+   {
+    "id": 153925,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2019,
+    "maxYear": 2022
+   },
+   {
+    "id": 359552,
+    "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2023,
+    "maxYear": 2023
+   },
+   {
+    "id": 393476,
+    "title": "1 Dollar - Charles III (1st Portrait - Australian Kangaroo - Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   }
+  ],
+  "tags": [
+   "Marsupial"
+  ],
+  "weight": 31.107,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/australie/69a5526889f433.10221456-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/69a5526889f433.10221456-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   },
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
    }
   ],
   "category": "coin",
@@ -82534,6 +82884,183 @@
    "text": "2000 pesetas"
   },
   "weight": 18
+ },
+ "76663": {
+  "id": 76663,
+  "url": "https://es.numista.com/76663",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo - Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2016,
+  "max_year": 2019,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "ELIZABETH II \r\nAUSTRALIA \r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/4594-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/4594-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "designers": [
+    "Stuart Devlin"
+   ],
+   "description": "Canguro rojo mirando a la izquierda encima de la fecha y el peso y la ley del metal",
+   "lettering": "AUSTRALIAN KANGAROO\r\nP\r\n2016 1 oz 9999 SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/4595-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/4595-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "Australian Kangaroo",
+  "commemorated_topic": "Canguro saltarín",
+  "comments": "<p>La moneda, acuñada por la Casa de la Moneda de Perth a partir de 1 onza de plata de ley con una pureza del 99,99%, se emite como moneda de curso legal en virtud de la Ley de la Moneda Australiana de 1965 y lleva la tradicional marca de ceca \"P\" de la Casa de la Moneda de Perth.<br><br>Como primicia de la Casa de la Moneda de Perth, la moneda incluye un elemento de autentificación en el reverso. Se trata de una letra \"A\" grabada con microláser que se encuentra dentro de la primera A de AUSTRALIAN y que puede detectarse con lupa. La característica de autentificación se ha diseñado para dificultar considerablemente la falsificación de la moneda y ofrecer tranquilidad a los clientes de la Fábrica de Moneda de Perth.</p>",
+  "related_types": [
+   {
+    "id": 105293,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 168801,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Australian Kangaroo; Gilded Edition)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 153925,
+    "title": "1 Dollar - Elizabeth II (6th Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2019,
+    "maxYear": 2022
+   },
+   {
+    "id": 359552,
+    "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2023,
+    "maxYear": 2023
+   },
+   {
+    "id": 393476,
+    "title": "1 Dollar - Charles III (1st Portrait - Australian Kangaroo - Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2024,
+    "maxYear": 2024
+   },
+   {
+    "id": 404064,
+    "title": "1 Dollar - Charles III (1st Portrait - Australian Kangaroo - Bullion Coin)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2024,
+    "maxYear": 2026
+   }
+  ],
+  "tags": [
+   "Marsupial"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "3234"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/australie/603856032214c1.00176547-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/603856032214c1.00176547-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "76690": {
   "category": "coin",
