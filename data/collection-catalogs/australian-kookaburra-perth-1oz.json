@@ -1,231 +1,274 @@
 {
   "schema_version": 1,
   "id": "australian-kookaburra-perth-1oz",
-  "name": "Australian Kookaburra · Perth Mint · 1 oz",
+  "name": "Australian Kookaburra · Perth Mint · 1 oz de plata bullion anual estándar",
   "issuer_code": "australie",
   "family": "Australian Kookaburra",
   "weight_millioz": 1000,
-  "finish": null,
+  "finish": "Bullion",
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=1552",
-  "updated_at": "2026-08-01",
+  "updated_at": "2026-08-02",
   "members": [
     {
       "id": "1990-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1990,
-      "numista_type_id": 20585
+      "numista_type_id": 20585,
+      "numista_issue_ids": [109614]
     },
     {
       "id": "1991-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1991,
-      "numista_type_id": 571411
+      "numista_type_id": 22330,
+      "numista_issue_ids": [119246]
     },
     {
       "id": "1992-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1992,
-      "numista_type_id": 20600
+      "numista_type_id": 20600,
+      "numista_issue_ids": [109738]
     },
     {
       "id": "1993-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1993,
-      "numista_type_id": 17335
+      "numista_type_id": 20601,
+      "numista_issue_ids": [109741]
     },
     {
       "id": "1994-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1994,
-      "numista_type_id": 17336
+      "numista_type_id": 17335,
+      "numista_issue_ids": [361408]
     },
     {
-      "id": "1995-kookaburra-silver",
-      "label": "Kookaburra - Silver",
+      "id": "1995-australian-kookaburra",
+      "label": "Australian Kookaburra",
       "year": 1995,
-      "numista_type_id": 10841
+      "numista_type_id": 17336,
+      "numista_issue_ids": [87409]
     },
     {
       "id": "1996-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1996,
-      "numista_type_id": 17339
+      "numista_type_id": 10841,
+      "numista_issue_ids": [60606]
     },
     {
       "id": "1997-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1997,
-      "numista_type_id": 17340
+      "numista_type_id": 17339,
+      "numista_issue_ids": [135829]
     },
     {
       "id": "1998-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1998,
-      "numista_type_id": 313416
+      "numista_type_id": 17340,
+      "numista_issue_ids": [87415]
     },
     {
       "id": "1999-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 1999,
-      "numista_type_id": 17342
+      "numista_type_id": 17342,
+      "numista_issue_ids": [87417]
     },
     {
       "id": "2000-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2000,
-      "numista_type_id": 17357
+      "numista_type_id": 17343,
+      "numista_issue_ids": [87418]
     },
     {
       "id": "2001-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2001,
-      "numista_type_id": 20627
+      "numista_type_id": 17357,
+      "numista_issue_ids": [87504]
     },
     {
       "id": "2002-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2002,
-      "numista_type_id": 15415
+      "numista_type_id": 20627,
+      "numista_issue_ids": [109808]
     },
     {
       "id": "2003-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2003,
-      "numista_type_id": 57179
+      "numista_type_id": 15415,
+      "numista_issue_ids": [372871]
     },
     {
       "id": "2004-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2004,
-      "numista_type_id": 20658
+      "numista_type_id": 57179,
+      "numista_issue_ids": [225111]
+    },
+    {
+      "id": "2005-australian-kookaburra",
+      "label": "Australian Kookaburra",
+      "year": 2005,
+      "numista_type_id": 20658,
+      "numista_issue_ids": [630201]
     },
     {
       "id": "2006-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2006,
-      "numista_type_id": 74351
+      "numista_type_id": 74351,
+      "numista_issue_ids": [261827]
     },
     {
       "id": "2007-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2007,
-      "numista_type_id": 191855
+      "numista_type_id": 191855,
+      "numista_issue_ids": [478174]
     },
     {
-      "id": "2008-australian-kookaburra-silver-bullion-coin",
-      "label": "Australian Kookaburra - Silver Bullion Coin",
+      "id": "2008-australian-kookaburra",
+      "label": "Australian Kookaburra",
       "year": 2008,
-      "numista_type_id": 29124
+      "numista_type_id": 29124,
+      "numista_issue_ids": [146935]
     },
     {
       "id": "2009-australian-kookaburra-p20",
-      "label": "Australian Kookaburra - P20",
+      "label": "Australian Kookaburra · P20",
       "year": 2009,
-      "numista_type_id": 17382
+      "numista_type_id": 17382,
+      "numista_issue_ids": [367420]
     },
     {
       "id": "2010-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2010,
-      "numista_type_id": 17387
+      "numista_type_id": 17387,
+      "numista_issue_ids": [87569]
     },
     {
       "id": "2011-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2011,
-      "numista_type_id": 26066
+      "numista_type_id": 26066,
+      "numista_issue_ids": [136475]
     },
     {
       "id": "2012-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2012,
-      "numista_type_id": 26278
+      "numista_type_id": 26278,
+      "numista_issue_ids": [137729]
     },
     {
       "id": "2013-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2013,
-      "numista_type_id": 42224
+      "numista_type_id": 42224,
+      "numista_issue_ids": [183132]
     },
     {
       "id": "2014-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2014,
-      "numista_type_id": 49184
+      "numista_type_id": 49184,
+      "numista_issue_ids": [205638]
     },
     {
       "id": "2015-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2015,
-      "numista_type_id": 65421
+      "numista_type_id": 65421,
+      "numista_issue_ids": [243827]
     },
     {
       "id": "2016-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2016,
-      "numista_type_id": 80390
+      "numista_type_id": 80390,
+      "numista_issue_ids": [275276]
     },
     {
       "id": "2017-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2017,
-      "numista_type_id": 95694
+      "numista_type_id": 95694,
+      "numista_issue_ids": [312279]
     },
     {
       "id": "2018-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2018,
-      "numista_type_id": 124796
+      "numista_type_id": 124796,
+      "numista_issue_ids": [366016]
     },
     {
       "id": "2019-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2019,
-      "numista_type_id": 161560
+      "numista_type_id": 161560,
+      "numista_issue_ids": [734242]
     },
     {
       "id": "2020-kookaburra-30th-anniversary",
-      "label": "Kookaburra - 30th Anniversary",
+      "label": "Kookaburra · 30th Anniversary",
       "year": 2020,
-      "numista_type_id": 183220
+      "numista_type_id": 183220,
+      "numista_issue_ids": [464715]
     },
     {
       "id": "2021-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2021,
-      "numista_type_id": 242195
+      "numista_type_id": 242195,
+      "numista_issue_ids": [587493]
     },
     {
       "id": "2022-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2022,
-      "numista_type_id": 308142
+      "numista_type_id": 308142,
+      "numista_issue_ids": [691355]
     },
     {
       "id": "2023-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2023,
-      "numista_type_id": 349979
+      "numista_type_id": 349979,
+      "numista_issue_ids": [760315]
     },
     {
       "id": "2024-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2024,
-      "numista_type_id": 395644
+      "numista_type_id": 395644,
+      "numista_issue_ids": [835712]
     },
     {
-      "id": "2025-australian-kookaburra",
-      "label": "Australian Kookaburra",
+      "id": "2025-australian-kookaburra-35th-anniversary",
+      "label": "Australian Kookaburra · 35th Anniversary",
       "year": 2025,
-      "numista_type_id": 451849
+      "numista_type_id": 451849,
+      "numista_issue_ids": [923574]
     },
     {
       "id": "2026-australian-kookaburra",
       "label": "Australian Kookaburra",
       "year": 2026,
-      "numista_type_id": 552773
+      "numista_type_id": 552773,
+      "numista_issue_ids": [1055814]
     }
   ]
 }
