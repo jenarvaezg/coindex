@@ -32,13 +32,14 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(41, catalogs.size)
+        assertEquals(44, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los dieciséis
-     * cerrados llevan su nota y los veinticinco abiertos no afirman nada más que «N de N catalogadas».
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
+     * diecisiete cerrados llevan su nota y los veintisiete abiertos no afirman nada más que
+     * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -46,8 +47,8 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(16, closed.size)
-        assertEquals(25, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(17, closed.size)
+        assertEquals(27, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -565,6 +566,105 @@ class CuratedCatalogsTest {
                 kangaroo.members.single { it.year == 2019 && it.numistaTypeId == 153_925 },
                 portrait6th2019,
             ),
+        )
+    }
+
+    /**
+     * Silver Britannia (#97): the 2013 fineness change splits the 1 oz line like the Canadian
+     * dollar of #52 — .958 at 32,45 g closes in 2012; .999 at 31,21 g opens from 2013. The ¼ oz
+     * never had .958 bullion (only proof), so it is one open catalog with gaps where Numista
+     * only lists proof (2016-2020 and 2022). Privies and city marks on the same type fill the
+     * year; plain-field BU, Oriental Border, Coronation and Gairsoppa stay out. 2023 has two
+     * slots (Elizabeth / Charles), same rule as the Eagle Type 1 / Type 2 of #91.
+     */
+    @Test
+    fun `silver britannia splits on the 2013 fineness change and catalogs the quarter separately`() {
+        val closed958 = find("uk-silver-britannia-1oz-958")
+        assertEquals(2, closed958.schemaVersion)
+        assertTrue(closed958.isDateRun)
+        assertEquals("Silver Britannia .958 1 oz", closed958.family)
+        assertEquals(1_043, closed958.weightMillioz)
+        assertEquals(Finish.Bullion, closed958.finish)
+        assertEquals(Metal.Silver, closed958.metal)
+        assertEquals(SeriesStatus.Closed, closed958.seriesStatus)
+        assertNotNull(closed958.closedNote)
+        assertTrue(closed958.closedNote!!.contains(".999"))
+        assertEquals("https://en.numista.com/catalogue/pieces13410.html", closed958.source)
+        assertEquals((1998..2012).toList(), closed958.members.map { it.year })
+        assertTrue(closed958.members.all { it.numistaIssueIds.isNotEmpty() })
+        assertTrue(closed958.members.none { it.year == 1997 })
+        assertTrue(closed958.members.none { 115_756 in it.numistaIssueIds }) // 1998 proof
+        assertTrue(closed958.members.none { 677_334 in it.numistaIssueIds }) // 2011 Matt BU
+
+        val open999 = find("uk-silver-britannia-1oz-bullion")
+        assertEquals(2, open999.schemaVersion)
+        assertTrue(open999.isDateRun)
+        assertEquals("Silver Britannia .999 bullion anual", open999.family)
+        assertEquals(1_000, open999.weightMillioz)
+        assertEquals(Finish.Bullion, open999.finish)
+        assertEquals(SeriesStatus.Open, open999.seriesStatus)
+        assertNull(open999.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces295025.html", open999.source)
+        assertEquals(15, open999.members.size)
+        assertEquals(
+            (2013..2022).toList() + listOf(2023, 2023) + (2024..2026).toList(),
+            open999.members.map { it.year },
+        )
+        assertTrue(open999.members.all { it.numistaIssueIds.isNotEmpty() })
+        // Textured bullion is the 2015/2016 standard; plain-field BU must not fill.
+        assertTrue(555_707 in open999.members.single { it.year == 2015 }.numistaIssueIds)
+        assertTrue(open999.members.none { 254_785 in it.numistaIssueIds })
+        assertTrue(open999.members.none { 552_302 in it.numistaIssueIds })
+        // Lunar / city privies on the same type fill; Coronation and Oriental Border stay out.
+        assertTrue(667_940 in open999.members.single { it.year == 2013 }.numistaIssueIds)
+        assertTrue(open999.members.none { it.numistaTypeId == 370_264 })
+        assertTrue(open999.members.none { it.numistaTypeId == 134_668 })
+        val elizabeth2023 = open999.members.single { it.id == "2023-elizabeth-silver-britannia" }
+        val charles2023 = open999.members.single { it.id == "2023-charles-silver-britannia" }
+        assertEquals(240_613, elizabeth2023.numistaTypeId)
+        assertEquals(353_110, charles2023.numistaTypeId)
+
+        val bullion2015 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 224_428,
+            issueYear = 2015,
+            issueId = 555_707,
+        )
+        val plainBu2015 = CollectedItem(
+            id = 2,
+            quantity = 1,
+            typeId = 59_887,
+            issueYear = 2015,
+            issueId = 254_785,
+        )
+        assertTrue(open999.memberMatches(open999.members.single { it.year == 2015 }, bullion2015))
+        assertTrue(open999.members.none { open999.memberMatches(it, plainBu2015) })
+
+        val quarter = find("uk-silver-britannia-quarter-oz-bullion")
+        assertEquals(2, quarter.schemaVersion)
+        assertTrue(quarter.isDateRun)
+        assertEquals("Silver Britannia ¼ oz bullion", quarter.family)
+        assertEquals(250, quarter.weightMillioz)
+        assertEquals(Finish.Bullion, quarter.finish)
+        assertEquals(SeriesStatus.Open, quarter.seriesStatus)
+        assertNull(quarter.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces384610.html", quarter.source)
+        assertEquals(
+            listOf(2013, 2014, 2015, 2021, 2023, 2023, 2024, 2025, 2026),
+            quarter.members.map { it.year },
+        )
+        assertTrue(quarter.members.all { it.numistaIssueIds.isNotEmpty() })
+        assertTrue(quarter.members.none { 726_963 in it.numistaIssueIds }) // Gairsoppa
+        assertTrue(quarter.members.none { it.year in 2016..2020 })
+        assertTrue(quarter.members.none { it.year == 2022 })
+        assertEquals(
+            274_495,
+            quarter.members.single { it.id == "2023-elizabeth-silver-britannia-quarter" }.numistaTypeId,
+        )
+        assertEquals(
+            384_610,
+            quarter.members.single { it.id == "2023-charles-silver-britannia-quarter" }.numistaTypeId,
         )
     }
 

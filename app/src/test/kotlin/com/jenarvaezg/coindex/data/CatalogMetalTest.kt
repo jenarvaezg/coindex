@@ -50,7 +50,7 @@ class CatalogMetalTest {
     @Test
     fun `every catalog that is not a set declares silver today`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(40, declared.size)
+        assertEquals(43, declared.size)
         assertEquals(emptyList(), declared.filterNot { (_, metal) -> metal == Metal.Silver })
         // El único conjunto no declara variante física de ninguna clase (ADR 0012).
         assertEquals(listOf(null), catalogs.filter { it.isSet }.map { it.metal })
