@@ -137,6 +137,8 @@ fun unclassifiedReasonLabel(reason: UnclassifiedReason): String = when (reason) 
         "Ficha del tipo sin descargar: se completará en el próximo sincronizado."
     UnclassifiedReason.NoFamilyOrCatalog ->
         "Sin familia en Numista y sin catálogo curado que la referencie: candidata a catálogo."
+    UnclassifiedReason.IssueNotClaimedByCatalog ->
+        "Sin una emisión de Numista incluida en los catálogos curados de este tipo."
     is UnclassifiedReason.UnknownWeight ->
         "«${reason.family}» sin peso en Numista: no se puede identificar la variante física."
 }

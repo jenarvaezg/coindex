@@ -32,15 +32,55 @@ object CatalogSeeds {
         return catalog
     }
 
-    /** Parses every seed and rejects duplicate catalog ids across files. */
+    /**
+     * Parses every seed, rejects duplicate catalog ids, and makes cross-catalog type claims
+     * unambiguous. A type may occur in several ordinary catalogs only when every occurrence is
+     * issue-qualified and those catalogs' issue sets are disjoint.
+     */
     fun parseAll(files: List<Pair<String, String>>): List<CollectionCatalog> {
         val ids = mutableSetOf<String>()
-        return files.map { (fileName, contents) ->
+        val catalogs = files.map { (fileName, contents) ->
             val catalog = parse(fileName, contents)
             if (!ids.add(catalog.id)) {
                 throw CatalogSeedException("collection catalog id `${catalog.id}` is duplicated")
             }
             catalog
+        }
+        validateCrossCatalogClaims(catalogs)
+        return catalogs
+    }
+
+    private fun validateCrossCatalogClaims(catalogs: List<CollectionCatalog>) {
+        val claimsByType =
+            mutableMapOf<Int, MutableMap<String, MutableList<CollectionCatalogMember>>>()
+        for (catalog in catalogs.filterNot { it.isSet }) {
+            for (member in catalog.members.filter { it.isIssued }) {
+                val typeId = member.numistaTypeId ?: continue
+                claimsByType
+                    .getOrPut(typeId) { linkedMapOf() }
+                    .getOrPut(catalog.id) { mutableListOf() }
+                    .add(member)
+            }
+        }
+
+        for ((typeId, claimsByCatalog) in claimsByType) {
+            if (claimsByCatalog.size < 2) continue
+            if (claimsByCatalog.values.flatten().any { it.numistaIssueIds.isEmpty() }) {
+                throw CatalogSeedException(
+                    "Numista type `$typeId` is claimed by more than one collection catalog without issue-qualified identities",
+                )
+            }
+            val issueOwners = mutableMapOf<Int, String>()
+            for ((catalogId, members) in claimsByCatalog) {
+                for (issueId in members.flatMap { it.numistaIssueIds }) {
+                    val previous = issueOwners.putIfAbsent(issueId, catalogId)
+                    if (previous != null && previous != catalogId) {
+                        throw CatalogSeedException(
+                            "Numista issue `$issueId` for type `$typeId` is claimed by collection catalogs `$previous` and `$catalogId`",
+                        )
+                    }
+                }
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "id": "lunar-iii-perth-1oz-bullion",
-  "name": "Lunar Series III · Perth Mint · 1 oz bullion",
+  "id": "lunar-iii-perth-1oz-proof-coloured",
+  "name": "Lunar Series III · Perth Mint · 1 oz proof coloured",
   "issuer_code": "australie",
   "family": "Lunar Series III",
   "weight_millioz": 1000,
-  "finish": "Bullion",
+  "finish": "ProofColoured",
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=4750",
@@ -15,10 +15,9 @@
       "id": "2020-year-of-the-mouse",
       "label": "Year of the Mouse",
       "year": 2020,
-      "numista_type_id": 179438,
+      "numista_type_id": 185343,
       "numista_issue_ids": [
-        459056,
-        698372
+        467674
       ]
     },
     {
@@ -27,7 +26,8 @@
       "year": 2021,
       "numista_type_id": 235118,
       "numista_issue_ids": [
-        582780
+        585569,
+        582778
       ]
     },
     {
@@ -36,8 +36,8 @@
       "year": 2022,
       "numista_type_id": 307024,
       "numista_issue_ids": [
-        698366,
-        698365
+        698367,
+        700090
       ]
     },
     {
@@ -46,34 +46,35 @@
       "year": 2023,
       "numista_type_id": 342221,
       "numista_issue_ids": [
-        747609
+        970595
       ]
     },
     {
       "id": "2024-year-of-the-dragon",
       "label": "Year of the Dragon",
       "year": 2024,
-      "numista_type_id": 386213,
+      "numista_type_id": 394043,
       "numista_issue_ids": [
-        841265
+        833480
       ]
     },
     {
       "id": "2025-year-of-the-snake",
       "label": "Year of the Snake",
       "year": 2025,
-      "numista_type_id": 441816,
+      "numista_type_id": 576294,
       "numista_issue_ids": [
-        923283
+        1088982,
+        1091660
       ]
     },
     {
       "id": "2026-year-of-the-horse",
       "label": "Year of the Horse",
       "year": 2026,
-      "numista_type_id": 483798,
+      "numista_type_id": 507204,
       "numista_issue_ids": [
-        979731
+        1002105
       ]
     }
   ]

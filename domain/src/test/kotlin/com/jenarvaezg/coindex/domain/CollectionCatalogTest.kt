@@ -361,13 +361,29 @@ class CollectionCatalogValidationTest {
             zeroIssue.validate(),
         )
 
-        // Naming issues anywhere else is a curation mistake, not a silently ignored field.
+        // A date run keeps its year-only identity; optional issue qualifiers belong to schema 1.
         val issuesOnDateRun = dateRunCatalogStub().let { run ->
             run.copy(members = listOf(run.members[0].copy(numistaIssueIds = listOf(9_001))))
         }
         assertEquals(
             CollectionCatalogValidationError.IssuesOutsideIssueRun("1904"),
             issuesOnDateRun.validate(),
+        )
+
+        val ordinaryWithBadIssues = teslaCatalogStub().copy(
+            members = listOf(
+                teslaCatalogStub().members[0].copy(numistaIssueIds = listOf(9_001, 9_001)),
+            ),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.DuplicateNumistaIssueId(9_001),
+            ordinaryWithBadIssues.validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.InvalidNumistaIssueId,
+            ordinaryWithBadIssues.copy(
+                members = listOf(ordinaryWithBadIssues.members[0].copy(numistaIssueIds = listOf(0))),
+            ).validate(),
         )
     }
 
@@ -660,6 +676,27 @@ class CollectionCatalogAlbumTest {
         assertTrue(definition.isEvidencedBy(listOf(datedItem(4, 10_340, null))))
     }
 
+    @Test
+    fun `ordinary issue qualifiers constrain membership and evidence`() {
+        val definition = teslaCatalogStub().copy(
+            members = listOf(
+                teslaCatalogStub().members[0].copy(numistaIssueIds = listOf(7_001, 7_002)),
+            ),
+        )
+        val member = definition.members.single()
+        val matching = CollectedItem(1, 1, 150_352, issueId = 7_002)
+        val wrongIssue = CollectedItem(2, 1, 150_352, issueId = 7_003)
+        val missingIssue = CollectedItem(3, 1, 150_352)
+
+        assertNull(definition.validate())
+        assertTrue(definition.memberMatches(member, matching))
+        assertFalse(definition.memberMatches(member, wrongIssue))
+        assertFalse(definition.memberMatches(member, missingIssue))
+        assertTrue(definition.isEvidencedBy(listOf(matching)))
+        assertFalse(definition.isEvidencedBy(listOf(wrongIssue, missingIssue)))
+
+    }
+
     /**
      * The case the date run cannot express: six issues, one year. Keying on the year would fill
      * one slot and call the other five missing while they sit in the album.
@@ -703,7 +740,8 @@ class CollectionCatalogAlbumTest {
         assertNull(definition.emissionLabelFor(issuedItem(8, 1_885, 9_999)))
         assertNull(dateRunCatalogStub().emissionLabelFor(datedItem(9, 10_340, 1904)))
 
-        // One owned issue is evidence enough to reach the plate, as one owned type is elsewhere.
-        assertTrue(definition.isEvidencedBy(listOf(issuedItem(10, 1_885, null))))
+        // Issue-qualified evidence needs an issue, just as ownership does.
+        assertTrue(definition.isEvidencedBy(listOf(issuedItem(10, 1_885, 9_001))))
+        assertFalse(definition.isEvidencedBy(listOf(issuedItem(11, 1_885, null))))
     }
 }
