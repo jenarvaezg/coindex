@@ -32,13 +32,14 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(41, catalogs.size)
+        assertEquals(42, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los dieciséis
-     * cerrados llevan su nota y los veinticinco abiertos no afirman nada más que «N de N catalogadas».
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
+     * diecisiete cerrados llevan su nota y los veinticinco abiertos no afirman nada más que
+     * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -46,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(16, closed.size)
+        assertEquals(17, closed.size)
         assertEquals(25, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -635,6 +636,54 @@ class CuratedCatalogsTest {
         assertEquals(
             listOf(1960, 1965),
             bolivares.members.filter { it.numistaTypeId == 7_775 }.map { it.year },
+        )
+    }
+
+    /**
+     * El 1 bolívar sale de agrupación a date run (#113): el tronco N#10338 que la agrupación
+     * no nombraba, más N#10398 / N#7034 / N#5316. Los años no se copian del 2 bolívares —aquí
+     * hay 1893, 1901 y 1921, y no hay 1894 ni 1930— y el bulto de 102 de N#5316 sigue siendo
+     * una fila hasta que el padre la parta por años en Numista.
+     */
+    @Test
+    fun `the venezuelan 1 bolivar date run spans its four types including the trunk`() {
+        val bolivar = find("venezuela-1-bolivar")
+        assertEquals(2, bolivar.schemaVersion)
+        assertTrue(bolivar.isDateRun)
+        assertEquals("1 Bolívar de Venezuela", bolivar.family)
+        assertEquals(161, bolivar.weightMillioz)
+        assertEquals(Metal.Silver, bolivar.metal)
+        assertNull(bolivar.finish)
+        assertEquals(SeriesStatus.Closed, bolivar.seriesStatus)
+        assertEquals(22, bolivar.members.size)
+        assertEquals(
+            listOf(
+                1879, 1886, 1887, 1888, 1889, 1893, 1900, 1901, 1903,
+                1911, 1912, 1919, 1921, 1924, 1926, 1929, 1935, 1936,
+            ),
+            bolivar.members.filter { it.numistaTypeId == 10_338 }.map { it.year },
+        )
+        assertEquals(
+            listOf(1945),
+            bolivar.members.filter { it.numistaTypeId == 10_398 }.map { it.year },
+        )
+        assertEquals(
+            "1945 (acuñada en 1947)",
+            bolivar.members.first { it.numistaTypeId == 10_398 }.label,
+        )
+        assertEquals(
+            listOf(1954),
+            bolivar.members.filter { it.numistaTypeId == 7_034 }.map { it.year },
+        )
+        assertEquals(
+            "1954 (acuñada en 1955)",
+            bolivar.members.first { it.numistaTypeId == 7_034 }.label,
+        )
+        assertTrue(bolivar.members.none { it.year == 1947 || it.year == 1955 })
+        assertTrue(bolivar.members.all { it.numistaIssueIds.isEmpty() })
+        assertEquals(
+            listOf(1960, 1965),
+            bolivar.members.filter { it.numistaTypeId == 5_316 }.map { it.year },
         )
     }
 

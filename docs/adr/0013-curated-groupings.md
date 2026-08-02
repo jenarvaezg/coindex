@@ -56,8 +56,8 @@ file order.
 
 The physical variant still comes from each type's own metadata. A grouping declares no weight,
 so a grouping that happened to span two weights honestly splits into two proposals instead of
-pretending a ¼ bolívar and a 2 bolívares are one piece. The four shipped groupings are each one
-denomination of uniform weight, so each is exactly one card.
+pretending a ¼ bolívar and a 2 bolívares are one piece. The shipped groupings keep uniform
+weight inside each file, so each is exactly one card.
 
 **Every proposal card opens its own screen**, catalog or no catalog. The proposal screen lists
 the pieces the collector owns in that group, as recorded, with the year on each row. The plate
@@ -65,15 +65,20 @@ and the catalog source moved into it, and the plate keeps a shortcut on the card
 rather than as the title. The division of labour is now stated in one line: the proposal screen
 is what you own, the plate is the catalog with its gaps, and only the plate can say «me falta».
 
-The 2 bolívares are the exception that proves the rule: they ship as a date-run catalog with 25
-members across three types, not as a grouping, because the collector is actively hunting the
-1965 and a grouping could never show him that hole.
+The Venezuelan silver denominations that hunt a year ship as date-run catalogs, not as
+groupings: a grouping could never show the hole. The 2 bolívares were the first (25 members
+across three types); the 1 bolívar followed (#113) with 22 members across four types, including
+the trunk N#10338 the old grouping had omitted. Publishing that plate accepts that a bulk row
+of N#5316 under a single year can still report a false Missing for 1960 or 1965 until the
+collector splits the bag by year in Numista — the honest fix for those two cells, not a reason
+to keep the whole denomination silent.
 
 ## Consequences
 
 The 81 orphans stop being unreachable by construction: any of them can be given a family by
-curating a file, without inventing a sequence for it. Four groupings ship now — the paquillos and
-the Venezuelan medios, reales and 1 bolívar — and the rest of the list is candidates.
+curating a file, without inventing a sequence for it. Four groupings ship now — the Venezuelan
+medios and reales, the loose Royal Mint ounces, and the classic US silver dollar. The paquillos
+and the 1 bolívar already graduated to catalogs, and the rest of the list is candidates.
 
 A grouping is cheap enough to be tempting, and that is its risk: it is an editorial claim with
 no source of truth behind it beyond the curator's judgement, so it names a representative

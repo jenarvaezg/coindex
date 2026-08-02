@@ -376,6 +376,174 @@
   },
   "weight": 14
  },
+ "10338": {
+  "id": 10338,
+  "url": "https://es.numista.com/10338",
+  "title": "1 Bolívar",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1879,
+  "max_year": 1936,
+  "ruler": [
+   {
+    "id": 4705,
+    "name": "Estados Unidos",
+    "wikidata_id": "Q5848651"
+   }
+  ],
+  "value": {
+   "text": "1 bolívar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 23.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 835 (Copper .165)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Désiré-Albert Barre"
+   ],
+   "description": "Escudo con leyenda en la parte superior. Peso, fecha y pureza en la parte inferior.",
+   "lettering": "ESTADOS UNIDOS DE VENEZUELA\r\nGRAM,5 • 1886 • LEI 835",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/527-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/527-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Désiré-Albert Barre"
+   ],
+   "description": "Busto a la izquierda flanqueado por leyenda. Nombre del grabador en la base.",
+   "lettering": "BOLÍVAR LIBERTADOR\r\nBARRE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/526-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/526-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "comments": "De las monedas fechadas en 1936, 1.000.000 se acuñaron en 1936 y 4.000.000 en 1937.",
+  "related_types": [
+   {
+    "id": 10398,
+    "title": "1 Bolívar",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1947,
+    "maxYear": 1947
+   },
+   {
+    "id": 7034,
+    "title": "1 Bolívar",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1955,
+    "maxYear": 1955
+   },
+   {
+    "id": 5316,
+    "title": "1 Bolívar",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1960,
+    "maxYear": 1965
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Líder militar",
+   "Político",
+   "Escudo de armas",
+   "Cornucopia"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "22"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv1bs-aa"
+   }
+  ],
+  "weight": 5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Fresado",
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/6a57a0a91b3cc2.00603797-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/6a57a0a91b3cc2.00603797-180.jpg",
+   "picture_copyright": "Fireberg",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 305,
+    "name": "Caracas"
+   },
+   {
+    "id": 14,
+    "name": "Casa de la Moneda de París"
+   },
+   {
+    "id": 1338,
+    "name": "Royal Mint of Belgium"
+   },
+   {
+    "id": 11,
+    "name": "United States Mint of Philadelphia"
+   },
+   {
+    "id": 14,
+    "name": "Casa de la Moneda de París"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
  "10339": {
   "category": "coin",
   "comments": "De las monedas fechadas en 1936, 1.700.000 se acuñaron en 1936 y 800.000 en 1937.",
