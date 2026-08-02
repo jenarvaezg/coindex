@@ -31,13 +31,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(31, catalogs.size)
+        assertEquals(32, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los quince
-     * cerrados llevan su nota y los dieciséis abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los diecisiete abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -46,7 +46,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(15, closed.size)
-        assertEquals(16, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(17, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -147,6 +147,39 @@ class CuratedCatalogsTest {
         assertEquals(1_000, eagle.weightMillioz)
         assertEquals(listOf(2024, 2025, 2026), eagle.members.map { it.year })
         assertEquals(listOf(404_024, 404_024, 546_643), eagle.members.map { it.numistaTypeId })
+    }
+
+    /**
+     * N#143754 empieza en 2018: la pieza Premium Uncirculated del cincuentenario de 2017 es una
+     * emisión distinta y no abre esta tirada anual bullion. Como Numista no propone una serie,
+     * la fuente es la página del tipo y cada fecha repite ese tipo sin fijar emisiones.
+     */
+    @Test
+    fun `the silver krugerrand annual bullion date run starts in 2018`() {
+        val krugerrand = find("south-africa-silver-krugerrand-1oz-bullion")
+        assertEquals(2, krugerrand.schemaVersion)
+        assertTrue(krugerrand.isDateRun)
+        assertEquals(
+            "Silver Krugerrand bullion anual desde 2018 (sin 2017 Premium Uncirculated)",
+            krugerrand.family,
+        )
+        assertEquals(
+            "Silver Krugerrand · Sudáfrica · 1 oz bullion anual desde 2018 " +
+                "(excluye 2017 Premium Uncirculated)",
+            krugerrand.name,
+        )
+        assertEquals("afrique_du_sud", krugerrand.issuerCode)
+        assertEquals(1_000, krugerrand.weightMillioz)
+        assertEquals(Finish.Bullion, krugerrand.finish)
+        assertEquals(Metal.Silver, krugerrand.metal)
+        assertEquals(SeriesStatus.Open, krugerrand.seriesStatus)
+        assertNull(krugerrand.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces143754.html", krugerrand.source)
+        assertEquals("2026-08-02", krugerrand.updatedAt)
+        assertEquals((2018..2026).toList(), krugerrand.members.map { it.year })
+        assertTrue(krugerrand.members.none { it.year == 2017 })
+        assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })
+        assertTrue(krugerrand.members.all { it.numistaIssueIds.isEmpty() })
     }
 
     /**

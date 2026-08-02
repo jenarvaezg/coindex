@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "id": "south-africa-silver-krugerrand-1oz-bullion",
+  "name": "Silver Krugerrand · Sudáfrica · 1 oz bullion anual desde 2018 (excluye 2017 Premium Uncirculated)",
+  "issuer_code": "afrique_du_sud",
+  "family": "Silver Krugerrand bullion anual desde 2018 (sin 2017 Premium Uncirculated)",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces143754.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2018-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2018,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2019-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2019,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2020-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2020,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2021-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2021,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2022-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2022,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2023-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2023,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2024-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2024,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2025-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2025,
+      "numista_type_id": 143754
+    },
+    {
+      "id": "2026-silver-krugerrand",
+      "label": "Silver Krugerrand",
+      "year": 2026,
+      "numista_type_id": 143754
+    }
+  ]
+}
