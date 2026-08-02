@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(35, catalogs.size)
+        assertEquals(39, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los dieciséis
-     * cerrados llevan su nota y los diecinueve abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los veintitrés abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(16, closed.size)
-        assertEquals(19, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(23, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -181,6 +181,80 @@ class CuratedCatalogsTest {
         assertTrue(krugerrand.members.none { it.year == 2017 })
         assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })
         assertTrue(krugerrand.members.all { it.numistaIssueIds.isEmpty() })
+    }
+
+    /**
+     * Tanda 2 de #57 / #95: programas anuales que ya tenían serie en Numista y por tanto tarjeta
+     * sin denominador. Un tipo por catálogo, una casilla por año, sin cualificar emisiones —la
+     * ficha no mezcla acabados; las filas duplicadas de algunos años son variedades de mintage
+     * del mismo bullion. 2026 está emitido en los cuatro; ni Jose ni el padre tienen 5 oz, 1 kg
+     * ni otras fracciones del Arca dentro de las dos colecciones.
+     */
+    @Test
+    fun `vienna philharmonic and noahs ark are open single-type bullion date runs`() {
+        val philharmonic = find("austria-vienna-philharmonic-1oz-bullion")
+        assertEquals(2, philharmonic.schemaVersion)
+        assertTrue(philharmonic.isDateRun)
+        assertEquals("Vienna Philharmonic bullion anual", philharmonic.family)
+        assertEquals(
+            "Vienna Philharmonic · Austria · 1 oz bullion anual desde 2008",
+            philharmonic.name,
+        )
+        assertEquals("autriche", philharmonic.issuerCode)
+        assertEquals(1_000, philharmonic.weightMillioz)
+        assertEquals(Finish.Bullion, philharmonic.finish)
+        assertEquals(Metal.Silver, philharmonic.metal)
+        assertEquals(SeriesStatus.Open, philharmonic.seriesStatus)
+        assertNull(philharmonic.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces9165.html", philharmonic.source)
+        assertEquals("2026-08-02", philharmonic.updatedAt)
+        assertEquals((2008..2026).toList(), philharmonic.members.map { it.year })
+        assertEquals(List(19) { 9_165 }, philharmonic.members.map { it.numistaTypeId })
+        assertTrue(philharmonic.members.all { it.numistaIssueIds.isEmpty() })
+
+        val arks = listOf(
+            Triple(
+                "armenia-noahs-ark-1oz-bullion",
+                1_000 to 26_279,
+                "Noah's Ark · Armenia · 1 oz bullion anual desde 2011",
+            ),
+            Triple(
+                "armenia-noahs-ark-half-oz-bullion",
+                500 to 31_963,
+                "Noah's Ark · Armenia · ½ oz bullion anual desde 2011",
+            ),
+            Triple(
+                "armenia-noahs-ark-quarter-oz-bullion",
+                250 to 31_623,
+                "Noah's Ark · Armenia · ¼ oz bullion anual desde 2011",
+            ),
+        )
+        for ((id, weightAndType, name) in arks) {
+            val (weight, typeId) = weightAndType
+            val catalog = find(id)
+            assertEquals(2, catalog.schemaVersion)
+            assertTrue(catalog.isDateRun)
+            assertEquals(name, catalog.name)
+            assertEquals("armenie", catalog.issuerCode)
+            assertEquals(weight, catalog.weightMillioz)
+            assertEquals(Finish.Bullion, catalog.finish)
+            assertEquals(Metal.Silver, catalog.metal)
+            assertEquals(SeriesStatus.Open, catalog.seriesStatus)
+            assertNull(catalog.closedNote)
+            assertEquals("https://en.numista.com/catalogue/pieces$typeId.html", catalog.source)
+            assertEquals("2026-08-02", catalog.updatedAt)
+            assertEquals((2011..2026).toList(), catalog.members.map { it.year })
+            assertEquals(List(16) { typeId }, catalog.members.map { it.numistaTypeId })
+            assertTrue(catalog.members.all { it.numistaIssueIds.isEmpty() })
+        }
+        assertEquals(
+            setOf(
+                "Noah's Ark 1 oz bullion anual",
+                "Noah's Ark ½ oz bullion anual",
+                "Noah's Ark ¼ oz bullion anual",
+            ),
+            arks.map { find(it.first).family }.toSet(),
+        )
     }
 
     /**

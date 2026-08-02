@@ -1,0 +1,129 @@
+{
+  "schema_version": 2,
+  "id": "austria-vienna-philharmonic-1oz-bullion",
+  "name": "Vienna Philharmonic · Austria · 1 oz bullion anual desde 2008",
+  "issuer_code": "autriche",
+  "family": "Vienna Philharmonic bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces9165.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2008-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2008,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2009-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2009,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2010-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2010,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2011-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2011,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2012-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2012,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2013-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2013,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2014-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2014,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2015-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2015,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2016-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2016,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2017-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2017,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2018-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2018,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2019-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2019,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2020-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2020,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2021-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2021,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2022-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2022,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2023-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2023,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2024-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2024,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2025-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2025,
+      "numista_type_id": 9165
+    },
+    {
+      "id": "2026-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2026,
+      "numista_type_id": 9165
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "id": "armenia-noahs-ark-quarter-oz-bullion",
+  "name": "Noah's Ark · Armenia · ¼ oz bullion anual desde 2011",
+  "issuer_code": "armenie",
+  "family": "Noah's Ark ¼ oz bullion anual",
+  "weight_millioz": 250,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces31623.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2011-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2011,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2012-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2012,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2013-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2013,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2014-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2014,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2015-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2015,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2016-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2016,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2017-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2017,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2018-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2018,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2019-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2019,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2020-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2020,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2021-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2021,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2022-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2022,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2023-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2023,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2024-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2024,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2025-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2025,
+      "numista_type_id": 31623
+    },
+    {
+      "id": "2026-noahs-ark",
+      "label": "Noah's Ark",
+      "year": 2026,
+      "numista_type_id": 31623
+    }
+  ]
+}
