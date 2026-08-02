@@ -24,8 +24,8 @@ class CuratedGroupingsTest {
 
     @Test
     fun `every shipped grouping parses and validates`() {
-        // Los paquillos y el 1 bolívar se fueron: ya tienen lista de emisiones, así que son catálogo.
-        assertEquals(4, groupings.size)
+        // Paquillos, 1 bolívar y reales ya tienen lista de emisiones: son catálogo.
+        assertEquals(3, groupings.size)
         groupings.forEach { grouping ->
             assertNull(grouping.validate(), "inválida: ${grouping.id}")
             assertEquals(1, grouping.schemaVersion)
@@ -34,18 +34,17 @@ class CuratedGroupingsTest {
     }
 
     /**
-     * One card per silver denomination still waiting on a plate, which is how the collector
-     * talks about them: a «medio» is a quarter bolívar whatever the coin calls itself, and the
-     * 1960 25 céntimos is the same coin under the decimal name. The 1 bolívar already has its
-     * date-run catalog (#113).
+     * The only Venezuelan silver denomination still waiting on a plate is the medio: a
+     * «medio» is a quarter bolívar whatever the coin calls itself, and the 1960 25 céntimos
+     * is the same coin under the decimal name. The 1 bolívar and the reales already have
+     * their date-run catalogs (#113, #114).
      */
     @Test
     fun `the venezuelan silver is grouped by denomination`() {
         assertEquals(listOf(4_369, 9_488), find("venezuela-medios").typeIds)
         assertEquals("Medios de Venezuela", find("venezuela-medios").family)
-        assertEquals(listOf(2_971, 7_297), find("venezuela-reales").typeIds)
-        assertEquals("Reales de Venezuela", find("venezuela-reales").family)
         assertTrue(groupings.none { it.id == "venezuela-1-bolivar" })
+        assertTrue(groupings.none { it.id == "venezuela-reales" })
     }
 
     /**
