@@ -1,0 +1,151 @@
+{
+  "schema_version": 2,
+  "id": "uk-silver-britannia-1oz-958",
+  "name": "Silver Britannia · Reino Unido · 1 oz .958 cerrada 1998-2012 (sin 1997 proof ni plated)",
+  "issuer_code": "royaume-uni",
+  "family": "Silver Britannia .958 1 oz",
+  "weight_millioz": 1043,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Cierre por cambio de ley y métrica, no porque el programa muriera: hasta 2012 la Royal Mint acuñó la onza de plata Britannia en plata Britannia .958 (32,45 g / 40 mm) y en 2013 pasó a .999 (31,21 g / 38,61 mm) para alinearla con el lingote internacional —siguen siendo una onza fina de plata, otra clave de variante—. 1997 solo tuvo proof (N#32142). https://blog.westminstercollection.com/2013/01/14/royal-mint-abandons-britannia-silver/ https://www.chards.co.uk/2013-silver-britannia-one-ounce-bullion-coin/740",
+  "source": "https://en.numista.com/catalogue/pieces13410.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1998-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 1998,
+      "numista_type_id": 13410,
+      "numista_issue_ids": [
+        69365
+      ]
+    },
+    {
+      "id": "1999-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 1999,
+      "numista_type_id": 13417,
+      "numista_issue_ids": [
+        69372
+      ]
+    },
+    {
+      "id": "2000-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2000,
+      "numista_type_id": 13410,
+      "numista_issue_ids": [
+        69364
+      ]
+    },
+    {
+      "id": "2001-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2001,
+      "numista_type_id": 14363,
+      "numista_issue_ids": [
+        71628
+      ]
+    },
+    {
+      "id": "2002-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2002,
+      "numista_type_id": 13410,
+      "numista_issue_ids": [
+        69361
+      ]
+    },
+    {
+      "id": "2003-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2003,
+      "numista_type_id": 13411,
+      "numista_issue_ids": [
+        69366
+      ]
+    },
+    {
+      "id": "2004-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2004,
+      "numista_type_id": 13410,
+      "numista_issue_ids": [
+        69363
+      ]
+    },
+    {
+      "id": "2005-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2005,
+      "numista_type_id": 13413,
+      "numista_issue_ids": [
+        69368
+      ]
+    },
+    {
+      "id": "2006-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2006,
+      "numista_type_id": 13410,
+      "numista_issue_ids": [
+        69362
+      ]
+    },
+    {
+      "id": "2007-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2007,
+      "numista_type_id": 13414,
+      "numista_issue_ids": [
+        69369
+      ]
+    },
+    {
+      "id": "2008-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2008,
+      "numista_type_id": 18525,
+      "numista_issue_ids": [
+        92968
+      ]
+    },
+    {
+      "id": "2009-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2009,
+      "numista_type_id": 13417,
+      "numista_issue_ids": [
+        325861
+      ]
+    },
+    {
+      "id": "2010-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2010,
+      "numista_type_id": 18524,
+      "numista_issue_ids": [
+        92967
+      ]
+    },
+    {
+      "id": "2011-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2011,
+      "numista_type_id": 23404,
+      "numista_issue_ids": [
+        123806
+      ]
+    },
+    {
+      "id": "2012-silver-britannia-958",
+      "label": "Silver Britannia",
+      "year": 2012,
+      "numista_type_id": 13410,
+      "numista_issue_ids": [
+        147707
+      ]
+    }
+  ]
+}
