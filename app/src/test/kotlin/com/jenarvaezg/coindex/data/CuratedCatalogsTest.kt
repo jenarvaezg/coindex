@@ -31,13 +31,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(32, catalogs.size)
+        assertEquals(33, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los quince
-     * cerrados llevan su nota y los diecisiete abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los dieciocho abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -46,7 +46,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(15, closed.size)
-        assertEquals(17, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(18, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -180,6 +180,63 @@ class CuratedCatalogsTest {
         assertTrue(krugerrand.members.none { it.year == 2017 })
         assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })
         assertTrue(krugerrand.members.all { it.numistaIssueIds.isEmpty() })
+    }
+
+    /**
+     * American Silver Eagle bullion: one date run across N#1493 (Type 1, 1986-2021) and
+     * N#298883 (Type 2, 2021-2026). 2021 keeps two slots because the reverse changed mid-year
+     * and the market names them apart (#57). Both type pages mix proof and burnished, so every
+     * slot is issue-qualified; Star Privy 2024 and Eagle Privy 2025 stay out as thematic
+     * privies. Ids from `/types/1493/issues` and `/types/298883/issues`, two calls (#91).
+     */
+    @Test
+    fun `the american silver eagle is forty-two issue-qualified bullion years over two types`() {
+        val eagle = find("us-american-silver-eagle-1oz-bullion")
+        assertEquals(2, eagle.schemaVersion)
+        assertTrue(eagle.isDateRun)
+        assertEquals("American Silver Eagle bullion anual", eagle.family)
+        assertEquals("etats-unis", eagle.issuerCode)
+        assertEquals(1_000, eagle.weightMillioz)
+        assertEquals(Finish.Bullion, eagle.finish)
+        assertEquals(Metal.Silver, eagle.metal)
+        assertEquals(SeriesStatus.Open, eagle.seriesStatus)
+        assertNull(eagle.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces1493.html", eagle.source)
+        assertEquals(42, eagle.members.size)
+        assertEquals(
+            (1986..2021).toList() + (2021..2026).toList(),
+            eagle.members.map { it.year },
+        )
+        val type1 = eagle.members.filter { it.numistaTypeId == 1_493 }
+        val type2 = eagle.members.filter { it.numistaTypeId == 298_883 }
+        assertEquals((1986..2021).toList(), type1.map { it.year })
+        assertEquals((2021..2026).toList(), type2.map { it.year })
+        assertEquals("Type 1", type1.single { it.year == 2021 }.label)
+        assertEquals("Type 2", type2.single { it.year == 2021 }.label)
+        assertTrue(eagle.members.all { it.numistaIssueIds.isNotEmpty() })
+        // Standard bullion rows the father owns; the 2023 Proof must not be listed.
+        assertTrue(64_283 in type1.single { it.year == 1987 }.numistaIssueIds)
+        assertTrue(1_059_386 in type2.single { it.year == 2026 }.numistaIssueIds)
+        assertTrue(eagle.members.none { 760_576 in it.numistaIssueIds })
+        assertTrue(eagle.members.none { 897_759 in it.numistaIssueIds })
+        assertTrue(eagle.members.none { 948_319 in it.numistaIssueIds })
+
+        val proof2023 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 298_883,
+            issueYear = 2023,
+            issueId = 760_576,
+        )
+        val bullion2026 = CollectedItem(
+            id = 2,
+            quantity = 1,
+            typeId = 298_883,
+            issueYear = 2026,
+            issueId = 1_059_386,
+        )
+        assertTrue(eagle.members.none { eagle.memberMatches(it, proof2023) })
+        assertTrue(eagle.memberMatches(type2.single { it.year == 2026 }, bullion2026))
     }
 
     /**

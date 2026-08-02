@@ -48,10 +48,13 @@ siendo alcanzable con una pieza sin año, pero un miembro cualificado sólo apor
 emisión coincide. El tipo compartido por sí solo no abre las dos láminas.
 
 **`schema_version: 5` conserva su significado exhaustivo.** Todos sus miembros emitidos deben
-seguir declarando al menos una emisión y un mismo `issue_id` no puede llenar dos casillas. Las
-versiones 2 y 3 no aceptan el cualificador: la 2 ya identifica sus casillas por año y la 3 representa
-un producto emitido como set. Los miembros `announced` y `unlisted` tampoco pueden declarar
-emisiones, porque no tienen un tipo propio publicado que cualificar.
+seguir declarando al menos una emisión y un mismo `issue_id` no puede llenar dos casillas.
+**`schema_version: 2` puede cualificar opcionalmente** una casilla de año con `numista_issue_ids`:
+el año sigue siendo la identidad del date run, y la lista excluye acabados que Numista mete en el
+mismo tipo —proof, burnished, privy temático— sin forzar un catálogo simple de un tipo por año.
+La versión 3 no acepta el cualificador: representa un producto emitido como set. Los miembros
+`announced` y `unlisted` tampoco pueden declarar emisiones, porque no tienen un tipo propio
+publicado que cualificar.
 
 **Compartir un tipo entre catálogos obliga a cerrar la ambigüedad en los ficheros.** Al cargar todos
 los seeds, cada aparición de ese tipo en catálogos que no son sets debe estar cualificada y los
@@ -78,8 +81,9 @@ cualifica conservan exactamente el enrutado anterior.
 Este ADR estrecha dos decisiones aceptadas sin cambiar su propósito:
 
 - Del ADR 0014 cae únicamente la prohibición de usar `numista_issue_ids` fuera de un issue run. La
-  versión 5 sigue siendo la forma en que **todas** las casillas se identifican por emisión; la versión
-  1 sólo puede cualificar miembros concretos.
+  versión 5 sigue siendo la forma en que **todas** las casillas se identifican por emisión; las
+  versiones 1 y 2 pueden cualificar miembros concretos sin dejar de ser un catálogo simple o un
+  date run.
 - En el ADR 0016, «el catálogo nombra el tipo» pasa a significar «la identidad del miembro acepta la
   pieza» cuando hay cualificador. La autoridad del catálogo sobre peso, acabado y metal no alcanza
   una emisión que el miembro excluye, y el *snapping* no puede volver a introducirla.
@@ -103,6 +107,9 @@ Este ADR estrecha dos decisiones aceptadas sin cambiar su propósito:
   N#342221 sin completar dos láminas con una sola pieza. En esta curación se cualifican los siete
   años de ambos catálogos, aunque la validación sólo lo obliga donde comparten tipo: cada fichero
   declara el producto exacto de Perth Mint y no cualquier acabado que Numista añada a su ficha.
+- El American Silver Eagle (#91) es el primer date run que cualifica: N#1493 y N#298883 mezclan
+  bullion, proof y burnished en la misma ficha, y sin lista de emisiones una proof del padre
+  rellenaría la casilla bullion de su año.
 - Una pieza cuyo JSON no deja leer `issue.id` tampoco puede atravesar una frontera cualificada. Se
   muestra sin clasificar en vez de adivinarse; mejorar el lector corrige filas antiguas al vuelo.
 - La validación entre ficheros vive en `CatalogSeeds.parseAll`, porque un catálogo aislado no puede

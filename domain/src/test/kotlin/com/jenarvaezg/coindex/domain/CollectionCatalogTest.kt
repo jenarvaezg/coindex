@@ -361,14 +361,11 @@ class CollectionCatalogValidationTest {
             zeroIssue.validate(),
         )
 
-        // A date run keeps its year-only identity; optional issue qualifiers belong to schema 1.
+        // A date run may refine a year with issues when the type page mixes finishes (#91).
         val issuesOnDateRun = dateRunCatalogStub().let { run ->
             run.copy(members = listOf(run.members[0].copy(numistaIssueIds = listOf(9_001))))
         }
-        assertEquals(
-            CollectionCatalogValidationError.IssuesOutsideIssueRun("1904"),
-            issuesOnDateRun.validate(),
-        )
+        assertNull(issuesOnDateRun.validate())
 
         val ordinaryWithBadIssues = teslaCatalogStub().copy(
             members = listOf(
