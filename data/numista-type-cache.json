@@ -16734,6 +16734,115 @@
   },
   "weight": 18
  },
+ "18655": {
+  "id": 18655,
+  "url": "https://es.numista.com/18655",
+  "title": "5 Dollars - Elizabeth II (2nd Portrait; SML Bullion Coinage)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 1988,
+  "max_year": 1989,
+  "ruler": [
+   {
+    "id": 2095,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "thickness": 3.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Arnold Machin"
+   ],
+   "description": "Busto de la Reina Isabel II, como a los 37 años, con tiara, mirando hacia la derecha.",
+   "lettering": "ELIZABETH II\r\n5 DOLLARS 1989",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/4299-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/4299-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "designers": [
+    "Walter Ott"
+   ],
+   "description": "Hoja de arce",
+   "lettering": "CANADA\r\n9999 9999\r\nFINE SILVER 1 OZ ARGENT PUR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/4300-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/4300-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "series": "SML",
+  "references": [
+   {
+    "catalogue": {
+     "id": 133,
+     "code": "Ch"
+    },
+    "number": "RC-1270"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "163"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Dentado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "18797": {
   "id": 18797,
   "url": "https://es.numista.com/18797",
@@ -39324,6 +39433,132 @@
   },
   "weight": 17
  },
+ "356135": {
+  "id": 356135,
+  "url": "https://es.numista.com/356135",
+  "title": "5 Dollars (In the name of Elizabeth II; SML Bullion Coinage)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 2023,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 6816,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Susan Taylor"
+   ],
+   "designers": [
+    "Susanna Blunt"
+   ],
+   "description": "Cabeza de la reina Isabel II, como a los 77 años de edad, con la cabeza descubierta, collar y pendientes, mirando hacia la derecha. La efigie va acompañada de una marca especial consistente en las fechas dobles \"1952\" y \"2022\", separadas por cuatro perlas que simbolizan las cuatro efigies que han adornado las monedas canadienses a lo largo del reinado de Isabel II.",
+   "lettering": "ELIZABETH II\r\n1952\r\n••••\r\n2022\r\n5 DOLLARS 2023",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/63ec7d2f1998f8.23961049-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/63ec7d2f1998f8.23961049-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "reverse": {
+   "designers": [
+    "Walter Ott"
+   ],
+   "description": "Diseño clásico de hoja de arce, rodeada de letras con una pequeña hoja de arce como elemento de seguridad debajo. con los dos últimos dígitos del año grabados en el elemento de seguridad, que representan el año",
+   "lettering": "CANADA\r\n9999  9999\r\nFINE SILVER 1 OZ ARGENT PUR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/63ec7d3026d0a9.07924364-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/63ec7d3026d0a9.07924364-180.jpg",
+   "picture_copyright": "JM Bullion",
+   "picture_copyright_url": "https://www.jmbullion.com/"
+  },
+  "series": "SML",
+  "comments": "Esta moneda, un éxito entre los inversores de todo el mundo, ha sido ligeramente modificada por la Real Casa de la Moneda de Canadá para presentar un nuevo acabado formado por complejas líneas radiales y una marca micrograbada con láser para reducir las falsificaciones, que seguirá formando parte del diseño de esta moneda en el futuro.<br /><br />\r\nLa moneda de plata en lingotes más segura del mundo, ¡ahora con protección de superficie MINTSHIELD™!<br /><br />\r\nUna variedad de monedas y lingotes de plata están disponibles para su compra a través de distribuidores seleccionados. El precio de venta al público de los lingotes se basa en los precios del mercado internacional del oro, la plata y el platino, que varían diariamente. Las monedas en lingotes no tienen una acuñación fija a menos que se indique lo contrario.<br /><br />\r\nDesde su introducción en 1988, la emblemática hoja de arce plateada de la Royal Canadian Mint (SML) ha sido una moneda de inversión en lingotes muy codiciada. La LMS está acuñada con una onza troy (31,11 gramos) de plata de ley 99,99% y tiene un valor nominal de 5 $.<br /><br />\r\nTodas las monedas de lingotes SML de 2023 incluyen características de seguridad mejoradas: líneas radiales, una hoja de arce micrograbada y tecnología antifalsificación BULLION DNA™. También incluyen la protección de superficie MINTSHIELD™: el primer enfoque probado en el mundo para reducir la aparición de decoloraciones de manchas blancas en las monedas de lingotes de plata.<br /><br />\r\nProtección estética<br /><br />\r\nTras años de investigación y desarrollo intensivos, la Real Casa de la Moneda de Canadá desarrolló MINTSHIELD™, un avance único en el proceso de fabricación que reduce la aparición de manchas blancas en las monedas de lingotes de plata Maple Leaf. Invisible a simple vista y sin afectar a la pureza ni a la composición de las monedas, MINTSHIELD™ reduce la aparición de manchas blancas durante años.<br /><br />\r\nSeguridad mejorada<br /><br />\r\nLa tecnología antifalsificación BULLION DNA™ es una primicia en el sector que va más allá de otros métodos de autentificación de monedas. Cada troquel utilizado para producir las monedas SML está micrograbado con láser con una marca de seguridad antifalsificación. Nuestro proceso de registro -tecnología de activación digital no destructiva (DNA)- captura imágenes cifradas con una firma algorítmica y las almacena en nuestra base de datos segura. Esta tecnología Bullion DNA™ patentada facilita la autentificación de las monedas Silver Maple Leaf con fecha de 2015 y posterior.<br /><br />\r\nLas monedas de lingotes SML también presentan una hoja de arce texturizada, micrograbada con tecnología láser en una pequeña zona del reverso de la moneda. En el centro de esta marca, visible con lupa, figura el número &quot;23&quot;, que indica el año de emisión de la moneda.<br /><br />\r\nLas líneas radiales de las monedas en lingotes Silver Maple Leaf 2023 se mecanizan con una precisión de micras en el utillaje maestro para lograr la máxima reproducibilidad de un troquel a otro y de una moneda a otra. La anchura y el paso de las líneas confieren a las monedas Silver Maple Leaf un aspecto característico y crean un patrón distintivo que difracta la luz y que es específico de esta moneda.<br /><br />\r\nEn el anverso figura la efigie de la reina Isabel II, obra de Susanna Blunt. El anverso también lleva una marca especial que incluye cuatro perlas que simbolizan las cuatro efigies que han adornado las monedas canadienses y la doble fecha de su reinado.<br /><br />\r\nCaracterísticas especiales<br /><br />\r\nTres características únicas para una seguridad de vanguardia, que incluyen líneas radiales precisas, una hoja micrograbada y la tecnología antifalsificación Bullion DNA™, exclusiva de la Real Casa de la Moneda de Canadá.<br />\r\nLa tecnología Bullion DNA™ facilita la autentificación de las monedas Silver Maple Leaf con fecha de 2015 y posterior.<br />\r\nUna adquisición atractiva tanto para los que compran metales preciosos por primera vez como para los inversores a largo plazo.<br />\r\nLas líneas radiales cortadas con precisión crean un patrón único de difracción de la luz específico de esta moneda.<br /><br />\r\nSin acuñación fija.",
+  "related_types": [
+   {
+    "id": 356472,
+    "title": "50 Dollars (In the name of Elizabeth II; GML Bullion Coinage)",
+    "category": "coin",
+    "country": {
+     "code": "canada",
+     "name": "Canadá"
+    },
+    "minYear": 2023,
+    "maxYear": 2023
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 2048,
+     "code": "RCM/MRC"
+    },
+    "number": "205901"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "3304"
+   }
+  ],
+  "weight": 31.11,
+  "orientation": "medal",
+  "edge": {
+   "description": "Dentado"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "357929": {
   "category": "coin",
   "comments": "Cuarto diseño de la serie Las Bestias de los Tudor, hay un total de diez Bestias que representan las estatuas que se alzan en el palacio de Hampton Court.<br /><br />\r\nEste diseño del reverso de David Lawrence se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos. Límite de emisión: 5.510<br />\r\n<a href=\"https://en.numista.com/catalogue/images/64052a7db7005.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052a7db7005.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2023<br /><br />\r\nTambién se emitió un juego de 2 monedas con una edición de reverso esmerilado. Límite de emisión: 500<br />\r\n<a href=\"https://en.numista.com/catalogue/images/64052aa46eddf.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052aa46eddf.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/64052ab175e2d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052ab175e2d.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/64052ab8515a7.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052ab8515a7.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2023",
@@ -44310,6 +44545,121 @@
    "text": "2 euros"
   },
   "weight": 8.5
+ },
+ "401696": {
+  "id": 401696,
+  "url": "https://es.numista.com/401696",
+  "title": "5 Dollars - Charles III (SML (Bullion))",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "canada",
+   "name": "Canadá"
+  },
+  "min_year": 2024,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6816,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 827,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 Dollars",
+   "numeric_value": 5,
+   "currency": {
+    "id": 44,
+    "name": "Dollar",
+    "full_name": "Dollar (1858-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Steven Rosati"
+   ],
+   "description": "Busto del rey Carlos III con traje y corbata mirando hacia la izquierda.",
+   "lettering": "CHARLES III\r\n5 DOLLARS 2024\r\nSR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/664134471b9e68.16130192-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/664134471b9e68.16130192-180.jpg",
+   "picture_copyright": "The Coin Shoppe",
+   "picture_copyright_url": "https://thecoinshoppe.ca/"
+  },
+  "reverse": {
+   "engravers": [
+    "Walter Ott"
+   ],
+   "description": "Diseño clásico de hoja de arce, rodeada de letras con una pequeña hoja de arce como elemento de seguridad debajo. con los dos últimos dígitos del año grabados en el elemento de seguridad, que representan el año",
+   "lettering": "CANADA\r\n9999 9999\r\nFINE SILVER 1 OZ ARGENT PUR",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/canada/664134477d5a93.27308158-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/canada/664134477d5a93.27308158-180.jpg",
+   "picture_copyright": "The Coin Shoppe",
+   "picture_copyright_url": "https://thecoinshoppe.ca/"
+  },
+  "series": "SML",
+  "references": [
+   {
+    "catalogue": {
+     "id": 2048,
+     "code": "RCM/MRC"
+    },
+    "number": "245977"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "3432"
+   },
+   {
+    "catalogue": {
+     "id": 2048,
+     "code": "RCM/MRC"
+    },
+    "number": "248926"
+   }
+  ],
+  "weight": 31.11,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "401697": {
   "category": "coin",

@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(39, catalogs.size)
+        assertEquals(40, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los dieciséis
-     * cerrados llevan su nota y los veintitrés abiertos no afirman nada más que «N de N catalogadas».
+     * cerrados llevan su nota y los veinticuatro abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(16, closed.size)
-        assertEquals(23, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(24, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -394,6 +394,76 @@ class CuratedCatalogsTest {
         )
         assertTrue(eagle.members.none { eagle.memberMatches(it, proof2023) })
         assertTrue(eagle.memberMatches(type2.single { it.year == 2026 }, bullion2026))
+    }
+
+    /**
+     * Silver Maple Leaf bullion (#96): the longest of the twelve annual runs, hidden under the
+     * Numista series «SML». Six type pages cover 1988-2026 (N#18655, N#6735, N#381278, N#58596,
+     * N#356135, N#401696). Types mix proof, reverse-proof privies, incuse, gilded and specimen,
+     * so every slot is issue-qualified; bullion privies on the same type fill the year, and a
+     * privy is never its own slot. 2000 has no plain bullion row — Firework/Dragon/Expo fill it.
+     * Ids from `/types/{id}/issues`.
+     */
+    @Test
+    fun `the silver maple leaf is thirty-nine issue-qualified bullion years over six types`() {
+        val maple = find("canada-silver-maple-leaf-1oz-bullion")
+        assertEquals(2, maple.schemaVersion)
+        assertTrue(maple.isDateRun)
+        assertEquals("Silver Maple Leaf bullion anual", maple.family)
+        assertEquals(
+            "Silver Maple Leaf · Canadá · 1 oz bullion anual desde 1988 " +
+                "(sin proof, reverse proof, incuse, doradas ni aniversario; " +
+                "el privy del mismo tipo rellena el año)",
+            maple.name,
+        )
+        assertEquals("canada", maple.issuerCode)
+        assertEquals(1_000, maple.weightMillioz)
+        assertEquals(Finish.Bullion, maple.finish)
+        assertEquals(Metal.Silver, maple.metal)
+        assertEquals(SeriesStatus.Open, maple.seriesStatus)
+        assertNull(maple.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces18655.html", maple.source)
+        assertEquals("2026-08-02", maple.updatedAt)
+        assertEquals(39, maple.members.size)
+        assertEquals((1988..2026).toList(), maple.members.map { it.year })
+        assertEquals(
+            List(2) { 18_655 } + List(14) { 6_735 } + List(10) { 381_278 } +
+                List(9) { 58_596 } + listOf(356_135) + List(3) { 401_696 },
+            maple.members.map { it.numistaTypeId },
+        )
+        assertTrue(maple.members.all { it.numistaIssueIds.isNotEmpty() })
+        // Father owns 2007/2012/2014 bullion; 1989 proof and 2018 incuse must not fill.
+        assertTrue(814_014 in maple.members.single { it.year == 2007 }.numistaIssueIds)
+        assertTrue(228_562 in maple.members.single { it.year == 2014 }.numistaIssueIds)
+        assertTrue(maple.members.none { 118_027 in it.numistaIssueIds })
+        assertTrue(maple.members.none { 394_320 in it.numistaIssueIds })
+        // 2000 has no plain row: Firework 2000 single-date fills the year.
+        assertTrue(814_168 in maple.members.single { it.year == 2000 }.numistaIssueIds)
+
+        val bullion2007 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 381_278,
+            issueYear = 2007,
+            issueId = 814_014,
+        )
+        val proof1989 = CollectedItem(
+            id = 2,
+            quantity = 1,
+            typeId = 18_655,
+            issueYear = 1989,
+            issueId = 118_027,
+        )
+        val incuse2018 = CollectedItem(
+            id = 3,
+            quantity = 1,
+            typeId = 58_596,
+            issueYear = 2018,
+            issueId = 394_320,
+        )
+        assertTrue(maple.memberMatches(maple.members.single { it.year == 2007 }, bullion2007))
+        assertTrue(maple.members.none { maple.memberMatches(it, proof1989) })
+        assertTrue(maple.members.none { maple.memberMatches(it, incuse2018) })
     }
 
     /**
