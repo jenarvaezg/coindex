@@ -285,7 +285,7 @@ class CuratedCatalogsTest {
         assertEquals(
             listOf(
                 150_352, 162_242, 195_591, 302_302, 334_411, 371_257, 359_331, 421_848, 421_849,
-                448_067, 493_347, 493_329,
+                448_067, 493_347, 493_329, null,
             ),
             tesla.members.map { it.numistaTypeId },
         )
@@ -312,6 +312,28 @@ class CuratedCatalogsTest {
         assertEquals(Finish.Bullion, tudorBullion.finish)
         val tudorProof = find("tudor-beasts-uk-1oz-proof")
         assertEquals(Finish.Proof, tudorProof.finish)
+    }
+
+    @Test
+    fun `the five visible slots distinguish unlisted and announced coins`() {
+        val tesla = find("nikola-tesla-serbia-1oz")
+        val energyMedicine = tesla.members.single { it.year == 2026 }
+        assertTrue(energyMedicine.isUnlisted)
+        assertEquals("Energy Medicine", energyMedicine.label)
+
+        val redDataBook = find("red-data-book-russia")
+        assertTrue(redDataBook.members.none { it.year == 2025 })
+        assertEquals(
+            listOf("Caucasian Wildcat", "Spectacled Eider", "Toad-headed Agama"),
+            redDataBook.members.filter { it.year == 2026 }.map { it.label },
+        )
+        assertTrue(redDataBook.members.filter { it.year == 2026 }.all { it.isAnnounced })
+
+        val monuments = find("architectural-monuments-russia-3-roubles")
+        assertTrue(monuments.members.none { it.year == 2025 })
+        val mirozhsky = monuments.members.single { it.year == 2026 }
+        assertTrue(mirozhsky.isAnnounced)
+        assertEquals("Holy Transfiguration Mirozhsky Monastery in Pskov", mirozhsky.label)
     }
 
     /**
