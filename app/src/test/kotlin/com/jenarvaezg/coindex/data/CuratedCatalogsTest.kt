@@ -435,10 +435,15 @@ class CuratedCatalogsTest {
         // Father owns 2007/2012/2014 bullion; 1989 proof and 2018 incuse must not fill.
         assertTrue(814_014 in maple.members.single { it.year == 2007 }.numistaIssueIds)
         assertTrue(228_562 in maple.members.single { it.year == 2014 }.numistaIssueIds)
-        assertTrue(maple.members.none { 118_027 in it.numistaIssueIds })
-        assertTrue(maple.members.none { 394_320 in it.numistaIssueIds })
+        assertTrue(maple.members.none { 118_027 in it.numistaIssueIds }) // 1989 proof
+        assertTrue(maple.members.none { 394_320 in it.numistaIssueIds }) // 2018 incuse
+        assertTrue(maple.members.none { 247_767 in it.numistaIssueIds }) // 2001 reverse-proof privy
+        assertTrue(maple.members.none { 726_344 in it.numistaIssueIds }) // 2019 gilded
+        assertTrue(maple.members.none { it.numistaTypeId == 138_478 }) // 2018 anniversary type
         // 2000 has no plain row: Firework 2000 single-date fills the year.
         assertTrue(814_168 in maple.members.single { it.year == 2000 }.numistaIssueIds)
+        // Bullion privy on the same type fills the year (Tiger 1998).
+        assertTrue(247_759 in maple.members.single { it.year == 1998 }.numistaIssueIds)
 
         val bullion2007 = CollectedItem(
             id = 1,
