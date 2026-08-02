@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(47, catalogs.size)
+        assertEquals(48, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * diecinueve cerrados llevan su nota y los veintiocho abiertos no afirman nada más que
+     * veinte cerrados llevan su nota y los veintiocho abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(19, closed.size)
+        assertEquals(20, closed.size)
         assertEquals(28, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -784,6 +784,57 @@ class CuratedCatalogsTest {
             listOf(1960, 1965),
             bolivar.members.filter { it.numistaTypeId == 5_316 }.map { it.year },
         )
+    }
+
+    /**
+     * Los reales —½ bolívar y 50 céntimos, 2,5 g de plata .835— eran una agrupación de dos
+     * tipos que omitía el tronco N#17945 y N#7727. Misma forma que el 1 bolívar (#113): date
+     * run cerrado, casilla = año, y la etiqueta nombra el año de acuñación cuando Numista lo
+     * apunta. No hay 1926 (sí en el 1 bolívar y en los fuertes). Familia de la calle: «Reales
+     * de Venezuela», no «½ Bolívar», porque en Venezuela «medio» es el ¼ (#114).
+     */
+    @Test
+    fun `the venezuelan reales date run spans its four types including the trunk`() {
+        val reales = find("venezuela-reales")
+        assertEquals(2, reales.schemaVersion)
+        assertTrue(reales.isDateRun)
+        assertEquals("Reales de Venezuela", reales.family)
+        assertEquals(80, reales.weightMillioz)
+        assertEquals(Metal.Silver, reales.metal)
+        assertNull(reales.finish)
+        assertEquals(SeriesStatus.Closed, reales.seriesStatus)
+        assertEquals(22, reales.members.size)
+        assertEquals(
+            listOf(
+                1879, 1886, 1887, 1888, 1889, 1893, 1900, 1901, 1903,
+                1911, 1912, 1919, 1921, 1924, 1929, 1935, 1936,
+            ),
+            reales.members.filter { it.numistaTypeId == 17_945 }.map { it.year },
+        )
+        assertEquals(
+            listOf(1944, 1945, 1946),
+            reales.members.filter { it.numistaTypeId == 7_727 }.map { it.year },
+        )
+        assertEquals(
+            "1944 (acuñada en 1945)",
+            reales.members.first { it.numistaTypeId == 7_727 }.label,
+        )
+        assertEquals(
+            listOf(1954),
+            reales.members.filter { it.numistaTypeId == 2_971 }.map { it.year },
+        )
+        assertEquals(
+            "1954 (acuñada en 1955)",
+            reales.members.first { it.numistaTypeId == 2_971 }.label,
+        )
+        assertEquals(
+            listOf(1960),
+            reales.members.filter { it.numistaTypeId == 7_297 }.map { it.year },
+        )
+        assertTrue(reales.members.none { it.year == 1926 })
+        // Los años de acuñación no abren casilla: viven en la etiqueta.
+        assertTrue(reales.members.none { it.year in listOf(1947, 1955) })
+        assertTrue(reales.members.all { it.numistaIssueIds.isEmpty() })
     }
 
     @Test

@@ -17687,6 +17687,137 @@
   },
   "weight": 31.1035
  },
+ "17945": {
+  "id": 17945,
+  "url": "https://es.numista.com/17945",
+  "title": "½ Bolívar",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1879,
+  "max_year": 1936,
+  "ruler": [
+   {
+    "id": 4705,
+    "name": "Estados Unidos",
+    "wikidata_id": "Q5848651"
+   }
+  ],
+  "value": {
+   "text": "½ bolívar",
+   "numeric_value": 0.5,
+   "numerator": 1,
+   "denominator": 2,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 18,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 835 (Copper .165)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Désiré-Albert Barre"
+   ],
+   "description": "Escudo con leyenda alrededor. Peso, fecha y ley en la parte inferior.",
+   "lettering": "•ESTADOS UNIDOS DE VENEZUELA• \r\nGR.2.500•1886•LEI 835",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/525-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/525-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Désiré-Albert Barre"
+   ],
+   "description": "Busto a la izquierda flanqueado por leyenda. Nombre del grabador en la parte inferior.",
+   "lettering": "BOLÍVAR LIBERTADOR\r\nBARRE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/524-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/524-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "comments": "esta moneda se acuñó según las normas de la Unión Latina",
+  "related_types": [
+   {
+    "id": 7727,
+    "title": "½ Bolívar",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1944,
+    "maxYear": 1946
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Líder militar",
+   "Político",
+   "Escudo de armas",
+   "Cornucopia"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "21"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv0.5bs-aa"
+   }
+  ],
+  "weight": 2.5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 14,
+    "name": "Casa de la Moneda de París"
+   },
+   {
+    "id": 11,
+    "name": "United States Mint of Philadelphia"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
  "180354": {
   "category": "coin",
   "comments": "El octavo diseño de la serie de lingotes de 2 onzas de las Bestias de la Reina, que comenzó en 2016 con el León de Inglaterra, consta de un total de diez Bestias que representan las estatuas que se erigieron en la Abadía de Westminster con motivo de la Coronación de la Reina en 1953. Las estatuas originales se exhiben actualmente en el Museo Canadiense de Historia de Gatineau, mientras que las réplicas esculpidas por James Woodford se encuentran en el Real Jardín Botánico de Kew, Londres.<br /><br />\r\nEste reverso de Jody Clark se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos.",
@@ -88296,6 +88427,145 @@
    "text": "12 euros"
   },
   "weight": 18
+ },
+ "7727": {
+  "id": 7727,
+  "url": "https://es.numista.com/7727",
+  "title": "½ Bolívar",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1944,
+  "max_year": 1946,
+  "ruler": [
+   {
+    "id": 4705,
+    "name": "Estados Unidos",
+    "wikidata_id": "Q5848651"
+   }
+  ],
+  "value": {
+   "text": "½ bolívar",
+   "numeric_value": 0.5,
+   "numerator": 1,
+   "denominator": 2,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 18.5,
+  "thickness": 1,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 835"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Désiré-Albert Barre"
+   ],
+   "description": "Las armas de Venezuela con leyenda alrededor y el peso, la fecha y la finura en la parte inferior.",
+   "lettering": "•ESTADOS UNIDOS DE VENEZUELA• \r\nGR.2.500•1944•LEI 835",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/5fb5446ed847c9.49461640-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/5fb5446ed847c9.49461640-180.jpg",
+   "picture_copyright": "Ben-jamin",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Désiré-Albert Barre"
+   ],
+   "description": "Busto mirando a la izquierda flanqueado por la leyenda y el nombre del grabador en la parte inferior",
+   "lettering": "BOLÍVAR LIBERTADOR\r\nBARRE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/5fb5446f403752.73092821-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/5fb5446f403752.73092821-180.jpg",
+   "picture_copyright": "Ben-jamin",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "comments": "esta moneda se acuñó según las normas de la Unión Latina, a pesar de que ésta ya se había disuelto",
+  "related_types": [
+   {
+    "id": 17945,
+    "title": "½ Bolívar",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1879,
+    "maxYear": 1936
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Líder militar",
+   "Político",
+   "Escudo de armas",
+   "Cornucopia"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "21a"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv0.5bs-ba"
+   }
+  ],
+  "weight": 2.5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/6a57a04ad61e96.74170665-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/6a57a04ad61e96.74170665-180.jpg",
+   "picture_copyright": "Rhonan",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 10,
+    "name": "United States Mint of Denver"
+   },
+   {
+    "id": 11,
+    "name": "United States Mint of Philadelphia"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
  },
  "7775": {
   "category": "coin",

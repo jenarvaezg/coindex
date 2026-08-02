@@ -68,17 +68,18 @@ is what you own, the plate is the catalog with its gaps, and only the plate can 
 The Venezuelan silver denominations that hunt a year ship as date-run catalogs, not as
 groupings: a grouping could never show the hole. The 2 bolívares were the first (25 members
 across three types); the 1 bolívar followed (#113) with 22 members across four types, including
-the trunk N#10338 the old grouping had omitted. Publishing that plate accepts that a bulk row
-of N#5316 under a single year can still report a false Missing for 1960 or 1965 until the
-collector splits the bag by year in Numista — the honest fix for those two cells, not a reason
-to keep the whole denomination silent.
+the trunk N#10338 the old grouping had omitted; the reales (#114) are the same shape — 22
+members across four types, trunk N#17945 plus N#7727 that the old grouping had omitted.
+Publishing the 1 bolívar plate accepts that a bulk row of N#5316 under a single year can still
+report a false Missing for 1960 or 1965 until the collector splits the bag by year in Numista
+— the honest fix for those two cells, not a reason to keep the whole denomination silent.
 
 ## Consequences
 
 The 81 orphans stop being unreachable by construction: any of them can be given a family by
-curating a file, without inventing a sequence for it. Four groupings ship now — the Venezuelan
-medios and reales, the loose Royal Mint ounces, and the classic US silver dollar. The paquillos
-and the 1 bolívar already graduated to catalogs, and the rest of the list is candidates.
+curating a file, without inventing a sequence for it. Three groupings ship now — the Venezuelan
+medios, the loose Royal Mint ounces, and the classic US silver dollar. The paquillos, the 1
+bolívar and the reales already graduated to catalogs, and the rest of the list is candidates.
 
 A grouping is cheap enough to be tempting, and that is its risk: it is an editorial claim with
 no source of truth behind it beyond the curator's judgement, so it names a representative
