@@ -6564,6 +6564,88 @@
   },
   "weight": 21.1
  },
+ "13333": {
+  "id": 13333,
+  "url": "https://es.numista.com/13333",
+  "title": "1 Onza",
+  "object_type": {
+   "id": 20,
+   "name": "Monedas bullion"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1949,
+  "max_year": 1949,
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 41.5,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Prensa de monedas\r\nMarca de ceca sobre la prensa de monedas (Mo)",
+   "lettering": "CASA DE MONEDA DE MEXICO\r\n1949",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/67cfa1fd038059.41051506-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/67cfa1fd038059.41051506-180.jpg",
+   "picture_copyright": "La Caja De Moneda"
+  },
+  "reverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Balanza",
+   "lettering": "UNA ONZA TROY = 480 GRANOS DE PLATA PURA *\r\nPESO 33.625 GRAMOS\r\nLEY 0.925",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/67cfa1fe7329d2.00991163-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/67cfa1fe7329d2.00991163-180.jpg",
+   "picture_copyright": "La Caja De Moneda"
+  },
+  "tags": [
+   "Balanza"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "M49a"
+   }
+  ],
+  "weight": 33.625,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas bullion"
+ },
  "133446": {
   "category": "coin",
   "commemorated_topic": "Año del Perro",
@@ -8547,6 +8629,122 @@
    "text": "1 Krugerrand"
   },
   "weight": 31.1
+ },
+ "14465": {
+  "id": 14465,
+  "url": "https://es.numista.com/14465",
+  "title": "1 Onza \"Libertad\"",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1982,
+  "max_year": 1995,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 3.47,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Armas nacionales de México",
+   "lettering": "ESTADOS UNIDOS MEXICANOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/661036592add84.14992695-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/661036592add84.14992695-180.jpg",
+   "picture_copyright": "Scott Doll"
+  },
+  "reverse": {
+   "description": "Victoria alada",
+   "lettering": "1 onza PLATA PURA M 1989 MEXICO Ley .999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/6610365d4ecfc8.57176809-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/6610365d4ecfc8.57176809-180.jpg",
+   "picture_copyright": "Scott Doll"
+  },
+  "comments": "(en) <p>A review of the KM numbers and their descriptions revealed inconsistencies. Below are the main types, without reference to the KM numbers.<br><br>Type 1 Obverse: eight dots on cactus pad below left claw of the eagle<br>Type 2 Obverse: seven dots on cactus pad below left claw of the eagle<br>Type 1 Reverse: serif font (\"onza\", \"PLATA PURA\")<br>Type 2 Reverse: sans serif font with ornamental capitalization (\"ONZA\" that looks like \"OnZa\", \"PLATA PURA\")</p><p>&nbsp;</p><p>Edge lettering exists with orientation obverse up, and obverse down.</p><p><a href=\"https://en.numista.com/catalogue/images/6a4d5b1691dd1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6a4d5b1691dd1.jpg\"></a></p>",
+  "tags": [
+   "Águila",
+   "Alegoría",
+   "Escudo de armas",
+   "Guirnalda"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "494.1"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "494.2"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "494.3"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "494.4"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "494.5"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Con letras (KM#494.1) o con lengüeta (véanse los comentarios)",
+   "lettering": "INDEPENDENCIA Y LIBERTAD"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "14538": {
   "category": "coin",
@@ -15156,6 +15354,87 @@
    "text": "20 euros"
   },
   "weight": 18
+ },
+ "17818": {
+  "id": 17818,
+  "url": "https://es.numista.com/17818",
+  "title": "1 Onza \"Libertad\"",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1996,
+  "max_year": 1999,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Nombre del país sobre su escudo.",
+   "lettering": "ESTADOS UNIDOS MEXICANOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/661038452272b0.13612311-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/661038452272b0.13612311-180.jpg",
+   "picture_copyright": "Scott Doll"
+  },
+  "reverse": {
+   "description": "Victoria alada sobre pedestal coronado. Montañas y Ciudad de México al fondo. Con peso en la parte superior izquierda, metal en la parte superior central, fecha, ceca y ley en la parte superior derecha.",
+   "lettering": "1 ONZA PLATA PURA 1999 LEY .999\r\nMo",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/66103849e9c903.31261266-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/66103849e9c903.31261266-180.jpg",
+   "picture_copyright": "Scott Doll"
+  },
+  "comments": "Diferentes ediciones.<br />\r\n3ª edición 1996-1999",
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "613"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "17839": {
   "id": 17839,

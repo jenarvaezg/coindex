@@ -1,0 +1,414 @@
+{
+  "schema_version": 2,
+  "id": "mexico-libertad-1oz-bullion",
+  "name": "Onza Libertad · México · 1 oz bullion anual desde 1982 (sin proof, reverse proof ni antiqued)",
+  "issuer_code": "mexique",
+  "family": "Onza Libertad bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces14465.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1982-libertad",
+      "label": "Onza Libertad",
+      "year": 1982,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71812
+      ]
+    },
+    {
+      "id": "1983-libertad",
+      "label": "Onza Libertad",
+      "year": 1983,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71813
+      ]
+    },
+    {
+      "id": "1984-libertad",
+      "label": "Onza Libertad",
+      "year": 1984,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71814
+      ]
+    },
+    {
+      "id": "1985-libertad",
+      "label": "Onza Libertad",
+      "year": 1985,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71815
+      ]
+    },
+    {
+      "id": "1986-libertad",
+      "label": "Onza Libertad",
+      "year": 1986,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71816
+      ]
+    },
+    {
+      "id": "1987-libertad",
+      "label": "Onza Libertad",
+      "year": 1987,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71817,
+        72696
+      ]
+    },
+    {
+      "id": "1988-libertad",
+      "label": "Onza Libertad",
+      "year": 1988,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71818
+      ]
+    },
+    {
+      "id": "1989-libertad",
+      "label": "Onza Libertad",
+      "year": 1989,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        71819
+      ]
+    },
+    {
+      "id": "1990-libertad",
+      "label": "Onza Libertad",
+      "year": 1990,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        72700
+      ]
+    },
+    {
+      "id": "1991-libertad",
+      "label": "Onza Libertad",
+      "year": 1991,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        904448,
+        72702,
+        72704
+      ]
+    },
+    {
+      "id": "1992-libertad",
+      "label": "Onza Libertad",
+      "year": 1992,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        72706
+      ]
+    },
+    {
+      "id": "1993-libertad",
+      "label": "Onza Libertad",
+      "year": 1993,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        72708
+      ]
+    },
+    {
+      "id": "1994-libertad",
+      "label": "Onza Libertad",
+      "year": 1994,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        72710
+      ]
+    },
+    {
+      "id": "1995-libertad",
+      "label": "Onza Libertad",
+      "year": 1995,
+      "numista_type_id": 14465,
+      "numista_issue_ids": [
+        72712
+      ]
+    },
+    {
+      "id": "1996-libertad",
+      "label": "Onza Libertad",
+      "year": 1996,
+      "numista_type_id": 17818,
+      "numista_issue_ids": [
+        88720
+      ]
+    },
+    {
+      "id": "1997-libertad",
+      "label": "Onza Libertad",
+      "year": 1997,
+      "numista_type_id": 17818,
+      "numista_issue_ids": [
+        88722
+      ]
+    },
+    {
+      "id": "1998-libertad",
+      "label": "Onza Libertad",
+      "year": 1998,
+      "numista_type_id": 17818,
+      "numista_issue_ids": [
+        88724
+      ]
+    },
+    {
+      "id": "1999-libertad",
+      "label": "Onza Libertad",
+      "year": 1999,
+      "numista_type_id": 17818,
+      "numista_issue_ids": [
+        88726
+      ]
+    },
+    {
+      "id": "2000-libertad",
+      "label": "Onza Libertad",
+      "year": 2000,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        88728
+      ]
+    },
+    {
+      "id": "2001-libertad",
+      "label": "Onza Libertad",
+      "year": 2001,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70565
+      ]
+    },
+    {
+      "id": "2002-libertad",
+      "label": "Onza Libertad",
+      "year": 2002,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70566
+      ]
+    },
+    {
+      "id": "2003-libertad",
+      "label": "Onza Libertad",
+      "year": 2003,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70567
+      ]
+    },
+    {
+      "id": "2004-libertad",
+      "label": "Onza Libertad",
+      "year": 2004,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70568
+      ]
+    },
+    {
+      "id": "2005-libertad",
+      "label": "Onza Libertad",
+      "year": 2005,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70569
+      ]
+    },
+    {
+      "id": "2006-libertad",
+      "label": "Onza Libertad",
+      "year": 2006,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70570
+      ]
+    },
+    {
+      "id": "2007-libertad",
+      "label": "Onza Libertad",
+      "year": 2007,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70571
+      ]
+    },
+    {
+      "id": "2008-libertad",
+      "label": "Onza Libertad",
+      "year": 2008,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70572
+      ]
+    },
+    {
+      "id": "2009-libertad",
+      "label": "Onza Libertad",
+      "year": 2009,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70573
+      ]
+    },
+    {
+      "id": "2010-libertad",
+      "label": "Onza Libertad",
+      "year": 2010,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        70574
+      ]
+    },
+    {
+      "id": "2011-libertad",
+      "label": "Onza Libertad",
+      "year": 2011,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        138438
+      ]
+    },
+    {
+      "id": "2012-libertad",
+      "label": "Onza Libertad",
+      "year": 2012,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        159145
+      ]
+    },
+    {
+      "id": "2013-libertad",
+      "label": "Onza Libertad",
+      "year": 2013,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        183286
+      ]
+    },
+    {
+      "id": "2014-libertad",
+      "label": "Onza Libertad",
+      "year": 2014,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        241125
+      ]
+    },
+    {
+      "id": "2015-libertad",
+      "label": "Onza Libertad",
+      "year": 2015,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        259889
+      ]
+    },
+    {
+      "id": "2016-libertad",
+      "label": "Onza Libertad",
+      "year": 2016,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        295078
+      ]
+    },
+    {
+      "id": "2017-libertad",
+      "label": "Onza Libertad",
+      "year": 2017,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        345578
+      ]
+    },
+    {
+      "id": "2018-libertad",
+      "label": "Onza Libertad",
+      "year": 2018,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        389604
+      ]
+    },
+    {
+      "id": "2019-libertad",
+      "label": "Onza Libertad",
+      "year": 2019,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        428932
+      ]
+    },
+    {
+      "id": "2020-libertad",
+      "label": "Onza Libertad",
+      "year": 2020,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        610337
+      ]
+    },
+    {
+      "id": "2021-libertad",
+      "label": "Onza Libertad",
+      "year": 2021,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        674586
+      ]
+    },
+    {
+      "id": "2022-libertad",
+      "label": "Onza Libertad",
+      "year": 2022,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        739433
+      ]
+    },
+    {
+      "id": "2023-libertad",
+      "label": "Onza Libertad",
+      "year": 2023,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        811954
+      ]
+    },
+    {
+      "id": "2024-libertad",
+      "label": "Onza Libertad",
+      "year": 2024,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        898129
+      ]
+    },
+    {
+      "id": "2025-libertad",
+      "label": "Onza Libertad",
+      "year": 2025,
+      "numista_type_id": 13855,
+      "numista_issue_ids": [
+        1038598
+      ]
+    }
+  ]
+}

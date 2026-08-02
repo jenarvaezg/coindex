@@ -16,6 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -31,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(33, catalogs.size)
+        assertEquals(35, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los quince
-     * cerrados llevan su nota y los dieciocho abiertos no afirman nada más que «N de N catalogadas».
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los dieciséis
+     * cerrados llevan su nota y los diecinueve abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -45,8 +46,8 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(15, closed.size)
-        assertEquals(18, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(16, closed.size)
+        assertEquals(19, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -180,6 +181,88 @@ class CuratedCatalogsTest {
         assertTrue(krugerrand.members.none { it.year == 2017 })
         assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })
         assertTrue(krugerrand.members.all { it.numistaIssueIds.isEmpty() })
+    }
+
+    /**
+     * Onza Libertad bullion: one open date run from the 1982 decree that replaced the Onza Troy.
+     * Three type pages (N#14465 36 mm 1982-1995, N#17818 and N#13855 at 40 mm) mix proof and
+     * later reverse/antiqued, so every slot is issue-qualified for the standard bullion row.
+     * Die varieties of the same finish share a year; 2026 is not on Numista yet. Emission ids
+     * read from the type pages in the browser (#92) — no `/issues` budget.
+     */
+    @Test
+    fun `the mexican libertad is forty-four issue-qualified bullion years over three types`() {
+        val libertad = find("mexico-libertad-1oz-bullion")
+        assertEquals(2, libertad.schemaVersion)
+        assertTrue(libertad.isDateRun)
+        assertEquals("Onza Libertad bullion anual", libertad.family)
+        assertEquals("mexique", libertad.issuerCode)
+        assertEquals(1_000, libertad.weightMillioz)
+        assertEquals(Finish.Bullion, libertad.finish)
+        assertEquals(Metal.Silver, libertad.metal)
+        assertEquals(SeriesStatus.Open, libertad.seriesStatus)
+        assertNull(libertad.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces14465.html", libertad.source)
+        assertEquals(44, libertad.members.size)
+        assertEquals((1982..2025).toList(), libertad.members.map { it.year })
+        assertEquals(
+            List(14) { 14_465 } + List(4) { 17_818 } + List(26) { 13_855 },
+            libertad.members.map { it.numistaTypeId },
+        )
+        assertTrue(libertad.members.all { it.numistaIssueIds.isNotEmpty() })
+        // Father's 2024 bullion fills; the matching Proof of that year must not.
+        assertTrue(898_129 in libertad.members.single { it.year == 2024 }.numistaIssueIds)
+        assertTrue(libertad.members.none { 929_350 in it.numistaIssueIds })
+        val bullion2024 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 13_855,
+            issueYear = 2024,
+            issueId = 898_129,
+        )
+        val proof2024 = CollectedItem(
+            id = 2,
+            quantity = 1,
+            typeId = 13_855,
+            issueYear = 2024,
+            issueId = 929_350,
+        )
+        assertTrue(libertad.memberMatches(libertad.members.single { it.year == 2024 }, bullion2024))
+        assertTrue(libertad.members.none { libertad.memberMatches(it, proof2024) })
+    }
+
+    /**
+     * Onza Troy .925: the four-year closed run the Libertad replaced. Physical variant is
+     * 33.625 g / 41.5 mm (1081 millioz), so it never shares a key with the Libertad. N#13333 is
+     * 1949; N#13398 covers 1978-1980. Closed by Banxico's stated succession and the DOF decree
+     * of 21/28 December 1981, not by Numista going quiet (#92).
+     */
+    @Test
+    fun `the mexican onza troy is four closed years at 1081 millioz`() {
+        val troy = find("mexico-onza-troy-925")
+        assertEquals(2, troy.schemaVersion)
+        assertTrue(troy.isDateRun)
+        assertEquals("Onza Troy de México", troy.family)
+        assertEquals("mexique", troy.issuerCode)
+        assertEquals(1_081, troy.weightMillioz)
+        assertNull(troy.finish)
+        assertEquals(Metal.Silver, troy.metal)
+        assertEquals(SeriesStatus.Closed, troy.seriesStatus)
+        assertNotNull(troy.closedNote)
+        assertTrue(troy.closedNote!!.contains("Banxico"))
+        assertTrue(troy.closedNote!!.contains("33.625"))
+        assertEquals("https://en.numista.com/catalogue/pieces13333.html", troy.source)
+        assertEquals(listOf(1949, 1978, 1979, 1980), troy.members.map { it.year })
+        assertEquals(listOf(13_333, 13_398, 13_398, 13_398), troy.members.map { it.numistaTypeId })
+        assertTrue(troy.members.all { it.numistaIssueIds.isEmpty() })
+        val owned1979 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 13_398,
+            issueYear = 1979,
+            issueId = 69_445,
+        )
+        assertTrue(troy.memberMatches(troy.members.single { it.year == 1979 }, owned1979))
     }
 
     /**

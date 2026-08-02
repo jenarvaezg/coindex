@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "id": "mexico-onza-troy-925",
+  "name": "Onza Troy · México · .925 cerrada 1949 y 1978-1980",
+  "issuer_code": "mexique",
+  "family": "Onza Troy de México",
+  "weight_millioz": 1081,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Cierre por relevo legislado, no por silencio de Numista: el reverso lleva «UNA ONZA TROY = 480 GRANOS DE PLATA PURA · PESO 33.625 GRAMOS · LEY 0.925» (diseño de Manuel Luna Negrete), se acuñó en 1949 y de nuevo en 1978-1980, y el decreto publicado en el DOF el 28 de diciembre de 1981 (firmado el 21) fijó las características de la Onza Libertad de plata .999 —Banxico dice que la intención fue sustituir en el mercado la onza troy de balanza—. N#13333 es 1949; N#13398 cubre 1978-1980. https://www.banxico.org.mx/billetes-y-monedas/serie-libertad-plata-banco-me.html https://diariooficial.gob.mx/nota_detalle.php?codigo=4705912&fecha=28/12/1981",
+  "source": "https://en.numista.com/catalogue/pieces13333.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1949-onza-troy",
+      "label": "Onza Troy",
+      "year": 1949,
+      "numista_type_id": 13333
+    },
+    {
+      "id": "1978-onza-troy",
+      "label": "Onza Troy",
+      "year": 1978,
+      "numista_type_id": 13398
+    },
+    {
+      "id": "1979-onza-troy",
+      "label": "Onza Troy",
+      "year": 1979,
+      "numista_type_id": 13398
+    },
+    {
+      "id": "1980-onza-troy",
+      "label": "Onza Troy",
+      "year": 1980,
+      "numista_type_id": 13398
+    }
+  ]
+}
