@@ -7389,6 +7389,828 @@
   "url": "https://es.numista.com/13398",
   "weight": 33.625
  },
+ "13410": {
+  "id": 13410,
+  "url": "https://es.numista.com/13410",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver (.958))",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1998,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH'II'D'G  REG'FID'DEF\r\nIRB\r\n '2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62b068b5134015.08442822-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62b068b5134015.08442822-180.jpg",
+   "picture_copyright": "The Royal Mint, 1998"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia sosteniendo un tridente en la mano derecha y un escudo con la bandera de la Unión en la derecha, leyenda alrededor, nombre del grabador en el exergo.",
+   "lettering": "'BRITANNIA'1998' 'ONE' 'OUNCE'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62b068b5c03c21.64726852-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62b068b5c03c21.64726852-180.jpg",
+   "picture_copyright": "The Royal Mint, 1998"
+  },
+  "series": "Silver Britannia",
+  "comments": "Desde su creación en 1997, la Britannia de plata de 2 libras se acuñó en una onza troy de plata con una ley de 0,958 y un diámetro de 40 mm. Esto cambió en 2013, cuando la ley pasó a .999 y el diámetro se redujo a 38,61 mm, mientras que en 2015 se lanzó una nueva calidad de lingotes en forma de Brilliant Uncirculated.<br /><br />\r\nLímite de emisión de las Pruebas de 1998: 30.000 (10.000 en juegos de 4 monedas Pruebas de Plata, 20.000 como piezas individuales);<br />\r\nDatos de ventas de las pruebas de 1998: 5.212 (3.044 en juegos de 4 monedas Silver Proof, 2.168 en piezas individuales).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60e4c70c2901e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60e4c70c2901e.jpg\" alt=\"\" width=\"200\" height=\"164\" /></a><br />\r\n© The Royal Mint, 1998<br /><br />\r\nLa acuñación de 2002 se emitió en un juego de 4 monedas de diseño que incluía otras monedas Britannia de 1 onza de 1999, 2001 y 2003. También puede adquirirse individualmente.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6106a2f659fb0.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6106a2f659fb0.jpg\" alt=\"\" width=\"200\" height=\"250\" /></a><a href=\"https://en.numista.com/catalogue/images/6106a34d06842.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6106a34d06842.jpg\" alt=\"\" width=\"200\" height=\"154\" /></a><br /><br />\r\nLas acuñaciones de 2004 y 2006 sólo se emitieron individualmente.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60e4c7801499e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60e4c7801499e.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/60e4c78b032d2.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60e4c78b032d2.jpg\" alt=\"\" width=\"190\" height=\"249\" /></a><br /><br />\r\nLímite de emisiones Proof 2012: 5.550 (2.600 en juegos de 4 monedas Silver Proof)<br />\r\nDatos de ventas de Proof 2012: 5.532 (2.595 en juegos de 4 monedas Silver Proof, 2.937 en piezas individuales).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60e4c74c4ee4c.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60e4c74c4ee4c.jpg\" alt=\"\" width=\"200\" height=\"164\" /></a><br />\r\n© The Royal Mint, 2012<br /><br />\r\n<span style=\"font-style:italic;\">Existen variedades:</span><br />\r\n<span style=\"font-weight:bold;\">KM#1029a, Sp#BF2A</span> <span style=\"font-style:italic;\">(2006</span> ) proof con baño de oro seleccionado en anverso y reverso.",
+  "related_types": [
+   {
+    "id": 29106,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 105071,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 106078,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 301451,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   },
+   {
+    "id": 59887,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1029"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF2"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "13411": {
+  "id": 13411,
+  "url": "https://es.numista.com/13411",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2003,
+  "max_year": 2003,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ef7a1e1081986.37114408-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ef7a1e1081986.37114408-180.jpg",
+   "picture_copyright": "The Royal Mint, 2003"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Cabeza con casco de Britannia a la izquierda, sobrepuesta con una ola estilizada, leyenda delante y detrás.",
+   "lettering": "BRITANNIA\r\nONE\r\nOUNCE FINE\r\nSILVER\r\n2003\r\nPN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ef7a1e1983c04.90604372-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ef7a1e1983c04.90604372-180.jpg",
+   "picture_copyright": "The Royal Mint, 2003"
+  },
+  "series": "Silver Britannia",
+  "comments": "Límite de emisión: 10.000 (5.000 en series de 4 monedas Britannia proof de plata; 5.000 como piezas individuales)<br />\r\nDatos de ventas: 5.685 (3.669 en series de 4 monedas Britannia proof de plata; 2.016 en piezas sueltas).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6106a0a3a1911.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6106a0a3a1911.jpg\" alt=\"\" width=\"199\" height=\"171\" /></a><a href=\"https://en.numista.com/catalogue/images/5edd086375990.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5edd086375990.jpg\" alt=\"\" width=\"200\" height=\"75\" /></a><a href=\"https://en.numista.com/catalogue/images/6106a0adbbe7e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6106a0adbbe7e.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\nLa moneda también se emitió en series de 4 monedas de diseño que incluían otras monedas Britannia de 1 onza de 1999, 2001 y 2002.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ef7a195c060e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ef7a195c060e.jpg\" alt=\"\" width=\"200\" height=\"250\" /></a><br />\r\nEl diseño se reeditó en 2006 con reflejos dorados selectivos.",
+  "related_types": [
+   {
+    "id": 29116,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 105231,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 106351,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2003,
+    "maxYear": 2012
+   },
+   {
+    "id": 13410,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver (.958))",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 13417,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1999,
+    "maxYear": 2009
+   },
+   {
+    "id": 14363,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 301447,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1039"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF5"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "13413": {
+  "id": 13413,
+  "url": "https://es.numista.com/13413",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2005,
+  "max_year": 2005,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña, leyenda alrededor.",
+   "lettering": "ELIZABETH|II|D|G REG|FID|DEF\r\n|2|POUNDS|\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f8cbbbfafaca5.13434433-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f8cbbbfafaca5.13434433-180.jpg",
+   "picture_copyright": "The Royal Mint, 2005"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura sedente de Britannia a la izquierda con tridente y escudo, leyenda y fecha alrededor.",
+   "lettering": "ONE OUNCE FINE SILVER 2005\r\nBRITANNIA\r\nPN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f8cbbc04af271.94617317-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f8cbbc04af271.94617317-180.jpg",
+   "picture_copyright": "The Royal Mint, 2005"
+  },
+  "series": "Silver Britannia",
+  "comments": "Límite de emisión de pruebas: 6.000 (3.500 en series de 4 pruebas de plata; 2.500 como piezas individuales)<br />\r\nDatos de ventas: 2.360 en series de 4 monedas, 1.539 en piezas sueltas.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f8cbb846a687.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f8cbb846a687.jpg\" alt=\"\" width=\"200\" height=\"123\" /></a><a href=\"https://en.numista.com/catalogue/images/5f8cbb8e621ea.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f8cbb8e621ea.jpg\" alt=\"\" width=\"200\" height=\"75\" /></a><br /><br />\r\nEl diseño también se utilizó en la colección Silueta Dorada de 5 monedas de 2006.",
+  "related_types": [
+   {
+    "id": 97492,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   },
+   {
+    "id": 105232,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   },
+   {
+    "id": 106352,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2005,
+    "maxYear": 2012
+   },
+   {
+    "id": 301445,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1063"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF6"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "13414": {
+  "id": 13414,
+  "url": "https://es.numista.com/13414",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña, leyenda alrededor.",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ee102bc2e10d1.49695836-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ee102bc2e10d1.49695836-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Christopher Le Brun"
+   ],
+   "designers": [
+    "John Bergdahl"
+   ],
+   "description": "Figura sedente de Britannia a la derecha, sosteniendo un tridente en la mano derecha y una ramita de olivo en la izquierda, con un león a sus pies.",
+   "lettering": "ONE OUNCE FINE SILVER 2007  BRITANNIA\r\nCLB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ee102bc745dc7.48754292-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ee102bc745dc7.48754292-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Silver Britannia",
+  "comments": "Límite de emisión de lingotes: 100.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60eb2d8b2d4f2.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2d8b2d4f2.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br /><br />\r\nLímite de emisión de pruebas: 10.000 (2.500 en series de 4 monedas Silver Proof, 7.500 como piezas individuales)<br />\r\nDatos de ventas: 7.657 (2.500 en series de 4 monedas Silver Proof, 5.157 en piezas individuales)<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60eb2da5526f8.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2da5526f8.jpg\" alt=\"\" width=\"200\" height=\"140\" /></a><a href=\"https://en.numista.com/catalogue/images/60eb2db18d3f7.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2db18d3f7.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ee634113adaf.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee634113adaf.jpg\" alt=\"\" width=\"200\" height=\"111\" /></a>",
+  "related_types": [
+   {
+    "id": 29157,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   },
+   {
+    "id": 105233,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   },
+   {
+    "id": 106354,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2007,
+    "maxYear": 2012
+   }
+  ],
+  "tags": [
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1078"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF7"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "13417": {
+  "id": 13417,
+  "url": "https://es.numista.com/13417",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1999,
+  "max_year": 2009,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña, leyenda alrededor.",
+   "lettering": "ELIZABETH'II'D'G  REG'FID'DEF\r\nIRB\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62b0694de19026.05853463-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62b0694de19026.05853463-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia en carro tirado por un caballo que lleva riendas y un tridente, con leyenda y fecha alrededor.",
+   "lettering": "ONE'OUNCE'FINE'SILVER'1999\r\nPN\r\nBRITANNIA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62b0694e7e9525.38917523-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62b0694e7e9525.38917523-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Silver Britannia",
+  "comments": "La pieza de 1999 sólo se lanzó en calidad de lingote y se emitió en varios juegos, incluido un juego de 4 monedas de diseño, junto con otras monedas Britannia de 1 oz de 2001, 2002 y 2003.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ef799da2ac69.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ef799da2ac69.jpg\" alt=\"\" width=\"200\" height=\"250\" /></a><br /><br />\r\nLa moneda Proof de 2009 se acuñó con un límite de emisión de 12.000 piezas individuales (4.284 ventas). Incluidas en esta acuñación, algunas de estas monedas se pusieron a la venta como parte del juego de cuatro monedas Proof de plata Britannia (2.500 ventas) con un límite de emisión de 2.500.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60eb2a1def07c.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2a1def07c.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/60eb2a15e1709.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2a15e1709.jpg\" alt=\"\" width=\"200\" height=\"158\" /></a><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb139ef77b99.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb139ef77b99.jpg\" alt=\"\" width=\"200\" height=\"70\" /></a><br />\r\n© The Royal Mint, 2009<br /><br />\r\nEl diseño también se utilizó en la Colección Silueta Dorada de 5 monedas de 2006.",
+  "related_types": [
+   {
+    "id": 102707,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   },
+   {
+    "id": 105424,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2009,
+    "maxYear": 2009
+   },
+   {
+    "id": 106361,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2009,
+    "maxYear": 2012
+   },
+   {
+    "id": 301450,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "tags": [
+   "Caballo o equino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1000"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF3"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "135553": {
   "category": "coin",
   "comments": "El quinto diseño de la serie de lingotes de las Bestias de la Reina, que comenzó en 2016 con el León de Inglaterra, consta de un total de diez Bestias que representan las estatuas que se erigieron en la Abadía de Westminster con motivo de la Coronación de la Reina en 1953. Las estatuas originales se exponen actualmente en el Museo Canadiense de Historia de Gatineau, mientras que las réplicas esculpidas por James Woodford se encuentran en el Real Jardín Botánico de Kew, Londres.<br /><br />\r\nEste reverso de Jody Clark se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos.",
@@ -8622,6 +9444,197 @@
    "text": "3 Roubles"
   },
   "weight": 33.94
+ },
+ "14363": {
+  "id": 14363,
+  "url": "https://es.numista.com/14363",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2001,
+  "max_year": 2001,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ef79ee2dcde56.85040343-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ef79ee2dcde56.85040343-180.jpg",
+   "picture_copyright": "The Royal Mint, 2001"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Britania de pie con tridente y escudo, un león de pie a su lado, leyenda delante y detrás.",
+   "lettering": "BRITANNIA \r\n2001\r\nONE \r\nOUNCE\r\nFINE \r\nSILVER\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ef79ee3747c51.95914142-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ef79ee3747c51.95914142-180.jpg",
+   "picture_copyright": "The Royal Mint, 2001"
+  },
+  "series": "Silver Britannia",
+  "comments": "Lingotes emitidos como serie Britannia de 4 monedas, incluidas otras monedas Britannia de 1 oz de 1999, 2002 y 2003.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ef79e6c02ba6.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ef79e6c02ba6.jpg\" alt=\"\" width=\"200\" height=\"250\" /></a><br /><br />\r\nLímite de emisión de pruebas: 15.000 (5.000 en juegos de 4 monedas Silver Proof y 10.000 en piezas individuales).<br />\r\nDatos de ventas: 7.643 (4.596 en juegos de 4 monedas Silver Proof, 3.047 en piezas individuales)<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f553e339edee.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f553e339edee.jpg\" alt=\"\" width=\"200\" height=\"76\" /></a><br />\r\nReeditada en 2006, Colección Silueta Dorada de 5 monedas.",
+  "related_types": [
+   {
+    "id": 97490,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 105072,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 106349,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2012
+   },
+   {
+    "id": 13410,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver (.958))",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 13417,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1999,
+    "maxYear": 2009
+   },
+   {
+    "id": 13411,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 301448,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "tags": [
+   "Gato o felino",
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1019"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF4"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "143754": {
   "category": "coin",
@@ -11646,6 +12659,180 @@
    "text": "1000 escudos"
   },
   "weight": 27
+ },
+ "157350": {
+  "id": 157350,
+  "url": "https://es.numista.com/157350",
+  "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2017,
+  "max_year": 2020,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (textured fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Jody Clark"
+   ],
+   "description": "Quinto retrato coronado de la Reina Isabel II a la derecha, portando la Diadema de Estado de Jorge IV, leyenda alrededor.\r\n\r\nNota: diseño guilloché",
+   "lettering": "ELIZABETH II·D·G·REG·F·D·2 POUNDS·\r\nJ.C",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/10499-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/10499-180.jpg",
+   "picture_copyright": "Bullion Exchanges",
+   "picture_copyright_url": "https://bullionexchanges.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Imagen de pie de Britannia sosteniendo un tridente en la mano derecha, con un escudo con la bandera de la Unión y una rama de olivo en la mano izquierda, leyenda alrededor.\r\n\r\nNota: diseño de rayos de sol.",
+   "lettering": "' BRITANNIA ' 2019 ' 1 oz ' 999 ' FINE ' SILVER '\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/10500-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/10500-180.jpg",
+   "picture_copyright": "Bullion Exchanges",
+   "picture_copyright_url": "https://bullionexchanges.com/"
+  },
+  "series": "Silver Britannia",
+  "comments": "(en) <p>The 2017 issue of the 1oz Silver Britannia introduced a starburst effect finish to the reverse of the bullion coin. While the standard bullion issue had a textured obverse, the Trident privy mint mark issue was changed to one with a guilloche. This guilloche effect on the obverse has since been used moving forward.<br>&nbsp;<br><i>Trident privy mark edition:</i><br>Issued in 2017 to commemorate the 20th anniversary of the Silver Britannia series:<br><img src=\"https://en.numista.com/catalogue/images/5eb42b8361999.jpg\" alt=\"\"><br>The privy mark can be found near the rim at about 7 o'clock on the reverse:<br><a href=\"https://en.numista.com/catalogue/images/5ebbd592b5268.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ebbd592b5268.jpg\" alt=\"\"></a><br><br>Privy marks have been added to the plain edge of the coins to commemorate the Chinese Lunar Year:<br><br><strong>Sp#BSF15G</strong> (2018) <i>Dog privy mark</i><br><a href=\"https://en.numista.com/catalogue/images/5eee25531ab7a.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eee25531ab7a.jpg\" alt=\"\"></a><br><br><strong>Sp#BSF15G</strong> (2019) <i>Pig privy mark</i><br><a href=\"https://en.numista.com/catalogue/images/5eee25622ca2f.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eee25622ca2f.jpg\" alt=\"\"></a><br><br><strong>Sp#BSF15G</strong> (2020) <i>Rat privy mark</i><br><a href=\"https://en.numista.com/catalogue/images/5ebbd642e0ec3.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ebbd642e0ec3.jpg\" alt=\"\"></a><br><br>The Brilliant Uncirculated Silver Britannia issues have plain fields on both obverse and reverse (see link below).</p><p>&nbsp;</p><p>From 2021 the starburst effect was replaced with waves (see link below) on the reverse.</p>",
+  "related_types": [
+   {
+    "id": 83432,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 223062,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2018
+   },
+   {
+    "id": 295027,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2017,
+    "maxYear": 2017
+   },
+   {
+    "id": 240613,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2021,
+    "maxYear": 2023
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15E"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15F"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15G"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1508"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed\r\n\r\nNota: existen variedades de borde (véase más abajo)"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "157874": {
   "category": "coin",
@@ -16600,6 +17787,302 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "18524": {
+  "id": 18524,
+  "url": "https://es.numista.com/18524",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH|II|D|G REG|FID|DEF\r\n| 2|POUNDS |\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/600d7f5147ddc0.57123123-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/600d7f5147ddc0.57123123-180.jpg",
+   "picture_copyright": "The Royal Mint, 2010"
+  },
+  "reverse": {
+   "engravers": [
+    "Suzie Zamit"
+   ],
+   "description": "Busto de Britannia con casco de león, cabellera suelta y túnica, mirando hacia la derecha; leyenda alrededor y fecha debajo.",
+   "lettering": "BRITANNIA ONE OUNCE FINE SILVER\r\n2010",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/600d7f520372d2.01988730-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/600d7f520372d2.01988730-180.jpg",
+   "picture_copyright": "The Royal Mint, 2010"
+  },
+  "series": "Silver Britannia",
+  "comments": "Este diseño se acuñó tanto en calidad Bullion como Proof, con un límite de emisión de 8.000 piezas individuales (3.042 ventas). Incluidas en esta tirada, algunas de estas monedas se lanzaron como parte del 2010 Britannia 4-Coin Silver Proof Set con un límite de emisión de 3.500 (3.497 ventas).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60eb26d47e577.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb26d47e577.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/600d7eefdb647.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/600d7eefdb647.jpg\" alt=\"\" width=\"200\" height=\"159\" /></a><br />\r\n<a href=\"https://en.numista.com/catalogue/images/600d7f0d41ac9.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/600d7f0d41ac9.jpg\" alt=\"\" width=\"200\" height=\"70\" /></a><br />\r\n© The Royal Mint, 2010",
+  "related_types": [
+   {
+    "id": 29107,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 105425,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 106363,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2012
+   }
+  ],
+  "tags": [
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1134"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF9"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "18525": {
+  "id": 18525,
+  "url": "https://es.numista.com/18525",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2008,
+  "max_year": 2008,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña, leyenda alrededor.",
+   "lettering": "ELIZABETH|II|D|G REG|FID|DEF\r\n| 2|POUNDS |\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb16300c51a14.22919231-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb16300c51a14.22919231-180.jpg",
+   "picture_copyright": "The London Coin Company",
+   "picture_copyright_url": "https://thelondoncoincompany.com"
+  },
+  "reverse": {
+   "engravers": [
+    "John Bergdahl"
+   ],
+   "description": "Figura de pie de Britannia a la izquierda con tridente y escudo, faro al fondo, prenda que fluye hacia las olas.",
+   "lettering": "· BRITANNIA 2008 ·\r\nONE OUNCE FINE SILVER\r\nJB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1630127d850.20856718-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1630127d850.20856718-180.jpg",
+   "picture_copyright": "The London Coin Company",
+   "picture_copyright_url": "https://thelondoncoincompany.com"
+  },
+  "series": "Silver Britannia",
+  "comments": "Límite de emisión de lingotes: 100.000<br />\r\nLímite de emisión de pruebas: 5.000<br />\r\n2.500 monedas individuales vendidas y 2.500 emitidas como parte del juego de cuatro monedas de plata Britannia Proof Set de 2008, con un límite de emisión de: 2,500<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60eb2bbb2200a.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2bbb2200a.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/60eb2bc30d5af.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb2bc30d5af.jpg\" alt=\"\" width=\"200\" height=\"156\" /></a><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb158d2b1fa1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb158d2b1fa1.jpg\" alt=\"\" width=\"200\" height=\"70\" /></a><br />\r\n© The Royal Mint, 2008",
+  "related_types": [
+   {
+    "id": 97655,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   },
+   {
+    "id": 105234,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   },
+   {
+    "id": 106355,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2012
+   }
+  ],
+  "tags": [
+   "Armadura",
+   "Faro",
+   "Mar"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1098"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF8"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "185343": {
   "id": 185343,
@@ -22712,6 +24195,148 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "224428": {
+  "id": 224428,
+  "url": "https://es.numista.com/224428",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2015,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (textured fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.\r\n\r\nNota: campos texturados",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5efcf40279fd01.43513978-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5efcf40279fd01.43513978-180.jpg",
+   "picture_copyright": "The Royal Mint, 2015"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia sosteniendo un tridente en la mano derecha y un escudo con la bandera de la Unión en la izquierda, leyenda alrededor, nombre del grabador en el exergo.\r\n\r\nNota: campos texturados",
+   "lettering": "'BRITANNIA'2015' 1oz '999'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5efcf403694236.51344593-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5efcf403694236.51344593-180.jpg",
+   "picture_copyright": "The Royal Mint, 2015"
+  },
+  "series": "Silver Britannia",
+  "comments": "En 2015 se introdujo una nueva emisión de lingotes con un efecto texturizado tanto en el anverso como en el reverso para ayudar a diferenciar con lo que se convertiría en la versión Brilliant Uncirculated que tiene campos lisos similares a las emisiones de 2013 y 2014.<br /><br />\r\nIntroducidas en 2013, las marcas privadas se han añadido a un borde liso de las monedas para conmemorar el Año Lunar Chino:<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#BF12C</span> Marca privada de <span style=\"font-style:italic;\">oveja</span><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f87611b3e959.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f87611b3e959.jpg\" alt=\"\" width=\"200\" height=\"88\" /></a>",
+  "related_types": [
+   {
+    "id": 295025,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 59887,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF12B"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF12C"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1347"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed\r\n\r\nNota: existen variedades de borde (véase más abajo)"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "22502": {
   "category": "coin",
   "commemorated_topic": "Paz",
@@ -23679,6 +25304,152 @@
    {
     "id": 19,
     "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "23404": {
+  "id": 23404,
+  "url": "https://es.numista.com/23404",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 958"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "|ELIZABETH|II|D|G REG|FID|DEF|\r\n2|POUNDS\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60eb248293de25.23587966-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60eb248293de25.23587966-180.jpg",
+   "picture_copyright": "The Royal Mint, 2011"
+  },
+  "reverse": {
+   "engravers": [
+    "David Mach"
+   ],
+   "description": "Figura sedente de Britannia a la derecha, con tridente en la mano izquierda y escudo en la derecha, sobre una bandera de la Unión, leyenda alrededor y fecha debajo.",
+   "lettering": "BRITANNIA ONE OUNCE FINE SILVER\r\n2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60eb2483444141.58358038-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60eb2483444141.58358038-180.jpg",
+   "picture_copyright": "The Royal Mint, 2011"
+  },
+  "series": "Silver Britannia",
+  "comments": "Límite de emisión de pruebas: 10.000<br />\r\nLímite de emisión de lingotes: 500.000<br /><br />\r\nEmitido como parte del 2011 Britannia Four-Coin Silver Proof Set con un límite de emisión de: 3,500<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60eb245ecdb48.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60eb245ecdb48.jpg\" alt=\"\" width=\"200\" height=\"160\" /></a><a href=\"https://en.numista.com/catalogue/images/5eb1486be8ca1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb1486be8ca1.jpg\" alt=\"\" width=\"199\" height=\"69\" /></a><br />\r\n© The Royal Mint, 2011",
+  "related_types": [
+   {
+    "id": 102708,
+    "title": "20 Pence - Elizabeth II (4th portrait; 1/10 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 105427,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 33076,
+    "title": "1 Pound - Elizabeth II (4th portrait; 1/2 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2012
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1230"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF10"
+   }
+  ],
+  "weight": 32.45,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
    }
   ],
   "category": "coin",
@@ -26007,6 +27778,123 @@
    "text": "25 Ringgit"
   },
   "weight": 35
+ },
+ "274495": {
+  "id": 274495,
+  "url": "https://es.numista.com/274495",
+  "title": "50 Pence - Elizabeth II (5th portrait; 1/4 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2021,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "50 peniques",
+   "numeric_value": 0.5,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 22,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Jody Clark"
+   ],
+   "description": "Quinto retrato coronado de la Reina Isabel II a la derecha, portando la Diadema de Estado de Jorge IV, leyenda alrededor.\r\n\r\nNota: diseño guilloché",
+   "lettering": "ELIZABETH II·D·G·REG·F·D·50 PENCE·\r\nJ.C",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/602937b9c475b0.99269395-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/602937b9c475b0.99269395-180.jpg",
+   "picture_copyright": "The Royal Mint, 2021"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Imagen de pie de Britannia sosteniendo un tridente en la mano derecha, con un escudo con la bandera de la Unión y una rama de olivo en la mano izquierda, leyenda alrededor.\r\n\r\nNota: efecto sol",
+   "lettering": "' BRITANNIA ' 2021 ' 1/4 oz ' 999 ' FINE ' SILVER '\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/602937ba3dc8d0.25004455-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/602937ba3dc8d0.25004455-180.jpg",
+   "picture_copyright": "The Royal Mint, 2021"
+  },
+  "series": "Silver Britannia",
+  "comments": "La serie 2023 se emitió en otoño de 2022 tras el fallecimiento de la reina Isabel II y sólo se fabricó en un número limitado.",
+  "related_types": [
+   {
+    "id": 240613,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2021,
+    "maxYear": 2023
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSD23"
+   }
+  ],
+  "weight": 7.86,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "27573": {
   "category": "coin",
@@ -33322,6 +35210,283 @@
   },
   "weight": 2.7
  },
+ "295025": {
+  "id": 295025,
+  "url": "https://es.numista.com/295025",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (plain fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.\r\n\r\nNota: con campos lisos",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60ac1bddb147b8.67838126-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60ac1bddb147b8.67838126-180.jpg",
+   "picture_copyright": "The Royal Mint, 2013"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia sosteniendo un tridente en la mano derecha y un escudo con la bandera de la Unión en la izquierda, leyenda alrededor, nombre del grabador en el exergo.\r\n\r\nNota: con campos lisos",
+   "lettering": "'BRITANNIA'2013' 'ONE' 'OUNCE'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60ac1bde651a89.40336122-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60ac1bde651a89.40336122-180.jpg",
+   "picture_copyright": "The Royal Mint, 2013"
+  },
+  "series": "Silver Britannia",
+  "comments": "Desde su creación en 1997, la Britannia de plata de 2 £ se acuñó en una onza troy de plata con una ley de 0,958 (plata Britannia) y un diámetro de 40 mm. Esto cambió con esta emisión en 2013, cuando la ley se cambió a .999 (plata fina) y el diámetro se redujo a 38,61 mm.<br /><br />\r\nEsta emisión lleva la misma leyenda en el reverso que las emisiones anteriores \"ONE OUNCE FINE SILVER\" con los mismos campos lisos.<br /><br />\r\nIntroducidas en 2013, se han añadido marcas privy en un borde liso de las monedas para conmemorar el Año Lunar chino:<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#BF2B</span> Marca privada de <span style=\"font-style:italic;\">serpiente</span><br />\r\n<a href=\"https://en.numista.com/catalogue/images/60ac199670b80.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60ac199670b80.jpg\" alt=\"\" width=\"199\" height=\"57\" /></a>",
+  "related_types": [
+   {
+    "id": 13410,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver (.958))",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 59887,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF2"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF2B"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed\r\n\r\nNota: existen variedades de borde (véase más abajo)"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "295027": {
+  "id": 295027,
+  "url": "https://es.numista.com/295027",
+  "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2017,
+  "max_year": 2017,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Jody Clark"
+   ],
+   "description": "Quinto retrato coronado de la Reina Isabel II a la derecha, portando la Diadema de Estado de Jorge IV, leyenda alrededor.\r\n\r\nNota: campos texturados",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nJC\r\n'2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60ac26081a8129.97723624-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60ac26081a8129.97723624-180.jpg",
+   "picture_copyright": "The Royal Mint, 2017"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia que sostiene un tridente en la mano derecha y un escudo con la bandera de la Unión en la izquierda, leyenda alrededor, nombre del grabador en el exergo.\r\n\r\nNota: diseño de rayos de sol.",
+   "lettering": "'BRITANNIA'2017' '1 oz' '999'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62b3155a3869e5.15125531-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62b3155a3869e5.15125531-180.jpg",
+   "picture_copyright": "The Royal Mint, 2017"
+  },
+  "series": "Silver Britannia",
+  "comments": "<p>A partir de esta emisión de 2017, la Fábrica de la Moneda comenzó a utilizar el efecto de estallido de estrellas en el reverso para la emisión de lingotes en lugar del efecto de textura anterior. Tanto la emisión de lingotes de 2017 como la del gallo con marca privada de 2017 presentan el efecto de estallido de estrellas en el reverso, mientras que en el anverso se sigue utilizando el efecto texturizado.<br><br>Introducidas en 2013, las marcas privadas se han añadido al canto liso de las monedas para conmemorar el Año Lunar Chino:<br><br><strong>Sp#BF15D</strong> <i>Marca privada del gallo</i><br><a href=\"https://en.numista.com/catalogue/images/60ac25b8cf390.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60ac25b8cf390.jpg\" alt=\"\"></a><br><br>Tenga en cuenta que las emisiones de la Britannia de plata sin circular brillante tienen un campo liso tanto en el anverso como en el reverso (véase el enlace más abajo).</p><p></p><p>En la emisión de 2017, un número desconocido de monedas fueron acuñadas por error con el perro en lugar del gallo en el canto</p><p><a href=\"https://en.numista.com/catalogue/images/675c3ba670586.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/675c3ba670586.jpg\"></a></p>",
+  "related_types": [
+   {
+    "id": 83432,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 223062,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2018
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15C"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15D"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1508"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed\r\n\r\nNota: existen variedades de borde (véase más abajo)"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "2971": {
   "category": "coin",
   "composition": {
@@ -35333,6 +37498,134 @@
   },
   "weight": 17
  },
+ "312488": {
+  "id": 312488,
+  "url": "https://es.numista.com/312488",
+  "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2015,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "50 peniques",
+   "numeric_value": 0.5,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 22,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (textured fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.\r\n\r\nNota: campos texturados",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'50'PENCE'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/61a54e948500e0.78172381-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/61a54e948500e0.78172381-180.jpg",
+   "picture_copyright": "CazCollins"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia con tridente, escudo y rama de olivo, leyenda alrededor.\r\n\r\nNota: campos con textura",
+   "lettering": "'BRITANNIA'2015' 1/4 '999'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/61a54e96393c03.29913416-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/61a54e96393c03.29913416-180.jpg",
+   "picture_copyright": "CazCollins"
+  },
+  "series": "Silver Britannia",
+  "comments": "Emitida únicamente como parte de un juego de presentación de boda con un soberano de oro, la moneda presenta campos texturados en ambas caras. Límite de emisión: 100.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/61a54d60d8c21.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61a54d60d8c21.jpg\" alt=\"\" width=\"200\" height=\"150\" /></a><br />\r\n© CazCollins",
+  "related_types": [
+   {
+    "id": 59310,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver (.999))",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 329467,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver, modified reverse)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSD15"
+   }
+  ],
+  "weight": 7.86,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "312890": {
   "category": "coin",
   "commemorated_topic": "Año del Tigre",
@@ -36617,6 +38910,155 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "329467": {
+  "id": 329467,
+  "url": "https://es.numista.com/329467",
+  "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver, modified reverse)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2014,
+  "max_year": 2014,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "50 peniques",
+   "numeric_value": 0.5,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 22,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (plain fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.\r\n\r\nNota: campos lisos",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'50'PENCE'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6295bef7f0ad00.72373279-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6295bef7f0ad00.72373279-180.jpg",
+   "picture_copyright": "The Royal Mint, 2014"
+  },
+  "reverse": {
+   "designers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia con tridente, escudo y rama de olivo, leyenda alrededor.\r\n\r\nNota: campos lisos",
+   "lettering": "'BRITANNIA'2014' 1/4 oz '999'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6295bef89e7a65.30846399-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6295bef89e7a65.30846399-180.jpg",
+   "picture_copyright": "The Royal Mint, 2014"
+  },
+  "series": "Silver Britannia",
+  "comments": "En 2013, la Real Casa de la Moneda comenzó a emitir monedas de plata Britannia en plata de ley 999, pero no fue hasta 2014 cuando se actualizó la leyenda del reverso para reflejarlo. La acuñación en lingotes se lanzó con un canto fresado en juegos de boda, junto con un soberano de oro en lingotes de 2014.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6295bce41a841.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6295bce41a841.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><br /><br />\r\nA finales de 1940, el buque de vapor británico Gairsoppa zarpó de Calcuta cargado con 7.000 toneladas de hierro, plata y té. Fue hundido el 17 de febrero de 1941 por un submarino alemán y sólo sobrevivió un miembro de la tripulación.<br /><br />\r\nPara conmemorar la recuperación de la plata del S.S. Gairsoppa, la Real Casa de la Moneda puso a la venta una edición limitada de la moneda de plata Britannia de 50 peniques acuñada en plata maciza de pureza .999 recuperada del S.S. Gairsoppa. Esta acuñación tiene un borde liso con la inscripción \"S.S. GAIRSOPPA -\" (límite de emisión 20.000).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6295bd5b51731.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6295bd5b51731.jpg\" alt=\"\" width=\"200\" height=\"171\" /></a><br /><br />\r\nNota: La acuñación de 2013 tenía un reverso diferente con la pureza omitida y se emitió para el mercado estadounidense en tubos, mientras que la de 2014 se emitió según esta entrada con la pureza anotada en un paquete Brilliant Uncirculated. Además, cabe señalar que los campos son lisos en estas emisiones, mientras que la de 2015 tiene campos texturados.",
+  "related_types": [
+   {
+    "id": 105071,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 59310,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver (.999))",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 312488,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSD14"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSD14A"
+   }
+  ],
+  "weight": 7.86,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado\r\n\r\nNota: existe variedad (véase más abajo)",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6295bef93d9808.00623369-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6295bef93d9808.00623369-180.jpg",
+   "picture_copyright": "The Royal Mint, 2014"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "33": {
   "category": "coin",
@@ -38915,6 +41357,128 @@
    {
     "id": 6,
     "name": "Moscow Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "353110": {
+  "id": 353110,
+  "url": "https://es.numista.com/353110",
+  "title": "2 Pounds - Charles III (1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2023,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2025-03-08"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/63d58db1788ed3.11086427-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/63d58db1788ed3.11086427-180.jpg",
+   "picture_copyright": "The Royal Mint, 2023"
+  },
+  "reverse": {
+   "designers": [
+    "Philip Nathan"
+   ],
+   "description": "Imagen de pie de Britannia sosteniendo un tridente en la mano derecha, con un escudo con la bandera de la Unión y una rama de olivo en la mano izquierda, candado de seguridad, leyenda alrededor.\r\n\r\nNota: efecto ondulado.",
+   "lettering": "BRITANNIA ' 2023 ' 1 oz ' 999 ' FINE ' SILVER '\r\nDECUS ET TUTAMEN\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/63d58db24e9864.50030186-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/63d58db24e9864.50030186-180.jpg",
+   "picture_copyright": "The Royal Mint, 2023"
+  },
+  "series": "Silver Britannia",
+  "comments": "<p>Esta emisión Britannia fue la segunda emisión con fecha de 2023 y la primera con la efigie del rey Carlos III.<br><br>La serie sigue presentando cuatro elementos de seguridad:<br>- una imagen latente que cambia de un candado al famoso tridente de Britannia<br>- animación de la superficie que da vida al fondo de olas centelleantes<br>- Microtexto que sirve a la vez de decoración y de protección: \"un ornamento y una salvaguardia\".<br>- Escudo de Britannia con la bandera de la Unión acentuada con líneas de tinte.</p><p></p><p>En 2025 se añadió una marca de ceca a las monedas de plata hundidas en 1942 en el SS Tilawa, un transatlántico propiedad de la British India Steam Navigation Company. El submarino japonés <i>Matsu</i> torpedeó y hundió el transatlántico de 10.000 toneladas el 23 de noviembre de 1942 cuando se dirigía de Bombay (India) a Durban (Sudáfrica). . La marca circular muestra un ancla con la inscripción \"S.S. TILAWA\" encima y los números \"19\" y \"42\" de la fecha del hundimiento del <i>Tilawa</i> en 1942 divididos por el asta del ancla.</p><p><a href=\"https://en.numista.com/catalogue/images/6840563f7cf97.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6840563f7cf97.jpg\"></a></p><p></p><p>En 2026, The Royal Mint acuñó monedas con una marca privada con iconos de diferentes países para conmemorar las asociaciones internacionales con los distribuidores oficiales de lingotes de The Royal Mint y los mercados mundiales de lingotes.</p><p></p><p>Merlion de Singapur: 93.000 límite de emisión.</p><p><a href=\"https://en.numista.com/catalogue/images/692d8efbddf50.webp\"><img src=\"https://en.numista.com/catalogue/images/miniatures/692d8efbddf50.webp\"></a></p><p>Hong Kong Junk Boat: límite de emisión 100.000.</p><p><a href=\"https://en.numista.com/catalogue/images/692d8f4143af1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/692d8f4143af1.jpg\"></a></p><p></p><p>Japón Chery Blossom:</p><p><a href=\"https://en.numista.com/catalogue/images/692d8ef3b1c5b.webp\"><img src=\"https://en.numista.com/catalogue/images/miniatures/692d8ef3b1c5b.webp\"></a></p>",
+  "related_types": [
+   {
+    "id": 370264,
+    "title": "2 Pounds - Charles III (Coronation; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2023,
+    "maxYear": 2023
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "2370"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
    }
   ],
   "category": "coin",
@@ -64612,6 +67176,142 @@
   },
   "weight": 31.1
  },
+ "59310": {
+  "id": 59310,
+  "url": "https://es.numista.com/59310",
+  "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver (.999))",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "50 peniques",
+   "numeric_value": 0.5,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 22,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH'II'D'G REG'FID'DEF\r\nIRB\r\n'50'PENCE'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5e92e68ea95e48.63345128-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5e92e68ea95e48.63345128-180.jpg",
+   "picture_copyright": "The London Coin Company",
+   "picture_copyright_url": "https://thelondoncoincompany.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia con tridente, escudo y rama de olivo, leyenda alrededor.",
+   "lettering": "'BRITANNIA'2013' '1/4' 'OUNCE'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5e92e68ee60063.20225831-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5e92e68ee60063.20225831-180.jpg",
+   "picture_copyright": "The London Coin Company",
+   "picture_copyright_url": "https://thelondoncoincompany.com"
+  },
+  "series": "Silver Britannia",
+  "commemorated_topic": "SS Gairsoppa",
+  "comments": "A finales de 1940, el buque de vapor británico Gairsoppa zarpó de Calcuta cargado con 7.000 toneladas de hierro, plata y té. Fue hundido el 17 de febrero de 1941 por un submarino alemán y sólo sobrevivió un miembro de la tripulación.<br /><br />\r\nPara conmemorar la recuperación de la plata del S.S. Gairsoppa, la Real Casa de la Moneda lanzó una edición limitada de la moneda de plata Britannia de 50 peniques acuñada en plata maciza de pureza .999 recuperada del S.S. Gairsoppa. Esta acuñación de 2013 se emitió para el mercado estadounidense en tubos con un límite de emisión de 150.000.<br /><br />\r\nA continuación encontrará un enlace a la acuñación de 2014 con la leyenda del reverso actualizada para mostrar la ley de la plata.",
+  "related_types": [
+   {
+    "id": 329467,
+    "title": "50 Pence - Elizabeth II (4th portrait; 1/4 oz Fine Silver, modified reverse)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1080.1"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSD12"
+   }
+  ],
+  "weight": 7.86,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con letras incusas",
+   "lettering": "S.S. GAIRSOPPA ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6295c28fb14725.31884911-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6295c28fb14725.31884911-180.jpg",
+   "picture_copyright": "The Royal Mint, 2014"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "59404": {
   "category": "exonumia",
   "commemorated_topic": "Admisión en el Consejo de Europa",
@@ -64851,6 +67551,171 @@
    "text": "3 Roubles"
   },
   "weight": 33.94
+ },
+ "59887": {
+  "id": 59887,
+  "url": "https://es.numista.com/59887",
+  "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2014,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (plain fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.\r\n\r\nNota: con campos lisos",
+   "lettering": "ELIZABETH'II'D'G  REG'FID'DEF\r\nIRB\r\n '2'POUNDS'",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60ac20458ec3c2.38474425-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60ac20458ec3c2.38474425-180.jpg",
+   "picture_copyright": "The Royal Mint, 2014"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia sosteniendo un tridente en la mano derecha y un escudo con la bandera de la Unión en la izquierda, leyenda alrededor, nombre del grabador en el exergo.\r\n\r\nNota: con campos lisos",
+   "lettering": "'BRITANNIA'2014' '1 oz' '999'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60ac204643aa65.61215772-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60ac204643aa65.61215772-180.jpg",
+   "picture_copyright": "The Royal Mint, 2014"
+  },
+  "series": "Silver Britannia",
+  "comments": "Desde su creación en 1997, la Britannia de plata de 2 libras se acuñó en una onza troy de plata con una ley de 0,958 y un diámetro de 40 mm. Esto cambió en 2013, cuando la ley pasó a 0,999 y el diámetro se redujo a 38,61 mm.<br /><br />\r\nEsta emisión lleva una leyenda actualizada en el reverso \"1 oz 999 FINE SILVER\", sin embargo, al igual que la emisión anterior, también tiene campos lisos.<br /><br />\r\nIntroducidas en 2013, se han añadido marcas privadas en un borde liso de las monedas para conmemorar el Año Lunar chino:<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#BF12A</span> <span style=\"font-style:italic;\">(2014)</span> Marca privada de caballo:<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eee4c450531e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eee4c450531e.jpg\" alt=\"\" width=\"200\" height=\"34\" /></a><br /><br />\r\nEn 2014, se produjo un error de mula cuando se acuñaron alrededor de 17 000 planchetes de lingotes Britannia de 1 onza utilizando el troquel de anverso previsto para la emisión del Año Lunar del Caballo 2014 emparejado con el troquel de reverso Britannia estándar. Esto dio lugar a que el retrato del anverso apareciera con un borde liso en lugar de los dentils normales de un Britannia (véase el enlace separado a continuación).<br /><br />\r\nEn 2015, se introdujo una nueva emisión de lingotes con un efecto texturizado tanto en el anverso como en el reverso para ayudar a diferenciar con lo que se convertiría en el lanzamiento Brilliant Uncirculated que tiene un campo liso tanto en el anverso como en el reverso como en las emisiones de 2013 y 2014.<br /><br />\r\nLímite de emisiones BU de 2014: 10.000<br />\r\nLímite de emisión de BU de 2015: 10.000",
+  "related_types": [
+   {
+    "id": 13410,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver (.958))",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2012
+   },
+   {
+    "id": 295025,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 165668,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver, Mule)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   },
+   {
+    "id": 224428,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1267"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF12"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF12A"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed\r\n\r\nNota: existen variedades de borde (véase más abajo)"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "60709": {
   "category": "coin",
@@ -87249,6 +90114,171 @@
    "text": "12 euros"
   },
   "weight": 18
+ },
+ "83432": {
+  "id": 83432,
+  "url": "https://es.numista.com/83432",
+  "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2016,
+  "max_year": 2016,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (textured fields)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Jody Clark"
+   ],
+   "description": "Quinto retrato coronado de la Reina Isabel II a la derecha, portando la Diadema de Estado de Jorge IV, leyenda alrededor.\r\n\r\nNota: campos texturados",
+   "lettering": "ELIZABETH II·D·G·REG·F·D·2 POUNDS·\r\nJ.C",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eee3ccbc35ee6.49917432-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eee3ccbc35ee6.49917432-180.jpg",
+   "picture_copyright": "The Royal Mint, 2016"
+  },
+  "reverse": {
+   "engravers": [
+    "Philip Nathan"
+   ],
+   "description": "Figura de pie de Britannia mirando a la izquierda, sosteniendo tridente en la mano derecha, rama de olivo y escudo con la bandera de la Unión en la izquierda, leyenda alrededor.\r\n\r\nNota: campos texturados",
+   "lettering": "'BRITANNIA'2016' 1OZ '999'FINE'SILVER'\r\nNATHAN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eee3ccc368738.01534036-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eee3ccc368738.01534036-180.jpg",
+   "picture_copyright": "The Royal Mint, 2016"
+  },
+  "series": "Silver Britannia",
+  "comments": "Aunque el anverso de Jody Clark se introdujo en 2015, no fue hasta 2016 que se adoptó para el Britannia de plata en lingotes, al igual que la emisión anterior, esta emisión en lingotes tiene un anverso y reverso con textura junto con las emisiones con marcas privadas, mientras que las emisiones del Britannia de plata sin circular brillante tienen un campo liso tanto en el anverso como en el reverso;(ver enlace más abajo).<br /><br />\r\nIntroducidas en 2013, las marcas privy se han añadido al borde liso de las monedas para conmemorar el Año Lunar Chino:<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#BSF15B</span> <span style=\"font-style:italic;\">Marca privada del mono</span><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb52a08eab83.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb52a08eab83.jpg\" alt=\"\" width=\"198\" height=\"54\" /></a><br /><br />\r\nA partir de 2017, la Fábrica de la Moneda comenzó a utilizar un efecto de estallido de estrellas en el reverso para la emisión de lingotes (véase el enlace más abajo)",
+  "related_types": [
+   {
+    "id": 224428,
+    "title": "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 223062,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2018
+   },
+   {
+    "id": 295027,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2017,
+    "maxYear": 2017
+   },
+   {
+    "id": 157350,
+    "title": "2 Pounds - Elizabeth II (5th portrait; 1 oz Fine Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2017,
+    "maxYear": 2020
+   }
+  ],
+  "tags": [
+   "Armadura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15A"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "BSF15B"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1508"
+   }
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed\r\n\r\nNota: existen variedades de borde (véase más abajo)"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "85886": {
   "category": "coin",

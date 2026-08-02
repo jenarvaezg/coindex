@@ -1,0 +1,163 @@
+{
+  "schema_version": 2,
+  "id": "uk-silver-britannia-1oz-bullion",
+  "name": "Silver Britannia · Reino Unido · 1 oz .999 bullion anual desde 2013 (sin proof, BU de campos lisos, Oriental Border ni Coronation; el privy del mismo tipo rellena el año; 2023 parte Elizabeth/Charles)",
+  "issuer_code": "royaume-uni",
+  "family": "Silver Britannia .999 bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces295025.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "2013-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2013,
+      "numista_type_id": 295025,
+      "numista_issue_ids": [
+        667939,
+        667940
+      ]
+    },
+    {
+      "id": "2014-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2014,
+      "numista_type_id": 59887,
+      "numista_issue_ids": [
+        533090,
+        231071
+      ]
+    },
+    {
+      "id": "2015-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2015,
+      "numista_type_id": 224428,
+      "numista_issue_ids": [
+        555707,
+        584885
+      ]
+    },
+    {
+      "id": "2016-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2016,
+      "numista_type_id": 83432,
+      "numista_issue_ids": [
+        283418,
+        428786
+      ]
+    },
+    {
+      "id": "2017-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2017,
+      "numista_type_id": 295027,
+      "numista_issue_ids": [
+        667942,
+        667943,
+        914624
+      ]
+    },
+    {
+      "id": "2018-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2018,
+      "numista_type_id": 157350,
+      "numista_issue_ids": [
+        457551,
+        553112
+      ]
+    },
+    {
+      "id": "2019-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2019,
+      "numista_type_id": 157350,
+      "numista_issue_ids": [
+        424001,
+        553113
+      ]
+    },
+    {
+      "id": "2020-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2020,
+      "numista_type_id": 157350,
+      "numista_issue_ids": [
+        485090,
+        532595
+      ]
+    },
+    {
+      "id": "2021-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2021,
+      "numista_type_id": 240613,
+      "numista_issue_ids": [
+        584706
+      ]
+    },
+    {
+      "id": "2022-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2022,
+      "numista_type_id": 240613,
+      "numista_issue_ids": [
+        690472
+      ]
+    },
+    {
+      "id": "2023-elizabeth-silver-britannia",
+      "label": "Elizabeth II",
+      "year": 2023,
+      "numista_type_id": 240613,
+      "numista_issue_ids": [
+        750256
+      ]
+    },
+    {
+      "id": "2023-charles-silver-britannia",
+      "label": "Charles III",
+      "year": 2023,
+      "numista_type_id": 353110,
+      "numista_issue_ids": [
+        766036
+      ]
+    },
+    {
+      "id": "2024-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2024,
+      "numista_type_id": 353110,
+      "numista_issue_ids": [
+        810729
+      ]
+    },
+    {
+      "id": "2025-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2025,
+      "numista_type_id": 353110,
+      "numista_issue_ids": [
+        899962,
+        954737
+      ]
+    },
+    {
+      "id": "2026-silver-britannia",
+      "label": "Silver Britannia",
+      "year": 2026,
+      "numista_type_id": 353110,
+      "numista_issue_ids": [
+        979033,
+        1035237,
+        1035238,
+        1035239
+      ]
+    }
+  ]
+}
