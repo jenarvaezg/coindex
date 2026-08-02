@@ -11,6 +11,7 @@ import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.deriveCollection
+import com.jenarvaezg.coindex.ui.plateEntries
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -401,19 +402,24 @@ class CuratedCatalogsTest {
      * under the very same series, so the members are the Perth ones — .9999 and 40,9 mm against
      * RAM's .999 and 40 mm, and in 2020 RAM even calls the animal a rat where Perth says mouse.
      *
-     * Seven emitted members and no more: 2027-2031 are announced, and the schema cannot say so
-     * until #46 lands.
+     * Seven issued members and five scheduled subjects: the official Perth zodiac guide maps
+     * 2027-2031 to Goat through Pig, while Series III is the annual twelve-coin 2020-2031 cycle.
+     * Those five subjects are announced slots, not claims that their individual designs or
+     * specifications have already been released.
      */
     @Test
-    fun `lunar iii bullion is the perth line from 2020 to 2026`() {
+    fun `lunar iii bullion fixes the perth cycle from 2020 to 2031`() {
         val lunar = find("lunar-iii-perth-1oz-bullion")
         assertEquals(1, lunar.schemaVersion)
         assertEquals("Lunar Series III", lunar.family)
         assertEquals(1_000, lunar.weightMillioz)
         assertEquals(Finish.Bullion, lunar.finish)
-        assertEquals((2020..2026).toList(), lunar.members.map { it.year })
+        assertEquals((2020..2031).toList(), lunar.members.map { it.year })
+        assertEquals(12, lunar.members.size)
+        assertEquals(7, lunar.members.count { !it.isAnnounced })
+        assertEquals(5, lunar.members.count { it.isAnnounced })
         assertEquals(
-            listOf(179_438, 235_118, 307_024, 342_221, 386_213, 441_816, 483_798),
+            listOf(179_438, 235_118, 307_024, 342_221, 386_213, 441_816, 483_798) + List(5) { null },
             lunar.members.map { it.numistaTypeId },
         )
         assertEquals(
@@ -425,9 +431,30 @@ class CuratedCatalogsTest {
                 listOf(841_265),
                 listOf(923_283),
                 listOf(979_731),
-            ),
+            ) + List(5) { emptyList() },
             lunar.members.map { it.numistaIssueIds },
         )
+        val announced = lunar.members.filter { it.isAnnounced }
+        assertEquals(
+            listOf(
+                "Year of the Goat",
+                "Year of the Monkey",
+                "Year of the Rooster",
+                "Year of the Dog",
+                "Year of the Pig",
+            ),
+            announced.map { it.label },
+        )
+        assertTrue(announced.all { it.designTypeId == null })
+        assertTrue(announced.all { it.source?.startsWith("https://www.perthmint.com/") == true })
+        assertTrue(announced.all { it.sourceNote?.contains("tema programado") == true })
+
+        val album = buildCollectionCatalogAlbum(lunar, emptyList())
+        assertEquals(7, album.issuedMembers())
+        assertEquals(5, album.announcedMembers())
+        val entries = plateEntries(lunar, album.ownedMembers())
+        assertEquals("Progreso" to "0 / 7 emisiones", entries[0])
+        assertEquals("Sin emitir" to "5 anunciadas", entries[1])
         // La línea de la Royal Australian Mint: misma serie en Numista, otra moneda.
         val royalAustralianMint =
             listOf(219_663, 266_550, 309_870, 355_589, 406_506, 444_584, 529_884)
