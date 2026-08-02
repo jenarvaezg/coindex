@@ -1,0 +1,148 @@
+{
+  "schema_version": 2,
+  "id": "venezuela-1-bolivar",
+  "name": "1 Bolívar · Venezuela · plata 5 g",
+  "issuer_code": "venezuela",
+  "family": "1 Bolívar de Venezuela",
+  "weight_millioz": 161,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "1965 fue el último año de plata venezolana y la ley de moneda del 4 de diciembre de 1967 pasó el 1 y el 2 bolívares al níquel puro.",
+  "source": "https://en.numista.com/catalogue/pieces10338.html",
+  "updated_at": "2026-08-02",
+  "members": [
+    {
+      "id": "1879",
+      "label": "1879",
+      "year": 1879,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1886",
+      "label": "1886",
+      "year": 1886,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1887",
+      "label": "1887",
+      "year": 1887,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1888",
+      "label": "1888",
+      "year": 1888,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1889",
+      "label": "1889",
+      "year": 1889,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1893",
+      "label": "1893",
+      "year": 1893,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1900",
+      "label": "1900",
+      "year": 1900,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1901",
+      "label": "1901",
+      "year": 1901,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1903",
+      "label": "1903",
+      "year": 1903,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1911",
+      "label": "1911",
+      "year": 1911,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1912",
+      "label": "1912",
+      "year": 1912,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1919",
+      "label": "1919",
+      "year": 1919,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1921",
+      "label": "1921",
+      "year": 1921,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1924",
+      "label": "1924",
+      "year": 1924,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1926",
+      "label": "1926",
+      "year": 1926,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1929",
+      "label": "1929",
+      "year": 1929,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1935",
+      "label": "1935",
+      "year": 1935,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1936",
+      "label": "1936",
+      "year": 1936,
+      "numista_type_id": 10338
+    },
+    {
+      "id": "1945",
+      "label": "1945 (acuñada en 1947)",
+      "year": 1945,
+      "numista_type_id": 10398
+    },
+    {
+      "id": "1954",
+      "label": "1954 (acuñada en 1955)",
+      "year": 1954,
+      "numista_type_id": 7034
+    },
+    {
+      "id": "1960",
+      "label": "1960",
+      "year": 1960,
+      "numista_type_id": 5316
+    },
+    {
+      "id": "1965",
+      "label": "1965",
+      "year": 1965,
+      "numista_type_id": 5316
+    }
+  ]
+}
