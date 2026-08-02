@@ -15681,6 +15681,115 @@
   },
   "weight": 31.1035
  },
+ "17379": {
+  "id": 17379,
+  "url": "https://es.numista.com/17379",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2009,
+  "max_year": 2009,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "ELIZABETH II \r\nAUSTRALIA 2009\r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/8651-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/8651-180.jpg",
+   "picture_copyright": "MesBedes",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Shevaun Buschenhofen"
+   ],
+   "description": "Koala sentado en la rama de un eucalipto",
+   "lettering": "P\r\n1oz 999 SILVER\r\nSB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/8652-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/8652-180.jpg",
+   "picture_copyright": "MesBedes",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Koala Bullion Coin",
+  "commemorated_topic": "Koala australiano",
+  "tags": [
+   "Marsupial",
+   "Árbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1111"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "17382": {
   "id": 17382,
   "url": "https://es.numista.com/17382",
@@ -16078,6 +16187,123 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "17386": {
+  "id": 17386,
+  "url": "https://es.numista.com/17386",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "ELIZABETH II\r\nAUSTRALIA 2010\r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/1709-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/1709-180.jpg",
+   "picture_copyright": "graybeard76"
+  },
+  "reverse": {
+   "designers": [
+    "Wade Robinson"
+   ],
+   "description": "Koala en equilibrio sobre una rama delgada",
+   "lettering": "P\r\nWR\r\n1oz 999 SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/1710-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/1710-180.jpg",
+   "picture_copyright": "graybeard76"
+  },
+  "series": "Koala Bullion Coin",
+  "commemorated_topic": "Koala australiano",
+  "related_types": [
+   {
+    "id": 76391,
+    "title": "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin - Gilt)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   }
+  ],
+  "tags": [
+   "Marsupial"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1464"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "17387": {
   "category": "coin",
@@ -21715,6 +21941,200 @@
    "text": "20 euros"
   },
   "weight": 18
+ },
+ "20532": {
+  "id": 20532,
+  "url": "https://es.numista.com/20532",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "ELIZABETH II\r\nAUSTRALIA 2007\r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6996c0995225a6.81801106-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6996c0995225a6.81801106-180.jpg",
+   "picture_copyright": "lektrobal"
+  },
+  "reverse": {
+   "designers": [
+    "Shevaun Buschenhofen"
+   ],
+   "description": "Koala agarrado a la rama de un árbol. Fondo brillante.",
+   "lettering": "1oz 999 SILVER\r\nSB  P",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6996c09a0a05c5.15543940-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6996c09a0a05c5.15543940-180.jpg",
+   "picture_copyright": "lektrobal"
+  },
+  "series": "Koala Bullion Coin",
+  "commemorated_topic": "Koala australiano",
+  "tags": [
+   "Marsupial",
+   "Árbol"
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "20535": {
+  "id": 20535,
+  "url": "https://es.numista.com/20535",
+  "title": "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2008,
+  "max_year": 2008,
+  "ruler": [
+   {
+    "id": 1783,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.6,
+  "thickness": 4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "4º retrato de la Reina Isabel II mirando hacia la derecha con la Tiara de las Niñas de Gran Bretaña e Irlanda",
+   "lettering": "· ELIZABETH II · AUSTRALIA 2008 ·\r\n1 DOLLAR\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/682f2f682adaf1.25143610-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/682f2f682adaf1.25143610-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "designers": [
+    "Shevaun Buschenhofen"
+   ],
+   "description": "Imagen de una madre y su bebé koala sentados en la rama de un árbol con fondo brillante.",
+   "lettering": "1 OZ 999 SILVER\r\nP\r\nSB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/682f2f68850d70.76906175-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/682f2f68850d70.76906175-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "series": "Koala Bullion Coin",
+  "commemorated_topic": "Koala australiano",
+  "tags": [
+   "Marsupial",
+   "Árbol"
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "20579": {
   "category": "coin",

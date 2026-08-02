@@ -1145,6 +1145,85 @@ class CuratedCatalogsTest {
     }
 
     /**
+     * Mismo criterio que el Kookaburra (#70/#106): la emisión BU anual estándar de Perth Mint,
+     * una casilla por año del programa oficial, cualificada por emisión. El catálogo original
+     * empezaba en 2011 porque eso es lo que enumeraba la serie 10445 de Numista; la tabla de la
+     * ceca arranca en 2007 y esas cuatro casillas vivían en la serie hermana 4424.
+     */
+    @Test
+    fun `the koala catalog is the issue-qualified standard annual bullion run`() {
+        val koala = find("australian-koala-perth-1oz")
+        assertEquals("Australian Koala · Perth Mint · 1 oz de plata bullion anual estándar", koala.name)
+        assertEquals(1_000, koala.weightMillioz)
+        assertEquals(Finish.Bullion, koala.finish)
+        assertEquals(Metal.Silver, koala.metal)
+        assertEquals((2007..2026).toList(), koala.members.map { it.year })
+        assertEquals(
+            listOf(
+                Triple(2007, 20_532, 109_470), Triple(2008, 20_535, 109_474),
+                Triple(2009, 17_379, 87_561), Triple(2010, 17_386, 87_568),
+                Triple(2011, 25_340, 133_627), Triple(2012, 32_572, 155_901),
+                Triple(2013, 42_672, 184_923), Triple(2014, 54_800, 220_141),
+                Triple(2015, 68_298, 248_794), Triple(2016, 85_886, 289_240),
+                Triple(2017, 100_525, 321_230), Triple(2018, 132_621, 380_880),
+                Triple(2019, 160_928, 430_168), Triple(2020, 194_185, 481_352),
+                Triple(2021, 281_802, 644_120), Triple(2022, 319_477, 709_997),
+                Triple(2023, 358_743, 775_700), Triple(2024, 413_950, 861_187),
+                Triple(2025, 459_669, 935_627), Triple(2026, 576_543, 1_089_274),
+            ),
+            koala.members.map { member ->
+                Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
+            },
+        )
+
+        // Alternativas del mismo año que no son la bullion anual estándar.
+        val excludedTypes = listOf(
+            170_428, // 2009 gilded
+            76_391, // 2010 gilt
+            359_230, // 2011 gilded
+            402_992, // 2023 coloured
+            398_192, // 2024 Elizabeth «in the name of», .999 / 40 mm / 25.000
+            476_400, // 2025 .999 / 40 mm
+            478_727, // 2025 coloured
+            557_132, // 2026 .999 / 40 mm / 25.000
+            592_033, // 2026 coloured
+        )
+        assertTrue(koala.members.none { it.numistaTypeId in excludedTypes })
+    }
+
+    /**
+     * Lunar Series II cierra el ciclo 2008-2019; cada tipo mezcla la bullion estándar con
+     * colour, gilded, proof, typesets y privys, así que la casilla se identifica por emisión.
+     */
+    @Test
+    fun `the lunar ii bullion catalog is the issue-qualified standard annual run`() {
+        val lunar = find("lunar-ii-perth-1oz-bullion")
+        assertEquals(
+            "Lunar Series II · Perth Mint · 1 oz de plata bullion anual estándar",
+            lunar.name,
+        )
+        assertEquals(1_000, lunar.weightMillioz)
+        assertEquals(Finish.Bullion, lunar.finish)
+        assertEquals(Metal.Silver, lunar.metal)
+        assertEquals(SeriesStatus.Closed, lunar.seriesStatus)
+        assertEquals((2008..2019).toList(), lunar.members.map { it.year })
+        assertEquals(
+            listOf(
+                Triple(2008, 28_575, 145_935), Triple(2009, 17_378, 136_304),
+                Triple(2010, 17_383, 87_565), Triple(2011, 17_388, 87_570),
+                Triple(2012, 28_574, 145_934), Triple(2013, 37_980, 172_471),
+                Triple(2014, 49_355, 206_294), Triple(2015, 66_615, 309_546),
+                Triple(2016, 80_295, 278_592), Triple(2017, 95_688, 312_257),
+                Triple(2018, 129_091, 374_553), Triple(2019, 150_358, 412_033),
+            ),
+            lunar.members.map { member ->
+                Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
+            },
+        )
+        assertTrue(lunar.members.all { it.numistaIssueIds.size == 1 })
+    }
+
+    /**
      * El primer miembro anunciado del repo (#31): la colección son diez bestias nombradas de
      * antemano y el Seymour Panther salió en proof en 2022 y **sigue sin salir en bullion**, así
      * que la décima casilla no es un agujero de curación sino una moneda sin emitir.
