@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(49, catalogs.size)
+        assertEquals(50, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintiún cerrados llevan su nota y los veintiocho abiertos no afirman nada más que
+     * veintiún cerrados llevan su nota y los veintinueve abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -48,7 +48,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(21, closed.size)
-        assertEquals(28, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(29, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -182,6 +182,34 @@ class CuratedCatalogsTest {
         assertTrue(krugerrand.members.none { it.year == 2017 })
         assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })
         assertTrue(krugerrand.members.all { it.numistaIssueIds.isEmpty() })
+    }
+
+    /**
+     * Southern Cross de ABC Mint (Niue): un solo tipo N#485082 sin `series` en Numista, con las
+     * fechas 2025 y 2026 en la ficha. Date run abierto —programa bullion de tirada ilimitada—
+     * y solo la plata de 1 oz: el oro (N#476767 / N#476766) es otra clave de variante.
+     */
+    @Test
+    fun `the southern cross niue silver ounce is an open date run from 2025`() {
+        val southern = find("niue-southern-cross-1oz-bullion")
+        assertEquals(2, southern.schemaVersion)
+        assertTrue(southern.isDateRun)
+        assertEquals("Southern Cross bullion anual", southern.family)
+        assertEquals(
+            "Southern Cross · Niue · ABC Mint · 1 oz bullion anual desde 2025",
+            southern.name,
+        )
+        assertEquals("niue", southern.issuerCode)
+        assertEquals(1_000, southern.weightMillioz)
+        assertEquals(Finish.Bullion, southern.finish)
+        assertEquals(Metal.Silver, southern.metal)
+        assertEquals(SeriesStatus.Open, southern.seriesStatus)
+        assertNull(southern.closedNote)
+        assertEquals("https://en.numista.com/catalogue/pieces485082.html", southern.source)
+        assertEquals("2026-08-03", southern.updatedAt)
+        assertEquals(listOf(2025, 2026), southern.members.map { it.year })
+        assertEquals(List(2) { 485_082 }, southern.members.map { it.numistaTypeId })
+        assertTrue(southern.members.all { it.numistaIssueIds.isEmpty() })
     }
 
     /**
