@@ -9,6 +9,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=1452",
+  "no_issue_years": [2001, 2020],
+  "no_issue_note": "2001: la ceca no lanzó ninguna de la serie (tsbnk; Numista 1452 salta de 2000 a 2002). 2020: tampoco en 3 rublos de Architectural Monuments — el aniversario del Kremlin de Tula (5111-0430 / N#235489) no es de la serie, y el Antonievo-Siysky es 25 rublos. Resuelto en #131.",
   "updated_at": "2026-08-03",
   "members": [
     {

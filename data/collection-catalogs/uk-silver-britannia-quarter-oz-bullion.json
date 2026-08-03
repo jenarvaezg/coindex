@@ -9,7 +9,9 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/pieces384610.html",
-  "updated_at": "2026-08-02",
+  "no_issue_years": [2016, 2017, 2018, 2019, 2020, 2022],
+  "no_issue_note": "La Royal Mint no emitió la Britannia de ¼ oz en plata bullion en 2016–2020 ni 2022: en esos años el ¼ oz sólo existió en prueba, dentro de sets (Online Coin Club: «sets only, not individually»). britannia-uk.com lista bullion fraccionario en 2013/2014 y de nuevo desde 2021, sin esos seis años. Resuelto en #130.",
+  "updated_at": "2026-08-03",
   "members": [
     {
       "id": "2013-silver-britannia-quarter",

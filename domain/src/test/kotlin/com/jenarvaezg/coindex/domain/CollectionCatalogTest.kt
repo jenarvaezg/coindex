@@ -310,6 +310,66 @@ class CollectionCatalogValidationTest {
         assertNull(closed.copy(sourceNote = "el Handboek los cierra en cinco").validate())
     }
 
+    /**
+     * Interior years the mint skipped are not curation debt (#130, #131). Declaring them takes
+     * the same bargain as `closed_note`: the years are structured for the stale-catalogs report,
+     * and the note is required prose with the proof. They never become members, so the plate
+     * denominator stays untouched.
+     */
+    @Test
+    fun `a catalog may declare years the mint did not issue`() {
+        val open = teslaCatalogStub()
+        assertTrue(open.noIssueYears.isEmpty())
+        assertNull(open.noIssueNote)
+
+        val silenced = open.copy(
+            noIssueYears = listOf(2019),
+            noIssueNote = "La ceca saltó 2019; la serie pasa de 2018 a 2020.",
+        )
+        assertNull(silenced.validate())
+
+        assertEquals(
+            CollectionCatalogValidationError.NoIssueYearsWithoutNote,
+            open.copy(noIssueYears = listOf(2019)).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.BlankNoIssueNote,
+            open.copy(noIssueYears = listOf(2019), noIssueNote = "   ").validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.NoIssueNoteWithoutYears,
+            open.copy(noIssueNote = "prosa huérfana").validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.DuplicateNoIssueYear(2019),
+            open.copy(
+                noIssueYears = listOf(2019, 2019),
+                noIssueNote = "duplicado",
+            ).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.NoIssueYearConflictsWithMember(2018),
+            open.copy(
+                noIssueYears = listOf(2018),
+                noIssueNote = "choca con Alternating current",
+            ).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.NoIssueYearOutsideSpan(2017),
+            open.copy(
+                noIssueYears = listOf(2017),
+                noIssueNote = "antes del primer miembro",
+            ).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.NoIssueYearOutsideSpan(2021),
+            open.copy(
+                noIssueYears = listOf(2021),
+                noIssueNote = "después del último miembro",
+            ).validate(),
+        )
+    }
+
     @Test
     fun `date runs repeat one type across years and accept type page sources`() {
         val definition = dateRunCatalogStub()
