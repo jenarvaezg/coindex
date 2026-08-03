@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,10 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -266,6 +271,12 @@ private fun UpdateBanner(
     updating: Boolean,
     onInstall: () -> Unit,
 ) {
+    val notes = update.manifest.notes?.takeIf(String::isNotBlank)
+    // Keyed on the note itself: a newer version's news arrives collapsed and unmeasured.
+    var expanded by remember(notes) { mutableStateOf(false) }
+    var truncated by remember(notes) { mutableStateOf(false) }
+    val disclosure = updateNotesDisclosure(expanded, truncated)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -274,20 +285,47 @@ private fun UpdateBanner(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                // The whole block takes the tap, not just the hint: a two-line strip is a small
+                // enough target already. No hint means nothing is hidden, so nothing to open.
+                .then(
+                    if (disclosure.hint == null) {
+                        Modifier
+                    } else {
+                        Modifier.clickable(role = Role.Button) { expanded = !expanded }
+                    },
+                )
+                .padding(end = 12.dp),
+        ) {
             Text(
                 "NUEVA VERSIÓN ${update.manifest.versionName}",
                 style = MaterialTheme.typography.labelMedium,
                 color = Paper.rust,
             )
-            update.manifest.notes?.takeIf(String::isNotBlank)?.let { notes ->
+            notes?.let {
                 Text(
-                    notes,
+                    it,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Paper.muted,
-                    maxLines = 2,
+                    maxLines = disclosure.maxLines,
                     overflow = TextOverflow.Ellipsis,
+                    // Only the collapsed layout can report the overflow; once expanded there is
+                    // none left to see, and reading it back would retract the hint.
+                    onTextLayout = { layout ->
+                        if (!expanded) truncated = layout.hasVisualOverflow
+                    },
                 )
+                disclosure.hint?.let { hint ->
+                    Text(
+                        hint,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Paper.moss,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                }
             }
         }
         PrimaryAction(
