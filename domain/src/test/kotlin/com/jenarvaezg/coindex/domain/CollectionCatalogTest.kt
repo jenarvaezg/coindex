@@ -292,6 +292,24 @@ class CollectionCatalogValidationTest {
         )
     }
 
+    /**
+     * The boundary an open catalog cannot write in `closed_note` (#53, ADR 0020): a `source_note`
+     * is optional, allowed in both statuses, and refused only when blank.
+     */
+    @Test
+    fun `a catalog may cite the boundary that Numista does not draw`() {
+        val open = teslaCatalogStub()
+        assertNull(open.sourceNote)
+        assertNull(open.copy(sourceNote = "la ceca la presenta como gama").validate())
+        assertEquals(
+            CollectionCatalogValidationError.BlankSourceNote,
+            open.copy(sourceNote = "   ").validate(),
+        )
+
+        val closed = dateRunCatalogStub()
+        assertNull(closed.copy(sourceNote = "el Handboek los cierra en cinco").validate())
+    }
+
     @Test
     fun `date runs repeat one type across years and accept type page sources`() {
         val definition = dateRunCatalogStub()

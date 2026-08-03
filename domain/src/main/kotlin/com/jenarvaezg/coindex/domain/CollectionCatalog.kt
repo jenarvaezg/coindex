@@ -42,6 +42,15 @@ data class CollectionCatalog(
     /** What sustains the closure, in prose with a URL when there is one. Only when closed. */
     @SerialName("closed_note") val closedNote: String? = null,
     val source: String,
+    /**
+     * What draws the boundary when Numista is not what draws it, in prose with a URL when there
+     * is one. Optional and allowed in both statuses, which is the whole point: `closed_note` is
+     * forbidden while a series is open (#28), so before this field an open catalog that existed
+     * because its mint said so had nowhere in the file to say it (#53, ADR 0020). It is the same
+     * pair the members got in #48, one level up, and it proves nothing on its own — the curator
+     * writes it, the validator only refuses it blank.
+     */
+    @SerialName("source_note") val sourceNote: String? = null,
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CollectionCatalogMember>,
 ) {
@@ -148,6 +157,9 @@ data class CollectionCatalog(
         // Handboek and no series at all in Numista; requiring one would have forced a fake.
         if (!isNumistaSeriesSource(source) && !isNumistaTypeSource(source)) {
             return CollectionCatalogValidationError.InvalidSource
+        }
+        if (sourceNote != null && sourceNote.isBlank()) {
+            return CollectionCatalogValidationError.BlankSourceNote
         }
         if (members.isEmpty()) {
             return CollectionCatalogValidationError.EmptyMembers
@@ -355,6 +367,10 @@ sealed class CollectionCatalogValidationError(val message: String) {
 
     data object InvalidSource : CollectionCatalogValidationError(
         "collection catalog source must be an HTTPS Numista series or type URL",
+    )
+
+    data object BlankSourceNote : CollectionCatalogValidationError(
+        "collection catalog carries an empty `source_note`: say what draws the boundary, or drop it",
     )
 
     data object EmptyMembers : CollectionCatalogValidationError(
