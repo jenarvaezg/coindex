@@ -45,10 +45,14 @@ import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.OwnGroupingScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
+import com.jenarvaezg.coindex.ui.screens.PrototypeFirstLevel
 import com.jenarvaezg.coindex.ui.screens.ProposalScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
 import com.jenarvaezg.coindex.ui.theme.Paper
+
+/** PROTOTIPO #18: a `false` la app vuelve a ser ella misma. Se borra con la rama. */
+private const val PROTOTYPE_FIRST_LEVEL = true
 
 @Composable
 fun CoindexApp(viewModel: CoindexViewModel) {
@@ -128,6 +132,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     ) { padding ->
         val content = Modifier.fillMaxSize().padding(padding)
         when {
+            // PROTOTIPO #18 — el primer nivel entero lo sirve PrototypeFirstLevel, con su propia
+            // barra de variantes. Rama desechable: esta línea se va con ella.
+            PROTOTYPE_FIRST_LEVEL -> PrototypeFirstLevel(content)
             state.fatalError != null -> FatalError(state.fatalError!!, content)
             !state.onboarded -> OnboardingScreen(
                 validation = state.validation,
