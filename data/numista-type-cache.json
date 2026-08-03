@@ -64047,6 +64047,125 @@
   },
   "weight": 31.1
  },
+ "485082": {
+  "id": 485082,
+  "url": "https://es.numista.com/485082",
+  "title": "2 Dollars - Charles III (Southern Cross)",
+  "object_type": {
+   "id": 47,
+   "name": "Monedas de colección"
+  },
+  "issuer": {
+   "code": "niue",
+   "name": "Niue"
+  },
+  "min_year": 2025,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6839,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 807,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 Dollars",
+   "numeric_value": 2,
+   "currency": {
+    "id": 8674,
+    "name": "Dollar of New Zealand",
+    "full_name": "Dollar of New Zealand (1987-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39.92,
+  "thickness": 2.65,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Jody Clark"
+   ],
+   "description": "En el anverso figura el retrato sin corona del rey Carlos III mirando hacia la izquierda. El retrato está en acabado mate sobre un fondo de espejo pulido con leyendas en un borde circular.",
+   "lettering": "NIUE\r\nCHARLES III\r\nJC\r\n2 DOLLARS\r\n2025",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/niue/68c3cceb9c21f1.87787154-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/niue/68c3cceb9c21f1.87787154-180.jpg",
+   "picture_copyright": "send2georgie"
+  },
+  "reverse": {
+   "designers": [
+    "Tony Dean"
+   ],
+   "description": "En el reverso aparecen un canguro y un emú sobre un vasto fondo del interior de Australia, ambos mirando hacia la constelación de la Cruz del Sur en un cielo nocturno estrellado.",
+   "lettering": "THE SOUTHERN CROSS\r\n1OZ ABC MINT 9999 FINE SILVER\r\nTD\r\nABC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/niue/68c3ccec325086.97647267-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/niue/68c3ccec325086.97647267-180.jpg",
+   "picture_copyright": "send2georgie"
+  },
+  "comments": "<p><i>Presentada en 2025 por la casa de la moneda privada australiana ABC Refinery, la moneda en lingotes de plata de ley 9999 Southern Cross es la primera moneda soberana emitida por la casa de la moneda para el país insular de Niue. El diseño se inspira en la constelación de la Cruz del Sur, que aparece con orgullo en las banderas de muchas naciones insulares del Pacífico, incluidas Australia y Nueva Zelanda. En el anverso figura el retrato del rey Carlos III, diseñado por Jody Clark, mientras que el reverso es obra de Tony Dean, con el canguro y el emú australianos en el vasto interior bajo un cielo nocturno estrellado enmarcado por las magníficas estrellas de la constelación de la Cruz del Sur.</i></p>",
+  "related_types": [
+   {
+    "id": 476767,
+    "title": "100 Dollars - Charles III (Southern Cross)",
+    "category": "exonumia",
+    "country": {
+     "code": "niue",
+     "name": "Niue"
+    },
+    "minYear": 2025,
+    "maxYear": 2025
+   },
+   {
+    "id": 476766,
+    "title": "200 Dollars - Charles III (Southern Cross)",
+    "category": "exonumia",
+    "country": {
+     "code": "niue",
+     "name": "Niue"
+    },
+    "minYear": 2025,
+    "maxYear": 2025
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Marsupial"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5096,
+    "name": "ABC Refinery"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de colección"
+ },
  "48672": {
   "category": "coin",
   "comments": "esta moneda se acuñó según las normas de la Unión Latina a razón de 5 francos por bolívar",
