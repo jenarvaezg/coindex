@@ -638,4 +638,90 @@ class CollectionProposalsTest {
         // A piece the collector no longer owns is not a proposal and not an orphan either.
         assertFalse(derivation.unclassified.any { it.item.id == 5L })
     }
+
+    @Test
+    fun `unclassified residue collapses by type summing quantity`() {
+        val typeMeta = mapOf(
+            14_538 to TypeMeta(id = 14_538, family = null, weightOz = ounces(30.0)),
+        )
+        val derivation = deriveCollection(
+            listOf(
+                CollectedItem(1, 2, 14_538),
+                CollectedItem(2, 1, 14_538),
+            ),
+            typeMeta,
+            emptyList(),
+        )
+
+        val entry = derivation.unclassified.single()
+        assertEquals(UnclassifiedReason.NoFamilyOrCatalog, entry.reason)
+        assertEquals(1L, entry.item.id)
+        assertEquals(3, entry.quantity)
+        assertEquals(2, entry.rowCount)
+    }
+
+    @Test
+    fun `issue-unclaimed residue stays split by issue of the same type`() {
+        fun qualifiedCatalog(issueId: Int) = teslaCatalogStub().copy(
+            id = "lunar-$issueId",
+            name = "Lunar Series III",
+            family = "Lunar Series III",
+            finish = Finish.ProofColoured,
+            members = listOf(
+                CollectionCatalogMember(
+                    id = "2020-rat",
+                    label = "Rat",
+                    year = 2020,
+                    numistaTypeId = 400_000,
+                    numistaIssueIds = listOf(issueId),
+                ),
+            ),
+        )
+        val metadata = mapOf(
+            400_000 to TypeMeta(
+                id = 400_000,
+                family = "Lunar Series III",
+                weightOz = ounces(31.1),
+                finish = Finish.ProofColoured,
+                metal = Metal.Silver,
+            ),
+        )
+        val derivation = deriveCollection(
+            listOf(
+                CollectedItem(1, 1, 400_000, issueId = 70_999),
+                CollectedItem(2, 2, 400_000, issueId = 70_998),
+                CollectedItem(3, 1, 400_000, issueId = 70_999),
+            ),
+            metadata,
+            listOf(qualifiedCatalog(70_001)),
+        )
+
+        assertEquals(2, derivation.unclassified.size)
+        assertTrue(
+            derivation.unclassified.all { it.reason == UnclassifiedReason.IssueNotClaimedByCatalog },
+        )
+        val byIssue = derivation.unclassified.associateBy { it.item.issueId }
+        assertEquals(2, byIssue.getValue(70_999).quantity)
+        assertEquals(2, byIssue.getValue(70_999).rowCount)
+        assertEquals(2, byIssue.getValue(70_998).quantity)
+        assertEquals(1, byIssue.getValue(70_998).rowCount)
+    }
+
+    @Test
+    fun `unclassified quantity saturates instead of wrapping`() {
+        val typeMeta = mapOf(
+            99 to TypeMeta(id = 99, family = null, weightOz = ounces(31.1)),
+        )
+        val derivation = deriveCollection(
+            listOf(
+                CollectedItem(1, Int.MAX_VALUE, 99),
+                CollectedItem(2, 1, 99),
+            ),
+            typeMeta,
+            emptyList(),
+        )
+
+        assertEquals(Int.MAX_VALUE, derivation.unclassified.single().quantity)
+        assertEquals(2, derivation.unclassified.single().rowCount)
+    }
 }

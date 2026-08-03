@@ -15,9 +15,20 @@ sealed interface UnclassifiedReason {
     data class UnknownWeight(val family: String) : UnclassifiedReason
 }
 
+/**
+ * One entry of the unclassified residue: inventory rows collapsed by type, except when the
+ * reason is [UnclassifiedReason.IssueNotClaimedByCatalog], where the unit is the issue —
+ * two unmatched issues of the same type are two leftovers, not a ×2 (#93).
+ *
+ * [item] is the first row encountered (title, photos, year). [quantity] is the saturating sum
+ * across collapsed rows; [rowCount] is how many rows were fused. Drawing the ×N is the screen
+ * map's job; this type only delivers the numbers.
+ */
 data class UnclassifiedItem(
     val item: CollectedItem,
     val reason: UnclassifiedReason,
+    val quantity: Int,
+    val rowCount: Int,
 )
 
 /**
@@ -84,7 +95,7 @@ fun deriveCollection(
     }
     val curatedWeights: Set<Int> = catalogs.mapNotNullTo(mutableSetOf()) { it.weightMillioz }
     val grouped = LinkedHashMap<CollectionProposalKey, ProposalAccumulator>()
-    val unclassified = mutableListOf<UnclassifiedItem>()
+    val unclassifiedGrouped = LinkedHashMap<UnclassifiedGroupKey, UnclassifiedAccumulator>()
 
     for (item in items.filter { it.quantity > 0 }) {
         val setFamily = setFamilies[item.typeId]
@@ -95,7 +106,7 @@ fun deriveCollection(
         }
         val metadata = typeMeta[item.typeId]
         if (metadata == null) {
-            unclassified += UnclassifiedItem(item, UnclassifiedReason.MissingTypeMetadata)
+            unclassifiedGrouped.record(item, UnclassifiedReason.MissingTypeMetadata)
             continue
         }
         val numistaFamily = metadata.family?.let(::normalizeFamily)
@@ -116,10 +127,7 @@ fun deriveCollection(
         val catalog = matchingCatalogs.singleOrNull()
             ?: candidateCatalogs.firstOrNull().takeUnless { issueQualifiedClaim }
         if (catalog == null && issueQualifiedClaim) {
-            unclassified += UnclassifiedItem(
-                item,
-                UnclassifiedReason.IssueNotClaimedByCatalog,
-            )
+            unclassifiedGrouped.record(item, UnclassifiedReason.IssueNotClaimedByCatalog)
             continue
         }
         val curatedFamily = catalog?.family ?: groupingFamilies[item.typeId]
@@ -130,7 +138,7 @@ fun deriveCollection(
             else -> numistaFamily
         }
         if (family == null) {
-            unclassified += UnclassifiedItem(item, UnclassifiedReason.NoFamilyOrCatalog)
+            unclassifiedGrouped.record(item, UnclassifiedReason.NoFamilyOrCatalog)
             continue
         }
         // Its own catalog names the family and variant, so neither has to be inferred.
@@ -142,7 +150,7 @@ fun deriveCollection(
             normalizeWeightMillioz(weightOz, curatedWeights)
         }
         if (weightMillioz == null) {
-            unclassified += UnclassifiedItem(item, UnclassifiedReason.UnknownWeight(family))
+            unclassifiedGrouped.record(item, UnclassifiedReason.UnknownWeight(family))
             continue
         }
         grouped.record(
@@ -170,6 +178,14 @@ fun deriveCollection(
         )
     }
     val itemsByKey = ordered.associate { (key, accumulator) -> key to accumulator.items.toList() }
+    val unclassified = unclassifiedGrouped.values.map { accumulator ->
+        UnclassifiedItem(
+            item = accumulator.item,
+            reason = accumulator.reason,
+            quantity = accumulator.quantity,
+            rowCount = accumulator.rowCount,
+        )
+    }
     return CollectionDerivation(proposals, unclassified, itemsByKey)
 }
 
@@ -196,6 +212,46 @@ private fun MutableMap<CollectionProposalKey, ProposalAccumulator>.record(
     accumulator.typeIds += item.typeId
     accumulator.items += item
     accumulator.quantity = saturatingAdd(accumulator.quantity, item.quantity)
+}
+
+/**
+ * Collapse key for the unclassified residue. Type is enough for every reason except
+ * [UnclassifiedReason.IssueNotClaimedByCatalog], which scopes to the recorded issue.
+ */
+private sealed interface UnclassifiedGroupKey {
+    data class ByType(val typeId: Int) : UnclassifiedGroupKey
+    data class ByIssue(val typeId: Int, val issueId: Int?) : UnclassifiedGroupKey
+}
+
+private class UnclassifiedAccumulator(
+    val item: CollectedItem,
+    val reason: UnclassifiedReason,
+) {
+    var quantity: Int = 0
+    var rowCount: Int = 0
+}
+
+private fun unclassifiedGroupKey(
+    item: CollectedItem,
+    reason: UnclassifiedReason,
+): UnclassifiedGroupKey = when (reason) {
+    UnclassifiedReason.IssueNotClaimedByCatalog ->
+        UnclassifiedGroupKey.ByIssue(item.typeId, item.issueId)
+    else -> UnclassifiedGroupKey.ByType(item.typeId)
+}
+
+private fun MutableMap<UnclassifiedGroupKey, UnclassifiedAccumulator>.record(
+    item: CollectedItem,
+    reason: UnclassifiedReason,
+) {
+    val key = unclassifiedGroupKey(item, reason)
+    val accumulator = getOrPut(key) { UnclassifiedAccumulator(item, reason) }
+    check(accumulator.reason == reason) {
+        "collected item type `${item.typeId}` collapsed under conflicting unclassified reasons: " +
+            "`${accumulator.reason}` and `$reason`"
+    }
+    accumulator.quantity = saturatingAdd(accumulator.quantity, item.quantity)
+    accumulator.rowCount += 1
 }
 
 /** Quantities come from a third-party catalog; a hostile total must not wrap around. */
