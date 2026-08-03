@@ -51,6 +51,15 @@ data class CollectionCatalog(
      * writes it, the validator only refuses it blank.
      */
     @SerialName("source_note") val sourceNote: String? = null,
+    /**
+     * Calendar years inside the member span where the mint issued nothing for this variant.
+     * Structured so `scripts/stale-catalogs.py` can drop them from interior gaps; they are never
+     * members and never touch the plate denominator. Declaring any year requires [noIssueNote]
+     * with the proof (#130, #131).
+     */
+    @SerialName("no_issue_years") val noIssueYears: List<Int> = emptyList(),
+    /** What sustains [noIssueYears], in prose with a URL when there is one. */
+    @SerialName("no_issue_note") val noIssueNote: String? = null,
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CollectionCatalogMember>,
 ) {
@@ -171,6 +180,36 @@ data class CollectionCatalog(
             }
             SeriesStatus.Open -> if (closedNote != null) {
                 return CollectionCatalogValidationError.OpenWithClosedNote
+            }
+        }
+        // Silenced calendar gaps are the same bargain: years without a note are unsigned claims,
+        // and a note without years is orphan prose. They must sit inside the member year span and
+        // never collide with a slot that already exists.
+        if (noIssueYears.isEmpty()) {
+            if (noIssueNote != null) {
+                return CollectionCatalogValidationError.NoIssueNoteWithoutYears
+            }
+        } else {
+            if (noIssueNote == null) {
+                return CollectionCatalogValidationError.NoIssueYearsWithoutNote
+            }
+            if (noIssueNote.isBlank()) {
+                return CollectionCatalogValidationError.BlankNoIssueNote
+            }
+            val memberYears = members.mapNotNull { it.year }.toSet()
+            val firstYear = memberYears.minOrNull()
+            val lastYear = memberYears.maxOrNull()
+            val seenNoIssue = mutableSetOf<Int>()
+            for (year in noIssueYears) {
+                if (!seenNoIssue.add(year)) {
+                    return CollectionCatalogValidationError.DuplicateNoIssueYear(year)
+                }
+                if (year in memberYears) {
+                    return CollectionCatalogValidationError.NoIssueYearConflictsWithMember(year)
+                }
+                if (firstYear == null || lastYear == null || year !in firstYear..lastYear) {
+                    return CollectionCatalogValidationError.NoIssueYearOutsideSpan(year)
+                }
             }
         }
 
@@ -371,6 +410,30 @@ sealed class CollectionCatalogValidationError(val message: String) {
 
     data object BlankSourceNote : CollectionCatalogValidationError(
         "collection catalog carries an empty `source_note`: say what draws the boundary, or drop it",
+    )
+
+    data object NoIssueYearsWithoutNote : CollectionCatalogValidationError(
+        "a catalog that declares `no_issue_years` must say in `no_issue_note` what sustains them",
+    )
+
+    data object BlankNoIssueNote : CollectionCatalogValidationError(
+        "collection catalog carries an empty `no_issue_note`: say why those years have no slot, or drop them",
+    )
+
+    data object NoIssueNoteWithoutYears : CollectionCatalogValidationError(
+        "a catalog that carries `no_issue_note` must declare the years in `no_issue_years`",
+    )
+
+    data class DuplicateNoIssueYear(val year: Int) : CollectionCatalogValidationError(
+        "`no_issue_years` repeats `$year`",
+    )
+
+    data class NoIssueYearConflictsWithMember(val year: Int) : CollectionCatalogValidationError(
+        "`no_issue_years` claims `$year` had no issue, but a member already occupies that year",
+    )
+
+    data class NoIssueYearOutsideSpan(val year: Int) : CollectionCatalogValidationError(
+        "`no_issue_years` claims `$year`, which falls outside the span of member years",
     )
 
     data object EmptyMembers : CollectionCatalogValidationError(

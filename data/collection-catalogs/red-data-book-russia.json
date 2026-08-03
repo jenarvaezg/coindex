@@ -9,7 +9,9 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5860",
-  "updated_at": "2026-08-02",
+  "no_issue_years": [2009, 2011, 2013, 2015, 2017, 2018, 2020, 2021, 2023, 2025],
+  "no_issue_note": "Tras 2008 el Banco de Rusia emite el Libro Rojo a tandas cada dos o tres años, no anual: la serie Numista 5860 no tiene plata de 1/2 rublos en ninguno de esos años, y el plan oficial de 2025 no incluye la serie. Resuelto en #131.",
+  "updated_at": "2026-08-03",
   "members": [
     {
       "id": "1993-amur-tiger",

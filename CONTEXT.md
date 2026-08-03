@@ -103,8 +103,10 @@ claims is «N of N catalogued» today and **no promise about any date**. Closing
 costs proof, so a closed catalog must say in `closed_note` what sustains the closure and an open
 one is forbidden from carrying that note — a curator who cannot find the closure declares open.
 Every catalog declares it and no curated grouping does, because coverage is what the field is
-about. An open catalog going behind its mint is therefore not a defect in the file: it is reported
-in an issue, never stored as a field (ADR 0020).
+about. An open catalog going behind its mint is therefore not a defect in the file: the **tail**
+(missing current year) is reported in an issue, never stored as freshness. Interior years the mint
+skipped are a different claim — `no_issue_years` with `no_issue_note` — so the report stops
+listing them once the curator has versioned the proof (ADR 0020).
 _Avoid_: Up to date, incomplete catalog, curated series
 
 **Announced member**:

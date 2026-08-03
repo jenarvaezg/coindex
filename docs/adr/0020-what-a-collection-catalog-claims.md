@@ -130,9 +130,17 @@ measured connection between phone and repository. The mitigation is not architec
 manifest already carries `notes`, so `scripts/release.sh` says when a release brings changed
 `data/`, derived from `git diff <previous tag>..HEAD -- data/`.
 
-Being behind is reported, not stored. No `checked_at` field and no new meaning for `updated_at`,
-which is a modification stamp. A CI step keeps a single issue in sync with the tail and the
-interior gaps of every open catalog, informative and never red.
+Being behind is reported, not stored as freshness. No `checked_at` field and no new meaning for
+`updated_at`, which is a modification stamp. A CI step keeps a single issue in sync with the tail
+and the interior gaps of every open catalog, informative and never red.
+
+**Interior years the mint skipped are not debt.** An open catalog may declare
+`no_issue_years` with a required `no_issue_note` — the same proof bargain as `closed_note` —
+so the stale-catalogs report drops those years from gaps. They are never members and never
+touch the plate denominator: the claim is «the mint issued nothing that year for this variant»,
+not a slot to fill. #94 left gaps listed forever because an open catalog then had nowhere to
+write the exception; `source_note` opened the door for prose, and this field makes the exception
+machine-readable.
 
 ### Physical cross-checks live in the suite and are never fatal
 
@@ -150,10 +158,12 @@ to write the exception.
 - **The validator.** It stops the app at startup with the file and the reason, so every rule above
   that is structural is now a startup rule: `series_status` required in all versions,
   `closed_note` required exactly when closed and forbidden when open, `source` accepting a series
-  or a type page, `source_note` refused only when blank, and the full status symmetry with its
-  proof pair. The editorial rules — the existence criterion, the minimum of two rows, the three
-  rules for announcements, the annual-bullion limit — deliberately reach **none** of it: they are
-  judgments, and a judgment that halts the app is a judgment nobody can override.
+  or a type page, `source_note` refused only when blank, `no_issue_years` requiring
+  `no_issue_note` (and the reverse; a blank note is refused), years unique and inside the
+  member span without colliding with a slot, and the full status symmetry with its proof pair. The editorial rules — the
+  existence criterion, the minimum of two rows, the three rules for announcements, the
+  annual-bullion limit — deliberately reach **none** of it: they are judgments, and a judgment
+  that halts the app is a judgment nobody can override.
 - The 49 shipped catalogs declare their status: 28 open and 21 closed. Gothic Horror was retired
   under the existence criterion, and no other file failed it.
 - `schema_version: 4` stays unused. Nothing here needed a new version: coverage is a property of
@@ -179,6 +189,9 @@ to write the exception.
   variant, and no series operation in the API.
 - **An optional remote catalog file.** Rejected: it buys convenience an open catalog never promised
   and turns a fatal validator into a remote weapon.
+- **A free-prose silence list in comments or `source_note` alone.** Rejected for the report: the
+  script needs structured years. `no_issue_years` + `no_issue_note` is the machine-readable form
+  of the same proof bargain.
 - **Allowing `closed_note` while open**, instead of adding `source_note`. Rejected: it would undo
   the asymmetry of the status decision, and a reader could no longer read the presence of that note
   as «this is closed».

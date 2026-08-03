@@ -9,7 +9,9 @@ dos bloques (#94, #132):
   unlisted con casilla del año).
 - **Los huecos**: un año sin ninguna casilla entre el primero del catálogo y el
   año *anterior* al en curso. El año en curso ausente es cola, no hueco: los dos
-  conjuntos son disjuntos.
+  conjuntos son disjuntos. Los años declarados en `no_issue_years` (con su
+  `no_issue_note`) no cuentan: la ceca no emitió, y eso ya está versionado en el
+  fichero (#130, #131).
 
 Cero llamadas a Numista: aritmética sobre los años de los miembros y la fecha de
 hoy. Ejecutable a mano al sentarse a curar; en CI, `--sync` mantiene un issue
@@ -42,6 +44,7 @@ class CatalogYears:
     catalog_id: str
     name: str
     years: frozenset[int]
+    no_issue_years: frozenset[int]
 
     @property
     def first_year(self) -> int | None:
@@ -75,12 +78,26 @@ def load_open_catalogs(directory: pathlib.Path = CATALOGS) -> list[CatalogYears]
             for member in payload.get("members", [])
             if member.get("year") is not None
         )
+        no_issue_years = tuple(payload.get("no_issue_years") or ())
+        no_issue_note = payload.get("no_issue_note")
+        # Misma simetría que el validador Kotlin: años sin nota no se silencian en silencio.
+        if no_issue_years and (
+            no_issue_note is None or not str(no_issue_note).strip()
+        ):
+            sys.exit(
+                f"{path.name}: declara `no_issue_years` sin `no_issue_note` no vacía"
+            )
+        if no_issue_note is not None and not no_issue_years:
+            sys.exit(
+                f"{path.name}: declara `no_issue_note` sin `no_issue_years`"
+            )
         catalogs.append(
             CatalogYears(
                 path=path,
                 catalog_id=payload["id"],
                 name=payload.get("name", payload["id"]),
                 years=years,
+                no_issue_years=frozenset(no_issue_years),
             )
         )
     return catalogs
@@ -101,10 +118,11 @@ def build_report(
         if current_year not in catalog.years:
             lagging.append(catalog)
         # Huecos interiores: el año en curso ausente es cola, no hueco (#94).
+        # Los `no_issue_years` versionados en el fichero tampoco son deuda.
         missing = tuple(
             year
             for year in range(catalog.first_year, current_year)
-            if year not in catalog.years
+            if year not in catalog.years and year not in catalog.no_issue_years
         )
         if missing:
             gapped.append((catalog, missing))
@@ -130,9 +148,10 @@ def render_markdown(report: Report) -> str:
         f"catálogos abiertos. Cero red: aritmética sobre los años de los miembros.",
         "",
         "Generado por `scripts/stale-catalogs.py`. Un issue abierto significa deuda; "
-        "se cierra solo cuando cola y huecos quedan vacíos. El histórico de cada "
-        "pasada —y las notas humanas del tipo «Pressburg no ha emitido 2026, "
-        "comprobado el …»— vive en los comentarios.",
+        "se cierra solo cuando cola y huecos quedan vacíos. Los años en "
+        "`no_issue_years` no son deuda. El histórico de cada pasada —y las notas "
+        "humanas del tipo «Pressburg no ha emitido 2026, comprobado el …»— vive "
+        "en los comentarios.",
         "",
         "## Cola",
         "",
