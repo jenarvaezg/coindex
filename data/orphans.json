@@ -1,5 +1,26 @@
 {
   "schema_version": 1,
   "updated_at": "2026-08-03",
-  "orphans": []
+  "orphans": [
+    {
+      "numista_type_id": 6918,
+      "reason": "Kennedy Half Dollar 1971-2025: moneda de circulación, y el límite del bullion anual de #57 —«una moneda al año que tendría sentido comprar»— la deja fuera por lo que es y no por su tamaño. Palabras de Jose en ese ticket: «quizás algún día pero no creo que nos pongamos a coleccionarlo jamás». Entra además a granel, en filas de muchas piezas, que no son una colección."
+    },
+    {
+      "numista_type_id": 131809,
+      "reason": "Nummus de Licinio I acuñado en Cyzicus (316-317): un bronce imperial romano se identifica por emperador, ceca y leyenda de reverso, y su rango de años es el reinado, no un calendario de emisiones, así que no hay secuencia con denominador que dibujar. #120 la clasificó con secuencia externa por ser plurianual; el veredicto la firma igual, como #121 permite con las secuencias reales que Coindex no va a laminar."
+    },
+    {
+      "numista_type_id": 132242,
+      "reason": "Medalla «1200 Jahre Münzgeschichte» de 2002 (20 g de plata .999): una medalla no tiene emisor que declare programa ni serie detrás, y las medallas son filtro y no sección desde #18. Sin serie no hay casilla que rellenar."
+    },
+    {
+      "numista_type_id": 291255,
+      "reason": "Denario de Ulpia Severina con reverso VENVS FELIX (270-275): mismo caso que el nummus de Licinio, un tipo imperial romano cuyo rango de años es un reinado y no una serie de emisiones. Ninguna de las dos colecciones persigue moneda romana."
+    },
+    {
+      "numista_type_id": 470766,
+      "reason": "Pillar Dollar de 2025 (1 oz de plata .9999, Perth Mint): conmemorativa de un aniversario único —los 225 años de las monedas de proclamación de 1800—, acuñada solo ese año y sin más entregas anunciadas por la ceca; los acabados proof y antiqued del mismo año son otra variante y tampoco harían casilla. https://www.perthmint.com/shop/bullion/bullion-coins/225th-anniversary-of-australian-proclamation-coins-pillar-dollar-2025-1oz-silver-bullion-coin/"
+    }
+  ]
 }

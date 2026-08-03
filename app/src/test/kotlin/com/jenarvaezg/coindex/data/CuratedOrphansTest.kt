@@ -13,8 +13,9 @@ import kotlin.test.assertTrue
 /**
  * The orphans register is a curator verdict, not the unclassified residue (#121, #133).
  *
- * It ships empty until a type is judged: the schema is the asset. Structural mistakes fail
- * here; a type that a catalog already claims is a suite collision, never a fatal boot red.
+ * A type enters it only once a curator signs it, so the shipped list is short on purpose.
+ * Structural mistakes fail here; a type that a catalog already claims is a suite collision,
+ * never a fatal boot red.
  */
 class CuratedOrphansTest {
     private val orphans = OrphanSeeds.parse("orphans.json", OrphanFile.read())
@@ -24,7 +25,28 @@ class CuratedOrphansTest {
     fun `the shipped orphans register parses and validates`() {
         assertNull(orphans.validate())
         assertEquals(1, orphans.schemaVersion)
-        assertTrue(orphans.orphans.isEmpty(), "todavía no hay veredictos versionados")
+    }
+
+    /**
+     * The five verdicts signed by #146 §3, and only those.
+     *
+     * Pinned one by one on purpose: adding or dropping a verdict is a curation decision, so it
+     * costs an edit here. Two cases the census (#120) filed as solitude stayed out after being
+     * contrasted outside Numista — the RAM Koala (N#557132) is the third year of a live annual
+     * programme and the Haitian gourdes (N#19085, N#19328) were sold in a four-coin case — and
+     * the two unpublished medals (N#578835, N#581856) wait for their referee, because an id a
+     * referee may still delete is never versioned.
+     */
+    @Test
+    fun `the register carries the signed verdicts`() {
+        assertEquals(
+            listOf(6_918, 131_809, 132_242, 291_255, 470_766),
+            orphans.orphans.map { it.numistaTypeId }.sorted(),
+        )
+        assertTrue(
+            orphans.orphans.all { it.reason.trim().length > 40 },
+            "un veredicto se firma con motivo en prosa, no con una etiqueta",
+        )
     }
 
     @Test

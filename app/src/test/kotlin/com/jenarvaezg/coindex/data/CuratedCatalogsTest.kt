@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(50, catalogs.size)
+        assertEquals(51, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintiún cerrados llevan su nota y los veintinueve abiertos no afirman nada más que
+     * veintidós cerrados llevan su nota y los veintinueve abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(21, closed.size)
+        assertEquals(22, closed.size)
         assertEquals(29, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -964,6 +964,34 @@ class CuratedCatalogsTest {
         // 500, 750 y 1000 escudos de plata .835, emitidas juntas en un mismo estuche.
         assertEquals(listOf(22_178, 22_179, 22_180), trio.members.map { it.numistaTypeId })
         assertTrue(trio.members.all { it.year == 1983 })
+    }
+
+    /**
+     * The second set, and the first one no collection proposal could ever have suggested (#146).
+     *
+     * 28,28 g and 35 g share no variant key and never will, so the *absence* of a proposal over
+     * them was the signal. The plate claims the two-coin silver case the
+     * Royal Mint struck for the Banco Central de Venezuela, not the conservation programme: the
+     * BCV Directorio approved a third coin, the Gallito de las Rocas in gold, sold apart and
+     * therefore outside this denominator.
+     */
+    @Test
+    fun `the 1975 venezuelan pair is the silver case and not the whole programme`() {
+        val conservacion = find("venezuela-1975-conservacion-plata")
+        assertEquals(3, conservacion.schemaVersion)
+        assertTrue(conservacion.isSet)
+        assertNull(conservacion.weightMillioz)
+        assertNull(conservacion.metal)
+        assertNull(conservacion.finish)
+        assertNull(conservacion.key().weightMillioz)
+        assertEquals(SeriesStatus.Closed, conservacion.seriesStatus)
+        // Verificados uno a uno: N#37246 jaguar 25 Bs 28,28 g, N#37247 cachicamo 50 Bs 35 g.
+        assertEquals(listOf(37_246, 37_247), conservacion.members.map { it.numistaTypeId })
+        assertTrue(conservacion.members.all { it.year == 1975 })
+        assertTrue(
+            conservacion.closedNote!!.contains("Gallito"),
+            "la nota tiene que decir que el programa tenía una tercera en oro",
+        )
     }
 
     @Test
