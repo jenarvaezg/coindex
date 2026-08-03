@@ -242,12 +242,28 @@ def find_report_issue() -> dict | None:
         ]
     )
     issues = json.loads(raw or "[]")
-    by_marker = [
-        issue for issue in issues if ISSUE_MARKER in (issue.get("body") or "")
-    ]
+    by_marker = sorted(
+        (issue for issue in issues if ISSUE_MARKER in (issue.get("body") or "")),
+        key=lambda issue: issue["number"],
+    )
+    if len(by_marker) > 1:
+        numbers = ", ".join(f"#{issue['number']}" for issue in by_marker)
+        sys.exit(
+            f"hay {len(by_marker)} issues con el marcador del informe ({numbers}): "
+            "deja uno solo antes de sincronizar"
+        )
     if by_marker:
         return by_marker[0]
-    by_title = [issue for issue in issues if issue.get("title") == ISSUE_TITLE]
+    by_title = sorted(
+        (issue for issue in issues if issue.get("title") == ISSUE_TITLE),
+        key=lambda issue: issue["number"],
+    )
+    if len(by_title) > 1:
+        numbers = ", ".join(f"#{issue['number']}" for issue in by_title)
+        sys.exit(
+            f"hay {len(by_title)} issues con el título exacto ({numbers}): "
+            "deja uno solo antes de sincronizar"
+        )
     return by_title[0] if by_title else None
 
 

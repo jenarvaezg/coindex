@@ -67,7 +67,8 @@ jobs:
   # Informativo, nunca bloqueante (#94 / #132): dice en voz alta qué catálogos abiertos
   # se han quedado atrás. No corre en PR — un fork no tiene permiso de escritura de issues.
   stale-catalogs:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # Sólo main: un workflow_dispatch desde otra rama reescribiría el issue con data/ incompleta.
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: read
