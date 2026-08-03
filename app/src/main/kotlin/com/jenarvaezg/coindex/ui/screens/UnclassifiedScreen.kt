@@ -27,8 +27,9 @@ import com.jenarvaezg.coindex.ui.unclassifiedReasonLabel
 /**
  * Pieces that produced no proposal, each with the reason why.
  *
- * This screen is the mechanism by which the curated catalogs grow: an orphan with no family in
- * Numista is a candidate for the next catalog.
+ * This screen lists the automatic unclassified residue — rows `deriveCollection` could not
+ * place. It is not the orphan list: an orphan is a curator verdict recorded outside the app.
+ * Residues with no Numista family remain candidates for the next catalog or grouping.
  */
 @Composable
 fun UnclassifiedScreen(
@@ -48,7 +49,7 @@ fun UnclassifiedScreen(
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Eyebrow("Sin clasificar")
-                Text("Piezas huérfanas", style = MaterialTheme.typography.headlineMedium)
+                Text("Sin clasificar", style = MaterialTheme.typography.headlineMedium)
                 Text(
                     "Nada se descarta en silencio: cada pieza dice por qué no ha entrado en " +
                         "ninguna propuesta. Si sabes que varias van juntas, agrúpalas tú.",
@@ -76,22 +77,22 @@ fun UnclassifiedScreen(
                 }
             }
         }
-        items(state.unclassified, key = { it.item.id }) { orphan ->
+        items(state.unclassified, key = { it.item.id }) { entry ->
             PieceCard(
-                item = orphan.item,
-                title = pieceTitle(state, orphan.item),
-                images = state.images[orphan.item.typeId],
+                item = entry.item,
+                title = pieceTitle(state, entry.item),
+                images = state.images[entry.item.typeId],
                 onOpenSource = onOpenSource,
             ) {
                 Text(
-                    unclassifiedReasonLabel(orphan.reason),
+                    unclassifiedReasonLabel(entry.reason),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp),
                 )
                 if (selection.active) {
                     PieceSelectionToggle(
-                        picked = selection.isPicked(orphan.item.typeId),
-                        onToggle = { selection.toggle(orphan.item.typeId) },
+                        picked = selection.isPicked(entry.item.typeId),
+                        onToggle = { selection.toggle(entry.item.typeId) },
                     )
                 }
             }

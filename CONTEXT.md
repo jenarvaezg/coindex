@@ -60,7 +60,18 @@ _Avoid_: Date run, fractional bullion family, curated series
 Numista's `System YYYY[-YYYY]` value, a monetary system rather than a collectible grouping.
 It is the weakest family: any curated catalog naming the type outranks it, but it still
 groups pieces no catalog claims, so a piece is never dropped for having one.
-_Avoid_: Numista family, orphan, unclassified reason
+_Avoid_: Numista family, unclassified reason
+
+**Orphan**:
+A coin for which the curator has affirmed that a collection-catalog plate would not make
+sense — not merely one that currently lacks a catalog. The verdict is manual: after
+investigating the automatic unclassified residue, the curator records the Numista type and a
+prose reason in a curated repo asset. Absolute solitude is enough but not required; a real
+sequence Coindex will never plate (for example ordinary euro circulation by country) can be
+an orphan too. Calendar solitude — a programme that may still grow, such as a lone Gothic
+Horror character — is not an orphan. The screen that lists rows `deriveCollection` could not
+place is unclassified residue, not the orphan list.
+_Avoid_: Unclassified, missing, stable orphan
 
 **Collection proposal**:
 A provisional, per-collector grouping of currently owned pieces that share one exact
