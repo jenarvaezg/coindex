@@ -97,6 +97,26 @@ It **declares** that variant rather than inferring it: for the types it claims, 
 weight, finish and metal are the key, whatever family or grams Numista records (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
+**Open series**:
+A collection catalog's declaration that its series is still being issued, so the boundary it
+claims is «N of N catalogued» today and **no promise about any date**. Closing is the claim that
+costs proof, so a closed catalog must say in `closed_note` what sustains the closure and an open
+one is forbidden from carrying that note — a curator who cannot find the closure declares open.
+Every catalog declares it and no curated grouping does, because coverage is what the field is
+about. An open catalog going behind its mint is therefore not a defect in the file: it is reported
+in an issue, never stored as a field (ADR 0020).
+_Avoid_: Up to date, incomplete catalog, curated series
+
+**Announced member**:
+A collection-catalog member the issuer has named but not yet struck, so no piece can ever fill it
+and it stays outside the plate denominator. It cites the issuer instead of Numista — no
+`numista_type_id`, a required `source` and prose saying what that source proves — and its year is
+optional, because writing in a date the mint has not announced would claim more than the source
+says. Its optional `design_type_id` points at the same design in another physical variant and
+never takes part in matching or evidence. An announcement with no identity at all is worth nothing
+without a programme count: «more will come» is what an open series already says.
+_Avoid_: Missing, unlisted member, not-yet-issued slot
+
 **Issue-qualified member**:
 A collection-catalog member whose `numista_issue_ids` narrow a Numista type to the exact
 physical issues the catalog claims. The qualifier is optional in a simple catalog and

@@ -77,6 +77,23 @@ if [[ -z "$SUMMARY" ]]; then
   SUMMARY=$(head -1 <<<"$CHANGELOG" | sed 's/^- //')
 fi
 
+# Los catálogos viajan dentro del APK y se rechazó el canal remoto (ADR 0020), así que la
+# frescura de un catálogo queda atada a la versión instalada. Esta línea es la mitigación: quien
+# lee el banner sabe si la actualización trae datos curados o solo código. El banner corta a dos
+# líneas, así que la segunda va corta a propósito y el detalle vive en el cuerpo de la release.
+if [[ -n "$LAST_TAG" ]]; then
+  DATA_FILES=$(git diff --name-only "$LAST_TAG"..HEAD -- data/)
+else
+  DATA_FILES=$(git ls-files data/)
+fi
+if [[ -n "$DATA_FILES" ]]; then
+  DATA_COUNT=$(grep -c . <<<"$DATA_FILES")
+  SUMMARY="$SUMMARY"$'\n'"Trae datos curados: $DATA_COUNT ficheros de data/."
+  CHANGELOG="$CHANGELOG"$'\n\n'"### Datos curados en esta versión"$'\n'"$(sed 's/^/- /' <<<"$DATA_FILES")"
+else
+  SUMMARY="$SUMMARY"$'\n'"Sin cambios en los catálogos."
+fi
+
 echo "==> Construyendo $TAG (versionCode $VERSION_CODE, publicado $PUBLISHED_CODE)"
 ./gradlew :app:assembleRelease
 
