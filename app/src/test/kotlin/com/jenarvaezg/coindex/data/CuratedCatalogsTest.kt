@@ -993,7 +993,9 @@ class CuratedCatalogsTest {
         assertTrue(redDataBook.members.filter { it.year == 2026 }.all { it.isAnnounced })
 
         val monuments = find("architectural-monuments-russia-3-roubles")
-        assertTrue(monuments.members.none { it.year == 2025 })
+        val tulaMuseum = monuments.members.single { it.year == 2025 }
+        assertEquals("Tula State Museum of Arms", tulaMuseum.label)
+        assertEquals(583_338, tulaMuseum.numistaTypeId)
         val mirozhsky = monuments.members.single { it.year == 2026 }
         assertTrue(mirozhsky.isAnnounced)
         assertEquals("Holy Transfiguration Mirozhsky Monastery in Pskov", mirozhsky.label)

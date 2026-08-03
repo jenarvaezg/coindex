@@ -9,7 +9,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=1452",
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-08-03",
   "members": [
     {
       "id": "1993-bell-tower-ivan-the-great",
@@ -622,6 +622,12 @@
       "label": "Great Ascension Church",
       "year": 2024,
       "numista_type_id": 398310
+    },
+    {
+      "id": "2025-tula-state-museum-of-arms",
+      "label": "Tula State Museum of Arms",
+      "year": 2025,
+      "numista_type_id": 583338
     },
     {
       "id": "2026-holy-transfiguration-mirozhsky-monastery",
