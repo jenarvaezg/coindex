@@ -42,3 +42,8 @@ object TypeCacheFile {
 object GroupingFiles {
     fun all(): List<Pair<String, String>> = seedFiles("groupings")
 }
+
+/** The curated orphans register (#133), editorial and not loaded at app startup. */
+object OrphanFile {
+    fun read(): String = File("../data/orphans.json").readText()
+}
