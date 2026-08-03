@@ -36,9 +36,11 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 20 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 49 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
-   de versionarse. Se empaquetan como assets de la app. Esquema:
+   de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
+   `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
+   ADR 0020**; lo que sigue es cómo identifica sus casillas:
    - `schema_version: 1`: miembros identificados por `numista_type_id` único; posesión =
      poseer el tipo. Fuente obligatoria: página de serie de Numista
      (`catalogue/series.php?id=N`).
@@ -59,20 +61,29 @@
      siendo propuestas separadas, como ya hacen Tudor Beasts y Lunar II). Primer conjunto
      vivo: `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
      7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres).
-2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 634 tipos
-   (respuestas íntegras de `GET /types/{id}?lang=es`). Costó ~650 llamadas de API;
-   empaquetarlo como seed de la tabla de caché para que ningún usuario las repita.
-   Incluye los 470 tipos referenciados por los catálogos: las láminas muestran todos los
-   diseños (incluidos los "me falta") sin gastar presupuesto.
+   - `schema_version: 5` (**issue runs**, ADR 0014): los miembros son emisiones de un mismo
+     tipo que comparten año y se distinguen por variedad, identificadas por
+     `numista_issue_ids`. Un catálogo simple o un date run puede **cualificar** una casilla
+     con ese mismo campo sin ser un issue run (ADR 0019). Único vivo: los paquillos de 100
+     pesetas de Franco.
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 802 tipos
+   (respuestas íntegras de `GET /types/{id}?lang=es`), empaquetado como seed de la tabla de
+   caché para que ningún usuario gaste esas llamadas. Cubre los **716** tipos referenciados por
+   los catálogos, así que las láminas muestran todos los diseños (incluidos los «me falta») sin
+   tocar el presupuesto. Sembrar es parte de curar: `scripts/seed-type-cache.py` omite lo ya
+   cacheado y dice el coste con `--dry-run`, y `TypeCacheSeedTest` se pone rojo con la lista de
+   los que falten.
 3. **`data/series/*.json`** — **retirado**: las dos series curadas históricas (Lunar III,
    Tudor Beasts) no las leía nadie (ADR 0010 §2) y viajaban en el APK como assets muertos.
    Tudor Beasts ya tiene dos catálogos curados; el material de Lunar III (doce casillas con
    etiqueta, motivo y `release_status`, sin un solo `numista_type_id`) queda en el commit
    `9fc2582` para el catálogo que se cure. Ya no hay código que las valide en `main`.
-4. **`docs/adr/0001..0012`** — las decisiones de dominio siguen vigentes; la 0007
-   (propuestas desde inventario), 0008 (disposiciones durables), 0009 (date runs +
-   fallback de familia) y 0012 (familias técnicas, pesos de catálogo y conjuntos) son la
-   especificación del comportamiento.
+4. **`docs/adr/`** — las decisiones de dominio siguen vigentes; la 0007 (propuestas desde
+   inventario), 0008 (disposiciones durables), 0009 (date runs + fallback de familia), 0012
+   (familias técnicas, pesos de catálogo y conjuntos), 0013 (agrupaciones curadas), 0014
+   (issue runs), 0016 (un catálogo manda sobre la variante de sus miembros), 0018 (el metal
+   dominante en la clave) y 0019 (miembros cualificados por emisión) son la especificación del
+   comportamiento, y la 0020 la de lo que un catálogo afirma.
 5. **`crates/domain`** — la lógica a portar (~1.200 líneas, pura, sin I/O, con tests de
    tabla dorada). Portada a mano a `domain/` en Kotlin (ADR 0010); el original está en el tag
    `rust-frozen`.
@@ -156,23 +167,60 @@ usado (julio 2026) y reglas aprendidas:
    relief/sets. Cuidado con líneas paralelas: Numista mezcla Perth Mint y Royal
    Australian Mint en la misma serie (koala, lunar); separar por el campo `mints` de la
    API.
-6. Criterio del coleccionista (el padre): bullion de diseño estable (Maple, Krugerrand,
-   ASE, Britannia, Philharmonic, Noah's Ark, Kangaroo) = pieza representativa, **sin
-   catálogo de fechas**; series de diseño anual cambiante sí se catalogan y se siguen
-   hacia delante.
+6. **El bullion de diseño estable sí se cataloga**, como date run con una casilla por año
+   aunque el diseño no cambie ([#57](https://github.com/jenarvaezg/coindex/issues/57), que
+   revierte la regla de julio: Maple, Krugerrand, ASE, Britannia, Philharmonic, Noah's Ark y
+   Kangaroo tienen todos su date run). El límite editorial es «una moneda al año que tendría
+   sentido comprar», que deja fuera la moneda de circulación y la reacuñación con fecha
+   congelada. La intención la expresa el coleccionista con la disposición, no el curador con el
+   fichero. Ver ADR 0020.
+7. Lo que parte una lámina de otra es la **variante física**, no el diseño: dos monedas del
+   mismo año con el mismo peso, acabado y metal son dos casillas de una misma lámina, y un
+   privy o un animal nuevo no parten nada. Un acabado distinto sí es otra lámina.
 
-### 0.7 Estado de datos al pivotar (29 jul 2026)
+### 0.7 Estado de datos (3 ago 2026)
 
-- 18 catálogos sembrados. Con lámina en uso: valor facial España (24/37 del padre),
-  250 aniversario EE. UU. (3/8), 5 Bolívares (19/21), Personalidades de Rusia (1/121 de
-  Jose), Tudor 2 oz (2-3/9 cada uno), y el resto seguibles.
-- Huérfanas restantes (sin familia ni catálogo): conmemorativas portuguesas en escudos
-  (familias técnicas `System …`; candidatas a catálogos por diseño: 500 escudos
-  1995-2001 al padre le faltan N#13043/N#10207/N#13046), plata venezolana circulante
-  menor, Franco 100 ptas (date run candidato: estrellas 66-70), Koala RAM (N#557132, sin
-  serie en Numista), y piezas sueltas (medallas, conmemorativas aisladas).
-- Presupuesto API de la key de Jose consumido en julio: ~631/1500. Ya no importa tras el
-  pivot (cada usuario la suya), pero el snapshot de caché evita regastarlo.
+Esta sección la reescribió el mapa [#14](https://github.com/jenarvaezg/coindex/issues/14). Lo
+que decía al pivotar —18 catálogos, y una lista de candidatos encabezada por los 500 escudos—
+quedó desfasado moneda a moneda: los 500 escudos ya son catálogo y el padre los tiene 7/7, la
+plata venezolana menor son tres date runs, los paquillos son un issue run y el bullion de
+diseño estable, que julio dejaba fuera a propósito, se cataloga desde
+[#57](https://github.com/jenarvaezg/coindex/issues/57).
+
+**Lo versionado**, medido sobre `data/`:
+
+- **49 catálogos** con 1.041 miembros: 28 abiertos y 21 cerrados. Por versión de esquema, 26
+  simples, 21 date runs, 1 conjunto y 1 issue run.
+- **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
+  Royal Mint y el dólar de plata clásico de EE. UU.
+- **802 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+  sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
+  invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
+- **`data/orphans.json` vacío**. El fichero existe desde
+  [#133](https://github.com/jenarvaezg/coindex/issues/133) y arranca sin un solo veredicto.
+
+**Lo no catalogado.** Una huérfana es un veredicto del curador y no el residuo de la app
+(ADR 0020), así que el número que importa es el censo, no la pantalla. El de
+[#120](https://github.com/jenarvaezg/coindex/issues/120), sobre los **92** tipos que ningún
+catálogo reclamaba esa mañana: **26** solas de verdad, **62** con secuencia externa sin curar,
+**1** sola solo por calendario (el Drácula, que no es huérfana) y **3** sin ficha. Bajo la
+definición nueva sobrevivían como huérfanas 9 de Jose y 25 del padre, todas por «sin familia ni
+catálogo». La pantalla «Sin clasificar», ya agrupada por tipo
+([#93](https://github.com/jenarvaezg/coindex/issues/93)), quedó en **19** entradas en el móvil
+de Jose y **50** en el del padre.
+
+Los dos listados por pieza **no se publican**: este repo es público y son dos inventarios
+privados. La cifra viva se reproduce corriendo `FieldReportTest` con `COINDEX_FIELD_SNAPSHOT`
+sobre una captura de `scripts/record-fixture.py --user-id`, que vive fuera del árbol; el test
+corre el `deriveCollection` real, así que un listado rehecho a mano inventaría huérfanas que la
+app no tiene.
+
+Queda sin recorrer un sitio donde puede haber catálogos: los sistemas monetarios portugueses
+—`System 1927-1968`, `System 1969-1980` y lo que resta de `System 1981-2001`—, que es
+exactamente como apareció el catálogo de los 1000 escudos. Cuesta navegador, no presupuesto.
+
+Presupuesto de API: cada usuario gasta su propia key (~1.500-2.000 llamadas/mes), y el snapshot
+de caché existe para que ninguno repita lo ya descargado.
 
 ### 0.8 Orden de trabajo de la app — estado a 30 jul 2026
 
@@ -201,16 +249,28 @@ ADR 0010 para las decisiones del port.
 
 ### 0.9 Cuestiones abiertas de la fase Android
 
+**Las cuatro están resueltas.** Las tres de catálogos y datos las cerró el mapa
+[#14](https://github.com/jenarvaezg/coindex/issues/14) y las escribe el **ADR 0020**, que es
+la especificación de lo que un catálogo afirma; los detalles de identidad siguen en los ADR
+0009, 0012, 0013, 0014, 0016, 0018 y 0019.
+
 1. ✅ Resuelta: `Coindex`, applicationId `com.jenarvaezg.coindex`.
-2. Cómo expresar en catálogos las emisiones futuras/anunciadas (el modelo v1/v2/v3 exige
-   `numista_type_id`, así que no puede representar "sin emitir" como hacían las series
-   curadas con `release_status`). Ojo: `schema_version: 3` ya está ocupado por los conjuntos
-   emitidos como set (ADR 0012), así que esto necesita otra versión o un campo opcional.
-3. ¿Migrar Lunar III bullion a catálogo v1 (12 tipos verificados) y retirar `data/series`?
-4. Actualización de catálogos dentro de la app sin reinstalar (¿fichero remoto opcional?)
-   — en tensión con el local-first; decidir más adelante. Nota: los catálogos viajan hoy con
-   cada APK, y con la actualización desde la app (ADR 0011) llegar a los dos móviles ya no
-   requiere reinstalar a mano, así que la urgencia baja.
+2. ✅ Resuelta (ADR 0020): las emisiones anunciadas se expresan con **`status` por miembro**
+   —`issued` | `announced` | `unlisted`— y no con una versión de esquema nueva, porque el
+   estado es propiedad de un miembro y compone con las cuatro formas de identificarlo. Un
+   anunciado prohíbe `numista_type_id` y exige `source` + `source_note`; `schema_version: 4`
+   sigue **libre**.
+3. ✅ Resuelta: Lunar III se curó como **dos catálogos de 1 oz** —bullion y proof coloured, de
+   siete casillas cada uno más cinco anunciadas hasta 2031— y `data/series` está retirado.
+   Corrección de lo que esta línea afirmaba: los doce tipos **no estaban verificados**, porque
+   el material histórico de `data/series/lunar-iii.json` eran doce casillas con año y motivo y
+   **ningún `numista_type_id`**. Se verificaron desde cero contra numista.com.
+4. ✅ Resuelta (ADR 0020): **se rechaza el fichero remoto**. Los catálogos siguen viajando
+   dentro del APK, así que la frescura de un catálogo queda atada a la versión instalada, y eso
+   es coherente con que un catálogo abierto no prometa estar al día a ninguna fecha. La
+   mitigación no es arquitectura: `scripts/release.sh` dice en las notas de la release cuándo
+   trae `data/` cambiado, y un paso informativo de CI mantiene al día el issue de
+   [catálogos abiertos por detrás](https://github.com/jenarvaezg/coindex/issues/136).
 
 ---
 
