@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,7 +56,12 @@ data class ProtoPlate(
     val filled: Int?,
     val total: Int?,
     val issuer: String,
-)
+    val weightMillioz: Int?,
+    val status: String?,
+    val span: String?,
+) {
+    val firstYear: Int? get() = span?.take(4)?.toIntOrNull()
+}
 
 private val ISSUERS = mapOf(
     "afrique_du_sud" to "Sudáfrica", "allemagne_rfa" to "Alemania, República Federal de",
@@ -70,6 +76,7 @@ private val ISSUERS = mapOf(
     "rwanda" to "Ruanda", "suede" to "Suecia", "venezuela" to "Venezuela",
 )
 
+@Suppress("LongParameterList")
 private fun p(
     family: String,
     variant: String,
@@ -78,68 +85,73 @@ private fun p(
     filled: Int?,
     total: Int?,
     issuer: String,
-) = ProtoPlate(family, variant, types, pieces, filled, total, ISSUERS[issuer] ?: issuer)
+    weightMillioz: Int?,
+    status: String?,
+    span: String?,
+) = ProtoPlate(
+    family, variant, types, pieces, filled, total,
+    ISSUERS[issuer] ?: issuer, weightMillioz, status, span,
+)
 
 val PROTO_PLATES: List<ProtoPlate> = listOf(
-    p("Fuertes de Venezuela", "0,804 oz", 22, 41, 22, 22, "venezuela"),
-    p("Medios de Venezuela", "0,040 oz", 18, 24, 18, 18, "venezuela"),
-    p("Reales de Venezuela", "0,080 oz", 22, 31, 22, 22, "venezuela"),
-    p("1 Bolívar de Venezuela", "0,161 oz", 22, 38, 22, 22, "venezuela"),
-    p("2 Bolívares de Venezuela", "0,322 oz", 19, 26, 19, 25, "venezuela"),
-    p("100 Pesetas de Franco", "0,611 oz", 4, 12, 4, 5, "espagne"),
-    p("Capitales de provincia y ciudades autónomas", "0,434 oz", 1, 1, 1, 52, "espagne"),
-    p("Onza Libertad bullion anual", "1 oz", 1, 3, 1, 44, "mexique"),
-    p("Australian Kookaburra", "1 oz", 1, 1, 1, 37, "australie"),
-    p("Vienna Philharmonic bullion anual", "1 oz", 1, 1, 1, 19, "autriche"),
-    p("Noah's Ark 1 oz bullion anual", "1 oz", 1, 1, 1, 16, "armenie"),
-    p("Noah's Ark ½ oz bullion anual", "0,500 oz", 1, 1, 1, 16, "armenie"),
-    p("Noah's Ark ¼ oz bullion anual", "0,250 oz", 1, 1, 1, 16, "armenie"),
-    p("Silver Britannia .999 bullion anual", "1 oz", 1, 1, 1, 15, "royaume-uni"),
-    p("Silver Britannia .958 1 oz", "1,043 oz", 1, 1, 1, 15, "royaume-uni"),
-    p("Panda de plata 30 g bullion anual", "0,965 oz", 1, 1, 1, 11, "chine"),
-    p("Silver Krugerrand bullion anual desde 2018", "1 oz", 1, 3, 1, 9, "afrique_du_sud"),
-    p("Lunar ounce", "1 oz", 1, 1, 1, 10, "rwanda"),
-    p("Nautical Ounce", "1 oz", 1, 1, 1, 10, "rwanda"),
-    p("Southern Cross bullion anual", "1 oz", 1, 1, 1, 2, "niue"),
-    p("St George and the Dragon", "1 oz", 1, 1, 1, 3, "royaume-uni"),
-    p("American Silver Eagle bullion anual", "1 oz", 2, 3, 2, 42, "etats-unis"),
-    p("Silver Maple Leaf bullion anual", "1 oz", 3, 4, 3, 39, "canada"),
-    p("Australian Koala", "1 oz", 5, 6, 5, 20, "australie"),
-    p("Lunar Series II", "1 oz", 4, 5, 4, 12, "australie"),
-    p("The Royal Tudor Beasts", "2 oz", 3, 3, 3, 10, "royaume-uni"),
-    p("The Queen's Beasts", "2 oz", 6, 7, 6, 11, "royaume-uni"),
-    p("Panda de plata 1 oz bullion anual", "1 oz", 8, 9, 8, 27, "chine"),
-    p("Serie de monedas de plata obtenidas a valor facial", "0,579 oz", 12, 14, 12, 37, "espagne"),
-    p("500 escudos conmemorativos de plata .500", "0,450 oz", 7, 7, 7, 7, "portugal"),
-    p("1000 escudos conmemorativos de plata .500", "0,900 oz", 9, 10, 9, 19, "portugal"),
-    p("Dólar conmemorativo de plata .500 de Canadá", "0,750 oz", 5, 5, 5, 21, "canada"),
-    p("10 gulden conmemorativos de Beatrix", "0,482 oz", 3, 3, 3, 5, "pays-bas"),
-    p("French regions", "0,289 oz", 4, 4, null, null, "france"),
-    p("Royal Diadem series", "1 oz", 2, 2, null, null, "royaume-uni"),
-    p("System 1969-1980", "0,401 oz", 3, 3, null, null, "portugal"),
-    p("System 1927-1968", "0,321 oz", 2, 2, null, null, "portugal"),
-    p("Disney 100 Years of Wonder", "1 oz", 1, 1, null, null, "niue"),
-    p("Tribute to the Spanish Army", "0,868 oz", 1, 1, null, null, "espagne"),
-    p("Europa Star", "0,450 oz", 1, 1, null, null, "portugal"),
-    p("Austria and its People", "0,643 oz", 1, 1, null, null, "autriche"),
-    p("Millennium", "0,868 oz", 1, 2, null, null, "espagne"),
-    p("Charlemagme - Mounted Knight", "1 oz", 1, 1, null, null, "gibraltar"),
-    p("5 marcos conmemorativos", "0,353 oz", 4, 5, null, null, "allemagne_rfa"),
-    p("Dólar de plata Morgan", "0,773 oz", 3, 3, null, null, "etats-unis"),
-    p("500 pesetas de plata", "0,579 oz", 2, 2, null, null, "espagne"),
-    p("Denario imperial", "Conjunto", 2, 2, null, null, "rome"),
-    p("Gourde de plata", "0,289 oz", 2, 3, null, null, "haiti"),
-    p("500 lire Caravelle", "0,289 oz", 2, 2, null, null, "italie"),
-    p("Florín de Australia", "0,321 oz", 2, 2, null, null, "australie"),
-    p("Rupia de la India Británica", "0,343 oz", 1, 1, null, null, "inde-britannique"),
-    p("Corona sueca de plata", "0,225 oz", 1, 1, null, null, "suede"),
-    p("5 francos Hércules", "0,804 oz", 1, 1, null, null, "france"),
-    p("Dirham de Marruecos", "0,193 oz", 1, 1, null, null, "maroc"),
-    p("Crown de Jersey", "0,911 oz", 1, 1, null, null, "jersey"),
-    p("Ringgit de Malasia", "0,225 oz", 1, 1, null, null, "malaisie"),
-    p("Piastra de Egipto", "0,180 oz", 1, 1, null, null, "egypte"),
-    p("Escudo de Portugal", "0,321 oz", 1, 1, null, null, "portugal"),
-).sortedBy { it.family.lowercase() }
+    p("Fuertes de Venezuela", "0,804 oz", 22, 41, 22, 22, "venezuela", 804, "closed", "1876-1936"),
+    p("Medios de Venezuela", "0,040 oz", 18, 24, 18, 18, "venezuela", 40, "closed", "1894-1960"),
+    p("Reales de Venezuela", "0,080 oz", 22, 31, 22, 22, "venezuela", 80, "closed", "1879-1960"),
+    p("1 Bolívar de Venezuela", "0,161 oz", 22, 38, 22, 22, "venezuela", 161, "closed", "1879-1965"),
+    p("2 Bolívares de Venezuela", "0,322 oz", 19, 26, 19, 25, "venezuela", 322, "closed", "1879-1965"),
+    p("100 Pesetas de Franco", "0,611 oz", 4, 12, 4, 5, "espagne", 611, "closed", "1966-1966"),
+    p("Capitales de provincia y ciudades autónomas", "0,434 oz", 1, 1, 1, 52, "espagne", 434, "closed", "2010-2012"),
+    p("Onza Libertad bullion anual", "1 oz", 1, 3, 1, 44, "mexique", 1000, "open", "1982-2025"),
+    p("Australian Kookaburra", "1 oz", 1, 1, 1, 37, "australie", 1000, "open", "1990-2026"),
+    p("Vienna Philharmonic bullion anual", "1 oz", 1, 1, 1, 19, "autriche", 1000, "open", "2008-2026"),
+    p("Noah's Ark 1 oz bullion anual", "1 oz", 1, 1, 1, 16, "armenie", 1000, "open", "2011-2026"),
+    p("Noah's Ark ½ oz bullion anual", "0,500 oz", 1, 1, 1, 16, "armenie", 500, "open", "2011-2026"),
+    p("Noah's Ark ¼ oz bullion anual", "0,250 oz", 1, 1, 1, 16, "armenie", 250, "open", "2011-2026"),
+    p("Silver Britannia .999 bullion anual", "1 oz", 1, 1, 1, 15, "royaume-uni", 1000, "open", "2013-2026"),
+    p("Silver Britannia .958 1 oz", "1,043 oz", 1, 1, 1, 15, "royaume-uni", 1043, "closed", "1998-2012"),
+    p("Panda de plata 30 g bullion anual", "0,965 oz", 1, 1, 1, 11, "chine", 965, "open", "2016-2026"),
+    p("Silver Krugerrand bullion anual desde 2018", "1 oz", 1, 3, 1, 9, "afrique_du_sud", 1000, "open", "2018-2026"),
+    p("Lunar ounce", "1 oz", 1, 1, 1, 10, "rwanda", 1000, "open", "2017-2026"),
+    p("Nautical Ounce", "1 oz", 1, 1, 1, 10, "rwanda", 1000, "open", "2017-2026"),
+    p("Southern Cross bullion anual", "1 oz", 1, 1, 1, 2, "niue", 1000, "open", "2025-2026"),
+    p("St George and the Dragon", "1 oz", 1, 1, 1, 3, "royaume-uni", 1000, "open", "2024-2026"),
+    p("American Silver Eagle bullion anual", "1 oz", 2, 3, 2, 42, "etats-unis", 1000, "open", "1986-2026"),
+    p("Silver Maple Leaf bullion anual", "1 oz", 3, 4, 3, 39, "canada", 1000, "open", "1988-2026"),
+    p("Australian Koala", "1 oz", 5, 6, 5, 20, "australie", 1000, "open", "2007-2026"),
+    p("Lunar Series II", "1 oz", 4, 5, 4, 12, "australie", 1000, "closed", "2008-2019"),
+    p("The Royal Tudor Beasts", "2 oz", 3, 3, 3, 10, "royaume-uni", 2000, "open", "2022-2026"),
+    p("The Queen's Beasts", "2 oz", 6, 7, 6, 11, "royaume-uni", 2000, "closed", "2016-2021"),
+    p("Panda de plata 1 oz bullion anual", "1 oz", 8, 9, 8, 27, "chine", 1000, "closed", "1989-2015"),
+    p("Serie de monedas de plata obtenidas a valor facial", "0,579 oz", 12, 14, 12, 37, "espagne", 579, "open", "1994-2026"),
+    p("500 escudos conmemorativos de plata .500", "0,450 oz", 7, 7, 7, 7, "portugal", 450, "closed", "1995-2001"),
+    p("1000 escudos conmemorativos de plata .500", "0,900 oz", 9, 10, 9, 19, "portugal", 900, "closed", "1992-2001"),
+    p("Dólar conmemorativo de plata .500 de Canadá", "0,750 oz", 5, 5, 5, 21, "canada", 750, "closed", "1971-1991"),
+    p("10 gulden conmemorativos de Beatrix", "0,482 oz", 3, 3, 3, 5, "pays-bas", 482, "closed", "1994-1999"),
+    p("French regions", "0,289 oz", 4, 4, null, null, "france", 289, null, null),
+    p("Royal Diadem series", "1 oz", 2, 2, null, null, "royaume-uni", 1000, null, null),
+    p("System 1969-1980", "0,401 oz", 3, 3, null, null, "portugal", 401, null, null),
+    p("System 1927-1968", "0,321 oz", 2, 2, null, null, "portugal", 321, null, null),
+    p("Disney 100 Years of Wonder", "1 oz", 1, 1, null, null, "niue", 1000, null, null),
+    p("Tribute to the Spanish Army", "0,868 oz", 1, 1, null, null, "espagne", 868, null, null),
+    p("Europa Star", "0,450 oz", 1, 1, null, null, "portugal", 450, null, null),
+    p("Austria and its People", "0,643 oz", 1, 1, null, null, "autriche", 643, null, null),
+    p("Millennium", "0,868 oz", 1, 2, null, null, "espagne", 868, null, null),
+    p("Charlemagme - Mounted Knight", "1 oz", 1, 1, null, null, "gibraltar", 1000, null, null),
+    p("5 marcos conmemorativos", "0,353 oz", 4, 5, null, null, "allemagne_rfa", 353, null, null),
+    p("Dólar de plata Morgan", "0,773 oz", 3, 3, null, null, "etats-unis", 773, null, null),
+    p("500 pesetas de plata", "0,579 oz", 2, 2, null, null, "espagne", 579, null, null),
+    p("Denario imperial", "Conjunto", 2, 2, null, null, "rome", null, null, null),
+    p("Gourde de plata", "0,289 oz", 2, 3, null, null, "haiti", 289, null, null),
+    p("500 lire Caravelle", "0,289 oz", 2, 2, null, null, "italie", 289, null, null),
+    p("Florín de Australia", "0,321 oz", 2, 2, null, null, "australie", 321, null, null),
+    p("Rupia de la India Británica", "0,343 oz", 1, 1, null, null, "inde-britannique", 343, null, null),
+    p("Corona sueca de plata", "0,225 oz", 1, 1, null, null, "suede", 225, null, null),
+    p("5 francos Hércules", "0,804 oz", 1, 1, null, null, "france", 804, null, null),
+    p("Dirham de Marruecos", "0,193 oz", 1, 1, null, null, "maroc", 193, null, null),
+    p("Crown de Jersey", "0,911 oz", 1, 1, null, null, "jersey", 911, null, null),
+    p("Ringgit de Malasia", "0,225 oz", 1, 1, null, null, "malaisie", 225, null, null),
+    p("Piastra de Egipto", "0,180 oz", 1, 1, null, null, "egypte", 180, null, null),
+    p("Escudo de Portugal", "0,321 oz", 1, 1, null, null, "portugal", 321, null, null),).sortedBy { it.family.lowercase() }
 
 data class ProtoPiece(
     val title: String,
@@ -147,81 +159,217 @@ data class ProtoPiece(
     val year: Int?,
     val medal: Boolean,
     val typeId: Int,
+    val weightGrams: Double?,
     val collections: List<String>,
 ) {
     val classified: Boolean get() = collections.isNotEmpty()
 }
 
+@Suppress("LongParameterList")
 private fun c(
     title: String,
     issuer: String,
     year: Int?,
     medal: Boolean,
     id: Int,
+    weightGrams: Number?,
     collections: List<String>,
-) = ProtoPiece(title, issuer, year, medal, id, collections)
+) = ProtoPiece(title, issuer, year, medal, id, weightGrams?.toDouble(), collections)
 
 val PROTO_PIECES: List<ProtoPiece> = listOf(
-    c("Medal - 1200 Jahre Münzgeschichte (Euro)", "Alemania, República Fe…", 2002, true, 132242, listOf()),
-    c("1 Onza", "México", 1949, true, 13333, listOf("Onza Troy de México")),
-    c("1 Onza", "México", 1978, true, 13398, listOf("Onza Troy de México")),
-    c("1 ECU (Don Quixote of La Mancha)", "España", 1994, true, 18156, listOf()),
-    c("1 Euro (Ground forces)", "España", 1998, true, 18161, listOf()),
-    c("5 ECU (Charles V)", "España", 1989, true, 19125, listOf()),
-    c("2 Dollars - Charles III (Equilibrium)", "Niue", 2025, true, 477907, listOf("Equilibrium")),
-    c("2 Dollars - Charles III (Scrooge McDuck)", "Niue", 2025, true, 484131, listOf()),
-    c("2 Dollars - Charles III (Southern Cross)", "Niue", 2025, true, 485082, listOf("Southern Cross bullion anual")),
-    c("Medal - 400th Anniversary of Caracas", "Venezuela", null, true, 578835, listOf()),
-    c("Medalla Antonio José de Sucre 1795-1995 – Ba…", "Venezuela", null, true, 581856, listOf()),
-    c("10 Diners - Joan Martí i Alanis (Council of …", "Andorra", 1995, true, 59404, listOf()),
-    c("3 Euro (Discovery of the mainland)", "España", 1998, true, 67681, listOf()),
-    c("35 ECUs / 25 Pounds - Elizabeth II (Knight)", "Gibraltar", 1992, false, 104170, listOf()),
-    c("½ Rupee - George VI", "India Británica", 1942, false, 10613, listOf()),
-    c("5 Pesos", "México", 1947, false, 10919, listOf()),
-    c("20 Escudos (Financial Renewal)", "Portugal", 1953, false, 11158, listOf()),
-    c("5 Euros (Pope John XXI)", "Portugal", 2005, false, 11440, listOf()),
-    c("100 Pesos", "México", 1977, false, 11552, listOf()),
-    c("50 Schilling (Garden Exhibition)", "Austria", 1974, false, 12454, listOf()),
-    c("5 Kronor - Gustaf VI Adolf", "Suecia", 1954, false, 12994, listOf()),
-    c("50 Escudos (Os Lusiadas)", "Portugal", 1972, false, 13027, listOf()),
-    c("50 Escudos (Marechal Carmona)", "Portugal", 1969, false, 13173, listOf()),
-    c("Nummus - Licinius I (IOVI CONSERVATORI; Cyzi…", "Romano, Imperio (27 a.…", 316, false, 131809, listOf()),
-    c("10 Euros (Nebra Sky Disc)", "Alemania, República Fe…", 2008, false, 13203, listOf()),
-    c("8 Euros (Passarola)", "Portugal", 2007, false, 13289, listOf()),
-    c("5 Euros (People in Europe)", "Italia", 2003, false, 13695, listOf()),
-    c("10 Euros (People in Europe)", "Italia", 2003, false, 13706, listOf()),
-    c("½ Dirham - Abd al-Aziz (Paris)", "Marruecos", 1897, false, 14018, listOf()),
-    c("10 Bolívares (Bolivar coins)", "Venezuela", 1973, false, 14538, listOf()),
-    c("2½ Pounds - Elizabeth II (Silver Wedding)", "Jersey", 1972, false, 15357, listOf()),
-    c("10 Euros (Guadeloupe, 1st type)", "Francia", 2010, false, 15486, listOf()),
-    c("10 Euros (French Guiana, 1st type)", "Francia", 2010, false, 15487, listOf()),
-    c("1 Dollar - Elizabeth II (4th Portrait - Koal…", "Australia", 2017, false, 100525, listOf("Australian Koala")),
-    c("2 Roubles (P.P. Semyonov-Tyan-Shansky)", "Federación de Rusia (1…", 2017, false, 101685, listOf("Outstanding Personalities of Russia")),
-    c("500 Escudos (Return of Macau to China)", "Portugal", 1999, false, 10207, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
-    c("1 Bolívar", "Venezuela", 1879, false, 10338, listOf("1 Bolívar de Venezuela")),
-    c("2 Bolívares", "Venezuela", 1879, false, 10339, listOf("2 Bolívares de Venezuela")),
-    c("5 Bolívares", "Venezuela", 1879, false, 10340, listOf("Fuertes de Venezuela")),
-    c("1 Bolívar", "Venezuela", 1947, false, 10398, listOf("1 Bolívar de Venezuela")),
-    c("2 Bolívares", "Venezuela", 1947, false, 10399, listOf("2 Bolívares de Venezuela")),
-    c("1000 Escudos (Dom Manuel I)", "Portugal", 1998, false, 10658, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
-    c("3 Roubles (Surb-Khach Monastery)", "Federación de Rusia (1…", 2017, false, 107292, listOf("Architectural Monuments of Russia")),
-    c("5 Pounds - Elizabeth II (Red Dragon of Wales…", "Reino Unido", 2017, false, 107370, listOf("The Queen's Beasts")),
-    c("50 Francs (Year of the Rooster)", "Ruanda", 2017, false, 107917, listOf("Lunar ounce")),
-    c("12 Euros - Juan Carlos I (Spanish Presidency…", "España", 2010, false, 10814, listOf("Serie de monedas de plata obtenidas a valor facial")),
-    c("1 Dollar - Elizabeth II (3rd Portrait - Kook…", "Australia", 1995, false, 10841, listOf("Australian Kookaburra")),
-    c("1 Dollar - Elizabeth II (Silver Jubilee)", "Canadá", 1977, false, 10973, listOf("Dólar conmemorativo de plata .500 de Canadá")),
-    c("2 Roubles (K.D. Balmont)", "Federación de Rusia (1…", 2017, false, 110873, listOf("Outstanding Personalities of Russia")),
-    c("1000 Escudos (Pauliteiros Dancers)", "Portugal", 1997, false, 11120, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
-    c("30 Euros - Felipe VI (Treaty on the European…", "España", 2017, false, 111783, listOf("Serie de monedas de plata obtenidas a valor facial")),
-    c("1 Dollar - Elizabeth II (Calgary)", "Canadá", 1975, false, 11564, listOf("Dólar conmemorativo de plata .500 de Canadá")),
-    c("500 Escudos (Banco de Portugal)", "Portugal", 1996, false, 11696, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
-    c("1000 Escudos (D. João II)", "Portugal", 1995, false, 11697, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
-    c("1000 Escudos (Our Lady of Conception)", "Portugal", 1996, false, 11698, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
-    c("1000 Escudos (Oceanographic Expeditions)", "Portugal", 1997, false, 11699, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
-    c("1000 Escudos (International Year of Oceans)", "Portugal", 1998, false, 11700, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("Medal - 1200 Jahre Münzgeschichte (Euro)", "Alemania, República Fe…", 2002, true, 132242, 20, listOf()),
+    c("1 Onza", "México", 1949, true, 13333, 33.625, listOf("Onza Troy de México")),
+    c("1 Onza", "México", 1978, true, 13398, 33.625, listOf("Onza Troy de México")),
+    c("1 ECU (Don Quixote of La Mancha)", "España", 1994, true, 18156, 6.72, listOf()),
+    c("1 Euro (Ground forces)", "España", 1998, true, 18161, 6.72, listOf()),
+    c("5 ECU (Charles V)", "España", 1989, true, 19125, 33.62, listOf()),
+    c("2 Dollars - Charles III (Equilibrium)", "Niue", 2025, true, 477907, 31.31, listOf("Equilibrium")),
+    c("2 Dollars - Charles III (Scrooge McDuck)", "Niue", 2025, true, 484131, 31.1, listOf()),
+    c("2 Dollars - Charles III (Southern Cross)", "Niue", 2025, true, 485082, 31.1, listOf("Southern Cross bullion anual")),
+    c("Medal - 400th Anniversary of Caracas", "Venezuela", null, true, 578835, 15.1, listOf()),
+    c("Medalla Antonio José de Sucre 1795-1995 – Ba…", "Venezuela", null, true, 581856, 31.1, listOf()),
+    c("10 Diners - Joan Martí i Alanis (Council of …", "Andorra", 1995, true, 59404, 31.6, listOf()),
+    c("3 Euro (Discovery of the mainland)", "España", 1998, true, 67681, 20, listOf()),
+    c("35 ECUs / 25 Pounds - Elizabeth II (Knight)", "Gibraltar", 1992, false, 104170, 28.28, listOf()),
+    c("½ Rupee - George VI", "India Británica", 1942, false, 10613, 5.84, listOf()),
+    c("5 Pesos", "México", 1947, false, 10919, 30, listOf()),
+    c("20 Escudos (Financial Renewal)", "Portugal", 1953, false, 11158, 21, listOf()),
+    c("5 Euros (Pope John XXI)", "Portugal", 2005, false, 11440, 14, listOf()),
+    c("100 Pesos", "México", 1977, false, 11552, 27.78, listOf()),
+    c("50 Schilling (Garden Exhibition)", "Austria", 1974, false, 12454, 20, listOf()),
+    c("5 Kronor - Gustaf VI Adolf", "Suecia", 1954, false, 12994, 18, listOf()),
+    c("50 Escudos (Os Lusiadas)", "Portugal", 1972, false, 13027, 18, listOf()),
+    c("50 Escudos (Marechal Carmona)", "Portugal", 1969, false, 13173, 18, listOf()),
+    c("Nummus - Licinius I (IOVI CONSERVATORI; Cyzi…", "Romano, Imperio (27 a.…", 316, false, 131809, 3.3, listOf()),
+    c("10 Euros (Nebra Sky Disc)", "Alemania, República Fe…", 2008, false, 13203, 18, listOf()),
+    c("8 Euros (Passarola)", "Portugal", 2007, false, 13289, 21.1, listOf()),
+    c("5 Euros (People in Europe)", "Italia", 2003, false, 13695, 18, listOf()),
+    c("10 Euros (People in Europe)", "Italia", 2003, false, 13706, 22, listOf()),
+    c("½ Dirham - Abd al-Aziz (Paris)", "Marruecos", 1897, false, 14018, 1.4558, listOf()),
+    c("10 Bolívares (Bolivar coins)", "Venezuela", 1973, false, 14538, 30, listOf()),
+    c("2½ Pounds - Elizabeth II (Silver Wedding)", "Jersey", 1972, false, 15357, 27.1, listOf()),
+    c("10 Euros (Guadeloupe, 1st type)", "Francia", 2010, false, 15486, 10, listOf()),
+    c("10 Euros (French Guiana, 1st type)", "Francia", 2010, false, 15487, 10, listOf()),
+    c("10 Euros (Réunion, 1st type)", "Francia", 2010, false, 15500, 10, listOf()),
+    c("10 Pesos (Hidalgo Grande)", "México", 1955, false, 18816, 28.888, listOf()),
+    c("8 Reales - Charles IV", "México", 1791, false, 18852, 27.07, listOf()),
+    c("75 Bolívares (Antonio José de Sucre)", "Venezuela", 1980, false, 18940, 17, listOf()),
+    c("50 Gourdes (Woman and Child)", "Haití (1804-presente)", 1973, false, 19085, 16.5, listOf()),
+    c("2 Dollars - Elizabeth II (Lion King)", "Niue", 2019, false, 192181, 31.39, listOf()),
+    c("50 Gourdes (The Mermaid)", "Haití (1804-presente)", 1973, false, 19328, 16.45, listOf()),
+    c("5 Deutsche Mark", "Alemania, República Fe…", 1951, false, 1933, 11.2, listOf()),
+    c("10 Rentenpfennig", "Alemania (1871-1948)", 1923, false, 1952, 4, listOf()),
+    c("10 Euros (Charlemagne in the Untersberg)", "Austria", 2010, false, 21377, 17.3, listOf()),
+    c("1500 Pesetas - Juan Carlos I (Peace)", "España", 2000, false, 22502, 20, listOf()),
+    c("10 Euros (Picardy)", "Francia", 2011, false, 25292, 10, listOf()),
+    c("50 Qirsh (Evacuation of the British)", "Egipto", 1956, false, 26190, 28, listOf()),
+    c("2 Dollars - Elizabeth II (Bitcoin)", "Niue", 2021, false, 272140, 31.1035, listOf()),
+    c("25 Ringgit - Agong VI (Conservation)", "Malasia", 1976, false, 27380, 35, listOf()),
+    c("100 Bolívares (Birth of Andres Bello)", "Venezuela", 1981, false, 27573, 27, listOf()),
+    c("30 Francs (450th Anniversary Galileo)", "República Democrática …", 2014, false, 277960, 31.1, listOf()),
+    c("Denarius - Ulpia Severina (VENVS FELIX; Venus)", "Romano, Imperio (27 a.…", 270, false, 291255, 2.7, listOf()),
+    c("100 Francs (La Fayette)", "Francia", 1987, false, 30, 15, listOf()),
+    c("1100 Bolívares (Cristobal Colón)", "Venezuela", 1991, false, 31925, 27, listOf()),
+    c("100 Francs (Charlemagne)", "Francia", 1990, false, 33, 15, listOf()),
+    c("10 Euros (Akacorleone)", "Portugal", 2022, false, 334727, 27, listOf()),
+    c("2 Reichsmark (Paul von Hindenburg)", "Alemania (1871-1948)", 1936, false, 3416, 8, listOf()),
+    c("100 Bolívares (José M. Vargas)", "Venezuela", 1986, false, 34721, 31.1, listOf()),
+    c("1 Peso 'Tepalcate'", "México", 1957, false, 3550, 16, listOf()),
+    c("5 Dollars - Elizabeth II (Posthumous; Superm…", "Samoa", 2023, false, 368266, 31.1, listOf()),
+    c("25 Bolívares (Jaguar)", "Venezuela", 1975, false, 37246, 28.28, listOf()),
+    c("50 Bolívares (Armadillo)", "Venezuela", 1975, false, 37247, 35, listOf()),
+    c("25 Pesos (Olympic Games)", "México", 1968, false, 3855, 22.5, listOf()),
+    c("25 Dollars - Elizabeth II (Basketball)", "Canadá", 2016, false, 387614, 30.75, listOf()),
+    c("1 Dollar - Elizabeth II (4th Portrait - Koal…", "Australia", 2017, false, 100525, 31.1035, listOf("Australian Koala")),
+    c("2 Roubles (P.P. Semyonov-Tyan-Shansky)", "Federación de Rusia (1…", 2017, false, 101685, 17, listOf("Outstanding Personalities of Russia")),
+    c("500 Escudos (Return of Macau to China)", "Portugal", 1999, false, 10207, 14, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("1 Bolívar", "Venezuela", 1879, false, 10338, 5, listOf("1 Bolívar de Venezuela")),
+    c("2 Bolívares", "Venezuela", 1879, false, 10339, 10, listOf("2 Bolívares de Venezuela")),
+    c("5 Bolívares", "Venezuela", 1879, false, 10340, 25, listOf("Fuertes de Venezuela")),
+    c("1 Bolívar", "Venezuela", 1947, false, 10398, 5, listOf("1 Bolívar de Venezuela")),
+    c("2 Bolívares", "Venezuela", 1947, false, 10399, 10, listOf("2 Bolívares de Venezuela")),
+    c("1000 Escudos (Dom Manuel I)", "Portugal", 1998, false, 10658, 27, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("3 Roubles (Surb-Khach Monastery)", "Federación de Rusia (1…", 2017, false, 107292, 39.94, listOf("Architectural Monuments of Russia")),
+    c("5 Pounds - Elizabeth II (Red Dragon of Wales…", "Reino Unido", 2017, false, 107370, 62.42, listOf("The Queen's Beasts")),
+    c("50 Francs (Year of the Rooster)", "Ruanda", 2017, false, 107917, 31.1, listOf("Lunar ounce")),
+    c("12 Euros - Juan Carlos I (Spanish Presidency…", "España", 2010, false, 10814, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("1 Dollar - Elizabeth II (3rd Portrait - Kook…", "Australia", 1995, false, 10841, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (Silver Jubilee)", "Canadá", 1977, false, 10973, 23.3276, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("2 Roubles (K.D. Balmont)", "Federación de Rusia (1…", 2017, false, 110873, 17, listOf("Outstanding Personalities of Russia")),
+    c("1000 Escudos (Pauliteiros Dancers)", "Portugal", 1997, false, 11120, 28.2, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("30 Euros - Felipe VI (Treaty on the European…", "España", 2017, false, 111783, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("1 Dollar - Elizabeth II (Calgary)", "Canadá", 1975, false, 11564, 23.3276, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("500 Escudos (Banco de Portugal)", "Portugal", 1996, false, 11696, 14, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("1000 Escudos (D. João II)", "Portugal", 1995, false, 11697, 28, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("1000 Escudos (Our Lady of Conception)", "Portugal", 1996, false, 11698, 28, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("1000 Escudos (Oceanographic Expeditions)", "Portugal", 1997, false, 11699, 28, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("1000 Escudos (International Year of Oceans)", "Portugal", 1998, false, 11700, 27, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("1000 Escudos (Council of the European Union)", "Portugal", 2000, false, 11701, 28.2, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("1000 Escudos (Cavalo Lusitano)", "Portugal", 2000, false, 11702, 27, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("2 Roubles (I.K. Aivazovsky)", "Federación de Rusia (1…", 2017, false, 117327, 17, listOf("Outstanding Personalities of Russia")),
+    c("3 Roubles (Queen Louise Bridge)", "Federación de Rusia (1…", 2017, false, 117328, 39.94, listOf("Architectural Monuments of Russia")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 2018, false, 124796, 31.1035, listOf("Australian Kookaburra")),
+    c("5 Pounds - Elizabeth II (Unicorn of Scotland…", "Reino Unido", 2018, false, 127263, 62.42, listOf("The Queen's Beasts")),
+    c("10 Yuan (Panda)", "China, República Popular", 2018, false, 127720, 30, listOf("Panda de plata 30 g bullion anual")),
+    c("50 Francs (Santa Maria)", "Ruanda", 2017, false, 127972, 31.1, listOf("Nautical Ounce")),
+    c("2 Roubles (Y. P. Lyubimov)", "Federación de Rusia (1…", 2017, false, 128809, 17, listOf("Outstanding Personalities of Russia")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Year…", "Australia", 2018, false, 129091, 31.1035, listOf("Lunar Series II")),
+    c("500 Escudos (Saint Anthony)", "Portugal", 1995, false, 13042, 14, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("500 Escudos (Padre António Vieira)", "Portugal", 1997, false, 13043, 14, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("500 Escudos (Vasco da Gama Bridge)", "Portugal", 1998, false, 13044, 14, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("500 Escudos (Eça de Queiroz)", "Portugal", 2000, false, 13045, 14, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("500 Escudos (European Culture Capital)", "Portugal", 2001, false, 13046, 13.96, listOf("500 escudos conmemorativos de plata .500 de Portugal")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Koal…", "Australia", 2018, false, 132621, 31.1035, listOf("Australian Koala")),
+    c("50 Francs (Year of the Dog)", "Ruanda", 2018, false, 133446, 31.1, listOf("Lunar ounce")),
+    c("2 Roubles (M. I. Petipa)", "Federación de Rusia (1…", 2018, false, 133886, 17, listOf("Outstanding Personalities of Russia")),
+    c("2 Roubles (M. Gorky)", "Federación de Rusia (1…", 2018, false, 133887, 17, listOf("Outstanding Personalities of Russia")),
+    c("30 Euros - Felipe VI (50th Birthday of King …", "España", 2018, false, 133929, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 1998, false, 13410, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 2003, false, 13411, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 2005, false, 13413, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 2007, false, 13414, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 1999, false, 13417, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("5 Pounds - Elizabeth II (Black Bull of Clare…", "Reino Unido", 2018, false, 135553, 62.42, listOf("The Queen's Beasts")),
+    c("2000 Pesetas - Juan Carlos I (Miguel de Cerv…", "España", 1997, false, 13634, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("3 Roubles (Trinity Monastery)", "Federación de Rusia (1…", 2018, false, 136521, 33.94, listOf("Architectural Monuments of Russia")),
+    c("3 Roubles (Saint Trinity Cathedral)", "Federación de Rusia (1…", 2018, false, 136522, 33.94, listOf("Architectural Monuments of Russia")),
+    c("1 Onza 'Libertad'", "México", 2000, false, 13855, 31.1, listOf("Onza Libertad bullion anual")),
+    c("2 Roubles (V. Y. Struve)", "Federación de Rusia (1…", 2018, false, 138786, 17, listOf("Outstanding Personalities of Russia")),
+    c("50 Francs (HMS Endeavour)", "Ruanda", 2018, false, 139377, 31.104, listOf("Nautical Ounce")),
+    c("3 Roubles (Church of the Kazan Icon of the M…", "Federación de Rusia (1…", 2018, false, 141400, 33.94, listOf("Architectural Monuments of Russia")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 2001, false, 14363, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("Silver Krugerrand - 1 Rand", "Sudáfrica", 2018, false, 143754, 31.1, listOf("Silver Krugerrand bullion anual desde 2018 (sin 2017 Premium Uncirculated)")),
+    c("1 Onza 'Libertad'", "México", 1982, false, 14465, 31.1, listOf("Onza Libertad bullion anual")),
+    c("2000 Pesetas - Juan Carlos I (Last issue of …", "España", 2001, false, 14673, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("2 Roubles (V.S. Visotzky)", "Federación de Rusia (1…", 2018, false, 148206, 17, listOf("Outstanding Personalities of Russia")),
+    c("1 Dollar 'Morgan Dollar'", "Estados Unidos", 1878, false, 1492, 26.73, listOf("Dólar de plata clásico · EE. UU. · Morgan y Peace")),
+    c("1 Dollar 'American Silver Eagle' (Bullion Co…", "Estados Unidos", 1986, false, 1493, 31.103, listOf("American Silver Eagle bullion anual")),
+    c("100 Dinara (Nikola Tesla, Alternating current)", "Serbia", 2018, false, 150352, 31.1, listOf("Nikola Tesla")),
+    c("5 Pounds - Elizabeth II (Falcon of the Plant…", "Reino Unido", 2019, false, 150354, 62.42, listOf("The Queen's Beasts")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Year…", "Australia", 2019, false, 150358, 31.1035, listOf("Lunar Series II")),
+    c("30 Euros - Felipe VI (Kingdom of Asturias)", "España", 2018, false, 152027, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("2 Roubles (A.I. Solzhenitsyn)", "Federación de Rusia (1…", 2018, false, 153797, 17, listOf("Outstanding Personalities of Russia")),
+    c("3 Roubles (Saint Vladimir’s Cathedral)", "Federación de Rusia (1…", 2018, false, 153799, 33.94, listOf("Architectural Monuments of Russia")),
+    c("1 Dollar - Elizabeth II (6th Portrait - Aust…", "Australia", 2019, false, 153925, 31.1035, listOf("Australian Kangaroo bullion anual")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 2002, false, 15415, 31.135, listOf("Australian Kookaburra")),
+    c("1000 Escudos (Encounter of Two Worlds)", "Portugal", 1992, false, 15463, 27, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("10 Yuan (Panda)", "China, República Popular", 2019, false, 154933, 30, listOf("Panda de plata 30 g bullion anual")),
+    c("1 Dollar - Elizabeth II (S.S. Frontenac)", "Canadá", 1991, false, 15517, 23.327, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("1000 Escudos (D João de Castro)", "Portugal", 2000, false, 15566, 27, listOf("1000 escudos conmemorativos de plata .500 de Portugal")),
+    c("2 Pounds - Elizabeth II (5th portrait; 1 oz …", "Reino Unido", 2017, false, 157350, 31.21, listOf("Silver Britannia .999 bullion anual")),
+    c("2 Roubles (V.V. Bianki)", "Federación de Rusia (1…", 2019, false, 157874, 17, listOf("Outstanding Personalities of Russia")),
+    c("50 Francs (Year of the Pig)", "Ruanda", 2019, false, 158491, 31.1, listOf("Lunar ounce")),
+    c("1 Dollar - Elizabeth II (6th Portrait - Koala)", "Australia", 2019, false, 160928, 31.1035, listOf("Australian Koala")),
+    c("1 Dollar - Elizabeth II (6th Portrait - Aust…", "Australia", 2019, false, 161560, 31.1035, listOf("Australian Kookaburra")),
+    c("5 Pounds - Elizabeth II (Yale of Beaufort; 2…", "Reino Unido", 2019, false, 161586, 62.42, listOf("The Queen's Beasts")),
+    c("2 Roubles (Amur Leopard)", "Federación de Rusia (1…", 2019, false, 161739, 17, listOf("Red Data Book")),
+    c("2 Roubles (Japanese Crested Ibis)", "Federación de Rusia (1…", 2019, false, 161741, 17, listOf("Red Data Book")),
+    c("2 Roubles (Beluga)", "Federación de Rusia (1…", 2019, false, 161742, 17, listOf("Red Data Book")),
+    c("100 Dinara (Nikola Tesla, Remote Control)", "Serbia", 2019, false, 162242, 31.1, listOf("Nikola Tesla")),
+    c("3 Roubles (Savior's Transfiguration Church)", "Federación de Rusia (1…", 2017, false, 162819, 33.94, listOf("Architectural Monuments of Russia")),
+    c("1 Dollar - Elizabeth II (Davis Strait)", "Canadá", 1987, false, 16314, 23.3276, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("1 Dollar - Elizabeth II (Griffon)", "Canadá", 1979, false, 16315, 23.3276, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("3 Roubles (Aseyev Estate)", "Federación de Rusia (1…", 2019, false, 167168, 33.94, listOf("Architectural Monuments of Russia")),
+    c("3 Roubles (Main Narzan Baths)", "Federación de Rusia (1…", 2019, false, 168992, 33.94, listOf("Architectural Monuments of Russia")),
+    c("50 Francs (Victoria)", "Ruanda", 2019, false, 172069, 31.104, listOf("Nautical Ounce")),
+    c("1 Dollar - Elizabeth II (3rd Portrait - Aust…", "Australia", 1993, false, 17335, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (3rd Portrait - Aust…", "Australia", 1994, false, 17336, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (3rd Portrait - Aust…", "Australia", 1996, false, 17339, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (3rd Portrait - Aust…", "Australia", 1997, false, 17340, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 1999, false, 17342, 31.635, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 1999, false, 17343, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 2000, false, 17357, 31.135, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Year…", "Australia", 2009, false, 17378, 31.1035, listOf("Lunar Series II")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Koal…", "Australia", 2009, false, 17379, 31.1035, listOf("Australian Koala")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 2009, false, 17382, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Year…", "Australia", 2010, false, 17383, 31.1035, listOf("Lunar Series II")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Koal…", "Australia", 2010, false, 17386, 31.1035, listOf("Australian Koala")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Aust…", "Australia", 2010, false, 17387, 31.1035, listOf("Australian Kookaburra")),
+    c("1 Dollar - Elizabeth II (4th Portrait - Year…", "Australia", 2011, false, 17388, 31.1035, listOf("Lunar Series II")),
+    c("20 Euros - Juan Carlos I (2010 FIFA World Cup)", "España", 2010, false, 17413, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("1 Onza 'Libertad'", "México", 1996, false, 17818, 31.1, listOf("Onza Libertad bullion anual")),
+    c("1 Dollar - Elizabeth II (2nd portrait; silver)", "Canadá", 1972, false, 17839, 23.3, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("2 Roubles (M.T. Kalashnikov)", "Federación de Rusia (1…", 2019, false, 178572, 17, listOf("Outstanding Personalities of Russia")),
+    c("2 Roubles (M. Karim)", "Federación de Rusia (1…", 2019, false, 178574, 17, listOf("Outstanding Personalities of Russia")),
+    c("1 Dollar - Elizabeth II (6th Portrait - Year…", "Australia", 2020, false, 179438, 31.1035, listOf("Lunar Series III")),
+    c("½ Bolívar", "Venezuela", 1879, false, 17945, 2.5, listOf("Reales de Venezuela")),
+    c("5 Pounds - Elizabeth II (White Lion of Morti…", "Reino Unido", 2020, false, 180354, 62.42, listOf("The Queen's Beasts")),
+    c("1 Dollar - Elizabeth II (6th Portrait - Kook…", "Australia", 2020, false, 183220, 31.1035, listOf("Australian Kookaburra")),
+    c("10 Yuan (Panda)", "China, República Popular", 2020, false, 183654, 30, listOf("Panda de plata 30 g bullion anual")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 2010, false, 18524, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("2 Pounds - Elizabeth II (4th portrait; 1 oz …", "Reino Unido", 2008, false, 18525, 32.45, listOf("Silver Britannia .958 1 oz")),
+    c("1 Dollar - Elizabeth II (6th Portrait - Year…", "Australia", 2020, false, 185343, 31.1035, listOf("Lunar Series III")),
+    c("30 Euros - Felipe VI (Prado Museum)", "España", 2019, false, 186086, 18, listOf("Serie de monedas de plata obtenidas a valor facial")),
+    c("5 Dollars - Elizabeth II (2nd Portrait; SML …", "Canadá", 1988, false, 18655, 31.1035, listOf("Silver Maple Leaf bullion anual")),
+    c("1 Dollar - Elizabeth II (Winnipeg)", "Canadá", 1974, false, 18797, 23.33, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("1 Dollar - Elizabeth II (Parliamentary Libra…", "Canadá", 1976, false, 1880, 23.3, listOf("Dólar conmemorativo de plata .500 de Canadá")),
+    c("50 Francs (Year of the Rat)", "Ruanda", 2020, false, 188048, 31.103, listOf("Lunar ounce")),
+    c("100 Pesetas - Francisco Franco", "España", 1966, false, 1885, 19, listOf("100 Pesetas de Franco")),
+    c("5 Dollars - Elizabeth II (Equilibrium)", "Tokelau", 2018, false, 188952, 31.31, listOf("Equilibrium")),
+    c("10 Yuan (Panda)", "China, República Popular", 1999, false, 19043, 31.1, listOf("Panda de plata 1 oz bullion anual")),
     // Añadida a mano: hoy NINGÚN tipo curado vive en dos colecciones (0 de 723), así que sin
     // esta fila la lista de pertenencias nunca se vería con más de un elemento.
-    c("1 Dollar 'Morgan Dollar'", "Estados Unidos", 1878, false, 1492, listOf(
+    c("1 Dollar 'Morgan Dollar'", "Estados Unidos", 1878, false, 1492, 26.73, listOf(
         "Dólar de plata clásico de EE. UU.",
         "Plata a valor facial de EE. UU.",
     )),
@@ -488,17 +636,47 @@ private fun Tab(text: String, selected: Boolean, onClick: () -> Unit) {
 
 // ─── Las dos listas, compartidas por B y C ────────────────────────────────────────────────
 
+
+/**
+ * Comparación de búsqueda: sin acentos y sin mayúsculas, porque el que escribe «panda» en el
+ * móvil no escribe «Panda» y el que busca «bolivar» no pone la tilde de «Bolívar».
+ */
+private fun searchable(text: String): String = text
+    .lowercase()
+    .replace('á', 'a').replace('é', 'e').replace('í', 'i')
+    .replace('ó', 'o').replace('ú', 'u').replace('ü', 'u').replace('ñ', 'n')
+
+/**
+ * Una faceta: un nombre y las opciones, cada una con el predicado que recorta la lista. Todas
+ * las facetas se cruzan con Y; dentro de una faceta, la opción elegida sustituye a la anterior.
+ */
+private class Facet<T>(val name: String, val options: List<Pair<String, (T) -> Boolean>>)
+
+private fun <T> facetedCount(
+    items: List<T>,
+    facets: List<Facet<T>>,
+    chosen: List<Int>,
+    skip: Int,
+    option: Int,
+): Int = items.count { item ->
+    facets.indices.all { f ->
+        val pick = if (f == skip) option else chosen[f]
+        pick == 0 || facets[f].options[pick].second(item)
+    }
+}
+
 /** Las colecciones, con los filtros que el índice de hoy no tiene. */
 @Composable
 private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
-    var filter by remember { mutableStateOf(0) }
-    val curated = PROTO_PLATES.filter { it.total != null }
-    val shown = when (filter) {
-        1 -> curated
-        2 -> curated.filter { it.filled == it.total }
-        3 -> curated.filter { it.filled != it.total }
-        4 -> PROTO_PLATES.filter { it.total == null }
-        else -> PROTO_PLATES
+    val facets = remember { plateFacets() }
+    var chosen by remember { mutableStateOf(List(facets.size) { 0 }) }
+    var query by remember { mutableStateOf("") }
+    val needle = searchable(query)
+    val platesByQuery = PROTO_PLATES.filter { plate ->
+        needle.isBlank() || searchable(plate.family + " " + plate.issuer).contains(needle)
+    }
+    val shown = platesByQuery.filter { plate ->
+        facets.indices.all { f -> chosen[f] == 0 || facets[f].options[chosen[f]].second(plate) }
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -507,20 +685,68 @@ private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
     ) {
         item { header() }
         item {
-            FilterRow(
-                listOf(
-                    "Todas · ${PROTO_PLATES.size}",
-                    "Con lámina · ${curated.size}",
-                    "Completas · ${curated.count { it.filled == it.total }}",
-                    "A medias · ${curated.count { it.filled != it.total }}",
-                    "Sin lámina · ${PROTO_PLATES.count { it.total == null }}",
-                ),
-                filter,
-            ) { filter = it }
+            FacetShelf(
+                facets = facets,
+                chosen = chosen,
+                items = platesByQuery,
+                total = PROTO_PLATES.size,
+                shown = shown.size,
+                noun = "colecciones",
+                query = query,
+                onQuery = { query = it },
+                onChoose = { f, option -> chosen = chosen.toMutableList().also { it[f] = option } },
+                onClear = { chosen = List(facets.size) { 0 } },
+            )
         }
         items(shown) { plate -> PlateCard(plate, actions = actions) }
     }
 }
+
+private fun plateFacets(): List<Facet<ProtoPlate>> = listOf(
+    Facet(
+        "País",
+        listOf<Pair<String, (ProtoPlate) -> Boolean>>("Todos" to { true }) +
+            PROTO_PLATES.groupingBy { it.issuer }.eachCount()
+                .entries.sortedByDescending { it.value }.take(7)
+                .map { (issuer, _) -> issuer to { plate: ProtoPlate -> plate.issuer == issuer } },
+    ),
+    Facet(
+        "Peso",
+        listOf(
+            "Cualquiera" to { _: ProtoPlate -> true },
+            "Menos de ½ oz" to { it: ProtoPlate -> (it.weightMillioz ?: 0) < 500 },
+            "½ – 1 oz" to { it: ProtoPlate -> (it.weightMillioz ?: 0) in 500..1099 },
+            "Más de 1 oz" to { it: ProtoPlate -> (it.weightMillioz ?: 0) >= 1100 },
+        ),
+    ),
+    Facet(
+        "Empieza en",
+        listOf(
+            "Cualquier año" to { _: ProtoPlate -> true },
+            "Antes de 1950" to { it: ProtoPlate -> (it.firstYear ?: 9999) < 1950 },
+            "1950 – 1999" to { it: ProtoPlate -> (it.firstYear ?: 0) in 1950..1999 },
+            "Desde 2000" to { it: ProtoPlate -> (it.firstYear ?: 0) >= 2000 },
+        ),
+    ),
+    Facet(
+        "Estado",
+        listOf(
+            "Todas" to { _: ProtoPlate -> true },
+            "Completas" to { it: ProtoPlate -> it.total != null && it.filled == it.total },
+            "A medias" to { it: ProtoPlate -> it.total != null && it.filled != it.total },
+            "Una sola casilla" to { it: ProtoPlate -> it.total != null && it.filled == 1 },
+            "Sin lámina" to { it: ProtoPlate -> it.total == null },
+        ),
+    ),
+    Facet(
+        "Serie",
+        listOf(
+            "Abiertas y cerradas" to { _: ProtoPlate -> true },
+            "Abiertas" to { it: ProtoPlate -> it.status == "open" },
+            "Cerradas" to { it: ProtoPlate -> it.status == "closed" },
+        ),
+    ),
+)
 
 /**
  * Las monedas. Cada ficha lleva las colecciones en las que vive, como enlaces de vuelta: la
@@ -528,12 +754,18 @@ private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
  */
 @Composable
 private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable () -> Unit) {
-    var filter by remember { mutableStateOf(0) }
-    val shown = when (filter) {
-        1 -> PROTO_PIECES.filter { !it.classified }
-        2 -> PROTO_PIECES.filter { it.medal }
-        3 -> PROTO_PIECES.filter { it.classified }
-        else -> PROTO_PIECES
+    val facets = remember { pieceFacets() }
+    var chosen by remember { mutableStateOf(List(facets.size) { 0 }) }
+    var query by remember { mutableStateOf("") }
+    val needle = searchable(query)
+    val piecesByQuery = PROTO_PIECES.filter { piece ->
+        needle.isBlank() || searchable(
+            piece.title + " " + piece.issuer + " " +
+                piece.year + " " + piece.collections.joinToString(" "),
+        ).contains(needle)
+    }
+    val shown = piecesByQuery.filter { piece ->
+        facets.indices.all { f -> chosen[f] == 0 || facets[f].options[chosen[f]].second(piece) }
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -542,15 +774,18 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
     ) {
         item { header() }
         item {
-            FilterRow(
-                listOf(
-                    "Todas · $PIECES",
-                    "Sin colección · $UNCLASSIFIED",
-                    "Medallas · $MEDALS",
-                    "En alguna colección",
-                ),
-                filter,
-            ) { filter = it }
+            FacetShelf(
+                facets = facets,
+                chosen = chosen,
+                items = piecesByQuery,
+                total = PROTO_PIECES.size,
+                shown = shown.size,
+                noun = "tipos",
+                query = query,
+                onQuery = { query = it },
+                onChoose = { f, option -> chosen = chosen.toMutableList().also { it[f] = option } },
+                onClear = { chosen = List(facets.size) { 0 } },
+            )
         }
         items(shown) { piece ->
             FieldCard(modifier = Modifier.fillMaxWidth()) {
@@ -594,15 +829,124 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
     }
 }
 
+private fun pieceFacets(): List<Facet<ProtoPiece>> = listOf(
+    Facet(
+        "País",
+        listOf<Pair<String, (ProtoPiece) -> Boolean>>("Todos" to { true }) +
+            PROTO_PIECES.groupingBy { it.issuer }.eachCount()
+                .entries.sortedByDescending { it.value }.take(7)
+                .map { (issuer, _) -> issuer to { piece: ProtoPiece -> piece.issuer == issuer } },
+    ),
+    Facet(
+        "Peso",
+        listOf(
+            "Cualquiera" to { _: ProtoPiece -> true },
+            "Menos de 10 g" to { it: ProtoPiece -> (it.weightGrams ?: 0.0) < 10 },
+            "10 – 25 g" to { it: ProtoPiece -> (it.weightGrams ?: 0.0) in 10.0..24.99 },
+            "Una onza (25 – 34 g)" to { it: ProtoPiece -> (it.weightGrams ?: 0.0) in 25.0..34.0 },
+            "Más de 34 g" to { it: ProtoPiece -> (it.weightGrams ?: 0.0) > 34 },
+        ),
+    ),
+    Facet(
+        "Año",
+        listOf(
+            "Cualquiera" to { _: ProtoPiece -> true },
+            "Antes de 1900" to { it: ProtoPiece -> (it.year ?: 9999) < 1900 },
+            "1900 – 1979" to { it: ProtoPiece -> (it.year ?: 0) in 1900..1979 },
+            "1980 – 1999" to { it: ProtoPiece -> (it.year ?: 0) in 1980..1999 },
+            "Desde 2000" to { it: ProtoPiece -> (it.year ?: 0) >= 2000 },
+            "Sin año" to { it: ProtoPiece -> it.year == null },
+        ),
+    ),
+    Facet(
+        "Clase",
+        listOf(
+            "Todo" to { _: ProtoPiece -> true },
+            "Monedas" to { it: ProtoPiece -> !it.medal },
+            "Medallas y fichas" to { it: ProtoPiece -> it.medal },
+        ),
+    ),
+    Facet(
+        "Colección",
+        listOf(
+            "Da igual" to { _: ProtoPiece -> true },
+            "En alguna" to { it: ProtoPiece -> it.classified },
+            "Sin colección" to { it: ProtoPiece -> !it.classified },
+        ),
+    ),
+)
+
+/**
+ * La estantería de filtros: una fila de opciones por faceta, plegable, con el recuento de lo que
+ * queda. Plegada dice cuántas facetas están puestas, porque una estantería abierta se come la
+ * primera pantalla entera — que es justo lo que hay que mirar en las capturas.
+ */
 @Composable
-private fun FilterRow(labels: List<String>, selected: Int, onSelect: (Int) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        labels.chunked(2).forEachIndexed { row, chunk ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                chunk.forEachIndexed { column, label ->
-                    val index = row * 2 + column
-                    Chip(label, index == selected) { onSelect(index) }
+private fun <T> FacetShelf(
+    facets: List<Facet<T>>,
+    chosen: List<Int>,
+    items: List<T>,
+    total: Int,
+    shown: Int,
+    noun: String,
+    query: String,
+    onQuery: (String) -> Unit,
+    onChoose: (Int, Int) -> Unit,
+    onClear: () -> Unit,
+) {
+    // Plegada al entrar: abierta se come la primera pantalla entera y entierra las tarjetas,
+    // que es lo que se venía a ver.
+    var open by remember { mutableStateOf(false) }
+    val active = chosen.count { it != 0 }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQuery,
+            label = { Text("Buscar") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                when {
+                    open -> "▾ Filtros"
+                    active == 0 -> "▸ Filtros"
+                    active == 1 -> "▸ Filtros · 1 puesto"
+                    else -> "▸ Filtros · $active puestos"
+                },
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.clickable { open = !open },
+            )
+            Text(
+                if (shown == total) "$shown $noun" else "$shown de $total $noun",
+                style = MaterialTheme.typography.labelLarge,
+                color = if (active == 0) Paper.muted else Paper.rust,
+            )
+        }
+        if (open) {
+            facets.forEachIndexed { index, facet ->
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Eyebrow(facet.name)
+                    facet.options.indices.chunked(2).forEach { pair ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            pair.forEach { option ->
+                                val label = facet.options[option].first
+                                val left = facetedCount(items, facets, chosen, index, option)
+                                Chip(
+                                    if (option == 0) label else "$label · $left",
+                                    option == chosen[index],
+                                ) { onChoose(index, option) }
+                            }
+                        }
+                    }
                 }
+            }
+            if (active > 0) {
+                CardAction(text = "Quitar los filtros", onClick = onClear)
             }
         }
     }
