@@ -15,7 +15,9 @@ import kotlin.test.assertNull
  *
  * A date run repeats one type across years, so «1879 · Numista 10340» under a cell titled 1879
  * was the same two facts twice, twenty-one times over. An issue run repeats the year as well.
- * Whatever every member shares belongs in the heading; the cell keeps only what tells it apart.
+ * Whatever every member shares belongs in the heading; the cell keeps only what tells it apart —
+ * except the Numista type, which is never in a cell at all (issue #88): it heads the plate when
+ * every cell is that type, and otherwise the plate simply does not say it.
  */
 class PlateLabelsTest {
     private fun member(id: String, label: String, year: Int, typeId: Int) =
@@ -90,12 +92,54 @@ class PlateLabelsTest {
     }
 
     @Test
-    fun `a catalog of distinct types keeps the year and the type in every cell`() {
+    fun `a catalog of distinct types keeps the year in every cell, never the type`() {
         val common = plateCommonFacts(typeRun)
 
         assertNull(common.numistaTypeId)
         assertNull(common.year)
-        assertEquals("2011 · Numista 25340", plateCellFootnote(typeRun[0], common))
+        assertEquals("2011", plateCellFootnote(typeRun[0], common))
+    }
+
+    /**
+     * A date run that outgrew its single type — the fuertes gained the 1876 Venezuelan, N#48672,
+     * next to twenty-one cells of N#10340 — used to hand every one of the twenty-two cells a
+     * footnote, twenty-one of them repeating the same identifier (issue #88). A type identifier is
+     * not what a plate says under a coin: on screen the cell title already links to its Numista
+     * page, and the exported sheet is a picture, not a database dump.
+     */
+    @Test
+    fun `a run of two types puts no identifier under any of its cells`() {
+        val fuertes = dateRun + member("1876", "1876", 1876, 48_672)
+        val common = plateCommonFacts(fuertes)
+
+        assertNull(common.numistaTypeId)
+        assertNull(plateCellFootnote(fuertes[0], common))
+        assertNull(plateCellFootnote(fuertes.last(), common))
+        // And it does not reappear in the heading either: two types are not one type.
+        assertEquals(
+            emptyList(),
+            plateEntries(catalog(fuertes), ownedMembers = 1).filter { it.first == "Tipo" },
+        )
+    }
+
+    /**
+     * The 121 cells of the Russian personalities said 121 different identifiers, and not one of
+     * them was an exception to a norm: there was no norm to be the exception to. Real members of
+     * `outstanding-personalities-russia-2-roubles`, three years apart so the year stays theirs.
+     */
+    @Test
+    fun `a catalog where every cell is its own type says no identifier either`() {
+        val personalities = listOf(
+            member("1994-i-a-krylov", "I.A. Krylov", 1994, 28_934),
+            member("1995-s-a-yesenin", "S.A. Yesenin", 1995, 28_930),
+            member("1996-f-m-dostoyevsky", "F.M. Dostoyevsky", 1996, 70_074),
+        )
+        val common = plateCommonFacts(personalities)
+
+        assertEquals(
+            listOf("1994", "1995", "1996"),
+            personalities.map { plateCellFootnote(it, common) },
+        )
     }
 
     private fun catalog(members: List<CollectionCatalogMember>) = CollectionCatalog(

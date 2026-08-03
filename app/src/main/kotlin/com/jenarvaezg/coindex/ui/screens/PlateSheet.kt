@@ -235,7 +235,8 @@ private fun SheetCell(
             modifier = Modifier.padding(top = 8.dp),
         )
         Text(albumMember.member.label, style = MaterialTheme.typography.titleMedium)
-        // Same rule as on screen: whatever every cell of the sheet shares is in the heading.
+        // Same rule as on screen, and it matters more here: what the sheet says under a coin is
+        // read on paper, so it is the year or nothing.
         plateCellFootnote(albumMember.member, common)?.let { footnote ->
             Text(
                 footnote,
