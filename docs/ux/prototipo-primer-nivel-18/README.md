@@ -15,7 +15,9 @@ su **densidad**.
 | --- | --- |
 | [`b1-bifurcacion.png`](b1-bifurcacion.png) | Las dos puertas: Colecciones 58 · Monedas 572 |
 | [`b6-colecciones-plegado.png`](b6-colecciones-plegado.png) | Colecciones al entrar: buscador visible, filtros **plegados** |
-| [`b7-colecciones-filtros.png`](b7-colecciones-filtros.png) | La estantería abierta: país, peso, año de inicio, estado, serie |
+| [`b12-orden-completas.png`](b12-orden-completas.png) | La estantería abierta: orden + país, peso, año de inicio, estado, serie |
+| [`b13-orden-reciente.png`](b13-orden-reciente.png) | «Alta más reciente» y la nota de que Numista no da fecha de compra |
+| [`b14-persistencia.png`](b14-persistencia.png) | Tras matar la app y volver: «1 filtro · orden alta más reciente» |
 | [`b8-busqueda.png`](b8-busqueda.png) | «bolivar», sin tilde, en tiempo real → 2 de 58 |
 | [`b9-monedas.png`](b9-monedas.png) | Monedas: 191 tipos, cada ficha con sus colecciones |
 | [`b10-monedas-filtros.png`](b10-monedas-filtros.png) | Facetas de monedas: país, peso, año, clase, colección |
@@ -36,5 +38,11 @@ su **densidad**.
 - La fila del **Morgan Dollar en dos colecciones está puesta a mano**. Hoy, de los 723 tipos
   curados de `data/`, **ninguno vive en más de una colección**: la pertenencia múltiple es una
   capacidad nueva, no un dato que la app ya tenga.
+- El orden **«alta más reciente» está simulado**: `collected_items` de Numista trae id, cantidad,
+  tipo, emisión, grado, precio y colección, y **ninguna fecha**. Lo único que ordena por antigüedad
+  es el id de la pieza, que es creciente — «alta en Numista», no «compra». La pantalla lo dice
+  cuando ese orden está puesto.
+- **Lo que persiste son los filtros y el orden, no el buscador.** Volver a abrir la app con un
+  texto viejo en la caja y media colección escondida se lee como una app rota.
 - Las facetas no cuestan API: `weight` está en el 100 % de los 804 tipos sembrados, `min_year` en
   el 99,8 % y `issuer` en el 100 %, todo dentro del `raw` que ya guarda `type_meta`.

@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -646,6 +648,54 @@ private fun searchable(text: String): String = text
     .replace('á', 'a').replace('é', 'e').replace('í', 'i')
     .replace('ó', 'o').replace('ú', 'u').replace('ü', 'u').replace('ñ', 'n')
 
+
+// ─── Orden y memoria de la estantería ─────────────────────────────────────────────────────
+
+/** Un criterio de orden: su nombre y el comparador. */
+private class Sorting<T>(val name: String, val by: Comparator<T>)
+
+/**
+ * Lo que la estantería recuerda: qué opción hay puesta en cada faceta y por qué se ordena. Lo
+ * escrito en el buscador NO se guarda a propósito — volver a abrir la app con un texto viejo en
+ * la caja y media colección escondida se lee como una app rota, no como una preferencia.
+ */
+private class Shelf(val chosen: List<Int>, val sort: Int)
+
+private const val SHELF_STORE = "prototipo-18"
+
+@Composable
+private fun rememberShelf(key: String, facets: Int): Pair<Shelf, (Shelf) -> Unit> {
+    val context = LocalContext.current
+    val store = remember { context.getSharedPreferences(SHELF_STORE, Context.MODE_PRIVATE) }
+    var shelf by remember {
+        val saved = store.getString(key, null)
+            ?.split(",")
+            ?.mapNotNull(String::toIntOrNull)
+            .orEmpty()
+        mutableStateOf(
+            if (saved.size == facets + 1) {
+                Shelf(saved.dropLast(1), saved.last())
+            } else {
+                Shelf(List(facets) { 0 }, 0)
+            },
+        )
+    }
+    return shelf to { next: Shelf ->
+        shelf = next
+        store.edit().putString(key, (next.chosen + next.sort).joinToString(",")).apply()
+    }
+}
+
+/**
+ * Numista no da fecha de compra: `collected_items` trae id, cantidad, tipo, emisión, grado,
+ * precio y colección, y nada más. Lo único que ordena por antigüedad es el id de la pieza, que
+ * es creciente — o sea «orden de alta en Numista», no «compra». En el prototipo ese orden está
+ * simulado, y la pantalla lo dice cuando está puesto.
+ */
+private const val RECENCY_NOTE =
+    "Orden simulado: Numista no da fecha de compra. El dato real sería el id de la pieza, que " +
+        "es creciente, así que diría «alta más reciente» y no «comprada más tarde»."
+
 /**
  * Una faceta: un nombre y las opciones, cada una con el predicado que recorta la lista. Todas
  * las facetas se cruzan con Y; dentro de una faceta, la opción elegida sustituye a la anterior.
@@ -669,15 +719,19 @@ private fun <T> facetedCount(
 @Composable
 private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
     val facets = remember { plateFacets() }
-    var chosen by remember { mutableStateOf(List(facets.size) { 0 }) }
+    val sortings = remember { plateSortings() }
+    val (shelf, setShelf) = rememberShelf("colecciones", facets.size)
+    val chosen = shelf.chosen
     var query by remember { mutableStateOf("") }
     val needle = searchable(query)
     val platesByQuery = PROTO_PLATES.filter { plate ->
         needle.isBlank() || searchable(plate.family + " " + plate.issuer).contains(needle)
     }
-    val shown = platesByQuery.filter { plate ->
-        facets.indices.all { f -> chosen[f] == 0 || facets[f].options[chosen[f]].second(plate) }
-    }
+    val shown = platesByQuery
+        .filter { plate ->
+            facets.indices.all { f -> chosen[f] == 0 || facets[f].options[chosen[f]].second(plate) }
+        }
+        .sortedWith(sortings[shelf.sort].by)
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PAGE,
@@ -694,8 +748,13 @@ private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
                 noun = "colecciones",
                 query = query,
                 onQuery = { query = it },
-                onChoose = { f, option -> chosen = chosen.toMutableList().also { it[f] = option } },
-                onClear = { chosen = List(facets.size) { 0 } },
+                sortings = sortings,
+                sort = shelf.sort,
+                onSort = { setShelf(Shelf(chosen, it)) },
+                onChoose = { f, option ->
+                    setShelf(Shelf(chosen.toMutableList().also { it[f] = option }, shelf.sort))
+                },
+                onClear = { setShelf(Shelf(List(facets.size) { 0 }, shelf.sort)) },
             )
         }
         items(shown) { plate -> PlateCard(plate, actions = actions) }
@@ -755,7 +814,9 @@ private fun plateFacets(): List<Facet<ProtoPlate>> = listOf(
 @Composable
 private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable () -> Unit) {
     val facets = remember { pieceFacets() }
-    var chosen by remember { mutableStateOf(List(facets.size) { 0 }) }
+    val sortings = remember { pieceSortings() }
+    val (shelf, setShelf) = rememberShelf("monedas", facets.size)
+    val chosen = shelf.chosen
     var query by remember { mutableStateOf("") }
     val needle = searchable(query)
     val piecesByQuery = PROTO_PIECES.filter { piece ->
@@ -764,9 +825,11 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
                 piece.year + " " + piece.collections.joinToString(" "),
         ).contains(needle)
     }
-    val shown = piecesByQuery.filter { piece ->
-        facets.indices.all { f -> chosen[f] == 0 || facets[f].options[chosen[f]].second(piece) }
-    }
+    val shown = piecesByQuery
+        .filter { piece ->
+            facets.indices.all { f -> chosen[f] == 0 || facets[f].options[chosen[f]].second(piece) }
+        }
+        .sortedWith(sortings[shelf.sort].by)
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PAGE,
@@ -783,8 +846,13 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
                 noun = "tipos",
                 query = query,
                 onQuery = { query = it },
-                onChoose = { f, option -> chosen = chosen.toMutableList().also { it[f] = option } },
-                onClear = { chosen = List(facets.size) { 0 } },
+                sortings = sortings,
+                sort = shelf.sort,
+                onSort = { setShelf(Shelf(chosen, it)) },
+                onChoose = { f, option ->
+                    setShelf(Shelf(chosen.toMutableList().also { it[f] = option }, shelf.sort))
+                },
+                onClear = { setShelf(Shelf(List(facets.size) { 0 }, shelf.sort)) },
             )
         }
         items(shown) { piece ->
@@ -876,6 +944,37 @@ private fun pieceFacets(): List<Facet<ProtoPiece>> = listOf(
     ),
 )
 
+
+/**
+ * Los órdenes de las colecciones. El primero es el de hoy —alfabético por familia, `Proposals.kt`—
+ * y los demás son los que #17 echó en falta: el índice actual entierra las cuatro completas entre
+ * las quince de una sola casilla porque ordena sin mirar cobertura.
+ */
+private fun plateSortings(): List<Sorting<ProtoPlate>> = listOf(
+    Sorting("Alfabético") { a, b -> a.family.lowercase().compareTo(b.family.lowercase()) },
+    Sorting("Más completas") { a, b -> b.coverage().compareTo(a.coverage()) },
+    Sorting("Menos completas") { a, b -> a.coverage().compareTo(b.coverage()) },
+    Sorting("Más pesadas") { a, b -> (b.weightMillioz ?: 0).compareTo(a.weightMillioz ?: 0) },
+    Sorting("Más piezas") { a, b -> b.pieces.compareTo(a.pieces) },
+    Sorting("Alta más reciente") { a, b -> b.recency().compareTo(a.recency()) },
+)
+
+private fun ProtoPlate.coverage(): Double =
+    if (total == null || total == 0) -1.0 else (filled ?: 0).toDouble() / total
+
+/** Ver [RECENCY_NOTE]: simulado y estable, para que el orden no baile entre recomposiciones. */
+private fun ProtoPlate.recency(): Int = family.hashCode()
+
+private fun pieceSortings(): List<Sorting<ProtoPiece>> = listOf(
+    Sorting("Alfabético") { a, b -> a.title.lowercase().compareTo(b.title.lowercase()) },
+    Sorting("Más nuevas") { a, b -> (b.year ?: 0).compareTo(a.year ?: 0) },
+    Sorting("Más viejas") { a, b -> (a.year ?: 9999).compareTo(b.year ?: 9999) },
+    Sorting("Más pesadas") { a, b ->
+        (b.weightGrams ?: 0.0).compareTo(a.weightGrams ?: 0.0)
+    },
+    Sorting("Alta más reciente") { a, b -> b.typeId.compareTo(a.typeId) },
+)
+
 /**
  * La estantería de filtros: una fila de opciones por faceta, plegable, con el recuento de lo que
  * queda. Plegada dice cuántas facetas están puestas, porque una estantería abierta se come la
@@ -891,6 +990,9 @@ private fun <T> FacetShelf(
     noun: String,
     query: String,
     onQuery: (String) -> Unit,
+    sortings: List<Sorting<T>>,
+    sort: Int,
+    onSort: (Int) -> Unit,
     onChoose: (Int, Int) -> Unit,
     onClear: () -> Unit,
 ) {
@@ -912,11 +1014,13 @@ private fun <T> FacetShelf(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                // Plegada dice lo que hay puesto: cuántos filtros y por qué está ordenada. Un
+                // pliegue que esconde el estado obliga a abrirlo para saber qué estás viendo.
                 when {
-                    open -> "▾ Filtros"
-                    active == 0 -> "▸ Filtros"
-                    active == 1 -> "▸ Filtros · 1 puesto"
-                    else -> "▸ Filtros · $active puestos"
+                    open -> "▾ Filtros y orden"
+                    active == 0 -> "▸ Filtros · orden ${sortings[sort].name.lowercase()}"
+                    active == 1 -> "▸ 1 filtro · orden ${sortings[sort].name.lowercase()}"
+                    else -> "▸ $active filtros · orden ${sortings[sort].name.lowercase()}"
                 },
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.clickable { open = !open },
@@ -928,6 +1032,24 @@ private fun <T> FacetShelf(
             )
         }
         if (open) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Eyebrow("Orden")
+                sortings.indices.chunked(2).forEach { pair ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        pair.forEach { option ->
+                            Chip(sortings[option].name, option == sort) { onSort(option) }
+                        }
+                    }
+                }
+                if (sortings[sort].name == "Alta más reciente") {
+                    Text(
+                        RECENCY_NOTE,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Paper.rust,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                }
+            }
             facets.forEachIndexed { index, facet ->
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Eyebrow(facet.name)
