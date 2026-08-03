@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -62,3 +63,32 @@ jobs:
           path: |
             domain/build/reports/tests/
             app/build/reports/tests/
+
+  # Informativo, nunca bloqueante (#94 / #132): dice en voz alta qué catálogos abiertos
+  # se han quedado atrás. No corre en PR — un fork no tiene permiso de escritura de issues.
+  stale-catalogs:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Informe de catálogos abiertos por detrás
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          report=$(python3 scripts/stale-catalogs.py --sync)
+          status=$?
+          set -e
+          {
+            echo "### Catálogos abiertos por detrás"
+            echo ""
+            echo "$report"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then
+            echo "El informe falló (exit $status); el job de tests no se toca." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 0
