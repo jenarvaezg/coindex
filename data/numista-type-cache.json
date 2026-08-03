@@ -70483,6 +70483,119 @@
   },
   "weight": 17
  },
+ "583338": {
+  "id": 583338,
+  "url": "https://es.numista.com/583338",
+  "title": "3 Roubles (Tula State Museum of Arms)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2025-12-26"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "thickness": 3.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms are the chemical symbol and fineness of the metal on the left and fine metal content and the mint mark on the right, at the bottom centre in three lines are the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘3 РУБЛЯ’ (3 RUBLES), and the year of issue ‘2025 г.’ (2025).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 31,1\r\nСПМД\r\nБАНК РОССИИ\r\n3 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6a2039e17daad1.26029233-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6a2039e17daad1.26029233-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Alexey Vladimirovich Gnidin"
+   ],
+   "designers": [
+    "Alexey Vladimirovich Gnidin"
+   ],
+   "description": "(en) A relief image of the modern building of the Tula State Museum of Arms, the image of a backsword hilt and an ornament, laser treated for matte finishing, and the inscription ‘ТУЛЬСКИЙ ГОСУДАРСТВЕННЫЙ МУЗЕЙ ОРУЖИЯ’ (TULA STATE MUSEUM OF ARMS) around the upper circumference.",
+   "lettering": "ТУЛЬСКИЙ ГОСУДАРСТВЕННЫЙ МУЗЕЙ ОРУЖИЯ",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6a2039e2123fd6.89970413-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6a2039e2123fd6.89970413-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "commemorated_topic": "(en) Tula State Museum of Arms",
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "5111-0533"
+   }
+  ],
+  "weight": 33.94,
+  "orientation": "medal",
+  "edge": {
+   "description": "300 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "58596": {
   "category": "coin",
   "comments": "Esta moneda, un éxito entre los inversores de todo el mundo, ha sido ligeramente modificada por la Real Casa de la Moneda de Canadá para presentar un nuevo acabado formado por complejas líneas radiales y una marca micrograbada con láser para reducir las falsificaciones, que seguirá formando parte del diseño de esta moneda en el futuro.",
