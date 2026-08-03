@@ -177,9 +177,11 @@ class FieldReportTest {
         for (orphan in unclassified) {
             val item = orphan.item
             val meta = typeMeta[item.typeId]
+            val rows = if (orphan.rowCount > 1) " · ${orphan.rowCount} filas" else ""
             appendLine(
                 "· N#${item.typeId} ${item.title ?: meta?.title ?: "?"} " +
-                    "(${item.issuerCode ?: "?"}, ${item.recordedYear ?: "sin fecha"}) x${item.quantity}",
+                    "(${item.issuerCode ?: "?"}, ${item.recordedYear ?: "sin fecha"}) " +
+                    "x${orphan.quantity}$rows",
             )
             appendLine("    ${unclassifiedReasonLabel(orphan.reason)}")
             appendLine(

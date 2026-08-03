@@ -79,7 +79,7 @@ fun UnclassifiedScreen(
         }
         items(state.unclassified, key = { it.item.id }) { entry ->
             PieceCard(
-                item = entry.item,
+                item = entry.item.copy(quantity = entry.quantity),
                 title = pieceTitle(state, entry.item),
                 images = state.images[entry.item.typeId],
                 onOpenSource = onOpenSource,
