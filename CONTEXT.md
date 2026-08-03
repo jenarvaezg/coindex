@@ -66,7 +66,7 @@ _Avoid_: Numista family, unclassified reason
 A coin for which the curator has affirmed that a collection-catalog plate would not make
 sense — not merely one that currently lacks a catalog. The verdict is manual: after
 investigating the automatic unclassified residue, the curator records the Numista type and a
-prose reason in a curated repo asset. Absolute solitude is enough but not required; a real
+prose reason in `data/orphans.json`. Absolute solitude is enough but not required; a real
 sequence Coindex will never plate (for example ordinary euro circulation by country) can be
 an orphan too. Calendar solitude — a programme that may still grow, such as a lone Gothic
 Horror character — is not an orphan. The screen that lists rows `deriveCollection` could not

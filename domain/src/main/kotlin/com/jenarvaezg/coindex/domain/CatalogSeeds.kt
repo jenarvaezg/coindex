@@ -128,3 +128,25 @@ object GroupingSeeds {
         }
     }
 }
+
+/**
+ * Parses the curated orphans register (#133).
+ *
+ * Same strict JSON as the catalogs: a typo is a bug. Unlike catalogs and groupings, this
+ * file is editorial — it is not loaded into the app container — so structural failures surface
+ * in the suite rather than as a fatal startup crash. Cross-checks against catalog claims
+ * stay in the suite too ([orphanCatalogCollisions]).
+ */
+object OrphanSeeds {
+    fun parse(fileName: String, contents: String): CuratedOrphans {
+        val orphans = try {
+            strictJson.decodeFromString<CuratedOrphans>(contents)
+        } catch (error: IllegalArgumentException) {
+            throw CatalogSeedException("cannot parse seed $fileName: ${error.message}", error)
+        }
+        orphans.validate()?.let { invalid ->
+            throw CatalogSeedException("orphans seed $fileName is invalid: ${invalid.message}")
+        }
+        return orphans
+    }
+}

@@ -28,7 +28,7 @@ import com.jenarvaezg.coindex.ui.unclassifiedReasonLabel
  * Pieces that produced no proposal, each with the reason why.
  *
  * This screen lists the automatic unclassified residue — rows `deriveCollection` could not
- * place. It is not the orphan list: an orphan is a curator verdict recorded outside the app.
+ * place. It is not the orphan list: an orphan is a curator verdict in `data/orphans.json`.
  * Residues with no Numista family remain candidates for the next catalog or grouping.
  */
 @Composable
