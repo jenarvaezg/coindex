@@ -13,7 +13,9 @@ su **densidad**.
 
 | Captura | Qué enseña |
 | --- | --- |
-| [`b1-bifurcacion.png`](b1-bifurcacion.png) | Las dos puertas: Colecciones 58 · Monedas 572 |
+| [`b15-colecciones-barra.png`](b15-colecciones-barra.png) | **La forma final**: abre en Colecciones, barra inferior de dos destinos |
+| [`b16-monedas-barra.png`](b16-monedas-barra.png) | Monedas, a un toque desde la misma barra |
+| [`b1-bifurcacion.png`](b1-bifurcacion.png) | La bifurcación como casa, **descartada**: cobraba un toque por arranque |
 | [`b6-colecciones-plegado.png`](b6-colecciones-plegado.png) | Colecciones al entrar: buscador visible, filtros **plegados** |
 | [`b12-orden-completas.png`](b12-orden-completas.png) | La estantería abierta: orden + país, peso, año de inicio, estado, serie |
 | [`b13-orden-reciente.png`](b13-orden-reciente.png) | «Alta más reciente» y la nota de que Numista no da fecha de compra |

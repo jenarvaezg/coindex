@@ -402,8 +402,9 @@ fun PrototypeFirstLevel(modifier: Modifier = Modifier) {
         }
         Row(
             modifier = Modifier
+                // Por encima de la barra de destinos de B, que ahora ocupa el borde de abajo.
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 84.dp)
                 .background(Paper.ink)
                 .padding(horizontal = 8.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -476,95 +477,92 @@ private fun VariantA() {
 
 // ─── B · Dos jerarquías hermanas ──────────────────────────────────────────────────────────
 
-private enum class BranchB { Fork, Collections, Coins }
+private enum class BranchB { Collections, Coins }
 
+/**
+ * B, con lo decidido en la sesión: **se abre siempre en Colecciones**, y la barra de abajo lleva
+ * a Monedas y de vuelta. La pantalla de bifurcación se cae — cobraba un toque en cada arranque
+ * para elegir siempre lo mismo: el 100 % de lo que hace el padre empieza abriendo una lámina.
+ */
 @Composable
 private fun VariantB() {
-    var where by remember { mutableStateOf(BranchB.Fork) }
-    when (where) {
-        BranchB.Fork -> LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PAGE,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Eyebrow("Cuaderno de colección")
-                    Text("Coindex", style = MaterialTheme.typography.displayLarge)
-                    Text(
-                        "Dos maneras de entrar en lo mismo.",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Paper.muted,
-                    )
-                }
-            }
-            item {
-                DoorCard(
-                    eyebrow = "Por serie",
-                    title = "Colecciones",
-                    count = "${PROTO_PLATES.size}",
-                    lines = listOf(
-                        "33 con lámina curada · 25 propuestas sueltas",
-                        "4 completas · 15 con una sola casilla",
-                    ),
-                    onClick = { where = BranchB.Collections },
+    var where by remember { mutableStateOf(BranchB.Collections) }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.weight(1f)) {
+            when (where) {
+                BranchB.Collections -> PlatesList(
+                    actions = true,
+                    header = {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Eyebrow("Cuaderno de colección")
+                            Text("Colecciones", style = MaterialTheme.typography.displayLarge)
+                            Text(
+                                "${PROTO_PLATES.size} series derivadas de tus piezas.",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Paper.muted,
+                            )
+                        }
+                    },
                 )
-            }
-            item {
-                DoorCard(
-                    eyebrow = "Por pieza",
-                    title = "Monedas",
-                    count = "$PIECES",
-                    lines = listOf(
-                        "$TYPES tipos distintos · $PIECES piezas",
-                        "$UNCLASSIFIED sin colección · $MEDALS medallas y fichas",
-                    ),
-                    onClick = { where = BranchB.Coins },
+
+                BranchB.Coins -> CoinsList(
+                    onOpenCollection = { where = BranchB.Collections },
+                    header = {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Eyebrow("Cuaderno de colección")
+                            Text("Monedas", style = MaterialTheme.typography.displayLarge)
+                            Text(
+                                "$PIECES piezas · $TYPES tipos distintos.",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Paper.muted,
+                            )
+                        }
+                    },
                 )
-            }
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    PrimaryAction(text = "Sincronizar", onClick = {})
-                }
             }
         }
+        BottomBar(where) { where = it }
+    }
+}
 
-        BranchB.Collections -> PlatesList(
-            actions = true,
-            header = {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    LinkText(
-                        text = "← Coindex",
-                        style = MaterialTheme.typography.labelLarge,
-                        onClick = { where = BranchB.Fork },
-                    )
-                    Text("Colecciones", style = MaterialTheme.typography.displayLarge)
-                    Text(
-                        "${PROTO_PLATES.size} series derivadas de tus piezas.",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Paper.muted,
-                    )
-                }
-            },
-        )
+/** Los dos destinos del primer nivel, siempre a un toque. */
+@Composable
+private fun BottomBar(where: BranchB, onGo: (BranchB) -> Unit) {
+    Column {
+        HorizontalDivider(color = Paper.line)
+        Row(modifier = Modifier.fillMaxWidth().background(Paper.paperDeep)) {
+            BottomTab(
+                text = "Colecciones · ${PROTO_PLATES.size}",
+                selected = where == BranchB.Collections,
+                modifier = Modifier.weight(1f),
+            ) { onGo(BranchB.Collections) }
+            BottomTab(
+                text = "Monedas · $PIECES",
+                selected = where == BranchB.Coins,
+                modifier = Modifier.weight(1f),
+            ) { onGo(BranchB.Coins) }
+        }
+    }
+}
 
-        BranchB.Coins -> CoinsList(
-            onOpenCollection = { where = BranchB.Collections },
-            header = {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    LinkText(
-                        text = "← Coindex",
-                        style = MaterialTheme.typography.labelLarge,
-                        onClick = { where = BranchB.Fork },
-                    )
-                    Text("Monedas", style = MaterialTheme.typography.displayLarge)
-                    Text(
-                        "$PIECES piezas · $TYPES tipos distintos.",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Paper.muted,
-                    )
-                }
-            },
+@Composable
+private fun BottomTab(
+    text: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .background(if (selected) Paper.ink else Paper.paperDeep)
+            .clickable(onClick = onClick)
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge,
+            color = if (selected) Paper.paper else Paper.ink,
         )
     }
 }
@@ -1023,12 +1021,14 @@ private fun <T> FacetShelf(
                     else -> "▸ $active filtros · orden ${sortings[sort].name.lowercase()}"
                 },
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.clickable { open = !open },
+                // Con peso: el rótulo se parte antes que pisar al recuento de la derecha.
+                modifier = Modifier.weight(1f).clickable { open = !open },
             )
             Text(
                 if (shown == total) "$shown $noun" else "$shown de $total $noun",
                 style = MaterialTheme.typography.labelLarge,
                 color = if (active == 0) Paper.muted else Paper.rust,
+                modifier = Modifier.padding(start = 12.dp),
             )
         }
         if (open) {
