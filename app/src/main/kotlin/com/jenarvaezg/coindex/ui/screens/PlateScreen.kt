@@ -293,8 +293,8 @@ private fun PlateCell(
         } else {
             Text(albumMember.member.label, style = MaterialTheme.typography.titleMedium)
         }
-        // Only what tells this cell apart: in a date run the title is already the year and the
-        // type is the same one printed once in the specification above.
+        // Only what tells this cell apart, which is at most the year: in a date run the title is
+        // already it, and the type is reached by tapping the title right above.
         plateCellFootnote(albumMember.member, common)?.let { footnote ->
             Text(
                 footnote,

@@ -8,8 +8,9 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
  * The facts every member of a catalog shares, which therefore belong to the plate and not to
  * its cells.
  *
- * A date run repeats one Numista type across years and an issue run repeats the year as well, so
- * a footnote built from both said the same thing in twenty-one cells at once.
+ * An issue run repeats the year across its cells, so a footnote built from it said the same thing
+ * in twenty-one cells at once. The type is here for the same reason but is never handed back to a
+ * cell: it either heads the whole plate or it is not on the plate at all (see [plateCellFootnote]).
  */
 data class PlateCommonFacts(val numistaTypeId: Int?, val year: Int?)
 
@@ -25,21 +26,23 @@ fun plateCommonFacts(members: List<CollectionCatalogMember>): PlateCommonFacts {
 
 /**
  * What one cell has left to say under its own title: the year, unless the title is already the
- * year or every cell shares it, and the Numista type, unless the whole plate is one type.
+ * year or every cell shares it.
  *
- * Null when nothing is left, which is the common case of a date run.
+ * Null when nothing is left, which is the common case of any catalog whose cells are titled with
+ * their year.
+ *
+ * The Numista type is deliberately absent (issue #88). Lifting it only when every cell agreed left
+ * it in the cells of the forty-three catalogs whose cells do not: twenty-one repetitions of one
+ * identifier in the fuertes, and a hundred and twenty-one distinct ones — no norm, so no exception
+ * to annotate — in the Russian personalities. A type identifier is not what a plate says under a
+ * coin: on screen the cell title already links to its Numista page, and the exported sheet is a
+ * picture the collection is shown with. Where the type does belong is the plate's own
+ * specification, and only when the whole plate is that type — see [plateEntries].
  */
 fun plateCellFootnote(member: CollectionCatalogMember, common: PlateCommonFacts): String? {
-    val parts = buildList {
-        val year = member.year
-        if (common.year == null && year != null && member.label != year.toString()) {
-            add(year.toString())
-        }
-        if (common.numistaTypeId == null) {
-            member.numistaTypeId?.let { typeId -> add("Numista $typeId") }
-        }
-    }
-    return parts.joinToString(" · ").ifEmpty { null }
+    val year = member.year ?: return null
+    if (common.year != null || member.label == year.toString()) return null
+    return year.toString()
 }
 
 /**
