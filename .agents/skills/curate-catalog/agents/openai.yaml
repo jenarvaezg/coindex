@@ -1,0 +1,4 @@
+interface:
+  display_name: "Curate Catalog"
+  short_description: "Cura una secuencia de monedas como catálogo versionado"
+  default_prompt: "Use $curate-catalog to decide whether this coin sequence is a catalog, an agrupación or a huérfana, enumerate and verify its members against numista.com, version the file, seed the type cache, and report the lámina fraction measured for both collections."

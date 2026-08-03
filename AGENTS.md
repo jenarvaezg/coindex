@@ -11,3 +11,7 @@ Uses the canonical `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-h
 ### Domain docs
 
 This is a single-context repository. See `docs/agents/domain.md`.
+
+### Curating catalogs
+
+Turning a coin sequence into a versioned catalog under `data/` is the `curate-catalog` project skill (`.agents/skills/curate-catalog/`). Preparing a correction for Numista itself is `numista-draft`.
