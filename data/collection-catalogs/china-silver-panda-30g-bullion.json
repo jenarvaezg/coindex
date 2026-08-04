@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
   "id": "china-silver-panda-30g-bullion",
-  "name": "Panda de plata · China · 30 g bullion anual desde 2016 (sin proof de colección separada ni conmemorativas de banco/expo)",
+  "name": "Panda de plata 30 g · China · bullion anual desde 2016 (sin proof de colección separada ni conmemorativas de banco/expo)",
+  "short_name": "Panda de plata 30 g",
   "issuer_code": "chine",
   "family": "Panda de plata 30 g bullion anual",
   "weight_millioz": 965,

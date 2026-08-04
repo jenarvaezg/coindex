@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "venezuela-2-bolivares",
   "name": "2 Bolívares · Venezuela · plata 10 g",
+  "short_name": "2 Bolívares",
   "issuer_code": "venezuela",
   "family": "2 Bolívares de Venezuela",
   "weight_millioz": 322,

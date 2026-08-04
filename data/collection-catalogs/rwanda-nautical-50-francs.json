@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "rwanda-nautical-50-francs",
-  "name": "Rwanda Nautical Ounce · 50 francos",
+  "name": "Nautical Ounce de Ruanda · 50 francos de plata",
+  "short_name": "Nautical Ounce de Ruanda",
   "issuer_code": "rwanda",
   "family": "Nautical Ounce",
   "weight_millioz": 1000,

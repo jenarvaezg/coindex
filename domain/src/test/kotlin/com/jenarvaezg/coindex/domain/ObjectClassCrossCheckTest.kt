@@ -21,6 +21,7 @@ class ObjectClassCrossCheckTest {
         schemaVersion = 2,
         id = "venezuela-fuertes",
         name = "Fuertes de Venezuela",
+        shortName = "Fuertes de Venezuela",
         issuerCode = "venezuela",
         family = "Fuertes de Venezuela",
         weightMillioz = 804,

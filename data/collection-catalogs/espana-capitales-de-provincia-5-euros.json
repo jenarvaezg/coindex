@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "espana-capitales-de-provincia-5-euros",
-  "name": "Capitales de Provincia y Ciudades Autónomas · España · 5 € de plata",
+  "name": "Capitales de provincia y ciudades autónomas · España · 5 € de plata",
+  "short_name": "Capitales de provincia",
   "issuer_code": "espagne",
   "family": "Capitales de provincia y ciudades autónomas",
   "weight_millioz": 434,

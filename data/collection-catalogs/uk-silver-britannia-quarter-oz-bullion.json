@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
   "id": "uk-silver-britannia-quarter-oz-bullion",
-  "name": "Silver Britannia · Reino Unido · ¼ oz .999 bullion (años con emisión bullion verificada; sin proof ni Gairsoppa; 2023 parte Elizabeth/Charles)",
+  "name": "Silver Britannia ¼ oz · Reino Unido · .999 bullion (años con emisión bullion verificada; sin proof ni Gairsoppa; 2023 parte Elizabeth/Charles)",
+  "short_name": "Silver Britannia ¼ oz",
   "issuer_code": "royaume-uni",
   "family": "Silver Britannia ¼ oz bullion",
   "weight_millioz": 250,

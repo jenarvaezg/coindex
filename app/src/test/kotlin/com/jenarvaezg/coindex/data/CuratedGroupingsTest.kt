@@ -114,7 +114,8 @@ class CuratedGroupingsTest {
         {
           "schema_version": 1,
           "id": "$id",
-          "name": "Prueba",
+          "name": "Prueba $id",
+          "short_name": "Prueba $id",
           "family": "$family",
           "issuer_code": "espagne",
           "source": "https://en.numista.com/catalogue/pieces1885.html",

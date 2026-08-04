@@ -57,6 +57,12 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     /** Curated catalogs shipped with the app; constant for the process lifetime. */
     val catalogs get() = container.repository.catalogs
 
+    /**
+     * The card-sized name of every curated collection (#22). The plate keeps the long [name] —
+     * defining the editorial scope is its job — so this is the index's, and the ficha's.
+     */
+    val titles get() = container.repository.titles
+
     /** The name of one curated catalog, for the masthead of its plate. */
     fun catalogName(catalogId: String?): String? =
         catalogs.firstOrNull { it.id == catalogId }?.name

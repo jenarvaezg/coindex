@@ -1,7 +1,8 @@
 {
   "schema_version": 5,
   "id": "espana-paquillos",
-  "name": "Paquillos · 100 pesetas de Franco",
+  "name": "Paquillos · España · 100 pesetas de Franco",
+  "short_name": "Paquillos",
   "issuer_code": "espagne",
   "family": "100 Pesetas de Franco",
   "weight_millioz": 611,

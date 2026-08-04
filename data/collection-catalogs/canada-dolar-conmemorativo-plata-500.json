@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "canada-dolar-conmemorativo-plata-500",
   "name": "Dólar conmemorativo de plata .500 · Canadá 1971-1991",
+  "short_name": "Dólar conmemorativo de plata .500",
   "issuer_code": "canada",
   "family": "Dólar conmemorativo de plata .500 de Canadá",
   "weight_millioz": 750,

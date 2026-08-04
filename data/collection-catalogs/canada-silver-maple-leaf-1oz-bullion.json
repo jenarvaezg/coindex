@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "canada-silver-maple-leaf-1oz-bullion",
   "name": "Silver Maple Leaf · Canadá · 1 oz bullion anual desde 1988 (sin proof, reverse proof, incuse, doradas ni aniversario; el privy del mismo tipo rellena el año)",
+  "short_name": "Silver Maple Leaf",
   "issuer_code": "canada",
   "family": "Silver Maple Leaf bullion anual",
   "weight_millioz": 1000,

@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "spain-face-value-18g",
   "name": "Plata a valor facial · España · 18 g",
+  "short_name": "Plata a valor facial",
   "issuer_code": "espagne",
   "family": "Serie de monedas de plata obtenidas a valor facial",
   "weight_millioz": 579,

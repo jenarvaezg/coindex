@@ -7,6 +7,7 @@ import com.jenarvaezg.coindex.data.CredentialStore
 import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
 import com.jenarvaezg.coindex.data.seed.GroupingAssets
@@ -34,11 +35,12 @@ class AppContainer(context: Context) {
     val syncLog: SyncLog by lazy { SyncLog(applicationContext) }
 
     val repository: CoindexRepository by lazy {
-        CoindexRepository(
-            database = database,
-            catalogs = CatalogAssets.load(applicationContext.assets),
-            groupings = GroupingAssets.load(applicationContext.assets),
-        )
+        val catalogs = CatalogAssets.load(applicationContext.assets)
+        val groupings = GroupingAssets.load(applicationContext.assets)
+        // The index draws both species side by side and indistinguishably (#12), so a card name
+        // repeated across them is only visible here, where both are loaded (#22).
+        validateShortNamesAcross(catalogs, groupings)
+        CoindexRepository(database = database, catalogs = catalogs, groupings = groupings)
     }
 
     val typeCacheSeed: TypeCacheSeed by lazy {

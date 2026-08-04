@@ -18,6 +18,7 @@ class MetalCrossCheckTest {
         schemaVersion = 1,
         id = "australian-kookaburra-perth-1oz",
         name = "Kookaburra",
+        shortName = "Kookaburra",
         issuerCode = "australie",
         family = "Australian Kookaburra",
         weightMillioz = 1_000,

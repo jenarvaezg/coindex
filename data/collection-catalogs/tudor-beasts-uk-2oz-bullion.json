@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "tudor-beasts-uk-2oz-bullion",
-  "name": "The Royal Tudor Beasts · Reino Unido · 2 oz bullion",
+  "name": "The Royal Tudor Beasts 2 oz · Reino Unido · bullion",
+  "short_name": "The Royal Tudor Beasts 2 oz",
   "issuer_code": "royaume-uni",
   "family": "The Royal Tudor Beasts",
   "weight_millioz": 2000,

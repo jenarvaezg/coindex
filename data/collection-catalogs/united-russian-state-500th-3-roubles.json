@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "united-russian-state-500th-3-roubles",
-  "name": "500 años del Estado Ruso Unificado · 3 rublos",
+  "name": "500 años del Estado ruso unificado · 3 rublos",
+  "short_name": "500 años del Estado ruso unificado",
   "issuer_code": "ancienne_urss",
   "family": "500th Anniversary of the United Russian State",
   "weight_millioz": 1111,

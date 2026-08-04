@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionProposal
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
+import com.jenarvaezg.coindex.domain.CollectionTitles
 import com.jenarvaezg.coindex.domain.CuratedGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.ProposalDisposition
@@ -72,6 +73,9 @@ class CoindexRepository(
     val catalogs: List<CollectionCatalog>,
     val groupings: List<CuratedGrouping> = emptyList(),
 ) {
+    /** What each collection is called on a card (#22). Constant for the process lifetime. */
+    val titles: CollectionTitles = CollectionTitles(catalogs, groupings)
+
     fun observeState(): Flow<CollectionState> = combine(
         database.collectedItems().observeAll(),
         database.typeMeta().observeAll(),

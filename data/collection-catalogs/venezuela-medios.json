@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "venezuela-medios",
   "name": "Medios · Venezuela · plata 1,25 g",
+  "short_name": "Medios",
   "issuer_code": "venezuela",
   "family": "Medios de Venezuela",
   "weight_millioz": 40,

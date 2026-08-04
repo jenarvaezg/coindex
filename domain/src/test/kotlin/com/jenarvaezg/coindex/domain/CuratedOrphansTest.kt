@@ -45,6 +45,7 @@ class CuratedOrphansTest {
                 schemaVersion = 1,
                 id = "prueba",
                 name = "Prueba",
+                shortName = "Prueba",
                 issuerCode = "espagne",
                 family = "Prueba",
                 weightMillioz = 1_000,

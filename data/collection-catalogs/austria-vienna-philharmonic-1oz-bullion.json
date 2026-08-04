@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "austria-vienna-philharmonic-1oz-bullion",
   "name": "Vienna Philharmonic · Austria · 1 oz bullion anual desde 2008",
+  "short_name": "Vienna Philharmonic",
   "issuer_code": "autriche",
   "family": "Vienna Philharmonic bullion anual",
   "weight_millioz": 1000,

@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "rwanda-lunar-50-francs",
-  "name": "Rwanda Lunar Ounce · 50 francos",
+  "name": "Lunar Ounce de Ruanda · 50 francos de plata",
+  "short_name": "Lunar Ounce de Ruanda",
   "issuer_code": "rwanda",
   "family": "Lunar ounce",
   "weight_millioz": 1000,

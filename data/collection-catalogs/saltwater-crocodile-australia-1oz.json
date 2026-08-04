@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "saltwater-crocodile-australia-1oz",
-  "name": "Australian Saltwater Crocodile · 1 oz",
+  "name": "Australian Saltwater Crocodile · Australia · 1 oz de plata",
+  "short_name": "Australian Saltwater Crocodile",
   "issuer_code": "australie",
   "family": "Australian Saltwater Crocodile",
   "weight_millioz": 1000,

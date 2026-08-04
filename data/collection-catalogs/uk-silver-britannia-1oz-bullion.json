@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
   "id": "uk-silver-britannia-1oz-bullion",
-  "name": "Silver Britannia · Reino Unido · 1 oz .999 bullion anual desde 2013 (sin proof, BU de campos lisos, Oriental Border ni Coronation; el privy del mismo tipo rellena el año; 2023 parte Elizabeth/Charles)",
+  "name": "Silver Britannia 1 oz .999 · Reino Unido · bullion anual desde 2013 (sin proof, BU de campos lisos, Oriental Border ni Coronation; el privy del mismo tipo rellena el año; 2023 parte Elizabeth/Charles)",
+  "short_name": "Silver Britannia 1 oz .999",
   "issuer_code": "royaume-uni",
   "family": "Silver Britannia .999 bullion anual",
   "weight_millioz": 1000,

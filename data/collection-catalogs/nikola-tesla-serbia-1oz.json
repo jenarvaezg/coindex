@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "nikola-tesla-serbia-1oz",
-  "name": "Nikola Tesla · Serbia · 1 oz",
+  "name": "Nikola Tesla · Serbia · 1 oz de plata",
+  "short_name": "Nikola Tesla",
   "issuer_code": "serbie",
   "family": "Nikola Tesla",
   "weight_millioz": 1000,

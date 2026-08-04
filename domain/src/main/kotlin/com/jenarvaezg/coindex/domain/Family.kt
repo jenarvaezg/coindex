@@ -19,23 +19,20 @@ fun isTechnicalFamily(family: String): Boolean {
 }
 
 /**
- * Presentation-only alias for a resolved proposal family. Never enters the proposal variant
- * key, grouping or persisted dispositions.
+ * What a family reads as when no curated file names the collection.
+ *
+ * The six editorial aliases this used to hold died with #22: five belonged to families with a
+ * catalog, and their text now lives in that file's `short_name`; the sixth, `SML`, was
+ * unreachable — its six types all sit inside the maple leaf catalog, which declares another
+ * family, and by ADR 0016 the catalog rules. What remains is not an alias but the formatting of
+ * a generated string: a technical monetary system reaches the collector only this way (ADR 0012).
+ *
+ * Everything else is printed verbatim, in whatever language Numista wrote it. An ugly card name
+ * is the visible debt of a collection nobody has curated yet, and hiding it behind a prettier
+ * string in code would hide the work instead of doing it.
  */
 fun collectionProposalFamilyLabel(family: String): String = when {
     isTechnicalFamily(family) ->
         "Sistema monetario ${family.removePrefix("System ")}"
-    else -> curatedFamilyLabel(family)
-}
-
-private fun curatedFamilyLabel(family: String): String = when (family) {
-    "SML" -> "Silver Maple Leaf"
-    // The collector calls them paquillos; the key stays the coin's catalog name.
-    "100 Pesetas de Franco" -> "Paquillos · 100 pesetas de Franco"
-    "Red Data Book" -> "Libro Rojo de Rusia"
-    "Serie de monedas de plata obtenidas a valor facial" ->
-        "Monedas españolas de plata a valor facial"
-    "Lunar ounce" -> "Rwanda Lunar Ounce"
-    "Nautical Ounce" -> "Rwanda Nautical Ounce"
     else -> family
 }

@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "architectural-monuments-russia-3-roubles",
   "name": "Monumentos arquitectónicos de Rusia · 3 rublos",
+  "short_name": "Monumentos arquitectónicos de Rusia",
   "issuer_code": "russie",
   "family": "Architectural Monuments of Russia",
   "weight_millioz": 1121,

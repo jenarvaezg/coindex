@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "canada-dolar-plata-800",
   "name": "Dólar de plata .800 · Canadá 1935-1967",
+  "short_name": "Dólar de plata .800",
   "issuer_code": "canada",
   "family": "Dólar de plata .800 de Canadá",
   "weight_millioz": 750,
