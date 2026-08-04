@@ -62,7 +62,11 @@ class NotebookPagesTest {
                 footnote = member.year?.toString(),
                 diameterMm = member.numistaTypeId
                     ?.let { typeMeta[it]?.sizeMillimetres?.toFloat() },
-                reverse = CoinPhoto(thumbnail = "https://example.invalid/$member.jpg"),
+                // Thumbnail and original, as a cached type has: what is warmed is the first.
+                reverse = CoinPhoto(
+                    thumbnail = "https://numista.invalid/${member.id}-180.jpg",
+                    picture = "https://numista.invalid/${member.id}-original.jpg",
+                ),
                 filled = false,
             )
         },
@@ -135,6 +139,42 @@ class NotebookPagesTest {
             kookaburra.all { it.blockWidthMm == it.section.grid.blockWidthMm },
             "una fila corta ha movido el bloque de una lámina que se continúa",
         )
+    }
+
+    /**
+     * The photographs the notebook has to fetch, once each.
+     *
+     * This list is the fix for an export that came out with 64 photographs out of some 600: asked
+     * page by page, a picture got one page's budget and no second chance. Two properties make it
+     * work — **deduplicated**, because a type shows up on several pages, and **the thumbnail only**,
+     * because the original behind it is a fallback and warming both would double the requests.
+     */
+    @Test
+    fun `the photographs to warm are the thumbnails, each one once`() {
+        val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
+        val pages = printPages(listOf(section(kookaburra)))
+
+        val urls = notebookPhotographs(pages)
+
+        // One per cell, and the four pages of the plate do not ask for anything four times over.
+        assertEquals(kookaburra.members.size, urls.size)
+        assertEquals(urls.size, urls.distinct().size)
+        assertTrue(urls.all { it.startsWith("https://numista.invalid/") }, "no son las miniaturas")
+
+        // The same coin on two pages of two cards is one photograph to fetch.
+        val repeated = section(kookaburra).let { plate ->
+            plate.copy(cells = plate.cells.take(1) + plate.cells.take(1))
+        }
+        assertEquals(1, notebookPhotographs(printPages(listOf(repeated))).size)
+    }
+
+    @Test
+    fun `a cell with no picture asks for nothing`() {
+        val bare = section(catalogs.first()).let { plate ->
+            plate.copy(cells = plate.cells.map { it.copy(reverse = null) })
+        }
+
+        assertEquals(emptyList(), notebookPhotographs(printPages(listOf(bare))))
     }
 
     @Test
