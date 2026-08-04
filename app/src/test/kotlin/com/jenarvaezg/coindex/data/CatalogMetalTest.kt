@@ -50,7 +50,7 @@ class CatalogMetalTest {
     @Test
     fun `every catalog that is not a set declares silver today`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(49, declared.size)
+        assertEquals(50, declared.size)
         assertEquals(emptyList(), declared.filterNot { (_, metal) -> metal == Metal.Silver })
         // Los dos conjuntos no declaran variante física de ninguna clase (ADR 0012). El metal no
         // es lo que los parte —el venezolano de 1975 es plata .925 en sus dos miembros—, pero sin

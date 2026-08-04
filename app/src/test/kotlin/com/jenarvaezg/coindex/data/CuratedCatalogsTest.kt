@@ -32,7 +32,7 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(51, catalogs.size)
+        assertEquals(52, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
@@ -48,7 +48,7 @@ class CuratedCatalogsTest {
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
         assertEquals(22, closed.size)
-        assertEquals(29, catalogs.count { it.seriesStatus == SeriesStatus.Open })
+        assertEquals(30, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -1393,6 +1393,47 @@ class CuratedCatalogsTest {
             592_033, // 2026 coloured
         )
         assertTrue(koala.members.none { it.numistaTypeId in excludedTypes })
+    }
+
+    /**
+     * El Koala de la Royal Australian Mint (#152): tres tipos que la lámina de Perth ya excluía
+     * uno a uno y que son un programa propio. La ceca anuncia el de 2026 como «a third release …
+     * follows the success of the 2025 Koala Series», así que 2024 es la primera entrega y no una
+     * huérfana —el censo de #120 la había puesto en la caja 1 porque Numista no le da serie.
+     *
+     * La serie 10445 sostiene los dos catálogos a la vez, que es justo lo que dice el ADR 0020:
+     * la serie propone y sólo el fichero afirma cobertura. Cada tipo trae una sola emisión BU,
+     * así que ninguna casilla necesita cualificador de emisión.
+     */
+    @Test
+    fun `the ram koala catalog is the other mint's annual bullion run`() {
+        val koala = find("australian-koala-ram-1oz")
+        assertEquals("Koala del RAM · Royal Australian Mint · 1 oz de plata bullion anual", koala.name)
+        assertEquals(1_000, koala.weightMillioz)
+        assertEquals(Finish.Bullion, koala.finish)
+        assertEquals(Metal.Silver, koala.metal)
+        assertEquals(SeriesStatus.Open, koala.seriesStatus)
+        assertEquals(
+            listOf(2024 to 398_192, 2025 to 476_400, 2026 to 557_132),
+            koala.members.map { member -> member.year to member.numistaTypeId },
+        )
+        assertTrue(koala.members.all { it.numistaIssueIds.isEmpty() })
+
+        // La misma serie de Numista que el Koala de Perth, y sin un solo tipo en común.
+        val perth = find("australian-koala-perth-1oz")
+        assertEquals(perth.source, koala.source)
+        assertTrue(koala.members.none { member -> member.numistaTypeId in perth.members.map { it.numistaTypeId } })
+
+        // Las otras tres monedas de cada entrega son otra variante física, otra lámina.
+        val otherVariants = listOf(
+            400_931, // 2024 · 5 dólares plata proof alto relieve
+            400_939, // 2024 · 100 dólares oro bullion
+            467_387, // 2025 · 5 dólares plata proof
+            509_567, // 2025 · 100 dólares oro
+            464_499, // 2025 · 50 céntimos
+            555_879, // 2026 · 50 céntimos
+        )
+        assertTrue(koala.members.none { it.numistaTypeId in otherVariants })
     }
 
     /**

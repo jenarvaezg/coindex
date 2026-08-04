@@ -49806,6 +49806,110 @@
   },
   "weight": 31.1035
  },
+ "398192": {
+  "id": 398192,
+  "url": "https://es.numista.com/398192",
+  "title": "1 Dollar - Elizabeth II (6th Portrait; In the name of - Koala - Silver Bullion)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Jody Clark"
+   ],
+   "description": "Sexto retrato coronado de la reina Isabel II mirando hacia la derecha, con la diadema de Estado de Jorge IV y el collar de la Coronación Victoriana, Anverso conmemorativo.",
+   "lettering": "ELIZABETH II 1952-2022\r\nAUSTRALIA 2024\r\n1 DOLLAR\r\nJC",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/65bd434619ff58.83259874-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/65bd434619ff58.83259874-180.jpg",
+   "picture_copyright": "Royal Australian Mint",
+   "picture_copyright_url": "http://www.ramint.gov.au"
+  },
+  "reverse": {
+   "description": "Koala en el tronco de un árbol.",
+   "lettering": "KOALA\r\nBS\r\n1 oz .999 Ag",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/65bd4346a165b4.49215809-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/65bd4346a165b4.49215809-180.jpg",
+   "picture_copyright": "Royal Australian Mint",
+   "picture_copyright_url": "http://www.ramint.gov.au"
+  },
+  "series": "Australian Koala",
+  "commemorated_topic": "Koala",
+  "tags": [
+   "Marsupial",
+   "Árbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "4735"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 28,
+    "name": "Royal Australian Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "398310": {
   "category": "coin",
   "comments": "<p>Fecha de emisión: 01 FEB 2024</p>",
@@ -63377,6 +63481,127 @@
    "text": "3 Roubles"
   },
   "weight": 34.56
+ },
+ "476400": {
+  "id": 476400,
+  "url": "https://es.numista.com/476400",
+  "title": "1 Dollar - Charles III (1st Portrait - Koala - Silver Bullion)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Dan Thorne"
+   ],
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda.",
+   "lettering": "CHARLES III\r\nAUSTRALIA 2025\r\n1 DOLLAR\r\nDT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6873ba661536e8.45085697-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6873ba661536e8.45085697-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "designers": [
+    "Adam Ball"
+   ],
+   "description": "Un koala y Joey abrazados en la rama de un eucalipto.",
+   "lettering": "KOALA\r\nAWB\r\n1 oz .999 Ag",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6873ba66eee5c2.00636225-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6873ba66eee5c2.00636225-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "series": "Australian Koala",
+  "commemorated_topic": "Koala",
+  "related_types": [
+   {
+    "id": 464499,
+    "title": "50 Cents - Charles III (1st Portrait - Koala)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2025,
+    "maxYear": 2025
+   },
+   {
+    "id": 467387,
+    "title": "5 Dollars - Charles III (1st Portrait - Koala; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "australie",
+     "name": "Australia"
+    },
+    "minYear": 2025,
+    "maxYear": 2025
+   }
+  ],
+  "tags": [
+   "Marsupial"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 28,
+    "name": "Royal Australian Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "476689": {
   "category": "coin",

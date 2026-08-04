@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "australian-koala-ram-1oz",
+  "name": "Koala del RAM · Royal Australian Mint · 1 oz de plata bullion anual",
+  "short_name": "Koala del RAM",
+  "issuer_code": "australie",
+  "family": "Koala del RAM bullion anual",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/series.php?id=10445",
+  "source_note": "La serie 10445 de Numista mezcla las dos cecas que acuñan koalas australianos: la Perth Mint desde 2007 (`australian-koala-perth-1oz`) y la Royal Australian Mint desde 2024. La frontera de este catálogo la dibuja el programa del RAM, no la serie: la ceca anuncia la entrega de 2026 como «a third release … follows the success of the 2025 Koala Series», así que son tres entregas anuales y la de 2024 es la primera. Cada entrega saca cuatro monedas del mismo diseño —$1 plata 1 oz BU, $100 oro 1 oz BU, $5 plata 1 oz proof en alto relieve y 50c sin circular—; este fichero es solo la de inversión de plata, porque lo que separa una lámina de otra es la variante física. https://www.ramint.gov.au/about-us/whats-new/koala-returns-introducing-2026-koala-series",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "id": "2024-koala-ram",
+      "label": "Koala del RAM",
+      "year": 2024,
+      "numista_type_id": 398192
+    },
+    {
+      "id": "2025-koala-ram",
+      "label": "Koala del RAM",
+      "year": 2025,
+      "numista_type_id": 476400
+    },
+    {
+      "id": "2026-koala-ram",
+      "label": "Koala del RAM",
+      "year": 2026,
+      "numista_type_id": 557132
+    }
+  ]
+}
