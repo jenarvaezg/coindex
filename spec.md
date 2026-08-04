@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 51 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 52 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -222,11 +222,11 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 **Lo versionado**, medido sobre `data/`:
 
-- **51 catálogos** con 1.046 miembros: 29 abiertos y 22 cerrados. Por versión de esquema, 26
+- **52 catálogos** con 1.049 miembros: 30 abiertos y 22 cerrados. Por versión de esquema, 27
   simples, 22 date runs, 2 conjuntos y 1 issue run.
 - **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint y el dólar de plata clásico de EE. UU.
-- **804 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **806 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
 - **5 veredictos en `data/orphans.json`**, firmados por
