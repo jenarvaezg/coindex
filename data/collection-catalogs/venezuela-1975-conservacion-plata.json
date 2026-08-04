@@ -1,0 +1,25 @@
+{
+  "schema_version": 3,
+  "id": "venezuela-1975-conservacion-plata",
+  "name": "Conservación de la Naturaleza · Venezuela 1975 · estuche de dos monedas de plata .925",
+  "issuer_code": "venezuela",
+  "family": "Estuche de plata de la Conservación de la Naturaleza de 1975",
+  "series_status": "closed",
+  "closed_note": "El estuche que la Royal Mint acuñó para el Banco Central de Venezuela trae dos monedas y solo dos —el jaguar de 25 bolívares (28,28 g) y el cachicamo gigante de 50 bolívares (35 g), plata .925 las dos—, vendidas juntas en caja con certificado y sin más entregas ni otro año. El programa de conservación que aprobó el Directorio del BCV sí tuvo una tercera moneda, el Gallito de las Rocas de 1000 bolívares en oro .900 de 33,437 g (N#59793, verificado en numista.com, misma resolución publicada en Gaceta Oficial 30.910 del 02-02-76): se vendió aparte, no viene en este estuche y queda fuera del denominador a propósito. https://britanniacoincompany.com/buy-coins/coin-sets/1975-venezuela-silver-set/ y https://www.monedasdevenezuela.com/conmemorativa/el-jaguar-el-cachicamo-y-el-gallito-de-las-rocas/",
+  "source": "https://en.numista.com/catalogue/pieces37246.html",
+  "updated_at": "2026-08-03",
+  "members": [
+    {
+      "id": "25-bolivares-jaguar",
+      "label": "25 bolívares · jaguar · 28,28 g",
+      "year": 1975,
+      "numista_type_id": 37246
+    },
+    {
+      "id": "50-bolivares-cachicamo",
+      "label": "50 bolívares · cachicamo gigante · 35 g",
+      "year": 1975,
+      "numista_type_id": 37247
+    }
+  ]
+}

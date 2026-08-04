@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 49 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 51 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -58,17 +58,19 @@
      se emitieron juntos es una afirmación más específica que la agrupación de Numista.
      Criterio estrecho a propósito: **solo** conjuntos emitidos como un producto. El bullion
      fraccional no es un conjunto (¼ oz y 1 oz son la misma moneda en dos tamaños y siguen
-     siendo propuestas separadas, como ya hacen Tudor Beasts y Lunar II). Primer conjunto
-     vivo: `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
-     7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres).
+     siendo propuestas separadas, como ya hacen Tudor Beasts y Lunar II). Los dos vivos:
+     `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
+     7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres) y
+     `venezuela-1975-conservacion-plata.json` (el estuche de dos monedas de la Royal Mint para
+     el Banco Central de Venezuela, 28,28 g y 35 g).
    - `schema_version: 5` (**issue runs**, ADR 0014): los miembros son emisiones de un mismo
      tipo que comparten año y se distinguen por variedad, identificadas por
      `numista_issue_ids`. Un catálogo simple o un date run puede **cualificar** una casilla
      con ese mismo campo sin ser un issue run (ADR 0019). Único vivo: los paquillos de 100
      pesetas de Franco.
-2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 802 tipos
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 804 tipos
    (respuestas íntegras de `GET /types/{id}?lang=es`), empaquetado como seed de la tabla de
-   caché para que ningún usuario gaste esas llamadas. Cubre los **716** tipos referenciados por
+   caché para que ningún usuario gaste esas llamadas. Cubre los **720** tipos referenciados por
    los catálogos, así que las láminas muestran todos los diseños (incluidos los «me falta») sin
    tocar el presupuesto. Sembrar es parte de curar: `scripts/seed-type-cache.py` omite lo ya
    cacheado y dice el coste con `--dry-run`, y `TypeCacheSeedTest` se pone rojo con la lista de
@@ -189,15 +191,25 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 **Lo versionado**, medido sobre `data/`:
 
-- **49 catálogos** con 1.041 miembros: 28 abiertos y 21 cerrados. Por versión de esquema, 26
-  simples, 21 date runs, 1 conjunto y 1 issue run.
+- **51 catálogos** con 1.046 miembros: 29 abiertos y 22 cerrados. Por versión de esquema, 26
+  simples, 22 date runs, 2 conjuntos y 1 issue run.
 - **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint y el dólar de plata clásico de EE. UU.
-- **802 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **804 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
-- **`data/orphans.json` vacío**. El fichero existe desde
-  [#133](https://github.com/jenarvaezg/coindex/issues/133) y arranca sin un solo veredicto.
+- **5 veredictos en `data/orphans.json`**, firmados por
+  [#146](https://github.com/jenarvaezg/coindex/issues/146): el Kennedy Half Dollar, las dos
+  romanas, la medalla alemana de 2002 y el Pillar Dollar de 2025. El fichero existe desde
+  [#133](https://github.com/jenarvaezg/coindex/issues/133) y es registro editorial: no alimenta
+  propuestas ni la pantalla, así que firmar un veredicto **no baja** el número de «Sin
+  clasificar» que ve el coleccionista.
+
+El segundo conjunto (`schema_version: 3`) es el estuche venezolano de 1975, y llegó por donde no
+había señal: 28,28 g y 35 g no comparten clave de variante ni la compartirán nunca, así que
+**ninguna propuesta de colección podía sugerirlo jamás** y fue precisamente su ausencia la que
+delató el conjunto. La lámina afirma el estuche de plata de la Royal Mint, no el programa de
+conservación del BCV, que tuvo una tercera moneda en oro (N#59793) vendida aparte.
 
 **Lo no catalogado.** Una huérfana es un veredicto del curador y no el residuo de la app
 (ADR 0020), así que el número que importa es el censo, no la pantalla. El de
@@ -208,6 +220,21 @@ definición nueva sobrevivían como huérfanas 9 de Jose y 25 del padre, todas p
 catálogo». La pantalla «Sin clasificar», ya agrupada por tipo
 ([#93](https://github.com/jenarvaezg/coindex/issues/93)), quedó en **19** entradas en el móvil
 de Jose y **50** en el del padre.
+
+El resync del 3 de agosto de 2026 ([#146](https://github.com/jenarvaezg/coindex/issues/146))
+volvió a medirlo con 29 filas nuevas entre las dos colecciones y el residuo **bajó** igual —**18**
+sin clasificar en el móvil de Jose y **47** en el del padre—: lo que entró cayó casi todo en
+catálogos que ya existían. Las dos cifras son de **antes** del estuche venezolano, que saca del
+residuo la pieza de 1975 de Jose y las dos del padre; no se han vuelto a medir porque esa curación
+no tuvo captura disponible.
+
+De ese resync sale otra lección: **tres tipos que el censo dio por solos no lo estaban**, y lo dijo
+la ceca y no Numista. El Koala del RAM
+([#152](https://github.com/jenarvaezg/coindex/issues/152)) se anunció como la tercera entrega de un
+programa anual, y los dos gourdes de Haití
+([#153](https://github.com/jenarvaezg/coindex/issues/153)) se vendieron en un estuche de cuatro
+monedas: ninguno se firmó y los tres esperan curación. Contrastar al coleccionista y al censo
+**fuera** de Numista no es un lujo del método, es lo que evitó firmar tres veredictos falsos.
 
 Los dos listados por pieza **no se publican**: este repo es público y son dos inventarios
 privados. La cifra viva se reproduce corriendo `FieldReportTest` con `COINDEX_FIELD_SNAPSHOT`
