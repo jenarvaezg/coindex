@@ -12,8 +12,6 @@ import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.VariantKey
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -343,18 +341,9 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
             container.repository.programmes,
         )
 
-    /** The curated catalog for one variant key, if one was curated for it. */
-    fun catalogFor(key: VariantKey): CollectionCatalog? =
-        container.repository.catalogFor(key)
-
-    /**
-     * How that catalog's plate resolves right now, or null when there is no catalog at all.
-     *
-     * The collection screen shows the reason a plate cannot be opened rather than hiding the
-     * catalog, so it needs the same answer the plate itself would give.
-     */
-    fun plateFor(key: VariantKey): PlateResult? =
-        catalogFor(key)?.let { catalog -> plate(catalog.id) }
+    // The pair that used to answer «is there a catalog for this key, and would its plate open?»
+    // left with the screen that asked: a card with a reachable plate now *is* the plate (ADR 0021
+    // §9), so nothing between the index and the plate needs to explain a jump it cannot make.
 
     private suspend fun refreshBudget() {
         val cap = container.credentials.monthlyBudget

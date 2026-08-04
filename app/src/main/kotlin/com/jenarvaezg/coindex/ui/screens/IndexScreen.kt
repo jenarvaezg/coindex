@@ -21,9 +21,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
-import com.jenarvaezg.coindex.domain.DerivedCollection
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.BudgetStatus
+import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -70,11 +71,11 @@ fun IndexScreen(
     lastSync: SyncRecord?,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
-    onOpenDerivedCollection: (DerivedCollection) -> Unit,
-    onOpenOwnGrouping: (groupingId: Long) -> Unit,
-    onOpenPlate: (catalogId: String) -> Unit,
+    onOpen: (CardDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val openCard: (IndexCard) -> Unit = { card -> onOpen(destinationOf(card)) }
+
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
         // same answer: one column is a page, two are a spread.
@@ -141,16 +142,7 @@ fun IndexScreen(
             }
 
             items(state.index, key = ::cardKey) { card ->
-                CollectionCard(
-                    card = card,
-                    onOpen = {
-                        when (card) {
-                            is IndexCard.Derived -> onOpenDerivedCollection(card.collection)
-                            is IndexCard.Box -> onOpenOwnGrouping(card.box.id)
-                        }
-                    },
-                    onOpenPlate = onOpenPlate,
-                )
+                CollectionCard(card = card, onOpen = { openCard(card) })
             }
         }
     }
@@ -178,12 +170,15 @@ private fun cardKey(card: IndexCard): String = when (card) {
  * The eyebrow is the country, said by the file wherever a file names this collection (ADR 0021 §9).
  * There is no word of provenance: what the card does is the only signal, and the third line is it —
  * `4 de 12 · te faltan 8` with an issue list, `3 tipos distintos · 4 piezas` without one.
+ *
+ * **The title is the whole of what the card does.** It used to carry a «Ver lámina» action besides,
+ * which was a second destination on a card that has one (ADR 0021 §9): where a plate exists the
+ * title now opens it, and where it does not there was never a button to draw.
  */
 @Composable
 private fun CollectionCard(
     card: IndexCard,
     onOpen: () -> Unit,
-    onOpenPlate: (catalogId: String) -> Unit,
 ) {
     val derived = card as? IndexCard.Derived
     FieldCard(modifier = Modifier.fillMaxWidth()) {
@@ -206,17 +201,6 @@ private fun CollectionCard(
             color = Paper.muted,
             modifier = Modifier.padding(top = 4.dp),
         )
-        // The plate keeps its shortcut from the card, but as an action rather than as the title.
-        // It is drawn only when it opens: the card already carries the answer resolvePlate would
-        // give, so a dead button is never drawn — and since ADR 0021 §7 curating a catalog over
-        // something the collector already owns is enough to light it.
-        derived?.plateCatalogId?.let { catalogId ->
-            CardAction(
-                text = "Ver lámina",
-                onClick = { onOpenPlate(catalogId) },
-                modifier = Modifier.padding(top = 12.dp),
-            )
-        }
     }
 }
 

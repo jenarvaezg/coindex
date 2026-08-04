@@ -13,8 +13,9 @@ fun screenTitle(route: String?, subjectName: String? = null): String = when {
     route == Routes.UNCLASSIFIED -> "Sin clasificar"
     route == Routes.SETTINGS -> "Ajustes"
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
-    Routes.isDerivedCollection(route) -> subjectName?.let { "Colección · $it" } ?: "Colección"
-    Routes.isOwnGrouping(route) -> subjectName?.let { "Tu agrupación · $it" } ?: "Tu agrupación"
+    // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
+    // «Tu agrupación» was the last place in the app that ranked a box below the rest.
+    Routes.isPieces(route) -> subjectName?.let { "Colección · $it" } ?: "Colección"
     // The index, and anything unrecognised: never a blank masthead.
     else -> STRAPLINE
 }

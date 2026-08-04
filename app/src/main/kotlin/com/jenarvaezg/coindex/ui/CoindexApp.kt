@@ -40,10 +40,10 @@ import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
-import com.jenarvaezg.coindex.ui.screens.DerivedCollectionScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
-import com.jenarvaezg.coindex.ui.screens.OwnGroupingScreen
+import com.jenarvaezg.coindex.ui.screens.MissingSubject
+import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
@@ -151,35 +151,35 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         lastSync = state.lastSync,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
-                        onOpenDerivedCollection = { collection ->
-                            navController.navigate(Routes.derivedCollection(collection.key()))
-                        },
-                        onOpenOwnGrouping = { groupingId ->
-                            navController.navigate(Routes.ownGrouping(groupingId))
-                        },
-                        onOpenPlate = { catalogId ->
-                            navController.navigate(Routes.plate(catalogId))
+                        onOpen = { destination ->
+                            navController.navigate(routeOf(destination))
                         },
                     )
                 }
                 composable(Routes.OWN_GROUPING) { entry ->
-                    val groupingId = entry.arguments?.getString("groupingId")?.toLongOrNull()
-                    val grouping = state.collection.ownGroupings
-                        .firstOrNull { it.id == groupingId }
-                    OwnGroupingScreen(
+                    val boxId = entry.arguments?.getString("groupingId")?.toLongOrNull()
+                    val card = boxId?.let(state.collection::piecesCardForBox)
+                    PiecesScreen(
                         state = state.collection,
-                        grouping = grouping,
+                        subject = card?.let { piecesSubject(state.collection, it) },
                         onOpenSource = openUrl,
-                        onRename = { name ->
-                            grouping?.let { viewModel.renameOwnGrouping(it.id, name) }
-                        },
-                        onRemoveType = { typeId ->
-                            grouping?.let { viewModel.removeFromOwnGrouping(it.id, typeId) }
-                        },
-                        // Undoing it leaves nothing to look at, so the screen goes with it.
-                        onDelete = {
-                            grouping?.let { viewModel.deleteOwnGrouping(it.id) }
-                            navController.popBackStack()
+                        onMessage = viewModel::showMessage,
+                        onCreateGrouping = viewModel::createOwnGrouping,
+                        onAddToGrouping = viewModel::addToOwnGrouping,
+                        upkeep = card?.let { box ->
+                            BoxUpkeep(
+                                onRename = { name ->
+                                    viewModel.renameOwnGrouping(box.box.id, name)
+                                },
+                                onRemoveType = { typeId ->
+                                    viewModel.removeFromOwnGrouping(box.box.id, typeId)
+                                },
+                                // Undoing it leaves nothing to look at, so the screen goes too.
+                                onDelete = {
+                                    viewModel.deleteOwnGrouping(box.box.id)
+                                    navController.popBackStack()
+                                },
+                            )
                         },
                     )
                 }
@@ -194,18 +194,19 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     // is the identity of the cards no curated file names (ADR 0021 §5), and half
                     // a key names none of them.
                     if (key == null) {
-                        UnknownDerivedCollection(Modifier.fillMaxSize().padding(20.dp))
+                        MissingSubject(
+                            "Ese enlace no describe ninguna variante de tu colección. Vuelve " +
+                                "al índice.",
+                            Modifier.fillMaxSize().padding(20.dp),
+                        )
                     } else {
-                        DerivedCollectionScreen(
+                        val card = state.collection.piecesCardFor(key)
+                        // No upkeep: a derived collection is not something anyone typed.
+                        PiecesScreen(
                             state = state.collection,
-                            key = key,
-                            catalog = viewModel.catalogFor(key),
-                            title = viewModel.titles.of(key),
-                            plate = viewModel.plateFor(key),
-                            onOpenPlate = { catalogId ->
-                                navController.navigate(Routes.plate(catalogId))
-                            },
+                            subject = card?.let { piecesSubject(state.collection, it) },
                             onOpenSource = openUrl,
+                            onMessage = viewModel::showMessage,
                             onCreateGrouping = viewModel::createOwnGrouping,
                             onAddToGrouping = viewModel::addToOwnGrouping,
                         )
@@ -377,19 +378,6 @@ private fun Masthead(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
         )
         HorizontalDivider(thickness = 2.dp, color = Paper.ink)
-    }
-}
-
-/** A route that describes no canonical variant key: said plainly, never guessed at. */
-@Composable
-private fun UnknownDerivedCollection(modifier: Modifier = Modifier) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Colección desconocida", style = MaterialTheme.typography.headlineMedium)
-        Text(
-            "Ese enlace no describe ninguna variante de tu colección. Vuelve al índice.",
-            style = MaterialTheme.typography.bodyLarge,
-            color = Paper.muted,
-        )
     }
 }
 

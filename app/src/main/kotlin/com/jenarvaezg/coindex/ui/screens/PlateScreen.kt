@@ -1,7 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
 import android.graphics.Picture
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,27 +8,20 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.withFrameNanos
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
@@ -53,12 +45,9 @@ import com.jenarvaezg.coindex.ui.plateExportMessage
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.recordInto
-import com.jenarvaezg.coindex.ui.sharePlateSheet
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * The plate of a followed collection against its curated catalog.
@@ -153,55 +142,39 @@ private fun PlateSheetExport(
     val loaded = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(catalog.id) {
-        withTimeoutOrNull(IMAGE_WAIT_MILLIS) {
-            snapshotFlow { settled.intValue }.first { it >= expectedImages }
-        }
-        // The last picture reports before it is drawn, so let a frame land either way.
-        withFrameNanos {}
-        withFrameNanos {}
-        val outcome = runCatching {
-            sharePlateSheet(context, picture, plateFileName(catalog.id))
-        }
+        val outcome = shareSettledSheet(
+            context = context,
+            picture = picture,
+            fileName = plateFileName(catalog.id),
+            expectedImages = expectedImages,
+            settled = settled,
+        )
         onFinished(
             if (outcome.isFailure) {
                 "No se pudo exportar la lámina: ${outcome.exceptionOrNull()?.message}"
             } else {
-                // Timing out and failing outright come to the same thing here: whatever had not
-                // painted by now is a hole in the sheet that has just been shared.
                 plateExportMessage(members.size, expectedImages, loaded.intValue)
             },
         )
     }
 
-    // Off-screen: unbounded so the whole sheet is measured, and clipped away from the plate.
-    Box(modifier = Modifier.size(0.dp).wrapContentSize(unbounded = true, align = Alignment.TopStart)) {
-        CompositionLocalProvider(LocalDensity provides layout.density) {
-            PlateSheet(
-                catalog = catalog,
-                members = members,
-                ownedMembers = ownedMembers,
-                images = images,
-                layout = layout,
-                programmes = programmes,
-                onImageSettled = { painted ->
-                    settled.intValue += 1
-                    if (painted) loaded.intValue += 1
-                },
-                // The sheet paints its own paper; recording it from the outside would drop it.
-                modifier = Modifier.recordInto(picture),
-            )
-        }
+    OffScreenSheet(layout) {
+        PlateSheet(
+            catalog = catalog,
+            members = members,
+            ownedMembers = ownedMembers,
+            images = images,
+            layout = layout,
+            programmes = programmes,
+            onImageSettled = { painted ->
+                settled.intValue += 1
+                if (painted) loaded.intValue += 1
+            },
+            // The sheet paints its own paper; recording it from the outside would drop it.
+            modifier = Modifier.recordInto(picture),
+        )
     }
 }
-
-/**
- * How long the export waits for the pictures before capturing whatever is on the sheet.
- *
- * Twenty seconds was the whole budget when a refused picture failed instantly. Now a throttled
- * one is retried with a wait, and four at a time queue behind each other, so the old ceiling
- * would have cut the retries off exactly on the sheets that need them (issue #67).
- */
-private const val IMAGE_WAIT_MILLIS = 30_000L
 
 @Composable
 private fun PlateGrid(

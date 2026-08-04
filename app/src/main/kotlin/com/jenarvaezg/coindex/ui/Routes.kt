@@ -39,6 +39,28 @@ object Routes {
     fun isDerivedCollection(route: String?): Boolean = route == DERIVED_COLLECTION
 
     fun isOwnGrouping(route: String?): Boolean = route == OWN_GROUPING
+
+    /**
+     * The two routes that open `PiecesScreen`.
+     *
+     * They stay two because they address different subjects — a variant key the inventory derives,
+     * a box id the collector's own table holds — but they arrive at one screen (ADR 0021 §9), and
+     * everything that speaks about the destination rather than the subject asks this.
+     */
+    fun isPieces(route: String?): Boolean = isDerivedCollection(route) || isOwnGrouping(route)
+}
+
+/**
+ * The route that reaches a card's one destination.
+ *
+ * Untested for the same reason `Routes.derivedCollection` is: it encodes through `android.net.Uri`.
+ * What is worth testing is the choice, and that is [destinationOf], which knows nothing about
+ * routes.
+ */
+fun routeOf(destination: CardDestination): String = when (destination) {
+    is CardDestination.Plate -> Routes.plate(destination.catalogId)
+    is CardDestination.Pieces -> Routes.derivedCollection(destination.key)
+    is CardDestination.Box -> Routes.ownGrouping(destination.boxId)
 }
 
 /**
