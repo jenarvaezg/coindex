@@ -70,29 +70,6 @@ interface TypeMetaDao {
     suspend fun setThumbnails(typeId: Int, obverse: String?, reverse: String?)
 }
 
-@Dao
-interface DerivedCollectionPreferenceDao {
-    @Query("SELECT * FROM collection_proposal_preferences")
-    fun observeAll(): Flow<List<DerivedCollectionPreferenceEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(preference: DerivedCollectionPreferenceEntity)
-
-    @Query(
-        """
-        DELETE FROM collection_proposal_preferences
-        WHERE family = :family AND weightMillioz = :weightMillioz
-          AND finishCode = :finishCode AND metalCode = :metalCode
-        """,
-    )
-    suspend fun delete(
-        family: String,
-        weightMillioz: Int,
-        finishCode: String,
-        metalCode: String,
-    )
-}
-
 /**
  * The collector's own groupings.
  *
@@ -102,7 +79,10 @@ interface DerivedCollectionPreferenceDao {
  */
 @Dao
 interface OwnGroupingDao {
-    @Query("SELECT * FROM own_groupings ORDER BY name")
+    // By id and not by name: the order of the index is one comparator over every card
+    // (ADR 0021 §6), so a box has no ordering of its own to bring — this only keeps the read
+    // deterministic.
+    @Query("SELECT * FROM own_groupings ORDER BY id")
     fun observeAll(): Flow<List<OwnGroupingEntity>>
 
     @Query("SELECT * FROM own_grouping_members")

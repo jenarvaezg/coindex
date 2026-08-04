@@ -1,23 +1,21 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
-import com.jenarvaezg.coindex.data.db.DerivedCollectionPreferenceEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
-import com.jenarvaezg.coindex.domain.ClassifiedDerivedCollections
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.CollectionIndex
 import com.jenarvaezg.coindex.domain.CollectionTitles
 import com.jenarvaezg.coindex.domain.CuratedGrouping
 import com.jenarvaezg.coindex.domain.DerivedCollection
-import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
+import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.buildOwnGroupingViews
-import com.jenarvaezg.coindex.domain.classifyDerivedCollections
 import com.jenarvaezg.coindex.domain.deriveCollection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -25,31 +23,36 @@ import kotlinx.coroutines.flow.combine
 /** Everything the screens need, derived from the local snapshot alone. */
 data class CollectionState(
     val items: List<CollectedItem> = emptyList(),
-    val derivedCollections: ClassifiedDerivedCollections = ClassifiedDerivedCollections(),
+    /**
+     * The first level, as one list in one order (ADR 0021 §2, §6): curated catalogs, curated
+     * groupings and the collector's own boxes, already sorted by the index comparator.
+     */
+    val index: List<IndexCard> = emptyList(),
+    val derivedCollections: List<DerivedCollection> = emptyList(),
     val unclassified: List<UnclassifiedItem> = emptyList(),
     val typeMeta: Map<Int, TypeMeta> = emptyMap(),
     val images: Map<Int, TypeImages> = emptyMap(),
-    val followedKeys: Set<VariantKey> = emptySet(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
     /** The pieces behind each derived collection, for the screen that opens one. */
     val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
-    /** The collector's own groupings, an extra view over the same pieces (ADR 0013). */
+    /** The collector's own boxes, which hold only pieces they own (ADR 0021 §11). */
     val ownGroupings: List<OwnGroupingView> = emptyList(),
 ) {
-    /** Every current derived collection, whatever the collector decided about it. */
-    fun allDerivedCollections(): List<DerivedCollection> =
-        derivedCollections.followed + derivedCollections.available + derivedCollections.ignored
-
     fun derivedCollectionFor(key: VariantKey): DerivedCollection? =
-        allDerivedCollections().firstOrNull { it.key() == key }
+        derivedCollections.firstOrNull { it.key() == key }
 }
 
-/** Why a catalog plate cannot be opened. Navigability is never guessed at in the UI. */
+/**
+ * Why a catalog plate cannot be opened. Navigability is never guessed at in the UI.
+ *
+ * Three reasons and no more (ADR 0021 §7): `NotFollowed` left with the dispositions, and it was the
+ * only one of the four that said nothing about the world — the other three describe the inventory,
+ * that one said «tap here first».
+ */
 enum class PlateUnavailable {
     UnknownCatalog,
     NotACollection,
-    NotFollowed,
     NoEvidence,
 }
 
@@ -65,8 +68,9 @@ sealed interface PlateResult {
 /**
  * Single source of truth for the collector's local data.
  *
- * Collections are always derived, never stored: the only per-collector rows are the
- * collection snapshot, the type cache, the durable dispositions and the API call log.
+ * Collections are always derived, never stored, and since ADR 0021 §7 **nothing at all is stored
+ * per card**: the only per-collector rows are the collection snapshot, the type cache, the boxes the
+ * collector typed and the API call log.
  */
 class CoindexRepository(
     private val database: CoindexDatabase,
@@ -76,61 +80,34 @@ class CoindexRepository(
     /** What each collection is called on a card (#22). Constant for the process lifetime. */
     val titles: CollectionTitles = CollectionTitles(catalogs, groupings)
 
+    /** The one list of the first level, built from the same constant seeds (ADR 0021 §6). */
+    private val index: CollectionIndex = CollectionIndex(catalogs, groupings, titles)
+
     fun observeState(): Flow<CollectionState> = combine(
         database.collectedItems().observeAll(),
         database.typeMeta().observeAll(),
-        database.derivedCollectionPreferences().observeAll(),
         database.ownGroupings().observeAll(),
         database.ownGroupings().observeMembers(),
-    ) { items, types, preferences, ownGroupings, ownMembers ->
+    ) { items, types, ownGroupings, ownMembers ->
         val domainItems = items.map { it.toDomain() }
         val typeMeta = types.associate { it.typeId to it.toDomain() }
         val derivation = deriveCollection(domainItems, typeMeta, catalogs, groupings)
-        val dispositions = preferences.mapNotNull { it.toDomain() }
+        val boxes = buildOwnGroupingViews(
+            ownGroupings.map { it.toDomain(ownMembers) },
+            domainItems,
+        )
         CollectionState(
             items = domainItems,
-            derivedCollections =
-                classifyDerivedCollections(derivation.derivedCollections, dispositions),
+            index = index.build(derivation, boxes, domainItems, typeMeta),
+            derivedCollections = derivation.derivedCollections,
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,
             images = types.associate { it.typeId to it.toImages() },
-            followedKeys = dispositions
-                .filter { it.disposition == DerivedCollectionDisposition.Followed }
-                .mapTo(mutableSetOf()) { it.key },
             evidencedCatalogIds = catalogs
                 .filter { catalog -> catalog.isEvidencedBy(domainItems) }
                 .mapTo(mutableSetOf()) { it.id },
             itemsByKey = derivation.itemsByKey,
-            ownGroupings = buildOwnGroupingViews(
-                ownGroupings.map { it.toDomain(ownMembers) },
-                domainItems,
-            ),
-        )
-    }
-
-    /** Persists a disposition, or clears it when [disposition] is null (back to Available). */
-    suspend fun setDisposition(key: VariantKey, disposition: DerivedCollectionDisposition?) {
-        val dao = database.derivedCollectionPreferences()
-        if (disposition == null) {
-            dao.delete(
-                key.family,
-                key.storedWeightMillioz(),
-                key.finishCode(),
-                key.metalCode(),
-            )
-            return
-        }
-        val now = System.currentTimeMillis()
-        dao.upsert(
-            DerivedCollectionPreferenceEntity(
-                family = key.family,
-                weightMillioz = key.storedWeightMillioz(),
-                finishCode = key.finishCode(),
-                metalCode = key.metalCode(),
-                disposition = disposition.asCode(),
-                createdAt = now,
-                updatedAt = now,
-            ),
+            ownGroupings = boxes,
         )
     }
 
@@ -180,9 +157,12 @@ class CoindexRepository(
 /**
  * Resolves a plate against the current state.
  *
- * A plate is reachable only when the collection currently exists, the collector follows
- * that exact variant key, a catalog matches it, and at least one official type is owned. Evidence
- * is by type even for date runs, so a plate stays open while years are still missing.
+ * **A plate opens on evidence** (ADR 0021 §7): the collection has to exist right now, a catalog has
+ * to match it, and at least one official type has to be owned. Nothing else — curating a catalog for
+ * a variant the collector already owns is enough to light its plate, where before ADR 0021 the whole
+ * curation stayed invisible until they guessed they had to follow it.
+ *
+ * Evidence is by type even for date runs, so a plate stays open while years are still missing.
  */
 fun resolvePlate(
     state: CollectionState,
@@ -191,11 +171,9 @@ fun resolvePlate(
 ): PlateResult {
     val catalog = catalogs.firstOrNull { it.id == catalogId }
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
-    val key = catalog.key()
     return when {
-        state.derivedCollectionFor(key) == null ->
+        state.derivedCollectionFor(catalog.key()) == null ->
             PlateResult.Unavailable(PlateUnavailable.NotACollection)
-        key !in state.followedKeys -> PlateResult.Unavailable(PlateUnavailable.NotFollowed)
         catalog.id !in state.evidencedCatalogIds ->
             PlateResult.Unavailable(PlateUnavailable.NoEvidence)
         else -> PlateResult.Available(

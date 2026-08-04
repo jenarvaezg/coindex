@@ -205,8 +205,9 @@ usado (julio 2026) y reglas aprendidas:
    revierte la regla de julio: Maple, Krugerrand, ASE, Britannia, Philharmonic, Noah's Ark y
    Kangaroo tienen todos su date run). El límite editorial es «una moneda al año que tendría
    sentido comprar», que deja fuera la moneda de circulación y la reacuñación con fecha
-   congelada. La intención la expresa el coleccionista con la disposición, no el curador con el
-   fichero. Ver ADR 0020.
+   congelada. La intención dejó de declararse en ninguna parte —el ADR 0021 §7 retiró la
+   disposición—, así que lo que dice hasta dónde va una colección es su **ratio de cobertura**, que
+   es un hecho medido. Ver ADR 0020.
 7. Lo que parte una lámina de otra es la **variante física**, no el diseño: dos monedas del
    mismo año con el mismo peso, acabado y metal son dos casillas de una misma lámina, y un
    privy o un animal nuevo no parten nada. Un acabado distinto sí es otra lámina.
@@ -222,11 +223,11 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 **Lo versionado**, medido sobre `data/`:
 
-- **52 catálogos** con 1.049 miembros: 30 abiertos y 22 cerrados. Por versión de esquema, 27
+- **56 catálogos** con 1.063 miembros: 30 abiertos y 26 cerrados. Por versión de esquema, 31
   simples, 22 date runs, 2 conjuntos y 1 issue run.
 - **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint y el dólar de plata clásico de EE. UU.
-- **806 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **814 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
 - **5 veredictos en `data/orphans.json`**, firmados por
@@ -273,9 +274,22 @@ sobre una captura de `scripts/record-fixture.py --user-id`, que vive fuera del �
 corre el `deriveCollection` real, así que un listado rehecho a mano inventaría huérfanas que la
 app no tiene.
 
-Queda sin recorrer un sitio donde puede haber catálogos: los sistemas monetarios portugueses
-—`System 1927-1968`, `System 1969-1980` y lo que resta de `System 1981-2001`—, que es
-exactamente como apareció el catálogo de los 1000 escudos. Cuesta navegador, no presupuesto.
+Los sistemas monetarios portugueses —`System 1927-1968`, `System 1969-1980` y `System
+1981-2001`— ya están recorridos ([#157](https://github.com/jenarvaezg/coindex/issues/157)). La
+categoría de Numista «Circulating commemorative coins» da **135 tipos** de la era del escudo, de
+los que el padre tiene 34; 29 ya estaban en los tres catálogos portugueses y las 6 sueltas se
+curaron en cuatro, por denominación y metal, criterio del coleccionista. Con eso el **peldaño 5
+de la escalera de familias no produce ninguna tarjeta** en ninguna de las dos colecciones,
+medido: el índice del padre pasó de 60 tarjetas —cinco de ellas «Sistema monetario», dos
+homónimas— a 59, y «Sin clasificar» siguió en 48, porque esas seis nunca estuvieron ahí. El
+peldaño sigue en el modelo como red de seguridad: ninguna pieza se cae por tener solo familia
+técnica.
+
+Un catálogo único de las 135 no era opción: habría chocado con los 29 tipos ya reclamados y se
+habría tragado las once series *Portuguese Discoveries*, que son programas por derecho propio.
+Lo que sí queda pendiente es la **lectura temática** que pidió el coleccionista —el programa de
+1977 y el de 1983, cada uno en tres denominaciones—, que el modelo no sabe dar hoy
+([#178](https://github.com/jenarvaezg/coindex/issues/178)).
 
 Presupuesto de API: cada usuario gasta su propia key (~1.500-2.000 llamadas/mes), y el snapshot
 de caché existe para que ninguno repita lo ya descargado.
@@ -294,7 +308,9 @@ ADR 0010 para las decisiones del port.
    se portan series curadas ni correcciones manuales (ADR 0010 §2).
 3. ✅ Onboarding con API key + user id cifrados con el Android Keystore; sync explícito a
    Room con contador mensual y techo configurable (19 tests de app, sin red).
-4. ✅ Índice de colecciones en tres bloques con disposiciones persistentes.
+4. ✅ Índice de colecciones en **una sola lista**, ordenada por el comparador del ADR 0021 §6
+   `(tiene ratio ↓, ratio ↓, denominador ↓, short_name ↑)`. Los tres bloques y las
+   disposiciones se retiraron con la migración v5.
 5. ✅ Láminas v1 y v2: progreso `n / m emisiones`, ficha de especificaciones, grises al
    45 % para las que faltan y enlaces a Numista.
 6. ✅ Vista de huérfanas, ahora con motivo auditable por pieza (ADR 0010 §3).

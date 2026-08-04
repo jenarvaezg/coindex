@@ -20,18 +20,16 @@ internal data class PreservedKey(
     entities = [
         CollectedItemEntity::class,
         TypeMetaEntity::class,
-        DerivedCollectionPreferenceEntity::class,
         OwnGroupingEntity::class,
         OwnGroupingMemberEntity::class,
         ApiCallEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
     abstract fun collectedItems(): CollectedItemDao
     abstract fun typeMeta(): TypeMetaDao
-    abstract fun derivedCollectionPreferences(): DerivedCollectionPreferenceDao
     abstract fun ownGroupings(): OwnGroupingDao
     abstract fun apiCalls(): ApiCallDao
 
@@ -187,6 +185,28 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 5 retires the dispositions (ADR 0021 §7): one `DROP`, forward only, rescuing
+         * nothing.
+         *
+         * There is no data to save. The ~58 rows in the collector's phone are all `followed`
+         * because following was the toll the plate charged, so they express that the app charged
+         * it and not a preference — and ADR 0008 itself demanded a rollback drop the table rather
+         * than reinterpret it. It is **irreversible on purpose**: if archiving a card ever earns
+         * its case, the bit is rebuilt from zero rather than resurrected from these.
+         *
+         * `own_groupings` and `own_grouping_members` are untouched (ADR 0021 §11): a box is the one
+         * thing the collector typed.
+         */
+        internal const val VERSION_5_DROP: String =
+            "DROP TABLE `collection_proposal_preferences`"
+
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(connection: SQLiteConnection) {
+                connection.execSQL(VERSION_5_DROP)
+            }
+        }
+
         private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
@@ -213,7 +233,7 @@ abstract class CoindexDatabase : RoomDatabase() {
 
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
     }
 }

@@ -161,10 +161,10 @@ class CuratedCatalogsTest {
         val krugerrand = find("south-africa-silver-krugerrand-1oz-bullion")
         assertEquals(2, krugerrand.schemaVersion)
         assertTrue(krugerrand.isDateRun)
-        assertEquals(
-            "Silver Krugerrand bullion anual desde 2018 (sin 2017 Premium Uncirculated)",
-            krugerrand.family,
-        )
+        // La `family` es identidad y clave de agrupación, no una definición de alcance: eso lo
+        // dice `name`, que ya lo dice. Retirar la cláusula es gratis desde el ADR 0021 §7, que
+        // dejó de persistir nada por tarjeta — antes le habría cerrado la lámina al padre.
+        assertEquals("Silver Krugerrand bullion anual", krugerrand.family)
         assertEquals(
             "Silver Krugerrand · Sudáfrica · 1 oz bullion anual desde 2018 " +
                 "(excluye 2017 Premium Uncirculated)",
@@ -177,7 +177,7 @@ class CuratedCatalogsTest {
         assertEquals(SeriesStatus.Open, krugerrand.seriesStatus)
         assertNull(krugerrand.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces143754.html", krugerrand.source)
-        assertEquals("2026-08-02", krugerrand.updatedAt)
+        assertEquals("2026-08-04", krugerrand.updatedAt)
         assertEquals((2018..2026).toList(), krugerrand.members.map { it.year })
         assertTrue(krugerrand.members.none { it.year == 2017 })
         assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })

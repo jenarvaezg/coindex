@@ -13,7 +13,6 @@ import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
 import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
 import com.jenarvaezg.coindex.domain.VariantKey
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -176,10 +175,6 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     /** Drops a stale form error so a screen is never entered with the last visit's complaint. */
     fun clearValidation() {
         _state.update { it.copy(validation = null) }
-    }
-
-    fun setDisposition(key: VariantKey, disposition: DerivedCollectionDisposition?) {
-        viewModelScope.launch { container.repository.setDisposition(key, disposition) }
     }
 
     /**

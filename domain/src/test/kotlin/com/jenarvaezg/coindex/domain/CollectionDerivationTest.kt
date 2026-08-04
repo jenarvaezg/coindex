@@ -282,28 +282,24 @@ class CollectionDerivationTest {
         assertEquals(3, collection.quantity)
     }
 
+    /**
+     * La clave ya no persiste nada (ADR 0021 §5), pero sigue siendo la identidad de la tarjeta que
+     * ningún fichero nombra y la de su ruta, así que reconstruirla desde sus partes tiene que
+     * seguir rechazando todo lo que no sea ya canónico.
+     */
     @Test
-    fun `canonical keys round trip finish codes and stale preferences stay dormant`() {
-        fun derivedCollection(family: String, finish: Finish?) = DerivedCollection(
-            family = family,
+    fun `canonical keys round trip finish codes and refuse anything uncanonical`() {
+        val proofColoured = DerivedCollection(
+            family = "SML",
             weightMillioz = 1_000,
-            finish = finish,
+            finish = Finish.ProofColoured,
             metal = Metal.Silver,
             distinctTypes = 1,
             quantity = 1,
         )
-        val followed = derivedCollection("SML", Finish.ProofColoured)
-        val available = derivedCollection("Lunar ounce", null)
-        val ignored = derivedCollection("Nautical Ounce", Finish.Bullion)
-        val stale = VariantKey.fromCanonicalParts("Red Data Book", 2_000, "proof", "silver")
-        assertNotNull(stale)
-        val preferences = listOf(
-            DerivedCollectionPreference(followed.key(), DerivedCollectionDisposition.Followed),
-            DerivedCollectionPreference(ignored.key(), DerivedCollectionDisposition.Ignored),
-            DerivedCollectionPreference(stale, DerivedCollectionDisposition.Followed),
-        )
 
-        assertEquals("proof_coloured", followed.key().finishCode())
+        assertEquals("proof_coloured", proofColoured.key().finishCode())
+        assertNotNull(VariantKey.fromCanonicalParts("Red Data Book", 2_000, "proof", "silver"))
         assertNull(
             VariantKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "silver")!!.finish,
         )
@@ -312,18 +308,6 @@ class CollectionDerivationTest {
         assertNull(VariantKey.fromCanonicalParts("Lunar ounce", 1_000, "Proof", "silver"))
         // Un código de metal que nadie reconoce descalifica la clave igual que el acabado.
         assertNull(VariantKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "Plata"))
-
-        val classified = classifyDerivedCollections(
-            listOf(followed, available, ignored),
-            preferences,
-        )
-
-        assertEquals(1, classified.followed.size)
-        assertEquals(1, classified.available.size)
-        assertEquals(1, classified.ignored.size)
-        assertEquals("SML", classified.followed[0].family)
-        assertEquals("Lunar ounce", classified.available[0].family)
-        assertEquals("Nautical Ounce", classified.ignored[0].family)
     }
 
     @Test

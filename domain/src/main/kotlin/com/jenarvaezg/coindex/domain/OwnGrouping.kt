@@ -33,9 +33,9 @@ data class OwnGroupingView(
  * nothing disappears from the index for having been organized. Only currently owned pieces
  * count, as everywhere else.
  *
- * A grouping whose types have all left the collection still comes back, empty. Unlike a
- * disposition — which is dormant intent about a derived thing and materializes nothing — this is
- * something the collector typed, and having it vanish because a coin was sold would read as data
+ * A grouping whose types have all left the collection still comes back, empty, with its zero and
+ * its place in the order (ADR 0021 §11). Nothing else in the app is stored per card, so this is the
+ * one thing the collector typed, and having it vanish because a coin was sold would read as data
  * loss rather than as an empty shelf.
  */
 fun buildOwnGroupingViews(

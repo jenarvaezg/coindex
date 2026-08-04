@@ -58,27 +58,6 @@ data class TypeMetaEntity(
 data class TypeRawRow(val typeId: Int, val raw: String)
 
 /**
- * Durable intent about one variant key. Absence means Available (ADR 0008).
- *
- * The whole key is the primary key, so widening the key rewrites this table: `metalCode` joined
- * it in version 4 (ADR 0018) and the rows that could not be given a metal were dropped rather
- * than guessed at — a stored key that no longer matches any card is dormant either way.
- */
-@Entity(
-    tableName = "collection_proposal_preferences",
-    primaryKeys = ["family", "weightMillioz", "finishCode", "metalCode"],
-)
-data class DerivedCollectionPreferenceEntity(
-    val family: String,
-    val weightMillioz: Int,
-    val finishCode: String,
-    val metalCode: String,
-    val disposition: String,
-    val createdAt: Long,
-    val updatedAt: Long,
-)
-
-/**
  * A grouping the collector made themselves (ADR 0013): a heading and the types under it.
  *
  * It is the collector's own organization, not a claim about the catalog, so it lives only on

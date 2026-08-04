@@ -11,12 +11,14 @@ import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionDerivation
+import com.jenarvaezg.coindex.domain.CollectionIndex
+import com.jenarvaezg.coindex.domain.CollectionTitles
 import com.jenarvaezg.coindex.domain.CuratedGrouping
 import com.jenarvaezg.coindex.domain.GroupingSeeds
+import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
-import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.deriveCollection
 import com.jenarvaezg.coindex.ui.unclassifiedReasonLabel
 import java.io.File
@@ -74,9 +76,13 @@ class FieldReportTest {
         val groupings = GroupingSeeds.parseAll(GroupingFiles.all())
 
         val derivation = deriveCollection(items, typeMeta, catalogs, groupings)
+        val index = CollectionIndex(catalogs, groupings, CollectionTitles(catalogs, groupings))
+            // Sin base de datos no hay cajas propias: lo que el informe ordena es lo que sale de
+            // los ficheros y del inventario, que es la mitad medible desde una captura.
+            .build(derivation, emptyList(), items, typeMeta)
 
         println(header(directory, items, typeMeta, catalogs, groupings))
-        println(derivedCollectionReport(derivation, catalogs, items))
+        println(indexReport(index, derivation))
         println(unclassifiedReport(derivation.unclassified, typeMeta))
         println(unpublishedReport(items, typeMeta))
     }
@@ -134,32 +140,34 @@ class FieldReportTest {
     }
 
     /**
-     * Every card, saying whether a curated catalog claims it — and if none does, the types
-     * it is made of, which is what a curation ticket needs to start from.
+     * The index **in the order the phone shows it** (ADR 0021 §6), each card saying its ratio — and
+     * where no curated file claims it, the types it is made of, which is what a curation ticket
+     * needs to start from.
+     *
+     * Printed through [CollectionIndex] rather than in derivation order on purpose: the comparator
+     * is the thing under test here, and reimplementing the sort in the report would report an order
+     * nobody's phone has. It is also the only place the whole order is measurable at once — 58 cards
+     * against a real inventory, where the emulator shows the first two.
      */
-    private fun derivedCollectionReport(
+    private fun indexReport(
+        index: List<IndexCard>,
         derivation: CollectionDerivation,
-        catalogs: List<CollectionCatalog>,
-        allItems: List<CollectedItem>,
     ): String = buildString {
-        val catalogsByKey = catalogs.associateBy { it.key() }
         appendLine()
-        appendLine("== ÍNDICE DE COLECCIONES (${derivation.derivedCollections.size}) ==")
-        for (collection in derivation.derivedCollections) {
-            val key = collection.key()
-            val catalog = catalogsByKey[key]
-            val coverage = catalog?.let {
-                val album = buildCollectionCatalogAlbum(it, allItems)
-                "CATÁLOGO ${it.id} ${album.ownedMembers()}/${album.issuedMembers()}"
-            } ?: "sin catálogo"
+        appendLine("== ÍNDICE DE COLECCIONES (${index.size}) ==")
+        for ((position, card) in index.withIndex()) {
+            val collection = (card as? IndexCard.Derived)?.collection
+            val ratio = card.coverage
+                ?.let { "${it.owned}/${it.issued}" }
+                ?: "sin lista de emisiones"
             appendLine(
-                "· ${collection.family} | ${weightLabel(collection.weightMillioz)} | " +
-                    "${collection.finish?.name?.lowercase() ?: "—"} | " +
-                    "${collection.distinctTypes} tipos, " +
-                    "${collection.quantity} piezas | $coverage",
+                "${position + 1}. $ratio | ${card.name} | ${card.issuer ?: "—"} | " +
+                    "${weightLabel(collection?.weightMillioz)} | " +
+                    "${collection?.finish?.name?.lowercase() ?: "—"} | " +
+                    "${card.distinctTypes} tipos, ${card.quantity} piezas",
             )
-            if (catalog == null) {
-                val types = derivation.itemsByKey[key].orEmpty()
+            if (card.coverage == null && collection != null) {
+                val types = derivation.itemsByKey[collection.key()].orEmpty()
                     .map { it.typeId }
                     .distinct()
                     .sorted()

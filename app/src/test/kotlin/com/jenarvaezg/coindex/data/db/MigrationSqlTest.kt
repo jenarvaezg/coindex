@@ -129,4 +129,45 @@ class MigrationSqlTest {
         }
     }
 
+    /**
+     * La versión 5 retira las disposiciones (ADR 0021 §7): un `DROP`, hacia delante y sin rescatar
+     * nada. La tabla que desaparece tiene que ser exactamente la que el esquema exportado deja de
+     * declarar — un `DROP` sobre otro nombre no falla al abrir la base de datos, se queda callado
+     * con una tabla huérfana en el móvil del coleccionista.
+     */
+    @Test
+    fun `version 5 drops exactly the table the schema stops declaring`() {
+        val dropped = exportedCreateSql(4).keys - exportedCreateSql(5).keys
+
+        assertEquals(setOf("collection_proposal_preferences"), dropped)
+        assertEquals(
+            dropped.map { "DROP TABLE `$it`" },
+            listOf(CoindexDatabase.VERSION_5_DROP),
+        )
+    }
+
+    /**
+     * Las cajas del coleccionista **no** caen con ella (ADR 0021 §11): son lo único que él tecleó,
+     * y la colección sincronizada y la caché de tipos siguen costando presupuesto de API.
+     */
+    @Test
+    fun `version 5 leaves the boxes, the snapshot and the type cache intact`() {
+        assertEquals(
+            setOf(
+                "collected_items",
+                "type_meta",
+                "own_groupings",
+                "own_grouping_members",
+                "api_call_log",
+            ),
+            exportedCreateSql(5).keys,
+        )
+        exportedCreateSql(5).keys.forEach { table ->
+            assertEquals(
+                exportedColumns(4, table),
+                exportedColumns(5, table),
+                "la versión 5 ha tocado $table",
+            )
+        }
+    }
 }
