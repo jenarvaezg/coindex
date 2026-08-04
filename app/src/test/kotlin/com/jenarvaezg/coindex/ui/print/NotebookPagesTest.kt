@@ -83,10 +83,15 @@ class NotebookPagesTest {
         assertEquals(45.6, sizes.max())
     }
 
-    /** The two catalogs #169 names, and the numbers it asks the printed notebook to hit. */
+    /**
+     * The two catalogs #169 names, and the numbers it asks the printed notebook to hit. The seven
+     * pages it measured were the 121 members the Russian personalities had before #159 split them
+     * by fineness: the 104 of .925 print six, and the seventeen of .500 fit on a single page.
+     */
     @Test
     fun `the two measured catalogs come out at the length the ticket asks for`() {
-        assertEquals(7, pagesOf("outstanding-personalities-russia-2-roubles"))
+        assertEquals(6, pagesOf("outstanding-personalities-russia-2-roubles"))
+        assertEquals(1, pagesOf("outstanding-personalities-russia-2-roubles-plata-500"))
         assertEquals(4, pagesOf("australian-kookaburra-perth-1oz"))
     }
 
@@ -95,8 +100,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the fifty-seven shipped catalogs would print as one hundred and two pages`() {
-        assertEquals(102, catalogs.sumOf { section(it).pages })
+    fun `the fifty-nine shipped catalogs would print as one hundred and three pages`() {
+        assertEquals(103, catalogs.sumOf { section(it).pages })
     }
 
     @Test

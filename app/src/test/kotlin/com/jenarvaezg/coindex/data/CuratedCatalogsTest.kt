@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(57, catalogs.size)
+        assertEquals(59, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintisiete cerrados llevan su nota y los treinta abiertos no afirman nada más que
+     * veintinueve cerrados llevan su nota y los treinta abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(27, closed.size)
+        assertEquals(29, closed.size)
         assertEquals(30, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -1621,6 +1621,72 @@ class CuratedCatalogsTest {
         )
         // La de 1992 es la primera esterlina y no es casilla de nadie.
         assertTrue(catalogs.none { catalog -> catalog.members.any { it.numistaTypeId == 23_296 } })
+    }
+
+    /**
+     * Las personalidades destacadas de Rusia son **dos** catálogos por el corte de 1998 (#159):
+     * diecisiete de plata .500 y 15,87 g —7,78 g de plata fina, un cuarto de onza— contra ciento
+     * cuatro de plata .925 y 17,00 g —15,55 g finos, media onza—. La serie de Numista (id=5460)
+     * propone las dos épocas juntas; lo que las separa es la variante física, que es la unidad de
+     * catálogo (ADR 0020), y el límite lo dibuja la ceca: sus números 5110-0001 a 5110-0020 son
+     * .500 y el 5110-0021 es el primer .925, medido ficha a ficha en cbr.ru.
+     *
+     * La lámina de .925 se queda el id **y la familia** a propósito. La familia es parte de la
+     * clave de `collection_proposal_preferences`, así que renombrarla le cerraría al coleccionista
+     * una lámina que ya seguía sin decirle por qué — lo midió #62 con los fuertes —, y por eso la
+     * `PreservedKey` de `CoindexDatabase` sigue valiendo. La ruta contraria, un solo catálogo con
+     * la desviación en `variant_note` como los 20 escudos de 1966, se descartó porque aquí no es
+     * una moneda distinta entre tres sino una época entera con la mitad de la plata.
+     */
+    @Test
+    fun `the russian personalities split at the 1998 redenomination by fineness`() {
+        val sterling = find("outstanding-personalities-russia-2-roubles")
+        val fiveHundred = find("outstanding-personalities-russia-2-roubles-plata-500")
+        for (catalog in listOf(sterling, fiveHundred)) {
+            assertEquals(1, catalog.schemaVersion)
+            assertEquals("russie", catalog.issuerCode)
+            assertNull(catalog.finish)
+            assertEquals(Metal.Silver, catalog.metal)
+        }
+        assertNotEquals(sterling.key(), fiveHundred.key())
+
+        // La familia y el peso de la .925 no se tocan: son la clave que preserva la disposición.
+        assertEquals("Outstanding Personalities of Russia", sterling.family)
+        assertEquals(547, sterling.weightMillioz)
+        assertEquals(SeriesStatus.Open, sterling.seriesStatus)
+        assertEquals(104, sterling.members.size)
+        assertEquals(1998, sterling.members.first().year)
+
+        // 15,87 g miden 510 milionzas y `normalizeWeightMillioz` las imanta a 500 estando justo en
+        // la tolerancia, así que declarar 500 es lo que no parte la tarjeta de un hermano suelto.
+        assertEquals("Outstanding Personalities of Russia · plata .500", fiveHundred.family)
+        assertEquals(500, fiveHundred.weightMillioz)
+        assertEquals(SeriesStatus.Closed, fiveHundred.seriesStatus)
+        assertTrue(fiveHundred.closedNote!!.contains("5110-0021"), fiveHundred.closedNote!!)
+        assertEquals(
+            listOf(
+                34_864, 28_934, 61_058, 65_690, 28_935, 28_933, 28_931, 28_930, 28_932, 70_073,
+                70_074, 70_171, 28_937, 70_172, 70_173, 70_174, 28_938,
+            ),
+            fiveHundred.members.map { it.numistaTypeId },
+        )
+        assertEquals(
+            listOf(1994, 1994, 1994, 1994, 1994, 1995, 1995, 1995, 1995, 1996, 1996, 1997, 1997,
+                1997, 1997, 1997, 1997),
+            fiveHundred.members.map { it.year },
+        )
+        // Los dos Nikitin son los dos reversos del 5110-0018 y del 5110-0019, y cada casilla dice
+        // el suyo: dos celdas con el mismo rótulo es lo que #22 no puede dejar pasar.
+        assertEquals(
+            listOf("A. Nikitin · la partida", "A. Nikitin · la India"),
+            fiveHundred.members.filter { it.label.startsWith("A. Nikitin") }.map { it.label },
+        )
+        // Ningún tipo se queda en las dos láminas.
+        assertEquals(
+            emptySet(),
+            sterling.members.mapNotNull { it.numistaTypeId }.toSet()
+                .intersect(fiveHundred.members.mapNotNull { it.numistaTypeId }.toSet()),
+        )
     }
 
     /**

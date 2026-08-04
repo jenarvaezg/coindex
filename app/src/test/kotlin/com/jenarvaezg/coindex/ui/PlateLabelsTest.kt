@@ -128,8 +128,9 @@ class PlateLabelsTest {
 
     /**
      * The 121 cells of the Russian personalities said 121 different identifiers, and not one of
-     * them was an exception to a norm: there was no norm to be the exception to. Real members of
-     * `outstanding-personalities-russia-2-roubles`, three years apart so the year stays theirs.
+     * them was an exception to a norm: there was no norm to be the exception to. Real members —
+     * of `outstanding-personalities-russia-2-roubles-plata-500` since #159 split the series by
+     * fineness — three years apart so the year stays theirs.
      */
     @Test
     fun `a catalog where every cell is its own type says no identifier either`() {
