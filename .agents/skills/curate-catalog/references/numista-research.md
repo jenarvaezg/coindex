@@ -77,6 +77,7 @@ Three things that route does not tell you:
 ## Reading a ficha
 
 - **The metal is the only physical property worth cross-checking.** Numista's grams do not agree with themselves — the 1000 escudos is one coin recorded as 27, 28 and 28,2 g — and its finish field does not exist, so `inferFinish` only reads the title (#62).
+- **A weight that matches no law is not proof of an intruder.** Of the three off-standard grams in the 104 3-rouble Architectural Monuments, two were a bailed digit in Numista (39,94 for 33,94) and the third, 35,66 g, is the mint's own figure for a coin carrying a 1,55 g gold inlay — same 31,10 g of fine silver, same plate. Read the *fine* content off the ficha's own edge lettering and off the mint, then decide; the gross gram alone separates nothing (#160).
 - **What sits in parentheses describes the finish, not the alloy**: «Plata 999 (highlighted in 24-carat gold)» is a silver coin. Read only the head of the composition phrase.
 - **A type with no year at all is the offline trace of an unpublished draft** (#38). The API serves it with every field as its contributor typed it, so a half-written `series` arrives looking like a real family.
 
