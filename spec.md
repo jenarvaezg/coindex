@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 52 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 57 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -68,10 +68,10 @@
      `numista_issue_ids`. Un catálogo simple o un date run puede **cualificar** una casilla
      con ese mismo campo sin ser un issue run (ADR 0019). Único vivo: los paquillos de 100
      pesetas de Franco.
-2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 804 tipos
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 819 tipos
    (respuestas íntegras de `GET /types/{id}?lang=es`), empaquetado como seed de la tabla de
-   caché para que ningún usuario gaste esas llamadas. Cubre los **720** tipos referenciados por
-   los catálogos, así que las láminas muestran todos los diseños (incluidos los «me falta») sin
+   caché para que ningún usuario gaste esas llamadas. Cubre los **749** tipos referenciados por
+   los ficheros curados, así que las láminas muestran todos los diseños (incluidos los «me falta») sin
    tocar el presupuesto. Sembrar es parte de curar: `scripts/seed-type-cache.py` omite lo ya
    cacheado y dice el coste con `--dry-run`, y `TypeCacheSeedTest` se pone rojo con la lista de
    los que falten.
@@ -223,13 +223,13 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 **Lo versionado**, medido sobre `data/`:
 
-- **56 catálogos** con 1.063 miembros: 30 abiertos y 26 cerrados. Por versión de esquema, 31
+- **57 catálogos** con 1.068 miembros: 30 abiertos y 27 cerrados. Por versión de esquema, 32
   simples, 22 date runs, 2 conjuntos y 1 issue run.
 - **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint y el dólar de plata clásico de EE. UU.
 - **2 programas conmemorativos** (ADR 0022), que no son colecciones y no dan tarjeta: las series
   portuguesas de 1977 y de 1983, tres denominaciones cada una. El padre lee «1 de 3» en las dos.
-- **816 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **819 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
 - **5 veredictos en `data/orphans.json`**, firmados por

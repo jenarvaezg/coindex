@@ -29700,6 +29700,120 @@
   },
   "weight": 31.1035
  },
+ "25848": {
+  "id": 25848,
+  "url": "https://es.numista.com/25848",
+  "title": "50 Gourdes (1976 Montreal-Innsbruck Olympiad)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "haiti",
+   "name": "Haití (1804-presente)"
+  },
+  "min_year": 1974,
+  "max_year": 1976,
+  "ruler": [
+   {
+    "id": 725,
+    "name": "Segunda Republica",
+    "wikidata_id": "Q3041766"
+   }
+  ],
+  "value": {
+   "text": "50 Gourdes",
+   "numeric_value": 50,
+   "currency": {
+    "id": 86,
+    "name": "Third gourde",
+    "full_name": "Third gourde (1872-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 38,
+  "thickness": 2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Media figura con antorcha sobre la llama olímpica, flanco de atletas",
+   "lettering": "REPUBLIQUE D'HAITI\r\n1976\r\nOLYMPIADE\r\nINNSBRUCK MONTREAL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/haiti/196-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/haiti/196-180.jpg",
+   "picture_copyright": "Jean Alexandre"
+  },
+  "reverse": {
+   "description": "Escudo de armas",
+   "lettering": "LIBERTE EGALITE FRATERNITE\r\n925\r\n50 \r\nGOURDES \r\n1974",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/haiti/195-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/haiti/195-180.jpg",
+   "picture_copyright": "Jean Alexandre"
+  },
+  "commemorated_topic": "Olimpiada Montreal-Innsbruck 1976",
+  "related_types": [
+   {
+    "id": 87978,
+    "title": "500 Gourdes (1976 Montreal-Innsbruck Olympiad)",
+    "category": "coin",
+    "country": {
+     "code": "haiti",
+     "name": "Haití (1804-presente)"
+    },
+    "minYear": 1974,
+    "maxYear": 1975
+   }
+  ],
+  "tags": [
+   "Juegos Olímpicos de Verano",
+   "Juegos Olímpicos de Invierno"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "113.1"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "113.2"
+   }
+  ],
+  "weight": 16.5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 12,
+    "name": "United States Mint of San Francisco"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "26066": {
   "category": "coin",
   "commemorated_topic": "Cucaburra",
@@ -30104,6 +30218,114 @@
    "text": "500 Dram"
   },
   "weight": 31.103
+ },
+ "26478": {
+  "id": 26478,
+  "url": "https://es.numista.com/26478",
+  "title": "50 Gourdes (Holy Year)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "haiti",
+   "name": "Haití (1804-presente)"
+  },
+  "min_year": 1974,
+  "max_year": 1976,
+  "ruler": [
+   {
+    "id": 725,
+    "name": "Segunda Republica",
+    "wikidata_id": "Q3041766"
+   }
+  ],
+  "value": {
+   "text": "50 Gourdes",
+   "numeric_value": 50,
+   "currency": {
+    "id": 86,
+    "name": "Third gourde",
+    "full_name": "Third gourde (1872-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 38.3,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Motivo Vaticano",
+   "lettering": "REPUBLIQUE D'HAITI\r\nMCMLXXV\r\nANNUS SANCTUS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/haiti/498-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/haiti/498-180.jpg",
+   "picture_copyright": "noumea"
+  },
+  "reverse": {
+   "description": "Escudo de armas",
+   "lettering": "LIBERTE EGALITE FRATERNITE\r\n925\r\n50 GOURDES\r\n1974",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/haiti/499-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/haiti/499-180.jpg",
+   "picture_copyright": "noumea"
+  },
+  "commemorated_topic": "Año Santo",
+  "related_types": [
+   {
+    "id": 86844,
+    "title": "200 Gourdes (Holy Year)",
+    "category": "coin",
+    "country": {
+     "code": "haiti",
+     "name": "Haití (1804-presente)"
+    },
+    "minYear": 1974,
+    "maxYear": 1975
+   }
+  ],
+  "tags": [
+   "Construcción religiosa",
+   "Mano",
+   "Figura religiosa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "123"
+   }
+  ],
+  "weight": 16.75,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 12,
+    "name": "United States Mint of San Francisco"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "272140": {
   "category": "coin",
@@ -54275,6 +54497,121 @@
    "text": "2 Roubles"
   },
   "weight": 17
+ },
+ "42955": {
+  "id": 42955,
+  "url": "https://es.numista.com/42955",
+  "title": "50 Gourdes (1974 World Cup)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "haiti",
+   "name": "Haití (1804-presente)"
+  },
+  "min_year": 1973,
+  "max_year": 1973,
+  "ruler": [
+   {
+    "id": 725,
+    "name": "Segunda Republica",
+    "wikidata_id": "Q3041766"
+   }
+  ],
+  "value": {
+   "text": "50 Gourdes",
+   "numeric_value": 50,
+   "currency": {
+    "id": 86,
+    "name": "Third gourde",
+    "full_name": "Third gourde (1872-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 38.61,
+  "thickness": 2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Motivo de la Copa del Mundo",
+   "lettering": "REPUBLIQUE D'HAÏTI\r\nWM 74\r\nCOUPE DU MONDE DE FOOTBALL 1974",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/haiti/350-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/haiti/350-180.jpg"
+  },
+  "reverse": {
+   "description": "Escudo de armas",
+   "lettering": "LIBERTE EGALITE FRATERNITE\r\n925\r\n50\r\nGOURDES\r\n1973",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/haiti/351-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/haiti/351-180.jpg"
+  },
+  "commemorated_topic": "Copa del Mundo de 1974",
+  "related_types": [
+   {
+    "id": 23677,
+    "title": "25 Gourdes (1974 World Cup)",
+    "category": "coin",
+    "country": {
+     "code": "haiti",
+     "name": "Haití (1804-presente)"
+    },
+    "minYear": 1973,
+    "maxYear": 1974
+   },
+   {
+    "id": 122126,
+    "title": "200 Gourdes (1974 World Cup)",
+    "category": "coin",
+    "country": {
+     "code": "haiti",
+     "name": "Haití (1804-presente)"
+    },
+    "minYear": 1973,
+    "maxYear": 1973
+   }
+  ],
+  "tags": [
+   "Fútbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "106"
+   }
+  ],
+  "weight": 16.75,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "430053": {
   "category": "coin",
