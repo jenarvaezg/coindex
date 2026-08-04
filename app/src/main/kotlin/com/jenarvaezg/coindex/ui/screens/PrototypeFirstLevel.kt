@@ -18,7 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -34,7 +37,7 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /*
- * PROTOTIPO DESECHABLE — ticket #18 del mapa #16.
+ * PROTOTIPO DESECHABLE — tickets #18, #23 y #161 del mapa #16.
  *
  * Tres formas rivales del primer nivel, conmutables desde la barra flotante de abajo:
  *
@@ -42,6 +45,10 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  *   B · Dos jerarquías hermanas — el primer nivel se parte en Colecciones y Monedas.
  *   C · Un cuaderno, dos vistas — el cuaderno sigue siendo el objeto; Láminas/Monedas es
  *       una lectura del mismo material, no otra jerarquía.
+ *   D · #23 · el destino de una tarjeta hoy, con dos saltos.
+ *   E · #23 · un destino por tarjeta, elegido por la capacidad.
+ *   F · #161 · la caja propia se hace eligiendo una a una — el gesto de hoy, mudado a Monedas.
+ *   G · #161 · la caja propia se hace filtrando: el filtro siembra la selección y tú descartas.
  *
  * Sin tests, sin datos reales, sin navegación de verdad: el estado vive en memoria. Los datos
  * son los medidos en #17 sobre el móvil del padre (58 tarjetas, 33 con catálogo, 4 completas,
@@ -61,6 +68,8 @@ data class ProtoPlate(
     val weightMillioz: Int?,
     val status: String?,
     val span: String?,
+    /** Caja propia: sin lista de emisiones, sin fichero y sin variante que declarar (#161). */
+    val own: Boolean = false,
 ) {
     val firstYear: Int? get() = span?.take(4)?.toIntOrNull()
 }
@@ -392,6 +401,9 @@ private val VARIANTS = listOf(
     // Ticket #23: el destino de una tarjeta, dentro del modelo que decidió #18.
     "D — #23 · Hoy: dos saltos",
     "E — #23 · Destino único",
+    // Ticket #161: desde dónde nace una caja propia, ya en Monedas.
+    "F — #161 · Elegir una a una",
+    "G — #161 · El filtro siembra",
 )
 
 @Composable
@@ -403,7 +415,9 @@ fun PrototypeFirstLevel(modifier: Modifier = Modifier) {
             1 -> VariantB()
             2 -> VariantC()
             3 -> VariantD()
-            else -> VariantE()
+            4 -> VariantE()
+            5 -> VariantOwnBox(seeded = false)
+            else -> VariantOwnBox(seeded = true)
         }
         Row(
             modifier = Modifier
@@ -639,6 +653,273 @@ private fun Tab(text: String, selected: Boolean, onClick: () -> Unit) {
     )
 }
 
+// ─── F y G · #161 · Desde dónde nace una caja propia ──────────────────────────────────────
+
+/** Una caja propia recién hecha: un nombre tecleado y los tipos que enumera. Nada más. */
+private class ProtoBox(val name: String, val typeIds: List<Int>)
+
+/**
+ * Lo que la caja propia enseña en el índice, calculado como lo haría `buildOwnGroupingViews`:
+ * sólo las piezas que tienes ahora, el país sólo si es uno, y nunca un ratio.
+ */
+private fun ProtoBox.asPlate(): ProtoPlate {
+    val mine = PROTO_PIECES.filter { it.typeId in typeIds }
+    return ProtoPlate(
+        family = name,
+        variant = "",
+        types = mine.size,
+        pieces = mine.size,
+        filled = null,
+        total = null,
+        issuer = mine.map { it.issuer }.distinct().singleOrNull().orEmpty(),
+        weightMillioz = null,
+        status = null,
+        span = null,
+        own = true,
+    )
+}
+
+/** Qué está eligiendo el coleccionista mientras lo elige. Por tipo, nunca por fila (#149). */
+@Stable
+private class ProtoSelection(val seeded: Boolean) {
+    var active by mutableStateOf(false)
+        private set
+
+    val picked = mutableStateListOf<Int>()
+
+    fun start(seed: List<Int>) {
+        picked.clear()
+        // La diferencia entera entre F y G: de qué lado empieza el trabajo.
+        if (seeded) picked.addAll(seed)
+        active = true
+    }
+
+    fun cancel() {
+        active = false
+        picked.clear()
+    }
+
+    fun toggle(typeId: Int) {
+        if (!picked.remove(typeId)) picked.add(typeId)
+    }
+
+    fun isPicked(typeId: Int): Boolean = typeId in picked
+}
+
+/** El nombre de una caja es su nombre de tarjeta: uno solo, con el tamaño de una tarjeta (#22). */
+private const val NAME_LIMIT = 40
+
+@Composable
+private fun SelectionBar(
+    selection: ProtoSelection,
+    seed: List<Int>,
+    filtered: Boolean,
+    boxes: List<ProtoBox>,
+    onCreate: (String, List<Int>) -> Unit,
+    onAddTo: (ProtoBox, List<Int>) -> Unit,
+) {
+    var naming by remember { mutableStateOf(false) }
+    // La siembra sólo tiene sentido cuando el filtro ya ha recortado algo: sin filtro ofrecería
+    // agrupar la colección entera, y una caja de dos monedas de dos países se haría desmarcando
+    // 189. Medido en el prototipo, no decidido antes.
+    val sows = selection.seeded && filtered
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (selection.active) {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                PrimaryAction(
+                    text = "Nombrar la caja · ${selection.picked.size}",
+                    onClick = { naming = true },
+                    enabled = selection.picked.isNotEmpty(),
+                )
+                CardAction(text = "Cancelar", onClick = selection::cancel)
+            }
+            Text(
+                if (selection.picked.isEmpty()) {
+                    "Toca «Elegir» en cada moneda que quieras."
+                } else {
+                    "Vienen elegidas las ${selection.picked.size} que enseñaba el filtro. " +
+                        "Quita las que no."
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = Paper.muted,
+            )
+        } else {
+            CardAction(
+                text = if (sows) "Agrupar estas ${seed.size}" else "Agrupar piezas",
+                onClick = { selection.start(if (sows) seed else emptyList()) },
+            )
+        }
+    }
+    if (naming) {
+        NameDialog(
+            count = selection.picked.size,
+            boxes = boxes,
+            onDismiss = { naming = false },
+            onCreate = { name ->
+                onCreate(name, selection.picked.toList())
+                naming = false
+                selection.cancel()
+            },
+            onAddTo = { box ->
+                onAddTo(box, selection.picked.toList())
+                naming = false
+                selection.cancel()
+            },
+        )
+    }
+}
+
+/**
+ * El bautizo. Un solo campo, porque una caja enumera a mano y no tiene alcance editorial que
+ * definir: lo que teclea **es** el `short_name`. Se rechaza el nombre que ya esté en el índice,
+ * que es el defecto que #163 acabó de curar en los ficheros.
+ */
+@Composable
+private fun NameDialog(
+    count: Int,
+    boxes: List<ProtoBox>,
+    onDismiss: () -> Unit,
+    onCreate: (String) -> Unit,
+    onAddTo: (ProtoBox) -> Unit,
+) {
+    var name by remember { mutableStateOf("") }
+    val taken = remember(boxes.size) {
+        (PROTO_PLATES.map { it.family } + boxes.map { it.name }).associateBy { searchable(it) }
+    }
+    val clash = taken[searchable(name.trim())]
+    Dialog(onDismissRequest = onDismiss) {
+        // `Paper.card` es 34 % de alfa: sobre el papel funciona, sobre el scrim de un diálogo
+        // se transparenta. El `GroupingDialog` de la v0.12.0 se ve exactamente así.
+        FieldCard(modifier = Modifier.fillMaxWidth().background(Paper.paper)) {
+            Eyebrow("Tu caja")
+            Text(
+                "Agrupar $count ${if (count == 1) "moneda" else "monedas"}",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = 4.dp, bottom = 10.dp),
+            )
+            OutlinedTextField(
+                value = name,
+                onValueChange = { if (it.length <= NAME_LIMIT) name = it },
+                label = { Text("Cómo se llama") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Text(
+                "${name.length}/$NAME_LIMIT · tiene que caber en una tarjeta",
+                style = MaterialTheme.typography.labelMedium,
+                color = Paper.muted,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+            if (clash != null) {
+                Text(
+                    "Ya hay una colección que se llama «$clash». Ponle otro nombre.",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Paper.rust,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.padding(top = 12.dp),
+            ) {
+                PrimaryAction(
+                    text = "Crear",
+                    onClick = { onCreate(name.trim()) },
+                    enabled = name.isNotBlank() && clash == null,
+                )
+                CardAction(text = "Cancelar", onClick = onDismiss)
+            }
+            if (boxes.isNotEmpty()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(top = 16.dp),
+                ) {
+                    Text(
+                        "O añádelas a una que ya tienes:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Paper.muted,
+                    )
+                    boxes.forEach { box ->
+                        CardAction(
+                            text = box.name,
+                            onClick = { onAddTo(box) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * F y G, que sólo se diferencian en una línea: de qué lado empieza la selección.
+ *
+ * Arranca con una caja ya vaciada —«Las que cambié», con tipos que ya no tienes— para que la
+ * tarjeta a cero se pueda mirar sin tener que vender nada.
+ */
+@Composable
+private fun VariantOwnBox(seeded: Boolean) {
+    var where by remember { mutableStateOf(BranchB.Coins) }
+    val boxes = remember {
+        mutableStateListOf(ProtoBox("Las que cambié", listOf(-1, -2)))
+    }
+    val selection = remember(seeded) { ProtoSelection(seeded) }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.weight(1f)) {
+            when (where) {
+                BranchB.Collections -> PlatesList(
+                    actions = true,
+                    extra = boxes.map { it.asPlate() },
+                    header = {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Eyebrow("Cuaderno de colección")
+                            Text("Colecciones", style = MaterialTheme.typography.displayLarge)
+                            Text(
+                                "${PROTO_PLATES.size} derivadas y ${boxes.size} tuyas, " +
+                                    "en la misma lista y con el mismo orden.",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Paper.muted,
+                            )
+                        }
+                    },
+                )
+
+                BranchB.Coins -> CoinsList(
+                    onOpenCollection = { where = BranchB.Collections },
+                    selection = selection,
+                    boxes = boxes,
+                    onCreate = { name, typeIds ->
+                        boxes.add(ProtoBox(name, typeIds))
+                        where = BranchB.Collections
+                    },
+                    onAddTo = { box, typeIds ->
+                        val at = boxes.indexOf(box)
+                        boxes[at] = ProtoBox(box.name, (box.typeIds + typeIds).distinct())
+                        where = BranchB.Collections
+                    },
+                    header = {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Eyebrow("Cuaderno de colección")
+                            Text("Monedas", style = MaterialTheme.typography.displayLarge)
+                            Text(
+                                if (seeded) {
+                                    "Filtra, y agrupa lo que queda enseñado."
+                                } else {
+                                    "Entra en modo elegir y toca las que van juntas."
+                                },
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Paper.muted,
+                            )
+                        }
+                    },
+                )
+            }
+        }
+        BottomBar(where) { where = it }
+    }
+}
+
 // ─── Las dos listas, compartidas por B y C ────────────────────────────────────────────────
 
 
@@ -720,14 +1001,21 @@ private fun <T> facetedCount(
 
 /** Las colecciones, con los filtros que el índice de hoy no tiene. */
 @Composable
-private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
+private fun PlatesList(
+    actions: Boolean,
+    extra: List<ProtoPlate> = emptyList(),
+    header: @Composable () -> Unit,
+) {
     val facets = remember { plateFacets() }
     val sortings = remember { plateSortings() }
     val (shelf, setShelf) = rememberShelf("colecciones", facets.size)
     val chosen = shelf.chosen
     var query by remember { mutableStateOf("") }
     val needle = searchable(query)
-    val platesByQuery = PROTO_PLATES.filter { plate ->
+    // Las cajas propias entran en la misma lista y las ordena el mismo comparador: sin ratio, así
+    // que caen en el tramo sin ratio de #164, sin privilegio (#161).
+    val everything = PROTO_PLATES + extra
+    val platesByQuery = everything.filter { plate ->
         needle.isBlank() || searchable(plate.family + " " + plate.issuer).contains(needle)
     }
     val shown = platesByQuery
@@ -746,7 +1034,7 @@ private fun PlatesList(actions: Boolean, header: @Composable () -> Unit) {
                 facets = facets,
                 chosen = chosen,
                 items = platesByQuery,
-                total = PROTO_PLATES.size,
+                total = everything.size,
                 shown = shown.size,
                 noun = "colecciones",
                 query = query,
@@ -815,7 +1103,14 @@ private fun plateFacets(): List<Facet<ProtoPlate>> = listOf(
  * moneda es la puerta a su colección, y la lista admite varias aunque hoy nunca haya más de una.
  */
 @Composable
-private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable () -> Unit) {
+private fun CoinsList(
+    onOpenCollection: (String) -> Unit,
+    selection: ProtoSelection? = null,
+    boxes: List<ProtoBox> = emptyList(),
+    onCreate: (String, List<Int>) -> Unit = { _, _ -> },
+    onAddTo: (ProtoBox, List<Int>) -> Unit = { _, _ -> },
+    header: @Composable () -> Unit,
+) {
     val facets = remember { pieceFacets() }
     val sortings = remember { pieceSortings() }
     val (shelf, setShelf) = rememberShelf("monedas", facets.size)
@@ -858,6 +1153,18 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
                 onClear = { setShelf(Shelf(List(facets.size) { 0 }, shelf.sort)) },
             )
         }
+        if (selection != null) {
+            item {
+                SelectionBar(
+                    selection = selection,
+                    seed = shown.map { it.typeId },
+                    filtered = shown.size != PROTO_PIECES.size,
+                    boxes = boxes,
+                    onCreate = onCreate,
+                    onAddTo = onAddTo,
+                )
+            }
+        }
         items(shown) { piece ->
             FieldCard(modifier = Modifier.fillMaxWidth()) {
                 Eyebrow(piece.issuer)
@@ -872,7 +1179,11 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
                     color = Paper.muted,
                     modifier = Modifier.padding(top = 2.dp),
                 )
-                if (piece.collections.isEmpty()) {
+                // Por #149 una caja propia se sienta en pie de igualdad con la derivada: la
+                // pieza no se muda, así que aquí se leen las dos.
+                val homes = piece.collections +
+                    boxes.filter { piece.typeId in it.typeIds }.map { it.name }
+                if (homes.isEmpty()) {
                     Text(
                         "En ninguna colección",
                         style = MaterialTheme.typography.labelLarge,
@@ -881,12 +1192,12 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
                     )
                 } else {
                     Text(
-                        if (piece.collections.size == 1) "En esta colección" else "En estas colecciones",
+                        if (homes.size == 1) "En esta colección" else "En estas colecciones",
                         style = MaterialTheme.typography.labelMedium,
                         color = Paper.muted,
                         modifier = Modifier.padding(top = 6.dp),
                     )
-                    piece.collections.forEach { name ->
+                    homes.forEach { name ->
                         LinkText(
                             text = name,
                             style = MaterialTheme.typography.labelLarge,
@@ -894,6 +1205,13 @@ private fun CoinsList(onOpenCollection: (String) -> Unit, header: @Composable ()
                             modifier = Modifier.padding(top = 2.dp),
                         )
                     }
+                }
+                if (selection != null && selection.active) {
+                    CardAction(
+                        text = if (selection.isPicked(piece.typeId)) "✓ Elegida" else "Elegir",
+                        onClick = { selection.toggle(piece.typeId) },
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
                 }
             }
         }
@@ -1109,26 +1427,39 @@ private fun BlockHeading(title: String) {
 @Composable
 private fun PlateCard(plate: ProtoPlate, actions: Boolean) {
     FieldCard(modifier = Modifier.fillMaxWidth()) {
-        Eyebrow(plate.issuer)
+        // Una caja que cruza países no tiene país que rotular, y calla: `issuerEyebrow` ya
+        // devuelve null con dos emisores (#161).
+        if (plate.issuer.isNotBlank()) Eyebrow(plate.issuer)
         LinkText(
             text = plate.family,
             style = MaterialTheme.typography.titleLarge,
             onClick = {},
         )
-        Text(plate.variant, style = MaterialTheme.typography.bodyLarge)
+        if (plate.variant.isNotBlank()) {
+            Text(plate.variant, style = MaterialTheme.typography.bodyLarge)
+        }
         Text(
             buildString {
-                append(plate.types).append(if (plate.types == 1) " tipo distinto" else " tipos distintos")
-                append(" · ").append(plate.pieces).append(if (plate.pieces == 1) " pieza" else " piezas")
-                if (plate.filled != null && plate.total != null) {
-                    append(" · ").append(plate.filled).append("/").append(plate.total)
+                if (plate.own) {
+                    // La frase que fijó #19 para una tarjeta sin lista de emisiones.
+                    append(plate.pieces).append(if (plate.pieces == 1) " moneda" else " monedas")
+                    append(" · ").append(plate.types)
+                        .append(if (plate.types == 1) " tipo" else " tipos")
+                } else {
+                    append(plate.types)
+                        .append(if (plate.types == 1) " tipo distinto" else " tipos distintos")
+                    append(" · ").append(plate.pieces)
+                        .append(if (plate.pieces == 1) " pieza" else " piezas")
+                    if (plate.filled != null && plate.total != null) {
+                        append(" · ").append(plate.filled).append("/").append(plate.total)
+                    }
                 }
             },
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
             modifier = Modifier.padding(top = 4.dp),
         )
-        if (actions) {
+        if (actions && !plate.own) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(top = 10.dp),
