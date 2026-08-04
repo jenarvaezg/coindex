@@ -1,7 +1,7 @@
 # ADR 0010 — Alcance del port a Android y decisiones de la app local-first
 
 Fecha: 2026-07-30
-Estado: aceptado
+Estado: aceptado, con §2, §3 y §8 modificados por el [ADR 0021](0021-what-a-collection-is-and-the-top-level.md)
 
 ## Contexto
 
@@ -24,8 +24,17 @@ compilar contra la API 37.
 La UI ya había retirado las láminas curadas del índice (spec §0.4) y los catálogos v1/v2
 cubren su papel. Por tanto **no** se portan `Series`, `Slot`, `Matcher`, `build_album` ni
 `ManualOverride`: eran la maquinaria de emparejar piezas contra casillas definidas a mano,
-con heurísticas que había que poder corregir. Las propuestas se derivan de la familia de
-Numista de forma determinista, sin heurísticas, así que no hay nada que corregir a mano.
+con heurísticas que había que poder corregir.
+
+**Corrección (ADR 0021 §12, 4 de agosto de 2026).** El motivo que este párrafo daba —«las
+propuestas se derivan de la familia de Numista de forma determinista, sin heurísticas, así que no
+hay nada que corregir a mano»— **es falso**: 84 de los 804 tipos sembrados corren tres heurísticas
+(imán de peso, acabado por título, metal por prosa) y una de ellas cruza catálogos. `ManualOverride`
+se queda fuera por los motivos verdaderos: corregir en el móvil arregla un móvil y curar el catálogo
+arregla los dos y para siempre; sería una segunda autoridad compitiendo con el catálogo, que el ADR
+0016 corona como la única que manda sobre la variante de sus miembros; y necesitaría un destino, que
+es lo que decide el ADR 0021 §10. El desacuerdo entre la ficha de Numista y lo que declara el
+catálogo se audita en un informe fuera de la app (#158).
 
 Consecuencia: `data/series/*.json` no viaja en la app. Sigue en el repo como datos para
 futuros catálogos (spec §0.9 cuestión 3).
@@ -42,6 +51,12 @@ propuesta**, con el motivo explícito (`UnclassifiedReason`):
 - `UnknownWeight` — sin peso, así que no se puede identificar la variante física.
 
 Se mantiene la propiedad que importaba: nada se descarta en silencio.
+
+**Corrección (ADR 0021 §12).** El motivo por pieza sobrevive como **dato de informe y no como texto
+de pantalla**: `unclassifiedReasonLabel` deja de ser UI y sus cuatro frases viven en el informe de
+campo, que es donde mira el curador. La app enseña **qué** piezas están fuera —el filtro «Sin
+colección» de Monedas— y no el por qué, así que «nada se descarta en silencio» pasa a ser «nada se
+descarta»: desde el ADR 0021 §1 la pieza no se pierde, vive en Monedas.
 
 ### 4. El acabado se infiere al leer, no se almacena
 
@@ -90,6 +105,13 @@ emulador). Por lo mismo, el `ImageLoader` de Coil desactiva los bitmaps de hardw
 
 El export espera a que todas las imágenes de la hoja se resuelvan —con éxito o con error,
 porque una que falla nunca llega— con un techo de 20 s, y avisa si alguna no cargó.
+
+**Ampliación (ADR 0021 §13).** Este §8 sigue gobernando **la hoja de pantalla**: el PNG conserva su
+rejilla `sqrt`, las dos caras y su `scale`, porque en pantalla el milímetro no existe. El papel
+divierge a propósito y lo especifica el ADR 0021: el cuaderno entero sale como **PDF vectorial**
+reproduciendo el mismo `Picture` que graba `recordInto`, a A4, con **sólo el reverso a tamaño real**,
+rejilla por lámina y una regla de 50 mm al pie. Son dos maquetadores sobre el mismo contenido, cada
+uno fiel a su medio; el `scale` de `SheetLayout` muere sólo en el papel.
 
 ## Consecuencias
 

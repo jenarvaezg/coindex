@@ -103,38 +103,69 @@
     (`proof`+colour → ProofColoured; `proof`; colour/`coloriz`/colores lunares; `gild`/
     `dorad`; `antiqu`; `bullion` o series Lunar III / Tudor Beasts → Bullion; si no →
     desconocido). Numista no expone un campo de acabado estable.
-- **Propuestas de colección**: agrupan solo piezas actuales del usuario por clave de
+- **Colecciones derivadas**: agrupan solo piezas actuales del usuario por clave de
   variante exacta. Sin familias difusas, sin mezclar pesos ni acabados. Cantidades: tipos
-  distintos + piezas.
-- **Precedencia de familia** (ADR 0009 y 0012), de la afirmación más específica a la más
-  débil: catálogo de conjunto (`schema_version: 3`) que nombra el tipo → familia real de
-  Numista → catálogo v1/v2 que referencia el tipo → familia técnica `System YYYY[-YYYY]`.
-  Una familia técnica ya no descarta la pieza: es la familia más débil, y se muestra con el
-  alias de presentación «Sistema monetario YYYY-YYYY». Solo los tipos sin familia y sin
-  catálogo siguen fuera (huérfanos).
-- **Disposiciones**: cada propuesta está `Available`, `Followed` o `Ignored` (persistente
-  por usuario y clave exacta; reversible; una preferencia sin evidencia actual queda
-  dormida sin materializar propuestas).
-- **Lámina de catálogo**: navegable cuando la propuesta existe, está `Followed`, hay
-  catálogo para esa clave exacta y el usuario posee ≥1 `type_id` oficial del catálogo
-  (la evidencia es por tipo incluso en date runs). Estados `Tengo (×n)` / `Me falta`.
-- **Alias editoriales de familia** (solo presentación, nunca entran en la clave):
-  `SML`→`Silver Maple Leaf`, `Red Data Book`→`Libro Rojo de Rusia`, la serie española a
-  facial→`Monedas españolas de plata a valor facial`, `Lunar ounce`→`Rwanda Lunar
-  Ounce`, `Nautical Ounce`→`Rwanda Nautical Ounce`.
+  distintos + piezas. Desde el ADR 0021 §8 no se llaman «propuestas»: la palabra murió con
+  el gesto de seguirlas.
+- **Precedencia de familia** (ADR 0009, 0012 y 0013), de la afirmación más específica a la
+  más débil: catálogo de conjunto (`schema_version: 3`) que nombra el tipo → catálogo de
+  colección seleccionado para el tipo y la pieza → familia real de Numista → agrupación
+  curada que nombra el tipo → familia técnica `System YYYY[-YYYY]`. Una familia técnica ya
+  no descarta la pieza: es la familia más débil, y se formatea «Sistema monetario
+  YYYY-YYYY». Los cinco peldaños siguen resolviendo la familia y **dejan de ser dato de
+  pantalla** (ADR 0021 §3). Y desde el ADR 0021 §1 ninguna pieza se pierde por no tener
+  familia: vive en Monedas, con el filtro «Sin colección».
+- **Disposiciones**: retiradas enteras (ADR 0021 §7, que supera al 0008).
+  `Available`/`Followed`/`Ignored`, `ProposalStance` y
+  `collection_proposal_preferences` desaparecen; la tabla se va con un `DROP` en la
+  migración v5 y no queda **nada persistido por tarjeta**.
+- **Lámina de catálogo**: navegable cuando la colección existe hoy (hay piezas de la
+  variante), hay catálogo para ella y el usuario posee ≥1 `type_id` oficial del catálogo
+  (la evidencia es **por tipo**, también en date runs). Tres razones de indisponibilidad y
+  ninguna más: `UnknownCatalog`, `NotAProposal`, `NoEvidence`. Estados `Tengo (×n)` /
+  `Me falta`.
+- **Nombre de tarjeta**: `short_name` en el fichero curado —obligatorio, único en el índice
+  y prefijo de `name`—, y la familia cruda de Numista verbatim cuando no hay fichero. Los
+  seis alias editoriales de familia **están retirados** (ADR 0021 §4, hechos en la v0.12.0
+  con #166): el único etiquetado
+  que queda en código es `System 1879-1936` → «Sistema monetario 1879-1936», que es
+  formateo de una cadena generada. Una caja propia lleva un solo nombre, con
+  `name == short_name` y 40 caracteres de techo.
+- **Orden del índice**: un único comparador `(tiene ratio ↓, ratio ↓, denominador ↓,
+  short_name ↑)` (ADR 0021 §6).
 
-### 0.4 UI de referencia (la web congelada es el prototipo)
+### 0.4 UI de referencia (la decide el ADR 0021, no la web congelada)
 
-Índice por usuario: botón **Sincronizar** + acceso a huérfanas/sin clasificar +
-propuestas en tres bloques (Seguidas / Disponibles / Ignoradas plegadas). Sin sección de
-láminas curadas (se retiró; las series curadas viven como catálogos). Cada tarjeta:
-familia (alias), variante (`peso · acabado`), `n tipos · m piezas`, acciones. El título
-enlaza: seguida con catálogo y evidencia → lámina local; resto con catálogo → página de
-la serie en Numista. La lámina: cabecera con progreso `n / m emisiones`, fuente y
-variante; rejilla con anverso/reverso, año y nº Numista por miembro, **los que faltan en
-gris (grayscale + opacidad ~0.45) con su diseño visible**, y todos los miembros enlazan a
-su ficha de Numista. Estética de guía de campo ornitológica (ver apéndice §8): serif,
-paleta de papel, ficha de especificaciones físicas.
+La web congelada dejó de ser la referencia el 4 de agosto de 2026. Lo que sigue es el
+resumen de la arquitectura de información que decidió el mapa
+[#16](https://github.com/jenarvaezg/coindex/issues/16) y que escribe el
+**[ADR 0021](docs/adr/0021-what-a-collection-is-and-the-top-level.md)**, que es la
+especificación; el apéndice §8 sigue siendo la mejor descripción de la **estética** —guía
+de campo ornitológica: serif, paleta de papel, ficha de especificaciones físicas—.
+
+- **Dos jerarquías hermanas en el primer nivel**: la app abre en **Colecciones** y una
+  barra inferior de dos destinos cruza a **Monedas**. «Sin clasificar» es el filtro «Sin
+  colección» de Monedas; las medallas son filtro y no sección; la moneda enlaza de vuelta a
+  sus colecciones. Los dos lados llevan filtros con recuento vivo, ordenación y buscador en
+  tiempo real, con la estantería plegada al entrar; filtros y orden persisten entre
+  arranques.
+- **Una sola especie de colección**, en una sola lista: catálogo curado, agrupación curada
+  y caja propia, sin bloques y **sin palabra de procedencia**. Cada tarjeta: eyebrow de
+  país, `short_name`, línea de variante (`peso · acabado`) cuando la hay, y la tercera
+  línea que dice la capacidad — `4 de 12 · te faltan 8` con lista de emisiones, `3 monedas
+  · 2 tipos` sin ella.
+- **Una tarjeta, un destino**: con lista de emisiones abre la lámina de un toque; sin ella
+  abre la lista de piezas, que es también donde vive la caja propia con su mantenimiento.
+- **La lámina** no cambia: cabecera con progreso `n / m emisiones`, fuente y variante;
+  rejilla con anverso/reverso, año y nº Numista por miembro, **los que faltan en gris
+  (grayscale + opacidad ~0.45) con su diseño visible**, y todos los miembros enlazan a su
+  ficha de Numista.
+- **Exportar**: la lámina como PNG por el share intent (ADR 0010 §8) y el cuaderno entero
+  —lo que el índice esté enseñando, en el orden del comparador— como PDF vectorial a A4,
+  con sólo el reverso a tamaño real y una regla de 50 mm al pie (ADR 0021 §13).
+- **La app no es superficie de auditoría** (ADR 0021 §12): ni línea de razón en la ficha,
+  ni gesto de «esta no va aquí». El desacuerdo se informa fuera, en un script que nunca se
+  pone rojo.
 
 ### 0.5 API de Numista — todo lo aprendido (válido para la app)
 
@@ -336,6 +367,13 @@ del sistema es **casar** los objetos coleccionados en Numista contra nuestras ca
 Ese emparejamiento es imperfecto por naturaleza y **debe ser auditable y corregible a
 mano de forma permanente**. Esto no es un detalle: es el requisito que determina si la
 app se usa o se abandona.
+
+> **Corrección (ADR 0021 §12, 4 de agosto de 2026).** El párrafo anterior se escribió sobre
+> el `Slot` y el emparejamiento heurístico, que ya no existen (ADR 0010 §2). La propiedad
+> sobrevive con otro sujeto: auditable **por el curador y fuera de la app** —un informe de
+> desacuerdos que nunca se pone rojo—, y corregible **curando el catálogo**, que arregla los
+> dos móviles y para siempre. Lo que la app garantiza es lo que de verdad importaba: que
+> ninguna pieza se pierda. `ManualOverride` no vuelve.
 
 ---
 

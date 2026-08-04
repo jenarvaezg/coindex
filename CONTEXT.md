@@ -10,11 +10,6 @@ The exact catalog family under which Numista groups related coin types. A family
 multiple physical variants and is not necessarily a curated series.
 _Avoid_: Series
 
-**Family display alias**:
-A presentation-only label for a Numista family. It does not change proposal identity,
-grouping, or persisted dispositions.
-_Avoid_: Numista family, proposal variant key
-
 **Physical variant**:
 A distinct form within a Numista family, identified by its normalized weight, finish and
 dominant metal. For example, one-ounce bullion, two-ounce bullion, and one-ounce coloured
@@ -33,18 +28,20 @@ _Avoid_: Alloy, fineness, composition
 
 **Composite finish**:
 A physical finish with multiple simultaneous properties, currently Proof coloured. It is
-distinct from Proof and Coloured and participates in proposal identity and grouping.
+distinct from Proof and Coloured and participates in card identity and grouping.
 _Avoid_: Display label, either component finish
 
-**Proposal variant key**:
+**Variant key**:
 The exact canonical tuple of resolved family, normalized weight, finish and dominant metal
-that identifies a physical variant for proposal grouping and per-user dispositions. A matching
-catalog declares the resolved family and complete key; without one, the remaining precedence
-ladder resolves the family. Family display aliases never alter the key.
-_Avoid_: Family display alias, proposal title
+that identifies a physical variant, and therefore groups the pieces of a derived collection. A
+matching catalog declares the resolved family and complete key; without one, the remaining
+precedence ladder resolves the family. It **persists nothing**: since ADR 0021 nothing is stored
+per card, and identity is the curated file wherever there is one, so the key is the identity only
+of the cards no file names.
+_Avoid_: Proposal variant key, family display alias, card name
 
 **Absent weight**:
-The weight of a proposal variant key that identifies a set rather than a physical variant,
+The weight of a variant key that identifies a set rather than a physical variant,
 because the set spans several of them. It persists as `-1`, never as zero, so that a
 defaulted row stays an invalid weight instead of reading as a set.
 _Avoid_: Zero weight, unknown weight
@@ -69,30 +66,68 @@ investigating the automatic unclassified residue, the curator records the Numist
 prose reason in `data/orphans.json`. Absolute solitude is enough but not required; a real
 sequence Coindex will never plate (for example ordinary euro circulation by country) can be
 an orphan too. Calendar solitude — a programme that may still grow, such as a lone Gothic
-Horror character — is not an orphan. The screen that lists rows `deriveCollection` could not
-place is unclassified residue, not the orphan list.
+Horror character — is not an orphan. The rows `deriveCollection` could not place are unclassified
+residue, not the orphan list, and the collector reaches them through the «Sin colección» filter of
+Coins — which shows *which* pieces are out, never *why* (ADR 0021 §12).
 _Avoid_: Unclassified, missing, stable orphan
 
-**Collection proposal**:
-A provisional, per-collector grouping of currently owned pieces that share one exact
-resolved family and physical variant. It suggests an organization, not catalog coverage or
-absent pieces.
-_Avoid_: Album, automatic series
+**Collection**:
+Any card of the index, and there is only one species: a curated catalog, a curated grouping and a
+collector's own box sit in one list, sorted by one comparator, with no block, no section and no word
+of provenance telling them apart. Having a curated file is not a rank and none is subordinate to
+another. What a collection *does* depends on one capability only — whether it has an issue list.
+_Avoid_: Collection proposal, album, automatic series, own grouping as a separate species
 
-**Available proposal**:
-A current collection proposal for which the user has neither followed nor ignored the
-proposal variant key.
-_Avoid_: Followed proposal, ignored proposal
+**Derived collection**:
+A collection nobody curated, fabricated from the collector's current pieces by one variant key
+because no file names those types. It is ephemeral and per collector (ADR 0007), recomputed after
+each sync, and it prints Numista's raw family verbatim as its card name.
+_Avoid_: Collection proposal, followed proposal, unclassified
 
-**Followed collection proposal**:
-A current collection proposal whose proposal variant key the user has marked as followed.
-Following does not promote it to a curated series or Album and cannot create Missing
-members.
-_Avoid_: Curated series, Album
+**Issue list**:
+The property that splits what a collection can do: with one — a catalog's members — the card says
+progress (`4 de 12 · te faltan 8`), opens its plate in one tap and can show a hole. Without one, the
+card counts what there is (`3 monedas · 2 tipos`) and opens its list of pieces. It is the only
+provenance signal on screen, and it is never spelled out as a word.
+_Avoid_: Provenance label, curated flag, coverage claim
+
+**Card name**:
+The card-sized name of a collection: `short_name` in the curated file — required, unique across the
+index and a prefix of `name` — Numista's raw family verbatim where no file exists, and the single
+40-character name a collector types when creating a box (where `name == short_name`). It is written
+by the curator, never renamed by the collector, and there are no display aliases in code.
+_Avoid_: Family, name, family display alias, editorial scope
+
+**Coverage ratio**:
+Issued members owned over issued members catalogued, which is what a collection with an issue list
+prints and what the index is sorted by — `(has ratio ↓, ratio ↓, denominator ↓, short_name ↑)`. It
+is a measured fact and it replaced the collector's declaration of intent: nothing is stored per card
+any more.
+_Avoid_: Followed disposition, progress bar, completeness claim
+
+**Collector's own box**:
+A collection whose members the collector enumerated by hand on the phone (`own_groupings`), born
+from a filter in Coins that seeds the selection. It is indistinguishable from any other card in the
+index, but it is a different act: it only ever holds pieces you own, so it **can never contain a
+gap**, and its only product is a sheet. A collection pursues; a box shows.
+_Avoid_: Own grouping, curated grouping, unclassified bucket, subordinate collection
+
+**Coins**:
+The sibling hierarchy of Collections at the top level, reached through the bottom bar, where a piece
+exists whether or not any collection claims it. It carries the filters — «Sin colección», class,
+country — the sort and the search, and each coin links back to the collections that claim it.
+_Avoid_: Unclassified screen, inventory view, collection detail
+
+**Disagreement report**:
+The audit surface for what the matching contradicts in silence — a member whose weight normalized
+from Numista's grams is not the one its catalog declares, a row so year-blind it is invisible in its
+own plate. It is a script with no network that never goes red and keeps a single issue in sync, not a
+screen: red when the finding is rare, a report when it is routine (ADR 0021 §12).
+_Avoid_: Manual override, unclassified reason, in-app audit
 
 **Collection catalog**:
-A curated, sourced reference list of official members for one exact proposal variant key.
-It remains separate from curated series and from the collector's followed disposition.
+A curated, sourced reference list of official members for one exact variant key.
+It remains separate from curated series, and it is what gives a collection its issue list.
 It **declares** that variant rather than inferring it: for the types it claims, its own family,
 weight, finish and metal are the key, whatever family or grams Numista records (ADR 0016).
 _Avoid_: Collection proposal, curated series
@@ -144,19 +179,16 @@ editor's fix upstream is the fix. Its offline trace is a type with no year at al
 _Avoid_: Numista error, manual override, missing type metadata
 
 **Collection catalog plate**:
-The per-collector comparison between a followed collection proposal and its matching
-collection catalog. It can show owned and Missing catalog members without changing the
-proposal or promoting it to an Album.
-_Avoid_: Album, followed collection proposal
-
-**Ignored proposal**:
-A current collection proposal whose proposal variant key the user has reversibly marked
-as ignored.
-_Avoid_: Deleted proposal, permanent exclusion
+The per-collector comparison between a collection that exists today and its matching collection
+catalog, showing owned and Missing members. It opens with no gesture from the collector, on two
+conditions and nothing else: the collection exists — the collector owns pieces of that variant — and
+there is **evidence by type**, at least one official member of the catalog among them. Evidence by
+type rather than by issue is what keeps a plate open while years are missing.
+_Avoid_: Album, followed proposal, disposition
 
 **Curated series**:
 An intentionally defined collectible sequence whose scope and expected members are
-editorial claims. Unlike a collection proposal, it can establish catalog coverage.
+editorial claims. Unlike a derived collection, it can establish catalog coverage.
 _Avoid_: Numista family, collection proposal
 
 **Catalog coverage**:
@@ -166,10 +198,11 @@ _Avoid_: Catalog metadata
 
 **Missing**:
 The status of an issued member within catalog coverage for which the collector owns no
-matching piece. It is meaningful only for curated series, never for collection proposals.
+matching piece. It is meaningful only where there is an issue list, never in a derived
+collection or a collector's box.
 _Avoid_: Unobserved, unknown
 
 **Album**:
 A collector-specific view of curated series coverage, distinguishing owned, Missing, and
-not-yet-issued members. A collection proposal is not an Album.
+not-yet-issued members. A collection with no issue list is not an Album.
 _Avoid_: Collection proposal, inventory
