@@ -72,6 +72,29 @@ data class PrintPage(
      * twelve pictures to wait for eighty-four times over and never a thousand at once.
      */
     val photographs: Int get() = cells.count { it.reverse?.hasPicture == true }
+
+    /**
+     * Columns this page is laid out on, which is the grid's except on a plate of one short row.
+     *
+     * A plate that spills keeps the grid's columns on every one of its pages, even the tail page
+     * holding a single coin: the pages of one plate are read as a run, and a lone Kookaburra
+     * centred on page four would not line up with the column it continues. A plate that fits on one
+     * page has no run to line up with, so three coins in a four-column grid are laid out as three.
+     */
+    val columnsUsed: Int
+        get() = if (pagesInSection > 1) {
+            section.grid.columns
+        } else {
+            minOf(section.grid.columns, cells.size).coerceAtLeast(1)
+        }
+
+    /**
+     * How wide the block of cells is, which is what gets centred on the page.
+     *
+     * The **block** and not each row: centring row by row would move the short last row of a plate
+     * that does not fill it, and an album page is read down its columns.
+     */
+    val blockWidthMm: Float get() = section.grid.widthOfMm(columnsUsed)
 }
 
 /** The whole notebook, in the order the index handed its cards over. */

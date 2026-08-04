@@ -41,9 +41,9 @@ import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.lastSyncLabel
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookExportLabel
-import com.jenarvaezg.coindex.ui.notebookProgressLabel
+import com.jenarvaezg.coindex.ui.notebookStepLabel
+import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
-import com.jenarvaezg.coindex.ui.print.exportableCards
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -84,11 +84,15 @@ fun IndexScreen(
     onOpenUnclassified: () -> Unit,
     onOpen: (CardDestination) -> Unit,
     /**
-     * The notebook as printable pages, built on the tap and not on every recomposition: resolving
-     * every card's plate is work the index does not owe until somebody asks for paper.
+     * The cards this screen is showing, as printable pages.
+     *
+     * It takes the list rather than reading the index itself, so the notebook is what is on screen
+     * — filters and search included — and not what the collector had just narrowed away. Called on
+     * the tap and not on every recomposition: resolving every card's plate is work the index does
+     * not owe until somebody asks for paper.
      */
-    notebook: () -> List<PrintPage> = ::emptyList,
-    onMessage: (String) -> Unit = {},
+    notebook: (List<IndexCard>) -> List<PrintPage>,
+    onMessage: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val openCard: (IndexCard) -> Unit = { card -> onOpen(destinationOf(card)) }
@@ -96,8 +100,7 @@ fun IndexScreen(
     // the notebook as it was when the button was pressed, so a sync landing mid-export cannot
     // reshuffle the pages under the printer.
     var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
-    var pagesDone by remember { mutableIntStateOf(0) }
-    var printingTitle by remember { mutableStateOf("") }
+    var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
@@ -118,17 +121,18 @@ fun IndexScreen(
                     syncing = syncing,
                     lastSync = lastSync,
                     spread = columns > 1,
-                    exportableCards = exportableCards(state),
+                    // One card, one page at least: what stays out of the notebook is a question
+                    // for the index and not for the printer (#147).
+                    exportableCards = state.index.size,
                     exporting = printing != null,
                     onSync = onSync,
                     onOpenUnclassified = onOpenUnclassified,
                     onExport = {
-                        val pages = notebook()
+                        val pages = notebook(state.index)
                         if (pages.isEmpty()) {
                             onMessage("No hay ninguna colección que llevar al papel.")
                         } else {
-                            pagesDone = 0
-                            printingTitle = pages.first().section.title
+                            step = NotebookExportStep.Drawing(0, pages.first().section.title)
                             printing = pages
                         }
                     },
@@ -140,10 +144,17 @@ fun IndexScreen(
             printing?.let { pages ->
                 fullWidth {
                     ExportProgress(
-                        label = notebookProgressLabel(pagesDone, pages.size, printingTitle),
-                        onCancel = {
-                            printing = null
-                            onMessage(notebookCancelledMessage(pagesDone, pages.size))
+                        step = step,
+                        pages = pages.size,
+                        // Only while there are pages left to draw: cancelling the write would
+                        // close the document under the thread serializing it.
+                        onCancel = (step as? NotebookExportStep.Drawing)?.let { drawing ->
+                            {
+                                printing = null
+                                onMessage(
+                                    notebookCancelledMessage(drawing.pagesDone, pages.size),
+                                )
+                            }
                         },
                     )
                 }
@@ -201,10 +212,7 @@ fun IndexScreen(
         printing?.let { pages ->
             NotebookPdfExport(
                 pages = pages,
-                onProgress = { done, title ->
-                    pagesDone = done
-                    printingTitle = title
-                },
+                onStep = { step = it },
                 onFinished = { message ->
                     printing = null
                     onMessage(message)
@@ -214,13 +222,17 @@ fun IndexScreen(
     }
 }
 
-/** What the notebook is doing right now, and the way out of it. */
+/** What the notebook is doing right now, and the way out of it while there is one. */
 @Composable
-private fun ExportProgress(label: String, onCancel: () -> Unit) {
+private fun ExportProgress(
+    step: NotebookExportStep,
+    pages: Int,
+    onCancel: (() -> Unit)?,
+) {
     FieldCard(modifier = Modifier.fillMaxWidth()) {
         Eyebrow("Exportando el cuaderno")
         Text(
-            label,
+            notebookStepLabel(step, pages),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 6.dp),
         )
@@ -230,7 +242,13 @@ private fun ExportProgress(label: String, onCancel: () -> Unit) {
             color = Paper.muted,
             modifier = Modifier.padding(top = 4.dp),
         )
-        CardAction(text = "Cancelar", onClick = onCancel, modifier = Modifier.padding(top = 10.dp))
+        onCancel?.let { cancel ->
+            CardAction(
+                text = "Cancelar",
+                onClick = cancel,
+                modifier = Modifier.padding(top = 10.dp),
+            )
+        }
     }
 }
 

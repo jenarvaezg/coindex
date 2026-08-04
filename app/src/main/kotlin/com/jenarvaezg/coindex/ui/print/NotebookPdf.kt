@@ -26,9 +26,10 @@ private const val POINTS_PER_PIXEL = POINTS_PER_INCH / (MM_PER_INCH * PrintPaper
  * weigh. The photographs are still bitmaps, at whatever resolution [PRINT_PX_PER_MM] decoded them.
  *
  * The scale is the **same on both axes** on purpose. A4 is 595,28 × 841,89 points and a page is
- * sized in whole ones, so fitting the recording to the rounded rectangle would stretch it by six
- * hundredths of a percent on one axis alone — invisible, and a lie at 1:1. Rounding down instead
- * leaves the difference in the fifteen-millimetre margin, where nothing is drawn.
+ * sized in whole ones (595 × 842), so fitting the recording to that rounded rectangle would stretch
+ * it by six hundredths of a percent on one axis alone — invisible, and a lie at 1:1. Keeping the
+ * scale uniform leaves the third of a point of difference inside the fifteen-millimetre margin,
+ * where nothing is drawn.
  */
 fun addNotebookPage(document: PdfDocument, picture: Picture, number: Int) {
     require(picture.width > 0 && picture.height > 0) { "la página aún no se ha dibujado" }

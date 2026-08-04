@@ -46,7 +46,7 @@ import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.PrintPaper
 import com.jenarvaezg.coindex.ui.theme.Paper
 
-/** The density that makes one dp one millimetre of paper, so the layout is written in millimetres. */
+/** The density that makes one dp a millimetre of paper: the layout is written in millimetres. */
 val printDensity = Density(density = PrintPaper.PX_PER_MM, fontScale = 1f)
 
 /** Millimetres, as the unit the whole printed page is laid out in. */
@@ -196,9 +196,15 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
             .height(PrintPaper.gridHeightMm.mm)
             .clipToBounds(),
         verticalArrangement = Arrangement.spacedBy(PrintPaper.GUTTER_MM.mm),
+        // The block is centred and the rows inside it are not: what the grid leaves over is
+        // margin, and margin on one side only reads as a page printed askew.
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         page.cells.chunked(grid.columns).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(PrintPaper.GUTTER_MM.mm)) {
+            Row(
+                modifier = Modifier.width(page.blockWidthMm.mm),
+                horizontalArrangement = Arrangement.spacedBy(PrintPaper.GUTTER_MM.mm),
+            ) {
                 row.forEach { cell ->
                     PrintedCell(
                         cell = cell,
@@ -333,14 +339,17 @@ private fun PrintedCoin(
 @Composable
 private fun EmptyMount(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
-        val stroke = 0.4f * PrintPaper.PX_PER_MM
+        // Through the draw scope's own density rather than by multiplying by `PX_PER_MM`: the
+        // millimetre is the unit of the page either way, and this one stays a millimetre if the
+        // page is ever recorded at another resolution.
+        val stroke = 0.4f.mm.toPx()
         drawCircle(
             color = Paper.hairline,
             radius = (size.minDimension - stroke) / 2f,
             style = Stroke(
                 width = stroke,
                 pathEffect = PathEffect.dashPathEffect(
-                    floatArrayOf(1.6f * PrintPaper.PX_PER_MM, 1.2f * PrintPaper.PX_PER_MM),
+                    floatArrayOf(1.6f.mm.toPx(), 1.2f.mm.toPx()),
                 ),
             ),
         )
@@ -391,7 +400,7 @@ private fun Ruler() {
             .width(PrintPaper.RULER_BAR_MM.mm)
             .height(3f.mm),
     ) {
-        val stroke = 0.3f * PrintPaper.PX_PER_MM
+        val stroke = 0.3f.mm.toPx()
         val baseline = size.height - stroke / 2f
         drawLine(
             color = Paper.ink,

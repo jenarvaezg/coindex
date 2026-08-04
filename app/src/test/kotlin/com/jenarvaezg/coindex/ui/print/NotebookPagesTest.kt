@@ -2,12 +2,16 @@ package com.jenarvaezg.coindex.ui.print
 
 import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CoinPhoto
+import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.TypeCacheFile
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.OwnGrouping
+import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -107,6 +111,32 @@ class NotebookPagesTest {
         assertEquals(1, pages.last().cells.size)
     }
 
+    /**
+     * A plate of one short row is centred on what it holds; a plate that spills is not.
+     *
+     * The three 20 escudos of Portugal in a four-column grid printed visibly left of centre. The
+     * Kookaburra's tail page holds one coin and must **not** be centred: it continues the column it
+     * started in, and the four pages are read as a run.
+     */
+    @Test
+    fun `a plate of one short row is centred on the cells it has`() {
+        val escudos = section(catalogs.first { it.id == "portugal-20-escudos-plata" })
+        val single = printPages(listOf(escudos)).single()
+
+        assertEquals(4, escudos.grid.columns)
+        assertEquals(3, single.columnsUsed)
+        assertEquals(escudos.grid.widthOfMm(3), single.blockWidthMm)
+
+        val kookaburra = printPages(
+            listOf(section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })),
+        )
+        assertEquals(1, kookaburra.last().cells.size)
+        assertTrue(
+            kookaburra.all { it.blockWidthMm == it.section.grid.blockWidthMm },
+            "una fila corta ha movido el bloque de una lámina que se continúa",
+        )
+    }
+
     @Test
     fun `a collection with nothing in it still gets one page rather than none`() {
         val empty = section(catalogs.first()).copy(cells = emptyList())
@@ -115,5 +145,32 @@ class NotebookPagesTest {
 
         assertEquals(1, pages.size)
         assertEquals(emptyList(), pages.single().cells)
+    }
+
+    /**
+     * One card in, one section out — including the box the collector emptied.
+     *
+     * A box survives with nothing in it (ADR 0021 §11), and what stays out of the notebook is a
+     * question for the index and not for the printer (#147): dropping it here would be a second
+     * rule about what a collection is, kept only in the exporter, and the button's count would have
+     * to learn it too.
+     */
+    @Test
+    fun `an emptied box is still a section of the notebook`() {
+        val emptied = IndexCard.Box(
+            name = "Bandeja del abuelo",
+            issuer = null,
+            box = OwnGroupingView(
+                OwnGrouping(id = 1, name = "Bandeja del abuelo", typeIds = emptyList()),
+                emptyList(),
+            ),
+        )
+
+        val sections = notebookSections(CollectionState(), listOf(emptied), catalogs, emptyList())
+
+        assertEquals(1, sections.size)
+        assertEquals("Bandeja del abuelo", sections.single().title)
+        assertEquals(emptyList(), sections.single().cells)
+        assertEquals(1, printPages(sections).size)
     }
 }

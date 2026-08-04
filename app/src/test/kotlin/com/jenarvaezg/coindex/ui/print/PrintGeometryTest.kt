@@ -56,13 +56,32 @@ class PrintGeometryTest {
     fun `every cell fits inside the printable band it was measured against`() {
         listOf(14.5f, 16f, 22f, 33f, 38.61f, 40.9f, 45.6f).forEach { diameter ->
             val grid = printGrid(diameter)
-            val width = grid.columns * grid.cellWidthMm +
-                (grid.columns - 1) * PrintPaper.GUTTER_MM
             val height = grid.rows * grid.cellHeightMm + (grid.rows - 1) * PrintPaper.GUTTER_MM
-            assertTrue(width <= PrintPaper.gridWidthMm, "$diameter mm se sale de ancho: $width")
+            assertTrue(
+                grid.blockWidthMm <= PrintPaper.gridWidthMm,
+                "$diameter mm se sale de ancho: ${grid.blockWidthMm}",
+            )
             assertTrue(height <= PrintPaper.gridHeightMm, "$diameter mm se sale de alto: $height")
             assertTrue(grid.columns >= 1 && grid.rows >= 1, "rejilla vacía para $diameter mm")
         }
+    }
+
+    /**
+     * What the grid leaves over is margin on both sides, because the block is centred.
+     *
+     * The 45,6 mm Lunar II is the case that made this visible: three coins to a row leave 37 mm,
+     * and all of it against the right edge read as a page printed askew.
+     */
+    @Test
+    fun `the block is narrower than the page and what is left over is centred`() {
+        val lunar = printGrid(45.6f)
+
+        assertEquals(3, lunar.columns)
+        assertEquals(142.8f, lunar.blockWidthMm, 0.01f)
+        assertTrue(PrintPaper.gridWidthMm - lunar.blockWidthMm > 30f, "no sobraba tanto aire")
+        // A grid that nearly fills the width has almost nothing left to centre.
+        val roubles = printGrid(33f)
+        assertEquals(177f, roubles.blockWidthMm, 0.01f)
     }
 
     @Test

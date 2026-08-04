@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.jenarvaezg.coindex.ui.notebookExportMessage
+import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.addNotebookPage
 import com.jenarvaezg.coindex.ui.print.notebookFileName
@@ -29,12 +30,15 @@ import com.jenarvaezg.coindex.ui.recordInto
  *
  * Cancelling is leaving composition: the parent stops drawing this, the effect is cancelled and
  * [DisposableEffect] closes the document. Nothing has to be cleaned up because nothing has been
- * written — the file appears only once the last page is in.
+ * written — the file appears only once the last page is in. That is also why the last step reports
+ * [NotebookExportStep.Writing]: `writeTo` is a blocking native call that would not notice the
+ * coroutine being cancelled, so the parent has to stop offering a cancel that would close the
+ * document while it is being serialized.
  */
 @Composable
 fun NotebookPdfExport(
     pages: List<PrintPage>,
-    onProgress: (pagesDone: Int, title: String) -> Unit,
+    onStep: (NotebookExportStep) -> Unit,
     onFinished: (String) -> Unit,
 ) {
     val context = LocalContext.current
@@ -55,7 +59,7 @@ fun NotebookPdfExport(
 
     LaunchedEffect(pageIndex) {
         val current = pages.getOrNull(pageIndex) ?: return@LaunchedEffect
-        onProgress(pageIndex, current.section.title)
+        onStep(NotebookExportStep.Drawing(pageIndex, current.section.title))
         awaitSettledImages(current.photographs, settled)
         val appended = runCatching { addNotebookPage(document, picture, pageIndex + 1) }
         if (appended.isFailure) {
@@ -68,6 +72,7 @@ fun NotebookPdfExport(
             pageIndex += 1
             return@LaunchedEffect
         }
+        onStep(NotebookExportStep.Writing)
         val shared = runCatching {
             shareNotebookPdf(context, document, notebookFileName())
         }
