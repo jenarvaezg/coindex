@@ -71,12 +71,12 @@ interface TypeMetaDao {
 }
 
 @Dao
-interface ProposalPreferenceDao {
+interface DerivedCollectionPreferenceDao {
     @Query("SELECT * FROM collection_proposal_preferences")
-    fun observeAll(): Flow<List<ProposalPreferenceEntity>>
+    fun observeAll(): Flow<List<DerivedCollectionPreferenceEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(preference: ProposalPreferenceEntity)
+    suspend fun upsert(preference: DerivedCollectionPreferenceEntity)
 
     @Query(
         """

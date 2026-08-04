@@ -47,7 +47,7 @@ class CollectionTitlesTest {
 
         // A grouping declares no weight, finish or metal (ADR 0013), so the key it names is
         // whatever each piece's own metadata resolved to.
-        val key = CollectionProposalKey(grouping.family, 1000, null, Metal.Silver)
+        val key = VariantKey(grouping.family, 1000, null, Metal.Silver)
         assertEquals("Dólar de plata clásico", titles.of(key))
     }
 
@@ -57,11 +57,11 @@ class CollectionTitlesTest {
 
         assertEquals(
             "Charlemagme - Mounted Knight",
-            titles.of(CollectionProposalKey("Charlemagme - Mounted Knight", 1000, null, null)),
+            titles.of(VariantKey("Charlemagme - Mounted Knight", 1000, null, null)),
         )
         assertEquals(
             "Sistema monetario 1981-2001",
-            titles.of(CollectionProposalKey("System 1981-2001", 1000, null, null)),
+            titles.of(VariantKey("System 1981-2001", 1000, null, null)),
         )
     }
 

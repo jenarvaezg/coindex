@@ -1,23 +1,23 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.db.DerivedCollectionPreferenceEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
-import com.jenarvaezg.coindex.data.db.ProposalPreferenceEntity
-import com.jenarvaezg.coindex.domain.ClassifiedCollectionProposals
+import com.jenarvaezg.coindex.domain.ClassifiedDerivedCollections
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
-import com.jenarvaezg.coindex.domain.CollectionProposal
-import com.jenarvaezg.coindex.domain.CollectionProposalKey
 import com.jenarvaezg.coindex.domain.CollectionTitles
 import com.jenarvaezg.coindex.domain.CuratedGrouping
+import com.jenarvaezg.coindex.domain.DerivedCollection
+import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
 import com.jenarvaezg.coindex.domain.OwnGroupingView
-import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
+import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.buildOwnGroupingViews
-import com.jenarvaezg.coindex.domain.classifyCollectionProposals
+import com.jenarvaezg.coindex.domain.classifyDerivedCollections
 import com.jenarvaezg.coindex.domain.deriveCollection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -25,30 +25,30 @@ import kotlinx.coroutines.flow.combine
 /** Everything the screens need, derived from the local snapshot alone. */
 data class CollectionState(
     val items: List<CollectedItem> = emptyList(),
-    val proposals: ClassifiedCollectionProposals = ClassifiedCollectionProposals(),
+    val derivedCollections: ClassifiedDerivedCollections = ClassifiedDerivedCollections(),
     val unclassified: List<UnclassifiedItem> = emptyList(),
     val typeMeta: Map<Int, TypeMeta> = emptyMap(),
     val images: Map<Int, TypeImages> = emptyMap(),
-    val followedKeys: Set<CollectionProposalKey> = emptySet(),
+    val followedKeys: Set<VariantKey> = emptySet(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
-    /** The pieces behind each proposal, for the screen that opens one. */
-    val itemsByKey: Map<CollectionProposalKey, List<CollectedItem>> = emptyMap(),
+    /** The pieces behind each derived collection, for the screen that opens one. */
+    val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
     /** The collector's own groupings, an extra view over the same pieces (ADR 0013). */
     val ownGroupings: List<OwnGroupingView> = emptyList(),
 ) {
-    /** Every current proposal, whatever the collector decided about it. */
-    fun allProposals(): List<CollectionProposal> =
-        proposals.followed + proposals.available + proposals.ignored
+    /** Every current derived collection, whatever the collector decided about it. */
+    fun allDerivedCollections(): List<DerivedCollection> =
+        derivedCollections.followed + derivedCollections.available + derivedCollections.ignored
 
-    fun proposalFor(key: CollectionProposalKey): CollectionProposal? =
-        allProposals().firstOrNull { it.key() == key }
+    fun derivedCollectionFor(key: VariantKey): DerivedCollection? =
+        allDerivedCollections().firstOrNull { it.key() == key }
 }
 
 /** Why a catalog plate cannot be opened. Navigability is never guessed at in the UI. */
 enum class PlateUnavailable {
     UnknownCatalog,
-    NotAProposal,
+    NotACollection,
     NotFollowed,
     NoEvidence,
 }
@@ -65,8 +65,8 @@ sealed interface PlateResult {
 /**
  * Single source of truth for the collector's local data.
  *
- * Proposals are always derived, never stored: the only per-collector rows are the collection
- * snapshot, the type cache, the durable dispositions and the API call log.
+ * Collections are always derived, never stored: the only per-collector rows are the
+ * collection snapshot, the type cache, the durable dispositions and the API call log.
  */
 class CoindexRepository(
     private val database: CoindexDatabase,
@@ -79,7 +79,7 @@ class CoindexRepository(
     fun observeState(): Flow<CollectionState> = combine(
         database.collectedItems().observeAll(),
         database.typeMeta().observeAll(),
-        database.proposalPreferences().observeAll(),
+        database.derivedCollectionPreferences().observeAll(),
         database.ownGroupings().observeAll(),
         database.ownGroupings().observeMembers(),
     ) { items, types, preferences, ownGroupings, ownMembers ->
@@ -89,12 +89,13 @@ class CoindexRepository(
         val dispositions = preferences.mapNotNull { it.toDomain() }
         CollectionState(
             items = domainItems,
-            proposals = classifyCollectionProposals(derivation.proposals, dispositions),
+            derivedCollections =
+                classifyDerivedCollections(derivation.derivedCollections, dispositions),
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,
             images = types.associate { it.typeId to it.toImages() },
             followedKeys = dispositions
-                .filter { it.disposition == ProposalDisposition.Followed }
+                .filter { it.disposition == DerivedCollectionDisposition.Followed }
                 .mapTo(mutableSetOf()) { it.key },
             evidencedCatalogIds = catalogs
                 .filter { catalog -> catalog.isEvidencedBy(domainItems) }
@@ -108,8 +109,8 @@ class CoindexRepository(
     }
 
     /** Persists a disposition, or clears it when [disposition] is null (back to Available). */
-    suspend fun setDisposition(key: CollectionProposalKey, disposition: ProposalDisposition?) {
-        val dao = database.proposalPreferences()
+    suspend fun setDisposition(key: VariantKey, disposition: DerivedCollectionDisposition?) {
+        val dao = database.derivedCollectionPreferences()
         if (disposition == null) {
             dao.delete(
                 key.family,
@@ -121,7 +122,7 @@ class CoindexRepository(
         }
         val now = System.currentTimeMillis()
         dao.upsert(
-            ProposalPreferenceEntity(
+            DerivedCollectionPreferenceEntity(
                 family = key.family,
                 weightMillioz = key.storedWeightMillioz(),
                 finishCode = key.finishCode(),
@@ -147,8 +148,8 @@ class CoindexRepository(
         groupings.forEach { addAll(it.typeIds) }
     }
 
-    /** The catalog matching a proposal variant key, if one was curated for it. */
-    fun catalogFor(key: CollectionProposalKey): CollectionCatalog? =
+    /** The catalog matching a variant key, if one was curated for it. */
+    fun catalogFor(key: VariantKey): CollectionCatalog? =
         catalogs.firstOrNull { it.key() == key }
 
     /** Creates one of the collector's own groupings over the types they picked (ADR 0013). */
@@ -179,8 +180,8 @@ class CoindexRepository(
 /**
  * Resolves a plate against the current state.
  *
- * A plate is reachable only when the proposal currently exists, the collector follows that
- * exact variant key, a catalog matches it, and at least one official type is owned. Evidence
+ * A plate is reachable only when the collection currently exists, the collector follows
+ * that exact variant key, a catalog matches it, and at least one official type is owned. Evidence
  * is by type even for date runs, so a plate stays open while years are still missing.
  */
 fun resolvePlate(
@@ -192,7 +193,8 @@ fun resolvePlate(
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
     val key = catalog.key()
     return when {
-        state.proposalFor(key) == null -> PlateResult.Unavailable(PlateUnavailable.NotAProposal)
+        state.derivedCollectionFor(key) == null ->
+            PlateResult.Unavailable(PlateUnavailable.NotACollection)
         key !in state.followedKeys -> PlateResult.Unavailable(PlateUnavailable.NotFollowed)
         catalog.id !in state.evidencedCatalogIds ->
             PlateResult.Unavailable(PlateUnavailable.NoEvidence)

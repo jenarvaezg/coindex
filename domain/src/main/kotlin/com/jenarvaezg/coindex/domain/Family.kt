@@ -31,7 +31,7 @@ fun isTechnicalFamily(family: String): Boolean {
  * is the visible debt of a collection nobody has curated yet, and hiding it behind a prettier
  * string in code would hide the work instead of doing it.
  */
-fun collectionProposalFamilyLabel(family: String): String = when {
+fun familyLabel(family: String): String = when {
     isTechnicalFamily(family) ->
         "Sistema monetario ${family.removePrefix("System ")}"
     else -> family

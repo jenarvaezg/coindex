@@ -160,7 +160,7 @@ is honest), and it is not alphabetical, which §1 already paid for with a persis
 the gesture and the name.
 
 - **The plate condition is: a current collection plus evidence by type.** `NotFollowed` leaves
-  `PlateUnavailable`, which drops from four reasons to three — `UnknownCatalog`, `NotAProposal`,
+  `PlateUnavailable`, which drops from four reasons to three — `UnknownCatalog`, `NotACollection`,
   `NoEvidence`. Evidence is **by type and not by issue**, which is what keeps a plate open while
   years are missing. Following was the only one of the four conditions that said nothing about the
   world: the other three describe the inventory, and this one said «tap here first».
@@ -172,9 +172,9 @@ the gesture and the name.
 - **No declarative comes back.** «Lo colecciono» is an intention that ages; `4 de 12` is a measured
   fact. The distinction #17 asked for is **derived from the ratio**, which is why spending the ratio
   on the default order (§6) is an obligation and not an option.
-- **What the plate demands of the inventory does not change.** `NotAProposal` stays: with no pieces
-  of the variant there is no card and no plate. Cutting the toll does **not** open the 51 catalogs
-  to navigation — that would be new capability against ADR 0007, and it is not decided here.
+- **What the plate demands of the inventory does not change.** `NotACollection` stays: with no
+  pieces of the variant there is no card and no plate. Cutting the toll does **not** open the 51
+  catalogs to navigation — that would be new capability against ADR 0007, and is not decided here.
 
 ### 8. «Proposal» stops being the word
 
@@ -219,7 +219,8 @@ criterion fires on its own, there is no combinatorial explosion to bound and no 
 **Curated multiple membership has no home and no extra view.** The collections that name a type show
 it on equal footing, each counting its own ratio with its own gaps. The «home» turned out to be
 mechanical rather than conceptual: `deriveCollection` fabricates cards only for what no file claims,
-and the `check(matchingCatalogs.size <= 1)` of `Proposals.kt:122` — which crashes the app today —
+and the `check(matchingCatalogs.size <= 1)` of `CollectionDerivation.kt:122` — which crashes the
+app today —
 existed to break ties between *fabricated* keys. It **dies as unnecessary**, and derivation by family
 is relegated to what no file names: the 18 cards without a file and the orphans.
 

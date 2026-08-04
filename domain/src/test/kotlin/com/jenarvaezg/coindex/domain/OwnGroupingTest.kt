@@ -28,7 +28,7 @@ class OwnGroupingTest {
         assertEquals(61, view.quantity)
     }
 
-    /** A grouping is an extra view: grouping a piece never takes it out of its proposal. */
+    /** A grouping is an extra view: grouping a piece never takes it out of its collection. */
     @Test
     fun `grouping a piece leaves the derivation untouched`() {
         val items = listOf(piece(1, 1_885))
@@ -43,8 +43,8 @@ class OwnGroupingTest {
         val derivation = deriveCollection(items, typeMeta, emptyList())
         val views = buildOwnGroupingViews(listOf(paquillos), items)
 
-        assertEquals(1, derivation.proposals.size)
-        assertEquals(1, derivation.proposals[0].quantity)
+        assertEquals(1, derivation.derivedCollections.size)
+        assertEquals(1, derivation.derivedCollections[0].quantity)
         assertEquals(1, views.single().quantity)
     }
 

@@ -26,14 +26,14 @@ class MastheadLabelsTest {
     }
 
     @Test
-    fun `a proposal names the collection, with the curator's own word for it`() {
+    fun `a derived collection names the collection, with the curator's own word for it`() {
         // «Paquillos» is the collector's word (#13) and now reaches the masthead the way every
         // other card name does: from the catalog's `short_name`, not from an alias in code (#22).
         assertEquals(
-            "Propuesta · Paquillos",
-            screenTitle(Routes.PROPOSAL, subjectName = "Paquillos"),
+            "Colección · Paquillos",
+            screenTitle(Routes.DERIVED_COLLECTION, subjectName = "Paquillos"),
         )
-        assertEquals("Propuesta", screenTitle(Routes.PROPOSAL, subjectName = null))
+        assertEquals("Colección", screenTitle(Routes.DERIVED_COLLECTION, subjectName = null))
     }
 
     @Test

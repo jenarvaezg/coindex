@@ -1,17 +1,17 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
+import com.jenarvaezg.coindex.data.db.DerivedCollectionPreferenceEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
-import com.jenarvaezg.coindex.data.db.ProposalPreferenceEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.CollectionProposalKey
-import com.jenarvaezg.coindex.domain.CollectionProposalPreference
+import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
+import com.jenarvaezg.coindex.domain.DerivedCollectionPreference
 import com.jenarvaezg.coindex.domain.OwnGrouping
-import com.jenarvaezg.coindex.domain.ProposalDisposition
 import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
 import com.jenarvaezg.coindex.domain.inferMetal
@@ -150,12 +150,12 @@ fun OwnGroupingEntity.toDomain(members: List<OwnGroupingMemberEntity>): OwnGroup
 )
 
 /** A stored preference whose parts are no longer canonical is ignored, not guessed at. */
-fun ProposalPreferenceEntity.toDomain(): CollectionProposalPreference? {
-    val key = CollectionProposalKey
+fun DerivedCollectionPreferenceEntity.toDomain(): DerivedCollectionPreference? {
+    val key = VariantKey
         .fromCanonicalParts(family, weightMillioz, finishCode, metalCode)
         ?: return null
-    val disposition = ProposalDisposition.fromCode(disposition) ?: return null
-    return CollectionProposalPreference(key, disposition)
+    val disposition = DerivedCollectionDisposition.fromCode(disposition) ?: return null
+    return DerivedCollectionPreference(key, disposition)
 }
 
 /** Missing quantities default to one piece; an id-less or type-less item cannot be stored. */

@@ -12,10 +12,10 @@ import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
-import kotlinx.coroutines.delay
 import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionProposalKey
-import com.jenarvaezg.coindex.domain.ProposalDisposition
+import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
+import com.jenarvaezg.coindex.domain.VariantKey
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -178,7 +178,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         _state.update { it.copy(validation = null) }
     }
 
-    fun setDisposition(key: CollectionProposalKey, disposition: ProposalDisposition?) {
+    fun setDisposition(key: VariantKey, disposition: DerivedCollectionDisposition?) {
         viewModelScope.launch { container.repository.setDisposition(key, disposition) }
     }
 
@@ -344,16 +344,16 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         resolvePlate(_state.value.collection, container.repository.catalogs, catalogId)
 
     /** The curated catalog for one variant key, if one was curated for it. */
-    fun catalogFor(key: CollectionProposalKey): CollectionCatalog? =
+    fun catalogFor(key: VariantKey): CollectionCatalog? =
         container.repository.catalogFor(key)
 
     /**
      * How that catalog's plate resolves right now, or null when there is no catalog at all.
      *
-     * The proposal screen shows the reason a plate cannot be opened rather than hiding the
+     * The collection screen shows the reason a plate cannot be opened rather than hiding the
      * catalog, so it needs the same answer the plate itself would give.
      */
-    fun plateFor(key: CollectionProposalKey): PlateResult? =
+    fun plateFor(key: VariantKey): PlateResult? =
         catalogFor(key)?.let { catalog -> plate(catalog.id) }
 
     private suspend fun refreshBudget() {

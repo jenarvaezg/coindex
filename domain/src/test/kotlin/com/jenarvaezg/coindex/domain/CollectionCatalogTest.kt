@@ -198,7 +198,7 @@ class CollectionCatalogValidationTest {
     fun `validation requires versioned slugged unique sourced exact variants`() {
         val definition = teslaCatalogStub()
         assertEquals(
-            CollectionProposalKey.fromCanonicalParts("Nikola Tesla", 1_000, "unknown", "silver"),
+            VariantKey.fromCanonicalParts("Nikola Tesla", 1_000, "unknown", "silver"),
             definition.key(),
         )
         assertNull(definition.validate())
@@ -629,7 +629,7 @@ class CollectionCatalogValidationTest {
         assertEquals(SPANNING_VARIANTS_WEIGHT, key.storedWeightMillioz())
         assertEquals(
             key,
-            CollectionProposalKey.fromCanonicalParts(
+            VariantKey.fromCanonicalParts(
                 definition.family,
                 SPANNING_VARIANTS_WEIGHT,
                 "unknown",
@@ -658,10 +658,10 @@ class CollectionCatalogValidationTest {
             ).validate(),
         )
         // Zero stays an invalid weight, so a defaulted row is ignored rather than read as a set.
-        assertNull(CollectionProposalKey.fromCanonicalParts(definition.family, 0, "unknown", "silver"))
+        assertNull(VariantKey.fromCanonicalParts(definition.family, 0, "unknown", "silver"))
         // A set spans finishes too, so a stored finish makes the key uncanonical.
         assertNull(
-            CollectionProposalKey.fromCanonicalParts(
+            VariantKey.fromCanonicalParts(
                 definition.family,
                 SPANNING_VARIANTS_WEIGHT,
                 "proof",

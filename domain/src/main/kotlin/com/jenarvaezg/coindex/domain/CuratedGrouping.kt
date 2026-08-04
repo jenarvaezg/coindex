@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * it declares no members, no weight and no finish, so it can never produce a Missing state. A
  * collection catalog naming the same type outranks it, and the physical variant still comes from
  * each type's own metadata — a grouping that happened to span two weights would honestly split
- * into two proposals rather than pretend they are one piece.
+ * into two derived collections rather than pretend they are one piece.
  */
 @Serializable
 data class CuratedGrouping(
@@ -48,7 +48,7 @@ data class CuratedGrouping(
         if (!name.startsWith(shortName)) {
             return CuratedGroupingValidationError.ShortNameNotPrefix(shortName)
         }
-        // The family goes straight into a proposal key, so it must already be canonical.
+        // The family goes straight into a variant key, so it must already be canonical.
         if (normalizeFamily(family) != family || family.length > MAX_FAMILY_LENGTH) {
             return CuratedGroupingValidationError.InvalidFamily(family)
         }

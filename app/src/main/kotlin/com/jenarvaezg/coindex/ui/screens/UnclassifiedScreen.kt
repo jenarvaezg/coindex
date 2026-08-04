@@ -25,7 +25,7 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.unclassifiedReasonLabel
 
 /**
- * Pieces that produced no proposal, each with the reason why.
+ * Pieces that produced no collection, each with the reason why.
  *
  * This screen lists the automatic unclassified residue — rows `deriveCollection` could not
  * place. It is not the orphan list: an orphan is a curator verdict in `data/orphans.json`.
@@ -52,7 +52,7 @@ fun UnclassifiedScreen(
                 Text("Sin clasificar", style = MaterialTheme.typography.headlineMedium)
                 Text(
                     "Nada se descarta en silencio: cada pieza dice por qué no ha entrado en " +
-                        "ninguna propuesta. Si sabes que varias van juntas, agrúpalas tú.",
+                        "ninguna colección. Si sabes que varias van juntas, agrúpalas tú.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Paper.muted,
                 )

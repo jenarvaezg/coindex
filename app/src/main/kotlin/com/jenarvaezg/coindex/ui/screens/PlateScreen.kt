@@ -60,7 +60,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * The plate of a followed proposal against its curated catalog.
+ * The plate of a followed collection against its curated catalog.
  *
  * Owned members are shown at full colour; missing ones keep their catalog design in grayscale
  * so the plate reads as a collection with gaps. Every member links to its Numista page.

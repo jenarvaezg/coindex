@@ -35,7 +35,7 @@ data class CollectionCatalogAlbumMember(
     val status: CollectionCatalogMemberStatus,
 )
 
-/** The per-collector comparison between a followed proposal and its curated catalog. */
+/** The per-collector comparison between a followed collection and its curated catalog. */
 data class CollectionCatalogAlbum(
     val catalogId: String,
     val name: String,

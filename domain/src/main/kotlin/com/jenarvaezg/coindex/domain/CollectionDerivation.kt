@@ -1,6 +1,6 @@
 package com.jenarvaezg.coindex.domain
 
-/** Why a currently owned piece produced no collection proposal. Nothing is dropped silently. */
+/** Why a currently owned piece produced no derived collection. Nothing is dropped silently. */
 sealed interface UnclassifiedReason {
     /** The type has never been fetched, so its family, weight and finish are unknown. */
     data object MissingTypeMetadata : UnclassifiedReason
@@ -32,20 +32,20 @@ data class UnclassifiedItem(
 )
 
 /**
- * Proposals derived from an inventory, plus every piece that produced none.
+ * Every derived collection an inventory produces, plus every piece that produced none.
  *
- * [itemsByKey] is what each proposal is made of, in the same order the inventory had it: a
- * proposal is a summary, and the screen that opens it has to show the actual pieces.
+ * [itemsByKey] is what each one is made of, in the same order the inventory had it:
+ * a derived collection is a summary, and the screen that opens it has to show the actual pieces.
  */
 data class CollectionDerivation(
-    val proposals: List<CollectionProposal>,
+    val derivedCollections: List<DerivedCollection>,
     val unclassified: List<UnclassifiedItem>,
-    val itemsByKey: Map<CollectionProposalKey, List<CollectedItem>> = emptyMap(),
+    val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
 )
 
 /**
- * Groups the collector's current pieces into proposals by exact variant key, and reports
- * every piece that could not be grouped.
+ * Groups the collector's current pieces into derived collections by exact variant key,
+ * and reports every piece that could not be grouped.
  *
  * Only pieces currently owned participate. Families resolve in strict order of how specific
  * the claim is: a set catalog naming the exact types issued together, then a collection catalog
@@ -67,8 +67,8 @@ fun deriveCollection(
         }
     }
     /**
-     * A catalog that is not a set is authoritative about the complete proposal key of the types
-     * it claims: family, weight, finish and metal are verified by hand, so Numista's per-type
+     * A catalog that is not a set is authoritative about the complete variant key of the
+     * types it claims: family, weight, finish and metal are verified by hand, so Numista's per-type
      * family or gram value does not get to split them.
      *
      * Snapping alone cannot do this. The nineteen 1000 escudos of Portugal are one coin whose
@@ -94,14 +94,14 @@ fun deriveCollection(
         }
     }
     val curatedWeights: Set<Int> = catalogs.mapNotNullTo(mutableSetOf()) { it.weightMillioz }
-    val grouped = LinkedHashMap<CollectionProposalKey, ProposalAccumulator>()
+    val grouped = LinkedHashMap<VariantKey, DerivedCollectionAccumulator>()
     val unclassifiedGrouped = LinkedHashMap<UnclassifiedGroupKey, UnclassifiedAccumulator>()
 
     for (item in items.filter { it.quantity > 0 }) {
         val setFamily = setFamilies[item.typeId]
         if (setFamily != null) {
             // The set is the collectible unit: no part of the variant enters its key.
-            grouped.record(CollectionProposalKey(setFamily, null, null, null), item)
+            grouped.record(VariantKey(setFamily, null, null, null), item)
             continue
         }
         val metadata = typeMeta[item.typeId]
@@ -154,7 +154,7 @@ fun deriveCollection(
             continue
         }
         grouped.record(
-            CollectionProposalKey(family, weightMillioz, metadata.finish, metadata.metal),
+            VariantKey(family, weightMillioz, metadata.finish, metadata.metal),
             item,
         )
     }
@@ -167,8 +167,8 @@ fun deriveCollection(
             { (key, _) -> metalOrder(key.metal) },
         ),
     )
-    val proposals = ordered.map { (key, accumulator) ->
-        CollectionProposal(
+    val derivedCollections = ordered.map { (key, accumulator) ->
+        DerivedCollection(
             family = key.family,
             weightMillioz = key.weightMillioz,
             finish = key.finish,
@@ -186,29 +186,29 @@ fun deriveCollection(
             rowCount = accumulator.rowCount,
         )
     }
-    return CollectionDerivation(proposals, unclassified, itemsByKey)
+    return CollectionDerivation(derivedCollections, unclassified, itemsByKey)
 }
 
-/** Convenience wrapper over [deriveCollection] for callers that only need the proposals. */
-fun buildCollectionProposals(
+/** Convenience wrapper over [deriveCollection] for callers that only need the collections. */
+fun buildDerivedCollections(
     items: List<CollectedItem>,
     typeMeta: TypeMetaIndex,
     catalogs: List<CollectionCatalog>,
     groupings: List<CuratedGrouping> = emptyList(),
-): List<CollectionProposal> =
-    deriveCollection(items, typeMeta, catalogs, groupings).proposals
+): List<DerivedCollection> =
+    deriveCollection(items, typeMeta, catalogs, groupings).derivedCollections
 
-private class ProposalAccumulator {
+private class DerivedCollectionAccumulator {
     val typeIds = mutableSetOf<Int>()
     val items = mutableListOf<CollectedItem>()
     var quantity: Int = 0
 }
 
-private fun MutableMap<CollectionProposalKey, ProposalAccumulator>.record(
-    key: CollectionProposalKey,
+private fun MutableMap<VariantKey, DerivedCollectionAccumulator>.record(
+    key: VariantKey,
     item: CollectedItem,
 ) {
-    val accumulator = getOrPut(key) { ProposalAccumulator() }
+    val accumulator = getOrPut(key) { DerivedCollectionAccumulator() }
     accumulator.typeIds += item.typeId
     accumulator.items += item
     accumulator.quantity = saturatingAdd(accumulator.quantity, item.quantity)

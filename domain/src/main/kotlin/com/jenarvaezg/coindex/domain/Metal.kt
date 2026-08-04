@@ -8,10 +8,10 @@ import kotlinx.serialization.Serializable
  * finish (#40).
  *
  * Weight and finish alone collapse a one-ounce silver coin and a one-ounce gold one into the same
- * key. That never mattered while a proposal was only a suggestion, because a proposal claims no
- * coverage; it matters the moment a **second catalog** is curated over the same family, because a
- * plate is matched to its card by exact key and the card keeps the first catalog it finds — the
- * gold one would be born unreachable.
+ * key. That never mattered while a derived collection was only a suggestion, because it
+ * claims no coverage; it matters the moment a **second catalog** is curated over the same
+ * family, because a plate is matched to its card by exact key and the card keeps the first
+ * catalog it finds — the gold one would be born unreachable.
  *
  * Deliberately wide from the start, so the enum does not have to grow every time a curation meets
  * a new alloy. [Other] is not «unknown»: it is for a composition with **no** dominant metal, which

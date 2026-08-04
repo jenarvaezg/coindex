@@ -58,17 +58,17 @@ data class TypeMetaEntity(
 data class TypeRawRow(val typeId: Int, val raw: String)
 
 /**
- * Durable intent about one proposal variant key. Absence means Available (ADR 0008).
+ * Durable intent about one variant key. Absence means Available (ADR 0008).
  *
  * The whole key is the primary key, so widening the key rewrites this table: `metalCode` joined
  * it in version 4 (ADR 0018) and the rows that could not be given a metal were dropped rather
- * than guessed at — a stored key that no longer matches any proposal is dormant either way.
+ * than guessed at — a stored key that no longer matches any card is dormant either way.
  */
 @Entity(
     tableName = "collection_proposal_preferences",
     primaryKeys = ["family", "weightMillioz", "finishCode", "metalCode"],
 )
-data class ProposalPreferenceEntity(
+data class DerivedCollectionPreferenceEntity(
     val family: String,
     val weightMillioz: Int,
     val finishCode: String,

@@ -13,7 +13,7 @@ fun screenTitle(route: String?, subjectName: String? = null): String = when {
     route == Routes.UNCLASSIFIED -> "Sin clasificar"
     route == Routes.SETTINGS -> "Ajustes"
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
-    Routes.isProposal(route) -> subjectName?.let { "Propuesta · $it" } ?: "Propuesta"
+    Routes.isDerivedCollection(route) -> subjectName?.let { "Colección · $it" } ?: "Colección"
     Routes.isOwnGrouping(route) -> subjectName?.let { "Tu agrupación · $it" } ?: "Tu agrupación"
     // The index, and anything unrecognised: never a blank masthead.
     else -> STRAPLINE

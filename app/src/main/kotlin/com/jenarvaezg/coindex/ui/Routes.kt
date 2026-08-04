@@ -1,16 +1,22 @@
 package com.jenarvaezg.coindex.ui
 
 import android.net.Uri
-import com.jenarvaezg.coindex.domain.CollectionProposalKey
+import com.jenarvaezg.coindex.domain.VariantKey
 
 /** Every destination the notebook has. The masthead reads these to name the current screen. */
 object Routes {
+    /**
+     * Shared by the pattern and the builder below, which are matched against each other by
+     * `NavHost` and would fail silently — a tap that navigates nowhere — if they ever drifted.
+     */
+    private const val DERIVED_COLLECTION_PATH = "derived-collection"
+
     const val INDEX = "index"
     const val UNCLASSIFIED = "unclassified"
     const val SETTINGS = "settings"
     const val PLATE = "plate/{catalogId}"
-    const val PROPOSAL =
-        "proposal?family={family}&weight={weight}&finish={finish}&metal={metal}"
+    const val DERIVED_COLLECTION =
+        "$DERIVED_COLLECTION_PATH?family={family}&weight={weight}&finish={finish}&metal={metal}"
     const val OWN_GROUPING = "own-grouping/{groupingId}"
 
     fun plate(catalogId: String): String = "plate/$catalogId"
@@ -18,37 +24,37 @@ object Routes {
     fun ownGrouping(groupingId: Long): String = "own-grouping/$groupingId"
 
     /**
-     * A proposal is addressed by the same canonical parts that its disposition is stored under,
-     * as query parameters rather than path segments: a Numista family is arbitrary text and may
-     * contain a slash.
+     * A derived collection is addressed by the same canonical parts its disposition is stored
+     * under, as query parameters rather than path segments: a Numista family is arbitrary text
+     * and may contain a slash.
      */
-    fun proposal(key: CollectionProposalKey): String =
-        "proposal?family=${Uri.encode(key.family)}" +
+    fun derivedCollection(key: VariantKey): String =
+        "$DERIVED_COLLECTION_PATH?family=${Uri.encode(key.family)}" +
             "&weight=${key.storedWeightMillioz()}" +
             "&finish=${key.finishCode()}" +
             "&metal=${key.metalCode()}"
 
     fun isPlate(route: String?): Boolean = route == PLATE
 
-    fun isProposal(route: String?): Boolean = route == PROPOSAL
+    fun isDerivedCollection(route: String?): Boolean = route == DERIVED_COLLECTION
 
     fun isOwnGrouping(route: String?): Boolean = route == OWN_GROUPING
 }
 
 /**
- * The key a proposal route carries, or null if it does not describe one.
+ * The key a derived collection route carries, or null if it does not describe one.
  *
- * Rebuilt through [CollectionProposalKey.fromCanonicalParts], so a hand-typed or truncated route
- * is rejected rather than guessed at, exactly as a stored disposition would be.
+ * Rebuilt through [VariantKey.fromCanonicalParts], so a hand-typed or truncated route is
+ * rejected rather than guessed at, exactly as a stored disposition would be.
  */
-fun proposalKeyFromRoute(
+fun variantKeyFromRoute(
     family: String?,
     weight: String?,
     finish: String?,
     metal: String?,
-): CollectionProposalKey? {
+): VariantKey? {
     val weightMillioz = weight?.toIntOrNull() ?: return null
-    return CollectionProposalKey.fromCanonicalParts(
+    return VariantKey.fromCanonicalParts(
         family ?: return null,
         weightMillioz,
         finish ?: return null,
