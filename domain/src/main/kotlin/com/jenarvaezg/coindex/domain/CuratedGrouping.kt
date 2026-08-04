@@ -21,6 +21,8 @@ data class CuratedGrouping(
     @SerialName("schema_version") val schemaVersion: Int,
     val id: String,
     val name: String,
+    /** The card-sized name (#22): required, unique across every curated file, prefix of [name]. */
+    @SerialName("short_name") val shortName: String,
     val family: String,
     @SerialName("issuer_code") val issuerCode: String,
     /** The Numista page of a representative type: every grouping stays traceable to the catalog. */
@@ -37,10 +39,14 @@ data class CuratedGrouping(
         }
         for ((field, value) in listOf(
             "grouping.name" to name,
+            "grouping.short_name" to shortName,
             "grouping.issuer_code" to issuerCode,
             "grouping.updated_at" to updatedAt,
         )) {
             if (value.isBlank()) return CuratedGroupingValidationError.BlankField(field)
+        }
+        if (!name.startsWith(shortName)) {
+            return CuratedGroupingValidationError.ShortNameNotPrefix(shortName)
         }
         // The family goes straight into a proposal key, so it must already be canonical.
         if (normalizeFamily(family) != family || family.length > MAX_FAMILY_LENGTH) {
@@ -76,6 +82,10 @@ sealed class CuratedGroupingValidationError(val message: String) {
 
     data class BlankField(val field: String) : CuratedGroupingValidationError(
         "required field `$field` cannot be blank",
+    )
+
+    data class ShortNameNotPrefix(val value: String) : CuratedGroupingValidationError(
+        "`short_name` `$value` must be a prefix of `name`",
     )
 
     data class InvalidFamily(val value: String) : CuratedGroupingValidationError(

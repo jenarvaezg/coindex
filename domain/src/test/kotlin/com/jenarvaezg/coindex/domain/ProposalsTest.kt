@@ -122,18 +122,22 @@ class CollectionProposalsTest {
     }
 
     @Test
-    fun `editorial aliases preserve raw keys and technical systems group as the weakest family`() {
-        val aliases = listOf(
-            "SML" to "Silver Maple Leaf",
-            "Red Data Book" to "Libro Rojo de Rusia",
+    fun `a raw family prints verbatim and technical systems group as the weakest family`() {
+        // The six editorial aliases died with #22: what a curated file names, it names in its
+        // own `short_name`, and what no file claims reads as Numista wrote it — abbreviation,
+        // language and all. Only a generated monetary system is still formatted (ADR 0012).
+        val labels = listOf(
+            "SML" to "SML",
+            "Red Data Book" to "Red Data Book",
             "Serie de monedas de plata obtenidas a valor facial" to
-                "Monedas españolas de plata a valor facial",
-            "Lunar ounce" to "Rwanda Lunar Ounce",
-            "Nautical Ounce" to "Rwanda Nautical Ounce",
+                "Serie de monedas de plata obtenidas a valor facial",
+            "Lunar ounce" to "Lunar ounce",
+            "Nautical Ounce" to "Nautical Ounce",
+            "Charlemagme - Mounted Knight" to "Charlemagme - Mounted Knight",
             "System 1981-2001" to "Sistema monetario 1981-2001",
             "System 2025" to "Sistema monetario 2025",
         )
-        for ((raw, display) in aliases) {
+        for ((raw, display) in labels) {
             assertEquals(display, collectionProposalFamilyLabel(raw))
         }
         assertEquals("sml", collectionProposalFamilyLabel("sml"))
@@ -422,6 +426,7 @@ class CollectionProposalsTest {
         fun qualifiedCatalog(id: String, family: String, issueId: Int) = teslaCatalogStub().copy(
             id = id,
             name = family,
+            shortName = family,
             family = family,
             finish = Finish.ProofColoured,
             members = listOf(
@@ -522,6 +527,7 @@ class CollectionProposalsTest {
             schemaVersion = 1,
             id = "venezuela-medios",
             name = "Medios",
+            shortName = "Medios",
             family = "Medios de Venezuela",
             issuerCode = "venezuela",
             source = "https://en.numista.com/catalogue/pieces4369.html",
@@ -665,6 +671,7 @@ class CollectionProposalsTest {
         fun qualifiedCatalog(issueId: Int) = teslaCatalogStub().copy(
             id = "lunar-$issueId",
             name = "Lunar Series III",
+            shortName = "Lunar Series III",
             family = "Lunar Series III",
             finish = Finish.ProofColoured,
             members = listOf(

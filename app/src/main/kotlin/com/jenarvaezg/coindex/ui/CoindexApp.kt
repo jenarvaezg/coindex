@@ -38,7 +38,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
-import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
@@ -78,10 +77,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val subjectName = when {
         Routes.isPlate(route) ->
             viewModel.catalogName(backStackEntry?.arguments?.getString("catalogId"))
-        Routes.isProposal(route) -> backStackEntry
-            ?.arguments
-            ?.getString("family")
-            ?.let(::collectionProposalFamilyLabel)
+        // The whole key, not just the family: three Britannias share one and only the key
+        // tells them apart (#22).
+        Routes.isProposal(route) -> proposalKeyFromRoute(
+            family = backStackEntry?.arguments?.getString("family"),
+            weight = backStackEntry?.arguments?.getString("weight"),
+            finish = backStackEntry?.arguments?.getString("finish"),
+            metal = backStackEntry?.arguments?.getString("metal"),
+        )?.let(viewModel.titles::of)
         Routes.isOwnGrouping(route) -> backStackEntry
             ?.arguments
             ?.getString("groupingId")
@@ -147,6 +150,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         syncing = state.syncing,
                         lastSync = state.lastSync,
                         catalogs = viewModel.catalogs,
+                        titles = viewModel.titles,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
                         onOpenProposal = { proposal ->
@@ -200,6 +204,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             state = state.collection,
                             key = key,
                             catalog = viewModel.catalogFor(key),
+                            title = viewModel.titles.of(key),
                             plate = viewModel.plateFor(key),
                             onOpenPlate = { catalogId ->
                                 navController.navigate(Routes.plate(catalogId))

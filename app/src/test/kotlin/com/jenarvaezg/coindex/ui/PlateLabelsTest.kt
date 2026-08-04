@@ -146,6 +146,7 @@ class PlateLabelsTest {
         schemaVersion = 2,
         id = "venezuela-fuertes",
         name = "Fuertes · Venezuela",
+        shortName = "Fuertes",
         issuerCode = "venezuela",
         family = "Fuertes de Venezuela",
         weightMillioz = 804,

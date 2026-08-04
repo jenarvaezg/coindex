@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "venezuela-1-bolivar",
   "name": "1 Bolívar · Venezuela · plata 5 g",
+  "short_name": "1 Bolívar",
   "issuer_code": "venezuela",
   "family": "1 Bolívar de Venezuela",
   "weight_millioz": 161,

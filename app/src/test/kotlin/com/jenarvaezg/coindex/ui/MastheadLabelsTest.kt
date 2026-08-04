@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui
 
-import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -27,13 +26,12 @@ class MastheadLabelsTest {
     }
 
     @Test
-    fun `a proposal names its family, with the collector's own word for it`() {
+    fun `a proposal names the collection, with the curator's own word for it`() {
+        // «Paquillos» is the collector's word (#13) and now reaches the masthead the way every
+        // other card name does: from the catalog's `short_name`, not from an alias in code (#22).
         assertEquals(
-            "Propuesta · Paquillos · 100 pesetas de Franco",
-            screenTitle(
-                Routes.PROPOSAL,
-                subjectName = collectionProposalFamilyLabel("100 Pesetas de Franco"),
-            ),
+            "Propuesta · Paquillos",
+            screenTitle(Routes.PROPOSAL, subjectName = "Paquillos"),
         )
         assertEquals("Propuesta", screenTitle(Routes.PROPOSAL, subjectName = null))
     }

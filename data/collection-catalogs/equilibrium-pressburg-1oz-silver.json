@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "equilibrium-pressburg-1oz-silver",
   "name": "Equilibrium · Pressburg Mint · 1 oz de plata",
+  "short_name": "Equilibrium",
   "issuer_code": "tokelau",
   "family": "Equilibrium",
   "weight_millioz": 1000,

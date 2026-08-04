@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "us-independence-250th-spain-10-euros",
-  "name": "250 aniversario de la Independencia de EE. UU. · España · 10 €",
+  "name": "250.º aniversario de la Independencia de EE. UU. · España · 10 € de plata",
+  "short_name": "250.º aniversario de la Independencia",
   "issuer_code": "espagne",
   "family": "250th anniversary of the United States Declaration of Independence",
   "weight_millioz": 868,

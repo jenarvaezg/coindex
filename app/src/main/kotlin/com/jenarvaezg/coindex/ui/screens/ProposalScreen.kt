@@ -20,7 +20,6 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionProposalKey
 import com.jenarvaezg.coindex.domain.ProposalDisposition
-import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.DispositionActions
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -53,6 +52,7 @@ fun ProposalScreen(
     state: CollectionState,
     key: CollectionProposalKey,
     catalog: CollectionCatalog?,
+    title: String,
     plate: PlateResult?,
     onOpenPlate: (catalogId: String) -> Unit,
     onOpenSource: (url: String) -> Unit,
@@ -76,7 +76,7 @@ fun ProposalScreen(
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Eyebrow("Propuesta de colección")
                 Text(
-                    collectionProposalFamilyLabel(key.family),
+                    title,
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(

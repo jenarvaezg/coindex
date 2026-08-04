@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "australian-koala-perth-1oz",
   "name": "Australian Koala · Perth Mint · 1 oz de plata bullion anual estándar",
+  "short_name": "Australian Koala",
   "issuer_code": "australie",
   "family": "Australian Koala",
   "weight_millioz": 1000,

@@ -24,6 +24,17 @@ data class CollectionCatalog(
     @SerialName("schema_version") val schemaVersion: Int,
     val id: String,
     val name: String,
+    /**
+     * The card-sized name of the collection (#22). `name` defines the editorial scope and runs to
+     * 200 characters, so it belongs on the plate and never fitted an index card; before this field
+     * the card showed `family`, which is the **grouping key** of a variant and not a name at all —
+     * and the six hardcoded aliases it needed were the scar.
+     *
+     * Required, unique across every curated file, and a prefix of [name] so it cannot drift from
+     * it. The uniqueness is what does the work: it forces «Silver Britannia ¼ oz» where cutting
+     * [name] mechanically would have produced three identical cards.
+     */
+    @SerialName("short_name") val shortName: String,
     @SerialName("issuer_code") val issuerCode: String,
     val family: String,
     @SerialName("weight_millioz") val weightMillioz: Int? = null,
@@ -137,6 +148,11 @@ data class CollectionCatalog(
             return CollectionCatalogValidationError.InvalidId("catalog", id)
         }
         blankField("catalog.name", name)?.let { return it }
+        blankField("catalog.short_name", shortName)?.let { return it }
+        // A card name that is not a prefix of the editorial one is a second source of truth.
+        if (!name.startsWith(shortName)) {
+            return CollectionCatalogValidationError.ShortNameNotPrefix(shortName)
+        }
         blankField("catalog.issuer_code", issuerCode)?.let { return it }
         blankField("catalog.updated_at", updatedAt)?.let { return it }
         // A set declares no physical variant; anything else must declare exactly one weight.
@@ -382,6 +398,10 @@ sealed class CollectionCatalogValidationError(val message: String) {
 
     data class BlankField(val field: String) : CollectionCatalogValidationError(
         "required field `$field` cannot be blank",
+    )
+
+    data class ShortNameNotPrefix(val value: String) : CollectionCatalogValidationError(
+        "`short_name` `$value` must be a prefix of `name`",
     )
 
     data object InvalidVariantKey : CollectionCatalogValidationError(

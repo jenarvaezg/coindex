@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
   "id": "armenia-noahs-ark-1oz-bullion",
-  "name": "Noah's Ark · Armenia · 1 oz bullion anual desde 2011",
+  "name": "Noah's Ark 1 oz · Armenia · bullion anual desde 2011",
+  "short_name": "Noah's Ark 1 oz",
   "issuer_code": "armenie",
   "family": "Noah's Ark 1 oz bullion anual",
   "weight_millioz": 1000,

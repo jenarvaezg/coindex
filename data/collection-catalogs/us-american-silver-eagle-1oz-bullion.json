@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "us-american-silver-eagle-1oz-bullion",
   "name": "American Silver Eagle · EE. UU. · 1 oz bullion anual (Type 1 1986-2021 y Type 2 desde 2021; sin proof, burnished ni privy)",
+  "short_name": "American Silver Eagle",
   "issuer_code": "etats-unis",
   "family": "American Silver Eagle bullion anual",
   "weight_millioz": 1000,

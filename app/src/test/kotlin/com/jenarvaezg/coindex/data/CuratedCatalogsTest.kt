@@ -245,17 +245,17 @@ class CuratedCatalogsTest {
             Triple(
                 "armenia-noahs-ark-1oz-bullion",
                 1_000 to 26_279,
-                "Noah's Ark · Armenia · 1 oz bullion anual desde 2011",
+                "Noah's Ark 1 oz · Armenia · bullion anual desde 2011",
             ),
             Triple(
                 "armenia-noahs-ark-half-oz-bullion",
                 500 to 31_963,
-                "Noah's Ark · Armenia · ½ oz bullion anual desde 2011",
+                "Noah's Ark ½ oz · Armenia · bullion anual desde 2011",
             ),
             Triple(
                 "armenia-noahs-ark-quarter-oz-bullion",
                 250 to 31_623,
-                "Noah's Ark · Armenia · ¼ oz bullion anual desde 2011",
+                "Noah's Ark ¼ oz · Armenia · bullion anual desde 2011",
             ),
         )
         for ((id, weightAndType, name) in arks) {

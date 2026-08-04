@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "lunar-iii-perth-1oz-bullion",
-  "name": "Lunar Series III · Perth Mint · 1 oz bullion",
+  "name": "Lunar Series III bullion · Perth Mint · 1 oz",
+  "short_name": "Lunar Series III bullion",
   "issuer_code": "australie",
   "family": "Lunar Series III",
   "weight_millioz": 1000,

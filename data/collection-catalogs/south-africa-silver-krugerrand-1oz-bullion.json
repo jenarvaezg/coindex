@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "south-africa-silver-krugerrand-1oz-bullion",
   "name": "Silver Krugerrand · Sudáfrica · 1 oz bullion anual desde 2018 (excluye 2017 Premium Uncirculated)",
+  "short_name": "Silver Krugerrand",
   "issuer_code": "afrique_du_sud",
   "family": "Silver Krugerrand bullion anual desde 2018 (sin 2017 Premium Uncirculated)",
   "weight_millioz": 1000,

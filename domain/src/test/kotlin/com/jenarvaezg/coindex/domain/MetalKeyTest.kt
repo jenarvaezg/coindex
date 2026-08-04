@@ -19,6 +19,7 @@ class MetalKeyTest {
         schemaVersion = 1,
         id = id,
         name = id,
+        shortName = id,
         issuerCode = "slovaquie",
         family = "Equilibrium",
         weightMillioz = 1_000,

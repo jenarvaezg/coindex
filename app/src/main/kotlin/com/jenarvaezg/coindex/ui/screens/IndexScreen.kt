@@ -28,8 +28,8 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionProposal
+import com.jenarvaezg.coindex.domain.CollectionTitles
 import com.jenarvaezg.coindex.domain.ProposalDisposition
-import com.jenarvaezg.coindex.domain.collectionProposalFamilyLabel
 import com.jenarvaezg.coindex.ui.BudgetStatus
 import com.jenarvaezg.coindex.ui.ProposalStance
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -77,6 +77,7 @@ fun IndexScreen(
     syncing: Boolean,
     lastSync: SyncRecord?,
     catalogs: List<CollectionCatalog>,
+    titles: CollectionTitles,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
     onOpenProposal: (CollectionProposal) -> Unit,
@@ -180,6 +181,7 @@ fun IndexScreen(
                 stance = ProposalStance.Followed,
                 state = state,
                 catalogs = catalogs,
+                titles = titles,
                 onOpenProposal = onOpenProposal,
                 onOpenPlate = onOpenPlate,
                 onDisposition = onDisposition,
@@ -190,6 +192,7 @@ fun IndexScreen(
                 stance = ProposalStance.Available,
                 state = state,
                 catalogs = catalogs,
+                titles = titles,
                 onOpenProposal = onOpenProposal,
                 onOpenPlate = onOpenPlate,
                 onDisposition = onDisposition,
@@ -218,6 +221,7 @@ fun IndexScreen(
                         ProposalCard(
                             proposal = proposal,
                             stance = ProposalStance.Ignored,
+                            title = titles.of(proposal),
                             catalog = catalogs.firstOrNull { it.key() == proposal.key() },
                             state = state,
                             onOpenProposal = onOpenProposal,
@@ -335,6 +339,7 @@ private fun LazyGridScope.proposalBlock(
     stance: ProposalStance,
     state: CollectionState,
     catalogs: List<CollectionCatalog>,
+    titles: CollectionTitles,
     onOpenProposal: (CollectionProposal) -> Unit,
     onOpenPlate: (String) -> Unit,
     onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
@@ -345,6 +350,7 @@ private fun LazyGridScope.proposalBlock(
         ProposalCard(
             proposal = proposal,
             stance = stance,
+            title = titles.of(proposal),
             catalog = catalogs.firstOrNull { it.key() == proposal.key() },
             state = state,
             onOpenProposal = onOpenProposal,
@@ -358,6 +364,7 @@ private fun LazyGridScope.proposalBlock(
 private fun ProposalCard(
     proposal: CollectionProposal,
     stance: ProposalStance,
+    title: String,
     catalog: CollectionCatalog?,
     state: CollectionState,
     onOpenProposal: (CollectionProposal) -> Unit,
@@ -376,7 +383,7 @@ private fun ProposalCard(
             Eyebrow(issuer)
         }
         LinkText(
-            text = collectionProposalFamilyLabel(proposal.family),
+            text = title,
             style = MaterialTheme.typography.titleLarge,
             onClick = { onOpenProposal(proposal) },
         )

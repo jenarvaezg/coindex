@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
   "id": "armenia-noahs-ark-quarter-oz-bullion",
-  "name": "Noah's Ark · Armenia · ¼ oz bullion anual desde 2011",
+  "name": "Noah's Ark ¼ oz · Armenia · bullion anual desde 2011",
+  "short_name": "Noah's Ark ¼ oz",
   "issuer_code": "armenie",
   "family": "Noah's Ark ¼ oz bullion anual",
   "weight_millioz": 250,

@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "red-data-book-russia",
   "name": "Libro Rojo de Rusia · 1 y 2 rublos",
+  "short_name": "Libro Rojo de Rusia",
   "issuer_code": "russie",
   "family": "Red Data Book",
   "weight_millioz": 547,

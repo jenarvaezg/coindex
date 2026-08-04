@@ -39,10 +39,18 @@ object CatalogSeeds {
      */
     fun parseAll(files: List<Pair<String, String>>): List<CollectionCatalog> {
         val ids = mutableSetOf<String>()
+        val shortNames = mutableSetOf<String>()
         val catalogs = files.map { (fileName, contents) ->
             val catalog = parse(fileName, contents)
             if (!ids.add(catalog.id)) {
                 throw CatalogSeedException("collection catalog id `${catalog.id}` is duplicated")
+            }
+            // Two cards reading the same thing is a defect the collector cannot get past: the
+            // variant that tells them apart — weight, finish — is not on the card (#22).
+            if (!shortNames.add(catalog.shortName)) {
+                throw CatalogSeedException(
+                    "collection catalog `short_name` `${catalog.shortName}` is duplicated",
+                )
             }
             catalog
         }
@@ -111,11 +119,17 @@ object GroupingSeeds {
      */
     fun parseAll(files: List<Pair<String, String>>): List<CuratedGrouping> {
         val ids = mutableSetOf<String>()
+        val shortNames = mutableSetOf<String>()
         val typeIds = mutableSetOf<Int>()
         return files.map { (fileName, contents) ->
             val grouping = parse(fileName, contents)
             if (!ids.add(grouping.id)) {
                 throw CatalogSeedException("curated grouping id `${grouping.id}` is duplicated")
+            }
+            if (!shortNames.add(grouping.shortName)) {
+                throw CatalogSeedException(
+                    "curated grouping `short_name` `${grouping.shortName}` is duplicated",
+                )
             }
             for (typeId in grouping.typeIds) {
                 if (!typeIds.add(typeId)) {
@@ -126,6 +140,27 @@ object GroupingSeeds {
             }
             grouping
         }
+    }
+}
+
+/**
+ * Rejects a `short_name` shared by a catalog and a curated grouping (#22).
+ *
+ * Each species validates its own names while parsing, but the index draws them side by side and
+ * indistinguishably (#12), so uniqueness only means anything across both. Called where both are
+ * loaded, which is the only place that can see it.
+ */
+fun validateShortNamesAcross(
+    catalogs: List<CollectionCatalog>,
+    groupings: List<CuratedGrouping>,
+) {
+    val catalogNames = catalogs.associateBy { it.shortName }
+    for (grouping in groupings) {
+        val catalog = catalogNames[grouping.shortName] ?: continue
+        throw CatalogSeedException(
+            "`short_name` `${grouping.shortName}` is claimed by both catalog `${catalog.id}` " +
+                "and grouping `${grouping.id}`",
+        )
     }
 }
 

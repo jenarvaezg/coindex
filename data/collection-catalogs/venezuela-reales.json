@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "venezuela-reales",
   "name": "Reales · Venezuela · plata 2,5 g",
+  "short_name": "Reales",
   "issuer_code": "venezuela",
   "family": "Reales de Venezuela",
   "weight_millioz": 80,

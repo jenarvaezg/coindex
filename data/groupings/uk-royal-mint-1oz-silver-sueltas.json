@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "id": "uk-royal-mint-1oz-silver-sueltas",
-  "name": "Onzas de plata sueltas de la Royal Mint · 2 £",
+  "name": "Onzas sueltas de la Royal Mint · Reino Unido · 2 £ de plata",
+  "short_name": "Onzas sueltas de la Royal Mint",
   "family": "Onzas de plata sueltas de la Royal Mint",
   "issuer_code": "royaume-uni",
   "source": "https://en.numista.com/catalogue/pieces476689.html",

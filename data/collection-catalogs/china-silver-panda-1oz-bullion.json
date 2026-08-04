@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
   "id": "china-silver-panda-1oz-bullion",
-  "name": "Panda de plata · China · 1 oz bullion anual 1989-2015 (sin proof de colección separada, conmemorativas de banco/expo, ni 1983-1987 de otra métrica)",
+  "name": "Panda de plata 1 oz · China · bullion anual 1989-2015 (sin proof de colección separada, conmemorativas de banco/expo, ni 1983-1987 de otra métrica)",
+  "short_name": "Panda de plata 1 oz",
   "issuer_code": "chine",
   "family": "Panda de plata 1 oz bullion anual",
   "weight_millioz": 1000,

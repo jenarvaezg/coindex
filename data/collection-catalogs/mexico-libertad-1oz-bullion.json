@@ -2,6 +2,7 @@
   "schema_version": 2,
   "id": "mexico-libertad-1oz-bullion",
   "name": "Onza Libertad · México · 1 oz bullion anual desde 1982 (sin proof, reverse proof ni antiqued)",
+  "short_name": "Onza Libertad",
   "issuer_code": "mexique",
   "family": "Onza Libertad bullion anual",
   "weight_millioz": 1000,

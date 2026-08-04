@@ -2,6 +2,7 @@
   "schema_version": 1,
   "id": "us-classic-silver-dollar",
   "name": "Dólar de plata clásico · EE. UU. · Morgan y Peace",
+  "short_name": "Dólar de plata clásico",
   "family": "Dólar de plata clásico de EE. UU.",
   "issuer_code": "etats-unis",
   "source": "https://en.numista.com/catalogue/pieces1492.html",
