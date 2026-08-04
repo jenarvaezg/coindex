@@ -35,6 +35,11 @@ class NotebookLabelsTest {
      */
     @Test
     fun `the writing step says so instead of freezing on the last page`() {
+        // The long step, and it counts photographs because no page exists yet.
+        assertEquals(
+            "Descargando fotos · 320 de 623",
+            notebookStepLabel(NotebookExportStep.Warming(320, 623), 84),
+        )
         assertEquals(
             "Página 3 de 84 · Fuertes",
             notebookStepLabel(NotebookExportStep.Drawing(2, "Fuertes"), 84),
@@ -81,5 +86,18 @@ class NotebookLabelsTest {
             message,
         )
         assertTrue("No se ha compartido nada" in message)
+    }
+
+    /**
+     * Cancelling the download is «not now» and not «start over»: what arrived stays in the cache, so
+     * the next export does not ask Numista for it again.
+     */
+    @Test
+    fun `cancelling the download says that what arrived is kept`() {
+        assertEquals(
+            "Exportación cancelada al descargar las fotos (320 de 623). " +
+                "Las descargadas se guardan para la próxima.",
+            notebookWarmCancelledMessage(320, 623),
+        )
     }
 }

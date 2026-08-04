@@ -31,6 +31,9 @@ fun notebookProgressLabel(pagesDone: Int, pages: Int, title: String): String =
  * of eighty pages spends a visible pause and where the «Cancelar» next to it disappears.
  */
 fun notebookStepLabel(step: NotebookExportStep, pages: Int): String = when (step) {
+    // In photographs, not in pages: it is the step that takes the time, and no page exists yet.
+    is NotebookExportStep.Warming ->
+        "Descargando fotos · ${step.photographsDone} de ${step.photographs}"
     is NotebookExportStep.Drawing ->
         notebookProgressLabel(step.pagesDone, pages, step.title)
     NotebookExportStep.Writing ->
@@ -65,3 +68,13 @@ fun notebookExportMessage(pages: Int, expectedPhotos: Int, loadedPhotos: Int): S
 fun notebookCancelledMessage(pagesDone: Int, pages: Int): String =
     "Exportación cancelada en la página ${(pagesDone + 1).coerceAtMost(pages)} de $pages. " +
         "No se ha compartido nada."
+
+/**
+ * The same, cancelled while the photographs were still being fetched.
+ *
+ * It says that what arrived is kept, because it is: the pictures live in the cache from now on, so
+ * cancelling here is «not now» and not «start over» — the next export will not ask for them again.
+ */
+fun notebookWarmCancelledMessage(photographsDone: Int, photographs: Int): String =
+    "Exportación cancelada al descargar las fotos ($photographsDone de $photographs). " +
+        "Las descargadas se guardan para la próxima."

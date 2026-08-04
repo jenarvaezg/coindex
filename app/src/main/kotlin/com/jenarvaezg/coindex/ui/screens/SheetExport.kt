@@ -26,7 +26,7 @@ import kotlinx.coroutines.withTimeoutOrNull
  * is retried with a wait, and four at a time queue behind each other, so the old ceiling would have
  * cut the retries off exactly on the sheets that need them (issue #67).
  */
-private const val IMAGE_WAIT_MILLIS = 30_000L
+const val IMAGE_WAIT_MILLIS = 30_000L
 
 /**
  * Waits for a sheet's pictures to settle, then writes it out and hands it to the share sheet.
@@ -57,9 +57,17 @@ suspend fun shareSettledSheet(
  * something else with the result — a page of a PDF rather than a file to share — and the waiting is
  * the delicate part: what is not painted when this returns is a hole in what is about to be
  * captured, in all three exports alike.
+ *
+ * [timeoutMillis] is a **ceiling and not a cost**: what is already cached settles in a frame. The
+ * notebook passes a shorter one because it has warmed every photograph first, so a page that has
+ * not settled by then is not going to.
  */
-suspend fun awaitSettledImages(expectedImages: Int, settled: IntState) {
-    withTimeoutOrNull(IMAGE_WAIT_MILLIS) {
+suspend fun awaitSettledImages(
+    expectedImages: Int,
+    settled: IntState,
+    timeoutMillis: Long = IMAGE_WAIT_MILLIS,
+) {
+    withTimeoutOrNull(timeoutMillis) {
         snapshotFlow { settled.intValue }.first { it >= expectedImages }
     }
     // The last picture reports before it is drawn, so let a frame land either way.

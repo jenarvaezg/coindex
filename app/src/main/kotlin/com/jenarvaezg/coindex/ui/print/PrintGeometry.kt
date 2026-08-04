@@ -67,11 +67,18 @@ object PrintPaper {
     /**
      * Pixels per millimetre a page is recorded at.
      *
-     * The page reaches the PDF as drawing commands, so text and rules come out vector-sharp
-     * whatever this is; what it buys is the resolution of the **photographs**, which are bitmaps
-     * decoded at the size the layout asks for. Six pixels per millimetre is about 150 dpi over a
-     * 40 mm coin — more than Numista's 180-pixel thumbnails carry anyway (ADR 0017) — and it keeps
-     * one page's recording small enough to hold in memory eighty-four times over.
+     * The page reaches the PDF as drawing commands, so text, rules and circles come out
+     * vector-sharp whatever this is; what it buys is the resolution of the **photographs**, which
+     * are bitmaps decoded at the size the layout asks for.
+     *
+     * Six is not a resolution choice, and **measured** not to be one: whatever it is, Coil decodes
+     * a Numista thumbnail at its own 180 pixels (ADR 0017) and never upscales it, so the PDF ends up
+     * holding 180 × 180 images either way — verified identical at five and at six. What the number
+     * really buys is sub-pixel precision in the layout, and it keeps one page's recording small
+     * enough to hold in memory eighty-one times over.
+     *
+     * The weight of the file is therefore not here: a notebook of 623 photographs is 27 MB because
+     * Skia stores each of them losslessly, and the 623 draws are only 319 distinct pictures.
      */
     const val PX_PER_MM = 6f
 

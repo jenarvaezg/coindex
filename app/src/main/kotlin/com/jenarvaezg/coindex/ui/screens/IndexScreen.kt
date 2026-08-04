@@ -42,6 +42,7 @@ import com.jenarvaezg.coindex.ui.lastSyncLabel
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookExportLabel
 import com.jenarvaezg.coindex.ui.notebookStepLabel
+import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -146,15 +147,29 @@ fun IndexScreen(
                     ExportProgress(
                         step = step,
                         pages = pages.size,
-                        // Only while there are pages left to draw: cancelling the write would
-                        // close the document under the thread serializing it.
-                        onCancel = (step as? NotebookExportStep.Drawing)?.let { drawing ->
-                            {
-                                printing = null
-                                onMessage(
-                                    notebookCancelledMessage(drawing.pagesDone, pages.size),
-                                )
+                        // Every step but the write, which would close the document under the
+                        // thread serializing it.
+                        onCancel = when (val current = step) {
+                            is NotebookExportStep.Warming -> {
+                                {
+                                    printing = null
+                                    onMessage(
+                                        notebookWarmCancelledMessage(
+                                            current.photographsDone,
+                                            current.photographs,
+                                        ),
+                                    )
+                                }
                             }
+                            is NotebookExportStep.Drawing -> {
+                                {
+                                    printing = null
+                                    onMessage(
+                                        notebookCancelledMessage(current.pagesDone, pages.size),
+                                    )
+                                }
+                            }
+                            NotebookExportStep.Writing -> null
                         },
                     )
                 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -16,17 +17,33 @@ import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.addNotebookPage
 import com.jenarvaezg.coindex.ui.print.notebookFileName
+import com.jenarvaezg.coindex.ui.print.notebookPhotographs
 import com.jenarvaezg.coindex.ui.print.shareNotebookPdf
+import com.jenarvaezg.coindex.ui.print.warmNotebookPhotographs
 import com.jenarvaezg.coindex.ui.recordInto
+
+/**
+ * How long one page of the notebook waits for its pictures.
+ *
+ * Far below the thirty seconds a single plate gets, because by now every photograph has been asked
+ * for and cached: what a page is waiting for is a decode from disk, and one that has not landed in
+ * four seconds is not coming. The old ceiling was what turned a notebook of seventy pages into
+ * thirty-five minutes of waiting for pictures that were never going to arrive.
+ */
+private const val PAGE_WAIT_MILLIS = 4_000L
 
 /**
  * Draws the whole notebook into one PDF, one page at a time, and shares it.
  *
- * **One page in composition at any moment**, which is the only thing that makes this affordable: a
- * full notebook is of the order of a thousand photographs, and composing every page at once would
- * ask Coil for all of them and hold eighty-four full-page recordings in memory. Each page waits for
- * its own pictures with the same budget a single plate gets (`awaitSettledImages`), is appended to
- * the document as drawing commands, and is then dropped.
+ * **Photographs first, pages second.** Every picture the notebook needs is fetched once, up front
+ * (`warmNotebookPhotographs`), and only then is the first page composed. Asking page by page is what
+ * the first version did and it produced 64 photographs out of 600 in half an hour: see that
+ * function for why the two are not equivalent.
+ *
+ * **One page in composition at any moment**, which is the only thing that makes the drawing
+ * affordable: composing every page at once would hold seventy full-page recordings in memory. Each
+ * page waits for its own pictures — cached by now, so in practice for a decode — is appended to the
+ * document as drawing commands, and is then dropped.
  *
  * Cancelling is leaving composition: the parent stops drawing this, the effect is cancelled and
  * [DisposableEffect] closes the document. Nothing has to be cleaned up because nothing has been
@@ -43,8 +60,14 @@ fun NotebookPdfExport(
 ) {
     val context = LocalContext.current
     val document = remember { PdfDocument() }
+
+    // Every photograph of the notebook, fetched once and before anything is drawn. Until it is
+    // done no page is composed at all: composing one would put its cells in the same queue.
+    val photographs = remember(pages) { notebookPhotographs(pages) }
+    var warm by remember(pages) { mutableStateOf(photographs.isEmpty()) }
+
     var pageIndex by remember { mutableIntStateOf(0) }
-    val page = pages.getOrNull(pageIndex)
+    val page = pages.getOrNull(pageIndex).takeIf { warm }
 
     // A fresh recording per page, so the previous one is released as soon as the index moves on.
     val picture = remember(pageIndex) { Picture() }
@@ -57,10 +80,20 @@ fun NotebookPdfExport(
 
     DisposableEffect(Unit) { onDispose { document.close() } }
 
-    LaunchedEffect(pageIndex) {
+    LaunchedEffect(pages) {
+        if (photographs.isEmpty()) return@LaunchedEffect
+        onStep(NotebookExportStep.Warming(0, photographs.size))
+        warmNotebookPhotographs(context, photographs) { done ->
+            onStep(NotebookExportStep.Warming(done, photographs.size))
+        }
+        warm = true
+    }
+
+    LaunchedEffect(pageIndex, warm) {
+        if (!warm) return@LaunchedEffect
         val current = pages.getOrNull(pageIndex) ?: return@LaunchedEffect
         onStep(NotebookExportStep.Drawing(pageIndex, current.section.title))
-        awaitSettledImages(current.photographs, settled)
+        awaitSettledImages(current.photographs, settled, PAGE_WAIT_MILLIS)
         val appended = runCatching { addNotebookPage(document, picture, pageIndex + 1) }
         if (appended.isFailure) {
             onFinished(
