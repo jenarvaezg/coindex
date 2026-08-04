@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(56, catalogs.size)
+        assertEquals(57, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintiséis cerrados llevan su nota y los treinta abiertos no afirman nada más que
+     * veintisiete cerrados llevan su nota y los treinta abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(26, closed.size)
+        assertEquals(27, closed.size)
         assertEquals(30, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(

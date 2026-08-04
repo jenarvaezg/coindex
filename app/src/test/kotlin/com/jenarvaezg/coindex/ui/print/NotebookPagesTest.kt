@@ -95,8 +95,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the fifty-six shipped catalogs would print as one hundred and one pages`() {
-        assertEquals(101, catalogs.sumOf { section(it).pages })
+    fun `the fifty-seven shipped catalogs would print as one hundred and two pages`() {
+        assertEquals(102, catalogs.sumOf { section(it).pages })
     }
 
     @Test

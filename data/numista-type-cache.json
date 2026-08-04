@@ -4874,6 +4874,859 @@
   },
   "weight": 31.1035
  },
+ "12578": {
+  "id": 12578,
+  "url": "https://es.numista.com/12578",
+  "title": "8 Euros (Values of Football - Fair Play)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2003,
+  "max_year": 2003,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "José Simão"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "REPÚBLICA PORTUGUESA 2003\r\nDesportivismo\r\n8\r\neuro",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c2a0af177794.10630560-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c2a0af177794.10630560-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "José Simão"
+   ],
+   "description": "A la izquierda se repite la palabra \"Fairplay\", en el centro una pelota en un corazón.",
+   "lettering": "airPlayF\r\nyFairPlayFa\r\nayFairPlayFai\r\nlayFairPlayFair\r\nFairPlayFairPlay\r\nairPlayFairPl\r\nirPlayFairPl\r\nPlayFairPla\r\nFairPlayFai\r\nyFairPlayFa\r\nairPlayFair\r\nPlayFairPlay\r\nlayFairPlayFairP\r\nyFairPlayFairPl\r\nirPlayFairPla\r\nlayFairPlay\r\nFairPla\r\nTM\r\nUEFA\r\nEuro 2004\r\nPORTUGAL\r\nJosé Simão·INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c2a0af6bcb65.36403574-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c2a0af6bcb65.36403574-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "Los valores del fútbol - El fútbol es juego limpio",
+  "related_types": [
+   {
+    "id": 17274,
+    "title": "8 Euros (Values of Football - Fair Play; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 17275,
+    "title": "8 Euros (Values of Football - Fair Play; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Fútbol",
+   "Feria o exposición"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "752"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "12579": {
+  "id": 12579,
+  "url": "https://es.numista.com/12579",
+  "title": "8 Euros (Values of Football - Celebration)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2003,
+  "max_year": 2003,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "João Duarte"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "REPÚBLICA PORTUGUESA 2003\r\n8\r\neuro",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6489b841d9dae6.43680585-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6489b841d9dae6.43680585-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "João Duarte"
+   ],
+   "description": "Símbolo estilizado de la fiesta.",
+   "lettering": "TM\r\nUEFA\r\nEuro 2004\r\nPORTUGAL\r\nJoão Duarte·INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6489b842380a20.05127036-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6489b842380a20.05127036-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "Los valores del fútbol - El fútbol es fiesta",
+  "related_types": [
+   {
+    "id": 17280,
+    "title": "8 Euros (Values of Football - Celebration; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 17282,
+    "title": "8 Euros (Values of Football - Celebration; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   }
+  ],
+  "tags": [
+   "Fútbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "750"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "12581": {
+  "id": 12581,
+  "url": "https://es.numista.com/12581",
+  "title": "8 Euros (Values of Football - Passion)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2003,
+  "max_year": 2003,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.6,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "José Teixeira"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "REPÚBLICA PORTUGUESA 2003\r\n8 euro",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c29fc04a0de6.03911484-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c29fc04a0de6.03911484-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "José Teixeira"
+   ],
+   "description": "Una representación estilizada de la pasión por el fútbol.",
+   "lettering": "TM\r\nUEFA\r\nEuro 2004\r\nPORTUGAL\r\nJosé Teixeira·INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c29fc09f5269.49056575-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c29fc09f5269.49056575-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "Los valores del fútbol - El fútbol es pasión",
+  "related_types": [
+   {
+    "id": 17278,
+    "title": "8 Euros (Values of Football - Passion; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 17279,
+    "title": "8 Euros (Values of Football - Passion; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   }
+  ],
+  "tags": [
+   "Fútbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "751"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "12582": {
+  "id": 12582,
+  "url": "https://es.numista.com/12582",
+  "title": "8 Euros (Football - The Score)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.75,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "José Teixeira"
+   ],
+   "description": "Escudo de Portugal en el centro de la moneda.",
+   "lettering": "REPÚBLICA PORTUGUESA 2004\r\n8 euro",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63bae33964c0a0.25338359-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63bae33964c0a0.25338359-180.jpg",
+   "picture_copyright": "Atalys78",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "José Teixeira"
+   ],
+   "description": "El objetivo en el centro de las pasiones.",
+   "lettering": "TM\r\nUEFA\r\nEuro 2004\r\nPORTUGAL\r\nJosé Teixeira·INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63bae339da36d8.96287092-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63bae339da36d8.96287092-180.jpg",
+   "picture_copyright": "Atalys78",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "commemorated_topic": "La espectacularidad del fútbol - El marcador",
+  "related_types": [
+   {
+    "id": 17281,
+    "title": "8 Euros (Football - The Score; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   },
+   {
+    "id": 18245,
+    "title": "8 Euros (Football - The Score; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   }
+  ],
+  "tags": [
+   "Fútbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "758"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6a1529f2636425.06249894-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6a1529f2636425.06249894-180.jpg",
+   "picture_copyright": "Atalys78",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "12583": {
+  "id": 12583,
+  "url": "https://es.numista.com/12583",
+  "title": "8 Euros (Football - The Shot)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "José Simão"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "REPUBLICA PORTUGUESA\r\n2004\r\n8 euro\r\nJosé Simão·INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6489b728d28cd9.43137713-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6489b728d28cd9.43137713-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "José Simão"
+   ],
+   "description": "Cabeza estilizada de un futbolista.",
+   "lettering": "TM\r\nUEFA\r\nEuro 2004\r\nPORTUGAL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6489b7293d5f91.35556197-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6489b7293d5f91.35556197-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "La espectacularidad del fútbol - El disparo",
+  "related_types": [
+   {
+    "id": 17429,
+    "title": "8 Euros (Football - The Shot; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   },
+   {
+    "id": 18242,
+    "title": "8 Euros (Football - The Shot; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   }
+  ],
+  "tags": [
+   "Fútbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "757"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "12585": {
+  "id": 12585,
+  "url": "https://es.numista.com/12585",
+  "title": "8 Euro (Football - The Keeper's Save)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "João Duarte"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "8 euro\r\nREPÚBLICA PORTUGUESA 2004",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad6d0abd2656.79114554-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad6d0abd2656.79114554-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "João Duarte"
+   ],
+   "description": "Representación estilizada de un futbolista.",
+   "lettering": "TM\r\nUEFA\r\nEuro 2004\r\nPORTUGAL\r\nJOÃO DUARTE · INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad6d0b20f907.45331244-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad6d0b20f907.45331244-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "La espectacularidad del fútbol - La parada del portero",
+  "related_types": [
+   {
+    "id": 17428,
+    "title": "8 Euros (Football - The Keeper's Save; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   },
+   {
+    "id": 18244,
+    "title": "8 Euros (Football - The Keeper's Save; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   }
+  ],
+  "tags": [
+   "Fútbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "756"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "12587": {
+  "id": 12587,
+  "url": "https://es.numista.com/12587",
+  "title": "8 Euros (First Railway In Portugal)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2006,
+  "max_year": 2006,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Hélder Batista"
+   ],
+   "description": "Bandera de Portugal.",
+   "lettering": "€8\r\nREPÚBLICA PORTUGUESA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/841-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/841-180.jpg",
+   "picture_copyright": "World Coin Gallery",
+   "picture_copyright_url": "http://worldcoingallery.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Hélder Batista"
+   ],
+   "description": "Ferrocarril, y a cada lado de la línea a la derecha el escudo de la ciudad de Carregado, y a la izquierda el escudo de la ciudad de Lisboa. Cerca del borde las inscripciones en portugués 150 años de la primera línea ferroviaria Lisboa-Carregado 1856 2006.",
+   "lettering": "150 ANOS DA PRIMEIRA LINHA FÉRREA LISBOA CARREGADO\r\nH BATISTA INCM\r\n·1856·2006·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/840-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/840-180.jpg",
+   "picture_copyright": "World Coin Gallery",
+   "picture_copyright_url": "http://worldcoingallery.com"
+  },
+  "commemorated_topic": "150 aniversario del primer ferrocarril en Portugal",
+  "related_types": [
+   {
+    "id": 17647,
+    "title": "8 Euros (First Railway in Portugal; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "778"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "127263": {
   "category": "coin",
   "comments": "El cuarto diseño de la serie de lingotes de las Bestias de la Reina, que comenzó en 2016 con el León de Inglaterra, consta de un total de diez Bestias que representan las estatuas que se erigieron en la Abadía de Westminster con motivo de la Coronación de la Reina en 1953. Las estatuas originales se exponen actualmente en el Museo Canadiense de Historia de Gatineau, mientras que las réplicas esculpidas por James Woodford se encuentran en el Real Jardín Botánico de Kew, Londres.<br /><br />\r\nEste reverso de Jody Clark se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos.",
@@ -7208,6 +8061,361 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "13286": {
+  "id": 13286,
+  "url": "https://es.numista.com/13286",
+  "title": "8 Euros (Enlargement of the European Union; 21 g; silver .500)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.65,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "José João de Brito"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n8 euro\r\nJJ Brito INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6489b916cb0f96.44755411-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6489b916cb0f96.44755411-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "José João de Brito"
+   ],
+   "description": "Mapa de la Unión Europea con una espiral en la parte superior.",
+   "lettering": "ALARGAMENTO DA UNIÃO EUROPEIA 2004",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6489b9172e4a29.01529941-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6489b9172e4a29.01529941-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "series": "Europa Star",
+  "commemorated_topic": "Ampliación de la Unión Europea",
+  "related_types": [
+   {
+    "id": 17640,
+    "title": "8 Euros (Enlargement of the European Union; 31 g; silver .925)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   }
+  ],
+  "tags": [
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "753"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "13287": {
+  "id": 13287,
+  "url": "https://es.numista.com/13287",
+  "title": "8 Euros (Peace and freedom; 21 g; silver .500)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2005,
+  "max_year": 2005,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "João Duarte"
+   ],
+   "description": "Escudo de Portugal y plumas.",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n8 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63bae3dc7df8d9.57477340-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63bae3dc7df8d9.57477340-180.jpg",
+   "picture_copyright": "Atalys78",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "João Duarte"
+   ],
+   "description": "Cuatro plumas y un mapa de Europa marcan el final de la Segunda Guerra Mundial.",
+   "lettering": "FIM DA II GUERRA MUNDIAL\r\n1945 - 2005\r\nJOÃO DUARTE INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63bae3dd386eb8.74171060-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63bae3dd386eb8.74171060-180.jpg",
+   "picture_copyright": "Atalys78",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "series": "Europa Star",
+  "commemorated_topic": "(en) Peace and freedom - 60th anniversary of end of World War II",
+  "related_types": [
+   {
+    "id": 17065,
+    "title": "8 Euros (Peace and freedom; 31 g; silver .925; proof)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Mapa",
+   "Guerra",
+   "Paz"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "773"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/6a152a12c2ac64.79873788-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/6a152a12c2ac64.79873788-180.jpg",
+   "picture_copyright": "Atalys78",
+   "picture_license_name": "CC BY",
+   "picture_license_url": "https://creativecommons.org/licenses/by/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "13288": {
+  "id": 13288,
+  "url": "https://es.numista.com/13288",
+  "title": "8 Euros (Henry the Navigator)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2006,
+  "max_year": 2006,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "8 euros",
+   "numeric_value": 8,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 36,
+  "thickness": 2.7,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "João Cutileiro"
+   ],
+   "description": "Las inscripciones \"REPUBLICA.PORTUGUESA.\" y \"8€\" en el centro de la moneda.",
+   "lettering": "REPUBLICA · PORTUGUESA ·\r\n€ 8",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/829-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/829-180.jpg",
+   "picture_copyright": "World Coin Gallery",
+   "picture_copyright_url": "http://worldcoingallery.com"
+  },
+  "reverse": {
+   "engravers": [
+    "João Cutileiro"
+   ],
+   "description": "Retrato del príncipe Enrique (1394-1460), hijo de D. Juan R y D. Philippa de Lancaster, fue el principal impulsor del descubrimiento, el hecho más notable de la historia de los portugueses en el mundo.\r\nCon el Príncipe Henrique, Portugal comenzó la expansión en el extranjero, la conquista de Ceuta. El Príncipe tiene 21 años de valor militar y el mérito, a continuación, será nombrado caballero.\r\nBajo el liderazgo de D. Henrique, antes de Portugal (1434) Cabo Bojador (África Occidental) ...",
+   "lettering": "· 2006· D. HENRIQUE O NAVIGADOR INCM·JC PERSONALIDADES EUROPEAIS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/828-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/828-180.jpg",
+   "picture_copyright": "World Coin Gallery",
+   "picture_copyright_url": "http://worldcoingallery.com"
+  },
+  "series": "Europa Star",
+  "commemorated_topic": "(en) Distinguished European figures - Henry the Navigator",
+  "related_types": [
+   {
+    "id": 17645,
+    "title": "8 Euros (Henry the Navigator; proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Explorador"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "776"
+   }
+  ],
+  "weight": 21.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "13289": {
   "category": "coin",

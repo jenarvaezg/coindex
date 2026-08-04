@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "portugal-8-euros-plata-500",
+  "name": "8 euros de plata .500 · Portugal 2003-2007 · conmemorativos circulantes",
+  "short_name": "8 euros de plata .500",
+  "issuer_code": "portugal",
+  "family": "8 euros conmemorativos de plata .500 de Portugal",
+  "weight_millioz": 678,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "La Passarola de 2007 es la última. El Decreto-Lei n.º 246/2007, de 26 de junio (Diário da República, 1.ª série, n.º 121), cerró la puerta a repetirla: recoge la Recomendación de la Comisión Europea de 29 de septiembre de 2003, que «limitou a um único valor facial a emissão de moedas comemorativas destinadas à circulação», y define la emisión conmemorativa de moeda corrente como «uma variação do desenho da face nacional das moedas» (art. 2.º, n.º 4), nunca un valor facial propio como el 8 euros. Los valores faciales distintos quedan para las moedas de colecção, que no aseguran la circulación monetaria (art. 3.º). Al aprobarlo se revocó el régimen anterior, el Decreto-Lei n.º 318/2002, de 28 de diciembre. https://files.diariodarepublica.pt/1s/2007/06/12100/40564059.pdf",
+  "source": "https://en.numista.com/catalogue/pieces13289.html",
+  "source_note": "Ninguna serie de Numista propone esta lista. «Europa Star» sólo etiqueta cuatro de los once tipos (N#13286, 13287, 13288 y 13289) y es además un programa de varios emisores, no portugués, así que propone y no delimita (#43); los otros siete no llevan serie ninguna. El límite se midió sobre el catálogo completo del emisor: `catalogue/index.php?cat=y&st=2&e=portugal` da once 8 euros de plata .500 de 21,1 g entre 2003 y 2007, y una búsqueda de texto sobre todas las categorías (`&st=all&r=8+euros`) confirma que los demás 8 euros portugueses son las .925 de 31,1 g y las de oro .9166, ambas no circulantes y por tanto otra variante. Aviso para quien lo relea: la ficha de «The Keeper's Save» (N#12585) se titula «8 Euro» en singular y se escapa de cualquier búsqueda de «8 Euros».",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "id": "2003-el-futbol-es-fiesta",
+      "label": "El fútbol es fiesta",
+      "year": 2003,
+      "numista_type_id": 12579
+    },
+    {
+      "id": "2003-el-futbol-es-pasion",
+      "label": "El fútbol es pasión",
+      "year": 2003,
+      "numista_type_id": 12581
+    },
+    {
+      "id": "2003-el-futbol-es-deportividad",
+      "label": "El fútbol es deportividad",
+      "year": 2003,
+      "numista_type_id": 12578
+    },
+    {
+      "id": "2004-ampliacion-de-la-union-europea",
+      "label": "Ampliación de la Unión Europea",
+      "year": 2004,
+      "numista_type_id": 13286
+    },
+    {
+      "id": "2004-la-parada",
+      "label": "La parada",
+      "year": 2004,
+      "numista_type_id": 12585
+    },
+    {
+      "id": "2004-el-remate",
+      "label": "El remate",
+      "year": 2004,
+      "numista_type_id": 12583
+    },
+    {
+      "id": "2004-el-gol",
+      "label": "El gol",
+      "year": 2004,
+      "numista_type_id": 12582
+    },
+    {
+      "id": "2005-paz-y-libertad",
+      "label": "Paz y libertad · 60 años del fin de la Segunda Guerra Mundial",
+      "year": 2005,
+      "numista_type_id": 13287
+    },
+    {
+      "id": "2006-enrique-el-navegante",
+      "label": "Enrique el Navegante",
+      "year": 2006,
+      "numista_type_id": 13288
+    },
+    {
+      "id": "2006-primer-ferrocarril-de-portugal",
+      "label": "150 años del primer ferrocarril de Portugal",
+      "year": 2006,
+      "numista_type_id": 12587
+    },
+    {
+      "id": "2007-passarola",
+      "label": "La Passarola de Bartolomeu de Gusmão",
+      "year": 2007,
+      "numista_type_id": 13289
+    }
+  ]
+}

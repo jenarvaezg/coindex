@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 52 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 57 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
