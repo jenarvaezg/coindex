@@ -13,6 +13,12 @@ sealed interface UnclassifiedReason {
 
     /** Numista records no usable weight, so the physical variant cannot be identified. */
     data class UnknownWeight(val family: String) : UnclassifiedReason
+
+    /**
+     * The Numista page is still a submission awaiting a referee, so its fields are whatever the
+     * contributor half-typed and no collection is derived from them (#186).
+     */
+    data object UnpublishedType : UnclassifiedReason
 }
 
 /**
@@ -128,6 +134,18 @@ fun deriveCollection(
             ?: candidateCatalogs.firstOrNull().takeUnless { issueQualifiedClaim }
         if (catalog == null && issueQualifiedClaim) {
             unclassifiedGrouped.record(item, UnclassifiedReason.IssueNotClaimedByCatalog)
+            continue
+        }
+        // A submission in review is not verifiable, and what a curator could not sign does not get
+        // to invent a card either (#186). Two limits keep the check to the damage it repairs:
+        //
+        // - A curated file outranks it. If a versioned file names the type, someone verified it by
+        //   hand and the file rules (ADR 0016), so no plate slot is lost to a half-typed field.
+        // - Only a declared family triggers it. Without one the piece is already in the residue for
+        //   want of a family, and that reason does not lie — whereas «unpublished» would, for a
+        //   published type nobody has dated.
+        if (catalog == null && numistaFamily != null && metadata.looksUnpublished) {
+            unclassifiedGrouped.record(item, UnclassifiedReason.UnpublishedType)
             continue
         }
         val curatedFamily = catalog?.family ?: groupingFamilies[item.typeId]

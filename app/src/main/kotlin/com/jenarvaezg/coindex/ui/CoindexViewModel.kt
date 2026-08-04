@@ -12,6 +12,10 @@ import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
+import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.notebookSections
+import com.jenarvaezg.coindex.ui.print.printPages
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -332,6 +336,22 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     fun dismissMessage() {
         _state.update { it.copy(message = null) }
     }
+
+    /**
+     * The given cards as printable pages, in the order they arrive (#169).
+     *
+     * Built on demand and never observed: [cards] is what the index was showing when the button was
+     * pressed, which is exactly what the collector chose to print. There is no `Notebook` behind it
+     * — no table, no name, no second order (ADR 0021 §1).
+     */
+    fun notebookPages(cards: List<IndexCard>): List<PrintPage> = printPages(
+        notebookSections(
+            state = _state.value.collection,
+            cards = cards,
+            catalogs = container.repository.catalogs,
+            programmes = container.repository.programmes,
+        ),
+    )
 
     fun plate(catalogId: String): PlateResult =
         resolvePlate(

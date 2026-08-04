@@ -133,9 +133,11 @@ fun CardAction(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     OutlinedButton(
         onClick = onClick,
+        enabled = enabled,
         shape = RectangleShape,
         border = BorderStroke(1.dp, Paper.hairline),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Paper.ink),
@@ -296,6 +298,15 @@ private val PAPER_TINT = ColorMatrix().apply {
 private val GRAYSCALE_ON_PAPER = ColorMatrix(GRAYSCALE.values.copyOf()).apply {
     timesAssign(PAPER_TINT)
 }
+
+/**
+ * The filter a coin gets on a printed page, where every coin is on paper by definition.
+ *
+ * Exposed for the notebook of #169, which draws its coins itself — at their real diameter and
+ * reverse only — instead of through [CoinSides], and must not reinvent the mapping of the studio
+ * white onto the page tone.
+ */
+fun paperCoinFilter(missing: Boolean): ColorFilter? = coinColorFilter(missing, onPaper = true)
 
 private fun coinColorFilter(missing: Boolean, onPaper: Boolean): ColorFilter? = when {
     missing && onPaper -> ColorFilter.colorMatrix(GRAYSCALE_ON_PAPER)

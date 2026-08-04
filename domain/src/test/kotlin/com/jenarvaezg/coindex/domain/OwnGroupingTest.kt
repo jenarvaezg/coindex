@@ -36,6 +36,8 @@ class OwnGroupingTest {
             1_885 to TypeMeta(
                 id = 1_885,
                 family = "100 Pesetas de Franco",
+                minYear = 1966,
+                maxYear = 1970,
                 weightOz = 19.0 / GRAMS_PER_TROY_OUNCE,
             ),
         )

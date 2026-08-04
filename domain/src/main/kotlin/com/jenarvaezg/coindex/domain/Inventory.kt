@@ -42,6 +42,30 @@ data class TypeMeta(
     val finish: Finish? = null,
     /** Dominant metal, inferred from `composition.text` like the finish is from the title. */
     val metal: Metal? = null,
-)
+    /**
+     * The coin's diameter in millimetres, Numista's `size`.
+     *
+     * The one measurement of a type that says nothing about what it is and everything about how it
+     * prints: the exported notebook draws each coin at its real diameter (#169), so this is the
+     * whole basis of a 1:1 page. It takes no part in the variant key, in the matching or in any
+     * ratio — a coin is not more or less of a collection for being wide.
+     */
+    val sizeMillimetres: Double? = null,
+) {
+    /**
+     * Whether this looks like a Numista page a referee has not published yet (#186).
+     *
+     * A submission still in review is served by the API with every field as the contributor left
+     * it, so a half-typed `series` arrives as a real family. It is **not verifiable** —the referee
+     * may still delete the page and take the id with it— and what is not verifiable does not become
+     * a collection: the piece waits in the unclassified residue until the page is published.
+     *
+     * No year at all is the offline trace of that state, measured in #38 and again in #186: of the
+     * 816 seeded types, the two it catches are the two unpublished ones. It is a trace and not the
+     * state — a published type nobody has dated falls here too, and its destination is the residue
+     * it already had for want of a family, so the false positive costs it nothing.
+     */
+    val looksUnpublished: Boolean get() = minYear == null && maxYear == null
+}
 
 typealias TypeMetaIndex = Map<Int, TypeMeta>

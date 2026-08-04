@@ -14,6 +14,7 @@ import com.jenarvaezg.coindex.domain.inferMetal
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -89,6 +90,23 @@ internal fun compositionFromRaw(raw: String): String? = runCatching {
 }.getOrNull()
 
 /**
+ * Numista's `size`, the coin's diameter in millimetres, read from the stored response.
+ *
+ * Read rather than stored for the third time and for the same bargain (`issuer.name`,
+ * `composition.text`): it covers 100 % of the seeded cache, so the printed notebook of #169 gets a
+ * real diameter for every type already on the phone without a migration or an API call. A column
+ * would have bought nothing — unlike the finish and the metal there is no inference here to
+ * improve, the field is already a number in millimetres.
+ */
+internal fun sizeFromRaw(raw: String): Double? = runCatching {
+    lenientJson.parseToJsonElement(raw)
+        .jsonObject["size"]
+        ?.jsonPrimitive
+        ?.doubleOrNull
+        ?.takeIf { it > 0.0 }
+}.getOrNull()
+
+/**
  * Issuer names already read, kept for as long as the process lives.
  *
  * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
@@ -101,6 +119,12 @@ private val issuerNames = ConcurrentHashMap<Pair<Int, Long>, String>()
 
 /** The composition prose, cached on the same terms and for the same reason as [issuerNames]. */
 private val compositions = ConcurrentHashMap<Pair<Int, Long>, String>()
+
+/** Diameters already read, on the same terms. A map cannot hold null, so [NO_SIZE] stands in. */
+private val sizes = ConcurrentHashMap<Pair<Int, Long>, Double>()
+
+/** «Nobody recorded a diameter», as a value a [ConcurrentHashMap] can hold. */
+private const val NO_SIZE = -1.0
 
 /**
  * The finish and the metal are inferred here rather than stored, so a later fix to the
@@ -125,6 +149,9 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
             .getOrPut(typeId to fetchedAt) { compositionFromRaw(raw).orEmpty() }
             .ifEmpty { null },
     ),
+    sizeMillimetres = sizes
+        .getOrPut(typeId to fetchedAt) { sizeFromRaw(raw) ?: NO_SIZE }
+        .takeIf { it > 0.0 },
 )
 
 /**

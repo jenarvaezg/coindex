@@ -154,6 +154,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         onOpen = { destination ->
                             navController.navigate(routeOf(destination))
                         },
+                        notebook = viewModel::notebookPages,
+                        onMessage = viewModel::showMessage,
                     )
                 }
                 composable(Routes.OWN_GROUPING) { entry ->

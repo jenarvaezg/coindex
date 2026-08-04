@@ -171,11 +171,14 @@ _Avoid_: Missing, announced member, unpublished type
 **Unpublished type**:
 A Numista type whose page is not publicly visible yet, because a referee has still to publish,
 edit or delete the submission. The API serves it anyway, with every field as the contributor
-left it, so a half-typed family arrives as a real family and becomes a card of its own. It is
-**not verifiable**, and verified is what a curated file requires: an unpublished type never
-enters a collection catalog or a curated grouping, however certain the coin is, because the
-referee may delete the page and take the id with it. Nothing corrects it in the app — the
-editor's fix upstream is the fix. Its offline trace is a type with no year at all.
+left it, so a half-typed family arrives as a real family. It is **not verifiable**, and verified
+is what a curated file requires: an unpublished type never enters a collection catalog or a
+curated grouping, however certain the coin is, because the referee may delete the page and take
+the id with it. Since #186 the same bar applies to the collection the app derives on its own: a
+type that looks unpublished and declares a family derives no card, and its pieces wait in the
+unclassified residue until the page is published. Nothing corrects the fields in the app — the
+editor's fix upstream is the fix, and it only reaches a phone that can fetch the type again
+(#185). Its offline trace is a type with no year at all.
 _Avoid_: Numista error, manual override, missing type metadata
 
 **Collection catalog plate**:
