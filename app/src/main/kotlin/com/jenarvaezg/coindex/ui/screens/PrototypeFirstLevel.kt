@@ -389,6 +389,9 @@ private val VARIANTS = listOf(
     "A — Índice de colecciones (hoy)",
     "B — Dos jerarquías hermanas",
     "C — Un cuaderno, dos vistas",
+    // Ticket #23: el destino de una tarjeta, dentro del modelo que decidió #18.
+    "D — #23 · Hoy: dos saltos",
+    "E — #23 · Destino único",
 )
 
 @Composable
@@ -398,7 +401,9 @@ fun PrototypeFirstLevel(modifier: Modifier = Modifier) {
         when (variant) {
             0 -> VariantA()
             1 -> VariantB()
-            else -> VariantC()
+            2 -> VariantC()
+            3 -> VariantD()
+            else -> VariantE()
         }
         Row(
             modifier = Modifier
