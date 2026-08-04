@@ -336,7 +336,12 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     fun plate(catalogId: String): PlateResult =
-        resolvePlate(_state.value.collection, container.repository.catalogs, catalogId)
+        resolvePlate(
+            _state.value.collection,
+            container.repository.catalogs,
+            catalogId,
+            container.repository.programmes,
+        )
 
     /** The curated catalog for one variant key, if one was curated for it. */
     fun catalogFor(key: VariantKey): CollectionCatalog? =

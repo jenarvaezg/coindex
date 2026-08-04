@@ -7,16 +7,19 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionIndex
 import com.jenarvaezg.coindex.domain.CollectionTitles
+import com.jenarvaezg.coindex.domain.CommemorativeProgramme
 import com.jenarvaezg.coindex.domain.CuratedGrouping
 import com.jenarvaezg.coindex.domain.DerivedCollection
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.buildOwnGroupingViews
 import com.jenarvaezg.coindex.domain.deriveCollection
+import com.jenarvaezg.coindex.domain.programmeStandings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
@@ -60,6 +63,12 @@ sealed interface PlateResult {
     data class Available(
         val catalog: CollectionCatalog,
         val album: CollectionCatalogAlbum,
+        /**
+         * The commemorative programmes this catalog touches (ADR 0022), each with the
+         * collector's progress in it. Empty for all but the two Portuguese cupronickel
+         * catalogs today, and never part of the plate's own denominator.
+         */
+        val programmes: List<ProgrammeStanding> = emptyList(),
     ) : PlateResult
 
     data class Unavailable(val reason: PlateUnavailable) : PlateResult
@@ -76,6 +85,8 @@ class CoindexRepository(
     private val database: CoindexDatabase,
     val catalogs: List<CollectionCatalog>,
     val groupings: List<CuratedGrouping> = emptyList(),
+    /** Commemorative programmes (ADR 0022): a second reading, never a card and never a family. */
+    val programmes: List<CommemorativeProgramme> = emptyList(),
 ) {
     /** What each collection is called on a card (#22). Constant for the process lifetime. */
     val titles: CollectionTitles = CollectionTitles(catalogs, groupings)
@@ -117,12 +128,19 @@ class CoindexRepository(
      *
      * An announced member names none, and its `design_type_id` is not one either: that is the
      * design in another variant, and putting it here would seed the cell with the wrong coin.
+     *
+     * A programme's members count too (ADR 0022), including the ones no catalog claims: the plate
+     * names the programme beside its rows, and the 25 escudos of 1977 and 1983 are exactly the
+     * coins a collector with «1 de 3» is missing.
      */
     fun curatedTypeIds(): Set<Int> = buildSet {
         catalogs.forEach { catalog ->
             catalog.members.forEach { member -> member.numistaTypeId?.let(::add) }
         }
         groupings.forEach { addAll(it.typeIds) }
+        programmes.forEach { programme ->
+            programme.members.forEach { member -> add(member.numistaTypeId) }
+        }
     }
 
     /** The catalog matching a variant key, if one was curated for it. */
@@ -168,6 +186,7 @@ fun resolvePlate(
     state: CollectionState,
     catalogs: List<CollectionCatalog>,
     catalogId: String,
+    programmes: List<CommemorativeProgramme> = emptyList(),
 ): PlateResult {
     val catalog = catalogs.firstOrNull { it.id == catalogId }
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
@@ -179,6 +198,7 @@ fun resolvePlate(
         else -> PlateResult.Available(
             catalog,
             buildCollectionCatalogAlbum(catalog, state.items),
+            programmeStandings(catalog, programmes, state.items),
         )
     }
 }

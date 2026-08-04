@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "portugal-1983-dia-mundial-alimentacion",
+  "name": "Serie FAO 1983 · Portugal · 2,50, 5 y 25 escudos de cuproníquel",
+  "short_name": "Serie FAO 1983",
+  "issuer_code": "portugal",
+  "year": 1983,
+  "source": "https://filateliadochiado.pt/produto/serie-3-moedas-fao-1983/",
+  "source_note": "La colección conmemorativa «Dia Mundial da Alimentação - FAO» del 16 de octubre de 1983 son tres monedas de cuproníquel —2$50 de 3,5 g, 5$00 de 7 g y 25$00 de 11 g—, que se venden como carteira de tres. Numista no las agrupa: las tres fichas cuelgan de la familia técnica «System 1981-2001». No se consultó el catálogo propio de la INCM.",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "label": "2,50 escudos",
+      "numista_type_id": 9829
+    },
+    {
+      "label": "5 escudos",
+      "numista_type_id": 9830
+    },
+    {
+      "label": "25 escudos",
+      "numista_type_id": 9831
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "portugal-1977-alexandre-herculano",
+  "name": "Serie Alexandre Herculano 1977 · Portugal · 2,50, 5 y 25 escudos de cuproníquel",
+  "short_name": "Serie Alexandre Herculano 1977",
+  "issuer_code": "portugal",
+  "year": 1977,
+  "source": "https://www.portugalmoedas.com.pt/pt/-moedas-comemorativas-25-escudos-2500/5835-colecao-completa-da-serie-alexandre-herculano-de-1977.html",
+  "source_note": "La Imprensa Nacional - Casa da Moeda acuñó tres denominaciones para el centenario de la muerte de Alexandre Herculano (1877-1977), y se venden como «Coleção Completa da Série Alexandre Herculano de 1977», una carteira de tres monedas: 2$50, 5$00 y 25$00, las tres de cuproníquel. Numista no las agrupa —las tres fichas cuelgan de la familia técnica «System 1969-1980»—, así que el límite lo pone esta fuente y no el catálogo. No se consultó el catálogo propio de la INCM.",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "label": "2,50 escudos",
+      "numista_type_id": 6071
+    },
+    {
+      "label": "5 escudos",
+      "numista_type_id": 10126
+    },
+    {
+      "label": "25 escudos",
+      "numista_type_id": 7338
+    }
+  ]
+}
