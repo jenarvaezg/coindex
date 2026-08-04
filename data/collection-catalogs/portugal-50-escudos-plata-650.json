@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "portugal-50-escudos-plata-650",
+  "name": "50 escudos de plata .650 · Portugal 1968-1972 · conmemorativos circulantes",
+  "short_name": "50 escudos de plata .650",
+  "issuer_code": "portugal",
+  "family": "50 escudos conmemorativos de plata .650 de Portugal",
+  "weight_millioz": 579,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Os Lusíadas de 1972 es el último 50 escudos de plata: la denominación siguió en cuproníquel y el escudo desapareció con el euro el 1 de enero de 2002, así que la serie no puede crecer.",
+  "source": "https://en.numista.com/catalogue/pieces13027.html",
+  "source_note": "Ninguna serie de Numista propone esta lista: las cinco fichas cuelgan de las familias técnicas «System 1927-1968» y «System 1969-1980». El límite se midió sobre las 135 conmemorativas circulantes de la era del escudo que Numista cataloga (catalogue/index.php?cat=y&st=2&e=portugal), donde el 50 escudos de plata .650 de 18 g aparece exactamente cinco veces, sin ninguna en 1970.",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "id": "1968-pedro-alvares-cabral",
+      "label": "Pedro Álvares Cabral",
+      "year": 1968,
+      "numista_type_id": 4930
+    },
+    {
+      "id": "1969-vasco-da-gama",
+      "label": "Vasco da Gama",
+      "year": 1969,
+      "numista_type_id": 13026
+    },
+    {
+      "id": "1969-marechal-carmona",
+      "label": "Mariscal Carmona",
+      "year": 1969,
+      "numista_type_id": 13173
+    },
+    {
+      "id": "1971-banco-de-portugal",
+      "label": "125 años del Banco de Portugal",
+      "year": 1971,
+      "numista_type_id": 13174
+    },
+    {
+      "id": "1972-os-lusiadas",
+      "label": "Os Lusíadas",
+      "year": 1972,
+      "numista_type_id": 13027
+    }
+  ]
+}

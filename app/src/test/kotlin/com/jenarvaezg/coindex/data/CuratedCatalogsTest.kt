@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(52, catalogs.size)
+        assertEquals(56, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintidós cerrados llevan su nota y los veintinueve abiertos no afirman nada más que
+     * veintiséis cerrados llevan su nota y los treinta abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(22, closed.size)
+        assertEquals(26, closed.size)
         assertEquals(30, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -951,6 +951,66 @@ class CuratedCatalogsTest {
             tientjes.members.map { it.numistaTypeId },
         )
         assertEquals(listOf(1994, 1995, 1996, 1997, 1999), tientjes.members.map { it.year })
+    }
+
+    /**
+     * Los seis escudos que resolvían por el peldaño 5 —la familia técnica de Numista— y salían
+     * como cinco tarjetas, dos de ellas homónimas (#157). Ninguna serie de Numista propone estas
+     * cuatro listas: las catorce fichas cuelgan de «System 1927-1968», «System 1969-1980» y
+     * «System 1981-2001», así que las cuatro citan la página de un tipo.
+     *
+     * El criterio es del coleccionista y es uno solo, denominación más metal, el mismo patrón que
+     * ya sostenía los 500 y los 1000 escudos de plata .500. La lectura temática que pidió además
+     * —el programa de 1977 y el de 1983, cada uno en tres denominaciones— vive aparte, en los
+     * programas conmemorativos del ADR 0022, porque su tercera moneda no está en ningún catálogo.
+     */
+    @Test
+    fun `the six loose escudos become four catalogs by denomination and metal`() {
+        val veinte = find("portugal-20-escudos-plata")
+        assertEquals(675, veinte.weightMillioz)
+        assertEquals(Metal.Silver, veinte.metal)
+        assertEquals(listOf(11_158, 11_161, 6_580), veinte.members.map { it.numistaTypeId })
+        assertEquals(listOf(1953, 1960, 1966), veinte.members.map { it.year })
+        // El módulo reducido de 1966 —10,12 g de plata .650 contra 21 g de plata .800— entra a
+        // propósito: por el ADR 0016 el catálogo manda sobre la variante de sus miembros, y la
+        // desviación se declara en prosa en vez de partir la lámina en dos.
+        val salazar = veinte.members.last()
+        assertEquals(6_580, salazar.numistaTypeId)
+        assertTrue(salazar.variantNote!!.contains("10,12 g"), salazar.variantNote!!)
+
+        val cincuenta = find("portugal-50-escudos-plata-650")
+        assertEquals(579, cincuenta.weightMillioz)
+        assertEquals(Metal.Silver, cincuenta.metal)
+        assertEquals(
+            listOf(4_930, 13_026, 13_173, 13_174, 13_027),
+            cincuenta.members.map { it.numistaTypeId },
+        )
+        // 1970 no falta: en las 135 conmemorativas circulantes de la era del escudo no hay
+        // ninguna de ese año. Al estar cerrado, el hueco interior no lo informa nadie.
+        assertEquals(listOf(1968, 1969, 1969, 1971, 1972), cincuenta.members.map { it.year })
+
+        val dosCincuenta = find("portugal-2-50-escudos-cuproniquel")
+        assertEquals(113, dosCincuenta.weightMillioz)
+        assertEquals(Metal.Cupronickel, dosCincuenta.metal)
+        assertEquals(listOf(6_071, 9_828, 9_829), dosCincuenta.members.map { it.numistaTypeId })
+
+        val cinco = find("portugal-5-escudos-cuproniquel")
+        assertEquals(225, cinco.weightMillioz)
+        assertEquals(Metal.Cupronickel, cinco.metal)
+        assertEquals(listOf(10_126, 7_337, 9_830), cinco.members.map { it.numistaTypeId })
+
+        listOf(veinte, cincuenta, dosCincuenta, cinco).forEach { catalog ->
+            assertEquals(1, catalog.schemaVersion)
+            assertEquals(SeriesStatus.Closed, catalog.seriesStatus, catalog.id)
+            assertNull(catalog.finish)
+            assertTrue(
+                catalog.source.startsWith("https://en.numista.com/catalogue/pieces"),
+                catalog.id,
+            )
+            // El límite no lo dibuja Numista, así que cada fichero dice en prosa de dónde sale.
+            assertTrue(catalog.sourceNote!!.contains("135"), catalog.id)
+            assertTrue(catalog.members.all { it.numistaIssueIds.isEmpty() }, catalog.id)
+        }
     }
 
     @Test

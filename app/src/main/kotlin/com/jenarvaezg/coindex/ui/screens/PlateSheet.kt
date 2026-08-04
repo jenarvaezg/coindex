@@ -29,6 +29,7 @@ import com.jenarvaezg.coindex.ui.components.coinSideImageCount
 import com.jenarvaezg.coindex.ui.PlateCommonFacts
 import com.jenarvaezg.coindex.ui.plateCellFootnote
 import com.jenarvaezg.coindex.ui.plateCommonFacts
+import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import com.jenarvaezg.coindex.ui.plateEntries
 import com.jenarvaezg.coindex.ui.plateMemberStateLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -93,6 +94,7 @@ fun PlateSheet(
     ownedMembers: Int,
     images: Map<Int, TypeImages>,
     layout: SheetLayout,
+    programmes: List<ProgrammeStanding> = emptyList(),
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -109,7 +111,7 @@ fun PlateSheet(
         val common = plateCommonFacts(catalog.members)
         SheetHeading(
             catalog = catalog,
-            entries = plateEntries(catalog, ownedMembers, common),
+            entries = plateEntries(catalog, ownedMembers, common, programmes),
             layout = layout,
         )
         members.chunked(layout.columns).forEach { row ->

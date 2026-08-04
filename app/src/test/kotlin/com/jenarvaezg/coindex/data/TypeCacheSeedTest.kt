@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.GroupingSeeds
+import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -98,16 +99,21 @@ class TypeCacheSeedTest {
             .mapValues { (_, element) -> element.jsonObject }
 
     /**
-     * Every type id the curated files name, catalogs and groupings alike.
+     * Every type id the curated files name: catalogs, groupings and commemorative programmes.
      *
      * An announced member names none. Its `design_type_id` is not one either: that is the same
      * design in **another** variant, so seeding it here would fill the cell with a coin the
      * catalog does not claim.
+     *
+     * A programme's members count even where no catalog claims them (ADR 0022): the 25 escudos of
+     * 1977 and 1983 are in no catalog and are exactly the coins «1 de 3» says are missing.
      */
     private val curatedTypeIds: List<Int> =
         CatalogSeeds.parseAll(CatalogFiles.all())
             .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } } +
-            GroupingSeeds.parseAll(GroupingFiles.all()).flatMap { it.typeIds }
+            GroupingSeeds.parseAll(GroupingFiles.all()).flatMap { it.typeIds } +
+            ProgrammeSeeds.parseAll(ProgrammeFiles.all())
+                .flatMap { programme -> programme.members.map { it.numistaTypeId } }
 
     @Test
     fun `the seed covers every type the curated files name`() {

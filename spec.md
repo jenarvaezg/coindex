@@ -227,7 +227,9 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
   simples, 22 date runs, 2 conjuntos y 1 issue run.
 - **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint y el dólar de plata clásico de EE. UU.
-- **814 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **2 programas conmemorativos** (ADR 0022), que no son colecciones y no dan tarjeta: las series
+  portuguesas de 1977 y de 1983, tres denominaciones cada una. El padre lee «1 de 3» en las dos.
+- **816 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
 - **5 veredictos en `data/orphans.json`**, firmados por
@@ -287,8 +289,8 @@ técnica.
 
 Un catálogo único de las 135 no era opción: habría chocado con los 29 tipos ya reclamados y se
 habría tragado las once series *Portuguese Discoveries*, que son programas por derecho propio.
-Lo que sí queda pendiente es la **lectura temática** que pidió el coleccionista —el programa de
-1977 y el de 1983, cada uno en tres denominaciones—, que el modelo no sabe dar hoy
+La **lectura temática** que pidió el coleccionista —el programa de 1977 y el de 1983, cada uno en
+tres denominaciones— se resolvió con los programas conmemorativos del ADR 0022
 ([#178](https://github.com/jenarvaezg/coindex/issues/178)).
 
 Presupuesto de API: cada usuario gasta su propia key (~1.500-2.000 llamadas/mes), y el snapshot

@@ -126,6 +126,145 @@
   },
   "weight": 31.1035
  },
+ "10126": {
+  "id": 10126,
+  "url": "https://es.numista.com/10126",
+  "title": "5 Escudos (Alexandre Herculano)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1977,
+  "max_year": 1977,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 escudos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 24.5,
+  "thickness": 2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Valor, Escudo de armas",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n* 5$00 *",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3361-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3361-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Retrato de Alexandre Herculano",
+   "lettering": "CENTENÁRIO·DA·MORTE·DE·ALEXANDRE·HERCULANO * \r\n1877 1977 \r\nincm 1977    \r\nM.NORTE SC VLP",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3362-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3362-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1969-1980",
+  "commemorated_topic": "Centenario de la muerte de Alexandre Herculano",
+  "comments": "Las monedas Proof-Like se lanzaron en un set de 3 monedas que contenía las monedas de 2$50, 5$ y 25$00.<br /><br />\r\nImágenes del set Proof-Like: (El set no viene originalmente con la moneda en un flip, pero debido a la peligrosidad del plástico utilizado en el set normalmente los propietarios protegen la moneda con algún soporte extra).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f998e74a5648.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f998e74a5648.jpg\" alt=\"\" width=\"200\" height=\"201\" /></a><br /><br />\r\nLa disposición original de las monedas sin protección adicional:<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f998ebb87946.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f998ebb87946.jpg\" alt=\"\" width=\"200\" height=\"139\" /></a>",
+  "related_types": [
+   {
+    "id": 6071,
+    "title": "2.50 Escudos (Alexandre Herculano)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1977,
+    "maxYear": 1977
+   },
+   {
+    "id": 7338,
+    "title": "25 Escudos (Alexandre Herculano)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1977,
+    "maxYear": 1977
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Literatura",
+   "Aniversario de fallecimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "606"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 38"
+   }
+  ],
+  "weight": 7,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/65c4dd1b2aa799.70849684-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/65c4dd1b2aa799.70849684-180.jpg",
+   "picture_copyright": "Julio Vega",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "101685": {
   "category": "coin",
   "commemorated_topic": "190 aniversario del nacimiento del geógrafo P.P. Semyonov-Tyan-Shansky",
@@ -2722,6 +2861,137 @@
    "text": "20 escudos"
   },
   "weight": 21
+ },
+ "11161": {
+  "id": 11161,
+  "url": "https://es.numista.com/11161",
+  "title": "20 Escudos (Infante D. Henrique)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1960,
+  "max_year": 1960,
+  "ruler": [
+   {
+    "id": 1294,
+    "name": "Segunda República",
+    "wikidata_id": "Q17748736"
+   }
+  ],
+  "value": {
+   "text": "20 escudos",
+   "numeric_value": 20,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 34,
+  "thickness": 2.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 800 (Copper .200)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Brasil: Escudo con siete castillos y cruz formada por cinco escudos con 5 besantes cada uno.",
+   "lettering": "REPUBLICA PORTUGUESA\r\n20$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/69ad87f9dc5be7.62367298-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/69ad87f9dc5be7.62367298-180.jpg",
+   "picture_copyright": "Bryan Leão"
+  },
+  "reverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Busto do Infante D. Henrique",
+   "lettering": "QUINTO CENTENARIO DA MORTE DO INFANTE DOM HENRIQUE\r\n1960",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/69ad87fbafe795.73113582-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/69ad87fbafe795.73113582-180.jpg",
+   "picture_copyright": "Bryan Leão"
+  },
+  "series": "System 1927-1968",
+  "commemorated_topic": "V Centenario de la muerte del Infante D. Henrique",
+  "related_types": [
+   {
+    "id": 11159,
+    "title": "5 Escudos (Prince Henry the Navigator)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1960,
+    "maxYear": 1960
+   },
+   {
+    "id": 11160,
+    "title": "10 Escudos (Prince Henry the Navigator)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1960,
+    "maxYear": 1960
+   }
+  ],
+  "tags": [
+   "Aniversario de fallecimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "589"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 50"
+   }
+  ],
+  "weight": 21,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "111783": {
   "category": "coin",
@@ -5448,6 +5718,121 @@
   },
   "weight": 18
  },
+ "13026": {
+  "id": 13026,
+  "url": "https://es.numista.com/13026",
+  "title": "50 Escudos (Vasco da Gama)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1969,
+  "max_year": 1969,
+  "ruler": [
+   {
+    "id": 1294,
+    "name": "Segunda República",
+    "wikidata_id": "Q17748736"
+   }
+  ],
+  "value": {
+   "text": "50 escudos",
+   "numeric_value": 50,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 34,
+  "thickness": 2.1,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 650"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Álvaro Lucas"
+   ],
+   "description": "Las armas de Portugal con el nombre del país en la parte superior y el valor debajo",
+   "lettering": "República-Portuguesa\r\n50$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3359-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3359-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Álvaro Lucas"
+   ],
+   "description": "Retrato estilizado de Vasco da Gama mirando hacia la izquierda",
+   "lettering": "Vasco da Gama 1469-1969\r\n\r\nA. LUCAS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3360-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3360-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1969-1980",
+  "commemorated_topic": "500 aniversario del nacimiento de Vasco da Gama",
+  "tags": [
+   "Explorador",
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "598"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R64"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "57"
+   }
+  ],
+  "weight": 18,
+  "orientation": "coin",
+  "edge": {
+   "description": "La orientación de las letras de los bordes varía.",
+   "lettering": "V CENTENARIO DE VASCO DA GAMA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "13027": {
   "category": "coin",
   "commemorated_topic": "400 aniversario de \"Os Lusiadas",
@@ -6327,6 +6712,118 @@
    "text": "50 escudos"
   },
   "weight": 18
+ },
+ "13174": {
+  "id": 13174,
+  "url": "https://es.numista.com/13174",
+  "title": "50 Escudos (Banco de Portugal)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1971,
+  "max_year": 1971,
+  "ruler": [
+   {
+    "id": 1294,
+    "name": "Segunda República",
+    "wikidata_id": "Q17748736"
+   }
+  ],
+  "value": {
+   "text": "50 escudos",
+   "numeric_value": 50,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 34.15,
+  "thickness": 2.35,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 650"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Diseño de círculos dentro de una cruz circular",
+   "lettering": "REPUBLICA PORTUGUESA\r\n50$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/640eb1db8cbb28.84980309-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/640eb1db8cbb28.84980309-180.jpg",
+   "picture_copyright": "JLHare",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "Árbol estilizado",
+   "lettering": "BANCO DE PORTUGAL\r\n1846·1971",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/640eb1dc9f5932.00650201-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/640eb1dc9f5932.00650201-180.jpg",
+   "picture_copyright": "JLHare",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "System 1969-1980",
+  "commemorated_topic": "125 aniversario del Banco de Portugal",
+  "comments": "Hay 2 alineaciones de bordes.",
+  "tags": [
+   "Árbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "601"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R66"
+   }
+  ],
+  "weight": 17.9,
+  "orientation": "coin",
+  "edge": {
+   "description": "Liso con inscripción",
+   "lettering": "CXXV ANIVERSARIO DO BANCO DE PORTUGAL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "131809": {
   "category": "coin",
@@ -65146,6 +65643,111 @@
   },
   "weight": 34.88
  },
+ "4930": {
+  "id": 4930,
+  "url": "https://es.numista.com/4930",
+  "title": "50 Escudos (Pedro Alvares Cabral)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1968,
+  "max_year": 1968,
+  "ruler": [
+   {
+    "id": 1294,
+    "name": "Segunda República",
+    "wikidata_id": "Q17748736"
+   }
+  ],
+  "value": {
+   "text": "50 escudos",
+   "numeric_value": 50,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 34,
+  "thickness": 2.25,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 650"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo coronado",
+   "lettering": "Republica·Portuguesa\r\n50$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3353-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3353-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Busto con tocado a la derecha dentro de un círculo",
+   "lettering": "V CENTº NASCIMENTO DE PEDRO ALVARES CABRAL 1968\r\nM.NORTE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3354-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3354-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1927-1968",
+  "commemorated_topic": "500 aniversario del nacimiento de Pedro Alvares Cabral",
+  "tags": [
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "593"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R63"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "52"
+   }
+  ],
+  "weight": 18,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "493329": {
   "category": "coin",
   "composition": {
@@ -85556,6 +86158,286 @@
   },
   "weight": 17
  },
+ "7337": {
+  "id": 7337,
+  "url": "https://es.numista.com/7337",
+  "title": "5 Escudos (Roller Hockey Championship)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1982,
+  "max_year": 1982,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 escudos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 24.5,
+  "thickness": 2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Escudo portugués en el centro rodeado por la inscripción",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n5$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3371-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3371-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Dorita Castel-Branco"
+   ],
+   "description": "Jugador en carrera de ataque",
+   "lettering": "82\r\nincm 82\r\nDorita\r\nMUNDIAL HÓQUEI",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3372-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3372-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1981-2001",
+  "commemorated_topic": "Juegos del Campeonato Mundial de Hockey sobre Patines",
+  "related_types": [
+   {
+    "id": 9826,
+    "title": "1 Escudo (Roller Hockey Championship)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1982,
+    "maxYear": 1982
+   },
+   {
+    "id": 9828,
+    "title": "2.50 Escudos (Roller Hockey Championship)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1982,
+    "maxYear": 1982
+   },
+   {
+    "id": 7129,
+    "title": "25 Escudos (Roller Hockey Championship 1982)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   }
+  ],
+  "tags": [
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "615"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 39"
+   }
+  ],
+  "weight": 7,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "7338": {
+  "id": 7338,
+  "url": "https://es.numista.com/7338",
+  "title": "25 Escudos (Alexandre Herculano)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1977,
+  "max_year": 1977,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "25 escudos",
+   "numeric_value": 25,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2002-00-00"
+  },
+  "size": 26.5,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Escudo de Portugal",
+   "lettering": "REPUBLICA·PORTUGUESA\r\n* 25$00 *",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3363-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3363-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Retrato de Alexandre Herculano (escritor y poeta portugués)",
+   "lettering": "CENTENÁRIO·DA·MORTE·DE·ALEXANDRE·HERCULANO *\r\n1877  1977\r\nincm 1977    \r\nM.NORTE SC VLP",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3364-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3364-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1969-1980",
+  "commemorated_topic": "Centenario de la muerte de Alexandre Herculano",
+  "comments": "Las monedas Proof-Like se lanzaron en un set de 3 monedas que contenía las monedas de 2$50, 5$ y 25$00.<br /><br />\r\nImágenes del set Proof-Like: (El set no viene originalmente con la moneda en un flip, pero debido a la peligrosidad del plástico utilizado en el set normalmente los propietarios protegen la moneda con algún soporte extra).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f998e74a5648.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f998e74a5648.jpg\" alt=\"\" width=\"200\" height=\"201\" /></a><br /><br />\r\nLa disposición original de las monedas sin protección adicional:<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f998ebb87946.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f998ebb87946.jpg\" alt=\"\" width=\"200\" height=\"139\" /></a>",
+  "related_types": [
+   {
+    "id": 6071,
+    "title": "2.50 Escudos (Alexandre Herculano)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1977,
+    "maxYear": 1977
+   },
+   {
+    "id": 10126,
+    "title": "5 Escudos (Alexandre Herculano)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1977,
+    "maxYear": 1977
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Literatura",
+   "Aniversario de fallecimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "608"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 55"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/614c7921421453.27458907-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/614c7921421453.27458907-180.jpg",
+   "picture_copyright": "Walter_Scott"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "7393": {
   "category": "coin",
   "comments": "<p>El Maria Theresa Thaler sigue la norma Conventionsthaler de 1750, con un peso bruto de ⅒ de un marco de Viena de plata, ⅚ fina.<br><i>Contenido de plata fina (ASW):</i> 0,7516 oz = 23,39 g = 0,1 marcos de Colonia = 0,0833 marcos de Viena (5 marcos de Viena = 6 marcos de Colonia).<br><br>El <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://en.numista.com/21961\">Maria Theresa Thaler se acuñó originalmente en Austria entre 1740 y 1780</a>. Era la moneda circulante del Sacro Imperio Romano Germánico y sus dominios, y una de las monedas comerciales más importantes de Europa y del mundo. Tras la muerte de María Teresa en 1780, la moneda siguió acuñándose hasta hoy, con la fecha congelada en 1780. Se calcula que hasta el año 2000 se acuñaron 389 millones de piezas. A partir de 2024, la <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.muenzeoesterreich.at/eng/produkte/maria-theresa-taler-silver-uncirculated\">Casa de la Moneda de</a> Viena sigue vendiéndola.<br><a href=\"https://en.numista.com/catalogue/images/5e3a9fef8aeb7.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5e3a9fef8aeb7.jpg\" alt=\"\"></a><br><a href=\"https://en.numista.com/catalogue/images/5f0cbea693d80.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f0cbea693d80.jpg\" alt=\"\"></a> <a href=\"https://en.numista.com/catalogue/images/5f0cbeb0bb8f1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f0cbeb0bb8f1.jpg\" alt=\"\"></a><br><br>Junto con la moneda española de 8 reales, fue la base del dólar de plata adoptado por los entonces incipientes Estados Unidos en virtud de la Ley de la Casa de la Moneda de 1792. La palabra \"dólar\" deriva de la palabra alemana \"Thaler/Taler\". También conocido como dólar de Levante, circuló como moneda comercial en el mundo árabe (especialmente en Arabia Saudí, Yemen, Siria, Mascate y Omán), en África (especialmente en Etiopía, Somalia, Kenia, Tanzania y Mozambique), en la India y en Indonesia. En la actualidad sigue en circulación en zonas conflictivas de Oriente Próximo y África.<br><br>Referencias:<br><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"http://www.theresia.name/en/index.html\">http://www.theresia.name/en/index.html</a><br>H.D. Rauch, Walter Hafner. \"Léxico de la Maria Theresien Taler 1780\". Viena 1984<br><br><i><strong>Variante de la ceca de Roma:</strong></i><br>Como resultado del Real Decreto Legislativo nº 1371 de 1936, el gobierno italiano reguló la circulación del Talero de María Teresa en los territorios del África Oriental Italiana, disponiendo que estas monedas, tradicionalmente utilizadas como moneda de cambio, pudieran ser cambiadas por el Banco de Italia, sin límite de tiempo, a un tipo de lira italiana que sería establecido periódicamente por los gobernadores.<br><br>Tras el fracaso de las negociaciones con Austria, relativas a la posibilidad de reconstituir los táleros de María Teresa, llevadas a cabo de diversas formas después de la Primera Guerra Mundial, y dadas las necesidades italianas tras el fracaso de la emisión del tálero de Eritrea<a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"/19047\">(</a><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"/19516\">N#19047</a>) antes, y después del tálero de Italia<a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"/19516\">(N#19516</a>), posteriormente, el gobierno italiano reanudó directamente las negociaciones con el gobierno austriaco y consiguió concluir un acuerdo, firmado el 9 de julio de 1935, que reflejaba la venta al gobierno italiano del derecho exclusivo durante 25 años para acuñar y poner en circulación los táleros de María Teresa. En ejecución de este acuerdo, la Casa de la Moneda de Viena entregó a la Casa de la Moneda italiana los troqueles que reproducían esta moneda. De este modo, la Real Casa de la Moneda italiana pudo satisfacer desde el principio las necesidades de la campaña colonial italiana en África Oriental, acuñando, desde agosto de 1935 hasta el 30 de junio de 1939, a razón de 100.000 piezas diarias, estas monedas por cuenta del gobierno de África Oriental (4.300.000 piezas), del Tesoro (14.200.000 piezas), del Banco di Roma (745.409 piezas) y del Banco de Italia (201.320 piezas). Para estas acuñaciones se utilizó el metal obtenido de desmonetizaciones anteriores [MdF 1940, pp. 64-65].<br><br>Los troqueles, gracias a los cuales se obtuvieron las monedas de los táleros de María Teresa acuñados en Roma, fueron devueltos a Austria en 1961, una vez transcurridos los 25 años del acuerdo de transferencia [Simonetti III, p. 290, nota 314].<br><br>Estos táleros de María Teresa acuñados en Roma son casi idénticos tanto a los acuñados en Viena de 1932 a 1935 como a los acuñados en Londres en 1936, diferenciándose de estos últimos únicamente por la ley de plata que contienen, igual a 835 milésimas frente a las 833,33 milésimas de los austriacos y británicos. A este respecto, Girola [2010, p. 335] nos informa de que \"La preferencia por los títulos 835 se dio porque toda la moneda fraccionaria italiana de plata fabricada después de la unificación de Italia se acuñó para el título 835 y, por lo tanto, las existencias de plata con ese título estaban fácilmente disponibles.\"<br><br>Para reconocer las monedas acuñadas en Roma de las nuevas austriacas, es necesario observar las plumas laterales de la cola del águila colocadas en el reverso de la moneda. Tanto a la derecha como a la izquierda, se observan dos plumas de la cola, que se abren hacia el exterior, de las que sale una pluma muy fina o dos plumas igualmente finas. La primera identifica los contadores austriacos modernos, la segunda identifica tanto las monedas acuñadas en Roma como las monedas similares acuñadas en Londres en 1936. Por último, para distinguir los táleros acuñados en Roma de los acuñados en Londres, es necesario observar la disposición de las grandes plumas situadas en la parte central de la cola del águila. Las monedas acuñadas en Londres presentan las plumas dispuestas según el esquema 1-2-1: una en el centro, dos laterales (una a la izquierda y otra a la derecha) y, entre las dos laterales y bajo la central, una cuarta pluma muy alargada hacia abajo. Las monedas acuñadas en Roma, en cambio, presentan las plumas de la cola del águila dispuestas según el esquema 1-3-1: cuatro plumas formando un rombo e, inmediatamente debajo, una quinta pluma colocada en el centro.<br><br>Estas monedas, en el reverso después de la fecha, presentan el símbolo <i><strong>X</strong></i> que recuerda la cruz de San Andrea. Es el signo identificativo del Conventionsthaler de María Teresa y se estampó en las monedas para conmemorar la reforma monetaria del \"Pie Monetario de 20 florines\", sancionada por el acuerdo de 1753 con el Ducado de Baviera. En base a este acuerdo se decidió que de un marco de Colonia, de 233,8555 gramos de plata fina, debían obtenerse monedas por valor de 20 florines. Así pues, un florín, cualquiera que fuese su denominación, debía contener 11,69277 gramos (233,8555: 20 = 11,69277) de plata fina. Por esta razón, estas monedas tomaron el nombre de \"táleros de convención\" (Konventionstaler) [Gigante 2016, p. 180].<br><br>El tálero de María Teresa se acuñó de 1935 a 1950 [Simonetti ibíd.]. De estas monedas sólo se conocen las cantidades acuñadas entre agosto de 1935 y el 30 de junio de 1939, que ascienden a 19.446.729 piezas [MdF 1940, p. 65, tab.].</p><p></p><p><i>Variedades:</i><br>Existen más de 150 variedades principales diferentes, y prácticamente todos los troqueles producidos antes de 1850 presentaban pequeñas diferencias. Sutiles diferencias en el diseño, el estilo y las letras permiten determinar al menos en parte la fecha y la ceca. Algunas variaciones son muy raras, conociéndose la existencia de 10 piezas o menos.</p><p></p><p>Uno de los principales elementos de diseño utilizados para distinguir la variedad es el escudo interior del reverso. Existen tres variedades principales:</p><p><a href=\"https://en.numista.com/catalogue/images/664bbf7cbe7c5.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/664bbf7cbe7c5.jpg\"></a></p><p>A. Escudo con fondo redondeado. Corona con cinco perlas y medio arco apuntando a la derecha.</p><p>B. Escudo con fondo puntiagudo. Corona con siete perlas y medio arco apuntando a la izquierda.</p><p>C. Escudo con fondo acolado. Corona con siete perlas, circulo y medio arco apuntando a la izquierda.</p>",
@@ -99251,6 +100133,288 @@
   },
   "weight": 20
  },
+ "9828": {
+  "id": 9828,
+  "url": "https://es.numista.com/9828",
+  "title": "2.50 Escudos (Roller Hockey Championship)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1982,
+  "max_year": 1982,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "2,50 escudos",
+   "numeric_value": 2.5,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1998-00-00"
+  },
+  "size": 20,
+  "thickness": 1.6,
+  "shape": "Circular",
+  "composition": {
+   "text": "Cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Escudo portugués en el centro rodeado por la inscripción",
+   "lettering": "REPUBLICA PORTUGUESA\r\n2$50",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3367-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3367-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Dorita Castel-Branco"
+   ],
+   "description": "Jugador que domina la pelota con el stick",
+   "lettering": "82\r\nincm 82\r\nDorita\r\nMUNDIAL HÓQUEI",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3368-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3368-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1981-2001",
+  "commemorated_topic": "25º Campeonato del Mundo de hockey sobre patines",
+  "related_types": [
+   {
+    "id": 9826,
+    "title": "1 Escudo (Roller Hockey Championship)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1982,
+    "maxYear": 1982
+   },
+   {
+    "id": 7337,
+    "title": "5 Escudos (Roller Hockey Championship)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1982,
+    "maxYear": 1982
+   },
+   {
+    "id": 7129,
+    "title": "25 Escudos (Roller Hockey Championship 1982)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   }
+  ],
+  "tags": [
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "613"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 33"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "73"
+   }
+  ],
+  "weight": 3.5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "9829": {
+  "id": 9829,
+  "url": "https://es.numista.com/9829",
+  "title": "2.50 Escudos (FAO)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1983,
+  "max_year": 1983,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "2,50 escudos",
+   "numeric_value": 2.5,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 20,
+  "thickness": 1.6,
+  "shape": "Circular",
+  "composition": {
+   "text": "Cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Escudo menor (Escudo portugués: cinco escudos formando una cruz y siete castillos)",
+   "lettering": "REPUBLICA PORTUGUESA\r\n2$50",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3375-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3375-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Euclides Vaz"
+   ],
+   "description": "Maíz (nombre binomial: Zea mays)",
+   "lettering": "FAO\r\n1983",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3376-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3376-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1981-2001",
+  "commemorated_topic": "Día Mundial de la Alimentación 1983",
+  "related_types": [
+   {
+    "id": 9830,
+    "title": "5 Escudos (FAO)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   },
+   {
+    "id": 9831,
+    "title": "25 Escudos (FAO)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "FAO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "617"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 34"
+   }
+  ],
+  "weight": 3.5,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "9830": {
   "category": "coin",
   "commemorated_topic": "Día Mundial de la Alimentación 1983",
@@ -99393,6 +100557,140 @@
    "text": "5 escudos"
   },
   "weight": 7
+ },
+ "9831": {
+  "id": 9831,
+  "url": "https://es.numista.com/9831",
+  "title": "25 Escudos (FAO)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 1983,
+  "max_year": 1983,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "25 escudos",
+   "numeric_value": 25,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 28.5,
+  "thickness": 2.25,
+  "shape": "Circular",
+  "composition": {
+   "text": "Cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Marcelino Norte de Almeida"
+   ],
+   "description": "Escudo menor (Escudo portugués: cinco escudos formando una cruz y siete castillos).",
+   "lettering": "REPUBLICA PORTUGUESA\r\n25$00",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3377-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3377-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "reverse": {
+   "engravers": [
+    "Euclides Vaz"
+   ],
+   "description": "Bacalao, F.A.O. y fecha.\r\n Bacalao del Atlántico (Gadus morhua) Pescado.",
+   "lettering": "ALIMENTOS PARA TODOS\r\nFAO\r\n1983\r\nincm",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/3378-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3378-180.jpg",
+   "picture_copyright": "Ulmo"
+  },
+  "series": "System 1981-2001",
+  "commemorated_topic": "Día Mundial de la Alimentación 1983",
+  "comments": "En el marco del Programa de monedas de la FAO; Portugal emitió en 1983<br />\r\nEn una moneda de 2$50 se representa el maíz como símbolo de los productos agrícolas.<br />\r\nen una moneda de 5$00 se representa una vaca para indicar el desarrollo del sector lácteo y<br />\r\nen la moneda de 25$00 aparece un bacalao atlántico como símbolo de los productos pesqueros o marinos.",
+  "related_types": [
+   {
+    "id": 9829,
+    "title": "2.50 Escudos (FAO)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   },
+   {
+    "id": 9830,
+    "title": "5 Escudos (FAO)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   }
+  ],
+  "tags": [
+   "Pez",
+   "Escudo de armas",
+   "FAO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "619"
+   },
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R59"
+   }
+  ],
+  "weight": 11,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "99558": {
   "category": "coin",

@@ -46,6 +46,7 @@ import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.PlateCommonFacts
 import com.jenarvaezg.coindex.ui.plateCellFootnote
 import com.jenarvaezg.coindex.ui.plateCommonFacts
+import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import com.jenarvaezg.coindex.ui.plateEntries
 import com.jenarvaezg.coindex.ui.plateMemberStateLabel
 import com.jenarvaezg.coindex.ui.plateExportMessage
@@ -79,6 +80,7 @@ fun PlateScreen(
             catalog = result.catalog,
             members = result.album.members,
             ownedMembers = result.album.ownedMembers(),
+            programmes = result.programmes,
             images = images,
             onOpenSource = onOpenSource,
             onMessage = onMessage,
@@ -92,6 +94,7 @@ private fun AvailablePlate(
     catalog: CollectionCatalog,
     members: List<CollectionCatalogAlbumMember>,
     ownedMembers: Int,
+    programmes: List<ProgrammeStanding>,
     images: Map<Int, TypeImages>,
     onOpenSource: (String) -> Unit,
     onMessage: (String) -> Unit,
@@ -104,6 +107,7 @@ private fun AvailablePlate(
             catalog = catalog,
             members = members,
             ownedMembers = ownedMembers,
+            programmes = programmes,
             images = images,
             exporting = exporting,
             onOpenSource = onOpenSource,
@@ -114,6 +118,7 @@ private fun AvailablePlate(
                 catalog = catalog,
                 members = members,
                 ownedMembers = ownedMembers,
+                programmes = programmes,
                 images = images,
                 onFinished = { message ->
                     exporting = false
@@ -136,6 +141,7 @@ private fun PlateSheetExport(
     catalog: CollectionCatalog,
     members: List<CollectionCatalogAlbumMember>,
     ownedMembers: Int,
+    programmes: List<ProgrammeStanding>,
     images: Map<Int, TypeImages>,
     onFinished: (String) -> Unit,
 ) {
@@ -176,6 +182,7 @@ private fun PlateSheetExport(
                 ownedMembers = ownedMembers,
                 images = images,
                 layout = layout,
+                programmes = programmes,
                 onImageSettled = { painted ->
                     settled.intValue += 1
                     if (painted) loaded.intValue += 1
@@ -201,6 +208,7 @@ private fun PlateGrid(
     catalog: CollectionCatalog,
     members: List<CollectionCatalogAlbumMember>,
     ownedMembers: Int,
+    programmes: List<ProgrammeStanding>,
     images: Map<Int, TypeImages>,
     exporting: Boolean,
     onOpenSource: (String) -> Unit,
@@ -227,7 +235,7 @@ private fun PlateGrid(
                     color = Paper.muted,
                 )
                 SpecificationCard(
-                    entries = plateEntries(catalog, ownedMembers, common),
+                    entries = plateEntries(catalog, ownedMembers, common, programmes),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 // Exporting the plate is what this screen is for, so it is the only filled

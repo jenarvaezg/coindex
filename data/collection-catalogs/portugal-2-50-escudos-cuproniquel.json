@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "portugal-2-50-escudos-cuproniquel",
+  "name": "2,50 escudos de cuproníquel · Portugal 1977-1983 · conmemorativos circulantes",
+  "short_name": "2,50 escudos de cuproníquel",
+  "issuer_code": "portugal",
+  "family": "2,50 escudos conmemorativos de cuproníquel de Portugal",
+  "weight_millioz": 113,
+  "finish": null,
+  "metal": "cupronickel",
+  "series_status": "closed",
+  "closed_note": "El Día Mundial de la Alimentación de 1983 es el último 2,50 escudos conmemorativo, y el escudo desapareció con el euro el 1 de enero de 2002, así que la serie no puede crecer.",
+  "source": "https://en.numista.com/catalogue/pieces6071.html",
+  "source_note": "Ninguna serie de Numista propone esta lista: las tres fichas cuelgan de las familias técnicas «System 1969-1980» y «System 1981-2001». El límite se midió sobre las 135 conmemorativas circulantes de la era del escudo que Numista cataloga (catalogue/index.php?cat=y&st=2&e=portugal), donde el 2,50 escudos aparece exactamente tres veces, las tres en cuproníquel de 3,5 g. Cada una pertenece además a un programa de tres denominaciones (2,50, 5 y 25 escudos), que se lee aparte en `data/programmes/` (ADR 0022).",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "id": "1977-alexandre-herculano",
+      "label": "Alexandre Herculano",
+      "year": 1977,
+      "numista_type_id": 6071
+    },
+    {
+      "id": "1982-hockey-sobre-patines",
+      "label": "Campeonato del Mundo de Hockey sobre Patines",
+      "year": 1982,
+      "numista_type_id": 9828
+    },
+    {
+      "id": "1983-fao",
+      "label": "Día Mundial de la Alimentación (FAO)",
+      "year": 1983,
+      "numista_type_id": 9829
+    }
+  ]
+}

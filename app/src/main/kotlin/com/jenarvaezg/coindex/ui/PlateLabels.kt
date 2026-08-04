@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
+import com.jenarvaezg.coindex.domain.ProgrammeStanding
 
 /**
  * The facts every member of a catalog shares, which therefore belong to the plate and not to
@@ -84,6 +85,7 @@ fun plateEntries(
     catalog: CollectionCatalog,
     ownedMembers: Int,
     common: PlateCommonFacts = plateCommonFacts(catalog.members),
+    programmes: List<ProgrammeStanding> = emptyList(),
 ): List<Pair<String, String>> {
     val announced = catalog.members.count { it.isAnnounced }
     val unlisted = catalog.members.count { it.isUnlisted }
@@ -98,6 +100,14 @@ fun plateEntries(
             add(
                 "Sin ficha" to
                     if (unlisted == 1) "1 emisión no medible" else "$unlisted emisiones no medibles",
+            )
+        }
+        // The second reading (ADR 0022), after the plate's own progress and never mixed into it:
+        // its denominator counts coins no catalog of this project claims.
+        programmes.forEach { standing ->
+            add(
+                "Programa" to "${standing.programme.shortName} · " +
+                    "${standing.progress.owned} de ${standing.progress.total}",
             )
         }
         addAll(variantEntries(catalog.weightMillioz, catalog.finish))

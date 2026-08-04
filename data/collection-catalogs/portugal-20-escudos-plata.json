@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "portugal-20-escudos-plata",
+  "name": "20 escudos de plata · Portugal 1953-1966 · conmemorativos circulantes",
+  "short_name": "20 escudos de plata",
+  "issuer_code": "portugal",
+  "family": "20 escudos conmemorativos de plata de Portugal",
+  "weight_millioz": 675,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El 20 escudos no volvió a acuñarse en plata después del Puente Salazar de 1966 —los posteriores son de cuproníquel— y el escudo desapareció con el euro el 1 de enero de 2002, así que la serie no puede crecer.",
+  "source": "https://en.numista.com/catalogue/pieces11158.html",
+  "source_note": "Ninguna serie de Numista propone esta lista: las tres fichas cuelgan de la familia técnica «System 1927-1968». El límite se midió sobre las 135 conmemorativas circulantes de la era del escudo que Numista cataloga (catalogue/index.php?cat=y&st=2&e=portugal), donde el 20 escudos de plata aparece exactamente tres veces. Que el módulo reducido de 1966 cuente como uno de los tres es criterio del coleccionista (4 de agosto de 2026).",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "id": "1953-renovacion-financiera",
+      "label": "Renovación financiera",
+      "year": 1953,
+      "numista_type_id": 11158
+    },
+    {
+      "id": "1960-infante-d-henrique",
+      "label": "Infante D. Henrique",
+      "year": 1960,
+      "numista_type_id": 11161
+    },
+    {
+      "id": "1966-puente-salazar",
+      "label": "Puente Salazar · módulo reducido",
+      "year": 1966,
+      "numista_type_id": 6580,
+      "variant_note": "Módulo reducido y baja ley: 10,12 g de plata .650, contra los 21 g de plata .800 de 1953 y 1960. Sigue computando como uno de los tres 20 escudos conmemorativos de plata."
+    }
+  ]
+}

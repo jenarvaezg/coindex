@@ -35,7 +35,31 @@ catalogue/index.php?cat=y&st=all&e=<issuer>&w=<min>-<max>&q=500&p=1&o=y
 
 The form's category checkboxes carry no `name`, and `k[]` is a different parameter: passing it empties the result.
 
-## Route 3: the issues of one type
+## Route 3: walk a category
+
+When the sequence is «all the circulating commemoratives of one issuer», the category filter
+enumerates it without a series and without weights:
+
+```
+catalogue/index.php?cat=y&st=2&e=<issuer>&q=500&p=1&o=y
+```
+
+`st=2` is «Circulating commemorative coins» — read it off any ficha's own breadcrumb link rather
+than guessing, since the form's category checkboxes carry no `name` (#157).
+
+Three things that route does not tell you:
+
+- **`q=500` is silently capped at 200 per page**, and a `p` beyond the real page count **serves
+  page 1 again** instead of an empty result. Enumerating 5 pages of a 2-page list returned 912
+  rows for 312 types. Deduplicate by id and stop when a page adds nothing new.
+- **Results are grouped by currency**, so one issuer's list spans its whole monetary history: of
+  312 Portuguese circulating commemoratives, 135 are the escudo and 336 rows were the euro.
+  Walk the DOM in order, tracking the `h2` currency heading; the item links are bare `/<id>`.
+- **A category is not a collection.** The 135 escudo types hold three already-curated catalogs and
+  eleven named *Portuguese Discoveries* programmes. Enumerating the category tells you the
+  denominator of the *search*, never the boundary of a plate.
+
+## Route 4: the issues of one type
 
 `GET /types/{id}/issues` is the source for a date run and for what a type actually emitted per year. It is the cheap route when one trunk type spans the whole programme.
 

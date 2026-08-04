@@ -144,6 +144,63 @@ object GroupingSeeds {
 }
 
 /**
+ * Parses and validates the commemorative programme seeds (ADR 0022), under the same rules as the
+ * catalogs: unknown fields are rejected and a bad file stops the app instead of degrading.
+ *
+ * A programme's `short_name` deliberately stays **out** of [validateShortNamesAcross]: a
+ * programme is not a card, so it never sits beside a catalog in the index and cannot be confused
+ * with one there. Uniqueness among programmes is enough.
+ */
+object ProgrammeSeeds {
+    fun parse(fileName: String, contents: String): CommemorativeProgramme {
+        val programme = try {
+            strictJson.decodeFromString<CommemorativeProgramme>(contents)
+        } catch (error: IllegalArgumentException) {
+            throw CatalogSeedException("cannot parse seed $fileName: ${error.message}", error)
+        }
+        programme.validate()?.let { invalid ->
+            throw CatalogSeedException(
+                "commemorative programme seed $fileName is invalid: ${invalid.message}",
+            )
+        }
+        return programme
+    }
+
+    /**
+     * Parses every seed and rejects duplicate ids, duplicate names, and any type named by two
+     * programmes: a coin was struck for one commemoration, so two programmes claiming it is a
+     * curation mistake and not a precedence question to resolve at runtime.
+     */
+    fun parseAll(files: List<Pair<String, String>>): List<CommemorativeProgramme> {
+        val ids = mutableSetOf<String>()
+        val shortNames = mutableSetOf<String>()
+        val typeIds = mutableSetOf<Int>()
+        return files.map { (fileName, contents) ->
+            val programme = parse(fileName, contents)
+            if (!ids.add(programme.id)) {
+                throw CatalogSeedException(
+                    "commemorative programme id `${programme.id}` is duplicated",
+                )
+            }
+            if (!shortNames.add(programme.shortName)) {
+                throw CatalogSeedException(
+                    "commemorative programme `short_name` `${programme.shortName}` is duplicated",
+                )
+            }
+            for (member in programme.members) {
+                if (!typeIds.add(member.numistaTypeId)) {
+                    throw CatalogSeedException(
+                        "Numista type `${member.numistaTypeId}` is claimed by more than one " +
+                            "commemorative programme",
+                    )
+                }
+            }
+            programme
+        }
+    }
+}
+
+/**
  * Rejects a `short_name` shared by a catalog and a curated grouping (#22).
  *
  * Each species validates its own names while parsing, but the index draws them side by side and

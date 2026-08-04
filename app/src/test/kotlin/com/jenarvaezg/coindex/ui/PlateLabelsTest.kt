@@ -3,8 +3,12 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
+import com.jenarvaezg.coindex.domain.CommemorativeProgramme
+import com.jenarvaezg.coindex.domain.CommemorativeProgrammeMember
 import com.jenarvaezg.coindex.domain.ItemRef
 import com.jenarvaezg.coindex.domain.MemberStatus
+import com.jenarvaezg.coindex.domain.ProgrammeProgress
+import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -165,6 +169,52 @@ class PlateLabelsTest {
         assertEquals(
             listOf(
                 "Progreso" to "1 / 2 emisiones",
+                "Peso" to "0,804 oz",
+                "Acabado" to "Sin confirmar",
+                "Tipo" to "Numista 10340",
+                "Actualizado" to "2026-08-01",
+            ),
+            entries,
+        )
+    }
+
+    /**
+     * El programa conmemorativo entra en la especificación **después** del progreso de la lámina
+     * y sin mezclarse con él (ADR 0022): «1 / 2 emisiones» cuenta lo que el catálogo sostiene, y
+     * «1 de 3» cuenta el programa entero, cuya tercera moneda no está en ningún catálogo.
+     */
+    @Test
+    fun `a programme is a second line and never touches the plate progress`() {
+        val standing = ProgrammeStanding(
+            programme = CommemorativeProgramme(
+                schemaVersion = 1,
+                id = "portugal-1977-alexandre-herculano",
+                name = "Serie Alexandre Herculano 1977 · Portugal",
+                shortName = "Serie Alexandre Herculano 1977",
+                issuerCode = "portugal",
+                year = 1977,
+                source = "https://example.org/serie-1977",
+                sourceNote = "Carteira de tres monedas.",
+                updatedAt = "2026-08-04",
+                members = listOf(
+                    CommemorativeProgrammeMember("2,50 escudos", 6_071),
+                    CommemorativeProgrammeMember("5 escudos", 10_126),
+                    CommemorativeProgrammeMember("25 escudos", 7_338),
+                ),
+            ),
+            progress = ProgrammeProgress(owned = 1, total = 3),
+        )
+
+        val entries = plateEntries(
+            catalog(dateRun),
+            ownedMembers = 1,
+            programmes = listOf(standing),
+        )
+
+        assertEquals(
+            listOf(
+                "Progreso" to "1 / 2 emisiones",
+                "Programa" to "Serie Alexandre Herculano 1977 · 1 de 3",
                 "Peso" to "0,804 oz",
                 "Acabado" to "Sin confirmar",
                 "Tipo" to "Numista 10340",

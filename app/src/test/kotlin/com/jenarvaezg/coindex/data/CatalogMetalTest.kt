@@ -43,15 +43,26 @@ class CatalogMetalTest {
     }
 
     /**
-     * Las dos colecciones son de plata de arriba abajo — 73 de las 75 tarjetas medidas en #40 —
-     * y eso es lo que hace que el defecto de la clave viviera escondido: hasta que no se cure el
-     * primer catálogo de oro, nada choca. Fijarlo aquí es fijar la premisa, no el resultado.
+     * Hasta el 4 de agosto de 2026 las dos colecciones eran de plata de arriba abajo — 73 de las
+     * 75 tarjetas medidas en #40 —, y eso es lo que hacía que el defecto de la clave viviera
+     * escondido: sin un catálogo de otro metal, nada choca.
+     *
+     * Las conmemorativas circulantes de Portugal (#157) rompen la premisa por primera vez: los
+     * 2,50 y los 5 escudos son de cuproníquel, así que el metal ya es una componente de la clave
+     * que separa tarjetas de verdad y no sólo en teoría. Fijarlo aquí sigue siendo fijar la
+     * premisa, no el resultado.
      */
     @Test
-    fun `every catalog that is not a set declares silver today`() {
+    fun `every catalog that is not a set declares its metal and two are cupronickel`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(50, declared.size)
-        assertEquals(emptyList(), declared.filterNot { (_, metal) -> metal == Metal.Silver })
+        assertEquals(54, declared.size)
+        assertEquals(
+            listOf(
+                "portugal-2-50-escudos-cuproniquel" to Metal.Cupronickel,
+                "portugal-5-escudos-cuproniquel" to Metal.Cupronickel,
+            ),
+            declared.filterNot { (_, metal) -> metal == Metal.Silver }.sortedBy { it.first },
+        )
         // Los dos conjuntos no declaran variante física de ninguna clase (ADR 0012). El metal no
         // es lo que los parte —el venezolano de 1975 es plata .925 en sus dos miembros—, pero sin
         // esa exención tampoco tendrían dónde vivir: sus pesos no caben en una sola clave.

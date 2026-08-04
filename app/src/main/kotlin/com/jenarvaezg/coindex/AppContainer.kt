@@ -11,6 +11,7 @@ import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
 import com.jenarvaezg.coindex.data.seed.GroupingAssets
+import com.jenarvaezg.coindex.data.seed.ProgrammeAssets
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.data.seed.TypeThumbnailBackfill
 import com.jenarvaezg.coindex.data.update.UpdateChecker
@@ -40,7 +41,13 @@ class AppContainer(context: Context) {
         // The index draws both species side by side and indistinguishably (#12), so a card name
         // repeated across them is only visible here, where both are loaded (#22).
         validateShortNamesAcross(catalogs, groupings)
-        CoindexRepository(database = database, catalogs = catalogs, groupings = groupings)
+        CoindexRepository(
+            database = database,
+            catalogs = catalogs,
+            groupings = groupings,
+            // A programme reaches no card, so it takes no part in the name check above (ADR 0022).
+            programmes = ProgrammeAssets.load(applicationContext.assets),
+        )
     }
 
     val typeCacheSeed: TypeCacheSeed by lazy {

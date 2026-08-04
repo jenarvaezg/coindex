@@ -186,6 +186,18 @@ there is **evidence by type**, at least one official member of the catalog among
 type rather than by issue is what keeps a plate open while years are missing.
 _Avoid_: Album, followed proposal, disposition
 
+**Commemorative programme**:
+A curated statement that some Numista types were struck for the same commemoration, and nothing
+more (ADR 0022). It is a **second reading** of a coin that already belongs to a collection, not a
+collection itself: it declares no variant, never reaches `deriveCollection` and produces no card,
+which is exactly what lets it coexist with the card the coin already has instead of replacing it —
+a set catalog would have won the family precedence and moved the coin. Its members are types and
+they are **not** bounded by what the catalogs hold: the 25 escudos of the 1977 and 1983 Portuguese
+programmes sit in no catalog, so its denominator counts three where a join across catalogs would
+have printed two. Its boundary is never a Numista fact, so it cites any host and its prose note is
+required. It reads today on the plate, beside the plate's own progress and never mixed into it.
+_Avoid_: Subseries, set catalog, curated grouping, thematic collection
+
 **Curated series**:
 An intentionally defined collectible sequence whose scope and expected members are
 editorial claims. Unlike a derived collection, it can establish catalog coverage.
