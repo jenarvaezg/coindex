@@ -1,7 +1,15 @@
 # ADR 0008: Durable per-user proposal dispositions
 
-- Status: accepted
+- Status: superseded by [ADR 0021](0021-what-a-collection-is-and-the-top-level.md)
 - Date: 2026-07-29
+
+> **Retired on 2026-08-04.** ADR 0021 §7 withdraws the disposition entirely: a plate now opens on a
+> current collection plus evidence by type, `Available`/`Followed`/`Ignored` are gone and
+> `collection_proposal_preferences` is dropped in the v5 migration. The body below is left intact
+> because nothing in it was false — it is entirely about something that stopped existing — and it is
+> the only document that explains the ~58 meaningless rows in the collector's phone and why
+> `MIGRATION_3_4` repopulated only 30 literal keys. The plate paragraph (lines 37-45 below) is **not**
+> inherited: ADR 0021 rewrites that condition, with evidence by type rather than by issue.
 
 ## Context
 

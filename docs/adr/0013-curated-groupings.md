@@ -1,7 +1,23 @@
 # ADR 0013: Curated groupings and the proposal screen
 
-- Status: accepted
+- Status: accepted, amended by [ADR 0021](0021-what-a-collection-is-and-the-top-level.md)
 - Date: 2026-07-30
+
+> **Amended on 2026-08-04.** The family ladder below survives whole, and so does what a curated
+> grouping claims. Two sentences do not, and ADR 0021 replaces them:
+>
+> - «the proposal screen is what you own, the plate is the catalog with its gaps, and only the plate
+>   can say "me falta"» — **false in the code**: the plate is also what you own
+>   (`plateMemberStateLabel` says `Tengo · ×3`), and measured against the 1033 curated slots, zero
+>   pieces fall in a card with a catalog and in no slot of its plate. One card, one destination
+>   (ADR 0021 §9).
+> - a curated grouping as a subordinate view of a real collection — there are no extra views, only
+>   collections, and none is subordinate to another (ADR 0021 §2, §10).
+>
+> One sentence is added: **a grouping cannot join what the variant key splits**, because it declares
+> no weight, so a family broken apart by weight is cured as a catalog rather than as a grouping — as
+> the six Portuguese escudos showed (#157). And «proposal» stops being the word for the card this ADR
+> gave a screen to (ADR 0021 §8).
 
 ## Context
 
