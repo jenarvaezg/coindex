@@ -38,7 +38,7 @@ class CuratedCatalogsTest {
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintiséis cerrados llevan su nota y los treinta abiertos no afirman nada más que
+     * veintisiete cerrados llevan su nota y los treinta abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de

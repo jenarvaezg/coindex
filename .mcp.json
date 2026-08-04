@@ -9,7 +9,7 @@
         "--user-data-dir",
         ".playwright-mcp/numista-review-profile",
         "--allowed-origins",
-        "https://numista.com;https://*.numista.com",
+        "https://numista.com;https://*.numista.com;https://challenges.cloudflare.com",
         "--viewport-size",
         "1440x1000"
       ]

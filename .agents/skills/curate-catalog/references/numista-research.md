@@ -58,6 +58,11 @@ Three things that route does not tell you:
 - **A category is not a collection.** The 135 escudo types hold three already-curated catalogs and
   eleven named *Portuguese Discoveries* programmes. Enumerating the category tells you the
   denominator of the *search*, never the boundary of a plate.
+- **Never filter the listing by the denomination as a string.** Titles are contributor prose and
+  do not agree with themselves: ten Portuguese types read «8 Euros» and the eleventh, N#12585,
+  reads «8 Euro» in the singular. A `grep` of the plural dropped it, and the denominator would
+  have shipped as 10 of 11 (#187). Filter on the row's metal and weight, which the listing prints
+  for every hit, and read the title only as a label.
 
 ## Route 4: the issues of one type
 
