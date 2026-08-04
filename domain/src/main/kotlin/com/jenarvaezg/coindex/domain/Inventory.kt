@@ -51,6 +51,21 @@ data class TypeMeta(
      * ratio — a coin is not more or less of a collection for being wide.
      */
     val sizeMillimetres: Double? = null,
-)
+) {
+    /**
+     * Whether this looks like a Numista page a referee has not published yet (#186).
+     *
+     * A submission still in review is served by the API with every field as the contributor left
+     * it, so a half-typed `series` arrives as a real family. It is **not verifiable** —the referee
+     * may still delete the page and take the id with it— and what is not verifiable does not become
+     * a collection: the piece waits in the unclassified residue until the page is published.
+     *
+     * No year at all is the offline trace of that state, measured in #38 and again in #186: of the
+     * 816 seeded types, the two it catches are the two unpublished ones. It is a trace and not the
+     * state — a published type nobody has dated falls here too, and its destination is the residue
+     * it already had for want of a family, so the false positive costs it nothing.
+     */
+    val looksUnpublished: Boolean get() = minYear == null && maxYear == null
+}
 
 typealias TypeMetaIndex = Map<Int, TypeMeta>

@@ -99,6 +99,16 @@ data class PrintGrid(
     val cellHeightMm: Float get() = diameterMm + PrintPaper.CAPTION_MM
 
     val cellsPerPage: Int get() = columns * rows
+
+    /**
+     * How wide a full row of this grid is, which is at most the printable width and usually less:
+     * a 45,6 mm coin fits three to a row and leaves 37 mm over.
+     */
+    val blockWidthMm: Float get() = widthOfMm(columns)
+
+    /** The width of [columns] cells of this grid, with the gutters between them and not around. */
+    fun widthOfMm(columns: Int): Float =
+        columns * cellWidthMm + (columns - 1).coerceAtLeast(0) * PrintPaper.GUTTER_MM
 }
 
 /** The grid a plate of coins this big gets on A4. */

@@ -12,15 +12,15 @@ import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.destinationOf
-import com.jenarvaezg.coindex.ui.piecesSubject
 import com.jenarvaezg.coindex.ui.pieceLine
+import com.jenarvaezg.coindex.ui.piecesSubject
 import com.jenarvaezg.coindex.ui.plateCellFootnote
 import com.jenarvaezg.coindex.ui.plateCommonFacts
 import com.jenarvaezg.coindex.ui.plateEntries
 import com.jenarvaezg.coindex.ui.plateMemberStateLabel
 
 /**
- * The whole notebook as pages: one section per card the index is showing, in the index's order.
+ * The whole notebook as pages: one section per card, in the order they were handed over.
  *
  * **`página(tarjeta) = su destino`.** Which page a card gets is decided by [destinationOf] and by
  * nothing else, so the paper cannot disagree with the tap: a card whose plate opens prints its
@@ -28,35 +28,24 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
  * that same door (ADR 0021 §9). Adding a second rule here would be a second architecture of
  * information, kept only in the exporter.
  *
- * A card with nothing to draw is dropped rather than printed empty — a box the collector emptied is
- * a page of blank paper, and the notebook is what is *in* the collection.
+ * **[cards] is what the index is showing**, passed in rather than read off [CollectionState.index]:
+ * the unit of the export is what is on screen at that moment, filters and search included, and
+ * reading the whole index here would silently print what the collector had just narrowed away. One
+ * card in, one section out — nothing is dropped, because what stays out of the notebook is a
+ * question for the index and not for the printer (#147).
  */
 fun notebookSections(
     state: CollectionState,
+    cards: List<IndexCard>,
     catalogs: List<CollectionCatalog>,
-    programmes: List<CommemorativeProgramme> = emptyList(),
-): List<PrintSection> = state.index.mapNotNull { card ->
-    val section = when (val destination = destinationOf(card)) {
+    programmes: List<CommemorativeProgramme>,
+): List<PrintSection> = cards.map { card ->
+    when (val destination = destinationOf(card)) {
         is CardDestination.Plate -> plateSection(state, catalogs, programmes, destination.catalogId)
             // A plate that will not resolve is not a reason to skip the card: its pieces are still
             // a collection, and the same fallback the screens have is the one the paper gets.
             ?: piecesSection(state, card)
         is CardDestination.Pieces, is CardDestination.Box -> piecesSection(state, card)
-    }
-    section.takeIf { it.cells.isNotEmpty() }
-}
-
-/**
- * How many cards of the index the export would put on paper, counted without building a page.
- *
- * The button says what it is about to do — «Exportar 12 láminas» — and it says it on every
- * recomposition of the index, so it cannot afford to resolve fifty-six albums to find out. The
- * agreement with [notebookSections] is the one condition that drops a card: having nothing in it.
- */
-fun exportableCards(state: CollectionState): Int = state.index.count { card ->
-    when (card) {
-        is IndexCard.Derived -> card.distinctTypes > 0
-        is IndexCard.Box -> card.box.items.isNotEmpty()
     }
 }
 
@@ -85,6 +74,10 @@ private fun plateSection(
                 label = member.label,
                 state = plateMemberStateLabel(albumMember.status),
                 footnote = plateCellFootnote(member, common),
+                // A hole keeps **its own** real diameter: the type of a member the collector is
+                // missing is in the seeded cache like any other, so the empty mount is the size of
+                // the coin that goes in it. Only a member no Numista type backs at all — announced,
+                // unlisted — has nothing to be measured, and borrows the plate's.
                 diameterMm = state.diameterOf(member.numistaTypeId),
                 reverse = member.numistaTypeId?.let { state.images[it]?.reverse },
                 filled = owned,

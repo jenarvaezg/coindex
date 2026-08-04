@@ -42,6 +42,8 @@ class MetalKeyTest {
     private fun meta(typeId: Int, metal: Metal) = TypeMeta(
         id = typeId,
         family = "Equilibrium",
+        minYear = 2018,
+        maxYear = 2018,
         weightOz = gramsToOunces(31.1),
         finish = Finish.Bullion,
         metal = metal,

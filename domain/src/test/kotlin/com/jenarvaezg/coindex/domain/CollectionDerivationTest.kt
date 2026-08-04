@@ -13,9 +13,13 @@ private fun ounces(grams: Double): Double = grams / GRAMS_PER_TROY_OUNCE
 private fun item(id: Long, typeId: Int, quantity: Int) =
     CollectedItem(id = id, quantity = quantity, typeId = typeId)
 
+// The year is what a published Numista page always carries: without one the type reads as a
+// submission still in review and derives no collection (#186), which is another test's subject.
 private fun metadata(id: Int, family: String, grams: Double, finish: Finish?) = TypeMeta(
     id = id,
     family = family,
+    minYear = 2020,
+    maxYear = 2020,
     weightOz = ounces(grams),
     finish = finish,
 )
@@ -185,6 +189,8 @@ class CollectionDerivationTest {
             title = "Escudos",
             family = family,
             issuerCode = "portugal",
+            minYear = 1992,
+            maxYear = 1992,
             weightOz = ounces(grams),
         )
         val typeMeta = mapOf(
@@ -256,6 +262,8 @@ class CollectionDerivationTest {
             title = "1000 Escudos",
             family = "System 1981-2001",
             issuerCode = "portugal",
+            minYear = 1992,
+            maxYear = 1992,
             weightOz = ounces(grams),
         )
         val typeMeta = mapOf(
@@ -348,6 +356,8 @@ class CollectionDerivationTest {
             10_340 to TypeMeta(
                 id = 10_340,
                 family = "Familia Numista distinta",
+                minYear = 1936,
+                maxYear = 1936,
                 weightOz = ounces(25.0),
             ),
         )
@@ -380,14 +390,18 @@ class CollectionDerivationTest {
             448_800 to TypeMeta(
                 id = 448_800,
                 family = "Lunar ounce - Year of the Snake",
+                minYear = 2025,
+                maxYear = 2025,
                 weightOz = ounces(31.1),
                 finish = Finish.Bullion,
                 metal = Metal.Silver,
             ),
-            // N#596807 is not claimed by a catalog, so #38 keeps Numista's data sovereign.
-            596_807 to TypeMeta(
-                id = 596_807,
-                family = "The",
+            // Published and unclaimed by any catalog: Numista's data stays sovereign (#38).
+            470_766 to TypeMeta(
+                id = 470_766,
+                family = "Pillar Dollar",
+                minYear = 2025,
+                maxYear = 2025,
                 weightOz = ounces(31.1),
                 finish = Finish.Bullion,
                 metal = Metal.Silver,
@@ -395,7 +409,7 @@ class CollectionDerivationTest {
         )
 
         val derivedCollections = buildDerivedCollections(
-            listOf(item(1, 448_800, 1), item(2, 596_807, 1)),
+            listOf(item(1, 448_800, 1), item(2, 470_766, 1)),
             typeMeta,
             listOf(catalog),
         )
@@ -403,10 +417,70 @@ class CollectionDerivationTest {
         assertEquals(
             listOf(
                 catalog.key(),
-                VariantKey("The", 1_000, Finish.Bullion, Metal.Silver),
+                VariantKey("Pillar Dollar", 1_000, Finish.Bullion, Metal.Silver),
             ),
             derivedCollections.map { it.key() },
         )
+    }
+
+    @Test
+    fun `an unpublished submission derives no collection, whatever family it half-declares`() {
+        // N#596807: a page awaiting a referee, whose `series` reads «The» because whoever created
+        // it stopped mid-word. #38 accepted the card on the grounds that it would vanish by itself
+        // once published; #185 measured that a cached type is never fetched again, so it would not.
+        val submission = TypeMeta(
+            id = 596_807,
+            title = "2 Pounds - Charles III (250th Anniversary of the Declaration of the American",
+            family = "The",
+            weightOz = ounces(31.1),
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+        )
+
+        val derivation = deriveCollection(
+            listOf(item(1, 596_807, 1)),
+            mapOf(596_807 to submission),
+            emptyList(),
+        )
+
+        assertEquals(emptyList(), derivation.derivedCollections.map { it.key() })
+        assertEquals(
+            listOf(UnclassifiedReason.UnpublishedType),
+            derivation.unclassified.map { it.reason },
+        )
+    }
+
+    @Test
+    fun `a curated catalog still claims a type whose page is unpublished`() {
+        // The file outranks the check: a curator verified this by hand, so no plate slot is lost
+        // to a field Numista left half-typed.
+        val catalog = teslaCatalogStub().copy(
+            family = "The Royal Tudor Beasts",
+            finish = Finish.Bullion,
+            members = listOf(
+                CollectionCatalogMember(
+                    id = "2026-royal-dragon",
+                    label = "Royal Dragon",
+                    year = 2026,
+                    numistaTypeId = 577_854,
+                ),
+            ),
+        )
+        val submission = TypeMeta(
+            id = 577_854,
+            family = "The",
+            weightOz = ounces(31.1),
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+        )
+
+        val derivedCollections = buildDerivedCollections(
+            listOf(item(1, 577_854, 1)),
+            mapOf(577_854 to submission),
+            listOf(catalog),
+        )
+
+        assertEquals(listOf(catalog.key()), derivedCollections.map { it.key() })
     }
 
     @Test
@@ -530,6 +604,8 @@ class CollectionDerivationTest {
             title = "¼ Bolívar",
             family = family,
             issuerCode = "venezuela",
+            minYear = 1879,
+            maxYear = 1936,
             weightOz = ounces(1.25),
         )
 
@@ -581,7 +657,13 @@ class CollectionDerivationTest {
     @Test
     fun `each derived collection keeps the pieces it was derived from`() {
         val typeMeta = mapOf(
-            1_885 to TypeMeta(id = 1_885, family = "100 Pesetas de Franco", weightOz = ounces(19.0)),
+            1_885 to TypeMeta(
+                id = 1_885,
+                family = "100 Pesetas de Franco",
+                minYear = 1966,
+                maxYear = 1970,
+                weightOz = ounces(19.0),
+            ),
             10 to metadata(10, "Otra familia", 31.1, Finish.Bullion),
         )
         val stars = (1966..1970).mapIndexed { index, year ->
@@ -608,7 +690,7 @@ class CollectionDerivationTest {
     @Test
     fun `every ungrouped piece is preserved with an auditable reason`() {
         val typeMeta = mapOf(
-            12 to TypeMeta(id = 12, family = "Sin peso", weightOz = null),
+            12 to TypeMeta(id = 12, family = "Sin peso", minYear = 2020, weightOz = null),
             13 to TypeMeta(id = 13, family = null, weightOz = ounces(31.1)),
         )
 

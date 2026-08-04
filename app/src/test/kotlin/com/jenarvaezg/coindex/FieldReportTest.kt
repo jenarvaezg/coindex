@@ -149,7 +149,7 @@ class FieldReportTest {
         catalogs: List<CollectionCatalog>,
         programmes: List<CommemorativeProgramme>,
     ): String = buildString {
-        val sections = notebookSections(state, catalogs, programmes)
+        val sections = notebookSections(state, state.index, catalogs, programmes)
         val pages = printPages(sections)
         appendLine()
         appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
@@ -320,7 +320,9 @@ class FieldReportTest {
                 val family = meta.family
                 val symptom = when {
                     family == null -> "sin familia: cae en «Sin clasificar» como cualquier huérfana"
-                    else -> "familia «$family»: sale en una tarjeta con ese nombre"
+                    // Desde #186 una ficha a medias ya no inventa tarjeta: la pieza espera en el
+                    // residuo hasta que se publique y su ficha se refresque.
+                    else -> "familia «$family» a medias: cae en «Sin clasificar» y no forma tarjeta"
                 }
                 appendLine("· N#${meta.id} ${meta.title ?: "?"}")
                 appendLine("    $symptom")
