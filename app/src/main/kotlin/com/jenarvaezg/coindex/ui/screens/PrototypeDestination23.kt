@@ -50,9 +50,40 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 private enum class Dest23 { Index, Pieces, Plate }
 
-/** Las piezas del fixture que dicen pertenecer a esta tarjeta. */
-private fun piecesOf(family: String): List<ProtoPiece> =
-    PROTO_PIECES.filter { piece -> piece.collections.any { it.startsWith(family.take(18)) } }
+/**
+ * Las piezas de una tarjeta, con el tamaño que la propia tarjeta declara.
+ *
+ * El fixture de #18 se hizo para el primer nivel y solo etiqueta una muestra de piezas por
+ * colección, así que la lista saldría con dos filas donde la tarjeta dice 38 piezas — y el
+ * contraste que este prototipo tiene que dejar ver es exactamente el del tamaño. Se completa
+ * con filas sintéticas del mismo tipo y años del tramo declarado.
+ */
+private fun piecesOf(plate: ProtoPlate): List<ProtoPiece> {
+    val reales = PROTO_PIECES.filter { piece ->
+        piece.collections.any { it.startsWith(plate.family.take(18)) }
+    }
+    if (reales.size >= plate.pieces) return reales
+    // Sin muestra propia —le pasa a las tarjetas sin lista— se toman monedas reales del mismo
+    // emisor: una fila que dice «Sin año · N# 1» parece la app rota, no un prototipo.
+    val delEmisor = PROTO_PIECES.filter { it.issuer == plate.issuer && it !in reales }
+    if (reales.size + delEmisor.size >= plate.pieces) {
+        return reales + delEmisor.take(plate.pieces - reales.size)
+    }
+    val plantilla = reales.firstOrNull() ?: delEmisor.firstOrNull()
+    val first = plate.firstYear
+    val relleno = (reales.size until plate.pieces).map { index ->
+        ProtoPiece(
+            title = plantilla?.title ?: plate.family,
+            issuer = plate.issuer,
+            year = first?.plus(index),
+            medal = false,
+            typeId = (plantilla?.typeId ?: 0) + index + 1,
+            weightGrams = plantilla?.weightGrams,
+            collections = listOf(plate.family),
+        )
+    }
+    return reales + relleno
+}
 
 /** La caja propia del ejemplo de #12: la hizo el coleccionista y no puede tener un hueco. */
 private const val OWN_BOX_NAME = "Las francesas"
@@ -104,7 +135,7 @@ internal fun VariantD() {
                     eyebrow = "Propuesta de colección",
                     title = plate.family,
                     subtitle = plate.variant,
-                    pieces = piecesOf(plate.family),
+                    pieces = piecesOf(plate),
                     upkeep = false,
                     onBack = { where = Dest23.Index },
                     catalogCard = if (plate.total != null) {
@@ -154,7 +185,7 @@ internal fun VariantE() {
                     eyebrow = plate.issuer,
                     title = plate.family,
                     subtitle = plate.variant,
-                    pieces = piecesOf(plate.family),
+                    pieces = piecesOf(plate),
                     upkeep = false,
                     onBack = { where = Dest23.Index },
                     catalogCard = null,
