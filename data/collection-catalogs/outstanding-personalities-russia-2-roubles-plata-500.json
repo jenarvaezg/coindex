@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "id": "outstanding-personalities-russia-2-roubles-plata-500",
+  "name": "Personalidades destacadas de Rusia · plata .500 · 2 rublos, cerrada 1994-1997",
+  "short_name": "Personalidades destacadas de Rusia · plata .500",
+  "issuer_code": "russie",
+  "family": "Outstanding Personalities of Russia · plata .500",
+  "weight_millioz": 500,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El patrón cambió con la redenominación del rublo y no ha vuelto. El catálogo del propio Banco de Rusia lo fija por número: del 5110-0001 (P.P. Bazhov, 1994) al 5110-0020 (A.K. Savrasov, 1997) todos son «серебро 500/1000», 15,87 g (±0,15) y 7,78 g de plata fina, y el 5110-0021 (K.S. Stanislavski, 1998) es el primero en «серебро 925/1000», 17,00 g (±0,18) y 15,55 g de plata fina; la numeración es cronológica y no vuelve a bajar de ley. El corte cae el 1 de enero de 1998, cuando entró en vigor la redenominación 1000:1 del Decreto Presidencial n.º 822 de 4 de agosto de 1997 «Об изменении нарицательной стоимости российских денежных знаков и масштаба цен», así que los «2 rublos» de 1994-1997 y los de 1998 en adelante no son la misma unidad monetaria. Medido además sobre los 121 tipos de la serie en la caché: ningún tipo posterior a 1997 vuelve a los 15,87 g de plata .500. https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5110-0020 · https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5110-0021 · https://base.garant.ru/12100160/",
+  "source": "https://en.numista.com/catalogue/series.php?id=5460",
+  "source_note": "La serie de Numista (id=5460) propone los 121 tipos de las dos épocas y no delimita ninguna de las dos, así que el límite de esta lámina lo dibuja la ceca: los diecisiete números 5110-0001 a 5110-0020 del catálogo del Banco de Rusia que llevan la serie «Выдающиеся личности России» —la numeración salta el 5110-0007 al 5110-0009, que son 2 rublos de la misma plata .500 pero de «50-летие Победы в Великой Отечественной войне», otra serie—. Los diecisiete `type_id` vienen del catálogo .925, donde ya estaban verificados, y su ley queda confirmada por segunda vez contra una fuente primaria distinta de Numista: la ficha de la ceca de cada número. `weight_millioz` declara 500 y no 510 porque 15,87 g mide 510 milionzas y `normalizeWeightMillioz` las imanta a 500 estando justo en la tolerancia de 10, así que declarar 500 es lo que mantiene a un hermano no reclamado en esta misma tarjeta; el numismático ruso llama a esta pieza «полунцовка», media onza, que es el peso bruto y no la plata fina —7,78 g, un cuarto de onza—. La familia lleva la ley y la del catálogo .925 no: renombrar aquélla le cerraría la lámina al coleccionista sin decirle por qué, que es lo que midió el #62. Las dos casillas de Afanasi Nikitin no son un duplicado: son los dos reversos que el Banco de Rusia emitió el 23 de julio de 1997 con números propios —el 5110-0018 (N#70173) lleva al viajero ante una ciudad rusa a orillas del río y una nave antigua, el 5110-0019 (N#70174) un velero árabe, un pavo real, un elefante y un palacio indio—, así que cada casilla nombra su reverso en vez de repetir el nombre.",
+  "updated_at": "2026-08-04",
+  "members": [
+    {
+      "id": "1994-p-p-bazhov",
+      "label": "P.P. Bazhov",
+      "year": 1994,
+      "numista_type_id": 34864
+    },
+    {
+      "id": "1994-i-a-krylov",
+      "label": "I.A. Krylov",
+      "year": 1994,
+      "numista_type_id": 28934
+    },
+    {
+      "id": "1994-n-v-gogol",
+      "label": "N.V. Gogol",
+      "year": 1994,
+      "numista_type_id": 61058
+    },
+    {
+      "id": "1994-f-f-ushakov",
+      "label": "F.F. Ushakov",
+      "year": 1994,
+      "numista_type_id": 65690
+    },
+    {
+      "id": "1994-i-y-repin",
+      "label": "I.Y. Repin",
+      "year": 1994,
+      "numista_type_id": 28935
+    },
+    {
+      "id": "1995-a-s-griboyedov",
+      "label": "A.S. Griboyedov",
+      "year": 1995,
+      "numista_type_id": 28933
+    },
+    {
+      "id": "1995-m-i-kutuzov",
+      "label": "M.I. Kutuzov",
+      "year": 1995,
+      "numista_type_id": 28931
+    },
+    {
+      "id": "1995-s-a-yesenin",
+      "label": "S.A. Yesenin",
+      "year": 1995,
+      "numista_type_id": 28930
+    },
+    {
+      "id": "1995-i-a-bunin",
+      "label": "I.A. Bunin",
+      "year": 1995,
+      "numista_type_id": 28932
+    },
+    {
+      "id": "1996-n-a-nekrasov",
+      "label": "N.A. Nekrasov",
+      "year": 1996,
+      "numista_type_id": 70073
+    },
+    {
+      "id": "1996-f-m-dostoyevsky",
+      "label": "F.M. Dostoyevsky",
+      "year": 1996,
+      "numista_type_id": 70074
+    },
+    {
+      "id": "1997-a-n-skryabin",
+      "label": "A.N. Skryabin",
+      "year": 1997,
+      "numista_type_id": 70171
+    },
+    {
+      "id": "1997-n-y-zhukovsky",
+      "label": "N.Y. Zhukovsky",
+      "year": 1997,
+      "numista_type_id": 28937
+    },
+    {
+      "id": "1997-a-l-tchizhevsky",
+      "label": "A.L. Tchizhevsky",
+      "year": 1997,
+      "numista_type_id": 70172
+    },
+    {
+      "id": "1997-a-nikitin",
+      "label": "A. Nikitin · la partida",
+      "year": 1997,
+      "numista_type_id": 70173
+    },
+    {
+      "id": "1997-a-nikitin-70174",
+      "label": "A. Nikitin · la India",
+      "year": 1997,
+      "numista_type_id": 70174
+    },
+    {
+      "id": "1997-alexei-savrasov",
+      "label": "Alexei Savrasov",
+      "year": 1997,
+      "numista_type_id": 28938
+    }
+  ]
+}

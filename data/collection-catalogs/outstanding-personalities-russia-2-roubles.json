@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "outstanding-personalities-russia-2-roubles",
-  "name": "Personalidades destacadas de Rusia · 2 rublos",
-  "short_name": "Personalidades destacadas de Rusia",
+  "name": "Personalidades destacadas de Rusia · plata .925 · 2 rublos desde 1998",
+  "short_name": "Personalidades destacadas de Rusia · plata .925",
   "issuer_code": "russie",
   "family": "Outstanding Personalities of Russia",
   "weight_millioz": 547,
@@ -10,110 +10,9 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5460",
-  "updated_at": "2026-08-01",
+  "source_note": "Las diecisiete primeras emisiones de la serie, 1994-1997, no están aquí: son otra variante física y viven en `outstanding-personalities-russia-2-roubles-plata-500` (15,87 g de plata .500, 7,78 g de plata fina, contra los 17,00 g de plata .925 y 15,55 g finos de esta lámina). El corte es el de la redenominación del rublo del 1 de enero de 1998 y lo fija el catálogo del Banco de Rusia entre sus números 5110-0020 y 5110-0021. La serie de Numista (id=5460) sigue proponiendo las dos épocas juntas: si el informe de desviaciones vuelve a levantar los 15,87 g contra los 17,00 g declarados aquí, es esto y está decidido en el #159. Esta lámina conserva el id y la familia de la serie entera a propósito, porque la familia es parte de la clave de `collection_proposal_preferences` y renombrarla cierra la lámina que el coleccionista ya seguía (#62). La otra ruta —un solo catálogo con la desviación declarada en `variant_note`, como los 20 escudos de 1966 en `portugal-20-escudos-plata`— se descartó porque allí es una moneda distinta entre tres y aquí es una época entera de diecisiete con la mitad de la plata: la variante física es la unidad de catálogo (ADR 0020), y el coleccionista que persigue plata no compra media onza fina y un cuarto en la misma lámina.",
+  "updated_at": "2026-08-04",
   "members": [
-    {
-      "id": "1994-i-a-krylov",
-      "label": "I.A. Krylov",
-      "year": 1994,
-      "numista_type_id": 28934
-    },
-    {
-      "id": "1994-i-y-repin",
-      "label": "I.Y. Repin",
-      "year": 1994,
-      "numista_type_id": 28935
-    },
-    {
-      "id": "1994-p-p-bazhov",
-      "label": "P.P. Bazhov",
-      "year": 1994,
-      "numista_type_id": 34864
-    },
-    {
-      "id": "1994-n-v-gogol",
-      "label": "N.V. Gogol",
-      "year": 1994,
-      "numista_type_id": 61058
-    },
-    {
-      "id": "1994-f-f-ushakov",
-      "label": "F.F. Ushakov",
-      "year": 1994,
-      "numista_type_id": 65690
-    },
-    {
-      "id": "1995-s-a-yesenin",
-      "label": "S.A. Yesenin",
-      "year": 1995,
-      "numista_type_id": 28930
-    },
-    {
-      "id": "1995-m-i-kutuzov",
-      "label": "M.I. Kutuzov",
-      "year": 1995,
-      "numista_type_id": 28931
-    },
-    {
-      "id": "1995-i-a-bunin",
-      "label": "I.A. Bunin",
-      "year": 1995,
-      "numista_type_id": 28932
-    },
-    {
-      "id": "1995-a-s-griboyedov",
-      "label": "A.S. Griboyedov",
-      "year": 1995,
-      "numista_type_id": 28933
-    },
-    {
-      "id": "1996-n-a-nekrasov",
-      "label": "N.A. Nekrasov",
-      "year": 1996,
-      "numista_type_id": 70073
-    },
-    {
-      "id": "1996-f-m-dostoyevsky",
-      "label": "F.M. Dostoyevsky",
-      "year": 1996,
-      "numista_type_id": 70074
-    },
-    {
-      "id": "1997-n-y-zhukovsky",
-      "label": "N.Y. Zhukovsky",
-      "year": 1997,
-      "numista_type_id": 28937
-    },
-    {
-      "id": "1997-alexei-savrasov",
-      "label": "Alexei Savrasov",
-      "year": 1997,
-      "numista_type_id": 28938
-    },
-    {
-      "id": "1997-a-n-skryabin",
-      "label": "A.N. Skryabin",
-      "year": 1997,
-      "numista_type_id": 70171
-    },
-    {
-      "id": "1997-a-l-tchizhevsky",
-      "label": "A.L. Tchizhevsky",
-      "year": 1997,
-      "numista_type_id": 70172
-    },
-    {
-      "id": "1997-a-nikitin",
-      "label": "A. Nikitin",
-      "year": 1997,
-      "numista_type_id": 70173
-    },
-    {
-      "id": "1997-a-nikitin-70174",
-      "label": "A. Nikitin",
-      "year": 1997,
-      "numista_type_id": 70174
-    },
     {
       "id": "1998-constantin-stanislavski",
       "label": "Constantin Stanislavski",

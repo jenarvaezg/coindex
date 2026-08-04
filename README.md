@@ -133,7 +133,7 @@ publicable, pero nunca publica.
 densidad, no la del móvil—, espera a que Coil termine con todas las imágenes y la graba en un
 `Picture` que se reproduce sobre un bitmap software. El PNG resultante lleva la cabecera con
 el progreso, todas las emisiones (las que faltan en gris) y la fuente al pie. Un catálogo de
-121 emisiones sale en ocho columnas a menor densidad para que el bitmap no se desmande.
+104 emisiones sale en ocho columnas a menor densidad para que el bitmap no se desmande.
 
 Los bitmaps de hardware están desactivados en Coil: un `Picture` no se puede reproducir sobre
 un canvas software si contiene alguno.
