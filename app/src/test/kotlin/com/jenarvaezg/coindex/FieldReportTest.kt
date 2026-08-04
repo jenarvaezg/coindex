@@ -1,25 +1,34 @@
 package com.jenarvaezg.coindex
 
 import com.jenarvaezg.coindex.data.CatalogFiles
+import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.GroupingFiles
+import com.jenarvaezg.coindex.data.ProgrammeFiles
+import com.jenarvaezg.coindex.data.TypeImages
+import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.data.toEntity
+import com.jenarvaezg.coindex.data.toImages
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionDerivation
 import com.jenarvaezg.coindex.domain.CollectionIndex
 import com.jenarvaezg.coindex.domain.CollectionTitles
+import com.jenarvaezg.coindex.domain.CommemorativeProgramme
 import com.jenarvaezg.coindex.domain.CuratedGrouping
 import com.jenarvaezg.coindex.domain.GroupingSeeds
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.deriveCollection
+import com.jenarvaezg.coindex.ui.print.notebookSections
+import com.jenarvaezg.coindex.ui.print.printPages
 import com.jenarvaezg.coindex.ui.unclassifiedReasonLabel
 import java.io.File
 import kotlin.test.Test
@@ -71,9 +80,11 @@ class FieldReportTest {
         val directory = File(checkNotNull(snapshot))
 
         val items = readItems(File(directory, "collected_items.json"))
-        val typeMeta = readTypeMeta(System.getenv(TYPES_VARIABLE))
+        val types = readTypeEntities(System.getenv(TYPES_VARIABLE))
+        val typeMeta = types.associate { it.typeId to it.toDomain() }
         val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
         val groupings = GroupingSeeds.parseAll(GroupingFiles.all())
+        val programmes = ProgrammeSeeds.parseAll(ProgrammeFiles.all())
 
         val derivation = deriveCollection(items, typeMeta, catalogs, groupings)
         val index = CollectionIndex(catalogs, groupings, CollectionTitles(catalogs, groupings))
@@ -83,8 +94,73 @@ class FieldReportTest {
 
         println(header(directory, items, typeMeta, catalogs, groupings))
         println(indexReport(index, derivation))
+        println(
+            notebookReport(
+                state(
+                    items = items,
+                    typeMeta = typeMeta,
+                    images = types.associate { it.typeId to it.toImages() },
+                    derivation = derivation,
+                    index = index,
+                    catalogs = catalogs,
+                ),
+                catalogs,
+                programmes,
+            ),
+        )
         println(unclassifiedReport(derivation.unclassified, typeMeta))
         println(unpublishedReport(items, typeMeta))
+    }
+
+    /**
+     * The state the screens read, rebuilt from the snapshot: what a phone would have after a sync,
+     * minus the boxes the collector typed, which live only on the device.
+     */
+    private fun state(
+        items: List<CollectedItem>,
+        typeMeta: TypeMetaIndex,
+        images: Map<Int, TypeImages>,
+        derivation: CollectionDerivation,
+        index: List<IndexCard>,
+        catalogs: List<CollectionCatalog>,
+    ) = CollectionState(
+        items = items,
+        index = index,
+        derivedCollections = derivation.derivedCollections,
+        unclassified = derivation.unclassified,
+        typeMeta = typeMeta,
+        images = images,
+        evidencedCatalogIds = catalogs
+            .filter { catalog -> catalog.isEvidencedBy(items) }
+            .mapTo(mutableSetOf()) { it.id },
+        itemsByKey = derivation.itemsByKey,
+    )
+
+    /**
+     * How long the printed notebook of #169 comes out for this collection, card by card.
+     *
+     * The only place the answer exists: the length of the notebook is not a property of `data/` —
+     * it depends on which variants the collector owns, because a card with no catalog prints its
+     * pieces instead of a hundred and twenty-one empty slots. Fifty-six catalogs would be a
+     * hundred and one pages (`NotebookPagesTest`); a real collection is not the shelf.
+     */
+    private fun notebookReport(
+        state: CollectionState,
+        catalogs: List<CollectionCatalog>,
+        programmes: List<CommemorativeProgramme>,
+    ): String = buildString {
+        val sections = notebookSections(state, catalogs, programmes)
+        val pages = printPages(sections)
+        appendLine()
+        appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
+        appendLine("fotos que pediría: ${pages.sumOf { it.photographs }}")
+        for (section in sections.sortedByDescending { it.pages }) {
+            appendLine(
+                "· ${section.pages} pág | ${section.cells.size} casillas | " +
+                    "Ø ${section.grid.diameterMm} mm | " +
+                    "${section.grid.columns}×${section.grid.rows} | ${section.title}",
+            )
+        }
     }
 
     /** The same two hops the sync makes: Numista DTO to row, row to domain. */
@@ -99,8 +175,14 @@ class FieldReportTest {
         }
     }
 
-    /** The shipped type cache, plus any deliberate captures for what it misses. */
-    private fun readTypeMeta(extraDirectory: String?): TypeMetaIndex {
+    /**
+     * The shipped type cache, plus any deliberate captures for what it misses.
+     *
+     * Kept as rows rather than as domain fichas because a row is what the phone has: it carries the
+     * picture URLs the printed notebook counts, and it is the same `toDomain()` the app calls that
+     * turns it into what the derivation reasons about.
+     */
+    private fun readTypeEntities(extraDirectory: String?): List<TypeMetaEntity> {
         val cache = json.parseToJsonElement(File(TYPE_CACHE).readText()).jsonObject
         val seeded = cache.entries.mapNotNull { (typeIdText, element) ->
             val raw = element as? JsonObject ?: return@mapNotNull null
@@ -114,14 +196,14 @@ class FieldReportTest {
                 val raw = json.parseToJsonElement(file.readText()).jsonObject
                 typeId?.let { decode(it, raw) }
             }
-        return (seeded + extra).associateBy { it.id }
+        return seeded + extra
     }
 
-    private fun decode(typeId: Int, raw: JsonObject): TypeMeta? {
+    private fun decode(typeId: Int, raw: JsonObject): TypeMetaEntity? {
         val dto = runCatching {
             json.decodeFromJsonElement(NumistaTypeDto.serializer(), raw)
         }.getOrNull() ?: return null
-        return typeMetaEntity(typeId, dto, raw.toString(), 0L).toDomain()
+        return typeMetaEntity(typeId, dto, raw.toString(), 0L)
     }
 
     private fun header(

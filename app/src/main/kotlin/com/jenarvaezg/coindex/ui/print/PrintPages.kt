@@ -1,0 +1,92 @@
+package com.jenarvaezg.coindex.ui.print
+
+import com.jenarvaezg.coindex.data.CoinPhoto
+
+/**
+ * One cell of a printed page: one coin, at its own diameter, and what is written under it.
+ *
+ * The same shape for a plate's member and for a piece of a collection with no issue list, because
+ * what a page draws is a coin and a caption either way (ADR 0021 §9): the difference is which of
+ * them can be [filled] false, and a sheet of pieces simply never is.
+ */
+data class PrintCell(
+    val label: String,
+    /** The state on a plate — «Tengo», «Me falta» — and the piece's own line on a sheet. */
+    val state: String?,
+    /** What is left to tell this cell apart, usually the year. Null when nothing is. */
+    val footnote: String?,
+    /** The real diameter in millimetres, or null when nobody recorded one for this type. */
+    val diameterMm: Float?,
+    /**
+     * The reverse, and only the reverse.
+     *
+     * Paper gets one face per coin (#169): an album page is the side you look at, and printing both
+     * would halve the diameter to fit twice as many pictures — which is the one thing a 1:1 page
+     * cannot do. The obverse stays in the app.
+     */
+    val reverse: CoinPhoto?,
+    /** Whether the collector owns this cell. False is a hole, and only a plate has holes. */
+    val filled: Boolean,
+)
+
+/**
+ * One card of the index as it goes to paper: its heading, its cells and the grid they get.
+ *
+ * A section is **not** an entity. The notebook has no cover, no name and no second order — the
+ * export is what the index is showing at that moment, in the index's own order (ADR 0021 §6), and a
+ * section is one card's turn at the printer and nothing more.
+ */
+data class PrintSection(
+    /** «COINDEX · CATÁLOGO CURADO» or «COINDEX · COLECCIÓN», as the two sheets already say. */
+    val eyebrow: String,
+    val title: String,
+    val subtitle: String?,
+    val facts: List<Pair<String, String>>,
+    val source: String,
+    val cells: List<PrintCell>,
+) {
+    /** Fixed by the largest coin of this section, so no page rescales a coin (#169). */
+    val grid: PrintGrid = printGrid(cells.mapNotNull { it.diameterMm }.maxOrNull())
+
+    val pages: Int get() = pageCount(cells.size, grid)
+}
+
+/**
+ * One printed page: a slice of one section's cells, under that section's heading.
+ *
+ * A section that does not fit continues on the next page **with its heading repeated**, which is
+ * why the heading is carried by the page and not by the section: on paper there is no scrolling
+ * back to find out which collection you are looking at.
+ */
+data class PrintPage(
+    val section: PrintSection,
+    val cells: List<PrintCell>,
+    /** 1-based within its section, so a spilled plate can say «2 de 4». */
+    val numberInSection: Int,
+    val pagesInSection: Int,
+) {
+    /**
+     * The photographs this page will ask for, which is what the export waits on before capturing.
+     *
+     * Counted per page and not per notebook: the notebook is drawn one page at a time, so this is
+     * twelve pictures to wait for eighty-four times over and never a thousand at once.
+     */
+    val photographs: Int get() = cells.count { it.reverse?.hasPicture == true }
+}
+
+/** The whole notebook, in the order the index handed its cards over. */
+fun printPages(sections: List<PrintSection>): List<PrintPage> = sections.flatMap { section ->
+    val perPage = section.grid.cellsPerPage.coerceAtLeast(1)
+    val pages = section.pages
+    // `chunked` on an empty list is empty, and an empty collection still gets its page: the
+    // heading saying there is nothing in it is the honest page, not a section silently dropped.
+    val slices = section.cells.chunked(perPage).ifEmpty { listOf(emptyList()) }
+    slices.mapIndexed { index, cells ->
+        PrintPage(
+            section = section,
+            cells = cells,
+            numberInSection = index + 1,
+            pagesInSection = pages,
+        )
+    }
+}

@@ -42,6 +42,15 @@ data class TypeMeta(
     val finish: Finish? = null,
     /** Dominant metal, inferred from `composition.text` like the finish is from the title. */
     val metal: Metal? = null,
+    /**
+     * The coin's diameter in millimetres, Numista's `size`.
+     *
+     * The one measurement of a type that says nothing about what it is and everything about how it
+     * prints: the exported notebook draws each coin at its real diameter (#169), so this is the
+     * whole basis of a 1:1 page. It takes no part in the variant key, in the matching or in any
+     * ratio — a coin is not more or less of a collection for being wide.
+     */
+    val sizeMillimetres: Double? = null,
 )
 
 typealias TypeMetaIndex = Map<Int, TypeMeta>

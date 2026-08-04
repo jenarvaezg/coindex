@@ -15,7 +15,8 @@ import java.text.Normalizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private const val EXPORT_DIR = "plates"
+/** Where every export lands before the share sheet takes it: plates, sheets and the notebook. */
+internal const val EXPORT_DIR = "plates"
 
 /**
  * Records the node's drawing commands into [picture] **without painting it on screen**.
@@ -56,13 +57,24 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
             }
         }
     }
+    handToShareSheet(context, file, "image/png", "Compartir lámina")
+}
+
+/**
+ * Hands a written export to another app, whatever it is.
+ *
+ * One place because the grant is the delicate part: the file lives in the cache directory declared
+ * in `file_paths.xml`, and only a [FileProvider] uri with the read flag on it survives the trip to
+ * a mail client or a chat.
+ */
+internal fun handToShareSheet(context: Context, file: File, mimeType: String, title: String) {
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
     val share = Intent(Intent.ACTION_SEND).apply {
-        type = "image/png"
+        type = mimeType
         putExtra(Intent.EXTRA_STREAM, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(Intent.createChooser(share, "Compartir lámina"))
+    context.startActivity(Intent.createChooser(share, title))
 }
 
 /** File-system safe name for an exported plate. */

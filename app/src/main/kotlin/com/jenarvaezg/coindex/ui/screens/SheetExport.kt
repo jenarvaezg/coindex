@@ -13,6 +13,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.sharePlateSheet
 import kotlinx.coroutines.flow.first
@@ -45,13 +46,25 @@ suspend fun shareSettledSheet(
     expectedImages: Int,
     settled: IntState,
 ): Result<Unit> {
+    awaitSettledImages(expectedImages, settled)
+    return runCatching { sharePlateSheet(context, picture, fileName) }
+}
+
+/**
+ * Waits until every picture of what is being drawn has reported back, or until the budget runs out.
+ *
+ * Split out of [shareSettledSheet] because the printed notebook waits the same way and then does
+ * something else with the result — a page of a PDF rather than a file to share — and the waiting is
+ * the delicate part: what is not painted when this returns is a hole in what is about to be
+ * captured, in all three exports alike.
+ */
+suspend fun awaitSettledImages(expectedImages: Int, settled: IntState) {
     withTimeoutOrNull(IMAGE_WAIT_MILLIS) {
         snapshotFlow { settled.intValue }.first { it >= expectedImages }
     }
     // The last picture reports before it is drawn, so let a frame land either way.
     withFrameNanos {}
     withFrameNanos {}
-    return runCatching { sharePlateSheet(context, picture, fileName) }
 }
 
 /**
@@ -61,12 +74,17 @@ suspend fun shareSettledSheet(
  * sized to nothing so it never lands on the page it is being exported from.
  */
 @Composable
-fun OffScreenSheet(layout: SheetLayout, content: @Composable () -> Unit) {
+fun OffScreenSheet(layout: SheetLayout, content: @Composable () -> Unit) =
+    OffScreenSheet(layout.density, content)
+
+/** The same, for what is measured in millimetres of paper rather than in cells of a bitmap. */
+@Composable
+fun OffScreenSheet(density: Density, content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .size(0.dp)
             .wrapContentSize(unbounded = true, align = Alignment.TopStart),
     ) {
-        CompositionLocalProvider(LocalDensity provides layout.density, content = content)
+        CompositionLocalProvider(LocalDensity provides density, content = content)
     }
 }

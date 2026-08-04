@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -33,6 +39,11 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.lastSyncLabel
+import com.jenarvaezg.coindex.ui.notebookCancelledMessage
+import com.jenarvaezg.coindex.ui.notebookExportLabel
+import com.jenarvaezg.coindex.ui.notebookProgressLabel
+import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.exportableCards
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -72,9 +83,21 @@ fun IndexScreen(
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
     onOpen: (CardDestination) -> Unit,
+    /**
+     * The notebook as printable pages, built on the tap and not on every recomposition: resolving
+     * every card's plate is work the index does not owe until somebody asks for paper.
+     */
+    notebook: () -> List<PrintPage> = ::emptyList,
+    onMessage: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val openCard: (IndexCard) -> Unit = { card -> onOpen(destinationOf(card)) }
+    // Null while nothing is being printed. The list itself is the switch: what is being exported is
+    // the notebook as it was when the button was pressed, so a sync landing mid-export cannot
+    // reshuffle the pages under the printer.
+    var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
+    var pagesDone by remember { mutableIntStateOf(0) }
+    var printingTitle by remember { mutableStateOf("") }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
@@ -95,9 +118,35 @@ fun IndexScreen(
                     syncing = syncing,
                     lastSync = lastSync,
                     spread = columns > 1,
+                    exportableCards = exportableCards(state),
+                    exporting = printing != null,
                     onSync = onSync,
                     onOpenUnclassified = onOpenUnclassified,
+                    onExport = {
+                        val pages = notebook()
+                        if (pages.isEmpty()) {
+                            onMessage("No hay ninguna colección que llevar al papel.")
+                        } else {
+                            pagesDone = 0
+                            printingTitle = pages.first().section.title
+                            printing = pages
+                        }
+                    },
                 )
+            }
+
+            // Visible progress and a way out, which is what a job of eighty-four pages and a
+            // thousand photographs owes whoever pressed the button (#169).
+            printing?.let { pages ->
+                fullWidth {
+                    ExportProgress(
+                        label = notebookProgressLabel(pagesDone, pages.size, printingTitle),
+                        onCancel = {
+                            printing = null
+                            onMessage(notebookCancelledMessage(pagesDone, pages.size))
+                        },
+                    )
+                }
             }
 
             // An incomplete sync outlives its snackbar: what it left half-done is a property of
@@ -145,6 +194,43 @@ fun IndexScreen(
                 CollectionCard(card = card, onOpen = { openCard(card) })
             }
         }
+
+        // Outside the grid on purpose: a lazy item is disposed the moment it scrolls off, and the
+        // page being recorded would go with it — the export would restart, or stop, depending on
+        // where the collector's thumb was.
+        printing?.let { pages ->
+            NotebookPdfExport(
+                pages = pages,
+                onProgress = { done, title ->
+                    pagesDone = done
+                    printingTitle = title
+                },
+                onFinished = { message ->
+                    printing = null
+                    onMessage(message)
+                },
+            )
+        }
+    }
+}
+
+/** What the notebook is doing right now, and the way out of it. */
+@Composable
+private fun ExportProgress(label: String, onCancel: () -> Unit) {
+    FieldCard(modifier = Modifier.fillMaxWidth()) {
+        Eyebrow("Exportando el cuaderno")
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+        Text(
+            "Se comparte cuando esté entero. Puedes cancelar sin perder nada.",
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.muted,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+        CardAction(text = "Cancelar", onClick = onCancel, modifier = Modifier.padding(top = 10.dp))
     }
 }
 
@@ -218,8 +304,11 @@ private fun IndexHeading(
     syncing: Boolean,
     lastSync: SyncRecord?,
     spread: Boolean,
+    exportableCards: Int,
+    exporting: Boolean,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
+    onExport: () -> Unit,
 ) {
     val title = @Composable {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -234,9 +323,12 @@ private fun IndexHeading(
     }
     val actions = @Composable {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row(
+            // Flowed rather than a row: the notebook's own action is a third button, and three of
+            // them do not fit across a phone held upright.
+            FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
             ) {
                 PrimaryAction(
                     text = if (syncing) "Sincronizando…" else "Sincronizar",
@@ -246,6 +338,17 @@ private fun IndexHeading(
                 CardAction(
                     text = "Sin clasificar · $unclassified",
                     onClick = onOpenUnclassified,
+                )
+                // Level 2 and not the filled button: what this screen exists for is the collection
+                // arriving from Numista, and the notebook is what the collector then does with it.
+                CardAction(
+                    text = if (exporting) {
+                        "Exportando…"
+                    } else {
+                        notebookExportLabel(exportableCards)
+                    },
+                    onClick = onExport,
+                    enabled = !exporting && exportableCards > 0,
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
