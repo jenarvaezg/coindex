@@ -61,7 +61,7 @@ fun metalLabel(metal: Metal?): String = when (metal) {
  * show, so it says what it is instead of showing two blanks (ADR 0012).
  *
  * The metal is named only when it is not silver (#40). Silver is what almost every card of these
- * two collections is made of — 73 of the 75 proposals measured — so printing it everywhere would
+ * two collections is made of — 73 of the 75 cards measured — so printing it everywhere would
  * add a word to every line to distinguish nothing, while «Oro» on the one card that is gold is
  * the whole reason the metal entered the key.
  */
@@ -72,7 +72,7 @@ fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
 }
 
 /**
- * Who issued the pieces behind one proposal, for the eyebrow of its card.
+ * Who issued the pieces behind one collection, for the eyebrow of its card.
  *
  * Every card used to wear «EVIDENCIA DE COLECCIÓN», which is what the section heading above it
  * already said. The issuer is the one line the card cannot derive from its own title.
@@ -125,9 +125,9 @@ fun pieceLine(item: CollectedItem, emissionLabel: String? = null): String {
 /** Why a plate cannot be opened, in terms of what the collector can do about it. */
 fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."
-    PlateUnavailable.NotAProposal ->
-        "Ya no tienes piezas de esta variante, así que la propuesta no existe."
-    PlateUnavailable.NotFollowed -> "Sigue la propuesta para abrir su lámina."
+    PlateUnavailable.NotACollection ->
+        "Ya no tienes piezas de esta variante, así que esa colección no existe."
+    PlateUnavailable.NotFollowed -> "Sigue esta colección para abrir su lámina."
     PlateUnavailable.NoEvidence -> "Aún no tienes ninguna emisión oficial de este catálogo."
 }
 

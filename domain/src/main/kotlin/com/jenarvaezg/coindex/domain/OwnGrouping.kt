@@ -4,10 +4,10 @@ package com.jenarvaezg.coindex.domain
  * A grouping the collector made themselves: a heading of their own and the types under it
  * (ADR 0013).
  *
- * It is not a proposal and not a catalog. A proposal is derived from what Numista says the
- * pieces are, and a catalog is an editorial claim about a sequence; this is neither, it is the
- * collector saying «these go together» — which is the one authority neither of the other two
- * can overrule.
+ * It is not a derived collection and not a catalog. A derived collection comes from what
+ * Numista says the pieces are, and a catalog is an editorial claim about a sequence; this is
+ * neither, it is the collector saying «these go together» — which is the one authority neither
+ * of the other two can overrule.
  */
 data class OwnGrouping(
     val id: Long,
@@ -29,7 +29,7 @@ data class OwnGroupingView(
 /**
  * Fills each own grouping with the pieces currently owned of its types.
  *
- * An extra view, not a move: a grouped piece stays in the proposal it was derived into, so
+ * An extra view, not a move: a grouped piece stays in the collection it was derived into, so
  * nothing disappears from the index for having been organized. Only currently owned pieces
  * count, as everywhere else.
  *

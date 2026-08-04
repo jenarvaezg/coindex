@@ -20,7 +20,7 @@ internal data class PreservedKey(
     entities = [
         CollectedItemEntity::class,
         TypeMetaEntity::class,
-        ProposalPreferenceEntity::class,
+        DerivedCollectionPreferenceEntity::class,
         OwnGroupingEntity::class,
         OwnGroupingMemberEntity::class,
         ApiCallEntity::class,
@@ -31,7 +31,7 @@ internal data class PreservedKey(
 abstract class CoindexDatabase : RoomDatabase() {
     abstract fun collectedItems(): CollectedItemDao
     abstract fun typeMeta(): TypeMetaDao
-    abstract fun proposalPreferences(): ProposalPreferenceDao
+    abstract fun derivedCollectionPreferences(): DerivedCollectionPreferenceDao
     abstract fun ownGroupings(): OwnGroupingDao
     abstract fun apiCalls(): ApiCallDao
 
@@ -78,7 +78,7 @@ abstract class CoindexDatabase : RoomDatabase() {
         )
 
         /**
-         * Version 4 puts the dominant metal into the proposal key (#40, ADR 0018).
+         * Version 4 puts the dominant metal into the variant key (#40, ADR 0018).
          *
          * The key *is* the primary key of `collection_proposal_preferences`, and SQLite cannot
          * add a column to one, so the table is rebuilt: renamed aside, recreated exactly as Room
@@ -89,7 +89,7 @@ abstract class CoindexDatabase : RoomDatabase() {
          * A migration is frozen history: reading today's `data/` inside it would silently change
          * what an old phone does the next time someone curates a catalog. Everything else is
          * dropped and comes back as **Disponible**, which is the price #55 already named for
-         * touching a key: the two cupronickel proposals of the father's Portuguese systems lose
+         * touching a key: the two cupronickel cards of the father's Portuguese systems lose
          * their card and are re-followed by hand.
          */
         /** Every shipped catalog key at version 4: silver, and the 1983 set, which has no metal. */

@@ -285,7 +285,7 @@ class CatalogSeedsTest {
         assertEquals(Finish.Bullion, parsed.finish)
         assertEquals(Metal.Silver, parsed.metal)
         assertEquals(
-            CollectionProposalKey("The Royal Tudor Beasts", 2_000, Finish.Bullion, Metal.Silver),
+            VariantKey("The Royal Tudor Beasts", 2_000, Finish.Bullion, Metal.Silver),
             parsed.key(),
         )
     }

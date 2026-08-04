@@ -76,7 +76,7 @@ class FieldReportTest {
         val derivation = deriveCollection(items, typeMeta, catalogs, groupings)
 
         println(header(directory, items, typeMeta, catalogs, groupings))
-        println(proposalReport(derivation, catalogs, items))
+        println(derivedCollectionReport(derivation, catalogs, items))
         println(unclassifiedReport(derivation.unclassified, typeMeta))
         println(unpublishedReport(items, typeMeta))
     }
@@ -134,28 +134,29 @@ class FieldReportTest {
     }
 
     /**
-     * Every proposal, saying whether a curated catalog claims it — and if none does, the types
+     * Every card, saying whether a curated catalog claims it — and if none does, the types
      * it is made of, which is what a curation ticket needs to start from.
      */
-    private fun proposalReport(
+    private fun derivedCollectionReport(
         derivation: CollectionDerivation,
         catalogs: List<CollectionCatalog>,
         allItems: List<CollectedItem>,
     ): String = buildString {
         val catalogsByKey = catalogs.associateBy { it.key() }
         appendLine()
-        appendLine("== ÍNDICE DE PROPUESTAS (${derivation.proposals.size}) ==")
-        for (proposal in derivation.proposals) {
-            val key = proposal.key()
+        appendLine("== ÍNDICE DE COLECCIONES (${derivation.derivedCollections.size}) ==")
+        for (collection in derivation.derivedCollections) {
+            val key = collection.key()
             val catalog = catalogsByKey[key]
             val coverage = catalog?.let {
                 val album = buildCollectionCatalogAlbum(it, allItems)
                 "CATÁLOGO ${it.id} ${album.ownedMembers()}/${album.issuedMembers()}"
             } ?: "sin catálogo"
             appendLine(
-                "· ${proposal.family} | ${weightLabel(proposal.weightMillioz)} | " +
-                    "${proposal.finish?.name?.lowercase() ?: "—"} | ${proposal.distinctTypes} tipos, " +
-                    "${proposal.quantity} piezas | $coverage",
+                "· ${collection.family} | ${weightLabel(collection.weightMillioz)} | " +
+                    "${collection.finish?.name?.lowercase() ?: "—"} | " +
+                    "${collection.distinctTypes} tipos, " +
+                    "${collection.quantity} piezas | $coverage",
             )
             if (catalog == null) {
                 val types = derivation.itemsByKey[key].orEmpty()

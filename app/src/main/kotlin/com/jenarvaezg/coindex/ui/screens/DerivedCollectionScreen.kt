@@ -18,12 +18,12 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionProposalKey
-import com.jenarvaezg.coindex.domain.ProposalDisposition
+import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
+import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.DispositionActions
-import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.ExternalLink
+import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PieceSelectionToggle
@@ -37,7 +37,7 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.variantLabel
 
 /**
- * One proposal, opened: the pieces it is made of.
+ * One collection, opened: the pieces it is made of.
  *
  * Every card in the index leads here, whether or not a curated catalog exists for its variant.
  * Before this screen a title only opened something when a catalog happened to match it, so the
@@ -48,21 +48,21 @@ import com.jenarvaezg.coindex.ui.variantLabel
  * catalog side, and it is the only one of the two that can show a gap.
  */
 @Composable
-fun ProposalScreen(
+fun DerivedCollectionScreen(
     state: CollectionState,
-    key: CollectionProposalKey,
+    key: VariantKey,
     catalog: CollectionCatalog?,
     title: String,
     plate: PlateResult?,
     onOpenPlate: (catalogId: String) -> Unit,
     onOpenSource: (url: String) -> Unit,
-    onDisposition: (CollectionProposalKey, ProposalDisposition?) -> Unit,
+    onDisposition: (VariantKey, DerivedCollectionDisposition?) -> Unit,
     onCreateGrouping: (name: String, typeIds: List<Int>) -> Unit,
     onAddToGrouping: (groupingId: Long, typeIds: List<Int>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val selection = rememberPieceSelection()
-    val proposal = state.proposalFor(key)
+    val collection = state.derivedCollectionFor(key)
     val pieces = state.itemsByKey[key].orEmpty().sortedWith(
         compareBy({ it.recordedYear ?: Int.MAX_VALUE }, { it.title.orEmpty() }, { it.id }),
     )
@@ -74,7 +74,7 @@ fun ProposalScreen(
     ) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Eyebrow("Propuesta de colección")
+                Eyebrow("Colección")
                 Text(
                     title,
                     style = MaterialTheme.typography.headlineMedium,
@@ -83,9 +83,9 @@ fun ProposalScreen(
                     variantLabel(key.weightMillioz, key.finish, key.metal),
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                if (proposal != null) {
+                if (collection != null) {
                     Text(
-                        countLabel(proposal.distinctTypes, proposal.quantity),
+                        countLabel(collection.distinctTypes, collection.quantity),
                         style = MaterialTheme.typography.labelLarge,
                         color = Paper.muted,
                     )
@@ -97,14 +97,14 @@ fun ProposalScreen(
             }
         }
 
-        // The proposal is derived from what you own right now, so it can vanish under this
+        // The collection is derived from what you own right now, so it can vanish under this
         // screen while it is open: a piece sold on Numista and synced away leaves the route
         // valid and its subject gone.
-        if (proposal == null) {
+        if (collection == null) {
             item {
                 FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        "Ya no tienes piezas de esta variante, así que esta propuesta no " +
+                        "Ya no tienes piezas de esta variante, así que esta colección no " +
                             "existe. Vuelve al índice.",
                         style = MaterialTheme.typography.bodyLarge,
                         color = Paper.muted,

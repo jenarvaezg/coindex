@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 /**
  * Curated register of [Orphan] verdicts (#121, #133).
  *
- * Editorial only: it does not feed proposals, plates, or the unclassified residue screen.
+ * Editorial only: it does not feed collections, plates, or the unclassified residue screen.
  * Absolute solitude is enough but not required; calendar solitude (Gothic Horror) stays out.
  * An empty list is valid — the schema can ship before any verdict is versioned.
  */

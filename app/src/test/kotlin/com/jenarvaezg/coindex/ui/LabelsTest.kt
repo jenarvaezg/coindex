@@ -56,7 +56,7 @@ class LabelsTest {
         typeId to TypeMeta(id = typeId, issuerName = issuer)
 
     @Test
-    fun `the eyebrow names the issuer of the pieces behind the proposal`() {
+    fun `the eyebrow names the issuer of the pieces behind the derived collection`() {
         val types = mapOf(meta(10_340, "Venezuela"), meta(10_339, "Venezuela"))
 
         assertEquals(

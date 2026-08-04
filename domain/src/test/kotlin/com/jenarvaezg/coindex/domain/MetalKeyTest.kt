@@ -60,10 +60,10 @@ class MetalKeyTest {
 
     /**
      * Lo que la pantalla hace con la tarjeta: `IndexScreen` se queda con el primer catálogo cuya
-     * clave coincida. Con dos claves distintas cada propuesta encuentra el suyo.
+     * clave coincida. Con dos claves distintas cada tarjeta encuentra el suyo.
      */
     @Test
-    fun `each catalog is reachable from the proposal its own pieces produce`() {
+    fun `each catalog is reachable from the derived collection its own pieces produce`() {
         val catalogs = listOf(silver, gold)
         val derivation = deriveCollection(
             items = listOf(piece(1, 307_244), piece(2, 309_842)),
@@ -74,9 +74,9 @@ class MetalKeyTest {
             catalogs = catalogs,
         )
 
-        assertEquals(2, derivation.proposals.size)
-        val found = derivation.proposals.map { proposal ->
-            catalogs.firstOrNull { catalog -> catalog.key() == proposal.key() }?.id
+        assertEquals(2, derivation.derivedCollections.size)
+        val found = derivation.derivedCollections.map { collection ->
+            catalogs.firstOrNull { catalog -> catalog.key() == collection.key() }?.id
         }
         assertEquals(listOf("equilibrium-silver", "equilibrium-gold"), found)
     }
@@ -95,7 +95,7 @@ class MetalKeyTest {
             catalogs = listOf(silver.copy(members = silver.members + gold.members)),
         )
 
-        assertEquals(Metal.Silver, derivation.proposals.single().metal)
+        assertEquals(Metal.Silver, derivation.derivedCollections.single().metal)
     }
 
     /** Una pieza sin catálogo sí toma el metal de su ficha, y dos metales son dos tarjetas. */
@@ -110,6 +110,9 @@ class MetalKeyTest {
             catalogs = emptyList(),
         )
 
-        assertEquals(listOf(Metal.Silver, Metal.Gold), derivation.proposals.map { it.metal })
+        assertEquals(
+            listOf(Metal.Silver, Metal.Gold),
+            derivation.derivedCollections.map { it.metal },
+        )
     }
 }

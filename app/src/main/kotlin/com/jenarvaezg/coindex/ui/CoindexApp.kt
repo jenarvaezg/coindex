@@ -40,11 +40,11 @@ import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.screens.DerivedCollectionScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.OwnGroupingScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
-import com.jenarvaezg.coindex.ui.screens.ProposalScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -71,7 +71,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
-    // The plate and the proposal name themselves in the masthead, which means reading what the
+    // The plate and the collection name themselves in the masthead, which means reading what the
     // route carries; every other destination knows its own title from the route alone.
     val route = backStackEntry?.destination?.route
     val subjectName = when {
@@ -79,7 +79,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             viewModel.catalogName(backStackEntry?.arguments?.getString("catalogId"))
         // The whole key, not just the family: three Britannias share one and only the key
         // tells them apart (#22).
-        Routes.isProposal(route) -> proposalKeyFromRoute(
+        Routes.isDerivedCollection(route) -> variantKeyFromRoute(
             family = backStackEntry?.arguments?.getString("family"),
             weight = backStackEntry?.arguments?.getString("weight"),
             finish = backStackEntry?.arguments?.getString("finish"),
@@ -153,8 +153,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         titles = viewModel.titles,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
-                        onOpenProposal = { proposal ->
-                            navController.navigate(Routes.proposal(proposal.key()))
+                        onOpenDerivedCollection = { collection ->
+                            navController.navigate(Routes.derivedCollection(collection.key()))
                         },
                         onOpenOwnGrouping = { groupingId ->
                             navController.navigate(Routes.ownGrouping(groupingId))
@@ -162,8 +162,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         onOpenPlate = { catalogId ->
                             navController.navigate(Routes.plate(catalogId))
                         },
-                        onDisposition = { proposal, disposition ->
-                            viewModel.setDisposition(proposal.key(), disposition)
+                        onDisposition = { collection, disposition ->
+                            viewModel.setDisposition(collection.key(), disposition)
                         },
                     )
                 }
@@ -188,8 +188,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         },
                     )
                 }
-                composable(Routes.PROPOSAL) { entry ->
-                    val key = proposalKeyFromRoute(
+                composable(Routes.DERIVED_COLLECTION) { entry ->
+                    val key = variantKeyFromRoute(
                         family = entry.arguments?.getString("family"),
                         weight = entry.arguments?.getString("weight"),
                         finish = entry.arguments?.getString("finish"),
@@ -198,9 +198,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     // A route that does not describe a canonical key is not guessed at; it is
                     // the same refusal a stored disposition gets when its parts drift.
                     if (key == null) {
-                        UnknownProposal(Modifier.fillMaxSize().padding(20.dp))
+                        UnknownDerivedCollection(Modifier.fillMaxSize().padding(20.dp))
                     } else {
-                        ProposalScreen(
+                        DerivedCollectionScreen(
                             state = state.collection,
                             key = key,
                             catalog = viewModel.catalogFor(key),
@@ -267,7 +267,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 /**
  * Persistent notice that a newer APK is published.
  *
- * It lives in the top bar rather than among the proposals so it is visible on every screen,
+ * It lives in the top bar rather than among the cards so it is visible on every screen,
  * and it does not block: a pending update is not a reason to stop looking at the collection.
  */
 @Composable
@@ -385,11 +385,11 @@ private fun Masthead(
     }
 }
 
-/** A proposal route that describes no canonical variant key: said plainly, never guessed at. */
+/** A route that describes no canonical variant key: said plainly, never guessed at. */
 @Composable
-private fun UnknownProposal(modifier: Modifier = Modifier) {
+private fun UnknownDerivedCollection(modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Propuesta desconocida", style = MaterialTheme.typography.headlineMedium)
+        Text("Colección desconocida", style = MaterialTheme.typography.headlineMedium)
         Text(
             "Ese enlace no describe ninguna variante de tu colección. Vuelve al índice.",
             style = MaterialTheme.typography.bodyLarge,

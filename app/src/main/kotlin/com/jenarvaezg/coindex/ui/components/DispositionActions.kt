@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.domain.ProposalDisposition
-import com.jenarvaezg.coindex.ui.ProposalStance
+import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
+import com.jenarvaezg.coindex.ui.DerivedCollectionStance
 
 /**
- * What you can do with a proposal, wherever it is shown: the index card and the proposal's own
+ * What you can do with a collection, wherever it is shown: the index card and its own
  * screen offer the same three decisions, so they share one row of buttons.
  *
  * A [FlowRow] rather than a [androidx.compose.foundation.layout.Row]: «Ver lámina · Dejar de
@@ -19,8 +19,8 @@ import com.jenarvaezg.coindex.ui.ProposalStance
  */
 @Composable
 fun DispositionActions(
-    stance: ProposalStance,
-    onDisposition: (ProposalDisposition?) -> Unit,
+    stance: DerivedCollectionStance,
+    onDisposition: (DerivedCollectionDisposition?) -> Unit,
     modifier: Modifier = Modifier,
     onOpenPlate: (() -> Unit)? = null,
 ) {
@@ -31,24 +31,24 @@ fun DispositionActions(
     ) {
         onOpenPlate?.let { open -> CardAction(text = "Ver lámina", onClick = open) }
         when (stance) {
-            ProposalStance.Followed -> {
+            DerivedCollectionStance.Followed -> {
                 CardAction(text = "Dejar de seguir", onClick = { onDisposition(null) })
                 CardAction(
                     text = "Ignorar",
-                    onClick = { onDisposition(ProposalDisposition.Ignored) },
+                    onClick = { onDisposition(DerivedCollectionDisposition.Ignored) },
                 )
             }
-            ProposalStance.Available -> {
+            DerivedCollectionStance.Available -> {
                 CardAction(
                     text = "Seguir",
-                    onClick = { onDisposition(ProposalDisposition.Followed) },
+                    onClick = { onDisposition(DerivedCollectionDisposition.Followed) },
                 )
                 CardAction(
                     text = "Ignorar",
-                    onClick = { onDisposition(ProposalDisposition.Ignored) },
+                    onClick = { onDisposition(DerivedCollectionDisposition.Ignored) },
                 )
             }
-            ProposalStance.Ignored -> CardAction(
+            DerivedCollectionStance.Ignored -> CardAction(
                 text = "Restaurar",
                 onClick = { onDisposition(null) },
             )

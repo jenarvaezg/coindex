@@ -71,7 +71,8 @@ fun PieceSelectionToggle(picked: Boolean, onToggle: () -> Unit, modifier: Modifi
 /**
  * The whole grouping gesture in one control: start picking, then decide where they go.
  *
- * Any screen that lists pieces can offer it, and the two that do — the orphans and a proposal —
+ * Any screen that lists pieces can offer it, and the two that do — the orphans and a
+ * collection —
  * are the two places where the collector is already looking at coins that belong together in
  * their head and nowhere else.
  */

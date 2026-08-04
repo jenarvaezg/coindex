@@ -58,7 +58,7 @@
      se emitieron juntos es una afirmación más específica que la agrupación de Numista.
      Criterio estrecho a propósito: **solo** conjuntos emitidos como un producto. El bullion
      fraccional no es un conjunto (¼ oz y 1 oz son la misma moneda en dos tamaños y siguen
-     siendo propuestas separadas, como ya hacen Tudor Beasts y Lunar II). Los dos vivos:
+     siendo colecciones separadas, como ya hacen Tudor Beasts y Lunar II). Los dos vivos:
      `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
      7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres) y
      `venezuela-1975-conservacion-plata.json` (el estuche de dos monedas de la Royal Mint para
@@ -92,7 +92,7 @@
 
 ### 0.3 Modelo de dominio a portar (invariantes)
 
-- **Clave de variante física** (identidad de propuesta, de preferencia y de catálogo):
+- **Clave de variante física** (identidad de tarjeta, de preferencia y de catálogo):
   `(familia Numista cruda, peso normalizado en mili-onzas, acabado)`.
   - Peso: `round(oz*1000)`, con imán a los pesos comunes `[250, 500, 1000, 2000, 5000,
     10000]` **y a los pesos declarados por los catálogos sembrados** (ADR 0012) si la
@@ -116,13 +116,13 @@
   pantalla** (ADR 0021 §3). Y desde el ADR 0021 §1 ninguna pieza se pierde por no tener
   familia: vive en Monedas, con el filtro «Sin colección».
 - **Disposiciones**: retiradas enteras (ADR 0021 §7, que supera al 0008).
-  `Available`/`Followed`/`Ignored`, `ProposalStance` y
+  `Available`/`Followed`/`Ignored`, `DerivedCollectionStance` y
   `collection_proposal_preferences` desaparecen; la tabla se va con un `DROP` en la
   migración v5 y no queda **nada persistido por tarjeta**.
 - **Lámina de catálogo**: navegable cuando la colección existe hoy (hay piezas de la
   variante), hay catálogo para ella y el usuario posee ≥1 `type_id` oficial del catálogo
   (la evidencia es **por tipo**, también en date runs). Tres razones de indisponibilidad y
-  ninguna más: `UnknownCatalog`, `NotAProposal`, `NoEvidence`. Estados `Tengo (×n)` /
+  ninguna más: `UnknownCatalog`, `NotACollection`, `NoEvidence`. Estados `Tengo (×n)` /
   `Me falta`.
 - **Nombre de tarjeta**: `short_name` en el fichero curado —obligatorio, único en el índice
   y prefijo de `name`—, y la familia cruda de Numista verbatim cuando no hay fichero. Los
@@ -233,12 +233,12 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
   [#146](https://github.com/jenarvaezg/coindex/issues/146): el Kennedy Half Dollar, las dos
   romanas, la medalla alemana de 2002 y el Pillar Dollar de 2025. El fichero existe desde
   [#133](https://github.com/jenarvaezg/coindex/issues/133) y es registro editorial: no alimenta
-  propuestas ni la pantalla, así que firmar un veredicto **no baja** el número de «Sin
+  colecciones ni la pantalla, así que firmar un veredicto **no baja** el número de «Sin
   clasificar» que ve el coleccionista.
 
 El segundo conjunto (`schema_version: 3`) es el estuche venezolano de 1975, y llegó por donde no
 había señal: 28,28 g y 35 g no comparten clave de variante ni la compartirán nunca, así que
-**ninguna propuesta de colección podía sugerirlo jamás** y fue precisamente su ausencia la que
+**ninguna colección derivada podía sugerirlo jamás** y fue precisamente su ausencia la que
 delató el conjunto. La lámina afirma el estuche de plata de la Royal Mint, no el programa de
 conservación del BCV, que tuvo una tercera moneda en oro (N#59793) vendida aparte.
 
@@ -288,12 +288,13 @@ ADR 0010 para las decisiones del port.
 1. ✅ Esqueleto Kotlin + Compose + Room (AGP 9.3.1, Kotlin 2.4.10, compileSdk 36). Los
    assets se montan desde `../../data`, sin copiar; los catálogos se validan al arrancar y
    un fallo detiene la app con el fichero y el motivo.
-2. ✅ Dominio portado con sus tablas doradas (22 tests): propuestas, clave de variante,
+2. ✅ Dominio portado con sus tablas doradas (22 tests): colecciones derivadas, clave de
+   variante,
    catálogos v1/v2, date runs, fallback de familia, normalización de peso, acabados. **No**
    se portan series curadas ni correcciones manuales (ADR 0010 §2).
 3. ✅ Onboarding con API key + user id cifrados con el Android Keystore; sync explícito a
    Room con contador mensual y techo configurable (19 tests de app, sin red).
-4. ✅ Índice de propuestas en tres bloques con disposiciones persistentes.
+4. ✅ Índice de colecciones en tres bloques con disposiciones persistentes.
 5. ✅ Láminas v1 y v2: progreso `n / m emisiones`, ficha de especificaciones, grises al
    45 % para las que faltan y enlaces a Numista.
 6. ✅ Vista de huérfanas, ahora con motivo auditable por pieza (ADR 0010 §3).

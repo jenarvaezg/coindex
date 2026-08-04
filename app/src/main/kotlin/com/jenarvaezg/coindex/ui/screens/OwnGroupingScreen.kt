@@ -33,12 +33,12 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 /**
  * One of the collector's own groupings, opened.
  *
- * It is deliberately plainer than a proposal: there is no variant to state and no catalog to
+ * It is deliberately plainer than a derived collection: no variant to state and no catalog to
  * compare against, because nobody claimed this is a series. It is a shelf the collector built,
  * so what it offers is the shelf's own upkeep — rename it, take a coin off it, take it apart.
  *
  * Taking a coin off does not touch the coin: a grouping is an extra view, and the piece was
- * never removed from the proposal it derives into.
+ * never removed from the collection it derives into.
  */
 @Composable
 fun OwnGroupingScreen(

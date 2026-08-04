@@ -10,20 +10,20 @@ package com.jenarvaezg.coindex.domain
  *
  * A catalog is matched on the whole variant key and a grouping on its family alone, which is all
  * a grouping supplies (ADR 0013). What no file claims falls through to
- * [collectionProposalFamilyLabel] and reads as Numista wrote it.
+ * [familyLabel] and reads as Numista wrote it.
  */
 class CollectionTitles(
     catalogs: List<CollectionCatalog>,
     groupings: List<CuratedGrouping>,
 ) {
-    private val byKey: Map<CollectionProposalKey, String> =
+    private val byKey: Map<VariantKey, String> =
         catalogs.associate { catalog -> catalog.key() to catalog.shortName }
 
     private val byFamily: Map<String, String> =
         groupings.associate { grouping -> grouping.family to grouping.shortName }
 
-    fun of(key: CollectionProposalKey): String =
-        byKey[key] ?: byFamily[key.family] ?: collectionProposalFamilyLabel(key.family)
+    fun of(key: VariantKey): String =
+        byKey[key] ?: byFamily[key.family] ?: familyLabel(key.family)
 
-    fun of(proposal: CollectionProposal): String = of(proposal.key())
+    fun of(collection: DerivedCollection): String = of(collection.key())
 }

@@ -43,7 +43,7 @@ class CatalogMetalTest {
     }
 
     /**
-     * Las dos colecciones son de plata de arriba abajo — 73 de las 75 propuestas medidas en #40 —
+     * Las dos colecciones son de plata de arriba abajo — 73 de las 75 tarjetas medidas en #40 —
      * y eso es lo que hace que el defecto de la clave viviera escondido: hasta que no se cure el
      * primer catálogo de oro, nada choca. Fijarlo aquí es fijar la premisa, no el resultado.
      */

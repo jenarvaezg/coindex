@@ -59,9 +59,9 @@ class WeightNormalizationTest {
     }
 }
 
-class CollectionProposalsTest {
+class CollectionDerivationTest {
     @Test
-    fun `proposals group exact normalized family weight and finish variants`() {
+    fun `derived collections group exact normalized family weight and finish variants`() {
         val items = listOf(item(1, 10, 2), item(2, 11, 3), item(3, 12, 1))
         val typeMeta = mapOf(
             10 to metadata(10, " Lunar   ounce ", 31.1, null),
@@ -69,28 +69,28 @@ class CollectionProposalsTest {
             12 to metadata(12, "Lunar ounce", 31.1, Finish.Bullion),
         )
 
-        val proposals = buildCollectionProposals(items, typeMeta, emptyList())
+        val derivedCollections = buildDerivedCollections(items, typeMeta, emptyList())
 
-        assertEquals(2, proposals.size)
-        val unconfirmed = proposals.first { it.finish == null }
+        assertEquals(2, derivedCollections.size)
+        val unconfirmed = derivedCollections.first { it.finish == null }
         assertEquals("Lunar ounce", unconfirmed.family)
         assertEquals(1_000, unconfirmed.weightMillioz)
         assertEquals(2, unconfirmed.distinctTypes)
         assertEquals(5, unconfirmed.quantity)
-        val bullion = proposals.first { it.finish == Finish.Bullion }
+        val bullion = derivedCollections.first { it.finish == Finish.Bullion }
         assertEquals(1, bullion.distinctTypes)
         assertEquals(1, bullion.quantity)
     }
 
     @Test
-    fun `proposals are isolated to the supplied inventory without fuzzy families`() {
+    fun `derived collections are isolated to the supplied inventory without fuzzy families`() {
         val typeMeta = mapOf(
             10 to metadata(10, "Lunar Series III", 7.777, Finish.Coloured),
             20 to metadata(20, "Lunar ounce", 31.1, Finish.Bullion),
         )
 
-        val firstUser = buildCollectionProposals(listOf(item(1, 10, 1)), typeMeta, emptyList())
-        val secondUser = buildCollectionProposals(listOf(item(2, 20, 2)), typeMeta, emptyList())
+        val firstUser = buildDerivedCollections(listOf(item(1, 10, 1)), typeMeta, emptyList())
+        val secondUser = buildDerivedCollections(listOf(item(2, 20, 2)), typeMeta, emptyList())
 
         assertEquals(1, firstUser.size)
         assertEquals("Lunar Series III", firstUser[0].family)
@@ -102,23 +102,27 @@ class CollectionProposalsTest {
     }
 
     @Test
-    fun `curated variants also surface as proposals and unknown finish stays separate`() {
+    fun `curated variants also surface as derived collections and unknown finish stays separate`() {
         val typeMeta = mapOf(
             10 to metadata(10, "Lunar Series III", 31.1, Finish.Bullion),
             11 to metadata(11, "Lunar Series III", 7.777, Finish.Coloured),
             12 to metadata(12, "Lunar Series III", 31.1, null),
         )
 
-        val proposals = buildCollectionProposals(
+        val derivedCollections = buildDerivedCollections(
             listOf(item(1, 10, 1), item(2, 11, 1), item(3, 12, 1)),
             typeMeta,
             emptyList(),
         )
 
-        assertEquals(3, proposals.size)
-        assertTrue(proposals.any { it.weightMillioz == 250 && it.finish == Finish.Coloured })
-        assertTrue(proposals.any { it.weightMillioz == 1_000 && it.finish == null })
-        assertTrue(proposals.any { it.weightMillioz == 1_000 && it.finish == Finish.Bullion })
+        assertEquals(3, derivedCollections.size)
+        assertTrue(
+            derivedCollections.any { it.weightMillioz == 250 && it.finish == Finish.Coloured },
+        )
+        assertTrue(derivedCollections.any { it.weightMillioz == 1_000 && it.finish == null })
+        assertTrue(
+            derivedCollections.any { it.weightMillioz == 1_000 && it.finish == Finish.Bullion },
+        )
     }
 
     @Test
@@ -138,11 +142,11 @@ class CollectionProposalsTest {
             "System 2025" to "Sistema monetario 2025",
         )
         for ((raw, display) in labels) {
-            assertEquals(display, collectionProposalFamilyLabel(raw))
+            assertEquals(display, familyLabel(raw))
         }
-        assertEquals("sml", collectionProposalFamilyLabel("sml"))
-        assertEquals("System of a Down", collectionProposalFamilyLabel("System of a Down"))
-        assertEquals("System 19-2001", collectionProposalFamilyLabel("System 19-2001"))
+        assertEquals("sml", familyLabel("sml"))
+        assertEquals("System of a Down", familyLabel("System of a Down"))
+        assertEquals("System 19-2001", familyLabel("System 19-2001"))
 
         val typeMeta = mapOf(
             10 to metadata(10, "System 2025", 31.1, null),
@@ -152,13 +156,13 @@ class CollectionProposalsTest {
             21 to metadata(21, "System 19-2001", 31.1, null),
         )
 
-        val proposals = buildCollectionProposals(
+        val derivedCollections = buildDerivedCollections(
             listOf(item(1, 10, 1), item(2, 11, 1), item(3, 12, 1), item(4, 20, 1), item(5, 21, 1)),
             typeMeta,
             emptyList(),
         )
 
-        // A technical family no longer costs the piece its proposal (ADR 0012); the raw value
+        // A technical family no longer costs the piece its card (ADR 0012); the raw value
         // stays in the key, and only the label reads as a monetary system.
         assertEquals(
             listOf(
@@ -168,7 +172,7 @@ class CollectionProposalsTest {
                 "System 2025",
                 "System of a Down",
             ),
-            proposals.map { it.family },
+            derivedCollections.map { it.family },
         )
     }
 
@@ -207,24 +211,24 @@ class CollectionProposalsTest {
         )
 
         assertTrue(derivation.unclassified.isEmpty())
-        val set = derivation.proposals.first { it.family == setCatalog.family }
+        val set = derivation.derivedCollections.first { it.family == setCatalog.family }
         assertNull(set.weightMillioz)
         assertNull(set.finish)
         assertEquals(3, set.distinctTypes)
         assertEquals(6, set.quantity)
 
         // Both 500 escudos land on the catalog's weight, 13,96 g included.
-        val annualProposal = derivation.proposals.first { it.family == annual.family }
-        assertEquals(450, annualProposal.weightMillioz)
-        assertEquals(2, annualProposal.distinctTypes)
+        val annualCollection = derivation.derivedCollections.first { it.family == annual.family }
+        assertEquals(450, annualCollection.weightMillioz)
+        assertEquals(2, annualCollection.distinctTypes)
 
         // The piece no catalog claims keeps its technical family and its own weight.
-        val leftover = derivation.proposals.first { it.family == "System 1981-2001" }
+        val leftover = derivation.derivedCollections.first { it.family == "System 1981-2001" }
         assertEquals(225, leftover.weightMillioz)
         assertEquals(1, leftover.distinctTypes)
 
         assertEquals(setCatalog.key(), set.key())
-        assertEquals(annual.key(), annualProposal.key())
+        assertEquals(annual.key(), annualCollection.key())
     }
 
     /**
@@ -271,16 +275,16 @@ class CollectionProposalsTest {
         )
 
         assertTrue(derivation.unclassified.isEmpty())
-        assertEquals(1, derivation.proposals.size)
-        val proposal = derivation.proposals.single()
-        assertEquals(catalog.key(), proposal.key())
-        assertEquals(3, proposal.distinctTypes)
-        assertEquals(3, proposal.quantity)
+        assertEquals(1, derivation.derivedCollections.size)
+        val collection = derivation.derivedCollections.single()
+        assertEquals(catalog.key(), collection.key())
+        assertEquals(3, collection.distinctTypes)
+        assertEquals(3, collection.quantity)
     }
 
     @Test
     fun `canonical keys round trip finish codes and stale preferences stay dormant`() {
-        fun proposal(family: String, finish: Finish?) = CollectionProposal(
+        fun derivedCollection(family: String, finish: Finish?) = DerivedCollection(
             family = family,
             weightMillioz = 1_000,
             finish = finish,
@@ -288,28 +292,28 @@ class CollectionProposalsTest {
             distinctTypes = 1,
             quantity = 1,
         )
-        val followed = proposal("SML", Finish.ProofColoured)
-        val available = proposal("Lunar ounce", null)
-        val ignored = proposal("Nautical Ounce", Finish.Bullion)
-        val stale = CollectionProposalKey.fromCanonicalParts("Red Data Book", 2_000, "proof", "silver")
+        val followed = derivedCollection("SML", Finish.ProofColoured)
+        val available = derivedCollection("Lunar ounce", null)
+        val ignored = derivedCollection("Nautical Ounce", Finish.Bullion)
+        val stale = VariantKey.fromCanonicalParts("Red Data Book", 2_000, "proof", "silver")
         assertNotNull(stale)
         val preferences = listOf(
-            CollectionProposalPreference(followed.key(), ProposalDisposition.Followed),
-            CollectionProposalPreference(ignored.key(), ProposalDisposition.Ignored),
-            CollectionProposalPreference(stale, ProposalDisposition.Followed),
+            DerivedCollectionPreference(followed.key(), DerivedCollectionDisposition.Followed),
+            DerivedCollectionPreference(ignored.key(), DerivedCollectionDisposition.Ignored),
+            DerivedCollectionPreference(stale, DerivedCollectionDisposition.Followed),
         )
 
         assertEquals("proof_coloured", followed.key().finishCode())
         assertNull(
-            CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "silver")!!.finish,
+            VariantKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "silver")!!.finish,
         )
-        assertNull(CollectionProposalKey.fromCanonicalParts(" Lunar ounce", 1_000, "unknown", "silver"))
-        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 0, "unknown", "silver"))
-        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "Proof", "silver"))
+        assertNull(VariantKey.fromCanonicalParts(" Lunar ounce", 1_000, "unknown", "silver"))
+        assertNull(VariantKey.fromCanonicalParts("Lunar ounce", 0, "unknown", "silver"))
+        assertNull(VariantKey.fromCanonicalParts("Lunar ounce", 1_000, "Proof", "silver"))
         // Un código de metal que nadie reconoce descalifica la clave igual que el acabado.
-        assertNull(CollectionProposalKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "Plata"))
+        assertNull(VariantKey.fromCanonicalParts("Lunar ounce", 1_000, "unknown", "Plata"))
 
-        val classified = classifyCollectionProposals(
+        val classified = classifyDerivedCollections(
             listOf(followed, available, ignored),
             preferences,
         )
@@ -343,10 +347,10 @@ class CollectionProposalsTest {
         )
 
         // Only the catalog-referenced type is rescued; the rest stays unclassified.
-        assertEquals(1, derivation.proposals.size)
-        assertEquals("5 Bolívares de Venezuela", derivation.proposals[0].family)
-        assertEquals(804, derivation.proposals[0].weightMillioz)
-        assertEquals(2, derivation.proposals[0].quantity)
+        assertEquals(1, derivation.derivedCollections.size)
+        assertEquals("5 Bolívares de Venezuela", derivation.derivedCollections[0].family)
+        assertEquals(804, derivation.derivedCollections[0].weightMillioz)
+        assertEquals(2, derivation.derivedCollections[0].quantity)
         assertEquals(1, derivation.unclassified.size)
         assertEquals(99, derivation.unclassified[0].item.typeId)
         assertEquals(UnclassifiedReason.NoFamilyOrCatalog, derivation.unclassified[0].reason)
@@ -365,13 +369,13 @@ class CollectionProposalsTest {
         )
 
         // ADR 0009 lets an undated holding open the plate by type without filling any dated slot.
-        val proposals = buildCollectionProposals(
+        val derivedCollections = buildDerivedCollections(
             listOf(item(1, 10_340, 1)),
             metadata,
             listOf(catalog),
         )
 
-        assertEquals(listOf(catalog.key()), proposals.map { it.key() })
+        assertEquals(listOf(catalog.key()), derivedCollections.map { it.key() })
     }
 
     @Test
@@ -406,7 +410,7 @@ class CollectionProposalsTest {
             ),
         )
 
-        val proposals = buildCollectionProposals(
+        val derivedCollections = buildDerivedCollections(
             listOf(item(1, 448_800, 1), item(2, 596_807, 1)),
             typeMeta,
             listOf(catalog),
@@ -415,9 +419,9 @@ class CollectionProposalsTest {
         assertEquals(
             listOf(
                 catalog.key(),
-                CollectionProposalKey("The", 1_000, Finish.Bullion, Metal.Silver),
+                VariantKey("The", 1_000, Finish.Bullion, Metal.Silver),
             ),
-            proposals.map { it.key() },
+            derivedCollections.map { it.key() },
         )
     }
 
@@ -460,7 +464,10 @@ class CollectionProposalsTest {
             listOf(oneOunce, halfOunce),
         )
 
-        assertEquals(setOf(oneOunce.key(), halfOunce.key()), matched.proposals.map { it.key() }.toSet())
+        assertEquals(
+            setOf(oneOunce.key(), halfOunce.key()),
+            matched.derivedCollections.map { it.key() }.toSet(),
+        )
         assertTrue(matched.unclassified.isEmpty())
 
         val unmatched = deriveCollection(
@@ -471,7 +478,7 @@ class CollectionProposalsTest {
             metadata,
             listOf(oneOunce, halfOunce),
         )
-        assertTrue(unmatched.proposals.isEmpty())
+        assertTrue(unmatched.derivedCollections.isEmpty())
         assertEquals(2, unmatched.unclassified.size)
         assertTrue(
             unmatched.unclassified.all {
@@ -549,22 +556,22 @@ class CollectionProposalsTest {
             emptyList(),
             listOf(grouping),
         )
-        assertEquals(1, derivation.proposals.size)
-        assertEquals("Medios de Venezuela", derivation.proposals[0].family)
-        assertEquals(40, derivation.proposals[0].weightMillioz)
-        assertEquals(2, derivation.proposals[0].distinctTypes)
-        assertEquals(62, derivation.proposals[0].quantity)
+        assertEquals(1, derivation.derivedCollections.size)
+        assertEquals("Medios de Venezuela", derivation.derivedCollections[0].family)
+        assertEquals(40, derivation.derivedCollections[0].weightMillioz)
+        assertEquals(2, derivation.derivedCollections[0].distinctTypes)
+        assertEquals(62, derivation.derivedCollections[0].quantity)
         assertTrue(derivation.unclassified.isEmpty())
 
         // A real Numista family wins; a technical monetary system does not.
-        val real = buildCollectionProposals(
+        val real = buildDerivedCollections(
             listOf(item(1, 4_369, 1)),
             mapOf(4_369 to quarter(4_369, "Familia oficial")),
             emptyList(),
             listOf(grouping),
         )
         assertEquals("Familia oficial", real[0].family)
-        val technical = buildCollectionProposals(
+        val technical = buildDerivedCollections(
             listOf(item(1, 4_369, 1)),
             mapOf(4_369 to quarter(4_369, "System 1879-1936")),
             emptyList(),
@@ -574,7 +581,7 @@ class CollectionProposalsTest {
 
         // And a catalog outranks the grouping, because it can also say what is missing.
         val catalog = dateRunCatalogStub()
-        val catalogued = buildCollectionProposals(
+        val catalogued = buildDerivedCollections(
             listOf(item(1, 10_340, 1)),
             mapOf(10_340 to TypeMeta(id = 10_340, family = null, weightOz = ounces(25.0))),
             listOf(catalog),
@@ -584,11 +591,11 @@ class CollectionProposalsTest {
     }
 
     /**
-     * Every proposal keeps the rows it was built from: the screen that opens one shows the
+     * Every card keeps the rows it was built from: the screen that opens one shows the
      * pieces, and «los 5 paquillos» is five rows of one single Numista type.
      */
     @Test
-    fun `each proposal keeps the pieces it was derived from`() {
+    fun `each derived collection keeps the pieces it was derived from`() {
         val typeMeta = mapOf(
             1_885 to TypeMeta(id = 1_885, family = "100 Pesetas de Franco", weightOz = ounces(19.0)),
             10 to metadata(10, "Otra familia", 31.1, Finish.Bullion),
@@ -599,17 +606,17 @@ class CollectionProposalsTest {
 
         val derivation = deriveCollection(stars + item(99, 10, 1), typeMeta, emptyList())
 
-        val paquillos = derivation.proposals.first { it.family == "100 Pesetas de Franco" }
+        val paquillos = derivation.derivedCollections.first { it.family == "100 Pesetas de Franco" }
         assertEquals(1, paquillos.distinctTypes)
         assertEquals(5, paquillos.quantity)
         assertEquals(
             (1966..1970).toList(),
             derivation.itemsByKey.getValue(paquillos.key()).map { it.recordedYear },
         )
-        // Every proposal has an entry, and no piece is counted under two keys.
-        assertEquals(derivation.proposals.size, derivation.itemsByKey.size)
+        // Every derived collection has an entry, and no piece is counted under two keys.
+        assertEquals(derivation.derivedCollections.size, derivation.itemsByKey.size)
         assertEquals(
-            derivation.proposals.sumOf { it.quantity },
+            derivation.derivedCollections.sumOf { it.quantity },
             derivation.itemsByKey.values.sumOf { pieces -> pieces.sumOf { it.quantity } },
         )
     }
@@ -632,7 +639,7 @@ class CollectionProposalsTest {
             emptyList(),
         )
 
-        assertTrue(derivation.proposals.isEmpty())
+        assertTrue(derivation.derivedCollections.isEmpty())
         assertEquals(
             listOf(
                 UnclassifiedReason.MissingTypeMetadata,
@@ -641,7 +648,7 @@ class CollectionProposalsTest {
             ),
             derivation.unclassified.map { it.reason },
         )
-        // A piece the collector no longer owns is not a proposal and not an orphan either.
+        // A piece the collector no longer owns is not a card and not an orphan either.
         assertFalse(derivation.unclassified.any { it.item.id == 5L })
     }
 

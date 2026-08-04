@@ -27,11 +27,11 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionProposal
 import com.jenarvaezg.coindex.domain.CollectionTitles
-import com.jenarvaezg.coindex.domain.ProposalDisposition
+import com.jenarvaezg.coindex.domain.DerivedCollection
+import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
 import com.jenarvaezg.coindex.ui.BudgetStatus
-import com.jenarvaezg.coindex.ui.ProposalStance
+import com.jenarvaezg.coindex.ui.DerivedCollectionStance
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.DispositionActions
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -41,9 +41,9 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.issuerEyebrow
 import com.jenarvaezg.coindex.ui.lastSyncLabel
-import com.jenarvaezg.coindex.ui.variantLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
+import com.jenarvaezg.coindex.ui.variantLabel
 
 /** Narrower than this a card cannot hold its own action row on one line. */
 private val MIN_CARD_WIDTH = 340.dp
@@ -58,10 +58,10 @@ internal fun indexColumns(availableWidth: Dp): Int {
 }
 
 /**
- * The collection index: one card per current proposal, in three blocks.
+ * The collection index: one card per current collection, in three blocks.
  *
- * Proposals are derived from the pieces the collector owns right now. Following one never
- * invents a gap. Every title opens its proposal, catalog or no catalog: the plate and the
+ * Collections are derived from the pieces the collector owns right now. Following one
+ * never invents a gap. Every title opens its card, catalog or no catalog: the plate and the
  * source moved into that screen, because a title that opens something only when a curated
  * catalog happens to exist is a title that looks broken the rest of the time.
  *
@@ -80,14 +80,14 @@ fun IndexScreen(
     titles: CollectionTitles,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
-    onOpenProposal: (CollectionProposal) -> Unit,
+    onOpenDerivedCollection: (DerivedCollection) -> Unit,
     onOpenOwnGrouping: (groupingId: Long) -> Unit,
     onOpenPlate: (catalogId: String) -> Unit,
-    onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
+    onDisposition: (DerivedCollection, DerivedCollectionDisposition?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showIgnored by remember { mutableStateOf(false) }
-    val proposals = state.proposals
+    val derivedCollections = state.derivedCollections
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
@@ -136,16 +136,16 @@ fun IndexScreen(
             }
 
             // Reading the collection off the database takes a frame or two, and «todavía no hay
-            // propuestas» in that gap is a lie about a collection that is on the device already.
-            if (proposals.isEmpty && state.ownGroupings.isEmpty()) {
+            // colecciones» in that gap is a lie about a collection that is on the device already.
+            if (derivedCollections.isEmpty && state.ownGroupings.isEmpty()) {
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Text(
                             if (loading) {
                                 "Leyendo tu colección…"
                             } else {
-                                "Todavía no hay propuestas. Sincroniza para traer tu colección " +
-                                    "de Numista."
+                                "Todavía no hay colecciones. Sincroniza para traer " +
+                                    "tu colección de Numista."
                             },
                             style = MaterialTheme.typography.bodyLarge,
                             color = Paper.muted,
@@ -175,30 +175,30 @@ fun IndexScreen(
                 }
             }
 
-            proposalBlock(
+            derivedCollectionBlock(
                 title = "Seguidas",
-                proposals = proposals.followed,
-                stance = ProposalStance.Followed,
+                derivedCollections = derivedCollections.followed,
+                stance = DerivedCollectionStance.Followed,
                 state = state,
                 catalogs = catalogs,
                 titles = titles,
-                onOpenProposal = onOpenProposal,
+                onOpenDerivedCollection = onOpenDerivedCollection,
                 onOpenPlate = onOpenPlate,
                 onDisposition = onDisposition,
             )
-            proposalBlock(
+            derivedCollectionBlock(
                 title = "Disponibles",
-                proposals = proposals.available,
-                stance = ProposalStance.Available,
+                derivedCollections = derivedCollections.available,
+                stance = DerivedCollectionStance.Available,
                 state = state,
                 catalogs = catalogs,
                 titles = titles,
-                onOpenProposal = onOpenProposal,
+                onOpenDerivedCollection = onOpenDerivedCollection,
                 onOpenPlate = onOpenPlate,
                 onDisposition = onDisposition,
             )
 
-            if (proposals.ignored.isNotEmpty()) {
+            if (derivedCollections.ignored.isNotEmpty()) {
                 fullWidth {
                     // In a Row so the button keeps its own width: a grid cell measures its
                     // content at the full column width, and a button as wide as the page reads
@@ -208,23 +208,23 @@ fun IndexScreen(
                             // The arrow is what says whether the list is open: without it the
                             // same button read as «show them» in both states.
                             text = if (showIgnored) {
-                                "▾ Ocultar las ignoradas · ${proposals.ignored.size}"
+                                "▾ Ocultar las ignoradas · ${derivedCollections.ignored.size}"
                             } else {
-                                "▸ Propuestas ignoradas · ${proposals.ignored.size}"
+                                "▸ Colecciones ignoradas · ${derivedCollections.ignored.size}"
                             },
                             onClick = { showIgnored = !showIgnored },
                         )
                     }
                 }
                 if (showIgnored) {
-                    items(proposals.ignored, key = { it.key().toString() }) { proposal ->
-                        ProposalCard(
-                            proposal = proposal,
-                            stance = ProposalStance.Ignored,
-                            title = titles.of(proposal),
-                            catalog = catalogs.firstOrNull { it.key() == proposal.key() },
+                    items(derivedCollections.ignored, key = { it.key().toString() }) { collection ->
+                        DerivedCollectionCard(
+                            collection = collection,
+                            stance = DerivedCollectionStance.Ignored,
+                            title = titles.of(collection),
+                            catalog = catalogs.firstOrNull { it.key() == collection.key() },
                             state = state,
-                            onOpenProposal = onOpenProposal,
+                            onOpenDerivedCollection = onOpenDerivedCollection,
                             onOpenPlate = onOpenPlate,
                             onDisposition = onDisposition,
                         )
@@ -257,7 +257,7 @@ private fun IndexHeading(
             Eyebrow("Cuaderno de colección")
             Text("Láminas de plata", style = MaterialTheme.typography.displayLarge)
             Text(
-                "Propuestas a partir de las piezas que tienes ahora mismo.",
+                "Colecciones a partir de las piezas que tienes ahora mismo.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Paper.muted,
             )
@@ -333,27 +333,27 @@ private fun LazyGridScope.blockHeading(title: String) {
     }
 }
 
-private fun LazyGridScope.proposalBlock(
+private fun LazyGridScope.derivedCollectionBlock(
     title: String,
-    proposals: List<CollectionProposal>,
-    stance: ProposalStance,
+    derivedCollections: List<DerivedCollection>,
+    stance: DerivedCollectionStance,
     state: CollectionState,
     catalogs: List<CollectionCatalog>,
     titles: CollectionTitles,
-    onOpenProposal: (CollectionProposal) -> Unit,
+    onOpenDerivedCollection: (DerivedCollection) -> Unit,
     onOpenPlate: (String) -> Unit,
-    onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
+    onDisposition: (DerivedCollection, DerivedCollectionDisposition?) -> Unit,
 ) {
-    if (proposals.isEmpty()) return
+    if (derivedCollections.isEmpty()) return
     blockHeading(title)
-    items(proposals, key = { "$title-${it.key()}" }) { proposal ->
-        ProposalCard(
-            proposal = proposal,
+    items(derivedCollections, key = { "$title-${it.key()}" }) { collection ->
+        DerivedCollectionCard(
+            collection = collection,
             stance = stance,
-            title = titles.of(proposal),
-            catalog = catalogs.firstOrNull { it.key() == proposal.key() },
+            title = titles.of(collection),
+            catalog = catalogs.firstOrNull { it.key() == collection.key() },
             state = state,
-            onOpenProposal = onOpenProposal,
+            onOpenDerivedCollection = onOpenDerivedCollection,
             onOpenPlate = onOpenPlate,
             onDisposition = onDisposition,
         )
@@ -361,45 +361,45 @@ private fun LazyGridScope.proposalBlock(
 }
 
 @Composable
-private fun ProposalCard(
-    proposal: CollectionProposal,
-    stance: ProposalStance,
+private fun DerivedCollectionCard(
+    collection: DerivedCollection,
+    stance: DerivedCollectionStance,
     title: String,
     catalog: CollectionCatalog?,
     state: CollectionState,
-    onOpenProposal: (CollectionProposal) -> Unit,
+    onOpenDerivedCollection: (DerivedCollection) -> Unit,
     onOpenPlate: (String) -> Unit,
-    onDisposition: (CollectionProposal, ProposalDisposition?) -> Unit,
+    onDisposition: (DerivedCollection, DerivedCollectionDisposition?) -> Unit,
 ) {
     // The plate keeps its shortcut from the card, but as an action rather than as the title:
     // the same conditions resolvePlate applies, checked here so a dead button is never drawn.
     val plateCatalog = catalog?.takeIf {
-        stance == ProposalStance.Followed && it.id in state.evidencedCatalogIds
+        stance == DerivedCollectionStance.Followed && it.id in state.evidencedCatalogIds
     }
     FieldCard(modifier = Modifier.fillMaxWidth()) {
         // The issuer, where every card used to repeat «EVIDENCIA DE COLECCIÓN» — which is what
         // the section heading right above it already says.
-        issuerEyebrow(state.itemsByKey[proposal.key()].orEmpty(), state.typeMeta)?.let { issuer ->
+        issuerEyebrow(state.itemsByKey[collection.key()].orEmpty(), state.typeMeta)?.let { issuer ->
             Eyebrow(issuer)
         }
         LinkText(
             text = title,
             style = MaterialTheme.typography.titleLarge,
-            onClick = { onOpenProposal(proposal) },
+            onClick = { onOpenDerivedCollection(collection) },
         )
         Text(
-            variantLabel(proposal.weightMillioz, proposal.finish, proposal.metal),
+            variantLabel(collection.weightMillioz, collection.finish, collection.metal),
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(
-            countLabel(proposal.distinctTypes, proposal.quantity),
+            countLabel(collection.distinctTypes, collection.quantity),
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
             modifier = Modifier.padding(top = 4.dp),
         )
         DispositionActions(
             stance = stance,
-            onDisposition = { disposition -> onDisposition(proposal, disposition) },
+            onDisposition = { disposition -> onDisposition(collection, disposition) },
             onOpenPlate = plateCatalog?.let { curated -> { onOpenPlate(curated.id) } },
         )
     }

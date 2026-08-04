@@ -967,9 +967,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * The second set, and the first one no collection proposal could ever have suggested (#146).
+     * The second set, and the first one no derivation could ever have suggested (#146).
      *
-     * 28,28 g and 35 g share no variant key and never will, so the *absence* of a proposal over
+     * 28,28 g and 35 g share no variant key and never will, so the *absence* of a card over
      * them was the signal. The plate claims the two-coin silver case the
      * Royal Mint struck for the Banco Central de Venezuela, not the conservation programme: the
      * BCV Directorio approved a third coin, the Gallito de las Rocas in gold, sold apart and
@@ -995,7 +995,7 @@ class CuratedCatalogsTest {
     }
 
     @Test
-    fun `catalogs target their exact proposal variants`() {
+    fun `catalogs target their exact derived collection variants`() {
         val tesla = find("nikola-tesla-serbia-1oz")
         assertEquals(1, tesla.schemaVersion)
         assertEquals("Nikola Tesla", tesla.family)
@@ -1079,7 +1079,7 @@ class CuratedCatalogsTest {
 
         val derivation = deriveCollection(listOf(snake), mapOf(metadata.id to metadata), catalogs)
 
-        assertEquals(listOf(rwanda.key()), derivation.proposals.map { it.key() })
+        assertEquals(listOf(rwanda.key()), derivation.derivedCollections.map { it.key() })
         assertEquals(listOf(snake), derivation.itemsByKey[rwanda.key()])
         assertTrue(derivation.unclassified.isEmpty())
         assertEquals(1, buildCollectionCatalogAlbum(rwanda, listOf(snake)).ownedMembers())
@@ -1248,7 +1248,10 @@ class CuratedCatalogsTest {
             mapOf(metadata.id to metadata),
             catalogs,
         )
-        assertEquals(setOf(bullion.key(), proofColoured.key()), derivation.proposals.map { it.key() }.toSet())
+        assertEquals(
+            setOf(bullion.key(), proofColoured.key()),
+            derivation.derivedCollections.map { it.key() }.toSet(),
+        )
         assertEquals(listOf(bullionPiece), derivation.itemsByKey[bullion.key()])
         assertEquals(listOf(proofColouredPiece), derivation.itemsByKey[proofColoured.key()])
         assertEquals(1, derivation.unclassified.size)
@@ -1574,7 +1577,7 @@ class CuratedCatalogsTest {
     }
 
     @Test
-    fun `no two catalogs claim the same proposal variant key`() {
+    fun `no two catalogs claim the same variant key`() {
         val keys = catalogs.map { it.key() }
         assertEquals(keys.size, keys.distinct().size, "dos catálogos comparten clave de variante")
     }

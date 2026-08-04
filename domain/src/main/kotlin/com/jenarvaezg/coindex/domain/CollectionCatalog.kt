@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * A curated, sourced reference list of official members for one exact proposal variant key.
+ * A curated, sourced reference list of official members for one exact variant key.
  *
  * For an `issued` member, `schema_version` 1 identifies it by a unique Numista type, optionally
  * refined with one or more Numista issues when a type page covers several physical variants.
@@ -74,8 +74,8 @@ data class CollectionCatalog(
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CollectionCatalogMember>,
 ) {
-    fun key(): CollectionProposalKey =
-        CollectionProposalKey(family, weightMillioz, finish, metal)
+    fun key(): VariantKey =
+        VariantKey(family, weightMillioz, finish, metal)
 
     val isDateRun: Boolean get() = schemaVersion == 2
 
@@ -167,7 +167,7 @@ data class CollectionCatalog(
         if (!isSet && metal == null) {
             return CollectionCatalogValidationError.MissingMetal
         }
-        val canonical = CollectionProposalKey.fromCanonicalParts(
+        val canonical = VariantKey.fromCanonicalParts(
             family,
             weightMillioz ?: SPANNING_VARIANTS_WEIGHT,
             finishCode(finish),
@@ -405,7 +405,7 @@ sealed class CollectionCatalogValidationError(val message: String) {
     )
 
     data object InvalidVariantKey : CollectionCatalogValidationError(
-        "collection catalog has an invalid proposal variant key",
+        "collection catalog has an invalid variant key",
     )
 
     data object SetDeclaresVariant : CollectionCatalogValidationError(
