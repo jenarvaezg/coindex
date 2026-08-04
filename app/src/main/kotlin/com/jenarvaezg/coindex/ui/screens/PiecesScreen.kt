@@ -1,0 +1,354 @@
+package com.jenarvaezg.coindex.ui.screens
+
+import android.graphics.Picture
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.ui.BoxUpkeep
+import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.components.CardAction
+import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.PieceCard
+import com.jenarvaezg.coindex.ui.components.PieceSelectionToggle
+import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.SelectionControls
+import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
+import com.jenarvaezg.coindex.ui.countLabel
+import com.jenarvaezg.coindex.ui.coverageLabel
+import com.jenarvaezg.coindex.ui.piecesExportMessage
+import com.jenarvaezg.coindex.ui.piecesFileName
+import com.jenarvaezg.coindex.ui.recordInto
+import com.jenarvaezg.coindex.ui.theme.Paper
+import com.jenarvaezg.coindex.ui.theme.PlateMetrics
+
+/**
+ * A collection whose plate does not open, opened: the pieces it is made of.
+ *
+ * **One screen for the two cases** (ADR 0021 §9). A collection the inventory derives and a box the
+ * collector typed used to have a screen each, and the measurement behind the merge is that they
+ * differ in what they *have* — a physical variant, an upkeep — never in what they are. Two screens
+ * would have drifted apart the first time one of them grew a line, and the difference the collector
+ * would have read is the word of provenance the card had just dropped.
+ *
+ * What it never shows is a gap. A collection with no issue list has nothing to be missing from
+ * (ADR 0021 §3), and a box cannot contain one by construction, so what goes where a plate's empty
+ * cells would be is nothing at all — not a hole, not a promise, not a «could have a catalog».
+ */
+@Composable
+fun PiecesScreen(
+    state: CollectionState,
+    subject: PiecesSubject?,
+    onOpenSource: (url: String) -> Unit,
+    onMessage: (String) -> Unit,
+    onCreateGrouping: (name: String, typeIds: List<Int>) -> Unit,
+    onAddToGrouping: (groupingId: Long, typeIds: List<Int>) -> Unit,
+    /** Present exactly when the subject is a box: the same `if` all the way down. */
+    upkeep: BoxUpkeep? = null,
+    modifier: Modifier = Modifier,
+) {
+    if (subject == null) {
+        MissingSubject(
+            "Esta colección ya no existe. Vuelve al índice.",
+            modifier.fillMaxSize().padding(20.dp),
+        )
+        return
+    }
+
+    val selection = rememberPieceSelection()
+    var renaming by remember(subject.boxId) { mutableStateOf(false) }
+    var exporting by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+        ) {
+            item {
+                PiecesHeading(
+                    subject = subject,
+                    upkeep = upkeep,
+                    exporting = exporting,
+                    renaming = renaming,
+                    onExport = { exporting = true },
+                    onToggleRename = { renaming = !renaming },
+                )
+            }
+
+            // The upkeep of a box is an `if` and not a screen: two actions in the heading above
+            // and one per row below.
+            if (renaming && upkeep != null) {
+                item {
+                    RenameCard(subject.title, onRename = { upkeep.onRename(it); renaming = false })
+                }
+            }
+
+            if (subject.pieces.isEmpty()) {
+                item { EmptyCollection(subject.boxId != null) }
+            } else {
+                item {
+                    Column {
+                        HorizontalDivider(color = Paper.line)
+                        Text(
+                            "Tus piezas",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 10.dp),
+                        )
+                        // Only where it already was. By ADR 0021 §11 this gesture is replaced by
+                        // one born in Coins (#173), and a box never offered it: adding it here
+                        // would be building the capability the ADR is about to move.
+                        if (subject.boxId == null) {
+                            SelectionControls(
+                                selection = selection,
+                                existing = state.ownGroupings,
+                                onCreate = onCreateGrouping,
+                                onAddTo = onAddToGrouping,
+                                modifier = Modifier.padding(top = 10.dp),
+                            )
+                        }
+                    }
+                }
+            }
+
+            items(subject.pieces, key = { it.id }) { piece ->
+                PieceCard(
+                    item = piece,
+                    title = pieceTitle(state, piece),
+                    images = state.images[piece.typeId],
+                    onOpenSource = onOpenSource,
+                ) {
+                    // Dropping a type does not touch the piece (ADR 0013, §10): it stays in the
+                    // inventory and on the card its variant derives, which is what makes a box a
+                    // second membership rather than a move.
+                    upkeep?.let { box ->
+                        CardAction(
+                            text = "Quitar de la colección",
+                            onClick = { box.onRemoveType(piece.typeId) },
+                            modifier = Modifier.padding(top = 8.dp),
+                        )
+                    }
+                    if (selection.active) {
+                        PieceSelectionToggle(
+                            picked = selection.isPicked(piece.typeId),
+                            onToggle = { selection.toggle(piece.typeId) },
+                        )
+                    }
+                }
+            }
+        }
+
+        if (exporting) {
+            PiecesSheetExport(
+                subject = subject,
+                state = state,
+                onFinished = { message ->
+                    exporting = false
+                    onMessage(message)
+                },
+            )
+        }
+    }
+}
+
+/**
+ * The heading: country, name, what it is made of, and what can be done to it.
+ *
+ * The eyebrow is **the country** — the same one the card carried — and not the species of
+ * collection. That slot used to say «Propuesta de colección» or «Tu agrupación», which is the
+ * distinction ADR 0021 §2 removed; the country was already the right answer and was being spent
+ * on saying which of the two screens you had landed on.
+ *
+ * The count is the card's own sentence, ratio included where there is one: a collection whose
+ * catalog it owns no issued member of yet says «0 de 12 · te faltan 12» on the card, and reading
+ * `3 tipos distintos · 4 piezas` one tap later would be the same collection contradicting itself.
+ */
+@Composable
+private fun PiecesHeading(
+    subject: PiecesSubject,
+    upkeep: BoxUpkeep?,
+    exporting: Boolean,
+    renaming: Boolean,
+    onExport: () -> Unit,
+    onToggleRename: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        subject.issuer?.let { issuer -> Eyebrow(issuer) }
+        Text(subject.title, style = MaterialTheme.typography.headlineMedium)
+        subject.variant?.let { variant ->
+            Text(variant, style = MaterialTheme.typography.bodyLarge)
+        }
+        Text(
+            subject.coverage?.let(::coverageLabel)
+                ?: countLabel(subject.distinctTypes, subject.quantity),
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.muted,
+        )
+        // The sheet is the only product this screen can have — by ADR 0020 there is no gap here
+        // to report — so it is the filled button, exactly as the export is on a plate.
+        PrimaryAction(
+            text = if (exporting) "Preparando la hoja…" else "Exportar como imagen",
+            onClick = onExport,
+            enabled = !exporting && subject.pieces.isNotEmpty(),
+            share = !exporting,
+            modifier = Modifier.padding(top = 12.dp),
+        )
+        if (upkeep != null) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(top = 4.dp),
+            ) {
+                CardAction(
+                    text = if (renaming) "Cerrar el nombre" else "Renombrar",
+                    onClick = onToggleRename,
+                )
+                CardAction(text = "Deshacer la colección", onClick = upkeep.onDelete)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RenameCard(current: String, onRename: (String) -> Unit) {
+    var name by remember(current) { mutableStateOf(current) }
+    FieldCard(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nombre de la colección") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        PrimaryAction(
+            text = "Guardar el nombre",
+            onClick = { onRename(name) },
+            modifier = Modifier.padding(top = 12.dp),
+        )
+    }
+}
+
+/**
+ * Empty, and why — which is not the same sentence in the two cases.
+ *
+ * A box survives with nothing in it, because it is the one thing the collector typed and having it
+ * vanish would read as data loss (ADR 0021 §11). A derived collection cannot: with no pieces there
+ * is nothing left to derive it from.
+ */
+@Composable
+private fun EmptyCollection(isBox: Boolean) {
+    FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
+        Text(
+            if (isBox) {
+                "Ahora mismo no tienes ninguna de las piezas de esta colección. Sigue aquí " +
+                    "por si vuelven."
+            } else {
+                "Ya no tienes piezas de esta variante, así que esta colección no existe. " +
+                    "Vuelve al índice."
+            },
+            style = MaterialTheme.typography.bodyLarge,
+            color = Paper.muted,
+        )
+    }
+}
+
+/**
+ * A route with nothing behind it: the collection was undone, sold away, or never described.
+ *
+ * Said plainly and never guessed at — the alternative is a screen about a collection that does not
+ * exist, which reads as the app having lost it.
+ */
+@Composable
+fun MissingSubject(explanation: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("Colección desconocida", style = MaterialTheme.typography.headlineMedium)
+        Text(explanation, style = MaterialTheme.typography.bodyLarge, color = Paper.muted)
+    }
+}
+
+/** What to call a piece: the catalog title if its type is cached, else what the row itself says. */
+internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
+    state.typeMeta[item.typeId]?.displayTitle
+        ?: item.title
+        ?: "Pieza ${item.id}"
+
+/**
+ * Composes the whole sheet off-screen, waits for every picture to settle, and shares it.
+ *
+ * The same machinery a plate exports with ([recordInto] + [shareSettledSheet]), pointed at a sheet
+ * that has no empty cell to draw.
+ */
+@Composable
+private fun PiecesSheetExport(
+    subject: PiecesSubject,
+    state: CollectionState,
+    onFinished: (String) -> Unit,
+) {
+    val context = LocalContext.current
+    val picture = remember(subject.title) { Picture() }
+    val layout = remember(subject.pieces.size) { SheetLayout.forMemberCount(subject.pieces.size) }
+    val expectedImages = remember(subject.pieces, state.images) {
+        piecesSheetImageCount(subject.pieces, state.images)
+    }
+    val settled = remember { mutableIntStateOf(0) }
+    val loaded = remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(subject.title) {
+        val outcome = shareSettledSheet(
+            context = context,
+            picture = picture,
+            fileName = piecesFileName(subject.title),
+            expectedImages = expectedImages,
+            settled = settled,
+        )
+        onFinished(
+            if (outcome.isFailure) {
+                "No se pudo exportar la hoja: ${outcome.exceptionOrNull()?.message}"
+            } else {
+                piecesExportMessage(
+                    distinctTypes = subject.distinctTypes,
+                    quantity = subject.quantity,
+                    expectedPhotos = expectedImages,
+                    loadedPhotos = loaded.intValue,
+                )
+            },
+        )
+    }
+
+    OffScreenSheet(layout) {
+        PiecesSheet(
+            subject = subject,
+            titles = { piece -> pieceTitle(state, piece) },
+            images = state.images,
+            layout = layout,
+            onImageSettled = { painted ->
+                settled.intValue += 1
+                if (painted) loaded.intValue += 1
+            },
+            modifier = Modifier.recordInto(picture),
+        )
+    }
+}

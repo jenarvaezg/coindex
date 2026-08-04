@@ -143,10 +143,6 @@ class CoindexRepository(
         }
     }
 
-    /** The catalog matching a variant key, if one was curated for it. */
-    fun catalogFor(key: VariantKey): CollectionCatalog? =
-        catalogs.firstOrNull { it.key() == key }
-
     /** Creates one of the collector's own groupings over the types they picked (ADR 0013). */
     suspend fun createOwnGrouping(name: String, typeIds: List<Int>): Long =
         database.ownGroupings().create(name, typeIds.distinct(), System.currentTimeMillis())

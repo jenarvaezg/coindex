@@ -196,7 +196,7 @@ private fun SheetHeading(
 }
 
 /** The same style one step up the page, for type that has to hold a whole sheet together. */
-private fun TextStyle.scaledBy(scale: Float): TextStyle = copy(
+internal fun TextStyle.scaledBy(scale: Float): TextStyle = copy(
     fontSize = fontSize * scale,
     lineHeight = if (lineHeight.isSpecified) lineHeight * scale else lineHeight,
     letterSpacing = if (letterSpacing.isSpecified) letterSpacing * scale else letterSpacing,

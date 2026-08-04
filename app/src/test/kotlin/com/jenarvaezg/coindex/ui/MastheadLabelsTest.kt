@@ -36,6 +36,20 @@ class MastheadLabelsTest {
         assertEquals("Colección", screenTitle(Routes.DERIVED_COLLECTION, subjectName = null))
     }
 
+    /**
+     * The masthead was the last place that ranked a box below a curated collection. With one
+     * species (ADR 0021 §2) and one screen for both (§9), «Tu agrupación · …» has nothing left to
+     * distinguish — and saying it would reintroduce the word of provenance the card dropped.
+     */
+    @Test
+    fun `a box is a collection too, and the masthead calls it one`() {
+        assertEquals(
+            "Colección · Las francesas",
+            screenTitle(Routes.OWN_GROUPING, subjectName = "Las francesas"),
+        )
+        assertEquals("Colección", screenTitle(Routes.OWN_GROUPING, subjectName = null))
+    }
+
     @Test
     fun `an unresolved route falls back to the strapline instead of going blank`() {
         assertEquals("Inventario de campo · plata bullion", screenTitle(null))

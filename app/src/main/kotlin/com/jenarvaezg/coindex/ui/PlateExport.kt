@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.draw
 import androidx.core.content.FileProvider
 import java.io.File
+import java.text.Normalizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -66,3 +67,23 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
 
 /** File-system safe name for an exported plate. */
 fun plateFileName(catalogId: String): String = "coindex-$catalogId"
+
+/**
+ * The same, for a sheet of pieces, whose subject has no curated id to be named by.
+ *
+ * The title is prose the collector typed — accents, middle dots, double spaces — so it is
+ * flattened here, which is the one place that prose meets a file system.
+ */
+fun piecesFileName(title: String): String {
+    val slug = Normalizer.normalize(title, Normalizer.Form.NFD)
+        .replace(NON_SPACING_MARKS, "")
+        .lowercase()
+        .replace(NOT_A_WORD, "-")
+        .trim('-')
+    return "coindex-${slug.ifEmpty { "piezas" }}"
+}
+
+private val NON_SPACING_MARKS = Regex("\\p{Mn}+")
+
+/** Everything that is not a letter or a digit collapses to one separator, accents already gone. */
+private val NOT_A_WORD = Regex("[^a-z0-9]+")
