@@ -1,19 +1,17 @@
 package com.jenarvaezg.coindex.ui
 
-import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.Metal
-import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 /**
  * The lines a card writes about itself.
  *
  * Both cases here were UX findings rather than bugs: «Por confirmar» on its own line read as a
- * finish called that, and every card in the index wore the same eyebrow, which said what the
- * section heading above it already said.
+ * finish called that, and the metal, which the key needs in all four positions, is worth a word on
+ * screen only where it is not the silver almost every card is made of.
  */
 class LabelsTest {
     @Test
@@ -50,32 +48,17 @@ class LabelsTest {
         )
     }
 
-    private fun item(id: Long, typeId: Int) = CollectedItem(id = id, quantity = 1, typeId = typeId)
-
-    private fun meta(typeId: Int, issuer: String?) =
-        typeId to TypeMeta(id = typeId, issuerName = issuer)
-
+    /**
+     * La tercera línea de una tarjeta con lista de emisiones es el mismo ratio por el que está
+     * ordenado el índice (ADR 0021 §3 y §6). Que se lea es lo que hace legible el orden: sin ella
+     * el índice se mueve con el ratio mientras cada tarjeta cuenta piezas.
+     */
     @Test
-    fun `the eyebrow names the issuer of the pieces behind the derived collection`() {
-        val types = mapOf(meta(10_340, "Venezuela"), meta(10_339, "Venezuela"))
-
-        assertEquals(
-            "Venezuela",
-            issuerEyebrow(listOf(item(1, 10_340), item(2, 10_340)), types),
-        )
-    }
-
-    @Test
-    fun `an issuer nobody agrees on, or nobody recorded, is left unsaid`() {
-        val types = mapOf(meta(10_340, "Venezuela"), meta(25_340, "Australia"), meta(1_885, null))
-
-        // Two issuers under one heading would be an eyebrow that lies about half its card.
-        assertNull(issuerEyebrow(listOf(item(1, 10_340), item(2, 25_340)), types))
-        // A type whose cache row has no issuer, or a type not cached at all.
-        assertNull(issuerEyebrow(listOf(item(3, 1_885)), types))
-        assertNull(issuerEyebrow(listOf(item(4, 999_999)), types))
-        assertNull(issuerEyebrow(emptyList(), types))
-        // One unchecked piece among Venezuelans: «Venezuela» would be a claim about it too.
-        assertNull(issuerEyebrow(listOf(item(5, 10_340), item(6, 1_885)), types))
+    fun `a card with an issue list says its progress, and claims no closure when nothing is missing`() {
+        assertEquals("4 de 12 · te faltan 8", coverageLabel(CoverageRatio(4, 12)))
+        assertEquals("0 de 52 · te faltan 52", coverageLabel(CoverageRatio(0, 52)))
+        // Ni «completa» ni «22/22 ✓»: por el ADR 0020 una serie abierta no tiene completitud que
+        // afirmar, y este enero las mismas 22 casillas pueden ser 23.
+        assertEquals("22 de 22", coverageLabel(CoverageRatio(22, 22)))
     }
 }

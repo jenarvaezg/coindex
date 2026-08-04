@@ -149,8 +149,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         loading = state.loading,
                         syncing = state.syncing,
                         lastSync = state.lastSync,
-                        catalogs = viewModel.catalogs,
-                        titles = viewModel.titles,
                         onSync = viewModel::sync,
                         onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
                         onOpenDerivedCollection = { collection ->
@@ -161,9 +159,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         },
                         onOpenPlate = { catalogId ->
                             navController.navigate(Routes.plate(catalogId))
-                        },
-                        onDisposition = { collection, disposition ->
-                            viewModel.setDisposition(collection.key(), disposition)
                         },
                     )
                 }
@@ -195,8 +190,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         finish = entry.arguments?.getString("finish"),
                         metal = entry.arguments?.getString("metal"),
                     )
-                    // A route that does not describe a canonical key is not guessed at; it is
-                    // the same refusal a stored disposition gets when its parts drift.
+                    // A route that does not describe a canonical key is not guessed at: the key
+                    // is the identity of the cards no curated file names (ADR 0021 §5), and half
+                    // a key names none of them.
                     if (key == null) {
                         UnknownDerivedCollection(Modifier.fillMaxSize().padding(20.dp))
                     } else {
@@ -210,7 +206,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 navController.navigate(Routes.plate(catalogId))
                             },
                             onOpenSource = openUrl,
-                            onDisposition = viewModel::setDisposition,
                             onCreateGrouping = viewModel::createOwnGrouping,
                             onAddToGrouping = viewModel::addToOwnGrouping,
                         )

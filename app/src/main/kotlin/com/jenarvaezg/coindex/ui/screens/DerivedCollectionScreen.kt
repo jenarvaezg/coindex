@@ -18,10 +18,8 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
 import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.DispositionActions
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -31,7 +29,6 @@ import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
-import com.jenarvaezg.coindex.ui.stanceFor
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -56,7 +53,6 @@ fun DerivedCollectionScreen(
     plate: PlateResult?,
     onOpenPlate: (catalogId: String) -> Unit,
     onOpenSource: (url: String) -> Unit,
-    onDisposition: (VariantKey, DerivedCollectionDisposition?) -> Unit,
     onCreateGrouping: (name: String, typeIds: List<Int>) -> Unit,
     onAddToGrouping: (groupingId: Long, typeIds: List<Int>) -> Unit,
     modifier: Modifier = Modifier,
@@ -88,10 +84,6 @@ fun DerivedCollectionScreen(
                         countLabel(collection.distinctTypes, collection.quantity),
                         style = MaterialTheme.typography.labelLarge,
                         color = Paper.muted,
-                    )
-                    DispositionActions(
-                        stance = state.stanceFor(key),
-                        onDisposition = { disposition -> onDisposition(key, disposition) },
                     )
                 }
             }

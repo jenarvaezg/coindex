@@ -2,9 +2,9 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.Metal
-import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 
 /**
@@ -71,23 +71,6 @@ fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
     return if (metal == null || metal == Metal.Silver) line else "$line · ${metalLabel(metal)}"
 }
 
-/**
- * Who issued the pieces behind one collection, for the eyebrow of its card.
- *
- * Every card used to wear «EVIDENCIA DE COLECCIÓN», which is what the section heading above it
- * already said. The issuer is the one line the card cannot derive from its own title.
- *
- * Two issuers under one heading, or one piece whose issuer nobody recorded, leave the eyebrow
- * unsaid: an eyebrow that covers half its card would be worse than no eyebrow at all. That is
- * why the unknowns are kept in the list rather than filtered out — one uncached type is enough
- * to make «Venezuela» a claim about pieces that were never checked.
- */
-fun issuerEyebrow(items: List<CollectedItem>, typeMeta: Map<Int, TypeMeta>): String? =
-    items
-        .map { item -> typeMeta[item.typeId]?.issuerName }
-        .distinct()
-        .singleOrNull()
-
 /** Weight and finish as specification rows, omitted entirely for a set. */
 fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, String>> =
     if (weightMillioz == null) {
@@ -106,6 +89,23 @@ fun callsLabel(count: Int): String = plural(count, "llamada", "llamadas")
 fun countLabel(distinctTypes: Int, quantity: Int): String =
     plural(distinctTypes, "tipo distinto", "tipos distintos") +
         " · " + plural(quantity, "pieza", "piezas")
+
+/**
+ * The third line of a card that has an issue list: `4 de 12 · te faltan 8` (ADR 0021 §3).
+ *
+ * It is the same measured fact the index is sorted by (§6), which is why it has to be legible: an
+ * order that moves with the ratio while every card counts pieces would look arbitrary. A card
+ * without an issue list says [countLabel] instead, and there is no third phrase apologising for the
+ * absence — «emisión» is curator's jargon, and the missing progress *is* the signal.
+ *
+ * With nothing missing the sentence stops at the count. «Completa» would claim a closure the
+ * catalog does not have: by ADR 0020 an open series has no completeness to claim, and this January
+ * the same 22/22 becomes 22/23.
+ */
+fun coverageLabel(coverage: CoverageRatio): String {
+    val counted = "${coverage.owned} de ${coverage.issued}"
+    return if (coverage.nothingMissing) counted else "$counted · te faltan ${coverage.missing}"
+}
 
 /**
  * The identity line of one inventory row: what tells it apart, its Numista type and how many
@@ -127,7 +127,6 @@ fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."
     PlateUnavailable.NotACollection ->
         "Ya no tienes piezas de esta variante, así que esa colección no existe."
-    PlateUnavailable.NotFollowed -> "Sigue esta colección para abrir su lámina."
     PlateUnavailable.NoEvidence -> "Aún no tienes ninguna emisión oficial de este catálogo."
 }
 

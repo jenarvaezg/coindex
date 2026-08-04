@@ -1,17 +1,13 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
-import com.jenarvaezg.coindex.data.db.DerivedCollectionPreferenceEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
-import com.jenarvaezg.coindex.domain.DerivedCollectionPreference
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.TypeMeta
-import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
 import com.jenarvaezg.coindex.domain.inferMetal
@@ -97,7 +93,7 @@ internal fun compositionFromRaw(raw: String): String? = runCatching {
  *
  * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
  * carrying its whole Numista response — so parsing on each pass would put a tenth of a second
- * between tapping «Seguir» and seeing it. A cached type is never refetched, so the answer is
+ * between a sync landing and the index redrawing. A cached type is never refetched, so the answer is
  * read once; the key carries `fetchedAt` anyway, so a row that is written again is read again.
  * The empty string stands in for «no issuer», which a [ConcurrentHashMap] cannot hold as null.
  */
@@ -148,15 +144,6 @@ fun OwnGroupingEntity.toDomain(members: List<OwnGroupingMemberEntity>): OwnGroup
     name = name,
     typeIds = members.filter { it.groupingId == id }.map { it.typeId },
 )
-
-/** A stored preference whose parts are no longer canonical is ignored, not guessed at. */
-fun DerivedCollectionPreferenceEntity.toDomain(): DerivedCollectionPreference? {
-    val key = VariantKey
-        .fromCanonicalParts(family, weightMillioz, finishCode, metalCode)
-        ?: return null
-    val disposition = DerivedCollectionDisposition.fromCode(disposition) ?: return null
-    return DerivedCollectionPreference(key, disposition)
-}
 
 /** Missing quantities default to one piece; an id-less or type-less item cannot be stored. */
 fun CollectedItemDto.toEntity(raw: String, syncedAt: Long): CollectedItemEntity? {

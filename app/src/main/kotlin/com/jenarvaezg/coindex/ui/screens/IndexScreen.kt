@@ -12,34 +12,25 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionTitles
 import com.jenarvaezg.coindex.domain.DerivedCollection
-import com.jenarvaezg.coindex.domain.DerivedCollectionDisposition
+import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.BudgetStatus
-import com.jenarvaezg.coindex.ui.DerivedCollectionStance
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.DispositionActions
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.issuerEyebrow
+import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.lastSyncLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -58,12 +49,13 @@ internal fun indexColumns(availableWidth: Dp): Int {
 }
 
 /**
- * The collection index: one card per current collection, in three blocks.
+ * The collection index: one card per current collection, in **one list and one order**.
  *
- * Collections are derived from the pieces the collector owns right now. Following one
- * never invents a gap. Every title opens its card, catalog or no catalog: the plate and the
- * source moved into that screen, because a title that opens something only when a curated
- * catalog happens to exist is a title that looks broken the rest of the time.
+ * There is one species of collection (ADR 0021 §2) — a curated catalog, a curated grouping and a
+ * box the collector typed — so there is no block, no section heading and no word of provenance
+ * telling them apart. What replaced the three blocks of dispositions is a single comparator,
+ * `(has ratio ↓, ratio ↓, denominator ↓, name ↑)` (ADR 0021 §6), applied in the domain: this
+ * screen draws [CollectionState.index] in the order it arrives.
  *
  * The cards are laid out as a grid rather than a column. In portrait that is the same single
  * column it always was; held sideways, or on a tablet, the second column is free — and the
@@ -76,19 +68,13 @@ fun IndexScreen(
     loading: Boolean,
     syncing: Boolean,
     lastSync: SyncRecord?,
-    catalogs: List<CollectionCatalog>,
-    titles: CollectionTitles,
     onSync: () -> Unit,
     onOpenUnclassified: () -> Unit,
     onOpenDerivedCollection: (DerivedCollection) -> Unit,
     onOpenOwnGrouping: (groupingId: Long) -> Unit,
     onOpenPlate: (catalogId: String) -> Unit,
-    onDisposition: (DerivedCollection, DerivedCollectionDisposition?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showIgnored by remember { mutableStateOf(false) }
-    val derivedCollections = state.derivedCollections
-
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
         // same answer: one column is a page, two are a spread.
@@ -137,7 +123,7 @@ fun IndexScreen(
 
             // Reading the collection off the database takes a frame or two, and «todavía no hay
             // colecciones» in that gap is a lie about a collection that is on the device already.
-            if (derivedCollections.isEmpty && state.ownGroupings.isEmpty()) {
+            if (state.index.isEmpty()) {
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -154,83 +140,82 @@ fun IndexScreen(
                 }
             }
 
-            // The collector's own headings come first: they are the only ones nobody derived.
-            if (state.ownGroupings.isNotEmpty()) {
-                blockHeading("Tus agrupaciones")
-                items(state.ownGroupings, key = { "own-${it.id}" }) { grouping ->
-                    FieldCard(modifier = Modifier.fillMaxWidth()) {
-                        Eyebrow("Agrupación tuya")
-                        LinkText(
-                            text = grouping.name,
-                            style = MaterialTheme.typography.titleLarge,
-                            onClick = { onOpenOwnGrouping(grouping.id) },
-                        )
-                        Text(
-                            countLabel(grouping.distinctTypes, grouping.quantity),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Paper.muted,
-                            modifier = Modifier.padding(top = 4.dp),
-                        )
-                    }
-                }
+            items(state.index, key = ::cardKey) { card ->
+                CollectionCard(
+                    card = card,
+                    onOpen = {
+                        when (card) {
+                            is IndexCard.Derived -> onOpenDerivedCollection(card.collection)
+                            is IndexCard.Box -> onOpenOwnGrouping(card.box.id)
+                        }
+                    },
+                    onOpenPlate = onOpenPlate,
+                )
             }
+        }
+    }
+}
 
-            derivedCollectionBlock(
-                title = "Seguidas",
-                derivedCollections = derivedCollections.followed,
-                stance = DerivedCollectionStance.Followed,
-                state = state,
-                catalogs = catalogs,
-                titles = titles,
-                onOpenDerivedCollection = onOpenDerivedCollection,
-                onOpenPlate = onOpenPlate,
-                onDisposition = onDisposition,
-            )
-            derivedCollectionBlock(
-                title = "Disponibles",
-                derivedCollections = derivedCollections.available,
-                stance = DerivedCollectionStance.Available,
-                state = state,
-                catalogs = catalogs,
-                titles = titles,
-                onOpenDerivedCollection = onOpenDerivedCollection,
-                onOpenPlate = onOpenPlate,
-                onDisposition = onDisposition,
-            )
+/**
+ * What tells one card of the grid from another across recompositions.
+ *
+ * The identity of a card is its curated file wherever there is one (ADR 0021 §5), but a route is
+ * still what opens it, so the key here is what the destination is addressed by: the box id, or the
+ * variant key of a collection derived from the inventory.
+ */
+private fun cardKey(card: IndexCard): String = when (card) {
+    is IndexCard.Derived -> "derived-${card.key}"
+    is IndexCard.Box -> "box-${card.box.id}"
+}
 
-            if (derivedCollections.ignored.isNotEmpty()) {
-                fullWidth {
-                    // In a Row so the button keeps its own width: a grid cell measures its
-                    // content at the full column width, and a button as wide as the page reads
-                    // as a section rather than as a control.
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        CardAction(
-                            // The arrow is what says whether the list is open: without it the
-                            // same button read as «show them» in both states.
-                            text = if (showIgnored) {
-                                "▾ Ocultar las ignoradas · ${derivedCollections.ignored.size}"
-                            } else {
-                                "▸ Colecciones ignoradas · ${derivedCollections.ignored.size}"
-                            },
-                            onClick = { showIgnored = !showIgnored },
-                        )
-                    }
-                }
-                if (showIgnored) {
-                    items(derivedCollections.ignored, key = { it.key().toString() }) { collection ->
-                        DerivedCollectionCard(
-                            collection = collection,
-                            stance = DerivedCollectionStance.Ignored,
-                            title = titles.of(collection),
-                            catalog = catalogs.firstOrNull { it.key() == collection.key() },
-                            state = state,
-                            onOpenDerivedCollection = onOpenDerivedCollection,
-                            onOpenPlate = onOpenPlate,
-                            onDisposition = onDisposition,
-                        )
-                    }
-                }
-            }
+/**
+ * One collection of the index, whichever of the two it is.
+ *
+ * **One composable and not two**, because ADR 0021 §2 makes the cases indistinguishable on screen:
+ * two of them would drift apart the first time one grew a line. What varies is drawn from what the
+ * card *has* — a physical variant, a ratio, a reachable plate — never from which case it is.
+ *
+ * The eyebrow is the country, said by the file wherever a file names this collection (ADR 0021 §9).
+ * There is no word of provenance: what the card does is the only signal, and the third line is it —
+ * `4 de 12 · te faltan 8` with an issue list, `3 tipos distintos · 4 piezas` without one.
+ */
+@Composable
+private fun CollectionCard(
+    card: IndexCard,
+    onOpen: () -> Unit,
+    onOpenPlate: (catalogId: String) -> Unit,
+) {
+    val derived = card as? IndexCard.Derived
+    FieldCard(modifier = Modifier.fillMaxWidth()) {
+        card.issuer?.let { issuer -> Eyebrow(issuer) }
+        LinkText(
+            text = card.name,
+            style = MaterialTheme.typography.titleLarge,
+            onClick = onOpen,
+        )
+        // A box spans whatever the collector put in it, so it has no physical variant to state.
+        derived?.collection?.let { collection ->
+            Text(
+                variantLabel(collection.weightMillioz, collection.finish, collection.metal),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+        Text(
+            card.coverage?.let(::coverageLabel) ?: countLabel(card.distinctTypes, card.quantity),
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.muted,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+        // The plate keeps its shortcut from the card, but as an action rather than as the title.
+        // It is drawn only when it opens: the card already carries the answer resolvePlate would
+        // give, so a dead button is never drawn — and since ADR 0021 §7 curating a catalog over
+        // something the collector already owns is enough to light it.
+        derived?.plateCatalogId?.let { catalogId ->
+            CardAction(
+                text = "Ver lámina",
+                onClick = { onOpenPlate(catalogId) },
+                modifier = Modifier.padding(top = 12.dp),
+            )
         }
     }
 }
@@ -318,89 +303,4 @@ private fun IndexHeading(
 /** A row of the page rather than a card of the grid: headings and notices span every column. */
 private fun LazyGridScope.fullWidth(content: @Composable () -> Unit) {
     item(span = { GridItemSpan(maxLineSpan) }) { content() }
-}
-
-private fun LazyGridScope.blockHeading(title: String) {
-    fullWidth {
-        Column {
-            HorizontalDivider(color = Paper.line)
-            Text(
-                title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 10.dp),
-            )
-        }
-    }
-}
-
-private fun LazyGridScope.derivedCollectionBlock(
-    title: String,
-    derivedCollections: List<DerivedCollection>,
-    stance: DerivedCollectionStance,
-    state: CollectionState,
-    catalogs: List<CollectionCatalog>,
-    titles: CollectionTitles,
-    onOpenDerivedCollection: (DerivedCollection) -> Unit,
-    onOpenPlate: (String) -> Unit,
-    onDisposition: (DerivedCollection, DerivedCollectionDisposition?) -> Unit,
-) {
-    if (derivedCollections.isEmpty()) return
-    blockHeading(title)
-    items(derivedCollections, key = { "$title-${it.key()}" }) { collection ->
-        DerivedCollectionCard(
-            collection = collection,
-            stance = stance,
-            title = titles.of(collection),
-            catalog = catalogs.firstOrNull { it.key() == collection.key() },
-            state = state,
-            onOpenDerivedCollection = onOpenDerivedCollection,
-            onOpenPlate = onOpenPlate,
-            onDisposition = onDisposition,
-        )
-    }
-}
-
-@Composable
-private fun DerivedCollectionCard(
-    collection: DerivedCollection,
-    stance: DerivedCollectionStance,
-    title: String,
-    catalog: CollectionCatalog?,
-    state: CollectionState,
-    onOpenDerivedCollection: (DerivedCollection) -> Unit,
-    onOpenPlate: (String) -> Unit,
-    onDisposition: (DerivedCollection, DerivedCollectionDisposition?) -> Unit,
-) {
-    // The plate keeps its shortcut from the card, but as an action rather than as the title:
-    // the same conditions resolvePlate applies, checked here so a dead button is never drawn.
-    val plateCatalog = catalog?.takeIf {
-        stance == DerivedCollectionStance.Followed && it.id in state.evidencedCatalogIds
-    }
-    FieldCard(modifier = Modifier.fillMaxWidth()) {
-        // The issuer, where every card used to repeat «EVIDENCIA DE COLECCIÓN» — which is what
-        // the section heading right above it already says.
-        issuerEyebrow(state.itemsByKey[collection.key()].orEmpty(), state.typeMeta)?.let { issuer ->
-            Eyebrow(issuer)
-        }
-        LinkText(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            onClick = { onOpenDerivedCollection(collection) },
-        )
-        Text(
-            variantLabel(collection.weightMillioz, collection.finish, collection.metal),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            countLabel(collection.distinctTypes, collection.quantity),
-            style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-        DispositionActions(
-            stance = stance,
-            onDisposition = { disposition -> onDisposition(collection, disposition) },
-            onOpenPlate = plateCatalog?.let { curated -> { onOpenPlate(curated.id) } },
-        )
-    }
 }

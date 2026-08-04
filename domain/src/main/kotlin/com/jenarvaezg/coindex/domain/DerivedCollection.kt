@@ -7,9 +7,12 @@ package com.jenarvaezg.coindex.domain
 const val SPANNING_VARIANTS_WEIGHT: Int = -1
 
 /**
- * The exact canonical tuple that identifies a physical variant. Derived collections, per-user
- * dispositions and curated catalogs all key off this. Editorial family aliases never alter
- * it.
+ * The exact canonical tuple that identifies a physical variant. Derived collections and curated
+ * catalogs both key off this, and it groups the pieces of either.
+ *
+ * It **persists nothing**: since ADR 0021 §5 nothing is stored per card, and identity is the
+ * curated file wherever there is one, so this key is the identity only of the cards no file names —
+ * and of the route that opens one.
  *
  * A null [weightMillioz] means the family is a set issued as a set, whose members span
  * physical variants, so no single weight identifies it (ADR 0012).
@@ -32,9 +35,9 @@ data class VariantKey(
 
     companion object {
         /**
-         * Rebuilds a key from persisted parts, rejecting anything that is not already
-         * canonical: an unnormalized family, an out-of-range weight or an unknown finish
-         * or metal code. Used when reading back a stored disposition.
+         * Rebuilds a key from its parts, rejecting anything that is not already canonical: an
+         * unnormalized family, an out-of-range weight or an unknown finish or metal code. Used when
+         * reading back the route of a card no file names.
          */
         fun fromCanonicalParts(
             family: String,
@@ -74,59 +77,4 @@ data class DerivedCollection(
     val quantity: Int,
 ) {
     fun key(): VariantKey = VariantKey(family, weightMillioz, finish, metal)
-}
-
-/** The collector's durable intent about one variant key (ADR 0008). */
-enum class DerivedCollectionDisposition {
-    Followed,
-    Ignored,
-    ;
-
-    fun asCode(): String = when (this) {
-        Followed -> "followed"
-        Ignored -> "ignored"
-    }
-
-    companion object {
-        fun fromCode(code: String): DerivedCollectionDisposition? = when (code) {
-            "followed" -> Followed
-            "ignored" -> Ignored
-            else -> null
-        }
-    }
-}
-
-data class DerivedCollectionPreference(
-    val key: VariantKey,
-    val disposition: DerivedCollectionDisposition,
-)
-
-data class ClassifiedDerivedCollections(
-    val followed: List<DerivedCollection> = emptyList(),
-    val available: List<DerivedCollection> = emptyList(),
-    val ignored: List<DerivedCollection> = emptyList(),
-) {
-    val isEmpty: Boolean get() = followed.isEmpty() && available.isEmpty() && ignored.isEmpty()
-}
-
-/**
- * Splits current derived collections by the collector's stored dispositions. A preference with no
- * current evidence stays dormant: it never materializes a derived collection.
- */
-fun classifyDerivedCollections(
-    derivedCollections: List<DerivedCollection>,
-    preferences: List<DerivedCollectionPreference>,
-): ClassifiedDerivedCollections {
-    val byKey = preferences.associate { preference -> preference.key to preference.disposition }
-    val followed = mutableListOf<DerivedCollection>()
-    val available = mutableListOf<DerivedCollection>()
-    val ignored = mutableListOf<DerivedCollection>()
-    for (collection in derivedCollections) {
-        when (byKey[collection.key()]) {
-            DerivedCollectionDisposition.Followed -> followed += collection
-            DerivedCollectionDisposition.Ignored -> ignored += collection
-            null -> available += collection
-        }
-    }
-    return ClassifiedDerivedCollections(followed, available, ignored)
 }
