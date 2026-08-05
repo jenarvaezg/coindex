@@ -12,10 +12,11 @@ import kotlin.test.assertEquals
  * a country selected would be the failure the persisted search text was rejected for.
  */
 class ShelfLabelsTest {
+    /** Both sides carry a sort (ADR 0021 §1), so both resting lines say the same thing. */
     @Test
     fun `an untouched shelf says what it is, not that nothing is on`() {
         assertEquals("Filtros y orden", indexShelfSummary(IndexShelf()))
-        assertEquals("Filtros", coinsShelfSummary(CoinsShelf()))
+        assertEquals("Filtros y orden", coinsShelfSummary(CoinsShelf()))
     }
 
     @Test
@@ -26,6 +27,21 @@ class ShelfLabelsTest {
             indexShelfSummary(IndexShelf(issuer = "Venezuela", series = SeriesStatus.Closed)),
         )
         assertEquals("1 filtro", coinsShelfSummary(CoinsShelf(membership = Membership.InNone)))
+    }
+
+    @Test
+    fun `the sort of Coins is named on the same terms`() {
+        assertEquals(
+            "orden más pesadas",
+            coinsShelfSummary(CoinsShelf(sort = CoinSort.Heaviest)),
+        )
+        assertEquals(
+            "1 filtro · orden alfabético",
+            coinsShelfSummary(
+                CoinsShelf(sort = CoinSort.Alphabetical, membership = Membership.InNone),
+            ),
+        )
+        assertEquals("Filtros y orden", coinsShelfSummary(CoinsShelf(sort = CoinSort.ByCountry)))
     }
 
     @Test

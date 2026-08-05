@@ -53,11 +53,16 @@ class ShelfCodecTest {
     fun `an empty shelf stores nothing but the sort, and reads back empty`() {
         assertEquals(IndexShelf(), roundTrip(IndexShelf()))
         assertEquals(CoinsShelf(), roundTrip(CoinsShelf()))
+        // The sort is written as the default rather than as an absence, so «chosen on purpose» and
+        // «never chosen» read back the same — which they are. Nothing else is stored.
         assertEquals(
             listOf(ShelfCodec.INDEX_SORT),
             ShelfCodec.encode(IndexShelf()).filterValues { it != null }.keys.toList(),
         )
-        assertEquals(emptyMap(), ShelfCodec.encode(CoinsShelf()).filterValues { it != null })
+        assertEquals(
+            listOf(ShelfCodec.COINS_SORT),
+            ShelfCodec.encode(CoinsShelf()).filterValues { it != null }.keys.toList(),
+        )
     }
 
     @Test
@@ -86,14 +91,6 @@ class ShelfCodecTest {
         assertEquals(
             CoinsShelf(),
             ShelfCodec.decodeCoins { key -> if (key == ShelfCodec.COINS_ISSUER) "  " else null },
-        )
-    }
-
-    @Test
-    fun `every key the two shelves own is listed, so a store can clear them`() {
-        assertEquals(
-            (ShelfCodec.encode(IndexShelf()).keys + ShelfCodec.encode(CoinsShelf()).keys).toSet(),
-            ShelfCodec.keys.toSet(),
         )
     }
 }

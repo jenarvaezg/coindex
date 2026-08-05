@@ -30,7 +30,9 @@ class ShelfStore(context: Context) {
         prefs.edit().apply {
             // A null is a removal and not an empty string: a blank country would read back as a
             // filter for a country nobody is called.
-            values.forEach { (key, value) -> if (value == null) remove(key) else putString(key, value) }
+            values.forEach { (key, value) ->
+                if (value == null) remove(key) else putString(key, value)
+            }
         }.apply()
     }
 }

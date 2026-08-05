@@ -105,7 +105,7 @@ fun SelectionControls(
     shown: List<Int>,
     seeded: Boolean,
     onCreate: (name: String, typeIds: List<Int>) -> Unit,
-    onAddTo: (groupingId: Long, typeIds: List<Int>) -> Unit,
+    onAddTo: (boxId: Long, typeIds: List<Int>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var naming by remember { mutableStateOf(false) }
@@ -153,7 +153,7 @@ fun SelectionControls(
             naming = false
             selection.cancel()
         }
-        GroupingDialog(
+        BoxDialog(
             count = selection.count,
             existing = existing,
             taken = taken,
@@ -182,7 +182,7 @@ fun SelectionControls(
  * collector wanting to add is looking at the coins they want to add (ADR 0021 §11).
  */
 @Composable
-fun GroupingDialog(
+fun BoxDialog(
     count: Int,
     existing: List<OwnGroupingView>,
     taken: Collection<String>,
@@ -231,7 +231,7 @@ fun GroupingDialog(
                 PrimaryAction(
                     text = "Crear",
                     onClick = { onCreate(name.stored) },
-                    enabled = name.canCreate,
+                    enabled = name.canSave,
                 )
                 CardAction(text = "Cancelar", onClick = onDismiss)
             }

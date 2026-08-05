@@ -12,13 +12,13 @@ const val BOX_NAME_LIMIT: Int = 40
  * short one to fail to be a prefix of.
  */
 data class BoxName(
-    /** What would be stored, trimmed. Only ever passed on when [canCreate]. */
+    /** What would be stored, trimmed. Only ever passed on when [canSave]. */
     val stored: String,
     /** «13/40 · tiene que caber en una tarjeta»: the limit said as a fact, not as a warning. */
     val counter: String,
     /** What is wrong, in the collector's words, or null while there is nothing to say. */
     val problem: String?,
-    val canCreate: Boolean,
+    val canSave: Boolean,
 )
 
 /**
@@ -53,6 +53,6 @@ fun boxName(typed: String, taken: Collection<String>): BoxName {
         stored = trimmed,
         counter = "${trimmed.length}/$BOX_NAME_LIMIT · tiene que caber en una tarjeta",
         problem = problem,
-        canCreate = trimmed.isNotEmpty() && problem == null,
+        canSave = trimmed.isNotEmpty() && problem == null,
     )
 }

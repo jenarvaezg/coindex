@@ -66,6 +66,9 @@ internal object ShelfFixtures {
         item(id = 2, typeId = FUERTE, quantity = 1),
         item(id = 5, typeId = ONZA_MEXICANA, quantity = 1),
         item(id = 9, typeId = BRITANNIA, quantity = 1),
+        // The sibling row an issue-qualified catalog does not claim (ADR 0019): the shape of the
+        // father's American Silver Eagle N#298883, whose 2026 issue no member names.
+        item(id = 10, typeId = BRITANNIA, quantity = 1),
         item(id = 12, typeId = UNCACHED, quantity = 1),
     )
 
@@ -123,7 +126,9 @@ internal object ShelfFixtures {
         typeMeta = typeMeta,
         itemsByKey = mapOf(
             fuertesKey to items.filter { it.typeId == FUERTE },
-            britanniaKey to items.filter { it.typeId == BRITANNIA },
+            // Only row 9. Row 10 is the same type and produced no collection, which is exactly what
+            // `deriveCollection` does with an issue no member claims.
+            britanniaKey to items.filter { it.id == 9L },
         ),
         ownGroupings = listOf(box.box),
     )

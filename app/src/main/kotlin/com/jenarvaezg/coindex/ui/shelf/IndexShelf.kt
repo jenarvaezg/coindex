@@ -169,8 +169,4 @@ data class IndexFacetCounts(
     val startsIn: FacetCounts<StartBand>,
     val status: FacetCounts<PlateStatus>,
     val series: FacetCounts<SeriesStatus>,
-) {
-    /** The countries worth a chip, the fullest first. None is dropped — see `CoinsFacetCounts`. */
-    fun issuers(): List<Pair<String, Int>> = issuer.populated()
-        .sortedWith(compareByDescending<Pair<String, Int>> { it.second }.thenBy { it.first })
-}
+)

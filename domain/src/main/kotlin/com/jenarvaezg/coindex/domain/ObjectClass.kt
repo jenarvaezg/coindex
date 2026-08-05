@@ -4,8 +4,9 @@ package com.jenarvaezg.coindex.domain
  * What a struck thing is, coarsely: a coin, or something struck that is filed beside coins.
  *
  * This is Numista's own `category`, and it is deliberately **not** the five-class net of
- * [objectClassDeviations]. That one reads `type` — «Medallas», «Monedas de ensayo» — to warn a curator
- * that a member of a catalog may not be money at all, and it is silenced member by member in prose.
+ * [objectClassDeviations]. That one reads `type` — «Medallas», «Monedas de ensayo» — to warn a
+ * curator that a member of a catalog may not be money at all, and it is silenced one member at a
+ * time in prose.
  * This is the collector's question instead, and it is answered with a chip: 13 of the 829 seeded types
  * are exonumia, and **four of them live inside curated catalogs** — the two Mexican Onzas and two
  * Niue members — which is exactly why ADR 0021 §1 made medals a **filter and not a section**. A

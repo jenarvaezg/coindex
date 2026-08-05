@@ -24,17 +24,12 @@ object ShelfCodec {
     const val INDEX_STATUS = "index_status"
     const val INDEX_SERIES = "index_series"
 
+    const val COINS_SORT = "coins_sort"
     const val COINS_ISSUER = "coins_issuer"
     const val COINS_WEIGHT = "coins_weight"
     const val COINS_YEAR = "coins_year"
     const val COINS_CLASS = "coins_class"
     const val COINS_MEMBERSHIP = "coins_membership"
-
-    /** Every key the two shelves own, so a store can clear them without listing them again. */
-    val keys: List<String> = listOf(
-        INDEX_SORT, INDEX_ISSUER, INDEX_WEIGHT, INDEX_STARTS_IN, INDEX_STATUS, INDEX_SERIES,
-        COINS_ISSUER, COINS_WEIGHT, COINS_YEAR, COINS_CLASS, COINS_MEMBERSHIP,
-    )
 
     fun encode(shelf: IndexShelf): Map<String, String?> = mapOf(
         // The default is written as the default and not as an absence, so «Más completas» chosen
@@ -48,6 +43,7 @@ object ShelfCodec {
     )
 
     fun encode(shelf: CoinsShelf): Map<String, String?> = mapOf(
+        COINS_SORT to shelf.sort.name,
         COINS_ISSUER to shelf.issuer,
         COINS_WEIGHT to shelf.weight?.name,
         COINS_YEAR to shelf.year?.name,
@@ -65,6 +61,7 @@ object ShelfCodec {
     )
 
     fun decodeCoins(read: (String) -> String?): CoinsShelf = CoinsShelf(
+        sort = named<CoinSort>(read(COINS_SORT)) ?: CoinSort.ByCountry,
         issuer = read(COINS_ISSUER)?.takeIf(String::isNotBlank),
         weight = named<GramBand>(read(COINS_WEIGHT)),
         year = named<YearBand>(read(COINS_YEAR)),

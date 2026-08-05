@@ -245,7 +245,7 @@ private fun RenameCard(current: String, onRename: (String) -> Unit) {
         PrimaryAction(
             text = "Guardar el nombre",
             onClick = { onRename(name.stored) },
-            enabled = name.canCreate,
+            enabled = name.canSave,
             modifier = Modifier.padding(top = 12.dp),
         )
     }

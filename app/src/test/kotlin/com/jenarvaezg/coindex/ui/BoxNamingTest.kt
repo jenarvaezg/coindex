@@ -25,11 +25,11 @@ class BoxNamingTest {
     fun `an empty field cannot create, and says nothing about it`() {
         val name = boxName("", taken)
 
-        assertFalse(name.canCreate)
+        assertFalse(name.canSave)
         assertNull(name.problem)
         assertEquals("0/40 · tiene que caber en una tarjeta", name.counter)
         // Whitespace is not a name either, and it is still not a complaint.
-        assertFalse(boxName("   ", taken).canCreate)
+        assertFalse(boxName("   ", taken).canSave)
         assertNull(boxName("   ", taken).problem)
     }
 
@@ -37,7 +37,7 @@ class BoxNamingTest {
     fun `a name that is taken says which one, and cannot create`() {
         val name = boxName("French regions", taken)
 
-        assertFalse(name.canCreate)
+        assertFalse(name.canSave)
         assertEquals(
             "Ya hay una colección que se llama «French regions». Ponle otro nombre.",
             name.problem,
@@ -46,16 +46,16 @@ class BoxNamingTest {
 
     @Test
     fun `it is taken whether the clash is a curated file or another box`() {
-        assertFalse(boxName("Bolívar de Venezuela", taken).canCreate)
-        assertFalse(boxName("Las que cambié", taken).canCreate)
+        assertFalse(boxName("Bolívar de Venezuela", taken).canSave)
+        assertFalse(boxName("Las que cambié", taken).canSave)
     }
 
     @Test
     fun `accents and case are not a distinction`() {
         // The same shelf in anybody's head, and two cards a letter apart would be a filing mistake.
-        assertFalse(boxName("french REGIONS", taken).canCreate)
-        assertFalse(boxName("bolivar de venezuela", taken).canCreate)
-        assertFalse(boxName("Las que cambie", taken).canCreate)
+        assertFalse(boxName("french REGIONS", taken).canSave)
+        assertFalse(boxName("bolivar de venezuela", taken).canSave)
+        assertFalse(boxName("Las que cambie", taken).canSave)
         // And the clash names the existing one as it is actually written.
         assertEquals(
             "Ya hay una colección que se llama «Bolívar de Venezuela». Ponle otro nombre.",
@@ -69,20 +69,20 @@ class BoxNamingTest {
 
         val name = boxName(fortyOne, taken)
 
-        assertFalse(name.canCreate)
+        assertFalse(name.canSave)
         assertEquals(
             "Son 41 caracteres y el límite son 40: tiene que caber en una tarjeta.",
             name.problem,
         )
         // Exactly at the limit is fine: the measured files run from 6 to 37 characters.
-        assertTrue(boxName("a".repeat(BOX_NAME_LIMIT), taken).canCreate)
+        assertTrue(boxName("a".repeat(BOX_NAME_LIMIT), taken).canSave)
     }
 
     @Test
     fun `a good name creates, and what is stored is the trimmed text`() {
         val name = boxName("  Las francesas  ", taken)
 
-        assertTrue(name.canCreate)
+        assertTrue(name.canSave)
         assertNull(name.problem)
         assertEquals("Las francesas", name.stored)
         // The counter counts what would be stored, so trailing spaces do not inflate it.

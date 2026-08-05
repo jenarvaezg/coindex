@@ -62,6 +62,7 @@ import com.jenarvaezg.coindex.ui.shelf.indexFacetCounts
 import com.jenarvaezg.coindex.ui.shelf.indexFacts
 import com.jenarvaezg.coindex.ui.shelf.indexShelfSummary
 import com.jenarvaezg.coindex.ui.shelf.indexTally
+import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -508,7 +509,7 @@ private fun IndexFacets(
             selected = shelf.issuer == null,
             onClick = { onNarrow(shelf.copy(issuer = null)) },
         )
-        counts.issuers().forEach { (issuer, count) ->
+        counts.issuer.issuers().forEach { (issuer, count) ->
             FilterChip(
                 label = issuer,
                 count = count,

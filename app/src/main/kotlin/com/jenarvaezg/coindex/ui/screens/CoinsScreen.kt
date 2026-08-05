@@ -36,7 +36,9 @@ import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.objectClassLabel
+import com.jenarvaezg.coindex.ui.plural
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
+import com.jenarvaezg.coindex.ui.shelf.CoinSort
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.GramBand
 import com.jenarvaezg.coindex.ui.shelf.Membership
@@ -45,6 +47,7 @@ import com.jenarvaezg.coindex.ui.shelf.coinRows
 import com.jenarvaezg.coindex.ui.shelf.coinsFacetCounts
 import com.jenarvaezg.coindex.ui.shelf.coinsShelfSummary
 import com.jenarvaezg.coindex.ui.shelf.coinsTally
+import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -70,8 +73,8 @@ fun CoinsScreen(
     curatedNames: Set<String>,
     onNarrow: (CoinsShelf) -> Unit,
     onOpen: (CardDestination) -> Unit,
-    onCreateGrouping: (name: String, typeIds: List<Int>) -> Unit,
-    onAddToGrouping: (groupingId: Long, typeIds: List<Int>) -> Unit,
+    onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
+    onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Recomputed only when the collection changes: 192 rows joined against the type cache is work
@@ -119,8 +122,8 @@ fun CoinsScreen(
                         taken = taken,
                         shown = shown.map { it.typeId },
                         seeded = seeded,
-                        onCreate = onCreateGrouping,
-                        onAddTo = onAddToGrouping,
+                        onCreate = onCreateBox,
+                        onAddTo = onAddToBox,
                     )
                 }
             }
@@ -162,6 +165,16 @@ private fun CoinsFacets(
 ) {
     val counts = coinsFacetCounts(rows, shelf, query)
 
+    Facet("Orden") {
+        CoinSort.entries.forEach { sort ->
+            FilterChip(
+                label = sort.label,
+                count = null,
+                selected = shelf.sort == sort,
+                onClick = { onNarrow(shelf.copy(sort = sort)) },
+            )
+        }
+    }
     Facet("País") {
         FilterChip(
             label = "Todos",
@@ -169,7 +182,7 @@ private fun CoinsFacets(
             selected = shelf.issuer == null,
             onClick = { onNarrow(shelf.copy(issuer = null)) },
         )
-        counts.issuers().forEach { (issuer, count) ->
+        counts.issuer.issuers().forEach { (issuer, count) ->
             FilterChip(
                 label = issuer,
                 count = count,
@@ -247,11 +260,11 @@ private fun CoinsFacets(
 }
 
 /**
- * One coin: what it is, and every collection that claims it.
+ * One coin: what it is, how many of it are loose, and every collection that claims it.
  *
  * The links are a list because a type may be claimed by more than one collection (§10) — a curated
  * grouping and a box can both name it, and the commemorative programmes of ADR 0022 are what make
- * that ordinary. No photographs: this list is 191 rows long on the father's phone, and two pictures a
+ * that ordinary. No photographs: this list is 192 rows long on the father's phone, and two pictures a
  * row is the whole type cache on screen at once.
  */
 @Composable
@@ -280,7 +293,18 @@ private fun CoinCard(
                 color = Paper.rust,
                 modifier = Modifier.padding(top = 6.dp),
             )
-        } else {
+        } else if (row.unclaimedPieces > 0) {
+            // In a collection *and* holding a loose piece: an issue-qualified catalog claimed one
+            // row of this type and not its sibling (ADR 0019). Saying *which* is what the «Sin
+            // colección» chip is for; saying *why* is the field report's (ADR 0021 §12).
+            Text(
+                "${plural(row.unclaimedPieces, "pieza", "piezas")} sin colección",
+                style = MaterialTheme.typography.labelLarge,
+                color = Paper.rust,
+                modifier = Modifier.padding(top = 6.dp),
+            )
+        }
+        if (row.claims.isNotEmpty()) {
             Text(
                 if (row.claims.size == 1) "En esta colección" else "En estas colecciones",
                 style = MaterialTheme.typography.labelLarge,
