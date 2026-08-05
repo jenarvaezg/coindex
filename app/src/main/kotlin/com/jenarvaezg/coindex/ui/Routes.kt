@@ -12,7 +12,14 @@ object Routes {
     private const val DERIVED_COLLECTION_PATH = "derived-collection"
 
     const val INDEX = "index"
-    const val UNCLASSIFIED = "unclassified"
+
+    /**
+     * The other hierarchy of the top level (ADR 0021 §1), not a view inside a collection.
+     *
+     * It replaces `unclassified`, which was a screen for the pieces no collection claimed: those
+     * pieces are now the «Sin colección» chip of this one, reached from where they already live.
+     */
+    const val COINS = "coins"
     const val SETTINGS = "settings"
     const val PLATE = "plate/{catalogId}"
     const val DERIVED_COLLECTION =
@@ -39,6 +46,14 @@ object Routes {
     fun isDerivedCollection(route: String?): Boolean = route == DERIVED_COLLECTION
 
     fun isOwnGrouping(route: String?): Boolean = route == OWN_GROUPING
+
+    /**
+     * The two destinations of the bottom bar, which are the two hierarchies and nothing else.
+     *
+     * Everything else in the app is reached *through* one of them, so this is also the answer to
+     * «does the masthead offer Ajustes or «Volver»?»: a root has nothing underneath to pop.
+     */
+    fun isRoot(route: String?): Boolean = route == INDEX || route == COINS
 
     /**
      * The two routes that open `PiecesScreen`.

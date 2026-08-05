@@ -107,6 +107,22 @@ internal fun sizeFromRaw(raw: String): Double? = runCatching {
 }.getOrNull()
 
 /**
+ * Numista's `category` — `coin` or `exonumia` — read from the stored response for the fourth time on
+ * the same bargain.
+ *
+ * It covers 100 % of the seeded cache, so the class chip of Coins (ADR 0021 §1) works on every type
+ * already on the phone without a migration or an API call. The prose is what is read, not the split:
+ * `objectClassOf` is a rule, and a rule stored as a column could never be improved.
+ */
+internal fun categoryFromRaw(raw: String): String? = runCatching {
+    lenientJson.parseToJsonElement(raw)
+        .jsonObject["category"]
+        ?.jsonPrimitive
+        ?.contentOrNull
+        ?.takeIf(String::isNotBlank)
+}.getOrNull()
+
+/**
  * Issuer names already read, kept for as long as the process lives.
  *
  * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
@@ -122,6 +138,9 @@ private val compositions = ConcurrentHashMap<Pair<Int, Long>, String>()
 
 /** Diameters already read, on the same terms. A map cannot hold null, so [NO_SIZE] stands in. */
 private val sizes = ConcurrentHashMap<Pair<Int, Long>, Double>()
+
+/** Categories already read, on the same terms as [issuerNames]. */
+private val categories = ConcurrentHashMap<Pair<Int, Long>, String>()
 
 /** «Nobody recorded a diameter», as a value a [ConcurrentHashMap] can hold. */
 private const val NO_SIZE = -1.0
@@ -152,6 +171,9 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     sizeMillimetres = sizes
         .getOrPut(typeId to fetchedAt) { sizeFromRaw(raw) ?: NO_SIZE }
         .takeIf { it > 0.0 },
+    category = categories
+        .getOrPut(typeId to fetchedAt) { categoryFromRaw(raw).orEmpty() }
+        .ifEmpty { null },
 )
 
 /**

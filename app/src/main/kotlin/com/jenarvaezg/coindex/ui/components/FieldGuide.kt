@@ -46,6 +46,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -83,11 +84,14 @@ fun LinkText(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = Paper.moss,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         text = text,
         style = style.copy(textDecoration = TextDecoration.Underline),
         color = color,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = 6.dp),

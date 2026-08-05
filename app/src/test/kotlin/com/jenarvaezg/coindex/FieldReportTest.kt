@@ -26,10 +26,10 @@ import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
+import com.jenarvaezg.coindex.domain.UnclassifiedReason
 import com.jenarvaezg.coindex.domain.deriveCollection
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printPages
-import com.jenarvaezg.coindex.ui.unclassifiedReasonLabel
 import java.io.File
 import kotlin.test.Test
 import kotlinx.serialization.Serializable
@@ -274,12 +274,34 @@ class FieldReportTest {
                     "(${item.issuerCode ?: "?"}, ${item.recordedYear ?: "sin fecha"}) " +
                     "x${orphan.quantity}$rows",
             )
-            appendLine("    ${unclassifiedReasonLabel(orphan.reason)}")
+            appendLine("    ${reasonLine(orphan.reason)}")
             appendLine(
                 "    familia Numista: ${meta?.family ?: "ninguna"} · " +
                     "peso: ${meta?.weightOz ?: "ninguno"} oz",
             )
         }
+    }
+
+    /**
+     * Why a piece produced no collection — and this is now the **only** place it is said.
+     *
+     * ADR 0021 §12 took the four reasons out of the app: «nothing is discarded silently» became
+     * «nothing is discarded» once a coin had a hierarchy of its own, so the «Sin colección» chip of
+     * Coins answers *which* and the *why* migrated here, which is where the curator already looks.
+     * The wording came from `unclassifiedReasonLabel`, which had no reader left on screen.
+     */
+    private fun reasonLine(reason: UnclassifiedReason): String = when (reason) {
+        UnclassifiedReason.MissingTypeMetadata ->
+            "Ficha del tipo sin descargar: se completará en el próximo sincronizado."
+        UnclassifiedReason.NoFamilyOrCatalog ->
+            "Sin familia en Numista y sin catálogo curado que la referencie: candidata a catálogo."
+        UnclassifiedReason.IssueNotClaimedByCatalog ->
+            "Sin una emisión de Numista incluida en los catálogos curados de este tipo."
+        UnclassifiedReason.UnpublishedType ->
+            "Ficha aún sin publicar en Numista: hasta que un revisor la valide, sus datos no " +
+                "forman colección."
+        is UnclassifiedReason.UnknownWeight ->
+            "«${reason.family}» sin peso en Numista: no se puede identificar la variante física."
     }
 
     /**

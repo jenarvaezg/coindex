@@ -3,20 +3,20 @@ package com.jenarvaezg.coindex.ui
 /**
  * What the masthead says you are looking at.
  *
- * The root keeps the notebook's own strapline, because on the index the screen and the app are
- * the same thing; every other screen names itself, so a plate opened three taps deep still says
- * which plate it is.
+ * **Both roots keep the notebook's own strapline** (ADR 0021 §1): Collections and Coins are two
+ * hierarchies of one notebook, the bottom bar already says which one you are in, and the heading
+ * below names it in full. Every other screen names itself, so a plate opened three taps deep still
+ * says which plate it is.
  */
 private const val STRAPLINE = "Inventario de campo · plata bullion"
 
 fun screenTitle(route: String?, subjectName: String? = null): String = when {
-    route == Routes.UNCLASSIFIED -> "Sin clasificar"
     route == Routes.SETTINGS -> "Ajustes"
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
     // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
     // «Tu agrupación» was the last place in the app that ranked a box below the rest.
     Routes.isPieces(route) -> subjectName?.let { "Colección · $it" } ?: "Colección"
-    // The index, and anything unrecognised: never a blank masthead.
+    // The two roots, and anything unrecognised: never a blank masthead.
     else -> STRAPLINE
 }
 

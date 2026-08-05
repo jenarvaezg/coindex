@@ -5,7 +5,8 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.Metal
-import com.jenarvaezg.coindex.domain.UnclassifiedReason
+import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.domain.SeriesStatus
 
 /**
  * `1000` reads as "1 oz", `250` as "0,25 oz", `804` as "0,804 oz". An absent weight is a set
@@ -37,6 +38,17 @@ fun finishLabel(finish: Finish?): String = when (finish) {
  */
 fun standaloneFinishLabel(finish: Finish?): String =
     if (finish == null) "Acabado sin confirmar" else finishLabel(finish)
+
+/**
+ * Whether a catalog's series is still being issued, as the two chips of the index's shelf.
+ *
+ * Only ever a filter (ADR 0021 §3): the card itself says what it does and never a word about its
+ * curation, and «abierta» on sixty cards would be curator's vocabulary printed sixty times.
+ */
+fun seriesLabel(status: SeriesStatus): String = when (status) {
+    SeriesStatus.Open -> "Abierta"
+    SeriesStatus.Closed -> "Cerrada"
+}
 
 /** The metal as a specification value. Null is unread prose, not an alloy without a name. */
 fun metalLabel(metal: Metal?): String = when (metal) {
@@ -130,19 +142,27 @@ fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.NoEvidence -> "Aún no tienes ninguna emisión oficial de este catálogo."
 }
 
-/** Nothing is discarded in silence: every ungrouped piece says why. */
-fun unclassifiedReasonLabel(reason: UnclassifiedReason): String = when (reason) {
-    UnclassifiedReason.MissingTypeMetadata ->
-        "Ficha del tipo sin descargar: se completará en el próximo sincronizado."
-    UnclassifiedReason.NoFamilyOrCatalog ->
-        "Sin familia en Numista y sin catálogo curado que la referencie: candidata a catálogo."
-    UnclassifiedReason.IssueNotClaimedByCatalog ->
-        "Sin una emisión de Numista incluida en los catálogos curados de este tipo."
-    UnclassifiedReason.UnpublishedType ->
-        "Ficha aún sin publicar en Numista: hasta que un revisor la valide, sus datos no forman " +
-            "colección."
-    is UnclassifiedReason.UnknownWeight ->
-        "«${reason.family}» sin peso en Numista: no se puede identificar la variante física."
+/**
+ * What a coin of Coins is, said only when it is not a coin.
+ *
+ * Exonumia is 13 of the 829 seeded types, so printing «Moneda» on the other 816 rows would add a word
+ * to almost every one of them to distinguish nothing — the same reasoning that keeps «plata» off
+ * [variantLabel]. What earns a line is the medal, because a struck thing filed beside coins is exactly
+ * what a collector wants to know before reading the rest of the row (ADR 0021 §1).
+ *
+ * There is **no reason line** here and nowhere else in the app: ADR 0021 §12 moved the four reasons a
+ * piece produced no collection out to the field report, where the curator already looks. «Nothing is
+ * discarded silently» became «nothing is discarded» the moment a coin got a hierarchy of its own.
+ */
+fun objectClassLabel(objectClass: ObjectClass): String? = when (objectClass) {
+    ObjectClass.Coin -> null
+    ObjectClass.Exonumia -> "Medalla o ficha"
+}
+
+/** The same split as the two chips of the class facet, where both sides have to be named. */
+fun objectClassChip(objectClass: ObjectClass): String = when (objectClass) {
+    ObjectClass.Coin -> "Monedas"
+    ObjectClass.Exonumia -> "Medallas y fichas"
 }
 
 fun numistaTypeUrl(typeId: Int): String = "https://en.numista.com/catalogue/pieces$typeId.html"

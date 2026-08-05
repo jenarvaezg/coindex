@@ -272,8 +272,13 @@ private fun MutableMap<UnclassifiedGroupKey, UnclassifiedAccumulator>.record(
     accumulator.rowCount += 1
 }
 
-/** Quantities come from a third-party catalog; a hostile total must not wrap around. */
-internal fun saturatingAdd(left: Int, right: Int): Int {
+/**
+ * Quantities come from a third-party catalog; a hostile total must not wrap around.
+ *
+ * Public because every list that adds up pieces has to add them up the same way: a derived
+ * collection, a box, and the rows of Coins (ADR 0021 §1) all sum quantities Numista supplied.
+ */
+fun saturatingAdd(left: Int, right: Int): Int {
     val total = left.toLong() + right.toLong()
     return if (total > Int.MAX_VALUE) Int.MAX_VALUE else total.toInt()
 }

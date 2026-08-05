@@ -2,7 +2,9 @@ package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.objectClassDeviations
+import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.thingsThatAreNotMoney
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,9 +36,38 @@ class CatalogObjectClassTest {
             id.toInt() to ficha.jsonObject["type"]?.jsonPrimitive?.contentOrNull
         }
 
+    /** La categoría gruesa de Numista, que es la que lee la chip de clase de Monedas (ADR 0021 §1). */
+    private val categories: Map<Int, String?> =
+        json.parseToJsonElement(TypeCacheFile.read()).jsonObject.entries.associate { (id, ficha) ->
+            id.toInt() to ficha.jsonObject["category"]?.jsonPrimitive?.contentOrNull
+        }
+
     @Test
     fun `no shipped member is a struck thing that is not money`() {
         assertEquals(emptyList(), objectClassDeviations(catalogs, objectClasses))
+    }
+
+    /**
+     * Por qué las medallas son **filtro y no sección** (ADR 0021 §1).
+     *
+     * Cuatro de las 13 exonumia de la caché sembrada son miembros de catálogos curados: las dos onzas
+     * mexicanas y dos casillas de Niue. Una sección «Medallas» tendría que arrancarlas de su lámina,
+     * y este test es la razón medida de que no exista: siguen siendo miembros de pleno derecho, y lo
+     * único que la clase hace con ellas es dejar que el coleccionista las encuentre.
+     *
+     * Rojo aquí no significa «saca la casilla». Significa que el reparto cambió y hay que releer §1.
+     */
+    @Test
+    fun `four curated members are exonumia, which is why the class is a chip and not a section`() {
+        val curatedTypeIds = catalogs
+            .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } }
+            .toSet()
+        val exonumia = categories
+            .filterValues { objectClassOf(it) == ObjectClass.Exonumia }
+            .keys
+
+        assertEquals(13, exonumia.size)
+        assertEquals(setOf(13_333, 13_398, 477_907, 485_082), exonumia intersect curatedTypeIds)
     }
 
     /**

@@ -14,6 +14,8 @@ import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
+import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printPages
 import kotlinx.coroutines.delay
@@ -49,6 +51,14 @@ data class UiState(
     val update: UpdateStatus = UpdateStatus.UpToDate,
     val updating: Boolean = false,
     val versionName: String = "",
+    /**
+     * What the collector is looking through, on each of the two hierarchies (ADR 0021 §1).
+     *
+     * In the state and not in the screens because it survives a launch, which is exactly what tells
+     * it apart from the search text: that one lives in the screen it belongs to and is gone with it.
+     */
+    val indexShelf: IndexShelf = IndexShelf(),
+    val coinsShelf: CoinsShelf = CoinsShelf(),
 )
 
 class CoindexViewModel(private val container: AppContainer) : ViewModel() {
@@ -75,6 +85,8 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
             it.copy(
                 versionName = container.installedVersionName(),
                 lastSync = container.syncLog.last,
+                indexShelf = container.shelves.index,
+                coinsShelf = container.shelves.coins,
             )
         }
         start()
@@ -177,6 +189,23 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     /** Drops a stale form error so a screen is never entered with the last visit's complaint. */
     fun clearValidation() {
         _state.update { it.copy(validation = null) }
+    }
+
+    /**
+     * Narrows one of the two hierarchies, and remembers it (ADR 0021 §1).
+     *
+     * Written through on every chip rather than saved on the way out: there is no «way out» of a
+     * root destination — the bottom bar crosses to the other one and the app is killed from wherever
+     * it happens to be — so a shelf saved on exit is a shelf that survives only some of the time.
+     */
+    fun narrowIndex(shelf: IndexShelf) {
+        container.shelves.index = shelf
+        _state.update { it.copy(indexShelf = shelf) }
+    }
+
+    fun narrowCoins(shelf: CoinsShelf) {
+        container.shelves.coins = shelf
+        _state.update { it.copy(coinsShelf = shelf) }
     }
 
     /**

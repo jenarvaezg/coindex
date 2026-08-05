@@ -4,14 +4,18 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MastheadLabelsTest {
+    /**
+     * The two hierarchies of the top level are one notebook (ADR 0021 §1), so both keep its
+     * strapline: the bottom bar says which of the two you are in, and the heading names it in full.
+     */
     @Test
-    fun `the index keeps the notebook's own strapline`() {
+    fun `both roots keep the notebook's own strapline`() {
         assertEquals("Inventario de campo · plata bullion", screenTitle(Routes.INDEX))
+        assertEquals("Inventario de campo · plata bullion", screenTitle(Routes.COINS))
     }
 
     @Test
-    fun `every other screen names itself`() {
-        assertEquals("Sin clasificar", screenTitle(Routes.UNCLASSIFIED))
+    fun `every screen reached through them names itself`() {
         assertEquals("Ajustes", screenTitle(Routes.SETTINGS))
     }
 
