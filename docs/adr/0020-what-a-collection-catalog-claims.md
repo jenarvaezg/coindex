@@ -91,6 +91,29 @@ programme count, since «more will come» is what `series_status: open` already 
 needs **at least one issued** member, because one made only of announcements never progresses and
 would ship in the APK unopened.
 
+### The issuer is a fact about a coin, and the catalog's is only a default
+
+**A member may declare its own `issuer_code`, and the catalog's is what a member means when it
+declares none** (#170). Absence therefore changes nothing about the 58 files that already shipped,
+and the header stops being readable as the issuer *of a collection*: `issuerCodes()` is what names
+a country, one code in 58 catalogs and two in Equilibrium.
+
+The measurement forced it. Pressburg Mint strikes the silver ounce of Equilibrium for Tokelau from
+2018 to 2022 and again in 2024, and for Niue in 2023 and 2025 — verified on the fichas, where the
+issuer changes with the denomination (5 dollars against 2) — and Numista's own series 3245 heads
+itself «Emisores: Niue, Tokelau». One header code over that list is not an imprecision of
+catalogue: it prints «Tokelau» over a coin whose obverse says Niue, and the collector owning
+exactly that coin is the case in the field.
+
+Splitting the catalog in two was the alternative and is refused: the years interleave, so it would
+produce two plates of a series the mint never split, and «one issuer only» is precisely the
+gatekeeper this ADR already killed above. The curator had it right before the schema did — the
+country is written into every member id.
+
+One rule guards it, and it is structural: **the catalog's `issuer_code` must be the issuer of at
+least one member.** A default that defaults for nobody is the same false label one indirection
+deeper.
+
 ### The denominator counts what the app can measure
 
 A plate's denominator counts issued members only. Announced and unlisted slots are shown and
@@ -160,10 +183,11 @@ to write the exception.
   `closed_note` required exactly when closed and forbidden when open, `source` accepting a series
   or a type page, `source_note` refused only when blank, `no_issue_years` requiring
   `no_issue_note` (and the reverse; a blank note is refused), years unique and inside the
-  member span without colliding with a slot, and the full status symmetry with its proof pair. The editorial rules — the
-  existence criterion, the minimum of two rows, the three rules for announcements, the
-  annual-bullion limit — deliberately reach **none** of it: they are judgments, and a judgment
-  that halts the app is a judgment nobody can override.
+  member span without colliding with a slot, a member `issuer_code` refused only when blank and a
+  catalog one that is the issuer of no member, and the full status symmetry with its proof pair.
+  The editorial rules — the existence criterion, the minimum of two rows, the three rules for
+  announcements, the annual-bullion limit — deliberately reach **none** of it: they are judgments,
+  and a judgment that halts the app is a judgment nobody can override.
 - The 49 shipped catalogs declare their status: 28 open and 21 closed. Gothic Horror was retired
   under the existence criterion, and no other file failed it.
 - `schema_version: 4` stays unused. Nothing here needed a new version: coverage is a property of
@@ -174,6 +198,15 @@ to write the exception.
   a fact about the programme, not a hole in the curation.
 - The two Royal Mint bullion ranges are the first files to carry a catalog-level `source_note`.
   They are open catalogs that exist because the mint declared a range, and Numista groups neither.
+- **Equilibrium is the only catalog whose members span two issuers**, remeasured over all 59 files
+  of `data/collection-catalogs/` and every member of them against the type cache — 20 distinct
+  declared issuers, no member without a cached ficha. Its two Niue slots are the only per-member
+  `issuer_code` in the repository, and its 1 oz strand is complete: 2018-2025 with no gap and no
+  duplicate. #170 measured 50 catalogs, which is what the number was in the same week.
+- **What a card prints when a catalog spans two issuers is not decided here.** The file no longer
+  claims one country, and `Issuers` already has both the fallback to the pieces and the silence
+  clause it applies to a card with no file; which of the two a spanning catalog gets is the open
+  half of #170, and until it is decided the eyebrow still reads the header.
 - No database migration, no new API call and no remote fetch comes out of this ADR. What changes
   is what the curated files are allowed and required to say.
 
@@ -195,6 +228,10 @@ to write the exception.
 - **Allowing `closed_note` while open**, instead of adding `source_note`. Rejected: it would undo
   the asymmetry of the status decision, and a reader could no longer read the presence of that note
   as «this is closed».
+- **An `issuer_codes` list in the header** instead of a per-member issuer. Rejected: it renames the
+  field in all 52 curated files, plus the tests that read it, to describe one catalog — and it would
+  say *which* countries a list spans while still not saying which coin is from which, when the
+  members are where that already lives.
 - **A `checked_at` field for freshness.** Rejected: if a programme died the catalog closes with its
   note, and if it is alive the gap is temporary by construction. A stamp would record when someone
   looked, which is not a claim about the coins.

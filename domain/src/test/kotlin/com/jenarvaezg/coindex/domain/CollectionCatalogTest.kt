@@ -266,6 +266,48 @@ class CollectionCatalogValidationTest {
     }
 
     /**
+     * El emisor de la cabecera es el de un miembro que no dice otro, y no una afirmación sobre la
+     * lista (#170): Pressburg acuña Equilibrium alternando Tokelau y Niue, así que un solo código
+     * sólo podía rotularse encima de las dos monedas que dicen Niue mintiendo.
+     *
+     * Las dos reglas son la misma en los dos sentidos. Un `issuer_code` en blanco en el miembro se
+     * rechaza como cualquier campo declarado y vacío, y una cabecera que no es el emisor de nadie
+     * también: un valor por defecto que no le sirve de defecto a ningún miembro es el mismo rótulo
+     * falso una indirección más adentro.
+     */
+    @Test
+    fun `a member may name its own issuer and the header defaults for the rest`() {
+        val single = teslaCatalogStub()
+        assertNull(single.validate())
+        assertEquals(setOf("serbie"), single.issuerCodes())
+        assertEquals("serbie", single.issuerCodeOf(single.members[0]))
+
+        val spanning = single.copy(
+            members = single.members.mapIndexed { index, member ->
+                if (index == 1) member.copy(issuerCode = "niue") else member
+            },
+        )
+        assertNull(spanning.validate())
+        assertEquals(setOf("serbie", "niue"), spanning.issuerCodes())
+        assertEquals("niue", spanning.issuerCodeOf(spanning.members[1]))
+
+        assertEquals(
+            CollectionCatalogValidationError.BlankMemberIssuerCode(single.members[0].id),
+            single.copy(
+                members = single.members.mapIndexed { index, member ->
+                    if (index == 0) member.copy(issuerCode = " ") else member
+                },
+            ).validate(),
+        )
+        assertEquals(
+            CollectionCatalogValidationError.UnusedIssuerCode("serbie"),
+            single.copy(
+                members = single.members.map { member -> member.copy(issuerCode = "niue") },
+            ).validate(),
+        )
+    }
+
+    /**
      * Closing costs proof and opening costs none (#28): the note is obligatory one way and
      * forbidden the other, the same symmetry the issue ids already use outside an issue run.
      */

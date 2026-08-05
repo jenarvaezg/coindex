@@ -10,7 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=3245",
-  "updated_at": "2026-08-01",
+  "source_note": "Pressburg Mint acuña la serie alternando emisor: Tokelau de 2018 a 2022 y en 2024 (5 dólares, Elizabeth II y luego Carlos III), Niue en 2023 y 2025 (2 dólares, Carlos III). La propia serie 3245 de Numista se encabeza «Emisores: Niue, Tokelau», y sus 18 tipos son tres hebras de variante: estas 8 de 1 oz, más las de 10 y 100 dólares. Los ocho años 2018-2025 están cubiertos sin huecos ni duplicados.",
+  "updated_at": "2026-08-05",
   "members": [
     {
       "id": "2018-equilibrium-tokelau",
@@ -46,7 +47,8 @@
       "id": "2023-equilibrium-niue",
       "label": "Equilibrium · Niue",
       "year": 2023,
-      "numista_type_id": 356004
+      "numista_type_id": 356004,
+      "issuer_code": "niue"
     },
     {
       "id": "2024-equilibrium-tokelau",
@@ -58,7 +60,8 @@
       "id": "2025-equilibrium-niue",
       "label": "Equilibrium · Niue",
       "year": 2025,
-      "numista_type_id": 477907
+      "numista_type_id": 477907,
+      "issuer_code": "niue"
     }
   ]
 }

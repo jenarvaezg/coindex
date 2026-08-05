@@ -1331,6 +1331,12 @@ class CuratedCatalogsTest {
      *
      * El emisor alterna por año entre Tokelau y Niue sin que el programa cambie de ceca: es un
      * acuerdo de respaldo legal de la Pressburg Mint, así que las ocho son una tirada anual.
+     *
+     * Y por eso es el único de los 59 catálogos cuya cabecera no puede decir el país sola (#170):
+     * el emisor lo dicen las dos casillas de Niue —2023 y 2025, verificadas en N#356004 y
+     * N#477907, 2 dólares de Nueva Zelanda contra los 5 de Tokelau—, y la cabecera hace de
+     * defecto para las otras seis. La propia serie 3245 de Numista se encabeza «Emisores: Niue,
+     * Tokelau».
      */
     @Test
     fun `equilibrium is the pressburg silver ounce from 2018 to 2025`() {
@@ -1344,6 +1350,19 @@ class CuratedCatalogsTest {
             listOf(188_952, 194_187, 241_862, 307_244, 334_281, 356_004, 407_407, 477_907),
             equilibrium.members.map { it.numistaTypeId },
         )
+        assertEquals("tokelau", equilibrium.issuerCode)
+        assertEquals(
+            listOf(null, null, null, null, null, "niue", null, "niue"),
+            equilibrium.members.map { it.issuerCode },
+        )
+        assertEquals(
+            listOf(
+                "tokelau", "tokelau", "tokelau", "tokelau",
+                "tokelau", "niue", "tokelau", "niue",
+            ),
+            equilibrium.members.map { equilibrium.issuerCodeOf(it) },
+        )
+        assertEquals(setOf("tokelau", "niue"), equilibrium.issuerCodes())
         // Las diez de oro de la misma serie: décimo de onza y onza, ninguna es casilla de esta.
         val gold = listOf(
             307_242, 334_283, 356_002, 407_410, 477_905,
