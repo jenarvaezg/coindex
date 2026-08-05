@@ -31,6 +31,11 @@ jobs:
       - name: Compilar el APK de depuración
         run: ./gradlew :app:assembleDebug
 
+      # Los informes de curación son Python y leen data/ igual que el dominio: sin esto,
+      # sus tests viven sin correr y el informe se rompe en silencio hasta la próxima pasada.
+      - name: Tests de los informes de curación
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+
       # Informativo, nunca bloqueante: no todo commit publica una versión. El que se niega a
       # publicar una versión que los móviles no verían es scripts/release.sh.
       - name: Comparar la versión del repo con la publicada
@@ -86,6 +91,36 @@ jobs:
           set -e
           {
             echo "### Catálogos abiertos por detrás"
+            echo ""
+            echo "$report"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then
+            echo "El informe falló (exit $status); el job de tests no se toca." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 0
+
+  # Informativo, nunca bloqueante (#158): la auditoría del emparejamiento es del curador y
+  # vive fuera de la app (#20). Mismo guardarraíl que el informe de arriba, y job aparte para
+  # que un fallo de uno no esconda el otro.
+  weight-deviations:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Informe de desviaciones de peso
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          report=$(python3 scripts/weight-deviations.py --sync)
+          status=$?
+          set -e
+          {
+            echo "### Desviaciones de peso"
             echo ""
             echo "$report"
           } >> "$GITHUB_STEP_SUMMARY"

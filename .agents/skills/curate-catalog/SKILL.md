@@ -109,6 +109,14 @@ A curation that teaches something changes the documents too: `CONTEXT.md` when a
 
 Interior gaps deserve the opposite reflex: a year missing in the middle is usually a year the mint did not strike, and confirming that outside Numista closes it as legitimate calendar rather than curation debt.
 
+## Before sitting down: what the weights disagree about
+
+```
+python3 scripts/weight-deviations.py
+```
+
+Zero network, never red. It lists the members whose ficha weighs something other than what their catalog declares, the types no catalog claims whose weight the magnet moves, and the cards the file avoids in silence (ADR 0016). It syncs to the [Desviaciones de peso](https://github.com/jenarvaezg/coindex/issues/158) issue, and reading it is not curating: **a line says «look at it», not «fix it»** — most are Numista varying its grams, some are the fineness, and once in a while it is a coin that does not belong in that lámina. What you decide goes in the file, as a `variant_note` when the deviation is deliberate.
+
 ## Guardrails
 
 - A physical check against a Numista ficha lives in the test suite and stays silenceable in prose. What a catalog declares is the variant of the *collection*, not an assertion about each member, so a curator's judgment must never be able to halt the app.

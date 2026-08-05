@@ -11,6 +11,13 @@ a mano.
 
 Los tipos que ya están en la caché se omiten sin gastar llamada: el gasto es exactamente el
 número de tipos nuevos, y `--dry-run` lo dice antes de gastarlo.
+
+`--refresh` es la excepción, y existe porque el informe de desviaciones (#158) produce
+correcciones aguas arriba: cuando Numista acepta una, la ficha sembrada sigue guardando el
+dato viejo y omitirla la deja mintiendo para siempre. Con `--refresh` los tipos que ya están
+también se piden, y entonces el gasto es el número de ids que se le pasen.
+
+    scripts/seed-type-cache.py --refresh --confirm-live-api 107292 117328
 """
 
 from __future__ import annotations
@@ -64,17 +71,24 @@ def main() -> None:
         action="store_true",
         help="dice cuántas llamadas costaría y no gasta ninguna",
     )
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="pide también los tipos que ya están en la caché (una ficha corregida en Numista)",
+    )
     parser.add_argument("type_ids", type=int, nargs="+", help="ids de tipo de Numista a sembrar")
     arguments = parser.parse_args()
 
     cache = load_cache()
+    requested = list(dict.fromkeys(arguments.type_ids))
     pending = [
         type_id
-        for type_id in dict.fromkeys(arguments.type_ids)
-        if str(type_id) not in cache
+        for type_id in requested
+        if arguments.refresh or str(type_id) not in cache
     ]
-    already = len(dict.fromkeys(arguments.type_ids)) - len(pending)
-    print(f"{len(pending)} tipos por sembrar, {already} ya en la caché de {len(cache)} fichas")
+    already = len(requested) - len(pending)
+    verb = "por resembrar" if arguments.refresh else "por sembrar"
+    print(f"{len(pending)} tipos {verb}, {already} ya en la caché de {len(cache)} fichas")
     if arguments.dry_run or not pending:
         return
     if not arguments.confirm_live_api:
