@@ -205,6 +205,12 @@ class CollectionIndex(
  * eyebrow unsaid. An eyebrow that covers half its card is worse than no eyebrow at all, which is
  * why the unknowns are kept in the list rather than filtered out.
  *
+ * **One file cannot name one country**, and this still reads its header: Equilibrium spans Tokelau
+ * and Niue, so a card whose only piece is the 2023 Niue is labelled «Tokelau» today. The catalog
+ * stopped claiming a single issuer — `CollectionCatalog.issuerCodes()` is what to ask, and a
+ * spanning catalog either falls through to the pieces here or goes bare. Deciding which is the
+ * open half of #170.
+ *
  * The name of an issuer comes from the type cache either way, keyed by the same code the files
  * declare — `afrique_du_sud`, in French, because Numista's codes are. One source for both kinds of
  * card, rather than a table of countries maintained in code.

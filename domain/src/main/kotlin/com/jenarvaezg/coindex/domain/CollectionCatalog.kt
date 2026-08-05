@@ -35,6 +35,17 @@ data class CollectionCatalog(
      * [name] mechanically would have produced three identical cards.
      */
     @SerialName("short_name") val shortName: String,
+    /**
+     * The issuer of a member that does not name its own, which is every member of 58 of the 59
+     * shipped catalogs.
+     *
+     * It is **a default and not a claim about the list** (#170). Equilibrium is struck for Tokelau
+     * and for Niue in alternate years — Numista's own series 3245 heads itself «Emisores: Niue,
+     * Tokelau» — so a single code here could only be read as the issuer of the whole catalog by
+     * printing «Tokelau» over the two coins that say Niue on them. Required all the same: a
+     * catalog whose every member had to repeat its country would spend eight lines saying what one
+     * says, and [CollectionCatalogMember.issuerCode] is the exception, not the rule.
+     */
     @SerialName("issuer_code") val issuerCode: String,
     val family: String,
     @SerialName("weight_millioz") val weightMillioz: Int? = null,
@@ -76,6 +87,18 @@ data class CollectionCatalog(
 ) {
     fun key(): VariantKey =
         VariantKey(family, weightMillioz, finish, metal)
+
+    /** Who struck one member: its own issuer where it declares one, and the catalog's where not. */
+    fun issuerCodeOf(member: CollectionCatalogMember): String = member.issuerCode ?: issuerCode
+
+    /**
+     * Every issuer the members of this catalog were struck for, in the order they appear.
+     *
+     * One in 58 of the 59 shipped catalogs and two in Equilibrium (#170), which is why nothing may
+     * read [issuerCode] as *the* issuer of a collection: a card that names a country has to name
+     * one this returns, and a catalog that spans two names none of them by itself.
+     */
+    fun issuerCodes(): Set<String> = members.mapTo(LinkedHashSet()) { issuerCodeOf(it) }
 
     val isDateRun: Boolean get() = schemaVersion == 2
 
@@ -244,6 +267,9 @@ data class CollectionCatalog(
             if (member.variantNote != null && member.variantNote.isBlank()) {
                 return CollectionCatalogValidationError.BlankVariantNote(member.id)
             }
+            if (member.issuerCode != null && member.issuerCode.isBlank()) {
+                return CollectionCatalogValidationError.BlankMemberIssuerCode(member.id)
+            }
             validateMemberStatus(member)?.let { return it }
             // Schema 1 and date runs may refine an issued type with issues. Schema 5 requires
             // that refinement; its members would otherwise be indistinguishable. Sets and
@@ -280,6 +306,11 @@ data class CollectionCatalog(
                         member.year,
                     )
             }
+        }
+        // The default has to default for somebody. A header naming a country every member
+        // overrides is the very lie #170 came from, one indirection further in.
+        if (issuerCode !in issuerCodes()) {
+            return CollectionCatalogValidationError.UnusedIssuerCode(issuerCode)
         }
         return null
     }
@@ -377,6 +408,19 @@ data class CollectionCatalogMember(
      * closes a series. It never silences anything by itself; a note with no deviation is inert.
      */
     @SerialName("variant_note") val variantNote: String? = null,
+    /**
+     * Who struck this member, when it is not who struck the rest of the catalog (#170).
+     *
+     * Absent means the catalog's own [CollectionCatalog.issuerCode], so no shipped file had to be
+     * touched. It is here and not only in the header because the issuer is a fact about a coin: a
+     * mint that alternates countries within one series — Pressburg strikes Equilibrium for Tokelau
+     * and for Niue — leaves a list that no single code describes, and splitting the catalog would
+     * split a series the mint did not, which ADR 0020 already refused to make a gatekeeper.
+     *
+     * It changes nothing about matching or counting: the piece is found by its type, and the
+     * country is what gets printed over it.
+     */
+    @SerialName("issuer_code") val issuerCode: String? = null,
 ) {
     val isIssued: Boolean get() = status == MemberStatus.Issued
 
@@ -422,6 +466,14 @@ sealed class CollectionCatalogValidationError(val message: String) {
 
     data class BlankVariantNote(val memberId: String) : CollectionCatalogValidationError(
         "member `$memberId` carries an empty `variant_note`: say what deviates, or drop it",
+    )
+
+    data class BlankMemberIssuerCode(val memberId: String) : CollectionCatalogValidationError(
+        "member `$memberId` carries an empty `issuer_code`: name the issuer, or drop it",
+    )
+
+    data class UnusedIssuerCode(val value: String) : CollectionCatalogValidationError(
+        "catalog `issuer_code` `$value` is the issuer of no member: it defaults for nobody",
     )
 
     data object InvalidSource : CollectionCatalogValidationError(
