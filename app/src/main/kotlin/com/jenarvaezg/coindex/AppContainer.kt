@@ -7,6 +7,7 @@ import com.jenarvaezg.coindex.data.CredentialStore
 import com.jenarvaezg.coindex.data.ShelfStore
 import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
+import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
 import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -65,6 +66,9 @@ class AppContainer(context: Context) {
     val syncService: SyncService by lazy {
         SyncService(database.collectedItems(), database.typeMeta(), database.apiCalls())
     }
+
+    /** One type's ficha, asked again on purpose (#185, ADR 0023). */
+    val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }
 
     private val httpClient: HttpClient by lazy { HttpClient(OkHttp) }
 

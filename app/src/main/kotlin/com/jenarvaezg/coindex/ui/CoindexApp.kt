@@ -41,6 +41,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.components.CardAction
+import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
@@ -72,6 +73,18 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     val openUrl: (String) -> Unit = { url ->
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    }
+
+    // Built here, once, for the two surfaces that show a piece of a type (#185): both read the same
+    // cache date, the same in-flight set and the same budget the index prints, so the two cards can
+    // never disagree about how old a ficha is or about what asking again would cost.
+    val ficha: (Int) -> FichaRefresh = { typeId ->
+        FichaRefresh(
+            fetchedAt = state.collection.fichaFetchedAt[typeId],
+            refreshing = typeId in state.refreshingFichas,
+            budgetRemaining = state.budget.remaining,
+            onRefresh = { viewModel.refreshFicha(typeId) },
+        )
     }
 
     // The plate and the collection name themselves in the masthead, which means reading what the
@@ -197,6 +210,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         },
                         onCreateBox = viewModel::createOwnGrouping,
                         onAddToBox = viewModel::addToOwnGrouping,
+                        ficha = ficha,
                     )
                 }
                 composable(Routes.OWN_GROUPING) { entry ->
@@ -207,6 +221,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         subject = card?.let { piecesSubject(state.collection, it) },
                         onOpenSource = openUrl,
                         onMessage = viewModel::showMessage,
+                        ficha = ficha,
                         upkeep = card?.let { box ->
                             BoxUpkeep(
                                 onRename = { name ->
@@ -242,12 +257,19 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         )
                     } else {
                         val card = state.collection.piecesCardFor(key)
-                        // No upkeep: a derived collection is not something anyone typed.
+                        // No upkeep: a derived collection is not something anyone typed. The
+                        // explanation is this route's own, because there are two ways to lose one and
+                        // the second is new (#185): refreshing a ficha can move its coins to another
+                        // card, since the family is part of the key the route carries.
                         PiecesScreen(
                             state = state.collection,
                             subject = card?.let { piecesSubject(state.collection, it) },
                             onOpenSource = openUrl,
                             onMessage = viewModel::showMessage,
+                            ficha = ficha,
+                            missingExplanation = "Esta colección ya no existe: o has dejado de " +
+                                "tener piezas de esta variante, o la ficha de Numista ha cambiado " +
+                                "y sus monedas están ahora en otra colección. Vuelve al índice.",
                         )
                     }
                 }

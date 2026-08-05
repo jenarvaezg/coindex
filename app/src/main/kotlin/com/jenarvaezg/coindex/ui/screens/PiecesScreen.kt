@@ -33,6 +33,7 @@ import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
@@ -64,15 +65,24 @@ fun PiecesScreen(
     subject: PiecesSubject?,
     onOpenSource: (url: String) -> Unit,
     onMessage: (String) -> Unit,
+    /**
+     * How old each piece's ficha is and how to ask Numista again for it (#185). One type per tap:
+     * there is no «refrescar la tarjeta entera» here, because a collection of twenty pieces would be
+     * twenty calls spent on the nineteen nobody said were wrong (ADR 0023).
+     */
+    ficha: (typeId: Int) -> FichaRefresh,
     /** Present exactly when the subject is a box: the same `if` all the way down. */
     upkeep: BoxUpkeep? = null,
+    /**
+     * Why there is nothing here, when there is nothing here. A box has been undone; a derived
+     * collection may also have moved, because refreshing a ficha can change the family its key is
+     * built from (#185), and the route still names the old one.
+     */
+    missingExplanation: String = "Esta colección ya no existe. Vuelve al índice.",
     modifier: Modifier = Modifier,
 ) {
     if (subject == null) {
-        MissingSubject(
-            "Esta colección ya no existe. Vuelve al índice.",
-            modifier.fillMaxSize().padding(20.dp),
-        )
+        MissingSubject(missingExplanation, modifier.fillMaxSize().padding(20.dp))
         return
     }
 
@@ -130,6 +140,7 @@ fun PiecesScreen(
                     title = pieceTitle(state, piece),
                     images = state.images[piece.typeId],
                     onOpenSource = onOpenSource,
+                    ficha = ficha(piece.typeId),
                 ) {
                     // Dropping a type does not touch the piece (ADR 0013, §10): it stays in the
                     // inventory and on the card its variant derives, which is what makes a box a

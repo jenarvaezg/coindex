@@ -43,11 +43,22 @@ interface TypeMetaDao {
     @Query("SELECT COUNT(*) FROM type_meta")
     suspend fun count(): Int
 
+    @Query("SELECT * FROM type_meta WHERE typeId = :typeId")
+    suspend fun byId(typeId: Int): TypeMetaEntity?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIfAbsent(types: List<TypeMetaEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIfAbsent(type: TypeMetaEntity)
+
+    /**
+     * Writes a ficha over the one already cached. The **only** write that does (#185, ADR 0023):
+     * the seed and the sync both ignore conflicts on purpose, because neither of them was asked
+     * for the ficha it is holding — the collector was, one type at a time.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun overwrite(type: TypeMetaEntity)
 
     // Neither face, rather than the obverse alone: a ficha that only has a reverse thumbnail
     // would otherwise be read, written back with a null obverse, and read again for ever.

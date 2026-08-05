@@ -25,6 +25,10 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * This is a row of the inventory, not a catalog member: it never says «me falta», because a
  * piece that is here is a piece you own. [extra] is for whatever the screen showing it needs to
  * add — the reason it is unclassified, a selection control.
+ *
+ * [ficha] is how old what the card is saying actually is, and the gesture that asks Numista again
+ * (#185): the title, the year and both photographs come from a ficha that was cached once and, until
+ * this existed, never questioned again.
  */
 @Composable
 fun PieceCard(
@@ -32,6 +36,7 @@ fun PieceCard(
     title: String,
     images: TypeImages?,
     onOpenSource: (String) -> Unit,
+    ficha: FichaRefresh,
     modifier: Modifier = Modifier,
     extra: @Composable ColumnScope.() -> Unit = {},
 ) {
@@ -57,6 +62,9 @@ fun PieceCard(
                     text = "Ver en Numista",
                     onClick = { onOpenSource(numistaTypeUrl(item.typeId)) },
                 )
+                // Under the link out on purpose: seeing the page is how the collector finds out that
+                // Numista already says something else, and this is what brings that here.
+                FichaBrought(ficha, modifier = Modifier.padding(top = 2.dp))
             }
         }
     }

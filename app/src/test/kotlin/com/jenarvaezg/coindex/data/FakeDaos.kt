@@ -35,6 +35,11 @@ class FakeTypeMetaDao : TypeMetaDao {
     override suspend fun insertIfAbsent(type: TypeMetaEntity) {
         if (rows.value.none { it.typeId == type.typeId }) rows.value = rows.value + type
     }
+    override suspend fun byId(typeId: Int): TypeMetaEntity? =
+        rows.value.firstOrNull { it.typeId == typeId }
+    override suspend fun overwrite(type: TypeMetaEntity) {
+        rows.value = rows.value.filterNot { it.typeId == type.typeId } + type
+    }
     private fun withoutThumbnails() = rows.value
         .filter { it.obverseThumbnailUrl == null && it.reverseThumbnailUrl == null }
     override suspend fun countWithoutThumbnails(): Int = withoutThumbnails().size

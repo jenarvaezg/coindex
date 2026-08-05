@@ -35,6 +35,13 @@ data class CollectionState(
     val unclassified: List<UnclassifiedItem> = emptyList(),
     val typeMeta: Map<Int, TypeMeta> = emptyMap(),
     val images: Map<Int, TypeImages> = emptyMap(),
+    /**
+     * When each ficha was brought to this phone, so a card can say «hace ocho meses» instead of
+     * leaving it to be guessed at (#185). It is the cache's own `fetchedAt` and nothing derived: a
+     * ficha the collector refreshed is stamped again, and a ficha that arrived in the APK is
+     * stamped with the day it arrived (ADR 0023).
+     */
+    val fichaFetchedAt: Map<Int, Long> = emptyMap(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
     /** The pieces behind each derived collection, for the screen that opens one. */
@@ -114,6 +121,7 @@ class CoindexRepository(
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,
             images = types.associate { it.typeId to it.toImages() },
+            fichaFetchedAt = types.associate { it.typeId to it.fetchedAt },
             evidencedCatalogIds = catalogs
                 .filter { catalog -> catalog.isEvidencedBy(domainItems) }
                 .mapTo(mutableSetOf()) { it.id },
