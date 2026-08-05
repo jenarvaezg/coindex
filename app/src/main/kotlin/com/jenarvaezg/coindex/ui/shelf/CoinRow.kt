@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
@@ -32,7 +33,13 @@ data class CoinClaim(val name: String, val destination: CardDestination)
 data class CoinRow(
     val typeId: Int,
     val title: String,
-    /** The country as Numista names it in the collector's language, unsaid when uncached. */
+    /**
+     * The country, in Spanish, unsaid when the type is uncached.
+     *
+     * [TypeMeta.country] and not the ficha's `issuer.name`, because Numista names issuing entities
+     * with their period of validity: the country of a `russie` type is «Rusia», and «Federación de
+     * Rusia (1991-presente)» took a chip row to itself in the shelf below (ADR 0023).
+     */
     val issuer: String?,
     /** The type's first year, which for these collections is the year on the coin. */
     val year: Int?,
@@ -80,7 +87,7 @@ fun coinRows(state: CollectionState): List<CoinRow> {
         CoinRow(
             typeId = typeId,
             title = pieceTitle(state, pieces.first()),
-            issuer = meta?.issuerName,
+            issuer = meta?.country,
             year = meta?.minYear,
             objectClass = objectClassOf(meta?.category),
             weightOz = meta?.weightOz,

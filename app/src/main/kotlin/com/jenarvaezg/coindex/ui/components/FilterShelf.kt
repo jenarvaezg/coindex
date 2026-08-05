@@ -126,8 +126,9 @@ fun FilterChip(
         text = count?.let { "$label · $it" } ?: label,
         style = MaterialTheme.typography.labelLarge,
         color = if (selected) Paper.paper else Paper.ink,
-        // «Federación de Rusia (1991-presente)» is a real issuer name and would take a chip row to
-        // itself (#180). Truncating is the shelf's problem; the name itself is Numista's.
+        // The longest labels are gone — «Federación de Rusia (1991-presente)» is «Rusia» since
+        // ADR 0023 — but a chip still truncates rather than wrap: a curated `short_name` may run to
+        // 40 characters, and one chip taking a row to itself pushes the rest off the shelf.
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier

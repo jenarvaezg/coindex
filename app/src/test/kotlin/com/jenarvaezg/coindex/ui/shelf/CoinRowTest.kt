@@ -1,6 +1,9 @@
 package com.jenarvaezg.coindex.ui.shelf
 
+import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.matchesQuery
 import kotlin.test.Test
@@ -101,5 +104,44 @@ class CoinRowTest {
         assertTrue(matchesQuery(fuerte.haystack, "bolivar"))
         assertTrue(matchesQuery(fuerte.haystack, "venezuela"))
         assertTrue(matchesQuery(fuerte.haystack, "100"))
+    }
+
+    /**
+     * Monedas rotula el mismo país que la tarjeta, y no la entidad emisora de Numista (#180).
+     *
+     * Aquí no es sólo el rótulo de una fila: la chip de país de la estantería se construye con estas
+     * cadenas, y «Federación de Rusia (1991-presente)» se llevaba una fila de chips para ella sola.
+     * Los 293 tipos `russie` de la caché sembrada son el emisor más numeroso que hay, así que es la
+     * chip que más se toca.
+     */
+    @Test
+    fun `Coins says the country its card says`() {
+        val rusas = CollectionState(
+            items = listOf(
+                CollectedItem(id = 1, quantity = 1, typeId = 500),
+                CollectedItem(id = 2, quantity = 1, typeId = 501),
+            ),
+            typeMeta = mapOf(
+                500 to TypeMeta(
+                    id = 500,
+                    displayTitle = "3 rublos del Libro Rojo",
+                    issuerCode = "russie",
+                    issuerName = "Federación de Rusia (1991-presente)",
+                ),
+                501 to TypeMeta(
+                    id = 501,
+                    displayTitle = "1 rublo soviético",
+                    issuerCode = "ancienne_urss",
+                    issuerName = "Unión Soviética",
+                ),
+            ),
+        )
+
+        assertEquals(
+            listOf("Rusia", "Unión Soviética"),
+            coinRows(rusas).map { it.issuer },
+        )
+        // Y la búsqueda sigue alcanzando el país que la fila pinta.
+        assertTrue(matchesQuery(coinRows(rusas).first().haystack, "rusia"))
     }
 }

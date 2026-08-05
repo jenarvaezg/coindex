@@ -63,6 +63,15 @@ data class TypeMeta(
     val sizeMillimetres: Double? = null,
 ) {
     /**
+     * The country this type is from, which is what a card and a coin row paint (ADR 0023).
+     *
+     * [issuerName] stays Numista's own prose and this is the reading of it, so the pair never has to
+     * travel together to be cured: nine of the 40 issuer codes name an issuing entity with its period
+     * of validity, and `russie` is «Rusia» here and «Federación de Rusia (1991-presente)» above.
+     */
+    val country: String? get() = cardCountry(issuerCode, issuerName)
+
+    /**
      * Whether this looks like a Numista page a referee has not published yet (#186).
      *
      * A submission still in review is served by the API with every field as the contributor left

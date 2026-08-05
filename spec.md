@@ -127,10 +127,10 @@
 - **Nombre de tarjeta**: `short_name` en el fichero curado —obligatorio, único en el índice
   y prefijo de `name`—, y la familia cruda de Numista verbatim cuando no hay fichero. Los
   seis alias editoriales de familia **están retirados** (ADR 0021 §4, hechos en la v0.12.0
-  con #166): el único etiquetado
-  que queda en código es `System 1879-1936` → «Sistema monetario 1879-1936», que es
-  formateo de una cadena generada. Una caja propia lleva un solo nombre, con
-  `name == short_name` y 40 caracteres de techo.
+  con #166): los dos etiquetados que quedan en código son `System 1879-1936` → «Sistema
+  monetario 1879-1936» y los nueve códigos de emisor cuya etiqueta de Numista no es un país
+  —`russie` → «Rusia» (ADR 0023)—, los dos formateo de una cadena generada. Una caja propia
+  lleva un solo nombre, con `name == short_name` y 40 caracteres de techo.
 - **Orden del índice**: un único comparador `(tiene ratio ↓, ratio ↓, denominador ↓,
   short_name ↑)` (ADR 0021 §6).
 
