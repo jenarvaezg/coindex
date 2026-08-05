@@ -36,7 +36,7 @@ data class CollectionCatalog(
      */
     @SerialName("short_name") val shortName: String,
     /**
-     * The issuer of a member that does not name its own, which is every member of 58 of the 59
+     * The issuer of a member that does not name its own, which is every member of 59 of the 60
      * shipped catalogs.
      *
      * It is **a default and not a claim about the list** (#170). Equilibrium is struck for Tokelau
@@ -94,7 +94,7 @@ data class CollectionCatalog(
     /**
      * Every issuer the members of this catalog were struck for, in the order they appear.
      *
-     * One in 58 of the 59 shipped catalogs and two in Equilibrium (#170), which is why nothing may
+     * One in 59 of the 60 shipped catalogs and two in Equilibrium (#170), which is why nothing may
      * read [issuerCode] as *the* issuer of a collection: a card that names a country has to name
      * one this returns, and a catalog that spans two names none of them by itself.
      */

@@ -10,67 +10,98 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5228",
-  "updated_at": "2026-08-01",
+  "source_note": "Cada casilla cualifica la emisión corriente de su tipo porque el alto relieve antiguo de 2020-2024 es otra lámina (ADR 0019): sin la lista, la proof de 2017, 2018, 2021, 2022 y 2023 y la antigua de 2021-2024 llenarían la casilla de su año, y una sola pieza completaría las dos láminas. Las proof se quedan fuera de ambas a propósito, porque nadie las cataloga todavía. Numista lleva un solo renglón en 2019 y en 2020, los dos con tirada de 1.000 aunque allí no esté separada ni la proof ni la antigua de esos años, así que esas dos casillas cualifican lo único publicado y habrá que revisarlas cuando un árbitro desglose el año.",
+  "updated_at": "2026-08-05",
   "members": [
     {
       "id": "2017-santa-maria",
       "label": "Santa Maria",
       "year": 2017,
-      "numista_type_id": 127972
+      "numista_type_id": 127972,
+      "numista_issue_ids": [
+        373945
+      ]
     },
     {
       "id": "2018-hms-endeavour",
       "label": "HMS Endeavour",
       "year": 2018,
-      "numista_type_id": 139377
+      "numista_type_id": 139377,
+      "numista_issue_ids": [
+        1058947
+      ]
     },
     {
       "id": "2019-victoria",
       "label": "Victoria",
       "year": 2019,
-      "numista_type_id": 172069
+      "numista_type_id": 172069,
+      "numista_issue_ids": [
+        448244
+      ]
     },
     {
       "id": "2020-mayflower",
       "label": "Mayflower",
       "year": 2020,
-      "numista_type_id": 220874
+      "numista_type_id": 220874,
+      "numista_issue_ids": [
+        545873
+      ]
     },
     {
       "id": "2021-sedov",
       "label": "Sedov",
       "year": 2021,
-      "numista_type_id": 301537
+      "numista_type_id": 301537,
+      "numista_issue_ids": [
+        680048
+      ]
     },
     {
       "id": "2022-uss-constitution",
       "label": "USS Constitution",
       "year": 2022,
-      "numista_type_id": 362115
+      "numista_type_id": 362115,
+      "numista_issue_ids": [
+        781716
+      ]
     },
     {
       "id": "2023-great-eastern",
       "label": "Great Eastern",
       "year": 2023,
-      "numista_type_id": 415674
+      "numista_type_id": 415674,
+      "numista_issue_ids": [
+        864079
+      ]
     },
     {
       "id": "2024-cutty-sark",
       "label": "Cutty Sark",
       "year": 2024,
-      "numista_type_id": 442604
+      "numista_type_id": 442604,
+      "numista_issue_ids": [
+        908444
+      ]
     },
     {
       "id": "2025-hms-victory",
       "label": "HMS Victory",
       "year": 2025,
-      "numista_type_id": 471438
+      "numista_type_id": 471438,
+      "numista_issue_ids": [
+        954964
+      ]
     },
     {
       "id": "2026-kruzenshtern",
       "label": "Kruzenshtern",
       "year": 2026,
-      "numista_type_id": 592517
+      "numista_type_id": 592517,
+      "numista_issue_ids": [
+        1109419
+      ]
     }
   ]
 }
