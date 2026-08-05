@@ -196,6 +196,43 @@ class CollectionIndexTest {
         // Dos emisores bajo una tarjeta sin fichero: un eyebrow que cubre media tarjeta no se dice.
         assertNull(byName.getValue("Pièces de 10 francs"))
     }
+
+    /**
+     * El eyebrow de una caja es el país de sus piezas, y calla si son varios (ADR 0021 §11, #173).
+     *
+     * Aquí la cláusula de silencio **no** es el error de categoría del §9: sin fichero que la nombre,
+     * las piezas son la única autoridad que hay. Es la misma regla que las tarjetas sin fichero, y no
+     * un privilegio ni un castigo por ser lo único que el coleccionista escribió.
+     */
+    @Test
+    fun `the eyebrow of a box is the country of its pieces, and silent when they disagree`() {
+        val catalogs = emptyList<CollectionCatalog>()
+        val francesas = listOf(item(98_001L, 98_001), item(98_003L, 98_003))
+        val revueltas = listOf(item(98_001L, 98_001), item(98_002L, 98_002))
+        val typeMeta = mapOf(
+            meta(98_001, "france", "Francia"),
+            meta(98_002, "belgique", "Bélgica"),
+            meta(98_003, "france", "Francia"),
+        )
+        val index = CollectionIndex(catalogs, emptyList(), CollectionTitles(catalogs, emptyList()))
+
+        val cards = index.build(
+            derivation = derivation(emptyList(), emptyList()),
+            boxes = listOf(
+                box(1, "Las francesas", francesas),
+                box(2, "Revueltas", revueltas),
+                // Una caja vaciada no tiene piezas que digan el país, así que va desnuda.
+                box(3, "Vaciada", emptyList()),
+            ),
+            items = francesas + revueltas,
+            typeMeta = typeMeta,
+        )
+        val byName = cards.associate { it.name to it.issuer }
+
+        assertEquals("Francia", byName.getValue("Las francesas"))
+        assertNull(byName.getValue("Revueltas"))
+        assertNull(byName.getValue("Vaciada"))
+    }
 }
 
 private fun ratioLabel(card: IndexCard): String =

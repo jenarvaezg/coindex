@@ -26,4 +26,15 @@ class CollectionTitles(
         byKey[key] ?: byFamily[key.family] ?: familyLabel(key.family)
 
     fun of(collection: DerivedCollection): String = of(collection.key())
+
+    /**
+     * Every name a curated file claims, which is what a new box has to avoid (ADR 0021 §4).
+     *
+     * The uniqueness of `short_name` across the index is already validated at startup for the files
+     * themselves; this is the same set offered to the one name the collector types. It does **not**
+     * include the raw Numista families of the cards no file names: those move with the inventory, and
+     * ADR 0021 §11 is explicit that a collision arriving later is not policed — it is visible in the
+     * index, and the box is undone with one tap.
+     */
+    fun curatedNames(): Set<String> = byKey.values.toSet() + byFamily.values.toSet()
 }

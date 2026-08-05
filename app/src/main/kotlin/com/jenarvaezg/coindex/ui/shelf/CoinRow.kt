@@ -8,6 +8,7 @@ import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.destinationOf
+import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.pieceTitle
 import java.text.Collator
 import java.util.Locale

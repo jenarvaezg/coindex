@@ -190,10 +190,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     CoinsScreen(
                         state = state.collection,
                         shelf = state.coinsShelf,
+                        curatedNames = viewModel.curatedNames,
                         onNarrow = viewModel::narrowCoins,
                         onOpen = { destination ->
                             navController.navigate(routeOf(destination))
                         },
+                        onCreateGrouping = viewModel::createOwnGrouping,
+                        onAddToGrouping = viewModel::addToOwnGrouping,
                     )
                 }
                 composable(Routes.OWN_GROUPING) { entry ->
@@ -204,8 +207,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         subject = card?.let { piecesSubject(state.collection, it) },
                         onOpenSource = openUrl,
                         onMessage = viewModel::showMessage,
-                        onCreateGrouping = viewModel::createOwnGrouping,
-                        onAddToGrouping = viewModel::addToOwnGrouping,
                         upkeep = card?.let { box ->
                             BoxUpkeep(
                                 onRename = { name ->
@@ -247,8 +248,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             subject = card?.let { piecesSubject(state.collection, it) },
                             onOpenSource = openUrl,
                             onMessage = viewModel::showMessage,
-                            onCreateGrouping = viewModel::createOwnGrouping,
-                            onAddToGrouping = viewModel::addToOwnGrouping,
                         )
                     }
                 }

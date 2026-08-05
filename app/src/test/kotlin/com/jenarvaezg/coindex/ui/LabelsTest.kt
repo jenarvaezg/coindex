@@ -61,4 +61,22 @@ class LabelsTest {
         // afirmar, y este enero las mismas 22 casillas pueden ser 23.
         assertEquals("22 de 22", coverageLabel(CoverageRatio(22, 22)))
     }
+
+    /**
+     * La otra tercera línea, la de una colección sin lista de emisiones: **«5 monedas · 5 tipos»**,
+     * la frase que fija el ADR 0021 §3 y `CONTEXT.md`.
+     *
+     * Las monedas van primero porque es lo que hay en casa, y los tipos después porque es lo que
+     * distingue «cinco monedas distintas» de «la misma cinco veces». Decía «5 tipos distintos · 5
+     * piezas», que ponía delante la unidad del curador y gastaba dos palabras —«distinto», «pieza»—
+     * en decir lo que «tipo» y «moneda» ya dicen.
+     */
+    @Test
+    fun `a card without an issue list counts coins first and types second`() {
+        assertEquals("5 monedas · 5 tipos", countLabel(distinctTypes = 5, quantity = 5))
+        assertEquals("3 monedas · 2 tipos", countLabel(distinctTypes = 2, quantity = 3))
+        // El singular del español no cuenta nada, así que el cero va en plural (#19).
+        assertEquals("1 moneda · 1 tipo", countLabel(distinctTypes = 1, quantity = 1))
+        assertEquals("0 monedas · 0 tipos", countLabel(distinctTypes = 0, quantity = 0))
+    }
 }

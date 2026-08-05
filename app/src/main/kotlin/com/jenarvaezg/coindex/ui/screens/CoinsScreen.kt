@@ -29,7 +29,10 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.LinkText
+import com.jenarvaezg.coindex.ui.components.PieceSelectionToggle
 import com.jenarvaezg.coindex.ui.components.SearchField
+import com.jenarvaezg.coindex.ui.components.SelectionControls
+import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.objectClassLabel
@@ -63,11 +66,15 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 fun CoinsScreen(
     state: CollectionState,
     shelf: CoinsShelf,
+    /** Every curated `short_name`, so a new box cannot be baptised one of them (ADR 0021 §4). */
+    curatedNames: Set<String>,
     onNarrow: (CoinsShelf) -> Unit,
     onOpen: (CardDestination) -> Unit,
+    onCreateGrouping: (name: String, typeIds: List<Int>) -> Unit,
+    onAddToGrouping: (groupingId: Long, typeIds: List<Int>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Recomputed only when the collection changes: 191 rows joined against the type cache is work
+    // Recomputed only when the collection changes: 192 rows joined against the type cache is work
     // the screen does not owe on every keystroke.
     val rows = remember(state) { coinRows(state) }
     // Saved across a rotation and never persisted (ADR 0021 §1): reopening the app with a stale
@@ -75,6 +82,13 @@ fun CoinsScreen(
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
     val shown = remember(rows, shelf, query) { shelf.narrow(rows, query) }
+    val selection = rememberPieceSelection()
+    // The seed exists only while something is narrowing the list: without a filter «Agrupar estas
+    // 192» would offer the whole collection, and the two-coin box would be made by unticking 190.
+    val seeded = shelf.active > 0 || query.isNotBlank()
+    val taken = remember(curatedNames, state.ownGroupings) {
+        curatedNames + state.ownGroupings.map { it.name }
+    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -96,6 +110,19 @@ fun CoinsScreen(
                 ) {
                     CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
                 }
+                // Under the shelf, because the shelf is what decides whether it seeds: the button
+                // reads the same list the tally above it just counted (ADR 0021 §11).
+                if (rows.isNotEmpty()) {
+                    SelectionControls(
+                        selection = selection,
+                        existing = state.ownGroupings,
+                        taken = taken,
+                        shown = shown.map { it.typeId },
+                        seeded = seeded,
+                        onCreate = onCreateGrouping,
+                        onAddTo = onAddToGrouping,
+                    )
+                }
             }
         }
 
@@ -109,7 +136,13 @@ fun CoinsScreen(
         }
 
         items(shown, key = { it.typeId }) { row ->
-            CoinCard(row = row, onOpen = onOpen)
+            CoinCard(
+                row = row,
+                onOpen = onOpen,
+                picking = selection.active,
+                picked = selection.isPicked(row.typeId),
+                onTogglePick = { selection.toggle(row.typeId) },
+            )
         }
     }
 }
@@ -222,7 +255,13 @@ private fun CoinsFacets(
  * row is the whole type cache on screen at once.
  */
 @Composable
-private fun CoinCard(row: CoinRow, onOpen: (CardDestination) -> Unit) {
+private fun CoinCard(
+    row: CoinRow,
+    onOpen: (CardDestination) -> Unit,
+    picking: Boolean,
+    picked: Boolean,
+    onTogglePick: () -> Unit,
+) {
     FieldCard(modifier = Modifier.fillMaxWidth()) {
         row.issuer?.let { issuer ->
             Eyebrow(issuer, modifier = Modifier.fillMaxWidth())
@@ -256,6 +295,9 @@ private fun CoinCard(row: CoinRow, onOpen: (CardDestination) -> Unit) {
                     maxLines = 1,
                 )
             }
+        }
+        if (picking) {
+            PieceSelectionToggle(picked = picked, onToggle = onTogglePick)
         }
     }
 }

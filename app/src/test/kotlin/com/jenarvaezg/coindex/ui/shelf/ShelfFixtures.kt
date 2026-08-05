@@ -128,6 +128,17 @@ internal object ShelfFixtures {
         ownGroupings = listOf(box.box),
     )
 
+    /**
+     * The same collection after the Mexican onza was dropped from the box.
+     *
+     * Dropping a type does not touch the piece (ADR 0013, ADR 0021 §10): the inventory is untouched
+     * and only the membership goes, which is what makes a box a second reading rather than a move.
+     */
+    val stateWithoutTheBox = state.copy(
+        index = state.index.filterNot { it is IndexCard.Box },
+        ownGroupings = emptyList(),
+    )
+
     private fun item(id: Long, typeId: Int, quantity: Int) =
         CollectedItem(id = id, quantity = quantity, typeId = typeId)
 }

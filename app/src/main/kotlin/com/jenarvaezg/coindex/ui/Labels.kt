@@ -98,9 +98,16 @@ fun plural(count: Int, singular: String, plural: String): String =
 /** The API budget is counted on the index, in the settings screen and in the sync report. */
 fun callsLabel(count: Int): String = plural(count, "llamada", "llamadas")
 
+/**
+ * What a collection with no issue list counts: **«5 monedas · 5 tipos»** (ADR 0021 §3).
+ *
+ * The coins come first because that is what the collector has in the house, and the types second
+ * because that is what tells «five different coins» from «the same one five times». It used to read
+ * «5 tipos distintos · 5 piezas», which put the curator's unit first and spent two words —
+ * «distinto», «pieza» — on saying what «tipo» and «moneda» already say.
+ */
 fun countLabel(distinctTypes: Int, quantity: Int): String =
-    plural(distinctTypes, "tipo distinto", "tipos distintos") +
-        " · " + plural(quantity, "pieza", "piezas")
+    plural(quantity, "moneda", "monedas") + " · " + plural(distinctTypes, "tipo", "tipos")
 
 /**
  * The third line of a card that has an issue list: `4 de 12 · te faltan 8` (ADR 0021 §3).

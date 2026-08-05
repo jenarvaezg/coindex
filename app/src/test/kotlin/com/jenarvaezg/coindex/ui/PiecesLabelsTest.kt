@@ -6,19 +6,19 @@ import kotlin.test.assertEquals
 /**
  * What the collector is told after a sheet of pieces is shared.
  *
- * It counts **piezas** and never «casillas»: a sheet of pieces has no slot the mint has not struck,
+ * It counts **monedas** and never «casillas»: a sheet of pieces has no slot the mint has not struck,
  * which is the whole difference between it and a plate (ADR 0021 §9).
  */
 class PiecesLabelsTest {
     /**
      * The message counts what the sheet counts. It used to report the number of rows drawn while
      * the sheet printed `countLabel` under the title, so a collection of four types held in ten
-     * pieces was told «6 piezas» about a sheet that said «4 tipos distintos · 10 piezas».
+     * pieces was told «6 piezas» about a sheet that said something else.
      */
     @Test
     fun `everything painted reports the sheet in the sheet's own words`() {
         assertEquals(
-            "Hoja completa exportada · 4 tipos distintos · 10 piezas",
+            "Hoja completa exportada · 10 monedas · 4 tipos",
             piecesExportMessage(
                 distinctTypes = 4,
                 quantity = 10,
@@ -27,7 +27,7 @@ class PiecesLabelsTest {
             ),
         )
         assertEquals(
-            "Hoja completa exportada · 1 tipo distinto · 1 pieza",
+            "Hoja completa exportada · 1 moneda · 1 tipo",
             piecesExportMessage(
                 distinctTypes = 1,
                 quantity = 1,
@@ -64,7 +64,7 @@ class PiecesLabelsTest {
     @Test
     fun `more photos than expected never reads as a negative`() {
         assertEquals(
-            "Hoja completa exportada · 2 tipos distintos · 2 piezas",
+            "Hoja completa exportada · 2 monedas · 2 tipos",
             piecesExportMessage(
                 distinctTypes = 2,
                 quantity = 2,

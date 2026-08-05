@@ -3,6 +3,8 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.ui.fold
+import com.jenarvaezg.coindex.ui.matchesQuery
 import com.jenarvaezg.coindex.ui.variantLabel
 import java.text.Collator
 import java.util.Locale

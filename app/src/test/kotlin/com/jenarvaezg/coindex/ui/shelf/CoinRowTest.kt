@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.matchesQuery
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -61,6 +62,25 @@ class CoinRowTest {
 
         assertEquals(ObjectClass.Exonumia, medal.objectClass)
         assertEquals(listOf("Las mexicanas"), medal.claims.map { it.name })
+    }
+
+    /**
+     * Dropping a type from a box does not touch the coin (ADR 0013, ADR 0021 §10).
+     *
+     * It stays in the inventory and in Coins with the same quantity, and what changes is only which
+     * collections claim it — which is what makes a box a second membership rather than a move. Here
+     * the box was the onza's only claim, so it lands under «Sin colección» and nowhere else.
+     */
+    @Test
+    fun `a coin dropped from a box is still a coin, with one claim fewer`() {
+        val after = coinRows(ShelfFixtures.stateWithoutTheBox)
+        val before = rows.single { it.typeId == ShelfFixtures.ONZA_MEXICANA }
+        val onza = after.single { it.typeId == ShelfFixtures.ONZA_MEXICANA }
+
+        assertEquals(rows.size, after.size)
+        assertEquals(before.quantity, onza.quantity)
+        assertEquals(before.title, onza.title)
+        assertTrue(onza.claims.isEmpty())
     }
 
     @Test

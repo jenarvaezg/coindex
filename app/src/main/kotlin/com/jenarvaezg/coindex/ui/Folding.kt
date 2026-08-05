@@ -1,4 +1,4 @@
-package com.jenarvaezg.coindex.ui.shelf
+package com.jenarvaezg.coindex.ui
 
 import java.text.Normalizer
 import java.util.Locale

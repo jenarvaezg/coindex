@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.ui.fold
+import com.jenarvaezg.coindex.ui.matchesQuery
 
 /**
  * Whether any collection claims a coin.
