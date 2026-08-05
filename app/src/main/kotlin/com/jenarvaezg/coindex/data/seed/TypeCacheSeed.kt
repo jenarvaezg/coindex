@@ -40,9 +40,11 @@ class TypeCacheSeed(
      *
      * It used to seed only into an empty cache, which made the snapshot a **first-install**
      * gift: every catalog curated afterwards shipped its fichas in the asset and none of them
-     * ever reached a phone that already had the app. And a cached type is never re-fetched, so
-     * the missing fichas had no second route in — the cells stayed silhouettes for good. That
-     * is most of the plate the collector reported with 7 pictures out of 19 (issue #67).
+     * ever reached a phone that already had the app. And at the time nothing could re-fetch a
+     * cached type, so the missing fichas had no second route in — the cells stayed silhouettes for
+     * good. That is most of the plate the collector reported with 7 pictures out of 19 (issue #67).
+     * Since #185 there is a second route, but it is the collector's own gesture on one type, which
+     * is no way to top up a plate of nineteen.
      *
      * [requiredTypeIds] is what the curated files name, which is exactly what a plate can ask
      * to draw: comparing it against the cached ids costs one column of integers, and the 2.4 MB

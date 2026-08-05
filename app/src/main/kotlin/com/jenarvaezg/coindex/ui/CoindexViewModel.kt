@@ -7,6 +7,8 @@ import com.jenarvaezg.coindex.AppContainer
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.data.numista.NumistaClient
+import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
@@ -59,6 +61,14 @@ data class UiState(
      */
     val indexShelf: IndexShelf = IndexShelf(),
     val coinsShelf: CoinsShelf = CoinsShelf(),
+    /**
+     * The types whose ficha is being asked for right now (#185).
+     *
+     * A set and not a flag: the two surfaces that carry the gesture are lists, and the collector who
+     * taps two rows must see which two are working — one boolean would have greyed out every button
+     * on screen to report one call.
+     */
+    val refreshingFichas: Set<Int> = emptySet(),
 )
 
 class CoindexViewModel(private val container: AppContainer) : ViewModel() {
@@ -261,13 +271,23 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch { container.repository.deleteOwnGrouping(groupingId) }
     }
 
-    fun sync() {
-        if (_state.value.syncing) return
+    /**
+     * The client, or null having said why there isn't one.
+     *
+     * Every gesture that spends API budget goes through here, so «falta la API key» is one sentence
+     * in one place — and it is the same sentence [syncErrorLabel] gives for an empty key.
+     */
+    private fun clientOrComplain(): NumistaClient? {
         val client = container.numistaClient()
         if (client == null) {
-            _state.update { it.copy(message = "Falta la API key de Numista. Añádela en Ajustes.") }
-            return
+            _state.update { it.copy(message = syncErrorLabel(NumistaException.EmptyApiKey())) }
         }
+        return client
+    }
+
+    fun sync() {
+        if (_state.value.syncing) return
+        val client = clientOrComplain() ?: return
         val userId = container.credentials.credentials()?.userId ?: return
         _state.update { it.copy(syncing = true, message = null) }
         viewModelScope.launch {
@@ -296,6 +316,33 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
                     _state.update { it.copy(syncing = false, message = syncErrorLabel(error)) }
                 },
             )
+        }
+    }
+
+    /**
+     * Asks Numista again for one type's ficha (#185, ADR 0023).
+     *
+     * One call, and the collector asked for it, so unlike the update check every outcome is spoken:
+     * what changed, that nothing did, or why it could not be asked. The corrected ficha reaches the
+     * screen through the same flow a sync does — nothing here pushes it — so the card the collector
+     * is looking at redraws itself with the family Numista now publishes.
+     */
+    fun refreshFicha(typeId: Int) {
+        if (typeId in _state.value.refreshingFichas) return
+        val client = clientOrComplain() ?: return
+        _state.update { it.copy(refreshingFichas = it.refreshingFichas + typeId, message = null) }
+        viewModelScope.launch {
+            val outcome = runCatching { container.typeRefresh.refresh(client, typeId) }
+            refreshBudget()
+            _state.update { state ->
+                state.copy(
+                    refreshingFichas = state.refreshingFichas - typeId,
+                    message = outcome.fold(
+                        onSuccess = ::fichaRefreshMessage,
+                        onFailure = { error -> fichaRefreshErrorLabel(typeId, error) },
+                    ),
+                )
+            }
         }
     }
 

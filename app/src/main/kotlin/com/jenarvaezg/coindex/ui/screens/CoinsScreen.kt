@@ -25,6 +25,8 @@ import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.Facet
+import com.jenarvaezg.coindex.ui.components.FichaBrought
+import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
@@ -75,6 +77,15 @@ fun CoinsScreen(
     onOpen: (CardDestination) -> Unit,
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
+    /**
+     * How old each ficha is and how to ask for it again (#185, ADR 0023).
+     *
+     * This is the surface that has to carry it. A type whose ficha looks like an unpublished draft
+     * derives no card at all (#186), so its pieces are only ever reachable from here — and that is
+     * exactly the coin the issue was opened about: N#596807, whose family reads «The» until a referee
+     * publishes the page and somebody on this side can ask again.
+     */
+    ficha: (typeId: Int) -> FichaRefresh,
     modifier: Modifier = Modifier,
 ) {
     // Recomputed only when the collection changes: 192 rows joined against the type cache is work
@@ -142,6 +153,7 @@ fun CoinsScreen(
             CoinCard(
                 row = row,
                 onOpen = onOpen,
+                ficha = ficha(row.typeId),
                 picking = selection.active,
                 picked = selection.isPicked(row.typeId),
                 onTogglePick = { selection.toggle(row.typeId) },
@@ -271,6 +283,7 @@ private fun CoinsFacets(
 private fun CoinCard(
     row: CoinRow,
     onOpen: (CardDestination) -> Unit,
+    ficha: FichaRefresh,
     picking: Boolean,
     picked: Boolean,
     onTogglePick: () -> Unit,
@@ -320,6 +333,7 @@ private fun CoinCard(
                 )
             }
         }
+        FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
         if (picking) {
             PieceSelectionToggle(picked = picked, onToggle = onTogglePick)
         }

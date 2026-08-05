@@ -127,8 +127,9 @@ internal fun categoryFromRaw(raw: String): String? = runCatching {
  *
  * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
  * carrying its whole Numista response — so parsing on each pass would put a tenth of a second
- * between a sync landing and the index redrawing. A cached type is never refetched, so the answer is
- * read once; the key carries `fetchedAt` anyway, so a row that is written again is read again.
+ * between a sync landing and the index redrawing. The key carries `fetchedAt`, which is what makes a
+ * refreshed ficha read again instead of answering from the memo (#185): the refresh stamps the row
+ * with the moment it was brought, so its old parse is unreachable rather than stale.
  * The empty string stands in for «no issuer», which a [ConcurrentHashMap] cannot hold as null.
  */
 private val issuerNames = ConcurrentHashMap<Pair<Int, Long>, String>()

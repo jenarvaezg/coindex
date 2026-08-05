@@ -187,9 +187,20 @@ curated grouping, however certain the coin is, because the referee may delete th
 the id with it. Since #186 the same bar applies to the collection the app derives on its own: a
 type that looks unpublished and declares a family derives no card, and its pieces wait in the
 unclassified residue until the page is published. Nothing corrects the fields in the app — the
-editor's fix upstream is the fix, and it only reaches a phone that can fetch the type again
-(#185). Its offline trace is a type with no year at all.
+editor's fix upstream is the fix, and it reaches a phone only when somebody there asks for the ficha
+again, which since #185 is a gesture on the coin itself (ADR 0023) and never something the app does
+on its own. Its offline trace is a type with no year at all.
 _Avoid_: Numista error, manual override, missing type metadata
+
+**Ficha**:
+The Numista type as this phone holds it: the fields a card prints, the untouched body they were read
+from, and the day it was **brought** — which is what the card says, «ficha traída hace ocho meses»,
+because for a ficha that arrived in the APK's snapshot the content may be older than the day it
+landed. No sync and no seed ever asks for a ficha twice; the collector can, one type at a time, on
+the coin where the wrong datum is on screen, and that gesture is the only thing that overwrites one
+(ADR 0023). It costs one call, it says so before spending it, and failing it leaves the ficha that
+was already there — including the 404 that means a referee deleted the page.
+_Avoid_: Type metadata, permanent cache, refrescar la colección, ficha fresca
 
 **Collection catalog plate**:
 The per-collector comparison between a collection that exists today and its matching collection
