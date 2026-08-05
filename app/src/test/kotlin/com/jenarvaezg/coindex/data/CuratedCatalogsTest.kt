@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(59, catalogs.size)
+        assertEquals(60, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * veintinueve cerrados llevan su nota y los treinta abiertos no afirman nada más que
+     * treinta cerrados llevan su nota y los treinta abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(29, closed.size)
+        assertEquals(30, closed.size)
         assertEquals(30, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -332,6 +332,82 @@ class CuratedCatalogsTest {
         )
         assertTrue(libertad.memberMatches(libertad.members.single { it.year == 2024 }, bullion2024))
         assertTrue(libertad.members.none { libertad.memberMatches(it, proof2024) })
+    }
+
+    /**
+     * Nautical Ounce: the antiqued high relief is a second plate over the same ten type pages,
+     * and it is the case ADR 0019 exists for — Numista keeps the standard, the proof and the
+     * antiqued row inside one type, so an antiqued piece filled the bullion slot of its year and
+     * completed a plate the collector had never touched.
+     *
+     * The variant closes in 2024 while the series stays open, like the .500 Canadian dollar
+     * (#52): gold.de gives the antiqued 1 oz as struck 2020-2024 at 1,000 a year and «nicht
+     * geprägt» before 2020, and AgAuNEWS enumerates the whole 2025 and 2026 ranges without it.
+     * 2020 is `unlisted`: the coin exists and Numista carries one undifferentiated row for the
+     * year, so the slot cites the dealer table and anchors its picture on N#220874.
+     *
+     * Emission ids from `/types/{id}/issues` over the ten types, ten calls.
+     */
+    @Test
+    fun `the antiqued nautical ounce is five closed years sharing every type with the bullion`() {
+        val antiqued = find("rwanda-nautical-50-francs-antiqued")
+        assertEquals(1, antiqued.schemaVersion)
+        assertFalse(antiqued.isDateRun)
+        assertEquals("Nautical Ounce", antiqued.family)
+        assertEquals("Nautical Ounce antique de Ruanda", antiqued.shortName)
+        assertEquals("rwanda", antiqued.issuerCode)
+        assertEquals(1_000, antiqued.weightMillioz)
+        assertEquals(Finish.Antiqued, antiqued.finish)
+        assertEquals(Metal.Silver, antiqued.metal)
+        assertEquals(SeriesStatus.Closed, antiqued.seriesStatus)
+        assertNotNull(antiqued.closedNote)
+        assertTrue(antiqued.closedNote!!.contains("2020 a 2024"))
+        assertEquals((2020..2024).toList(), antiqued.members.map { it.year })
+
+        // 2020 is the only slot without a type, and the only one that may not name emissions.
+        val mayflower = antiqued.members.single { it.year == 2020 }
+        assertTrue(mayflower.isUnlisted)
+        assertNull(mayflower.numistaTypeId)
+        assertTrue(mayflower.numistaIssueIds.isEmpty())
+        assertEquals(220_874, mayflower.designTypeId)
+        assertNotNull(mayflower.source)
+        assertNotNull(mayflower.sourceNote)
+
+        val issued = antiqued.members.filter { it.isIssued }
+        assertEquals(listOf(301_537, 362_115, 415_674, 442_604), issued.map { it.numistaTypeId })
+        assertEquals(
+            listOf(listOf(796_570), listOf(796_577), listOf(864_080), listOf(908_445)),
+            issued.map { it.numistaIssueIds },
+        )
+
+        // The two plates share all four published types, so both sides must be qualified and
+        // disjoint: Jose's antiqued 2022 fills the antiqued slot and leaves the bullion one open.
+        val bullion = find("rwanda-nautical-50-francs")
+        assertTrue(bullion.members.all { it.numistaIssueIds.isNotEmpty() })
+        assertEquals(
+            emptySet(),
+            bullion.members.flatMap { it.numistaIssueIds }
+                .intersect(antiqued.members.flatMap { it.numistaIssueIds }.toSet()),
+        )
+        val antiqued2022 = CollectedItem(
+            id = 1,
+            quantity = 1,
+            typeId = 362_115,
+            issueYear = 2022,
+            issueId = 796_577,
+        )
+        assertTrue(antiqued.memberMatches(antiqued.members.single { it.year == 2022 }, antiqued2022))
+        assertTrue(bullion.members.none { bullion.memberMatches(it, antiqued2022) })
+        // And the proof of that same type fills neither: a closed world for a qualified type.
+        val proof2022 = CollectedItem(
+            id = 2,
+            quantity = 1,
+            typeId = 362_115,
+            issueYear = 2022,
+            issueId = 796_578,
+        )
+        assertTrue(antiqued.members.none { antiqued.memberMatches(it, proof2022) })
+        assertTrue(bullion.members.none { bullion.memberMatches(it, proof2022) })
     }
 
     /**
@@ -1332,7 +1408,7 @@ class CuratedCatalogsTest {
      * El emisor alterna por año entre Tokelau y Niue sin que el programa cambie de ceca: es un
      * acuerdo de respaldo legal de la Pressburg Mint, así que las ocho son una tirada anual.
      *
-     * Y por eso es el único de los 59 catálogos cuya cabecera no puede decir el país sola (#170):
+     * Y por eso es el único de los 60 catálogos cuya cabecera no puede decir el país sola (#170):
      * el emisor lo dicen las dos casillas de Niue —2023 y 2025, verificadas en N#356004 y
      * N#477907, 2 dólares de Nueva Zelanda contra los 5 de Tokelau—, y la cabecera hace de
      * defecto para las otras seis. La propia serie 3245 de Numista se encabeza «Emisores: Niue,

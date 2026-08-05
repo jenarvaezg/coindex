@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "id": "rwanda-nautical-50-francs-antiqued",
+  "name": "Nautical Ounce antique de Ruanda · 50 francos de plata en alto relieve",
+  "short_name": "Nautical Ounce antique de Ruanda",
+  "issuer_code": "rwanda",
+  "family": "Nautical Ounce",
+  "weight_millioz": 1000,
+  "finish": "Antiqued",
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "La Nautical Ounce sigue emitiéndose —el Kruzenshtern es de 2026— y lo que cierra aquí es la variante, no el programa: el alto relieve de 6 mm con acabado antiguo se acuñó de 2020 a 2024, mil piezas por año en la onza y quinientas en las tres onzas. La gama de 2025 y la de 2026 están enumeradas al completo por AgAuNEWS —10 francos de plata, 50 francos de plata sin circular, 50 francos de plata proof con tirada de 1.000 y las dos de oro— y en ninguna de las dos aparece el acabado antiguo: «the gorgeous antique-finished variants seem to have sunk without trace». https://agaunews.com/what-poor-sap-has-to-wash-the-sails/",
+  "source": "https://en.numista.com/catalogue/series.php?id=5228",
+  "source_note": "El arranque en 2020 está afirmado, no supuesto: la tabla de tiradas de GOLD.DE dice que la serie «wird ab dem Jahrgang 2020 - Mayflower auch in High Relief Antik Finish in der Stückelung 1 oz und 3 oz verausgabt» y marca 2017, 2018 y 2019 con «— = nicht geprägt», y los distribuidores de la Mayflower la anuncian como la primera del programa con ese acabado. La serie 5228 de Numista no separa acabados: sus 21 tipos mezclan esta onza, el doceavo de onza de plata, la onza de oro y las tres onzas antiguas, así que cada casilla de aquí cualifica la emisión antigua dentro del tipo que comparte con la lámina sin circular (ADR 0019). https://www.gold.de/kaufen/silbermuenzen/nautical-ounce/",
+  "updated_at": "2026-08-05",
+  "members": [
+    {
+      "id": "2020-mayflower",
+      "label": "Mayflower",
+      "year": 2020,
+      "status": "unlisted",
+      "source": "https://www.gold.de/kaufen/silbermuenzen/nautical-ounce/",
+      "source_note": "La onza antigua de 2020 se acuñó con tirada de 1.000: así la da la tabla de tiradas de GOLD.DE y así la venden los distribuidores, como «2020 1 oz Antique Silver Mayflower Nautical Ounce». Numista lleva un solo renglón de 2020 en N#220874 y no separa el acabado, de modo que la casilla se queda sin tipo hasta que un árbitro publique la propuesta de edición presentada.",
+      "design_type_id": 220874
+    },
+    {
+      "id": "2021-sedov",
+      "label": "Sedov",
+      "year": 2021,
+      "numista_type_id": 301537,
+      "numista_issue_ids": [
+        796570
+      ]
+    },
+    {
+      "id": "2022-uss-constitution",
+      "label": "USS Constitution",
+      "year": 2022,
+      "numista_type_id": 362115,
+      "numista_issue_ids": [
+        796577
+      ]
+    },
+    {
+      "id": "2023-great-eastern",
+      "label": "Great Eastern",
+      "year": 2023,
+      "numista_type_id": 415674,
+      "numista_issue_ids": [
+        864080
+      ]
+    },
+    {
+      "id": "2024-cutty-sark",
+      "label": "Cutty Sark",
+      "year": 2024,
+      "numista_type_id": 442604,
+      "numista_issue_ids": [
+        908445
+      ]
+    }
+  ]
+}
