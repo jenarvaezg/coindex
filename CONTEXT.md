@@ -98,6 +98,15 @@ index and a prefix of `name` — Numista's raw family verbatim where no file exi
 by the curator, never renamed by the collector, and there are no display aliases in code.
 _Avoid_: Family, name, family display alias, editorial scope
 
+**Card country**:
+The country a card says above its name, and the chip Coins filters by: `issuer_code` from the curated
+file wherever one names the collection, and the pieces' own issuer where none does — silent when they
+disagree, because an eyebrow covering half a card is worse than no eyebrow. It is a **country and not
+an issuing entity**: Numista names entities with their period of validity, so nine of the 40 issuer
+codes in the cache are cured to the name the curator writes in Spanish, `russie` → «Rusia»
+(ADR 0023). The remaining 31 are the ficha's, verbatim.
+_Avoid_: Numista's issuer label as the country, issuing entity, period of validity on a card
+
 **Coverage ratio**:
 Issued members owned over issued members catalogued, which is what a collection with an issue list
 prints and what the index is sorted by — `(has ratio ↓, ratio ↓, denominator ↓, short_name ↑)`. It

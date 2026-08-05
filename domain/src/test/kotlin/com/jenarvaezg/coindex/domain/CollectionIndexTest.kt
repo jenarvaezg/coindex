@@ -198,6 +198,76 @@ class CollectionIndexTest {
     }
 
     /**
+     * El eyebrow dice el **país**, y no la entidad emisora con su vigencia (#180).
+     *
+     * Cuatro catálogos declaran `russie` y dos `chine`, y hasta aquí la tarjeta rotulaba la etiqueta
+     * de Numista tal cual: «Federación de Rusia (1991-presente)» son 35 caracteres en versalitas
+     * sobre un `short_name` de 20 de mediana, y un paréntesis de vigencia en la línea de identidad es
+     * exactamente lo que el §4 del ADR 0021 le quitó a la `family` del Krugerrand. La distinción que
+     * el paréntesis hace sí es real, y la sigue haciendo `ancienne_urss` → «Unión Soviética».
+     */
+    @Test
+    fun `the eyebrow says the country and not Numista's issuing entity`() {
+        val libroRojo = catalog("red-data-book-russia", "Libro Rojo de Rusia", 2, 10_000, "russie")
+        val sovieticas = catalog("urss-rublos", "Rublos soviéticos", 1, 20_000, "ancienne_urss")
+        val catalogs = listOf(libroRojo, sovieticas)
+        val items = ownedTypes(libroRojo, 2) + ownedTypes(sovieticas, 1)
+        val typeMeta = mapOf(
+            meta(10_001, "russie", "Federación de Rusia (1991-presente)"),
+            meta(10_002, "russie", "Federación de Rusia (1991-presente)"),
+            meta(20_001, "ancienne_urss", "Unión Soviética"),
+        )
+        val index = CollectionIndex(catalogs, emptyList(), CollectionTitles(catalogs, emptyList()))
+
+        val cards = index.build(
+            derivation = derivation(
+                catalogs.map { it.key() },
+                items,
+                piecesByKey = mapOf(
+                    libroRojo.key() to ownedTypes(libroRojo, 2),
+                    sovieticas.key() to ownedTypes(sovieticas, 1),
+                ),
+            ),
+            boxes = emptyList(),
+            items = items,
+            typeMeta = typeMeta,
+        )
+        val byName = cards.associate { it.name to it.issuer }
+
+        assertEquals("Rusia", byName.getValue("Libro Rojo de Rusia"))
+        assertEquals("Unión Soviética", byName.getValue("Rublos soviéticos"))
+    }
+
+    /**
+     * Dos códigos de un mismo país dejan de ser un desacuerdo, y la tarjeta sin fichero habla.
+     *
+     * La cláusula de silencio protege contra un eyebrow que cubre media tarjeta, no contra dos
+     * momentos de la historia de Alemania: `allemagne` («Alemania, República Federal de») y
+     * `allemagne-pre1945` («Alemania (1871-1948)») son el mismo país, y curados los dos a «Alemania»
+     * la tarjeta rotula en vez de callar por contradecirse consigo misma.
+     */
+    @Test
+    fun `two codes of one country agree, and the card labels instead of going silent`() {
+        val alemanas = VariantKey("Deutsche Mark", 1_000, null, Metal.Silver)
+        val items = listOf(item(97_001L, 97_001), item(97_002L, 97_002))
+        val typeMeta = mapOf(
+            meta(97_001, "allemagne", "Alemania, República Federal de"),
+            meta(97_002, "allemagne-pre1945", "Alemania (1871-1948)"),
+        )
+        val titles = CollectionTitles(emptyList(), emptyList())
+        val index = CollectionIndex(emptyList(), emptyList(), titles)
+
+        val cards = index.build(
+            derivation = derivation(listOf(alemanas), items),
+            boxes = emptyList(),
+            items = items,
+            typeMeta = typeMeta,
+        )
+
+        assertEquals("Alemania", cards.single().issuer)
+    }
+
+    /**
      * El eyebrow de una caja es el país de sus piezas, y calla si son varios (ADR 0021 §11, #173).
      *
      * Aquí la cláusula de silencio **no** es el error de categoría del §9: sin fichero que la nombre,

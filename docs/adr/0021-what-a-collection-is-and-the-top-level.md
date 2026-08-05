@@ -1,8 +1,13 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
+
+> **Amended on 2026-08-05.** The model below stands whole. What ADR 0023 corrects is one inventory:
+> the labelling rules left in code are **two** and not one, because Numista does not write countries
+> — it writes issuing entities with their period of validity, and nine of the 40 issuer codes in the
+> cache reach a card as «Federación de Rusia (1991-presente)» rather than as «Rusia» (#180).
 
 ## Context
 
@@ -111,9 +116,10 @@ half was already implemented ahead of the ADR — 53 files curated one by one (#
 
 - **Without a file, the card paints Numista's raw family verbatim** — 18 cards measured, 15 of them
   a single type. An ugly name is a curation signal, fixed by curating or by opening an issue against
-  Numista, never by a display alias. **The six editorial aliases die**; the only labelling rule left
-  in code is `System 1879-1936` → «Sistema monetario 1879-1936», which is formatting of a generated
-  string (ADR 0012).
+  Numista, never by a display alias. **The six editorial aliases die**; the labelling rules left in
+  code are `System 1879-1936` → «Sistema monetario 1879-1936», which is formatting of a generated
+  string (ADR 0012), and the nine issuer codes whose Numista label is an issuing entity with its
+  period of validity rather than a country (ADR 0023).
 - **Language rule for the corpus**: the series in the mint's language when it is already in Latin
   script, translated when it is not — there the translation *is* the readable name — and everything
   the curator writes in Spanish, country names included (`Ruanda`, not `Rwanda`).
@@ -206,10 +212,11 @@ reach the same thing.
 
 Also settled here: the eyebrow vacated by «Propuesta de colección» is **the country**, taken from
 the file's `issuer_code` where there is one (all 50 declare it) and from the pieces where there is
-not; box maintenance is **an `if`, not a screen**; `PiecesScreen` **exports as an image**, because by
-ADR 0020 the only product a box can have is a sheet; and a collection without an issue list shows
-its pieces where the plate would go — no hole, no promise, no «could have a catalog», which would be
-a provenance label in disguise.
+not — and the *name* of that country is the ficha's for 31 of the 40 codes and the curator's for the
+nine Numista labels that are not country names (ADR 0023); box maintenance is **an `if`, not a
+screen**; `PiecesScreen` **exports as an image**, because by ADR 0020 the only product a box can have
+is a sheet; and a collection without an issue list shows its pieces where the plate would go — no
+hole, no promise, no «could have a catalog», which would be a provenance label in disguise.
 
 ### 10. Membership is curated, declared on the type, and never hierarchical
 

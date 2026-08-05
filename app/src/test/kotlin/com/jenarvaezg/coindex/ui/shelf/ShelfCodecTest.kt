@@ -26,7 +26,7 @@ class ShelfCodecTest {
     fun `a whole shelf of the index comes back as it went in`() {
         val shelf = IndexShelf(
             sort = IndexSort.RecentlyAdded,
-            issuer = "Federación de Rusia (1991-presente)",
+            issuer = "Rusia",
             weight = OunceBand.Spanning,
             startsIn = StartBand.BeforeFifty,
             status = PlateStatus.NoPlate,
@@ -91,6 +91,45 @@ class ShelfCodecTest {
         assertEquals(
             CoinsShelf(),
             ShelfCodec.decodeCoins { key -> if (key == ShelfCodec.COINS_ISSUER) "  " else null },
+        )
+    }
+
+    /**
+     * La migración de las nueve etiquetas que retiró el ADR 0023, que es la única que el país
+     * necesita.
+     *
+     * El país es la única faceta que no es un enum, así que la promesa de arriba —un valor que esta
+     * versión no reconoce se lee como «sin filtro»— no la heredaba: guardaba la etiqueta misma. Un
+     * teléfono con «Federación de Rusia (1991-presente)» puesto habría reabierto filtrando por una
+     * cadena que ya no produce ninguna fila —lista vacía, contador de filtros en 1 y ninguna chip
+     * encendida—, y `russie` es el emisor de 293 de las 829 fichas sembradas, así que es la chip que
+     * más probable es que se dejara puesta. No hace falta clave de versión: las chips se construyen
+     * con lo que dicen las filas, así que esto no se puede volver a escribir.
+     */
+    @Test
+    fun `a country this version no longer paints is no filter at all`() {
+        val retired = listOf(
+            "Federación de Rusia (1991-presente)",
+            "China, República Popular",
+            "Alemania, República Federal de",
+            "Haití (1804-presente)",
+            "Romano, Imperio (27 a. C. - 395 d. C.)",
+        )
+
+        for (label in retired) {
+            assertEquals(
+                CoinsShelf(),
+                ShelfCodec.decodeCoins { key -> label.takeIf { key == ShelfCodec.COINS_ISSUER } },
+            )
+            assertEquals(
+                IndexShelf(),
+                ShelfCodec.decodeIndex { key -> label.takeIf { key == ShelfCodec.INDEX_ISSUER } },
+            )
+        }
+        // Y un país que sí se pinta sigue siendo un filtro, que es lo que esto no puede romper.
+        assertEquals(
+            "Rusia",
+            ShelfCodec.decodeCoins { key -> "Rusia".takeIf { key == ShelfCodec.COINS_ISSUER } }.issuer,
         )
     }
 }

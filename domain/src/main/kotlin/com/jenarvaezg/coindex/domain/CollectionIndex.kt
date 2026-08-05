@@ -223,7 +223,8 @@ class CollectionIndex(
  *
  * The name of an issuer comes from the type cache either way, keyed by the same code the files
  * declare — `afrique_du_sud`, in French, because Numista's codes are. One source for both kinds of
- * card, rather than a table of countries maintained in code.
+ * card, and [cardCountry] over it for the nine codes whose Numista label is an issuing entity with
+ * its period of validity rather than a country (ADR 0023).
  */
 internal class Issuers(private val typeMeta: TypeMetaIndex) {
     private val namesByCode: Map<String, String> = buildMap {
@@ -235,9 +236,9 @@ internal class Issuers(private val typeMeta: TypeMetaIndex) {
     }
 
     fun of(declaredCode: String?, pieces: List<CollectedItem>): String? {
-        declaredCode?.let { code -> namesByCode[code]?.let { return it } }
+        declaredCode?.let { code -> cardCountry(code, namesByCode[code])?.let { return it } }
         return pieces
-            .map { piece -> typeMeta[piece.typeId]?.issuerName }
+            .map { piece -> typeMeta[piece.typeId]?.country }
             .distinct()
             .singleOrNull()
     }
