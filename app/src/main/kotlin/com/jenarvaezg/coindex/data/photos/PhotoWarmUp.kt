@@ -17,7 +17,7 @@ import kotlinx.coroutines.sync.withPermit
  * for the picture afterwards hits it at whatever diameter it then wants. Decoding to something is
  * unavoidable, so it decodes to the smallest honest thing rather than to the original.
  */
-const val WARM_SIZE_PX: Int = 180
+private const val WARM_SIZE_PX = 180
 
 /**
  * Fetches photographs into the cache, [concurrency] at a time, reporting each one as it lands.
@@ -31,6 +31,10 @@ const val WARM_SIZE_PX: Int = 180
  * A photograph that fails is reported as such and never retried here: `ThrottleRetryInterceptor`
  * has already tried it three times, and whatever is left is either gone or not coming today.
  *
+ * @param memoryCache what this warm-up does to the memory cache. The export writes to it — the page
+ *   it is about to draw may want the same bitmap seconds later — and the prefetch leaves it alone
+ *   entirely: sixteen hundred thumbnails written to memory would evict the ones the screen wants,
+ *   and none of them is the size a 40 mm cell asks for anyway.
  * @param onDone called once per URL, on the coroutine that fetched it, with whether it landed.
  */
 suspend fun warmPhotographs(
@@ -38,6 +42,7 @@ suspend fun warmPhotographs(
     loader: ImageLoader,
     urls: List<String>,
     concurrency: Int,
+    memoryCache: CachePolicy,
     onDone: (url: String, landed: Boolean) -> Unit,
 ) {
     if (urls.isEmpty()) return
@@ -51,11 +56,7 @@ suspend fun warmPhotographs(
                             ImageRequest.Builder(context)
                                 .data(url)
                                 .size(WARM_SIZE_PX, WARM_SIZE_PX)
-                                // The memory cache is left alone entirely. What a warm-up wants is
-                                // the disk; a thumbnail decoded at 180 px is not the bitmap a 40 mm
-                                // cell will want anyway, and hundreds of them written to memory
-                                // would evict the ones the screen does want.
-                                .memoryCachePolicy(CachePolicy.DISABLED)
+                                .memoryCachePolicy(memoryCache)
                                 .build(),
                         )
                     }.getOrNull() is SuccessResult

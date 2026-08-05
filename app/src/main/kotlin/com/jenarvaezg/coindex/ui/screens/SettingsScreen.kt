@@ -21,8 +21,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.ui.BudgetStatus
-import com.jenarvaezg.coindex.ui.PhotoCacheStatus
 import com.jenarvaezg.coindex.ui.SettingsValues
 import com.jenarvaezg.coindex.ui.callsLabel
 import com.jenarvaezg.coindex.ui.photoCacheLabel
@@ -131,12 +131,6 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 4.dp),
-            )
-            Text(
-                "Son fotos de Numista y no gastan presupuesto de llamadas.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Paper.muted,
-                modifier = Modifier.padding(top = 6.dp),
             )
         }
 

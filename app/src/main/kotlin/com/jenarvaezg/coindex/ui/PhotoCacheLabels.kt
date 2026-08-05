@@ -1,22 +1,8 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PrefetchRefusal
 import java.util.Locale
-
-/**
- * What the phone holds of the catalog's photographs, for the one line that says it (#191).
- *
- * @param wanted the photographs the index would draw, minus the ones Numista says are gone.
- * @param missing how many of those are not on this phone yet.
- * @param bytes what the picture cache weighs.
- * @param held why they are not being brought right now, or null while they are.
- */
-data class PhotoCacheStatus(
-    val wanted: Int = 0,
-    val missing: Int = 0,
-    val bytes: Long = 0L,
-    val held: PrefetchRefusal? = null,
-)
 
 /**
  * The prefetch's one sentence, in the settings screen.

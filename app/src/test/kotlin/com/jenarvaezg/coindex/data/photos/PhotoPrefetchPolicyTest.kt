@@ -111,6 +111,20 @@ class PhotoPrefetchPolicyTest {
     }
 
     @Test
+    fun `a photograph that was gone a month ago is given another chance`() {
+        val day = 24 * 60 * 60 * 1_000L
+        val now = 400L * day
+        val remembered = mapOf(
+            "yesterday.jpg" to now - day,
+            // A CDN having a bad minute would otherwise take this picture out of the catalog on
+            // this phone for good, invisibly, and not even clearing the cache would bring it back.
+            "last-year.jpg" to now - 365 * day,
+        )
+
+        assertEquals(setOf("yesterday.jpg"), stillGone(remembered, now))
+    }
+
+    @Test
     fun `a 404 is the picture being gone, and a throttle never is`() {
         assertEquals(true, PhotoRetryPolicy.isGone(404))
         assertEquals(true, PhotoRetryPolicy.isGone(410))

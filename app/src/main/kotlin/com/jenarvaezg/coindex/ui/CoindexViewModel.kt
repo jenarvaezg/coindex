@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
+import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.prefetchRefusal
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.startOfMonthMillis
@@ -21,13 +22,16 @@ import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printPages
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** How long the photograph prefetch lets the first screen have the phone to itself (#191). */
 private const val PREFETCH_START_DELAY_MILLIS = 3_000L
@@ -174,29 +178,52 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         if (prefetchJob?.isActive == true) return
         val images = _state.value.collection.images.values.toList()
         if (images.isEmpty()) return
-        if (!force && prefetchedFichas == images.size) return
+        // The fichas themselves and not how many there are: refreshing one ficha (#185) can bring a
+        // photograph the phone has never seen without the count moving at all, and an item arriving
+        // as another leaves would cancel out exactly.
+        val signature = images.hashCode()
+        if (!force && prefetchedFichas == signature) return
         prefetchJob = viewModelScope.launch {
             // The index is drawn first. This pass opens sixteen hundred cache snapshots before it
             // asks for anything, and doing that while the first screen is still laying itself out
             // is exactly the cold start the collector would feel.
             delay(PREFETCH_START_DELAY_MILLIS)
-            val conditions = container.prefetchConditions.current(syncing = _state.value.syncing)
-            val held = prefetchRefusal(conditions)
-            val report = container.photoPrefetch.run(images, conditions) { missing ->
-                _state.update { it.copy(photoCache = it.photoCache.copy(missing = missing)) }
+            // Off the main thread: reading whether the network is metered and how full the battery
+            // is are two binder calls, and this is the moment the app has just finished starting.
+            val held = withContext(Dispatchers.IO) {
+                prefetchRefusal(container.prefetchConditions.current(syncing = _state.value.syncing))
             }
-            prefetchedFichas = images.size
-            _state.update {
-                it.copy(
-                    photoCache = PhotoCacheStatus(
-                        wanted = report.wanted,
-                        missing = report.missing,
-                        bytes = report.cacheBytes,
-                        held = held,
-                    ),
-                )
+            val status = container.photoPrefetch.run(images, held) { partial ->
+                _state.update { it.copy(photoCache = partial) }
             }
+            prefetchedFichas = signature
+            _state.update { it.copy(photoCache = status) }
         }
+    }
+
+    /**
+     * Gives the network back while the notebook is being exported, and takes it up again after.
+     *
+     * The export takes all four of the loader's slots and the collector is watching it happen; two
+     * of those four held by pictures nobody has asked for is exactly the theft this prefetch was
+     * designed not to commit (#191).
+     */
+    fun notebookExporting(active: Boolean) {
+        if (active) prefetchJob?.cancel() else prefetchPhotographs(force = true)
+    }
+
+    /**
+     * Tries the photographs again when the app comes back to the front.
+     *
+     * The conditions are read once, when a pass starts, so a phone that walks into a wifi while the
+     * app is open would otherwise wait for the next launch — and the settings line says «se traerán
+     * cuando haya wifi», which has to be true. Coming back from the background is the moment that
+     * costs nothing to check, and the guard keeps it from rescanning sixteen hundred cache entries
+     * every time the collector glances at another app.
+     */
+    fun retryPhotoPrefetch() {
+        if (_state.value.photoCache.missing == 0) return
+        prefetchPhotographs(force = true)
     }
 
     fun saveCredentials(apiKey: String, userId: String) {
@@ -346,11 +373,12 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         if (_state.value.syncing) return
         val client = clientOrComplain() ?: return
         val userId = container.credentials.credentials()?.userId ?: return
-        // The photographs give the network back to the sync, which is both spending API budget and
-        // being waited for. Whatever had not been fetched is picked up again when it is over (#191).
-        prefetchJob?.cancel()
         _state.update { it.copy(syncing = true, message = null) }
         viewModelScope.launch {
+            // The photographs give the network back to the sync, which is both spending API budget
+            // and being waited for. Joined rather than merely cancelled: a pass still unwinding
+            // would otherwise overlap the one started when this is over, and both write the count.
+            prefetchJob?.cancelAndJoin()
             val outcome = runCatching { container.syncService.run(client, userId) }
             refreshBudget()
             outcome.fold(

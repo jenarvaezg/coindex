@@ -97,24 +97,6 @@ private class UserAgentInterceptor(private val userAgent: String) : Interceptor 
 }
 
 /**
- * Writes down the photographs Numista says are not there (#191).
- *
- * Coil's disk cache only ever keeps answers that arrived, so a `404` leaves no trace: without this
- * the background prefetch, which runs on every launch, would ask for the same missing picture for
- * as long as the phone lives. It listens to every photograph rather than only to the prefetch's,
- * because a screen finding out that a picture is gone is exactly as good a source.
- */
-private class GonePhotographInterceptor(private val gone: GonePhotographs) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val response = chain.proceed(chain.request())
-        if (PhotoRetryPolicy.isGone(response.code)) {
-            gone.remember(chain.request().url.toString())
-        }
-        return response
-    }
-}
-
-/**
  * Retries a throttled photograph instead of giving the cell up for lost.
  *
  * An application interceptor rather than a network one: it must survive the redirect and the

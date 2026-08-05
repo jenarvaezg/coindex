@@ -45,14 +45,18 @@ budget and is being waited for; the prefetch is neither.
 
 **Two of the four slots, never four.** The loader's dispatcher serves requests in the order they
 arrive, so a prefetch at four would park the plate the collector has just opened behind six hundred
-pictures nobody asked for. At two, a screen always finds a free slot and overtakes.
+pictures nobody asked for. At two, a screen always finds a free slot and overtakes. **Exporting the
+notebook stands it down entirely**, like a sync does: the export wants all four slots and the
+collector is watching it happen, so two of them held by pictures nobody asked for is precisely the
+theft this is designed not to commit.
 
-**A photograph Numista answers `404` for is remembered** (`coindex-photos` preferences, written by
-an interceptor that watches every photograph, not only the prefetched ones). The disk cache only
-holds answers that arrived, so without this list a missing picture would be asked for again on
-every launch for the life of the phone. `403` is deliberately **not** remembered: without a
-`User-Agent` Cloudflare answers `403` to everything (ADR 0017), so one bad afternoon at the edge
-would switch the catalog off on that phone for good.
+**A photograph Numista answers `404` for is remembered for a month**, written by an interceptor
+that watches every photograph, not only the prefetched ones. The disk cache only holds answers that
+arrived, so without this list a missing picture would be asked for again on every launch for the
+life of the phone; and without the month, a CDN having a bad minute would take that picture out of
+the catalog on that phone **for ever**, invisibly, with not even clearing the cache to repair it.
+`403` is deliberately not remembered at all: without a `User-Agent` Cloudflare answers `403` to
+everything (ADR 0017).
 
 **No ceiling per launch**, decided against the issue's own suggestion. A ceiling of a few hundred
 would mean four or five launches before the plates stop filling in, which is most of the wait being
@@ -88,9 +92,10 @@ The prefetch runs in the ViewModel's scope, not an application scope or `WorkMan
 saves is a wait the collector would see *in this app*, every photograph is independent, and nothing
 is written but the cache, so being cut short when they leave costs only the requests not yet made.
 
-One thing it does not do: notice a phone walking into a wifi while the app is open. The refusal is
-evaluated when a pass starts — at launch, and after a sync — so a collector who was on mobile data
-gets his pictures on the next launch rather than the moment the wifi connects. Registering a
-network callback for that is a bigger promise than the problem deserves today.
+The conditions are read once, when a pass starts — at launch, after a sync, after an export, and
+when the app returns to the foreground with photographs still missing. That last one is what makes
+«se traerán cuando haya wifi» true rather than a promise for the next launch. What it still does
+not do is notice a wifi connecting **while the app is in front**; registering a network callback
+for that is a bigger promise than the problem deserves today.
 
 The APK now declares `ACCESS_NETWORK_STATE`, which is what «is this network metered» costs.

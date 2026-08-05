@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.print
 
 import android.content.Context
 import coil3.SingletonImageLoader
+import coil3.request.CachePolicy
 import com.jenarvaezg.coindex.data.photos.warmPhotographs
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -72,5 +73,7 @@ suspend fun warmNotebookPhotographs(
         loader = SingletonImageLoader.get(context),
         urls = urls,
         concurrency = WARM_CONCURRENCY,
+        // Unchanged from #190: the page about to be drawn may want the same bitmap seconds later.
+        memoryCache = CachePolicy.WRITE_ONLY,
     ) { _, _ -> onProgress(done.incrementAndGet()) }
 }

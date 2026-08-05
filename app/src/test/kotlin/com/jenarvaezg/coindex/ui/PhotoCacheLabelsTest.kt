@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PrefetchRefusal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,8 +48,14 @@ class PhotoCacheLabelsTest {
             ).substringAfter("teléfono). ")
         }
 
-        assertEquals("Se traerán cuando haya wifi: con datos móviles no se descargan.", held(PrefetchRefusal.MeteredNetwork))
-        assertEquals("Esperan a que se apague el ahorro de energía.", held(PrefetchRefusal.PowerSave))
+        assertEquals(
+            "Se traerán cuando haya wifi: con datos móviles no se descargan.",
+            held(PrefetchRefusal.MeteredNetwork),
+        )
+        assertEquals(
+            "Esperan a que se apague el ahorro de energía.",
+            held(PrefetchRefusal.PowerSave),
+        )
         assertEquals("Esperan a que la batería se recupere.", held(PrefetchRefusal.LowBattery))
         assertEquals("Esperan a que termine el sincronizado.", held(PrefetchRefusal.Syncing))
     }
