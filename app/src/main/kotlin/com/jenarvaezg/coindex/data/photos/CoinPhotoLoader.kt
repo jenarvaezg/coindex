@@ -2,15 +2,38 @@ package com.jenarvaezg.coindex.data.photos
 
 import coil3.ImageLoader
 import coil3.PlatformContext
+import coil3.disk.DiskCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowHardware
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okio.Path.Companion.toOkioPath
 
 /** How many photographs are asked of Numista at the same time. */
 private const val MAX_CONCURRENT_PHOTOS = 4
+
+/**
+ * How much disk the catalog's photographs are allowed to keep.
+ *
+ * Coil's own default is 2 % of the free space, which is a sensible rule for an app whose pictures
+ * are a stream nobody expects to hold. This one's are a **finite set that is fetched on purpose**
+ * (#191): measured on a device, the whole seeded catalog is 1.658 pictures and 29,8 MB. Left at
+ * 2 %, a phone with a gigabyte and a half free would keep a cache smaller than the set being
+ * prefetched — so every launch would fetch the tail, evict the head, and pay for the same
+ * photographs over and over on the collector's data.
+ *
+ * 128 MB is that set with room to grow and for the originals that stand behind refused thumbnails.
+ * It is a `cache/` directory, so the system is still free to reclaim all of it under real pressure.
+ */
+private const val PHOTO_DISK_CACHE_BYTES = 128L * 1024 * 1024
+
+/**
+ * The directory Coil would have chosen by itself, named here because the size is no longer the
+ * default: pointing the cache anywhere else would abandon every photograph the phones already have.
+ */
+private const val PHOTO_DISK_CACHE_DIR = "coil3_disk_cache"
 
 /**
  * The client every catalog photograph is fetched with.
@@ -23,19 +46,36 @@ private const val MAX_CONCURRENT_PHOTOS = 4
  *   an export of thirty-eight photographs is a queue instead of a burst.
  * - **It tries again.** See [PhotoRetryPolicy].
  */
-fun coinPhotoImageLoader(context: PlatformContext, userAgent: String): ImageLoader =
+fun coinPhotoImageLoader(
+    context: PlatformContext,
+    userAgent: String,
+    gonePhotographs: GonePhotographs,
+): ImageLoader =
     ImageLoader.Builder(context)
         // Hardware bitmaps are disabled because exporting a plate replays it onto a software
         // canvas, which cannot draw them. The catalog pictures are small, so the cost is noise.
         .allowHardware(false)
+        .diskCache {
+            DiskCache.Builder()
+                .directory(context.cacheDir.resolve(PHOTO_DISK_CACHE_DIR).toOkioPath())
+                .maxSizeBytes(PHOTO_DISK_CACHE_BYTES)
+                .build()
+        }
         .components {
             // Coil holds this factory lazily and calls it once, so the four-slot dispatcher
             // below is shared by every photograph. A client per request would cap nothing.
-            add(OkHttpNetworkFetcherFactory(callFactory = { coinPhotoHttpClient(userAgent) }))
+            add(
+                OkHttpNetworkFetcherFactory(
+                    callFactory = { coinPhotoHttpClient(userAgent, gonePhotographs) },
+                ),
+            )
         }
         .build()
 
-private fun coinPhotoHttpClient(userAgent: String): OkHttpClient = OkHttpClient.Builder()
+private fun coinPhotoHttpClient(
+    userAgent: String,
+    gonePhotographs: GonePhotographs,
+): OkHttpClient = OkHttpClient.Builder()
     .dispatcher(
         Dispatcher().apply {
             maxRequests = MAX_CONCURRENT_PHOTOS
@@ -43,6 +83,9 @@ private fun coinPhotoHttpClient(userAgent: String): OkHttpClient = OkHttpClient.
         },
     )
     .addInterceptor(UserAgentInterceptor(userAgent))
+    // Outside the retry interceptor, so what it writes down is the last word on the request
+    // rather than the first of three attempts.
+    .addInterceptor(GonePhotographInterceptor(gonePhotographs))
     .addInterceptor(ThrottleRetryInterceptor())
     .build()
 
@@ -51,6 +94,24 @@ private class UserAgentInterceptor(private val userAgent: String) : Interceptor 
         chain.proceed(
             chain.request().newBuilder().header("User-Agent", userAgent).build(),
         )
+}
+
+/**
+ * Writes down the photographs Numista says are not there (#191).
+ *
+ * Coil's disk cache only ever keeps answers that arrived, so a `404` leaves no trace: without this
+ * the background prefetch, which runs on every launch, would ask for the same missing picture for
+ * as long as the phone lives. It listens to every photograph rather than only to the prefetch's,
+ * because a screen finding out that a picture is gone is exactly as good a source.
+ */
+private class GonePhotographInterceptor(private val gone: GonePhotographs) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val response = chain.proceed(chain.request())
+        if (PhotoRetryPolicy.isGone(response.code)) {
+            gone.remember(chain.request().url.toString())
+        }
+        return response
+    }
 }
 
 /**

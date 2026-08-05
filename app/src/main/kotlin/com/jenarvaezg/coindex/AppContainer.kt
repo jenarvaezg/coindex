@@ -9,6 +9,10 @@ import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.photos.DevicePrefetchConditions
+import com.jenarvaezg.coindex.data.photos.GonePhotographs
+import com.jenarvaezg.coindex.data.photos.PhotoPrefetch
+import com.jenarvaezg.coindex.data.photos.StoredGonePhotographs
 import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
@@ -69,6 +73,25 @@ class AppContainer(context: Context) {
 
     /** One type's ficha, asked again on purpose (#185, ADR 0023). */
     val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }
+
+    /**
+     * The photographs Numista answers `404` for, remembered across launches (#191).
+     *
+     * Held here and not inside the image loader because both ends need it: the loader's interceptor
+     * writes to it from whatever thread OkHttp is on, and the prefetch reads it before deciding
+     * what to ask for.
+     */
+    val gonePhotographs: GonePhotographs by lazy { StoredGonePhotographs(applicationContext) }
+
+    /** Catalog photographs brought in before anybody asks for them (#191). */
+    val photoPrefetch: PhotoPrefetch by lazy {
+        PhotoPrefetch(applicationContext, gonePhotographs)
+    }
+
+    /** Whether this is a good moment to spend the collector's data on them. */
+    val prefetchConditions: DevicePrefetchConditions by lazy {
+        DevicePrefetchConditions(applicationContext)
+    }
 
     private val httpClient: HttpClient by lazy { HttpClient(OkHttp) }
 

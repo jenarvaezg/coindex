@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
+import com.jenarvaezg.coindex.data.photos.prefetchRefusal
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
@@ -20,12 +21,16 @@ import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printPages
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+/** How long the photograph prefetch lets the first screen have the phone to itself (#191). */
+private const val PREFETCH_START_DELAY_MILLIS = 3_000L
 
 data class BudgetStatus(val used: Int, val cap: Int) {
     val remaining: Int get() = (cap - used).coerceAtLeast(0)
@@ -69,6 +74,8 @@ data class UiState(
      * on screen to report one call.
      */
     val refreshingFichas: Set<Int> = emptySet(),
+    /** What the phone holds of the catalog's photographs (#191). Read only in the settings screen. */
+    val photoCache: PhotoCacheStatus = PhotoCacheStatus(),
 )
 
 class CoindexViewModel(private val container: AppContainer) : ViewModel() {
@@ -95,6 +102,12 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         catalogs.firstOrNull { it.id == catalogId }?.name
 
     private var lastUpdateCheckMillis: Long? = null
+
+    /** The background photograph prefetch, so a sync can take the network back off it (#191). */
+    private var prefetchJob: Job? = null
+
+    /** How many fichas the last prefetch pass covered; a different number means new ones arrived. */
+    private var prefetchedFichas: Int? = null
 
     init {
         _state.update {
@@ -133,11 +146,55 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
                 refreshBudget()
                 container.repository.observeState().collect { collection ->
                     _state.update { it.copy(collection = collection, loading = false) }
+                    prefetchPhotographs()
                 }
             } catch (error: Exception) {
                 _state.update {
                     it.copy(loading = false, fatalError = error.message ?: error.toString())
                 }
+            }
+        }
+    }
+
+    /**
+     * Brings the catalog's photographs into the cache, quietly, once the collection has been read
+     * (#191).
+     *
+     * Called on **every** emission of the collection and cheap to call twice: a launch's worth of
+     * photographs is fetched once, and a later emission only starts a new pass when the number of
+     * fichas has changed — which is what «a sync brought new types» looks like from here. Creating
+     * a box or renaming one emits too, and none of those change what there is to fetch.
+     *
+     * It runs in [viewModelScope] rather than an application scope on purpose: what this saves is a
+     * wait the collector would otherwise see **in this app**, and every photograph is independent,
+     * so being cut short when they leave costs nothing but the ones that had not been asked for yet.
+     * They are asked for on the next launch.
+     */
+    private fun prefetchPhotographs(force: Boolean = false) {
+        if (prefetchJob?.isActive == true) return
+        val images = _state.value.collection.images.values.toList()
+        if (images.isEmpty()) return
+        if (!force && prefetchedFichas == images.size) return
+        prefetchJob = viewModelScope.launch {
+            // The index is drawn first. This pass opens sixteen hundred cache snapshots before it
+            // asks for anything, and doing that while the first screen is still laying itself out
+            // is exactly the cold start the collector would feel.
+            delay(PREFETCH_START_DELAY_MILLIS)
+            val conditions = container.prefetchConditions.current(syncing = _state.value.syncing)
+            val held = prefetchRefusal(conditions)
+            val report = container.photoPrefetch.run(images, conditions) { missing ->
+                _state.update { it.copy(photoCache = it.photoCache.copy(missing = missing)) }
+            }
+            prefetchedFichas = images.size
+            _state.update {
+                it.copy(
+                    photoCache = PhotoCacheStatus(
+                        wanted = report.wanted,
+                        missing = report.missing,
+                        bytes = report.cacheBytes,
+                        held = held,
+                    ),
+                )
             }
         }
     }
@@ -289,6 +346,9 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
         if (_state.value.syncing) return
         val client = clientOrComplain() ?: return
         val userId = container.credentials.credentials()?.userId ?: return
+        // The photographs give the network back to the sync, which is both spending API budget and
+        // being waited for. Whatever had not been fetched is picked up again when it is over (#191).
+        prefetchJob?.cancel()
         _state.update { it.copy(syncing = true, message = null) }
         viewModelScope.launch {
             val outcome = runCatching { container.syncService.run(client, userId) }
@@ -316,6 +376,9 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
                     _state.update { it.copy(syncing = false, message = syncErrorLabel(error)) }
                 },
             )
+            // Forced, because a sync that changed nothing emits nothing, and the pass it cancelled
+            // would otherwise wait for the next launch to be picked up again.
+            prefetchPhotographs(force = true)
         }
     }
 

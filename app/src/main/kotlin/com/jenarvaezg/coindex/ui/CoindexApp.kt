@@ -281,6 +281,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     SettingsScreen(
                         values = values,
                         budget = state.budget,
+                        photoCache = state.photoCache,
                         versionName = state.versionName,
                         validation = state.validation,
                         onSave = { apiKey, userId, budgetCap ->
