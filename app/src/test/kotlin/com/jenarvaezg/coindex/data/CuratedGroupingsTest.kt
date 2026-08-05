@@ -24,8 +24,8 @@ class CuratedGroupingsTest {
 
     @Test
     fun `every shipped grouping parses and validates`() {
-        // Toda la plata venezolana ya es catálogo; quedan solo las dos sueltas.
-        assertEquals(2, groupings.size)
+        // Toda la plata venezolana ya es catálogo; quedan las dos de sueltas y la alemana.
+        assertEquals(3, groupings.size)
         groupings.forEach { grouping ->
             assertNull(grouping.validate(), "inválida: ${grouping.id}")
             assertEquals(1, grouping.schemaVersion)
@@ -73,6 +73,24 @@ class CuratedGroupingsTest {
         assertEquals(listOf(436_016, 476_689, 581_702), loose.typeIds)
         assertEquals("Onzas de plata sueltas de la Royal Mint", loose.family)
         assertTrue(596_807 !in loose.typeIds)
+    }
+
+    /**
+     * Las 18 g de plata .925 alemanas son una secuencia de verdad —el 20 € nació en 2016 como
+     * sucesor oficial del 10 €, y el BMF encargó 94 motivos en esa misma variante— y aun así no
+     * son catálogo: el coleccionista no las persigue, «es que la cantidad es abrumadora» (#154),
+     * así que una lámina de 94 casillas afirmaría una cobertura que nadie va a completar. La
+     * agrupación les da familia a las dos que hay, una en cada colección, y no afirma nada más.
+     *
+     * Los cinco años del corte métrico —2011-2015, cuproníquel de 14 g y plata .625 de 16 g— no
+     * faltan aquí: son otra clave de variante, no un hueco.
+     */
+    @Test
+    fun `the german sterling silver is a family and never a plate`() {
+        val german = find("alemania-plata-de-ley-18g")
+        assertEquals(listOf(13_203, 451_961), german.typeIds)
+        assertEquals("Alemanas de plata de ley de 18 g", german.family)
+        assertEquals("allemagne", german.issuerCode)
     }
 
     /**
