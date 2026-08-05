@@ -3,6 +3,8 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.ui.fold
+import com.jenarvaezg.coindex.ui.matchesQuery
 import com.jenarvaezg.coindex.ui.variantLabel
 import java.text.Collator
 import java.util.Locale
@@ -167,8 +169,4 @@ data class IndexFacetCounts(
     val startsIn: FacetCounts<StartBand>,
     val status: FacetCounts<PlateStatus>,
     val series: FacetCounts<SeriesStatus>,
-) {
-    /** The countries worth a chip, the fullest first. None is dropped — see `CoinsFacetCounts`. */
-    fun issuers(): List<Pair<String, Int>> = issuer.populated()
-        .sortedWith(compareByDescending<Pair<String, Int>> { it.second }.thenBy { it.first })
-}
+)

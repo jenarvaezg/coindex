@@ -1,13 +1,20 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.ui.fold
+import com.jenarvaezg.coindex.ui.matchesQuery
 
 /**
- * Whether any collection claims a coin.
+ * Whether every piece of a coin is in some collection.
  *
  * [InNone] is the chip «Sin colección», which is what the masthead button «Sin clasificar» always
  * was (ADR 0021 §1): the same coins, reached from the hierarchy where they already live instead of
  * from a screen that existed to apologise for them.
+ *
+ * It is decided **by piece and not by type**, so a coin whose sibling row fell in the residue is
+ * under it even though the type has a collection — see [CoinRow.unclaimedPieces]. Read off `claims`
+ * instead, the chip would have quietly stopped showing one of the father's two Silver Eagles, which
+ * is the one thing this filter inherited from the screen it replaced.
  */
 enum class Membership(val label: String) {
     InSome("En alguna colección"),
@@ -23,6 +30,7 @@ enum class Membership(val label: String) {
  * hidden» a one-line mistake.
  */
 data class CoinsShelf(
+    val sort: CoinSort = CoinSort.ByCountry,
     val issuer: String? = null,
     val weight: GramBand? = null,
     val year: YearBand? = null,
@@ -48,17 +56,50 @@ data class CoinsShelf(
 enum class CoinsFacet { Issuer, Weight, Year, Class, Membership }
 
 private fun membershipOf(row: CoinRow): Membership =
-    if (row.claims.isEmpty()) Membership.InNone else Membership.InSome
+    if (row.unclaimedPieces > 0) Membership.InNone else Membership.InSome
 
 /**
- * The coins this shelf and this query leave, in the list's own reading order.
+ * How the list of coins is ordered (ADR 0021 §1: «both sides carry filters, **sorting** and a live
+ * search»).
  *
- * The order is [coinRows]'s and is never touched here: Coins carries filters and a search but no
- * sort selector — the prototype's shelf says «Filtros» on this side and «Filtros y orden» on the
- * other, because the index has a ratio to rank by and a list of coins does not.
+ * The default is the reading order of a field notebook, which is the one Coins has no alternative
+ * to: with no ratio to rank by, the collector arriving here is looking for a coin they can picture.
+ * Everything else answers a question about the pile rather than about one coin — «what is the newest
+ * thing I have?», «which is the heavy one?» — and «Más piezas» is where the duplicates surface.
  */
-fun CoinsShelf.narrow(rows: List<CoinRow>, query: String): List<CoinRow> =
-    rows.filter { row -> matches(row) && matchesQuery(row.haystack, query) }
+enum class CoinSort(val label: String) {
+    ByCountry("Por país"),
+    Alphabetical("Alfabético"),
+    Newest("Año más reciente"),
+    Oldest("Año más antiguo"),
+    Heaviest("Más pesadas"),
+    MostPieces("Más piezas"),
+}
+
+/** The coins this shelf and this query leave, in the order the shelf's sort asks for. */
+fun CoinsShelf.narrow(rows: List<CoinRow>, query: String): List<CoinRow> = rows
+    .filter { row -> matches(row) && matchesQuery(row.haystack, query) }
+    .sortedWith(coinSortOrder(sort))
+
+/**
+ * Every order but the default is built on top of it, never instead of it.
+ *
+ * `sortedWith` is stable and [coinRows] already left the list in reading order, so «Más pesadas»
+ * breaks its own ties by country and year without restating either. Unknowns go last in every order
+ * that has one to place: an uncached type says less than a dated one, and opening the list on
+ * whatever the last sync had not finished would be the wrong first screen.
+ */
+private fun coinSortOrder(sort: CoinSort): Comparator<CoinRow> = when (sort) {
+    CoinSort.ByCountry -> Comparator { _, _ -> 0 }
+    CoinSort.Alphabetical -> coinTitleOrder()
+    CoinSort.Newest -> compareBy<CoinRow> { it.year == null }
+        .thenByDescending { it.year ?: 0 }
+    CoinSort.Oldest -> compareBy<CoinRow> { it.year == null }
+        .thenBy { it.year ?: 0 }
+    CoinSort.Heaviest -> compareBy<CoinRow> { it.weightOz == null }
+        .thenByDescending { it.weightOz ?: 0.0 }
+    CoinSort.MostPieces -> compareByDescending { it.quantity }
+}
 
 /** Every chip's live count, each facet measured with its own choice dropped. */
 fun coinsFacetCounts(
@@ -84,14 +125,4 @@ data class CoinsFacetCounts(
     val year: FacetCounts<YearBand>,
     val objectClass: FacetCounts<ObjectClass>,
     val membership: FacetCounts<Membership>,
-) {
-    /**
-     * The countries worth a chip, the fullest first.
-     *
-     * Every country with at least one coin is offered and none is dropped: the shelf is folded on
-     * entry (ADR 0021 §1), so a long list costs nothing until the collector opens it, and a silent
-     * top-eight would read as «you own nothing from Serbia».
-     */
-    fun issuers(): List<Pair<String, Int>> = issuer.populated()
-        .sortedWith(compareByDescending<Pair<String, Int>> { it.second }.thenBy { it.first })
-}
+)

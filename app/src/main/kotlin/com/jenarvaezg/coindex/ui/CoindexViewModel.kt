@@ -74,6 +74,12 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      */
     val titles get() = container.repository.titles
 
+    /**
+     * Every name a curated file claims, so the one name a collector types cannot repeat one
+     * (ADR 0021 §4). Constant for the process lifetime, like the seeds it comes from.
+     */
+    val curatedNames: Set<String> get() = container.repository.titles.curatedNames()
+
     /** The name of one curated catalog, for the masthead of its plate. */
     fun catalogName(catalogId: String?): String? =
         catalogs.firstOrNull { it.id == catalogId }?.name
@@ -209,22 +215,27 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     /**
-     * Creates one of the collector's own groupings (ADR 0013).
+     * Creates one of the collector's own boxes (ADR 0013, ADR 0021 §11).
      *
-     * A name and at least one piece are required, and the refusal is a message rather than a
-     * silent no-op: a heading over nothing is not something to store.
+     * A name and at least one coin are required, and the refusal is a message rather than a silent
+     * no-op: a heading over nothing is not something to store. The name has already been read by
+     * `boxName` — that is where the 40-character limit and the uniqueness live — so what arrives
+     * here is only ever the last line of defence.
+     *
+     * It says «colección» and not «agrupación», because there is one species of collection and no
+     * word of provenance telling a box from the rest (ADR 0021 §2).
      */
     fun createOwnGrouping(name: String, typeIds: List<Int>) {
         val trimmed = name.trim()
         if (trimmed.isEmpty() || typeIds.isEmpty()) {
             _state.update {
-                it.copy(message = "Ponle un nombre a la agrupación y elige al menos una pieza.")
+                it.copy(message = "Ponle un nombre a la colección y elige al menos una moneda.")
             }
             return
         }
         viewModelScope.launch {
             container.repository.createOwnGrouping(trimmed, typeIds)
-            _state.update { it.copy(message = "Agrupación «$trimmed» creada.") }
+            _state.update { it.copy(message = "Colección «$trimmed» creada.") }
         }
     }
 
@@ -236,7 +247,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     fun renameOwnGrouping(groupingId: Long, name: String) {
         val trimmed = name.trim()
         if (trimmed.isEmpty()) {
-            _state.update { it.copy(message = "El nombre de la agrupación no puede estar vacío.") }
+            _state.update { it.copy(message = "El nombre de la colección no puede estar vacío.") }
             return
         }
         viewModelScope.launch { container.repository.renameOwnGrouping(groupingId, trimmed) }

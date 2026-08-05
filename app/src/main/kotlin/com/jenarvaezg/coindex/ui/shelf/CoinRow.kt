@@ -8,6 +8,7 @@ import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.destinationOf
+import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.pieceTitle
 import java.text.Collator
 import java.util.Locale
@@ -41,6 +42,17 @@ data class CoinRow(
     val quantity: Int,
     /** Every collection that claims it, in the order the index shows them (ADR 0021 §6). */
     val claims: List<CoinClaim>,
+    /**
+     * How many pieces of this type no collection claims, which is **not** always zero when
+     * [claims] is not empty.
+     *
+     * Measured on the father's collection: the American Silver Eagle N#298883 is two rows, issues
+     * 760576 and 1059386, and its catalog qualifies members by issue (ADR 0019). One row fills a
+     * member and the other is unclassified residue — so the type is in a collection and one of his
+     * two coins is not. Counting membership off [claims] alone made that second coin invisible in
+     * the one place ADR 0021 §12 leaves for it, which is the whole job of the «Sin colección» chip.
+     */
+    val unclaimedPieces: Int,
 ) {
     /** What the search box compares against: everything printed on the row, folded once. */
     val haystack: String = fold(
@@ -58,7 +70,7 @@ data class CoinRow(
  * whether or not any collection claims it.
  */
 fun coinRows(state: CollectionState): List<CoinRow> {
-    val claims = claimsByType(state)
+    val claimed = claimsOf(state)
     val byType = LinkedHashMap<Int, MutableList<CollectedItem>>()
     for (item in state.items.filter { it.quantity > 0 }) {
         byType.getOrPut(item.typeId) { mutableListOf() }.add(item)
@@ -73,32 +85,48 @@ fun coinRows(state: CollectionState): List<CoinRow> {
             objectClass = objectClassOf(meta?.category),
             weightOz = meta?.weightOz,
             quantity = pieces.fold(0) { total, piece -> saturatingAdd(total, piece.quantity) },
-            claims = claims[typeId].orEmpty(),
+            claims = claimed.byType[typeId].orEmpty(),
+            unclaimedPieces = pieces.count { it.id !in claimed.rowIds },
         )
     }.sortedWith(coinReadingOrder())
 }
 
+/** How many Numista types the collector owns, which is how many rows [coinRows] draws. */
+fun ownedTypeCount(state: CollectionState): Int =
+    state.items.filter { it.quantity > 0 }.distinctBy { it.typeId }.size
+
 /**
- * A type may be claimed by more than one collection (ADR 0021 §10), so this is a list and not a
- * lookup: a curated grouping and a box can both name the same coin, and the commemorative
- * programmes of ADR 0022 are the capability that makes it ordinary rather than exotic.
+ * Who claims what, read once off the index.
  *
+ * Two answers and not one, because they are asked at different grains: [byType] is what a coin links
+ * back to, and a type may be claimed by more than one collection (ADR 0021 §10). [rowIds] is which
+ * **pieces** were actually placed, which is finer — an issue-qualified catalog can claim one row of a
+ * type and leave its sibling in the residue (ADR 0019).
+ */
+private class Claims(
+    val byType: Map<Int, List<CoinClaim>>,
+    val rowIds: Set<Long>,
+)
+
+/**
  * Built by walking the index rather than the catalogs, so the links arrive already in the one order
  * of the first level and a card the inventory no longer derives cannot be linked to.
  */
-private fun claimsByType(state: CollectionState): Map<Int, List<CoinClaim>> {
-    val claims = LinkedHashMap<Int, MutableList<CoinClaim>>()
+private fun claimsOf(state: CollectionState): Claims {
+    val byType = LinkedHashMap<Int, MutableList<CoinClaim>>()
+    val rowIds = mutableSetOf<Long>()
     for (card in state.index) {
         val pieces = when (card) {
             is IndexCard.Derived -> state.itemsByKey[card.key].orEmpty()
             is IndexCard.Box -> card.box.items
         }
         val claim = CoinClaim(card.name, destinationOf(card))
+        pieces.forEach { piece -> rowIds += piece.id }
         for (typeId in pieces.mapTo(LinkedHashSet()) { it.typeId }) {
-            claims.getOrPut(typeId) { mutableListOf() }.add(claim)
+            byType.getOrPut(typeId) { mutableListOf() }.add(claim)
         }
     }
-    return claims
+    return Claims(byType, rowIds)
 }
 
 /**
@@ -116,4 +144,15 @@ private fun coinReadingOrder(): Comparator<CoinRow> {
         .thenBy { it.year ?: Int.MAX_VALUE }
         .thenBy(collator) { it.title }
         .thenBy { it.typeId }
+}
+
+/**
+ * Spanish alphabetical order on the coin's own title, for the «Alfabético» sort.
+ *
+ * The same [Collator] the index's names go through and for the same reason: comparing the strings
+ * themselves orders by UTF-16 code unit, where «Álbum» lands after «Zeta».
+ */
+internal fun coinTitleOrder(): Comparator<CoinRow> {
+    val collator = Collator.getInstance(Locale.forLanguageTag("es"))
+    return compareBy(collator) { it.title }
 }

@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.matchesQuery
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -16,7 +17,7 @@ class CoinRowTest {
         val fuerte = rows.single { it.typeId == ShelfFixtures.FUERTE }
 
         assertEquals(3, fuerte.quantity)
-        assertEquals(5, ShelfFixtures.state.items.size)
+        assertEquals(6, ShelfFixtures.state.items.size)
         assertEquals(4, rows.size)
     }
 
@@ -61,6 +62,36 @@ class CoinRowTest {
 
         assertEquals(ObjectClass.Exonumia, medal.objectClass)
         assertEquals(listOf("Las mexicanas"), medal.claims.map { it.name })
+    }
+
+    /**
+     * Dropping a type from a box does not touch the coin (ADR 0013, ADR 0021 §10).
+     *
+     * It stays in the inventory and in Coins with the same quantity, and what changes is only which
+     * collections claim it — which is what makes a box a second membership rather than a move. Here
+     * the box was the onza's only claim, so it lands under «Sin colección» and nowhere else.
+     */
+    @Test
+    fun `a coin dropped from a box is still a coin, with one claim fewer`() {
+        val after = coinRows(ShelfFixtures.stateWithoutTheBox)
+        val before = rows.single { it.typeId == ShelfFixtures.ONZA_MEXICANA }
+        val onza = after.single { it.typeId == ShelfFixtures.ONZA_MEXICANA }
+
+        assertEquals(rows.size, after.size)
+        assertEquals(before.quantity, onza.quantity)
+        assertEquals(before.title, onza.title)
+        assertTrue(onza.claims.isEmpty())
+    }
+
+    /**
+     * The bottom bar promises a number and this screen has to be able to keep it (ADR 0021 §1).
+     *
+     * The bar cannot afford to build every row on each recomposition, so it counts types directly —
+     * and this is what stops the two answers from drifting apart.
+     */
+    @Test
+    fun `the count the bottom bar prints is the number of rows Coins draws`() {
+        assertEquals(rows.size, ownedTypeCount(ShelfFixtures.state))
     }
 
     @Test

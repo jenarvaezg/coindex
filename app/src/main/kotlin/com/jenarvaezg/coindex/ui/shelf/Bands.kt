@@ -2,15 +2,12 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.GRAMS_PER_TROY_OUNCE
 
-/**
- * Every band of every facet is **total**: each has a member for the rows that have no value, so the
- * per-chip counts always add up to the facet's own total.
- *
- * That is not tidiness. A row reachable by no chip of a facet is a row the collector can only find by
- * *not* using that facet, and there is nothing on screen that would say so — the counts would simply
- * fall short of the tally and nobody would notice. The uncached type, the coin nobody weighed and the
- * box of types no ficha has arrived for are exactly the rows worth reaching.
- */
+// Every band in this file is **total**: each has a member for the rows that have no value, so the
+// per-chip counts always add up to the facet's own total. That is not tidiness — a row reachable by no
+// chip of a facet is a row the collector can only find by *not* using that facet, and nothing on
+// screen would say so: the counts would simply fall short of the tally and nobody would notice. The
+// uncached type, the coin nobody weighed and the box of types no ficha has arrived for are exactly the
+// rows worth reaching.
 
 /**
  * The weight of a coin, in the grams Numista records rather than in the ounces a card prints.

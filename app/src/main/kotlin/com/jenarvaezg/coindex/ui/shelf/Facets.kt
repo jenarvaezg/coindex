@@ -11,11 +11,21 @@ package com.jenarvaezg.coindex.ui.shelf
 data class FacetCounts<T>(val total: Int, val byValue: Map<T, Int>) {
     fun of(value: T?): Int = if (value == null) total else byValue[value] ?: 0
 
-    /** The values that would leave something, most populated first, ties broken by the caller. */
+    /** The values that would leave something, in the order they were counted. */
     fun populated(): List<Pair<T, Int>> = byValue.entries
         .filter { (_, count) -> count > 0 }
         .map { (value, count) -> value to count }
 }
+
+/**
+ * The countries worth a chip, the fullest first — shared by both shelves.
+ *
+ * Every country with at least one row is offered and none is dropped: the shelf is folded on entry
+ * (ADR 0021 §1), so a long list costs nothing until the collector opens it, and a silent top-eight
+ * would read as «you own nothing from Serbia».
+ */
+fun FacetCounts<String>.issuers(): List<Pair<String, Int>> = populated()
+    .sortedWith(compareByDescending<Pair<String, Int>> { it.second }.thenBy { it.first })
 
 /**
  * Counts one facet over the rows the *other* filters leave, grouped by the value each row has.

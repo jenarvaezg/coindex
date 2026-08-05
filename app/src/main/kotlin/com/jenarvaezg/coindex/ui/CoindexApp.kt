@@ -49,6 +49,7 @@ import com.jenarvaezg.coindex.ui.screens.MissingSubject
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
+import com.jenarvaezg.coindex.ui.shelf.ownedTypeCount
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 @Composable
@@ -139,10 +140,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 HierarchyBar(
                     route = route,
                     collections = state.collection.index.size,
-                    coins = state.collection.items
-                        .filter { it.quantity > 0 }
-                        .distinctBy { it.typeId }
-                        .size,
+                    // Read from the same place Coins draws its rows, so the bar cannot promise a
+                    // number the screen behind it then contradicts.
+                    coins = ownedTypeCount(state.collection),
                     onCross = { destination ->
                         navController.navigate(destination) {
                             // The two roots are siblings, not a stack: crossing over and back must
@@ -190,10 +190,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     CoinsScreen(
                         state = state.collection,
                         shelf = state.coinsShelf,
+                        curatedNames = viewModel.curatedNames,
                         onNarrow = viewModel::narrowCoins,
                         onOpen = { destination ->
                             navController.navigate(routeOf(destination))
                         },
+                        onCreateBox = viewModel::createOwnGrouping,
+                        onAddToBox = viewModel::addToOwnGrouping,
                     )
                 }
                 composable(Routes.OWN_GROUPING) { entry ->
@@ -204,8 +207,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         subject = card?.let { piecesSubject(state.collection, it) },
                         onOpenSource = openUrl,
                         onMessage = viewModel::showMessage,
-                        onCreateGrouping = viewModel::createOwnGrouping,
-                        onAddToGrouping = viewModel::addToOwnGrouping,
                         upkeep = card?.let { box ->
                             BoxUpkeep(
                                 onRename = { name ->
@@ -247,8 +248,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             subject = card?.let { piecesSubject(state.collection, it) },
                             onOpenSource = openUrl,
                             onMessage = viewModel::showMessage,
-                            onCreateGrouping = viewModel::createOwnGrouping,
-                            onAddToGrouping = viewModel::addToOwnGrouping,
                         )
                     }
                 }

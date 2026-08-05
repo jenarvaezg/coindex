@@ -27,16 +27,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.BoxUpkeep
 import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
-import com.jenarvaezg.coindex.ui.components.PieceSelectionToggle
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
-import com.jenarvaezg.coindex.ui.components.SelectionControls
-import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.pieceTitle
@@ -65,8 +64,6 @@ fun PiecesScreen(
     subject: PiecesSubject?,
     onOpenSource: (url: String) -> Unit,
     onMessage: (String) -> Unit,
-    onCreateGrouping: (name: String, typeIds: List<Int>) -> Unit,
-    onAddToGrouping: (groupingId: Long, typeIds: List<Int>) -> Unit,
     /** Present exactly when the subject is a box: the same `if` all the way down. */
     upkeep: BoxUpkeep? = null,
     modifier: Modifier = Modifier,
@@ -79,7 +76,6 @@ fun PiecesScreen(
         return
     }
 
-    val selection = rememberPieceSelection()
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
     var exporting by remember { mutableStateOf(false) }
 
@@ -114,23 +110,16 @@ fun PiecesScreen(
                 item {
                     Column {
                         HorizontalDivider(color = Paper.line)
+                        // The box-making gesture is **not** here any more. It was hung off this
+                        // screen and off «Sin clasificar», the two places §9 and §1 removed, and it
+                        // is born in Coins now (ADR 0021 §11, #173): whoever wants to group is
+                        // looking at the coins they want to group, not at a collection that already
+                        // holds them.
                         Text(
                             "Tus piezas",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(top = 10.dp),
                         )
-                        // Only where it already was. By ADR 0021 §11 this gesture is replaced by
-                        // one born in Coins (#173), and a box never offered it: adding it here
-                        // would be building the capability the ADR is about to move.
-                        if (subject.boxId == null) {
-                            SelectionControls(
-                                selection = selection,
-                                existing = state.ownGroupings,
-                                onCreate = onCreateGrouping,
-                                onAddTo = onAddToGrouping,
-                                modifier = Modifier.padding(top = 10.dp),
-                            )
-                        }
                     }
                 }
             }
@@ -150,12 +139,6 @@ fun PiecesScreen(
                             text = "Quitar de la colección",
                             onClick = { box.onRemoveType(piece.typeId) },
                             modifier = Modifier.padding(top = 8.dp),
-                        )
-                    }
-                    if (selection.active) {
-                        PieceSelectionToggle(
-                            picked = selection.isPicked(piece.typeId),
-                            onToggle = { selection.toggle(piece.typeId) },
                         )
                     }
                 }
@@ -233,20 +216,36 @@ private fun PiecesHeading(
     }
 }
 
+/**
+ * Renaming a box: the same field, the same limit, the same counter as the baptism (ADR 0021 §4).
+ *
+ * The 40 characters are a property of the name and not of the act of typing it first, so a rename
+ * cannot produce a name the card could not hold. Uniqueness is **not** rechecked, and that is the
+ * ADR's own rule (§11): it is checked at creation and there it ends — two homonymous cards are a
+ * signal to read, not a state to police.
+ */
 @Composable
 private fun RenameCard(current: String, onRename: (String) -> Unit) {
-    var name by remember(current) { mutableStateOf(current) }
+    var typed by remember(current) { mutableStateOf(current) }
+    val name = boxName(typed, taken = emptyList())
     FieldCard(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nombre de la colección") },
+            value = typed,
+            onValueChange = { if (it.length <= BOX_NAME_LIMIT) typed = it },
+            label = { Text("Cómo se llama") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
+        Text(
+            name.counter,
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.muted,
+            modifier = Modifier.padding(top = 6.dp),
+        )
         PrimaryAction(
             text = "Guardar el nombre",
-            onClick = { onRename(name) },
+            onClick = { onRename(name.stored) },
+            enabled = name.canSave,
             modifier = Modifier.padding(top = 12.dp),
         )
     }

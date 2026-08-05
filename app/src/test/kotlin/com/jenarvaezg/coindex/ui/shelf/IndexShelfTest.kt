@@ -102,7 +102,7 @@ class IndexShelfTest {
         assertEquals(1, counts.status.of(PlateStatus.NoPlate))
         // Every other facet sees only the one card the shelf leaves.
         assertEquals(1, counts.issuer.total)
-        assertEquals(listOf("Reino Unido" to 1), counts.issuers())
+        assertEquals(listOf("Reino Unido" to 1), counts.issuer.issuers())
     }
 
     @Test

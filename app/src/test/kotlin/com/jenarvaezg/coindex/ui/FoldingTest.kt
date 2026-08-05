@@ -1,4 +1,4 @@
-package com.jenarvaezg.coindex.ui.shelf
+package com.jenarvaezg.coindex.ui
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
