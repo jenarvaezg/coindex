@@ -64,6 +64,15 @@ sealed interface IndexCard {
          * open: the same conditions `resolvePlate` applies, so a dead action is never drawn.
          */
         val plateCatalogId: String?,
+        /**
+         * Whether the catalog behind this card declares its series still being issued (ADR 0020),
+         * or null where no catalog names the collection.
+         *
+         * Never printed on the card — the card says what it does and nothing about its curation
+         * (ADR 0021 §3) — and read only by the shelf of the index, where «cerrada» is the honest
+         * answer to «what can I still finish?».
+         */
+        val seriesStatus: SeriesStatus? = null,
     ) : IndexCard {
         override val distinctTypes: Int get() = collection.distinctTypes
         override val quantity: Int get() = collection.quantity
@@ -157,6 +166,7 @@ class CollectionIndex(
                 ),
                 collection = collection,
                 plateCatalogId = catalog?.takeIf { it.isEvidencedBy(items) }?.id,
+                seriesStatus = catalog?.seriesStatus,
             )
         } + boxes.map { box ->
             IndexCard.Box(

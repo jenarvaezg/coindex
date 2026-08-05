@@ -39,6 +39,7 @@ import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.coverageLabel
+import com.jenarvaezg.coindex.ui.pieceTitle
 import com.jenarvaezg.coindex.ui.piecesExportMessage
 import com.jenarvaezg.coindex.ui.piecesFileName
 import com.jenarvaezg.coindex.ui.recordInto
@@ -288,12 +289,6 @@ fun MissingSubject(explanation: String, modifier: Modifier = Modifier) {
         Text(explanation, style = MaterialTheme.typography.bodyLarge, color = Paper.muted)
     }
 }
-
-/** What to call a piece: the catalog title if its type is cached, else what the row itself says. */
-internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
-    state.typeMeta[item.typeId]?.displayTitle
-        ?: item.title
-        ?: "Pieza ${item.id}"
 
 /**
  * Composes the whole sheet off-screen, waits for every picture to settle, and shares it.

@@ -43,6 +43,16 @@ data class TypeMeta(
     /** Dominant metal, inferred from `composition.text` like the finish is from the title. */
     val metal: Metal? = null,
     /**
+     * Numista's `category`: `coin` or `exonumia`.
+     *
+     * Kept as prose and read through [objectClassOf], for the same reason `composition.text` is: the
+     * split is a rule, and a rule improved later has to fix rows cached long ago. It takes no part in
+     * the variant key, in the matching or in any ratio — four of the 13 exonumia in the seeded cache
+     * are members of curated catalogs in full, which is why this is a filter and not a section
+     * (ADR 0021 §1, #89).
+     */
+    val category: String? = null,
+    /**
      * The coin's diameter in millimetres, Numista's `size`.
      *
      * The one measurement of a type that says nothing about what it is and everything about how it

@@ -74,6 +74,17 @@ fun piecesSubject(state: CollectionState, card: IndexCard): PiecesSubject = when
 }
 
 /**
+ * What to call a piece: the catalog title if its type is cached, else what the row itself says.
+ *
+ * Shared by the three lists that draw a coin — a collection's pieces, its exported sheet, and Coins
+ * (ADR 0021 §1) — so the same coin cannot be called two things one tap apart.
+ */
+internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
+    state.typeMeta[item.typeId]?.displayTitle
+        ?: item.title
+        ?: "Pieza ${item.id}"
+
+/**
  * The order pieces are read in: the year first, because it is what usually tells two rows of the
  * same type apart, and a row without one goes last — undated is the least identified a row gets.
  */

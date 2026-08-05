@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,14 +29,19 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.BudgetStatus
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.Facet
 import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.FilterChip
+import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.lastSyncLabel
@@ -45,6 +51,18 @@ import com.jenarvaezg.coindex.ui.notebookStepLabel
 import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.seriesLabel
+import com.jenarvaezg.coindex.ui.shelf.IndexFacts
+import com.jenarvaezg.coindex.ui.shelf.IndexShelf
+import com.jenarvaezg.coindex.ui.shelf.IndexSort
+import com.jenarvaezg.coindex.ui.shelf.OunceBand
+import com.jenarvaezg.coindex.ui.shelf.PlateStatus
+import com.jenarvaezg.coindex.ui.shelf.StartBand
+import com.jenarvaezg.coindex.ui.shelf.indexFacetCounts
+import com.jenarvaezg.coindex.ui.shelf.indexFacts
+import com.jenarvaezg.coindex.ui.shelf.indexShelfSummary
+import com.jenarvaezg.coindex.ui.shelf.indexTally
+import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -81,8 +99,9 @@ fun IndexScreen(
     loading: Boolean,
     syncing: Boolean,
     lastSync: SyncRecord?,
+    shelf: IndexShelf,
+    onNarrow: (IndexShelf) -> Unit,
     onSync: () -> Unit,
-    onOpenUnclassified: () -> Unit,
     onOpen: (CardDestination) -> Unit,
     /**
      * The cards this screen is showing, as printable pages.
@@ -102,6 +121,15 @@ fun IndexScreen(
     // reshuffle the pages under the printer.
     var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
+    // Joined once per collection, not once per chip counted: five facets over sixty cards would
+    // otherwise walk the inventory thirty times a redraw.
+    val facts = remember(state) { indexFacts(state) }
+    // Saved across a rotation and never persisted (ADR 0021 §1), unlike the shelf above it.
+    var query by rememberSaveable { mutableStateOf("") }
+    var open by remember { mutableStateOf(false) }
+    // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
+    // the notebook needs no mechanism of its own to choose pages.
+    val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
@@ -117,19 +145,17 @@ fun IndexScreen(
         ) {
             fullWidth {
                 IndexHeading(
-                    unclassified = state.unclassified.size,
                     budget = budget,
                     syncing = syncing,
                     lastSync = lastSync,
                     spread = columns > 1,
                     // One card, one page at least: what stays out of the notebook is a question
                     // for the index and not for the printer (#147).
-                    exportableCards = state.index.size,
+                    exportableCards = shown.size,
                     exporting = printing != null,
                     onSync = onSync,
-                    onOpenUnclassified = onOpenUnclassified,
                     onExport = {
-                        val pages = notebook(state.index)
+                        val pages = notebook(shown)
                         if (pages.isEmpty()) {
                             onMessage("No hay ninguna colección que llevar al papel.")
                         } else {
@@ -138,6 +164,25 @@ fun IndexScreen(
                         }
                     },
                 )
+            }
+
+            fullWidth {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    SearchField(value = query, onValueChange = { query = it })
+                    FilterShelf(
+                        summary = indexShelfSummary(shelf),
+                        tally = indexTally(shown.size, state.index.size),
+                        expanded = open,
+                        onToggle = { open = !open },
+                    ) {
+                        IndexFacets(
+                            facts = facts,
+                            shelf = shelf,
+                            query = query,
+                            onNarrow = onNarrow,
+                        )
+                    }
+                }
             }
 
             // Visible progress and a way out, which is what a job of eighty-four pages and a
@@ -199,24 +244,35 @@ fun IndexScreen(
 
             // Reading the collection off the database takes a frame or two, and «todavía no hay
             // colecciones» in that gap is a lie about a collection that is on the device already.
-            if (state.index.isEmpty()) {
+            //
+            // A shelf that hides everything is the third case, and it owes the way out on the spot:
+            // the shelf enters folded, so the chip responsible may be two taps away.
+            if (shown.isEmpty()) {
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            if (loading) {
-                                "Leyendo tu colección…"
-                            } else {
-                                "Todavía no hay colecciones. Sincroniza para traer " +
+                            when {
+                                loading -> "Leyendo tu colección…"
+                                state.index.isNotEmpty() ->
+                                    "Ninguna colección pasa por lo que has puesto."
+                                else -> "Todavía no hay colecciones. Sincroniza para traer " +
                                     "tu colección de Numista."
                             },
                             style = MaterialTheme.typography.bodyLarge,
                             color = Paper.muted,
                         )
+                        if (!loading && state.index.isNotEmpty()) {
+                            CardAction(
+                                text = "Quitar los filtros",
+                                onClick = { onNarrow(IndexShelf()); query = "" },
+                                modifier = Modifier.padding(top = 10.dp),
+                            )
+                        }
                     }
                 }
             }
 
-            items(state.index, key = ::cardKey) { card ->
+            items(shown, key = ::cardKey) { card ->
                 CollectionCard(card = card, onOpen = { openCard(card) })
             }
         }
@@ -332,7 +388,6 @@ private fun CollectionCard(
  */
 @Composable
 private fun IndexHeading(
-    unclassified: Int,
     budget: BudgetStatus,
     syncing: Boolean,
     lastSync: SyncRecord?,
@@ -340,24 +395,19 @@ private fun IndexHeading(
     exportableCards: Int,
     exporting: Boolean,
     onSync: () -> Unit,
-    onOpenUnclassified: () -> Unit,
     onExport: () -> Unit,
 ) {
     val title = @Composable {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Eyebrow("Cuaderno de colección")
-            Text("Láminas de plata", style = MaterialTheme.typography.displayLarge)
-            Text(
-                "Colecciones a partir de las piezas que tienes ahora mismo.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Paper.muted,
-            )
-        }
+        RootHeading(
+            destination = "Colecciones",
+            sentence = "Colecciones a partir de las piezas que tienes ahora mismo.",
+        )
     }
     val actions = @Composable {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            // Flowed rather than a row: the notebook's own action is a third button, and three of
-            // them do not fit across a phone held upright.
+            // Two buttons where there were three: «Sin clasificar · N» was never a screen of its
+            // own, it was the «Sin colección» chip of Coins (ADR 0021 §1), and the bottom bar is
+            // now the way there.
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -367,10 +417,6 @@ private fun IndexHeading(
                     text = if (syncing) "Sincronizando…" else "Sincronizar",
                     onClick = onSync,
                     enabled = !syncing,
-                )
-                CardAction(
-                    text = "Sin clasificar · $unclassified",
-                    onClick = onOpenUnclassified,
                 )
                 // Level 2 and not the filled button: what this screen exists for is the collection
                 // arriving from Numista, and the notebook is what the collector then does with it.
@@ -416,6 +462,123 @@ private fun IndexHeading(
         ) {
             title()
             actions()
+        }
+    }
+}
+
+/**
+ * The six chip rows of Collections: the sort first, then the five filters.
+ *
+ * The sort leads because it is the one control that answers «why is this card at the top?», which is
+ * the question ADR 0021 §6 created by making the order a measured ratio rather than the alphabet.
+ */
+@Composable
+private fun IndexFacets(
+    facts: List<IndexFacts>,
+    shelf: IndexShelf,
+    query: String,
+    onNarrow: (IndexShelf) -> Unit,
+) {
+    val counts = indexFacetCounts(facts, shelf, query)
+
+    Facet("Orden") {
+        IndexSort.entries.forEach { sort ->
+            FilterChip(
+                label = sort.label,
+                count = null,
+                selected = shelf.sort == sort,
+                onClick = { onNarrow(shelf.copy(sort = sort)) },
+            )
+        }
+    }
+    // Numista's `collected_items` carries no date of any kind, so this order is by row id — «alta en
+    // Numista», not «compra». Said here rather than left to be guessed at from a surprising order.
+    if (shelf.sort == IndexSort.RecentlyAdded) {
+        Text(
+            "Numista no guarda fecha de compra, así que este orden es el del alta en Numista.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Paper.muted,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+    }
+    Facet("País") {
+        FilterChip(
+            label = "Todos",
+            count = null,
+            selected = shelf.issuer == null,
+            onClick = { onNarrow(shelf.copy(issuer = null)) },
+        )
+        counts.issuers().forEach { (issuer, count) ->
+            FilterChip(
+                label = issuer,
+                count = count,
+                selected = shelf.issuer == issuer,
+                onClick = { onNarrow(shelf.copy(issuer = issuer)) },
+            )
+        }
+    }
+    Facet("Peso") {
+        FilterChip(
+            label = "Cualquiera",
+            count = null,
+            selected = shelf.weight == null,
+            onClick = { onNarrow(shelf.copy(weight = null)) },
+        )
+        OunceBand.entries.forEach { band ->
+            FilterChip(
+                label = band.label,
+                count = counts.weight.of(band),
+                selected = shelf.weight == band,
+                onClick = { onNarrow(shelf.copy(weight = band)) },
+            )
+        }
+    }
+    Facet("Empieza en") {
+        FilterChip(
+            label = "Cualquier año",
+            count = null,
+            selected = shelf.startsIn == null,
+            onClick = { onNarrow(shelf.copy(startsIn = null)) },
+        )
+        StartBand.entries.forEach { band ->
+            FilterChip(
+                label = band.label,
+                count = counts.startsIn.of(band),
+                selected = shelf.startsIn == band,
+                onClick = { onNarrow(shelf.copy(startsIn = band)) },
+            )
+        }
+    }
+    Facet("Estado") {
+        FilterChip(
+            label = "Todas",
+            count = null,
+            selected = shelf.status == null,
+            onClick = { onNarrow(shelf.copy(status = null)) },
+        )
+        PlateStatus.entries.forEach { status ->
+            FilterChip(
+                label = status.label,
+                count = counts.status.of(status),
+                selected = shelf.status == status,
+                onClick = { onNarrow(shelf.copy(status = status)) },
+            )
+        }
+    }
+    Facet("Serie") {
+        FilterChip(
+            label = "Cualquiera",
+            count = null,
+            selected = shelf.series == null,
+            onClick = { onNarrow(shelf.copy(series = null)) },
+        )
+        SeriesStatus.entries.forEach { status ->
+            FilterChip(
+                label = seriesLabel(status),
+                count = counts.series.of(status),
+                selected = shelf.series == status,
+                onClick = { onNarrow(shelf.copy(series = status)) },
+            )
         }
     }
 }

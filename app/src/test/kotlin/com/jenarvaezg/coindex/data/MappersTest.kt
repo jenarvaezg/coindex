@@ -85,6 +85,29 @@ class MappersTest {
         )
     }
 
+    /**
+     * La categoría sale del mismo sitio y por el mismo trato: la chip de clase de Monedas
+     * (ADR 0021 §1) funciona sobre las 829 fichas ya cacheadas sin migración ni llamada.
+     */
+    @Test
+    fun `the category is read from the stored ficha, not from a column`() {
+        assertEquals(
+            "coin",
+            typeEntity(Fixtures.type(404_044), fetchedAt = 20).toDomain().category,
+        )
+        assertEquals(
+            "exonumia",
+            typeEntity("""{"category": "exonumia"}""", fetchedAt = 21).toDomain().category,
+        )
+    }
+
+    @Test
+    fun `a type with no category, or unreadable json, simply has none`() {
+        assertNull(typeEntity("{}", fetchedAt = 22).toDomain().category)
+        assertNull(typeEntity("no es json", fetchedAt = 23).toDomain().category)
+        assertNull(typeEntity("""{"category": ""}""", fetchedAt = 24).toDomain().category)
+    }
+
     private fun entity(raw: String) = CollectedItemEntity(
         id = 1,
         typeId = 1_885,

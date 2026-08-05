@@ -17,12 +17,16 @@ data class ObjectClassDeviation(
  * Deliberately five and not the whole table. `Monedas de colección` is **out**: two members of the
  * Equilibrium catalog carry it (N#356004 and N#477907) and they are members in full, so the class
  * says nothing there — Numista's own table calls it "depends on the declared scope", which is to
- * say the curator decides. `Monedas no circulantes` is out for the same reason at scale: 615 of the
- * 727 seeded fichas are one, which is what the two collections are made of.
+ * say the curator decides. `Monedas no circulantes` is out for the same reason at scale: 691 of the
+ * 829 seeded fichas are one, which is what the two collections are made of.
  *
  * The strings are Spanish because the cache is: every ficha is fetched with `lang=es`, by the app
  * (`NumistaClient`) and by `scripts/seed-type-cache.py` alike. A literal-string net can rot into a
  * silent no-op if that wording ever drifts, so the suite pins the vocabulary separately.
+ *
+ * Not to be confused with [ObjectClass], which reads the coarse `category` for the chip of Coins:
+ * this net exists to make a curator look at one member, and that one exists to let a collector find
+ * their medals without moving them out of the collections they belong to.
  */
 private val THINGS_THAT_ARE_NOT_MONEY = setOf(
     "Monedas de ensayo",

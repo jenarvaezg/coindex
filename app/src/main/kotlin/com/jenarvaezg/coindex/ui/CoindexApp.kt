@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.HorizontalDivider
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -40,13 +42,13 @@ import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.MissingSubject
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
-import com.jenarvaezg.coindex.ui.screens.UnclassifiedScreen
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 @Composable
@@ -93,18 +95,19 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         else -> null
     }
 
-    // The start destination is the only one with nothing underneath it, and a «Volver» that pops
-    // an empty back stack is a button that teaches you to ignore it. In that gap the masthead
-    // offers settings instead. Onboarding has no masthead actions at all.
-    val atIndex = state.onboarded && route == Routes.INDEX
+    // A root destination has nothing underneath it, and a «Volver» that pops an empty back stack is
+    // a button that teaches you to ignore it. In that gap the masthead offers settings instead —
+    // from **both** roots now (ADR 0021 §1), because neither is more the home than the other.
+    // Onboarding has no masthead actions at all.
+    val atRoot = state.onboarded && Routes.isRoot(route)
     val onBack: (() -> Unit)? =
-        if (state.onboarded && route != null && route != Routes.INDEX) {
+        if (state.onboarded && route != null && !Routes.isRoot(route)) {
             { navController.popBackStack() }
         } else {
             null
         }
     val onOpenSettings: (() -> Unit)? =
-        if (atIndex) {
+        if (atRoot) {
             { navController.navigate(Routes.SETTINGS) }
         } else {
             null
@@ -128,6 +131,30 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 }
             }
         },
+        bottomBar = {
+            // Only on the two roots. Everything else is reached *through* one of them, and a bar
+            // offering to jump hierarchies from three screens deep would be a second «Volver» that
+            // does something else.
+            if (atRoot) {
+                HierarchyBar(
+                    route = route,
+                    collections = state.collection.index.size,
+                    coins = state.collection.items
+                        .filter { it.quantity > 0 }
+                        .distinctBy { it.typeId }
+                        .size,
+                    onCross = { destination ->
+                        navController.navigate(destination) {
+                            // The two roots are siblings, not a stack: crossing over and back must
+                            // not pile up entries, and each side keeps its own scroll position.
+                            popUpTo(Routes.INDEX) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
+        },
     ) { padding ->
         val content = Modifier.fillMaxSize().padding(padding)
         when {
@@ -149,13 +176,24 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         loading = state.loading,
                         syncing = state.syncing,
                         lastSync = state.lastSync,
+                        shelf = state.indexShelf,
+                        onNarrow = viewModel::narrowIndex,
                         onSync = viewModel::sync,
-                        onOpenUnclassified = { navController.navigate(Routes.UNCLASSIFIED) },
                         onOpen = { destination ->
                             navController.navigate(routeOf(destination))
                         },
                         notebook = viewModel::notebookPages,
                         onMessage = viewModel::showMessage,
+                    )
+                }
+                composable(Routes.COINS) {
+                    CoinsScreen(
+                        state = state.collection,
+                        shelf = state.coinsShelf,
+                        onNarrow = viewModel::narrowCoins,
+                        onOpen = { destination ->
+                            navController.navigate(routeOf(destination))
+                        },
                     )
                 }
                 composable(Routes.OWN_GROUPING) { entry ->
@@ -214,14 +252,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         )
                     }
                 }
-                composable(Routes.UNCLASSIFIED) {
-                    UnclassifiedScreen(
-                        state = state.collection,
-                        onOpenSource = openUrl,
-                        onCreateGrouping = viewModel::createOwnGrouping,
-                        onAddToGrouping = viewModel::addToOwnGrouping,
-                    )
-                }
                 composable(Routes.SETTINGS) {
                     // Read once per visit: the form owns its own edits from then on, and it
                     // opens on a clean slate rather than on the last visit's complaint.
@@ -260,6 +290,68 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             }
         }
     }
+}
+
+/**
+ * The bottom bar of two destinations: Collections and Coins (ADR 0021 §1).
+ *
+ * **The app opens in Collections and this crosses to Coins and back.** A home screen that asked which
+ * hierarchy you wanted was prototyped and rejected — it charged a tap per launch to choose the same
+ * thing every time — and Coins is not a view inside a collection, so it could not be a button on the
+ * index either.
+ *
+ * Each cell carries how many cards are behind it, which is the number the destination itself then
+ * prints: 58 collections, and one row per Numista type owned. Drawn as two halves of a rule rather
+ * than as Material's `NavigationBar`, which brings its own elevation, ripple and icon slot into a
+ * notebook that has none of the three.
+ */
+@Composable
+private fun HierarchyBar(
+    route: String?,
+    collections: Int,
+    coins: Int,
+    onCross: (String) -> Unit,
+) {
+    Column {
+        HorizontalDivider(thickness = 2.dp, color = Paper.ink)
+        Row(modifier = Modifier.fillMaxWidth().navigationBarsPadding()) {
+            HierarchyCell(
+                label = "Colecciones · $collections",
+                selected = route == Routes.INDEX,
+                onClick = { onCross(Routes.INDEX) },
+                modifier = Modifier.weight(1f),
+            )
+            HierarchyCell(
+                label = "Monedas · $coins",
+                selected = route == Routes.COINS,
+                onClick = { onCross(Routes.COINS) },
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun HierarchyCell(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = label,
+        style = MaterialTheme.typography.labelLarge,
+        color = if (selected) Paper.paper else Paper.ink,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
+            .background(if (selected) Paper.ink else Paper.paperDeep)
+            // The cell you are already on still takes the tap: a dead half of the bar reads as a
+            // control that has stopped working.
+            .clickable(role = Role.Tab, onClick = onClick)
+            .padding(vertical = 16.dp),
+    )
 }
 
 /**
