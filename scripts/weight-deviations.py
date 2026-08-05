@@ -130,6 +130,7 @@ class Catalog:
     weight_millioz: int | None
     members: tuple[Member, ...]
     is_set: bool
+    source_note: str | None = None
 
 
 @dataclass(frozen=True)
@@ -163,11 +164,26 @@ class Deviation:
     composition: str | None
     variant_note: str | None
     key_declared_by: tuple[str, ...]
+    catalog_note: str | None = None
 
     @property
     def relative_percent(self) -> float:
         """Distancia de la clave al declarado, que es la que decide si hay dos tarjetas."""
         return abs(self.observed_millioz - self.declared_millioz) * 100.0 / self.declared_millioz
+
+    @property
+    def explained_by(self) -> str | None:
+        """Dónde está escrita ya la desviación: en la casilla o en la lámina entera.
+
+        Los 36 pesos de plata .900 del Libro Rojo (#204) no son 36 notas de casilla: es una
+        sola ley que la lámina explica de una vez, como los 3 rublos. Si el informe sólo
+        mirara el `variant_note` del miembro, esa nota escrita no callaría ni una línea.
+        """
+        if self.variant_note:
+            return "casilla"
+        if self.catalog_note:
+            return "lámina"
+        return None
 
     @property
     def magnet_moved(self) -> bool:
@@ -243,6 +259,11 @@ class Report:
     def extra_cards(self) -> int:
         return sum(split.extra_cards for split in self.splits)
 
+    @property
+    def explained_count(self) -> int:
+        """Cuántas líneas ya tienen su explicación escrita, en la casilla o en la lámina."""
+        return sum(1 for deviation in self.deviations if deviation.explained_by)
+
 
 def load_catalogs(directory: pathlib.Path = CATALOGS) -> list[Catalog]:
     catalogs: list[Catalog] = []
@@ -267,6 +288,7 @@ def load_catalogs(directory: pathlib.Path = CATALOGS) -> list[Catalog]:
                 # Espejo de `CollectionCatalog.isSet`: el conjunto es la unidad y no
                 # declara variante física de ninguna clase (ADR 0012).
                 is_set=payload.get("schema_version") == 3,
+                source_note=payload.get("source_note"),
             )
         )
     return catalogs
@@ -365,6 +387,7 @@ def find_deviations(
                     composition=ficha.composition,
                     variant_note=member.variant_note,
                     key_declared_by=declared_by.get(observed, ()),
+                    catalog_note=catalog.source_note,
                 )
             )
     deviations.sort(
@@ -569,8 +592,11 @@ def render_markdown(report: Report) -> str:
                 "Numista tal cual; `clave` es dónde los deja el imán, y cuando no son el "
                 "mismo número es que tiró de ellos un objetivo ajeno —el que se nombra al "
                 "lado—. La distancia se mide sobre la clave, que es la que decidiría la "
-                "tarjeta. La columna `nota` marca los miembros cuyo `variant_note` ya "
-                "explica la desviación: el curador la escribió a mano y no hay nada que mirar.",
+                "tarjeta. La columna `nota` marca las líneas cuya explicación ya está "
+                f"escrita —{report.explained_count} de {len(report.deviations)}— y dice "
+                "dónde: `casilla` es el `variant_note` de ese miembro y `lámina` el "
+                "`source_note` de su catálogo, que explica la ley de todos sus miembros de "
+                "una vez. El curador las escribió a mano y no hay nada que mirar.",
                 "",
                 "| distancia | catálogo | casilla | Numista | declara | ficha | clave | composición | nota |",
                 "|---|---|---|---|---|---|---|---|---|",
@@ -591,7 +617,7 @@ def render_markdown(report: Report) -> str:
                 f"| {deviation.measured_millioz} ({format_grams(deviation.grams)}) "
                 f"| {key} "
                 f"| {cell(deviation.composition, limit=32)} "
-                f"| {'sí' if deviation.variant_note else ''} |"
+                f"| {deviation.explained_by or ''} |"
             )
     else:
         lines.append("_Ninguno._")
@@ -673,7 +699,7 @@ def render_plain(report: Report) -> str:
     ]
     if report.deviations:
         for deviation in report.deviations:
-            note = " · nota" if deviation.variant_note else ""
+            note = f" · nota en la {deviation.explained_by}" if deviation.explained_by else ""
             magnet = ""
             if deviation.magnet_moved:
                 origin = magnet_origin(

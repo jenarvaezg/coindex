@@ -10,9 +10,10 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5860",
+  "source_note": "Toda la lámina es media onza de plata fina: el Banco de Rusia garantiza 15,55 g de metal fino en las tres variantes de la serie «Красная книга», y el peso bruto sigue a la ley —17,44 g (±0,16) al 900 en los 1 rublo de 1993-2004, 17,00 g (±0,18) al 925 en los 1 rublo de 2005-2007 y en los 2 rublos desde 2008—, con los mismos 33,00 mm en las tres. Verificado en el #204 contra la base de monedas conmemorativas de la ceca: 5109-0002 (el markhor de 1993) dice «серебро 900/1000, 17,44 г, не менее 15,55 г»; 5109-0073 (lobo rojo de 2005) y 5110-0086 (shemaya de 2008) dicen «серебро 925/1000, 17,00 г, 15,55 г». Los 15,70 y 15,72 g que salen de multiplicar los gramos de Numista por la ley están por encima de ese mínimo garantizado y no lo contradicen. Así que son la misma pieza coleccionable y una sola lámina (ADR 0016) —la misma historia que `architectural-monuments-russia-3-roubles`—, y el salto de denominación de 1 a 2 rublos en 2008 no tocó la plata fina. Los 547 millioz declarados aquí son los 17,00 g de la época .925 y se quedan como están a propósito: el peso es parte de la clave de `collection_proposal_preferences` y cambiarlo borraría la intención guardada en esta tarjeta. Las 36 líneas que este catálogo aporta al informe de desviaciones (#158) son exactamente los 36 miembros de plata 900, y ninguno es un intruso.",
   "no_issue_years": [2009, 2011, 2013, 2015, 2017, 2018, 2020, 2021, 2023, 2025],
   "no_issue_note": "Tras 2008 el Banco de Rusia emite el Libro Rojo a tandas cada dos o tres años, no anual: la serie Numista 5860 no tiene plata de 1/2 rublos en ninguno de esos años, y el plan oficial de 2025 no incluye la serie. Resuelto en #131.",
-  "updated_at": "2026-08-03",
+  "updated_at": "2026-08-05",
   "members": [
     {
       "id": "1993-amur-tiger",
