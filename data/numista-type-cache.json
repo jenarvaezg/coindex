@@ -1602,46 +1602,58 @@
   "weight": 27
  },
  "107292": {
-  "category": "coin",
-  "comments": "(en) <p style=\"margin-left:0.0px;\">Surb-Khach (Armenian: “Holy Cross”) is an Armenian men’s monastery located in Crimea, 3.5 km southwest of the town of Stary Krym. It was founded in 1358 by Hovhannes Sebastatsi, the spiritual leader of the Armenians of Crimea.</p><p style=\"margin-left:0.0px;\">&nbsp;</p><p style=\"margin-left:0.0px;\">During the medieval period, Surb-Khach was the largest Armenian religious center in the region. In 1778, as part of Empress Catherine II’s organized resettlement of Armenians from Crimea to Russia, the monastery’s clergy relocated to the Lower Don. However, by the late 18th century, the monastery was revived and once again became a major spiritual center for the Armenians who remained in Crimea.<br>&nbsp;</p><p style=\"margin-left:0.0px;\">In 1925, the monastery was officially closed as a religious institution. Restoration work began in the late 1980s, and by the early 1990s, religious services resumed in the monastery’s church. Today, the monastery is open year-round for free visits and pilgrimages.<br>&nbsp;</p><p style=\"margin-left:0.0px;\">The monastery complex includes the Surb-Nshan Church, a refectory, monks’ cells, and a garden with two fountains. Additionally, several khachkars—carved stone crosses or, more precisely, stone steles with intricate cross designs—are installed on the monastery grounds. Each khachkar is unique in its pattern and ornamentation.</p>",
-  "composition": {
-   "text": "Plata 925"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "300 ondulaciones"
-  },
   "id": 107292,
-  "issue_terms": {
-   "is_issued": true,
-   "issue_date": "2017-03-01"
+  "url": "https://es.numista.com/107292",
+  "title": "3 Roubles (Surb-Khach Monastery)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
   },
   "issuer": {
    "code": "russie",
    "name": "Federación de Rusia (1991-presente)"
   },
-  "max_year": 2017,
   "min_year": 2017,
-  "mints": [
+  "max_year": 2017,
+  "ruler": [
    {
-    "id": 6,
-    "name": "Moscow Mint"
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
    }
   ],
-  "object_type": {
-   "id": 3,
-   "name": "Monedas no circulantes"
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2017-03-01"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
   },
   "obverse": {
-   "description": "En el campo de espejo del disco - la imagen en relieve del Escudo Nacional de la Federación de Rusia, sobre ella - la inscripción semicircular a lo largo del borde: \"РОССИЙСКАЯ ФЕДЕРАЦИЯ\" (FEDERACIÓN RUSA), enmarcada a ambos lados por rombos dobles, debajo el escudo: a la izquierda - indicaciones del metal precioso y su finura, a la derecha - el contenido de metal fino y la marca comercial de la ceca, abajo en el centro, en tres líneas - la inscripción: \"БАНК РОССИИ\" (BANCO DE RUSIA), la denominación de la moneda: \"3 РУБЛЯ\" (3 ROUBLES), el año.",
-   "designers": [
-    "Elena Viktorovna Kramskaya"
-   ],
    "engravers": [
     "Alexandra Arsenyevna Dolgopolova"
    ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "En el campo de espejo del disco - la imagen en relieve del Escudo Nacional de la Federación de Rusia, sobre ella - la inscripción semicircular a lo largo del borde: \"РОССИЙСКАЯ ФЕДЕРАЦИЯ\" (FEDERACIÓN RUSA), enmarcada a ambos lados por rombos dobles, debajo el escudo: a la izquierda - indicaciones del metal precioso y su finura, a la derecha - el contenido de metal fino y la marca comercial de la ceca, abajo en el centro, en tres líneas - la inscripción: \"БАНК РОССИИ\" (BANCO DE RUSIA), la denominación de la moneda: \"3 РУБЛЯ\" (3 ROUBLES), el año.",
    "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 31,1\r\nММД\r\nБАНК РОССИИ\r\n3 РУБЛЯ\r\n2017 г.",
    "lettering_scripts": [
     {
@@ -1652,36 +1664,19 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/russie/651cb679a521c7.14398868-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb679a521c7.14398868-180.jpg",
    "picture_copyright": "tolnomur",
    "picture_license_name": "CC BY-NC-SA",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb679a521c7.14398868-180.jpg"
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
   },
-  "orientation": "medal",
-  "references": [
-   {
-    "catalogue": {
-     "code": "CBR",
-     "id": 203
-    },
-    "number": "5111-0357"
-   },
-   {
-    "catalogue": {
-     "code": "Y",
-     "id": 9
-    },
-    "number": "1764"
-   }
-  ],
   "reverse": {
-   "description": "La imagen en relieve del monasterio de Surb-Khach. Hay inscripciones: \"МОНАСТЫРЬ СУРБ-ХАЧ\" (MONASTERIO DE SURB-KHACH) a lo largo de la circunferencia en la parte superior, \"ОСН. В XIV в.\" (FUNDADO EN EL SIGLO XIV) en dos líneas a la izquierda, \"РЕСПУБЛИКА КРЫМ\" (REPÚBLICA DE CRIMEA) en dos líneas en la parte inferior.",
-   "designers": [
-    "Anton Dmitrievich Schablykin"
-   ],
    "engravers": [
     "Fedor Sergeevich Andronov"
    ],
+   "designers": [
+    "Anton Dmitrievich Schablykin"
+   ],
+   "description": "La imagen en relieve del monasterio de Surb-Khach. Hay inscripciones: \"МОНАСТЫРЬ СУРБ-ХАЧ\" (MONASTERIO DE SURB-KHACH) a lo largo de la circunferencia en la parte superior, \"ОСН. В XIV в.\" (FUNDADO EN EL SIGLO XIV) en dos líneas a la izquierda, \"РЕСПУБЛИКА КРЫМ\" (REPÚBLICA DE CRIMEA) en dos líneas en la parte inferior.",
    "lettering": "МОНАСТЫРЬ СУРБ-ХАЧ\r\nОСН. \r\nВ XIV в.\r\nРЕСПУБЛИКА \r\nКРЫМ",
    "lettering_scripts": [
     {
@@ -1689,40 +1684,45 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/russie/651cb67a6ab221.86525133-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb67a6ab221.86525133-180.jpg",
    "picture_copyright": "tolnomur",
    "picture_license_name": "CC BY-NC-SA",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb67a6ab221.86525133-180.jpg"
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
   },
-  "ruler": [
-   {
-    "id": 1573,
-    "name": "Russian Federation",
-    "wikidata_id": "Q159"
-   }
-  ],
   "series": "Architectural Monuments of Russia",
-  "shape": "Circular",
-  "size": 39,
+  "comments": "(en) <p style=\"margin-left:0.0px;\">Surb-Khach (Armenian: “Holy Cross”) is an Armenian men’s monastery located in Crimea, 3.5 km southwest of the town of Stary Krym. It was founded in 1358 by Hovhannes Sebastatsi, the spiritual leader of the Armenians of Crimea.</p><p style=\"margin-left:0.0px;\">&nbsp;</p><p style=\"margin-left:0.0px;\">During the medieval period, Surb-Khach was the largest Armenian religious center in the region. In 1778, as part of Empress Catherine II’s organized resettlement of Armenians from Crimea to Russia, the monastery’s clergy relocated to the Lower Don. However, by the late 18th century, the monastery was revived and once again became a major spiritual center for the Armenians who remained in Crimea.<br>&nbsp;</p><p style=\"margin-left:0.0px;\">In 1925, the monastery was officially closed as a religious institution. Restoration work began in the late 1980s, and by the early 1990s, religious services resumed in the monastery’s church. Today, the monastery is open year-round for free visits and pilgrimages.<br>&nbsp;</p><p style=\"margin-left:0.0px;\">The monastery complex includes the Surb-Nshan Church, a refectory, monks’ cells, and a garden with two fountains. Additionally, several khachkars—carved stone crosses or, more precisely, stone steles with intricate cross designs—are installed on the monastery grounds. Each khachkar is unique in its pattern and ornamentation.</p>",
   "tags": [
    "Construcción religiosa"
   ],
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "title": "3 Roubles (Surb-Khach Monastery)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/107292",
-  "value": {
-   "currency": {
-    "full_name": "Rouble (1998-date)",
-    "id": 169,
-    "name": "Rouble"
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5111-0357"
    },
-   "numeric_value": 3,
-   "text": "3 Roubles"
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "1764"
+   }
+  ],
+  "weight": 33.94,
+  "orientation": "medal",
+  "edge": {
+   "description": "300 ondulaciones"
   },
-  "weight": 39.94
+  "mints": [
+   {
+    "id": 6,
+    "name": "Moscow Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "107370": {
   "category": "coin",
@@ -4502,42 +4502,55 @@
   "weight": 17
  },
  "117328": {
-  "category": "coin",
-  "comments": "Fecha de emisión: 05 JUL 2017",
-  "composition": {
-   "text": "Plata 925"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "300 ondulaciones"
-  },
   "id": 117328,
-  "issuer": {
-   "code": "russie",
-   "name": "Federación de Rusia (1991-presente)"
-  },
-  "max_year": 2017,
-  "min_year": 2017,
-  "mints": [
-   {
-    "id": 7,
-    "name": "Saint Petersburg"
-   }
-  ],
+  "url": "https://es.numista.com/117328",
+  "title": "3 Roubles (Queen Louise Bridge)",
   "object_type": {
    "id": 3,
    "name": "Monedas no circulantes"
   },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "min_year": 2017,
+  "max_year": 2017,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "thickness": 3.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
   "obverse": {
-   "description": "En el campo de espejo del disco - la imagen en relieve del Escudo Nacional de la Federación de Rusia, sobre ella - la inscripción semicircular a lo largo del borde: \"РОССИЙСКАЯ ФЕДЕРАЦИЯ\" (FEDERACIÓN RUSA), enmarcada a ambos lados por rombos dobles, debajo el escudo: a la izquierda - indicaciones del metal precioso y su finura, a la derecha - el contenido de metal fino y la marca comercial de la ceca, abajo en el centro, en tres líneas - la inscripción: \"БАНК РОССИИ\" (BANCO DE RUSIA), la denominación de la moneda: \"3 РУБЛЯ\" (3 ROUBLES), el año.",
-   "designers": [
-    "Elena Viktorovna Kramskaya"
-   ],
    "engravers": [
     "Alexandra Arsenyevna Dolgopolova"
    ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "En el campo de espejo del disco - la imagen en relieve del Escudo Nacional de la Federación de Rusia, sobre ella - la inscripción semicircular a lo largo del borde: \"РОССИЙСКАЯ ФЕДЕРАЦИЯ\" (FEDERACIÓN RUSA), enmarcada a ambos lados por rombos dobles, debajo el escudo: a la izquierda - indicaciones del metal precioso y su finura, a la derecha - el contenido de metal fino y la marca comercial de la ceca, abajo en el centro, en tres líneas - la inscripción: \"БАНК РОССИИ\" (BANCO DE RUSIA), la denominación de la moneda: \"3 РУБЛЯ\" (3 ROUBLES), el año.",
    "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 31,1\r\nСПМД\r\nБАНК РОССИИ\r\n3 РУБЛЯ\r\n2017 г.",
    "lettering_scripts": [
     {
@@ -4548,36 +4561,19 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/russie/651cb92b6bd123.82064586-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb92b6bd123.82064586-180.jpg",
    "picture_copyright": "tolnomur",
    "picture_license_name": "CC BY-NC-SA",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb92b6bd123.82064586-180.jpg"
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
   },
-  "orientation": "medal",
-  "references": [
-   {
-    "catalogue": {
-     "code": "CBR",
-     "id": 203
-    },
-    "number": "5111-0362"
-   },
-   {
-    "catalogue": {
-     "code": "Y",
-     "id": 9
-    },
-    "number": "1762"
-   }
-  ],
   "reverse": {
-   "description": "Imagen en relieve del puente \"Reina Luisa\" en Sovetsk, región de Kaliningrado. Hay inscripciones: \"МОСТ \"КОРОЛЕВА ЛУИЗА\" (\"PUENTE \"REINA LOUISE\") a lo largo de la circunferencia en la parte inferior, \"г. СОВЕТСК\" (SOVETSK) a la derecha.",
-   "designers": [
-    "Elena Ivanovna Novikova"
-   ],
    "engravers": [
     "Alexey Vladimirovich Gnidin"
    ],
+   "designers": [
+    "Elena Ivanovna Novikova"
+   ],
+   "description": "Imagen en relieve del puente \"Reina Luisa\" en Sovetsk, región de Kaliningrado. Hay inscripciones: \"МОСТ \"КОРОЛЕВА ЛУИЗА\" (\"PUENTE \"REINA LOUISE\") a lo largo de la circunferencia en la parte inferior, \"г. СОВЕТСК\" (SOVETSK) a la derecha.",
    "lettering": "г. СОВЕТСК\r\nМОСТ \"КОРОЛЕВА ЛУИЗА\"",
    "lettering_scripts": [
     {
@@ -4585,41 +4581,45 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/russie/651cb92c2aa907.05180566-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb92c2aa907.05180566-180.jpg",
    "picture_copyright": "tolnomur",
    "picture_license_name": "CC BY-NC-SA",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/russie/651cb92c2aa907.05180566-180.jpg"
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
   },
-  "ruler": [
-   {
-    "id": 1573,
-    "name": "Russian Federation",
-    "wikidata_id": "Q159"
-   }
-  ],
   "series": "Architectural Monuments of Russia",
-  "shape": "Circular",
-  "size": 39,
+  "comments": "Fecha de emisión: 05 JUL 2017",
   "tags": [
    "Puente"
   ],
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "thickness": 3.3,
-  "title": "3 Roubles (Queen Louise Bridge)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/117328",
-  "value": {
-   "currency": {
-    "full_name": "Rouble (1998-date)",
-    "id": 169,
-    "name": "Rouble"
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5111-0362"
    },
-   "numeric_value": 3,
-   "text": "3 Roubles"
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "1762"
+   }
+  ],
+  "weight": 33.94,
+  "orientation": "medal",
+  "edge": {
+   "description": "300 ondulaciones"
   },
-  "weight": 39.94
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "12454": {
   "category": "coin",

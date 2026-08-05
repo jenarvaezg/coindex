@@ -10,10 +10,10 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=1452",
-  "source_note": "Toda la lámina es una onza de plata fina: el Banco de Rusia garantiza 31,10 g de metal fino en las 3 rublos de la serie, y el peso bruto sigue a la ley —34,88 g al 900 en 43 fichas y 33,94 g al 925 en 57—, así que son la misma pieza coleccionable y una sola lámina (ADR 0016). Los 1121 millioz declarados aquí son los 34,88 g de la época .900 y se quedan como están a propósito: el peso es parte de la clave de `collection_proposal_preferences` y cambiarlo borraría la intención guardada en esta tarjeta. Medido en el #160: de los 104 miembros sólo tres se salen de esos dos pesos, y ninguno es un intruso. La de Voronezh de 2009 pesa 35,66 g de verdad porque lleva oro incrustado, y lo dice su `variant_note`; las dos de 2017 que Numista da a 39,94 g son un dígito bailado suyo —el Banco de Rusia dice 33,94 g— y la corrección aguas arriba es el #195.",
+  "source_note": "Toda la lámina es una onza de plata fina: el Banco de Rusia garantiza 31,10 g de metal fino en las 3 rublos de la serie, y el peso bruto sigue a la ley —34,88 g al 900 en 43 fichas y 33,94 g al 925 en 59—, así que son la misma pieza coleccionable y una sola lámina (ADR 0016). Los 1121 millioz declarados aquí son los 34,88 g de la época .900 y se quedan como están a propósito: el peso es parte de la clave de `collection_proposal_preferences` y cambiarlo borraría la intención guardada en esta tarjeta. Medido en el #160: de los 104 miembros sólo tres se salían de esos dos pesos, y ninguno era un intruso. La de Voronezh de 2009 pesa 35,66 g de verdad porque lleva oro incrustado, y lo dice su `variant_note`. Las dos de 2017 eran un dígito bailado de Numista —39,94 contra los 33,94 g (±0,31) que dice el Banco de Rusia en 5111-0357 y 5111-0362—: Numista aprobó la corrección del #195 el 5 de agosto de 2026 y sus fichas se resembraron el mismo día, así que ya son dos de las 59 del .925 y el informe de desviaciones (#158) no las levanta.",
   "no_issue_years": [2001, 2020],
   "no_issue_note": "2001: la ceca no lanzó ninguna de la serie (tsbnk; Numista 1452 salta de 2000 a 2002). 2020: tampoco en 3 rublos de Architectural Monuments — el aniversario del Kremlin de Tula (5111-0430 / N#235489) no es de la serie, y el Antonievo-Siysky es 25 rublos. Resuelto en #131.",
-  "updated_at": "2026-08-04",
+  "updated_at": "2026-08-05",
   "members": [
     {
       "id": "1993-bell-tower-ivan-the-great",
