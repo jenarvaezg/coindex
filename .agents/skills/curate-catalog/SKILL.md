@@ -53,7 +53,27 @@ A type is **verificado** only if it is *published*. The API serves a referee's p
 
 **Done when** every id in the file has been opened and confirmed, and any unpublished ones are `unlisted` with an upstream issue titled `Numista: <acción> (N#…)`, unlabelled.
 
-### 4. Version the file, and seed the cache
+### 4. Cross the ids against everything already versioned
+
+Before writing a file, cross the types it will name against the types the rest of `data/` already names. One command, zero network:
+
+```
+scripts/type-claims.py <id> <id> …        # `235118:582778,585569` adds the issue qualifier
+scripts/type-claims.py --file <ruta>      # a file already written, before versioning it
+scripts/type-claims.py --all              # every overlap in data/
+```
+
+A `PARAR` is not a warning to weigh. Two ordinary catalogs naming one type is rejected the moment the seeds load — `CatalogSeeds.validateCrossCatalogClaims`, «Numista type `X` is claimed by more than one collection catalog without issue-qualified identities» — and the file travels to the father's phone in the release, so what looks like it would be a strange card is an app that does not start.
+
+One overlap is legitimate and must not stop the curation: two catalogs may share a type when **both** identities are issue-qualified and their `numista_issue_ids` are disjoint. That is what `lunar-iii-perth-1oz-bullion` and `lunar-iii-perth-1oz-proof-coloured` do over `235118`, `307024` and `342221`, and the two Rwanda Nautical files over four more — the years Numista archives two finishes under a single type.
+
+The other shapes have no such exit. An agrupación loses the family to any catalog naming the type (ADR 0013), and a set catalog wins it and takes the coin *off* the denomination card (ADR 0022): both are curation mistakes, not precedence to resolve at runtime, and neither is caught at startup. A commemorative programme is the one file that shares types on purpose — it produces no card and never reaches `deriveCollection`, which is exactly what lets it coexist.
+
+When the collision is none of those, the shape is usually wrong before the ids are: a type repeated across casillas is only legal inside one date run. And a genuine overlap between two collections — one coin on two plates, in earnest — is the domain change [#149](https://github.com/jenarvaezg/coindex/issues/149) postponed until the first real case, so that goes in first and this curation waits.
+
+**Done when** the cross-check is clean, or the only overlap is the issue-qualified disjoint kind and you have said which emissions each file takes.
+
+### 5. Version the file, and seed the cache
 
 Write the JSON under `data/collection-catalogs/` (or `data/groupings/`). Then seed the fichas of every new type. `TypeCacheSeedTest` is what *finds* the missing ones — it goes red with the list — and the script seeds the ids you hand it:
 
@@ -67,7 +87,7 @@ Say out loud, before doing it, what a rename costs: the family is part of the pr
 
 **Done when** `./gradlew :domain:test :app:testDebugUnitTest` is green — that suite carries the startup validator over the real files, the seed check and the cross-file ambiguity check.
 
-### 5. Measure the lámina
+### 6. Measure the lámina
 
 Report the real fraction for both collections by running the field report over a private capture, never by asserting it:
 
@@ -79,13 +99,13 @@ COINDEX_FIELD_SNAPSHOT=<dir> ./gradlew :app:testDebugUnitTest --tests '*FieldRep
 
 **Done when** the plate fraction and the change in «Sin clasificar» are **medido** for both collections, or you have said plainly that no capture was available and the figures are therefore unmeasured.
 
-### 6. Keep the prose honest
+### 7. Keep the prose honest
 
 A curation that teaches something changes the documents too: `CONTEXT.md` when a term is new, `spec.md` when a section it describes is now false, and a fresh ADR when you had to *decide* rather than look up. Say which of the three you touched, and why the others needed nothing.
 
 ## Branch: an open catalog that is behind
 
-`scripts/stale-catalogs.py` and the [Catálogos abiertos por detrás](https://github.com/jenarvaezg/coindex/issues/136) issue name the tail. Adding this year's casilla is steps 3 through 6 only — the sequence already proved itself, so re-litigating step 1 wastes the collector's time.
+`scripts/stale-catalogs.py` and the [Catálogos abiertos por detrás](https://github.com/jenarvaezg/coindex/issues/136) issue name the tail. Adding this year's casilla is steps 3 through 7 only — the sequence already proved itself, so re-litigating step 1 wastes the collector's time.
 
 Interior gaps deserve the opposite reflex: a year missing in the middle is usually a year the mint did not strike, and confirming that outside Numista closes it as legitimate calendar rather than curation debt.
 
