@@ -225,8 +225,13 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 - **59 catálogos** con 1.079 miembros: 30 abiertos y 29 cerrados. Por versión de esquema, 34
   simples, 22 date runs, 2 conjuntos y 1 issue run.
-- **2 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
-  Royal Mint y el dólar de plata clásico de EE. UU.
+- **3 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
+  Royal Mint, el dólar de plata clásico de EE. UU. y las alemanas de plata de ley de 18 g. La
+  tercera es la primera que se cura sobre una secuencia real y enumerada —94 motivos encargados
+  por el BMF en esa variante, 10 € de 2002 a 2010 y 20 € desde 2016— en vez de sobre monedas sin
+  secuencia: el criterio de existencia del ADR 0020 lo decide la intención, y el coleccionista
+  dijo que no las persigue porque «la cantidad es abrumadora»
+  ([#154](https://github.com/jenarvaezg/coindex/issues/154)).
 - **2 programas conmemorativos** (ADR 0022), que no son colecciones y no dan tarjeta: las series
   portuguesas de 1977 y de 1983, tres denominaciones cada una. El padre lee «1 de 3» en las dos.
 - **829 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
