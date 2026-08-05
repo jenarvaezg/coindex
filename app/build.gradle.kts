@@ -16,8 +16,8 @@ android {
         applicationId = "com.jenarvaezg.coindex"
         minSdk = 29
         targetSdk = 36
-        versionCode = 22
-        versionName = "0.14.1"
+        versionCode = 23
+        versionName = "0.15.0"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
