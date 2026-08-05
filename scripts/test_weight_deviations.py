@@ -51,6 +51,7 @@ def catalog(
     weight_millioz: int | None,
     *members,
     is_set: bool = False,
+    source_note: str | None = None,
 ):
     return weights.Catalog(
         catalog_id=catalog_id,
@@ -58,6 +59,7 @@ def catalog(
         weight_millioz=weight_millioz,
         members=tuple(members),
         is_set=is_set,
+        source_note=source_note,
     )
 
 
@@ -181,6 +183,52 @@ class DeviationTests(unittest.TestCase):
             [deviation.member_id for deviation in report.deviations],
         )
         self.assertIsNotNone(report.deviations[0].variant_note)
+
+    def test_the_note_of_the_lamina_explains_every_member_at_once(self) -> None:
+        # #204: los pesos de plata 900 del Libro Rojo son una sola ley, y la explica el
+        # `source_note` del catálogo. Sin esto, una nota escrita no callaría ni una línea.
+        report = report_for(
+            [
+                catalog(
+                    "red-data-book-russia",
+                    547,
+                    member("1993-markhor", 28_070),
+                    member("1994-casarca", 28_075),
+                    source_note="Media onza de plata fina en las dos leyes.",
+                )
+            ],
+            [ficha(28_070, 17.44), ficha(28_075, 17.44)],
+        )
+        self.assertEqual(
+            ["lámina", "lámina"],
+            [deviation.explained_by for deviation in report.deviations],
+        )
+        self.assertEqual(2, report.explained_count)
+        body = weights.render_markdown(report)
+        self.assertIn("| lámina |", body)
+        self.assertIn("nota en la lámina", weights.render_plain(report))
+
+    def test_the_note_of_the_casilla_wins_over_the_one_of_the_lamina(self) -> None:
+        report = report_for(
+            [
+                catalog(
+                    "monumentos",
+                    1_121,
+                    member("2009-voronezh", 39_904, variant_note="Lleva oro incrustado."),
+                    source_note="Una onza de plata fina en las dos leyes.",
+                )
+            ],
+            [ficha(39_904, 35.66)],
+        )
+        self.assertEqual("casilla", report.deviations[0].explained_by)
+
+    def test_a_lamina_without_a_note_leaves_the_line_unexplained(self) -> None:
+        report = report_for(
+            [catalog("lamina", 1_000, member("uno", 1))],
+            [ficha(1, 35.0)],
+        )
+        self.assertIsNone(report.deviations[0].explained_by)
+        self.assertEqual(0, report.explained_count)
 
     def test_the_key_says_when_a_foreign_catalog_moved_it(self) -> None:
         # Los 33,94 g rusos miden 1091 y acaban en el 1081 que declara la onza mexicana:
@@ -326,6 +374,7 @@ class LoadTests(unittest.TestCase):
                   "name": "Sample largo",
                   "short_name": "Sample",
                   "weight_millioz": 1000,
+                  "source_note": "La ley cambia y el fino no.",
                   "members": [
                     {"id": "2024-a", "year": 2024, "numista_type_id": 42,
                      "label": "Uno", "variant_note": "Otra ley."}
@@ -339,6 +388,7 @@ class LoadTests(unittest.TestCase):
             self.assertEqual("Sample", catalogs[0].name)
             self.assertEqual(1_000, catalogs[0].weight_millioz)
             self.assertFalse(catalogs[0].is_set)
+            self.assertEqual("La ley cambia y el fino no.", catalogs[0].source_note)
             self.assertEqual("Otra ley.", catalogs[0].members[0].variant_note)
 
     def test_schema_version_three_is_a_set(self) -> None:
@@ -380,6 +430,20 @@ class RealDataTests(unittest.TestCase):
             self.assertNotEqual(deviation.declared_millioz, deviation.observed_millioz)
             self.assertGreater(deviation.relative_percent, 0.0)
         self.assertEqual(len(self.report.deviations), sum(self.report.buckets))
+
+    def test_the_two_laminas_of_two_silver_finenesses_are_explained(self) -> None:
+        # Los 1 y 2 rublos rusos son la misma media onza (#204) y los 3 rublos la misma onza
+        # (#160): entre los dos son la mayoría del informe, y su nota está escrita.
+        explained_laminas = {
+            "red-data-book-russia",
+            "architectural-monuments-russia-3-roubles",
+        }
+        for deviation in self.report.deviations:
+            if deviation.catalog_id in explained_laminas:
+                self.assertIsNotNone(
+                    deviation.explained_by,
+                    f"{deviation.catalog_id}/{deviation.member_id} sin nota",
+                )
 
     def test_every_pull_moves_the_weight_and_has_a_target(self) -> None:
         for pull in self.report.pulls:
