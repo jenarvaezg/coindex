@@ -25,12 +25,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import pathlib
-import subprocess
 import sys
 from dataclasses import dataclass
 from datetime import date
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+from repo_issue import sync_report_issue  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOGS = ROOT / "data" / "collection-catalogs"
@@ -225,111 +227,17 @@ def render_plain(report: Report) -> str:
     return "\n".join(lines)
 
 
-def run_gh(args: list[str], *, input_text: str | None = None) -> str:
-    env = os.environ.copy()
-    if "GH_TOKEN" not in env and "GITHUB_TOKEN" in env:
-        env["GH_TOKEN"] = env["GITHUB_TOKEN"]
-    completed = subprocess.run(
-        ["gh", *args],
-        check=False,
-        capture_output=True,
-        text=True,
-        input=input_text,
-        env=env,
-    )
-    if completed.returncode != 0:
-        detail = (completed.stderr or completed.stdout or "").strip()
-        sys.exit(f"gh {' '.join(args)} falló ({completed.returncode}): {detail}")
-    return completed.stdout.strip()
-
-
-def find_report_issue() -> dict | None:
-    # Título exacto + marcador en el cuerpo: el issue es único e idempotente.
-    # La búsqueda por subcadena también pilla tickets del mapa (#132, #94); se filtran.
-    raw = run_gh(
-        [
-            "issue",
-            "list",
-            "--state",
-            "all",
-            "--limit",
-            "50",
-            "--json",
-            "number,title,state,body",
-            "--search",
-            f'in:title "{ISSUE_TITLE}"',
-        ]
-    )
-    issues = json.loads(raw or "[]")
-    by_marker = sorted(
-        (issue for issue in issues if ISSUE_MARKER in (issue.get("body") or "")),
-        key=lambda issue: issue["number"],
-    )
-    if len(by_marker) > 1:
-        numbers = ", ".join(f"#{issue['number']}" for issue in by_marker)
-        sys.exit(
-            f"hay {len(by_marker)} issues con el marcador del informe ({numbers}): "
-            "deja uno solo antes de sincronizar"
-        )
-    if by_marker:
-        return by_marker[0]
-    by_title = sorted(
-        (issue for issue in issues if issue.get("title") == ISSUE_TITLE),
-        key=lambda issue: issue["number"],
-    )
-    if len(by_title) > 1:
-        numbers = ", ".join(f"#{issue['number']}" for issue in by_title)
-        sys.exit(
-            f"hay {len(by_title)} issues con el título exacto ({numbers}): "
-            "deja uno solo antes de sincronizar"
-        )
-    return by_title[0] if by_title else None
-
-
 def sync_issue(report: Report) -> None:
-    body = render_markdown(report)
-    existing = find_report_issue()
-    if report.has_debt:
-        if existing is None:
-            url = run_gh(
-                [
-                    "issue",
-                    "create",
-                    "--title",
-                    ISSUE_TITLE,
-                    "--body",
-                    body,
-                ]
-            )
-            print(f"issue creado: {url}", file=sys.stderr)
-            return
-        number = str(existing["number"])
-        run_gh(["issue", "edit", number, "--body", body])
-        if existing.get("state") == "CLOSED":
-            run_gh(["issue", "reopen", number])
-            print(f"issue #{number} reabierto y reescrito", file=sys.stderr)
-        else:
-            print(f"issue #{number} reescrito", file=sys.stderr)
-        return
-
-    if existing is None:
-        print("sin deuda y sin issue previo: nada que sincronizar", file=sys.stderr)
-        return
-    number = str(existing["number"])
-    if existing.get("state") == "OPEN":
-        run_gh(
-            [
-                "issue",
-                "close",
-                number,
-                "--comment",
-                f"Cola y huecos vacíos el {report.as_of.isoformat()}. "
-                "Los catálogos abiertos están al día según la aritmética del informe.",
-            ]
-        )
-        print(f"issue #{number} cerrado: sin deuda", file=sys.stderr)
-    else:
-        print(f"issue #{number} ya cerrado y sin deuda", file=sys.stderr)
+    sync_report_issue(
+        title=ISSUE_TITLE,
+        marker=ISSUE_MARKER,
+        body=render_markdown(report),
+        has_debt=report.has_debt,
+        closing_comment=(
+            f"Cola y huecos vacíos el {report.as_of.isoformat()}. "
+            "Los catálogos abiertos están al día según la aritmética del informe."
+        ),
+    )
 
 
 def main() -> None:

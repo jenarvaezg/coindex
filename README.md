@@ -22,7 +22,7 @@ de la API de Numista y de la estética.
 ├── data/       # catálogos curados y snapshot de la caché de tipos (assets de la app)
 ├── fixtures/   # respuestas grabadas de Numista, que leen los tests
 ├── docs/adr/   # decisiones de arquitectura
-└── scripts/    # publicar releases, grabar fixtures
+└── scripts/    # publicar releases, grabar fixtures, informes de curación
 ```
 
 Los catálogos curados y el snapshot de la caché de tipos **no se copian a los assets**: el

@@ -122,7 +122,8 @@ _Avoid_: Unclassified screen, inventory view, collection detail
 The audit surface for what the matching contradicts in silence — a member whose weight normalized
 from Numista's grams is not the one its catalog declares, a row so year-blind it is invisible in its
 own plate. It is a script with no network that never goes red and keeps a single issue in sync, not a
-screen: red when the finding is rare, a report when it is routine (ADR 0021 §12).
+screen: red when the finding is rare, a report when it is routine (ADR 0021 §12). The weight half is
+`scripts/weight-deviations.py`; the year-blind rows need the inventory and belong to the field report.
 _Avoid_: Manual override, unclassified reason, in-app audit
 
 **Collection catalog**:
