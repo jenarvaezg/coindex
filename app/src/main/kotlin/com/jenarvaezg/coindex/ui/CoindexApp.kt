@@ -62,7 +62,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val backStackEntry by navController.currentBackStackEntryAsState()
 
     // Al volver a primer plano se recomprueba, con el suelo de tiempo de shouldCheckForUpdate.
-    LifecycleEventEffect(Lifecycle.Event.ON_START) { viewModel.checkForUpdate() }
+    // Y es también cuando se reintentan las fotos que faltan: puede que ahora haya wifi (#191).
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        viewModel.checkForUpdate()
+        viewModel.retryPhotoPrefetch()
+    }
 
     LaunchedEffect(state.message) {
         state.message?.let { message ->
@@ -197,6 +201,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         },
                         notebook = viewModel::notebookPages,
                         onMessage = viewModel::showMessage,
+                        onExporting = viewModel::notebookExporting,
                     )
                 }
                 composable(Routes.COINS) {
@@ -281,6 +286,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     SettingsScreen(
                         values = values,
                         budget = state.budget,
+                        photoCache = state.photoCache,
                         versionName = state.versionName,
                         validation = state.validation,
                         onSave = { apiKey, userId, budgetCap ->

@@ -18,5 +18,9 @@ class CoindexApplication : Application(), SingletonImageLoader.Factory {
 
     /** Every picture in the app is a Numista catalog photograph; see [coinPhotoImageLoader]. */
     override fun newImageLoader(context: PlatformContext): ImageLoader =
-        coinPhotoImageLoader(context, coinPhotoUserAgent(container.installedVersionName()))
+        coinPhotoImageLoader(
+            context,
+            coinPhotoUserAgent(container.installedVersionName()),
+            container.gonePhotographs,
+        )
 }

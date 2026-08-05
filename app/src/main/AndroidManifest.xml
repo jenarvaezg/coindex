@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Las fotos del catálogo se precargan solas (#191), y sólo con red no medida: 22 MB de
+         fotos que nadie ha pedido no salen de la tarifa de datos del coleccionista. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Coindex se distribuye por APK, así que se actualiza a sí misma. La instalación
          siempre la confirma el usuario: nada de esto instala en silencio. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />

@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -114,6 +115,14 @@ fun IndexScreen(
      */
     notebook: (List<IndexCard>) -> List<PrintPage>,
     onMessage: (String) -> Unit,
+    /**
+     * Whether the notebook is being exported right now.
+     *
+     * The export wants all four of the loader's slots, and the background photograph prefetch holds
+     * two of them (#191). This is what lets it stand aside for as long as the collector is watching
+     * a progress bar — and start again, on whatever is still missing, when the PDF is out.
+     */
+    onExporting: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val openCard: (IndexCard) -> Unit = { card -> onOpen(destinationOf(card)) }
@@ -122,6 +131,9 @@ fun IndexScreen(
     // reshuffle the pages under the printer.
     var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
+    // Announced from the state and not from the tap, so cancelling and failing say it too: every
+    // way out of an export goes through `printing` becoming null.
+    LaunchedEffect(printing != null) { onExporting(printing != null) }
     // Joined once per collection, not once per chip counted: five facets over sixty cards would
     // otherwise walk the inventory thirty times a redraw.
     val facts = remember(state) { indexFacts(state) }

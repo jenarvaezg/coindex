@@ -50,6 +50,19 @@ object PhotoRetryPolicy {
         status == 408 || status == 429 || status in 500..599
 
     /**
+     * Whether the answer means the picture is not there and is not coming back.
+     *
+     * Worth telling apart from «not retryable» because of the prefetch (#191), which runs on every
+     * launch: a photograph that is merely refused is asked for again another day, and one that is
+     * **gone** is remembered so it stops costing a request for ever.
+     *
+     * `403` is deliberately outside this. Without a `User-Agent` Cloudflare answers `403` to every
+     * photograph (ADR 0017), so remembering it would let one bad afternoon at the edge switch the
+     * whole catalog off on this phone, permanently and invisibly.
+     */
+    fun isGone(status: Int): Boolean = status == 404 || status == 410
+
+    /**
      * How long to wait before [attempt] + 1, or null when the attempts are spent.
      *
      * [attempt] is 1-based. [retryAfterSeconds] is the server's own instruction, which wins over

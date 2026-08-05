@@ -21,9 +21,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.ui.BudgetStatus
 import com.jenarvaezg.coindex.ui.SettingsValues
 import com.jenarvaezg.coindex.ui.callsLabel
+import com.jenarvaezg.coindex.ui.photoCacheLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -41,6 +43,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 fun SettingsScreen(
     values: SettingsValues,
     budget: BudgetStatus,
+    photoCache: PhotoCacheStatus,
     versionName: String,
     validation: String?,
     onSave: (apiKey: String, userId: String, budgetCap: String) -> Unit,
@@ -116,6 +119,20 @@ fun SettingsScreen(
             text = "Guardar ajustes",
             onClick = { onSave(apiKey, userId, budgetCap) },
         )
+
+        // The photographs are the one thing here that is not a setting: nothing on this card can
+        // be pressed. It is the only place the background prefetch is allowed to speak (#191), and
+        // it is here because «faltan 320 y están cayendo» and «faltan 320 porque estás con datos»
+        // look identical from the outside and are not.
+        FieldCard(modifier = Modifier.fillMaxWidth()) {
+            Text("Fotos del catálogo", style = MaterialTheme.typography.titleMedium)
+            Text(
+                photoCacheLabel(photoCache),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Paper.muted,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
 
         FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
             Text("Cerrar sesión", style = MaterialTheme.typography.titleMedium)

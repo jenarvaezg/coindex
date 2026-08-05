@@ -1,33 +1,20 @@
 package com.jenarvaezg.coindex.ui.print
 
 import android.content.Context
-import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
-import coil3.request.ImageRequest
+import com.jenarvaezg.coindex.data.photos.warmPhotographs
 import java.util.concurrent.atomic.AtomicInteger
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 
 /**
  * How many photographs of the warm-up are in flight at once.
  *
  * The same four as `CoinPhotoLoader`'s dispatcher, on purpose: asking for more would only pile
  * them up one layer higher, where the progress counter cannot see them and cancelling does not
- * reach them.
+ * reach them. The background prefetch takes two of the four for the opposite reason (#191) — the
+ * export is what the collector is watching, and it is allowed to take the lot.
  */
 private const val WARM_CONCURRENCY = 4
-
-/**
- * The size the warm-up decodes at, which is the size Numista's thumbnails are (ADR 0017).
- *
- * What the warm-up is really for is the **disk** cache, which is keyed by URL alone, so the pages
- * hit it whatever diameter they then ask for. Decoding to something is unavoidable, so it decodes
- * to the smallest honest thing rather than to the original.
- */
-private const val WARM_SIZE_PX = 180
 
 /**
  * Every photograph the notebook needs, once.
@@ -75,32 +62,18 @@ suspend fun warmNotebookPhotographs(
     onProgress: (done: Int) -> Unit,
 ) {
     if (urls.isEmpty()) return
-    val loader: ImageLoader = SingletonImageLoader.get(context)
-    val gate = Semaphore(WARM_CONCURRENCY)
     // Atomic because four coroutines report into it, and the counter is what the collector is
     // watching: a lost increment is a progress bar that never reaches the end.
     val done = AtomicInteger(0)
-    coroutineScope {
-        urls.forEach { url ->
-            launch {
-                gate.withPermit {
-                    // The result is deliberately ignored: success or failure, what matters is that
-                    // the cache now holds whatever this URL is ever going to give.
-                    runCatching {
-                        loader.execute(
-                            ImageRequest.Builder(context)
-                                .data(url)
-                                .size(WARM_SIZE_PX, WARM_SIZE_PX)
-                                // Written to disk but not to memory: a thumbnail decoded at 180 px
-                                // is not the bitmap a 40 mm cell will want, and six hundred of them
-                                // in the memory cache would evict the ones the pages do want.
-                                .memoryCachePolicy(CachePolicy.WRITE_ONLY)
-                                .build(),
-                        )
-                    }
-                }
-                onProgress(done.incrementAndGet())
-            }
-        }
-    }
+    // Whether each one landed is deliberately ignored here: success or failure, what matters is
+    // that the cache now holds whatever this URL is ever going to give, and the drawing pass is
+    // what counts holes because that is what ends up on the paper.
+    warmPhotographs(
+        context = context,
+        loader = SingletonImageLoader.get(context),
+        urls = urls,
+        concurrency = WARM_CONCURRENCY,
+        // Unchanged from #190: the page about to be drawn may want the same bitmap seconds later.
+        memoryCache = CachePolicy.WRITE_ONLY,
+    ) { _, _ -> onProgress(done.incrementAndGet()) }
 }
