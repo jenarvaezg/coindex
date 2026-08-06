@@ -73,10 +73,11 @@ enum class NotebookSwitch(
     val pending: Int?,
 ) {
     Photographs(pending = 231),
-    BothFaces(pending = 230),
+    /** The obverse beside the reverse, which doubles the cell and halves the page (#230). */
+    BothFaces(pending = null),
     ActualSize(pending = 233),
     SharePage(pending = 232),
 
-    /** The first one that works: the caption grows and each coin gets its code (#234). */
+    /** The caption grows and each coin gets its code (#234). */
     NumistaQr(pending = null),
 }

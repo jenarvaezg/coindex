@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.TypeCacheFile
+import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
@@ -63,8 +64,16 @@ class NotebookPagesTest {
     /** El mismo cuaderno con «QR de Numista» puesto, que es lo único que el #234 mueve. */
     private val coded = printGeometry(NotebookOptions(numistaQr = true))
 
-    /** One catalog as it would go to paper: every member a cell, nothing owned yet. */
-    private fun section(catalog: CollectionCatalog) = PrintSection(
+    /** Y con «ambas caras», que es lo único que el #230 mueve: la casilla se ensancha. */
+    private val doubled = printGeometry(NotebookOptions(bothFaces = true))
+
+    /**
+     * One catalog as it would go to paper: every member a cell, nothing owned yet.
+     *
+     * [faces] is how many sides each cell prints, which is what «ambas caras» decides (#230) — the
+     * two of them are two distinct photographs, so this is also what the warm-up has to fetch.
+     */
+    private fun section(catalog: CollectionCatalog, faces: Int = 1) = PrintSection(
         eyebrow = "COINDEX · CATÁLOGO CURADO",
         title = catalog.name,
         subtitle = null,
@@ -78,10 +87,12 @@ class NotebookPagesTest {
                 diameterMm = member.numistaTypeId
                     ?.let { typeMeta[it]?.sizeMillimetres?.toFloat() },
                 // Thumbnail and original, as a cached type has: what is warmed is the first.
-                reverse = CoinPhoto(
-                    thumbnail = "https://numista.invalid/${member.id}-180.jpg",
-                    picture = "https://numista.invalid/${member.id}-original.jpg",
-                ),
+                faces = listOf("anverso", "reverso").takeLast(faces).map { side ->
+                    CoinPhoto(
+                        thumbnail = "https://numista.invalid/${member.id}-$side-180.jpg",
+                        picture = "https://numista.invalid/${member.id}-$side-original.jpg",
+                    )
+                },
                 filled = false,
             )
         },
@@ -262,6 +273,138 @@ class NotebookPagesTest {
         )
     }
 
+    /**
+     * What both faces cost in paper, which is the most expensive of the five switches (#230).
+     *
+     * A cell stops being a coin wide and becomes two coins and a gutter, so an ounce goes from
+     * 40,9 mm to 84,8 and its plate from twelve cells a page to **six**. That is the check the ticket
+     * asks for, and it is arithmetic done before anything is drawn: the height of the cell does not
+     * move at all, because the second face is paid for in width or it is not paid for.
+     *
+     * The ticket said 184 pages against 104 for sixty plates; these are the sixty-eight that are
+     * shipped now, whose notebook of today is 113 and whose notebook of both faces is 196. Doubling
+     * is not exact —the 45,6 mm Lunar II went from three columns to one, so it more than doubles,
+     * and a plate of two coins still fits on one page— so the measure is the measure.
+     */
+    @Test
+    fun `both faces doubles the cell and very nearly doubles the notebook`() {
+        val sections = catalogs.map { section(it, faces = 2) }
+
+        val pages = printPages(sections, doubled)
+
+        assertEquals(196, pages.size)
+        assertEquals(
+            mapOf(1 to 25, 2 to 20, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
+            pages.groupBy { it.section.title }
+                .map { (_, ofSection) -> ofSection.size }
+                .groupingBy { it }
+                .eachCount()
+                .toSortedMap(),
+        )
+
+        // La comprobación que pide el ticket, casilla a casilla: la onza australiana.
+        val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
+        val one = section(kookaburra).grid(paper)
+        val two = section(kookaburra, faces = 2).grid(doubled)
+        assertEquals(12, one.cellsPerPage)
+        assertEquals(6, two.cellsPerPage)
+        assertEquals(4 to 3, one.columns to one.rows)
+        assertEquals(2 to 3, two.columns to two.rows)
+        // La casilla dobla de ancho —dos monedas y la calle de en medio— y no crece de alto.
+        assertEquals(one.cellWidthMm * 2 + paper.gutterMm, two.cellWidthMm, 0.01f)
+        assertEquals(one.cellHeightMm, two.cellHeightMm)
+        // Y el bloque sigue cabiendo en el papel que se midió contra él.
+        assertTrue(two.blockWidthMm <= doubled.gridWidthMm, "dos caras se salen: ${two.blockWidthMm}")
+    }
+
+    /**
+     * Two faces are two photographs, and a face nobody photographed is one missing photograph.
+     *
+     * The warm-up is what keeps a picture from being frozen into the PDF as a hole (#169), so the
+     * face that is not on this list is the hole: with «ambas caras» the list doubles, deduplicated
+     * exactly as it already was. And the closing message divides by the same number — a type whose
+     * obverse never arrived costs one photograph, not a broken plate.
+     */
+    @Test
+    fun `both faces asks for two photographs per type and counts them one by one`() {
+        val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
+        val pages = printPages(listOf(section(kookaburra, faces = 2)), doubled)
+
+        val urls = notebookPhotographs(pages)
+
+        assertEquals(kookaburra.members.size * 2, urls.size)
+        assertEquals(urls.size, urls.distinct().size)
+        assertEquals(kookaburra.members.size * 2, pages.sumOf { it.photographs })
+
+        // Y el mismo tipo en dos casillas sigue siendo dos fotos y no cuatro: la deduplicación no
+        // se rompe por contar caras en vez de casillas.
+        val repeated = section(kookaburra, faces = 2).let { plate ->
+            plate.copy(cells = plate.cells.take(1) + plate.cells.take(1))
+        }
+        assertEquals(2, notebookPhotographs(printPages(listOf(repeated), doubled)).size)
+
+        // Una cara que nadie fotografió es una foto menos que pedir, no una casilla rota: la otra
+        // sigue contando, y el denominador del mensaje de cierre es el de las caras.
+        val halfLit = pages.map { page ->
+            page.copy(
+                cells = page.cells.map { cell ->
+                    cell.copy(faces = listOf(CoinPhoto()) + cell.faces.last())
+                },
+            )
+        }
+        assertEquals(kookaburra.members.size, halfLit.sumOf { it.photographs })
+        assertEquals(kookaburra.members.size, notebookPhotographs(halfLit).size)
+    }
+
+    /**
+     * The switch decides how many faces a cell has, and the cache only decides what is in them.
+     *
+     * A type the cache has never seen keeps its two slots empty rather than getting one: the cells
+     * of a plate have to line up, and a lone coin where its neighbours print a pair reads as a
+     * misprint. It is the same reason a hole keeps its own diameter (#169).
+     */
+    @Test
+    fun `both faces gives every cell two slots, cached or not`() {
+        val curation = Curation(catalogs)
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = listOf(CollectedItem(id = 1, quantity = 1, typeId = 1885, issueId = 8508)),
+                typeMeta = typeMeta,
+            ),
+        )
+        val photographed = CollectionState(
+            assembled,
+            images = mapOf(
+                1885 to TypeImages(
+                    obverse = CoinPhoto(thumbnail = "anverso-180.jpg"),
+                    reverse = CoinPhoto(thumbnail = "reverso-180.jpg"),
+                ),
+            ),
+        )
+
+        val faces = { state: CollectionState, options: NotebookOptions ->
+            notebookSections(state, assembled.index, curation, options).single().cells.first().faces
+        }
+
+        // Una cara es el reverso y sólo el reverso, que es el cuaderno de hoy.
+        assertEquals(
+            listOf(CoinPhoto(thumbnail = "reverso-180.jpg")),
+            faces(photographed, NotebookOptions()),
+        )
+        // Dos son el anverso y después el reverso, en ese orden: es como se lee una ficha.
+        assertEquals(
+            listOf(
+                CoinPhoto(thumbnail = "anverso-180.jpg"),
+                CoinPhoto(thumbnail = "reverso-180.jpg"),
+            ),
+            faces(photographed, NotebookOptions(bothFaces = true)),
+        )
+        // Y un tipo del que no hay ninguna foto conserva los dos huecos, vacíos.
+        val blank = faces(CollectionState(assembled), NotebookOptions(bothFaces = true))
+        assertEquals(listOf(CoinPhoto(), CoinPhoto()), blank)
+        assertTrue(blank.none { it.hasPicture }, "un hueco vacío no pide ninguna foto")
+    }
+
     /** Y con el interruptor apagado ninguna casilla lleva URL: el cuaderno de hoy, intacto. */
     @Test
     fun `with the switch off no cell carries a url at all`() {
@@ -365,7 +508,9 @@ class NotebookPagesTest {
     @Test
     fun `a cell with no picture asks for nothing`() {
         val bare = section(catalogs.first()).let { plate ->
-            plate.copy(cells = plate.cells.map { it.copy(reverse = null) })
+            // La casilla conserva su hueco y pierde la foto: es lo que le pasa a un tipo que la
+            // caché no tiene, y lo que dibuja un hueco vacío es cosa del renderizador.
+            plate.copy(cells = plate.cells.map { it.copy(faces = listOf(CoinPhoto())) })
         }
 
         assertEquals(emptyList(), notebookPhotographs(pagesFor(bare)))

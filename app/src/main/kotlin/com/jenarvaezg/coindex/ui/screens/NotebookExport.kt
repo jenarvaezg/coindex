@@ -29,6 +29,12 @@ import com.jenarvaezg.coindex.ui.recordInto
  * for and cached: what a page is waiting for is a decode from disk, and one that has not landed in
  * four seconds is not coming. The old ceiling was what turned a notebook of seventy pages into
  * thirty-five minutes of waiting for pictures that were never going to arrive.
+ *
+ * **Unchanged by «ambas caras» (#230), and checked rather than assumed.** A page of both faces asks
+ * for twice as many decodes, but four seconds was never a budget of twelve: today's own pages run to
+ * thirty cells of Venezuelan medios, and this is a **ceiling and not a cost** — what is cached
+ * settles in a frame. The seven pages of a Kookaburra plate at both faces, seventy-four photographs,
+ * were exported without one page reaching this ceiling and without a hole in the PDF.
  */
 private const val PAGE_WAIT_MILLIS = 4_000L
 

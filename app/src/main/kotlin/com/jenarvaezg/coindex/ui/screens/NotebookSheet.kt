@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
 import com.jenarvaezg.coindex.ui.print.PrintCell
@@ -241,6 +242,9 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
  * aligned without rescaling a single piece. A cell with no coin behind it — a hole — takes the same
  * diameter as the coin the collector does have, so an album page reads as a gap and not as a
  * shrunken coin.
+ *
+ * With «ambas caras» on (#230) the band holds the two of them side by side, each at that same
+ * diameter and separated by the gutter, under **one** caption: the cell is a coin and not two.
  */
 @Composable
 private fun PrintedCell(
@@ -256,11 +260,18 @@ private fun PrintedCell(
             modifier = Modifier.fillMaxWidth().height(grid.diameterMm.mm),
             contentAlignment = Alignment.Center,
         ) {
-            PrintedCoin(
-                cell = cell,
-                onImageSettled = onImageSettled,
-                modifier = Modifier.size(diameter.mm),
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm)) {
+                // Keyed by nothing: the faces of a cell are a fixed pair for the whole export, so
+                // the obverse's slot is the obverse's for as long as this page exists.
+                cell.faces.forEach { face ->
+                    PrintedCoin(
+                        face = face,
+                        filled = cell.filled,
+                        onImageSettled = onImageSettled,
+                        modifier = Modifier.size(diameter.mm),
+                    )
+                }
+            }
         }
         cell.state?.let { state ->
             Text(
@@ -337,20 +348,26 @@ private fun NumistaCode(url: String?, sideMm: Float) {
 }
 
 /**
- * The reverse of one coin, printed round.
+ * One face of one coin, printed round.
  *
- * Only the reverse reaches the paper (#169): two faces at 1:1 would halve the diameter, which is
- * the one thing a page measured with a ruler cannot do. A hole keeps the catalog design faded and
- * desaturated, exactly as the plate on screen does, and is ruled with a dashed circle so it reads
- * as an empty mount rather than as a badly printed coin.
+ * By default it is the reverse and only the reverse (#169): the album page is the side you look at,
+ * and a second picture at 1:1 is paid for in width — which is what «ambas caras» decides to do
+ * (#230), not something this drawing can settle on its own. A hole keeps the catalog design faded
+ * and desaturated, exactly as the plate on screen does, and is ruled with a dashed circle so it
+ * reads as an empty mount rather than as a badly printed coin.
+ *
+ * [filled] is the **cell's** and not the face's: a coin the collector owns whose obverse nobody
+ * photographed is still owned, so that slot gets the silhouette of a coin that is there and not the
+ * dashed mount of one that is missing.
  */
 @Composable
 private fun PrintedCoin(
-    cell: PrintCell,
+    face: CoinPhoto,
+    filled: Boolean,
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val candidates = cell.reverse?.candidates.orEmpty()
+    val candidates = face.candidates
     var attempt by remember(candidates) { mutableIntStateOf(0) }
     var painted by remember(candidates) { mutableStateOf(false) }
     val url = candidates.getOrNull(attempt)
@@ -358,7 +375,7 @@ private fun PrintedCoin(
         // The stand-in for a coin whose picture is not cached, and only for a coin the collector
         // has: a hole's stand-in is the dashed mount below, and a filled silhouette in a «me
         // falta» cell would make the two indistinguishable on a page with no photographs at all.
-        if (cell.filled && !painted) {
+        if (filled && !painted) {
             Silhouette(Modifier.matchParentSize())
         }
         if (url != null) {
@@ -384,7 +401,7 @@ private fun PrintedCoin(
                         else -> Unit
                     }
                 },
-                colorFilter = paperCoinFilter(missing = !cell.filled),
+                colorFilter = paperCoinFilter(missing = !filled),
                 modifier = Modifier
                     .matchParentSize()
                     // Clipped round, which the screen's cell does not do and this page must: at
@@ -393,10 +410,10 @@ private fun PrintedCoin(
                     // plate is a screenshot. Numista crops its photographs to the coin, so the
                     // circle takes the corners and nothing else.
                     .clip(CircleShape)
-                    .alpha(if (cell.filled) 1f else 0.45f),
+                    .alpha(if (filled) 1f else 0.45f),
             )
         }
-        if (!cell.filled) {
+        if (!filled) {
             EmptyMount(Modifier.matchParentSize())
         }
     }

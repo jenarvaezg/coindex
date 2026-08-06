@@ -50,6 +50,35 @@ class PrintGeometryTest {
         assertTrue(tiny.columns in 5..6, "columnas para 16 mm: ${tiny.columns}")
     }
 
+    /**
+     * Con «ambas caras» la casilla son dos monedas y la calle de en medio (#230).
+     *
+     * Es el interruptor más caro en papel y el más fácil de dibujar: a 1:1 la segunda cara no se
+     * puede pagar encogiendo la moneda, así que se paga en ancho. La altura no se mueve.
+     */
+    @Test
+    fun `both faces make the cell two coins wide and leave its height alone`() {
+        val doubled = PrintGeometry(facesPerCell = 2)
+        val ounce = printGrid(40.9f, doubled)
+
+        // 40,9 + 3 + 40,9 = 84,8 mm, y sólo caben dos por fila en vez de cuatro.
+        assertEquals(84.8f, ounce.cellWidthMm, 0.01f)
+        assertEquals(2, ounce.columns)
+        assertEquals(3, ounce.rows)
+        assertEquals(6, ounce.cellsPerPage)
+        assertEquals(grid(40.9f).cellHeightMm, ounce.cellHeightMm)
+
+        // El suelo del rótulo sigue mandando donde la moneda es más estrecha que sus palabras: dos
+        // medios venezolanos de 16 mm son 35 mm, que ya pasa de los 28 y deja de ser el suelo.
+        assertEquals(35f, printGrid(16f, doubled).cellWidthMm, 0.01f)
+        assertEquals(paper.minCellWidthMm, grid(16f).cellWidthMm)
+
+        // Y la moneda más grande de la colección cabe una sola vez por fila, pero cabe.
+        val lunar = printGrid(45.6f, doubled)
+        assertEquals(1, lunar.columns)
+        assertTrue(lunar.blockWidthMm <= doubled.gridWidthMm, "94,2 mm no caben: $lunar")
+    }
+
     @Test
     fun `a diameter nobody recorded falls back instead of printing nothing`() {
         assertEquals(grid(paper.fallbackDiameterMm), grid(null))
