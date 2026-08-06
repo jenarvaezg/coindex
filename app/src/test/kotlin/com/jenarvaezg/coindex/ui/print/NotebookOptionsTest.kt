@@ -32,20 +32,24 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The door is open and the room behind it is today's notebook.
+     * The door is open and only the switch whose ticket landed has moved anything.
      *
-     * Each of the five switches becomes millimetres in its own ticket (#230-#234), so for now the
-     * thirty-two combinations are one geometry. **A ticket landing deletes a line of this test**,
-     * which is the point: until then a grey switch promises nothing, and the plumbing is provably
-     * the only thing that changed.
+     * Each of the five becomes millimetres in its own ticket (#230-#234), and «QR de Numista» is the
+     * first: the caption grows to make room for the code (#234). **A ticket landing moves a switch
+     * from one half of this test to the other**, which is the point — until then a grey switch
+     * promises nothing, and what has and has not changed behind the door is written down.
      */
     @Test
-    fun `no combination of the five moves a millimetre yet`() {
+    fun `only the switch whose ticket landed moves a millimetre`() {
         val everyCombination = allCombinations()
 
         assertEquals(32, everyCombination.size, "faltan combinaciones de cinco interruptores")
         val moved = everyCombination.filter { printGeometry(it) != PrintGeometry() }
-        assertEquals(emptyList(), moved, "un interruptor sin ticket ha movido la geometría")
+        assertEquals(
+            everyCombination.filter { it.numistaQr },
+            moved,
+            "un interruptor sin ticket ha movido la geometría, o el del #234 no la mueve",
+        )
     }
 
     /**
@@ -53,11 +57,12 @@ class NotebookOptionsTest {
      *
      * The configuration reaches `notebookSections` too, because what a cell *is* depends on it —
      * both faces gives it an obverse (#230), no photographs gives it neither (#231). Until those
-     * land, no combination may change a cell either: a notebook of 104 pages of empty circles is
-     * exactly the half-landed switch #228 refuses to ship.
+     * land, none of the four may change a cell: a notebook of 104 pages of empty circles is exactly
+     * the half-landed switch #228 refuses to ship. «QR de Numista» is left out because changing a
+     * cell is precisely what it does, and `NotebookPagesTest` is where that is measured.
      */
     @Test
-    fun `no combination of the five changes a cell yet`() {
+    fun `no switch without a ticket changes a cell`() {
         val card = IndexCard.Box(
             name = "Bandeja del abuelo",
             issuer = null,
@@ -68,7 +73,7 @@ class NotebookOptionsTest {
         )
         val today = notebookSections(CollectionState(), listOf(card), Curation(emptyList()), NotebookOptions())
 
-        val moved = allCombinations().filter { options ->
+        val moved = allCombinations().filterNot { it.numistaQr }.filter { options ->
             notebookSections(CollectionState(), listOf(card), Curation(emptyList()), options) != today
         }
 
@@ -83,9 +88,41 @@ class NotebookOptionsTest {
         assertEquals(297f, paper.heightMm)
         assertEquals(40f, paper.headingMm)
         assertEquals(14f, paper.rulerMm)
+        assertEquals(16f, paper.captionMm)
+        // Y ningún código: sin él, el rótulo es el pie de foto entero.
+        assertEquals(0f, paper.qrMm)
+        assertEquals(0f, paper.qrGapMm)
         // 210 menos los dos márgenes; 297 menos los dos márgenes, la cabecera y la regla del pie.
         assertEquals(180f, paper.gridWidthMm)
         assertEquals(213f, paper.gridHeightMm)
+    }
+
+    /**
+     * What the QR costs in millimetres, which is all it costs: only the caption moves.
+     *
+     * The page, the margins, the heading and the ruler are untouched, and so is the width of a cell:
+     * beside the name would have forced a floor of 44 mm on every cell, and that is a column taken
+     * away from almost every coin in the collection. The code goes under the name and grows the one
+     * measure this grid has to spare.
+     */
+    @Test
+    fun `the qr grows the caption and nothing else`() {
+        val paper = printGeometry(NotebookOptions())
+        val coded = printGeometry(NotebookOptions(numistaQr = true))
+
+        // 16 mm de rótulo, 2 de aire y los 12 del código con su zona de silencio.
+        assertEquals(30f, coded.captionMm)
+        assertEquals(12f, coded.qrMm)
+        assertEquals(2f, coded.qrGapMm)
+        // Y las palabras siguen teniendo los 16 mm del #169: el código se **suma** al pie de foto, no
+        // le quita sitio al rótulo. Un estado, un título de dos líneas y un año siguen cabiendo.
+        assertEquals(paper.captionMm, coded.captionMm - coded.qrGapMm - coded.qrMm)
+        assertEquals(
+            paper,
+            coded.copy(captionMm = paper.captionMm, qrMm = paper.qrMm, qrGapMm = paper.qrGapMm),
+        )
+        // Un módulo de 0,36 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 12 mm.
+        assertEquals(0.36f, coded.qrMm / 33f, 0.01f)
     }
 
     /**
@@ -124,13 +161,14 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The order of the enum is the order of the sheet, and every one still names its ticket.
+     * The order of the enum is the order of the sheet, and the four that do nothing yet say so.
      *
      * `pending` is what makes a grey switch honest: it is the issue that will make it work, and it
-     * goes to null in that issue. When all five are null this property has no reason left to exist.
+     * goes to null in that issue. «QR de Numista» is the first one at null. When all five are, this
+     * property has no reason left to exist.
      */
     @Test
-    fun `the five switches are in the order the sheet draws them and all still pending`() {
+    fun `the five switches are in the order the sheet draws them and four are still pending`() {
         assertEquals(
             listOf(
                 NotebookSwitch.Photographs,
@@ -141,7 +179,7 @@ class NotebookOptionsTest {
             ),
             NotebookSwitch.entries.toList(),
         )
-        assertEquals(listOf(231, 230, 233, 232, 234), NotebookSwitch.entries.map { it.pending })
+        assertEquals(listOf(231, 230, 233, 232, null), NotebookSwitch.entries.map { it.pending })
     }
 }
 

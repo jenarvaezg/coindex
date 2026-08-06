@@ -21,7 +21,7 @@ data class NotebookOptions(
     val actualSize: Boolean = true,
     /** Two plates in one folio, which is where most of the paper is saved. */
     val sharePage: Boolean = false,
-    /** The Numista page of each issue, as a code to point a phone at. */
+    /** The Numista page of each coin, as a code to point a phone at. */
     val numistaQr: Boolean = false,
 ) {
     operator fun get(switch: NotebookSwitch): Boolean = when (switch) {
@@ -76,5 +76,7 @@ enum class NotebookSwitch(
     BothFaces(pending = 230),
     ActualSize(pending = 233),
     SharePage(pending = 232),
-    NumistaQr(pending = 234),
+
+    /** The first one that works: the caption grows and each coin gets its code (#234). */
+    NumistaQr(pending = null),
 }

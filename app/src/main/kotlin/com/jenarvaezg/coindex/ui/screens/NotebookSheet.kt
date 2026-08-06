@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
@@ -45,7 +46,12 @@ import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
 import com.jenarvaezg.coindex.ui.print.PrintCell
 import com.jenarvaezg.coindex.ui.print.PrintGeometry
+import com.jenarvaezg.coindex.ui.print.PrintGrid
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.QR_QUIET_MODULES
+import com.jenarvaezg.coindex.ui.print.numistaQr
+import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
+import com.jenarvaezg.coindex.ui.print.qrRuns
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The density that makes one dp a millimetre of paper: the layout is written in millimetres. */
@@ -215,7 +221,7 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
                 row.forEach { cell ->
                     PrintedCell(
                         cell = cell,
-                        gridDiameterMm = grid.diameterMm,
+                        grid = grid,
                         onImageSettled = onImageSettled,
                         modifier = Modifier
                             .width(grid.cellWidthMm.mm)
@@ -239,14 +245,15 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
 @Composable
 private fun PrintedCell(
     cell: PrintCell,
-    gridDiameterMm: Float,
+    grid: PrintGrid,
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val diameter = cell.diameterMm ?: gridDiameterMm
+    val geometry = grid.geometry
+    val diameter = cell.diameterMm ?: grid.diameterMm
     Column(modifier = modifier.clipToBounds(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
-            modifier = Modifier.fillMaxWidth().height(gridDiameterMm.mm),
+            modifier = Modifier.fillMaxWidth().height(grid.diameterMm.mm),
             contentAlignment = Alignment.Center,
         ) {
             PrintedCoin(
@@ -280,6 +287,51 @@ private fun PrintedCell(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+        // Under the year and against it, not at the foot of the cell.
+        //
+        // Both were printed. Anchored to the foot the codes line up across a row, and every one of
+        // them sits a finger's width from the caption it belongs to — because the words take some ten
+        // of the sixteen millimetres the caption budgets for them, and the slack fell between the
+        // name and the code. Against the caption the slack falls at the bottom of the cell instead,
+        // where a gutter already is, and «bajo el nombre» is what the page actually shows. The price
+        // is that a two-line title lowers its own code by a line; the codes of one plate are not read
+        // as a row.
+        if (geometry.qrMm > 0f) {
+            Spacer(modifier = Modifier.height(geometry.qrGapMm.mm))
+            NumistaCode(cell.numistaUrl, geometry.qrMm)
+        }
+    }
+}
+
+/**
+ * The Numista page of one coin, as modules drawn on the page (#234).
+ *
+ * **Rectangles and not a bitmap.** The code goes into the PDF as drawing commands, so it is crisp at
+ * any zoom and at any printer's resolution — and it never touches Coil, which means it is not a
+ * photograph that can fail to arrive, cannot leave a hole in a page, and costs nothing in the
+ * warm-up of #169. It is the one thing on a printed cell that is guaranteed to be there.
+ *
+ * A cell with no URL —a member no Numista type backs, an unlisted one— leaves the square blank rather
+ * than drawing a code that leads nowhere. The square is reserved either way: the caption is a
+ * constant of the layout, and it is what the page count was computed against.
+ */
+@Composable
+private fun NumistaCode(url: String?, sideMm: Float) {
+    // Encoded once per URL rather than on every recomposition: a page of twelve cells is twelve
+    // encodings, and the same type shows up on several pages of the notebook.
+    val code = remember(url) { numistaQr(url) } ?: return
+    Canvas(modifier = Modifier.size(sideMm.mm)) {
+        val module = size.minDimension / code.qrModulesWithQuietZone
+        val quiet = module * QR_QUIET_MODULES
+        for (row in 0 until code.height) {
+            code.qrRuns(row).forEach { run ->
+                drawRect(
+                    color = Paper.ink,
+                    topLeft = Offset(quiet + run.first * module, quiet + row * module),
+                    size = Size((run.last - run.first + 1) * module, module),
+                )
+            }
         }
     }
 }

@@ -123,6 +123,24 @@ internal fun categoryFromRaw(raw: String): String? = runCatching {
 }.getOrNull()
 
 /**
+ * Numista's short URL for the type, read from the stored response on the same bargain as the four
+ * above — and covering 100 % of the seeded cache, so the QR of the printed notebook (#234) works on
+ * every type already on the phone without a migration or an API call.
+ *
+ * Read and never built. `https://es.numista.com/$typeId` would produce the same string today for all
+ * 829 seeded types, and it would be **our** guess about Numista's host and about which language the
+ * ficha was asked in — printed onto paper, where nobody can correct it. What is read is what the
+ * collector's own request came back with.
+ */
+internal fun urlFromRaw(raw: String): String? = runCatching {
+    lenientJson.parseToJsonElement(raw)
+        .jsonObject["url"]
+        ?.jsonPrimitive
+        ?.contentOrNull
+        ?.takeIf(String::isNotBlank)
+}.getOrNull()
+
+/**
  * Issuer names already read, kept for as long as the process lives.
  *
  * Every emission of the collection re-maps every cached type — 608 of them after the seed, each
@@ -142,6 +160,9 @@ private val sizes = ConcurrentHashMap<Pair<Int, Long>, Double>()
 
 /** Categories already read, on the same terms as [issuerNames]. */
 private val categories = ConcurrentHashMap<Pair<Int, Long>, String>()
+
+/** Short URLs already read, on the same terms. The empty string stands in for «no URL». */
+private val urls = ConcurrentHashMap<Pair<Int, Long>, String>()
 
 /** «Nobody recorded a diameter», as a value a [ConcurrentHashMap] can hold. */
 private const val NO_SIZE = -1.0
@@ -174,6 +195,9 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
         .takeIf { it > 0.0 },
     category = categories
         .getOrPut(typeId to fetchedAt) { categoryFromRaw(raw).orEmpty() }
+        .ifEmpty { null },
+    numistaUrl = urls
+        .getOrPut(typeId to fetchedAt) { urlFromRaw(raw).orEmpty() }
         .ifEmpty { null },
 )
 
