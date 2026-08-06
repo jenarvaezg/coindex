@@ -18,13 +18,19 @@ data class PrintCell(
     /** The real diameter in millimetres, or null when nobody recorded one for this type. */
     val diameterMm: Float?,
     /**
-     * The reverse, and only the reverse.
+     * The faces this cell prints, side by side, in the order they are laid out.
      *
-     * Paper gets one face per coin (#169): an album page is the side you look at, and printing both
-     * would halve the diameter to fit twice as many pictures — which is the one thing a 1:1 page
-     * cannot do. The obverse stays in the app.
+     * **One and it is the reverse**, which is the notebook of #169: an album page is the side you
+     * look at, and a second picture cannot be paid for by halving the diameter of a page measured
+     * with a ruler. **Two and they are the obverse and then the reverse** (#230), which is the
+     * collector documenting a piece rather than mounting an album — and the second face is paid for
+     * in width, so the cell doubles and a plate of ounces prints six to a page instead of twelve.
+     *
+     * A face with **no picture** is still a face and keeps its slot: what a plate needs is that its
+     * cells line up, and what an empty slot draws — a silhouette, a dashed mount — is the renderer's
+     * business, exactly as it always was for a reverse nobody had.
      */
-    val reverse: CoinPhoto?,
+    val faces: List<CoinPhoto>,
     /** Whether the collector owns this cell. False is a hole, and only a plate has holes. */
     val filled: Boolean,
     /**
@@ -93,8 +99,12 @@ data class PrintPage(
      *
      * Counted per page and not per notebook: the notebook is drawn one page at a time, so this is
      * twelve pictures to wait for eighty-four times over and never a thousand at once.
+     *
+     * **Faces and not cells** (#230): with both faces on, a cell asks for two, and a type whose
+     * obverse never arrives has to count as one photograph missing and not as a broken plate. That
+     * is the same number the closing message divides by.
      */
-    val photographs: Int get() = cells.count { it.reverse?.hasPicture == true }
+    val photographs: Int get() = cells.sumOf { cell -> cell.faces.count { it.hasPicture } }
 
     /**
      * Columns this page is laid out on, which is the grid's except on a plate of one short row.

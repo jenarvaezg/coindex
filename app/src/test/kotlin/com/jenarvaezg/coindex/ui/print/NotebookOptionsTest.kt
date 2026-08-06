@@ -32,23 +32,24 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The door is open and only the switch whose ticket landed has moved anything.
+     * The door is open and only the switches whose ticket landed have moved anything.
      *
-     * Each of the five becomes millimetres in its own ticket (#230-#234), and «QR de Numista» is the
-     * first: the caption grows to make room for the code (#234). **A ticket landing moves a switch
-     * from one half of this test to the other**, which is the point — until then a grey switch
-     * promises nothing, and what has and has not changed behind the door is written down.
+     * Each of the five becomes millimetres in its own ticket (#230-#234): «QR de Numista» grows the
+     * caption to make room for the code (#234), and «ambas caras» widens the cell to hold the second
+     * one (#230). **A ticket landing moves a switch from one half of this test to the other**, which
+     * is the point — until then a grey switch promises nothing, and what has and has not changed
+     * behind the door is written down.
      */
     @Test
-    fun `only the switch whose ticket landed moves a millimetre`() {
+    fun `only the switches whose ticket landed move a millimetre`() {
         val everyCombination = allCombinations()
 
         assertEquals(32, everyCombination.size, "faltan combinaciones de cinco interruptores")
         val moved = everyCombination.filter { printGeometry(it) != PrintGeometry() }
         assertEquals(
-            everyCombination.filter { it.numistaQr },
+            everyCombination.filter { it.numistaQr || it.bothFaces },
             moved,
-            "un interruptor sin ticket ha movido la geometría, o el del #234 no la mueve",
+            "un interruptor sin ticket ha movido la geometría, o el del #234 o el del #230 no la mueven",
         )
     }
 
@@ -56,10 +57,11 @@ class NotebookOptionsTest {
      * The same again for the cells, which is the half a geometry check cannot see.
      *
      * The configuration reaches `notebookSections` too, because what a cell *is* depends on it —
-     * both faces gives it an obverse (#230), no photographs gives it neither (#231). Until those
-     * land, none of the four may change a cell: a notebook of 104 pages of empty circles is exactly
-     * the half-landed switch #228 refuses to ship. «QR de Numista» is left out because changing a
-     * cell is precisely what it does, and `NotebookPagesTest` is where that is measured.
+     * both faces gives it an obverse (#230), no photographs will give it neither (#231). Until that
+     * one lands, none of the three left may change a cell: a notebook of 111 pages of empty circles
+     * is exactly the half-landed switch #228 refuses to ship. «QR de Numista» and «ambas caras» are
+     * left out because changing a cell is precisely what they do, and `NotebookPagesTest` is where
+     * that is measured.
      */
     @Test
     fun `no switch without a ticket changes a cell`() {
@@ -73,7 +75,7 @@ class NotebookOptionsTest {
         )
         val today = notebookSections(CollectionState(), listOf(card), Curation(emptyList()), NotebookOptions())
 
-        val moved = allCombinations().filterNot { it.numistaQr }.filter { options ->
+        val moved = allCombinations().filterNot { it.numistaQr || it.bothFaces }.filter { options ->
             notebookSections(CollectionState(), listOf(card), Curation(emptyList()), options) != today
         }
 
@@ -92,6 +94,8 @@ class NotebookOptionsTest {
         // Y ningún código: sin él, el rótulo es el pie de foto entero.
         assertEquals(0f, paper.qrMm)
         assertEquals(0f, paper.qrGapMm)
+        // Una cara por moneda, que es la del #169: el reverso, que es el lado que se mira.
+        assertEquals(1, paper.facesPerCell)
         // 210 menos los dos márgenes; 297 menos los dos márgenes, la cabecera y la regla del pie.
         assertEquals(180f, paper.gridWidthMm)
         assertEquals(213f, paper.gridHeightMm)
@@ -124,6 +128,45 @@ class NotebookOptionsTest {
         // Un módulo de 0,303 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 10 mm.
         // El folio de calibración leyó hasta los 9 mm (módulo de 0,273), así que esto va sobrado.
         assertEquals(0.303f, coded.qrMm / 33f, 0.001f)
+    }
+
+    /**
+     * What both faces cost in millimetres, which is all they cost: only the coin band moves (#230).
+     *
+     * The page, the margins, the heading, the ruler and the caption are untouched — the second face
+     * is paid for in width, because at 1:1 the alternative is halving the diameter and that is the
+     * one thing a page measured with a ruler cannot do.
+     */
+    @Test
+    fun `both faces widen the coin band and nothing else`() {
+        val paper = printGeometry(NotebookOptions())
+        val doubled = printGeometry(NotebookOptions(bothFaces = true))
+
+        assertEquals(2, doubled.facesPerCell)
+        assertEquals(paper, doubled.copy(facesPerCell = paper.facesPerCell))
+        // Dos onzas de 40,9 mm y la calle de 3 que las separa.
+        assertEquals(40.9f, paper.coinBandWidthMm(40.9f))
+        assertEquals(84.8f, doubled.coinBandWidthMm(40.9f), 0.01f)
+    }
+
+    /**
+     * The two switches that have landed compose, which is what «cinco interruptores» buys.
+     *
+     * Neither knows about the other: the code grows the caption, the second face widens the cell,
+     * and a notebook with both on pays for both. Models with a name were dropped precisely so the
+     * collector can combine, and the live page count is what tells them what the combination costs.
+     */
+    @Test
+    fun `the two that have landed compose without knowing about each other`() {
+        val both = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
+
+        assertEquals(2, both.facesPerCell)
+        assertEquals(28f, both.captionMm)
+        assertEquals(10f, both.qrMm)
+        assertEquals(
+            printGeometry(NotebookOptions(numistaQr = true)),
+            both.copy(facesPerCell = 1),
+        )
     }
 
     /**
@@ -162,14 +205,14 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The order of the enum is the order of the sheet, and the four that do nothing yet say so.
+     * The order of the enum is the order of the sheet, and the three that do nothing yet say so.
      *
      * `pending` is what makes a grey switch honest: it is the issue that will make it work, and it
-     * goes to null in that issue. «QR de Numista» is the first one at null. When all five are, this
-     * property has no reason left to exist.
+     * goes to null in that issue. «QR de Numista» was the first one at null and «ambas caras» is the
+     * second. When all five are, this property has no reason left to exist.
      */
     @Test
-    fun `the five switches are in the order the sheet draws them and four are still pending`() {
+    fun `the five switches are in the order the sheet draws them and three are still pending`() {
         assertEquals(
             listOf(
                 NotebookSwitch.Photographs,
@@ -180,7 +223,7 @@ class NotebookOptionsTest {
             ),
             NotebookSwitch.entries.toList(),
         )
-        assertEquals(listOf(231, 230, 233, 232, null), NotebookSwitch.entries.map { it.pending })
+        assertEquals(listOf(231, null, 233, 232, null), NotebookSwitch.entries.map { it.pending })
     }
 }
 

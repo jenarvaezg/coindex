@@ -1,7 +1,9 @@
 package com.jenarvaezg.coindex.ui.print
 
+import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
@@ -34,10 +36,10 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
  * question for the index and not for the printer (#147).
  *
  * **[options] reaches the cells and not only the millimetres** (#228). What a cell *is* depends on the
- * configuration: «QR de Numista» gives it a code to point a phone at (#234), printing both faces will
- * give it an obverse (#230), and printing no photographs gives it neither (#231). That is the door
- * #228 laid, and the ticket that opens one does not have to re-thread the ViewModel and the index
- * screen to get here.
+ * configuration: «QR de Numista» gives it a code to point a phone at (#234), «ambas caras» gives it a
+ * second face (#230), and printing no photographs will give it neither (#231). That is the door #228
+ * laid, and the ticket that opens one does not have to re-thread the ViewModel and the index screen
+ * to get here.
  */
 fun notebookSections(
     state: CollectionState,
@@ -84,7 +86,7 @@ private fun plateSection(
                 // the coin that goes in it. Only a member no Numista type backs at all — announced,
                 // unlisted — has nothing to be measured, and borrows the plate's.
                 diameterMm = state.diameterOf(member.numistaTypeId),
-                reverse = member.numistaTypeId?.let { state.images[it]?.reverse },
+                faces = state.facesOf(member.numistaTypeId, options),
                 filled = owned,
                 numistaUrl = state.qrUrlOf(member.numistaTypeId, options),
             )
@@ -120,7 +122,7 @@ private fun piecesSection(
                 state = null,
                 footnote = pieceLine(piece),
                 diameterMm = state.diameterOf(piece.typeId),
-                reverse = state.images[piece.typeId]?.reverse,
+                faces = state.facesOf(piece.typeId, options),
                 // Never a hole: a collection with no issue list has nothing to be missing from,
                 // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
                 filled = true,
@@ -133,6 +135,20 @@ private fun piecesSection(
 /** Numista's `size` for one type, in millimetres, or null where nobody recorded one. */
 private fun CollectionState.diameterOf(typeId: Int?): Float? =
     typeId?.let { typeMeta[it]?.sizeMillimetres?.toFloat() }
+
+/**
+ * The faces this cell prints: the reverse, or the obverse and the reverse (#230).
+ *
+ * **How many is the configuration's answer and not the cache's.** A type the cache has never seen —
+ * an announced member, an unlisted one — gets its slots empty rather than fewer of them: the cells
+ * of a plate have to line up, and one coin printed where its neighbours print a pair reads as a
+ * misprint. What an empty slot draws is the renderer's business, and it is what it already drew for
+ * a reverse nobody had.
+ */
+private fun CollectionState.facesOf(typeId: Int?, options: NotebookOptions): List<CoinPhoto> {
+    val sides = typeId?.let { images[it] } ?: TypeImages()
+    return if (options.bothFaces) listOf(sides.obverse, sides.reverse) else listOf(sides.reverse)
+}
 
 /**
  * The Numista page a cell's code points at, which is the page of its **type** (#234).

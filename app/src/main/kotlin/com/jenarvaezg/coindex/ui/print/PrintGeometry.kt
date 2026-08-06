@@ -94,6 +94,18 @@ data class PrintGeometry(
      */
     val minCellWidthMm: Float = 28f,
     /**
+     * How many faces of a coin one cell holds side by side: the reverse, or the two of them.
+     *
+     * A count and not a length, and it belongs among the millimetres all the same: at 1:1 a second
+     * face cannot be paid for by shrinking the coin, so it is paid for in **width**, and that is
+     * arithmetic done before a cell is drawn. A plate of ounces goes from a 40,9 mm cell to an
+     * 84,8 mm one and from twelve cells a page to six.
+     *
+     * It is «ambas caras» (#230), and it is where the notebook parts company with #169 on purpose:
+     * an album page is the side you look at, and this is the collector documenting a piece by both.
+     */
+    val facesPerCell: Int = 1,
+    /**
      * The diameter for a cell nobody recorded a size for.
      *
      * `size` covers 100 % of the seeded type cache, so in practice this is for the members no
@@ -106,6 +118,25 @@ data class PrintGeometry(
     val gridWidthMm: Float get() = widthMm - marginMm * 2
 
     val gridHeightMm: Float get() = heightMm - marginMm * 2 - headingMm - rulerMm
+
+    /**
+     * How wide the coins of one cell are: [facesPerCell] of them at [diameterMm], gutters between.
+     *
+     * The gutter that separates two cells is the one that separates the two faces of one, so a row
+     * of pairs is evenly spaced and what tells a pair from its neighbour is the caption underneath —
+     * one caption per coin, not one per face.
+     */
+    fun coinBandWidthMm(diameterMm: Float): Float =
+        diameterMm * facesPerCell + gutterMm * (facesPerCell - 1)
+
+    /**
+     * How wide a cell of coins this big is: the band they take, or the floor a caption needs.
+     *
+     * Here rather than on [PrintGrid], because the grid needs it before it exists — the number of
+     * columns is what this answer decides — and one place is what keeps the arithmetic of the page
+     * count and the drawing of the cell measuring the same thing.
+     */
+    fun cellWidthMm(diameterMm: Float): Float = max(coinBandWidthMm(diameterMm), minCellWidthMm)
 
     companion object {
         /**
@@ -138,9 +169,16 @@ data class PrintGeometry(
  * Every one of the five is a change to the arithmetic and not to the brush, so this is what the page
  * count is computed from and what the page is drawn with. The switches whose ticket has not landed
  * still return the notebook of #169: this function gaining a line is what «un interruptor funciona»
- * means, and «QR de Numista» (#234) is the first to have one.
+ * means, and «QR de Numista» (#234) and «ambas caras» (#230) are the two that have one.
+ *
+ * The two are independent and compose without knowing about each other, which is what «cinco
+ * interruptores y no tres modelos con nombre» buys: the code grows the caption, the second face
+ * grows the cell's width, and a notebook with both on pays for both.
  */
-fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry().let { paper ->
+fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry(
+    // One face or two, which is the width of the coin band and therefore of the whole cell (#230).
+    facesPerCell = if (options.bothFaces) 2 else 1,
+).let { paper ->
     if (!options.numistaQr) {
         paper
     } else {
@@ -174,7 +212,8 @@ data class PrintGrid(
     val columns: Int,
     val rows: Int,
 ) {
-    val cellWidthMm: Float get() = max(diameterMm, geometry.minCellWidthMm)
+    /** The coins of the cell and their gutters, or the caption's floor where that is wider. */
+    val cellWidthMm: Float get() = geometry.cellWidthMm(diameterMm)
 
     val cellHeightMm: Float get() = diameterMm + geometry.captionMm
 
@@ -196,11 +235,10 @@ fun printGrid(diameterMm: Float?, geometry: PrintGeometry): PrintGrid {
     val diameter = diameterMm
         ?.takeIf { it > 0f }
         ?: geometry.fallbackDiameterMm
-    val cellWidth = max(diameter, geometry.minCellWidthMm)
     return PrintGrid(
         geometry = geometry,
         diameterMm = diameter,
-        columns = fitCount(geometry.gridWidthMm, cellWidth, geometry.gutterMm),
+        columns = fitCount(geometry.gridWidthMm, geometry.cellWidthMm(diameter), geometry.gutterMm),
         rows = fitCount(geometry.gridHeightMm, diameter + geometry.captionMm, geometry.gutterMm),
     )
 }

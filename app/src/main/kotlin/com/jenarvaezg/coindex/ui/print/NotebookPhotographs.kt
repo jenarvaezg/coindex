@@ -21,9 +21,10 @@ private const val WARM_CONCURRENCY = 4
  *
  * **Deduplicated**, which is most of the point: the same type shows up on several pages — two rows
  * of the same Southern Cross, a type two catalogs share — and the drawing pass would ask for it
- * once per cell.
+ * once per cell. With «ambas caras» on (#230) a cell asks for two, which is two entries and not one:
+ * a face that is not warmed is a hole frozen into the PDF, and that was the failure of #169.
  *
- * Only the **first** candidate of each cell, which is the thumbnail. The original behind it is the
+ * Only the **first** candidate of each face, which is the thumbnail. The original behind it is the
  * fallback for a thumbnail that is refused (#67), and warming both would double the requests to
  * pre-empt a failure that mostly does not happen; a page that does fall back still asks for it
  * itself.
@@ -31,7 +32,8 @@ private const val WARM_CONCURRENCY = 4
 fun notebookPhotographs(pages: List<PrintPage>): List<String> = pages
     .asSequence()
     .flatMap { it.cells.asSequence() }
-    .mapNotNull { cell -> cell.reverse?.candidates?.firstOrNull() }
+    .flatMap { cell -> cell.faces.asSequence() }
+    .mapNotNull { face -> face.candidates.firstOrNull() }
     .distinct()
     .toList()
 
