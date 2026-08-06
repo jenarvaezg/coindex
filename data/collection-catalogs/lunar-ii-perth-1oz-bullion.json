@@ -11,7 +11,7 @@
   "series_status": "closed",
   "closed_note": "El ciclo lunar de doce años se agotó con el cerdo de 2019 y la Perth Mint siguió en 2020 con Lunar Series III, que es otro catálogo.",
   "source": "https://en.numista.com/catalogue/series.php?id=4749",
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-08-06",
   "members": [
     {
       "id": "2008-year-of-the-mouse",
@@ -46,7 +46,8 @@
       "label": "Year of the Dragon",
       "year": 2012,
       "numista_type_id": 28574,
-      "numista_issue_ids": [145934]
+      "numista_issue_ids": [145934, 1108238],
+      "variant_note": "La pieza de la colección es la coloreada «BU - Dark Orange» de 2012 (emisión 1108238, tirada 2.500), no la BU lisa de 300.000 con la que abre la casilla. Entra a propósito: es la misma onza de plata .999 de 45,1 mm del dragón de Perth Mint, y el color no cambia la variante física de la lámina. En 2012 Numista archiva quince coloreadas distintas bajo N#28574 y ninguna es la edición coloreada anual de Perth —la del año, por tirada, sería la roja de 64.001—, así que no hay lámina de coloreadas que la pudiera acoger."
     },
     {
       "id": "2013-year-of-the-snake",
