@@ -27,6 +27,15 @@ data class PrintCell(
     val reverse: CoinPhoto?,
     /** Whether the collector owns this cell. False is a hole, and only a plate has holes. */
     val filled: Boolean,
+    /**
+     * The Numista page this coin's QR points at, or null where the cell carries no code (#234).
+     *
+     * Null in two different situations that come out the same on paper: the switch is off, so no cell
+     * in the notebook has one; or nothing backs this cell on Numista — an announced member, a ficha
+     * with no URL — so this one alone goes without. Both the millimetres and the cells are read off the
+     * one [NotebookOptions] the export was started under, which is what keeps them in step.
+     */
+    val numistaUrl: String? = null,
 )
 
 /**

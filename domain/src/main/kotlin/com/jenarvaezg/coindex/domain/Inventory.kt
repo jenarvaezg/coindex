@@ -61,6 +61,20 @@ data class TypeMeta(
      * ratio — a coin is not more or less of a collection for being wide.
      */
     val sizeMillimetres: Double? = null,
+    /**
+     * Numista's own short URL for this type: `https://es.numista.com/1885`.
+     *
+     * The second field that says nothing about what the coin is and everything about how it prints
+     * (see [sizeMillimetres]): the printed notebook can carry a QR per coin (#234), and the code is
+     * only small enough to fit under a caption because this URL is twenty-odd characters and not the
+     * forty-nine of `en.numista.com/catalogue/pieces1885.html`.
+     *
+     * **Numista's and not ours.** Building it from [id] would hardcode the catalogue's language and
+     * its host into a string a phone camera is going to follow, and the API already hands it over —
+     * in the collector's own language, because that is the language the ficha was asked in. It takes
+     * no part in the variant key, in the matching or in any ratio.
+     */
+    val numistaUrl: String? = null,
 ) {
     /**
      * The country this type is from, which is what a card and a coin row paint (ADR 0023).

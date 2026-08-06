@@ -33,13 +33,12 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
  * card in, one section out — nothing is dropped, because what stays out of the notebook is a
  * question for the index and not for the printer (#147).
  *
- * **[options] is threaded through and not yet read** (#228). It belongs here because what a cell
- * *is* depends on the configuration and not only on the millimetres: printing both faces gives a cell
- * an obverse (#230), and printing no photographs gives it neither (#231). Laying the parameter now is
- * what #228 is for — a door that reaches the cells, so the ticket that opens it does not have to
- * re-thread the ViewModel and the index screen to get here.
+ * **[options] reaches the cells and not only the millimetres** (#228). What a cell *is* depends on the
+ * configuration: «QR de Numista» gives it a code to point a phone at (#234), printing both faces will
+ * give it an obverse (#230), and printing no photographs gives it neither (#231). That is the door
+ * #228 laid, and the ticket that opens one does not have to re-thread the ViewModel and the index
+ * screen to get here.
  */
-@Suppress("UNUSED_PARAMETER")
 fun notebookSections(
     state: CollectionState,
     cards: List<IndexCard>,
@@ -55,7 +54,6 @@ fun notebookSections(
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 private fun plateSection(
     state: CollectionState,
     curation: Curation,
@@ -88,12 +86,12 @@ private fun plateSection(
                 diameterMm = state.diameterOf(member.numistaTypeId),
                 reverse = member.numistaTypeId?.let { state.images[it]?.reverse },
                 filled = owned,
+                numistaUrl = state.qrUrlOf(member.numistaTypeId, options),
             )
         },
     )
 }
 
-@Suppress("UNUSED_PARAMETER")
 private fun piecesSection(
     state: CollectionState,
     card: IndexCard,
@@ -126,6 +124,7 @@ private fun piecesSection(
                 // Never a hole: a collection with no issue list has nothing to be missing from,
                 // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
                 filled = true,
+                numistaUrl = state.qrUrlOf(piece.typeId, options),
             )
         },
     )
@@ -134,3 +133,22 @@ private fun piecesSection(
 /** Numista's `size` for one type, in millimetres, or null where nobody recorded one. */
 private fun CollectionState.diameterOf(typeId: Int?): Float? =
     typeId?.let { typeMeta[it]?.sizeMillimetres?.toFloat() }
+
+/**
+ * The Numista page a cell's code points at, which is the page of its **type** (#234).
+ *
+ * **There is no URL per issue, and it was looked for.** The five paquillos are five members of one
+ * type qualified by `numista_issue_ids` (ADR 0019), so this hands all five the same code — and the
+ * alternative does not exist: a type page marks each issue only with the `id` of the empty row its
+ * collection widget fills in (`collec_line8508`), no link on Numista points at one, and no `?issue=`
+ * of any shape is read. The fragment that id would make is 42 characters, which is a version 3, and
+ * because the caption is a constant of the layout the largest code in the notebook is what every page
+ * pays for. So the promise the code makes is «esta moneda en Numista», and the ficha of a paquillo is
+ * the ficha of the type.
+ *
+ * Null when the switch is off, so a default notebook holds no URL at all, and null for a member no
+ * Numista type backs — an announced one, an unlisted one — because a code that leads nowhere is worse
+ * than no code.
+ */
+private fun CollectionState.qrUrlOf(typeId: Int?, options: NotebookOptions): String? =
+    typeId?.takeIf { options.numistaQr }?.let { typeMeta[it]?.numistaUrl }

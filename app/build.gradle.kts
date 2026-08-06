@@ -114,6 +114,11 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.okhttp)
 
+    // The QR of each coin on the printed page (#234). It goes in `:app` and not in `:domain`: the
+    // Numista page of a type is not something the domain reasons about, it is something the paper
+    // draws — and the encoder never touches Coil, so a QR cannot be a photograph that failed.
+    implementation(libs.zxing.core)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.client.mock)

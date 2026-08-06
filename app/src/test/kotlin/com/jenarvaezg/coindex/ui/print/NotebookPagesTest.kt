@@ -8,7 +8,9 @@ import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.domain.CatalogSeeds
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.CollectionSnapshot
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGrouping
@@ -57,6 +59,9 @@ class NotebookPagesTest {
             typeMetaEntity(typeId, dto, raw.toString(), 0L).toDomain()
         }
         .associateBy { it.id }
+
+    /** El mismo cuaderno con «QR de Numista» puesto, que es lo único que el #234 mueve. */
+    private val coded = printGeometry(NotebookOptions(numistaQr = true))
 
     /** One catalog as it would go to paper: every member a cell, nothing owned yet. */
     private fun section(catalog: CollectionCatalog) = PrintSection(
@@ -160,6 +165,124 @@ class NotebookPagesTest {
                 "una página va sobrecargada en ${plate.title}",
             )
         }
+    }
+
+    /**
+     * What the QR costs in paper, measured on the same sixty plates: 104 pages become 112 (#234).
+     *
+     * The caption is a constant of the layout, so this is what the switch is: the code is 10 mm and
+     * every cell of every plate reserves them, whether or not that cell has a code to draw. Eight
+     * pages for 1 084 codes, and the reason the decision was «under the name» — beside it would have
+     * forced a 44 mm cell and taken a **column** from almost every coin, which this grid cannot spare.
+     *
+     * **Eight and not the twenty-one of the first measurement**: the code was 12 mm until a printed
+     * calibration folio said it did not need to be. Page count is a step function of the caption —
+     * anything from 7 to 10,1 mm prints these plates in 112 pages — so the 9 mm the phone read on
+     * paper is not the size to ship: 10 mm is the same paper with a tenth more module.
+     *
+     * **Not the 73 → 91 of the ticket**, and on purpose: those are measured «con compartir página
+     * puesto», and «compartir página» is #232, which has not landed. What is measured here is this
+     * switch alone, on the notebook that exists — 104 pages with it off. When #232 lands, the two
+     * together are what its own recount will say.
+     */
+    @Test
+    fun `the qr costs eight pages of the sixty shipped catalogs`() {
+        val sections = catalogs.map(::section)
+
+        val pages = printPages(sections, coded)
+
+        assertEquals(112, pages.size)
+        // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
+        assertEquals(
+            mapOf(1 to 35, 2 to 15, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
+            pages.groupBy { it.section.title }
+                .map { (_, ofSection) -> ofSection.size }
+                .groupingBy { it }
+                .eachCount()
+                .toSortedMap(),
+        )
+        // La casilla crece de alto y no de ancho: las rusas de 33 mm siguen cinco por fila.
+        val roubles = section(
+            catalogs.first { it.id == "outstanding-personalities-russia-2-roubles" },
+        )
+        assertEquals(5, roubles.grid(paper).columns)
+        assertEquals(5, roubles.grid(coded).columns)
+        assertEquals(roubles.grid(paper).rows - 1, roubles.grid(coded).rows)
+    }
+
+    /**
+     * The five paquillos carry the **same** code, and that is the answer the ticket asked for.
+     *
+     * They are five members of one Numista type qualified by `numista_issue_ids` (ADR 0019), and the
+     * URL per issue the ticket sent us looking for does not exist: a type page marks each issue only
+     * with the id of the empty row its collection widget fills in, nothing on Numista links to one, and
+     * the fragment it would make is 42 characters — a version 3, which the whole notebook would pay
+     * for. So the code promises «esta moneda en Numista», and the ficha of a paquillo is the type's.
+     */
+    @Test
+    fun `the five paquillos share one code, because no url names an issue`() {
+        val paquillos = catalogs.first { it.id == "espana-paquillos" }
+        val curation = Curation(catalogs)
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = paquillos.members.mapIndexed { index, member ->
+                    CollectedItem(
+                        id = index + 1L,
+                        quantity = 1,
+                        typeId = member.numistaTypeId!!,
+                        issueId = member.numistaIssueIds.first(),
+                        issueYear = member.year,
+                    )
+                },
+                typeMeta = typeMeta,
+            ),
+        )
+        val state = CollectionState(assembled)
+        val card = assembled.index.single()
+
+        val cells = notebookSections(
+            state,
+            listOf(card),
+            curation,
+            NotebookOptions(numistaQr = true),
+        ).single().cells
+
+        assertEquals(5, cells.size)
+        assertEquals(
+            listOf("https://es.numista.com/1885"),
+            cells.mapNotNull { it.numistaUrl }.distinct(),
+        )
+    }
+
+    /** Y con el interruptor apagado ninguna casilla lleva URL: el cuaderno de hoy, intacto. */
+    @Test
+    fun `with the switch off no cell carries a url at all`() {
+        val paquillos = catalogs.first { it.id == "espana-paquillos" }
+        val curation = Curation(catalogs)
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = listOf(
+                    CollectedItem(
+                        id = 1,
+                        quantity = 1,
+                        typeId = 1885,
+                        issueId = 8508,
+                        issueYear = 1966,
+                    ),
+                ),
+                typeMeta = typeMeta,
+            ),
+        )
+
+        val cells = notebookSections(
+            CollectionState(assembled),
+            assembled.index,
+            curation,
+            NotebookOptions(),
+        ).single().cells
+
+        assertEquals(paquillos.members.size, cells.size)
+        assertEquals(emptyList(), cells.mapNotNull { it.numistaUrl })
     }
 
     @Test

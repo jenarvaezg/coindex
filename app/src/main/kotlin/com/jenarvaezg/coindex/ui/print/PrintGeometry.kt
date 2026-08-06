@@ -3,6 +3,12 @@ package com.jenarvaezg.coindex.ui.print
 import kotlin.math.floor
 import kotlin.math.max
 
+/** The side the QR gets on paper, quiet zone included. See [PrintGeometry.qrMm]. */
+private const val QR_SIDE_MM = 10f
+
+/** Between the last line of a caption and the code under it. Less than this and they read as one. */
+private const val QR_GAP_MM = 2f
+
 /**
  * The page the notebook is printed on, in millimetres.
  *
@@ -47,8 +53,39 @@ data class PrintGeometry(
      * It is fixed for the whole notebook and the diameter is not, which is what makes the cell
      * taller for an ounce than for a half real without the type changing size from one plate to the
      * next.
+     *
+     * With «QR de Numista» on it holds [qrMm] more of them (#234), and that is what the switch
+     * costs: the caption is a constant of the layout, so the code is the same size in every cell of
+     * every plate and the tallest one is what all of them pay for.
      */
     val captionMm: Float = 16f,
+    /**
+     * The square the QR of the coin gets at the foot of a caption, quiet zone included. Zero is
+     * none.
+     *
+     * **Including the quiet zone**, because a code printed flush against a caption is a code that
+     * does not scan: what is reserved here is what the symbol needs, not what its dark part measures.
+     * Every URL of the cache is 33 modules across with its frame (`NumistaQr` says why), so ten
+     * millimetres is a module of 0,303 mm.
+     *
+     * **Ten and not twelve, and a printed folio is why.** A calibration sheet —the same encoder, the
+     * same ink on the same paper, a 50 mm ruler to prove the print was 1:1— carried the code at six
+     * sizes from 9 to 14 mm, and the phone read **every one of them, the 9 mm included**. So the
+     * floor is at or below 9 and the size is no longer a question of reading but of paper, and paper
+     * answers in steps: a cell's height is quantised by how many rows fit a page, and every size from
+     * 7 to 10,1 mm prints the sixty curated plates in the same 112 pages. Ten is the largest module
+     * on the cheapest step — going down to the 9 mm that was measured buys nothing at all and only
+     * spends margin, and twelve cost thirteen pages for a legibility nobody needed.
+     */
+    val qrMm: Float = 0f,
+    /**
+     * The air between the last line of a caption and the code under it. Less and they read as one.
+     *
+     * A field and not a constant of the renderer because it is part of the arithmetic: the caption is
+     * the sixteen millimetres of #169 **plus** this and [qrMm], so what the words may take is unchanged
+     * — a state, a title over two lines and a year still fill the caption exactly.
+     */
+    val qrGapMm: Float = 0f,
     /**
      * The floor on a cell's width, for the coins smaller than their own caption.
      *
@@ -99,12 +136,27 @@ data class PrintGeometry(
  * The millimetres a configuration declares — the one place a switch becomes geometry.
  *
  * Every one of the five is a change to the arithmetic and not to the brush, so this is what the page
- * count is computed from and what the page is drawn with. Today it returns the notebook of #169 for
- * all thirty-two combinations, because each switch's line lands with its own ticket: this function
- * gaining a line is what «un interruptor funciona» will mean.
+ * count is computed from and what the page is drawn with. The switches whose ticket has not landed
+ * still return the notebook of #169: this function gaining a line is what «un interruptor funciona»
+ * means, and «QR de Numista» (#234) is the first to have one.
  */
-@Suppress("UNUSED_PARAMETER")
-fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry()
+fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry().let { paper ->
+    if (!options.numistaQr) {
+        paper
+    } else {
+        // Under the name and inside the cell's own width, which is the whole of the decision: beside
+        // the name reads better and forces a cell of 44 mm, and that takes a column away from almost
+        // every coin — the Russian 33 mm go from five to a row to four. Width is what this grid is
+        // short of; height it can find, at 8 pages of the 60 curated plates.
+        //
+        // The caption grows by the code's own band, so the words keep the sixteen millimetres they had.
+        paper.copy(
+            captionMm = paper.captionMm + QR_GAP_MM + QR_SIDE_MM,
+            qrMm = QR_SIDE_MM,
+            qrGapMm = QR_GAP_MM,
+        )
+    }
+}
 
 /**
  * The rejilla of one plate: fixed by its largest coin, never by a constant of the notebook.
