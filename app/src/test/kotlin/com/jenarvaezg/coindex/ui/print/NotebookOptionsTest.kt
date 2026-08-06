@@ -110,9 +110,9 @@ class NotebookOptionsTest {
         val paper = printGeometry(NotebookOptions())
         val coded = printGeometry(NotebookOptions(numistaQr = true))
 
-        // 16 mm de rótulo, 2 de aire y los 12 del código con su zona de silencio.
-        assertEquals(30f, coded.captionMm)
-        assertEquals(12f, coded.qrMm)
+        // 16 mm de rótulo, 2 de aire y los 10 del código con su zona de silencio.
+        assertEquals(28f, coded.captionMm)
+        assertEquals(10f, coded.qrMm)
         assertEquals(2f, coded.qrGapMm)
         // Y las palabras siguen teniendo los 16 mm del #169: el código se **suma** al pie de foto, no
         // le quita sitio al rótulo. Un estado, un título de dos líneas y un año siguen cabiendo.
@@ -121,8 +121,9 @@ class NotebookOptionsTest {
             paper,
             coded.copy(captionMm = paper.captionMm, qrMm = paper.qrMm, qrGapMm = paper.qrGapMm),
         )
-        // Un módulo de 0,36 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 12 mm.
-        assertEquals(0.36f, coded.qrMm / 33f, 0.01f)
+        // Un módulo de 0,303 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 10 mm.
+        // El folio de calibración leyó hasta los 9 mm (módulo de 0,273), así que esto va sobrado.
+        assertEquals(0.303f, coded.qrMm / 33f, 0.001f)
     }
 
     /**

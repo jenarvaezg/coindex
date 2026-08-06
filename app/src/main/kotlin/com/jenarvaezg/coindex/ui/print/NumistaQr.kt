@@ -18,7 +18,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
  * And version 3 would be the worse trade in the place it lands. The caption is a constant of the
  * layout, so the code's side in millimetres is fixed for the whole notebook: 29 modules in the same
  * square are **smaller** modules under the same phone camera. Seven per cent of recovery on a
- * 0,36 mm module beats fifteen on a 0,32 mm one when what is being read is a fresh laser print.
+ * 0,303 mm module beats fifteen on a 0,270 mm one when what is being read is a fresh laser print.
  */
 private val QR_CORRECTION = ErrorCorrectionLevel.L
 
@@ -71,7 +71,7 @@ val BitMatrix.qrModulesWithQuietZone: Int get() = width + QR_QUIET_MODULES * 2
  *
  * Drawn as runs and not one rectangle per module for the file's sake: a page of twelve codes is some
  * four thousand rectangles otherwise, every one of them a drawing command in the PDF, and a notebook
- * of 125 pages carries them all. Runs cut that by roughly half.
+ * of 112 pages carries them all. Runs cut that by roughly half.
  *
  * It is **not** about seams. Two rectangles that share an edge still share one from row to row, and
  * whether a renderer leaves a hair of paper between them is not something this can decide — what says

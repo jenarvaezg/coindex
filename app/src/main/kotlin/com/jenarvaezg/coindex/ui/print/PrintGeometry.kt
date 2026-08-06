@@ -4,7 +4,7 @@ import kotlin.math.floor
 import kotlin.math.max
 
 /** The side the QR gets on paper, quiet zone included. See [PrintGeometry.qrMm]. */
-private const val QR_SIDE_MM = 12f
+private const val QR_SIDE_MM = 10f
 
 /** Between the last line of a caption and the code under it. Less than this and they read as one. */
 private const val QR_GAP_MM = 2f
@@ -65,9 +65,17 @@ data class PrintGeometry(
      *
      * **Including the quiet zone**, because a code printed flush against a caption is a code that
      * does not scan: what is reserved here is what the symbol needs, not what its dark part measures.
-     * Every URL of the cache is 33 modules across with its frame (`NumistaQr` says why), so twelve
-     * millimetres is a module of 0,36 mm — the size a phone reads at arm's length off a fresh print,
-     * and the one thing about this ticket that a folio and a phone get the final word on.
+     * Every URL of the cache is 33 modules across with its frame (`NumistaQr` says why), so ten
+     * millimetres is a module of 0,303 mm.
+     *
+     * **Ten and not twelve, and a printed folio is why.** A calibration sheet —the same encoder, the
+     * same ink on the same paper, a 50 mm ruler to prove the print was 1:1— carried the code at six
+     * sizes from 9 to 14 mm, and the phone read **every one of them, the 9 mm included**. So the
+     * floor is at or below 9 and the size is no longer a question of reading but of paper, and paper
+     * answers in steps: a cell's height is quantised by how many rows fit a page, and every size from
+     * 7 to 10,1 mm prints the sixty curated plates in the same 112 pages. Ten is the largest module
+     * on the cheapest step — going down to the 9 mm that was measured buys nothing at all and only
+     * spends margin, and twelve cost thirteen pages for a legibility nobody needed.
      */
     val qrMm: Float = 0f,
     /**
@@ -139,7 +147,7 @@ fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry().let
         // Under the name and inside the cell's own width, which is the whole of the decision: beside
         // the name reads better and forces a cell of 44 mm, and that takes a column away from almost
         // every coin — the Russian 33 mm go from five to a row to four. Width is what this grid is
-        // short of; height it can find, at 21 pages of the 60 curated plates.
+        // short of; height it can find, at 8 pages of the 60 curated plates.
         //
         // The caption grows by the code's own band, so the words keep the sixteen millimetres they had.
         paper.copy(

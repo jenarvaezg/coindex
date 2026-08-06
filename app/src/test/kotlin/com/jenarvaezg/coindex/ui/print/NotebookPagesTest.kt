@@ -166,12 +166,17 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the QR costs in paper, measured on the same sixty plates: 104 pages become 125 (#234).
+     * What the QR costs in paper, measured on the same sixty plates: 104 pages become 112 (#234).
      *
-     * The caption is a constant of the layout, so this is what the switch is: the code is 12 mm and
-     * every cell of every plate reserves them, whether or not that cell has a code to draw. Twenty-one
+     * The caption is a constant of the layout, so this is what the switch is: the code is 10 mm and
+     * every cell of every plate reserves them, whether or not that cell has a code to draw. Eight
      * pages for 1 084 codes, and the reason the decision was «under the name» — beside it would have
      * forced a 44 mm cell and taken a **column** from almost every coin, which this grid cannot spare.
+     *
+     * **Eight and not the twenty-one of the first measurement**: the code was 12 mm until a printed
+     * calibration folio said it did not need to be. Page count is a step function of the caption —
+     * anything from 7 to 10,1 mm prints these plates in 112 pages — so the 9 mm the phone read on
+     * paper is not the size to ship: 10 mm is the same paper with a tenth more module.
      *
      * **Not the 73 → 91 of the ticket**, and on purpose: those are measured «con compartir página
      * puesto», and «compartir página» is #232, which has not landed. What is measured here is this
@@ -179,15 +184,15 @@ class NotebookPagesTest {
      * together are what its own recount will say.
      */
     @Test
-    fun `the qr costs twenty-one pages of the sixty shipped catalogs`() {
+    fun `the qr costs eight pages of the sixty shipped catalogs`() {
         val sections = catalogs.map(::section)
 
         val pages = printPages(sections, coded)
 
-        assertEquals(125, pages.size)
+        assertEquals(112, pages.size)
         // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
         assertEquals(
-            mapOf(1 to 30, 2 to 18, 3 to 3, 4 to 3, 5 to 2, 6 to 2, 7 to 1, 9 to 1),
+            mapOf(1 to 35, 2 to 15, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
