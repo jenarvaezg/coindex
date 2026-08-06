@@ -116,6 +116,22 @@ class CollectionStateTest {
         assertTrue(repository.observeState().first().ownGroupings.isEmpty())
     }
 
+    /**
+     * The stand-in has to answer what Room answers, or every test above it measures a fiction.
+     *
+     * `INSERT OR IGNORE` collapses a repeated `(groupingId, typeId)` inside a single batch too, and
+     * `create` — the `@Transaction` body this fake inherits rather than reimplements — hands it the
+     * list unfiltered. A fake that kept both rows would have the box counting one coin twice.
+     */
+    @Test
+    fun `the same type twice in one box is one member, as the database has it`() = runTest {
+        val dao = FakeOwnGroupingDao()
+
+        dao.create("Las de la caja de puros", listOf(LOOSE_TYPE, LOOSE_TYPE), 0L)
+
+        assertEquals(1, dao.members.value.size)
+    }
+
     private fun repository(
         items: List<CollectedItemEntity>,
         types: List<TypeMetaEntity>,

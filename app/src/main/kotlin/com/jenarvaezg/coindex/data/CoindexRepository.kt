@@ -9,8 +9,6 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionSnapshot
-import com.jenarvaezg.coindex.domain.CollectionTitles
-import com.jenarvaezg.coindex.domain.CommemorativeProgramme
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.DerivedCollection
 import com.jenarvaezg.coindex.domain.IndexCard
@@ -30,8 +28,8 @@ import kotlinx.coroutines.flow.combine
  * The collection itself is whatever [Curation.assemble] made of the snapshot, untouched: this type
  * adds the two things that are the app's and not the domain's — the catalog photographs, which the
  * domain stays free of, and when each ficha reached this phone. Wrapping rather than re-listing
- * the eight derived fields is the point of #217: there is one assembly, and no way to hold a state
- * whose index disagrees with its own inventory.
+ * the eight derived fields is the point of #217: what the app reads comes out of one assembly, so
+ * the index and the inventory under it are no longer two things a caller could fill in separately.
  */
 data class CollectionState(
     val collection: AssembledCollection = AssembledCollection(),
@@ -104,14 +102,6 @@ class CoindexRepository(
     /** The curated files, tied once, and the only door into the domain (#217). */
     val curation: Curation,
 ) {
-    val catalogs: List<CollectionCatalog> get() = curation.catalogs
-
-    /** Commemorative programmes (ADR 0022): a second reading, never a card and never a family. */
-    val programmes: List<CommemorativeProgramme> get() = curation.programmes
-
-    /** What each collection is called on a card (#22). Constant for the process lifetime. */
-    val titles: CollectionTitles get() = curation.titles
-
     fun observeState(): Flow<CollectionState> = combine(
         collectedItemDao.observeAll(),
         typeMetaDao.observeAll(),

@@ -42,8 +42,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(catalogs.map { it.key() } + fileless, items),
             boxes = listOf(box(7, "Bandeja del abuelo", items.take(2))),
-            items = items,
-            typeMeta = emptyMap(),
+            snapshot = CollectionSnapshot(items = items),
         )
 
         assertEquals(
@@ -77,8 +76,7 @@ class CollectionIndexTest {
             derivation = derivation(listOf(southernCross.key()), items),
             // Una caja vacía sobrevive con su cero y su sitio, sin nivel extra en el comparador.
             boxes = listOf(box(1, "Zeta de dos monedas", items), box(2, "Álbum vacío", emptyList())),
-            items = items,
-            typeMeta = emptyMap(),
+            snapshot = CollectionSnapshot(items = items),
         )
 
         // «Álbum» delante de «Zeta», que es lo que dice el alfabeto español: comparar las cadenas
@@ -115,8 +113,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(listOf(announced.key()), items),
             boxes = emptyList(),
-            items = items,
-            typeMeta = emptyMap(),
+            snapshot = CollectionSnapshot(items = items),
         )
 
         assertEquals(CoverageRatio(3, 3), cards.single().coverage)
@@ -140,8 +137,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(listOf(owned.key(), unowned.key()), items),
             boxes = emptyList(),
-            items = items,
-            typeMeta = emptyMap(),
+            snapshot = CollectionSnapshot(items = items),
         )
         val byName = cards.filterIsInstance<IndexCard.Derived>().associateBy { it.name }
 
@@ -185,8 +181,7 @@ class CollectionIndexTest {
                 ),
             ),
             boxes = emptyList(),
-            items = items,
-            typeMeta = typeMeta,
+            snapshot = CollectionSnapshot(items = items, typeMeta = typeMeta),
         )
         val byName = cards.associate { it.name to it.issuer }
 
@@ -229,8 +224,7 @@ class CollectionIndexTest {
                 ),
             ),
             boxes = emptyList(),
-            items = items,
-            typeMeta = typeMeta,
+            snapshot = CollectionSnapshot(items = items, typeMeta = typeMeta),
         )
         val byName = cards.associate { it.name to it.issuer }
 
@@ -260,8 +254,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(listOf(alemanas), items),
             boxes = emptyList(),
-            items = items,
-            typeMeta = typeMeta,
+            snapshot = CollectionSnapshot(items = items, typeMeta = typeMeta),
         )
 
         assertEquals("Alemania", cards.single().issuer)
@@ -294,8 +287,7 @@ class CollectionIndexTest {
                 // Una caja vaciada no tiene piezas que digan el país, así que va desnuda.
                 box(3, "Vaciada", emptyList()),
             ),
-            items = francesas + revueltas,
-            typeMeta = typeMeta,
+            snapshot = CollectionSnapshot(items = francesas + revueltas, typeMeta = typeMeta),
         )
         val byName = cards.associate { it.name to it.issuer }
 

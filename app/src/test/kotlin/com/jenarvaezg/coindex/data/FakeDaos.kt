@@ -80,8 +80,9 @@ class FakeOwnGroupingDao : OwnGroupingDao {
         return id
     }
     override suspend fun addMembers(added: List<OwnGroupingMemberEntity>) {
-        // `IGNORE` en el DAO real: la clave es (groupingId, typeId), así que repetir no duplica.
-        members.value = members.value + added.filterNot { it in members.value }
+        // `IGNORE` sobre la clave (groupingId, typeId): un tipo repetido no duplica fila, y eso
+        // vale también dentro del mismo lote — `create(nombre, listOf(7, 7), now)` deja una.
+        members.value = (members.value + added).distinct()
     }
     override suspend fun rename(id: Long, name: String, updatedAt: Long) {
         groupings.value = groupings.value.map { grouping ->

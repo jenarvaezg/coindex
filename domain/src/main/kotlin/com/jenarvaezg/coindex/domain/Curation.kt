@@ -72,7 +72,7 @@ class Curation(
         val boxes = buildOwnGroupingViews(snapshot.ownGroupings, items)
         return AssembledCollection(
             items = items,
-            index = index.build(derivation, boxes, items, typeMeta),
+            index = index.build(snapshot, derivation, boxes),
             derivedCollections = derivation.derivedCollections,
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,

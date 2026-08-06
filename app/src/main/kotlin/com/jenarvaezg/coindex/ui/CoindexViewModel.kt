@@ -86,11 +86,15 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
-    /** The curated files shipped with the app; constant for the process lifetime (#217). */
-    val curation get() = container.repository.curation
+    /**
+     * The curated files shipped with the app; constant for the process lifetime (#217).
+     *
+     * Private on purpose: the screens ask this class for a name or a plate, and what they are
+     * given is the answer and not the files it came from.
+     */
+    private val curation get() = container.repository.curation
 
-    /** Curated catalogs shipped with the app; constant for the process lifetime. */
-    val catalogs get() = curation.catalogs
+    private val catalogs get() = curation.catalogs
 
     /**
      * The card-sized name of every curated collection (#22). The plate keeps the long [name] —

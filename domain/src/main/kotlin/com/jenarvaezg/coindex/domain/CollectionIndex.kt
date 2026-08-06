@@ -147,13 +147,18 @@ class CollectionIndex(
     private val groupingIssuers: Map<String, String> =
         groupings.associate { grouping -> grouping.family to grouping.issuerCode }
 
+    /**
+     * The snapshot arrives whole rather than as the `items` and `typeMeta` the derivation already
+     * consumed (#217): the two always travel together, and threading them a second time is what
+     * let a caller hand the index one inventory and the derivation another.
+     */
     fun build(
+        snapshot: CollectionSnapshot,
         derivation: CollectionDerivation,
         boxes: List<OwnGroupingView>,
-        items: List<CollectedItem>,
-        typeMeta: TypeMetaIndex,
     ): List<IndexCard> {
-        val issuers = Issuers(typeMeta)
+        val items = snapshot.items
+        val issuers = Issuers(snapshot.typeMeta)
         val cards = derivation.derivedCollections.map { collection ->
             val key = collection.key()
             val catalog = catalogsByKey[key]
