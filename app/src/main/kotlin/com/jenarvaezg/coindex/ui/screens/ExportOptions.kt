@@ -25,7 +25,7 @@ import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * How the notebook is about to be printed: five switches, and what they cost in paper (#228).
+ * How the notebook is about to be printed: six switches, and what they cost in paper (#228, #275).
  *
  * **The count is why this exists**, and why it could not go in Ajustes: pages are arithmetic over
  * what the index is showing at that moment — filters and search included — so a screen with no index
@@ -36,16 +36,25 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * here is not confirming, it is **choosing** — and it lands in the same slot the progress card uses,
  * in the app's one visual language, rather than as the first bottom sheet in the app.
  *
- * All five do something now (#233). While a ticket was outstanding its switch was drawn, remembered and
- * **disabled**, with the issue named under it, because the one thing a control must never be is
- * tickable and inert. What is left grey is what the configuration itself makes moot — «ambas caras» and
- * «tamaño real» with the photographs off — and that one resolves the moment the coins come back.
+ * All six do something now (#233, #275). While a ticket was outstanding its switch was drawn, remembered
+ * and **disabled**, with the issue named under it, because the one thing a control must never be is
+ * tickable and inert. What is left grey is what makes the question moot — «ambas caras» and «tamaño
+ * real» with the photographs off, «sin colección» with no loose coin under the current narrowing — and
+ * both resolve themselves: one when the coins come back, the other when the filter is cleared.
  */
 @Composable
 fun ExportOptions(
     options: NotebookOptions,
     pages: Int,
     cards: Int,
+    /**
+     * How many coins no collection claims, of the ones this narrowing leaves (#275).
+     *
+     * The sheet holds it and [NotebookOptions] does not, because it is a fact about the collection
+     * on screen and not about the configuration: the switches know nothing about the inventory, and
+     * teaching them would put the index inside them.
+     */
+    loose: Int,
     onChange: (NotebookOptions) -> Unit,
     onExport: () -> Unit,
     onDismiss: () -> Unit,
@@ -55,13 +64,15 @@ fun ExportOptions(
         Eyebrow("Cómo se exporta")
         Column(modifier = Modifier.padding(top = 6.dp)) {
             NotebookSwitch.entries.forEach { switch ->
-                val offered = options.offers(switch)
+                val offered = options.offers(switch) &&
+                    (switch != NotebookSwitch.Unclaimed || loose > 0)
                 ToggleRow(
                     label = notebookSwitchLabel(switch),
-                    note = notebookSwitchNote(offered),
+                    note = notebookSwitchNote(switch, offered),
                     checked = options[switch],
-                    // One reason left to be grey, and the note says it: the configuration has made
-                    // the question moot. «Pendiente · #233» went with the last switch to land.
+                    // Two reasons to be grey, and the note says which: the configuration has made
+                    // the question moot, or there is no lámina left to add. «Pendiente · #233» went
+                    // with the last of the five switches to land.
                     enabled = offered,
                     onCheckedChange = { on -> onChange(options.with(switch, on)) },
                 )

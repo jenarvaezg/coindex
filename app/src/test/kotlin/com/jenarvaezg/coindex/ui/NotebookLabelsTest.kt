@@ -34,7 +34,14 @@ class NotebookLabelsTest {
     @Test
     fun `every switch is named in the collector's own words`() {
         assertEquals(
-            listOf("Fotos", "Ambas caras", "Tamaño real", "Compartir página", "QR de Numista"),
+            listOf(
+                "Fotos",
+                "Ambas caras",
+                "Tamaño real",
+                "Compartir página",
+                "QR de Numista",
+                "Sin colección",
+            ),
             NotebookSwitch.entries.map(::notebookSwitchLabel),
         )
     }
@@ -42,15 +49,22 @@ class NotebookLabelsTest {
     /**
      * Why a switch is grey, said on the spot rather than in a help screen.
      *
-     * **One reason left** (#233): the configuration the collector built made the question moot, and it
-     * resolves itself the moment they turn the coins back on. «Pendiente · #233» was the other one — a
-     * switch drawn and remembered before its ticket landed — and it went with the last of the five, so
-     * the note no longer needs to know *which* switch it is talking about.
+     * **Two reasons** (#233, #275), and each is about something the collector can undo: the
+     * configuration they built made the question moot, or the narrowing they put on leaves no loose
+     * coin for «Sin colección» to print. «Pendiente · #233» was the third — a switch drawn and
+     * remembered before its ticket landed — and it went for good with the last of the five.
      */
     @Test
-    fun `a greyed switch says the one reason left, and a live one says nothing`() {
-        assertEquals("Sin fotos no hay nada que ajustar", notebookSwitchNote(offered = false))
-        assertNull(notebookSwitchNote(offered = true))
+    fun `a greyed switch says which reason it is, and a live one says nothing`() {
+        assertEquals(
+            "Sin fotos no hay nada que ajustar",
+            notebookSwitchNote(NotebookSwitch.ActualSize, offered = false),
+        )
+        assertEquals(
+            "No hay monedas sueltas que imprimir",
+            notebookSwitchNote(NotebookSwitch.Unclaimed, offered = false),
+        )
+        assertNull(notebookSwitchNote(NotebookSwitch.Unclaimed, offered = true))
     }
 
     @Test

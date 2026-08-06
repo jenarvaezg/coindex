@@ -19,10 +19,11 @@ object NotebookCodec {
         NotebookSwitch.ActualSize -> "notebook_actual_size"
         NotebookSwitch.SharePage -> "notebook_share_page"
         NotebookSwitch.NumistaQr -> "notebook_numista_qr"
+        NotebookSwitch.Unclaimed -> "notebook_unclaimed"
     }
 
     /**
-     * All five, always.
+     * All six, always.
      *
      * The default is written as the default and not as an absence, so a switch chosen on purpose and
      * one never touched read back the same — which they are.

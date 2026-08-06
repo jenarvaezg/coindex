@@ -5,11 +5,14 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.data.resolvePlate
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
+import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
@@ -40,10 +43,17 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
  * second face (#230), and printing no photographs will give it neither (#231). That is the door #228
  * laid, and the ticket that opens one does not have to re-thread the ViewModel and the index screen
  * to get here.
+ *
+ * **[unclaimed] is the one thing on paper that is not a card** (#275), and it arrives already chosen
+ * for the same reason [cards] does: which coins no collection claims is measured against the whole
+ * index, and which of them survive the filter is the index screen's answer and not the printer's. It
+ * comes in as pieces rather than as a switch over the state so that this function keeps having no
+ * opinion about what belongs in the notebook — it only knows where it goes, which is last.
  */
 fun notebookSections(
     state: CollectionState,
     cards: List<IndexCard>,
+    unclaimed: List<CollectedItem>,
     curation: Curation,
     options: NotebookOptions,
 ): List<PrintSection> = cards.map { card ->
@@ -54,7 +64,7 @@ fun notebookSections(
             ?: piecesSection(state, card, options)
         is CardDestination.Pieces, is CardDestination.Box -> piecesSection(state, card, options)
     }
-}
+} + listOfNotNull(unclaimedSection(state, unclaimed, options).takeIf { options.unclaimed })
 
 private fun plateSection(
     state: CollectionState,
@@ -123,6 +133,67 @@ private fun piecesSection(
                 faces = state.facesOf(item.typeId, options, PrintedSide.Reverse),
                 // Never a hole: a collection with no issue list has nothing to be missing from,
                 // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
+                filled = true,
+                numistaUrl = state.qrUrlOf(item.typeId, options),
+            )
+        },
+    )
+}
+
+/**
+ * The last lámina: every coin no collection claims, so the notebook is the whole collection (#275).
+ *
+ * **It is a lámina and not a page of its own kind.** Same eyebrow, same heading, same cells with
+ * their photograph and their real diameter, and it obeys the five switches of #228 like every other
+ * page — the alternative, a compact list that always fits one folio, would be the only page of the
+ * notebook that does not look like the notebook.
+ *
+ * **A cell per row**, as in [piecesSection] and for the sharper reason: being claimed is decided per
+ * row, so the leftover row of a type whose sibling fills a member of its plate (ADR 0019) is what
+ * prints, not the coin entire.
+ *
+ * **No cell says why it is here.** ADR 0021 §12 took the reason line off the screen and sent the why
+ * to the field report, which is where the curator looks; «sin familia en Numista» under a thaler is
+ * jargon in the one notebook that leaves the house.
+ *
+ * Null on an empty list, so no folio is ever spent on a heading with nothing under it.
+ */
+private fun unclaimedSection(
+    state: CollectionState,
+    unclaimed: List<CollectedItem>,
+    options: NotebookOptions,
+): PrintSection? {
+    if (unclaimed.isEmpty()) return null
+    return PrintSection(
+        // Not «COLECCIÓN», which is the eyebrow of a page that is one: this is the page of the coins
+        // that are in none, and the header is where that is said once instead of cell by cell.
+        eyebrow = "COINDEX · SIN COLECCIÓN",
+        title = "Sin colección",
+        subtitle = null,
+        // No «País»: a page that spans twenty of them has none to name, and the countries are the
+        // order the coins are already in.
+        facts = listOf(
+            "Piezas" to countLabel(
+                distinctTypes = unclaimed.distinctBy { it.typeId }.size,
+                quantity = unclaimed.fold(0) { total, it -> saturatingAdd(total, it.quantity) },
+            ),
+        ),
+        source = "tu colección en Numista",
+        cells = unclaimed.map { item ->
+            PrintCell(
+                label = state.typeMeta[item.typeId]?.displayTitle
+                    ?: item.title
+                    ?: "Pieza ${item.id}",
+                state = null,
+                // The emission label of a coin no catalog claims is normally nothing, but it is
+                // asked for rather than assumed: which emission a coin is is a fact about the coin,
+                // and a catalog keyed on issues can name a row it does not claim.
+                footnote = pieceLine(DrawnPiece(item, state.emissionLabels[item.id])),
+                diameterMm = state.diameterOf(item.typeId),
+                // The reverse, spelled out, exactly as a piece printed off a card with no issue
+                // list: there is no plate here to declare a face (#227).
+                faces = state.facesOf(item.typeId, options, PrintedSide.Reverse),
+                // Never a hole: every one of these is a coin the collector owns.
                 filled = true,
                 numistaUrl = state.qrUrlOf(item.typeId, options),
             )

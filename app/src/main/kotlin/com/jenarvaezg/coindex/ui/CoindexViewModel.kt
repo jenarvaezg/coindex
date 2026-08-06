@@ -20,6 +20,7 @@ import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
@@ -428,14 +429,21 @@ class CoindexViewModel(
      * [options] comes in rather than being read off the state, because the export sheet recounts on
      * every tap and what it is counting is the configuration **under the collector's thumb** — which
      * is only stored once they press «Exportar».
+     *
+     * [unclaimed] arrives the same way and for the same reason (#275): the coins no collection claims
+     * are measured against the whole index and then narrowed by the shelf on screen, and both of
+     * those are the index's answers. What this adds is nothing — [notebookSections] decides whether
+     * the lámina is drawn, from the switch.
      */
     fun notebookPages(
         cards: List<IndexCard>,
+        unclaimed: List<CollectedItem>,
         options: NotebookOptions,
     ): List<PrintPage> = printPages(
         sections = notebookSections(
             state = _state.value.collection,
             cards = cards,
+            unclaimed = unclaimed,
             curation = curation,
             options = options,
         ),

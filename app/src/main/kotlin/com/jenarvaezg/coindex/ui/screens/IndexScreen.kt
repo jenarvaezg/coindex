@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.BudgetStatus
@@ -66,6 +67,8 @@ import com.jenarvaezg.coindex.ui.shelf.indexShelfSummary
 import com.jenarvaezg.coindex.ui.shelf.indexTally
 import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
+import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
+import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -121,8 +124,11 @@ fun IndexScreen(
      * — filters and search included — and not what the collector had just narrowed away. Called
      * once the export sheet is open and once per switch moved, never on an idle recomposition:
      * resolving every card's plate is work the index does not owe until somebody asks for paper.
+     *
+     * The second list is the coins no collection claims (#275), narrowed by the same shelf: what
+     * belongs in the notebook is this screen's answer, and the printer only decides where it goes.
      */
-    notebook: (List<IndexCard>, NotebookOptions) -> List<PrintPage>,
+    notebook: (List<IndexCard>, List<CollectedItem>, NotebookOptions) -> List<PrintPage>,
     onMessage: (String) -> Unit,
     /**
      * Whether the notebook is being exported right now.
@@ -160,12 +166,26 @@ fun IndexScreen(
     // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
     // the notebook needs no mechanism of its own to choose pages.
     val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
+    // The coins no collection claims, measured against the **whole** index and then narrowed by the
+    // same shelf (#275): having a collection is a fact about the coin, so a filter cannot orphan one
+    // that lives in a box — but a filtered notebook still takes only the loose coins it is about.
+    val loose = remember(state) { unclaimedFacts(state) }
+    val looseShown = remember(loose, shelf, query) { shelf.narrowUnclaimed(loose, query) }
     // What the export sheet is showing the cost of: recounted when a switch moves, and when the
     // narrowing under it moves. **Outside the grid**, like the export itself and for the same
     // reason: a lazy item is disposed the moment it scrolls off, and resolving sixty plates again
     // every time the sheet scrolls back into view is not what «recontado a cada toque» means.
-    val preview = remember(configuring, shown, draft) {
-        if (configuring) ExportPreview(shown.size, notebook(shown, draft)) else null
+    val preview = remember(configuring, shown, looseShown, draft) {
+        if (!configuring) {
+            null
+        } else {
+            ExportPreview(
+                // The lámina of the loose coins counts as one, because it is one: the sheet counts
+                // what this configuration produces, which is the whole reason it recounts at all.
+                cards = shown.size + if (draft.unclaimed && looseShown.isNotEmpty()) 1 else 0,
+                pages = notebook(shown, looseShown, draft),
+            )
+        }
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
@@ -224,7 +244,7 @@ fun IndexScreen(
                 }
             }
 
-            // The five switches and what they cost, before a single page is drawn (#228). In the
+            // The six switches and what they cost, before a single page is drawn (#228). In the
             // same slot the progress card takes, because it is the same conversation: what is
             // about to come out of the printer.
             preview?.let { about ->
@@ -233,6 +253,9 @@ fun IndexScreen(
                         options = draft,
                         pages = about.pages.size,
                         cards = about.cards,
+                        // What «Sin colección» has left to offer under the current narrowing, so a
+                        // switch with no lámina behind it is greyed instead of ticked and inert.
+                        loose = looseShown.size,
                         onChange = { draft = it },
                         onExport = {
                             val pages = about.pages

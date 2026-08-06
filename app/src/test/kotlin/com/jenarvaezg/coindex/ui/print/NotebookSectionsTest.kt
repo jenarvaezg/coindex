@@ -56,6 +56,7 @@ class NotebookSectionsTest {
         return notebookSections(
             CollectionState(assembled),
             listOf(box),
+            emptyList(),
             curation,
             NotebookOptions(),
         ).single().cells.map { it.footnote }
