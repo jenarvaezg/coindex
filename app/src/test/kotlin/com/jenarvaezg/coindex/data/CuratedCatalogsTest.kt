@@ -32,13 +32,13 @@ class CuratedCatalogsTest {
 
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(72, catalogs.size)
+        assertEquals(73, catalogs.size)
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * cuarenta cerrados llevan su nota y los treinta y dos abiertos no afirman nada más que
+     * cuarenta y uno cerrados llevan su nota y los treinta y dos abiertos no afirman nada más que
      * «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
@@ -47,7 +47,7 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(40, closed.size)
+        assertEquals(41, closed.size)
         assertEquals(32, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
@@ -1447,11 +1447,11 @@ class CuratedCatalogsTest {
      * El emisor alterna por año entre Tokelau y Niue sin que el programa cambie de ceca: es un
      * acuerdo de respaldo legal de la Pressburg Mint, así que las ocho son una tirada anual.
      *
-     * Y por eso es el único de los 60 catálogos cuya cabecera no puede decir el país sola (#170):
-     * el emisor lo dicen las dos casillas de Niue —2023 y 2025, verificadas en N#356004 y
-     * N#477907, 2 dólares de Nueva Zelanda contra los 5 de Tokelau—, y la cabecera hace de
-     * defecto para las otras seis. La propia serie 3245 de Numista se encabeza «Emisores: Niue,
-     * Tokelau».
+     * Y por eso fue el primero cuya cabecera no puede decir el país sola (#170): el emisor lo dicen
+     * las dos casillas de Niue —2023 y 2025, verificadas en N#356004 y N#477907, 2 dólares de Nueva
+     * Zelanda contra los 5 de Tokelau—, y la cabecera hace de defecto para las otras seis. La propia
+     * serie 3245 de Numista se encabeza «Emisores: Niue, Tokelau». Ya no es el único: `historia-del-real`
+     * abarca **tres** emisores (#257), así que de los 73 catálogos son dos los que se reparten países.
      */
     @Test
     fun `equilibrium is the pressburg silver ounce from 2018 to 2025`() {
@@ -1484,6 +1484,57 @@ class CuratedCatalogsTest {
             309_842, 334_282, 356_003, 407_409, 477_904,
         )
         assertTrue(equilibrium.members.none { it.numistaTypeId in gold })
+    }
+
+    /**
+     * El primer catálogo **temático** (#257): la frontera no es una denominación, ni un programa, ni
+     * el rango de una ceca, sino un tema que el padre declaró con sus palabras el 6 de agosto de 2026
+     * —«el Thaler es para mostrar con el real bajo el tema historia del real, me falta allí un holey
+     * dollar (y el dump) para completar»— y que cerró en cuatro piezas al preguntarle si entraban 8
+     * reales de otros reyes, otras cecas americanas o los resellos.
+     *
+     * No necesitó mecanismo nuevo. El ADR 0020 ya había matado «un solo emisor» y «un solo patrón
+     * físico» como porteros, el ADR 0016 hace que el fichero mande sobre la variante de sus miembros,
+     * y el `issuer_code` por casilla del #170 ya existía. Lo que se declara es el peso de la moneda
+     * **ancla** —los 27,07 g del real de a ocho, 870 milésimas de onza— y las tres desviaciones van
+     * escritas: el thaler pesa más (28,0668 g, norma Conventionsthaler de 1750) y las dos de 1813
+     * pesan lo que queda de un duro perforado, 21,035 g el anillo y 5,619 g el disco, que sumados son
+     * los 26,65 g del duro del que salieron.
+     *
+     * Se cierra y eso cuesta prueba: Carlos IV acaba en 1808, las dos de 1813 se desmonetizaron en
+     * 1829 según sus propias fichas, y el thaler que Viena sigue vendiendo lleva la fecha congelada en
+     * 1780, así que ninguna ceca puede añadir casilla.
+     *
+     * Y es la primera curación que **reabre una huérfana firmada**: N#18852 salió de `data/orphans.json`
+     * al escribirse este fichero, porque un veredicto de intención lo reabre la intención.
+     */
+    @Test
+    fun `historia del real is the first thematic catalog and spans three issuers`() {
+        val theme = find("historia-del-real")
+        assertEquals(1, theme.schemaVersion)
+        assertEquals("Historia del real", theme.family)
+        assertEquals("Historia del real", theme.shortName)
+        assertEquals(870, theme.weightMillioz)
+        assertNull(theme.finish)
+        assertEquals(Metal.Silver, theme.metal)
+        assertEquals(SeriesStatus.Closed, theme.seriesStatus)
+        assertEquals(listOf(1780, 1791, 1813, 1813), theme.members.map { it.year })
+        assertEquals(listOf(7_393, 18_852, 19_811, 17_316), theme.members.map { it.numistaTypeId })
+        // La cabecera es México, que es de quien es el real, y hace de defecto para su casilla sola.
+        assertEquals("mexique", theme.issuerCode)
+        assertEquals(
+            listOf("autriche-habsbourg", "mexique", "new_south_wales", "new_south_wales"),
+            theme.members.map { theme.issuerCodeOf(it) },
+        )
+        assertEquals(
+            setOf("autriche-habsbourg", "mexique", "new_south_wales"),
+            theme.issuerCodes(),
+        )
+        // Las cuatro casillas llevan nota, que es el peaje de un catálogo temático (ADR 0016): tres
+        // dicen por qué se apartan del peso declarado y la del real dice por qué la casilla es el
+        // tipo entero y no un año.
+        assertTrue(theme.members.all { it.variantNote?.isNotBlank() == true })
+        assertTrue(theme.members.all { it.isIssued })
     }
 
     /**

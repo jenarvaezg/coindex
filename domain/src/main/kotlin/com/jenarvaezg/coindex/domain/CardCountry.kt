@@ -1,8 +1,8 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * The nine issuer codes whose Numista label is not the name of a country, and what a card says
- * instead.
+ * The ten issuer codes whose Numista label is not the name of a country in Spanish, and what a card
+ * says instead.
  *
  * Numista does not write countries: it writes **issuing entities with their period of validity**,
  * which is why `russie` arrives as «Federación de Rusia (1991-presente)» and `rome` as «Romano,
@@ -27,6 +27,14 @@ package com.jenarvaezg.coindex.domain
  * `russia-empire` is «Imperio ruso» and not «Rusia», beside the `ancienne_urss` the ficha already
  * calls «Unión Soviética». `allemagne-pre1945` is «Alemania» because that is what Numista itself
  * calls it: «Alemania (1871-1948)» is a country with a period, not the name of another state.
+ *
+ * **The tenth is here for a third reason: the language** (#257). `new_south_wales` arrives as «New
+ * South Wales» even with `lang=es`, which is a clean label — no period of validity, no inversion, 15
+ * characters — and therefore the one vice [readsAsACountry] cannot see. It is the only English label
+ * among the 25 issuer codes the curated files declare, measured over the shipped cache, and ADR 0021
+ * §4 asks for Spanish. It takes its own name rather than «Australia» by the second rule above: in
+ * 1813 it was a British colony and today it is a state, so it is nobody's country and «Nueva Gales
+ * del Sur» is what it is called.
  */
 private val curedCountries: Map<String, String> = mapOf(
     "allemagne" to "Alemania",
@@ -34,6 +42,7 @@ private val curedCountries: Map<String, String> = mapOf(
     "chine" to "China",
     "democratic_republic_congo_period" to "República Democrática del Congo",
     "haiti" to "Haití",
+    "new_south_wales" to "Nueva Gales del Sur",
     "republique_dominicaine" to "República Dominicana",
     "rome" to "Imperio romano",
     "russia-empire" to "Imperio ruso",
@@ -62,6 +71,12 @@ fun cardCountry(issuerCode: String?, numistaName: String?): String? =
  * **inversion of an index** —«China, República Popular»—, and both are what ADR 0021 §4 keeps off a
  * line of identity. Length is the third: the eyebrow is set in small caps above a `short_name` capped
  * at 40 characters (#163), and a country that outruns the name below it does not fit on a card.
+ *
+ * **The language is a fourth vice this cannot see** (#257). «New South Wales» has none of the three
+ * and is still not Spanish, so the net passes it and only a curator reading the ficha catches it. It
+ * is not made a fourth clause because detecting a language is not one line of code over a third
+ * party's prose, and guessing at that prose is what ADR 0023 refused; the table carries the finding
+ * instead.
  *
  * It is the rule of the net over what ships (ADR 0023) and of the one migration that net implies, not
  * a filter any card is dropped by: a card always says what it knows, and a label that fails here is a

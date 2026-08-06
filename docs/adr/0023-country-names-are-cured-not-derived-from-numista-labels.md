@@ -4,6 +4,25 @@
 - Date: 2026-08-05
 - Amends ADR 0021 §4 and §9.
 
+> **Amended on 2026-08-06 (#257).** The decision stands whole and the table grows by one, for a
+> reason the nine did not have: **the language**. `new_south_wales` — the issuer of the holey dollar
+> and the dump, curated into `historia-del-real` — arrives as «New South Wales» even with `lang=es`.
+> It has none of the three vices `readsAsACountry` checks: no period of validity, no index
+> inversion, 15 characters. So **the net passes it and the card would print English**, against the
+> language rule of ADR 0021 §4 this very ADR cites.
+>
+> Measured over the shipped cache, it is the only English label among the **25 issuer codes the
+> curated files declare**, which is why the hole went unseen: the other 24 arrive in Spanish, and the
+> nine corrections all answer a vice the net does see.
+>
+> Two things deliberately do **not** change. `readsAsACountry` gains no fourth clause, because
+> detecting a language is not one line of code over a third party's prose and guessing at that prose
+> is what «Not a heuristic over Numista's prose» already refused — the table carries the finding, and
+> the curator reading the ficha is the check. And the entry is not «Australia»: by the second rule
+> below, a state that is nobody's country keeps its own name, and in 1813 Nueva Gales del Sur was a
+> British colony while today it is a state, so it sits beside `rome` and `russia-empire` rather than
+> beside `russie`.
+
 ## Context
 
 ADR 0021 §9 gave the card's eyebrow to the curated file: the code comes from `issuer_code`, and the

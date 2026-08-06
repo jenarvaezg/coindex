@@ -53,6 +53,18 @@ finish, and it claims its member types ahead of the family Numista gives them. F
 bullion is not one: a quarter-ounce and a one-ounce piece are the same coin in two sizes.
 _Avoid_: Date run, fractional bullion family, curated series
 
+**Thematic catalog**:
+A collection catalog whose boundary is a **theme the collector declared**, not a denomination, a
+programme or a mint's range — so it may cross issuers, centuries and physical patterns, and its
+declared weight is the **anchor coin's** rather than a standard every member shares. It is an
+ordinary schema 1 catalog and needs no mechanism of its own: ADR 0020 already refused «one issuer
+only» and «one physical standard only» as gatekeepers, and ADR 0016 makes the file authoritative
+over its members' variant, so the members land on one card however far apart they weigh. What it
+owes in exchange is prose: the `source_note` says whose declaration draws the line and quotes it
+with a date, and each deviating member carries a `variant_note`. `historia-del-real` is the first,
+with four slots over three issuers.
+_Avoid_: Agrupación, commemorative programme, set catalog, own grouping
+
 **Technical family**:
 Numista's `System YYYY[-YYYY]` value, a monetary system rather than a collectible grouping.
 It is the weakest family: any curated catalog naming the type outranks it, but it still

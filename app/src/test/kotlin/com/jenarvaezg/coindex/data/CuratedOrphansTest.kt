@@ -54,12 +54,20 @@ class CuratedOrphansTest {
      * and it was refused for a measured reason: a programme only surfaces on the plate of a
      * catalog that touches its types, and no plate touches these.
      *
-     * The two Mexican silver pieces of #242 are the block where the **father** answered, and both
-     * were writable before he did: the 1 Peso «Tepalcate» (N#3550) is 11 struck years without a gap
-     * and the 8 Reales of Charles IV (N#18852) is 18, so a date run was on the table for each — for
-     * the reales in two forms, by year or by assayer. He follows neither (6 August 2026, through
-     * Jose), and the shape had already lost its only alternative: an agrupación declares no weight,
-     * so by ADR 0013 as amended it cannot hold six Mexican pieces of five different weights.
+     * The 1 Peso «Tepalcate» (N#3550) is what is left of the Mexican block of #242, and it was
+     * writable before the **father** answered: 11 struck years without a gap, so a date run was on
+     * the table and he follows it not (6 August 2026, through Jose). The shape had already lost its
+     * only alternative: an agrupación declares no weight, so by ADR 0013 as amended it cannot hold
+     * six Mexican pieces of five different weights.
+     *
+     * **The 8 Reales of Charles IV (N#18852) left this register in #257**, and it is the one verdict
+     * a later answer reversed. The motive signed with it was true of the sequence it was offered — a
+     * date run by year or by assayer, which he follows neither of — but it also said the shape «had
+     * lost its only alternative», and the alternative it meant was an agrupación of Mexican silver.
+     * The one he then described is a different file altogether: `historia-del-real`, four pieces
+     * across three issuers and four physical patterns, joined by a theme rather than by a
+     * denomination. A verdict of intention is reopened by intention, and this is the first time
+     * that has happened.
      *
      * The sixteen of 6 August 2026 are the largest block ever signed at once, and all sixteen are
      * the **father's answer** to the five questions of #216 — not a measurement of ours. Four shapes
@@ -97,7 +105,7 @@ class CuratedOrphansTest {
         assertEquals(
             listOf(
                 1_933, 1_952, 3_416, 3_550, 3_855, 6_918, 10_613, 11_440, 12_454, 12_994, 14_018,
-                14_538, 15_357, 18_852, 18_940, 26_190, 38_130, 44_085, 59_404, 67_681, 90_456,
+                14_538, 15_357, 18_940, 26_190, 38_130, 44_085, 59_404, 67_681, 90_456,
                 98_259, 131_809, 132_242, 277_960, 291_255, 387_614, 451_057, 470_766, 571_460,
                 596_646,
             ),

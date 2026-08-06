@@ -20,6 +20,30 @@
 > and a sequence nobody is chasing and nobody has declared is still an orphan (#242 signed two
 > that way on the collector's word alone).
 
+> **Amended on 2026-08-06 (#257).** Nothing below changes. What changes is that «there are no
+> measurable gatekeepers» finally got a file that uses the whole of it, and one consequence bullet is
+> now a wrong measurement.
+>
+> `historia-del-real` is a **thematic catalog**: four slots over **three** issuers — the Austrian
+> Empire, Mexico and New South Wales — and four physical patterns, 28,0668 g of .833, 27,07 g of
+> .896, 21,035 g of .903 and 5,619 g of .903. It needed no new mechanism. «One issuer only» and «one
+> physical standard only» were already dead here, ADR 0016 already makes the file authoritative over
+> its members' variant, and the per-member `issuer_code` of #170 already existed; the declared weight
+> is the **anchor coin's** — the real de a ocho that names the theme — and the three deviations are
+> written as `variant_note`. The existence criterion held as written: the sequence exists without us
+> (Numista's own dump ficha describes the 1813 operation, and the two 1813 fichas cite each other),
+> the curator declared the pursuit in his own words, and the plate holds four rows.
+>
+> So the consequence bullet «**Equilibrium is the only catalog whose members span two issuers**» is
+> no longer true. Two catalogs span issuers out of 73, and the spanning one is now the wider case:
+> what a card prints when a catalog spans more than one country remains the open half of #170, and
+> this plate reads «México» off the header over a list that also holds Vienna and Sydney.
+>
+> One thing this file did that no curation had done before: **it reversed a signed orphan verdict**.
+> N#18852 was signed in #242 and left `data/orphans.json` here. That is not a defect of the register
+> — a verdict of intention is reopened by intention, and the #242 motive was true of the sequence it
+> was offered. It is the reason the orphan list is editorial and reaches none of the validator.
+
 ## Context
 
 ADR 0009, 0012, 0013, 0014, 0016, 0018 and 0019 all answer the same kind of question: how a
