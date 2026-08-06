@@ -39,6 +39,27 @@ enum class PlateStatus(val label: String) {
     NoPlate("Sin lámina"),
 }
 
+/**
+ * Whatever the five chips can be asked about: a card of the index, or one loose piece (#275).
+ *
+ * The shelf grew a second kind of subject when the notebook learned to print the coins no
+ * collection claims: that lámina is narrowed by the same chips as everything else, so a piece is
+ * measured **as if it were a card of one piece with no plate**. Three of the five it answers off
+ * its own ficha; the other two it answers the way a card with no catalog already does.
+ *
+ * [weight] is the one that is nullable here and not on a card. A card with no single weight is a
+ * box or a set — [OunceBand.Spanning], «Conjunto o caja» — and a loose coin whose ficha declares no
+ * weight is neither: it has **no answer**, so it falls out of any weight filter rather than
+ * disguising itself as a box.
+ */
+interface ShelfSubject {
+    val issuer: String?
+    val weight: OunceBand?
+    val startsIn: StartBand
+    val status: PlateStatus
+    val series: SeriesStatus?
+}
+
 /** What the shelf of the index is narrowing by, and in what order it leaves what is left. */
 data class IndexShelf(
     val sort: IndexSort = IndexSort.MostComplete,
@@ -51,12 +72,12 @@ data class IndexShelf(
     val active: Int
         get() = listOfNotNull(issuer, weight, startsIn, status, series).size
 
-    internal fun matches(facts: IndexFacts, except: IndexFacet? = null): Boolean =
-        (except == IndexFacet.Issuer || issuer == null || facts.issuer == issuer) &&
-            (except == IndexFacet.Weight || weight == null || facts.weight == weight) &&
-            (except == IndexFacet.StartsIn || startsIn == null || facts.startsIn == startsIn) &&
-            (except == IndexFacet.Status || status == null || facts.status == status) &&
-            (except == IndexFacet.Series || series == null || facts.series == series)
+    internal fun matches(subject: ShelfSubject, except: IndexFacet? = null): Boolean =
+        (except == IndexFacet.Issuer || issuer == null || subject.issuer == issuer) &&
+            (except == IndexFacet.Weight || weight == null || subject.weight == weight) &&
+            (except == IndexFacet.StartsIn || startsIn == null || subject.startsIn == startsIn) &&
+            (except == IndexFacet.Status || status == null || subject.status == status) &&
+            (except == IndexFacet.Series || series == null || subject.series == series)
 }
 
 /** The five chip rows of the index, named so a facet can be counted with its own choice dropped. */
@@ -71,11 +92,11 @@ enum class IndexFacet { Issuer, Weight, StartsIn, Status, Series }
  */
 data class IndexFacts(
     val card: IndexCard,
-    val issuer: String?,
-    val weight: OunceBand,
-    val startsIn: StartBand,
-    val status: PlateStatus,
-    val series: SeriesStatus?,
+    override val issuer: String?,
+    override val weight: OunceBand,
+    override val startsIn: StartBand,
+    override val status: PlateStatus,
+    override val series: SeriesStatus?,
     /**
      * The highest Numista row id among its pieces, which is the only thing that can order by age.
      *
@@ -85,7 +106,7 @@ data class IndexFacts(
      */
     val latestRowId: Long,
     val haystack: String,
-)
+) : ShelfSubject
 
 /** Everything the shelf of the index needs, joined once from the state the screens already read. */
 fun indexFacts(state: CollectionState): List<IndexFacts> = state.index.map { card ->

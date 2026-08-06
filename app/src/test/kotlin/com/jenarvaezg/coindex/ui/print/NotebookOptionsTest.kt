@@ -22,13 +22,14 @@ class NotebookOptionsTest {
     fun `the notebook of today is what nobody chose`() {
         val untouched = NotebookOptions()
 
-        // Fotos sí, una cara, tamaño real sí, sin compartir página, sin QR: nadie se encuentra su
-        // cuaderno cambiado sin haberlo pedido.
+        // Fotos sí, una cara, tamaño real sí, sin compartir página, sin QR y sin la lámina de las
+        // sueltas: nadie se encuentra su cuaderno cambiado sin haberlo pedido.
         assertTrue(untouched.photographs)
         assertFalse(untouched.bothFaces)
         assertTrue(untouched.actualSize)
         assertFalse(untouched.sharePage)
         assertFalse(untouched.numistaQr)
+        assertFalse(untouched.unclaimed)
     }
 
     /**
@@ -77,11 +78,17 @@ class NotebookOptionsTest {
                 emptyList(),
             ),
         )
-        val today = notebookSections(CollectionState(), listOf(card), Curation(emptyList()), NotebookOptions())
+        val today = notebookSections(
+            CollectionState(),
+            listOf(card),
+            emptyList(),
+            Curation(emptyList()),
+            NotebookOptions(),
+        )
 
         val landed = { it: NotebookOptions -> it.numistaQr || it.bothFaces || !it.photographs }
         val moved = allCombinations().filterNot(landed).filter { options ->
-            notebookSections(CollectionState(), listOf(card), Curation(emptyList()), options) != today
+            notebookSections(CollectionState(), listOf(card), emptyList(), Curation(emptyList()), options) != today
         }
 
         assertEquals(emptyList(), moved, "un interruptor de geometría ha cambiado una casilla")
@@ -468,15 +475,18 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The order of the enum is the order of the sheet, and all five of them do something now.
+     * The order of the enum is the order of the sheet, and all six of them do something now.
      *
      * `pending` was what made a grey switch honest — the issue that would make it work, named under a
      * control that could not be touched — and each ticket set its own to null: «QR de Numista» first,
      * then «ambas caras», «fotos», «compartir página» and «tamaño real» (#233). With the last one the
      * property itself went, because a field that can only be null is the same lie a grey switch was.
+     *
+     * «Sin colección» is last because its lámina is last (#275), and it is the only one of the six
+     * that adds a page instead of rearranging the ones there are.
      */
     @Test
-    fun `the five switches are in the order the sheet draws them`() {
+    fun `the six switches are in the order the sheet draws them`() {
         assertEquals(
             listOf(
                 NotebookSwitch.Photographs,
@@ -484,13 +494,20 @@ class NotebookOptionsTest {
                 NotebookSwitch.ActualSize,
                 NotebookSwitch.SharePage,
                 NotebookSwitch.NumistaQr,
+                NotebookSwitch.Unclaimed,
             ),
             NotebookSwitch.entries.toList(),
         )
     }
 }
 
-/** The thirty-two configurations the five switches can be in. */
+/**
+ * The thirty-two configurations the **five geometry switches** can be in.
+ *
+ * «Sin colección» is deliberately out (#275): it decides *what* is printed and not how, so it moves
+ * no millimetre and changes no cell of a card — and folding it in would double this list to say
+ * nothing new about the geometry these tests are about.
+ */
 internal fun allCombinations(): List<NotebookOptions> = buildList {
     for (photographs in BOTH) {
         for (bothFaces in BOTH) {

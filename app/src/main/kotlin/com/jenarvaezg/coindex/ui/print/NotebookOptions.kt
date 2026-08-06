@@ -1,7 +1,7 @@
 package com.jenarvaezg.coindex.ui.print
 
 /**
- * How the notebook comes out: five independent switches, and no models with a name (#228).
+ * How the notebook comes out: six independent switches, and no models with a name (#228).
  *
  * There is a notebook and a way of printing it, and until #228 the second was one shape — the album
  * page that serves the shelf at home and not the list you take to a fair. Named models
@@ -23,6 +23,8 @@ data class NotebookOptions(
     val sharePage: Boolean = false,
     /** The Numista page of each coin, as a code to point a phone at. */
     val numistaQr: Boolean = false,
+    /** The coins no collection claims, as one last lámina, and the notebook is the whole of it. */
+    val unclaimed: Boolean = false,
 ) {
     operator fun get(switch: NotebookSwitch): Boolean = when (switch) {
         NotebookSwitch.Photographs -> photographs
@@ -30,6 +32,7 @@ data class NotebookOptions(
         NotebookSwitch.ActualSize -> actualSize
         NotebookSwitch.SharePage -> sharePage
         NotebookSwitch.NumistaQr -> numistaQr
+        NotebookSwitch.Unclaimed -> unclaimed
     }
 
     fun with(switch: NotebookSwitch, on: Boolean): NotebookOptions = when (switch) {
@@ -38,6 +41,7 @@ data class NotebookOptions(
         NotebookSwitch.ActualSize -> copy(actualSize = on)
         NotebookSwitch.SharePage -> copy(sharePage = on)
         NotebookSwitch.NumistaQr -> copy(numistaQr = on)
+        NotebookSwitch.Unclaimed -> copy(unclaimed = on)
     }
 
     /**
@@ -46,15 +50,21 @@ data class NotebookOptions(
      * With the photographs off no coin reaches the page at all, so «ambas caras» and «tamaño real»
      * have nothing left to negotiate. The sheet greys them rather than leaving them ticked and
      * inert, which is the difference between a control that is unavailable and one that lies.
+     *
+     * **«Sin colección» is not answered here** (#275), because what makes it moot is not the
+     * configuration but the collection: a phone where every coin is in some collection, or a filter
+     * that leaves no loose coin standing, has no lámina to offer. That count is the export sheet's
+     * to hold, so this stays a function of the switches alone and the sheet ands the two.
      */
     fun offers(switch: NotebookSwitch): Boolean = when (switch) {
         NotebookSwitch.BothFaces, NotebookSwitch.ActualSize -> photographs
         NotebookSwitch.Photographs, NotebookSwitch.SharePage, NotebookSwitch.NumistaQr -> true
+        NotebookSwitch.Unclaimed -> true
     }
 }
 
 /**
- * The five switches, in the order the export sheet draws them.
+ * The six switches, in the order the export sheet draws them.
  *
  * «Cabecera fina» is deliberately **not** one of them: it is derived from «compartir página», since
  * a band of forty millimetres per plate makes no sense once two of them share a folio — and that
@@ -82,4 +92,13 @@ enum class NotebookSwitch {
 
     /** The caption grows and each coin gets its code (#234). */
     NumistaQr,
+
+    /**
+     * One last lámina with the coins no collection claims, and the notebook is the whole collection
+     * (#275).
+     *
+     * The only one of the six that adds pages rather than rearranging them, and the only one that is
+     * about **what** is printed rather than about how. It is last because the lámina is last.
+     */
+    Unclaimed,
 }

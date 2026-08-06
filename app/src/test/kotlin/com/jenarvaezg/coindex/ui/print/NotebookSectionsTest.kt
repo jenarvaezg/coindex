@@ -56,6 +56,7 @@ class NotebookSectionsTest {
         return notebookSections(
             CollectionState(assembled),
             listOf(box),
+            emptyList(),
             curation,
             NotebookOptions(),
         ).single().cells.map { it.footnote }
@@ -126,6 +127,7 @@ class NotebookSectionsTest {
         val section = notebookSections(
             state,
             listOf(card),
+            emptyList(),
             Curation(catalogs),
             NotebookOptions(),
         ).single()

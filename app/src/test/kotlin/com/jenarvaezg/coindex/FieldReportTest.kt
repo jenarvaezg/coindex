@@ -28,6 +28,7 @@ import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.pagesAlone
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
+import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import java.io.File
 import kotlin.test.Test
 import kotlinx.serialization.Serializable
@@ -118,11 +119,22 @@ class FieldReportTest {
     private fun notebookReport(state: CollectionState, curation: Curation): String = buildString {
         // El cuaderno de hoy, que es el que la configuración por omisión produce (#228).
         val paper = printGeometry(NotebookOptions())
-        val sections = notebookSections(state, state.index, curation, NotebookOptions())
+        val sections = notebookSections(state, state.index, emptyList(), curation, NotebookOptions())
         val pages = printPages(sections, paper)
         appendLine()
         appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
         appendLine("fotos que pediría: ${pages.sumOf { it.photographs }}")
+        // Y lo que cuesta encender «Sin colección» (#275), que es la única forma de saberlo: cuántas
+        // monedas de esta colección no salen en ninguna lámina, y cuánto papel más son.
+        val loose = unclaimedFacts(state).map { it.piece }
+        val whole = printPages(
+            notebookSections(state, state.index, loose, curation, NotebookOptions(unclaimed = true)),
+            paper,
+        )
+        appendLine(
+            "con «sin colección»: ${whole.size} páginas · ${loose.size} monedas sueltas " +
+                "(+${whole.size - pages.size} páginas)",
+        )
         for (section in sections.sortedByDescending { it.pagesAlone(paper) }) {
             val grid = section.grid(paper)
             appendLine(

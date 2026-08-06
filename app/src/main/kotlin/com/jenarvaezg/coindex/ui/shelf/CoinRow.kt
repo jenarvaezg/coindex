@@ -110,7 +110,7 @@ fun ownedTypeCount(state: CollectionState): Int =
  * **pieces** were actually placed, which is finer — an issue-qualified catalog can claim one row of a
  * type and leave its sibling in the residue (ADR 0019).
  */
-private class Claims(
+internal class Claims(
     val byType: Map<Int, List<CoinClaim>>,
     val rowIds: Set<Long>,
 )
@@ -119,7 +119,7 @@ private class Claims(
  * Built by walking the index rather than the catalogs, so the links arrive already in the one order
  * of the first level and a card the inventory no longer derives cannot be linked to.
  */
-private fun claimsOf(state: CollectionState): Claims {
+internal fun claimsOf(state: CollectionState): Claims {
     val byType = LinkedHashMap<Int, MutableList<CoinClaim>>()
     val rowIds = mutableSetOf<Long>()
     for (card in state.index) {

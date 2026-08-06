@@ -228,6 +228,7 @@ class NotebookPagesTest {
         val cells = notebookSections(
             state,
             listOf(card),
+            emptyList(),
             curation,
             NotebookOptions(numistaQr = true),
         ).single().cells
@@ -352,7 +353,7 @@ class NotebookPagesTest {
             NotebookOptions(photographs = false),
             NotebookOptions(photographs = false, bothFaces = true),
         ).forEach { options ->
-            val cells = notebookSections(photographed, assembled.index, curation, options)
+            val cells = notebookSections(photographed, assembled.index, emptyList(), curation, options)
                 .single()
                 .cells
 
@@ -441,7 +442,7 @@ class NotebookPagesTest {
         )
 
         val faces = { state: CollectionState, options: NotebookOptions ->
-            notebookSections(state, assembled.index, curation, options).single().cells.first().faces
+            notebookSections(state, assembled.index, emptyList(), curation, options).single().cells.first().faces
         }
 
         // Una cara es una y sólo una: la que la lámina declara —los paquillos imprimen el anverso
@@ -491,7 +492,7 @@ class NotebookPagesTest {
                 CollectionSnapshot(items = onlyPaquillos, typeMeta = typeMeta),
             )
             val state = CollectionState(assembled, images = mapOf(1885 to sides))
-            notebookSections(state, assembled.index, curation, options).single().cells
+            notebookSections(state, assembled.index, emptyList(), curation, options).single().cells
         }
         val declaring = { side: PrintedSide ->
             catalogs.map { catalog ->
@@ -575,6 +576,7 @@ class NotebookPagesTest {
         val cells = notebookSections(
             CollectionState(assembled),
             assembled.index,
+            emptyList(),
             curation,
             NotebookOptions(),
         ).single().cells
@@ -920,6 +922,7 @@ class NotebookPagesTest {
         val sections = notebookSections(
             CollectionState(),
             listOf(emptied),
+            emptyList(),
             Curation(catalogs),
             NotebookOptions(),
         )

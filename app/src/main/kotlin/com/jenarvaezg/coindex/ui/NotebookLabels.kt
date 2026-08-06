@@ -28,26 +28,31 @@ fun notebookExportLabel(cards: Int): String = when (cards) {
 fun notebookCostLabel(pages: Int, cards: Int): String =
     "${plural(pages, "página", "páginas")} · ${plural(cards, "lámina", "láminas")}"
 
-/** What each of the five switches is called on the export sheet, in the collector's words. */
+/** What each of the six switches is called on the export sheet, in the collector's words. */
 fun notebookSwitchLabel(switch: NotebookSwitch): String = when (switch) {
     NotebookSwitch.Photographs -> "Fotos"
     NotebookSwitch.BothFaces -> "Ambas caras"
     NotebookSwitch.ActualSize -> "Tamaño real"
     NotebookSwitch.SharePage -> "Compartir página"
     NotebookSwitch.NumistaQr -> "QR de Numista"
+    NotebookSwitch.Unclaimed -> "Sin colección"
 }
 
 /**
  * Why a switch is greyed out, or null where it is a live question.
  *
- * **One reason left, and it is about the configuration the collector has built** (#233): with the
- * photographs off there is no face and no size to negotiate, and that resolves itself the moment they
- * turn the coins back on. The other reason was «Pendiente · #233» — a switch drawn and remembered
- * before its ticket landed — and it went with the last of the five, because a note that can never be
- * printed is a branch nobody can read on the sheet.
+ * **Two reasons, and each is about something the collector can undo** (#233, #275). With the
+ * photographs off there is no face and no size to negotiate, and that resolves the moment they turn
+ * the coins back on; with no loose coin left standing — because there is none, or because the filter
+ * above has taken them all — «Sin colección» has no lámina to add, and that resolves when they clear
+ * the filter. The reason that went for good was «Pendiente · #233», a switch drawn and remembered
+ * before its ticket landed: a note that can never be printed is a branch nobody can read on the sheet.
  */
-fun notebookSwitchNote(offered: Boolean): String? =
-    if (offered) null else "Sin fotos no hay nada que ajustar"
+fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when {
+    offered -> null
+    switch == NotebookSwitch.Unclaimed -> "No hay monedas sueltas que imprimir"
+    else -> "Sin fotos no hay nada que ajustar"
+}
 
 /**
  * Where the export has got to, said in pages and in the name of what is being drawn.
