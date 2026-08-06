@@ -237,9 +237,17 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 - **829 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
-- **5 veredictos en `data/orphans.json`**, firmados por
-  [#146](https://github.com/jenarvaezg/coindex/issues/146): el Kennedy Half Dollar, las dos
-  romanas, la medalla alemana de 2002 y el Pillar Dollar de 2025. El fichero existe desde
+- **16 veredictos en `data/orphans.json`**. Los cinco primeros son de
+  [#146](https://github.com/jenarvaezg/coindex/issues/146) —el Kennedy Half Dollar, las dos
+  romanas, la medalla alemana de 2002 y el Pillar Dollar de 2025—; el repaso del
+  [#216](https://github.com/jenarvaezg/coindex/issues/216) añadió las de circulación de plata que
+  el coleccionista no persigue (5 Deutsche Mark, 2 Reichsmark) y dos modernas de un solo año (el
+  Orwell, que muere de volumen, y el Dune, de calendario); el
+  [#247](https://github.com/jenarvaezg/coindex/issues/247) firmó las **cinco** conmemorativas de
+  plata venezolanas por **ausencia de frontera** y no por gusto, que es el único bloque así; y el
+  [#242](https://github.com/jenarvaezg/coindex/issues/242) las dos mexicanas del padre —el peso de
+  plata de 1957-1967 y los 8 reales de Carlos IV—, escribibles las dos como date run y ninguna
+  perseguida. El fichero existe desde
   [#133](https://github.com/jenarvaezg/coindex/issues/133) y es registro editorial: no alimenta
   colecciones ni la pantalla, así que firmar un veredicto **no baja** el número de «Sin
   clasificar» que ve el coleccionista.
