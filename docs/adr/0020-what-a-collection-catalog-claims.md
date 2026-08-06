@@ -3,6 +3,23 @@
 - Status: accepted
 - Date: 2026-08-03
 
+> **Amended on 2026-08-06 (#256).** The existence criterion below stands whole, and its second
+> clause gets its wording fixed by the first file that broke it. «One of the two collections is
+> pursuing it» was written as if pursuit were readable off the inventory, and
+> `venezuela-500-bolivares-plata` ships at **0 of 5 in both collections**: five silver proofs of
+> 31,1 g the Banco Central struck between 1990 and 1997, curated because the collector said so
+> with the measurement in front of him, not because a piece of it is in a drawer.
+>
+> The clause therefore reads: **the curator declares the pursuit, and owning a member is evidence
+> of it and never the test.** A plate exists to say «me falta», so a plate that says it about every
+> slot is doing its job and not failing a gate — the same reason ADR 0013's grouping and this
+> ADR's own orphan verdict are editorial and reach none of the validator. What the file owes in
+> exchange is honesty in prose: `source_note` says outright that neither collection holds one.
+>
+> Nothing else moves. A plate still needs two rows, the sequence still has to exist without us,
+> and a sequence nobody is chasing and nobody has declared is still an orphan (#242 signed two
+> that way on the collector's word alone).
+
 ## Context
 
 ADR 0009, 0012, 0013, 0014, 0016, 0018 and 0019 all answer the same kind of question: how a
