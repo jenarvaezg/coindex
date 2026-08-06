@@ -236,6 +236,16 @@ there is **evidence by type**, at least one official member of the catalog among
 type rather than by issue is what keeps a plate open while years are missing.
 _Avoid_: Album, followed proposal, disposition
 
+**Printed side**:
+The face of its coins a catalog declares for the page that prints one — `printed_side`, «la cara que
+es la moneda»: the one the collector recognises as this piece, Britannia, the Amur tiger, the mermaid
+of the 50 gourdes. It is **not** the face that tells the members apart; that is the caption's job, and
+the criterion would print monarchs' portraits over a run of identical Britannias. It is declared by
+the curator and never inferred from the ficha's descriptions, it belongs to the whole plate rather
+than to a member, and its absence means the reverse — which is what «Numista's reverse» had silently
+been until #227.
+_Avoid_: Numista's reverse, the distinguishing face, obverse override
+
 **Commemorative programme**:
 A curated statement that some Numista types were struck for the same commemoration, and nothing
 more (ADR 0022). It is a **second reading** of a coin that already belongs to a collection, not a

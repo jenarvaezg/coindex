@@ -82,6 +82,20 @@ data class CollectionCatalog(
     @SerialName("no_issue_years") val noIssueYears: List<Int> = emptyList(),
     /** What sustains [noIssueYears], in prose with a URL when there is one. */
     @SerialName("no_issue_note") val noIssueNote: String? = null,
+    /**
+     * Which face the notebook prints when the page prints one, declared by the curator (#227).
+     *
+     * See [PrintedSide] for the criterion and for why it cannot be inferred. Two things about it are
+     * this file's business. It is **of the plate and never of a member**: if one coin wants a face
+     * its sisters do not, either the whole plate changes or it is borne, and the reason goes in
+     * [sourceNote] — a hard rule on purpose, so the debt stays visible in the curated file instead
+     * of becoming one more precedence to validate, test and explain. And even in the catalogs of
+     * heterogeneous members — `spain-face-value-18g`, the 1983 Portuguese set — the pattern is
+     * uniform inside the plate: the obverse is the constant and the reverse is what changes.
+     *
+     * Absent is [PrintedSide.Reverse], so no shipped file had to be touched to add it.
+     */
+    @SerialName("printed_side") val printedSide: PrintedSide = PrintedSide.Reverse,
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CollectionCatalogMember>,
 ) {

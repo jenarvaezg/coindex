@@ -48,9 +48,10 @@ fun prefetchRefusal(conditions: PrefetchConditions): PrefetchRefusal? = when {
 /**
  * Every photograph the index is going to draw, once, in the order the cards hold them.
  *
- * **Both faces**, unlike the notebook's warm-up, which only ever needs reverses: a card and a plate
- * cell draw obverse and reverse side by side, so warming one of the two would leave half of every
- * plate filling in before the collector's eyes — which is the thing this is for.
+ * **Both faces**, unlike the notebook's warm-up, which needs one of the two — the one its plate
+ * declared (#227): a card and a plate cell draw obverse and reverse side by side, so warming one of
+ * the two would leave half of every plate filling in before the collector's eyes — which is the thing
+ * this is for.
  *
  * **Only the first candidate of each face**, which is the thumbnail. The original behind it is the
  * fallback for a thumbnail that is refused (ADR 0017); warming both would double the traffic to

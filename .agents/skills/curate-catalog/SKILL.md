@@ -17,7 +17,7 @@ Run only inside the `jenarvaezg/coindex` repository. Confirm the root holds `CON
 
 Read these rather than reasoning from scratch, and never restate them here — a decision copied into two places drifts:
 
-- **What a catalog may claim** — `docs/adr/0020-what-a-collection-catalog-claims.md`: `series_status`, the `status` of a member, the existence criterion, the denominator, the source. Read it before your first curation.
+- **What a catalog may claim** — `docs/adr/0020-what-a-collection-catalog-claims.md`: `series_status`, the `status` of a member, the existence criterion, the denominator, the source, the printed face. Read it before your first curation.
 - **Which shape a sequence takes** — ADR 0009 (date run), 0012 (technical families, catalog weights, sets), 0013 (agrupación), 0014 (issue run), 0016 (a catalog owns its members' variant), 0018 (dominant metal in the key), 0019 (members qualified by issue).
 - **The words** — `CONTEXT.md`. Use its terms and avoid the synonyms it rejects.
 - **How to reach Numista, and the traps that eat an afternoon** — [references/numista-research.md](references/numista-research.md). Read it completely before any browser or API work.
@@ -73,7 +73,17 @@ When the collision is none of those, the shape is usually wrong before the ids a
 
 **Done when** the cross-check is clean, or the only overlap is the issue-qualified disjoint kind and you have said which emissions each file takes.
 
-### 5. Version the file, and seed the cache
+### 5. Choose the face the lámina prints
+
+Look at both faces of every casilla — the cache describes them, the ficha shows them — and declare in the header the one that **is** the coin: the one the collector recognises as this piece. `printed_side: "obverse"` when it is the anverso; keeping quiet declares the reverso, which is what comes out today. ADR 0020 holds the criterion and why it is never deduced from the descriptions.
+
+It is a claim of the **whole lámina**. If one coin wants a face its sisters do not, either the whole lámina changes or it is borne, and either way the reason is written into `source_note`: the debt stays visible in the curated file instead of becoming a per-member precedence.
+
+Skip this and the lámina is born without the field and nobody notices — out comes Numista's reverso, which is sometimes a coat of arms where the coin is a mermaid.
+
+**Done when** the header declares a face, or you have said why the reverso is the right one for this lámina.
+
+### 6. Version the file, and seed the cache
 
 Write the JSON under `data/collection-catalogs/` (or `data/groupings/`). Then seed the fichas of every new type. `TypeCacheSeedTest` is what *finds* the missing ones — it goes red with the list — and the script seeds the ids you hand it:
 
@@ -87,7 +97,7 @@ Say out loud, before doing it, what a rename costs: the family is part of the pr
 
 **Done when** `./gradlew :domain:test :app:testDebugUnitTest` is green — that suite carries the startup validator over the real files, the seed check and the cross-file ambiguity check.
 
-### 6. Measure the lámina
+### 7. Measure the lámina
 
 Report the real fraction for both collections by running the field report over a private capture, never by asserting it:
 
@@ -99,13 +109,13 @@ COINDEX_FIELD_SNAPSHOT=<dir> ./gradlew :app:testDebugUnitTest --tests '*FieldRep
 
 **Done when** the plate fraction and the change in «Sin clasificar» are **medido** for both collections, or you have said plainly that no capture was available and the figures are therefore unmeasured.
 
-### 7. Keep the prose honest
+### 8. Keep the prose honest
 
 A curation that teaches something changes the documents too: `CONTEXT.md` when a term is new, `spec.md` when a section it describes is now false, and a fresh ADR when you had to *decide* rather than look up. Say which of the three you touched, and why the others needed nothing.
 
 ## Branch: an open catalog that is behind
 
-`scripts/stale-catalogs.py` and the [Catálogos abiertos por detrás](https://github.com/jenarvaezg/coindex/issues/136) issue name the tail. Adding this year's casilla is steps 3 through 7 only — the sequence already proved itself, so re-litigating step 1 wastes the collector's time.
+`scripts/stale-catalogs.py` and the [Catálogos abiertos por detrás](https://github.com/jenarvaezg/coindex/issues/136) issue name the tail. Adding this year's casilla is steps 3 through 8 only — the sequence already proved itself, so re-litigating step 1 wastes the collector's time.
 
 Interior gaps deserve the opposite reflex: a year missing in the middle is usually a year the mint did not strike, and confirming that outside Numista closes it as legitimate calendar rather than curation debt.
 

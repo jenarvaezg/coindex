@@ -509,9 +509,10 @@ private fun NumistaCode(url: String?, sideMm: Float) {
 /**
  * One face of one coin, printed round.
  *
- * By default it is the reverse and only the reverse (#169): the album page is the side you look at,
- * and a second picture at 1:1 is paid for in width — which is what «ambas caras» decides to do
- * (#230), not something this drawing can settle on its own. A hole keeps the catalog design faded
+ * By default it is one face and one only (#169): the album page is the side you look at, and a
+ * second picture at 1:1 is paid for in width — which is what «ambas caras» decides to do (#230), not
+ * something this drawing can settle on its own. Which face that one is was decided before it got
+ * here too, by the plate that declared it (#227). A hole keeps the catalog design faded
  * and desaturated, exactly as the plate on screen does, and is ruled with a dashed circle so it
  * reads as an empty mount rather than as a badly printed coin.
  *

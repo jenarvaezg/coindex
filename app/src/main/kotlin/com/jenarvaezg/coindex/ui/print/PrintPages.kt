@@ -20,9 +20,11 @@ data class PrintCell(
     /**
      * The faces this cell prints, side by side, in the order they are laid out.
      *
-     * **One and it is the reverse**, which is the notebook of #169: an album page is the side you
-     * look at, and a second picture cannot be paid for by halving the diameter of a page measured
-     * with a ruler. **Two and they are the obverse and then the reverse** (#230), which is the
+     * **One and it is the face the plate declared**, which is the notebook of #169 with the choice
+     * #227 gave it: an album page is the side you look at, and a second picture cannot be paid for by
+     * halving the diameter of a page measured with a ruler — but *which* side you look at is the
+     * curator's, `printed_side`, and the reverse only where no catalog says otherwise.
+     * **Two and they are the obverse and then the reverse** (#230), which is the
      * collector documenting a piece rather than mounting an album — and the second face is paid for
      * in width, so the cell doubles and a plate of ounces prints six to a page instead of twelve.
      *

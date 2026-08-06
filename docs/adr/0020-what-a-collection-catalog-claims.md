@@ -44,6 +44,28 @@
 > — a verdict of intention is reopened by intention, and the #242 motive was true of the sequence it
 > was offered. It is the reason the orphan list is editorial and reaches none of the validator.
 
+> **Amended on 2026-08-06 (#227).** A catalog claims one more thing: **which face of its coins the
+> notebook prints.** `printed_side: "obverse" | "reverse"` in the header, absent meaning `reverse`,
+> and a third value stops the app at startup with the file name like every other enum here.
+>
+> The notebook prints one face per coin and that is #169's settled decision; what was never a
+> decision is *which*. The cells read Numista's `reverse` because the field is called that, and
+> «Numista's reverse» is not «the face of the coin»: on `haiti-50-gourdes-plata` the reverse is the
+> coat of arms and the mermaid — the coin — is the obverse. The criterion is the face the collector
+> recognises as this piece, and it is a **declaration**, never an inference: the oracle written over
+> `obverse.description` and `reverse.description` to find the candidates already fails on two of five.
+>
+> Two rules make it a claim of the same kind as the rest. It is **of the plate and never of a
+> member** — if one coin wants a face its sisters do not, the whole plate changes or it is borne, and
+> the reason goes in `source_note`; even the catalogs of heterogeneous members are uniform inside the
+> plate, where the obverse is the constant and the reverse is what changes. And it lives **here and
+> not in the type cache**, which is re-asked of Numista in the hot path (ADR 0023) and would overwrite
+> it on the next sync. The header covers 842 of the 911 cached types; the remaining 69 are what the
+> derived collections and the boxes print, they keep the reverse, and #216 is emptying that residue on
+> its own. Curating the seventy-three shipped plates is #229 — until one is written the notebook is
+> unchanged. (The ticket measured 753 of 829 over sixty plates; the shelf grows every week, and what
+> is written here is `data/` as it stands today.)
+
 ## Context
 
 ADR 0009, 0012, 0013, 0014, 0016, 0018 and 0019 all answer the same kind of question: how a

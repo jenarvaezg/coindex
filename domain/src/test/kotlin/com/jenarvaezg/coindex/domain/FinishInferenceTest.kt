@@ -135,6 +135,62 @@ class CatalogSeedsTest {
         )
     }
 
+    /**
+     * Qué cara imprime el cuaderno lo declara la lámina, y callarse es declarar el reverso (#227).
+     *
+     * El campo es de la cabecera y de un solo nivel: la excepción es siempre de la lámina entera,
+     * así que no hay `printed_side` por miembro que validar. Y como sólo hay dos caras, un tercer
+     * valor no es una preferencia rara sino un fichero curado que no dice nada — la app no arranca
+     * y nombra el fichero, igual que con `series_status`.
+     */
+    @Test
+    fun `a seed declares which face the notebook prints, and silence is the reverse`() {
+        val seed = { side: String ->
+            """
+            {
+              "schema_version": 1,
+              "id": "cara",
+              "name": "Cara",
+              "short_name": "Cara",
+              "issuer_code": "haiti",
+              "family": "Nikola Tesla",
+              "weight_millioz": 1000,
+              "finish": null,
+              "metal": "silver",
+              "series_status": "open",
+              $side
+              "source": "https://en.numista.com/catalogue/series.php?id=5303",
+              "updated_at": "2026-08-06",
+              "members": [
+                {
+                  "id": "alternating-current",
+                  "label": "Alternating current",
+                  "year": 2018,
+                  "numista_type_id": 150352
+                }
+              ]
+            }
+            """.trimIndent()
+        }
+
+        // Ausente es el reverso, que es lo que las 73 láminas de hoy imprimen sin haberlo dicho.
+        assertEquals(PrintedSide.Reverse, CatalogSeeds.parse("cara.json", seed("")).printedSide)
+        assertEquals(
+            PrintedSide.Obverse,
+            CatalogSeeds.parse("cara.json", seed("\"printed_side\": \"obverse\",")).printedSide,
+        )
+        assertEquals(
+            PrintedSide.Reverse,
+            CatalogSeeds.parse("cara.json", seed("\"printed_side\": \"reverse\",")).printedSide,
+        )
+
+        val unknownValue = kotlin.runCatching {
+            CatalogSeeds.parse("cara.json", seed("\"printed_side\": \"canto\","))
+        }.exceptionOrNull()
+        assertEquals(CatalogSeedException::class, unknownValue!!::class)
+        assertEquals(true, unknownValue.message!!.contains("cara.json"))
+    }
+
     @Test
     fun `an invalid seed is rejected after parsing`() {
         val error = kotlin.runCatching {
