@@ -46,11 +46,18 @@ class CuratedOrphansTest {
      * as a block, the collector kept the 5 Reichsmark — cured as a plate of its own — and dropped
      * the 2: 24 year-and-mint combinations over four struck years, 129 million pieces, and the
      * piece in the collection has no year recorded, so a by-year plate would have read 0 of 4.
+     *
+     * The last two are modern one-offs, and each one closed a different door on the way in. The
+     * Orwell 2 pounds (N#451057) died of volume — 829 type pages under that denomination, the
+     * #154 shape — and the Dune ounce (N#571460) of calendar: four Numista types and all four are
+     * 2026, so there is no sequence to count. Dune was offered an ADR 0022 programme file first
+     * and it was refused for a measured reason: a programme only surfaces on the plate of a
+     * catalog that touches its types, and no plate touches these.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
-            listOf(1_933, 3_416, 6_918, 131_809, 132_242, 291_255, 470_766),
+            listOf(1_933, 3_416, 6_918, 131_809, 132_242, 291_255, 451_057, 470_766, 571_460),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )
         assertTrue(
