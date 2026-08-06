@@ -10,15 +10,26 @@ private const val KEY_CALLS = "last_sync_calls"
 private const val KEY_PARTIAL = "last_sync_partial"
 
 /**
+ * Where the last [SyncRecord] is kept.
+ *
+ * An interface over one property, so what writes it — [CollectionSync] — can be read without a
+ * device: the record carries a timestamp, and a timestamp nobody can pin down is a line of the
+ * masthead nobody can test.
+ */
+interface SyncLog {
+    var last: SyncRecord?
+}
+
+/**
  * The last [SyncRecord], on shared preferences rather than in the database.
  *
  * It is a single row about the device, not about the collection, and putting it in Room would
  * cost a schema migration for something no query ever joins against.
  */
-class SyncLog(context: Context) {
+class StoredSyncLog(context: Context) : SyncLog {
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-    var last: SyncRecord?
+    override var last: SyncRecord?
         get() {
             val at = prefs.getLong(KEY_AT, -1L).takeIf { it > 0 } ?: return null
             return SyncRecord(

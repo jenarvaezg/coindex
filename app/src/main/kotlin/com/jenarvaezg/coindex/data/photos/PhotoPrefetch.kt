@@ -38,6 +38,27 @@ data class PhotoCacheStatus(
 )
 
 /**
+ * Whatever brings the catalog's photographs into the cache before anybody asks for them (#191).
+ *
+ * An interface because the real one needs Coil, a disk cache and a network: the *rules* around it —
+ * when a pass is worth starting, what gives the network back to a sync — are [PhotoPrefetchLoop]'s,
+ * and they are the part that had never been read by a test.
+ */
+interface PhotoPrefetch {
+    /**
+     * Fetches whatever is missing, or reports why it did not.
+     *
+     * @param held the reason not to ask for anything, already decided by [prefetchRefusal].
+     * @param onStatus called with the counts before the first request and then as they land.
+     */
+    suspend fun run(
+        images: Collection<TypeImages>,
+        held: PrefetchRefusal?,
+        onStatus: (PhotoCacheStatus) -> Unit = {},
+    ): PhotoCacheStatus
+}
+
+/**
  * Brings the catalog's photographs into the cache before anybody asks for them (#191).
  *
  * The export of the notebook already fetches every picture it needs up front (#190), and that made
@@ -61,11 +82,11 @@ data class PhotoCacheStatus(
  * the phone, over wifi, and a ceiling would have meant four or five launches before the plates stop
  * filling in — which is most of the wait this is trying to remove.
  */
-class PhotoPrefetch(
+class CoilPhotoPrefetch(
     context: Context,
     private val gone: GonePhotographs,
     private val imageLoader: () -> ImageLoader = { SingletonImageLoader.get(context) },
-) {
+) : PhotoPrefetch {
     private val appContext = context.applicationContext
 
     /**
@@ -81,10 +102,10 @@ class PhotoPrefetch(
      *   opened during the first pass must show what is happening rather than «no hay fotos que
      *   traer» — and then every [PROGRESS_EVERY] photographs.
      */
-    suspend fun run(
+    override suspend fun run(
         images: Collection<TypeImages>,
         held: PrefetchRefusal?,
-        onStatus: (PhotoCacheStatus) -> Unit = {},
+        onStatus: (PhotoCacheStatus) -> Unit,
     ): PhotoCacheStatus = withContext(Dispatchers.IO) {
         val wanted = photographsToPrefetch(images, gone.all())
         val missing = wanted.filterNot { isCached(it) }

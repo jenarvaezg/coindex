@@ -8,6 +8,8 @@ import android.net.NetworkCapabilities
 import android.os.BatteryManager
 import android.os.PowerManager
 import androidx.core.content.getSystemService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /** Below this the battery is «low», and pictures nobody asked for stop being worth their charge. */
 private const val LOW_BATTERY_FRACTION = 0.20f
@@ -21,12 +23,19 @@ private const val LOW_BATTERY_FRACTION = 0.20f
 class DevicePrefetchConditions(context: Context) {
     private val appContext = context.applicationContext
 
-    fun current(syncing: Boolean): PrefetchConditions = PrefetchConditions(
-        unmeteredNetwork = isUnmetered(),
-        powerSaveMode = isPowerSaving(),
-        batteryLow = isBatteryLow(),
-        syncing = syncing,
-    )
+    /**
+     * Off the main thread, which is this class's business and not its caller's: reading whether the
+     * network is metered and how full the battery is are three binder calls, and the moment they are
+     * asked for is the one right after the app has finished starting.
+     */
+    suspend fun current(syncing: Boolean): PrefetchConditions = withContext(Dispatchers.IO) {
+        PrefetchConditions(
+            unmeteredNetwork = isUnmetered(),
+            powerSaveMode = isPowerSaving(),
+            batteryLow = isBatteryLow(),
+            syncing = syncing,
+        )
+    }
 
     /**
      * Whether the network in use is one the collector does not pay by the megabyte for.

@@ -34,7 +34,8 @@ class SyncServiceTest {
     private val items = FakeCollectedItemDao()
     private val types = FakeTypeMetaDao()
     private val calls = FakeApiCallDao()
-    private val service = SyncService(items, types, calls) { 1_000L }
+    private val clock = { 1_000L }
+    private val service = SyncService(items, types, ApiCallLedger(calls, clock), clock)
 
     /** A budget that records into the same log the sync reads, like the real gate does. */
     private inner class LoggingBudget(private val failAt: String? = null) : CallBudget {

@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -87,5 +88,34 @@ class BoxNamingTest {
         assertEquals("Las francesas", name.stored)
         // The counter counts what would be stored, so trailing spaces do not inflate it.
         assertEquals("13/40 · tiene que caber en una tarjeta", name.counter)
+    }
+
+    @Test
+    fun `a box with a name and no coins is a heading over nothing`() {
+        assertEquals(
+            "Ponle un nombre a la colección y elige al menos una moneda.",
+            assertIs<BoxEntry.Refused>(boxToCreate("Las francesas", emptyList())).message,
+        )
+        assertEquals(
+            "Ponle un nombre a la colección y elige al menos una moneda.",
+            assertIs<BoxEntry.Refused>(boxToCreate("   ", listOf(10_340))).message,
+        )
+    }
+
+    @Test
+    fun `what is stored is the trimmed name, and the coins stay with the caller`() {
+        val entry = assertIs<BoxEntry.Accepted>(boxToCreate("  Las francesas  ", listOf(7, 9)))
+
+        assertEquals("Las francesas", entry.name)
+        assertEquals("Colección «Las francesas» creada.", boxCreatedMessage(entry.name))
+    }
+
+    @Test
+    fun `renaming refuses a blank name and never asks about the coins`() {
+        assertEquals(
+            "El nombre de la colección no puede estar vacío.",
+            assertIs<BoxEntry.Refused>(boxToRename("  ")).message,
+        )
+        assertEquals("Las que cambié", assertIs<BoxEntry.Accepted>(boxToRename(" Las que cambié ")).name)
     }
 }

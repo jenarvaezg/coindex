@@ -1,18 +1,26 @@
 package com.jenarvaezg.coindex
 
 import android.content.Context
+import com.jenarvaezg.coindex.data.ApiCallLedger
 import com.jenarvaezg.coindex.data.CallBudgetGate
 import com.jenarvaezg.coindex.data.CoindexRepository
+import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CredentialStore
+import com.jenarvaezg.coindex.data.KeystoreCredentialStore
 import com.jenarvaezg.coindex.data.NotebookStore
 import com.jenarvaezg.coindex.data.ShelfStore
+import com.jenarvaezg.coindex.data.StoredNotebook
+import com.jenarvaezg.coindex.data.StoredShelves
+import com.jenarvaezg.coindex.data.StoredSyncLog
 import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.photos.CoilPhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.DevicePrefetchConditions
 import com.jenarvaezg.coindex.data.photos.GonePhotographs
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetch
+import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.photos.StoredGonePhotographs
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.validateShortNamesAcross
@@ -22,7 +30,9 @@ import com.jenarvaezg.coindex.data.seed.GroupingAssets
 import com.jenarvaezg.coindex.data.seed.ProgrammeAssets
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.data.seed.TypeThumbnailBackfill
+import com.jenarvaezg.coindex.data.update.SystemUpdateInstaller
 import com.jenarvaezg.coindex.data.update.UpdateChecker
+import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateInstaller
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -33,21 +43,28 @@ import io.ktor.client.engine.okhttp.OkHttp
  *
  * The curated catalogs are parsed and validated here, on the first access, and a failure is
  * allowed to propagate: shipping a broken catalog must be loud.
+ *
+ * Most of what is built here is **private**: the database above all, whose DAOs used to be reachable
+ * from the UI by walking `container.database.apiCalls()` (#220). What a screen is given is the thing
+ * that answers its question — [calls] for the month's budget — and never the table behind it.
  */
 class AppContainer(context: Context) {
     private val applicationContext = context.applicationContext
 
-    val database: CoindexDatabase by lazy { CoindexDatabase.open(applicationContext) }
+    private val database: CoindexDatabase by lazy { CoindexDatabase.open(applicationContext) }
 
-    val credentials: CredentialStore by lazy { CredentialStore(applicationContext) }
+    val credentials: CredentialStore by lazy { KeystoreCredentialStore(applicationContext) }
 
-    val syncLog: SyncLog by lazy { SyncLog(applicationContext) }
+    private val syncLog: SyncLog by lazy { StoredSyncLog(applicationContext) }
 
     /** What the collector was looking through last time (ADR 0021 §1), on both hierarchies. */
-    val shelves: ShelfStore by lazy { ShelfStore(applicationContext) }
+    val shelves: ShelfStore by lazy { StoredShelves(applicationContext) }
 
     /** How the collector printed their notebook last time: the five switches of #228. */
-    val notebook: NotebookStore by lazy { NotebookStore(applicationContext) }
+    val notebook: NotebookStore by lazy { StoredNotebook(applicationContext) }
+
+    /** What is left of this month's API allowance, and the only reader of `api_call_log`. */
+    val calls: ApiCallLedger by lazy { ApiCallLedger(database.apiCalls()) }
 
     val repository: CoindexRepository by lazy {
         val catalogs = CatalogAssets.load(applicationContext.assets)
@@ -69,17 +86,34 @@ class AppContainer(context: Context) {
         )
     }
 
-    val typeCacheSeed: TypeCacheSeed by lazy {
+    private val typeCacheSeed: TypeCacheSeed by lazy {
         TypeCacheSeed.fromAssets(applicationContext.assets, database.typeMeta())
     }
 
-    val typeThumbnailBackfill: TypeThumbnailBackfill by lazy {
+    private val typeThumbnailBackfill: TypeThumbnailBackfill by lazy {
         TypeThumbnailBackfill(database.typeMeta())
     }
 
-    val syncService: SyncService by lazy {
-        SyncService(database.collectedItems(), database.typeMeta(), database.apiCalls())
+    /**
+     * Brings the ficha cache up to what the APK ships, before the collection is read.
+     *
+     * Two steps and one moment. The seed used to be a **first-install** gift: every catalog curated
+     * afterwards shipped its fichas in the asset and none of them reached a phone that already had
+     * the app (#67). And a cache seeded before version 3 has no thumbnails, while a cached type is
+     * never fetched again — without the backfill the plate would keep asking for the heavy originals
+     * for ever on exactly those phones.
+     */
+    suspend fun warmUpFichaCache() {
+        typeCacheSeed.topUp(repository.curation.curatedTypeIds())
+        typeThumbnailBackfill.run()
     }
+
+    private val syncService: SyncService by lazy {
+        SyncService(database.collectedItems(), database.typeMeta(), calls)
+    }
+
+    /** One explicit sync, stamped and written down (#220). */
+    val collectionSync: CollectionSync by lazy { CollectionSync(syncService, syncLog) }
 
     /** One type's ficha, asked again on purpose (#185, ADR 0023). */
     val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }
@@ -94,30 +128,53 @@ class AppContainer(context: Context) {
     val gonePhotographs: GonePhotographs by lazy { StoredGonePhotographs(applicationContext) }
 
     /** Catalog photographs brought in before anybody asks for them (#191). */
-    val photoPrefetch: PhotoPrefetch by lazy {
-        PhotoPrefetch(applicationContext, gonePhotographs)
+    private val photoPrefetch: PhotoPrefetch by lazy {
+        CoilPhotoPrefetch(applicationContext, gonePhotographs)
     }
 
     /** Whether this is a good moment to spend the collector's data on them. */
-    val prefetchConditions: DevicePrefetchConditions by lazy {
+    private val prefetchConditions: DevicePrefetchConditions by lazy {
         DevicePrefetchConditions(applicationContext)
+    }
+
+    /**
+     * When a pass of the prefetch is worth starting (#191).
+     *
+     * Held here rather than inside the ViewModel because what it remembers has to outlive the screen:
+     * a collector who leaves the app and comes back gets a new ViewModel over the same process, and
+     * reopening sixteen hundred cache snapshots to find out that nothing has changed is precisely the
+     * cold start this exists to remove. The status travels with it, so the settings line is still
+     * true on that second launch.
+     */
+    val photos: PhotoPrefetchLoop by lazy {
+        PhotoPrefetchLoop(photoPrefetch, prefetchConditions::current)
     }
 
     private val httpClient: HttpClient by lazy { HttpClient(OkHttp) }
 
     private val budgetGate: CallBudgetGate by lazy {
-        CallBudgetGate(database.apiCalls(), monthlyBudget = { credentials.monthlyBudget })
+        CallBudgetGate(calls, monthlyBudget = { credentials.monthlyBudget })
     }
 
     /**
      * Self-update against the public GitHub releases. These requests go to GitHub, never to
      * Numista, so they are outside the API budget gate on purpose.
      */
-    val updateChecker: UpdateChecker by lazy {
+    private val updateChecker: UpdateChecker by lazy {
         UpdateChecker(httpClient, currentVersionCode = installedVersionCode())
     }
 
-    val updateInstaller: UpdateInstaller by lazy { UpdateInstaller(applicationContext, httpClient) }
+    private val updateInstaller: UpdateInstaller by lazy {
+        SystemUpdateInstaller(applicationContext, httpClient)
+    }
+
+    /**
+     * Looking for a newer APK and installing it (ADR 0011).
+     *
+     * Held here for the same reason as [photos]: what it remembers is *when it last asked*, and a
+     * rotation is not a reason to ask GitHub again.
+     */
+    val updates: UpdateFlow by lazy { UpdateFlow(updateChecker, updateInstaller) }
 
     /** Version name of the running APK, shown in the masthead. */
     fun installedVersionName(): String = runCatching {

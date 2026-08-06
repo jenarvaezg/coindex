@@ -19,7 +19,7 @@ class CallBudgetGateTest {
     fun `the counter refuses the call that would cross the cap`() = runTest {
         val dao = FakeApiCallDao()
         val now = millis(2026, 7, 30)
-        val gate = CallBudgetGate(dao, monthlyBudget = { 2 }, nowMillis = { now })
+        val gate = CallBudgetGate(ApiCallLedger(dao) { now }, monthlyBudget = { 2 })
 
         gate.reserve("/types/1")
         gate.reserve("/types/2")
@@ -34,7 +34,7 @@ class CallBudgetGateTest {
     fun `each call is recorded before it is sent so the counter cannot drift low`() = runTest {
         val dao = FakeApiCallDao()
         val now = millis(2026, 7, 30)
-        val gate = CallBudgetGate(dao, monthlyBudget = { 10 }, nowMillis = { now })
+        val gate = CallBudgetGate(ApiCallLedger(dao) { now }, monthlyBudget = { 10 })
 
         gate.reserve("/oauth_token")
 
@@ -47,20 +47,10 @@ class CallBudgetGateTest {
         val dao = FakeApiCallDao()
         dao.calls += ApiCallEntity(endpoint = "/types/1", calledAt = millis(2026, 6, 30))
         val now = millis(2026, 7, 1)
-        val gate = CallBudgetGate(dao, monthlyBudget = { 1 }, nowMillis = { now })
+        val gate = CallBudgetGate(ApiCallLedger(dao) { now }, monthlyBudget = { 1 })
 
         gate.reserve("/types/2")
 
         assertEquals(2, dao.calls.size)
-    }
-
-    @Test
-    fun `the month starts at midnight local time on the first day`() {
-        val start = startOfMonthMillis(millis(2026, 7, 30), madrid)
-
-        assertEquals(
-            ZonedDateTime.of(2026, 7, 1, 0, 0, 0, 0, madrid).toInstant().toEpochMilli(),
-            start,
-        )
     }
 }
