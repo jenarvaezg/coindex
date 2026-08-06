@@ -137,15 +137,21 @@ private fun CollectionState.diameterOf(typeId: Int?): Float? =
     typeId?.let { typeMeta[it]?.sizeMillimetres?.toFloat() }
 
 /**
- * The faces this cell prints: the reverse, or the obverse and the reverse (#230).
+ * The faces this cell prints: none (#231), the reverse, or the obverse and the reverse (#230).
  *
  * **How many is the configuration's answer and not the cache's.** A type the cache has never seen —
  * an announced member, an unlisted one — gets its slots empty rather than fewer of them: the cells
  * of a plate have to line up, and one coin printed where its neighbours print a pair reads as a
  * misprint. What an empty slot draws is the renderer's business, and it is what it already drew for
  * a reverse nobody had.
+ *
+ * **An empty list is what makes «sin fotos» the export that cannot come out incomplete.** No face is
+ * no candidate URL, so `notebookPhotographs` has nothing to warm, no page waits for a decode, and the
+ * closing message divides by a denominator of zero photographs — it cannot claim that three of them
+ * failed to load in a notebook that never asked for one.
  */
 private fun CollectionState.facesOf(typeId: Int?, options: NotebookOptions): List<CoinPhoto> {
+    if (!options.photographs) return emptyList()
     val sides = typeId?.let { images[it] } ?: TypeImages()
     return if (options.bothFaces) listOf(sides.obverse, sides.reverse) else listOf(sides.reverse)
 }

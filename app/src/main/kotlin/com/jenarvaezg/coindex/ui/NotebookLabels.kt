@@ -84,6 +84,12 @@ fun notebookStepLabel(step: NotebookExportStep, pages: Int): String = when (step
  * arrived is a hole in a page that is about to be sent to somebody, so it is counted and said out
  * loud, and it never fails the export — eighty-three good pages are not thrown away for one blank
  * cell.
+ *
+ * **With «fotos» off it cannot speak of photographs at all** (#231), and not because it checks: a
+ * notebook of lines asks for none, so both counts are zero and the shortfall between them cannot be
+ * anything but zero either. A message saying «pero 3 fotos no llegaron a cargar» about a notebook
+ * with no photographs in it would be a lie, and the way to make a lie impossible is to leave nothing
+ * that could tell it.
  */
 fun notebookExportMessage(pages: Int, expectedPhotos: Int, loadedPhotos: Int): String {
     val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)

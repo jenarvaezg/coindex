@@ -17,6 +17,7 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
+import com.jenarvaezg.coindex.ui.notebookExportMessage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -67,11 +68,15 @@ class NotebookPagesTest {
     /** Y con «ambas caras», que es lo único que el #230 mueve: la casilla se ensancha. */
     private val doubled = printGeometry(NotebookOptions(bothFaces = true))
 
+    /** Y con las fotos apagadas, que es el #231: la casilla deja de ser una moneda y es una línea. */
+    private val listed = printGeometry(NotebookOptions(photographs = false))
+
     /**
      * One catalog as it would go to paper: every member a cell, nothing owned yet.
      *
      * [faces] is how many sides each cell prints, which is what «ambas caras» decides (#230) — the
-     * two of them are two distinct photographs, so this is also what the warm-up has to fetch.
+     * two of them are two distinct photographs, so this is also what the warm-up has to fetch. Zero
+     * is «sin fotos» (#231): a cell that is a line, and a plate with nothing to warm at all.
      */
     private fun section(catalog: CollectionCatalog, faces: Int = 1) = PrintSection(
         eyebrow = "COINDEX · CATÁLOGO CURADO",
@@ -315,6 +320,120 @@ class NotebookPagesTest {
         assertEquals(one.cellHeightMm, two.cellHeightMm)
         // Y el bloque sigue cabiendo en el papel que se midió contra él.
         assertTrue(two.blockWidthMm <= doubled.gridWidthMm, "dos caras se salen: ${two.blockWidthMm}")
+    }
+
+    /**
+     * What the shelf costs with the photographs off: 113 pages become 74, and 68 of them are floor.
+     *
+     * A cell stops being a coin and becomes a line, so a plate of ounces goes from twelve cells a
+     * page to forty-six and **sixty-four of the sixty-eight plates now fit on one page**. Four spill:
+     * the two Russian plates of 104 members — the personalities and the architectural monuments — over
+     * three pages each, and the Red Book (72) and the Spanish provincial capitals (52) over two.
+     *
+     * **Not the ~19 pages of the ticket, and two separate things account for the difference.**
+     *
+     * The first is the floor, and it is the larger. Those 19 are the members divided by a page of
+     * lines, and that arithmetic ignores the constraint #228 names in its own text: «una sección nunca
+     * comparte página». Sixty-eight plates are sixty-eight pages before a single member is printed,
+     * and lowering that floor is exactly and only what «compartir página» (#232) is for. It is the
+     * same correction #234 had to make — its «73 → 91» was measured with sharing on too.
+     *
+     * The second is ours, and smaller: the line is 7 mm but its **pitch is 10**, because the gutter
+     * that separates two columns is the one that separates two rows. That is 46 members a page where
+     * the ticket's arithmetic assumed about 57. A row gutter of its own would put four more lines in
+     * each column and take this notebook from 74 pages to 71 — three pages, for a field in the
+     * geometry that no other switch needs, so the gutter stays one number.
+     *
+     * So what this switch is worth is measured on the notebook that exists: **39 pages saved, and 6
+     * above the floor left for #232 to take.** What it is not worth is 19: the shipped plates hold
+     * 1 147 members, which is some 25 pages of *content* at 46 a page, and #232 as #228 scopes it is
+     * «dos láminas en un folio» — a floor near 34, not 19. That recount is its ticket's to make.
+     */
+    @Test
+    fun `with no photographs the shelf is a list and the plate is its floor`() {
+        val sections = catalogs.map { section(it, faces = 0) }
+
+        val pages = printPages(sections, listed)
+
+        // Los 1 147 miembros del estante, que son las ~25 páginas de contenido que el suelo esconde.
+        assertEquals(1_147, catalogs.sumOf { it.members.size })
+        assertEquals(74, pages.size)
+        assertEquals(
+            mapOf(1 to 64, 2 to 2, 3 to 2),
+            pages.groupBy { it.section.title }
+                .map { (_, ofSection) -> ofSection.size }
+                .groupingBy { it }
+                .eachCount()
+                .toSortedMap(),
+        )
+        // El suelo es una página por lámina, y sólo seis páginas del cuaderno están por encima de
+        // él: lo que queda por ahorrar aquí ya no es de este interruptor.
+        assertEquals(catalogs.size, pages.groupBy { it.section.title }.size)
+        assertEquals(6, pages.size - catalogs.size)
+
+        // La onza australiana, casilla a casilla: de doce por página a cuarenta y seis, y la rejilla
+        // ya no la decide el diámetro — la lámina de medios venezolanos tiene exactamente la misma.
+        val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
+        val lines = section(kookaburra, faces = 0).grid(listed)
+        assertEquals(12, section(kookaburra).grid(paper).cellsPerPage)
+        assertEquals(46, lines.cellsPerPage)
+        assertEquals(2 to 23, lines.columns to lines.rows)
+        val medios = section(catalogs.first { it.id == "venezuela-medios" }, faces = 0).grid(listed)
+        assertEquals(lines.columns to lines.rows, medios.columns to medios.rows)
+        assertEquals(lines.cellWidthMm, medios.cellWidthMm)
+        assertEquals(lines.cellHeightMm, medios.cellHeightMm)
+    }
+
+    /**
+     * The half of «sin fotos» that is worth more than the paper: there is nothing left to warm.
+     *
+     * No face is no candidate URL, so `notebookPhotographs` is empty, no page waits on a decode and
+     * the closing message divides by zero photographs — it **cannot** say that three of them failed
+     * to arrive, because none were asked for. That makes this the one export of the three that cannot
+     * come out incomplete, and it is not a check anywhere: it falls out of the cells being empty.
+     */
+    @Test
+    fun `a notebook with no photographs asks for none and cannot come out incomplete`() {
+        val curation = Curation(catalogs)
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = listOf(CollectedItem(id = 1, quantity = 1, typeId = 1885, issueId = 8508)),
+                typeMeta = typeMeta,
+            ),
+        )
+        val photographed = CollectionState(
+            assembled,
+            images = mapOf(
+                1885 to TypeImages(
+                    obverse = CoinPhoto(thumbnail = "anverso-180.jpg"),
+                    reverse = CoinPhoto(thumbnail = "reverso-180.jpg"),
+                ),
+            ),
+        )
+
+        // Ni con «ambas caras» marcada de antes: sin fotos no hay cara que negociar, y la hoja la
+        // pone en gris precisamente porque aquí ya no significa nada.
+        listOf(
+            NotebookOptions(photographs = false),
+            NotebookOptions(photographs = false, bothFaces = true),
+        ).forEach { options ->
+            val cells = notebookSections(photographed, assembled.index, curation, options)
+                .single()
+                .cells
+
+            assertTrue(cells.isNotEmpty(), "una lista sin casillas no es una lista")
+            assertEquals(emptyList(), cells.flatMap { it.faces }, "una línea ha pedido una foto")
+        }
+
+        val pages = printPages(catalogs.map { section(it, faces = 0) }, listed)
+        assertEquals(emptyList(), notebookPhotographs(pages))
+        assertEquals(0, pages.sumOf { it.photographs })
+        // Y el mensaje de cierre no puede hablar de fotos que no llegaron, porque no hay ninguna
+        // entre la que contarlas: el denominador es cero y la resta también.
+        assertEquals(
+            "Cuaderno completo exportado · 74 páginas",
+            notebookExportMessage(pages.size, expectedPhotos = 0, loadedPhotos = 0),
+        )
     }
 
     /**
