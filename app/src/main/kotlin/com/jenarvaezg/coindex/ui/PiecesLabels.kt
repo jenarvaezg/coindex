@@ -3,10 +3,10 @@ package com.jenarvaezg.coindex.ui
 /**
  * The one sentence a collection of pieces counts itself with.
  *
- * It normally counts **piezas**, because a sheet of pieces only ever draws what is owned — which is
- * exactly why a collection without an issue list can have one at all (ADR 0021 §9). But a collection
- * whose catalog it owns no issued member of yet arrives here carrying the card's ratio (§7), and it
- * has to keep saying «0 de 12 · te faltan 12».
+ * It normally counts what is in the house — «4 monedas · 3 tipos» — because a sheet of pieces only
+ * ever draws what is owned, which is exactly why a collection without an issue list can have one at
+ * all (ADR 0021 §9). The exception is the collection whose catalog it owns no issued member of yet:
+ * it arrives carrying the card's ratio (§7) and has to keep saying «0 de 12 · te faltan 12».
  *
  * It is read off the subject and never spelled out again, because the four surfaces that count this
  * collection — the screen, the shared PNG, the notebook page and the message about the file that has
@@ -23,8 +23,8 @@ val PiecesSubject.countSentence: String
  * `PiecesSheetHeading` was private and unreachable, and that is how the PNG came to count
  * differently from the screen that shared it without a single test going red.
  *
- * What nothing can name goes unsaid instead of printed blank: a box has no country of its own and
- * spans whatever physical variants the collector put in it.
+ * What nothing can name goes unsaid instead of printed blank: the country is silent when the pieces
+ * disagree about it, and a box states no variant at all — it spans whatever the collector put in it.
  */
 fun piecesSheetFacts(subject: PiecesSubject): List<Pair<String, String>> = buildList {
     subject.issuer?.let { issuer -> add("País" to issuer) }

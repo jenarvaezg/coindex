@@ -2,12 +2,17 @@ package com.jenarvaezg.coindex.ui.print
 
 import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionSnapshot
+import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.domain.DerivedCollection
+import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -83,6 +88,51 @@ class NotebookSectionsTest {
         assertEquals(
             listOf("Estrella 66 · Numista 1885", "1994 · Numista 999999 · ×2"),
             footnotesOf(listOf(stars.first(), unclaimed)),
+        )
+    }
+
+    /**
+     * The page counts what the screen and the shared sheet count.
+     *
+     * A card whose catalog the collector owns no issued member of yet arrives carrying the ratio
+     * (ADR 0021 §7) — the one collection with an issue list that lands on pieces instead of a plate
+     * — and the notebook has to print «0 de 12 · te faltan 12» like the other two. It is the third
+     * of the three surfaces #226 measured, and the only other one a JVM test can read.
+     */
+    @Test
+    fun `a page of pieces counts the ratio the card arrived with`() {
+        val francesas = DerivedCollection(
+            family = "Monnaie de Paris",
+            weightMillioz = 1_000,
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+            distinctTypes = 3,
+            quantity = 4,
+        )
+        val pieces = listOf(
+            CollectedItem(id = 1, quantity = 2, typeId = 100, issueYear = 1996),
+            CollectedItem(id = 2, quantity = 1, typeId = 101, issueYear = 1997),
+            CollectedItem(id = 3, quantity = 1, typeId = 102, issueYear = 1998),
+        )
+        val card = IndexCard.Derived(
+            name = "Las francesas",
+            coverage = CoverageRatio(0, 12),
+            issuer = "Francia",
+            collection = francesas,
+            plateCatalogId = null,
+        )
+        val state = CollectionState(AssembledCollection(itemsByKey = mapOf(card.key to pieces)))
+
+        val section = notebookSections(
+            state,
+            listOf(card),
+            Curation(catalogs),
+            NotebookOptions(),
+        ).single()
+
+        assertEquals(
+            listOf("País" to "Francia", "Piezas" to "0 de 12 · te faltan 12"),
+            section.facts,
         )
     }
 }
