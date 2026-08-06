@@ -450,6 +450,13 @@ class CuratedCatalogsTest {
      * and the market names them apart (#57). Both type pages mix proof and burnished, so every
      * slot is issue-qualified; Star Privy 2024 and Eagle Privy 2025 stay out as thematic
      * privies. Ids from `/types/1493/issues` and `/types/298883/issues`, two calls (#91).
+     *
+     * La casilla de 2023 acepta además la proof 760576 (#216). Es la moneda que hay en la
+     * colección del padre, confirmada por él en la mano, y el criterio del curador es que una
+     * proof rellena una casilla bullion mientras que una bullion no rellenaría una proof. Aquí
+     * no duplica nada porque el eagle no tiene lámina proof hermana; donde sí la hay —Lunar
+     * Series III, Nautical de Ruanda— una sola moneda marcaría dos casillas, que es lo que el
+     * ADR 0019 impide, así que la excepción es de esta casilla y no una regla del dominio.
      */
     @Test
     fun `the american silver eagle is forty-two issue-qualified bullion years over two types`() {
@@ -476,10 +483,12 @@ class CuratedCatalogsTest {
         assertEquals("Type 1", type1.single { it.year == 2021 }.label)
         assertEquals("Type 2", type2.single { it.year == 2021 }.label)
         assertTrue(eagle.members.all { it.numistaIssueIds.isNotEmpty() })
-        // Standard bullion rows the father owns; the 2023 Proof must not be listed.
+        // Standard bullion rows the father owns, and the 2023 Proof he also owns.
         assertTrue(64_283 in type1.single { it.year == 1987 }.numistaIssueIds)
         assertTrue(1_059_386 in type2.single { it.year == 2026 }.numistaIssueIds)
-        assertTrue(eagle.members.none { 760_576 in it.numistaIssueIds })
+        assertTrue(760_576 in type2.single { it.year == 2023 }.numistaIssueIds)
+        // La otra fila «Proof» de 2023 no está: nadie la tiene y un id no se escribe por simetría.
+        assertTrue(eagle.members.none { 760_578 in it.numistaIssueIds })
         assertTrue(eagle.members.none { 897_759 in it.numistaIssueIds })
         assertTrue(eagle.members.none { 948_319 in it.numistaIssueIds })
 
@@ -497,8 +506,9 @@ class CuratedCatalogsTest {
             issueYear = 2026,
             issueId = 1_059_386,
         )
-        assertTrue(eagle.members.none { eagle.memberMatches(it, proof2023) })
+        assertTrue(eagle.memberMatches(type2.single { it.year == 2023 }, proof2023))
         assertTrue(eagle.memberMatches(type2.single { it.year == 2026 }, bullion2026))
+        assertEquals(1, eagle.members.count { it.variantNote != null })
     }
 
     /**
@@ -1594,6 +1604,14 @@ class CuratedCatalogsTest {
     /**
      * Lunar Series II cierra el ciclo 2008-2019; cada tipo mezcla la bullion estándar con
      * colour, gilded, proof, typesets y privys, así que la casilla se identifica por emisión.
+     *
+     * Once casillas abren con una sola emisión y la de 2012 con dos (#216). La coleccionada de
+     * ese año es la «BU - Dark Orange» de tirada 2.500 y no la BU lisa, y ninguna lámina de
+     * coloreadas la podría acoger: la edición coloreada anual de Perth existe en 2008-2011,
+     * 2013 y 2017-2018 y no en 2014-2016 ni 2019, y en 2012 Numista archiva quince colores
+     * distintos bajo N#28574 sin que ninguno sea la del año —por tirada sería la roja de
+     * 64.001—. Dejarla fuera habría marcado 2012 como pendiente con el dragón en el cajón, así
+     * que la casilla se amplía y el ADR 0016 obliga a decirlo en el `variant_note`.
      */
     @Test
     fun `the lunar ii bullion catalog is the issue-qualified standard annual run`() {
@@ -1609,18 +1627,28 @@ class CuratedCatalogsTest {
         assertEquals((2008..2019).toList(), lunar.members.map { it.year })
         assertEquals(
             listOf(
-                Triple(2008, 28_575, 145_935), Triple(2009, 17_378, 136_304),
-                Triple(2010, 17_383, 87_565), Triple(2011, 17_388, 87_570),
-                Triple(2012, 28_574, 145_934), Triple(2013, 37_980, 172_471),
-                Triple(2014, 49_355, 206_294), Triple(2015, 66_615, 309_546),
-                Triple(2016, 80_295, 278_592), Triple(2017, 95_688, 312_257),
-                Triple(2018, 129_091, 374_553), Triple(2019, 150_358, 412_033),
+                Triple(2008, 28_575, listOf(145_935)),
+                Triple(2009, 17_378, listOf(136_304)),
+                Triple(2010, 17_383, listOf(87_565)),
+                Triple(2011, 17_388, listOf(87_570)),
+                Triple(2012, 28_574, listOf(145_934, 1_108_238)),
+                Triple(2013, 37_980, listOf(172_471)),
+                Triple(2014, 49_355, listOf(206_294)),
+                Triple(2015, 66_615, listOf(309_546)),
+                Triple(2016, 80_295, listOf(278_592)),
+                Triple(2017, 95_688, listOf(312_257)),
+                Triple(2018, 129_091, listOf(374_553)),
+                Triple(2019, 150_358, listOf(412_033)),
             ),
             lunar.members.map { member ->
-                Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
+                Triple(member.year, member.numistaTypeId, member.numistaIssueIds.toList())
             },
         )
-        assertTrue(lunar.members.all { it.numistaIssueIds.size == 1 })
+        assertTrue(lunar.members.all { it.numistaIssueIds.isNotEmpty() })
+
+        val dragon = lunar.members.single { it.year == 2012 }
+        assertTrue(dragon.variantNote!!.contains("Dark Orange"), dragon.variantNote!!)
+        assertTrue(lunar.members.count { it.variantNote != null } == 1)
     }
 
     /**
