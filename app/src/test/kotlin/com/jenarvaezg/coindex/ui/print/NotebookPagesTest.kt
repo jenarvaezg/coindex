@@ -129,8 +129,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the seventy shipped catalogs would print as one hundred and fifteen pages`() {
-        assertEquals(115, catalogs.sumOf { section(it).pages(paper) })
+    fun `the seventy-two shipped catalogs would print as one hundred and seventeen pages`() {
+        assertEquals(117, catalogs.sumOf { section(it).pages(paper) })
     }
 
     /**
@@ -147,21 +147,21 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, paper)
 
-        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 48 caben de una, y la más larga son
+        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 50 caben de una, y la más larga son
         // las nueve del Libro Rojo de Rusia. Los 2 € conmemorativos de España entran en la columna
         // de dos páginas: 29 casillas de 25,75 mm, que es la moneda más pequeña con lámina propia
         // después de los reales y los medios de Venezuela. Las dos láminas de la tanda del padre
         // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una, y también las
         // dos venezolanas de plata del #256: 40 mm de diámetro dan una rejilla de cuatro por tres.
         assertEquals(
-            mapOf(1 to 48, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            mapOf(1 to 50, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
                 .eachCount()
                 .toSortedMap(),
         )
-        assertEquals(115, pages.size)
+        assertEquals(117, pages.size)
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.
@@ -204,7 +204,7 @@ class NotebookPagesTest {
      * pinned — because the shelf grew from the sixty plates it was measured on to sixty-six without
      * anyone re-running it, and the histogram had kept sixty rows all along. What the eight pages of
      * the title claim is the *difference*, and that is what still holds, plate after plate: the #256
-     * batch of the same day moves both figures again and leaves the eight where they were.
+     * and #258 batches of the same day move both figures again and leave the eight where they were.
      */
     @Test
     fun `the qr costs eight pages of the shipped catalogs`() {
@@ -212,10 +212,10 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, coded)
 
-        assertEquals(123, pages.size)
+        assertEquals(126, pages.size)
         // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
         assertEquals(
-            mapOf(1 to 44, 2 to 16, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
+            mapOf(1 to 45, 2 to 17, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -283,8 +283,8 @@ class NotebookPagesTest {
      * asks for, and it is arithmetic done before anything is drawn: the height of the cell does not
      * move at all, because the second face is paid for in width or it is not paid for.
      *
-     * The ticket said 184 pages against 104 for sixty plates; these are the sixty-eight that are
-     * shipped now, whose notebook of today is 113 and whose notebook of both faces is 196. Doubling
+     * The ticket said 184 pages against 104 for sixty plates; these are the seventy-two that are
+     * shipped now, whose notebook of today is 117 and whose notebook of both faces is 201. Doubling
      * is not exact —the 45,6 mm Lunar II went from three columns to one, so it more than doubles,
      * and a plate of two coins still fits on one page— so the measure is the measure.
      */
@@ -294,9 +294,9 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, doubled)
 
-        assertEquals(196, pages.size)
+        assertEquals(201, pages.size)
         assertEquals(
-            mapOf(1 to 25, 2 to 20, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
+            mapOf(1 to 28, 2 to 21, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
