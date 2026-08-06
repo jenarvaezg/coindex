@@ -24,8 +24,8 @@ import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
-import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.pieceLine
+import com.jenarvaezg.coindex.ui.piecesSheetFacts
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 private val SHEET_GUTTER = 12.dp
@@ -114,9 +114,7 @@ private fun PiecesSheetHeading(subject: PiecesSubject, layout: SheetLayout) {
         Text(subject.title, style = MaterialTheme.typography.headlineMedium.scaledBy(scale * 1.55f))
         HorizontalDivider(thickness = 2.dp * scale, color = Paper.ink)
         Row(horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER * 2)) {
-            subject.issuer?.let { issuer -> SheetFact("País", issuer, scale) }
-            subject.variant?.let { variant -> SheetFact("Variante", variant, scale) }
-            SheetFact("Piezas", countLabel(subject.distinctTypes, subject.quantity), scale)
+            piecesSheetFacts(subject).forEach { (label, value) -> SheetFact(label, value, scale) }
         }
     }
 }

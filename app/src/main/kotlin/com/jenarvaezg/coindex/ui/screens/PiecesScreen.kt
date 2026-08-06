@@ -37,8 +37,7 @@ import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
-import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.coverageLabel
+import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.pieceTitle
 import com.jenarvaezg.coindex.ui.piecesExportMessage
 import com.jenarvaezg.coindex.ui.piecesFileName
@@ -179,7 +178,9 @@ fun PiecesScreen(
  *
  * The count is the card's own sentence, ratio included where there is one: a collection whose
  * catalog it owns no issued member of yet says «0 de 12 · te faltan 12» on the card, and reading
- * `3 tipos distintos · 4 piezas` one tap later would be the same collection contradicting itself.
+ * «4 monedas · 3 tipos» one tap later would be the same collection contradicting itself. It is
+ * [countSentence] and not the expression spelled out again — spelling it out is how the sheet this
+ * screen exports came to contradict it (#226).
  */
 @Composable
 private fun PiecesHeading(
@@ -197,8 +198,7 @@ private fun PiecesHeading(
             Text(variant, style = MaterialTheme.typography.bodyLarge)
         }
         Text(
-            subject.coverage?.let(::coverageLabel)
-                ?: countLabel(subject.distinctTypes, subject.quantity),
+            subject.countSentence,
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
         )
@@ -334,8 +334,7 @@ private fun PiecesSheetExport(
                 "No se pudo exportar la hoja: ${outcome.exceptionOrNull()?.message}"
             } else {
                 piecesExportMessage(
-                    distinctTypes = subject.distinctTypes,
-                    quantity = subject.quantity,
+                    subject = subject,
                     expectedPhotos = expectedImages,
                     loadedPhotos = loaded.intValue,
                 )
