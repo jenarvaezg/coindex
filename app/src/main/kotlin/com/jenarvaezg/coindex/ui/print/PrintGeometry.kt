@@ -96,6 +96,17 @@ data class PrintGeometry(
 }
 
 /**
+ * The millimetres a configuration declares — the one place a switch becomes geometry.
+ *
+ * Every one of the five is a change to the arithmetic and not to the brush, so this is what the page
+ * count is computed from and what the page is drawn with. Today it returns the notebook of #169 for
+ * all thirty-two combinations, because each switch's line lands with its own ticket: this function
+ * gaining a line is what «un interruptor funciona» will mean.
+ */
+@Suppress("UNUSED_PARAMETER")
+fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry()
+
+/**
  * The rejilla of one plate: fixed by its largest coin, never by a constant of the notebook.
  *
  * The screen's sheet squares its grid off and shrinks the density as the catalog grows

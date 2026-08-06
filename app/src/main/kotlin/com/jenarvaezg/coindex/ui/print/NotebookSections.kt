@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.print
 
-import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.resolvePlate
@@ -34,10 +33,13 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
  * card in, one section out — nothing is dropped, because what stays out of the notebook is a
  * question for the index and not for the printer (#147).
  *
- * **[options] reaches the cells and not only the millimetres** (#228): what a cell *is* depends on
- * the configuration too — a notebook printed without photographs carries none, so no page of it ever
- * waits for a picture. How tall that cell then gets is arithmetic, and lives with the geometry.
+ * **[options] is threaded through and not yet read** (#228). It belongs here because what a cell
+ * *is* depends on the configuration and not only on the millimetres: printing both faces gives a cell
+ * an obverse (#230), and printing no photographs gives it neither (#231). Laying the parameter now is
+ * what #228 is for — a door that reaches the cells, so the ticket that opens it does not have to
+ * re-thread the ViewModel and the index screen to get here.
  */
+@Suppress("UNUSED_PARAMETER")
 fun notebookSections(
     state: CollectionState,
     cards: List<IndexCard>,
@@ -53,6 +55,7 @@ fun notebookSections(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun plateSection(
     state: CollectionState,
     curation: Curation,
@@ -83,13 +86,14 @@ private fun plateSection(
                 // the coin that goes in it. Only a member no Numista type backs at all — announced,
                 // unlisted — has nothing to be measured, and borrows the plate's.
                 diameterMm = state.diameterOf(member.numistaTypeId),
-                reverse = options.reverseOf(member.numistaTypeId, state),
+                reverse = member.numistaTypeId?.let { state.images[it]?.reverse },
                 filled = owned,
             )
         },
     )
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun piecesSection(
     state: CollectionState,
     card: IndexCard,
@@ -118,7 +122,7 @@ private fun piecesSection(
                 state = null,
                 footnote = pieceLine(piece),
                 diameterMm = state.diameterOf(piece.typeId),
-                reverse = options.reverseOf(piece.typeId, state),
+                reverse = state.images[piece.typeId]?.reverse,
                 // Never a hole: a collection with no issue list has nothing to be missing from,
                 // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
                 filled = true,
@@ -130,13 +134,3 @@ private fun piecesSection(
 /** Numista's `size` for one type, in millimetres, or null where nobody recorded one. */
 private fun CollectionState.diameterOf(typeId: Int?): Float? =
     typeId?.let { typeMeta[it]?.sizeMillimetres?.toFloat() }
-
-/**
- * The reverse this cell prints, or nothing at all where the notebook prints no coins.
- *
- * A cell with no photograph asks for none, which is what makes the checklist of #231 export in
- * seconds and with no hole possible: the export waits on the pictures its pages carry, so removing
- * them here is what removes the wait.
- */
-private fun NotebookOptions.reverseOf(typeId: Int?, state: CollectionState): CoinPhoto? =
-    typeId?.takeIf { photographs }?.let { state.images[it]?.reverse }

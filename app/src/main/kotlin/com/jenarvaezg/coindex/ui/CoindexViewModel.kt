@@ -17,13 +17,13 @@ import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
 import com.jenarvaezg.coindex.domain.IndexCard
-import com.jenarvaezg.coindex.ui.print.PrintPage
-import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
-import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
+import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
+import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
+import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin

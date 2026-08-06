@@ -140,10 +140,11 @@ fun IndexScreen(
     // reshuffle the pages under the printer.
     var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
-    // The cards the export sheet is open over, frozen at the tap for the same reason `printing` is:
-    // the count under the switches has to be about the notebook the collector is configuring, and a
-    // sync landing while they read it must not change the number they are deciding on.
-    var configuring by remember { mutableStateOf<List<IndexCard>?>(null) }
+    // Whether the export sheet is open, and **not** the cards it was opened over: the shelf and the
+    // search box stay live above it, so a sheet holding the list from the moment of the tap would go
+    // on claiming «lo que hay en el índice ahora mismo» about a narrowing the collector had already
+    // changed — and «Exportar» would print it. What freezes is the export, at the second tap.
+    var configuring by remember { mutableStateOf(false) }
     // A draft, discarded on «Cancelar»: playing with the switches and backing out has not changed
     // how this collector prints. Reset from the stored configuration each time the sheet opens.
     var draft by remember { mutableStateOf(notebookOptions) }
@@ -159,12 +160,12 @@ fun IndexScreen(
     // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
     // the notebook needs no mechanism of its own to choose pages.
     val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
-    // What the export sheet is showing the cost of, recounted when a switch moves and on nothing
-    // else. **Outside the grid**, like the export itself and for the same reason: a lazy item is
-    // disposed the moment it scrolls off, and resolving sixty plates again every time the sheet
-    // scrolls back into view is not what «recontado a cada toque» means.
-    val preview = remember(configuring, draft) {
-        configuring?.let { cards -> ExportPreview(cards.size, notebook(cards, draft)) }
+    // What the export sheet is showing the cost of: recounted when a switch moves, and when the
+    // narrowing under it moves. **Outside the grid**, like the export itself and for the same
+    // reason: a lazy item is disposed the moment it scrolls off, and resolving sixty plates again
+    // every time the sheet scrolls back into view is not what «recontado a cada toque» means.
+    val preview = remember(configuring, shown, draft) {
+        if (configuring) ExportPreview(shown.size, notebook(shown, draft)) else null
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
@@ -189,15 +190,17 @@ fun IndexScreen(
                     // for the index and not for the printer (#147).
                     exportableCards = shown.size,
                     exporting = printing != null,
-                    // Open the sheet once: a second tap would reset the switches under the thumb
-                    // that was moving them.
-                    busy = printing != null || configuring != null,
                     onSync = onSync,
                     // The button no longer starts the printer: it opens the sheet that says what
                     // pressing it would cost, on the configuration the collector last used (#228).
+                    //
+                    // It stays enabled while the sheet is open, and a second tap is a no-op rather
+                    // than a reset: the sheet is a card in the list and can be scrolled past, so a
+                    // greyed button would be the only way back to it — and one that resets the
+                    // switches under the thumb that was moving them is worse than none.
                     onExport = {
-                        draft = notebookOptions
-                        configuring = shown
+                        if (!configuring) draft = notebookOptions
+                        configuring = true
                     },
                 )
             }
@@ -240,9 +243,9 @@ fun IndexScreen(
                                 step = NotebookExportStep.Drawing(0, pages.first().section.title)
                                 printing = pages
                             }
-                            configuring = null
+                            configuring = false
                         },
-                        onDismiss = { configuring = null },
+                        onDismiss = { configuring = false },
                     )
                 }
             }
@@ -466,7 +469,6 @@ private fun IndexHeading(
     spread: Boolean,
     exportableCards: Int,
     exporting: Boolean,
-    busy: Boolean,
     onSync: () -> Unit,
     onExport: () -> Unit,
 ) {
@@ -500,7 +502,7 @@ private fun IndexHeading(
                         notebookExportLabel(exportableCards)
                     },
                     onClick = onExport,
-                    enabled = !busy && exportableCards > 0,
+                    enabled = !exporting && exportableCards > 0,
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {

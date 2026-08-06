@@ -280,4 +280,3 @@ class NotebookPagesTest {
         assertEquals(1, printPages(sections, paper).size)
     }
 }
-

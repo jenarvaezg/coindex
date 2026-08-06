@@ -1,5 +1,10 @@
 package com.jenarvaezg.coindex.ui.print
 
+import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.OwnGrouping
+import com.jenarvaezg.coindex.domain.OwnGroupingView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -41,6 +46,33 @@ class NotebookOptionsTest {
         assertEquals(32, everyCombination.size, "faltan combinaciones de cinco interruptores")
         val moved = everyCombination.filter { printGeometry(it) != PrintGeometry() }
         assertEquals(emptyList(), moved, "un interruptor sin ticket ha movido la geometría")
+    }
+
+    /**
+     * The same again for the cells, which is the half a geometry check cannot see.
+     *
+     * The configuration reaches `notebookSections` too, because what a cell *is* depends on it —
+     * both faces gives it an obverse (#230), no photographs gives it neither (#231). Until those
+     * land, no combination may change a cell either: a notebook of 104 pages of empty circles is
+     * exactly the half-landed switch #228 refuses to ship.
+     */
+    @Test
+    fun `no combination of the five changes a cell yet`() {
+        val card = IndexCard.Box(
+            name = "Bandeja del abuelo",
+            issuer = null,
+            box = OwnGroupingView(
+                OwnGrouping(id = 1, name = "Bandeja del abuelo", typeIds = emptyList()),
+                emptyList(),
+            ),
+        )
+        val today = notebookSections(CollectionState(), listOf(card), Curation(emptyList()), NotebookOptions())
+
+        val moved = allCombinations().filter { options ->
+            notebookSections(CollectionState(), listOf(card), Curation(emptyList()), options) != today
+        }
+
+        assertEquals(emptyList(), moved, "un interruptor sin ticket ha cambiado una casilla")
     }
 
     @Test

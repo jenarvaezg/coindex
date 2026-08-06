@@ -44,8 +44,8 @@ import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
 import com.jenarvaezg.coindex.ui.print.PrintCell
-import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.PrintGeometry
+import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The density that makes one dp a millimetre of paper: the layout is written in millimetres. */
