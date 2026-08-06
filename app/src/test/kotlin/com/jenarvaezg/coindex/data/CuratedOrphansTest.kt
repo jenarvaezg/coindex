@@ -28,7 +28,7 @@ class CuratedOrphansTest {
     }
 
     /**
-     * The five verdicts signed by #146 §3, and only those.
+     * The five verdicts signed by #146 §3, plus the silver 5 Deutsche Mark of #216.
      *
      * Pinned one by one on purpose: adding or dropping a verdict is a curation decision, so it
      * costs an edit here. Two cases the census (#120) filed as solitude stayed out after being
@@ -36,11 +36,16 @@ class CuratedOrphansTest {
      * programme and the Haitian gourdes (N#19085, N#19328) were sold in a four-coin case — and
      * the two unpublished medals (N#578835, N#581856) wait for their referee, because an id a
      * referee may still delete is never versioned.
+     *
+     * N#1933 is the first verdict where the measurement argued *for* a plate and the collector
+     * closed the door anyway: 19 struck years over four mints, so 19 slots by year or 73 by year
+     * and mint were both writable, and «no voy a seguir eso» outranks either. The criterion is
+     * the same one that filed the Kennedy Half Dollar — bulk circulation silver nobody chases.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
-            listOf(6_918, 131_809, 132_242, 291_255, 470_766),
+            listOf(1_933, 6_918, 131_809, 132_242, 291_255, 470_766),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )
         assertTrue(
