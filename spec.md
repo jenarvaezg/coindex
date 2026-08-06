@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 66 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 70 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -223,8 +223,8 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 **Lo versionado**, medido sobre `data/`:
 
-- **66 catálogos** con 1.142 miembros: 32 abiertos y 34 cerrados. Por versión de esquema, 39
-  simples, 24 date runs, 2 conjuntos y 1 issue run.
+- **70 catálogos** con 1.156 miembros: 32 abiertos y 38 cerrados. Por versión de esquema, 41
+  simples, 25 date runs, 3 conjuntos y 1 issue run.
 - **3 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint, el dólar de plata clásico de EE. UU. y las alemanas de plata de ley de 18 g. La
   tercera es la primera que se cura sobre una secuencia real y enumerada —94 motivos encargados
@@ -234,20 +234,28 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
   ([#154](https://github.com/jenarvaezg/coindex/issues/154)).
 - **2 programas conmemorativos** (ADR 0022), que no son colecciones y no dan tarjeta: las series
   portuguesas de 1977 y de 1983, tres denominaciones cada una. El padre lee «1 de 3» en las dos.
-- **829 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **894 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
-- **16 veredictos en `data/orphans.json`**. Los cinco primeros son de
+- **29 veredictos en `data/orphans.json`**. Los cinco primeros son de
   [#146](https://github.com/jenarvaezg/coindex/issues/146) —el Kennedy Half Dollar, las dos
   romanas, la medalla alemana de 2002 y el Pillar Dollar de 2025—; el repaso del
   [#216](https://github.com/jenarvaezg/coindex/issues/216) añadió las de circulación de plata que
   el coleccionista no persigue (5 Deutsche Mark, 2 Reichsmark) y dos modernas de un solo año (el
   Orwell, que muere de volumen, y el Dune, de calendario); el
-  [#247](https://github.com/jenarvaezg/coindex/issues/247) firmó las **cinco** conmemorativas de
-  plata venezolanas por **ausencia de frontera** y no por gusto, que es el único bloque así; y el
   [#242](https://github.com/jenarvaezg/coindex/issues/242) las dos mexicanas del padre —el peso de
   plata de 1957-1967 y los 8 reales de Carlos IV—, escribibles las dos como date run y ninguna
-  perseguida. El fichero existe desde
+  perseguida; el [#255](https://github.com/jenarvaezg/coindex/issues/255) firmó de una sentada
+  **dieciséis**, todas respuesta del padre a las cinco preguntas del #216 y todas con sus palabras
+  dentro del motivo; y quedan **dos** venezolanas de las cinco que firmó el
+  [#247](https://github.com/jenarvaezg/coindex/issues/247), porque el
+  [#256](https://github.com/jenarvaezg/coindex/issues/256) tumbó su medición: el Catálogo
+  Numismático de Venezuela **sí** rotula la frontera conmemorativa —diseño a diseño y con un campo
+  «Motivo conmemorativo» en cada pieza—, de modo que los tres 100 bolívares salieron del registro a
+  una lámina de cuatro. Las dos que se quedan lo hacen por otra razón, y medida: el 10 bolívares de
+  1973 es el único de plata de su denominación —el otro conmemorativo, el de 1930, es de oro— y el
+  75 bolívares de 1980 es el único diseño que su denominación tuvo jamás. Una casilla sola no es
+  una lámina. El fichero existe desde
   [#133](https://github.com/jenarvaezg/coindex/issues/133) y es registro editorial: no alimenta
   colecciones ni la pantalla, así que firmar un veredicto **no baja** el número de «Sin
   clasificar» que ve el coleccionista.

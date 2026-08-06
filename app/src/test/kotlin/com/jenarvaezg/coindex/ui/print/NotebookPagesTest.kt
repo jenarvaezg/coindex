@@ -134,8 +134,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the sixty-eight shipped catalogs would print as one hundred and thirteen pages`() {
-        assertEquals(113, catalogs.sumOf { section(it).pages(paper) })
+    fun `the seventy shipped catalogs would print as one hundred and fifteen pages`() {
+        assertEquals(115, catalogs.sumOf { section(it).pages(paper) })
     }
 
     /**
@@ -152,20 +152,21 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, paper)
 
-        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 46 caben de una, y la más larga son
+        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 48 caben de una, y la más larga son
         // las nueve del Libro Rojo de Rusia. Los 2 € conmemorativos de España entran en la columna
         // de dos páginas: 29 casillas de 25,75 mm, que es la moneda más pequeña con lámina propia
         // después de los reales y los medios de Venezuela. Las dos láminas de la tanda del padre
-        // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una.
+        // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una, y también las
+        // dos venezolanas de plata del #256: 40 mm de diámetro dan una rejilla de cuatro por tres.
         assertEquals(
-            mapOf(1 to 46, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            mapOf(1 to 48, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
                 .eachCount()
                 .toSortedMap(),
         )
-        assertEquals(113, pages.size)
+        assertEquals(115, pages.size)
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.
@@ -185,7 +186,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the QR costs in paper, measured on the same sixty plates: 104 pages become 112 (#234).
+     * What the QR costs in paper: eight pages, which is what it cost on the sixty plates of #234
+     * (104 → 112) and what it still costs on the seventy of today (115 → 123).
      *
      * The caption is a constant of the layout, so this is what the switch is: the code is 10 mm and
      * every cell of every plate reserves them, whether or not that cell has a code to draw. Eight
@@ -194,8 +196,8 @@ class NotebookPagesTest {
      *
      * **Eight and not the twenty-one of the first measurement**: the code was 12 mm until a printed
      * calibration folio said it did not need to be. Page count is a step function of the caption —
-     * anything from 7 to 10,1 mm prints these plates in 112 pages — so the 9 mm the phone read on
-     * paper is not the size to ship: 10 mm is the same paper with a tenth more module.
+     * anything from 7 to 10,1 mm printed the sixty plates in 112 pages — so the 9 mm the phone read
+     * on paper is not the size to ship: 10 mm is the same paper with a tenth more module.
      *
      * **Not the 73 → 91 of the ticket**, and on purpose: those are measured «con compartir página
      * puesto», and «compartir página» is #232, which has not landed. What is measured here is this
@@ -206,8 +208,8 @@ class NotebookPagesTest {
      * test was red before the #216 batch of 6 August 2026 touched it — 119 pages against the 112
      * pinned — because the shelf grew from the sixty plates it was measured on to sixty-six without
      * anyone re-running it, and the histogram had kept sixty rows all along. What the eight pages of
-     * the title claim is the *difference*, and that is what still holds: 113 pages with the switch
-     * off, 121 with it on.
+     * the title claim is the *difference*, and that is what still holds, plate after plate: the #256
+     * batch of the same day moves both figures again and leaves the eight where they were.
      */
     @Test
     fun `the qr costs eight pages of the shipped catalogs`() {
@@ -215,10 +217,10 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, coded)
 
-        assertEquals(121, pages.size)
+        assertEquals(123, pages.size)
         // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
         assertEquals(
-            mapOf(1 to 42, 2 to 16, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
+            mapOf(1 to 44, 2 to 16, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -286,8 +288,8 @@ class NotebookPagesTest {
      * asks for, and it is arithmetic done before anything is drawn: the height of the cell does not
      * move at all, because the second face is paid for in width or it is not paid for.
      *
-     * The ticket said 184 pages against 104 for sixty plates; these are the sixty-eight that are
-     * shipped now, whose notebook of today is 113 and whose notebook of both faces is 196. Doubling
+     * The ticket said 184 pages against 104 for sixty plates; these are the seventy that are
+     * shipped now, whose notebook of today is 115 and whose notebook of both faces is 198. Doubling
      * is not exact —the 45,6 mm Lunar II went from three columns to one, so it more than doubles,
      * and a plate of two coins still fits on one page— so the measure is the measure.
      */
@@ -297,9 +299,9 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, doubled)
 
-        assertEquals(196, pages.size)
+        assertEquals(198, pages.size)
         assertEquals(
-            mapOf(1 to 25, 2 to 20, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
+            mapOf(1 to 27, 2 to 20, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -323,31 +325,31 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the shelf costs with the photographs off: 113 pages become 74, and 68 of them are floor.
+     * What the shelf costs with the photographs off: 115 pages become 76, and 70 of them are floor.
      *
      * A cell stops being a coin and becomes a line, so a plate of ounces goes from twelve cells a
-     * page to forty-six and **sixty-four of the sixty-eight plates now fit on one page**. Four spill:
-     * the two Russian plates of 104 members — the personalities and the architectural monuments — over
+     * page to forty-six and **sixty-six of the seventy plates now fit on one page**. Four spill: the
+     * two Russian plates of 104 members — the personalities and the architectural monuments — over
      * three pages each, and the Red Book (72) and the Spanish provincial capitals (52) over two.
      *
      * **Not the ~19 pages of the ticket, and two separate things account for the difference.**
      *
      * The first is the floor, and it is the larger. Those 19 are the members divided by a page of
      * lines, and that arithmetic ignores the constraint #228 names in its own text: «una sección nunca
-     * comparte página». Sixty-eight plates are sixty-eight pages before a single member is printed,
-     * and lowering that floor is exactly and only what «compartir página» (#232) is for. It is the
-     * same correction #234 had to make — its «73 → 91» was measured with sharing on too.
+     * comparte página». Seventy plates are seventy pages before a single member is printed, and
+     * lowering that floor is exactly and only what «compartir página» (#232) is for. It is the same
+     * correction #234 had to make — its «73 → 91» was measured with sharing on too.
      *
      * The second is ours, and smaller: the line is 7 mm but its **pitch is 10**, because the gutter
      * that separates two columns is the one that separates two rows. That is 46 members a page where
      * the ticket's arithmetic assumed about 57. A row gutter of its own would put four more lines in
-     * each column and take this notebook from 74 pages to 71 — three pages, for a field in the
+     * each column and take this notebook from 76 pages to 73 — three pages, for a field in the
      * geometry that no other switch needs, so the gutter stays one number.
      *
      * So what this switch is worth is measured on the notebook that exists: **39 pages saved, and 6
      * above the floor left for #232 to take.** What it is not worth is 19: the shipped plates hold
-     * 1 147 members, which is some 25 pages of *content* at 46 a page, and #232 as #228 scopes it is
-     * «dos láminas en un folio» — a floor near 34, not 19. That recount is its ticket's to make.
+     * 1 156 members, which is some 25 pages of *content* at 46 a page, and #232 as #228 scopes it is
+     * «dos láminas en un folio» — a floor near 35, not 19. That recount is its ticket's to make.
      */
     @Test
     fun `with no photographs the shelf is a list and the plate is its floor`() {
@@ -355,11 +357,11 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, listed)
 
-        // Los 1 147 miembros del estante, que son las ~25 páginas de contenido que el suelo esconde.
-        assertEquals(1_147, catalogs.sumOf { it.members.size })
-        assertEquals(74, pages.size)
+        // Los 1 156 miembros del estante, que son las ~25 páginas de contenido que el suelo esconde.
+        assertEquals(1_156, catalogs.sumOf { it.members.size })
+        assertEquals(76, pages.size)
         assertEquals(
-            mapOf(1 to 64, 2 to 2, 3 to 2),
+            mapOf(1 to 66, 2 to 2, 3 to 2),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -431,7 +433,7 @@ class NotebookPagesTest {
         // Y el mensaje de cierre no puede hablar de fotos que no llegaron, porque no hay ninguna
         // entre la que contarlas: el denominador es cero y la resta también.
         assertEquals(
-            "Cuaderno completo exportado · 74 páginas",
+            "Cuaderno completo exportado · 76 páginas",
             notebookExportMessage(pages.size, expectedPhotos = 0, loadedPhotos = 0),
         )
     }

@@ -61,14 +61,6 @@ class CuratedOrphansTest {
      * Jose), and the shape had already lost its only alternative: an agrupación declares no weight,
      * so by ADR 0013 as amended it cannot hold six Mexican pieces of five different weights.
      *
-     * The five Venezuelan silver commemoratives (N#14538, N#18940, N#19880, N#27573, N#34721) are
-     * the only block signed for the **absence of a boundary** rather than for the collector's
-     * taste (#247). Three sources were read and none declares a series — the catalogue the ficha
-     * itself cites has no commemorative section, the issuer's page is its museum, and the count of
-     * «21 silver coins 1973-2013» is retrospective — and no source could have fixed it: five
-     * commemorations over thirteen years are no date run, a set wants types issued together, and a
-     * category is not a collection. Their five weights would have printed five cards anyway.
-     *
      * The sixteen of 6 August 2026 are the largest block ever signed at once, and all sixteen are
      * the **father's answer** to the five questions of #216 — not a measurement of ours. Four shapes
      * were on the table and he closed each one in his own words: the Mexican Olympic 25 pesos of 68
@@ -81,15 +73,24 @@ class CuratedOrphansTest {
      * Maria Theresa thaler, which he reads as part of a «historia del real» theme with the 8 reales,
      * and the 25 ringgit of Malaysia, whose own ficha says it shipped in a two-coin set with the 15
      * ringgit — both are open questions and an open question is never signed.
+     *
+     * **Two** Venezuelan silver commemoratives are left of the five #247 signed, and the block is
+     * the one where the measurement itself was wrong (#256). The Catálogo Numismático de Venezuela
+     * does draw the commemorative boundary — it labels the design and gives every piece a «Motivo
+     * conmemorativo» field — so the three 100 bolívares (N#19880, N#27573, N#34721) came out of
+     * here and became a plate of four with the 1983 the first pass had missed. What is left is not
+     * an absence of boundary but a denomination with one silver slot in it: the 10 bolívares
+     * (N#14538) has two commemorative designs and the other, 1930, is gold, and the 75 bolívares
+     * (N#18940) is the only design its denomination ever had. One row is not a plate, and the
+     * weight was never the argument.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
             listOf(
                 1_933, 1_952, 3_416, 3_550, 3_855, 6_918, 10_613, 11_440, 12_454, 12_994, 14_018,
-                14_538, 15_357, 18_852, 18_940, 19_880, 26_190, 27_573, 34_721, 38_130, 44_085,
-                59_404, 90_456, 98_259, 131_809, 132_242, 277_960, 291_255, 387_614, 451_057,
-                470_766, 571_460,
+                14_538, 15_357, 18_852, 18_940, 26_190, 38_130, 44_085, 59_404, 90_456, 98_259,
+                131_809, 132_242, 277_960, 291_255, 387_614, 451_057, 470_766, 571_460,
             ),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )
