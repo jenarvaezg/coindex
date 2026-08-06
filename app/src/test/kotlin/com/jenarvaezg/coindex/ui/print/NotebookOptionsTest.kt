@@ -58,7 +58,7 @@ class NotebookOptionsTest {
      *
      * The configuration reaches `notebookSections` too, because what a cell *is* depends on it —
      * both faces gives it an obverse (#230), no photographs will give it neither (#231). Until that
-     * one lands, none of the three left may change a cell: a notebook of 111 pages of empty circles
+     * one lands, none of the three left may change a cell: a notebook of 113 pages of empty circles
      * is exactly the half-landed switch #228 refuses to ship. «QR de Numista» and «ambas caras» are
      * left out because changing a cell is precisely what they do, and `NotebookPagesTest` is where
      * that is measured.
