@@ -36,6 +36,15 @@ data class AssembledCollection(
     val evidencedCatalogIds: Set<String> = emptySet(),
     /** The pieces behind each derived collection, for the screen that opens one. */
     val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
+    /**
+     * What to call each piece whose year names nothing, by the **id of the row** (#225).
+     *
+     * By row and not by type, because the rows this answers for are rows of one type: the 100
+     * pesetas of Franco all say 1966 and Numista 1885, and the star is the only thing left that
+     * tells them apart. Resolved here once, so whoever draws a piece is handed the label with it
+     * instead of having to know that some collections have one to ask for.
+     */
+    val emissionLabels: Map<Long, String> = emptyMap(),
     /** The collector's own boxes, which hold only pieces they own (ADR 0021 §11). */
     val ownGroupings: List<OwnGroupingView> = emptyList(),
 ) {
@@ -64,6 +73,9 @@ class Curation(
     /** The one list of the first level, built from the same constant seeds (ADR 0021 §6). */
     private val index: CollectionIndex = CollectionIndex(catalogs, groupings, titles)
 
+    /** The catalogs keyed on Numista issues, which are the only ones that can name an emission. */
+    private val issueRuns: List<CollectionCatalog> = catalogs.filter { it.isIssueRun }
+
     /** The single entry to the domain: one snapshot in, everything the screens read out. */
     fun assemble(snapshot: CollectionSnapshot): AssembledCollection {
         val items = snapshot.items
@@ -81,7 +93,27 @@ class Curation(
                 .mapTo(mutableSetOf()) { it.id },
             itemsByKey = derivation.itemsByKey,
             ownGroupings = boxes,
+            emissionLabels = emissionLabelsOf(items),
         )
+    }
+
+    /**
+     * The emission each row belongs to, where a catalog keyed on issues names one (ADR 0019).
+     *
+     * Only an issue run has anything to add, and a row it does not match keeps its year: this is a
+     * map of the few rows that need one, not of every piece. Two catalogs claiming the same issue
+     * is a curation error `CatalogSeeds.parseAll` refuses to load at all, so the shipped shelf can
+     * never have one to arbitrate between — and arbitrating here, on a shelf assembled by hand in a
+     * test, would be a second rule about which catalog owns an issue.
+     */
+    private fun emissionLabelsOf(items: List<CollectedItem>): Map<Long, String> {
+        if (issueRuns.isEmpty()) return emptyMap()
+        return buildMap {
+            for (item in items) {
+                issueRuns.firstNotNullOfOrNull { it.emissionLabelFor(item) }
+                    ?.let { label -> put(item.id, label) }
+            }
+        }
     }
 
     /**

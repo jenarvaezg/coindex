@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.TypeImages
-import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * One piece of the collection as the collector recorded it: both sides, its title, the year on
- * the row and how many of it there are.
+ * One piece of the collection as the collector recorded it: both sides, its title, what names it —
+ * the year on the row, or the emission where the year names nothing — and how many of it there are.
  *
  * This is a row of the inventory, not a catalog member: it never says «me falta», because a
  * piece that is here is a piece you own. [extra] is for whatever the screen showing it needs to
@@ -32,7 +32,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  */
 @Composable
 fun PieceCard(
-    item: CollectedItem,
+    piece: DrawnPiece,
     title: String,
     images: TypeImages?,
     onOpenSource: (String) -> Unit,
@@ -52,7 +52,7 @@ fun PieceCard(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    pieceLine(item),
+                    pieceLine(piece),
                     style = MaterialTheme.typography.labelLarge,
                     color = Paper.muted,
                     modifier = Modifier.padding(top = 4.dp),
@@ -60,7 +60,7 @@ fun PieceCard(
                 extra()
                 ExternalLink(
                     text = "Ver en Numista",
-                    onClick = { onOpenSource(numistaTypeUrl(item.typeId)) },
+                    onClick = { onOpenSource(numistaTypeUrl(piece.item.typeId)) },
                 )
                 // Under the link out on purpose: seeing the page is how the collector finds out that
                 // Numista already says something else, and this is what brings that here.

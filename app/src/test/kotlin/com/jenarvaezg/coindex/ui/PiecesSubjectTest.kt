@@ -75,7 +75,7 @@ class PiecesSubjectTest {
         assertEquals("1 oz · Bullion", subject.variant)
         assertEquals(2, subject.distinctTypes)
         assertEquals(3, subject.quantity)
-        assertEquals(listOf(1L, 2L), subject.pieces.map { it.id })
+        assertEquals(listOf(1L, 2L), subject.pieces.map { it.item.id })
     }
 
     /**
@@ -93,7 +93,7 @@ class PiecesSubjectTest {
         assertNull(subject.variant)
         assertEquals(2, subject.distinctTypes)
         assertEquals(2, subject.quantity)
-        assertEquals(listOf(8L, 9L), subject.pieces.map { it.id })
+        assertEquals(listOf(8L, 9L), subject.pieces.map { it.item.id })
     }
 
     /**
@@ -140,7 +140,7 @@ class PiecesSubjectTest {
 
         val subject = piecesSubject(state, derivedCard())
 
-        assertEquals(listOf(1L, 2L, 3L, 4L), subject.pieces.map { it.id })
+        assertEquals(listOf(1L, 2L, 3L, 4L), subject.pieces.map { it.item.id })
     }
 
     /**
@@ -155,5 +155,31 @@ class PiecesSubjectTest {
         assertNull(state.piecesCardFor(francesas.key().copy(weightMillioz = 500)))
         assertNull(state.piecesCardForBox(99))
         assertTrue(state.piecesCardFor(francesas.key()) is IndexCard.Derived)
+    }
+
+    /**
+     * A piece arrives with its emission already on it, through either card (#225).
+     *
+     * Which emission a coin is is a fact about the coin and not about the card it was opened from,
+     * so the same row says «Estrella 67» read from its own collection and from a box. The screen
+     * cannot forget to ask for it, because there is nothing to ask: it is a field of the piece.
+     */
+    @Test
+    fun `a piece brings the emission that names it`() {
+        val star = piece(1, 1_885, 1966)
+        val plain = piece(2, 1_885, 1966)
+        val assembled = AssembledCollection(
+            itemsByKey = mapOf(francesas.key() to listOf(star, plain)),
+            emissionLabels = mapOf(1L to "Estrella 67"),
+        )
+        val state = CollectionState(assembled)
+
+        val fromCollection = piecesSubject(state, derivedCard()).pieces
+        val fromBox = piecesSubject(state, boxCard(listOf(star))).pieces
+
+        assertEquals(listOf("Estrella 67", null), fromCollection.map { it.emissionLabel })
+        assertEquals("Estrella 67 · Numista 1885", pieceLine(fromCollection.first()))
+        assertEquals("1966 · Numista 1885", pieceLine(fromCollection.last()))
+        assertEquals(listOf("Estrella 67"), fromBox.map { it.emissionLabel })
     }
 }

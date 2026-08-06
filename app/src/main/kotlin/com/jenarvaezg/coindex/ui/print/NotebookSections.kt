@@ -116,20 +116,21 @@ private fun piecesSection(
         },
         source = "tu colección en Numista",
         cells = subject.pieces.map { piece ->
+            val item = piece.item
             PrintCell(
-                label = state.typeMeta[piece.typeId]?.displayTitle
-                    ?: piece.title
-                    ?: "Pieza ${piece.id}",
+                label = state.typeMeta[item.typeId]?.displayTitle
+                    ?: item.title
+                    ?: "Pieza ${item.id}",
                 state = null,
                 footnote = pieceLine(piece),
-                diameterMm = state.diameterOf(piece.typeId),
+                diameterMm = state.diameterOf(item.typeId),
                 // The reverse, spelled out: a piece printed off a card with no issue list has no
                 // plate to declare a face (#227), so the honest thing is what it printed yesterday.
-                faces = state.facesOf(piece.typeId, options, PrintedSide.Reverse),
+                faces = state.facesOf(item.typeId, options, PrintedSide.Reverse),
                 // Never a hole: a collection with no issue list has nothing to be missing from,
                 // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
                 filled = true,
-                numistaUrl = state.qrUrlOf(piece.typeId, options),
+                numistaUrl = state.qrUrlOf(item.typeId, options),
             )
         },
     )

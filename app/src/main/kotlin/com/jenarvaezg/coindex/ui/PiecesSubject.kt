@@ -7,6 +7,24 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.VariantKey
 
 /**
+ * One piece as it is drawn, with what identifies it already resolved (#225).
+ *
+ * The three drawers of a piece — the card on screen, the exported sheet, the notebook page — are
+ * handed this and not a bare [CollectedItem], because the emission label is the head of the line
+ * and not an embellishment: where the row can only say 1966, the star *is* the identity. It was an
+ * optional last parameter of [pieceLine] until the merge of #183 dropped it from all three drawers
+ * at once with the suite green.
+ *
+ * Which is why [emissionLabel] has **no default**: whoever draws a piece has to say what names it,
+ * even when the answer is «nothing but its year». A shape that can be forgotten gets forgotten.
+ */
+data class DrawnPiece(
+    val item: CollectedItem,
+    /** «Estrella 67», where a catalog keyed on issues names the emission. Null everywhere else. */
+    val emissionLabel: String?,
+)
+
+/**
  * What `PiecesScreen` is looking at: one collection without an issue list, or a box.
  *
  * The merge of ADR 0021 §9 lives in this type. Two screens became one because the cases differ in
@@ -34,7 +52,7 @@ data class PiecesSubject(
     val coverage: CoverageRatio?,
     val distinctTypes: Int,
     val quantity: Int,
-    val pieces: List<CollectedItem>,
+    val pieces: List<DrawnPiece>,
     /** The box this screen maintains, or null when there is nothing to maintain. */
     val boxId: Long?,
 )
@@ -58,7 +76,7 @@ fun piecesSubject(state: CollectionState, card: IndexCard): PiecesSubject = when
         coverage = card.coverage,
         distinctTypes = card.distinctTypes,
         quantity = card.quantity,
-        pieces = state.itemsByKey[card.key].orEmpty().inReadingOrder(),
+        pieces = state.drawnPieces(state.itemsByKey[card.key].orEmpty()),
         boxId = null,
     )
     is IndexCard.Box -> PiecesSubject(
@@ -68,7 +86,7 @@ fun piecesSubject(state: CollectionState, card: IndexCard): PiecesSubject = when
         coverage = card.coverage,
         distinctTypes = card.distinctTypes,
         quantity = card.quantity,
-        pieces = card.box.items.inReadingOrder(),
+        pieces = state.drawnPieces(card.box.items),
         boxId = card.box.id,
     )
 }
@@ -85,12 +103,18 @@ internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
         ?: "Pieza ${item.id}"
 
 /**
- * The order pieces are read in: the year first, because it is what usually tells two rows of the
- * same type apart, and a row without one goes last — undated is the least identified a row gets.
+ * The pieces of one collection, in reading order and each carrying what names it.
+ *
+ * The label comes from the assembly and not from the card the collector arrived through: which
+ * emission a coin is is a fact about the coin, so the same 100 pesetas says «Estrella 67» whether
+ * it is read from its own collection or from a box the collector put it in.
+ *
+ * The order is the year first, because it is what usually tells two rows of the same type apart,
+ * and a row without one goes last — undated is the least identified a row gets.
  */
-private fun List<CollectedItem>.inReadingOrder(): List<CollectedItem> = sortedWith(
-    compareBy({ it.recordedYear ?: Int.MAX_VALUE }, { it.title.orEmpty() }, { it.id }),
-)
+private fun CollectionState.drawnPieces(items: List<CollectedItem>): List<DrawnPiece> = items
+    .sortedWith(compareBy({ it.recordedYear ?: Int.MAX_VALUE }, { it.title.orEmpty() }, { it.id }))
+    .map { item -> DrawnPiece(item, emissionLabels[item.id]) }
 
 /**
  * The card a pieces route points at, or null if it no longer exists.

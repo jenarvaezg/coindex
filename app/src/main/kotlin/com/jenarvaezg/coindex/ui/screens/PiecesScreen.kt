@@ -134,13 +134,13 @@ fun PiecesScreen(
                 }
             }
 
-            items(subject.pieces, key = { it.id }) { piece ->
+            items(subject.pieces, key = { it.item.id }) { piece ->
                 PieceCard(
-                    item = piece,
-                    title = pieceTitle(state, piece),
-                    images = state.images[piece.typeId],
+                    piece = piece,
+                    title = pieceTitle(state, piece.item),
+                    images = state.images[piece.item.typeId],
                     onOpenSource = onOpenSource,
-                    ficha = ficha(piece.typeId),
+                    ficha = ficha(piece.item.typeId),
                 ) {
                     // Dropping a type does not touch the piece (ADR 0013, §10): it stays in the
                     // inventory and on the card its variant derives, which is what makes a box a
@@ -148,7 +148,7 @@ fun PiecesScreen(
                     upkeep?.let { box ->
                         CardAction(
                             text = "Quitar de la colección",
-                            onClick = { box.onRemoveType(piece.typeId) },
+                            onClick = { box.onRemoveType(piece.item.typeId) },
                             modifier = Modifier.padding(top = 8.dp),
                         )
                     }

@@ -1,7 +1,6 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.PlateUnavailable
-import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.Metal
@@ -132,11 +131,14 @@ fun coverageLabel(coverage: CoverageRatio): String {
  *
  * The year goes first, because it is usually what tells two rows of the same type apart, and
  * «sin año» is a fact about the row rather than a blank: a date run can never fill a year from a
- * row that does not carry one. [emissionLabel] replaces it where the year distinguishes nothing —
- * the six 100 pesetas of Franco all say 1966 and differ by the star.
+ * row that does not carry one. [DrawnPiece.emissionLabel] replaces it where the year distinguishes
+ * nothing — the 100 pesetas of Franco all say 1966 and differ by the star.
+ *
+ * It takes a [DrawnPiece] and not a row plus an optional label, for the reason that type states.
  */
-fun pieceLine(item: CollectedItem, emissionLabel: String? = null): String {
-    val head = emissionLabel ?: item.recordedYear?.toString() ?: "Sin año"
+fun pieceLine(piece: DrawnPiece): String {
+    val item = piece.item
+    val head = piece.emissionLabel ?: item.recordedYear?.toString() ?: "Sin año"
     val quantity = if (item.quantity > 1) " · ×${item.quantity}" else ""
     return "$head · Numista ${item.typeId}$quantity"
 }
