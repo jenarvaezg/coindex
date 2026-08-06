@@ -25,7 +25,7 @@ import com.jenarvaezg.coindex.domain.UnclassifiedReason
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.grid
 import com.jenarvaezg.coindex.ui.print.notebookSections
-import com.jenarvaezg.coindex.ui.print.pages
+import com.jenarvaezg.coindex.ui.print.pagesAlone
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import java.io.File
@@ -123,10 +123,10 @@ class FieldReportTest {
         appendLine()
         appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
         appendLine("fotos que pediría: ${pages.sumOf { it.photographs }}")
-        for (section in sections.sortedByDescending { it.pages(paper) }) {
+        for (section in sections.sortedByDescending { it.pagesAlone(paper) }) {
             val grid = section.grid(paper)
             appendLine(
-                "· ${section.pages(paper)} pág | ${section.cells.size} casillas | " +
+                "· ${section.pagesAlone(paper)} pág | ${section.cells.size} casillas | " +
                     "Ø ${grid.diameterMm} mm | " +
                     "${grid.columns}×${grid.rows} | ${section.title}",
             )
