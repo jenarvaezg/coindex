@@ -41,11 +41,16 @@ class CuratedOrphansTest {
      * closed the door anyway: 19 struck years over four mints, so 19 slots by year or 73 by year
      * and mint were both writable, and «no voy a seguir eso» outranks either. The criterion is
      * the same one that filed the Kennedy Half Dollar — bulk circulation silver nobody chases.
+     *
+     * N#3416 shows the verdict is per denomination, not per metal. Asked about Reichsmark silver
+     * as a block, the collector kept the 5 Reichsmark — cured as a plate of its own — and dropped
+     * the 2: 24 year-and-mint combinations over four struck years, 129 million pieces, and the
+     * piece in the collection has no year recorded, so a by-year plate would have read 0 of 4.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
-            listOf(1_933, 6_918, 131_809, 132_242, 291_255, 470_766),
+            listOf(1_933, 3_416, 6_918, 131_809, 132_242, 291_255, 470_766),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )
         assertTrue(
