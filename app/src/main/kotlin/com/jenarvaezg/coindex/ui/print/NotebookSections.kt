@@ -14,6 +14,7 @@ import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.pieceLine
@@ -172,6 +173,10 @@ private fun unclaimedSection(
         subtitle = null,
         // No «País»: a page that spans twenty of them has none to name, and the countries are the
         // order the coins are already in.
+        //
+        // [countLabel] and not the expression spelled out, which is the whole of #226: these coins
+        // have no issue list and therefore no ratio, so this is exactly what `countSentence` reduces
+        // to for them — the same function, reached without inventing a subject to hang it on.
         facts = listOf(
             "Piezas" to countLabel(
                 distinctTypes = unclaimed.distinctBy { it.typeId }.size,

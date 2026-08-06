@@ -127,6 +127,7 @@ class NotebookSectionsTest {
         val section = notebookSections(
             state,
             listOf(card),
+            emptyList(),
             Curation(catalogs),
             NotebookOptions(),
         ).single()
