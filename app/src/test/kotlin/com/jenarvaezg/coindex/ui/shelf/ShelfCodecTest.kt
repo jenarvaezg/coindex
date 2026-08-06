@@ -102,7 +102,7 @@ class ShelfCodecTest {
      * versión no reconoce se lee como «sin filtro»— no la heredaba: guardaba la etiqueta misma. Un
      * teléfono con «Federación de Rusia (1991-presente)» puesto habría reabierto filtrando por una
      * cadena que ya no produce ninguna fila —lista vacía, contador de filtros en 1 y ninguna chip
-     * encendida—, y `russie` es el emisor de 293 de las 829 fichas sembradas, así que es la chip que
+     * encendida—, y `russie` es el emisor de cerca de un tercio de las fichas, así que es la chip que
      * más probable es que se dejara puesta. No hace falta clave de versión: las chips se construyen
      * con lo que dicen las filas, así que esto no se puede volver a escribir.
      */

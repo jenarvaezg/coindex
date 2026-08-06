@@ -7,10 +7,10 @@ import kotlin.test.assertEquals
  * The two-value split behind the class chip of Coins (ADR 0021 §1).
  *
  * It reads Numista's coarse `category` and **not** the `type` prose of [objectClassDeviations]: the
- * two answer different questions, and the difference is measurable on the shipped data. By `category`
- * there are 13 exonumia among the 829 seeded types and four of them are members of curated catalogs;
- * by the five-class net there are 8 and none is. Confusing them would either lose the four members the
- * chip exists to reach, or turn a curator's warning into a filter.
+ * two answer different questions, and the difference is measurable on the shipped data — by
+ * `category` there is exonumia inside curated catalogs, and by the five-class net of the curator
+ * there is none. Confusing them would either lose the members the chip exists to reach, or turn a
+ * curator's warning into a filter.
  */
 class ObjectClassTest {
     @Test

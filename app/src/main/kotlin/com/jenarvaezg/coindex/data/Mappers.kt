@@ -127,8 +127,8 @@ internal fun categoryFromRaw(raw: String): String? = runCatching {
  * above — and covering 100 % of the seeded cache, so the QR of the printed notebook (#234) works on
  * every type already on the phone without a migration or an API call.
  *
- * Read and never built. `https://es.numista.com/$typeId` would produce the same string today for all
- * 829 seeded types, and it would be **our** guess about Numista's host and about which language the
+ * Read and never built. `https://es.numista.com/$typeId` would produce the same string today for every
+ * seeded type, and it would be **our** guess about Numista's host and about which language the
  * ficha was asked in — printed onto paper, where nobody can correct it. What is read is what the
  * collector's own request came back with.
  */

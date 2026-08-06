@@ -140,8 +140,8 @@ private fun CollectionState.diameterOf(typeId: Int?): Float? =
  * **Which one, when it is one, is the plate's declaration and not this function's** (#227). Every
  * caller says which, with no default to fall through: a piece printed off a card with no issue list
  * has no plate to declare anything and asks for [PrintedSide.Reverse] out loud, so the day that
- * residue gets a face of its own — #216 is emptying it, 69 of the 911 cached types measured today —
- * the place to write it is the call and not a silent parameter.
+ * residue gets a face of its own — #216 is emptying it — the place to write it is the call and not a
+ * silent parameter.
  *
  * **How many is the configuration's answer and not the cache's.** A type the cache has never seen —
  * an announced member, an unlisted one — gets its slots empty rather than fewer of them: the cells

@@ -14,7 +14,7 @@ import com.jenarvaezg.coindex.domain.GRAMS_PER_TROY_OUNCE
  *
  * Grams because this facet is about a *piece* and not about a variant: the collector reading Coins is
  * holding the thing, and «una onza» is the answer the ounce bands of the index already give. `weight`
- * covers 100 % of the 829 seeded types, so [Unweighed] is empty on a synced phone and fills only
+ * covers every seeded type, so [Unweighed] is empty on a synced phone and fills only
  * between a sync landing and the fichas arriving.
  *
  * The upper bound of each band is inclusive, which is how its label reads: 25 g — the module of the

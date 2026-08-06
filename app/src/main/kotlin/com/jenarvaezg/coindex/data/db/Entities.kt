@@ -31,7 +31,7 @@ data class CollectedItemEntity(
  * Permanent catalog cache. No sync and no seed ever asks for a type twice: catalog data is
  * essentially immutable and API calls are the project's scarcest resource.
  *
- * **The collector can** (#185, ADR 0023), one type at a time, from the card where the wrong data is
+ * **The collector can** (#185, ADR 0025), one type at a time, from the card where the wrong data is
  * on screen — and that gesture is the only writer that overwrites a row here. `fetchedAt` is
  * therefore the day this phone got the ficha, not the day it was first cached, and it is what the
  * card prints as «ficha traída hace ocho meses».

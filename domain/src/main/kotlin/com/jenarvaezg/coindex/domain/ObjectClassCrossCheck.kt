@@ -17,8 +17,8 @@ data class ObjectClassDeviation(
  * Deliberately five and not the whole table. `Monedas de colección` is **out**: two members of the
  * Equilibrium catalog carry it (N#356004 and N#477907) and they are members in full, so the class
  * says nothing there — Numista's own table calls it "depends on the declared scope", which is to
- * say the curator decides. `Monedas no circulantes` is out for the same reason at scale: 691 of the
- * 829 seeded fichas are one, which is what the two collections are made of.
+ * say the curator decides. `Monedas no circulantes` is out for the same reason at scale: most of the
+ * seeded fichas are one, which is what the two collections are made of.
  *
  * The strings are Spanish because the cache is: every ficha is fetched with `lang=es`, by the app
  * (`NumistaClient`) and by `scripts/seed-type-cache.py` alike. A literal-string net can rot into a

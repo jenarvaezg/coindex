@@ -115,7 +115,7 @@ class AppContainer(context: Context) {
     /** One explicit sync, stamped and written down (#220). */
     val collectionSync: CollectionSync by lazy { CollectionSync(syncService, syncLog) }
 
-    /** One type's ficha, asked again on purpose (#185, ADR 0023). */
+    /** One type's ficha, asked again on purpose (#185, ADR 0025). */
     val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }
 
     /**

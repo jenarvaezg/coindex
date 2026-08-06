@@ -80,10 +80,10 @@ private const val SCALED_CAPTION_MM = 18f
 /**
  * The floor on a cell's width once the coins have shrunk (#233).
  *
- * At three fifths **every** coin of the collection prints narrower than the 28 mm of #169 — all 1 165
- * members the cache has a diameter for, of the shelf's 1 177 — so that floor would stop being an
- * exception for the medios and quietly become the width of every cell in the notebook: the shrinking
- * would buy height and no columns at all, which is 53 pages of the shelf against these 43.
+ * At three fifths **every** coin of the collection prints narrower than the 28 mm of #169 — every
+ * member the cache has a diameter for — so that floor would stop being an exception for the medios
+ * and quietly become the width of every cell in the notebook: the shrinking would buy height and no
+ * columns at all, worth about a fifth of the paper it buys now.
  *
  * Eighteen is where it lands, and the caption is what fixes it rather than the paper. What a cell must
  * print on **one** line whatever the coin is its state, and the longest thing `plateMemberStateLabel`

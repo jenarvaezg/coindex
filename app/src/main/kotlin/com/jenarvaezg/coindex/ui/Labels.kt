@@ -71,10 +71,10 @@ fun metalLabel(metal: Metal?): String = when (metal) {
  * The physical variant in one line. A set issued as a set has neither weight nor finish to
  * show, so it says what it is instead of showing two blanks (ADR 0012).
  *
- * The metal is named only when it is not silver (#40). Silver is what almost every card of these
- * two collections is made of — 73 of the 75 cards measured — so printing it everywhere would
- * add a word to every line to distinguish nothing, while «Oro» on the one card that is gold is
- * the whole reason the metal entered the key.
+ * The metal is named only when it is not silver (#40). Silver is what all but a handful of the cards
+ * of these two collections are made of, so printing it everywhere would add a word to every line to
+ * distinguish nothing, while «Oro» on the card that is gold is the whole reason the metal entered
+ * the key.
  */
 fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
     if (weightMillioz == null) return weightLabel(null)
@@ -154,8 +154,8 @@ fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
 /**
  * What a coin of Coins is, said only when it is not a coin.
  *
- * Exonumia is 13 of the 829 seeded types, so printing «Moneda» on the other 816 rows would add a word
- * to almost every one of them to distinguish nothing — the same reasoning that keeps «plata» off
+ * Exonumia is a small minority of the seeded types, so printing «Moneda» on all the others would add
+ * a word to almost every row to distinguish nothing — the same reasoning that keeps «plata» off
  * [variantLabel]. What earns a line is the medal, because a struck thing filed beside coins is exactly
  * what a collector wants to know before reading the rest of the row (ADR 0021 §1).
  *

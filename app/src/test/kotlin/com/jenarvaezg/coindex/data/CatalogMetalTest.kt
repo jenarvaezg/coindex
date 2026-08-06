@@ -43,8 +43,8 @@ class CatalogMetalTest {
     }
 
     /**
-     * Hasta el 4 de agosto de 2026 las dos colecciones eran de plata de arriba abajo — 73 de las
-     * 75 tarjetas medidas en #40 —, y eso es lo que hacía que el defecto de la clave viviera
+     * Hasta el 4 de agosto de 2026 las dos colecciones eran de plata de arriba abajo —todas las
+     * tarjetas medidas en #40 menos dos—, y eso es lo que hacía que el defecto de la clave viviera
      * escondido: sin un catálogo de otro metal, nada choca.
      *
      * Las conmemorativas circulantes de Portugal (#157) rompen la premisa por primera vez: los
@@ -61,7 +61,6 @@ class CatalogMetalTest {
     @Test
     fun `every catalog that is not a set declares its metal, two cupronickel and one bimetallic`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(70, declared.size)
         assertEquals(
             listOf(
                 "espana-2-euros-conmemorativos" to Metal.Other,

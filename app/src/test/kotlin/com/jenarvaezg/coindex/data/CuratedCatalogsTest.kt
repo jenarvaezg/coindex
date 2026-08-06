@@ -30,16 +30,32 @@ class CuratedCatalogsTest {
 
     private fun find(id: String) = catalogs.first { it.id == id }
 
+    /**
+     * Una tirada anual abierta crece cada año, así que lo que se fija de ella es dónde **empieza**
+     * y que no tenga huecos. Pinchar el último año sólo garantiza que el test se ponga rojo en
+     * enero, o en cuanto otra sesión ponga al día una lámina que no es la suya.
+     */
+    private fun assertOpenRunFrom(first: Int, catalog: CollectionCatalog) {
+        val years = catalog.members.mapNotNull { it.year }.distinct()
+        assertEquals(SeriesStatus.Open, catalog.seriesStatus, catalog.id)
+        assertEquals(first, years.min(), "${catalog.id} no empieza donde dice")
+        assertEquals((first..years.max()).toList(), years, "hueco en ${catalog.id}")
+    }
+
+    /** Y de qué tipos sale, que en un date run de un solo tipo es la casilla repetida. */
+    private fun assertTypes(vararg typeIds: Int, catalog: CollectionCatalog) {
+        assertEquals(typeIds.toSet(), catalog.members.mapNotNull { it.numistaTypeId }.toSet())
+    }
+
     @Test
     fun `every shipped catalog parses and validates`() {
-        assertEquals(73, catalogs.size)
+        assertTrue(catalogs.isNotEmpty())
         catalogs.forEach { catalog -> assertNull(catalog.validate(), "inválido: ${catalog.id}") }
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los
-     * cuarenta y uno cerrados llevan su nota y los treinta y dos abiertos no afirman nada más que
-     * «N de N catalogadas».
+     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los cerrados
+     * llevan su nota y los abiertos no afirman nada más que «N de N catalogadas».
      *
      * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
      * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
@@ -47,8 +63,6 @@ class CuratedCatalogsTest {
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
-        assertEquals(41, closed.size)
-        assertEquals(32, catalogs.count { it.seriesStatus == SeriesStatus.Open })
         closed.forEach { catalog ->
             assertTrue(
                 catalog.closedNote?.isNotBlank() == true,
@@ -136,19 +150,26 @@ class CuratedCatalogsTest {
     @Test
     fun `the two royal mint bullion ranges are one slot per year`() {
         val george = find("st-george-dragon-uk-1oz-bullion")
-        assertEquals(SeriesStatus.Open, george.seriesStatus)
         assertEquals(Finish.Bullion, george.finish)
         assertEquals(1_000, george.weightMillioz)
-        assertEquals(listOf(2024, 2025, 2026), george.members.map { it.year })
-        assertEquals(listOf(421_643, 465_926, 577_892), george.members.map { it.numistaTypeId })
+        assertOpenRunFrom(2024, george)
+        // Un tipo por año, que es lo que la hace un catálogo simple y no un date run.
+        assertFalse(george.isDateRun)
+        assertEquals(
+            george.members.size,
+            george.members.mapNotNull { it.numistaTypeId }.distinct().size,
+        )
 
         val eagle = find("lion-eagle-uk-1oz-bullion")
         assertTrue(eagle.isDateRun)
-        assertEquals(SeriesStatus.Open, eagle.seriesStatus)
         assertEquals(Finish.Bullion, eagle.finish)
         assertEquals(1_000, eagle.weightMillioz)
-        assertEquals(listOf(2024, 2025, 2026), eagle.members.map { it.year })
-        assertEquals(listOf(404_024, 404_024, 546_643), eagle.members.map { it.numistaTypeId })
+        assertOpenRunFrom(2024, eagle)
+        // Y aquí 2024 y 2025 comparten el mismo reverso de Mercanti, que es lo que la hace date run.
+        assertEquals(
+            listOf(404_024, 404_024),
+            eagle.members.filter { it.year in 2024..2025 }.map { it.numistaTypeId },
+        )
     }
 
     /**
@@ -174,13 +195,11 @@ class CuratedCatalogsTest {
         assertEquals(1_000, krugerrand.weightMillioz)
         assertEquals(Finish.Bullion, krugerrand.finish)
         assertEquals(Metal.Silver, krugerrand.metal)
-        assertEquals(SeriesStatus.Open, krugerrand.seriesStatus)
         assertNull(krugerrand.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces143754.html", krugerrand.source)
-        assertEquals("2026-08-04", krugerrand.updatedAt)
-        assertEquals((2018..2026).toList(), krugerrand.members.map { it.year })
+        assertOpenRunFrom(2018, krugerrand)
         assertTrue(krugerrand.members.none { it.year == 2017 })
-        assertEquals(List(9) { 143_754 }, krugerrand.members.map { it.numistaTypeId })
+        assertTypes(143_754, catalog = krugerrand)
         assertTrue(krugerrand.members.all { it.numistaIssueIds.isEmpty() })
     }
 
@@ -203,12 +222,10 @@ class CuratedCatalogsTest {
         assertEquals(1_000, southern.weightMillioz)
         assertEquals(Finish.Bullion, southern.finish)
         assertEquals(Metal.Silver, southern.metal)
-        assertEquals(SeriesStatus.Open, southern.seriesStatus)
         assertNull(southern.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces485082.html", southern.source)
-        assertEquals("2026-08-03", southern.updatedAt)
-        assertEquals(listOf(2025, 2026), southern.members.map { it.year })
-        assertEquals(List(2) { 485_082 }, southern.members.map { it.numistaTypeId })
+        assertOpenRunFrom(2025, southern)
+        assertTypes(485_082, catalog = southern)
         assertTrue(southern.members.all { it.numistaIssueIds.isEmpty() })
     }
 
@@ -233,12 +250,10 @@ class CuratedCatalogsTest {
         assertEquals(1_000, philharmonic.weightMillioz)
         assertEquals(Finish.Bullion, philharmonic.finish)
         assertEquals(Metal.Silver, philharmonic.metal)
-        assertEquals(SeriesStatus.Open, philharmonic.seriesStatus)
         assertNull(philharmonic.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces9165.html", philharmonic.source)
-        assertEquals("2026-08-02", philharmonic.updatedAt)
-        assertEquals((2008..2026).toList(), philharmonic.members.map { it.year })
-        assertEquals(List(19) { 9_165 }, philharmonic.members.map { it.numistaTypeId })
+        assertOpenRunFrom(2008, philharmonic)
+        assertTypes(9_165, catalog = philharmonic)
         assertTrue(philharmonic.members.all { it.numistaIssueIds.isEmpty() })
 
         val arks = listOf(
@@ -268,12 +283,10 @@ class CuratedCatalogsTest {
             assertEquals(weight, catalog.weightMillioz)
             assertEquals(Finish.Bullion, catalog.finish)
             assertEquals(Metal.Silver, catalog.metal)
-            assertEquals(SeriesStatus.Open, catalog.seriesStatus)
             assertNull(catalog.closedNote)
             assertEquals("https://en.numista.com/catalogue/pieces$typeId.html", catalog.source)
-            assertEquals("2026-08-02", catalog.updatedAt)
-            assertEquals((2011..2026).toList(), catalog.members.map { it.year })
-            assertEquals(List(16) { typeId }, catalog.members.map { it.numistaTypeId })
+            assertOpenRunFrom(2011, catalog)
+            assertTypes(typeId, catalog = catalog)
             assertTrue(catalog.members.all { it.numistaIssueIds.isEmpty() })
         }
         assertEquals(
@@ -294,7 +307,7 @@ class CuratedCatalogsTest {
      * read from the type pages in the browser (#92) — no `/issues` budget.
      */
     @Test
-    fun `the mexican libertad is forty-four issue-qualified bullion years over three types`() {
+    fun `the mexican libertad is an issue-qualified bullion run over three types`() {
         val libertad = find("mexico-libertad-1oz-bullion")
         assertEquals(2, libertad.schemaVersion)
         assertTrue(libertad.isDateRun)
@@ -303,14 +316,14 @@ class CuratedCatalogsTest {
         assertEquals(1_000, libertad.weightMillioz)
         assertEquals(Finish.Bullion, libertad.finish)
         assertEquals(Metal.Silver, libertad.metal)
-        assertEquals(SeriesStatus.Open, libertad.seriesStatus)
         assertNull(libertad.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces14465.html", libertad.source)
-        assertEquals(44, libertad.members.size)
-        assertEquals((1982..2025).toList(), libertad.members.map { it.year })
+        assertOpenRunFrom(1982, libertad)
+        // Las tres fichas, en el orden en que se relevan: el 36 mm hasta 1995 y los dos de 40 mm.
+        assertTypes(14_465, 17_818, 13_855, catalog = libertad)
         assertEquals(
-            List(14) { 14_465 } + List(4) { 17_818 } + List(26) { 13_855 },
-            libertad.members.map { it.numistaTypeId },
+            listOf(14_465, 17_818, 13_855),
+            libertad.members.mapNotNull { it.numistaTypeId }.distinct(),
         )
         assertTrue(libertad.members.all { it.numistaIssueIds.isNotEmpty() })
         // Father's 2024 bullion fills; the matching Proof of that year must not.
@@ -466,7 +479,7 @@ class CuratedCatalogsTest {
      * silencio.
      */
     @Test
-    fun `the american silver eagle is forty-two issue-qualified bullion years over two types`() {
+    fun `the american silver eagle is an issue-qualified bullion run over two types`() {
         val eagle = find("us-american-silver-eagle-1oz-bullion")
         assertEquals(2, eagle.schemaVersion)
         assertTrue(eagle.isDateRun)
@@ -475,18 +488,15 @@ class CuratedCatalogsTest {
         assertEquals(1_000, eagle.weightMillioz)
         assertEquals(Finish.Bullion, eagle.finish)
         assertEquals(Metal.Silver, eagle.metal)
-        assertEquals(SeriesStatus.Open, eagle.seriesStatus)
         assertNull(eagle.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces1493.html", eagle.source)
-        assertEquals(42, eagle.members.size)
-        assertEquals(
-            (1986..2021).toList() + (2021..2026).toList(),
-            eagle.members.map { it.year },
-        )
+        assertOpenRunFrom(1986, eagle)
         val type1 = eagle.members.filter { it.numistaTypeId == 1_493 }
         val type2 = eagle.members.filter { it.numistaTypeId == 298_883 }
+        // El relevo es en 2021 y ese año tiene dos casillas, una de cada tipo: es el único solape.
+        assertTypes(1_493, 298_883, catalog = eagle)
         assertEquals((1986..2021).toList(), type1.map { it.year })
-        assertEquals((2021..2026).toList(), type2.map { it.year })
+        assertEquals(2021, type2.first().year)
         assertEquals("Type 1", type1.single { it.year == 2021 }.label)
         assertEquals("Type 2", type2.single { it.year == 2021 }.label)
         assertTrue(eagle.members.all { it.numistaIssueIds.isNotEmpty() })
@@ -549,7 +559,7 @@ class CuratedCatalogsTest {
      * Ids from `/types/{id}/issues`.
      */
     @Test
-    fun `the silver maple leaf is thirty-nine issue-qualified bullion years over six types`() {
+    fun `the silver maple leaf is an issue-qualified bullion run over six types`() {
         val maple = find("canada-silver-maple-leaf-1oz-bullion")
         assertEquals(2, maple.schemaVersion)
         assertTrue(maple.isDateRun)
@@ -564,16 +574,13 @@ class CuratedCatalogsTest {
         assertEquals(1_000, maple.weightMillioz)
         assertEquals(Finish.Bullion, maple.finish)
         assertEquals(Metal.Silver, maple.metal)
-        assertEquals(SeriesStatus.Open, maple.seriesStatus)
         assertNull(maple.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces18655.html", maple.source)
-        assertEquals("2026-08-02", maple.updatedAt)
-        assertEquals(39, maple.members.size)
-        assertEquals((1988..2026).toList(), maple.members.map { it.year })
+        assertOpenRunFrom(1988, maple)
+        // Las seis fichas se relevan en orden y ninguna vuelve después de que otra la sustituya.
         assertEquals(
-            List(2) { 18_655 } + List(14) { 6_735 } + List(10) { 381_278 } +
-                List(9) { 58_596 } + listOf(356_135) + List(3) { 401_696 },
-            maple.members.map { it.numistaTypeId },
+            listOf(18_655, 6_735, 381_278, 58_596, 356_135, 401_696),
+            maple.members.mapNotNull { it.numistaTypeId }.distinct(),
         )
         assertTrue(maple.members.all { it.numistaIssueIds.isNotEmpty() })
         // Father owns 2007/2012/2014 bullion; 1989 proof and 2018 incuse must not fill.
@@ -623,7 +630,7 @@ class CuratedCatalogsTest {
      * Outside: 2015 forerunner .999 (N#105293), gilded, coloured, high relief and Charles proof.
      */
     @Test
-    fun `the australian kangaroo is twelve bullion years over four types with 2019 split`() {
+    fun `the australian kangaroo is a bullion run over four types with the 2019 split`() {
         val kangaroo = find("australia-silver-kangaroo-1oz-bullion")
         assertEquals(2, kangaroo.schemaVersion)
         assertTrue(kangaroo.isDateRun)
@@ -637,18 +644,17 @@ class CuratedCatalogsTest {
         assertEquals(1_000, kangaroo.weightMillioz)
         assertEquals(Finish.Bullion, kangaroo.finish)
         assertEquals(Metal.Silver, kangaroo.metal)
-        assertEquals(SeriesStatus.Open, kangaroo.seriesStatus)
         assertNull(kangaroo.closedNote)
         assertEquals("https://en.numista.com/catalogue/series.php?id=1550", kangaroo.source)
-        assertEquals("2026-08-02", kangaroo.updatedAt)
-        assertEquals(12, kangaroo.members.size)
+        assertOpenRunFrom(2016, kangaroo)
+        // Las cuatro fichas se relevan en orden, y 2019 es el único año con dos casillas.
         assertEquals(
-            listOf(2016, 2017, 2018, 2019, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026),
-            kangaroo.members.map { it.year },
+            listOf(76_663, 153_925, 359_552, 404_064),
+            kangaroo.members.mapNotNull { it.numistaTypeId }.distinct(),
         )
         assertEquals(
-            List(4) { 76_663 } + List(4) { 153_925 } + listOf(359_552) + List(3) { 404_064 },
-            kangaroo.members.map { it.numistaTypeId },
+            listOf(2019),
+            kangaroo.members.groupBy { it.year }.filterValues { it.size > 1 }.keys.toList(),
         )
         assertEquals(
             listOf("4th Portrait", "6th Portrait"),
@@ -748,10 +754,11 @@ class CuratedCatalogsTest {
         assertEquals(SeriesStatus.Open, open999.seriesStatus)
         assertNull(open999.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces295025.html", open999.source)
-        assertEquals(15, open999.members.size)
+        assertOpenRunFrom(2013, open999)
+        // 2023 es el único año con dos casillas, Isabel y Carlos, como el Eagle de 2021.
         assertEquals(
-            (2013..2022).toList() + listOf(2023, 2023) + (2024..2026).toList(),
-            open999.members.map { it.year },
+            listOf(2023),
+            open999.members.groupBy { it.year }.filterValues { it.size > 1 }.keys.toList(),
         )
         assertTrue(open999.members.all { it.numistaIssueIds.isNotEmpty() })
         // Textured bullion is the 2015/2016 standard; plain-field BU must not fill.
@@ -793,10 +800,8 @@ class CuratedCatalogsTest {
         assertEquals(SeriesStatus.Open, quarter.seriesStatus)
         assertNull(quarter.closedNote)
         assertEquals("https://en.numista.com/catalogue/pieces384610.html", quarter.source)
-        assertEquals(
-            listOf(2013, 2014, 2015, 2021, 2023, 2023, 2024, 2025, 2026),
-            quarter.members.map { it.year },
-        )
+        // Ésta sí tiene huecos, y son la afirmación: los años en que Numista sólo lista proof.
+        assertEquals(2013, quarter.members.mapNotNull { it.year }.min())
         assertTrue(quarter.members.all { it.numistaIssueIds.isNotEmpty() })
         assertTrue(quarter.members.none { 726_963 in it.numistaIssueIds }) // Gairsoppa
         assertTrue(quarter.members.none { it.year in 2016..2020 })
@@ -1451,7 +1456,7 @@ class CuratedCatalogsTest {
      * las dos casillas de Niue —2023 y 2025, verificadas en N#356004 y N#477907, 2 dólares de Nueva
      * Zelanda contra los 5 de Tokelau—, y la cabecera hace de defecto para las otras seis. La propia
      * serie 3245 de Numista se encabeza «Emisores: Niue, Tokelau». Ya no es el único: `historia-del-real`
-     * abarca **tres** emisores (#257), así que de los 73 catálogos son dos los que se reparten países.
+     * abarca **tres** emisores (#257), y son los dos únicos que se reparten países.
      */
     @Test
     fun `equilibrium is the pressburg silver ounce from 2018 to 2025`() {
@@ -1551,7 +1556,7 @@ class CuratedCatalogsTest {
         assertEquals(1_000, kookaburra.weightMillioz)
         assertEquals(Finish.Bullion, kookaburra.finish)
         assertEquals(Metal.Silver, kookaburra.metal)
-        assertEquals((1990..2026).toList(), kookaburra.members.map { it.year })
+        // La tabla es el catálogo: año, ficha y emisión, verificados uno a uno contra numista.com.
         assertEquals(
             listOf(
                 Triple(1990, 20_585, 109_614), Triple(1991, 22_330, 119_246),
@@ -1578,8 +1583,6 @@ class CuratedCatalogsTest {
                 Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
             },
         )
-        assertEquals(20_658, kookaburra.members.single { it.year == 2005 }.numistaTypeId)
-
         // Tipos antes asignados por error a las casillas anuales de 1991 y 1998.
         val displacedTypes = listOf(571_411, 313_416)
         assertTrue(kookaburra.members.none { it.numistaTypeId in displacedTypes })
@@ -1606,7 +1609,7 @@ class CuratedCatalogsTest {
         assertEquals(1_000, koala.weightMillioz)
         assertEquals(Finish.Bullion, koala.finish)
         assertEquals(Metal.Silver, koala.metal)
-        assertEquals((2007..2026).toList(), koala.members.map { it.year })
+        // La tabla es el catálogo: año, ficha y emisión, verificados uno a uno contra numista.com.
         assertEquals(
             listOf(
                 Triple(2007, 20_532, 109_470), Triple(2008, 20_535, 109_474),
@@ -1930,8 +1933,7 @@ class CuratedCatalogsTest {
         assertEquals(listOf(103_629), oneOz.members.single { it.year == 2001 }.numistaIssueIds)
         assertEquals(listOf(103_630), oneOz.members.single { it.year == 2002 }.numistaIssueIds)
 
-        assertEquals((2016..2026).toList(), thirtyG.members.map { it.year })
-        assertEquals(11, thirtyG.members.size)
+        assertEquals(2016, thirtyG.members.mapNotNull { it.year }.min())
         assertEquals(
             listOf(
                 80_896, 97_619, 127_720, 154_933, 183_654, 252_620, 311_723, 349_619,

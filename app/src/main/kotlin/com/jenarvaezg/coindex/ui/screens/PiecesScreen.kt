@@ -67,7 +67,7 @@ fun PiecesScreen(
     /**
      * How old each piece's ficha is and how to ask Numista again for it (#185). One type per tap:
      * there is no «refrescar la tarjeta entera» here, because a collection of twenty pieces would be
-     * twenty calls spent on the nineteen nobody said were wrong (ADR 0023).
+     * twenty calls spent on the nineteen nobody said were wrong (ADR 0025).
      */
     ficha: (typeId: Int) -> FichaRefresh,
     /** Present exactly when the subject is a box: the same `if` all the way down. */

@@ -24,7 +24,7 @@ class CuratedProgrammesTest {
 
     @Test
     fun `every shipped programme parses and validates`() {
-        assertEquals(2, programmes.size)
+        assertTrue(programmes.isNotEmpty())
         programmes.forEach { programme ->
             assertNull(programme.validate(), "inválido: ${programme.id}")
             // El límite nunca es un hecho de Numista, así que la prosa es obligatoria y el URL

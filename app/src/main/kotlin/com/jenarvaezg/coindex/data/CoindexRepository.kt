@@ -38,7 +38,7 @@ data class CollectionState(
      * When each ficha was brought to this phone, so a card can say «hace ocho meses» instead of
      * leaving it to be guessed at (#185). It is the cache's own `fetchedAt` and nothing derived: a
      * ficha the collector refreshed is stamped again, and a ficha that arrived in the APK is
-     * stamped with the day it arrived (ADR 0023).
+     * stamped with the day it arrived (ADR 0025).
      */
     val fichaFetchedAt: Map<Int, Long> = emptyMap(),
 ) {

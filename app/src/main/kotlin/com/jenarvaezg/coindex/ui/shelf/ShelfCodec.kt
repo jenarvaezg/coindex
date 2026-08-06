@@ -21,8 +21,8 @@ import com.jenarvaezg.coindex.domain.readsAsACountry
  * inherited: it stores the label itself, and ADR 0023 retired nine of them. A phone that had
  * «Federación de Rusia (1991-presente)» selected would have reopened filtering on a string no row
  * produces any more — an empty list, a filter badge at 1 and no chip lit — so a stored country that
- * [readsAsACountry] rejects is read back as no filter. `russie` is 293 of the 829 seeded fichas, which
- * makes it the likeliest chip on the phone to have been left on.
+ * [readsAsACountry] rejects is read back as no filter. `russie` is the emisor of about a third of the
+ * seeded fichas, which makes it the likeliest chip on the phone to have been left on.
  */
 object ShelfCodec {
     const val INDEX_SORT = "index_sort"
