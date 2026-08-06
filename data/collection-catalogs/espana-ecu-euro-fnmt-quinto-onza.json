@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "espana-ecu-euro-fnmt-quinto-onza",
+  "name": "ECU y euros de la FNMT · 1/5 de onza de plata · España",
+  "short_name": "ECU y euros de la FNMT · 1/5 de onza",
+  "issuer_code": "espagne",
+  "family": "ECU y euros de la FNMT",
+  "weight_millioz": 216,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Cierra por lo mismo que cierra su hermana de una onza (`espana-ecu-euro-fnmt-onza`): el 1 de enero de 1999 el ECU dejó de existir, el euro pasó a ser moneda de verdad y la FNMT dejó de acuñar la divisa figurada. Buscando en Numista todo lo español de 6,5 a 7 g (`catalogue/index.php?cat=y&st=all&e=espagne&w=6.5-7`) no hay nada de este programa después del Ejército de Tierra de 1998.",
+  "source": "https://en.numista.com/catalogue/pieces18156.html",
+  "source_note": "La pieza pequeña del mismo programa que `espana-ecu-euro-fnmt-onza`: misma ceca de Madrid, misma plata de 925 milésimas, 24 mm y 6,72 g, que son un quinto de onza troy de plata fina (6,72 × 0,925 = 6,22 g). Comparte con ella los sets anuales de la FNMT —N#S5768 de 1989, N#S5739 y N#S5740 de la Armada, N#S5742 de la aviación y N#S5743 del Ejército— y por eso el «1 Euro» de 1997 y el de 1998 son esta lámina: cambia la divisa del valor facial y no la moneda. El denominador de siete lo sostiene además el lote con que los comercios venden la serie entera, «7 monedas x 1 ECU 1989+1992+1994+1995+1996 + 1 EURO 1997+1998 PLATA ESTUCHE y CERTIFICADO FNMT» (https://www.numismaticabilbao.com/70530-7-monedas-x-1-ecu-19891992199419951996-1-euro-19971998-plata-estuche-y-certificado-fnmt-espana.html). El único 1 ECU de 1993 con este peso y este diámetro exactos es el de Pau Claris (N#462550), y no es de la FNMT sino de la Generalitat: lleva el emblema catalán con doce estrellas, «CATALUNYA» y la marca «dM», y en el Krause de monedas inusuales es X# M17, no la numeración de estas.",
+  "no_issue_years": [
+    1990,
+    1991,
+    1993
+  ],
+  "no_issue_note": "La FNMT no acuñó pieza pequeña esos tres años. En 1990, 1991 y 1993 el programa salió sólo en la onza —Alfonso X, Averroes y Don Juan de Borbón, que son los tres miembros de `espana-ecu-euro-fnmt-onza` sin pareja aquí—, y el lote de siete con que los comercios venden la serie completa salta esos años igual (https://www.numismaticabilbao.com/70530-7-monedas-x-1-ecu-19891992199419951996-1-euro-19971998-plata-estuche-y-certificado-fnmt-espana.html). No son huecos que rellenar.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1989-rapto-de-europa",
+      "label": "El rapto de Europa",
+      "year": 1989,
+      "numista_type_id": 19406,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause la publica en «Unusual World Coins», X# M23; tirada de 204.000."
+    },
+    {
+      "id": "1992-puerta-de-alcala",
+      "label": "Puerta de Alcalá",
+      "year": 1992,
+      "numista_type_id": 44260,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause la publica en «Unusual World Coins», X# M35; tirada de 78.289."
+    },
+    {
+      "id": "1994-don-quijote",
+      "label": "Don Quijote de la Mancha",
+      "year": 1994,
+      "numista_type_id": 18156,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause la publica en «Unusual World Coins», X# M45; tirada de 36.500."
+    },
+    {
+      "id": "1995-ancla-y-lema",
+      "label": "La Armada · ancla y lema",
+      "year": 1995,
+      "numista_type_id": 18157,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause no le da número en «Unusual World Coins»; tirada de 38.500."
+    },
+    {
+      "id": "1996-nautilus",
+      "label": "La Armada · corbeta Nautilus",
+      "year": 1996,
+      "numista_type_id": 18160,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause la publica en «Unusual World Coins», X# M16; tirada de 30.000."
+    },
+    {
+      "id": "1997-maurice-farman",
+      "label": "La aviación · Maurice Farman",
+      "year": 1997,
+      "numista_type_id": 18159,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause no le da número en «Unusual World Coins»; tirada de 50.000."
+    },
+    {
+      "id": "1998-ejercito-de-tierra",
+      "label": "El Ejército de Tierra",
+      "year": 1998,
+      "numista_type_id": 18161,
+      "variant_note": "Exonumia a propósito: Numista la ficha como «Moneda de fantasía» porque el ECU fue una divisa de cuenta y España nunca dio curso legal a estas piezas, así que el programa entero está fichado así y la lámina lo asume. Krause no le da número en «Unusual World Coins»; tirada de 50.000."
+    }
+  ]
+}

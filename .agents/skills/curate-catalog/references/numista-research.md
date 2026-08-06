@@ -35,6 +35,20 @@ catalogue/index.php?cat=y&st=all&e=<issuer>&w=<min>-<max>&q=500&p=1&o=y
 
 The form's category checkboxes carry no `name`, and `k[]` is a different parameter: passing it empties the result.
 
+**The date filter silently empties the result too.** `d=` and `f=` on this listing return zero rows
+rather than a filtered page, so a curator who trusts them reads «this year has nothing» about a
+year that has plenty — in #258 that would have declared the 5 euros of the 2026 World Cup
+unpublished, when it is published and indexed by weight and by text. Filter by weight or by `r=`
+free text and read the year off each row.
+
+**One Numista issuer can hold two programmes at the identical physical standard.** The ECU of the
+FNMT and the ECU of the Generalitat de Catalunya both file under «España» — «emisor supuesto», the
+tell that nothing official is being claimed — and the Catalan 1 ECU of 1993 is the same .925 silver,
+the same 6,72 g and the same 24 mm as Madrid's. Weight cannot separate them and the year would have
+made it look like a filled slot. What separates them is the coin's own legend and its Krause number:
+«ESPAÑA … M» with the crowned Madrid mintmark against «CATALUNYA», twelve stars and the `dM` mark,
+X# M17/M18 against X# M9/M24 (#258). Read the legend before you write a year.
+
 ## Route 3: walk a category
 
 When the sequence is «all the circulating commemoratives of one issuer», the category filter

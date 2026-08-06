@@ -7,10 +7,11 @@ package com.jenarvaezg.coindex.domain
  * [objectClassDeviations]. That one reads `type` — «Medallas», «Monedas de ensayo» — to warn a
  * curator that a member of a catalog may not be money at all, and it is silenced one member at a
  * time in prose.
- * This is the collector's question instead, and it is answered with a chip: 13 of the 829 seeded types
- * are exonumia, and **four of them live inside curated catalogs** — the two Mexican Onzas and two
- * Niue members — which is exactly why ADR 0021 §1 made medals a **filter and not a section**. A
- * «Medallas» section would have had to tear those four out of their plate.
+ * This is the collector's question instead, and it is answered with a chip: 27 of the 902 seeded types
+ * are exonumia, and **twenty-one of them live inside curated catalogs** — the two Mexican Onzas, two
+ * Niue members and the seventeen ECU and euros of the FNMT, which Numista files as fantasy coins
+ * because the ECU never was legal tender — which is exactly why ADR 0021 §1 made medals a **filter
+ * and not a section**. A «Medallas» section would have had to tear all twenty-one out of their plate.
  */
 enum class ObjectClass {
     Coin,

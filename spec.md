@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 70 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 72 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -68,9 +68,9 @@
      `numista_issue_ids`. Un catálogo simple o un date run puede **cualificar** una casilla
      con ese mismo campo sin ser un issue run (ADR 0019). Único vivo: los paquillos de 100
      pesetas de Franco.
-2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 819 tipos
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de 909 tipos
    (respuestas íntegras de `GET /types/{id}?lang=es`), empaquetado como seed de la tabla de
-   caché para que ningún usuario gaste esas llamadas. Cubre los **749** tipos referenciados por
+   caché para que ningún usuario gaste esas llamadas. Cubre los **840** tipos referenciados por
    los ficheros curados, así que las láminas muestran todos los diseños (incluidos los «me falta») sin
    tocar el presupuesto. Sembrar es parte de curar: `scripts/seed-type-cache.py` omite lo ya
    cacheado y dice el coste con `--dry-run`, y `TypeCacheSeedTest` se pone rojo con la lista de

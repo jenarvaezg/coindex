@@ -83,14 +83,23 @@ class CuratedOrphansTest {
      * (N#14538) has two commemorative designs and the other, 1930, is gold, and the 75 bolívares
      * (N#18940) is the only design its denomination ever had. One row is not a plate, and the
      * weight was never the argument.
+     *
+     * The two Spanish silver pieces of #258 are signed for the opposite reason to all of those: the
+     * father does pursue them («esas las seguiría»), and they are here because the measurement
+     * found no sequence to plate. The 3 euros of 1998 (N#67681) is the only coin of its
+     * denomination Spain ever struck, and the 5 euros of the 2026 World Cup (N#596646) belongs to
+     * a four-piece FNMT programme whose four pieces are four different denominations, so no
+     * denomination repeats and none forms a run. His intention did land on the other two of the
+     * four, which became `espana-ecu-euro-fnmt-onza` and `espana-ecu-euro-fnmt-quinto-onza`.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
             listOf(
                 1_933, 1_952, 3_416, 3_550, 3_855, 6_918, 10_613, 11_440, 12_454, 12_994, 14_018,
-                14_538, 15_357, 18_852, 18_940, 26_190, 38_130, 44_085, 59_404, 90_456, 98_259,
-                131_809, 132_242, 277_960, 291_255, 387_614, 451_057, 470_766, 571_460,
+                14_538, 15_357, 18_852, 18_940, 26_190, 38_130, 44_085, 59_404, 67_681, 90_456,
+                98_259, 131_809, 132_242, 277_960, 291_255, 387_614, 451_057, 470_766, 571_460,
+                596_646,
             ),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )

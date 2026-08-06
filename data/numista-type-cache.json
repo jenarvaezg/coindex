@@ -21233,6 +21233,287 @@
   },
   "weight": 6.72
  },
+ "18157": {
+  "id": 18157,
+  "url": "https://es.numista.com/18157",
+  "title": "1 ECU (Spanish Navy - Anchor and motto)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1995,
+  "max_year": 1995,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 ECU",
+   "numeric_value": 1,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 24,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Antigua carabela española navegando.",
+   "lettering": "ESPAÑA \r\n1 ECU \r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/63d7ff787237b6.58214460-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/63d7ff787237b6.58214460-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "description": "El ancla divide el lema de la Armada Española y la fecha.",
+   "lettering": "\"TU REGERE YMPERIO FLUCTUS HISPANE MEMENTO\"\r\n1995",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/63d7ff78bfc797.15829327-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/63d7ff78bfc797.15829327-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "series": "Spanish Navy",
+  "commemorated_topic": "Ancla y lema",
+  "comments": "<p>La<strong> Armada</strong> española es la rama marítima de las Fuerzas Armadas españolas y una de las fuerzas navales en activo más antiguas del mundo. La Armada española fue responsable de una serie de importantes logros históricos en la navegación, siendo los más famosos el descubrimiento de América y la primera circunnavegación mundial. Durante varios siglos, desempeñó un papel logístico crucial en la expansión y consolidación del Imperio español, y defendió una vasta red comercial a través del Océano Atlántico entre América y Europa, y el Galeón de Manila a través del Océano Pacífico entre Filipinas y América.</p>",
+  "tags": [
+   "Ancla",
+   "Bote o embarcación"
+  ],
+  "weight": 6.72,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed."
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
+ "18159": {
+  "id": 18159,
+  "url": "https://es.numista.com/18159",
+  "title": "1 Euro (Maurice Farman)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1997,
+  "max_year": 1997,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 euro",
+   "numeric_value": 1,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "size": 24,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Begoña Castellanos García"
+   ],
+   "description": "Insignia del Ejército del Aire español",
+   "lettering": "ESPAÑA\r\n1 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6062471e213c70.70135145-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6062471e213c70.70135145-180.jpg"
+  },
+  "reverse": {
+   "engravers": [
+    "Begoña Castellanos García"
+   ],
+   "description": "Imagen del biplano MF-7 de Maurice Farman. La marca de ceca (M coronada) divide la fecha.",
+   "lettering": "MAURICE FARMAN\r\nMF-7\r\n19 M 97",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6062471e9c03c2.57470491-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6062471e9c03c2.57470491-180.jpg"
+  },
+  "series": "Tribute to the Spanish Aviation",
+  "commemorated_topic": "Maurice Farman MF-7",
+  "comments": "<p>El Maurice Farman MF.7 Longhorn es un biplano francés desarrollado antes de la Primera Guerra Mundial que fue utilizado para reconocimiento por los servicios aéreos franceses y británicos en las primeras etapas de la guerra antes de ser relegado al servicio como entrenador.<br>El Maurice Farman MF.7 fue adoptado por la Aeronáutica Militar española en 1913, llegando los seis primeros a Cuatro Vientos en primavera. Cuatro de ellos fueron con la primera escuadrilla a Tetuán en octubre. A finales de año dos o tres MF.7 pasaron a Arcilla. Era un avión fácil de volar, y muy pronto se utilizó como avión de entrenamiento en Cuatro Vientos y Alcalá. También hubo una escuadrilla de MF-7 en Guadalajara desde 1916, pues además de los recibidos de Francia (unos doce), fue fabricado en Zaragoza por Carde y Escoriaza.</p>",
+  "tags": [
+   "Avión o aeronave"
+  ],
+  "weight": 6.72,
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
+ "18160": {
+  "id": 18160,
+  "url": "https://es.numista.com/18160",
+  "title": "1 ECU (Spanish Navy - Nautilus corvette)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1996,
+  "max_year": 1996,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 ECU",
+   "numeric_value": 1,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 24,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Esther González Pastor"
+   ],
+   "description": "Corbeta clíper de guerra.",
+   "lettering": "1 ECU M\r\nESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6062471f29c5f0.50145707-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6062471f29c5f0.50145707-180.jpg",
+   "picture_copyright": "Global Coins",
+   "picture_copyright_url": "http://www.gcoins.net/"
+  },
+  "reverse": {
+   "engravers": [
+    "Esther González Pastor"
+   ],
+   "description": "Rueda de timón.",
+   "lettering": "1996\r\n· NAUTILUS ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6062471fb25dd4.92712523-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6062471fb25dd4.92712523-180.jpg",
+   "picture_copyright": "Global Coins",
+   "picture_copyright_url": "http://www.gcoins.net/"
+  },
+  "series": "Spanish Navy",
+  "commemorated_topic": "Corbeta Nautilus",
+  "comments": "<p>La<strong> Armada</strong> española es la rama marítima de las Fuerzas Armadas españolas y una de las fuerzas navales en activo más antiguas del mundo. La Armada española fue responsable de una serie de importantes logros históricos en la navegación, siendo los más famosos el descubrimiento de América y la primera circunnavegación mundial. Durante varios siglos, desempeñó un papel logístico crucial en la expansión y consolidación del Imperio español, y defendió una vasta red comercial a través del Océano Atlántico entre América y Europa, y el Galeón de Manila a través del Océano Pacífico entre Filipinas y América.</p>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M16"
+   }
+  ],
+  "weight": 6.72,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
  "18161": {
   "category": "exonumia",
   "commemorated_topic": "Fuerzas terrestres",
@@ -21573,6 +21854,223 @@
   },
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "18371": {
+  "id": 18371,
+  "url": "https://es.numista.com/18371",
+  "title": "5 ECU (Spanish Navy - Coca de Mataró)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1996,
+  "max_year": 1996,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Luis José Díaz Salas"
+   ],
+   "description": "Barco medieval español en el mar.",
+   "lettering": "ESPAÑA\r\n5 ECU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/646312880507c9.58411253-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/646312880507c9.58411253-180.jpg",
+   "picture_copyright": "The Coinhouse Auctions"
+  },
+  "reverse": {
+   "engravers": [
+    "Begoña Castellanos García"
+   ],
+   "designers": [
+    "Luis José Díaz Salas"
+   ],
+   "description": "Barco medieval español en el mar.",
+   "lettering": "COCA DE MATARO\r\n19 M 96",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6463128874fff9.08841578-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6463128874fff9.08841578-180.jpg",
+   "picture_copyright": "The Coinhouse Auctions"
+  },
+  "series": "Spanish Navy",
+  "commemorated_topic": "Coca de Mataró",
+  "comments": "<p>Barco español (siglo XIII) conservado en el museo Prins Hendrik de Rotterdam.</p><p>La<strong> Armada</strong> española es la rama marítima de las Fuerzas Armadas españolas y una de las fuerzas navales en activo más antiguas del mundo. La Armada española fue responsable de una serie de importantes logros históricos en la navegación, siendo los más famosos el descubrimiento de América y la primera circunnavegación mundial. Durante varios siglos, desempeñó un papel logístico crucial en la expansión y consolidación del Imperio español, y defendió una vasta red comercial a través del Océano Atlántico entre América y Europa, y el Galeón de Manila a través del Océano Pacífico entre Filipinas y América.</p>",
+  "tags": [
+   "Mar",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M17"
+   }
+  ],
+  "weight": 33,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
+ "18520": {
+  "id": 18520,
+  "url": "https://es.numista.com/18520",
+  "title": "5 ECU (Juan de Borbón)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1993,
+  "max_year": 1993,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rafael Vallejo García"
+   ],
+   "description": "Barco \"el Saltillo\" navegando a la izquierda.",
+   "lettering": "ESPAÑA\r\n5 ECU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/606247224e48b9.08950417-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/606247224e48b9.08950417-180.jpg",
+   "picture_copyright": "2017 J.Schönfels"
+  },
+  "reverse": {
+   "engravers": [
+    "Luis José Díaz Salas"
+   ],
+   "description": "Figura sedente de medio cuerpo de Don Juan de Borbón y dos anclas.",
+   "lettering": "· DON JUAN DE BORBON ·\r\n· 1913 · M · 1993 ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624722cc3245.41719043-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624722cc3245.41719043-180.jpg",
+   "picture_copyright": "2017 J.Schönfels"
+  },
+  "commemorated_topic": "Homenaje a Don Juan de Borbón",
+  "comments": "<p><strong>El Infante Juan, Conde de Barcelona</strong> (Juan Carlos Teresa Silverio Alfonso de Borbón y Battenberg; 20 de junio de 1913 - 1 de abril de 1993), fue un pretendiente al trono español como Juan III. Era el tercer hijo y heredero designado del rey Alfonso XIII de España y de la reina Victoria Eugenia de Battenberg. Su padre fue sustituido por la Segunda República Española en 1931. Su hijo Juan Carlos I se convirtió en Rey de España cuando se restauró la monarquía constitucional en 1975.</p>",
+  "related_types": [
+   {
+    "id": 108616,
+    "title": "100 ECU (Juan de Borbon)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1993,
+    "maxYear": 1993
+   }
+  ],
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M9"
+   }
+  ],
+  "weight": 33.62,
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
  },
  "18524": {
   "id": 18524,
@@ -24546,6 +25044,115 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "19406": {
+  "id": 19406,
+  "url": "https://es.numista.com/19406",
+  "title": "1 ECU (The Abduction of Europa)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1989,
+  "max_year": 1989,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 ECU",
+   "numeric_value": 1,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 24,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rafael Vallejo García"
+   ],
+   "description": "Valor nominal y nombre del país.",
+   "lettering": "1 ECU\r\nESPAÑA\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/65888df9939246.44667256-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/65888df9939246.44667256-180.jpg",
+   "picture_copyright": "Julio Vega",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Imagen de Europa en el toro. Rapto de Europa.",
+   "lettering": "· EVROPA ·\r\n· 1989 ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/65888dfabb1240.41558508-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/65888dfabb1240.41558508-180.jpg",
+   "picture_copyright": "Julio Vega",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "El secuestro de Europa",
+  "tags": [
+   "Vaca o bovino",
+   "Mitología"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M23"
+   }
+  ],
+  "weight": 6.72,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6209041e862cc0.09875778-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6209041e862cc0.09875778-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
  "194185": {
   "category": "coin",
   "commemorated_topic": "Koala",
@@ -25391,6 +25998,113 @@
    "text": "100 dinares"
   },
   "weight": 31.1
+ },
+ "19619": {
+  "id": 19619,
+  "url": "https://es.numista.com/19619",
+  "title": "5 ECU (Averroes)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Círculo con estrellas en el exterior apoyado en el interior de un semicírculo curvado.",
+   "lettering": "5 ECU \r\nM \r\nESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67e1a84c95ea34.35017007-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67e1a84c95ea34.35017007-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Averroes sentado mirando a la derecha con un libro en la mano.",
+   "lettering": "ابن رشد\r\n· 1126 - 1193 ·\r\nAVERROES\r\n· 1991 ·",
+   "lettering_scripts": [
+    {
+     "name": "Árabe"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67e1a84dab2018.37194086-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67e1a84dab2018.37194086-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "commemorated_topic": "Averroes",
+  "comments": "<p>Ibn Rushd (árabe: ابن رشد; nombre completo en árabe: أبو الوليد محمد بن أحمد بن رشد, romanizado: Abū al-Walīd Muḥammad ibn Aḥmad ibn Rushd; 14 de abril de 1126 - 11 de diciembre de 1198), a menudo latinizado como <strong>Averroes</strong>, fue un polímata y jurista andalusí que escribió sobre numerosos temas, entre ellos filosofía, teología, medicina, astronomía, física, psicología, matemáticas, jurisprudencia y derecho islámicos y lingüística. Autor de más de cien libros y tratados, sus obras filosóficas incluyen numerosos comentarios sobre Aristóteles, por los que fue conocido en el mundo occidental como El Comentador y Padre del Racionalismo.</p>",
+  "tags": [
+   "Filósofo",
+   "Científico"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M31"
+   }
+  ],
+  "weight": 33.62,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
  },
  "19638": {
   "id": 19638,
@@ -34983,6 +35697,106 @@
    "text": "30 Francs"
   },
   "weight": 31.1
+ },
+ "28059": {
+  "id": 28059,
+  "url": "https://es.numista.com/28059",
+  "title": "5 ECU (Charles III of Spain)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1992,
+  "max_year": 1992,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rafael Vallejo García"
+   ],
+   "description": "Círculo con estrellas en el exterior apoyado en el interior de un semicírculo curvado.",
+   "lettering": "5 ECU\r\n1992 M\r\nESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6062472664cb46.21244659-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6062472664cb46.21244659-180.jpg",
+   "picture_copyright": "2017 J.Schönfels"
+  },
+  "reverse": {
+   "engravers": [
+    "Manuel Martinez Tornero"
+   ],
+   "description": "Figura de pie de cuerpo entero del rey Carlos III de España.",
+   "lettering": "MADRID CAPITAL EUROPEA DE LA CULTURA\r\nM 1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624726de0099.01523787-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624726de0099.01523787-180.jpg",
+   "picture_copyright": "2017 J.Schönfels"
+  },
+  "series": "Madrid European Capital of Culture",
+  "commemorated_topic": "Carlos III de España",
+  "tags": [
+   "Monarca"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M11"
+   }
+  ],
+  "weight": 33.62,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
  },
  "28067": {
   "category": "coin",
@@ -63001,6 +63815,112 @@
   },
   "weight": 31.1035
  },
+ "44260": {
+  "id": 44260,
+  "url": "https://es.numista.com/44260",
+  "title": "1 ECU (Puerta de Alcalá)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1992,
+  "max_year": 1992,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 ECU",
+   "numeric_value": 1,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 24,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rafael Vallejo García"
+   ],
+   "designers": [
+    "Francisco Martínez Tornero"
+   ],
+   "description": "Gran valor, doce estrellas dentro de un círculo, emblema de Madrid",
+   "lettering": "1 ECU \r\nESPAÑA\r\n1992 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/69c58152241334.84700136-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/69c58152241334.84700136-180.jpg",
+   "picture_copyright": "Monge Filatèlia-Numismàtica",
+   "picture_copyright_url": "https://www.filateliamonge.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Manuel Martinez Tornero"
+   ],
+   "description": "Puerta de Alcalá",
+   "lettering": "MADRID CAPITAL EUROPEA DE LA CULTURA\r\n· 1992 · \r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/69c58152bcb746.30109916-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/69c58152bcb746.30109916-180.jpg",
+   "picture_copyright": "Monge Filatèlia-Numismàtica",
+   "picture_copyright_url": "https://www.filateliamonge.com/"
+  },
+  "series": "Madrid European Capital of Culture",
+  "commemorated_topic": "Puerta de Alcalá",
+  "comments": "<p>Una Capital Europea de la Cultura es una ciudad designada por la Unión Europea (UE) por un periodo de un año natural durante el cual organiza actos culturales con una marcada dimensión paneuropea. Ser Capital Europea de la Cultura puede ser una oportunidad para que una ciudad genere considerables beneficios culturales, sociales y económicos y puede contribuir a fomentar la regeneración urbana, cambiar la imagen de la ciudad y aumentar su visibilidad y perfil a escala internacional. Varias ciudades pueden ser Capital Europea de la Cultura simultáneamente.</p>",
+  "tags": [
+   "Escultura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M35"
+   }
+  ],
+  "weight": 6.72,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
  "442604": {
   "category": "coin",
   "commemorated_topic": "En honor del clíper británico de té y lana \"Cutty Sark\" 1869",
@@ -80856,6 +81776,113 @@
   },
   "weight": 31.6
  },
+ "596646": {
+  "id": 596646,
+  "url": "https://es.numista.com/596646",
+  "title": "5 Euros - Felipe VI (2026 FIFA World Cup - Spain champion)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-07-30"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925 (92.5% silver, 7.5% copper)"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Cabeza del rey Felipe VI mirando hacia la izquierda.",
+   "lettering": "FELIPE VI REY DE ESPAÑA\r\n· 2026 ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6a6a49591b2d65.04677159-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6a6a49591b2d65.04677159-180.jpg",
+   "picture_copyright": "Monedalia",
+   "picture_copyright_url": "http://www.monedalia.es"
+  },
+  "reverse": {
+   "description": "(en) Full-color FIFA World Cup trophy alongside two five-pointed stars representing the two World Cups won by Spain and three colored stripes representing the Spanish flag.",
+   "lettering": "FIFA WORLD CUP 26™\r\nM\r\n5 EURO\r\nCAMPEONES DEL MUNDO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6a6a4959d51ea7.32613083-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6a6a4959d51ea7.32613083-180.jpg",
+   "picture_copyright": "Monedalia",
+   "picture_copyright_url": "http://www.monedalia.es"
+  },
+  "commemorated_topic": "(en) 2026 FIFA World Cup - Spain champion",
+  "comments": "(en) <p><strong>The 2026 FIFA World Cup</strong> was the 23rd FIFA World Cup, the quadrennial international men's soccer championship contested by the national teams of the member associations of FIFA. The tournament began on June 11, 2026, and concluded on July 19 with Spain winning the championship for the second time. It was jointly hosted by 16 cities—11 in the United States, 3 in Mexico, and 2 in Canada. The tournament was the first FIFA World Cup to be hosted by three countries and the first to include 48 teams, an expansion from the previous 32-team format.</p><p>For the first time in the tournament's history, the top four teams from the FIFA Men's World Ranking at the time of the contest (Argentina, Spain, France, and England) advanced to the semifinals. <strong>Spain won the final against defending champion Argentina 1–0 after extra time, winning its second title and first since 2010.</strong> Spain also made history by being the first nation to become the reigning champion for both the men's and women's World Cups, and the first team to win the World Cup while conceding only one goal during the tournament.</p>",
+  "related_types": [
+   {
+    "id": 392311,
+    "title": "10 Euros - Felipe VI (2023 FIFA Women's World Cup - Spain Champion)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 2023,
+    "maxYear": 2023
+   }
+  ],
+  "tags": [
+   "Copa Mundial de la FIFA"
+  ],
+  "weight": 13.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "59859": {
   "category": "coin",
   "commemorated_topic": "Monumentos arquitectónicos de Rusia",
@@ -98055,6 +99082,143 @@
   },
   "weight": 17
  },
+ "76763": {
+  "id": 76763,
+  "url": "https://es.numista.com/76763",
+  "title": "5 ECU (Miguel de Cervantes)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1994,
+  "max_year": 1994,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Luis José Díaz Salas"
+   ],
+   "description": "Quijote a caballo, Sancho montado en burro.",
+   "lettering": "ESPAÑA\r\n5 ECU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67e1acc91d7381.05081030-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67e1acc91d7381.05081030-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Rafael Vallejo García"
+   ],
+   "description": "Busto de Cervantes mirando 3/4 a la izquierda.",
+   "lettering": "MIGUEL DE CERVANTES\r\n19 M 94",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67e1acc9790c25.26294196-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67e1acc9790c25.26294196-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "commemorated_topic": "Miguel de Cervantes - El Quijote",
+  "comments": "<p><strong>Miguel de Cervantes Saavedra</strong> (29 de septiembre de 1547 (supuesta) - 22 de abril de 1616 NS) fue un escritor español ampliamente considerado como el más grande escritor en lengua española y uno de los novelistas preeminentes del mundo. Es conocido sobre todo por su novela El Quijote, obra considerada como la primera novela moderna[7][8][9] La novela ha sido calificada por muchos autores de renombre como el \"mejor libro de todos los tiempos\" y la \"mejor y más central obra de la literatura universal\".</p>",
+  "related_types": [
+   {
+    "id": 18156,
+    "title": "1 ECU (Don Quixote of La Mancha)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   },
+   {
+    "id": 32179,
+    "title": "25 ECU (Lepanto Battle and Alcalá University)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   },
+   {
+    "id": 108617,
+    "title": "100 ECU (Miguel de Cervantes)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Literatura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M46"
+   }
+  ],
+  "weight": 33.62,
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
  "76833": {
   "category": "coin",
   "comments": "Fecha de edición: 03 OCT 2005<br /><br />\r\nEl perro salvaje asiático (Cuon alpinus) se conoce gracias a encuentros muy raros sobre todo en el suroeste de la región de Primorsky y en lugares colindantes con la región de Amur.",
@@ -99081,6 +100245,168 @@
   "category": "coin",
   "type": "Monedas circulantes normales"
  },
+ "77339": {
+  "id": 77339,
+  "url": "https://es.numista.com/77339",
+  "title": "5 ECU (Alfonso X of Castile)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1990,
+  "max_year": 1990,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Luis José Díaz Salas"
+   ],
+   "designers": [
+    "Francisco Martínez Tornero"
+   ],
+   "description": "Círculo con estrellas en el exterior apoyado en el interior de un semicírculo curvado.",
+   "lettering": "5 ECU \r\nM \r\nESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6062472f7c3c55.38632637-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6062472f7c3c55.38632637-180.jpg",
+   "picture_copyright": "X2an"
+  },
+  "reverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Alfonso X de Castilla a caballo con armadura, escudo y lanza en mano.",
+   "lettering": "ALFONSVS : DEI : GRACIA : REX : CASTELLE\r\n✠ 1990 ✠",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624730077835.55473298-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624730077835.55473298-180.jpg",
+   "picture_copyright": "X2an"
+  },
+  "commemorated_topic": "Alfonso X de Castilla",
+  "comments": "<p><strong>Alfonso X</strong> (también conocido como el Sabio; 23 de noviembre de 1221 - 4 de abril de 1284) fue rey de Castilla, León y Galicia desde el 1 de junio de 1252 hasta su muerte en 1284. Durante las elecciones de 1257, una facción disidente le eligió rey de Alemania el 1 de abril. Renunció a sus pretensiones sobre Alemania en 1275 y, al crear una alianza con el reino de Inglaterra en 1254, también a sus pretensiones sobre el ducado de Gascuña.</p>",
+  "related_types": [
+   {
+    "id": 19125,
+    "title": "5 ECU (Charles V)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1989,
+    "maxYear": 1989
+   },
+   {
+    "id": 19619,
+    "title": "5 ECU (Averroes)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28059,
+    "title": "5 ECU (Charles III of Spain)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 18520,
+    "title": "5 ECU (Juan de Borbón)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1993,
+    "maxYear": 1993
+   },
+   {
+    "id": 18371,
+    "title": "5 ECU (Spanish Navy - Coca de Mataró)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1996,
+    "maxYear": 1996
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Monarca"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "M6"
+   }
+  ],
+  "weight": 33.62,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
  "7775": {
   "category": "coin",
   "comments": "Las monedas de 1965 fueron acuñadas por la Real Fábrica de la Moneda británica, pero muestran las mismas marcas privadas parisinas que las monedas de 1960 acuñadas en París.",
@@ -99869,6 +101195,120 @@
    "text": "2 Roubles"
   },
   "weight": 17
+ },
+ "78201": {
+  "id": 78201,
+  "url": "https://es.numista.com/78201",
+  "title": "5 Euros (Royal Guard)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1998,
+  "max_year": 1998,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Esther González Pastor"
+   ],
+   "lettering": "ESPAÑA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624730884fd9.87771587-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624730884fd9.87771587-180.jpg",
+   "picture_copyright": "antimadridista"
+  },
+  "reverse": {
+   "engravers": [
+    "Esther González Pastor"
+   ],
+   "lettering": "GUARDIA REAL \r\nM 1998",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/606247311da9d4.77894053-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/606247311da9d4.77894053-180.jpg",
+   "picture_copyright": "antimadridista"
+  },
+  "series": "Tribute to the Spanish Army",
+  "commemorated_topic": "Guardia Real",
+  "related_types": [
+   {
+    "id": 18161,
+    "title": "1 Euro (Ground forces)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1998,
+    "maxYear": 1998
+   },
+   {
+    "id": 78203,
+    "title": "25 Euros (Tribute to the Army)",
+    "category": "exonumia",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1998,
+    "maxYear": 1998
+   }
+  ],
+  "tags": [
+   "Caballo o equino",
+   "Arma de fuego"
+  ],
+  "weight": 33.62,
+  "orientation": "coin",
+  "edge": {
+   "description": "REEDED"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
  },
  "78379": {
   "category": "coin",
@@ -104821,6 +106261,98 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "85583": {
+  "id": 85583,
+  "url": "https://es.numista.com/85583",
+  "title": "5 Euro (Nieuport)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1997,
+  "max_year": 1997,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Garcilaso Rollán Sánchez"
+   ],
+   "description": "Avión Nieuport (posiblemente Nieuport X) y su vista esquemática frontal.",
+   "lettering": "ESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624734daf342.18891618-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624734daf342.18891618-180.jpg",
+   "picture_copyright": "2016 J.Schönfels"
+  },
+  "reverse": {
+   "engravers": [
+    "Garcilaso Rollán Sánchez"
+   ],
+   "description": "Avión Nieuport (posiblemente Nieuport II) y su vista lateral. Símbolo de la Unión Europea y marca de ceca.",
+   "lettering": "M\r\n1997\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624735698667.95879495-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624735698667.95879495-180.jpg",
+   "picture_copyright": "2016 J.Schönfels"
+  },
+  "series": "Tribute to the Spanish Aviation",
+  "commemorated_topic": "Nieuport",
+  "comments": "<p>Certificado de autenticidad:</p><p><a href=\"https://en.numista.com/catalogue/images/6950d67676f2a.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6950d67676f2a.jpg\"></a> <a href=\"https://en.numista.com/catalogue/images/6950d67c5d448.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6950d67c5d448.jpg\"></a></p><p><a href=\"https://en.numista.com/catalogue/images/6950d72c205ae.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6950d72c205ae.jpg\"></a><br></p>",
+  "tags": [
+   "Avión o aeronave"
+  ],
+  "weight": 33.62,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
+ },
  "8565": {
   "id": 8565,
   "url": "https://es.numista.com/8565",
@@ -106707,6 +108239,113 @@
    "text": "2000 pesetas"
   },
   "weight": 18
+ },
+ "93010": {
+  "id": 93010,
+  "url": "https://es.numista.com/93010",
+  "title": "5 ECU (Spanish Navy - Don Juan de Austria)",
+  "object_type": {
+   "id": 8,
+   "name": "Monedas de fantasía"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1995,
+  "max_year": 1995,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "5 ECU",
+   "numeric_value": 5,
+   "currency": {
+    "id": 10619,
+    "name": "Ecu",
+    "full_name": "Ecu (1979-1999)"
+   }
+  },
+  "size": 42,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Esther González Pastor"
+   ],
+   "designers": [
+    "Luis José Díaz Salas"
+   ],
+   "description": "Galera española a vela, denominación arriba.",
+   "lettering": "ESPAÑA \r\n5 ECU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/60624737ecca20.73994557-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/60624737ecca20.73994557-180.jpg",
+   "picture_copyright": "Auktionen Frühwald",
+   "picture_copyright_url": "http://www.auktionen-fruehwald.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Esther González Pastor"
+   ],
+   "description": "Busto de Don Juan de Austria mirando hacia la derecha.",
+   "lettering": "DON JUAN DE AUSTRIA\r\n19 M 95",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/606247387e2bd8.41160277-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/606247387e2bd8.41160277-180.jpg",
+   "picture_copyright": "Auktionen Frühwald",
+   "picture_copyright_url": "http://www.auktionen-fruehwald.com/"
+  },
+  "series": "Spanish Navy",
+  "commemorated_topic": "Don Juan de Austria",
+  "comments": "<p>La<strong> Armada</strong> española es la rama marítima de las Fuerzas Armadas españolas y una de las fuerzas navales en activo más antiguas del mundo. La Armada española fue responsable de una serie de importantes logros históricos en la navegación, siendo los más famosos el descubrimiento de América y la primera circunnavegación mundial. Durante varios siglos, desempeñó un papel logístico crucial en la expansión y consolidación del Imperio español, y defendió una vasta red comercial a través del Océano Atlántico entre América y Europa, y el Galeón de Manila a través del Océano Pacífico entre Filipinas y América.</p>",
+  "tags": [
+   "Líder militar",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 6,
+     "code": "X"
+    },
+    "number": "MA17"
+   }
+  ],
+  "weight": 33.62,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "exonumia",
+  "type": "Monedas de fantasía"
  },
  "93831": {
   "category": "coin",
