@@ -27092,6 +27092,117 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "19880": {
+  "id": 19880,
+  "url": "https://es.numista.com/19880",
+  "title": "100 Bolívares (Simón Bolivar's Death)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1980,
+  "max_year": 1980,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "100 bolívares",
+   "numeric_value": 100,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 40,
+  "thickness": 2.24,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Borde circular sin pedrería. En el centro, sobre el campo, mausoleo del Libertador Simón Bolívar situado en el Panteón Nacional de Caracas. En la parte superior, leyenda \"REPÚBLICA DE VENEZUELA\" y en la inferior \"1980\" y \"100 BOLÍVARES\".",
+   "lettering": "REPUBLICA DE VENEZUELA\r\n1980 100 BOLIVARES",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/63c06e196ddab4.07200838-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/63c06e196ddab4.07200838-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "description": "Borde circular sin rebordes. En el centro, sobre el campo, busto del Libertador Simón Bolívar de AITA, con la leyenda \"SIMON BOLÍVAR\" arriba, \"1830-1980\" a ambos lados y \"AITA\" debajo.",
+   "lettering": "SIMON BOLIVAR\r\n1830 1980",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/63c06e19cd8505.02489755-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/63c06e19cd8505.02489755-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "150 años de la muerte del Libertador Simón Bolívar",
+  "tags": [
+   "Aniversario de fallecimiento",
+   "Líder militar",
+   "Político"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "56"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv100bs-ba"
+   }
+  ],
+  "weight": 22,
+  "orientation": "coin",
+  "edge": {
+   "description": "Liso con inscripción",
+   "lettering": "BANCO CENTRAL DE VENEZUELA 22 GRS. LEY 900",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "19979": {
   "id": 19979,
   "url": "https://es.numista.com/19979",
@@ -53390,6 +53501,495 @@
   },
   "weight": 35
  },
+ "37248": {
+  "id": 37248,
+  "url": "https://es.numista.com/37248",
+  "title": "100 Bolívares (Bicentenary of Simon Bolivar's Birth)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1983,
+  "max_year": 1983,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "100 bolívares",
+   "numeric_value": 100,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 35,
+  "thickness": 3.62,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Fachada de la Casa Natal de Simón Bolívar. Con leyenda en la parte superior. Finura y peso abajo a la izquierda y valor abajo.",
+   "lettering": "•BANCO CENTRAL DE VENEZUELA•\r\nLEY 900 31,10 gms 100 BOLIVARES",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/419-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/419-180.jpg"
+  },
+  "reverse": {
+   "description": "Simón Bolívar de pie. Con leyenda alrededor y fechas de conmemoración en la parte inferior.",
+   "lettering": "BICENTENARIO DEL NACIMIENTO DEL LIBERTADOR SIMON BOLIVAR\r\n1783-1983",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/418-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/418-180.jpg"
+  },
+  "commemorated_topic": "200 aniversario - Nacimiento de Simón Bolívar",
+  "tags": [
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "58"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv100bs-da"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 4157,
+    "name": "VDM Metals / Vereinigte Deutsche Metallwerke"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "37249": {
+  "id": 37249,
+  "url": "https://es.numista.com/37249",
+  "title": "500 Bolívares (Battle of Matasiete)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1992,
+  "max_year": 1992,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "500 bolívares",
+   "numeric_value": 500,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 35,
+  "thickness": 3.63,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo con leyenda en la parte superior. Fina, peso, valor y fecha en la parte inferior.",
+   "lettering": "•BANCO CENTRAL DE VENEZUELA•\r\nLEY 900 • 31,10 GRS • 500 BOLIVARES • 1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/423-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/423-180.jpg"
+  },
+  "reverse": {
+   "description": "Monumento en el centro. Con leyenda en la parte superior y fechas de conmemoración en la base.",
+   "lettering": "BATALLA DE MATASIETE\r\n1817 1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/422-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/422-180.jpg"
+  },
+  "commemorated_topic": "175 aniversario de la batalla de Matasiete",
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "69"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv500bs-ca01p"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 4157,
+    "name": "VDM Metals / Vereinigte Deutsche Metallwerke"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "37252": {
+  "id": 37252,
+  "url": "https://es.numista.com/37252",
+  "title": "500 Bolívares (United Nations)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1995,
+  "max_year": 1995,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "500 bolívares",
+   "numeric_value": 500,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 35,
+  "thickness": 3.82,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo con leyenda en la parte superior. Fina, peso, valor y fecha en la parte inferior.",
+   "lettering": "BANCO CENTRAL DE VENEZUELA\r\nLEY 900 • 31,10 GRS • 500 BOLIVARES • 1995",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/425-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/425-180.jpg"
+  },
+  "reverse": {
+   "description": "Emblema de las Naciones Unidas, con leyenda en la parte superior e inferior. Fechas de conmemoración en la base.",
+   "lettering": "• ORGANIZACÍON DE LAS NACIONES UNIDAS •\r\n1945-1995\r\nNACIONES UNIDAS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/424-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/424-180.jpg"
+  },
+  "commemorated_topic": "50 aniversario - Naciones Unidas",
+  "tags": [
+   "Naciones Unidas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "71"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv500bs-da01p"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "37253": {
+  "id": 37253,
+  "url": "https://es.numista.com/37253",
+  "title": "500 Bolívares (Birth of Sucre)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1995,
+  "max_year": 1995,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "500 bolívares",
+   "numeric_value": 500,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 35,
+  "thickness": 3.75,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo con leyenda en la parte superior. Fina, peso, valor y fecha en la parte inferior.",
+   "lettering": "• BANCO CENTRAL DE VENEZUELA •\r\nLEY 900 • 31,10 GRS • 500 BOLIVARES • 1995",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/427-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/427-180.jpg"
+  },
+  "reverse": {
+   "description": "Busto de Antonio José de Sucre con leyenda alrededor y fechas de conmemoración en la parte inferior.",
+   "lettering": "BICENTENARIO DEL NATALICIO DEL MARISCAL ANTONIO JOSÉ DE SUCRE\r\n1795-1995",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/426-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/426-180.jpg"
+  },
+  "commemorated_topic": "200 aniversario del nacimiento de Antonio José de Sucre",
+  "tags": [
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "72"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv500bs-ea01p"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 19,
+    "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "37254": {
+  "id": 37254,
+  "url": "https://es.numista.com/37254",
+  "title": "500 Bolívares (Gual and España Conspiracy)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1997,
+  "max_year": 1997,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "500 bolívares",
+   "numeric_value": 500,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 40,
+  "thickness": 2.81,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo con leyenda en la parte superior. Fina, peso, valor y fecha en la parte inferior.",
+   "lettering": "• BANCO CENTRAL DE VENEZUELA •\r\nLEY 900 • 31,10 GRS • 500 BOLIVARES • 1997",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/429-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/429-180.jpg"
+  },
+  "reverse": {
+   "description": "Bustos de Manuel Gual y José María España con leyenda en la parte superior, nombres en la parte inferior y fechas de conmemoración en la base.",
+   "lettering": "BICENTENARIO DE LA CONSPIRACIÓN\r\n1797*1997\r\nMANUEL GUAL * JOSE MARIA ESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/428-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/428-180.jpg"
+  },
+  "commemorated_topic": "Bicentenario de la conspiración de Manuel Gual y José María España",
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "74"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv500bs-fa01p"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 14,
+    "name": "Casa de la Moneda de París"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "374471": {
   "category": "coin",
   "commemorated_topic": "Centenario del nacimiento de Rasul Gamzatov",
@@ -71542,6 +72142,106 @@
    {
     "id": 28,
     "name": "Royal Australian Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "47653": {
+  "id": 47653,
+  "url": "https://es.numista.com/47653",
+  "title": "500 Bolivares (Jose Antonio Paez)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "venezuela",
+   "name": "Venezuela"
+  },
+  "min_year": 1990,
+  "max_year": 1990,
+  "ruler": [
+   {
+    "id": 4706,
+    "name": "Cuarta República",
+    "wikidata_id": "Q21296156"
+   }
+  ],
+  "value": {
+   "text": "500 bolívares",
+   "numeric_value": 500,
+   "currency": {
+    "id": 7,
+    "name": "Bolívar",
+    "full_name": "Bolívar (1879-2007)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2011-12-31"
+  },
+  "size": 35,
+  "thickness": 3.63,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo nacional con leyenda en la parte superior. Fina, peso, valor y fecha en la parte inferior.",
+   "lettering": "•BANCO CENTRAL DE VENEZUELA•\r\nLEY 900 • 31,10 GRS • 500 BOLIVARES • 1990",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/456-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/456-180.jpg"
+  },
+  "reverse": {
+   "description": "Cabeza de Páez mirando a la izquierda. Con nombre en la parte superior y fechas conmemorativas en la inferior. Nombre del grabador en la base del cuello.",
+   "lettering": "JOSE ANTONIO PAEZ\r\nBARRÉ\r\n1790-1990",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/venezuela/455-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/venezuela/455-180.jpg"
+  },
+  "commemorated_topic": "Bicentenario del nacimiento del General José Antonio Páez",
+  "tags": [
+   "Escudo de armas",
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "64"
+   },
+   {
+    "catalogue": {
+     "id": 2068,
+     "code": "NCV"
+    },
+    "number": "mv500bs-ba"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
    }
   ],
   "category": "coin",
