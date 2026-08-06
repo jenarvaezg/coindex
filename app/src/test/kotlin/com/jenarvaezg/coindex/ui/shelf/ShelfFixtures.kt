@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.DerivedCollection
@@ -121,16 +122,18 @@ internal object ShelfFixtures {
      * partial one, and the box in the no-ratio stretch.
      */
     val state = CollectionState(
-        items = items,
-        index = listOf(britannia, fuertes, box),
-        typeMeta = typeMeta,
-        itemsByKey = mapOf(
-            fuertesKey to items.filter { it.typeId == FUERTE },
-            // Only row 9. Row 10 is the same type and produced no collection, which is exactly what
-            // `deriveCollection` does with an issue no member claims.
-            britanniaKey to items.filter { it.id == 9L },
+        AssembledCollection(
+            items = items,
+            index = listOf(britannia, fuertes, box),
+            typeMeta = typeMeta,
+            itemsByKey = mapOf(
+                fuertesKey to items.filter { it.typeId == FUERTE },
+                // Only row 9. Row 10 is the same type and produced no collection, which is exactly
+                // what `deriveCollection` does with an issue no member claims.
+                britanniaKey to items.filter { it.id == 9L },
+            ),
+            ownGroupings = listOf(box.box),
         ),
-        ownGroupings = listOf(box.box),
     )
 
     /**
@@ -140,8 +143,10 @@ internal object ShelfFixtures {
      * and only the membership goes, which is what makes a box a second reading rather than a move.
      */
     val stateWithoutTheBox = state.copy(
-        index = state.index.filterNot { it is IndexCard.Box },
-        ownGroupings = emptyList(),
+        collection = state.collection.copy(
+            index = state.index.filterNot { it is IndexCard.Box },
+            ownGroupings = emptyList(),
+        ),
     )
 
     private fun item(id: Long, typeId: Int, quantity: Int) =

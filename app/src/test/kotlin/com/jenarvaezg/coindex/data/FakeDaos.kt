@@ -4,6 +4,9 @@ import com.jenarvaezg.coindex.data.db.ApiCallDao
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
 import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
+import com.jenarvaezg.coindex.data.db.OwnGroupingDao
+import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
+import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
@@ -52,6 +55,52 @@ class FakeTypeMetaDao : TypeMetaDao {
             } else {
                 row
             }
+        }
+    }
+}
+
+/**
+ * The boxes the collector typed, in memory.
+ *
+ * The last of the four DAOs to get a stand-in (#217), and the only one with logic of its own to
+ * stand in for: `create` and `removeMemberOrDelete` are `@Transaction` default methods, so what is
+ * reimplemented here is the two queries they call and never the rule between them — a grouping over
+ * nothing is deleted here because the interface's own body says so.
+ */
+class FakeOwnGroupingDao : OwnGroupingDao {
+    val groupings = MutableStateFlow<List<OwnGroupingEntity>>(emptyList())
+    val members = MutableStateFlow<List<OwnGroupingMemberEntity>>(emptyList())
+    private var nextId = 1L
+
+    override fun observeAll(): Flow<List<OwnGroupingEntity>> = groupings
+    override fun observeMembers(): Flow<List<OwnGroupingMemberEntity>> = members
+    override suspend fun insert(grouping: OwnGroupingEntity): Long {
+        val id = nextId++
+        groupings.value = groupings.value + grouping.copy(id = id)
+        return id
+    }
+    override suspend fun addMembers(added: List<OwnGroupingMemberEntity>) {
+        // `IGNORE` en el DAO real: la clave es (groupingId, typeId), así que repetir no duplica.
+        members.value = members.value + added.filterNot { it in members.value }
+    }
+    override suspend fun rename(id: Long, name: String, updatedAt: Long) {
+        groupings.value = groupings.value.map { grouping ->
+            if (grouping.id == id) grouping.copy(name = name, updatedAt = updatedAt) else grouping
+        }
+    }
+    override suspend fun removeMember(groupingId: Long, typeId: Int) {
+        members.value = members.value
+            .filterNot { it.groupingId == groupingId && it.typeId == typeId }
+    }
+    override suspend fun delete(id: Long) {
+        groupings.value = groupings.value.filterNot { it.id == id }
+        members.value = members.value.filterNot { it.groupingId == id }
+    }
+    override suspend fun memberCount(groupingId: Long): Int =
+        members.value.count { it.groupingId == groupingId }
+    override suspend fun touch(id: Long, updatedAt: Long) {
+        groupings.value = groupings.value.map { grouping ->
+            if (grouping.id == id) grouping.copy(updatedAt = updatedAt) else grouping
         }
     }
 }
