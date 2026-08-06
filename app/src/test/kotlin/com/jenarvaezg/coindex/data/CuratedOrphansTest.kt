@@ -54,6 +54,13 @@ class CuratedOrphansTest {
      * and it was refused for a measured reason: a programme only surfaces on the plate of a
      * catalog that touches its types, and no plate touches these.
      *
+     * The two Mexican silver pieces of #242 are the block where the **father** answered, and both
+     * were writable before he did: the 1 Peso «Tepalcate» (N#3550) is 11 struck years without a gap
+     * and the 8 Reales of Charles IV (N#18852) is 18, so a date run was on the table for each — for
+     * the reales in two forms, by year or by assayer. He follows neither (6 August 2026, through
+     * Jose), and the shape had already lost its only alternative: an agrupación declares no weight,
+     * so by ADR 0013 as amended it cannot hold six Mexican pieces of five different weights.
+     *
      * The five Venezuelan silver commemoratives (N#14538, N#18940, N#19880, N#27573, N#34721) are
      * the only block signed for the **absence of a boundary** rather than for the collector's
      * taste (#247). Three sources were read and none declares a series — the catalogue the ficha
@@ -66,7 +73,7 @@ class CuratedOrphansTest {
     fun `the register carries the signed verdicts`() {
         assertEquals(
             listOf(
-                1_933, 3_416, 6_918, 14_538, 18_940, 19_880, 27_573, 34_721,
+                1_933, 3_416, 3_550, 6_918, 14_538, 18_852, 18_940, 19_880, 27_573, 34_721,
                 131_809, 132_242, 291_255, 451_057, 470_766, 571_460,
             ),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
