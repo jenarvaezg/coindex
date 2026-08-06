@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -8,6 +8,25 @@
 > the labelling rules left in code are **two** and not one, because Numista does not write countries
 > — it writes issuing entities with their period of validity, and nine of the 40 issuer codes in the
 > cache reach a card as «Federación de Rusia (1991-presente)» rather than as «Rusia» (#180).
+
+> **Amended on 2026-08-06 (§13).** What the notebook *is* stands whole — the index printed, no
+> entity, no cover, no second order — and so does every measurement §13 made. What stops being true
+> is that there is **one** output. #228 makes the layout configurable behind five independent
+> switches, so three sentences of §13 change status without changing content:
+>
+> - «Only the reverse goes on paper, at life size» and «one plate per page» become the **defaults**
+>   rather than the invariants. They are still what the measurements chose and still what nobody who
+>   asks for nothing gets; a collector who wants both faces (#230), a scaled coin (#233) or two plates
+>   in a folio (#232) can now say so. The 1:1 ruler is still the falsifiability of the 1:1 page, and
+>   it goes when the 1:1 goes.
+> - «the cost … is mitigated by the button saying how much it will export, **not by a dialog**»
+>   survives as written about **confirming** and is overtaken about **choosing**. The button still
+>   names the size of what it starts; what it now opens is a surface for deciding how, whose
+>   load-bearing line is the live page count — arithmetic over what the index is showing at that
+>   moment, which is why it cannot live in Ajustes. It is a card in the index and not a modal.
+>
+> Nothing here is stored per card, so §7 is untouched: how a notebook is printed is what the
+> collector is looking through, like the filters of §1, not something recorded about a collection.
 
 ## Context
 
@@ -296,6 +315,10 @@ the catalog fixes both and forever; it would be a second authority competing wit
 ADR 0016 just crowned; and it would need a destination, which is what §10 decides.
 
 ### 13. Exporting: a plate is a PNG, the notebook is the printed index
+
+> Amended by #228 — see the note at the top. The layout below is now the **default** and no longer
+> the only output, and the export button opens a sheet of switches with the live page count under
+> them. The PNG of a single plate is untouched.
 
 **The notebook is not an object; it is the index printed.** It needs no entity, no table, no naming
 and no cover page, because §4 and §6 gave it the two things it lacked: a canonical order and a

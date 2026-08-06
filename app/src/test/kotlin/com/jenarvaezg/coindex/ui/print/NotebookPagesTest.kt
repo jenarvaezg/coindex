@@ -33,6 +33,15 @@ import kotlinx.serialization.json.jsonObject
 class NotebookPagesTest {
     private val json = Json { ignoreUnknownKeys = true }
 
+    /**
+     * El cuaderno de hoy es el que la configuración por omisión produce (#228).
+     *
+     * Todos los recuentos de este archivo se miden contra esta geometría y no contra un `object` de
+     * constantes: que estos números no se muevan es la prueba de que la plomería del #228 no ha
+     * cambiado nada detrás de la puerta.
+     */
+    private val paper = printGeometry(NotebookOptions())
+
     private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
 
     private val typeMeta: TypeMetaIndex = json
@@ -73,7 +82,10 @@ class NotebookPagesTest {
         },
     )
 
-    private fun pagesOf(catalogId: String) = section(catalogs.first { it.id == catalogId }).pages
+    private fun pagesOf(catalogId: String) =
+        section(catalogs.first { it.id == catalogId }).pages(paper)
+
+    private fun pagesFor(vararg sections: PrintSection) = printPages(sections.toList(), paper)
 
     @Test
     fun `every seeded type carries the diameter the printed page is measured with`() {
@@ -102,13 +114,56 @@ class NotebookPagesTest {
      */
     @Test
     fun `the sixty shipped catalogs would print as one hundred and four pages`() {
-        assertEquals(104, catalogs.sumOf { section(it).pages })
+        assertEquals(104, catalogs.sumOf { section(it).pages(paper) })
+    }
+
+    /**
+     * The default configuration reproduces today's notebook **plate by plate**, not just in total.
+     *
+     * This is the load-bearing test of #228: the geometry stopped being an `object` of constants and
+     * became the value a configuration declares, threaded through `notebookSections`, `printGrid`,
+     * `printPages` and the drawing of the page. A millimetre lost anywhere in that plumbing moves a
+     * plate from one column of this histogram to the next, where the sum of 104 might well hide it.
+     */
+    @Test
+    fun `the default configuration reproduces today's notebook plate by plate`() {
+        val sections = catalogs.map(::section)
+
+        val pages = printPages(sections, paper)
+
+        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 39 caben de una, y la más larga son
+        // las nueve del Libro Rojo de Rusia.
+        assertEquals(
+            mapOf(1 to 39, 2 to 12, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            pages.groupBy { it.section.title }
+                .map { (_, ofSection) -> ofSection.size }
+                .groupingBy { it }
+                .eachCount()
+                .toSortedMap(),
+        )
+        assertEquals(104, pages.size)
+
+        // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
+        // sólo la última de cada lámina puede ir corta.
+        sections.forEach { plate ->
+            val ofPlate = pages.filter { it.section === plate }
+            assertEquals(plate.cells, ofPlate.flatMap { it.cells }, "corte roto: ${plate.title}")
+            val perPage = ofPlate.first().grid.cellsPerPage
+            assertTrue(
+                ofPlate.dropLast(1).all { it.cells.size == perPage },
+                "una página intermedia va corta en ${plate.title}",
+            )
+            assertTrue(
+                ofPlate.last().cells.size <= perPage,
+                "una página va sobrecargada en ${plate.title}",
+            )
+        }
     }
 
     @Test
     fun `a plate that spills repeats its heading and numbers its pages`() {
         val kookaburra = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
-        val pages = printPages(listOf(kookaburra))
+        val pages = pagesFor(kookaburra)
 
         assertEquals(4, pages.size)
         assertEquals(listOf(1, 2, 3, 4), pages.map { it.numberInSection })
@@ -131,18 +186,18 @@ class NotebookPagesTest {
     @Test
     fun `a plate of one short row is centred on the cells it has`() {
         val escudos = section(catalogs.first { it.id == "portugal-20-escudos-plata" })
-        val single = printPages(listOf(escudos)).single()
+        val single = pagesFor(escudos).single()
 
-        assertEquals(4, escudos.grid.columns)
+        assertEquals(4, escudos.grid(paper).columns)
         assertEquals(3, single.columnsUsed)
-        assertEquals(escudos.grid.widthOfMm(3), single.blockWidthMm)
+        assertEquals(escudos.grid(paper).widthOfMm(3), single.blockWidthMm)
 
-        val kookaburra = printPages(
-            listOf(section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })),
+        val kookaburra = pagesFor(
+            section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" }),
         )
         assertEquals(1, kookaburra.last().cells.size)
         assertTrue(
-            kookaburra.all { it.blockWidthMm == it.section.grid.blockWidthMm },
+            kookaburra.all { it.blockWidthMm == it.grid.blockWidthMm },
             "una fila corta ha movido el bloque de una lámina que se continúa",
         )
     }
@@ -158,7 +213,7 @@ class NotebookPagesTest {
     @Test
     fun `the photographs to warm are the thumbnails, each one once`() {
         val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
-        val pages = printPages(listOf(section(kookaburra)))
+        val pages = pagesFor(section(kookaburra))
 
         val urls = notebookPhotographs(pages)
 
@@ -171,7 +226,7 @@ class NotebookPagesTest {
         val repeated = section(kookaburra).let { plate ->
             plate.copy(cells = plate.cells.take(1) + plate.cells.take(1))
         }
-        assertEquals(1, notebookPhotographs(printPages(listOf(repeated))).size)
+        assertEquals(1, notebookPhotographs(pagesFor(repeated)).size)
     }
 
     @Test
@@ -180,14 +235,14 @@ class NotebookPagesTest {
             plate.copy(cells = plate.cells.map { it.copy(reverse = null) })
         }
 
-        assertEquals(emptyList(), notebookPhotographs(printPages(listOf(bare))))
+        assertEquals(emptyList(), notebookPhotographs(pagesFor(bare)))
     }
 
     @Test
     fun `a collection with nothing in it still gets one page rather than none`() {
         val empty = section(catalogs.first()).copy(cells = emptyList())
 
-        val pages = printPages(listOf(empty))
+        val pages = pagesFor(empty)
 
         assertEquals(1, pages.size)
         assertEquals(emptyList(), pages.single().cells)
@@ -212,11 +267,16 @@ class NotebookPagesTest {
             ),
         )
 
-        val sections = notebookSections(CollectionState(), listOf(emptied), Curation(catalogs))
+        val sections = notebookSections(
+            CollectionState(),
+            listOf(emptied),
+            Curation(catalogs),
+            NotebookOptions(),
+        )
 
         assertEquals(1, sections.size)
         assertEquals("Bandeja del abuelo", sections.single().title)
         assertEquals(emptyList(), sections.single().cells)
-        assertEquals(1, printPages(sections).size)
+        assertEquals(1, printPages(sections, paper).size)
     }
 }

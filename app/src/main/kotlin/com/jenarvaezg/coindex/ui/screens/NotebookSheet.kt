@@ -44,12 +44,12 @@ import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
 import com.jenarvaezg.coindex.ui.print.PrintCell
+import com.jenarvaezg.coindex.ui.print.PrintGeometry
 import com.jenarvaezg.coindex.ui.print.PrintPage
-import com.jenarvaezg.coindex.ui.print.PrintPaper
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The density that makes one dp a millimetre of paper: the layout is written in millimetres. */
-val printDensity = Density(density = PrintPaper.PX_PER_MM, fontScale = 1f)
+val printDensity = Density(density = PrintGeometry.PX_PER_MM, fontScale = 1f)
 
 /** Millimetres, as the unit the whole printed page is laid out in. */
 private val Float.mm: Dp get() = Dp(this)
@@ -117,16 +117,19 @@ fun NotebookPageSheet(
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // The millimetres this page was counted with, which since #228 come from the configuration the
+    // export was started under and no longer from a constant.
+    val geometry = page.geometry
     Column(
         // The paper is painted inside whatever the caller wraps the page in, or the recording
         // comes out transparent and every viewer fills it with a colour of its own.
         modifier = modifier
-            .size(PrintPaper.WIDTH_MM.mm, PrintPaper.HEIGHT_MM.mm)
+            .size(geometry.widthMm.mm, geometry.heightMm.mm)
             .background(Paper.paper)
-            // The margin is the page's and not each band's: inside it the three bands of
-            // `PrintPaper` add up to exactly the printable height, which is what the page count
-            // was computed against.
-            .padding(PrintPaper.MARGIN_MM.mm),
+            // The margin is the page's and not each band's: inside it the three bands of the
+            // geometry add up to exactly the printable height, which is what the page count was
+            // computed against.
+            .padding(geometry.marginMm.mm),
     ) {
         PageHeading(page)
         PageGrid(page, onImageSettled)
@@ -137,17 +140,18 @@ fun NotebookPageSheet(
 /**
  * The heading, repeated on every page of a plate that spills over.
  *
- * Its height is fixed by [PrintPaper.HEADING_MM] and its overflow is clipped, which is what keeps
- * the arithmetic of the page count and the drawing of the page in step: a heading that grew with a
- * catalog's specification would push cells off a page the exporter had already counted.
+ * Its height is fixed by [PrintGeometry.headingMm] and its overflow is clipped, which is what
+ * keeps the arithmetic of the page count and the drawing of the page in step: a heading that grew
+ * with a catalog's specification would push cells off a page the exporter had already counted.
  */
 @Composable
 private fun PageHeading(page: PrintPage) {
     val section = page.section
+    val geometry = page.geometry
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(PrintPaper.HEADING_MM.mm)
+            .height(geometry.headingMm.mm)
             .clipToBounds(),
         verticalArrangement = Arrangement.spacedBy(1f.mm),
     ) {
@@ -191,13 +195,14 @@ private fun PageHeading(page: PrintPage) {
 /** The cells of this page, on the grid its plate's largest coin fixed. */
 @Composable
 private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit) {
-    val grid = page.section.grid
+    val grid = page.grid
+    val geometry = page.geometry
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(PrintPaper.gridHeightMm.mm)
+            .height(geometry.gridHeightMm.mm)
             .clipToBounds(),
-        verticalArrangement = Arrangement.spacedBy(PrintPaper.GUTTER_MM.mm),
+        verticalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm),
         // The block is centred and the rows inside it are not: what the grid leaves over is
         // margin, and margin on one side only reads as a page printed askew.
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -205,7 +210,7 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
         page.cells.chunked(grid.columns).forEach { row ->
             Row(
                 modifier = Modifier.width(page.blockWidthMm.mm),
-                horizontalArrangement = Arrangement.spacedBy(PrintPaper.GUTTER_MM.mm),
+                horizontalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm),
             ) {
                 row.forEach { cell ->
                     PrintedCell(
@@ -375,17 +380,18 @@ private fun EmptyMount(modifier: Modifier = Modifier) {
  */
 @Composable
 private fun PageFoot(page: PrintPage) {
+    val geometry = page.geometry
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(PrintPaper.RULER_MM.mm)
+            .height(geometry.rulerMm.mm)
             .clipToBounds(),
         verticalAlignment = Alignment.Bottom,
     ) {
         Column {
-            Ruler()
+            Ruler(geometry)
             Text(
-                "${PrintPaper.RULER_BAR_MM.toInt()} MM · ESCALA 1:1",
+                "${geometry.rulerBarMm.toInt()} MM · ESCALA 1:1",
                 style = PRINT_FACT_LABEL,
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 0.8f.mm),
@@ -404,10 +410,10 @@ private fun PageFoot(page: PrintPage) {
 
 /** A 50 mm bar ticked every 10 mm, drawn rather than measured from any font. */
 @Composable
-private fun Ruler() {
+private fun Ruler(geometry: PrintGeometry) {
     Canvas(
         modifier = Modifier
-            .width(PrintPaper.RULER_BAR_MM.mm)
+            .width(geometry.rulerBarMm.mm)
             .height(3f.mm),
     ) {
         val stroke = 0.3f.mm.toPx()

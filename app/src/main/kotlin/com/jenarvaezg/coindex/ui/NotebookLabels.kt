@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
+import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 
 /**
  * What the export button says it is about to do.
@@ -8,11 +9,47 @@ import com.jenarvaezg.coindex.ui.print.NotebookExportStep
  * The count is the promise: pressing it can take minutes and produce eighty-four pages, so the
  * button names the size of what it is starting rather than saying «Exportar» and finding out.
  * «Láminas» and not «páginas», because what the collector chose is a set of collections — how many
- * pages each takes is the printer's business and the progress notice says it soon enough.
+ * pages each takes is the printer's business, and since #228 the sheet the button opens says it
+ * before a single one is drawn.
  */
 fun notebookExportLabel(cards: Int): String = when (cards) {
     0 -> "Nada que exportar"
     else -> "Exportar ${plural(cards, "lámina", "láminas")}"
+}
+
+/**
+ * What the export sheet is about to cost, recounted on every tap (#228).
+ *
+ * The pages first, because they are what the configuration moves and what the collector is deciding
+ * about; the láminas after, because they are what the filter already chose and do not change here.
+ * It is pure arithmetic over what the index is showing at that moment — filters and search included
+ * — which is why the count can only live in the sheet: in Ajustes there is no index to speak of.
+ */
+fun notebookCostLabel(pages: Int, cards: Int): String =
+    "${plural(pages, "página", "páginas")} · ${plural(cards, "lámina", "láminas")}"
+
+/** What each of the five switches is called on the export sheet, in the collector's words. */
+fun notebookSwitchLabel(switch: NotebookSwitch): String = when (switch) {
+    NotebookSwitch.Photographs -> "Fotos"
+    NotebookSwitch.BothFaces -> "Ambas caras"
+    NotebookSwitch.ActualSize -> "Tamaño real"
+    NotebookSwitch.SharePage -> "Compartir página"
+    NotebookSwitch.NumistaQr -> "QR de Numista"
+}
+
+/**
+ * Why a switch is greyed out, or null where it is a live question.
+ *
+ * Two reasons and they read differently on purpose. **Pending** is about the app: the switch is drawn
+ * and remembered but its ticket has not landed, and saying which one is what keeps a grey control
+ * from reading as a bug. **Derived** is about the configuration the collector has built: with the
+ * photographs off there is no face and no size left to negotiate, and that one resolves itself the
+ * moment they turn the coins back on.
+ */
+fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when {
+    !offered -> "Sin fotos no hay nada que ajustar"
+    switch.pending != null -> "Pendiente · #${switch.pending}"
+    else -> null
 }
 
 /**

@@ -94,7 +94,9 @@ fun NotebookPdfExport(
         val current = pages.getOrNull(pageIndex) ?: return@LaunchedEffect
         onStep(NotebookExportStep.Drawing(pageIndex, current.section.title))
         awaitSettledImages(current.photographs, settled, PAGE_WAIT_MILLIS)
-        val appended = runCatching { addNotebookPage(document, picture, pageIndex + 1) }
+        val appended = runCatching {
+            addNotebookPage(document, picture, pageIndex + 1, current.geometry)
+        }
         if (appended.isFailure) {
             onFinished(
                 "No se pudo exportar el cuaderno: ${appended.exceptionOrNull()?.message}",

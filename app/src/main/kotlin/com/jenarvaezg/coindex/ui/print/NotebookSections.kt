@@ -32,25 +32,35 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
  * reading the whole index here would silently print what the collector had just narrowed away. One
  * card in, one section out — nothing is dropped, because what stays out of the notebook is a
  * question for the index and not for the printer (#147).
+ *
+ * **[options] is threaded through and not yet read** (#228). It belongs here because what a cell
+ * *is* depends on the configuration and not only on the millimetres: printing both faces gives a cell
+ * an obverse (#230), and printing no photographs gives it neither (#231). Laying the parameter now is
+ * what #228 is for — a door that reaches the cells, so the ticket that opens it does not have to
+ * re-thread the ViewModel and the index screen to get here.
  */
+@Suppress("UNUSED_PARAMETER")
 fun notebookSections(
     state: CollectionState,
     cards: List<IndexCard>,
     curation: Curation,
+    options: NotebookOptions,
 ): List<PrintSection> = cards.map { card ->
     when (val destination = destinationOf(card)) {
-        is CardDestination.Plate -> plateSection(state, curation, destination.catalogId)
+        is CardDestination.Plate -> plateSection(state, curation, destination.catalogId, options)
             // A plate that will not resolve is not a reason to skip the card: its pieces are still
             // a collection, and the same fallback the screens have is the one the paper gets.
-            ?: piecesSection(state, card)
-        is CardDestination.Pieces, is CardDestination.Box -> piecesSection(state, card)
+            ?: piecesSection(state, card, options)
+        is CardDestination.Pieces, is CardDestination.Box -> piecesSection(state, card, options)
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun plateSection(
     state: CollectionState,
     curation: Curation,
     catalogId: String,
+    options: NotebookOptions,
 ): PrintSection? {
     val plate = resolvePlate(state, curation, catalogId) as? PlateResult.Available
         ?: return null
@@ -83,7 +93,12 @@ private fun plateSection(
     )
 }
 
-private fun piecesSection(state: CollectionState, card: IndexCard): PrintSection {
+@Suppress("UNUSED_PARAMETER")
+private fun piecesSection(
+    state: CollectionState,
+    card: IndexCard,
+    options: NotebookOptions,
+): PrintSection {
     val subject: PiecesSubject = piecesSubject(state, card)
     return PrintSection(
         eyebrow = "COINDEX · COLECCIÓN",

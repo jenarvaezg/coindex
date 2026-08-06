@@ -10,15 +10,19 @@ import kotlin.math.max
  * of the printer at its real diameter (#169): the unit of the layout has to be the unit of the
  * ruler the collector holds against it. What converts millimetres into anything a canvas
  * understands is the renderer, once, and nothing else in here knows about pixels.
+ *
+ * **A value and no longer an `object` of constants** (#228). The band a heading gets, the strip the
+ * ruler gets and the height of a caption are what the five switches of [NotebookOptions] move, and
+ * they have to move *before* a cell is drawn: the page count is arithmetic done up front, so the
+ * configuration enters the arithmetic and not the brush. The defaults are the notebook of today,
+ * exactly, so a geometry nobody configured is the one #169 measured.
  */
-object PrintPaper {
+data class PrintGeometry(
     /** A4 vertical. There is no landscape page: a plate is read the way a page is read. */
-    const val WIDTH_MM = 210f
-    const val HEIGHT_MM = 297f
-
+    val widthMm: Float = 210f,
+    val heightMm: Float = 297f,
     /** Wide enough that a domestic printer's unprintable border never eats a coin. */
-    const val MARGIN_MM = 15f
-
+    val marginMm: Float = 15f,
     /**
      * The band the heading gets, repeated on every page of a plate that spills over.
      *
@@ -26,34 +30,32 @@ object PrintPaper {
      * page count is arithmetic done before a single cell is drawn, so a heading that grew with its
      * catalog's specification would put the drawing and the arithmetic out of step. What does not
      * fit in the band is clipped by the renderer.
+     *
+     * It is the thin heading of «compartir página» (#232) that makes this a field rather than a
+     * constant: two plates in one folio cannot each take forty millimetres of band.
      */
-    const val HEADING_MM = 40f
-
-    /** The strip at the foot of the page that carries the 50 mm ruler. */
-    const val RULER_MM = 14f
-
+    val headingMm: Float = 40f,
+    /** The strip at the foot of the page that carries the 50 mm ruler. Zero is no strip at all. */
+    val rulerMm: Float = 14f,
     /** The ruler itself: a bar the collector can measure to catch a viewer's «fit to page». */
-    const val RULER_BAR_MM = 50f
-
+    val rulerBarMm: Float = 50f,
     /** Between two cells, and between two rows. */
-    const val GUTTER_MM = 3f
-
+    val gutterMm: Float = 3f,
     /**
      * What a cell holds under the coin: its state, its title over at most two lines, its year.
      *
-     * It is a constant and the diameter is not, which is what makes the cell taller for an ounce
-     * than for a half real without the type changing size from one plate to the next.
+     * It is fixed for the whole notebook and the diameter is not, which is what makes the cell
+     * taller for an ounce than for a half real without the type changing size from one plate to the
+     * next.
      */
-    const val CAPTION_MM = 16f
-
+    val captionMm: Float = 16f,
     /**
      * The floor on a cell's width, for the coins smaller than their own caption.
      *
      * The Venezuelan medios are 16 mm across: a cell that narrow would set its title in a column
      * three words wide. The coin is still printed at 16 mm — the cell is what grows.
      */
-    const val MIN_CELL_WIDTH_MM = 28f
-
+    val minCellWidthMm: Float = 28f,
     /**
      * The diameter for a cell nobody recorded a size for.
      *
@@ -62,30 +64,47 @@ object PrintPaper {
      * which by #169 takes the diameter of the coin the collector does have. The ounce is the
      * commonest piece of this collection and the least surprising thing for a lone hole to be.
      */
-    const val FALLBACK_DIAMETER_MM = 40f
+    val fallbackDiameterMm: Float = 40f,
+) {
+    val gridWidthMm: Float get() = widthMm - marginMm * 2
 
-    /**
-     * Pixels per millimetre a page is recorded at.
-     *
-     * The page reaches the PDF as drawing commands, so text, rules and circles come out
-     * vector-sharp whatever this is; what it buys is the resolution of the **photographs**, which
-     * are bitmaps decoded at the size the layout asks for.
-     *
-     * Six is not a resolution choice, and **measured** not to be one: whatever it is, Coil decodes
-     * a Numista thumbnail at its own 180 pixels (ADR 0017) and never upscales it, so the PDF ends up
-     * holding 180 × 180 images either way — verified identical at five and at six. What the number
-     * really buys is sub-pixel precision in the layout, and it keeps one page's recording small
-     * enough to hold in memory eighty-one times over.
-     *
-     * The weight of the file is therefore not here: a notebook of 623 photographs is 27 MB because
-     * Skia stores each of them losslessly, and the 623 draws are only 319 distinct pictures.
-     */
-    const val PX_PER_MM = 6f
+    val gridHeightMm: Float get() = heightMm - marginMm * 2 - headingMm - rulerMm
 
-    val gridWidthMm: Float get() = WIDTH_MM - MARGIN_MM * 2
-
-    val gridHeightMm: Float get() = HEIGHT_MM - MARGIN_MM * 2 - HEADING_MM - RULER_MM
+    companion object {
+        /**
+         * Pixels per millimetre a page is recorded at.
+         *
+         * Not a field of the geometry, because it is not about the layout: it is the resolution the
+         * page is recorded at, one per process, and no switch of the export has an opinion on it.
+         *
+         * The page reaches the PDF as drawing commands, so text, rules and circles come out
+         * vector-sharp whatever this is; what it buys is the resolution of the **photographs**,
+         * which are bitmaps decoded at the size the layout asks for.
+         *
+         * Six is not a resolution choice, and **measured** not to be one: whatever it is, Coil
+         * decodes a Numista thumbnail at its own 180 pixels (ADR 0017) and never upscales it, so the
+         * PDF ends up holding 180 × 180 images either way — verified identical at five and at six.
+         * What the number really buys is sub-pixel precision in the layout, and it keeps one page's
+         * recording small enough to hold in memory eighty-one times over.
+         *
+         * The weight of the file is therefore not here: a notebook of 623 photographs is 27 MB
+         * because Skia stores each of them losslessly, and the 623 draws are only 319 distinct
+         * pictures.
+         */
+        const val PX_PER_MM = 6f
+    }
 }
+
+/**
+ * The millimetres a configuration declares — the one place a switch becomes geometry.
+ *
+ * Every one of the five is a change to the arithmetic and not to the brush, so this is what the page
+ * count is computed from and what the page is drawn with. Today it returns the notebook of #169 for
+ * all thirty-two combinations, because each switch's line lands with its own ticket: this function
+ * gaining a line is what «un interruptor funciona» will mean.
+ */
+@Suppress("UNUSED_PARAMETER")
+fun printGeometry(options: NotebookOptions): PrintGeometry = PrintGeometry()
 
 /**
  * The rejilla of one plate: fixed by its largest coin, never by a constant of the notebook.
@@ -96,14 +115,16 @@ object PrintPaper {
  * different grids, and the same coin is the same size on every page of the notebook.
  */
 data class PrintGrid(
+    /** The page this grid was fitted to, which is what every measure below is taken from. */
+    val geometry: PrintGeometry,
     /** The diameter the cells are measured against: the largest of the plate's own coins. */
     val diameterMm: Float,
     val columns: Int,
     val rows: Int,
 ) {
-    val cellWidthMm: Float get() = max(diameterMm, PrintPaper.MIN_CELL_WIDTH_MM)
+    val cellWidthMm: Float get() = max(diameterMm, geometry.minCellWidthMm)
 
-    val cellHeightMm: Float get() = diameterMm + PrintPaper.CAPTION_MM
+    val cellHeightMm: Float get() = diameterMm + geometry.captionMm
 
     val cellsPerPage: Int get() = columns * rows
 
@@ -115,19 +136,20 @@ data class PrintGrid(
 
     /** The width of [columns] cells of this grid, with the gutters between them and not around. */
     fun widthOfMm(columns: Int): Float =
-        columns * cellWidthMm + (columns - 1).coerceAtLeast(0) * PrintPaper.GUTTER_MM
+        columns * cellWidthMm + (columns - 1).coerceAtLeast(0) * geometry.gutterMm
 }
 
-/** The grid a plate of coins this big gets on A4. */
-fun printGrid(diameterMm: Float?): PrintGrid {
+/** The grid a plate of coins this big gets on [geometry]. */
+fun printGrid(diameterMm: Float?, geometry: PrintGeometry): PrintGrid {
     val diameter = diameterMm
         ?.takeIf { it > 0f }
-        ?: PrintPaper.FALLBACK_DIAMETER_MM
-    val cellWidth = max(diameter, PrintPaper.MIN_CELL_WIDTH_MM)
+        ?: geometry.fallbackDiameterMm
+    val cellWidth = max(diameter, geometry.minCellWidthMm)
     return PrintGrid(
+        geometry = geometry,
         diameterMm = diameter,
-        columns = fitCount(PrintPaper.gridWidthMm, cellWidth),
-        rows = fitCount(PrintPaper.gridHeightMm, diameter + PrintPaper.CAPTION_MM),
+        columns = fitCount(geometry.gridWidthMm, cellWidth, geometry.gutterMm),
+        rows = fitCount(geometry.gridHeightMm, diameter + geometry.captionMm, geometry.gutterMm),
     )
 }
 
@@ -143,8 +165,8 @@ fun pageCount(cellCount: Int, grid: PrintGrid): Int {
 }
 
 /** How many cells of [cellSizeMm] fit in [availableMm], gutters between them and not around. */
-private fun fitCount(availableMm: Float, cellSizeMm: Float): Int {
+private fun fitCount(availableMm: Float, cellSizeMm: Float, gutterMm: Float): Int {
     if (cellSizeMm <= 0f) return 1
-    val count = floor((availableMm + PrintPaper.GUTTER_MM) / (cellSizeMm + PrintPaper.GUTTER_MM))
+    val count = floor((availableMm + gutterMm) / (cellSizeMm + gutterMm))
     return count.toInt().coerceAtLeast(1)
 }

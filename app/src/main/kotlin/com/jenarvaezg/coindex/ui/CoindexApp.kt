@@ -199,6 +199,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         onOpen = { destination ->
                             navController.navigate(routeOf(destination))
                         },
+                        notebookOptions = state.notebookOptions,
+                        onNotebookPrinted = viewModel::notebookPrinted,
                         notebook = viewModel::notebookPages,
                         onMessage = viewModel::showMessage,
                         onExporting = viewModel::notebookExporting,
