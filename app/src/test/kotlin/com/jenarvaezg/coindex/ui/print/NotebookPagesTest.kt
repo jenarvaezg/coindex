@@ -71,6 +71,9 @@ class NotebookPagesTest {
     /** Y con las fotos apagadas, que es el #231: la casilla deja de ser una moneda y es una línea. */
     private val listed = printGeometry(NotebookOptions(photographs = false))
 
+    /** Y compartiendo folio, que es el #232: la cabecera adelgaza y una lámina empieza donde otra acabó. */
+    private val shared = printGeometry(NotebookOptions(sharePage = true))
+
     /**
      * One catalog as it would go to paper: every member a cell, nothing owned yet.
      *
@@ -107,6 +110,21 @@ class NotebookPagesTest {
         section(catalogs.first { it.id == catalogId }).pages(paper)
 
     private fun pagesFor(vararg sections: PrintSection) = printPages(sections.toList(), paper)
+
+    /**
+     * Cuántas láminas ocupan una página, cuántas dos, y así.
+     *
+     * Se cuenta por bloques y no por páginas desde el #232: un folio puede llevar varias láminas, y
+     * lo que este histograma sigue midiendo es la longitud de cada lámina —cuántos trozos se parte—
+     * y no cuántos folios lleva el cuaderno, que es `pages.size`.
+     */
+    private fun lengths(pages: List<PrintPage>) = pages
+        .flatMap { it.blocks }
+        .groupBy { it.section.title }
+        .map { (_, ofSection) -> ofSection.size }
+        .groupingBy { it }
+        .eachCount()
+        .toSortedMap()
 
     @Test
     fun `every seeded type carries the diameter the printed page is measured with`() {
@@ -158,20 +176,15 @@ class NotebookPagesTest {
         // después de los reales y los medios de Venezuela. Las dos láminas de la tanda del padre
         // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una, y también las
         // dos venezolanas de plata del #256: 40 mm de diámetro dan una rejilla de cuatro por tres.
-        assertEquals(
-            mapOf(1 to 51, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
-            pages.groupBy { it.section.title }
-                .map { (_, ofSection) -> ofSection.size }
-                .groupingBy { it }
-                .eachCount()
-                .toSortedMap(),
-        )
+        assertEquals(mapOf(1 to 51, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1), lengths(pages))
         assertEquals(118, pages.size)
+        // Una lámina por folio: es la regla que el #232 levanta y que aquí sigue puesta.
+        assertTrue(pages.all { it.blocks.size == 1 }, "una página lleva dos láminas sin pedirlo")
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.
         sections.forEach { plate ->
-            val ofPlate = pages.filter { it.section === plate }
+            val ofPlate = pages.flatMap { it.blocks }.filter { it.section === plate }
             assertEquals(plate.cells, ofPlate.flatMap { it.cells }, "corte roto: ${plate.title}")
             val perPage = ofPlate.first().grid.cellsPerPage
             assertTrue(
@@ -225,14 +238,7 @@ class NotebookPagesTest {
 
         assertEquals(127, pages.size)
         // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
-        assertEquals(
-            mapOf(1 to 46, 2 to 17, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
-            pages.groupBy { it.section.title }
-                .map { (_, ofSection) -> ofSection.size }
-                .groupingBy { it }
-                .eachCount()
-                .toSortedMap(),
-        )
+        assertEquals(mapOf(1 to 46, 2 to 17, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1), lengths(pages))
         // La casilla crece de alto y no de ancho: las rusas de 33 mm siguen cinco por fila.
         val roubles = section(
             catalogs.first { it.id == "outstanding-personalities-russia-2-roubles" },
@@ -308,11 +314,7 @@ class NotebookPagesTest {
         assertEquals(202, pages.size)
         assertEquals(
             mapOf(1 to 29, 2 to 21, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
-            pages.groupBy { it.section.title }
-                .map { (_, ofSection) -> ofSection.size }
-                .groupingBy { it }
-                .eachCount()
-                .toSortedMap(),
+            lengths(pages),
         )
 
         // La comprobación que pide el ticket, casilla a casilla: la onza australiana.
@@ -366,17 +368,10 @@ class NotebookPagesTest {
         // Los 1 177 miembros del estante, que son las ~26 páginas de contenido que el suelo esconde.
         assertEquals(1_177, catalogs.sumOf { it.members.size })
         assertEquals(79, pages.size)
-        assertEquals(
-            mapOf(1 to 69, 2 to 2, 3 to 2),
-            pages.groupBy { it.section.title }
-                .map { (_, ofSection) -> ofSection.size }
-                .groupingBy { it }
-                .eachCount()
-                .toSortedMap(),
-        )
+        assertEquals(mapOf(1 to 69, 2 to 2, 3 to 2), lengths(pages))
         // El suelo es una página por lámina, y sólo seis páginas del cuaderno están por encima de
         // él: lo que queda por ahorrar aquí ya no es de este interruptor.
-        assertEquals(catalogs.size, pages.groupBy { it.section.title }.size)
+        assertEquals(catalogs.size, pages.flatMap { it.blocks }.groupBy { it.section.title }.size)
         assertEquals(6, pages.size - catalogs.size)
 
         // La onza australiana, casilla a casilla: de doce por página a cuarenta y seis, y la rejilla
@@ -473,9 +468,13 @@ class NotebookPagesTest {
         // Una cara que nadie fotografió es una foto menos que pedir, no una casilla rota: la otra
         // sigue contando, y el denominador del mensaje de cierre es el de las caras.
         val halfLit = pages.map { page ->
-            page.copy(
-                cells = page.cells.map { cell ->
-                    cell.copy(faces = listOf(CoinPhoto()) + cell.faces.last())
+            PrintPage(
+                page.blocks.map { block ->
+                    block.copy(
+                        cells = block.cells.map { cell ->
+                            cell.copy(faces = listOf(CoinPhoto()) + cell.faces.last())
+                        },
+                    )
                 },
             )
         }
@@ -563,16 +562,135 @@ class NotebookPagesTest {
         assertEquals(emptyList(), cells.mapNotNull { it.numistaUrl })
     }
 
+    /**
+     * What sharing a folio is worth, which is more than any other lever of paper (#232).
+     *
+     * The floor is what it takes away, and the floor was almost all of it: seventy-three plates are
+     * seventy-three pages before a member is printed, nineteen of the sixty measured did not fill
+     * half a page, and 29 % of the printed cells came out empty. Both halves of the switch are in
+     * this one number — a plate may start where the last one ended, **and** the band over it drops
+     * from the forty millimetres of the album's masthead to fourteen, which is where most of the
+     * saving is (the ticket measured 90 pages sharing folios with the masthead against 73 with the
+     * thin band).
+     *
+     * **Not the 73 of the ticket, and the shelf is why**: those are the sixty curated plates whose
+     * notebook of today was 104. These are the seventy-three that are shipped now, whose notebook of
+     * today is 118. It is the same correction #231 and #234 had to make — the shelf grows every week
+     * and a measured fact goes stale with it, so what is pinned here is the measurement of the shelf
+     * as it stands and the *shape* of the saving beside it. A third off, which is what the ticket
+     * promised and what the emulator printed: 89 folios of a real collection came out as 53.
+     */
+    @Test
+    fun `sharing a folio takes a third off the notebook and loses no cell`() {
+        val sections = catalogs.map(::section)
+
+        val pages = printPages(sections, shared)
+
+        assertEquals(80, pages.size)
+        // La cuenta de láminas no se mueve: lo que cambia es cuántas caben en un folio, no cuántas
+        // hay. Ninguna se cae del cuaderno por compartir folio con otra.
+        assertEquals(
+            sections.size,
+            pages.flatMap { it.blocks }.map { it.section.title }.distinct().size,
+        )
+        // En cuántos trozos se parte cada lámina, que ya no es su longitud a solas: 39 salen de una
+        // pieza y una se parte en siete. La lámina más larga —el Libro Rojo de Rusia— pasa de nueve
+        // páginas a siete, porque la banda fina le da una cuarta fila de casillas en cada folio; y
+        // las que se parten más que antes lo hacen empezando a media hoja ajena, que es de donde
+        // sale el ahorro. Son 125 trozos en 80 folios, y 39 de esos folios llevan más de una lámina.
+        assertEquals(mapOf(1 to 39, 2 to 25, 3 to 6, 5 to 1, 6 to 1, 7 to 1), lengths(pages))
+        assertEquals(125, pages.sumOf { it.blocks.size })
+        assertEquals(39, pages.count { it.blocks.size > 1 })
+
+        // Ninguna casilla se pierde ni se repite, y las de cada lámina siguen en su orden.
+        assertEquals(
+            sections.flatMap { it.cells },
+            pages.flatMap { it.blocks }.flatMap { it.cells },
+        )
+
+        // Y ningún folio se sale del papel: es la aritmética que el empaquetador hace antes de
+        // dibujar, sumada aquí como la sumaría una regla puesta sobre la hoja impresa.
+        pages.forEach { page ->
+            val used = page.blocks.sumOf { it.heightMm.toDouble() }.toFloat() +
+                shared.blockGapMm * (page.blocks.size - 1)
+            assertTrue(
+                used <= shared.contentHeightMm + 0.01f,
+                "un folio de ${page.blocks.size} láminas mide $used mm",
+            )
+        }
+    }
+
+    /**
+     * The check the ticket asks for: two short plates on one folio, each under its own heading.
+     *
+     * Three coins and five coins are two plates that today take a page each and leave most of it
+     * white. Sharing, they are one folio with two headings on it — which is the other half of what a
+     * heading is for once a page can hold two plates: not only «which collection is this» after the
+     * page turned, but where one stops and the next begins.
+     */
+    @Test
+    fun `a plate of three and a plate of five come out on the same folio`() {
+        val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
+        val three = ounces.copy(title = "Tres onzas", cells = ounces.cells.take(3))
+        val five = ounces.copy(title = "Cinco onzas", cells = ounces.cells.take(5))
+
+        // Apartadas son dos folios, cada una con una página casi vacía.
+        assertEquals(2, printPages(listOf(three, five), paper).size)
+
+        val folio = printPages(listOf(three, five), shared).single()
+
+        assertEquals(listOf("Tres onzas", "Cinco onzas"), folio.blocks.map { it.section.title })
+        assertEquals(listOf(3, 5), folio.blocks.map { it.cells.size })
+        // Cada una con su cabecera fina, y ninguna diciendo «2 de 2»: son dos láminas enteras.
+        assertTrue(folio.blocks.all { it.pagesInSection == 1 })
+        assertEquals(14f, shared.headingMm)
+        // Y cada una centrada en lo suyo: la de tres no se descoloca por la de cinco debajo.
+        assertEquals(3, folio.blocks.first().columnsUsed)
+        assertEquals(4, folio.blocks.last().columnsUsed)
+    }
+
+    /**
+     * A plate that spills still says «2 de 4» and still lines its columns up, folio shared or not.
+     *
+     * That is the third thing the ticket asks for, and it is the one the packer could most easily
+     * have broken: «2 de 4» is no longer `pageCount` of the plate on its own — a plate that starts
+     * halfway down somebody else's folio is cut differently — so the number and the total are read
+     * off the finished notebook instead. The columns are the other half: the pages of one plate are
+     * read as a run, so a tail row keeps the grid's columns even where it holds one coin.
+     */
+    @Test
+    fun `a plate that spills says two of four and keeps its columns on a shared folio`() {
+        val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
+        val three = ounces.copy(title = "Tres onzas", cells = ounces.cells.take(3))
+
+        // La lámina de tres deja sitio para dos filas del Kookaburra, que se lleva las demás detrás.
+        val pages = printPages(listOf(three, ounces), shared)
+        val spilled = pages.flatMap { it.blocks }.filter { it.section === ounces }
+
+        assertEquals(37, ounces.cells.size)
+        assertEquals(listOf(8, 16, 13), spilled.map { it.cells.size })
+        assertEquals(listOf(1, 2, 3), spilled.map { it.numberInSection })
+        assertTrue(spilled.all { it.pagesInSection == 3 }, "la lámina no sabe cuántos trozos es")
+        // Ninguna casilla perdida en los cortes, y las columnas alineadas de un folio al siguiente
+        // —incluso las cinco de la cola, que no se centran porque continúan una columna.
+        assertEquals(ounces.cells, spilled.flatMap { it.cells })
+        assertTrue(
+            spilled.all { it.columnsUsed == it.grid.columns },
+            "una página de una lámina que se derrama ha movido sus columnas",
+        )
+    }
+
     @Test
     fun `a plate that spills repeats its heading and numbers its pages`() {
         val kookaburra = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
         val pages = pagesFor(kookaburra)
+        val blocks = pages.flatMap { it.blocks }
 
         assertEquals(4, pages.size)
-        assertEquals(listOf(1, 2, 3, 4), pages.map { it.numberInSection })
-        assertTrue(pages.all { it.pagesInSection == 4 })
+        assertEquals(listOf(1, 2, 3, 4), blocks.map { it.numberInSection })
+        assertTrue(blocks.all { it.pagesInSection == 4 })
         // Every page carries the same heading, because on paper there is no scrolling back.
-        assertTrue(pages.all { it.section.title == kookaburra.title })
+        assertTrue(blocks.all { it.section.title == kookaburra.title })
         // And no cell is lost or repeated across the break.
         assertEquals(kookaburra.cells, pages.flatMap { it.cells })
         assertEquals(12, pages.first().cells.size)
@@ -589,7 +707,7 @@ class NotebookPagesTest {
     @Test
     fun `a plate of one short row is centred on the cells it has`() {
         val escudos = section(catalogs.first { it.id == "portugal-20-escudos-plata" })
-        val single = pagesFor(escudos).single()
+        val single = pagesFor(escudos).single().blocks.single()
 
         assertEquals(4, escudos.grid(paper).columns)
         assertEquals(3, single.columnsUsed)
@@ -600,7 +718,7 @@ class NotebookPagesTest {
         )
         assertEquals(1, kookaburra.last().cells.size)
         assertTrue(
-            kookaburra.all { it.blockWidthMm == it.grid.blockWidthMm },
+            kookaburra.flatMap { it.blocks }.all { it.blockWidthMm == it.grid.blockWidthMm },
             "una fila corta ha movido el bloque de una lámina que se continúa",
         )
     }

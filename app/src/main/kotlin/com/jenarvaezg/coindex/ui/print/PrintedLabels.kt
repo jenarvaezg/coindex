@@ -27,3 +27,28 @@ fun printedDiameterLabel(millimetres: Float?): String? {
     val tenth = tenths % 10
     return if (tenth == 0) "${tenths / 10} mm" else "${tenths / 10},$tenth mm"
 }
+
+/**
+ * Where what is printed on this folio came from, which is a line the paper has to carry.
+ *
+ * The strip at the foot is **once per folio** and the heading is once per plate, so since #232 the
+ * source can be a plural: two plates sharing a page can come from two different catalogs, and a page
+ * that names only the first one would attribute the second to it.
+ *
+ * **Named once each, and that is this function's job and not its caller's**: a folio of five plates
+ * of one catalog says it once, in the order they are printed. Deduplicating here rather than in
+ * [PrintPage.sources] is what makes «Fuentes» honest wherever the line is assembled — a caller that
+ * handed over the same catalog twice would otherwise print it twice under a word promising it had
+ * not.
+ *
+ * It outlives the app, which is why it is on the paper at all: a list that does not say where it came
+ * from cannot be checked later either.
+ */
+fun notebookSourceLabel(sources: List<String>): String {
+    val named = sources.distinct()
+    return when (named.size) {
+        0 -> ""
+        1 -> "Fuente: ${named.single()}"
+        else -> "Fuentes: ${named.joinToString(" · ")}"
+    }
+}

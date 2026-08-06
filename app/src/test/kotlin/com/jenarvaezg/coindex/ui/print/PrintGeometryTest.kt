@@ -19,8 +19,49 @@ class PrintGeometryTest {
     @Test
     fun `an A4 page keeps a printable band between its heading and its ruler`() {
         assertEquals(180f, paper.gridWidthMm)
-        // 297 menos los dos márgenes, la cabecera y la regla del pie.
+        // 297 menos los dos márgenes y la regla del pie: el folio entero, que es de las láminas.
+        assertEquals(253f, paper.contentHeightMm)
+        // Y de ahí la cabecera de la lámina, que en un folio suyo es la única que sale.
         assertEquals(213f, paper.gridHeightMm)
+    }
+
+    /**
+     * Cuántas filas caben en lo que queda de un folio, que es la pregunta del empaquetador (#232).
+     *
+     * Cero es una respuesta de verdad aquí y no lo es en [PrintGrid.rows]: una lámina a la que se le
+     * da un folio entero se lleva una fila como mínimo, porque la alternativa es una lámina de cero
+     * páginas; una lámina a la que se le ofrece la cola de un folio ajeno puede sencillamente no
+     * caber, y entonces abre el siguiente.
+     */
+    @Test
+    fun `a plate offered the tail of a folio takes the rows that fit and no more`() {
+        val ounce = grid(40.9f)
+
+        // El folio entero da las mismas tres filas que la rejilla, que es lo que la hace la misma
+        // aritmética: una lámina sola cortada por el empaquetador se corta como siempre se cortó.
+        assertEquals(ounce.rows, ounce.rowsIn(paper.contentHeightMm))
+        // La cabecera sale de lo que queda, así que 40 mm de banda y 56,9 de fila son 96,9.
+        assertEquals(0, ounce.rowsIn(96f))
+        assertEquals(1, ounce.rowsIn(97f))
+        assertEquals(2, ounce.rowsIn(156.8f))
+        // Y una cola en la que no cabe ni la cabecera no vale para nada.
+        assertEquals(0, ounce.rowsIn(20f))
+        assertEquals(0, ounce.rowsIn(0f))
+    }
+
+    /** Y la altura de un bloque es la de sus filas y las calles entre ellas, nunca alrededor. */
+    @Test
+    fun `the height of a block is its rows and the gutters between them`() {
+        val ounce = grid(40.9f)
+
+        assertEquals(0f, ounce.heightOfMm(0))
+        assertEquals(56.9f, ounce.heightOfMm(1), 0.01f)
+        assertEquals(56.9f * 3 + 3f * 2, ounce.heightOfMm(3), 0.01f)
+        // Las tres filas de la rejilla y su cabecera caben en el folio que se midió contra ellas.
+        assertTrue(
+            paper.headingMm + ounce.heightOfMm(ounce.rows) <= paper.contentHeightMm,
+            "la rejilla de la onza se sale del folio",
+        )
     }
 
     @Test

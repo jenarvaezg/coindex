@@ -29,30 +29,83 @@ private const val LIST_LINE_MM = 7f
  */
 private const val LIST_COLUMNS = 2
 
-/**
- * The heading of a page with no photographs: what names the plate, and nothing that summarises it.
- *
- * The band of forty millimetres is the album's masthead, and over twenty-three lines of text it is a
- * quarter of the page spent on a title. What is kept is the eyebrow, the title over its two lines and
- * the subtitle — «reducida a la mínima que identifique la lámina» (#231), and *identify* is the word:
- * the specification block goes, because **the list is the specification**. A checklist that says
- * «Tengo» or «Me falta» on every one of its lines has already printed the coverage the band would
- * have summarised, and it is the one thing this page makes redundant.
- *
- * Twenty-eight and not less, **measured off the printed folio rather than assumed**: on the exported
- * notebook the rule under the heading lands at 13,1 mm of the band for a one-line title, at 18,4 with
- * a subtitle under it and at 21,2 for a title over two lines. The worst case is both at once —a
- * collection card with a long name— at 26,5, which leaves a millimetre and a half. A title clipped
- * half a line in is worse than a band with a millimetre spare, and it is exactly the qualification a
- * printed page cannot afford to lose.
- *
- * This is not «cabecera fina» arriving early. That one is derived from «compartir página» (#232) and
- * has to hold a plate's facts in a folio shared with another plate; this one holds none at all.
- */
-private const val LIST_HEADING_MM = 28f
-
 /** The foot of a page with no ruler: room for the source line and no more. See [PrintGeometry.footMm]. */
 private const val LIST_FOOT_MM = 5f
+
+/**
+ * The air between two plates that share a folio (#232). See [PrintGeometry.blockGapMm].
+ *
+ * Two gutters and not one. The gutter separates two rows of the same plate; what happens here is that
+ * a plate ends and another begins, and the only thing marking it is the eyebrow of the next heading —
+ * three millimetres of white between a caption and a line of small caps reads as a badly spaced row,
+ * not as a seam. Six is the smallest gap that reads as one, and on the sixty-odd shipped plates it
+ * costs nothing at all: the page count is quantised by whole rows, and a row of coins is forty
+ * millimetres.
+ */
+private const val BLOCK_GAP_MM = 6f
+
+/**
+ * What the band at the top of a plate holds, and therefore how many millimetres it takes.
+ *
+ * **The height and the contents are one value and not two.** The page count is arithmetic done before
+ * anything is drawn, so a band whose number said forty while its brush drew a subtitle it had no room
+ * for would put the two out of step — and the band is clipped rather than measured precisely so that
+ * a disagreement is impossible. Naming the three shapes once is what lets the renderer ask the same
+ * question the arithmetic answered.
+ *
+ * All three are **measured off a printed folio**: on the exported notebook the rule under the heading
+ * lands at 13,1 mm of the band for a one-line title, at 18,4 with a subtitle under it and at 21,2 for
+ * a title over two lines, worst case 26,5 for both at once.
+ */
+enum class PrintHeading(
+    /** The band, from the eyebrow down to the rule under the title. */
+    val millimetres: Float,
+    /** How many lines the title gets before it is ellipsized. */
+    val titleLines: Int,
+    /** Whether the variant line under the title is printed at all. */
+    val subtitle: Boolean,
+    /** Whether the plate's specification block is printed under the rule. */
+    val facts: Boolean,
+) {
+    /**
+     * The album's masthead of #169: everything a plate says about itself, over forty millimetres.
+     *
+     * Fixed rather than measured, and that is the load-bearing decision of the whole layout: a
+     * heading that grew with its catalog's specification would put the drawing and the arithmetic
+     * out of step. What does not fit in the band is clipped by the renderer.
+     */
+    Masthead(millimetres = 40f, titleLines = 2, subtitle = true, facts = true),
+
+    /**
+     * What names the plate, and nothing that summarises it (#231).
+     *
+     * The masthead over twenty-three lines of text is a quarter of the page spent on a title. What
+     * is kept is the eyebrow, the title over its two lines and the subtitle — «reducida a la mínima
+     * que identifique la lámina», and *identify* is the word: the specification block goes, because
+     * **the list is the specification**. A checklist that says «Tengo» or «Me falta» on every one of
+     * its lines has already printed the coverage the band would have summarised.
+     *
+     * Twenty-eight and not less: the worst case measured is 26,5, which leaves a millimetre and a
+     * half. A title clipped half a line in is worse than a band with a millimetre spare.
+     */
+    Plain(millimetres = 28f, titleLines = 2, subtitle = true, facts = false),
+
+    /**
+     * The name band of «compartir página» (#232): a folio with two plates on it cannot give forty
+     * millimetres to each.
+     *
+     * It is derived from that switch and is not one of its own, and it is where most of the saving
+     * comes from — sharing pages with the masthead was measured at 90 pages against the 73 of this
+     * band. So what it holds is what the measurement allows: at 13,1 mm the rule already lands under
+     * a **one-line** title with no subtitle, and fourteen is that plus the margin of error of a
+     * printed folio. The subtitle and the second line of the title are what pays for the plate
+     * underneath.
+     *
+     * A plate that spills still repeats it on every one of its pages, for the reason it always did:
+     * on paper there is no scrolling back to find out which collection you are looking at.
+     */
+    Slim(millimetres = 14f, titleLines = 1, subtitle = false, facts = false),
+}
 
 /**
  * The page the notebook is printed on, in millimetres.
@@ -75,17 +128,25 @@ data class PrintGeometry(
     /** Wide enough that a domestic printer's unprintable border never eats a coin. */
     val marginMm: Float = 15f,
     /**
-     * The band the heading gets, repeated on every page of a plate that spills over.
-     *
-     * Fixed rather than measured, and that is the load-bearing decision of the whole layout: the
-     * page count is arithmetic done before a single cell is drawn, so a heading that grew with its
-     * catalog's specification would put the drawing and the arithmetic out of step. What does not
-     * fit in the band is clipped by the renderer.
+     * The band each plate's heading gets, repeated on every page of one that spills over.
      *
      * It is the thin heading of «compartir página» (#232) that makes this a field rather than a
      * constant: two plates in one folio cannot each take forty millimetres of band.
      */
-    val headingMm: Float = 40f,
+    val heading: PrintHeading = PrintHeading.Masthead,
+    /**
+     * Whether a folio may hold more than one plate (#232).
+     *
+     * A packing rule and not a length, and it belongs among the millimetres for the same reason
+     * [facesPerCell] does: it is decided before a cell is drawn, and it is where most of the paper
+     * goes — nineteen of the sixty plates measured do not fill half a page and take a whole one
+     * anyway, and 29 % of the printed cells are empty.
+     *
+     * **Off by default, and that is a decision and not caution.** The printed pages are archived
+     * **by collection**: two plates on one folio break the archiving of whoever files them in a
+     * folder. Saving a third of the paper is the printer's call, not the programmer's.
+     */
+    val sharesPage: Boolean = false,
     /**
      * The strip at the foot of the page. Zero is no strip at all.
      *
@@ -195,9 +256,31 @@ data class PrintGeometry(
      */
     val printsCoins: Boolean get() = facesPerCell > 0
 
+    /** The band the heading takes, which is what [heading] holds and nothing the brush decides. */
+    val headingMm: Float get() = heading.millimetres
+
+    /**
+     * The air between two plates on one folio, which is none at all where a folio holds one (#232).
+     *
+     * Derived from [sharesPage] rather than a field of its own, because a gap that could be set
+     * while nothing shares a page is a millimetre in the arithmetic that is nowhere on the paper.
+     */
+    val blockGapMm: Float get() = if (sharesPage) BLOCK_GAP_MM else 0f
+
     val gridWidthMm: Float get() = widthMm - marginMm * 2
 
-    val gridHeightMm: Float get() = heightMm - marginMm * 2 - headingMm - footMm
+    /**
+     * The whole of the folio the plates get: the page less its margins and the strip at the foot.
+     *
+     * **The foot is once per folio and the heading is once per plate**, which is the difference
+     * «compartir página» makes (#232) and the reason these are two measures and not one. What a
+     * plate takes out of this is its own band plus the rows it holds, so a folio's arithmetic is a
+     * sum over the plates on it and no longer a single subtraction.
+     */
+    val contentHeightMm: Float get() = heightMm - marginMm * 2 - footMm
+
+    /** What one plate's rejilla gets when it has the folio to itself: everything under its band. */
+    val gridHeightMm: Float get() = contentHeightMm - headingMm
 
     /**
      * How wide the coins of one cell are: [facesPerCell] of them at [diameterMm], gutters between.
@@ -262,8 +345,7 @@ data class PrintGeometry(
  * Every one of the five is a change to the arithmetic and not to the brush, so this is what the page
  * count is computed from and what the page is drawn with. The switches whose ticket has not landed
  * still return the notebook of #169: this function gaining a line is what «un interruptor funciona»
- * means, and «fotos» (#231), «ambas caras» (#230) and «QR de Numista» (#234) are the three that have
- * one.
+ * means, and «tamaño real» (#233) is the only one of the five that has not.
  *
  * They compose without knowing about each other, which is what «cinco interruptores y no tres modelos
  * con nombre» buys: the code grows the caption, the second face grows the cell's width, and a
@@ -273,7 +355,8 @@ data class PrintGeometry(
  */
 fun printGeometry(options: NotebookOptions): PrintGeometry {
     val paper = if (options.photographs) albumPage(options) else listPage()
-    return if (options.numistaQr) paper.withNumistaCode() else paper
+    val folio = if (options.sharePage) paper.shared() else paper
+    return if (options.numistaQr) folio.withNumistaCode() else folio
 }
 
 /** The notebook of #169: a coin at its real diameter, one face of it or two (#230). */
@@ -296,7 +379,7 @@ private fun albumPage(options: NotebookOptions): PrintGeometry = PrintGeometry(
  */
 private fun listPage(): PrintGeometry = PrintGeometry(
     facesPerCell = 0,
-    headingMm = LIST_HEADING_MM,
+    heading = PrintHeading.Plain,
     footMm = LIST_FOOT_MM,
     rulerBarMm = 0f,
     captionMm = LIST_LINE_MM,
@@ -309,6 +392,25 @@ private fun listPage(): PrintGeometry = PrintGeometry(
             (paper.gridWidthMm - paper.gutterMm * (LIST_COLUMNS - 1)) / LIST_COLUMNS,
     )
 }
+
+/**
+ * The same paper with more than one plate allowed on a folio, and the thin band that pays for it.
+ *
+ * **The band comes with the switch and is not a switch of its own** (#232). Forty millimetres per
+ * plate is the album's masthead, and two of them on one folio is eighty millimetres of title over a
+ * page that holds twelve coins; it is also where most of the saving is — the sixty plates measured
+ * come out at 90 pages sharing folios with the masthead and at **73** with this band, against 104
+ * apart. The floor of «una lámina, un folio» is sixty pages whatever else is done to the coins, which
+ * is why this is the lever and not the size of the pictures.
+ *
+ * It touches nothing else: the coins keep their diameter, the caption keeps its sixteen millimetres
+ * and the strip at the foot keeps its ruler, because a folio shared by two plates is still a folio
+ * printed at 1:1.
+ */
+private fun PrintGeometry.shared(): PrintGeometry = copy(
+    sharesPage = true,
+    heading = PrintHeading.Slim,
+)
 
 /**
  * The same page with a code on every cell (#234), which costs height on one shape and not the other.
@@ -363,6 +465,37 @@ data class PrintGrid(
     /** The width of [columns] cells of this grid, with the gutters between them and not around. */
     fun widthOfMm(columns: Int): Float =
         columns * cellWidthMm + (columns - 1).coerceAtLeast(0) * geometry.gutterMm
+
+    /** The height of [rows] rows of this grid, with the gutters between them and not around. */
+    fun heightOfMm(rows: Int): Float =
+        if (rows <= 0) 0f else rows * cellHeightMm + (rows - 1) * geometry.gutterMm
+
+    /** How many rows [cellCount] cells take on this grid: the last one is allowed to be short. */
+    fun rowsFor(cellCount: Int): Int = (cellCount + columns - 1) / columns
+
+    /**
+     * What a block of [cellCount] cells takes out of a folio: its own heading, and the rows under it.
+     *
+     * The one place that answer is given, because the packer and the block have to agree on it
+     * forever: the packer subtracts this from what is left of a folio *before* anything is drawn, and
+     * the block is drawn to it (#232). Two spellings of the same sum would be two page counts.
+     */
+    fun blockHeightMm(cellCount: Int): Float =
+        geometry.headingMm + heightOfMm(rowsFor(cellCount))
+
+    /**
+     * How many rows of this plate fit in [availableMm] of a folio, its own heading included.
+     *
+     * **Zero is a real answer here**, and it is what [rows] can never be: a plate given the folio to
+     * itself always gets at least one row, however tall its coins, because the alternative is a page
+     * count of zero. A plate offered the tail of a folio somebody else started may simply not fit,
+     * and then it opens the next one (#232).
+     */
+    fun rowsIn(availableMm: Float): Int {
+        val forCells = availableMm - geometry.headingMm
+        if (forCells < cellHeightMm) return 0
+        return fitCount(forCells, cellHeightMm, geometry.gutterMm)
+    }
 }
 
 /** The grid a plate of coins this big gets on [geometry]. */

@@ -25,4 +25,29 @@ class PrintedLabelsTest {
         assertNull(printedDiameterLabel(null))
         assertNull(printedDiameterLabel(0f))
     }
+
+    /**
+     * Where the folio says its coins came from, which is a plural since a folio can hold two plates.
+     *
+     * The strip at the foot is one per page and the heading is one per plate (#232), so a page that
+     * named only the first catalog would attribute the second plate's coins to it. Each source named
+     * once — a folio of five plates of the same catalog says it once — and in the order they print.
+     */
+    @Test
+    fun `the foot names every catalog on the folio, once each`() {
+        assertEquals("Fuente: Numista", notebookSourceLabel(listOf("Numista")))
+        assertEquals(
+            "Fuentes: Numista · tu colección en Numista",
+            notebookSourceLabel(listOf("Numista", "tu colección en Numista")),
+        )
+        // Y el mismo catálogo dos veces se dice una: cinco láminas de una serie en un folio no son
+        // cinco fuentes, y es esta función la que sostiene lo que promete la palabra «Fuentes».
+        assertEquals("Fuente: Numista", notebookSourceLabel(listOf("Numista", "Numista")))
+        assertEquals(
+            "Fuentes: Numista · tu colección en Numista",
+            notebookSourceLabel(listOf("Numista", "tu colección en Numista", "Numista")),
+        )
+        // Y un folio sin láminas no existe, así que esto es una frase que nadie llega a leer.
+        assertEquals("", notebookSourceLabel(emptyList()))
+    }
 }
