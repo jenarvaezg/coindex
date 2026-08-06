@@ -1501,6 +1501,138 @@
   },
   "weight": 10
  },
+ "10415": {
+  "id": 10415,
+  "url": "https://es.numista.com/10415",
+  "title": "5 Reichsmark (Potsdam Garrison Church)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1934,
+  "max_year": 1934,
+  "ruler": [
+   {
+    "id": 3581,
+    "name": "Third Reich",
+    "wikidata_id": "Q7318"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 29,
+  "thickness": 2.34,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "El águila alemana dividiendo la fecha con el valor en la parte inferior",
+   "lettering": "Deutsches Reich\r\n19 34\r\n5 Reichsmark",
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48d2294c0fa7.79518583-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48d2294c0fa7.79518583-180.jpg",
+   "picture_copyright": "mvm"
+  },
+  "reverse": {
+   "description": "La iglesia de Potsdam Garrison divide la fecha",
+   "lettering": "21. März 1933\r\nF",
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48d22c26d1e4.95701886-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48d22c26d1e4.95701886-180.jpg",
+   "picture_copyright": "mvm"
+  },
+  "commemorated_topic": "1er aniversario del régimen nazi - Iglesia de la Guarnición de Potsdam",
+  "comments": "<span style=\"text-decoration:underline;\">Talleres de dinero:</span><br />\r\nA = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo<br /><br />\r\nEl reverso muestra la Iglesia de la Guarnición Prusiana en Potsdam, lugar del &quot;Día de Potsdam&quot;, una ceremonia de propaganda nazi celebrada el 21 de marzo de 1933 con motivo de la inauguración del nuevo Reichstag por el Presidente del Reich Paul von Hindenburg y su propuesto nuevo Canciller, Adolf Hitler.",
+  "tags": [
+   "Ave",
+   "Construcción religiosa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "82"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "70"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "356"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "82"
+   }
+  ],
+  "weight": 13.88,
+  "orientation": "medal",
+  "edge": {
+   "description": "Con letras",
+   "lettering": "Gemeinnutz geht vor Eigennutz",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "104170": {
   "category": "coin",
   "commemorated_topic": "Charlemagme",
@@ -15558,6 +15690,286 @@
   },
   "weight": 31.1
  },
+ "15868": {
+  "id": 15868,
+  "url": "https://es.numista.com/15868",
+  "title": "5 Reichsmark (Friedrich Schiller)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1934,
+  "max_year": 1934,
+  "ruler": [
+   {
+    "id": 3581,
+    "name": "Third Reich",
+    "wikidata_id": "Q7318"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 29,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Un águila alemana con el nombre del emisor arriba y la denominación abajo",
+   "lettering": "Deutsches Reich\r\n5 Reichsmark",
+   "lettering_scripts": [
+    {
+     "name": "Latina (gótica Fraktur)"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1252-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1252-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "description": "El busto de Friedrich Schiller mirando a la izquierda con las fechas debajo",
+   "lettering": "Friedrich Schiller\r\n1759 - 1934\r\nF",
+   "lettering_scripts": [
+    {
+     "name": "Latina (gótica Fraktur)"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1253-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1253-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "175 aniversario Friedrich Schiller",
+  "related_types": [
+   {
+    "id": 316551,
+    "title": "5 Reichsmark (Friedrich Schiller - Pattern)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1934,
+    "maxYear": 1934
+   }
+  ],
+  "tags": [
+   "Literatura"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "85"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "359"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "78"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "71"
+   }
+  ],
+  "weight": 13.889,
+  "orientation": "medal",
+  "edge": {
+   "lettering": "ANS VATERLAND ANS TEURE SCHLIESS DICH AN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "15888": {
+  "id": 15888,
+  "url": "https://es.numista.com/15888",
+  "title": "5 Reichsmark",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1927,
+  "max_year": 1933,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Joseph Wackerle"
+   ],
+   "description": "Un águila en el centro y el valor debajo",
+   "lettering": "DEUTSCHES · REICH\r\nFÜNF · REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/955-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/955-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Maximilian Dasio"
+   ],
+   "description": "Un roble divide la fecha y la marca de ceca en la parte inferior",
+   "lettering": "· EINIGKEIT · UND · RECHT · UND · FREIHEIT ·\r\n1927\r\nF",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/956-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/956-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "comments": "<p><a href=\"https://en.numista.com/catalogue/images/6952ab8f505c1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6952ab8f505c1.jpg\"></a></p>",
+  "related_types": [
+   {
+    "id": 281238,
+    "title": "5 Reichsmark (Pattern)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1932,
+    "maxYear": 1932
+   }
+  ],
+  "tags": [
+   "Águila",
+   "Ave",
+   "Árbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "56"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "331"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "966"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "25"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
  "160928": {
   "category": "coin",
   "commemorated_topic": "Koala",
@@ -29261,6 +29673,250 @@
   },
   "weight": 20
  },
+ "22835": {
+  "id": 22835,
+  "url": "https://es.numista.com/22835",
+  "title": "5 Reichsmark (Weimar Constitution)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1929,
+  "max_year": 1929,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1934-10-01"
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rudolf Bosselt"
+   ],
+   "description": "Cabeza a la izquierda, denominación arriba",
+   "lettering": "DEUTSCHES REICH·5 REICHSMARK\r\nv.HINDENBERG\r\nREICHS-\r\nPRÄSIDENT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/957-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/957-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Rudolf Bosselt"
+   ],
+   "description": "Mano con dos dedos levantados, fechas abajo",
+   "lettering": "TREU DER VERFASSUNG\r\n1919·1929\r\n11.AUGUST\r\nG",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/958-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/958-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "10º aniversario de la Constitución de Weimar",
+  "comments": "A = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo",
+  "tags": [
+   "Mano"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "64"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "971"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "341"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "65"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "edge": {
+   "lettering": "EINIGKEIT UND RECHT UND FREIHEIT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "23143": {
+  "id": 23143,
+  "url": "https://es.numista.com/23143",
+  "title": "5 Reichsmark (Bremerhaven)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1927,
+  "max_year": 1927,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Maximilian Dasio"
+   ],
+   "description": "Águila sobre escudo, diseño festoneado en el fondo",
+   "lettering": "*DEUTSCHES•REICH*\r\nFÜNF•REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/961-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/961-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Maximilian Dasio"
+   ],
+   "description": "Escudo coronado divide la fecha debajo del barco",
+   "lettering": "HUNDERT•JAHRE•BREMERHAVEN\r\n1927\r\nA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/962-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/962-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "Centenario de Bremerhaven",
+  "comments": "(en) <p>Copies for this coin exist, this one weighing at 22.25g and a diameter of 35mm<br><a href=\"https://en.numista.com/catalogue/images/5e1ad332815dc.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5e1ad332815dc.jpg\" alt=\"\"></a><a href=\"https://en.numista.com/catalogue/images/5e1ad33a6f4ff.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5e1ad33a6f4ff.jpg\" alt=\"\"></a><br><a href=\"https://en.numista.com/catalogue/images/69836bbf6279e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/69836bbf6279e.jpg\"></a></p>",
+  "tags": [
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "51"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "326"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "967"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "61"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con arabesco e inscripción",
+   "lettering": "NAVIGARE NECESSE EST",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "23272": {
   "id": 23272,
   "url": "https://es.numista.com/23272",
@@ -32024,6 +32680,157 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "2544": {
+  "id": 2544,
+  "url": "https://es.numista.com/2544",
+  "title": "5 Reichsmark (Paul von Hindenburg)",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1935,
+  "max_year": 1936,
+  "ruler": [
+   {
+    "id": 3581,
+    "name": "Third Reich",
+    "wikidata_id": "Q7318"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 29,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Águila imperial dividiendo la fecha y la denominación debajo",
+   "lettering": "Deutsches Reich\r\n19  35\r\nReichs 5 mark",
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1256-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1256-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "description": "Retrato de Paul von Hindenburg (1847-1934), militar y político alemán y presidente del Reich desde 1925 hasta su muerte, mirando hacia la derecha y la marca de ceca detrás del retrato bajo la fecha.",
+   "lettering": "1847-1934 \r\nF\r\nPaul von Hindenburg",
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1257-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/1257-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "related_types": [
+   {
+    "id": 5218,
+    "title": "5 Reichsmark (Paul von Hindenburg)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1936,
+    "maxYear": 1939
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Águila",
+   "Político"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "86"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "27"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "360"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "84"
+   }
+  ],
+  "weight": 13.889,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con inscripciones",
+   "lettering": "Gemeinnutz geht vor Eigennutz",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/69836c13076154.21443339-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/69836c13076154.21443339-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
  },
  "25848": {
   "id": 25848,
@@ -41067,6 +41874,116 @@
   },
   "weight": 2.5
  },
+ "29885": {
+  "id": 29885,
+  "url": "https://es.numista.com/29885",
+  "title": "5 Reichsmark (Tubingen University)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1927,
+  "max_year": 1927,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Karl Schmidt"
+   ],
+   "description": "(en) Imperial eagle in the center, legend around.",
+   "lettering": "* DEUTSCHES REICH 1927 *\r\nFÜNF REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/66cb31c7080b88.61761428-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/66cb31c7080b88.61761428-180.jpg",
+   "picture_copyright": "magazuu",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Karl Schmidt"
+   ],
+   "description": "(en) Bust of Eberhard V of Württemberg facing left, legend around.",
+   "lettering": "450 JAHRE UNIVERSITÄT TÜBINGEN\r\nF\r\nEBERHARD IM BART",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/66cb31c7699489.91971073-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/66cb31c7699489.91971073-180.jpg",
+   "picture_copyright": "magazuu",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "450 aniversario de la Universidad de Tubinga",
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "55"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "329"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "968"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "62"
+   }
+  ],
+  "weight": 25,
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "298883": {
   "category": "coin",
   "comments": "<p>Introducidas en 1986, las populares y ahora icónicas American Eagle Silver Proof Coins son versiones para coleccionistas de las American Eagle Silver Bullion Coins oficiales de la Casa de la Moneda de Estados Unidos. El clásico diseño Walking Liberty de Adolph A. Weinman que aparece en el anverso de la moneda ha sido durante mucho tiempo uno de los favoritos de los coleccionistas. Después de 35 años, este famoso diseño ha sido renovado. Gracias a los avances tecnológicos en el proceso de diseño y acuñación, la Libertad incluye ahora algunos de los detalles originales de Weinman que antes no eran posibles. Para la moneda de 2021, la Fábrica de la Moneda de los Estados Unidos volvió a sus activos históricos originales para ofrecer un reflejo más cercano de la visión original de Weinman que incluye la adición de su tradicional marca de artista.<br><br>El diseño del reverso es nuevo. Para dotar a las nuevas monedas de un mayor nivel de seguridad, también se han actualizado con elementos de seguridad mejorados, incluida una variación del canto con lengüeta. El nuevo diseño del reverso muestra un águila que se aproxima a un aterrizaje portando una rama de roble como si fuera a añadirla a un nido.<br><br><a href=\"https://en.numista.com/catalogue/images/61ed5cc0c3716.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61ed5cc0c3716.jpg\" alt=\"\"></a> <a href=\"https://en.numista.com/catalogue/images/61ed5ce846fb6.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61ed5ce846fb6.jpg\" alt=\"\"></a><br><br><a href=\"https://en.numista.com/catalogue/images/61ed5d34b53f3.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61ed5d34b53f3.jpg\" alt=\"\"></a> <a href=\"https://en.numista.com/catalogue/images/61ed5d630f848.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61ed5d630f848.jpg\" alt=\"\"></a></p><p></p><p></p><figure class=\"image\"><img src=\"https://en.numista.com/catalogue/images/6780e632ac94d.jpg\"><figcaption>2024 Star Privy</figcaption></figure><figure class=\"image\"><a href=\"https://en.numista.com/catalogue/images/6875117745f76.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6875117745f76.jpg\"></a><figcaption>2025 Privy Láser </figcaption></figure><figure class=\"image\"><a href=\"https://en.numista.com/catalogue/images/68764c0868d7e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/68764c0868d7e.jpg\"></a><figcaption>2025 Navy Privy</figcaption></figure><figure class=\"image\"><a href=\"https://en.numista.com/catalogue/images/68764c1cd8d05.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/68764c1cd8d05.jpg\"></a><figcaption>2025 Cuerpo de Marines Privado</figcaption></figure><figure class=\"image\"><a href=\"https://en.numista.com/catalogue/images/68764c295392b.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/68764c295392b.jpg\"></a><figcaption>2025 Ejército Privy</figcaption></figure>",
@@ -41205,6 +42122,567 @@
    "text": "1 Dollar"
   },
   "weight": 31.103
+ },
+ "29890": {
+  "id": 29890,
+  "url": "https://es.numista.com/29890",
+  "title": "5 Reichsmark (Gotthold Lessing)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1929,
+  "max_year": 1929,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rudolf Bosselt"
+   ],
+   "description": "(en) Imperial eagle in the center, legend around.",
+   "lettering": "·DEUTSCHES REICH·\r\n5 REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/971-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/971-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Rudolf Bosselt"
+   ],
+   "description": "(en) Bust of Lessing facing left, year of birth on the left, year of minting on the right.",
+   "lettering": "1729 1929\r\nGOTTH.EPHRAIM\r\nLESSING\r\nA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/972-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/972-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "200 aniversario de Gotthold Lessing",
+  "comments": "A = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo",
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "61"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "336"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "969"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "63"
+   }
+  ],
+  "weight": 25,
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "29891": {
+  "id": 29891,
+  "url": "https://es.numista.com/29891",
+  "title": "5 Reichsmark (Meissen)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1929,
+  "max_year": 1929,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Friedrich Wilhelm Hörnlein"
+   ],
+   "description": "(en) Imperial eagle in the center, legend around.",
+   "lettering": "* DEUTSCHES REICH *\r\nFÜNF REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/973-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/973-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Friedrich Wilhelm Hörnlein"
+   ],
+   "description": "(en) Soldier supporting two shields and separating the date in two, legend around.",
+   "lettering": "TAUSEND JAHRE BURG UND STADT MEISSEN \r\n1929\r\nE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/974-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/974-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "1000 aniversario de Meissen",
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "66"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "970"
+   },
+   {
+    "catalogue": {
+     "id": 2428,
+     "code": "AFA"
+    },
+    "number": "397"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "339"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "64"
+   }
+  ],
+  "weight": 25,
+  "mints": [
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "29892": {
+  "id": 29892,
+  "url": "https://es.numista.com/29892",
+  "title": "5 Reichsmark (Graf Zeppelin)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1930,
+  "max_year": 1930,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Franz Paul Krischker"
+   ],
+   "description": "Águila rodeada de letras",
+   "lettering": "DEUTSCHES REICH 1930\r\n·5 REICHSMARK·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/641aff6c841492.39135378-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/641aff6c841492.39135378-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Franz Paul Krischker"
+   ],
+   "description": "El Graf Zeppelin sobre un globo terráqueo rodeado de letras",
+   "lettering": "GRAF ZEPPELIN\r\nWELTFLUG 1929",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/641aff6d111e80.42711735-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/641aff6d111e80.42711735-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "Vuelo del Graf Zeppelin",
+  "comments": "A = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo",
+  "related_types": [
+   {
+    "id": 307693,
+    "title": "5 Reichsmark (Graf Zeppelin - Pattern)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1930,
+    "maxYear": 1930
+   }
+  ],
+  "tags": [
+   "Avión o aeronave"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "68"
+   },
+   {
+    "catalogue": {
+     "id": 695,
+     "code": "Kaiser"
+    },
+    "number": "523"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "972"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "343"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "66"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "29894": {
+  "id": 29894,
+  "url": "https://es.numista.com/29894",
+  "title": "5 Reichsmark (Goethe)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1932,
+  "max_year": 1932,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Rudolf Bosselt"
+   ],
+   "description": "Águila alemana con las fechas \"1832-1932\" encima de la marca de ceca y el valor en la parte inferior.",
+   "lettering": "DEUTSCHES REICH\r\n1832 1932\r\nG\r\nFÜNF REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/979-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/979-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Rudolf Bosselt"
+   ],
+   "description": "El busto de Goethe mirando a la izquierda sobre su nombre",
+   "lettering": "GOETHE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/980-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/980-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "Centenario de la muerte de Goethe",
+  "comments": "A = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo",
+  "related_types": [
+   {
+    "id": 42120,
+    "title": "3 Reichsmark (Goethe)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1932,
+    "maxYear": 1932
+   }
+  ],
+  "tags": [
+   "Aniversario de fallecimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "77"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "974"
+   },
+   {
+    "catalogue": {
+     "id": 2466,
+     "code": "Bosselt"
+    },
+    "number": "66"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "351"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "68"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso, inscrito",
+   "lettering": "ALLEN GEWALTEN ZUM TRUTZ SICH ERHALTEN *",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "299474": {
   "category": "coin",
@@ -43869,6 +45347,153 @@
    "text": "100 Dram"
   },
   "weight": 7.778
+ },
+ "31803": {
+  "id": 31803,
+  "url": "https://es.numista.com/31803",
+  "title": "5 Reichsmark (Rhineland)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1925,
+  "max_year": 1925,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "thickness": 3.02,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Renée Sintenis"
+   ],
+   "description": "Figura acorazada detrás de un escudo\r\ndivide la fecha, brazo derecho levantado",
+   "lettering": "JAHRTAUSEND FEIER DER RHEINLANDE * DEUTSCHES REICH * \r\n19 25",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4950-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4950-180.jpg",
+   "picture_copyright": "smy77",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Emil Rudolf Weiss"
+   ],
+   "description": "Valor y marca de ceca dentro de corona cerrada de hojas de roble",
+   "lettering": "5\r\nREICHS\r\nMARK\r\nA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4951-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4951-180.jpg",
+   "picture_copyright": "smy77",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Milenario de Renania",
+  "comments": "A = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo",
+  "related_types": [
+   {
+    "id": 15901,
+    "title": "3 Reichsmark (Rhineland)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1925,
+    "maxYear": 1925
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "47"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "60"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "322"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "48"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "965"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con letras",
+   "lettering": "EINIGKEIT UND RECHT UND FREIHEIT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4952-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4952-180.jpg",
+   "picture_copyright": "smy77",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "31925": {
   "category": "coin",
@@ -57462,6 +59087,155 @@
   },
   "weight": 33.94
  },
+ "42596": {
+  "id": 42596,
+  "url": "https://es.numista.com/42596",
+  "title": "5 Reichsmark (Liberation of Rhineland)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1930,
+  "max_year": 1930,
+  "ruler": [
+   {
+    "id": 2863,
+    "name": "Weimar Republic",
+    "wikidata_id": "Q41304"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1934-10-01"
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Águila sobre un escudo, diseño Trifolium en el fondo y marca de ceca sobre su cabeza",
+   "lettering": "DEUTSCHES REICH\r\nFÜNF REICHSMARK",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48cfbec57048.90362161-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48cfbec57048.90362161-180.jpg",
+   "picture_copyright": "mvm"
+  },
+  "reverse": {
+   "description": "Águila a la izquierda en el puente divide la fecha",
+   "lettering": "DER RHEIN DEUTSCHLANDS STROM · NICHT DEUTSCHLANDS GRENZE ·\r\n1930",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48cfc04d9e83.81821469-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/6a48cfc04d9e83.81821469-180.jpg",
+   "picture_copyright": "mvm"
+  },
+  "commemorated_topic": "Liberación de Renania",
+  "comments": "La leyenda del reverso es una cita de un panfleto nacionalista de Ernst Moritz Arndt, publicado durante las guerras napoleónicas. La moneda se acuñó para conmemorar el final de la ocupación aliada de Renania.",
+  "related_types": [
+   {
+    "id": 15905,
+    "title": "3 Reichsmark (Liberation of Rhineland)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1930,
+    "maxYear": 1930
+   }
+  ],
+  "tags": [
+   "Águila",
+   "Puente"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "71"
+   },
+   {
+    "catalogue": {
+     "id": 829,
+     "code": "Dav GT III"
+    },
+    "number": "973"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "346"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "67"
+   }
+  ],
+  "weight": 25,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "42672": {
   "category": "coin",
   "commemorated_topic": "Koala",
@@ -67672,6 +69446,159 @@
    "text": "5 libras"
   },
   "weight": 62.42
+ },
+ "4690": {
+  "id": 4690,
+  "url": "https://es.numista.com/4690",
+  "title": "5 Reichsmark (Potsdam Garrison Church)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1934,
+  "max_year": 1935,
+  "ruler": [
+   {
+    "id": 3581,
+    "name": "Third Reich",
+    "wikidata_id": "Q7318"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 29,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Águila alemana dividiendo la fecha con la denominación debajo",
+   "lettering": "Deutsches Reich\r\n19  34\r\n5 Reichsmark",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4948-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4948-180.jpg",
+   "picture_copyright": "whitegandalf"
+  },
+  "reverse": {
+   "description": "Iglesia de la Guarnición de Potsdam y marca de ceca abajo",
+   "lettering": "D",
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4949-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/4949-180.jpg",
+   "picture_copyright": "whitegandalf"
+  },
+  "commemorated_topic": "1er aniversario del régimen nazi - Iglesia de la Guarnición de Potsdam",
+  "comments": "<span style=\"text-decoration:underline;\">Talleres de dinero:</span><br />\r\nA = Berlín<br />\r\nD = Múnich<br />\r\nE = Muldenhütten<br />\r\nF = Stuttgart<br />\r\nG = Karlsruhe<br />\r\nJ = Hamburgo",
+  "related_types": [
+   {
+    "id": 10415,
+    "title": "5 Reichsmark (Potsdam Garrison Church)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1934,
+    "maxYear": 1934
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Construcción religiosa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "83"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "26"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "357"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "83"
+   }
+  ],
+  "weight": 13.889,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con inscripciones",
+   "lettering": "GEMEINNUTZ GEHT VOR EIGENNUTZ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/69836bf368ffa9.98642989-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/69836bf368ffa9.98642989-180.jpg",
+   "picture_copyright": "Walter_Scott"
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "470766": {
   "category": "coin",
@@ -100731,6 +102658,154 @@
   ],
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "8565": {
+  "id": 8565,
+  "url": "https://es.numista.com/8565",
+  "title": "5 Reichsmark (Martin Luther)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "allemagne-pre1945",
+   "name": "Alemania (1871-1948)"
+  },
+  "min_year": 1933,
+  "max_year": 1933,
+  "ruler": [
+   {
+    "id": 3581,
+    "name": "Third Reich",
+    "wikidata_id": "Q7318"
+   }
+  ],
+  "value": {
+   "text": "5 Marks",
+   "numeric_value": 5,
+   "currency": {
+    "id": 230,
+    "name": "Reichsmark",
+    "full_name": "Reichsmark (1924-1948)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 29,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Águila del Tercer Reich alemán, denominación abajo",
+   "lettering": "Deutsches Reich\r\n5 Reichsmark\r\nA",
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/647a2042a7b587.26999527-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/647a2042a7b587.26999527-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "reverse": {
+   "description": "Cabeza de Martín Lutero mirando a la izquierda, fechas debajo",
+   "lettering": "Martin Luther\r\n1483 - 1933",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/allemagne-pre1945/647a20442c0527.09729763-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/allemagne-pre1945/647a20442c0527.09729763-180.jpg",
+   "picture_copyright": "Heritage Auctions",
+   "picture_copyright_url": "http://www.ha.com"
+  },
+  "commemorated_topic": "450 aniversario del nacimiento de Martín Lutero",
+  "related_types": [
+   {
+    "id": 8564,
+    "title": "2 Reichsmark (Martin Luther)",
+    "category": "coin",
+    "country": {
+     "code": "allemagne-pre1945",
+     "name": "Alemania (1871-1948)"
+    },
+    "minYear": 1933,
+    "maxYear": 1933
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Águila",
+   "Figura religiosa",
+   "Escudo de armas",
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "80"
+   },
+   {
+    "catalogue": {
+     "id": 80,
+     "code": "J"
+    },
+    "number": "353"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "76"
+   },
+   {
+    "catalogue": {
+     "id": 81,
+     "code": "AKS"
+    },
+    "number": "69"
+   }
+  ],
+  "weight": 13.88,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con inscripciones",
+   "lettering": "EIN FESTE BURG IST UNSER GOTT"
+  },
+  "mints": [
+   {
+    "id": 5,
+    "name": "Berlín"
+   },
+   {
+    "id": 1,
+    "name": "Múnich"
+   },
+   {
+    "id": 1366,
+    "name": "Muldenhütten"
+   },
+   {
+    "id": 2,
+    "name": "Casa de la Moneda Estatal de Stuttgart / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 3,
+    "name": "Casa de la Moneda Estatal de Karlsruhe / Casas de la Moneda Estatales de Baden-Wurtemberg"
+   },
+   {
+    "id": 4,
+    "name": "Hamburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "85886": {
   "category": "coin",
