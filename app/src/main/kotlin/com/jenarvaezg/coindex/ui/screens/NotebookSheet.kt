@@ -302,6 +302,12 @@ private fun PlateGrid(block: PrintBlock, onImageSettled: (painted: Boolean) -> U
  * diameter and separated by the gutter, under **one** caption: the cell is a coin and not two. With
  * «fotos» off (#231) there is no band and the cell is a [ListedCell]: the two shapes are decided by
  * the geometry the page count was computed from, so the brush cannot disagree with the arithmetic.
+ *
+ * With «tamaño real» off (#233) every diameter here is the printed one — the fraction is applied by
+ * [PrintGeometry.printedDiameterMm] and by nothing in this file — so the band, the circle and the hole
+ * all shrink together and a plate whose issues changed size still keeps its proportions. What does not
+ * shrink is the caption, which then has to say the **real** measure in words: there is no ruler under a
+ * page like this to lay a coin against.
  */
 @Composable
 private fun PrintedCell(
@@ -315,10 +321,12 @@ private fun PrintedCell(
         ListedCell(cell = cell, geometry = geometry, modifier = modifier)
         return
     }
-    val diameter = cell.diameterMm ?: grid.diameterMm
+    // The real diameter is what the caption may print as a number and what the band is measured from;
+    // what the circle comes out at is that fraction of it, which is «tamaño real» (#233).
+    val diameter = geometry.printedDiameterMm(cell.diameterMm ?: grid.diameterMm)
     Column(modifier = modifier.clipToBounds(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
-            modifier = Modifier.fillMaxWidth().height(grid.diameterMm.mm),
+            modifier = Modifier.fillMaxWidth().height(grid.printedDiameterMm.mm),
             contentAlignment = Alignment.Center,
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm)) {
@@ -351,6 +359,20 @@ private fun PrintedCell(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+        // And under it the diameter, on a page with no ruler to lay a coin against (#233). A line of
+        // its own and not the end of the one above: the cells of a collection with no issue list fill
+        // that one with «1977 · Numista 681», and the ellipsis ate the millimetres.
+        if (geometry.printsDiameterLabel) {
+            printedDiameterLabel(cell.diameterMm)?.let { measure ->
+                Text(
+                    measure,
+                    style = PRINT_FOOTNOTE,
+                    color = Paper.muted,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                )
+            }
         }
         // Under the year and against it, not at the foot of the cell.
         //
@@ -408,6 +430,8 @@ private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modif
         cell.footnote?.let { footnote ->
             Text(footnote, style = PRINT_FOOTNOTE, color = Paper.muted, maxLines = 1)
         }
+        // Unconditional, and it is the same rule the caption of a coin asks `printsDiameterLabel` for:
+        // a page of lines never carries a ruler, so the answer here is yes by construction.
         printedDiameterLabel(cell.diameterMm)?.let { diameter ->
             Text(diameter, style = PRINT_FOOTNOTE, color = Paper.muted, maxLines = 1)
         }
@@ -607,9 +631,11 @@ private fun EmptyMount(modifier: Modifier = Modifier) {
  * page» silently rescales everything, and a plate whose whole claim is that a one-ounce coin
  * measures forty millimetres has to be falsifiable with the ruler in the collector's drawer.
  *
- * With «fotos» off (#231) there is no coin at 1:1 to falsify, so the ruler goes and the strip narrows
- * to the source alone — that one stays whatever the page prints, because the paper outlives the app
- * and a list that does not say where it came from cannot be checked later either.
+ * On a page with no coin at 1:1 there is nothing to falsify, so the ruler goes and the strip narrows to
+ * the source alone — with «fotos» off because no coin is drawn (#231), and with «tamaño real» off
+ * because the one that is drawn is not the size it claims (#233). The source stays whatever the page
+ * prints, because the paper outlives the app and a list that does not say where it came from cannot be
+ * checked later either. What replaces the bar is every caption printing its diameter as a number.
  *
  * **One strip per folio and not per plate** (#232), which is why the source can be a plural: two
  * plates sharing a page can come from two catalogs, and one of them going unnamed would attribute

@@ -9,8 +9,8 @@ package com.jenarvaezg.coindex.ui.print
  * and the live page count of the export sheet makes protecting them from a combination unnecessary.
  *
  * **The defaults are the notebook of today**, exactly, so nobody finds their notebook changed
- * without having asked. What each switch does to the millimetres lands with its own ticket
- * (see [NotebookSwitch.pending]); what lands here is the door.
+ * without having asked. What each switch does to the millimetres landed with its own ticket, one at a
+ * time, and all five have (#230-#234); what lands here is the door.
  */
 data class NotebookOptions(
     /** The coins themselves. Off, the notebook is a checklist and no cell can come out blank. */
@@ -60,28 +60,26 @@ data class NotebookOptions(
  * a band of forty millimetres per plate makes no sense once two of them share a folio — and that
  * derivation is where most of the saving comes from (104 pages become 90 sharing pages with today's
  * heading, 73 with the thin one).
+ *
+ * **All five do something now**, and the `pending` property is gone with the last of them (#233). While
+ * a ticket was outstanding the switch was drawn, remembered and disabled with its issue named under it,
+ * because the one thing a control must never be is tickable and inert; a property that can only ever be
+ * null is the same lie in the other direction. What greys a switch from here on is the configuration
+ * itself — `NotebookOptions.offers` — and that resolves the moment the collector changes their mind.
  */
-enum class NotebookSwitch(
-    /**
-     * The issue that will make this switch do something, or null once it does.
-     *
-     * #228 opens the door and leaves today's notebook intact behind it, so a switch is drawn and
-     * persisted before it moves a millimetre. Rather than offer a control that silently does
-     * nothing, the sheet greys it and names the ticket. **The ticket that lands sets this to null**,
-     * and when all five are null the property has no reason left to exist.
-     */
-    val pending: Int?,
-) {
+enum class NotebookSwitch {
     /** No coin on the page at all: a line per member, and nothing left to warm (#231). */
-    Photographs(pending = null),
+    Photographs,
 
     /** The obverse beside the reverse, which doubles the cell and halves the page (#230). */
-    BothFaces(pending = null),
-    ActualSize(pending = 233),
+    BothFaces,
+
+    /** The coin at a fraction of its diameter, with the ruler traded for a number (#233). */
+    ActualSize,
 
     /** Two plates in one folio, under a band of fourteen millimetres instead of forty (#232). */
-    SharePage(pending = null),
+    SharePage,
 
     /** The caption grows and each coin gets its code (#234). */
-    NumistaQr(pending = null),
+    NumistaQr,
 }

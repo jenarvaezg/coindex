@@ -32,44 +32,43 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The door is open and only the switches whose ticket landed have moved anything.
+     * The door is open all the way: **every** configuration but the untouched one moves a millimetre.
      *
-     * Each of the five becomes millimetres in its own ticket (#230-#234): «QR de Numista» grows the
+     * Each of the five became millimetres in its own ticket (#230-#234): «QR de Numista» grows the
      * caption to make room for the code (#234), «ambas caras» widens the cell to hold the second one
-     * (#230), «fotos» takes the coin band away altogether (#231) and «compartir página» thins the
-     * heading and lets a folio hold two plates (#232). **A ticket landing moves a switch from one
-     * half of this test to the other**, which is the point — until then a grey switch promises
-     * nothing, and what has and has not changed behind the door is written down.
+     * (#230), «fotos» takes the coin band away altogether (#231), «compartir página» thins the heading
+     * and lets a folio hold two plates (#232), and «tamaño real» shrinks every coin and trades the
+     * ruler for a number (#233). This test used to have two halves and the last ticket emptied one of
+     * them — what is left is the promise #228 made from the start: the defaults are the notebook of
+     * today, and everything else is a notebook the collector asked for.
      */
     @Test
-    fun `only the switches whose ticket landed move a millimetre`() {
+    fun `every configuration but the untouched one moves a millimetre`() {
         val everyCombination = allCombinations()
 
         assertEquals(32, everyCombination.size, "faltan combinaciones de cinco interruptores")
         val moved = everyCombination.filter { printGeometry(it) != PrintGeometry() }
         assertEquals(
-            everyCombination.filter {
-                it.numistaQr || it.bothFaces || !it.photographs || it.sharePage
-            },
+            everyCombination.filter { it != NotebookOptions() },
             moved,
-            "un interruptor sin ticket ha movido la geometría, o uno con ticket no la mueve",
+            "un interruptor no mueve la geometría, o la mueve sin que nadie lo haya pedido",
         )
     }
 
     /**
-     * The same again for the cells, which is the half a geometry check cannot see.
+     * The half a geometry check cannot see: two of the five never touch a cell at all.
      *
-     * The configuration reaches `notebookSections` too, because what a cell *is* depends on it —
-     * both faces gives it an obverse (#230), no photographs gives it neither (#231). «Tamaño real»
-     * (#233) may not change a cell until its own ticket lands: a notebook of 113 pages of empty
-     * circles is exactly the half-landed switch #228 refuses to ship. «Compartir página» has landed
-     * and is still checked here, because a cell is the one thing it does **not** touch — it packs
-     * folios and thins a heading, and a coin on a shared page is the same coin (#232). The three
-     * that do change a cell are left out because changing one is precisely what they do, and
-     * `NotebookPagesTest` is where that is measured.
+     * The configuration reaches `notebookSections` too, because what a cell *is* depends on it — both
+     * faces gives it an obverse (#230), no photographs gives it neither (#231). The two that are checked
+     * here are the two that are **pure geometry**: «compartir página» packs folios and thins a heading,
+     * so a coin on a shared page is the same coin (#232); and «tamaño real» is a fraction the page is
+     * drawn with, so a cell keeps the **real** diameter it always carried and what shrinks is the circle
+     * (#233) — which is exactly what lets a scaled caption still say «33 mm». The three that do change a
+     * cell are left out because changing one is precisely what they do, and `NotebookPagesTest` is where
+     * that is measured.
      */
     @Test
-    fun `no switch without a ticket changes a cell`() {
+    fun `sharing a folio and scaling the coins change no cell`() {
         val card = IndexCard.Box(
             name = "Bandeja del abuelo",
             issuer = null,
@@ -85,7 +84,7 @@ class NotebookOptionsTest {
             notebookSections(CollectionState(), listOf(card), Curation(emptyList()), options) != today
         }
 
-        assertEquals(emptyList(), moved, "un interruptor sin ticket ha cambiado una casilla")
+        assertEquals(emptyList(), moved, "un interruptor de geometría ha cambiado una casilla")
     }
 
     @Test
@@ -103,6 +102,12 @@ class NotebookOptionsTest {
         assertEquals(14f, paper.footMm)
         assertEquals(50f, paper.rulerBarMm)
         assertEquals(16f, paper.captionMm)
+        assertEquals(28f, paper.minCellWidthMm)
+        // Al tamaño con el que sale del cajón, que es el 1:1 del #169: la moneda no se escala, y por
+        // eso la página lleva la regla y ninguna casilla dice ningún número.
+        assertEquals(1f, paper.coinScale)
+        assertEquals(40.9f, paper.printedDiameterMm(40.9f))
+        assertFalse(paper.printsDiameterLabel)
         // Y ningún código: sin él, el rótulo es el pie de foto entero.
         assertEquals(0f, paper.qrMm)
         assertEquals(0f, paper.qrGapMm)
@@ -222,14 +227,133 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The two switches that have landed compose, which is what «cinco interruptores» buys.
+     * What «tamaño real» apagado declares: every coin at three fifths, and no ruler to check it with.
+     *
+     * The switch gives up the one promise #169 was built on, so what goes with the diameter is the bar
+     * at the foot — a ruler nobody is going to lay a coin against protects nothing, and beside a coin
+     * that is not at 1:1 it is a foot that lies. What takes its place is the diameter as a **number** in
+     * every caption, which is what the list of #231 already prints for exactly the same reason.
+     *
+     * The floor on a cell comes down with the coins or the saving is never made: at three fifths every
+     * member of the shelf prints narrower than 28 mm, so that floor would become the width of every cell
+     * in the notebook. And the caption **grows** by two millimetres, which is the switch's one surprise:
+     * the number needs a line of its own, because appended to the year it was the millimetres an ellipsis
+     * ate on the cells of a collection with no issue list.
+     */
+    @Test
+    fun `scaling the coins takes the ruler away and prints the diameter instead`() {
+        val paper = printGeometry(NotebookOptions())
+        val scaled = printGeometry(NotebookOptions(actualSize = false))
+
+        assertEquals(0.6f, scaled.coinScale)
+        // Las rusas de 33 mm salen a 19,8, y la casilla es eso más el pie de foto, ahora de 18.
+        assertEquals(19.8f, scaled.printedDiameterMm(33f), 0.01f)
+        assertEquals(19.8f, scaled.coinBandWidthMm(33f), 0.01f)
+        assertEquals(18f, scaled.captionMm)
+        assertEquals(37.8f, scaled.cellHeightMm(33f), 0.01f)
+        // Ni regla ni tira: el pie de página se queda con la línea que dice de dónde salió la lámina.
+        assertEquals(0f, scaled.rulerBarMm)
+        assertEquals(5f, scaled.footMm)
+        assertTrue(scaled.printsDiameterLabel)
+        // Y el suelo de la casilla baja con las monedas: 17 mm es lo que mide «SIN EMITIR».
+        assertEquals(18f, scaled.minCellWidthMm)
+        assertEquals(18f, scaled.cellWidthMm(16f))
+        // Nada más se mueve. La casilla de 24,5 de una onza ya no es el suelo, sino la moneda.
+        assertEquals(24.54f, scaled.cellWidthMm(40.9f), 0.01f)
+        assertEquals(
+            paper,
+            scaled.copy(
+                coinScale = paper.coinScale,
+                rulerBarMm = paper.rulerBarMm,
+                footMm = paper.footMm,
+                captionMm = paper.captionMm,
+                minCellWidthMm = paper.minCellWidthMm,
+            ),
+        )
+    }
+
+    /**
+     * A hole scales like the coin that goes in it, and so does a casilla nobody measured (#169).
+     *
+     * The fraction multiplies into the cell's width and height and nowhere else, so the fallback
+     * diameter — the ounce a lone hole borrows when no Numista type backs it — needs to know nothing
+     * about the switch: it is a real diameter like any other and comes out at three fifths of itself.
+     */
+    @Test
+    fun `the diameter of a cell nobody measured scales like its siblings`() {
+        val scaled = printGeometry(NotebookOptions(actualSize = false))
+
+        assertEquals(40f, scaled.fallbackDiameterMm)
+        assertEquals(24f, printGrid(null, scaled).printedDiameterMm, 0.01f)
+        assertEquals(40f, printGrid(null, scaled).diameterMm)
+        // La rejilla se mide contra el diámetro real y se dibuja al escalado, que es lo que deja a un
+        // pie de foto decir «40,9 mm» de un círculo de 24,5.
+        val ounces = printGrid(40.9f, scaled)
+        assertEquals(40.9f, ounces.diameterMm)
+        assertEquals(24.54f, ounces.printedDiameterMm, 0.01f)
+    }
+
+    /**
+     * Exactly the pages printed at 1:1 carry a ruler, and every other page says the size in words.
+     *
+     * One fact and two ways of keeping it: #169 put on paper that a coin's size can be **checked**, and
+     * a page does that with a bar the collector measures or with a number they read. Both would be a
+     * caption arguing with a ruler; neither would be a coin with no size at all. So it is asked of the
+     * thirty-two configurations rather than of the two that were being written at the time.
+     */
+    @Test
+    fun `a page carries the ruler or the number, and never both or neither`() {
+        allCombinations().forEach { options ->
+            val paper = printGeometry(options)
+            val atActualSize = options.photographs && options.actualSize
+
+            assertEquals(atActualSize, paper.rulerBarMm > 0f, "la regla no cuadra con $options")
+            assertEquals(!atActualSize, paper.printsDiameterLabel, "el número no cuadra con $options")
+        }
+    }
+
+    /**
+     * The scaled page composes with the other four, and none of them had to learn about it.
+     *
+     * The second face is paid for in width off the **printed** diameter, which is the one thing at 1:1
+     * that could not be done — «ambas caras» at real size doubles a cell to 84,8 mm and takes a plate of
+     * ounces to six cells a page, and at three fifths the pair costs 52 and keeps three columns. The code
+     * adds its own band to whatever caption the page arrived with. And «sin fotos» wins outright: there
+     * is no coin to scale, so the list is the list.
+     */
+    @Test
+    fun `the scaled page composes with the other four`() {
+        val scaled = printGeometry(NotebookOptions(actualSize = false))
+        val doubled = printGeometry(NotebookOptions(actualSize = false, bothFaces = true))
+        val coded = printGeometry(NotebookOptions(actualSize = false, numistaQr = true))
+        val folio = printGeometry(NotebookOptions(actualSize = false, sharePage = true))
+
+        // Dos onzas de 24,54 mm y la calle de 3 que las separa, contra los 84,8 del 1:1.
+        assertEquals(52.08f, doubled.coinBandWidthMm(40.9f), 0.01f)
+        assertEquals(scaled, doubled.copy(facesPerCell = scaled.facesPerCell))
+        // El código se suma al rótulo escalado, sea el que sea: 18 más los 2 de aire y los 10 del QR.
+        assertEquals(30f, coded.captionMm)
+        assertEquals(10f, coded.qrMm)
+        // Y compartir folio adelgaza la cabecera y no toca ni la escala ni el suelo de la casilla.
+        assertEquals(PrintHeading.Slim, folio.heading)
+        assertEquals(0.6f, folio.coinScale)
+        assertEquals(18f, folio.minCellWidthMm)
+        // Sin fotos no hay moneda que escalar: la lista es la lista, marcada o no la casilla.
+        assertEquals(
+            printGeometry(NotebookOptions(photographs = false)),
+            printGeometry(NotebookOptions(photographs = false, actualSize = false)),
+        )
+    }
+
+    /**
+     * The code and the second face compose, which is what «cinco interruptores» buys.
      *
      * Neither knows about the other: the code grows the caption, the second face widens the cell,
      * and a notebook with both on pays for both. Models with a name were dropped precisely so the
      * collector can combine, and the live page count is what tells them what the combination costs.
      */
     @Test
-    fun `the two that have landed compose without knowing about each other`() {
+    fun `the code and the second face compose without knowing about each other`() {
         val both = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
 
         assertEquals(2, both.facesPerCell)
@@ -344,15 +468,15 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The order of the enum is the order of the sheet, and the three that do nothing yet say so.
+     * The order of the enum is the order of the sheet, and all five of them do something now.
      *
-     * `pending` is what makes a grey switch honest: it is the issue that will make it work, and it
-     * goes to null in that issue. «QR de Numista» was the first one at null, «ambas caras» the
-     * second, «fotos» the third and «compartir página» the fourth. When all five are, this property
-     * has no reason left to exist.
+     * `pending` was what made a grey switch honest — the issue that would make it work, named under a
+     * control that could not be touched — and each ticket set its own to null: «QR de Numista» first,
+     * then «ambas caras», «fotos», «compartir página» and «tamaño real» (#233). With the last one the
+     * property itself went, because a field that can only be null is the same lie a grey switch was.
      */
     @Test
-    fun `the five switches are in the order the sheet draws them and one is still pending`() {
+    fun `the five switches are in the order the sheet draws them`() {
         assertEquals(
             listOf(
                 NotebookSwitch.Photographs,
@@ -363,7 +487,6 @@ class NotebookOptionsTest {
             ),
             NotebookSwitch.entries.toList(),
         )
-        assertEquals(listOf(null, null, 233, null, null), NotebookSwitch.entries.map { it.pending })
     }
 }
 
