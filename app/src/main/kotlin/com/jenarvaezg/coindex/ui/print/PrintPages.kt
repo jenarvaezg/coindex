@@ -82,13 +82,13 @@ fun PrintSection.grid(geometry: PrintGeometry): PrintGrid =
 /**
  * How many pages this section takes on [geometry] **with a folio to itself**.
  *
- * Which is the whole of the answer until «compartir página» is on and no longer is (#232): a plate
- * that starts halfway down somebody else's folio can be cut into more pieces than this — the first
- * of them is one short row and the rest are whole folios — even though the notebook it belongs to
- * comes out shorter. What the notebook actually costs is `printPages(...).size` and always has been;
- * this is the plate's own length, which is what the field report ranks by.
+ * «Alone» is in the name because since #232 it is a trap otherwise: a plate that starts halfway down
+ * somebody else's folio can be cut into more pieces than this — the first of them is one short row
+ * and the rest are whole folios — even though the notebook it belongs to comes out shorter. What the
+ * notebook actually costs is `printPages(...).size` and always has been; this is the plate's own
+ * length, which is what the field report ranks by.
  */
-fun PrintSection.pages(geometry: PrintGeometry): Int = pageCount(cells.size, grid(geometry))
+fun PrintSection.pagesAlone(geometry: PrintGeometry): Int = pageCount(cells.size, grid(geometry))
 
 /**
  * One plate's turn on a folio: a slice of its cells, under its own heading.
@@ -222,12 +222,19 @@ fun printPages(
     val folios = mutableListOf<MutableList<Placement>>()
     var freeMm = 0f
 
-    // How many rows of [grid] the folio already open can still take, or zero where it can take
-    // none: there is no folio yet, the one open belongs to somebody else and sharing is off, or
-    // what is left of it does not hold a heading and a whole row under it.
-    fun roomOnOpenFolio(grid: PrintGrid): Int {
-        if (folios.isEmpty() || !geometry.sharesPage) return 0
-        return grid.rowsIn(freeMm - geometry.blockGapMm)
+    // What the folio already open can still take of a plate with [cellsLeft] cells to place: how
+    // many of its rows fit, or null where it has to open one of its own — there is no folio yet, the
+    // one open belongs to somebody else and sharing is off, or what is left of it is too little.
+    //
+    // Zero rows is a real answer and not «it does not fit»: a collection with nothing in it is its
+    // heading and nothing else, and an emptied box (ADR 0021 §11) does not deserve a folio to itself
+    // for the fourteen millimetres that say so.
+    fun roomOnOpenFolio(grid: PrintGrid, cellsLeft: Int): Int? {
+        if (folios.isEmpty() || !geometry.sharesPage) return null
+        val freeForBlock = freeMm - geometry.blockGapMm
+        val rows = grid.rowsIn(freeForBlock)
+        if (rows > 0) return rows
+        return if (cellsLeft == 0 && freeForBlock >= geometry.headingMm) 0 else null
     }
 
     sections.forEachIndexed { order, section ->
@@ -238,19 +245,18 @@ fun printPages(
         // the honest page, not a section silently dropped. Hence «not placed yet» and not «cells
         // left» as the condition to keep going.
         while (!placed || rest.isNotEmpty()) {
-            var rows = roomOnOpenFolio(grid)
-            val opening = rows == 0
-            if (opening) {
+            val room = roomOnOpenFolio(grid, rest.size)
+            if (room == null) {
                 folios += mutableListOf<Placement>()
                 freeMm = geometry.contentHeightMm
-                // A folio nobody has written on gives the plate its whole grid, even where a single
-                // row of it would overflow the paper: a plate that opens a folio gets one page at
-                // least, which is the floor `pageCount` has always had, and the rest is clipped.
-                rows = grid.rows
             }
+            // A folio nobody has written on gives the plate its whole grid, even where a single row
+            // of it would overflow the paper: a plate that opens a folio gets one page at least,
+            // which is the floor `pageCount` has always had, and the overflow is clipped.
+            val rows = room ?: grid.rows
             val slice = rest.take(rows * grid.columns)
             // The seam is only paid for by a plate landing under another one.
-            val gapMm = if (opening) 0f else geometry.blockGapMm
+            val gapMm = if (room == null) 0f else geometry.blockGapMm
             freeMm -= gapMm + grid.blockHeightMm(slice.size)
             folios.last() += Placement(order, section, grid, slice)
             rest = rest.drop(slice.size)

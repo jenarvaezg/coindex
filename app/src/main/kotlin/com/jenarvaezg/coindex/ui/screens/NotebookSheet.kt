@@ -153,6 +153,11 @@ fun NotebookPageSheet(
         modifier = modifier
             .size(geometry.widthMm.mm, geometry.heightMm.mm)
             .background(Paper.paper)
+            // Nothing is drawn outside the paper, which is the guarantee the packer makes when it
+            // gives a plate a folio to itself «even where a single row would overflow»: at shipped
+            // diameters that never happens, and if it ever did what came off the bottom would be
+            // clipped rather than drawn past the edge of a page the exporter had already counted.
+            .clipToBounds()
             // The margin is the page's and not each band's: inside it the plates and the strip at
             // the foot add up to at most the printable height, which is what the packer counted
             // against.

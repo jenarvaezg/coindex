@@ -107,7 +107,7 @@ class NotebookPagesTest {
     )
 
     private fun pagesOf(catalogId: String) =
-        section(catalogs.first { it.id == catalogId }).pages(paper)
+        section(catalogs.first { it.id == catalogId }).pagesAlone(paper)
 
     private fun pagesFor(vararg sections: PrintSection) = printPages(sections.toList(), paper)
 
@@ -153,7 +153,7 @@ class NotebookPagesTest {
      */
     @Test
     fun `the seventy-three shipped catalogs would print as one hundred and eighteen pages`() {
-        assertEquals(118, catalogs.sumOf { section(it).pages(paper) })
+        assertEquals(118, catalogs.sumOf { section(it).pagesAlone(paper) })
     }
 
     /**
@@ -678,6 +678,35 @@ class NotebookPagesTest {
             spilled.all { it.columnsUsed == it.grid.columns },
             "una página de una lámina que se derrama ha movido sus columnas",
         )
+    }
+
+    /**
+     * A collection with nothing in it costs its heading and not a folio (#232).
+     *
+     * An emptied box survives (ADR 0021 §11), and on paper it is fourteen millimetres saying there is
+     * nothing in it. Sharing folios, giving that a page of its own would be the same waste the switch
+     * exists to take away — so the packer asks whether the *block* fits and not whether a row of it
+     * does, and zero rows is a real answer rather than «no cabe».
+     */
+    @Test
+    fun `an empty collection costs its heading and not a whole folio`() {
+        val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
+        val three = ounces.copy(title = "Tres onzas", cells = ounces.cells.take(3))
+        val nothing = ounces.copy(title = "Caja vacía", cells = emptyList())
+
+        // Sin compartir son tres folios: cada lámina abre el suyo, la vacía incluida.
+        assertEquals(3, printPages(listOf(three, nothing, three), paper).size)
+
+        val folio = printPages(listOf(three, nothing, three), shared).single()
+
+        assertEquals(
+            listOf("Tres onzas", "Caja vacía", "Tres onzas"),
+            folio.blocks.map { it.section.title },
+        )
+        val empty = folio.blocks[1]
+        assertEquals(emptyList(), empty.cells)
+        assertEquals(0, empty.rows)
+        assertEquals(shared.headingMm, empty.heightMm)
     }
 
     @Test
