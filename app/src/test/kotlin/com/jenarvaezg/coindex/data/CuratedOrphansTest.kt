@@ -53,11 +53,22 @@ class CuratedOrphansTest {
      * 2026, so there is no sequence to count. Dune was offered an ADR 0022 programme file first
      * and it was refused for a measured reason: a programme only surfaces on the plate of a
      * catalog that touches its types, and no plate touches these.
+     *
+     * The five Venezuelan silver commemoratives (N#14538, N#18940, N#19880, N#27573, N#34721) are
+     * the only block signed for the **absence of a boundary** rather than for the collector's
+     * taste (#247). Three sources were read and none declares a series — the catalogue the ficha
+     * itself cites has no commemorative section, the issuer's page is its museum, and the count of
+     * «21 silver coins 1973-2013» is retrospective — and no source could have fixed it: five
+     * commemorations over thirteen years are no date run, a set wants types issued together, and a
+     * category is not a collection. Their five weights would have printed five cards anyway.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
-            listOf(1_933, 3_416, 6_918, 131_809, 132_242, 291_255, 451_057, 470_766, 571_460),
+            listOf(
+                1_933, 3_416, 6_918, 14_538, 18_940, 19_880, 27_573, 34_721,
+                131_809, 132_242, 291_255, 451_057, 470_766, 571_460,
+            ),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )
         assertTrue(
