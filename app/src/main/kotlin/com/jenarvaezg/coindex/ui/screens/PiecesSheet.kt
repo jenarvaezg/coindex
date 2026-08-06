@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
@@ -71,8 +72,8 @@ fun PiecesSheet(
                 row.forEach { piece ->
                     PiecesSheetCell(
                         piece = piece,
-                        title = titles(piece),
-                        images = images[piece.typeId],
+                        title = titles(piece.item),
+                        images = images[piece.item.typeId],
                         onImageSettled = onImageSettled,
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
@@ -134,7 +135,7 @@ private fun SheetFact(label: String, value: String, scale: Float) {
 
 @Composable
 private fun PiecesSheetCell(
-    piece: CollectedItem,
+    piece: DrawnPiece,
     title: String,
     images: TypeImages?,
     onImageSettled: (painted: Boolean) -> Unit,
@@ -165,9 +166,9 @@ private fun PiecesSheetCell(
 
 /** Total pictures the sheet will request, so the export knows when it can capture. */
 fun piecesSheetImageCount(
-    pieces: List<CollectedItem>,
+    pieces: List<DrawnPiece>,
     images: Map<Int, TypeImages>,
 ): Int = pieces.sumOf { piece ->
-    val typeImages = images[piece.typeId]
+    val typeImages = images[piece.item.typeId]
     coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
 }

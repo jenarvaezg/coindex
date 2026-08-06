@@ -196,6 +196,15 @@ physical issues the catalog claims. The qualifier is optional in a simple catalo
 exhaustive in an issue run; an unlisted issue belongs to neither by fallback nor precedence.
 _Avoid_: Issue run, date run, type-wide member
 
+**Emission label**:
+What an issue run calls one owned row, where the year calls it nothing: «Estrella 67» on a 100
+pesetas of Franco whose row can only say 1966, like its four sisters. It is a fact about the
+**piece** and not about the card it is read from — the same row is named that from its own
+collection, from a box the collector typed and from the notebook page — so it is resolved once in
+the assembly and travels inside the piece that gets drawn. Only an issue run has one to give;
+everywhere else the head of the line is the year (#225).
+_Avoid_: Member label, variety, year
+
 **Unlisted member**:
 A collection-catalog member for a coin that was struck and sold but has no published Numista
 type. Its slot is not measurable from the Numista-backed inventory, so an Album marks it neither

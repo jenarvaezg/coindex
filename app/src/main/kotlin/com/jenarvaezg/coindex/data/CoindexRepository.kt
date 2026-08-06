@@ -50,6 +50,7 @@ data class CollectionState(
     val evidencedCatalogIds: Set<String> get() = collection.evidencedCatalogIds
     val itemsByKey: Map<VariantKey, List<CollectedItem>> get() = collection.itemsByKey
     val ownGroupings: List<OwnGroupingView> get() = collection.ownGroupings
+    val emissionLabels: Map<Long, String> get() = collection.emissionLabels
 
     fun derivedCollectionFor(key: VariantKey): DerivedCollection? =
         collection.derivedCollectionFor(key)

@@ -1,0 +1,88 @@
+package com.jenarvaezg.coindex.ui.print
+
+import com.jenarvaezg.coindex.data.CatalogFiles
+import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CatalogSeeds
+import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.CollectionSnapshot
+import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.OwnGrouping
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+/**
+ * What a page of pieces says about each one, which is the one place the emission label reaches paper.
+ *
+ * The star is the whole content of the line for the 100 pesetas of Franco: five rows that all say
+ * 1966, all say Numista 1885, and differ only in the star Numista files as a variety of the issue.
+ * Printing five identical footnotes is the failure #225 measured, and it happened because the label
+ * was an optional parameter three drawers could forget — so what this pins is the drawn line and not
+ * `emissionLabelFor`, which was right and green the whole time.
+ */
+class NotebookSectionsTest {
+    private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
+
+    /** The five stars, plus a coin no curated catalog claims, in a box the collector typed. */
+    private val stars = listOf(
+        CollectedItem(id = 1, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 8_508),
+        CollectedItem(id = 2, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 33_204),
+        CollectedItem(id = 3, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 33_205),
+        CollectedItem(id = 4, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 33_206),
+        CollectedItem(id = 5, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 33_207),
+    )
+
+    private fun footnotesOf(items: List<CollectedItem>): List<String?> {
+        val curation = Curation(catalogs)
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = items,
+                ownGroupings = listOf(
+                    OwnGrouping(
+                        id = 1,
+                        name = "Los paquillos de mi padre",
+                        typeIds = items.map { it.typeId }.distinct(),
+                    ),
+                ),
+            ),
+        )
+        val box = assembled.index.filterIsInstance<IndexCard.Box>().single()
+        return notebookSections(
+            CollectionState(assembled),
+            listOf(box),
+            curation,
+            NotebookOptions(),
+        ).single().cells.map { it.footnote }
+    }
+
+    @Test
+    fun `each star is named by its emission where the year names nothing`() {
+        assertEquals(
+            listOf(
+                "Estrella 66 · Numista 1885",
+                "Estrella 67 · Numista 1885",
+                "Estrella 68 · Numista 1885",
+                "Estrella 69 · Numista 1885",
+                "Estrella 70 · Numista 1885",
+            ),
+            footnotesOf(stars),
+        )
+    }
+
+    /**
+     * And a piece no issue run claims keeps the year, which is what tells its rows apart.
+     *
+     * The two cases live in one function on purpose: the label is not a second kind of line, it is
+     * the head of the same one, taken over where the year has nothing to say.
+     */
+    @Test
+    fun `a piece outside an issue run still leads with its year`() {
+        val unclaimed = CollectedItem(id = 6, quantity = 2, typeId = 999_999, issueYear = 1994)
+
+        assertEquals(
+            listOf("Estrella 66 · Numista 1885", "1994 · Numista 999999 · ×2"),
+            footnotesOf(listOf(stars.first(), unclaimed)),
+        )
+    }
+}
