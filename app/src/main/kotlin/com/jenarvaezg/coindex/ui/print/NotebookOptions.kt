@@ -78,7 +78,9 @@ enum class NotebookSwitch(
     /** The obverse beside the reverse, which doubles the cell and halves the page (#230). */
     BothFaces(pending = null),
     ActualSize(pending = 233),
-    SharePage(pending = 232),
+
+    /** Two plates in one folio, under a band of fourteen millimetres instead of forty (#232). */
+    SharePage(pending = null),
 
     /** The caption grows and each coin gets its code (#234). */
     NumistaQr(pending = null),

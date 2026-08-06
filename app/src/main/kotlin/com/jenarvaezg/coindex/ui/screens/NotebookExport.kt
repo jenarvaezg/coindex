@@ -104,7 +104,11 @@ fun NotebookPdfExport(
     LaunchedEffect(pageIndex, warm) {
         if (!warm) return@LaunchedEffect
         val current = pages.getOrNull(pageIndex) ?: return@LaunchedEffect
-        onStep(NotebookExportStep.Drawing(pageIndex, current.section.title))
+        // The plate at the top of the folio, which since #232 may not be the only one on it: the
+        // progress line is what tells a stall from steady work, and it is the name the collector
+        // recognises as the page goes by. Naming every plate on a shared folio would put three
+        // titles in a line meant to be read at a glance.
+        onStep(NotebookExportStep.Drawing(pageIndex, current.blocks.first().section.title))
         awaitSettledImages(current.photographs, settled, PAGE_WAIT_MILLIS)
         val appended = runCatching {
             addNotebookPage(document, picture, pageIndex + 1, current.geometry)

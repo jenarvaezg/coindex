@@ -45,11 +45,14 @@ import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
+import com.jenarvaezg.coindex.ui.print.PrintBlock
 import com.jenarvaezg.coindex.ui.print.PrintCell
 import com.jenarvaezg.coindex.ui.print.PrintGeometry
 import com.jenarvaezg.coindex.ui.print.PrintGrid
+import com.jenarvaezg.coindex.ui.print.PrintHeading
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.QR_QUIET_MODULES
+import com.jenarvaezg.coindex.ui.print.notebookSourceLabel
 import com.jenarvaezg.coindex.ui.print.numistaQr
 import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.printedDiameterLabel
@@ -150,32 +153,43 @@ fun NotebookPageSheet(
         modifier = modifier
             .size(geometry.widthMm.mm, geometry.heightMm.mm)
             .background(Paper.paper)
-            // The margin is the page's and not each band's: inside it the three bands of the
-            // geometry add up to exactly the printable height, which is what the page count was
-            // computed against.
+            // The margin is the page's and not each band's: inside it the plates and the strip at
+            // the foot add up to at most the printable height, which is what the packer counted
+            // against.
             .padding(geometry.marginMm.mm),
     ) {
-        PageHeading(page)
-        PageGrid(page, onImageSettled)
+        page.blocks.forEachIndexed { index, block ->
+            // The seam between two plates, and never above the first: what the folio has left over
+            // belongs at its foot and not between the plates on it (#232).
+            if (index > 0) Spacer(modifier = Modifier.height(geometry.blockGapMm.mm))
+            PlateHeading(block)
+            PlateGrid(block, onImageSettled)
+        }
+        Spacer(modifier = Modifier.weight(1f))
         PageFoot(page)
     }
 }
 
 /**
- * The heading, repeated on every page of a plate that spills over.
+ * One plate's heading, repeated on every folio it spills onto.
  *
  * Its height is fixed by [PrintGeometry.headingMm] and its overflow is clipped, which is what
  * keeps the arithmetic of the page count and the drawing of the page in step: a heading that grew
  * with a catalog's specification would push cells off a page the exporter had already counted.
+ *
+ * **What it holds is [PrintHeading] and not this function's opinion** (#232). The band is forty
+ * millimetres of masthead, twenty-eight of a name with no specification (#231) or fourteen of a name
+ * band when the folio is shared — and the height and the contents come from the same value precisely
+ * so that a subtitle cannot be drawn into millimetres nobody reserved.
  */
 @Composable
-private fun PageHeading(page: PrintPage) {
-    val section = page.section
-    val geometry = page.geometry
+private fun PlateHeading(block: PrintBlock) {
+    val section = block.section
+    val heading = block.geometry.heading
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(geometry.headingMm.mm)
+            .height(heading.millimetres.mm)
             .clipToBounds(),
         verticalArrangement = Arrangement.spacedBy(1f.mm),
     ) {
@@ -183,28 +197,35 @@ private fun PageHeading(page: PrintPage) {
             Text(section.eyebrow, style = PRINT_EYEBROW, color = Paper.rust)
             Spacer(modifier = Modifier.weight(1f))
             // Only where there is a break to explain: «página 1 de 1» is noise on paper.
-            if (page.pagesInSection > 1) {
+            if (block.pagesInSection > 1) {
                 Text(
-                    "PÁGINA ${page.numberInSection} DE ${page.pagesInSection}",
+                    "PÁGINA ${block.numberInSection} DE ${block.pagesInSection}",
                     style = PRINT_EYEBROW,
                     color = Paper.muted,
                 )
             }
         }
-        // Two lines, because the title on a plate is the catalog's editorial name and it says what
-        // the list does and does not claim: «1 oz bullion anual (sin proof, burnished ni privy)»
-        // truncated at one line is exactly the qualification a printed page cannot afford to lose.
-        Text(section.title, style = PRINT_TITLE, maxLines = 2, overflow = TextOverflow.Ellipsis)
-        section.subtitle?.let { subtitle ->
+        // Two lines where the band has room for two, because the title on a plate is the catalog's
+        // editorial name and it says what the list does and does not claim: «1 oz bullion anual (sin
+        // proof, burnished ni privy)» truncated at one line is exactly the qualification a printed
+        // page cannot afford to lose — and what the thin band of a shared folio gives up to fit.
+        Text(
+            section.title,
+            style = PRINT_TITLE,
+            maxLines = heading.titleLines,
+            overflow = TextOverflow.Ellipsis,
+        )
+        section.subtitle?.takeIf { heading.subtitle }?.let { subtitle ->
             Text(subtitle, style = PRINT_SUBTITLE, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         HorizontalDivider(thickness = 0.5f.mm, color = Paper.ink)
-        // A page of lines drops the specification whole rather than clipping it (#231): the list
-        // already says «Tengo» or «Me falta» on every one of its rows, so it *is* the coverage the
-        // block would have summarised, and half a fact under a rule is worse than none. Otherwise
-        // flowed and clipped — what a plate says about itself grew with the catalogs that share a
-        // type or a year, and the band is what it is.
-        if (geometry.printsCoins) {
+        // A band without room for the specification drops it whole rather than clipping it: the
+        // list of #231 already says «Tengo» or «Me falta» on every one of its rows, so it *is* the
+        // coverage the block would have summarised, and a shared folio spends those millimetres on
+        // the plate underneath. Half a fact under a rule is worse than none. Where it is printed it
+        // is flowed and clipped — what a plate says about itself grew with the catalogs that share
+        // a type or a year, and the band is what it is.
+        if (heading.facts) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(5f.mm),
@@ -221,24 +242,31 @@ private fun PageHeading(page: PrintPage) {
     }
 }
 
-/** The cells of this page, on the grid its plate's largest coin fixed. */
+/**
+ * The cells of one plate on one folio, on the grid its largest coin fixed.
+ *
+ * It is as tall as the rows it holds and no taller (#232), where before it took the whole band under
+ * the heading: on a shared folio what is left over is the room the next plate is packed into, and on
+ * a folio of one plate the two are the same page — the leftover simply falls above the foot, where
+ * it always did.
+ */
 @Composable
-private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit) {
-    val grid = page.grid
-    val geometry = page.geometry
+private fun PlateGrid(block: PrintBlock, onImageSettled: (painted: Boolean) -> Unit) {
+    val grid = block.grid
+    val geometry = block.geometry
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(geometry.gridHeightMm.mm)
+            .height(block.cellsHeightMm.mm)
             .clipToBounds(),
         verticalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm),
         // The block is centred and the rows inside it are not: what the grid leaves over is
         // margin, and margin on one side only reads as a page printed askew.
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        page.cells.chunked(grid.columns).forEach { row ->
+        block.cells.chunked(grid.columns).forEach { row ->
             Row(
-                modifier = Modifier.width(page.blockWidthMm.mm),
+                modifier = Modifier.width(block.blockWidthMm.mm),
                 horizontalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm),
             ) {
                 row.forEach { cell ->
@@ -576,6 +604,10 @@ private fun EmptyMount(modifier: Modifier = Modifier) {
  * With «fotos» off (#231) there is no coin at 1:1 to falsify, so the ruler goes and the strip narrows
  * to the source alone — that one stays whatever the page prints, because the paper outlives the app
  * and a list that does not say where it came from cannot be checked later either.
+ *
+ * **One strip per folio and not per plate** (#232), which is why the source can be a plural: two
+ * plates sharing a page can come from two catalogs, and one of them going unnamed would attribute
+ * its coins to the other.
  */
 @Composable
 private fun PageFoot(page: PrintPage) {
@@ -600,7 +632,7 @@ private fun PageFoot(page: PrintPage) {
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            page.section.source,
+            notebookSourceLabel(page.sources),
             style = PRINT_FOOTNOTE,
             color = Paper.muted,
             maxLines = 1,

@@ -36,9 +36,10 @@ class NotebookOptionsTest {
      *
      * Each of the five becomes millimetres in its own ticket (#230-#234): «QR de Numista» grows the
      * caption to make room for the code (#234), «ambas caras» widens the cell to hold the second one
-     * (#230), and «fotos» takes the coin band away altogether (#231). **A ticket landing moves a
-     * switch from one half of this test to the other**, which is the point — until then a grey switch
-     * promises nothing, and what has and has not changed behind the door is written down.
+     * (#230), «fotos» takes the coin band away altogether (#231) and «compartir página» thins the
+     * heading and lets a folio hold two plates (#232). **A ticket landing moves a switch from one
+     * half of this test to the other**, which is the point — until then a grey switch promises
+     * nothing, and what has and has not changed behind the door is written down.
      */
     @Test
     fun `only the switches whose ticket landed move a millimetre`() {
@@ -47,7 +48,9 @@ class NotebookOptionsTest {
         assertEquals(32, everyCombination.size, "faltan combinaciones de cinco interruptores")
         val moved = everyCombination.filter { printGeometry(it) != PrintGeometry() }
         assertEquals(
-            everyCombination.filter { it.numistaQr || it.bothFaces || !it.photographs },
+            everyCombination.filter {
+                it.numistaQr || it.bothFaces || !it.photographs || it.sharePage
+            },
             moved,
             "un interruptor sin ticket ha movido la geometría, o uno con ticket no la mueve",
         )
@@ -57,11 +60,13 @@ class NotebookOptionsTest {
      * The same again for the cells, which is the half a geometry check cannot see.
      *
      * The configuration reaches `notebookSections` too, because what a cell *is* depends on it —
-     * both faces gives it an obverse (#230), no photographs gives it neither (#231). The two left,
-     * «tamaño real» (#233) and «compartir página» (#232), may not change a cell until their own
-     * ticket lands: a notebook of 113 pages of empty circles is exactly the half-landed switch #228
-     * refuses to ship. The three that have landed are left out because changing a cell is precisely
-     * what they do, and `NotebookPagesTest` is where that is measured.
+     * both faces gives it an obverse (#230), no photographs gives it neither (#231). «Tamaño real»
+     * (#233) may not change a cell until its own ticket lands: a notebook of 113 pages of empty
+     * circles is exactly the half-landed switch #228 refuses to ship. «Compartir página» has landed
+     * and is still checked here, because a cell is the one thing it does **not** touch — it packs
+     * folios and thins a heading, and a coin on a shared page is the same coin (#232). The three
+     * that do change a cell are left out because changing one is precisely what they do, and
+     * `NotebookPagesTest` is where that is measured.
      */
     @Test
     fun `no switch without a ticket changes a cell`() {
@@ -89,8 +94,12 @@ class NotebookOptionsTest {
 
         assertEquals(210f, paper.widthMm)
         assertEquals(297f, paper.heightMm)
+        assertEquals(PrintHeading.Masthead, paper.heading)
         assertEquals(40f, paper.headingMm)
         assertTrue(paper.printsCoins)
+        // Una lámina por folio, y por tanto ninguna costura entre láminas que pagar (#232).
+        assertFalse(paper.sharesPage)
+        assertEquals(0f, paper.blockGapMm)
         assertEquals(14f, paper.footMm)
         assertEquals(50f, paper.rulerBarMm)
         assertEquals(16f, paper.captionMm)
@@ -99,9 +108,69 @@ class NotebookOptionsTest {
         assertEquals(0f, paper.qrGapMm)
         // Una cara por moneda, que es la del #169: el reverso, que es el lado que se mira.
         assertEquals(1, paper.facesPerCell)
-        // 210 menos los dos márgenes; 297 menos los dos márgenes, la cabecera y la regla del pie.
+        // 210 menos los dos márgenes; 297 menos los dos márgenes y la regla del pie, y de ahí la
+        // cabecera de la única lámina que hay en el folio.
         assertEquals(180f, paper.gridWidthMm)
+        assertEquals(253f, paper.contentHeightMm)
         assertEquals(213f, paper.gridHeightMm)
+    }
+
+    /**
+     * What «compartir página» declares: a folio that takes more than one plate, under a thin band.
+     *
+     * **The band comes with the switch and is not a switch of its own** (#228 decided that, #232
+     * implements it): forty millimetres of masthead per plate makes no sense once two of them share a
+     * folio, and it is where most of the saving comes from — 90 pages sharing folios with the
+     * masthead against 73 with this band, on the sixty plates the ticket measured.
+     *
+     * Nothing else moves. The coins keep their diameter, the caption keeps its sixteen millimetres
+     * and the strip at the foot keeps its ruler: a folio shared by two plates is still printed at
+     * 1:1, and that is the whole reason this switch is about packing and not about size.
+     */
+    @Test
+    fun `sharing a folio thins the heading and moves nothing else`() {
+        val paper = printGeometry(NotebookOptions())
+        val folio = printGeometry(NotebookOptions(sharePage = true))
+
+        assertTrue(folio.sharesPage)
+        assertEquals(PrintHeading.Slim, folio.heading)
+        assertEquals(14f, folio.headingMm)
+        // La cabecera fina se queda con el epígrafe, una línea de título y la raya: ni subtítulo ni
+        // bloque de fichas caben en catorce milímetros, y medio dato bajo una raya es peor que nada.
+        assertEquals(1, folio.heading.titleLines)
+        assertFalse(folio.heading.subtitle)
+        assertFalse(folio.heading.facts)
+        // Y la costura entre dos láminas, que sólo existe cuando hay dos.
+        assertEquals(6f, folio.blockGapMm)
+        assertEquals(
+            paper,
+            folio.copy(sharesPage = paper.sharesPage, heading = paper.heading),
+        )
+        // El folio no crece: lo que cambia es que la cabecera sale de él una vez por lámina y no una
+        // vez por página, así que la rejilla de una lámina sola gana los veintiséis milímetros.
+        assertEquals(paper.contentHeightMm, folio.contentHeightMm)
+        assertEquals(239f, folio.gridHeightMm)
+    }
+
+    /**
+     * Sharing a folio composes with the other three, and with «sin fotos» it thins a thin heading.
+     *
+     * The list of #231 already dropped the specification block and came down to twenty-eight
+     * millimetres; sharing takes it to fourteen, and what it gives up on top is the subtitle and the
+     * second line of the title. Two lists of a dozen lines each on one folio is what the two switches
+     * together are for, and neither had to learn about the other to do it.
+     */
+    @Test
+    fun `sharing a folio thins the list's heading too`() {
+        val list = printGeometry(NotebookOptions(photographs = false))
+        val shared = printGeometry(NotebookOptions(photographs = false, sharePage = true))
+
+        assertEquals(28f, list.headingMm)
+        assertEquals(14f, shared.headingMm)
+        assertFalse(shared.printsCoins)
+        assertEquals(7f, shared.captionMm)
+        assertEquals(0f, shared.rulerBarMm)
+        assertEquals(list, shared.copy(sharesPage = false, heading = list.heading))
     }
 
     /**
@@ -278,11 +347,12 @@ class NotebookOptionsTest {
      * The order of the enum is the order of the sheet, and the three that do nothing yet say so.
      *
      * `pending` is what makes a grey switch honest: it is the issue that will make it work, and it
-     * goes to null in that issue. «QR de Numista» was the first one at null, «ambas caras» the second
-     * and «fotos» the third. When all five are, this property has no reason left to exist.
+     * goes to null in that issue. «QR de Numista» was the first one at null, «ambas caras» the
+     * second, «fotos» the third and «compartir página» the fourth. When all five are, this property
+     * has no reason left to exist.
      */
     @Test
-    fun `the five switches are in the order the sheet draws them and two are still pending`() {
+    fun `the five switches are in the order the sheet draws them and one is still pending`() {
         assertEquals(
             listOf(
                 NotebookSwitch.Photographs,
@@ -293,7 +363,7 @@ class NotebookOptionsTest {
             ),
             NotebookSwitch.entries.toList(),
         )
-        assertEquals(listOf(null, null, 233, 232, null), NotebookSwitch.entries.map { it.pending })
+        assertEquals(listOf(null, null, 233, null, null), NotebookSwitch.entries.map { it.pending })
     }
 }
 

@@ -73,7 +73,7 @@ private fun plateSection(
         title = catalog.name,
         subtitle = null,
         facts = plateEntries(catalog, plate.album.ownedMembers(), common, plate.programmes),
-        source = "Fuente: ${catalog.source}",
+        source = catalog.source,
         cells = plate.album.members.map { albumMember ->
             val member = albumMember.member
             val owned = albumMember.status is CollectionCatalogMemberStatus.Owned
@@ -113,7 +113,7 @@ private fun piecesSection(
                     ),
             )
         },
-        source = "Fuente: tu colección en Numista",
+        source = "tu colección en Numista",
         cells = subject.pieces.map { piece ->
             PrintCell(
                 label = state.typeMeta[piece.typeId]?.displayTitle

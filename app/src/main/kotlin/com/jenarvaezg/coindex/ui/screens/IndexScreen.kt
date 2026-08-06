@@ -240,7 +240,12 @@ fun IndexScreen(
                                 onMessage("No hay ninguna colección que llevar al papel.")
                             } else {
                                 onNotebookPrinted(draft)
-                                step = NotebookExportStep.Drawing(0, pages.first().section.title)
+                                step = NotebookExportStep.Drawing(
+                                    0,
+                                    // The plate at the top of the folio, which since #232 may not
+                                    // be the only one on it.
+                                    pages.first().blocks.first().section.title,
+                                )
                                 printing = pages
                             }
                             configuring = false
