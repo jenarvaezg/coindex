@@ -72,7 +72,9 @@ enum class NotebookSwitch(
      */
     val pending: Int?,
 ) {
-    Photographs(pending = 231),
+    /** No coin on the page at all: a line per member, and nothing left to warm (#231). */
+    Photographs(pending = null),
+
     /** The obverse beside the reverse, which doubles the cell and halves the page (#230). */
     BothFaces(pending = null),
     ActualSize(pending = 233),

@@ -52,6 +52,7 @@ import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.QR_QUIET_MODULES
 import com.jenarvaezg.coindex.ui.print.numistaQr
 import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
+import com.jenarvaezg.coindex.ui.print.printedDiameterLabel
 import com.jenarvaezg.coindex.ui.print.qrRuns
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -108,6 +109,22 @@ private val PRINT_FOOTNOTE = TextStyle(
     fontSize = 2.3f.sp,
     letterSpacing = 0.1f.sp,
 )
+
+/** The side of the box that gets ticked on a page with no photographs (#231). */
+private const val LIST_BOX_MM = 3.4f
+
+/** Between two things on one line of the list: enough to separate, not enough to be a column rule. */
+private const val LIST_GAP_MM = 1.4f
+
+/**
+ * The column the state takes on a line of the list, so the names below each other line up.
+ *
+ * Sized for the longest thing `plateMemberStateLabel` says — «SIN EMITIR», and «TENGO · ×9» just
+ * under it. A quantity in double figures ellipsizes rather than pushing the name out of line: it is
+ * the one case where the count is better read in the app than in the column, and a checklist whose
+ * left edge moves row by row is not read at all.
+ */
+private const val LIST_STATE_MM = 17f
 
 /**
  * One page of the printed notebook, at A4 and at 1:1.
@@ -182,17 +199,22 @@ private fun PageHeading(page: PrintPage) {
             Text(subtitle, style = PRINT_SUBTITLE, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         HorizontalDivider(thickness = 0.5f.mm, color = Paper.ink)
-        // Flowed and clipped: what a plate says about itself grew with the catalogs that share a
+        // A page of lines drops the specification whole rather than clipping it (#231): the list
+        // already says «Tengo» or «Me falta» on every one of its rows, so it *is* the coverage the
+        // block would have summarised, and half a fact under a rule is worse than none. Otherwise
+        // flowed and clipped — what a plate says about itself grew with the catalogs that share a
         // type or a year, and the band is what it is.
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5f.mm),
-            verticalArrangement = Arrangement.spacedBy(1f.mm),
-        ) {
-            section.facts.forEach { (label, value) ->
-                Column {
-                    Text(label.uppercase(), style = PRINT_FACT_LABEL, color = Paper.muted)
-                    Text(value, style = PRINT_FACT_VALUE, maxLines = 1)
+        if (geometry.printsCoins) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(5f.mm),
+                verticalArrangement = Arrangement.spacedBy(1f.mm),
+            ) {
+                section.facts.forEach { (label, value) ->
+                    Column {
+                        Text(label.uppercase(), style = PRINT_FACT_LABEL, color = Paper.muted)
+                        Text(value, style = PRINT_FACT_VALUE, maxLines = 1)
+                    }
                 }
             }
         }
@@ -235,7 +257,7 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
 }
 
 /**
- * One coin at its real diameter, and what is written under it.
+ * One coin at its real diameter, and what is written under it — or one line, with no coin at all.
  *
  * The coin band is as tall as the **plate's** largest coin and the coin is drawn at **its own**
  * diameter inside it, which is how a plate whose issues changed size over the years keeps its rows
@@ -244,7 +266,9 @@ private fun PageGrid(page: PrintPage, onImageSettled: (painted: Boolean) -> Unit
  * shrunken coin.
  *
  * With «ambas caras» on (#230) the band holds the two of them side by side, each at that same
- * diameter and separated by the gutter, under **one** caption: the cell is a coin and not two.
+ * diameter and separated by the gutter, under **one** caption: the cell is a coin and not two. With
+ * «fotos» off (#231) there is no band and the cell is a [ListedCell]: the two shapes are decided by
+ * the geometry the page count was computed from, so the brush cannot disagree with the arithmetic.
  */
 @Composable
 private fun PrintedCell(
@@ -254,6 +278,10 @@ private fun PrintedCell(
     modifier: Modifier = Modifier,
 ) {
     val geometry = grid.geometry
+    if (!geometry.printsCoins) {
+        ListedCell(cell = cell, geometry = geometry, modifier = modifier)
+        return
+    }
     val diameter = cell.diameterMm ?: grid.diameterMm
     Column(modifier = modifier.clipToBounds(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
@@ -273,15 +301,7 @@ private fun PrintedCell(
                 }
             }
         }
-        cell.state?.let { state ->
-            Text(
-                state.uppercase(),
-                style = PRINT_STATE,
-                color = if (cell.filled) Paper.rust else Paper.muted,
-                maxLines = 1,
-                modifier = Modifier.padding(top = 1f.mm),
-            )
-        }
+        CellState(cell, modifier = Modifier.padding(top = 1f.mm))
         Text(
             cell.label,
             style = PRINT_CELL_TITLE,
@@ -312,6 +332,112 @@ private fun PrintedCell(
             Spacer(modifier = Modifier.height(geometry.qrGapMm.mm))
             NumistaCode(cell.numistaUrl, geometry.qrMm)
         }
+    }
+}
+
+/**
+ * One member on one line: a box to tick in pencil, the state, the name, the year and the diameter.
+ *
+ * This is the notebook you take with you (#231). It is not the album page with its pictures turned
+ * off — it is the other thing a catalog can be, and every part of it earns its place on a line eighty
+ * millimetres wide:
+ *
+ * - **The box first, and it is what the pencil is for.** Ticked for what the collector has, empty for
+ *   what they do not, and an empty one at a fair is a box you fill in before the app ever hears about
+ *   it. It is the only mark on the page meant to be made by hand.
+ * - **The state beside it, in a column of its own width.** It is redundant with the box for a plate
+ *   —«Tengo», «Me falta»— and it is not for «Sin ficha» or «Sin emitir», which no tick can say. The
+ *   column is fixed so the names line up down the page: a checklist read at a glance is a checklist
+ *   whose left edge does not move.
+ * - **The name takes what is left**, and the year and the diameter are pushed to the right edge,
+ *   where a column of numbers is scanned. The diameter is a *number* because this page has no ruler
+ *   to hold a coin against (`printedDiameterLabel`).
+ *
+ * The code, where «QR de Numista» is on, closes the line rather than sitting under it: the row is
+ * already a left-to-right reading, and there is nothing above it to stack it beneath.
+ */
+@Composable
+private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.clipToBounds(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LIST_GAP_MM.mm),
+    ) {
+        TickBox(ticked = cell.filled, modifier = Modifier.size(LIST_BOX_MM.mm))
+        CellState(cell, modifier = Modifier.width(LIST_STATE_MM.mm))
+        Text(
+            cell.label,
+            style = PRINT_CELL_TITLE,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+        cell.footnote?.let { footnote ->
+            Text(footnote, style = PRINT_FOOTNOTE, color = Paper.muted, maxLines = 1)
+        }
+        printedDiameterLabel(cell.diameterMm)?.let { diameter ->
+            Text(diameter, style = PRINT_FOOTNOTE, color = Paper.muted, maxLines = 1)
+        }
+        if (geometry.qrMm > 0f) {
+            NumistaCode(cell.numistaUrl, geometry.qrMm)
+        }
+    }
+}
+
+/**
+ * What the cell says about itself — «Tengo», «Me falta», «Sin ficha» — or nothing where it says none.
+ *
+ * Shared by the two shapes of cell because it is the same claim about the same coin: a sheet of
+ * pieces has no state at all (ADR 0021 §9), and what a plate's state is coloured by is whether the
+ * collector owns it, on the page of coins and on the page of lines alike. Only where it sits differs,
+ * which is what [modifier] carries.
+ */
+@Composable
+private fun CellState(cell: PrintCell, modifier: Modifier = Modifier) {
+    val state = cell.state ?: return
+    Text(
+        state.uppercase(),
+        style = PRINT_STATE,
+        color = if (cell.filled) Paper.rust else Paper.muted,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier,
+    )
+}
+
+/**
+ * The box the collector marks: ruled empty, and ticked where the coin is already theirs.
+ *
+ * Drawn rather than set in a font, for the same reason the ruler and the empty mount are: it goes
+ * into the PDF as commands, it is crisp at any printer's resolution, and it is a millimetre of paper
+ * and not a glyph whose size depends on which font the viewer substitutes.
+ */
+@Composable
+private fun TickBox(ticked: Boolean, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier) {
+        val stroke = 0.3f.mm.toPx()
+        drawRect(
+            color = Paper.ink,
+            topLeft = Offset(stroke / 2f, stroke / 2f),
+            size = Size(size.width - stroke, size.height - stroke),
+            style = Stroke(width = stroke),
+        )
+        if (!ticked) return@Canvas
+        // A check and not a fill: a solid box beside «TENGO» is a blot, and the collector's own
+        // pencil marks are going to be checks too.
+        val tick = 0.45f.mm.toPx()
+        drawLine(
+            color = Paper.rust,
+            start = Offset(size.width * 0.22f, size.height * 0.52f),
+            end = Offset(size.width * 0.44f, size.height * 0.76f),
+            strokeWidth = tick,
+        )
+        drawLine(
+            color = Paper.rust,
+            start = Offset(size.width * 0.44f, size.height * 0.76f),
+            end = Offset(size.width * 0.80f, size.height * 0.24f),
+            strokeWidth = tick,
+        )
     }
 }
 
@@ -446,6 +572,10 @@ private fun EmptyMount(modifier: Modifier = Modifier) {
  * The ruler is the only thing on the page that is about the page itself. A PDF viewer's «fit to
  * page» silently rescales everything, and a plate whose whole claim is that a one-ounce coin
  * measures forty millimetres has to be falsifiable with the ruler in the collector's drawer.
+ *
+ * With «fotos» off (#231) there is no coin at 1:1 to falsify, so the ruler goes and the strip narrows
+ * to the source alone — that one stays whatever the page prints, because the paper outlives the app
+ * and a list that does not say where it came from cannot be checked later either.
  */
 @Composable
 private fun PageFoot(page: PrintPage) {
@@ -453,18 +583,20 @@ private fun PageFoot(page: PrintPage) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(geometry.rulerMm.mm)
+            .height(geometry.footMm.mm)
             .clipToBounds(),
         verticalAlignment = Alignment.Bottom,
     ) {
-        Column {
-            Ruler(geometry)
-            Text(
-                "${geometry.rulerBarMm.toInt()} MM · ESCALA 1:1",
-                style = PRINT_FACT_LABEL,
-                color = Paper.muted,
-                modifier = Modifier.padding(top = 0.8f.mm),
-            )
+        if (geometry.rulerBarMm > 0f) {
+            Column {
+                Ruler(geometry)
+                Text(
+                    "${geometry.rulerBarMm.toInt()} MM · ESCALA 1:1",
+                    style = PRINT_FACT_LABEL,
+                    color = Paper.muted,
+                    modifier = Modifier.padding(top = 0.8f.mm),
+                )
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(

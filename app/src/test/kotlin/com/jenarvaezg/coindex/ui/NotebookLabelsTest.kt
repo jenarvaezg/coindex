@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /** What the notebook says about itself before, during and after an export that takes minutes. */
@@ -48,9 +49,11 @@ class NotebookLabelsTest {
     @Test
     fun `a greyed switch says which of the two reasons it is`() {
         assertEquals(
-            "Pendiente · #231",
-            notebookSwitchNote(NotebookSwitch.Photographs, offered = true),
+            "Pendiente · #233",
+            notebookSwitchNote(NotebookSwitch.ActualSize, offered = true),
         )
+        // Y un interruptor que ya funciona no dice nada: «fotos» dejó de estar pendiente en el #231.
+        assertNull(notebookSwitchNote(NotebookSwitch.Photographs, offered = true))
         assertEquals(
             "Sin fotos no hay nada que ajustar",
             notebookSwitchNote(NotebookSwitch.ActualSize, offered = false),
@@ -124,6 +127,9 @@ class NotebookLabelsTest {
         )
         // Never a negative shortfall, whatever order the callbacks landed in.
         assertEquals("Cuaderno completo exportado · 1 página", notebookExportMessage(1, 12, 13))
+        // Y con «fotos» apagada (#231) no queda nada de lo que hablar: cero pedidas, cero llegadas,
+        // y ninguna forma de decir «pero 3 fotos no llegaron» sobre un cuaderno que no pidió una.
+        assertEquals("Cuaderno completo exportado · 74 páginas", notebookExportMessage(74, 0, 0))
     }
 
     @Test

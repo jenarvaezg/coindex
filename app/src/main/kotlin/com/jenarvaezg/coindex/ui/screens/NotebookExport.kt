@@ -46,6 +46,12 @@ private const val PAGE_WAIT_MILLIS = 4_000L
  * the first version did and it produced 64 photographs out of 600 in half an hour: see that
  * function for why the two are not equivalent.
  *
+ * **Or no photographs at all** (#231), and then the whole of that step is skipped rather than run
+ * over an empty list: `warm` starts true, no [NotebookExportStep.Warming] is ever reported, no page
+ * waits for a decode, and the closing message has a denominator of zero — the one export of the three
+ * that cannot come out incomplete. It falls out of the arithmetic and is not a branch: a cell with no
+ * faces asks for nothing, so there is nothing to warm and nothing to count.
+ *
  * **One page in composition at any moment**, which is the only thing that makes the drawing
  * affordable: composing every page at once would hold seventy full-page recordings in memory. Each
  * page waits for its own pictures — cached by now, so in practice for a decode — is appended to the
