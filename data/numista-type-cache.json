@@ -395,6 +395,122 @@
   },
   "weight": 17
  },
+ "101994": {
+  "id": 101994,
+  "url": "https://es.numista.com/101994",
+  "title": "2 Euros (Churches of the Kingdom of Asturias)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2017,
+  "max_year": 2017,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Iglesia de Santa María del Naranco. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2017\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4026-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4026-180.jpg",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4027-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4027-180.jpg",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Iglesias del Reino de Asturias",
+  "comments": "<p>El Reino de Asturias seguía siendo la única región cristiana de España en el siglo IX. Desarrolló un estilo propio de arte y arquitectura prerrománicos que se muestra en diversas iglesias y otros monumentos. La entrada original se titulaba<strong>\"Iglesias del Reino de Asturias</strong>\" y se amplió para incluir otros monumentos como La Foncalada.<br><strong>La iglesia de Santa María del Naranco</strong> es un edificio prerrománico asturiano situado en la ladera del monte Naranco, a 3 kilómetros de Oviedo, en el norte de España. Ramiro I de Asturias la mandó construir como palacio real, parte de un complejo mayor que también incorporaba la cercana iglesia de San Miguel de Lillo, a 100 metros de distancia. El palacio se terminó en 842 y tuvo en parte una función religiosa, siendo consagrado en 848.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/312\">https://whc.unesco.org/en/list/312</a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1394"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/4019-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/4019-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "10207": {
   "category": "coin",
   "commemorated_topic": "Devolución de Macao a China",
@@ -973,6 +1089,134 @@
    "text": "5 bolívares"
   },
   "weight": 25
+ },
+ "10364": {
+  "id": 10364,
+  "url": "https://es.numista.com/10364",
+  "title": "2 Euros (Mosque–Cathedral of Córdoba)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "\"Bosque de pilares\" de la Mezquita Mayor de Córdoba. El anillo exterior lleva las 12 estrellas de la Unión Europea.",
+   "lettering": "M\r\nESPAÑA 2010",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627f66bf3c9dd6.91318694-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627f66bf3c9dd6.91318694-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627f66c07d7e53.51554503-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627f66c07d7e53.51554503-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Mezquita-Catedral y centro histórico de Córdoba",
+  "comments": "<p>La moneda conmemora el centro histórico de Córdoba, primer sitio español inscrito en la Lista del Patrimonio Mundial de la UNESCO en 1984. Construida entre los siglos VIII y X, la Mezquita fue consagrada posteriormente como catedral cristiana y sufrió una serie de transformaciones.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/313\">https://whc.unesco.org/en/list/313</a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1152"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "471"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3372-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3372-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "10398": {
   "category": "coin",
@@ -7785,6 +8029,253 @@
   },
   "weight": 3.3
  },
+ "131881": {
+  "id": 131881,
+  "url": "https://es.numista.com/131881",
+  "title": "2 Euros (Old Town of Santiago de Compostela)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2018,
+  "max_year": 2018,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Figura de tres cuartos de Santiago Peregrino delante del arco central de la Puerta Santa de la Catedral de Santiago de Compostela. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2018\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627fafb474c816.49031304-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627fafb474c816.49031304-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627fafb5af5502.45243711-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627fafb5af5502.45243711-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Ciudad Vieja de Santiago de Compostela",
+  "comments": "<p><strong>La Catedral de Santiago de Compostela</strong> es la sepultura del apóstol Santiago y el punto final del Camino de Santiago, una peregrinación a través del norte de España. La ciudad fue destruida por los musulmanes en el siglo X y reconstruida durante el siglo siguiente.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/347\">https://whc.unesco.org/en/list/347</a></p><p><br>Marco legal de la moneda establecido en la Orden EIC/827/2017, de 30 de agosto.<br><br><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://en.numista.com/catalogue/images/5ac0d94d7b319.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ac0d94d7b319.jpg\" alt=\"\"></a> <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://en.numista.com/catalogue/images/5ac0d98d62372.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ac0d98d62372.jpg\" alt=\"\"></a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1417"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5055-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5055-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "131882": {
+  "id": 131882,
+  "url": "https://es.numista.com/131882",
+  "title": "2 Euros - Felipe VI (50th Birthday of King Felipe VI)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2018,
+  "max_year": 2018,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo personal del Rey Felipe VI de España. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2018\r\n50 ANIVERSARIO DE DON FELIPE VI\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/63ce1991177894.08848571-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/63ce1991177894.08848571-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/63ce1992aa64e6.77402513-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/63ce1992aa64e6.77402513-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "50 cumpleaños del Rey Felipe VI",
+  "comments": "Marco legal de la moneda establecido en la Orden EIC/863/2017, de 5 de septiembre.",
+  "related_types": [
+   {
+    "id": 133929,
+    "title": "30 Euros - Felipe VI (50th Birthday of King Felipe VI)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 2018,
+    "maxYear": 2018
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Aniversario de nacimiento",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1416"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5056-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5056-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "13203": {
   "category": "coin",
   "commemorated_topic": "Disco Nebra Sky",
@@ -14546,6 +15037,128 @@
    "text": "1000 escudos"
   },
   "weight": 27
+ },
+ "155939": {
+  "id": 155939,
+  "url": "https://es.numista.com/155939",
+  "title": "2 Euros (Old Town of Avila)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2019,
+  "max_year": 2019,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Detalle de las murallas de Ávila. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2019\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdc29a2a6c57.57844668-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdc29a2a6c57.57844668-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdc29aba5c84.88788407-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdc29aba5c84.88788407-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Casco antiguo de Ávila y sus iglesias extramuros",
+  "comments": "<p><strong>La muralla que rodea la primitiva ciudad de Ávila</strong> se construyó en el siglo XI. Cuenta con 82 torres semicirculares y 9 puertas, y es uno de los ejemplos más completos de murallas urbanas de España.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/348\">https://whc.unesco.org/en/list/348</a></p>",
+  "tags": [
+   "Castillo o fortificación",
+   "Mapa",
+   "UNESCO",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1451"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5494-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5494-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "157350": {
   "id": 157350,
@@ -22632,6 +23245,128 @@
   },
   "weight": 11.2
  },
+ "193508": {
+  "id": 193508,
+  "url": "https://es.numista.com/193508",
+  "title": "2 Euros (Mudéjar architecture of Aragon)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2020,
+  "max_year": 2020,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Esther González Pastor"
+   ],
+   "description": "Cima de la Torre de El Salvador de Teruel. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ARQUITECTURA MUDÉJAR DE ARAGÓN\r\nESPAÑA\r\nM\r\n2020",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/63f4c9895afd27.11756112-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/63f4c9895afd27.11756112-180.jpg",
+   "picture_copyright": "thomasleemarras",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5f229e50ba7796.62188763-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5f229e50ba7796.62188763-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Arquitectura mudéjar de Aragón",
+  "comments": "<p><strong>La arquitectura mudéjar aragonesa</strong> es una corriente estética del estilo mudéjar, centrada en Aragón (España) y que ha sido reconocida en algunos edificios representativos como Patrimonio de la Humanidad por la UNESCO. La cronología del mudéjar aragonés abarca desde el siglo XII hasta el XVII e incluye más de un centenar de monumentos arquitectónicos situados predominantemente en los valles del Ebro, Jalón y Jiloca.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/378\">https://whc.unesco.org/en/list/378</a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Torre",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1488"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/601c43dc80d0f2.73081260-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/601c43dc80d0f2.73081260-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "19352": {
   "id": 19352,
   "url": "https://es.numista.com/19352",
@@ -25292,6 +26027,135 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "19979": {
+  "id": 19979,
+  "url": "https://es.numista.com/19979",
+  "title": "2 Euros (Alhambra of Granada)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Patio de los Leones de la Alhambra, castillo fortificado de la ciudad de Granada, declarado Patrimonio de la Humanidad por la UNESCO en 1984. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "M\r\nESPAÑA 2011",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627f678034f618.65437641-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627f678034f618.65437641-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627f67817b0652.97085620-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627f67817b0652.97085620-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Alhambra, Generalife y Albayzín",
+  "comments": "<p><strong>La Alhambra</strong> es un complejo palaciego y fortaleza situado en Granada, Andalucía (España). Se construyó originalmente como una pequeña fortaleza en el año 889 d.C. sobre los restos de antiguas fortificaciones romanas, y luego fue ignorada en gran medida hasta que sus ruinas fueron renovadas y reconstruidas a mediados del siglo XIII por el emir árabe nazarí Mohammed ben Al-Ahmar del Emirato de Granada, quien construyó su actual palacio y murallas. Fue convertido en palacio real en 1333 por Yusuf I, sultán de Granada. Tras la conclusión de la Reconquista cristiana en 1492, el lugar se convirtió en la Corte Real de Fernando e Isabel (donde Cristóbal Colón recibió el aval real para su expedición), y los palacios fueron parcialmente reformados en estilo renacentista. En 1526, Carlos I de España encargó un nuevo palacio renacentista más acorde con el Emperador del Sacro Imperio Romano Germánico en el revolucionario estilo manierista influenciado por la filosofía humanista en yuxtaposición directa con la arquitectura nazarí andaluza, pero finalmente nunca se completó debido a las rebeliones moriscas en Granada.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/314\">https://whc.unesco.org/en/list/314</a></p>",
+  "tags": [
+   "Gato o felino",
+   "Castillo o fortificación",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1184"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "539"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3382-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3382-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "20008": {
   "category": "coin",
   "commemorated_topic": "Centenario del Día Internacional de la Mujer",
@@ -26642,6 +27506,133 @@
   },
   "weight": 17.3
  },
+ "2168": {
+  "id": 2168,
+  "url": "https://es.numista.com/2168",
+  "title": "2 Euros (Don Quixote)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2005,
+  "max_year": 2005,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Begoña Castellanos García"
+   ],
+   "description": "Figura de medio cuerpo de Don Quijote con sombrero sosteniendo una lanza y dos molinos de viento al fondo. Doce estrellas de Europa de las que cuatro están unidas por una banda.",
+   "lettering": "ESPAÑA \r\nM\r\n20 05",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/1770-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/1770-180.jpg",
+   "picture_copyright": "Ma collection de monnaies",
+   "picture_copyright_url": "https://monnaiesetvarietes.numista.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/1771-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/1771-180.jpg",
+   "picture_copyright": "Ma collection de monnaies",
+   "picture_copyright_url": "https://monnaiesetvarietes.numista.com/"
+  },
+  "commemorated_topic": "IV centenario de la 1ª edición de \"Don Quijote de la Mancha\"",
+  "comments": "<p>El<strong>ingenioso</strong> hidalgo don Quijote de la Mancha es una novela española escrita por Miguel de Cervantes. Se publicó en dos partes, en 1605 y 1615. Obra fundacional de la literatura occidental, se la suele calificar de \"primera novela moderna\" y muchos autores la consideran la mejor obra literaria jamás escrita.</p>",
+  "tags": [
+   "Arma blanca",
+   "Literatura",
+   "Otra construcción",
+   "Mapa",
+   "Sombrero",
+   "Bigote o barba"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1063"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "384"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3385-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3385-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "22012": {
   "category": "coin",
   "commemorated_topic": "75º aniversario - Liga de Combatientes",
@@ -26849,6 +27840,132 @@
    "text": "50 Francs"
   },
   "weight": 31.1
+ },
+ "2209": {
+  "id": 2209,
+  "url": "https://es.numista.com/2209",
+  "title": "2 Euros (Treaty of Rome)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Helmut Andexlinger"
+   ],
+   "description": "Documento del Tratado firmado por los seis países fundadores sobre un fondo que evoca el pavimento (diseñado por Miguel Ángel) de la Piazza del Campidoglio de Roma, donde tuvo lugar la firma el 25 de marzo de 1957. Doce estrellas de la Unión Europea en el anillo exterior.",
+   "lettering": "TRATADO DE ROMA\r\n50 AÑOS\r\nEUROPA\r\n2007 M\r\nESPAÑA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62806e07ba9617.05501076-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62806e07ba9617.05501076-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62806e0917e3f0.21397890-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62806e0917e3f0.21397890-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Treaty of Rome",
+  "commemorated_topic": "50 aniversario del Tratado de Roma",
+  "comments": "<p>Moneda conmemorativa común de 2 euros emitida por todos los países miembros de la zona euro.</p><p><strong>El Tratado de Roma</strong> o Tratado CEE (oficialmente Tratado constitutivo de la Comunidad Económica Europea) supuso la creación de la Comunidad Económica Europea (CEE), la más conocida de las Comunidades Europeas (CE). El Tratado fue firmado el 25 de marzo de 1957 por Bélgica, Francia, Italia, Luxemburgo, los Países Bajos y Alemania Occidental, y entró en vigor el 1 de enero de 1958. Originalmente \"Tratado constitutivo de la Comunidad Económica Europea\", y que ahora continúa con el nombre de \"Tratado de Funcionamiento de la Unión Europea\", sigue siendo uno de los dos tratados más importantes de lo que hoy es la Unión Europea (UE).</p>",
+  "tags": [
+   "Mapa",
+   "Tratado"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1130"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "414"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3373-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3373-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "22178": {
   "category": "coin",
@@ -31535,6 +32652,125 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "264789": {
+  "id": 264789,
+  "url": "https://es.numista.com/264789",
+  "title": "2 Euros (Historic City of Toledo)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2021,
+  "max_year": 2021,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Esther González Pastor"
+   ],
+   "description": "La Puerta del Sol y un detalle de la Sinagoga del Tránsito, ambos edificios construidos en el siglo XIV en estilo mudéjar. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "M\r\nESPAÑA\r\n2021",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/605254496a33f0.64039108-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/605254496a33f0.64039108-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/602fca95f2e0e4.04429380-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/602fca95f2e0e4.04429380-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Ciudad histórica de Toledo",
+  "comments": "<p><strong>La Puerta del Sol</strong> es una puerta de la ciudad de Toledo, España, construida a finales del siglo XIV por los Caballeros Hospitalarios. El medallón sobre el arco de la puerta representa la ordenación del visigodo Ildefonso, patrón de Toledo. El nombre de la puerta se debe a su orientación hacia el este, por donde siempre sale el sol.<br><strong>La</strong> Sinagoga del Tránsito es un edificio histórico de Toledo, famoso por su rica decoración de estuco, comparable a la del Alcázar de Sevilla y los palacios de la Alhambra de Granada.<br>La sinagoga fue fundada por Samuel ha-Levi Abulafia, tesorero de Pedro de Castilla, hacia 1356. Tras la expulsión de los judíos de la ciudad en virtud del decreto de la Alhambra en 1492, la Sinagoga pasó a manos de la Orden de Calatrava, que convirtió el edificio en una iglesia al servicio de un priorato dedicado a San Benito. En el siglo XVII la iglesia pasó a llamarse Nuestra Señora del Tránsito: el nombre deriva de un cuadro de Juan Correa de Vivar que allí se conserva, Tránsito de la Virgen. En 1877 el edificio se convirtió en monumento nacional. La transformación del edificio en Museo Sefardí, como se denomina oficialmente en la actualidad, comenzó hacia 1910.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/379\">https://whc.unesco.org/en/list/379</a></p>",
+  "tags": [
+   "Castillo o fortificación",
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1513"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "272140": {
   "category": "coin",
   "comments": "1,3 mBTC era el equivalente en milibitcoins (1/1000 BTC) del contenido en plata de la moneda el día de su diseño.<br />\r\nLos siete grupos de dígitos del reverso son las representaciones binarias de los códigos ASCII de las letras <span style=\"font-style:italic;\">SATOSHI</span>, el seudónimo del creador de bitcoin, Satoshi Nakamoto.",
@@ -34485,6 +35721,133 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "28193": {
+  "id": 28193,
+  "url": "https://es.numista.com/28193",
+  "title": "2 Euros (10 Years of Euro Cash)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Helmut Andexlinger"
+   ],
+   "description": "El mundo en forma de símbolo del euro en el centro, que muestra cómo el euro se ha convertido en un auténtico protagonista mundial en los últimos diez años. Los elementos que la rodean simbolizan la importancia del euro para los ciudadanos (representados por un grupo familiar), para el mundo financiero (la Eurotower), para el comercio (un barco), para la industria (una fábrica) y para el sector energético y la investigación y el desarrollo (dos turbinas eólicas). En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\nA.H.\r\n€\r\n2002 2012",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9db5ec44d52.23626590-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9db5ec44d52.23626590-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9db5f60b214.57798250-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9db5f60b214.57798250-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "10 years of Euro",
+  "commemorated_topic": "10 años de efectivo en euros",
+  "comments": "<p>Moneda conmemorativa común de 2 euros emitida por todos los países miembros de la zona euro.</p>",
+  "tags": [
+   "Industria",
+   "Mapa",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1252"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "556"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3381-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3381-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "28574": {
   "category": "coin",
@@ -40078,6 +41441,134 @@
   },
   "weight": 15
  },
+ "30072": {
+  "id": 30072,
+  "url": "https://es.numista.com/30072",
+  "title": "2 Euros (Burgos Cathedral)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Catedral de Burgos en el centro. El anillo exterior de la moneda representa las 12 estrellas de la bandera europea.",
+   "lettering": "ESPAÑA 2012\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdb93c7b8986.25464583-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdb93c7b8986.25464583-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdb93d054e42.42043968-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdb93d054e42.42043968-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Catedral de Burgos",
+  "comments": "<p>La<strong>\"Santa Iglesia Catedral Basílica Metropolitana de Santa María</strong>\" es un templo catedralicio de culto católico dedicado a la Virgen María, en la ciudad española de Burgos. Su construcción se inició en 1222, siguiendo los patrones del gótico francés. Tuvo modificaciones muy importantes en los siglos XV y XVI: los chapiteles de la fachada principal, la capilla del Condestable y el cimborrio del crucero, elementos del gótico flamígero que dan al templo su perfil inconfundible. Las últimas obras importantes (la sacristía o la capilla de Santa Tecla) pertenecen ya al siglo XVIII, centuria en la que también se modificaron las fachadas góticas de la fachada principal. Las posteriores construcciones y remodelaciones se realizaron con piedra caliza extraída de las canteras de la cercana localidad de Hontoria de la Cantera.</p><p><strong>Sitio de la UNESCO:</strong> <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/316\">https://whc.unesco.org/en/list/316</a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1254"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "555"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3380-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3380-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "30111": {
   "id": 30111,
   "url": "https://es.numista.com/30111",
@@ -43064,6 +44555,281 @@
   },
   "weight": 62.42
  },
+ "323476": {
+  "id": 323476,
+  "url": "https://es.numista.com/323476",
+  "title": "2 Euros (Garajonay National Park)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2022,
+  "max_year": 2022,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Vista del \"Roque de Agando\" y detalle del \"bosque de Laurisilva\". En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2022\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62a5cf0b4edd46.17235323-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62a5cf0b4edd46.17235323-180.jpg",
+   "picture_copyright": "Ponpandi Perumal",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62a5cf0c5a9790.11362050-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62a5cf0c5a9790.11362050-180.jpg",
+   "picture_copyright": "Ponpandi Perumal",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Parque Nacional de Garajonay",
+  "comments": "<p><strong>El Parque Nacional de Garajonay</strong> está situado en el centro y norte de la isla de La Gomera, una de las Islas Canarias (España). Fue declarado parque nacional en 1981 y Patrimonio de la Humanidad por la UNESCO en 1986. Ocupa 40 km2 y se extiende por cada uno de los seis municipios de la isla. Se inscribió en la lista del Patrimonio Mundial por ser un ejemplo excepcional y bien conservado de laurisilva (bosque de laurisilva), un ecosistema excepcional del remanente viviente de las antiguas selvas tropicales y bosques templados cálidos que ocuparon gran parte de Europa y el norte de África durante el Terciario.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/380\">https://whc.unesco.org/en/list/380</a></p>",
+  "tags": [
+   "Montaña",
+   "Mar",
+   "Mapa",
+   "UNESCO",
+   "Parque"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1554"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62359a6316dbc3.06428626-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62359a6316dbc3.06428626-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "323480": {
+  "id": 323480,
+  "url": "https://es.numista.com/323480",
+  "title": "2 Euros (Circumnavigation)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2022,
+  "max_year": 2022,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Globo terráqueo al fondo y busto con sombrero de Juan Sebastián Elcano al frente. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2022\r\nJUAN SEBASTIÁN ELCANO\r\nPRIMUS CIRCUMDEDISTI ME\r\n1519 – 1522\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62a5cd9ee032a2.26839912-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62a5cd9ee032a2.26839912-180.jpg",
+   "picture_copyright": "Ponpandi Perumal",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62a5cd9febfee5.31971602-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62a5cd9febfee5.31971602-180.jpg",
+   "picture_copyright": "Ponpandi Perumal",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "5th centenary of the first round-the-world voyage",
+  "commemorated_topic": "500 aniversario de la primera vuelta al mundo de Elcano",
+  "comments": "<p>La expedición de Magallanes y Elcano fue una expedición marítima del siglo XVI financiada por la Corona española y capitaneada por Fernando de Magallanes. Esta expedición, dirigida a su regreso por <strong>Juan Sebastián Elcano</strong>, completó la<strong> primera circunnavegación de la</strong> Tierra de la historia.<br>La expedición tenía como objetivo abrir una ruta comercial con las islas del Pacífico a través de Occidente, buscando un paso entre el Océano Atlántico y el Océano Pacífico. Estaba formada por cinco naves que partieron de Sanlúcar de Barrameda el 20 de septiembre de 1519. La flota, tras explorar durante meses las costas americanas al sur de Brasil, consiguió cruzar el Estrecho de Magallanes el 21 de noviembre de 1520. En su travesía por el Pacífico llegaron a las islas Filipinas, donde, el 27 de abril de 1521, Fernando de Magallanes murió en la batalla de Mactán. El expedicionario continuó la navegación hasta las Molucas, objetivo de su viaje, donde eligió a Juan Sebastián Elcano para capitanear el viaje de regreso. Navegando hacia el oeste a través del Océano Índico y rodeando África, el 6 de septiembre de 1522 la Victoria, único barco que quedaba de la expedición, regresó a Sanlúcar de Barrameda con su cargamento de especias, convirtiéndose en el primer barco de la historia en circunnavegar el mundo.<br>La expedición fue financiada principalmente por el rey Carlos I de España y V del Sacro Imperio Romano Germánico, con la esperanza de que descubriera una ruta rentable hacia el oeste, a las Molucas, ya que la ruta oriental estaba controlada por Portugal en virtud del Tratado de Tordesillas. Aunque la expedición encontró una ruta, fue mucho más larga y ardua de lo esperado, por lo que no resultó comercialmente útil. Sin embargo, la primera circunnavegación ha sido considerada un gran logro de la navegación y tuvo un impacto significativo en la comprensión europea del mundo.</p>",
+  "related_types": [
+   {
+    "id": 181863,
+    "title": "10 Euros (Magellan-Elcano Expedition - Departure)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 2019,
+    "maxYear": 2019
+   },
+   {
+    "id": 277209,
+    "title": "10 Euros (Magellan-Elcano Expedition - Strait of Magellan)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 2020,
+    "maxYear": 2020
+   },
+   {
+    "id": 300248,
+    "title": "10 Euros (Magellan-Elcano Expedition - Spice Islands)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 2021,
+    "maxYear": 2021
+   }
+  ],
+  "tags": [
+   "Explorador",
+   "Sombrero",
+   "Mar",
+   "Mapa",
+   "Bigote o barba",
+   "Globo"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1552"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6235e89c1a5358.32250990-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6235e89c1a5358.32250990-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "32571": {
   "id": 32571,
   "url": "https://es.numista.com/32571",
@@ -43580,6 +45346,129 @@
    "text": "100 Francs"
   },
   "weight": 15
+ },
+ "331425": {
+  "id": 331425,
+  "url": "https://es.numista.com/331425",
+  "title": "2 Euros (Erasmus Programme)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2022,
+  "max_year": 2022,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Joaquin Jimenez"
+   ],
+   "description": "El diseño es una mezcla de dos elementos principales del programa Erasmus: la inspiración intelectual original, el propio Erasmo, y la alegoría de su influencia sobre Europa. El primero está simbolizado por una de las representaciones más conocidas de Erasmo. La 2ª está simbolizada por un haz de lazos que atraviesa la moneda de un faro a otro, representando los numerosos intercambios intelectuales y humanos entre los estudiantes europeos. Como referencia a Europa, algunos de estos eslabones forman otras estrellas, nacidas de la sinergia entre los países. La cifra 35, por el 35 aniversario, sale de las estrellas en un estilo gráfico contemporáneo. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "35\r\n1987-2022\r\nERASMUS\r\nPROGRAMME\r\nESPAÑA\r\nM\r\nJ.J.",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62cd19ce3dbd92.96407300-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62cd19ce3dbd92.96407300-180.jpg",
+   "picture_copyright": "liege-numismatique"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62b5b17acb8f63.11800061-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62b5b17acb8f63.11800061-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Erasmus Programme",
+  "commemorated_topic": "35 años del Programa Erasmus.",
+  "comments": "<p>Moneda conmemorativa común de 2 euros emitida por todos los países miembros de la zona euro.</p><p>El<strong> Programa Erasmus</strong> (<strong>\"</strong> <strong>Programa de</strong> <strong>Acción</strong>Comunitario <strong>EuRopeo</strong>para la <strong>Movilidad</strong>de los <strong>Estudiantes Universitarios</strong>\") es un programa de intercambio de estudiantes de la Unión Europea (UE) creado en 1987. Erasmus+, o Erasmus Plus, es el nuevo programa que combina todos los regímenes actuales de la UE en materia de educación, formación, juventud y deporte, que se puso en marcha en enero de 2014.</p>",
+  "tags": [
+   "Educación",
+   "Filósofo",
+   "Mano",
+   "Sombrero",
+   "Mar",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1553"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/62cd19ce8b4fb4.58640818-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/62cd19ce8b4fb4.58640818-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "332172": {
   "category": "coin",
@@ -46842,6 +48731,132 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "357033": {
+  "id": 357033,
+  "url": "https://es.numista.com/357033",
+  "title": "2 Euros (Old City of Cáceres)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2023,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2023-03-28"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel (Core: 75% Cu, 20% Zn, 5% Ni Ring: 75% Cu, 25% Ni)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Plaza Mayor de Cáceres con la Torre de Bujaco a la izquierda. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2023\r\nM\r\nCÁCERES",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/643036d97abc16.47838250-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/643036d97abc16.47838250-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/64201ae585d257.47429015-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/64201ae585d257.47429015-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Casco Antiguo de Cáceres",
+  "comments": "<p>Declarada Patrimonio de la Humanidad en 1986, <strong>Cáceres</strong> posee un centro histórico excepcionalmente bien conservado y de gran unidad que ilustra el paso de diferentes culturas. Sus orígenes se remontan a las épocas romana, visigoda, islámica, gótica y renacentista, incluyendo una antigua judería en el actual Barrio de San Antonio. Este conjunto está incluido dentro de un recinto amurallado de unos 1200 m. de longitud, de origen almohade, a menudo oculto tras edificaciones de época posterior.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/384\">https://whc.unesco.org/en/list/384</a></p>",
+  "tags": [
+   "Otra construcción",
+   "Torre",
+   "Mapa",
+   "UNESCO",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1563"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/640db9c76014f2.55946672-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/640db9c76014f2.55946672-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "357929": {
   "category": "coin",
   "comments": "Cuarto diseño de la serie Las Bestias de los Tudor, hay un total de diez Bestias que representan las estatuas que se alzan en el palacio de Hampton Court.<br /><br />\r\nEste diseño del reverso de David Lawrence se acuñó en diversas composiciones y denominaciones de metales comunes y preciosos. Límite de emisión: 5.510<br />\r\n<a href=\"https://en.numista.com/catalogue/images/64052a7db7005.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052a7db7005.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2023<br /><br />\r\nTambién se emitió un juego de 2 monedas con una edición de reverso esmerilado. Límite de emisión: 500<br />\r\n<a href=\"https://en.numista.com/catalogue/images/64052aa46eddf.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052aa46eddf.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/64052ab175e2d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052ab175e2d.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/64052ab8515a7.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64052ab8515a7.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2023",
@@ -47788,6 +49803,126 @@
    "text": "5 Tala"
   },
   "weight": 31.1
+ },
+ "368770": {
+  "id": 368770,
+  "url": "https://es.numista.com/368770",
+  "title": "2 Euros (Presidency of the Council of the EU)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2023,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2023-07-03"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel (Core: 75% Cu, 20% Zn, 5% Ni Ring: 75% Cu, 25% Ni)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Logotipo de la Presidencia española del Consejo de la UE. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA 2023 - PRESIDENCIA ESPAÑOLA\r\nCONSEJO DE LA UNIÓN EUROPEA\r\nUE\r\n23\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/64b80addb40a17.88280484-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/64b80addb40a17.88280484-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/64877fcb7a89b5.49222790-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/64877fcb7a89b5.49222790-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Presidencia española del Consejo de la UE",
+  "comments": "<p>El <strong>Consejo de la Unión</strong> Europea, a menudo denominado en los tratados y otros documentos oficiales simplemente Consejo, e informalmente Consejo de Ministros, es la tercera de las siete instituciones de la Unión Europea (UE) enumeradas en el Tratado de la Unión Europea. Es uno de los dos órganos legislativos y, junto con el Parlamento Europeo, sirve para modificar y aprobar o vetar las propuestas de la Comisión Europea, que ostenta el derecho de iniciativa.</p>",
+  "tags": [
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1564"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/64877fcbc0d838.96237871-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/64877fcbc0d838.96237871-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "368865": {
   "category": "coin",
@@ -52347,6 +54482,130 @@
   },
   "weight": 33.94
  },
+ "401373": {
+  "id": 401373,
+  "url": "https://es.numista.com/401373",
+  "title": "2 Euros (Seville)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2024-03-12"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel (Core: 75% Cu, 20% Zn, 5% Ni Ring: 75% Cu, 25% Ni)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Patio de las Doncellas del Real Alcázar. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "SEVILLA\r\nM\r\nESPAÑA 2024",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/66b319ca777b08.11740383-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/66b319ca777b08.11740383-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/66b319cb834cd7.37044531-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/66b319cb834cd7.37044531-180.jpg",
+   "picture_copyright": "brismike",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Catedral, Alcázar y Archivo de Indias de Sevilla",
+  "comments": "<p>El <strong>Real Alcázar de Sevilla</strong> es un conjunto palaciego amurallado construido en diferentes etapas históricas. El palacio original se construyó en la Alta Edad Media. Se conservan algunos vestigios del arte islámico y, de la época posterior a la conquista castellana, un espacio palaciego mudéjar y otro de estilo gótico. En reformas posteriores se añadieron elementos renacentistas, manieristas1 y barrocos. Es la residencia de los miembros de la familia real española cuando visitan Sevilla. Esto lo convierte en el palacio real en uso más antiguo de Europa. La Unesco lo declaró <strong>Patrimonio de la Humanidad, </strong>junto con la <strong>Catedral de Sevilla y el Archivo de Indias</strong>, en 1987.</p><p>El <strong>Patio de las Doncellas</strong> debe su nombre a un relato legendario que sugiere que los gobernantes musulmanes exigían un tributo anual de 100 vírgenes a los reinos cristianos de Iberia. Construido como parte del palacio mudéjar de Pedro I en la década de 1360, el nivel inferior del patio conserva su arquitectura original, con inscripciones árabes que se refieren a Pedro I como \"Sultán Don Bidru\". Posteriormente, Carlos V añadió un piso superior de estilo renacentista italiano, adornado con yeserías renacentistas y mudéjares. El patio cuenta con un estanque rectangular flanqueado por paseos, adornados con pavimento de ladrillo rojo y bordes de cerámica verde. El estanque está bordeado de parterres y adornado con un friso de arcos de medio punto entrelazados. Una reconstrucción del siglo XXI devolvió al patio su aspecto original, revelando su jardín mudéjar oculto tras las excavaciones realizadas entre 2002 y 2005.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/383\">https://whc.unesco.org/en/list/383</a></p>",
+  "tags": [
+   "Palacio",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1572"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/65d8c9ab514dc2.72984630-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/65d8c9ab514dc2.72984630-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "401375": {
   "category": "coin",
   "commemorated_topic": "200 aniversario Policía Nacional de España",
@@ -55820,6 +58079,135 @@
   ],
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "42976": {
+  "id": 42976,
+  "url": "https://es.numista.com/42976",
+  "title": "2 Euros (Escorial)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Monasterio de San Lorenzo del Escorial en la parte interior. El anillo exterior de la moneda representa las doce estrellas de la bandera europea.",
+   "lettering": "ESPAÑA\r\n2013 \r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdb9bc0513c0.46243429-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdb9bc0513c0.46243429-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdb9bc8f30e2.24815292-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdb9bc8f30e2.24815292-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Monasterio y Sitio del Escorial",
+  "comments": "<p><strong>El Escorial</strong> es uno de los varios sitios reales españoles debido a su historia como residencia de la familia real. El palacio fue diseñado por el rey Felipe II y el arquitecto Juan Bautista de Toledo para servir de monumento al papel central de España en el mundo cristiano.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/318\">https://whc.unesco.org/en/list/318</a></p>",
+  "tags": [
+   "Castillo o fortificación",
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1305"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "577"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3379-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3379-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "430053": {
   "category": "coin",
@@ -64355,6 +66743,131 @@
   },
   "weight": 31.21
  },
+ "457922": {
+  "id": 457922,
+  "url": "https://es.numista.com/457922",
+  "title": "2 Euros (Salamanca)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2025-03-10"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel (Core: 75% Cu, 20% Zn, 5% Ni Ring: 75% Cu, 25% Ni)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Iglesia y convento de San Esteban de la orden de los Dominicos, en el centro histórico de Salamanca.",
+   "lettering": "SALAMANCA\r\nM\r\nESPAÑA 2025",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/699316f591c440.97346695-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/699316f591c440.97346695-180.jpg",
+   "picture_copyright": "Janusik",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Un mapa geográfico de Europa Occidental abarca el anillo exterior y el núcleo interior del lado derecho de la moneda. La inscripción 2 EURO aparece superpuesta sobre el mapa de Europa, con el número \"2\" situado en un campo abierto que representa el océano Atlántico oriental. En la parte derecha de la corona circular figuran doce estrellas, seis por encima del mapa de Europa y seis por debajo; seis franjas verticales atraviesan el núcleo interior de la moneda, conectando visualmente los segmentos superior e inferior de las estrellas.",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/699316f6a45756.92187433-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/699316f6a45756.92187433-180.jpg",
+   "picture_copyright": "Janusik",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Casco antiguo de Salamanca",
+  "comments": "<p><strong>\"Ciudad Vieja de Salamanca\"</strong> es el nombre que recibe el conjunto patrimonial situado en el casco antiguo de la ciudad española del mismo nombre, protegido con el título de Patrimonio de la Humanidad, otorgado por la Organización de las Naciones Unidas para la Educación, la Ciencia y la Cultura en 1988.</p><p><strong>Convento de San Esteban, frailes dominicos</strong> (siglo XVI): la fachada plateresca, en forma de arco triunfal, es una verdadera joya del Renacimiento salmantino. Cuenta con un impresionante retablo barroco de José Benito Churriguera. También destaca el claustro renacentista de los Reyes.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/381\">https://whc.unesco.org/en/list/381</a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1605"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67c412f52acc87.49999628-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67c412f52acc87.49999628-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "458928": {
   "category": "coin",
   "commemorated_topic": "200 aniversario del nacimiento de Alexander Mozhaisky",
@@ -68140,6 +70653,137 @@
   },
   "weight": 27
  },
+ "5061": {
+  "id": 5061,
+  "url": "https://es.numista.com/5061",
+  "title": "2 Euros (Economic and Monetary Union)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2009,
+  "max_year": 2009,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Geórgios Stamatópoulos"
+   ],
+   "description": "Figura de palo que se funde con el símbolo €. Doce estrellas de la Unión Europea en el anillo exterior.",
+   "lettering": "ESPAÑA \r\nM\r\nΓΣ\r\nUEM 1999-2009",
+   "lettering_scripts": [
+    {
+     "name": "Griega"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Unión Económica y Monetaria.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627f657dd3ebd9.47271833-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627f657dd3ebd9.47271833-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/627f657f1cb143.06876523-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/627f657f1cb143.06876523-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "10.º aniversario de la Unión Económica y Monetaria",
+  "commemorated_topic": "10º aniversario de la Unión Económica y Monetaria",
+  "comments": "<p>En esta moneda había dos tipos: KM#1142.1 (estrellas pequeñas en el anverso) y KM#1142.2 (estrellas grandes en el anverso, moneda de error) con una tirada aproximada de 100 000 monedas.<br><a href=\"https://en.numista.com/catalogue/images/5b7b1d71d6da1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5b7b1d71d6da1.jpg\" alt=\"\"></a></p>",
+  "tags": [
+   "Tratado",
+   "Mapa",
+   "Comercio"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1142"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "449"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3383-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3383-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "507204": {
   "category": "coin",
   "commemorated_topic": "Año del caballo",
@@ -70272,6 +72916,252 @@
   },
   "weight": 31.1
  },
+ "557309": {
+  "id": 557309,
+  "url": "https://es.numista.com/557309",
+  "title": "2 Euros (Monastery of Poblet)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-03-24"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel (Core: 75% Cu, 20% Zn, 5% Ni Ring: 75% Cu, 25% Ni)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Real Monasterio de Santa María de Poblet, doce estrellas de la Unión Europea en el anillo exterior.",
+   "lettering": "MONASTERIO DE POBLET\r\nM\r\nESPAÑA 2026",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6986f42e12f010.29906928-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6986f42e12f010.29906928-180.jpg",
+   "picture_copyright": "EUROCOLLEZIONE",
+   "picture_copyright_url": "https://eurocollezione.altervista.org/"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Un mapa geográfico de Europa Occidental abarca el anillo exterior y el núcleo interior del lado derecho de la moneda. La inscripción 2 EURO aparece superpuesta sobre el mapa de Europa, con el número \"2\" situado en un campo abierto que representa el océano Atlántico oriental. En la parte derecha de la corona circular figuran doce estrellas, seis por encima del mapa de Europa y seis por debajo; seis franjas verticales atraviesan el núcleo interior de la moneda, conectando visualmente los segmentos superior e inferior de las estrellas.",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6986f42e914c72.20568926-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6986f42e914c72.20568926-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Real Monasterio de Santa María de Poblet",
+  "comments": "<p>Declarado Patrimonio de la Humanidad en 1991, el <strong>Monasterio de Poblet</strong> es uno de los conjuntos monásticos cistercienses más importantes de Europa y un símbolo clave de la historia medieval de la Corona de Aragón. Fundado en el siglo XII, el monasterio sirvió de panteón real a los reyes de Aragón y desempeñó un papel fundamental tanto en la vida religiosa como en la política.</p><p><strong>Sitio de la UNESCO:</strong> <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/518\">https://whc.unesco.org/en/list/518</a></p>",
+  "tags": [
+   "Construcción religiosa",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1609"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6986f42f3ac1e2.11223080-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6986f42f3ac1e2.11223080-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "557310": {
+  "id": 557310,
+  "url": "https://es.numista.com/557310",
+  "title": "2 Euros (Inclusion)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-03-24"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel (Core: 75% Cu, 20% Zn, 5% Ni Ring: 75% Cu, 25% Ni)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Manos sosteniendo un libro con el escudo de España, símbolo de la Constitución, con una inscripción que destaca el nuevo enfoque constitucional, centrado en la dignidad, los derechos y la no discriminación. Doce estrellas de la Unión Europea en el anillo exterior.",
+   "lettering": "ESPAÑA 2026\r\nart. 49\r\nINCLUSIÓN\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Artículo 49",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6a644d03ee8400.80549148-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6a644d03ee8400.80549148-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "designers": [
+    "Luc Luycx"
+   ],
+   "description": "Un mapa geográfico de Europa Occidental abarca el anillo exterior y el núcleo interior del lado derecho de la moneda. La inscripción 2 EURO aparece superpuesta sobre el mapa de Europa, con el número \"2\" situado en un campo abierto que representa el océano Atlántico oriental. En la parte derecha de la corona circular figuran doce estrellas, seis por encima del mapa de Europa y seis por debajo; seis franjas verticales atraviesan el núcleo interior de la moneda, conectando visualmente los segmentos superior e inferior de las estrellas.",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6a644d048c5774.15791352-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6a644d048c5774.15791352-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "España y la discapacidad: protección, derechos e inclusión",
+  "comments": "<p>Esta moneda conmemorativa tiene un fuerte significado social e institucional, ya que está dedicada a la reforma del artículo 49 de la Constitución Española, un cambio histórico destinado a reforzar la protección jurídica, la igualdad y la plena inclusión de las personas con discapacidad.</p>",
+  "tags": [
+   "Mano",
+   "Mapa",
+   "Derechos humanos",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1608"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/6986f4ed3ce4d9.88292459-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/6986f4ed3ce4d9.88292459-180.jpg",
+   "picture_copyright": "albinh",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "5580": {
   "category": "coin",
   "comments": "<p>El peso estándar de estas monedas era de 412½ granos.<br>La marca de ceca, si está presente, se encuentra en el reverso, debajo de la \"O\" en UNO, justo a la izquierda de las puntas de las alas plegadas del águila.<br><a href=\"https://en.numista.com/catalogue/images/61ae56b78f8b0.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/61ae56b78f8b0.jpg\" alt=\"\"></a><br>Relieves de 1922<br><a href=\"https://en.numista.com/catalogue/images/639c780146b37.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/639c780146b37.jpg\" alt=\"\"></a><br>1934D doble matriz y tamaño de las marcas de ceca<br><a href=\"https://en.numista.com/catalogue/images/639c782c30483.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/639c782c30483.jpg\" alt=\"\"></a><br>1935S número de rayos<br><a href=\"https://en.numista.com/catalogue/images/639c784ad8368.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/639c784ad8368.jpg\" alt=\"\"></a></p>",
@@ -71813,6 +74703,132 @@
    "text": "60 Euros"
   },
   "weight": 18
+ },
+ "57612": {
+  "id": 57612,
+  "url": "https://es.numista.com/57612",
+  "title": "2 Euros (Park Güell)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2014,
+  "max_year": 2014,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "En primer plano una escultura de un lagarto que es el emblema del Park Güell y fue diseñada por el arquitecto Antoni Gaudí. Como fondo un detalle de uno de los pabellones situados en la entrada del Park Güell. El anillo exterior de la moneda representa las doce estrellas de la bandera europea.",
+   "lettering": "ESPAÑA\r\nPARK GÜELL - GAUDÍ\r\n2014\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3448-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3448-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3449-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3449-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "El Park Güell y la obra de Antoni Gaudí",
+  "comments": "<p>La <strong>arquitectura de Antoni Gaudí</strong> forma parte del estilo modernista, pero sus diseños se describen como altamente singulares. La lista original incluía el Park Güell, el Palau Güell y la Casa Milà; la ampliación de 2005 añadió la Casa Vicens, la cripta y la fachada del Nacimiento de la Sagrada Familia, la Casa Batlló y la cripta de la Colonia Güell.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/320\">https://whc.unesco.org/en/list/320</a></p>",
+  "tags": [
+   "Reptil",
+   "Escultura",
+   "Mapa",
+   "UNESCO",
+   "Parque"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1306"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "606"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3361-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3361-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "576294": {
   "id": 576294,
@@ -77665,6 +80681,131 @@
   },
   "weight": 31.1035
  },
+ "67019": {
+  "id": 67019,
+  "url": "https://es.numista.com/67019",
+  "title": "2 Euros - Felipe VI (Accession to Spanish Throne)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2014,
+  "max_year": 2014,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Luis José Díaz Salas"
+   ],
+   "description": "Cabezas superpuestas de los reyes Felipe VI y Juan Carlos I. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "M\r\nESPAÑA - 2014",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9dfd96f0406.97337762-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9dfd96f0406.97337762-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9dfda1ef0f8.19186723-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9dfda1ef0f8.19186723-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "El Rey Felipe VI accede al trono de España",
+  "comments": "<p>La <strong>proclamación del Rey Felipe VI</strong>, que tuvo lugar el jueves 19 de junio de 2014, fue el acto solemne en el que el Rey de España, ante las Cortes Generales, prestó juramento de desempeñar las funciones que la Constitución Española de 1978 le atribuye, guardar y hacer guardar las leyes y respetar los derechos de los ciudadanos y de las comunidades autónomas españolas.La ascensión de Felipe VI a la Corona de España se produjo el mismo día, momento en el que se hizo efectiva la abdicación de su padre al entrar en vigor la Ley Orgánica 3/2014, de 18 de junio, por la que se hace efectiva la abdicación del Rey Juan Carlos I.</p>",
+  "tags": [
+   "Coronación",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1325"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "628"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3378-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3378-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "6735": {
   "category": "coin",
   "comments": "(en) <p>Starting in 1998, selected Maple Leaf bullion coins were issued with privy marks, including the Chinese Lunar Calendar Privy Mark Series and other commemorative issues.</p><p>&nbsp;</p><p>The privy mark is a small symbol positioned to the left or right of the maple leaf stem. It serves primarily as an identifying and commemorative mark.&nbsp;</p><p>&nbsp;</p><p>Apart from the privy mark, the coins retain the same specifications and design as the corresponding standard bullion issue.</p><p>&nbsp;</p><p>The “Firework 2000” privy mark exists in two distinct varieties: a dual-dated 1999 issue and a single-dated 2000 issue.&nbsp;</p><p>&nbsp;</p><p>Only the single-dated 2000 variety is illustrated below.</p><p><br><a href=\"https://en.numista.com/catalogue/images/652601cc06fbe.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/652601cc06fbe.jpg\" alt=\"\"></a><br>© Ricardo Rivera</p>",
@@ -79260,6 +82401,135 @@
    "text": "½ Dollar "
   },
   "weight": 11.34
+ },
+ "69425": {
+  "id": 69425,
+  "url": "https://es.numista.com/69425",
+  "title": "2 Euros (Cave of Altamira)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2015,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Begoña Castellanos García"
+   ],
+   "description": "Pintura sobre bisonte procedente de la Cueva de Altamira, situada en Cantabria. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\nM\r\n2015",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9ed323bea23.33443609-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9ed323bea23.33443609-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9ed32d4a8f9.41147709-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9ed32d4a8f9.41147709-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Cueva de Altamira y arte rupestre paleolítico del norte de España",
+  "comments": "<p>La <strong>Cueva de Altamira</strong> contiene ejemplos de pintura rupestre del Paleolítico Superior, entre 35.000 y 11.000 a.C. El listado original contenía diecisiete cuevas decoradas. Las cuevas están bien conservadas debido a su profundo aislamiento del clima exterior.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/310\">https://whc.unesco.org/en/list/310</a></p>",
+  "tags": [
+   "Vaca o bovino",
+   "Pintura",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1337"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "637"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3375-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3375-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "69507": {
   "category": "coin",
@@ -89748,6 +93018,135 @@
   },
   "weight": 18
  },
+ "76634": {
+  "id": 76634,
+  "url": "https://es.numista.com/76634",
+  "title": "2 Euros (30 Years of European Union Flag)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2015,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Geórgios Stamatópoulos"
+   ],
+   "description": "La bandera de la Unión Europea como símbolo que une a pueblos y culturas con visiones e ideales compartidos para un futuro común mejor. Doce estrellas que se transforman en figuras humanas abrazan el nacimiento de una nueva Europa. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n1985-2015\r\nΓΣ\r\nM",
+   "lettering_scripts": [
+    {
+     "name": "Griega"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9e3a85c2437.13884352-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9e3a85c2437.13884352-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO \r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fc9e3a8ea3161.36098693-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fc9e3a8ea3161.36098693-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "EU Flag",
+  "commemorated_topic": "30 aniversario de la bandera de la Unión Europea",
+  "comments": "<p>Moneda conmemorativa común de 2 euros emitida por todos los países miembros de la zona euro.</p><p>La<strong> bandera de Europa</strong> o bandera europea está formada por doce estrellas doradas que forman un círculo sobre un campo azul. Es la bandera oficial de la Unión Europea. Fue diseñada y adoptada en 1955 por el Consejo de Europa (CdE) como símbolo de toda Europa.</p>",
+  "tags": [
+   "Mapa",
+   "Bandera"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1338"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "638"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/3374-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/3374-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "76663": {
   "id": 76663,
   "url": "https://es.numista.com/76663",
@@ -95244,6 +98643,134 @@
   },
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "81058": {
+  "id": 81058,
+  "url": "https://es.numista.com/81058",
+  "title": "2 Euros (Aqueduct of Segovia)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 2016,
+  "max_year": 2016,
+  "ruler": [
+   {
+    "id": 150,
+    "name": "Felipe VI",
+    "wikidata_id": "Q191045",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 euros",
+   "numeric_value": 2,
+   "currency": {
+    "id": 9004,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 25.75,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Bimetálica: centro de níquel recubierto de latón de níquel y anillo de cuproníquel"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Begoña Castellanos García"
+   ],
+   "description": "Acueducto romano de Segovia, construido probablemente hacia el año 50 d.C. En el anillo exterior de la moneda figuran las doce estrellas de la Unión Europea.",
+   "lettering": "ESPAÑA\r\n2016 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdbd58d76613.96858381-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdbd58d76613.96858381-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Luc Luycx"
+   ],
+   "description": "Mapa de Europa que simboliza la reunión de las quince naciones de la Unión Europea y doce estrellas (seis encima y seis debajo del mapa).",
+   "lettering": "2 EURO\r\nLL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2 euros.",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/5fcdbd597648b2.36847417-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/5fcdbd597648b2.36847417-180.jpg",
+   "picture_copyright": "Mike Bentley",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Patrimonio Mundial de España",
+  "commemorated_topic": "Casco Antiguo de Segovia y su Acueducto",
+  "comments": "<p>Segovia es una ciudad de la comunidad autónoma de Castilla y León, España, y capital de la provincia de Segovia. En 1985, la <strong>ciudad vieja de Segovia y su Acueducto</strong> fueron declarados Patrimonio de la Humanidad por la UNESCO. El Acueducto, situado en la Plaza del Azoguejo, es el elemento histórico más característico de la ciudad y data de finales del siglo I o principios del II d.C.. Reconocida como la obra de ingeniería civil romana más importante de España, está formada por unos 25.000 bloques de granito unidos entre sí sin argamasa alguna, y tiene una longitud de 818 metros con más de 170 arcos, el más alto de los cuales alcanza los 29 metros de altura.</p><p><strong>Sitio de la UNESCO: </strong><a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://whc.unesco.org/en/list/311\">https://whc.unesco.org/en/list/311</a></p>",
+  "tags": [
+   "Puente",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1375"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "664"
+   }
+  ],
+  "weight": 8.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Letras sobre lengüeta. La secuencia \"2 ★★★\" repetida seis veces alternativamente en vertical e invertida.",
+   "lettering": "2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/694c19a03ff0d3.67251527-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/694c19a03ff0d3.67251527-180.jpg",
+   "picture_copyright": "Cyrillius"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "81940": {
   "category": "coin",

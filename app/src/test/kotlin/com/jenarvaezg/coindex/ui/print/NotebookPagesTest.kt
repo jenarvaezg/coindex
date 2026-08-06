@@ -113,8 +113,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the sixty shipped catalogs would print as one hundred and four pages`() {
-        assertEquals(104, catalogs.sumOf { section(it).pages(paper) })
+    fun `the sixty-one shipped catalogs would print as one hundred and six pages`() {
+        assertEquals(106, catalogs.sumOf { section(it).pages(paper) })
     }
 
     /**
@@ -123,7 +123,7 @@ class NotebookPagesTest {
      * This is the load-bearing test of #228: the geometry stopped being an `object` of constants and
      * became the value a configuration declares, threaded through `notebookSections`, `printGrid`,
      * `printPages` and the drawing of the page. A millimetre lost anywhere in that plumbing moves a
-     * plate from one column of this histogram to the next, where the sum of 104 might well hide it.
+     * plate from one column of this histogram to the next, where the sum of 106 might well hide it.
      */
     @Test
     fun `the default configuration reproduces today's notebook plate by plate`() {
@@ -132,16 +132,18 @@ class NotebookPagesTest {
         val pages = printPages(sections, paper)
 
         // Cuántas láminas ocupan 1 página, cuántas 2, y así: 39 caben de una, y la más larga son
-        // las nueve del Libro Rojo de Rusia.
+        // las nueve del Libro Rojo de Rusia. Los 2 € conmemorativos de España entran en la columna
+        // de dos páginas: 29 casillas de 25,75 mm, que es la moneda más pequeña con lámina propia
+        // después de los reales y los medios de Venezuela.
         assertEquals(
-            mapOf(1 to 39, 2 to 12, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            mapOf(1 to 39, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
                 .eachCount()
                 .toSortedMap(),
         )
-        assertEquals(104, pages.size)
+        assertEquals(106, pages.size)
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.

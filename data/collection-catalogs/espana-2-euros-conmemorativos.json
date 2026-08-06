@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "id": "espana-2-euros-conmemorativos",
+  "name": "2 euros conmemorativos · España · bimetálica 8,5 g",
+  "short_name": "2 euros conmemorativos",
+  "issuer_code": "espagne",
+  "family": "2 euros conmemorativos de España",
+  "weight_millioz": 273,
+  "finish": null,
+  "metal": "other",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces2168.html",
+  "source_note": "Numista no da serie a ninguna de las 29 fichas, así que la frontera la pone el Banco Central Europeo, que publica una página por año con todos los 2 euros conmemorativos de la zona euro y su tirada. Medida año a año de 2004 a 2025 (https://www.ecb.europa.eu/euro/coins/comm/html/comm_2024.en.html y sus hermanas): España no emite ninguna en 2004, 2006 y 2008, una al año en 2005, 2007, 2009-2011, 2013, 2016, 2017, 2019-2021 y 2025, dos en 2012, 2014, 2015, 2018, 2023, 2024 y 2026, y tres en 2022. Diecisiete de las 29 son la serie anual del Patrimonio de la Humanidad de la Unesco y cinco son emisiones conjuntas de toda la zona euro; las dos cosas quedan escritas en la etiqueta de cada casilla porque son fronteras internas que la lámina no reparte. El par de 2026 es la excepción de la medición: el BCE no tiene todavía página de ese año, así que Poblet y la de Inclusión se apoyan en sus fichas de Numista, y la de Poblet además en la orden del Ministerio de Economía que aprueba 1.500.000 piezas para el primer trimestre. No se consultó el catálogo propio de la FNMT.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "2005-quijote",
+      "label": "Don Quijote",
+      "year": 2005,
+      "numista_type_id": 2168
+    },
+    {
+      "id": "2007-tratado-de-roma",
+      "label": "Tratado de Roma · emisión conjunta",
+      "year": 2007,
+      "numista_type_id": 2209
+    },
+    {
+      "id": "2009-union-economica-y-monetaria",
+      "label": "Diez años de la Unión Económica y Monetaria · emisión conjunta",
+      "year": 2009,
+      "numista_type_id": 5061
+    },
+    {
+      "id": "2010-cordoba",
+      "label": "Centro histórico de Córdoba · Unesco",
+      "year": 2010,
+      "numista_type_id": 10364
+    },
+    {
+      "id": "2011-alhambra",
+      "label": "Patio de los Leones de la Alhambra · Unesco",
+      "year": 2011,
+      "numista_type_id": 19979
+    },
+    {
+      "id": "2012-diez-anos-del-euro",
+      "label": "Diez años del euro · emisión conjunta",
+      "year": 2012,
+      "numista_type_id": 28193
+    },
+    {
+      "id": "2012-catedral-de-burgos",
+      "label": "Catedral de Burgos · Unesco",
+      "year": 2012,
+      "numista_type_id": 30072
+    },
+    {
+      "id": "2013-el-escorial",
+      "label": "Monasterio de San Lorenzo de El Escorial · Unesco",
+      "year": 2013,
+      "numista_type_id": 42976
+    },
+    {
+      "id": "2014-park-guell",
+      "label": "Park Güell · Unesco",
+      "year": 2014,
+      "numista_type_id": 57612
+    },
+    {
+      "id": "2014-proclamacion-de-felipe-vi",
+      "label": "Proclamación de Felipe VI",
+      "year": 2014,
+      "numista_type_id": 67019
+    },
+    {
+      "id": "2015-altamira",
+      "label": "Cueva de Altamira · Unesco",
+      "year": 2015,
+      "numista_type_id": 69425
+    },
+    {
+      "id": "2015-bandera-europea",
+      "label": "Treinta años de la bandera europea · emisión conjunta",
+      "year": 2015,
+      "numista_type_id": 76634
+    },
+    {
+      "id": "2016-acueducto-de-segovia",
+      "label": "Acueducto de Segovia · Unesco",
+      "year": 2016,
+      "numista_type_id": 81058
+    },
+    {
+      "id": "2017-reino-de-asturias",
+      "label": "Iglesias del Reino de Asturias · Unesco",
+      "year": 2017,
+      "numista_type_id": 101994
+    },
+    {
+      "id": "2018-santiago-de-compostela",
+      "label": "Casco antiguo de Santiago de Compostela · Unesco",
+      "year": 2018,
+      "numista_type_id": 131881
+    },
+    {
+      "id": "2018-cincuenta-anos-de-felipe-vi",
+      "label": "Cincuenta años de Felipe VI",
+      "year": 2018,
+      "numista_type_id": 131882
+    },
+    {
+      "id": "2019-avila",
+      "label": "Ciudad vieja de Ávila y sus iglesias extramuros · Unesco",
+      "year": 2019,
+      "numista_type_id": 155939
+    },
+    {
+      "id": "2020-mudejar-de-aragon",
+      "label": "Arquitectura mudéjar de Aragón · Unesco",
+      "year": 2020,
+      "numista_type_id": 193508
+    },
+    {
+      "id": "2021-toledo",
+      "label": "Ciudad histórica de Toledo · Unesco",
+      "year": 2021,
+      "numista_type_id": 264789
+    },
+    {
+      "id": "2022-garajonay",
+      "label": "Parque Nacional de Garajonay · Unesco",
+      "year": 2022,
+      "numista_type_id": 323476
+    },
+    {
+      "id": "2022-circunnavegacion",
+      "label": "V centenario de la primera vuelta al mundo",
+      "year": 2022,
+      "numista_type_id": 323480
+    },
+    {
+      "id": "2022-erasmus",
+      "label": "Treinta y cinco años del programa Erasmus · emisión conjunta",
+      "year": 2022,
+      "numista_type_id": 331425
+    },
+    {
+      "id": "2023-caceres",
+      "label": "Ciudad vieja de Cáceres · Unesco",
+      "year": 2023,
+      "numista_type_id": 357033
+    },
+    {
+      "id": "2023-presidencia-del-consejo",
+      "label": "Presidencia española del Consejo de la Unión Europea",
+      "year": 2023,
+      "numista_type_id": 368770
+    },
+    {
+      "id": "2024-sevilla",
+      "label": "Catedral, Alcázar y Archivo de Indias de Sevilla · Unesco",
+      "year": 2024,
+      "numista_type_id": 401373
+    },
+    {
+      "id": "2024-policia-nacional",
+      "label": "Doscientos años de la Policía Nacional",
+      "year": 2024,
+      "numista_type_id": 401375
+    },
+    {
+      "id": "2025-salamanca",
+      "label": "Ciudad vieja de Salamanca · Unesco",
+      "year": 2025,
+      "numista_type_id": 457922
+    },
+    {
+      "id": "2026-poblet",
+      "label": "Monasterio de Poblet · Unesco",
+      "year": 2026,
+      "numista_type_id": 557309
+    },
+    {
+      "id": "2026-inclusion",
+      "label": "Inclusión",
+      "year": 2026,
+      "numista_type_id": 557310
+    }
+  ]
+}

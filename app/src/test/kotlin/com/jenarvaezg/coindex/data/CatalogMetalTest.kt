@@ -51,13 +51,20 @@ class CatalogMetalTest {
      * 2,50 y los 5 escudos son de cuproníquel, así que el metal ya es una componente de la clave
      * que separa tarjetas de verdad y no sólo en teoría. Fijarlo aquí sigue siendo fijar la
      * premisa, no el resultado.
+     *
+     * Los 2 € conmemorativos de España (#216) añaden el tercer caso y el primero que no es un
+     * metal: una bimetálica no tiene metal dominante, así que declara `other`, que es lo que
+     * `inferMetal` deduce también de la composición de sus piezas —«Bimetálica: centro de níquel
+     * recubierto…»—. Que las dos partes coincidan es lo que mantiene la pieza y su lámina en la
+     * misma tarjeta.
      */
     @Test
-    fun `every catalog that is not a set declares its metal and two are cupronickel`() {
+    fun `every catalog that is not a set declares its metal, two cupronickel and one bimetallic`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(58, declared.size)
+        assertEquals(59, declared.size)
         assertEquals(
             listOf(
+                "espana-2-euros-conmemorativos" to Metal.Other,
                 "portugal-2-50-escudos-cuproniquel" to Metal.Cupronickel,
                 "portugal-5-escudos-cuproniquel" to Metal.Cupronickel,
             ),
