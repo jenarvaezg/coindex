@@ -3,6 +3,10 @@
   "updated_at": "2026-08-06",
   "orphans": [
     {
+      "numista_type_id": 1933,
+      "reason": "5 Deutsche Mark de plata .625 (1951-1974): moneda de circulación de 11,2 g con 7 g de plata, y el mismo límite que deja fuera al Kennedy Half Dollar. Medido con `GET /types/1933/issues` (#216): 169 filas de emisión sobre 19 años acuñados —1951, 1956-1961 y 1963-1974, sin 1952-1955 ni 1962—, cuatro cecas cada año (D Múnich, F Stuttgart, G Karlsruhe, J Hamburgo) que dan 73 combinaciones año-ceca de circulación, y más de 264 millones de piezas registradas, que además es un suelo porque 23 filas no declaran tirada. La colección tiene un 1958 G sin circular, tirada 1.557.000, y ningún otro 5 marcos de plata. Palabras de Jose el 6 de agosto de 2026, con las dos formas de lámina —19 casillas por año o 73 por año y ceca— sobre la mesa: «no voy a seguir eso». Las 73 filas proof son otro acabado y tampoco harían casilla aquí."
+    },
+    {
       "numista_type_id": 6918,
       "reason": "Kennedy Half Dollar 1971-2025: moneda de circulación, y el límite del bullion anual de #57 —«una moneda al año que tendría sentido comprar»— la deja fuera por lo que es y no por su tamaño. Palabras de Jose en ese ticket: «quizás algún día pero no creo que nos pongamos a coleccionarlo jamás». Entra además a granel, en filas de muchas piezas, que no son una colección."
     },
