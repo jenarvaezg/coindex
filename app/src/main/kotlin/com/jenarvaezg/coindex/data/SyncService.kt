@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.data
 
-import com.jenarvaezg.coindex.data.db.ApiCallDao
 import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -31,7 +30,7 @@ data class SyncReport(
 class SyncService(
     private val collectedItems: CollectedItemDao,
     private val typeMeta: TypeMetaDao,
-    private val apiCalls: ApiCallDao,
+    private val calls: ApiCallLedger,
     private val nowMillis: () -> Long = System::currentTimeMillis,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
@@ -86,6 +85,5 @@ class SyncService(
     }
 
     /** Calls actually recorded this month, including the OAuth token request. */
-    private suspend fun recordedCalls(): Int =
-        apiCalls.countSince(startOfMonthMillis(nowMillis()))
+    private suspend fun recordedCalls(): Int = calls.spentThisMonth()
 }

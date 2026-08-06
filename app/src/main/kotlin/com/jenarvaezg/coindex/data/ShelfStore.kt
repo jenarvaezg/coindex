@@ -8,6 +8,18 @@ import com.jenarvaezg.coindex.ui.shelf.ShelfCodec
 private const val PREFS = "coindex-shelves"
 
 /**
+ * Where the shelf of each hierarchy is remembered.
+ *
+ * Two properties and an interface, so that «a chip is written through the moment it is tapped» is
+ * something a test can watch happen rather than something the code merely says (ADR 0021 §1).
+ */
+interface ShelfStore {
+    var index: IndexShelf
+
+    var coins: CoinsShelf
+}
+
+/**
  * The filters and the sort of the two hierarchies, across launches (ADR 0021 §1).
  *
  * On shared preferences rather than in Room, for the same reason as [SyncLog]: it is a handful of
@@ -15,14 +27,14 @@ private const val PREFS = "coindex-shelves"
  * joins against them. Nothing here is per card either, so ADR 0021 §7 is untouched — a filter is
  * what the collector is looking through, not something stored about a collection.
  */
-class ShelfStore(context: Context) {
+class StoredShelves(context: Context) : ShelfStore {
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-    var index: IndexShelf
+    override var index: IndexShelf
         get() = ShelfCodec.decodeIndex { key -> prefs.getString(key, null) }
         set(value) = write(ShelfCodec.encode(value))
 
-    var coins: CoinsShelf
+    override var coins: CoinsShelf
         get() = ShelfCodec.decodeCoins { key -> prefs.getString(key, null) }
         set(value) = write(ShelfCodec.encode(value))
 

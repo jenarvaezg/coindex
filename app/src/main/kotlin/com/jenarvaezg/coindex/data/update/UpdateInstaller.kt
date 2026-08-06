@@ -17,6 +17,26 @@ import kotlinx.coroutines.withContext
 private const val UPDATE_DIR = "updates"
 
 /**
+ * Whatever can put a published APK in front of the system installer.
+ *
+ * An interface because every branch of installing is a *refusal* — no permission, no Settings app,
+ * no installer, a download that died — and each of those is a sentence the collector reads. They are
+ * the reason [UpdateFlow] exists, and none of them can be provoked on a device on purpose.
+ */
+interface UpdateInstaller {
+    /** Whether the user has granted Coindex the special "install unknown apps" permission. */
+    fun canInstall(): Boolean
+
+    /** Opens the system screen where that permission is granted. False if nothing handles it. */
+    fun requestInstallPermission(): Boolean
+
+    suspend fun download(url: String, versionCode: Int): File
+
+    /** Hands the APK to the system installer. False if no installer is available. */
+    fun install(apk: File): Boolean
+}
+
+/**
  * Downloads a published APK and hands it to the system installer.
  *
  * Sideloaded updates are always confirmed by the user: nothing here can install silently,
@@ -24,12 +44,11 @@ private const val UPDATE_DIR = "updates"
  * refuses an update signed with a different key than the installed app, so the signature is
  * verified by the platform rather than by us.
  */
-class UpdateInstaller(
+class SystemUpdateInstaller(
     private val context: Context,
     private val httpClient: HttpClient,
-) {
-    /** Whether the user has granted Coindex the special "install unknown apps" permission. */
-    fun canInstall(): Boolean = context.packageManager.canRequestPackageInstalls()
+) : UpdateInstaller {
+    override fun canInstall(): Boolean = context.packageManager.canRequestPackageInstalls()
 
     /**
      * Opens the system screen where that permission is granted.
@@ -37,14 +56,17 @@ class UpdateInstaller(
      * Returns false when no activity handles the intent — stripped-down builds exist and a
      * missing Settings app must not take the whole app down with it.
      */
-    fun requestInstallPermission(): Boolean = startSafely(
+    override fun requestInstallPermission(): Boolean = startSafely(
         Intent(
             Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
             Uri.parse("package:${context.packageName}"),
         ),
     )
 
-    suspend fun download(url: String, versionCode: Int): File = withContext(Dispatchers.IO) {
+    override suspend fun download(
+        url: String,
+        versionCode: Int,
+    ): File = withContext(Dispatchers.IO) {
         val directory = File(context.cacheDir, UPDATE_DIR).apply { mkdirs() }
         // One file per version, replaced on retry so a partial download is never installed.
         val target = File(directory, "coindex-$versionCode.apk")
@@ -68,8 +90,7 @@ class UpdateInstaller(
         target
     }
 
-    /** Hands the APK to the system installer. False if no installer is available. */
-    fun install(apk: File): Boolean {
+    override fun install(apk: File): Boolean {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", apk)
         return startSafely(
             Intent(Intent.ACTION_VIEW).apply {

@@ -4,18 +4,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
-import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.ApiCallLedger
+import com.jenarvaezg.coindex.data.CoindexRepository
+import com.jenarvaezg.coindex.data.CollectionSync
+import com.jenarvaezg.coindex.data.CredentialStore
+import com.jenarvaezg.coindex.data.NotebookStore
 import com.jenarvaezg.coindex.data.PlateResult
-import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.data.ShelfStore
+import com.jenarvaezg.coindex.data.SyncOutcome
+import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
-import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
-import com.jenarvaezg.coindex.data.photos.prefetchRefusal
+import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.resolvePlate
-import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
+import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
-import com.jenarvaezg.coindex.data.update.shouldCheckForUpdate
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
@@ -24,75 +28,55 @@ import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
-/** How long the photograph prefetch lets the first screen have the phone to itself (#191). */
-private const val PREFETCH_START_DELAY_MILLIS = 3_000L
-
-data class BudgetStatus(val used: Int, val cap: Int) {
-    val remaining: Int get() = (cap - used).coerceAtLeast(0)
-}
-
-/** What the settings screen edits, read from the credential store when it opens. */
-data class SettingsValues(val apiKey: String, val userId: String, val budgetCap: Int)
 
 /**
- * @param message a one-off notice for the snackbar; it is consumed once shown.
- * @param validation a form error that belongs next to the field that caused it and stays until
- *   the form is submitted again. Keeping the two apart is what stops a dismissed snackbar from
- *   also erasing the inline text under the credential fields.
+ * The one state the screens read, and the gestures that move it.
+ *
+ * What is left here is **[UiState] and nothing else**: every gesture below either writes a field or
+ * hands the work to the module whose subject it is — [CollectionSync] for a sync, [PhotoPrefetchLoop]
+ * for the photographs, [UpdateFlow] for the APK, [settingsEntry] and [boxToCreate] for what was
+ * typed into a form. There is no clock in this file, and that is the measure of it: the three
+ * `System.currentTimeMillis()` that used to be read in place now belong to the three modules that
+ * stamp with them, each with a clock of its own that a test can hold still (#220).
+ *
+ * The collaborators arrive one by one rather than as an `AppContainer`, which is what makes any of
+ * this readable: a container is not something a test can substitute, and «no hay nada que sustituir»
+ * was the reason the largest file in the app had not a single test.
  */
-data class UiState(
-    val onboarded: Boolean = false,
-    val loading: Boolean = true,
-    val syncing: Boolean = false,
-    val collection: CollectionState = CollectionState(),
-    val budget: BudgetStatus = BudgetStatus(0, 0),
-    val lastSync: SyncRecord? = null,
-    val message: String? = null,
-    val validation: String? = null,
-    val fatalError: String? = null,
-    val update: UpdateStatus = UpdateStatus.UpToDate,
-    val updating: Boolean = false,
-    val versionName: String = "",
+class CoindexViewModel(
     /**
-     * What the collector is looking through, on each of the two hierarchies (ADR 0021 §1).
-     *
-     * In the state and not in the screens because it survives a launch, which is exactly what tells
-     * it apart from the search text: that one lives in the screen it belongs to and is gone with it.
+     * Resolved on first use rather than in the factory: the curated files are parsed the first time
+     * anybody asks for them, and a file that fails to parse has to reach the collector as
+     * [UiState.fatalError] — which is inside [start]'s `try` — instead of as a crash at launch.
      */
-    val indexShelf: IndexShelf = IndexShelf(),
-    val coinsShelf: CoinsShelf = CoinsShelf(),
+    repository: () -> CoindexRepository,
+    private val credentials: CredentialStore,
+    private val shelves: ShelfStore,
+    private val notebook: NotebookStore,
+    private val calls: ApiCallLedger,
+    private val collectionSync: CollectionSync,
+    private val typeRefresh: TypeRefresh,
+    private val updates: UpdateFlow,
+    private val photos: PhotoPrefetchLoop,
+    /** A client bound to the stored API key, or null while onboarding is pending. */
+    private val client: () -> NumistaClient?,
     /**
-     * How the notebook comes out of the printer (#228), across launches like the shelves above.
+     * Tops the shipped ficha cache up before the collection is read for the first time.
      *
-     * In the state and not in the export sheet because it survives a launch: the collector who
-     * printed a checklist last month opens the sheet on a checklist. It is **not** per card
-     * (ADR 0021 §7) — it is how the paper looks, not something stored about a collection.
+     * Awaited rather than launched beside the collection: a plate drawn before its fichas exist is
+     * the plate with holes in it of #67.
      */
-    val notebookOptions: NotebookOptions = NotebookOptions(),
-    /**
-     * The types whose ficha is being asked for right now (#185).
-     *
-     * A set and not a flag: the two surfaces that carry the gesture are lists, and the collector who
-     * taps two rows must see which two are working — one boolean would have greyed out every button
-     * on screen to report one call.
-     */
-    val refreshingFichas: Set<Int> = emptySet(),
-    /** What the phone holds of the catalog's photographs (#191). Read only in the settings screen. */
-    val photoCache: PhotoCacheStatus = PhotoCacheStatus(),
-)
+    private val warmUpFichaCache: suspend () -> Unit,
+    private val installedVersionName: String,
+) : ViewModel() {
+    private val repository by lazy(repository)
 
-class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -102,7 +86,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * Private on purpose: the screens ask this class for a name or a plate, and what they are
      * given is the answer and not the files it came from.
      */
-    private val curation get() = container.repository.curation
+    private val curation get() = repository.curation
 
     private val catalogs get() = curation.catalogs
 
@@ -122,27 +106,33 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     fun catalogName(catalogId: String?): String? =
         catalogs.firstOrNull { it.id == catalogId }?.name
 
-    private var lastUpdateCheckMillis: Long? = null
-
-    /** The background photograph prefetch, so a sync can take the network back off it (#191). */
-    private var prefetchJob: Job? = null
-
-    /** How many fichas the last prefetch pass covered; a different number means new ones arrived. */
-    private var prefetchedFichas: Int? = null
-
     init {
         _state.update {
             it.copy(
-                versionName = container.installedVersionName(),
-                lastSync = container.syncLog.last,
-                indexShelf = container.shelves.index,
-                coinsShelf = container.shelves.coins,
-                notebookOptions = container.notebook.options,
+                versionName = installedVersionName,
+                lastSync = collectionSync.last,
+                indexShelf = shelves.index,
+                coinsShelf = shelves.coins,
+                notebookOptions = notebook.options,
             )
         }
         start()
+        watchPhotoCache()
         checkForUpdate(force = true)
         pollForUpdates()
+    }
+
+    /**
+     * Mirrors what the phone holds of the photographs into the state (#191).
+     *
+     * Observed and not written by [prefetchPhotographs], because the pass outlives the screen that
+     * started it: a collector who comes back to a new ViewModel gets no new pass — the fichas have
+     * not changed — and the settings line still has to say what is there.
+     */
+    private fun watchPhotoCache() {
+        viewModelScope.launch {
+            photos.status.collect { status -> _state.update { it.copy(photoCache = status) } }
+        }
     }
 
     /** Keeps looking while the app stays open, so a long session still notices a release. */
@@ -157,16 +147,11 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
 
     private fun start() {
         viewModelScope.launch {
-            val stored = container.credentials.credentials()
-            _state.update { it.copy(onboarded = stored != null) }
+            _state.update { it.copy(onboarded = credentials.credentials() != null) }
             try {
-                container.typeCacheSeed.topUp(curation.curatedTypeIds())
-                // A cache seeded before version 3 has no thumbnails, and a cached type is never
-                // fetched again: without this the plate would keep asking for the heavy
-                // originals for ever on the phones that already have the collection (#67).
-                container.typeThumbnailBackfill.run()
+                warmUpFichaCache()
                 refreshBudget()
-                container.repository.observeState().collect { collection ->
+                repository.observeState().collect { collection ->
                     _state.update { it.copy(collection = collection, loading = false) }
                     prefetchPhotographs()
                 }
@@ -179,44 +164,19 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     /**
-     * Brings the catalog's photographs into the cache, quietly, once the collection has been read
-     * (#191).
+     * Asks for the catalog's photographs, quietly, once the collection has been read (#191).
      *
-     * Called on **every** emission of the collection and cheap to call twice: a launch's worth of
-     * photographs is fetched once, and a later emission only starts a new pass when the number of
-     * fichas has changed — which is what «a sync brought new types» looks like from here. Creating
-     * a box or renaming one emits too, and none of those change what there is to fetch.
-     *
-     * It runs in [viewModelScope] rather than an application scope on purpose: what this saves is a
-     * wait the collector would otherwise see **in this app**, and every photograph is independent,
-     * so being cut short when they leave costs nothing but the ones that had not been asked for yet.
-     * They are asked for on the next launch.
+     * Called on **every** emission and cheap to call twice: [PhotoPrefetchLoop] holds the rules about
+     * what a second call is worth. Creating a box or renaming one emits too, and neither changes what
+     * there is to fetch.
      */
     private fun prefetchPhotographs(force: Boolean = false) {
-        if (prefetchJob?.isActive == true) return
-        val images = _state.value.collection.images.values.toList()
-        if (images.isEmpty()) return
-        // The fichas themselves and not how many there are: refreshing one ficha (#185) can bring a
-        // photograph the phone has never seen without the count moving at all, and an item arriving
-        // as another leaves would cancel out exactly.
-        val signature = images.hashCode()
-        if (!force && prefetchedFichas == signature) return
-        prefetchJob = viewModelScope.launch {
-            // The index is drawn first. This pass opens sixteen hundred cache snapshots before it
-            // asks for anything, and doing that while the first screen is still laying itself out
-            // is exactly the cold start the collector would feel.
-            delay(PREFETCH_START_DELAY_MILLIS)
-            // Off the main thread: reading whether the network is metered and how full the battery
-            // is are two binder calls, and this is the moment the app has just finished starting.
-            val held = withContext(Dispatchers.IO) {
-                prefetchRefusal(container.prefetchConditions.current(syncing = _state.value.syncing))
-            }
-            val status = container.photoPrefetch.run(images, held) { partial ->
-                _state.update { it.copy(photoCache = partial) }
-            }
-            prefetchedFichas = signature
-            _state.update { it.copy(photoCache = status) }
-        }
+        photos.start(
+            scope = viewModelScope,
+            images = _state.value.collection.images.values.toList(),
+            syncing = { _state.value.syncing },
+            force = force,
+        )
     }
 
     /**
@@ -227,7 +187,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * designed not to commit (#191).
      */
     fun notebookExporting(active: Boolean) {
-        if (active) prefetchJob?.cancel() else prefetchPhotographs(force = true)
+        if (active) photos.cancel() else prefetchPhotographs(force = true)
     }
 
     /**
@@ -245,24 +205,22 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     fun saveCredentials(apiKey: String, userId: String) {
-        val parsedUserId = userId.trim().toLongOrNull()
-        if (apiKey.isBlank() || parsedUserId == null || parsedUserId <= 0) {
-            _state.update {
-                it.copy(validation = "Introduce una API key y un identificador de usuario válidos.")
+        when (val entry = onboardingEntry(apiKey, userId)) {
+            is SettingsEntry.Refused -> _state.update { it.copy(validation = entry.problem) }
+            is SettingsEntry.Accepted -> {
+                credentials.save(entry.credentials.apiKey, entry.credentials.userId)
+                _state.update { it.copy(onboarded = true, validation = null) }
             }
-            return
         }
-        container.credentials.save(apiKey.trim(), parsedUserId)
-        _state.update { it.copy(onboarded = true, validation = null) }
     }
 
     /** The stored credentials and budget, so the settings screen opens on what is in effect. */
     fun currentSettings(): SettingsValues {
-        val stored = container.credentials.credentials()
+        val stored = credentials.credentials()
         return SettingsValues(
             apiKey = stored?.apiKey.orEmpty(),
             userId = stored?.userId?.toString().orEmpty(),
-            budgetCap = container.credentials.monthlyBudget,
+            budgetCap = credentials.monthlyBudget,
         )
     }
 
@@ -271,27 +229,20 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      *
      * @return true when everything was stored, so the caller can leave the screen.
      */
-    fun saveSettings(apiKey: String, userId: String, budgetCap: String): Boolean {
-        val parsedUserId = userId.trim().toLongOrNull()
-        val parsedCap = budgetCap.trim().toIntOrNull()
-        val problem = when {
-            apiKey.isBlank() -> "La API key no puede estar vacía."
-            parsedUserId == null || parsedUserId <= 0 ->
-                "El identificador de usuario es el número de la URL de tu perfil de Numista."
-            parsedCap == null || parsedCap <= 0 ->
-                "El techo de presupuesto tiene que ser un número de llamadas mayor que cero."
-            else -> null
+    fun saveSettings(apiKey: String, userId: String, budgetCap: String): Boolean =
+        when (val entry = settingsEntry(apiKey, userId, budgetCap)) {
+            is SettingsEntry.Refused -> {
+                _state.update { it.copy(validation = entry.problem) }
+                false
+            }
+            is SettingsEntry.Accepted -> {
+                credentials.save(entry.credentials.apiKey, entry.credentials.userId)
+                entry.budgetCap?.let { cap -> credentials.monthlyBudget = cap }
+                _state.update { it.copy(validation = null, message = SETTINGS_SAVED_MESSAGE) }
+                viewModelScope.launch { refreshBudget() }
+                true
+            }
         }
-        if (problem != null) {
-            _state.update { it.copy(validation = problem) }
-            return false
-        }
-        container.credentials.save(apiKey.trim(), parsedUserId!!)
-        container.credentials.monthlyBudget = parsedCap!!
-        _state.update { it.copy(validation = null, message = "Ajustes guardados.") }
-        viewModelScope.launch { refreshBudget() }
-        return true
-    }
 
     /**
      * Forgets the credentials and returns to onboarding.
@@ -300,7 +251,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * signing out is «these credentials are wrong», not «throw away what we already have».
      */
     fun signOut() {
-        container.credentials.clear()
+        credentials.clear()
         _state.update { it.copy(onboarded = false, validation = null) }
     }
 
@@ -317,60 +268,46 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * it happens to be — so a shelf saved on exit is a shelf that survives only some of the time.
      */
     fun narrowIndex(shelf: IndexShelf) {
-        container.shelves.index = shelf
+        shelves.index = shelf
         _state.update { it.copy(indexShelf = shelf) }
     }
 
     fun narrowCoins(shelf: CoinsShelf) {
-        container.shelves.coins = shelf
+        shelves.coins = shelf
         _state.update { it.copy(coinsShelf = shelf) }
     }
 
-    /**
-     * Creates one of the collector's own boxes (ADR 0013, ADR 0021 §11).
-     *
-     * A name and at least one coin are required, and the refusal is a message rather than a silent
-     * no-op: a heading over nothing is not something to store. The name has already been read by
-     * `boxName` — that is where the 40-character limit and the uniqueness live — so what arrives
-     * here is only ever the last line of defence.
-     *
-     * It says «colección» and not «agrupación», because there is one species of collection and no
-     * word of provenance telling a box from the rest (ADR 0021 §2).
-     */
+    /** Creates one of the collector's own boxes (ADR 0013, ADR 0021 §11), or says why not. */
     fun createOwnGrouping(name: String, typeIds: List<Int>) {
-        val trimmed = name.trim()
-        if (trimmed.isEmpty() || typeIds.isEmpty()) {
-            _state.update {
-                it.copy(message = "Ponle un nombre a la colección y elige al menos una moneda.")
+        when (val entry = boxToCreate(name, typeIds)) {
+            is BoxEntry.Refused -> _state.update { it.copy(message = entry.message) }
+            is BoxEntry.Accepted -> viewModelScope.launch {
+                repository.createOwnGrouping(entry.name, typeIds)
+                _state.update { it.copy(message = boxCreatedMessage(entry.name)) }
             }
-            return
-        }
-        viewModelScope.launch {
-            container.repository.createOwnGrouping(trimmed, typeIds)
-            _state.update { it.copy(message = "Colección «$trimmed» creada.") }
         }
     }
 
     fun addToOwnGrouping(groupingId: Long, typeIds: List<Int>) {
         if (typeIds.isEmpty()) return
-        viewModelScope.launch { container.repository.addToOwnGrouping(groupingId, typeIds) }
+        viewModelScope.launch { repository.addToOwnGrouping(groupingId, typeIds) }
     }
 
     fun renameOwnGrouping(groupingId: Long, name: String) {
-        val trimmed = name.trim()
-        if (trimmed.isEmpty()) {
-            _state.update { it.copy(message = "El nombre de la colección no puede estar vacío.") }
-            return
+        when (val entry = boxToRename(name)) {
+            is BoxEntry.Refused -> _state.update { it.copy(message = entry.message) }
+            is BoxEntry.Accepted -> viewModelScope.launch {
+                repository.renameOwnGrouping(groupingId, entry.name)
+            }
         }
-        viewModelScope.launch { container.repository.renameOwnGrouping(groupingId, trimmed) }
     }
 
     fun removeFromOwnGrouping(groupingId: Long, typeId: Int) {
-        viewModelScope.launch { container.repository.removeFromOwnGrouping(groupingId, typeId) }
+        viewModelScope.launch { repository.removeFromOwnGrouping(groupingId, typeId) }
     }
 
     fun deleteOwnGrouping(groupingId: Long) {
-        viewModelScope.launch { container.repository.deleteOwnGrouping(groupingId) }
+        viewModelScope.launch { repository.deleteOwnGrouping(groupingId) }
     }
 
     /**
@@ -380,48 +317,37 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * in one place — and it is the same sentence [syncErrorLabel] gives for an empty key.
      */
     private fun clientOrComplain(): NumistaClient? {
-        val client = container.numistaClient()
-        if (client == null) {
+        val ready = client()
+        if (ready == null) {
             _state.update { it.copy(message = syncErrorLabel(NumistaException.EmptyApiKey())) }
         }
-        return client
+        return ready
     }
 
     fun sync() {
         if (_state.value.syncing) return
-        val client = clientOrComplain() ?: return
-        val userId = container.credentials.credentials()?.userId ?: return
+        val ready = clientOrComplain() ?: return
+        val userId = credentials.credentials()?.userId ?: return
         _state.update { it.copy(syncing = true, message = null) }
         viewModelScope.launch {
             // The photographs give the network back to the sync, which is both spending API budget
-            // and being waited for. Joined rather than merely cancelled: a pass still unwinding
-            // would otherwise overlap the one started when this is over, and both write the count.
-            prefetchJob?.cancelAndJoin()
-            val outcome = runCatching { container.syncService.run(client, userId) }
+            // and being waited for.
+            photos.yieldNetwork()
+            val outcome = collectionSync.run(ready, userId)
             refreshBudget()
-            outcome.fold(
-                onSuccess = { report ->
-                    // Recorded before it is announced: the snackbar is the copy, not the original.
-                    val record = SyncRecord(
-                        atMillis = System.currentTimeMillis(),
-                        collectionItems = report.collectionItems,
-                        typesFetched = report.typesFetched,
-                        callsSpent = report.callsSpent,
-                        partialFailure = report.partialFailure,
+            _state.update { state ->
+                when (outcome) {
+                    is SyncOutcome.Done -> state.copy(
+                        syncing = false,
+                        lastSync = outcome.record,
+                        message = syncReportLabel(outcome.record),
                     )
-                    container.syncLog.last = record
-                    _state.update {
-                        it.copy(
-                            syncing = false,
-                            lastSync = record,
-                            message = syncReportLabel(record),
-                        )
-                    }
-                },
-                onFailure = { error ->
-                    _state.update { it.copy(syncing = false, message = syncErrorLabel(error)) }
-                },
-            )
+                    is SyncOutcome.Failed -> state.copy(
+                        syncing = false,
+                        message = syncErrorLabel(outcome.error),
+                    )
+                }
+            }
             // Forced, because a sync that changed nothing emits nothing, and the pass it cancelled
             // would otherwise wait for the next launch to be picked up again.
             prefetchPhotographs(force = true)
@@ -438,10 +364,10 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      */
     fun refreshFicha(typeId: Int) {
         if (typeId in _state.value.refreshingFichas) return
-        val client = clientOrComplain() ?: return
+        val ready = clientOrComplain() ?: return
         _state.update { it.copy(refreshingFichas = it.refreshingFichas + typeId, message = null) }
         viewModelScope.launch {
-            val outcome = runCatching { container.typeRefresh.refresh(client, typeId) }
+            val outcome = runCatching { typeRefresh.refresh(ready, typeId) }
             refreshBudget()
             _state.update { state ->
                 state.copy(
@@ -456,15 +382,12 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     /**
-     * Looks for a newer APK. Failures are swallowed into [UpdateStatus.Unavailable]: an update
-     * check that cannot reach GitHub must never interrupt looking at the collection.
+     * Looks for a newer APK, if it is time to look. Failures never reach the screen as errors: an
+     * update check that cannot reach GitHub must never interrupt looking at the collection.
      */
     fun checkForUpdate(force: Boolean = false) {
-        val now = System.currentTimeMillis()
-        if (!force && !shouldCheckForUpdate(lastUpdateCheckMillis, now)) return
-        lastUpdateCheckMillis = now
         viewModelScope.launch {
-            val status = container.updateChecker.check()
+            val status = updates.check(force) ?: return@launch
             _state.update { it.copy(update = status) }
         }
     }
@@ -476,51 +399,13 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     fun installUpdate() {
         val available = _state.value.update as? UpdateStatus.Available ?: return
         if (_state.value.updating) return
-        val installer = container.updateInstaller
-        if (!installer.canInstall()) {
-            val opened = installer.requestInstallPermission()
-            _state.update {
-                it.copy(
-                    message = if (opened) {
-                        "Concede a Coindex permiso para instalar aplicaciones y vuelve a " +
-                            "pulsar Instalar."
-                    } else {
-                        "Este dispositivo no permite conceder el permiso de instalación: " +
-                            "descarga el APK desde GitHub e instálalo a mano."
-                    },
-                )
-            }
-            return
-        }
-        _state.update { it.copy(updating = true, message = "Descargando la actualización…") }
         viewModelScope.launch {
-            val outcome = runCatching {
-                installer.download(available.apkUrl, available.manifest.versionCode)
+            val outcome = updates.install(available) {
+                _state.update { it.copy(updating = true, message = UPDATE_DOWNLOADING_MESSAGE) }
             }
-            outcome.fold(
-                onSuccess = { apk ->
-                    val launched = installer.install(apk)
-                    _state.update {
-                        it.copy(
-                            updating = false,
-                            message = if (launched) {
-                                null
-                            } else {
-                                "No hay instalador de paquetes en este dispositivo: instala " +
-                                    "el APK a mano."
-                            },
-                        )
-                    }
-                },
-                onFailure = { error ->
-                    _state.update {
-                        it.copy(
-                            updating = false,
-                            message = "No se pudo descargar la actualización: ${error.message}",
-                        )
-                    }
-                },
-            )
+            _state.update {
+                it.copy(updating = false, message = installOutcomeMessage(outcome))
+            }
         }
     }
 
@@ -564,7 +449,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * dismissed has not changed how they print, and storing each tap would make «Cancelar» a lie.
      */
     fun notebookPrinted(options: NotebookOptions) {
-        container.notebook.options = options
+        notebook.options = options
         _state.update { it.copy(notebookOptions = options) }
     }
 
@@ -576,18 +461,36 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     // §9), so nothing between the index and the plate needs to explain a jump it cannot make.
 
     private suspend fun refreshBudget() {
-        val cap = container.credentials.monthlyBudget
-        val used = container.database.apiCalls()
-            .countSince(startOfMonthMillis(System.currentTimeMillis()))
+        val cap = credentials.monthlyBudget
+        val used = calls.spentThisMonth()
         _state.update { it.copy(budget = BudgetStatus(used, cap)) }
     }
 
     companion object {
+        /**
+         * The one place the collaborators above are named twice.
+         *
+         * `AppContainer` builds and holds them — a prefetch loop that outlives a rotation keeps
+         * knowing which photographs it already covered — and this only picks the ones the screens'
+         * state is made of.
+         */
         fun factory(container: AppContainer): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    CoindexViewModel(container) as T
+                override fun <T : ViewModel> create(modelClass: Class<T>): T = CoindexViewModel(
+                    repository = { container.repository },
+                    credentials = container.credentials,
+                    shelves = container.shelves,
+                    notebook = container.notebook,
+                    calls = container.calls,
+                    collectionSync = container.collectionSync,
+                    typeRefresh = container.typeRefresh,
+                    updates = container.updates,
+                    photos = container.photos,
+                    client = container::numistaClient,
+                    warmUpFichaCache = container::warmUpFichaCache,
+                    installedVersionName = container.installedVersionName(),
+                ) as T
             }
     }
 }

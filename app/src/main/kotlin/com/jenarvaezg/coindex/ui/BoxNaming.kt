@@ -56,3 +56,53 @@ fun boxName(typed: String, taken: Collection<String>): BoxName {
         canSave = trimmed.isNotEmpty() && problem == null,
     )
 }
+
+/**
+ * What is to be stored about a box, or the sentence that refuses it.
+ *
+ * The last line of defence rather than the first: [boxName] has already read the name as it was
+ * being typed, and this is what a gesture that got past it arrives at. A refusal here is a message
+ * and never a silent no-op — a heading over nothing is not something to store, and a button that
+ * did nothing at all would read as a bug.
+ */
+sealed interface BoxEntry {
+    /**
+     * The name as it would be stored. Not the coins: the caller has them in its hand — a selection
+     * in Coins, or a box that already exists — and carrying them through the decision would only
+     * hand them back.
+     */
+    data class Accepted(val name: String) : BoxEntry
+
+    data class Refused(val message: String) : BoxEntry
+}
+
+/**
+ * Creating a box: a name and at least one coin (ADR 0013, ADR 0021 §11).
+ *
+ * It says «colección» and not «agrupación», because there is one species of collection and no word
+ * of provenance telling a box from the rest (ADR 0021 §2).
+ */
+fun boxToCreate(typed: String, typeIds: List<Int>): BoxEntry {
+    val trimmed = typed.trim()
+    if (trimmed.isEmpty() || typeIds.isEmpty()) {
+        return BoxEntry.Refused("Ponle un nombre a la colección y elige al menos una moneda.")
+    }
+    return BoxEntry.Accepted(trimmed)
+}
+
+/**
+ * Renaming one, where the coins are whatever they already were.
+ *
+ * Uniqueness is **not** checked: it is read once, at creation, and a name that collides later is
+ * curation catching up with what the collector noted down by hand (ADR 0021 §11).
+ */
+fun boxToRename(typed: String): BoxEntry {
+    val trimmed = typed.trim()
+    if (trimmed.isEmpty()) {
+        return BoxEntry.Refused("El nombre de la colección no puede estar vacío.")
+    }
+    return BoxEntry.Accepted(trimmed)
+}
+
+/** Said once the box exists, in the collector's own name for it. */
+fun boxCreatedMessage(name: String): String = "Colección «$name» creada."

@@ -24,33 +24,50 @@ const val DEFAULT_MONTHLY_BUDGET: Int = 1500
 data class Credentials(val apiKey: String, val userId: Long)
 
 /**
+ * The collector's own Numista credentials and their monthly cap.
+ *
+ * An interface because the real one is an Android Keystore away: onboarding, signing out and the
+ * settings form are decisions about what was typed, and none of them should need a device to be
+ * read.
+ */
+interface CredentialStore {
+    fun credentials(): Credentials?
+
+    fun save(apiKey: String, userId: Long)
+
+    fun clear()
+
+    var monthlyBudget: Int
+}
+
+/**
  * Stores the collector's own Numista credentials on the device.
  *
  * The API key is encrypted with an AES/GCM key that lives in the Android Keystore and never
  * leaves it; only the ciphertext reaches shared preferences. The user id and the budget cap
  * are not secrets and are stored as-is.
  */
-class CredentialStore(context: Context) {
+class KeystoreCredentialStore(context: Context) : CredentialStore {
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-    fun credentials(): Credentials? {
+    override fun credentials(): Credentials? {
         val userId = prefs.getLong(KEY_USER_ID, -1L).takeIf { it >= 0 } ?: return null
         val apiKey = decryptedApiKey()?.takeIf(String::isNotBlank) ?: return null
         return Credentials(apiKey, userId)
     }
 
-    fun save(apiKey: String, userId: Long) {
+    override fun save(apiKey: String, userId: Long) {
         prefs.edit()
             .putString(KEY_API_KEY, encrypt(apiKey))
             .putLong(KEY_USER_ID, userId)
             .apply()
     }
 
-    fun clear() {
+    override fun clear() {
         prefs.edit().remove(KEY_API_KEY).remove(KEY_USER_ID).apply()
     }
 
-    var monthlyBudget: Int
+    override var monthlyBudget: Int
         get() = prefs.getInt(KEY_BUDGET, DEFAULT_MONTHLY_BUDGET)
         set(value) {
             prefs.edit().putInt(KEY_BUDGET, value.coerceIn(1, 100_000)).apply()
