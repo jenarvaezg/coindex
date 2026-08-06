@@ -77,10 +77,19 @@ class CuratedOrphansTest {
      * eighteen — that he keeps as souvenirs («las demás las compré por baratas, podría venderlas»);
      * and ten commemoratives of one country each, where the theme that would have joined two of them
      * is abandoned by the only person who ever had it («pensé si, en el tema de animales, pero es que
-     * me cansé de Catawiki»). Two neighbours of that block are deliberately **not** here: the
-     * Maria Theresa thaler, which he reads as part of a «historia del real» theme with the 8 reales,
-     * and the 25 ringgit of Malaysia, whose own ficha says it shipped in a two-coin set with the 15
-     * ringgit — both are open questions and an open question is never signed.
+     * me cansé de Catawiki»). Two neighbours of that block were deliberately **not** signed with it,
+     * because an open question is never signed: the Maria Theresa thaler, which he reads as part of a
+     * «historia del real» theme with the 8 reales and which became a plate in #257, and the 25 ringgit
+     * of Malaysia, which is now here.
+     *
+     * **N#27380 is the only verdict signed after measuring that the plate existed** (#259). Its own
+     * ficha declares the boundary — a two-coin set with the 15 ringgit — the other half is published
+     * (N#27381, 28,28 g against its 35 g) and cites it back, and the pair is the Malaysian delivery of
+     * the same Royal Mint programme for 24 countries, two silver coins each, that already ships as
+     * `venezuela-1975-conservacion-plata`. So a set file of two slots reading 1/2 was writable with
+     * half of it in the drawer, and the father answered on 6 August 2026, with the Venezuelan parallel
+     * in front of him, that he leaves it loose. The gold 500 ringgit (N#27376) would have stayed out
+     * either way, sold apart like the Venezuelan Gallito de las Rocas.
      *
      * **Two** Venezuelan silver commemoratives are left of the five #247 signed, and the block is
      * the one where the measurement itself was wrong (#256). The Catálogo Numismático de Venezuela
@@ -105,7 +114,7 @@ class CuratedOrphansTest {
         assertEquals(
             listOf(
                 1_933, 1_952, 3_416, 3_550, 3_855, 6_918, 10_613, 11_440, 12_454, 12_994, 14_018,
-                14_538, 15_357, 18_940, 26_190, 38_130, 44_085, 59_404, 67_681, 90_456,
+                14_538, 15_357, 18_940, 26_190, 27_380, 38_130, 44_085, 59_404, 67_681, 90_456,
                 98_259, 131_809, 132_242, 277_960, 291_255, 387_614, 451_057, 470_766, 571_460,
                 596_646,
             ),
