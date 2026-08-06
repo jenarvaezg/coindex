@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "niue-bitcoin-1oz-plata",
+  "name": "Bitcoin de Niue · onza de plata de 2 Dollars · desde 2021 · dos casas de moneda",
+  "short_name": "Bitcoin de Niue",
+  "issuer_code": "niue",
+  "family": "Bitcoin de Niue en plata",
+  "weight_millioz": 1000,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces272140.html",
+  "source_note": "Numista no da serie a ninguno de los siete tipos —las siete fichas traen `series` vacío—, así que aquí la frontera no la pone el emisor: es temática y la firma el curador. Jose la eligió el 6 de agosto de 2026 con la medición delante y sabiendo lo que mezcla, después de que la lámina conjunta de todas las onzas de Niue quedara descartada por medida (`type-claims.py` da tres PARAR: N#356004 y N#477907 son de `equilibrium-pressburg-1oz-silver` y N#485082 de `niue-southern-cross-1oz-bullion`, y una agrupación pierde la familia frente a cualquier catálogo que nombre el tipo, ADR 0013). Dentro del tema no se escoge a mano, que sería poner un segundo criterio nuestro encima del primero: la enumeración es mecánica —los nueve tipos que Numista archiva bajo Niue con «Bitcoin» en el título— menos las dos de oro, el 100 Dollars N#304649 de 2021 y el 250 Dollars N#448512 de 2024, fuera por metal y por facial. Son dos líneas distintas y las etiquetas lo dicen: la mBTC de la Casa de la Moneda de Nueva Zelanda (N#272140 y N#325159, 40 mm, 31,1035 g y 2,37 mm de grosor, efigie Rank-Broadley de Isabel II y el nombre SATOSHI en binario sobre un circuito impreso; el «1.3 mBTC» de 2021 y el «0.6 mBTC» de 2022 son el contenido de plata de la moneda medido en milibitcoins el día de su diseño, que es la única lógica interna que declara alguna de las dos líneas), y la «Vires in Numeris» de European Mint (N#322591, N#364383 y N#403053, 38 mm, 31,1 g, sello público de Niue en el anverso). En 2022 las dos acuñan, y por eso ese año tiene dos casillas. Numista escribe 31,1035 g en las dos de NZ Mint y 31,1 g en las otras cinco; la lámina declara la onza. Abierta porque el tema sigue vivo —2025 tiene tipo— y `stale-catalogs.py` avisará del año que falte.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "2021-mbtc",
+      "label": "1,3 mBTC · NZ Mint",
+      "year": 2021,
+      "numista_type_id": 272140
+    },
+    {
+      "id": "2022-mbtc",
+      "label": "0,6 mBTC · NZ Mint",
+      "year": 2022,
+      "numista_type_id": 325159
+    },
+    {
+      "id": "2022-vires-in-numeris",
+      "label": "Vires in Numeris · European Mint",
+      "year": 2022,
+      "numista_type_id": 322591
+    },
+    {
+      "id": "2023-vires-in-numeris",
+      "label": "Vires in Numeris · European Mint",
+      "year": 2023,
+      "numista_type_id": 364383
+    },
+    {
+      "id": "2024-vires-in-numeris",
+      "label": "Vires in Numeris · European Mint",
+      "year": 2024,
+      "numista_type_id": 403053
+    },
+    {
+      "id": "2025-future-of-finance",
+      "label": "The Future of Finance",
+      "year": 2025,
+      "numista_type_id": 440308
+    },
+    {
+      "id": "2025-future-of-finance-chapada",
+      "label": "The Future of Finance, chapada en oro",
+      "year": 2025,
+      "numista_type_id": 440309,
+      "variant_note": "Es la misma moneda de 2025 que N#440308 —39 mm, 31,1 g, el mismo reverso «The Future of Finance · Decentralized Digital Currency»— y sólo la separa el chapado dorado, pero va a su propia casilla y no como ampliación de la otra. El dominio no tiene acabado para el chapado, su metal dominante sigue siendo la plata (ADR 0018) y una casilla de `schema_version` 1 sólo admite un tipo de Numista: la alternativa era dejar fuera una moneda que el criterio del fichero admite, y entonces saldría «sin clasificar» el día que entre en cualquiera de las dos colecciones."
+    }
+  ]
+}
