@@ -61,7 +61,7 @@ class CatalogMetalTest {
     @Test
     fun `every catalog that is not a set declares its metal, two cupronickel and one bimetallic`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(64, declared.size)
+        assertEquals(65, declared.size)
         assertEquals(
             listOf(
                 "espana-2-euros-conmemorativos" to Metal.Other,
@@ -70,9 +70,10 @@ class CatalogMetalTest {
             ),
             declared.filterNot { (_, metal) -> metal == Metal.Silver }.sortedBy { it.first },
         )
-        // Los dos conjuntos no declaran variante física de ninguna clase (ADR 0012). El metal no
-        // es lo que los parte —el venezolano de 1975 es plata .925 en sus dos miembros—, pero sin
-        // esa exención tampoco tendrían dónde vivir: sus pesos no caben en una sola clave.
-        assertEquals(listOf(null, null), catalogs.filter { it.isSet }.map { it.metal })
+        // Los tres conjuntos no declaran variante física de ninguna clase (ADR 0012). El metal no
+        // es lo que los parte —el venezolano de 1975 es plata .925 en sus dos miembros, y el
+        // díptico italiano de 2003 también—, pero sin esa exención tampoco tendrían dónde vivir:
+        // sus pesos no caben en una sola clave.
+        assertEquals(listOf(null, null, null), catalogs.filter { it.isSet }.map { it.metal })
     }
 }

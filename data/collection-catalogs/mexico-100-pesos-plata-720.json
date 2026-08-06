@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "id": "mexico-100-pesos-plata-720",
+  "name": "100 Pesos de plata .720 · México 1977-1979 · 27,78 g",
+  "short_name": "100 Pesos de plata .720",
+  "issuer_code": "mexique",
+  "family": "100 Pesos de plata .720",
+  "weight_millioz": 893,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El tipo agota su calendario en 1979: enumeradas sus emisiones con `GET /types/11552/issues`, son seis en tres años y ninguna posterior, todas de la ceca de México (Mo).",
+  "source": "https://en.numista.com/catalogue/pieces11552.html",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1977",
+      "label": "1977 · Morelos",
+      "year": 1977,
+      "numista_type_id": 11552
+    },
+    {
+      "id": "1978",
+      "label": "1978 · Morelos",
+      "year": 1978,
+      "numista_type_id": 11552
+    },
+    {
+      "id": "1979",
+      "label": "1979 · Morelos",
+      "year": 1979,
+      "numista_type_id": 11552
+    }
+  ],
+  "source_note": "Un tipo único de Numista con tres años, así que la frontera es la ficha y sus emisiones medidas: 27,78 g de plata .720, Ø39, Morelos de frente sobre el reverso con la ley y el peso debajo, KM#483. Las seis emisiones caen en tres casillas y no en seis porque 1977 trae tres variedades de cuño —hombro caído y «7» altos o bajos, KM#483.1, contra la fecha en línea de KM#483.2— y una variedad de cuño no parte una lámina; la proof de 1979 comparte casilla con la de circulación porque el fichero no declara acabado. La casilla escasa es 1979, con 784.000 piezas frente a los 9.879.000 de 1978 y los 5.225.000 declarados en una de las tres de 1977. Palabras del padre el 6 de agosto de 2026, preguntado por los tres años con el 1978 en la mano: «100 pesos vale». No se enumeraron los demás 100 pesos del emisor para no gastar cupón, así que este fichero no afirma nada sobre los 100 pesos de otro patrón —los de plata .925 de los ochenta o los de cuproníquel—: sólo que este tipo se acaba en 1979."
+}

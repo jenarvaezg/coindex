@@ -7,6 +7,10 @@
       "reason": "5 Deutsche Mark de plata .625 (1951-1974): moneda de circulación de 11,2 g con 7 g de plata, y el mismo límite que deja fuera al Kennedy Half Dollar. Medido con `GET /types/1933/issues` (#216): 169 filas de emisión sobre 19 años acuñados —1951, 1956-1961 y 1963-1974, sin 1952-1955 ni 1962—, cuatro cecas cada año (D Múnich, F Stuttgart, G Karlsruhe, J Hamburgo) que dan 73 combinaciones año-ceca de circulación, y más de 264 millones de piezas registradas, que además es un suelo porque 23 filas no declaran tirada. La colección tiene un 1958 G sin circular, tirada 1.557.000, y ningún otro 5 marcos de plata. Palabras de Jose el 6 de agosto de 2026, con las dos formas de lámina —19 casillas por año o 73 por año y ceca— sobre la mesa: «no voy a seguir eso». Las 73 filas proof son otro acabado y tampoco harían casilla aquí."
     },
     {
+      "numista_type_id": 1952,
+      "reason": "10 Rentenpfennig (1923-1925, bronce de aluminio de 4 g): no es plata y es moneda de circulación, así que la deja fuera el mismo límite del bullion anual de #57 que dejó fuera al Kennedy Half Dollar, al 5 Deutsche Mark de plata y al 2 Reichsmark. El padre tiene un 1924 y ninguna otra pieza del Rentenmark. Su ficha no declara serie. Palabras del padre el 6 de agosto de 2026, preguntado si estas piezas antiguas de circulación eran recuerdos sueltos o secuencias que persigue: «las demás las compré por baratas, podría venderlas»."
+    },
+    {
       "numista_type_id": 3416,
       "reason": "2 Reichsmark de Hindenburg (1936-1939, 8 g de plata .625): moneda de circulación, mismo límite que el 5 Deutsche Mark de plata y que el Kennedy Half Dollar. Medido con `GET /types/3416/issues` (#216): 25 filas de emisión sobre cuatro años, hasta siete cecas al año —1936 DEGJ, 1937 ADEFGJ, y 1938 y 1939 con Viena dentro, ABDEFGJ, que es el Anschluss visto desde el canto— para 24 combinaciones año-ceca y 129.604.279 piezas. La colección de Jose lo tiene sin fecha registrada, así que una lámina por año le marcaría 0 de 4 hasta anotarla en Numista, y el padre tiene un 1937. El veredicto es de esta denominación y no del metal: preguntado por la plata del Reichsmark el 6 de agosto de 2026, Jose sí persigue los 5 Reichsmark de plata —que se curan aparte— y no los de 2."
     },
@@ -15,12 +19,40 @@
       "reason": "1 Peso «Tepalcate» de plata (1957-1967, vellón .100): última moneda de un peso con plata de México —16 g de los que sólo 1,6 son plata, el resto latón— y moneda de circulación, el mismo límite que deja fuera al Kennedy Half Dollar y al 5 Deutsche Mark de plata. Medido con `GET /types/3550/issues` y la captura privada del 5 de agosto de 2026 (#242): 11 filas de emisión sobre 11 años sin huecos, todas de la ceca de México, entre 5 y 61 millones de piezas por año y 335 millones en total, así que ninguna es rara. El padre tiene una pieza de 1958 y la lámina le habría dicho 1 de 11. La agrupación estaba descartada de antemano por el ADR 0013 enmendado —una agrupación no declara peso, así que no puede unir lo que la clave de variante separa, y las seis mexicanas pendientes del #216 tienen cinco pesos distintos—, de modo que la única forma escribible era un date run de 11 casillas al estilo de `venezuela-1-bolivar`. Palabras del padre a través de Jose el 6 de agosto de 2026, con esa forma sobre la mesa: no sigue la secuencia. El veredicto es de intención y no de la moneda: los once años existen sin nosotros y siguen ahí el día que decida perseguirlos."
     },
     {
+      "numista_type_id": 3855,
+      "reason": "25 Pesos de los Juegos Olímpicos de México 68 (22,5 g de plata .720): único tipo de su año y de su patrón, con la ficha sin serie declarada y el tema «XIX Juegos Olímpicos de Verano - México 1968», que es una conmemoración y no un programa. Palabras del padre el 6 de agosto de 2026, preguntado si era un recuerdo del 68 o si iría a por más monedas olímpicas de plata: «juegos olímpicos, sola». Las variedades de cuño de los anillos olímpicos no se enumeraron: con la intención contestada no habrían cambiado el veredicto."
+    },
+    {
       "numista_type_id": 6918,
       "reason": "Kennedy Half Dollar 1971-2025: moneda de circulación, y el límite del bullion anual de #57 —«una moneda al año que tendría sentido comprar»— la deja fuera por lo que es y no por su tamaño. Palabras de Jose en ese ticket: «quizás algún día pero no creo que nos pongamos a coleccionarlo jamás». Entra además a granel, en filas de muchas piezas, que no son una colección."
     },
     {
+      "numista_type_id": 10613,
+      "reason": "½ Rupia de Jorge VI (1942-1945, 5,84 g de plata .500): el tipo abarca cuatro años y el padre tiene el 1942, así que el date run existiría —cuatro casillas— y lo que falta es que alguien lo persiga. Moneda de circulación de la India Británica, sin serie en su ficha. Palabras del padre el 6 de agosto de 2026, preguntado si estas piezas antiguas de circulación eran recuerdos sueltos o secuencias que persigue: «las demás las compré por baratas, podría venderlas»."
+    },
+    {
+      "numista_type_id": 11440,
+      "reason": "5 Euros del 800 aniversario del nacimiento del Papa Juan XXI (2005, 14 g de plata .500): la colección del padre tiene una sola moneda de este patrón y ninguno de los siete catálogos portugueses ya versionados la reclama —comprobado con `scripts/type-claims.py --all`—, porque el de 8 euros de plata .500 es otro patrón físico, 21,1 g contra 14. Portugal acuñó más 5 euros de plata de esta ley, así que la secuencia probablemente existe; no se enumeró, y lo que cierra el veredicto es la intención. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
+      "numista_type_id": 12454,
+      "reason": "50 Schilling de la Exposición Internacional de Jardines (1974, 20 g de plata .640): Austria acuñó 50 schilling conmemorativos de plata durante años, así que la secuencia es verosímil y **no se enumeró** —decirlo importa, porque «no hay programa» y «no lo hemos buscado» no son lo mismo—. La ficha no declara serie y el padre tiene sólo esta. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
+      "numista_type_id": 12994,
+      "reason": "5 Kronor de Gustaf VI Adolf (1954-1971, 18 g de vellón de plata .400): moneda de circulación sueca, el mismo límite que el Kennedy y el 5 Deutsche Mark, y con un tipo que abarca 18 años de los que el padre tiene el 1954. Su ficha no declara serie. Palabras del padre el 6 de agosto de 2026, preguntado si estas piezas antiguas de circulación eran recuerdos sueltos o secuencias que persigue: «las demás las compré por baratas, podría venderlas»."
+    },
+    {
+      "numista_type_id": 14018,
+      "reason": "½ Dirham de Abd al-Aziz acuñado en París (1897-1902, 1,4558 g de plata .835): la pieza más pequeña de las dos colecciones, moneda de circulación marroquí de un tipo de seis años del que el padre tiene un 1899. Sin serie en su ficha. Palabras del padre el 6 de agosto de 2026, preguntado si estas piezas antiguas de circulación eran recuerdos sueltos o secuencias que persigue: «las demás las compré por baratas, podría venderlas»."
+    },
+    {
       "numista_type_id": 14538,
       "reason": "10 Bolívares de 1973 (30 g de plata .900, acuñado en Ottawa, no circulante): es «el Doblón», por el centenario de la efigie del Libertador en la moneda venezolana, y la única pieza de su año y de su patrón. Ninguna fuente declara una serie del BCV, medido en #247: el Catálogo Numismático de Venezuela —el que la propia ficha cita— no tiene sección de conmemorativas y cataloga por unidad monetaria; la página del BCV es su museo, 15.210 piezas custodiadas, y no un catálogo de sus emisiones; y el «21 monedas de plata entre 1973 y 2013» es un recuento a posteriori de una fuente secundaria, por temas y sin pesos. Y ninguna fuente podría arreglarlo: cinco conmemoraciones distintas en trece años no son un date run, un conjunto del ADR 0012 exige los tipos emitidos juntos y éstas se acuñan de 1973 a 1986, y una numeración que agrupe «conmemorativas de plata» sería una categoría, que no es una colección. Los cinco pesos —30, 17, 22, 27 y 31,1 g— dan además cinco tarjetas distintas, así que ni una lámina ni una agrupación las une. Si algún día aparece una serie declarada por el emisor, el veredicto se reabre."
+    },
+    {
+      "numista_type_id": 15357,
+      "reason": "2½ Libras de la boda de plata de Isabel II (Jersey, 1972, 27,1 g de plata .925): conmemoración de un aniversario concreto, sin serie declarada en la ficha, y única pieza de Jersey en las dos colecciones. Varios emisores de la Commonwealth acuñaron por esa boda en 1972, pero eso sería una categoría entre emisores distintos y no una colección. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
     },
     {
       "numista_type_id": 18852,
@@ -35,12 +67,36 @@
       "reason": "100 Bolívares de 1980 (22 g de plata .900): sesquicentenario de la muerte de Simón Bolívar. Comparte año con el de Sucre pero no denominación ni peso, así que tampoco son dos casillas de nada. Ninguna fuente declara una serie del BCV, medido en #247: el Catálogo Numismático de Venezuela —el que la propia ficha cita— no tiene sección de conmemorativas y cataloga por unidad monetaria; la página del BCV es su museo, 15.210 piezas custodiadas, y no un catálogo de sus emisiones; y el «21 monedas de plata entre 1973 y 2013» es un recuento a posteriori de una fuente secundaria, por temas y sin pesos. Y ninguna fuente podría arreglarlo: cinco conmemoraciones distintas en trece años no son un date run, un conjunto del ADR 0012 exige los tipos emitidos juntos y éstas se acuñan de 1973 a 1986, y una numeración que agrupe «conmemorativas de plata» sería una categoría, que no es una colección. Los cinco pesos —30, 17, 22, 27 y 31,1 g— dan además cinco tarjetas distintas, así que ni una lámina ni una agrupación las une. Si algún día aparece una serie declarada por el emisor, el veredicto se reabre."
     },
     {
+      "numista_type_id": 26190,
+      "reason": "50 Qirsh del día de la evacuación británica (Egipto, 1956, 28 g de plata .900): conmemoración de una fecha —el 18 de junio de 1956—, sin serie en su ficha, y única pieza egipcia de las dos colecciones. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
       "numista_type_id": 27573,
       "reason": "100 Bolívares de 1981 (27 g de plata .835): bicentenario del nacimiento de Andrés Bello. Comparte denominación con los de 1980 y 1986 y no comparte peso con ninguno: 22, 27 y 31,1 g son tres variantes. Ninguna fuente declara una serie del BCV, medido en #247: el Catálogo Numismático de Venezuela —el que la propia ficha cita— no tiene sección de conmemorativas y cataloga por unidad monetaria; la página del BCV es su museo, 15.210 piezas custodiadas, y no un catálogo de sus emisiones; y el «21 monedas de plata entre 1973 y 2013» es un recuento a posteriori de una fuente secundaria, por temas y sin pesos. Y ninguna fuente podría arreglarlo: cinco conmemoraciones distintas en trece años no son un date run, un conjunto del ADR 0012 exige los tipos emitidos juntos y éstas se acuñan de 1973 a 1986, y una numeración que agrupe «conmemorativas de plata» sería una categoría, que no es una colección. Los cinco pesos —30, 17, 22, 27 y 31,1 g— dan además cinco tarjetas distintas, así que ni una lámina ni una agrupación las une. Si algún día aparece una serie declarada por el emisor, el veredicto se reabre."
     },
     {
       "numista_type_id": 34721,
       "reason": "100 Bolívares de 1986 (31,1 g de plata .900, acuñado por la Royal Mint): bicentenario del nacimiento de José María Vargas, único de su año y de su patrón. Ninguna fuente declara una serie del BCV, medido en #247: el Catálogo Numismático de Venezuela —el que la propia ficha cita— no tiene sección de conmemorativas y cataloga por unidad monetaria; la página del BCV es su museo, 15.210 piezas custodiadas, y no un catálogo de sus emisiones; y el «21 monedas de plata entre 1973 y 2013» es un recuento a posteriori de una fuente secundaria, por temas y sin pesos. Y ninguna fuente podría arreglarlo: cinco conmemoraciones distintas en trece años no son un date run, un conjunto del ADR 0012 exige los tipos emitidos juntos y éstas se acuñan de 1973 a 1986, y una numeración que agrupe «conmemorativas de plata» sería una categoría, que no es una colección. Los cinco pesos —30, 17, 22, 27 y 31,1 g— dan además cinco tarjetas distintas, así que ni una lámina ni una agrupación las une. Si algún día aparece una serie declarada por el emisor, el veredicto se reabre."
+    },
+    {
+      "numista_type_id": 38130,
+      "reason": "500 Pesos del cocodrilo del WWF (Colombia, 1978-1979, 28,28 g de plata .925): es una de las dos que apuntaban al tema de animales, junto con los 25 ringgit de Malasia, y por eso se le preguntó expresamente. El tema está abandonado. Su ficha no está en la caché sembrada del repo, así que el peso y la ley son los que el informe de campo del 5 de agosto de 2026 leyó en numista.com, y no una segunda lectura de hoy. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
+      "numista_type_id": 44085,
+      "reason": "10 Pesos de la primera extracción de plata de la mina Pueblo Viejo (República Dominicana, 1975, 30 g de plata .900): conmemoración de un hecho único, sin serie en su ficha, y única pieza dominicana de las dos colecciones. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
+      "numista_type_id": 59404,
+      "reason": "10 Diners de la admisión de Andorra en el Consejo de Europa (1995, 31,6 g de plata .925): conmemoración de un acto único, sin serie declarada en la ficha, y única pieza andorrana de las dos colecciones. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
+      "numista_type_id": 90456,
+      "reason": "20 Kopeks de Nicolás II sin marca de ceca (1915-1917, 3,6 g de plata .500): moneda de circulación del Imperio ruso acuñada en Petrogrado, un tipo de tres años del que el padre tiene el 1916, y el mismo límite que deja fuera al Kennedy y al 5 Deutsche Mark. Su ficha no declara serie, y el Imperio ruso ya tiene cuatro catálogos versionados en el repo —los 3 rublos de monumentos, los 2 rublos de personalidades y el 500 aniversario del Estado ruso unido— que son de la Federación y no de esta moneda ni de este patrón. Palabras del padre el 6 de agosto de 2026, preguntado si estas piezas antiguas de circulación eran recuerdos sueltos o secuencias que persigue: «las demás las compré por baratas, podría venderlas»."
+    },
+    {
+      "numista_type_id": 98259,
+      "reason": "1000 Dobras de las Olimpiadas y el Descubrimiento de América (Santo Tomé y Príncipe, 1990, 20 g de plata .999): el padre tiene **tres piezas del mismo tipo**, que es un lote y no una colección —tres iguales no llenan tres casillas—. Sin serie en su ficha, y única pieza del emisor en las dos colecciones. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
     },
     {
       "numista_type_id": 131809,
@@ -51,8 +107,16 @@
       "reason": "Medalla «1200 Jahre Münzgeschichte» de 2002 (20 g de plata .999): una medalla no tiene emisor que declare programa ni serie detrás, y las medallas son filtro y no sección desde #18. Sin serie no hay casilla que rellenar."
     },
     {
+      "numista_type_id": 277960,
+      "reason": "30 Francos del 450 aniversario de Galileo (República Democrática del Congo, 2014, 31,1 g de plata .999): una onza temática de emisor de conveniencia, sin serie declarada en su ficha, y única pieza congoleña de las dos colecciones. Es del género que el padre sí persigue —onzas de plata con tema— pero no de ninguna de las líneas que nombra. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
+    },
+    {
       "numista_type_id": 291255,
       "reason": "Denario de Ulpia Severina con reverso VENVS FELIX (270-275): mismo caso que el nummus de Licinio, un tipo imperial romano cuyo rango de años es un reinado y no una serie de emisiones. Ninguna de las dos colecciones persigue moneda romana."
+    },
+    {
+      "numista_type_id": 387614,
+      "reason": "25 Dollars del 125 aniversario de la invención del baloncesto (Canadá, 2016, 30,75 g de plata .9999): conmemoración de un aniversario, sin serie en su ficha. Los dos catálogos canadienses versionados —el dólar de plata .800 y el dólar conmemorativo de plata .500— son otros patrones y no la reclaman. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
     },
     {
       "numista_type_id": 451057,

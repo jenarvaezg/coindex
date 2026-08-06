@@ -118,8 +118,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the sixty-six shipped catalogs would print as one hundred and eleven pages`() {
-        assertEquals(111, catalogs.sumOf { section(it).pages(paper) })
+    fun `the sixty-eight shipped catalogs would print as one hundred and thirteen pages`() {
+        assertEquals(113, catalogs.sumOf { section(it).pages(paper) })
     }
 
     /**
@@ -136,19 +136,20 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, paper)
 
-        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 44 caben de una, y la más larga son
+        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 46 caben de una, y la más larga son
         // las nueve del Libro Rojo de Rusia. Los 2 € conmemorativos de España entran en la columna
         // de dos páginas: 29 casillas de 25,75 mm, que es la moneda más pequeña con lámina propia
-        // después de los reales y los medios de Venezuela.
+        // después de los reales y los medios de Venezuela. Las dos láminas de la tanda del padre
+        // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una.
         assertEquals(
-            mapOf(1 to 44, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            mapOf(1 to 46, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
                 .eachCount()
                 .toSortedMap(),
         )
-        assertEquals(111, pages.size)
+        assertEquals(113, pages.size)
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.
@@ -184,17 +185,24 @@ class NotebookPagesTest {
      * puesto», and «compartir página» is #232, which has not landed. What is measured here is this
      * switch alone, on the notebook that exists — 104 pages with it off. When #232 lands, the two
      * together are what its own recount will say.
+     *
+     * **The recount below is not the 112 of #234 any more, and it was already stale in main**: this
+     * test was red before the #216 batch of 6 August 2026 touched it — 119 pages against the 112
+     * pinned — because the shelf grew from the sixty plates it was measured on to sixty-six without
+     * anyone re-running it, and the histogram had kept sixty rows all along. What the eight pages of
+     * the title claim is the *difference*, and that is what still holds: 113 pages with the switch
+     * off, 121 with it on.
      */
     @Test
-    fun `the qr costs eight pages of the sixty shipped catalogs`() {
+    fun `the qr costs eight pages of the shipped catalogs`() {
         val sections = catalogs.map(::section)
 
         val pages = printPages(sections, coded)
 
-        assertEquals(112, pages.size)
+        assertEquals(121, pages.size)
         // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
         assertEquals(
-            mapOf(1 to 35, 2 to 15, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
+            mapOf(1 to 42, 2 to 16, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
