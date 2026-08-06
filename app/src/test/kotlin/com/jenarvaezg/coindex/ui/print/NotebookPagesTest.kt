@@ -134,8 +134,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the seventy-two shipped catalogs would print as one hundred and seventeen pages`() {
-        assertEquals(117, catalogs.sumOf { section(it).pages(paper) })
+    fun `the seventy-three shipped catalogs would print as one hundred and eighteen pages`() {
+        assertEquals(118, catalogs.sumOf { section(it).pages(paper) })
     }
 
     /**
@@ -159,14 +159,14 @@ class NotebookPagesTest {
         // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una, y también las
         // dos venezolanas de plata del #256: 40 mm de diámetro dan una rejilla de cuatro por tres.
         assertEquals(
-            mapOf(1 to 50, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            mapOf(1 to 51, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
                 .eachCount()
                 .toSortedMap(),
         )
-        assertEquals(117, pages.size)
+        assertEquals(118, pages.size)
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.
@@ -186,7 +186,7 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the QR costs in paper: **nine pages on the shelf of today** (117 → 126), which was eight
+     * What the QR costs in paper: **nine pages on the shelf of today** (118 → 127), which was eight
      * on the sixty plates #234 measured (104 → 112).
      *
      * The caption is a constant of the layout, so this is what the switch is: the code is 10 mm and
@@ -223,10 +223,10 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, coded)
 
-        assertEquals(126, pages.size)
+        assertEquals(127, pages.size)
         // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
         assertEquals(
-            mapOf(1 to 45, 2 to 17, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
+            mapOf(1 to 46, 2 to 17, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -294,8 +294,8 @@ class NotebookPagesTest {
      * asks for, and it is arithmetic done before anything is drawn: the height of the cell does not
      * move at all, because the second face is paid for in width or it is not paid for.
      *
-     * The ticket said 184 pages against 104 for sixty plates; these are the seventy-two that are
-     * shipped now, whose notebook of today is 117 and whose notebook of both faces is 201. Doubling
+     * The ticket said 184 pages against 104 for sixty plates; these are the seventy-three that are
+     * shipped now, whose notebook of today is 118 and whose notebook of both faces is 202. Doubling
      * is not exact —the 45,6 mm Lunar II went from three columns to one, so it more than doubles,
      * and a plate of two coins still fits on one page— so the measure is the measure.
      */
@@ -305,9 +305,9 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, doubled)
 
-        assertEquals(201, pages.size)
+        assertEquals(202, pages.size)
         assertEquals(
-            mapOf(1 to 28, 2 to 21, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
+            mapOf(1 to 29, 2 to 21, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -331,10 +331,10 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the shelf costs with the photographs off: 117 pages become 78, and 72 of them are floor.
+     * What the shelf costs with the photographs off: 118 pages become 79, and 73 of them are floor.
      *
      * A cell stops being a coin and becomes a line, so a plate of ounces goes from twelve cells a
-     * page to forty-six and **sixty-eight of the seventy-two plates now fit on one page**. Four spill: the
+     * page to forty-six and **sixty-nine of the seventy-three plates now fit on one page**. Four spill: the
      * two Russian plates of 104 members — the personalities and the architectural monuments — over
      * three pages each, and the Red Book (72) and the Spanish provincial capitals (52) over two.
      *
@@ -342,19 +342,19 @@ class NotebookPagesTest {
      *
      * The first is the floor, and it is the larger. Those 19 are the members divided by a page of
      * lines, and that arithmetic ignores the constraint #228 names in its own text: «una sección nunca
-     * comparte página». Seventy-two plates are seventy-two pages before a single member is printed,
+     * comparte página». Seventy-three plates are seventy-three pages before a single member is printed,
      * and lowering that floor is exactly and only what «compartir página» (#232) is for. It is the same
      * correction #234 had to make — its «73 → 91» was measured with sharing on too.
      *
      * The second is ours, and smaller: the line is 7 mm but its **pitch is 10**, because the gutter
      * that separates two columns is the one that separates two rows. That is 46 members a page where
      * the ticket's arithmetic assumed about 57. A row gutter of its own would put four more lines in
-     * each column and take this notebook from 78 pages to 75 — three pages, for a field in the
+     * each column and take this notebook from 79 pages to 76 — three pages, for a field in the
      * geometry that no other switch needs, so the gutter stays one number.
      *
      * So what this switch is worth is measured on the notebook that exists: **39 pages saved, and 6
      * above the floor left for #232 to take.** What it is not worth is 19: the shipped plates hold
-     * 1 173 members, which is some 26 pages of *content* at 46 a page, and #232 as #228 scopes it is
+     * 1 177 members, which is some 26 pages of *content* at 46 a page, and #232 as #228 scopes it is
      * «dos láminas en un folio» — a floor near 36, not 19. That recount is its ticket's to make.
      */
     @Test
@@ -363,11 +363,11 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, listed)
 
-        // Los 1 173 miembros del estante, que son las ~26 páginas de contenido que el suelo esconde.
-        assertEquals(1_173, catalogs.sumOf { it.members.size })
-        assertEquals(78, pages.size)
+        // Los 1 177 miembros del estante, que son las ~26 páginas de contenido que el suelo esconde.
+        assertEquals(1_177, catalogs.sumOf { it.members.size })
+        assertEquals(79, pages.size)
         assertEquals(
-            mapOf(1 to 68, 2 to 2, 3 to 2),
+            mapOf(1 to 69, 2 to 2, 3 to 2),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
@@ -439,7 +439,7 @@ class NotebookPagesTest {
         // Y el mensaje de cierre no puede hablar de fotos que no llegaron, porque no hay ninguna
         // entre la que contarlas: el denominador es cero y la resta también.
         assertEquals(
-            "Cuaderno completo exportado · 78 páginas",
+            "Cuaderno completo exportado · 79 páginas",
             notebookExportMessage(pages.size, expectedPhotos = 0, loadedPhotos = 0),
         )
     }

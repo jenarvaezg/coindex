@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "historia-del-real",
+  "name": "Historia del real · el dólar de plata español, el thaler que circuló a su lado y las dos monedas que salieron de perforarlo en Nueva Gales del Sur",
+  "short_name": "Historia del real",
+  "issuer_code": "mexique",
+  "family": "Historia del real",
+  "weight_millioz": 870,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Cierra porque su asunto está cerrado y ninguna ceca puede añadirle una casilla. Los 8 reales de Carlos IV acaban en 1808 y Fernando VII es otro tipo (N#18852, `max_year` 1808). El holey dollar y el dump son la acuñación de un solo año —1813— y las dos fichas declaran «Demonetized 1829»: la colonia los retiró y nunca volvió a perforar un duro. Y el thaler de María Teresa, que la Casa de la Moneda de Viena sigue vendiendo, lo hace con la fecha congelada en 1780, así que su acuñación de este año es la misma casilla que la de 1780 y no una nueva —el mismo motivo por el que el ADR 0020 deja fuera de un date run anual «una reacuñación con la fecha congelada». Lo que sí puede crecer es la lista, si el padre decide que otra pieza entra en el tema; eso es una decisión de curación y no una emisión, que es lo que `series_status` declara.",
+  "source": "https://en.numista.com/catalogue/pieces19811.html",
+  "source_note": "La frontera la pone el padre y no una fuente externa, con sus palabras del 6 de agosto de 2026 a través de Jose (#257): «el Thaler es para mostrar con el real bajo el tema historia del real, me falta allí un holey dollar (y el dump) para completar». Preguntado ese mismo día por si el tema incluía 8 reales de otros reyes, otras cecas americanas o los resellos, contestó que son sólo esas cuatro, así que el denominador es cuatro y es suyo. Numista no agrupa nada de esto: ninguno de los cuatro tipos trae `series`, y los emisores son tres —el Imperio austríaco, México y Nueva Gales del Sur—, de modo que ni una serie ni una familia técnica podían proponer esta lista. Lo que sí sostiene la fuente es la operación de 1813 que une las cuatro piezas, y lo dice la propia ficha del dump con sus palabras: «In 1813 Governor Lachlan Macquarie overcame an acute shortage of currency by arranging for the purchase of Spanish silver dollars, having the centres punched out and therein creating two new coins - the 'Holey Dollar' (valued at five shillings) and the 'Dump' (valued at one shilling and three pence)». Las dos fichas de 1813 se citan mutuamente en su «See also» (N#19811 ↔ N#17316), y la aritmética cuadra: 21,035 g del anillo más 5,619 g del disco son 26,65 g, que es el duro español del que salieron. El thaler entra por lo que dice su propia ficha —«Junto con la moneda española de 8 reales, fue la base del dólar de plata adoptado por los entonces incipientes Estados Unidos en virtud de la Ley de la Casa de la Moneda de 1792»—, que es la razón por la que él lo muestra al lado del real. Ninguna de las dos colecciones tiene el holey dollar ni el dump, y son piezas caras: la propia ficha del dump recoge tres martillos de Heritage Auctions —11.455,20 € por una VF30 el 15 de agosto de 2019, 3.332,42 € por una F agujereada el 20 de noviembre de 2022 y 1.353,80 € por una G6 el 4 de noviembre de 2021—, así que el «me falta» de esta lámina es de los que tardan.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1780-thaler-maria-teresa",
+      "label": "Thaler de María Teresa",
+      "year": 1780,
+      "numista_type_id": 7393,
+      "issuer_code": "autriche-habsbourg",
+      "variant_note": "Se aparta del peso declarado a propósito: 28,0668 g de plata .833 contra los 27,07 g del real que da la clave a esta lámina, porque el thaler sigue la norma Conventionsthaler de 1750 —un décimo de marco de Viena— y el duro español la ley de 1772. Son dos patrones que compitieron, y eso es precisamente el tema. La fecha va congelada en 1780 desde la muerte de María Teresa, así que una pieza de cualquier año llena esta casilla; la del padre es una reacuñación proof (emisión 139570, «Restrike; Proof»), y la lámina no declara acabado para no partirla de la de circulación."
+    },
+    {
+      "id": "1791-8-reales-carlos-iv",
+      "label": "8 reales de Carlos IV · México",
+      "year": 1791,
+      "numista_type_id": 18852,
+      "variant_note": "El real de a ocho que da nombre al tema y el peso a la lámina: 27,07 g de plata .896, la ceca de México, 1791-1808. La casilla es el tipo entero y no un año, porque lo que el tema pide es un duro de Carlos IV y no la secuencia por fechas —esa forma se le ofreció en el #242 en sus dos variantes, por año y por ensayador, y no sigue ninguna—. El año declarado es el primero del tipo y sirve de ancla: cualquier 8 reales de Carlos IV la llena. El padre tiene dos, el 1803 (FT) y el 1805 (TH)."
+    },
+    {
+      "id": "1813-holey-dollar",
+      "label": "Holey dollar · 5 chelines",
+      "year": 1813,
+      "numista_type_id": 19811,
+      "issuer_code": "new_south_wales",
+      "variant_note": "Se aparta del peso declarado porque es lo que queda del peso declarado: 21,035 g de plata .903 y 39 mm con un agujero redondo en medio, que es un duro español al que Nueva Gales del Sur le sacó el centro en 1813. Numista lo ficha con once números de Krause (KM# 2.1 a 2.15) por las variedades del punzón, y la lámina las mete todas en una casilla porque el tema pide un holey dollar, no la colección de variedades."
+    },
+    {
+      "id": "1813-dump",
+      "label": "Dump · 15 peniques",
+      "year": 1813,
+      "numista_type_id": 17316,
+      "issuer_code": "new_south_wales",
+      "variant_note": "La otra mitad de la misma operación y el otro extremo del peso: 5,619 g de plata .903 y 19 mm, el disco que salió del centro del duro, con valor de un chelín y tres peniques. Sus variedades también son varias en Krause (KM# 1.1 a 1.4, que Numista distingue por la separación del punzón y el tipo de mira) y comparten casilla por el mismo motivo que las del anillo."
+    }
+  ]
+}

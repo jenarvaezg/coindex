@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 72 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 73 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -234,10 +234,10 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
   ([#154](https://github.com/jenarvaezg/coindex/issues/154)).
 - **2 programas conmemorativos** (ADR 0022), que no son colecciones y no dan tarjeta: las series
   portuguesas de 1977 y de 1983, tres denominaciones cada una. El padre lee «1 de 3» en las dos.
-- **894 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
+- **911 fichas** en `data/numista-type-cache.json`. Curar un catálogo incluye sembrar las de
   sus miembros: un hueco solo se ve en el móvil que **no** tiene la moneda, así que es
   invisible para quien cura y `TypeCacheSeedTest` lo pone rojo.
-- **29 veredictos en `data/orphans.json`**. Los cinco primeros son de
+- **30 veredictos en `data/orphans.json`**. Los cinco primeros son de
   [#146](https://github.com/jenarvaezg/coindex/issues/146) —el Kennedy Half Dollar, las dos
   romanas, la medalla alemana de 2002 y el Pillar Dollar de 2025—; el repaso del
   [#216](https://github.com/jenarvaezg/coindex/issues/216) añadió las de circulación de plata que
@@ -245,7 +245,11 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
   Orwell, que muere de volumen, y el Dune, de calendario); el
   [#242](https://github.com/jenarvaezg/coindex/issues/242) las dos mexicanas del padre —el peso de
   plata de 1957-1967 y los 8 reales de Carlos IV—, escribibles las dos como date run y ninguna
-  perseguida; el [#255](https://github.com/jenarvaezg/coindex/issues/255) firmó de una sentada
+  perseguida, aunque de esas dos **sólo queda el peso**: el
+  [#257](https://github.com/jenarvaezg/coindex/issues/257) sacó los 8 reales del registro a
+  `historia-del-real`, y es la primera vez que un veredicto firmado se reabre —lo reabrió lo mismo
+  que lo firmó, la intención del padre, al describir un tema que la forma ofrecida en el #242 no
+  contemplaba; el [#255](https://github.com/jenarvaezg/coindex/issues/255) firmó de una sentada
   **dieciséis**, todas respuesta del padre a las cinco preguntas del #216 y todas con sus palabras
   dentro del motivo; y quedan **dos** venezolanas de las cinco que firmó el
   [#247](https://github.com/jenarvaezg/coindex/issues/247), porque el
