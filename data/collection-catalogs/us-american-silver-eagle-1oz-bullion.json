@@ -10,7 +10,9 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/pieces1493.html",
-  "updated_at": "2026-08-06",
+  "source_note": "El cuaderno imprime el anverso (#229), y aquí fue una decisión y no una lectura: las dos caras son la moneda. Gana la Libertad ambulante de Weinman, que es la imagen con la que se anuncia y se reconoce la pieza; el reverso es un águila heráldica con escudo, que es el patrón del que desconfía el criterio del ADR 0020 —el mismo que deja la sirena de Haití en el anverso—. Se paga un precio a la vista: las 42 casillas salen con el mismo dibujo, porque el rehub de 2021 no se aprecia en foto, y el corte Type 1 / Type 2 de 2021 —36 águilas heráldicas y 6 águilas posándose— deja de verse en la lámina. Es el precio correcto: el criterio dice que la cara no se elige por distinguir a las hermanas entre sí. Elegido por el coleccionista el 7 de agosto de 2026.",
+  "printed_side": "obverse",
+  "updated_at": "2026-08-07",
   "members": [
     {
       "id": "1986",
