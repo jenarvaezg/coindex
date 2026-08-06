@@ -13,6 +13,7 @@ import com.jenarvaezg.coindex.data.photos.DevicePrefetchConditions
 import com.jenarvaezg.coindex.data.photos.GonePhotographs
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.StoredGonePhotographs
+import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.CatalogAssets
@@ -51,11 +52,16 @@ class AppContainer(context: Context) {
         // repeated across them is only visible here, where both are loaded (#22).
         validateShortNamesAcross(catalogs, groupings)
         CoindexRepository(
-            database = database,
-            catalogs = catalogs,
-            groupings = groupings,
-            // A programme reaches no card, so it takes no part in the name check above (ADR 0022).
-            programmes = ProgrammeAssets.load(applicationContext.assets),
+            collectedItemDao = database.collectedItems(),
+            typeMetaDao = database.typeMeta(),
+            ownGroupingDao = database.ownGroupings(),
+            curation = Curation(
+                catalogs = catalogs,
+                groupings = groupings,
+                // A programme reaches no card, so it takes no part in the name check above
+                // (ADR 0022).
+                programmes = ProgrammeAssets.load(applicationContext.assets),
+            ),
         )
     }
 

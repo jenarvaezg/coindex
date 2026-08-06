@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
@@ -211,7 +212,7 @@ class NotebookPagesTest {
             ),
         )
 
-        val sections = notebookSections(CollectionState(), listOf(emptied), catalogs, emptyList())
+        val sections = notebookSections(CollectionState(), listOf(emptied), Curation(catalogs))
 
         assertEquals(1, sections.size)
         assertEquals("Bandeja del abuelo", sections.single().title)

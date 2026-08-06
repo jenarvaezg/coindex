@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.TypeMeta
@@ -117,22 +118,24 @@ class CoinRowTest {
     @Test
     fun `Coins says the country its card says`() {
         val rusas = CollectionState(
-            items = listOf(
-                CollectedItem(id = 1, quantity = 1, typeId = 500),
-                CollectedItem(id = 2, quantity = 1, typeId = 501),
-            ),
-            typeMeta = mapOf(
-                500 to TypeMeta(
-                    id = 500,
-                    displayTitle = "3 rublos del Libro Rojo",
-                    issuerCode = "russie",
-                    issuerName = "Federación de Rusia (1991-presente)",
+            AssembledCollection(
+                items = listOf(
+                    CollectedItem(id = 1, quantity = 1, typeId = 500),
+                    CollectedItem(id = 2, quantity = 1, typeId = 501),
                 ),
-                501 to TypeMeta(
-                    id = 501,
-                    displayTitle = "1 rublo soviético",
-                    issuerCode = "ancienne_urss",
-                    issuerName = "Unión Soviética",
+                typeMeta = mapOf(
+                    500 to TypeMeta(
+                        id = 500,
+                        displayTitle = "3 rublos del Libro Rojo",
+                        issuerCode = "russie",
+                        issuerName = "Federación de Rusia (1991-presente)",
+                    ),
+                    501 to TypeMeta(
+                        id = 501,
+                        displayTitle = "1 rublo soviético",
+                        issuerCode = "ancienne_urss",
+                        issuerName = "Unión Soviética",
+                    ),
                 ),
             ),
         )

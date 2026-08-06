@@ -3,9 +3,8 @@ package com.jenarvaezg.coindex.ui.print
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.resolvePlate
-import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
-import com.jenarvaezg.coindex.domain.CommemorativeProgramme
+import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.PiecesSubject
@@ -37,11 +36,10 @@ import com.jenarvaezg.coindex.ui.plateMemberStateLabel
 fun notebookSections(
     state: CollectionState,
     cards: List<IndexCard>,
-    catalogs: List<CollectionCatalog>,
-    programmes: List<CommemorativeProgramme>,
+    curation: Curation,
 ): List<PrintSection> = cards.map { card ->
     when (val destination = destinationOf(card)) {
-        is CardDestination.Plate -> plateSection(state, catalogs, programmes, destination.catalogId)
+        is CardDestination.Plate -> plateSection(state, curation, destination.catalogId)
             // A plate that will not resolve is not a reason to skip the card: its pieces are still
             // a collection, and the same fallback the screens have is the one the paper gets.
             ?: piecesSection(state, card)
@@ -51,11 +49,10 @@ fun notebookSections(
 
 private fun plateSection(
     state: CollectionState,
-    catalogs: List<CollectionCatalog>,
-    programmes: List<CommemorativeProgramme>,
+    curation: Curation,
     catalogId: String,
 ): PrintSection? {
-    val plate = resolvePlate(state, catalogs, catalogId, programmes) as? PlateResult.Available
+    val plate = resolvePlate(state, curation, catalogId) as? PlateResult.Available
         ?: return null
     val catalog = plate.catalog
     val common = plateCommonFacts(catalog.members)

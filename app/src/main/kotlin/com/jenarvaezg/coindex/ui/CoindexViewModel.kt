@@ -86,20 +86,27 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
-    /** Curated catalogs shipped with the app; constant for the process lifetime. */
-    val catalogs get() = container.repository.catalogs
+    /**
+     * The curated files shipped with the app; constant for the process lifetime (#217).
+     *
+     * Private on purpose: the screens ask this class for a name or a plate, and what they are
+     * given is the answer and not the files it came from.
+     */
+    private val curation get() = container.repository.curation
+
+    private val catalogs get() = curation.catalogs
 
     /**
      * The card-sized name of every curated collection (#22). The plate keeps the long [name] —
      * defining the editorial scope is its job — so this is the index's, and the ficha's.
      */
-    val titles get() = container.repository.titles
+    val titles get() = curation.titles
 
     /**
      * Every name a curated file claims, so the one name a collector types cannot repeat one
      * (ADR 0021 §4). Constant for the process lifetime, like the seeds it comes from.
      */
-    val curatedNames: Set<String> get() = container.repository.titles.curatedNames()
+    val curatedNames: Set<String> get() = curation.titles.curatedNames()
 
     /** The name of one curated catalog, for the masthead of its plate. */
     fun catalogName(catalogId: String?): String? =
@@ -142,7 +149,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
             val stored = container.credentials.credentials()
             _state.update { it.copy(onboarded = stored != null) }
             try {
-                container.typeCacheSeed.topUp(container.repository.curatedTypeIds())
+                container.typeCacheSeed.topUp(curation.curatedTypeIds())
                 // A cache seeded before version 3 has no thumbnails, and a cached type is never
                 // fetched again: without this the plate would keep asking for the heavy
                 // originals for ever on the phones that already have the collection (#67).
@@ -523,21 +530,11 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
      * — no table, no name, no second order (ADR 0021 §1).
      */
     fun notebookPages(cards: List<IndexCard>): List<PrintPage> = printPages(
-        notebookSections(
-            state = _state.value.collection,
-            cards = cards,
-            catalogs = container.repository.catalogs,
-            programmes = container.repository.programmes,
-        ),
+        notebookSections(state = _state.value.collection, cards = cards, curation = curation),
     )
 
     fun plate(catalogId: String): PlateResult =
-        resolvePlate(
-            _state.value.collection,
-            container.repository.catalogs,
-            catalogId,
-            container.repository.programmes,
-        )
+        resolvePlate(_state.value.collection, curation, catalogId)
 
     // The pair that used to answer «is there a catalog for this key, and would its plate open?»
     // left with the screen that asked: a card with a reachable plate now *is* the plate (ADR 0021

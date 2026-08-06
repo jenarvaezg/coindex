@@ -1,39 +1,38 @@
 package com.jenarvaezg.coindex.data
 
-import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.db.CollectedItemDao
+import com.jenarvaezg.coindex.data.db.OwnGroupingDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
+import com.jenarvaezg.coindex.data.db.TypeMetaDao
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
-import com.jenarvaezg.coindex.domain.CollectionIndex
-import com.jenarvaezg.coindex.domain.CollectionTitles
-import com.jenarvaezg.coindex.domain.CommemorativeProgramme
-import com.jenarvaezg.coindex.domain.CuratedGrouping
+import com.jenarvaezg.coindex.domain.CollectionSnapshot
+import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.DerivedCollection
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.ProgrammeStanding
-import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
-import com.jenarvaezg.coindex.domain.buildOwnGroupingViews
-import com.jenarvaezg.coindex.domain.deriveCollection
 import com.jenarvaezg.coindex.domain.programmeStandings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-/** Everything the screens need, derived from the local snapshot alone. */
+/**
+ * Everything the screens need, derived from the local snapshot alone.
+ *
+ * The collection itself is whatever [Curation.assemble] made of the snapshot, untouched: this type
+ * adds the two things that are the app's and not the domain's — the catalog photographs, which the
+ * domain stays free of, and when each ficha reached this phone. Wrapping rather than re-listing
+ * the eight derived fields is the point of #217: what the app reads comes out of one assembly, so
+ * the index and the inventory under it are no longer two things a caller could fill in separately.
+ */
 data class CollectionState(
-    val items: List<CollectedItem> = emptyList(),
-    /**
-     * The first level, as one list in one order (ADR 0021 §2, §6): curated catalogs, curated
-     * groupings and the collector's own boxes, already sorted by the index comparator.
-     */
-    val index: List<IndexCard> = emptyList(),
-    val derivedCollections: List<DerivedCollection> = emptyList(),
-    val unclassified: List<UnclassifiedItem> = emptyList(),
-    val typeMeta: Map<Int, TypeMeta> = emptyMap(),
+    val collection: AssembledCollection = AssembledCollection(),
     val images: Map<Int, TypeImages> = emptyMap(),
     /**
      * When each ficha was brought to this phone, so a card can say «hace ocho meses» instead of
@@ -42,15 +41,18 @@ data class CollectionState(
      * stamped with the day it arrived (ADR 0023).
      */
     val fichaFetchedAt: Map<Int, Long> = emptyMap(),
-    /** Catalogs the collector owns at least one official type of (plate reachability). */
-    val evidencedCatalogIds: Set<String> = emptySet(),
-    /** The pieces behind each derived collection, for the screen that opens one. */
-    val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
-    /** The collector's own boxes, which hold only pieces they own (ADR 0021 §11). */
-    val ownGroupings: List<OwnGroupingView> = emptyList(),
 ) {
+    val items: List<CollectedItem> get() = collection.items
+    val index: List<IndexCard> get() = collection.index
+    val derivedCollections: List<DerivedCollection> get() = collection.derivedCollections
+    val unclassified: List<UnclassifiedItem> get() = collection.unclassified
+    val typeMeta: TypeMetaIndex get() = collection.typeMeta
+    val evidencedCatalogIds: Set<String> get() = collection.evidencedCatalogIds
+    val itemsByKey: Map<VariantKey, List<CollectedItem>> get() = collection.itemsByKey
+    val ownGroupings: List<OwnGroupingView> get() = collection.ownGroupings
+
     fun derivedCollectionFor(key: VariantKey): DerivedCollection? =
-        derivedCollections.firstOrNull { it.key() == key }
+        collection.derivedCollectionFor(key)
 }
 
 /**
@@ -87,92 +89,60 @@ sealed interface PlateResult {
  * Collections are always derived, never stored, and since ADR 0021 §7 **nothing at all is stored
  * per card**: the only per-collector rows are the collection snapshot, the type cache, the boxes the
  * collector typed and the API call log.
+ *
+ * It takes the three DAOs it reads and not the database that holds them (#217). Room's
+ * `CoindexDatabase` is an abstract class with a generated subclass and no stand-in, so receiving
+ * it sealed the seam from the inside: the DAOs are interfaces with two implementations each —
+ * Room's in production and the fakes in `src/test` — which is what makes [observeState] testable.
  */
 class CoindexRepository(
-    private val database: CoindexDatabase,
-    val catalogs: List<CollectionCatalog>,
-    val groupings: List<CuratedGrouping> = emptyList(),
-    /** Commemorative programmes (ADR 0022): a second reading, never a card and never a family. */
-    val programmes: List<CommemorativeProgramme> = emptyList(),
+    private val collectedItemDao: CollectedItemDao,
+    private val typeMetaDao: TypeMetaDao,
+    private val ownGroupingDao: OwnGroupingDao,
+    /** The curated files, tied once, and the only door into the domain (#217). */
+    val curation: Curation,
 ) {
-    /** What each collection is called on a card (#22). Constant for the process lifetime. */
-    val titles: CollectionTitles = CollectionTitles(catalogs, groupings)
-
-    /** The one list of the first level, built from the same constant seeds (ADR 0021 §6). */
-    private val index: CollectionIndex = CollectionIndex(catalogs, groupings, titles)
-
     fun observeState(): Flow<CollectionState> = combine(
-        database.collectedItems().observeAll(),
-        database.typeMeta().observeAll(),
-        database.ownGroupings().observeAll(),
-        database.ownGroupings().observeMembers(),
+        collectedItemDao.observeAll(),
+        typeMetaDao.observeAll(),
+        ownGroupingDao.observeAll(),
+        ownGroupingDao.observeMembers(),
     ) { items, types, ownGroupings, ownMembers ->
-        val domainItems = items.map { it.toDomain() }
-        val typeMeta = types.associate { it.typeId to it.toDomain() }
-        val derivation = deriveCollection(domainItems, typeMeta, catalogs, groupings)
-        val boxes = buildOwnGroupingViews(
-            ownGroupings.map { it.toDomain(ownMembers) },
-            domainItems,
-        )
         CollectionState(
-            items = domainItems,
-            index = index.build(derivation, boxes, domainItems, typeMeta),
-            derivedCollections = derivation.derivedCollections,
-            unclassified = derivation.unclassified,
-            typeMeta = typeMeta,
+            collection = curation.assemble(
+                CollectionSnapshot(
+                    items = items.map { it.toDomain() },
+                    typeMeta = types.associate { it.typeId to it.toDomain() },
+                    ownGroupings = ownGroupings.map { it.toDomain(ownMembers) },
+                ),
+            ),
             images = types.associate { it.typeId to it.toImages() },
             fichaFetchedAt = types.associate { it.typeId to it.fetchedAt },
-            evidencedCatalogIds = catalogs
-                .filter { catalog -> catalog.isEvidencedBy(domainItems) }
-                .mapTo(mutableSetOf()) { it.id },
-            itemsByKey = derivation.itemsByKey,
-            ownGroupings = boxes,
         )
-    }
-
-    /**
-     * Every Numista type the curated files name, which is exactly the set a plate can be asked
-     * to draw and therefore the set the type cache has to hold.
-     *
-     * An announced member names none, and its `design_type_id` is not one either: that is the
-     * design in another variant, and putting it here would seed the cell with the wrong coin.
-     *
-     * A programme's members count too (ADR 0022), including the ones no catalog claims: the plate
-     * names the programme beside its rows, and the 25 escudos of 1977 and 1983 are exactly the
-     * coins a collector with «1 de 3» is missing.
-     */
-    fun curatedTypeIds(): Set<Int> = buildSet {
-        catalogs.forEach { catalog ->
-            catalog.members.forEach { member -> member.numistaTypeId?.let(::add) }
-        }
-        groupings.forEach { addAll(it.typeIds) }
-        programmes.forEach { programme ->
-            programme.members.forEach { member -> add(member.numistaTypeId) }
-        }
     }
 
     /** Creates one of the collector's own groupings over the types they picked (ADR 0013). */
     suspend fun createOwnGrouping(name: String, typeIds: List<Int>): Long =
-        database.ownGroupings().create(name, typeIds.distinct(), System.currentTimeMillis())
+        ownGroupingDao.create(name, typeIds.distinct(), System.currentTimeMillis())
 
     suspend fun addToOwnGrouping(groupingId: Long, typeIds: List<Int>) {
-        val dao = database.ownGroupings()
-        dao.addMembers(typeIds.distinct().map { OwnGroupingMemberEntity(groupingId, it) })
-        dao.touch(groupingId, System.currentTimeMillis())
+        ownGroupingDao.addMembers(
+            typeIds.distinct().map { OwnGroupingMemberEntity(groupingId, it) },
+        )
+        ownGroupingDao.touch(groupingId, System.currentTimeMillis())
     }
 
     suspend fun renameOwnGrouping(groupingId: Long, name: String) {
-        database.ownGroupings().rename(groupingId, name, System.currentTimeMillis())
+        ownGroupingDao.rename(groupingId, name, System.currentTimeMillis())
     }
 
     /** Drops one type from a grouping, and the grouping itself if it was the last one. */
     suspend fun removeFromOwnGrouping(groupingId: Long, typeId: Int) {
-        database.ownGroupings()
-            .removeMemberOrDelete(groupingId, typeId, System.currentTimeMillis())
+        ownGroupingDao.removeMemberOrDelete(groupingId, typeId, System.currentTimeMillis())
     }
 
     suspend fun deleteOwnGrouping(groupingId: Long) {
-        database.ownGroupings().delete(groupingId)
+        ownGroupingDao.delete(groupingId)
     }
 }
 
@@ -185,14 +155,17 @@ class CoindexRepository(
  * curation stayed invisible until they guessed they had to follow it.
  *
  * Evidence is by type even for date runs, so a plate stays open while years are still missing.
+ *
+ * Takes the whole [Curation] rather than a catalog list and a programme list threaded separately:
+ * both come from the same files, and passing them apart is how a caller ends up handing the
+ * repository two things the repository already had (#217).
  */
 fun resolvePlate(
     state: CollectionState,
-    catalogs: List<CollectionCatalog>,
+    curation: Curation,
     catalogId: String,
-    programmes: List<CommemorativeProgramme> = emptyList(),
 ): PlateResult {
-    val catalog = catalogs.firstOrNull { it.id == catalogId }
+    val catalog = curation.catalogs.firstOrNull { it.id == catalogId }
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
     return when {
         state.derivedCollectionFor(catalog.key()) == null ->
@@ -202,7 +175,7 @@ fun resolvePlate(
         else -> PlateResult.Available(
             catalog,
             buildCollectionCatalogAlbum(catalog, state.items),
-            programmeStandings(catalog, programmes, state.items),
+            programmeStandings(catalog, curation.programmes, state.items),
         )
     }
 }

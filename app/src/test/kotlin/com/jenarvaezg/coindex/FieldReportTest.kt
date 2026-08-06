@@ -4,7 +4,6 @@ import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.GroupingFiles
 import com.jenarvaezg.coindex.data.ProgrammeFiles
-import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
@@ -12,22 +11,17 @@ import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.data.toEntity
 import com.jenarvaezg.coindex.data.toImages
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionDerivation
-import com.jenarvaezg.coindex.domain.CollectionIndex
-import com.jenarvaezg.coindex.domain.CollectionTitles
-import com.jenarvaezg.coindex.domain.CommemorativeProgramme
-import com.jenarvaezg.coindex.domain.CuratedGrouping
+import com.jenarvaezg.coindex.domain.CollectionSnapshot
+import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.GroupingSeeds
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.ProgrammeSeeds
-import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
-import com.jenarvaezg.coindex.domain.deriveCollection
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printPages
 import java.io.File
@@ -43,10 +37,14 @@ import org.junit.Assume.assumeTrue
  * Prints what the app would show for a real collection snapshot, run through the shipped domain.
  *
  * A field session used to mean transcribing «Sin clasificar» card by card off a phone screen.
- * That answers slowly and, worse, approximately: only [deriveCollection] knows the family
+ * That answers slowly and, worse, approximately: only [Curation.assemble] knows the family
  * precedence of ADR 0012 and ADR 0013, the weight normalization against curated weights, and
  * the inferred finish. A listing rebuilt by hand — or reimplemented in a script — reports
  * orphans the app does not have, which is the one error this project cannot afford.
+ *
+ * It calls that assembly rather than reproducing it (#217). This file used to rebuild the body of
+ * `observeState()` line by line, so the report ordered its index with a second implementation of
+ * the app's and nothing guaranteed the two stayed in step.
  *
  * Inert without `COINDEX_FIELD_SNAPSHOT`, so the suite stays green and offline for everyone
  * else. Point it at a directory holding a `collected_items.json` captured by
@@ -82,59 +80,28 @@ class FieldReportTest {
         val items = readItems(File(directory, "collected_items.json"))
         val types = readTypeEntities(System.getenv(TYPES_VARIABLE))
         val typeMeta = types.associate { it.typeId to it.toDomain() }
-        val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
-        val groupings = GroupingSeeds.parseAll(GroupingFiles.all())
-        val programmes = ProgrammeSeeds.parseAll(ProgrammeFiles.all())
-
-        val derivation = deriveCollection(items, typeMeta, catalogs, groupings)
-        val index = CollectionIndex(catalogs, groupings, CollectionTitles(catalogs, groupings))
-            // Sin base de datos no hay cajas propias: lo que el informe ordena es lo que sale de
-            // los ficheros y del inventario, que es la mitad medible desde una captura.
-            .build(derivation, emptyList(), items, typeMeta)
-
-        println(header(directory, items, typeMeta, catalogs, groupings))
-        println(indexReport(index, derivation))
-        println(
-            notebookReport(
-                state(
-                    items = items,
-                    typeMeta = typeMeta,
-                    images = types.associate { it.typeId to it.toImages() },
-                    derivation = derivation,
-                    index = index,
-                    catalogs = catalogs,
-                ),
-                catalogs,
-                programmes,
-            ),
+        val curation = Curation(
+            catalogs = CatalogSeeds.parseAll(CatalogFiles.all()),
+            groupings = GroupingSeeds.parseAll(GroupingFiles.all()),
+            programmes = ProgrammeSeeds.parseAll(ProgrammeFiles.all()),
         )
-        println(unclassifiedReport(derivation.unclassified, typeMeta))
+
+        // Sin base de datos no hay cajas propias: lo que el informe ordena es lo que sale de los
+        // ficheros y del inventario, que es la mitad medible desde una captura. Lo demás es el
+        // mismo ensamblaje que corre en el móvil, sin una segunda versión aquí.
+        val collection = curation.assemble(CollectionSnapshot(items = items, typeMeta = typeMeta))
+        val state = CollectionState(
+            collection = collection,
+            images = types.associate { it.typeId to it.toImages() },
+            fichaFetchedAt = types.associate { it.typeId to it.fetchedAt },
+        )
+
+        println(header(directory, curation, collection))
+        println(indexReport(collection))
+        println(notebookReport(state, curation))
+        println(unclassifiedReport(collection.unclassified, typeMeta))
         println(unpublishedReport(items, typeMeta))
     }
-
-    /**
-     * The state the screens read, rebuilt from the snapshot: what a phone would have after a sync,
-     * minus the boxes the collector typed, which live only on the device.
-     */
-    private fun state(
-        items: List<CollectedItem>,
-        typeMeta: TypeMetaIndex,
-        images: Map<Int, TypeImages>,
-        derivation: CollectionDerivation,
-        index: List<IndexCard>,
-        catalogs: List<CollectionCatalog>,
-    ) = CollectionState(
-        items = items,
-        index = index,
-        derivedCollections = derivation.derivedCollections,
-        unclassified = derivation.unclassified,
-        typeMeta = typeMeta,
-        images = images,
-        evidencedCatalogIds = catalogs
-            .filter { catalog -> catalog.isEvidencedBy(items) }
-            .mapTo(mutableSetOf()) { it.id },
-        itemsByKey = derivation.itemsByKey,
-    )
 
     /**
      * How long the printed notebook of #169 comes out for this collection, card by card.
@@ -144,12 +111,8 @@ class FieldReportTest {
      * pieces instead of a hundred and twenty-one empty slots. Fifty-six catalogs would be a
      * hundred and one pages (`NotebookPagesTest`); a real collection is not the shelf.
      */
-    private fun notebookReport(
-        state: CollectionState,
-        catalogs: List<CollectionCatalog>,
-        programmes: List<CommemorativeProgramme>,
-    ): String = buildString {
-        val sections = notebookSections(state, state.index, catalogs, programmes)
+    private fun notebookReport(state: CollectionState, curation: Curation): String = buildString {
+        val sections = notebookSections(state, state.index, curation)
         val pages = printPages(sections)
         appendLine()
         appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
@@ -208,17 +171,19 @@ class FieldReportTest {
 
     private fun header(
         directory: File,
-        items: List<CollectedItem>,
-        typeMeta: TypeMetaIndex,
-        catalogs: List<CollectionCatalog>,
-        groupings: List<CuratedGrouping>,
+        curation: Curation,
+        collection: AssembledCollection,
     ): String = buildString {
+        val items = collection.items
         appendLine("== INFORME DE CAMPO: ${directory.name} ==")
         appendLine("filas: ${items.size}")
         appendLine("piezas: ${items.sumOf { it.quantity }}")
         appendLine("tipos distintos: ${items.map { it.typeId }.distinct().size}")
-        appendLine("fichas de tipo disponibles: ${typeMeta.size}")
-        appendLine("catálogos: ${catalogs.size} · agrupaciones curadas: ${groupings.size}")
+        appendLine("fichas de tipo disponibles: ${collection.typeMeta.size}")
+        appendLine(
+            "catálogos: ${curation.catalogs.size} · " +
+                "agrupaciones curadas: ${curation.groupings.size}",
+        )
     }
 
     /**
@@ -231,25 +196,23 @@ class FieldReportTest {
      * nobody's phone has. It is also the only place the whole order is measurable at once — 58 cards
      * against a real inventory, where the emulator shows the first two.
      */
-    private fun indexReport(
-        index: List<IndexCard>,
-        derivation: CollectionDerivation,
-    ): String = buildString {
+    private fun indexReport(collection: AssembledCollection): String = buildString {
+        val index = collection.index
         appendLine()
         appendLine("== ÍNDICE DE COLECCIONES (${index.size}) ==")
         for ((position, card) in index.withIndex()) {
-            val collection = (card as? IndexCard.Derived)?.collection
+            val derived = (card as? IndexCard.Derived)?.collection
             val ratio = card.coverage
                 ?.let { "${it.owned}/${it.issued}" }
                 ?: "sin lista de emisiones"
             appendLine(
                 "${position + 1}. $ratio | ${card.name} | ${card.issuer ?: "—"} | " +
-                    "${weightLabel(collection?.weightMillioz)} | " +
-                    "${collection?.finish?.name?.lowercase() ?: "—"} | " +
+                    "${weightLabel(derived?.weightMillioz)} | " +
+                    "${derived?.finish?.name?.lowercase() ?: "—"} | " +
                     "${card.distinctTypes} tipos, ${card.quantity} piezas",
             )
-            if (card.coverage == null && collection != null) {
-                val types = derivation.itemsByKey[collection.key()].orEmpty()
+            if (card.coverage == null && derived != null) {
+                val types = collection.itemsByKey[derived.key()].orEmpty()
                     .map { it.typeId }
                     .distinct()
                     .sorted()

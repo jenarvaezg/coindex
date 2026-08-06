@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.DerivedCollection
@@ -9,6 +10,7 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.domain.VariantKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -31,6 +33,10 @@ class PiecesSubjectTest {
         distinctTypes = 2,
         quantity = 3,
     )
+
+    /** A state holding only the pieces of one key, which is all this screen ever reads. */
+    private fun state(vararg pieces: Pair<VariantKey, List<CollectedItem>>) =
+        CollectionState(AssembledCollection(itemsByKey = pieces.toMap()))
 
     private fun piece(id: Long, typeId: Int, year: Int?, title: String? = null) = CollectedItem(
         id = id,
@@ -60,7 +66,7 @@ class PiecesSubjectTest {
     @Test
     fun `a card without an issue list brings its pieces, its country and its variant`() {
         val pieces = listOf(piece(2, 100, 1996), piece(1, 101, 1994))
-        val state = CollectionState(itemsByKey = mapOf(francesas.key() to pieces))
+        val state = state(francesas.key() to pieces)
 
         val subject = piecesSubject(state, derivedCard())
 
@@ -98,7 +104,7 @@ class PiecesSubjectTest {
      */
     @Test
     fun `a card that counts a ratio keeps counting it inside`() {
-        val state = CollectionState(itemsByKey = mapOf(francesas.key() to listOf(piece(1, 100, 1996))))
+        val state = state(francesas.key() to listOf(piece(1, 100, 1996)))
 
         val subject = piecesSubject(state, derivedCard(coverage = CoverageRatio(0, 12)))
 
@@ -130,7 +136,7 @@ class PiecesSubjectTest {
             piece(2, 102, 1996, title = "A"),
             piece(1, 103, 1994),
         )
-        val state = CollectionState(itemsByKey = mapOf(francesas.key() to pieces))
+        val state = state(francesas.key() to pieces)
 
         val subject = piecesSubject(state, derivedCard())
 
@@ -144,7 +150,7 @@ class PiecesSubjectTest {
      */
     @Test
     fun `a route whose card is gone resolves to nothing rather than to an empty screen`() {
-        val state = CollectionState(index = listOf(derivedCard()))
+        val state = CollectionState(AssembledCollection(index = listOf(derivedCard())))
 
         assertNull(state.piecesCardFor(francesas.key().copy(weightMillioz = 500)))
         assertNull(state.piecesCardForBox(99))

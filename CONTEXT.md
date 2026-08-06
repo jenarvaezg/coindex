@@ -135,6 +135,20 @@ screen: red when the finding is rare, a report when it is routine (ADR 0021 §12
 `scripts/weight-deviations.py`; the year-blind rows need the inventory and belong to the field report.
 _Avoid_: Manual override, unclassified reason, in-app audit
 
+**Curation**:
+All the curated files that travel with the app taken together — collection catalogs, curated
+groupings and commemorative programmes — bound once and treated as one thing. It is what the
+snapshot is read **against**: the card names, the index order and the plates all come from it, and
+the assembly that turns a snapshot into what the screens show is the single entry to the domain
+(#217). Constant for the lifetime of the process, because the files ship inside the APK.
+_Avoid_: Seeds, catalogs, curated data
+
+**Snapshot**:
+What one phone holds of the collector right now, and the only input the curation is applied to: the
+inventory as it was last synced, the fichas cached for it, and the boxes the collector typed.
+Everything else is derived from it and nothing about it is stored per card (ADR 0021 §7).
+_Avoid_: State, local data, cache
+
 **Collection catalog**:
 A curated, sourced reference list of official members for one exact variant key.
 It remains separate from curated series, and it is what gives a collection its issue list.

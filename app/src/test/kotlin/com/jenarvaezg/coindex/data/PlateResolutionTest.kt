@@ -1,8 +1,10 @@
 package com.jenarvaezg.coindex.data
 
+import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.DerivedCollection
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.MemberStatus
@@ -25,6 +27,9 @@ import kotlin.test.assertIs
  * `src/test` trees came back empty, which is exactly why the condition is pinned here as it changes.
  */
 class PlateResolutionTest {
+    /** El único catálogo curado que ve esta prueba: la lámina se resuelve contra la curación. */
+    private val curation = Curation(listOf(SOUTHERN_CROSS))
+
     @Test
     fun `a curated catalog over pieces you own opens its plate with no gesture at all`() {
         val state = state(
@@ -32,7 +37,7 @@ class PlateResolutionTest {
             items = listOf(item(1, 2025)),
         )
 
-        val result = resolvePlate(state, listOf(SOUTHERN_CROSS), SOUTHERN_CROSS.id)
+        val result = resolvePlate(state, curation, SOUTHERN_CROSS.id)
 
         val available = assertIs<PlateResult.Available>(result)
         assertEquals(SOUTHERN_CROSS.id, available.catalog.id)
@@ -45,7 +50,7 @@ class PlateResolutionTest {
     fun `a catalog nobody shipped is said plainly rather than guessed at`() {
         val state = state(catalog = SOUTHERN_CROSS, items = listOf(item(1, 2025)))
 
-        val result = resolvePlate(state, listOf(SOUTHERN_CROSS), "un-catalogo-que-no-existe")
+        val result = resolvePlate(state, curation, "un-catalogo-que-no-existe")
 
         assertEquals(PlateResult.Unavailable(PlateUnavailable.UnknownCatalog), result)
     }
@@ -56,7 +61,7 @@ class PlateResolutionTest {
      */
     @Test
     fun `a variant you own nothing of is not a collection, so it has no plate`() {
-        val result = resolvePlate(CollectionState(), listOf(SOUTHERN_CROSS), SOUTHERN_CROSS.id)
+        val result = resolvePlate(CollectionState(), curation, SOUTHERN_CROSS.id)
 
         assertEquals(PlateResult.Unavailable(PlateUnavailable.NotACollection), result)
     }
@@ -69,7 +74,7 @@ class PlateResolutionTest {
     fun `a card with no official issue of the catalog still has no plate`() {
         val state = state(catalog = SOUTHERN_CROSS, items = listOf(item(1, typeId = 777_777)))
 
-        val result = resolvePlate(state, listOf(SOUTHERN_CROSS), SOUTHERN_CROSS.id)
+        val result = resolvePlate(state, curation, SOUTHERN_CROSS.id)
 
         assertEquals(PlateResult.Unavailable(PlateUnavailable.NoEvidence), result)
     }
@@ -86,7 +91,7 @@ class PlateResolutionTest {
             items = listOf(item(1, typeId = DESIGN_TYPE_2027)),
         )
 
-        val result = resolvePlate(state, listOf(SOUTHERN_CROSS), SOUTHERN_CROSS.id)
+        val result = resolvePlate(state, curation, SOUTHERN_CROSS.id)
 
         assertEquals(PlateResult.Unavailable(PlateUnavailable.NoEvidence), result)
     }
@@ -94,19 +99,25 @@ class PlateResolutionTest {
     private fun state(catalog: CollectionCatalog, items: List<CollectedItem>): CollectionState {
         val key = catalog.key()
         return CollectionState(
-            items = items,
-            derivedCollections = listOf(
-                DerivedCollection(
-                    family = key.family,
-                    weightMillioz = key.weightMillioz,
-                    finish = key.finish,
-                    metal = key.metal,
-                    distinctTypes = items.map { it.typeId }.distinct().size,
-                    quantity = items.sumOf { it.quantity },
+            AssembledCollection(
+                items = items,
+                derivedCollections = listOf(
+                    DerivedCollection(
+                        family = key.family,
+                        weightMillioz = key.weightMillioz,
+                        finish = key.finish,
+                        metal = key.metal,
+                        distinctTypes = items.map { it.typeId }.distinct().size,
+                        quantity = items.sumOf { it.quantity },
+                    ),
                 ),
+                evidencedCatalogIds = if (catalog.isEvidencedBy(items)) {
+                    setOf(catalog.id)
+                } else {
+                    emptySet()
+                },
+                itemsByKey = mapOf(key to items),
             ),
-            evidencedCatalogIds = if (catalog.isEvidencedBy(items)) setOf(catalog.id) else emptySet(),
-            itemsByKey = mapOf(key to items),
         )
     }
 
