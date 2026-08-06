@@ -36,10 +36,10 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * here is not confirming, it is **choosing** — and it lands in the same slot the progress card uses,
  * in the app's one visual language, rather than as the first bottom sheet in the app.
  *
- * A switch whose ticket has not landed is drawn, remembered and **disabled**, with the issue named
- * under it. The alternative was to leave it tickable and inert, which is the one thing a control must
- * never be: the notebook of today is what the defaults produce, and nothing here can quietly change
- * that until the ticket behind it says so.
+ * All five do something now (#233). While a ticket was outstanding its switch was drawn, remembered and
+ * **disabled**, with the issue named under it, because the one thing a control must never be is
+ * tickable and inert. What is left grey is what the configuration itself makes moot — «ambas caras» and
+ * «tamaño real» with the photographs off — and that one resolves the moment the coins come back.
  */
 @Composable
 fun ExportOptions(
@@ -58,11 +58,11 @@ fun ExportOptions(
                 val offered = options.offers(switch)
                 ToggleRow(
                     label = notebookSwitchLabel(switch),
-                    note = notebookSwitchNote(switch, offered),
+                    note = notebookSwitchNote(offered),
                     checked = options[switch],
-                    // Two reasons to be grey and one appearance: the ticket has not landed, or the
-                    // configuration has made the question moot. Both are said in the note.
-                    enabled = offered && switch.pending == null,
+                    // One reason left to be grey, and the note says it: the configuration has made
+                    // the question moot. «Pendiente · #233» went with the last switch to land.
+                    enabled = offered,
                     onCheckedChange = { on -> onChange(options.with(switch, on)) },
                 )
             }

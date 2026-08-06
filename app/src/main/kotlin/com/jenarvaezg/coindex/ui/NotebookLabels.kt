@@ -40,17 +40,14 @@ fun notebookSwitchLabel(switch: NotebookSwitch): String = when (switch) {
 /**
  * Why a switch is greyed out, or null where it is a live question.
  *
- * Two reasons and they read differently on purpose. **Pending** is about the app: the switch is drawn
- * and remembered but its ticket has not landed, and saying which one is what keeps a grey control
- * from reading as a bug. **Derived** is about the configuration the collector has built: with the
- * photographs off there is no face and no size left to negotiate, and that one resolves itself the
- * moment they turn the coins back on.
+ * **One reason left, and it is about the configuration the collector has built** (#233): with the
+ * photographs off there is no face and no size to negotiate, and that resolves itself the moment they
+ * turn the coins back on. The other reason was «Pendiente · #233» — a switch drawn and remembered
+ * before its ticket landed — and it went with the last of the five, because a note that can never be
+ * printed is a branch nobody can read on the sheet.
  */
-fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when {
-    !offered -> "Sin fotos no hay nada que ajustar"
-    switch.pending != null -> "Pendiente · #${switch.pending}"
-    else -> null
-}
+fun notebookSwitchNote(offered: Boolean): String? =
+    if (offered) null else "Sin fotos no hay nada que ajustar"
 
 /**
  * Where the export has got to, said in pages and in the name of what is being drawn.

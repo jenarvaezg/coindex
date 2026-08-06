@@ -11,11 +11,19 @@ import kotlin.math.roundToInt
  */
 
 /**
- * The diameter of a coin the page is not printing at its real size, as a number (#231).
+ * The diameter of a coin the page is not printing at its real size, as a number (#231, #233).
  *
  * A notebook of lines has no ruler and nothing at 1:1 to hold one against, so the measure that was
  * the whole point of #169 has to be **said** instead of shown — the collector at a fair still wants
- * to know whether the piece in the tray is the 38,6 mm one or the 40,9.
+ * to know whether the piece in the tray is the 38,6 mm one or the 40,9. A scaled album page is the
+ * other one that has to say it (#233), and it is the same sentence: what a ruler cannot be laid
+ * against is measured in words or it is not measured at all.
+ *
+ * On a page of coins it gets a **line of its own** at the foot of the caption, and it was printed the
+ * other way first: appended to the year it shared a line with «1977 · Numista 681», and an ellipsis
+ * eating the millimetres —«1977 · Numista 681 · 4…»— is a page that dropped the one thing it promised
+ * in place of the ruler. On a page of lines it closes the row instead, where the width runs left to
+ * right and there is nothing to stack it under.
  *
  * One decimal and a comma, because that is how Numista records it and how the collector says it. A
  * whole number of millimetres drops the decimal rather than printing «40,0 mm»: the zero would read

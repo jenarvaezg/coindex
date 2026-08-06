@@ -75,6 +75,12 @@ class NotebookPagesTest {
     /** Y compartiendo folio, que es el #232: la cabecera adelgaza y una lámina empieza donde otra acabó. */
     private val shared = printGeometry(NotebookOptions(sharePage = true))
 
+    /** Y al 60 % del diámetro, que es el #233: la moneda encoge y la regla se va del pie. */
+    private val scaled = printGeometry(NotebookOptions(actualSize = false))
+
+    /** Los dos interruptores del papel juntos, que es donde el #233 rinde de verdad. */
+    private val compact = printGeometry(NotebookOptions(actualSize = false, sharePage = true))
+
     /**
      * One catalog as it would go to paper: every member a cell, nothing owned yet.
      *
@@ -700,6 +706,90 @@ class NotebookPagesTest {
                 "un folio de ${page.blocks.size} láminas mide $used mm",
             )
         }
+    }
+
+    /**
+     * What the coins at three fifths are worth, which is **only half of it without #232** (#233).
+     *
+     * 118 folios become 84 on their own and **43 sharing them**, which is the number the ticket is
+     * really about: the floor of «una lámina, un folio» is seventy-three pages before a member is
+     * printed, so a switch that only makes cells smaller runs into it eleven pages later. Shrinking the
+     * coins and sharing the folio are the two levers that multiply — 80 pages become 43, and the album
+     * of 118 comes out as a catalogue of 43 — and neither had to learn about the other to do it.
+     *
+     * **Not the 73 → 34 of the ticket, and the shelf is why**: those were measured on the sixty curated
+     * plates whose notebook of today was 104. These are the seventy-three that are shipped now, whose
+     * notebook of today is 118 — the same correction #231, #232 and #234 each had to make, because a
+     * measured fact goes stale as the shelf grows. What holds is the shape: a little over a third of the
+     * paper, and the plate stops being the floor — 32 of the 43 folios carry more than one.
+     */
+    @Test
+    fun `scaling the coins halves the notebook, and halves it again on shared folios`() {
+        val sections = catalogs.map(::section)
+
+        val alone = printPages(sections, scaled)
+        val pages = printPages(sections, compact)
+
+        assertEquals(84, alone.size)
+        assertEquals(43, pages.size)
+        // Sola, la lámina sigue siendo el suelo: 65 de las 73 caben en un folio y no se ahorra más.
+        assertEquals(mapOf(1 to 65, 2 to 6, 3 to 1, 4 to 1), lengths(alone))
+        assertEquals(catalogs.size, alone.size - 11)
+        // Compartiendo, 94 trozos en 43 folios y 32 de ellos con más de una lámina.
+        assertEquals(mapOf(1 to 57, 2 to 13, 3 to 2, 5 to 1), lengths(pages))
+        assertEquals(94, pages.sumOf { it.blocks.size })
+        assertEquals(32, pages.count { it.blocks.size > 1 })
+        // Ninguna casilla se pierde ni se repite por encogerla.
+        assertEquals(
+            sections.flatMap { it.cells },
+            pages.flatMap { it.blocks }.flatMap { it.cells },
+        )
+        // Y ningún folio se sale del papel, sumado como lo sumaría una regla sobre la hoja impresa.
+        pages.forEach { page ->
+            val used = page.blocks.sumOf { it.heightMm.toDouble() }.toFloat() +
+                compact.blockGapMm * (page.blocks.size - 1)
+            assertTrue(
+                used <= compact.contentHeightMm + 0.01f,
+                "un folio de ${page.blocks.size} láminas mide $used mm",
+            )
+        }
+    }
+
+    /**
+     * The same, cell by cell: what shrinks is the circle and the columns are what it buys.
+     *
+     * The grid of a plate stops being fixed by its largest coin's **printed** size alone — the floor is
+     * still there, an eighteen-millimetre one — and the check the ticket asks for is that the small-coin
+     * plates are the ones that gain most: the Venezuelan medios were the reason the floor exists at all,
+     * and at three fifths they go from thirty cells a page to fifty-six.
+     *
+     * The real diameter survives all of it, on the grid and in the cell, because that is what a caption
+     * with no ruler under it has to print as a number.
+     */
+    @Test
+    fun `every plate keeps its real diameter and gains columns`() {
+        val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
+        val roubles = section(
+            catalogs.first { it.id == "outstanding-personalities-russia-2-roubles" },
+        )
+        val medios = section(catalogs.first { it.id == "venezuela-medios" })
+
+        // La onza: de doce casillas por página a veinticuatro, y el círculo de 40,9 sale a 24,5.
+        assertEquals(12, ounces.grid(paper).cellsPerPage)
+        assertEquals(24, ounces.grid(scaled).cellsPerPage)
+        assertEquals(4 to 3, ounces.grid(paper).columns to ounces.grid(paper).rows)
+        assertEquals(6 to 4, ounces.grid(scaled).columns to ounces.grid(scaled).rows)
+        assertEquals(40.9f, ounces.grid(scaled).diameterMm)
+        assertEquals(24.54f, ounces.grid(scaled).printedDiameterMm, 0.01f)
+        // Las rusas de 33 mm: de veinte a cuarenta, cinco columnas a ocho.
+        assertEquals(20, roubles.grid(paper).cellsPerPage)
+        assertEquals(40, roubles.grid(scaled).cellsPerPage)
+        // Y los medios venezolanos de 16 mm, que son los que el suelo de 28 mm estaba sosteniendo: la
+        // casilla es ahora el suelo nuevo de 18 y no la moneda, que sale a 9,6.
+        assertEquals(30, medios.grid(paper).cellsPerPage)
+        assertEquals(56, medios.grid(scaled).cellsPerPage)
+        assertEquals(18f, medios.grid(scaled).cellWidthMm)
+        assertEquals(9.6f, medios.grid(scaled).printedDiameterMm, 0.01f)
     }
 
     /**

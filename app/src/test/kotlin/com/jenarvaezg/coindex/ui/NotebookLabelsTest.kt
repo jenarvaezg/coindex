@@ -42,28 +42,15 @@ class NotebookLabelsTest {
     /**
      * Why a switch is grey, said on the spot rather than in a help screen.
      *
-     * Two reasons and they read differently on purpose: **pending** is about the app and names the
-     * ticket, so grey cannot be mistaken for broken; **derived** is about the configuration the
-     * collector built, and resolves itself the moment they turn the coins back on.
+     * **One reason left** (#233): the configuration the collector built made the question moot, and it
+     * resolves itself the moment they turn the coins back on. «Pendiente · #233» was the other one — a
+     * switch drawn and remembered before its ticket landed — and it went with the last of the five, so
+     * the note no longer needs to know *which* switch it is talking about.
      */
     @Test
-    fun `a greyed switch says which of the two reasons it is`() {
-        assertEquals(
-            "Pendiente · #233",
-            notebookSwitchNote(NotebookSwitch.ActualSize, offered = true),
-        )
-        // Y un interruptor que ya funciona no dice nada: «fotos» dejó de estar pendiente en el #231.
-        assertNull(notebookSwitchNote(NotebookSwitch.Photographs, offered = true))
-        assertEquals(
-            "Sin fotos no hay nada que ajustar",
-            notebookSwitchNote(NotebookSwitch.ActualSize, offered = false),
-        )
-        // The configuration wins over the ticket: with no coins on the page, «#233 has not landed»
-        // is not the answer to why «tamaño real» cannot be touched.
-        assertEquals(
-            notebookSwitchNote(NotebookSwitch.BothFaces, offered = false),
-            notebookSwitchNote(NotebookSwitch.ActualSize, offered = false),
-        )
+    fun `a greyed switch says the one reason left, and a live one says nothing`() {
+        assertEquals("Sin fotos no hay nada que ajustar", notebookSwitchNote(offered = false))
+        assertNull(notebookSwitchNote(offered = true))
     }
 
     @Test
