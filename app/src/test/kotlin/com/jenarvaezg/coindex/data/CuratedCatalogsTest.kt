@@ -452,11 +452,11 @@ class CuratedCatalogsTest {
      * privies. Ids from `/types/1493/issues` and `/types/298883/issues`, two calls (#91).
      *
      * La casilla de 2023 acepta además la proof 760576 (#216). Es la moneda que hay en la
-     * colección del padre, confirmada por él en la mano, y el criterio del curador es que una
-     * proof rellena una casilla bullion mientras que una bullion no rellenaría una proof. Aquí
-     * no duplica nada porque el eagle no tiene lámina proof hermana; donde sí la hay —Lunar
-     * Series III, Nautical de Ruanda— una sola moneda marcaría dos casillas, que es lo que el
-     * ADR 0019 impide, así que la excepción es de esta casilla y no una regla del dominio.
+     * colección del padre, confirmada por él en la mano, y la decisión es de esta casilla:
+     * proof, BU y coloreada son acabados distintos y ninguno se subsume en otro por regla.
+     * Lo que sostiene ésta es que el eagle no tiene lámina proof hermana, así que la pieza no
+     * marca ninguna otra casilla; donde sí la hay —Lunar Series III, Nautical de Ruanda— una
+     * sola moneda marcaría dos, que es lo que el ADR 0019 impide.
      */
     @Test
     fun `the american silver eagle is forty-two issue-qualified bullion years over two types`() {
