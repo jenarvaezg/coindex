@@ -11,7 +11,9 @@
   "series_status": "closed",
   "closed_note": "El tipo N#1885 solo se acuñó con las estrellas 66 a 70, entre 1966 y 1970; las 100 pesetas de plata no volvieron a emitirse.",
   "source": "https://en.numista.com/catalogue/pieces1885.html",
-  "updated_at": "2026-08-01",
+  "source_note": "El cuaderno imprime el anverso (#229). La lámina se llama «paquillos» por la cabeza de Franco, que es lo que el coleccionista reconoce en la moneda; el reverso son los cuarteles del escudo de España —castillo, león, palos, cadenas, granada y flor de lis—, que es heráldica de emisor y no la pieza. Las cinco casillas comparten el tipo N#1885, así que la cara declarada es la misma foto en todas y lo que las distingue es la estrella del pie de foto (#225).",
+  "printed_side": "obverse",
+  "updated_at": "2026-08-07",
   "members": [
     {
       "id": "estrella-66",

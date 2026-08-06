@@ -11,7 +11,9 @@
   "series_status": "closed",
   "closed_note": "La FNMT anunció una colección de diez piezas —ocho de 10 € en plata, una de 50 € en plata y una de 200 € en oro— y las ocho de 10 € salieron entre 2025 y 2026.",
   "source": "https://en.numista.com/catalogue/series.php?id=11467",
-  "updated_at": "2026-08-01",
+  "source_note": "El cuaderno imprime el anverso (#229). La prueba está en las etiquetas de las ocho casillas: Farragut, Gálvez, Córdova, Solano, Saavedra, Isabel I, el águila calva y el primer dólar americano están todos en el anverso, y el reverso lleva la escena que los acompaña —Pensacola, el Santísima Trinidad, Yorktown, el columnario—. La moneda es a quién conmemora, y esta lámina nombra a esa persona en cada casilla.",
+  "printed_side": "obverse",
+  "updated_at": "2026-08-07",
   "members": [
     {
       "id": "2025-first-american-dollar",

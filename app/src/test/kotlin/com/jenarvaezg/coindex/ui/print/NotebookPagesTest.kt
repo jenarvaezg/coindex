@@ -513,9 +513,10 @@ class NotebookPagesTest {
             notebookSections(state, assembled.index, curation, options).single().cells.first().faces
         }
 
-        // Una cara es el reverso y sólo el reverso, que es el cuaderno de hoy.
+        // Una cara es una y sólo una: la que la lámina declara —los paquillos imprimen el anverso
+        // desde el #229, y cuál sea es asunto del test de más abajo y no de éste—.
         assertEquals(
-            listOf(CoinPhoto(thumbnail = "reverso-180.jpg")),
+            listOf(CoinPhoto(thumbnail = "anverso-180.jpg")),
             faces(photographed, NotebookOptions()),
         )
         // Dos son el anverso y después el reverso, en ese orden: es como se lee una ficha.
@@ -567,10 +568,13 @@ class NotebookPagesTest {
             }
         }
 
-        // Sin declaración, el reverso: la cabeza de Franco se queda en la app, como hoy.
+        // Sin declaración, el reverso. Los paquillos ya no son una lámina callada —el #229 les
+        // declaró el anverso, que es la cabeza de Franco—, así que el silencio se escribe aquí con
+        // el valor que el silencio significa; que un fichero sin el campo se lea así lo fija
+        // `FinishInferenceTest`.
         assertEquals(
             listOf(CoinPhoto(thumbnail = "reverso-180.jpg")),
-            cellsOf(catalogs, NotebookOptions()).first().faces,
+            cellsOf(declaring(PrintedSide.Reverse), NotebookOptions()).first().faces,
         )
         // Declarándolo, el anverso, y en **todas** las casillas de la lámina: la excepción es de la
         // lámina entera y no de un miembro, así que aquí no hay dos criterios que puedan discrepar.
@@ -580,10 +584,11 @@ class NotebookPagesTest {
             obverse.all { it.faces == listOf(CoinPhoto(thumbnail = "anverso-180.jpg")) },
             "una casilla de la lámina ha impreso otra cara que sus hermanas",
         )
-        // Y declarar el reverso es escribir lo que ya pasaba, byte a byte.
+        // Y lo que sale al papel es lo que el fichero curado declara, no lo que este test simule:
+        // la lámina que viaja en el APK imprime el anverso.
         assertEquals(
-            cellsOf(catalogs, NotebookOptions()),
-            cellsOf(declaring(PrintedSide.Reverse), NotebookOptions()),
+            listOf(CoinPhoto(thumbnail = "anverso-180.jpg")),
+            cellsOf(catalogs, NotebookOptions()).first().faces,
         )
 
         // Con «ambas caras» la declaración no pinta nada: se imprimen las dos, anverso y después
@@ -596,7 +601,10 @@ class NotebookPagesTest {
             ),
             cellsOf(declaring(PrintedSide.Obverse), both).first().faces,
         )
-        assertEquals(cellsOf(catalogs, both), cellsOf(declaring(PrintedSide.Obverse), both))
+        assertEquals(
+            cellsOf(declaring(PrintedSide.Reverse), both),
+            cellsOf(declaring(PrintedSide.Obverse), both),
+        )
 
         // Y la cola de descargas es la de la cara declarada: una sola foto, la que se dibuja.
         val plate = PrintSection(
