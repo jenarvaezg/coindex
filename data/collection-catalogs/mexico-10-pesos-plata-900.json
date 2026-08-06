@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "id": "mexico-10-pesos-plata-900",
+  "name": "10 Pesos de plata .900 · México 1955-1960 · 28,888 g",
+  "short_name": "10 Pesos de plata .900",
+  "issuer_code": "mexique",
+  "family": "10 Pesos de plata .900",
+  "weight_millioz": 929,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El de 1960 es el último 10 pesos de plata. Los ensayos de 1972 y 1973 —en plata .720, .500 y .300— se quedaron en pattern y nunca se emitieron, y el 10 pesos que llega en 1974, el «tuerca», ya es de cuproníquel.",
+  "source": "https://en.numista.com/catalogue/pieces18816.html",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1955",
+      "label": "1955 · Hidalgo",
+      "year": 1955,
+      "numista_type_id": 18816
+    },
+    {
+      "id": "1956",
+      "label": "1956 · Hidalgo",
+      "year": 1956,
+      "numista_type_id": 18816
+    },
+    {
+      "id": "1957-constitucion",
+      "label": "1957 · centenario de la Constitución",
+      "year": 1957,
+      "numista_type_id": 18817
+    },
+    {
+      "id": "1960-independencia",
+      "label": "1960 · 150 años de la Independencia",
+      "year": 1960,
+      "numista_type_id": 14754
+    }
+  ],
+  "source_note": "Numista no agrupa estos tres tipos, y lo que los reúne es el patrón físico leído en sus tres fichas: 28,888 g, plata .900 y 40 mm los tres. Enumerados los 10 pesos del emisor con la API, no hay ningún otro tipo de plata de ese patrón —los de 1870-1905 y el de 1905-1996 son las de oro— y los patterns quedan fuera porque no se emitieron. La casilla escasa es la de 1955, con 584.500 piezas frente a los 3.535.000 del 1956. El tipo del Hidalgo hace dos casillas porque abarca dos años, que es lo que un date run permite y lo que ninguna otra forma de fichero permitiría."
+}
