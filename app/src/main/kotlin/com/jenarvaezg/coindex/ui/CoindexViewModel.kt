@@ -355,7 +355,7 @@ class CoindexViewModel(
     }
 
     /**
-     * Asks Numista again for one type's ficha (#185, ADR 0023).
+     * Asks Numista again for one type's ficha (#185, ADR 0025).
      *
      * One call, and the collector asked for it, so unlike the update check every outcome is spoken:
      * what changed, that nothing did, or why it could not be asked. The corrected ficha reaches the

@@ -27,7 +27,7 @@ class LabelsTest {
     }
 
     /**
-     * El metal solo se nombra cuando no es plata (#40): decirlo en las 73 tarjetas de plata que
+     * El metal solo se nombra cuando no es plata (#40): decirlo en todas las tarjetas de plata que
      * miden las dos colecciones alargaría cada línea para no distinguir nada, y la onza de oro
      * —la que obligó a meterlo en la clave— es justo la que necesita la palabra.
      */

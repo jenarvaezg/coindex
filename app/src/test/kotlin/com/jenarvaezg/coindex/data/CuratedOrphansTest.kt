@@ -28,98 +28,22 @@ class CuratedOrphansTest {
     }
 
     /**
-     * The five verdicts signed by #146 §3, plus the silver 5 Deutsche Mark of #216.
+     * Cómo se firma un veredicto, que es lo único de él que el código puede vigilar.
      *
-     * Pinned one by one on purpose: adding or dropping a verdict is a curation decision, so it
-     * costs an edit here. Two cases the census (#120) filed as solitude stayed out after being
-     * contrasted outside Numista — the RAM Koala (N#557132) is the third year of a live annual
-     * programme and the Haitian gourdes (N#19085, N#19328) were sold in a four-coin case — and
-     * the two unpublished medals (N#578835, N#581856) wait for their referee, because an id a
-     * referee may still delete is never versioned.
+     * **Qué** hay firmado y **por qué** vive en `data/orphans.json`, donde cada entrada lleva su
+     * motivo en prosa, y en el issue que lo firmó. Repetir aquí la lista no añadía una afirmación:
+     * añadía una segunda copia que diverge —ya lo hizo, con los veredictos que el #256 y el #257
+     * reabrieron— y una colisión garantizada con cualquier sesión que firme al mismo tiempo.
      *
-     * N#1933 is the first verdict where the measurement argued *for* a plate and the collector
-     * closed the door anyway: 19 struck years over four mints, so 19 slots by year or 73 by year
-     * and mint were both writable, and «no voy a seguir eso» outranks either. The criterion is
-     * the same one that filed the Kennedy Half Dollar — bulk circulation silver nobody chases.
-     *
-     * N#3416 shows the verdict is per denomination, not per metal. Asked about Reichsmark silver
-     * as a block, the collector kept the 5 Reichsmark — cured as a plate of its own — and dropped
-     * the 2: 24 year-and-mint combinations over four struck years, 129 million pieces, and the
-     * piece in the collection has no year recorded, so a by-year plate would have read 0 of 4.
-     *
-     * The last two are modern one-offs, and each one closed a different door on the way in. The
-     * Orwell 2 pounds (N#451057) died of volume — 829 type pages under that denomination, the
-     * #154 shape — and the Dune ounce (N#571460) of calendar: four Numista types and all four are
-     * 2026, so there is no sequence to count. Dune was offered an ADR 0022 programme file first
-     * and it was refused for a measured reason: a programme only surfaces on the plate of a
-     * catalog that touches its types, and no plate touches these.
-     *
-     * The 1 Peso «Tepalcate» (N#3550) is what is left of the Mexican block of #242, and it was
-     * writable before the **father** answered: 11 struck years without a gap, so a date run was on
-     * the table and he follows it not (6 August 2026, through Jose). The shape had already lost its
-     * only alternative: an agrupación declares no weight, so by ADR 0013 as amended it cannot hold
-     * six Mexican pieces of five different weights.
-     *
-     * **The 8 Reales of Charles IV (N#18852) left this register in #257**, and it is the one verdict
-     * a later answer reversed. The motive signed with it was true of the sequence it was offered — a
-     * date run by year or by assayer, which he follows neither of — but it also said the shape «had
-     * lost its only alternative», and the alternative it meant was an agrupación of Mexican silver.
-     * The one he then described is a different file altogether: `historia-del-real`, four pieces
-     * across three issuers and four physical patterns, joined by a theme rather than by a
-     * denomination. A verdict of intention is reopened by intention, and this is the first time
-     * that has happened.
-     *
-     * The sixteen of 6 August 2026 are the largest block ever signed at once, and all sixteen are
-     * the **father's answer** to the five questions of #216 — not a measurement of ours. Four shapes
-     * were on the table and he closed each one in his own words: the Mexican Olympic 25 pesos of 68
-     * («juegos olímpicos, sola»); five pieces of old circulation silver, three of them writable date
-     * runs — the ½ rupee over four struck years, the 20 kopeks over three, the 5 kronor over
-     * eighteen — that he keeps as souvenirs («las demás las compré por baratas, podría venderlas»);
-     * and ten commemoratives of one country each, where the theme that would have joined two of them
-     * is abandoned by the only person who ever had it («pensé si, en el tema de animales, pero es que
-     * me cansé de Catawiki»). Two neighbours of that block were deliberately **not** signed with it,
-     * because an open question is never signed: the Maria Theresa thaler, which he reads as part of a
-     * «historia del real» theme with the 8 reales and which became a plate in #257, and the 25 ringgit
-     * of Malaysia, which is now here.
-     *
-     * **N#27380 is the only verdict signed after measuring that the plate existed** (#259). Its own
-     * ficha declares the boundary — a two-coin set with the 15 ringgit — the other half is published
-     * (N#27381, 28,28 g against its 35 g) and cites it back, and the pair is the Malaysian delivery of
-     * the same Royal Mint programme for 24 countries, two silver coins each, that already ships as
-     * `venezuela-1975-conservacion-plata`. So a set file of two slots reading 1/2 was writable with
-     * half of it in the drawer, and the father answered on 6 August 2026, with the Venezuelan parallel
-     * in front of him, that he leaves it loose. The gold 500 ringgit (N#27376) would have stayed out
-     * either way, sold apart like the Venezuelan Gallito de las Rocas.
-     *
-     * **Two** Venezuelan silver commemoratives are left of the five #247 signed, and the block is
-     * the one where the measurement itself was wrong (#256). The Catálogo Numismático de Venezuela
-     * does draw the commemorative boundary — it labels the design and gives every piece a «Motivo
-     * conmemorativo» field — so the three 100 bolívares (N#19880, N#27573, N#34721) came out of
-     * here and became a plate of four with the 1983 the first pass had missed. What is left is not
-     * an absence of boundary but a denomination with one silver slot in it: the 10 bolívares
-     * (N#14538) has two commemorative designs and the other, 1930, is gold, and the 75 bolívares
-     * (N#18940) is the only design its denomination ever had. One row is not a plate, and the
-     * weight was never the argument.
-     *
-     * The two Spanish silver pieces of #258 are signed for the opposite reason to all of those: the
-     * father does pursue them («esas las seguiría»), and they are here because the measurement
-     * found no sequence to plate. The 3 euros of 1998 (N#67681) is the only coin of its
-     * denomination Spain ever struck, and the 5 euros of the 2026 World Cup (N#596646) belongs to
-     * a four-piece FNMT programme whose four pieces are four different denominations, so no
-     * denomination repeats and none forms a run. His intention did land on the other two of the
-     * four, which became `espana-ecu-euro-fnmt-onza` and `espana-ecu-euro-fnmt-quinto-onza`.
+     * Lo que sí se vigila es la forma, porque es lo que separa un veredicto de una etiqueta: el
+     * motivo es prosa y no una palabra. Las lecciones del registro —que un veredicto de intención
+     * se reabre por intención (#257), que una casilla sola no es una lámina (#256), y que contrastar
+     * al coleccionista **fuera** de Numista evitó firmar tres falsos (#152, #153)— están en
+     * `spec.md §0.7`.
      */
     @Test
-    fun `the register carries the signed verdicts`() {
-        assertEquals(
-            listOf(
-                1_933, 1_952, 3_416, 3_550, 3_855, 6_918, 10_613, 11_440, 12_454, 12_994, 14_018,
-                14_538, 15_357, 18_940, 26_190, 27_380, 38_130, 44_085, 59_404, 67_681, 90_456,
-                98_259, 131_809, 132_242, 277_960, 291_255, 387_614, 451_057, 470_766, 571_460,
-                596_646,
-            ),
-            orphans.orphans.map { it.numistaTypeId }.sorted(),
-        )
+    fun `a verdict is signed with prose and not with a label`() {
+        assertTrue(orphans.orphans.isNotEmpty())
         assertTrue(
             orphans.orphans.all { it.reason.trim().length > 40 },
             "un veredicto se firma con motivo en prosa, no con una etiqueta",
@@ -131,8 +55,13 @@ class CuratedOrphansTest {
         assertEquals(emptyList(), orphanCatalogCollisions(orphans, catalogs))
     }
 
+    /**
+     * El parser convierte en excepción lo que `validate()` devuelve, y el fichero y el id llegan al
+     * mensaje: sin eso, un error de curación sale como un fallo de arranque sin dónde mirar. Las
+     * reglas en sí son de `CuratedOrphansTest` en `domain/`, que es donde vive `validate()`.
+     */
     @Test
-    fun `duplicate type ids are rejected`() {
+    fun `a validation error names the file and the type`() {
         val error = assertFailsWith<CatalogSeedException> {
             OrphanSeeds.parse(
                 "dup.json",
@@ -145,17 +74,7 @@ class CuratedOrphansTest {
             )
         }
         assertTrue(error.message!!.contains("1885"), error.message!!)
-    }
-
-    @Test
-    fun `a blank reason is rejected`() {
-        val error = assertFailsWith<CatalogSeedException> {
-            OrphanSeeds.parse(
-                "blank.json",
-                orphansJson("""{"numista_type_id": 1885, "reason": "  "}"""),
-            )
-        }
-        assertTrue(error.message!!.contains("1885"), error.message!!)
+        assertTrue(error.message!!.contains("dup.json"), error.message!!)
     }
 
     @Test
@@ -174,21 +93,6 @@ class CuratedOrphansTest {
             )
         }
         assertTrue(error.message!!.contains("typo.json"), error.message!!)
-    }
-
-    @Test
-    fun `a type claimed by a catalog collides in the suite`() {
-        val catalogType = catalogs
-            .flatMap { it.members }
-            .first { it.isIssued && it.numistaTypeId != null }
-            .numistaTypeId!!
-        val colliding = OrphanSeeds.parse(
-            "collision.json",
-            orphansJson(
-                """{"numista_type_id": $catalogType, "reason": "no tendría lámina"}""",
-            ),
-        )
-        assertEquals(listOf(catalogType), orphanCatalogCollisions(colliding, catalogs))
     }
 
     private fun orphansJson(entries: String): String = """

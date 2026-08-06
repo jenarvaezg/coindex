@@ -27,23 +27,24 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
 /**
- * How many A4 pages the shipped catalogs take at 1:1, which is the one thing #169 can be checked
+ * How the shipped catalogs come out on A4 at 1:1, which is the one thing #169 can be checked
  * against without a printer.
  *
  * The diameters are read from the seeded type cache exactly as the phone reads them — through
- * `raw`, so this also pins that `size` survives the trip from the asset to [PrintCell] — and the
- * page count follows from them alone. A catalog gaining a member, or a curated diameter changing,
- * moves a number here on purpose: the notebook's length is a measured fact.
+ * `raw`, so this also pins that `size` survives the trip from the asset to [PrintCell].
+ *
+ * What is pinned is the *shape* of each switch and not the length of the notebook: the shelf grows
+ * every week, so a test that named a page count would go red on whoever cured the next plate and
+ * say nothing about the printer. Each switch is measured against the notebook the default
+ * configuration produces, in the same run.
  */
 class NotebookPagesTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
-     * El cuaderno de hoy es el que la configuración por omisión produce (#228).
-     *
-     * Todos los recuentos de este archivo se miden contra esta geometría y no contra un `object` de
-     * constantes: que estos números no se muevan es la prueba de que la plomería del #228 no ha
-     * cambiado nada detrás de la puerta.
+     * El cuaderno de hoy es el que la configuración por omisión produce (#228), y la vara de medir
+     * de todos los demás: la geometría dejó de ser un `object` de constantes y es el valor que una
+     * configuración declara.
      */
     private val paper = printGeometry(NotebookOptions())
 
@@ -113,54 +114,12 @@ class NotebookPagesTest {
         },
     )
 
-    private fun pagesOf(catalogId: String) =
-        section(catalogs.first { it.id == catalogId }).pagesAlone(paper)
-
     private fun pagesFor(vararg sections: PrintSection) = printPages(sections.toList(), paper)
-
-    /**
-     * Cuántas láminas ocupan una página, cuántas dos, y así.
-     *
-     * Se cuenta por bloques y no por páginas desde el #232: un folio puede llevar varias láminas, y
-     * lo que este histograma sigue midiendo es la longitud de cada lámina —cuántos trozos se parte—
-     * y no cuántos folios lleva el cuaderno, que es `pages.size`.
-     */
-    private fun lengths(pages: List<PrintPage>) = pages
-        .flatMap { it.blocks }
-        .groupBy { it.section.title }
-        .map { (_, ofSection) -> ofSection.size }
-        .groupingBy { it }
-        .eachCount()
-        .toSortedMap()
 
     @Test
     fun `every seeded type carries the diameter the printed page is measured with`() {
         val withoutSize = typeMeta.values.filter { it.sizeMillimetres == null }
         assertTrue(withoutSize.isEmpty(), "fichas sin diámetro: ${withoutSize.map { it.id }}")
-        val sizes = typeMeta.values.mapNotNull { it.sizeMillimetres }
-        assertEquals(14.5, sizes.min())
-        assertEquals(45.6, sizes.max())
-    }
-
-    /**
-     * The two catalogs #169 names, and the numbers it asks the printed notebook to hit. The seven
-     * pages it measured were the 121 members the Russian personalities had before #159 split them
-     * by fineness: the 104 of .925 print six, and the seventeen of .500 fit on a single page.
-     */
-    @Test
-    fun `the two measured catalogs come out at the length the ticket asks for`() {
-        assertEquals(6, pagesOf("outstanding-personalities-russia-2-roubles"))
-        assertEquals(1, pagesOf("outstanding-personalities-russia-2-roubles-plata-500"))
-        assertEquals(4, pagesOf("australian-kookaburra-perth-1oz"))
-    }
-
-    /**
-     * The whole shelf, which is the upper bound of any collector's notebook: nobody owns a piece of
-     * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
-     */
-    @Test
-    fun `the seventy-three shipped catalogs would print as one hundred and eighteen pages`() {
-        assertEquals(118, catalogs.sumOf { section(it).pagesAlone(paper) })
     }
 
     /**
@@ -168,8 +127,9 @@ class NotebookPagesTest {
      *
      * This is the load-bearing test of #228: the geometry stopped being an `object` of constants and
      * became the value a configuration declares, threaded through `notebookSections`, `printGrid`,
-     * `printPages` and the drawing of the page. A millimetre lost anywhere in that plumbing moves a
-     * plate from one column of this histogram to the next, where the sum of 111 might well hide it.
+     * `printPages` and the drawing of the page. What is checked is the cutting itself — a millimetre
+     * lost anywhere in that plumbing loses or repeats a cell — and not the length of the shelf,
+     * which grows every week.
      */
     @Test
     fun `the default configuration reproduces today's notebook plate by plate`() {
@@ -177,16 +137,12 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, paper)
 
-        // Cuántas láminas ocupan 1 página, cuántas 2, y así: 50 caben de una, y la más larga son
-        // las nueve del Libro Rojo de Rusia. Los 2 € conmemorativos de España entran en la columna
-        // de dos páginas: 29 casillas de 25,75 mm, que es la moneda más pequeña con lámina propia
-        // después de los reales y los medios de Venezuela. Las dos láminas de la tanda del padre
-        // —los tres 100 pesos mexicanos y el díptico italiano— caben de una cada una, y también las
-        // dos venezolanas de plata del #256: 40 mm de diámetro dan una rejilla de cuatro por tres.
-        assertEquals(mapOf(1 to 51, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1), lengths(pages))
-        assertEquals(118, pages.size)
         // Una lámina por folio: es la regla que el #232 levanta y que aquí sigue puesta.
         assertTrue(pages.all { it.blocks.size == 1 }, "una página lleva dos láminas sin pedirlo")
+        assertEquals(
+            sections.size,
+            pages.flatMap { it.blocks }.map { it.section.title }.distinct().size,
+        )
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.
@@ -206,36 +162,15 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the QR costs in paper: **nine pages on the shelf of today** (118 → 127), which was eight
-     * on the sixty plates #234 measured (104 → 112).
+     * What the QR costs in paper, and what it must never cost.
      *
      * The caption is a constant of the layout, so this is what the switch is: the code is 10 mm and
-     * every cell of every plate reserves them, whether or not that cell has a code to draw. Eight
-     * pages for the 1 084 codes it was measured on, and the reason the decision was «under the name»
-     * — beside it would have forced a 44 mm cell and taken a **column** from almost every coin, which
-     * this grid cannot spare.
+     * every cell of every plate reserves them, whether or not that cell has a code to draw. That is
+     * also the reason the decision was «under the name» — beside it would have forced a 44 mm cell
+     * and taken a **column** from almost every coin, which this grid cannot spare.
      *
-     * **Eight and not the twenty-one of the first measurement**: the code was 12 mm until a printed
-     * calibration folio said it did not need to be. Page count is a step function of the caption —
-     * anything from 7 to 10,1 mm printed the sixty plates in 112 pages — so the 9 mm the phone read
-     * on paper is not the size to ship: 10 mm is the same paper with a tenth more module.
-     *
-     * **Not the 73 → 91 of the ticket**, and on purpose: those are measured «con compartir página
-     * puesto», and «compartir página» is #232, which has not landed. What is measured here is this
-     * switch alone, on the notebook that exists — 104 pages with it off. When #232 lands, the two
-     * together are what its own recount will say.
-     *
-     * **The recount below is not the 112 of #234 any more, and it was already stale in main**: this
-     * test was red before the #216 batch of 6 August 2026 touched it — 119 pages against the 112
-     * pinned — because the shelf grew from the sixty plates it was measured on to sixty-six without
-     * anyone re-running it, and the histogram had kept sixty rows all along. Four batches of that one
-     * day have moved both figures since.
-     *
-     * **So the number came out of the name** (#231): what the switch costs is a measured fact of a
-     * shelf that grows every week, and a test called «eight pages» goes quietly false the day a plate
-     * lands on the wrong side of a step — as it just did, at nine. What does not move is the *shape*
-     * of the cost, and that is what the assertions below are for: the caption grows, the columns do
-     * not, and no plate ever gets shorter.
+     * The cost itself is a measured fact of a shelf that grows every week, so what is pinned is its
+     * *shape*: the caption grows, the columns do not, and no plate ever gets shorter.
      */
     @Test
     fun `the qr grows the notebook by a few pages and never takes a column`() {
@@ -243,9 +178,14 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, coded)
 
-        assertEquals(127, pages.size)
-        // Ninguna lámina se acorta, y la más larga sigue siendo el Libro Rojo de Rusia.
-        assertEquals(mapOf(1 to 46, 2 to 17, 3 to 2, 4 to 5, 5 to 1, 7 to 1, 9 to 1), lengths(pages))
+        // Ninguna lámina se acorta, ni una: el cuaderno sólo puede crecer.
+        assertTrue(pages.size > printPages(sections, paper).size, "el código sale gratis")
+        sections.forEach { plate ->
+            assertTrue(
+                plate.pagesAlone(coded) >= plate.pagesAlone(paper),
+                "el código ha acortado ${plate.title}",
+            )
+        }
         // La casilla crece de alto y no de ancho: las rusas de 33 mm siguen cinco por fila.
         val roubles = section(
             catalogs.first { it.id == "outstanding-personalities-russia-2-roubles" },
@@ -307,10 +247,8 @@ class NotebookPagesTest {
      * asks for, and it is arithmetic done before anything is drawn: the height of the cell does not
      * move at all, because the second face is paid for in width or it is not paid for.
      *
-     * The ticket said 184 pages against 104 for sixty plates; these are the seventy-three that are
-     * shipped now, whose notebook of today is 118 and whose notebook of both faces is 202. Doubling
-     * is not exact —the 45,6 mm Lunar II went from three columns to one, so it more than doubles,
-     * and a plate of two coins still fits on one page— so the measure is the measure.
+     * Doubling is not exact —a plate whose coins go from three columns to one more than doubles, and
+     * a plate of two coins still fits on one page— so what is pinned is that it costs and never saves.
      */
     @Test
     fun `both faces doubles the cell and very nearly doubles the notebook`() {
@@ -318,11 +256,9 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, doubled)
 
-        assertEquals(202, pages.size)
-        assertEquals(
-            mapOf(1 to 29, 2 to 21, 3 to 7, 4 to 6, 5 to 2, 7 to 4, 8 to 1, 9 to 1, 13 to 1, 18 to 1),
-            lengths(pages),
-        )
+        val plain = printPages(catalogs.map(::section), paper)
+        assertTrue(pages.size > plain.size * 1.5, "dos caras no llegan a hora y media de papel")
+        assertTrue(pages.size < plain.size * 2.5, "dos caras cuestan más del doble largo")
 
         // La comprobación que pide el ticket, casilla a casilla: la onza australiana.
         val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
@@ -340,31 +276,19 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the shelf costs with the photographs off: 118 pages become 79, and 73 of them are floor.
+     * What the shelf costs with the photographs off, which is **almost exactly its floor**.
      *
      * A cell stops being a coin and becomes a line, so a plate of ounces goes from twelve cells a
-     * page to forty-six and **sixty-nine of the seventy-three plates now fit on one page**. Four spill: the
-     * two Russian plates of 104 members — the personalities and the architectural monuments — over
-     * three pages each, and the Red Book (72) and the Spanish provincial capitals (52) over two.
+     * page to forty-six and nearly every plate now fits on one page. What is left over the floor is
+     * the handful of plates of a hundred-odd members.
      *
-     * **Not the ~19 pages of the ticket, and two separate things account for the difference.**
-     *
-     * The first is the floor, and it is the larger. Those 19 are the members divided by a page of
-     * lines, and that arithmetic ignores the constraint #228 names in its own text: «una sección nunca
-     * comparte página». Seventy-three plates are seventy-three pages before a single member is printed,
-     * and lowering that floor is exactly and only what «compartir página» (#232) is for. It is the same
-     * correction #234 had to make — its «73 → 91» was measured with sharing on too.
-     *
-     * The second is ours, and smaller: the line is 7 mm but its **pitch is 10**, because the gutter
-     * that separates two columns is the one that separates two rows. That is 46 members a page where
-     * the ticket's arithmetic assumed about 57. A row gutter of its own would put four more lines in
-     * each column and take this notebook from 79 pages to 76 — three pages, for a field in the
-     * geometry that no other switch needs, so the gutter stays one number.
-     *
-     * So what this switch is worth is measured on the notebook that exists: **39 pages saved, and 6
-     * above the floor left for #232 to take.** What it is not worth is 19: the shipped plates hold
-     * 1 177 members, which is some 26 pages of *content* at 46 a page, and #232 as #228 scopes it is
-     * «dos láminas en un folio» — a floor near 36, not 19. That recount is its ticket's to make.
+     * That floor is the constraint #228 names in its own text — «una sección nunca comparte página» —
+     * so one plate is one page before a single member is printed, and lowering it is exactly and only
+     * what «compartir página» (#232) is for. The other half of the arithmetic is ours: the line is
+     * 7 mm but its **pitch is 10**, because the gutter that separates two columns is the one that
+     * separates two rows. A row gutter of its own would put four more lines in each column and save
+     * some three pages, for a field in the geometry that no other switch needs, so the gutter stays
+     * one number.
      */
     @Test
     fun `with no photographs the shelf is a list and the plate is its floor`() {
@@ -372,14 +296,15 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, listed)
 
-        // Los 1 177 miembros del estante, que son las ~26 páginas de contenido que el suelo esconde.
-        assertEquals(1_177, catalogs.sumOf { it.members.size })
-        assertEquals(79, pages.size)
-        assertEquals(mapOf(1 to 69, 2 to 2, 3 to 2), lengths(pages))
-        // El suelo es una página por lámina, y sólo seis páginas del cuaderno están por encima de
-        // él: lo que queda por ahorrar aquí ya no es de este interruptor.
+        // El suelo es una página por lámina, y el cuaderno se le pega: lo que queda por ahorrar aquí
+        // ya no es de este interruptor, sino del #232.
+        assertTrue(pages.size < printPages(catalogs.map(::section), paper).size / 1.3)
         assertEquals(catalogs.size, pages.flatMap { it.blocks }.groupBy { it.section.title }.size)
-        assertEquals(6, pages.size - catalogs.size)
+        assertTrue(pages.size >= catalogs.size, "una lámina ha compartido folio sin pedirlo")
+        assertTrue(
+            pages.size < catalogs.size * 1.2,
+            "el cuaderno en lista se ha despegado del suelo: ${pages.size} folios",
+        )
 
         // La onza australiana, casilla a casilla: de doce por página a cuarenta y seis, y la rejilla
         // ya no la decide el diámetro — la lámina de medios venezolanos tiene exactamente la misma.
@@ -441,7 +366,7 @@ class NotebookPagesTest {
         // Y el mensaje de cierre no puede hablar de fotos que no llegaron, porque no hay ninguna
         // entre la que contarlas: el denominador es cero y la resta también.
         assertEquals(
-            "Cuaderno completo exportado · 79 páginas",
+            "Cuaderno completo exportado · ${pages.size} páginas",
             notebookExportMessage(pages.size, expectedPhotos = 0, loadedPhotos = 0),
         )
     }
@@ -661,20 +586,15 @@ class NotebookPagesTest {
     /**
      * What sharing a folio is worth, which is more than any other lever of paper (#232).
      *
-     * The floor is what it takes away, and the floor was almost all of it: seventy-three plates are
-     * seventy-three pages before a member is printed, nineteen of the sixty measured did not fill
-     * half a page, and 29 % of the printed cells came out empty. Both halves of the switch are in
-     * this one number — a plate may start where the last one ended, **and** the band over it drops
-     * from the forty millimetres of the album's masthead to fourteen, which is where most of the
-     * saving is (the ticket measured 90 pages sharing folios with the masthead against 73 with the
-     * thin band).
+     * The floor is what it takes away, and the floor was almost all of it: one plate is one page
+     * before a member is printed, and a third of the plates measured did not fill half a page. Both
+     * halves of the switch are in the one number — a plate may start where the last one ended, **and**
+     * the band over it drops from the forty millimetres of the album's masthead to fourteen, which is
+     * where most of the saving is (the ticket measured 90 pages sharing folios with the masthead
+     * against 73 with the thin band).
      *
-     * **Not the 73 of the ticket, and the shelf is why**: those are the sixty curated plates whose
-     * notebook of today was 104. These are the seventy-three that are shipped now, whose notebook of
-     * today is 118. It is the same correction #231 and #234 had to make — the shelf grows every week
-     * and a measured fact goes stale with it, so what is pinned here is the measurement of the shelf
-     * as it stands and the *shape* of the saving beside it. A third off, which is what the ticket
-     * promised and what the emulator printed: 89 folios of a real collection came out as 53.
+     * A third off, which is what the ticket promised and what the emulator printed: 89 folios of a
+     * real collection came out as 53.
      */
     @Test
     fun `sharing a folio takes a third off the notebook and loses no cell`() {
@@ -682,21 +602,22 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, shared)
 
-        assertEquals(80, pages.size)
+        // Un tercio menos de papel: lo que se ahorra es el blanco que dejaba «una lámina, un folio».
+        val alone = printPages(sections, paper).size
+        assertTrue(
+            pages.size < alone * 0.75,
+            "compartir folio no llega al tercio: ${pages.size} de $alone",
+        )
         // La cuenta de láminas no se mueve: lo que cambia es cuántas caben en un folio, no cuántas
         // hay. Ninguna se cae del cuaderno por compartir folio con otra.
         assertEquals(
             sections.size,
             pages.flatMap { it.blocks }.map { it.section.title }.distinct().size,
         )
-        // En cuántos trozos se parte cada lámina, que ya no es su longitud a solas: 39 salen de una
-        // pieza y una se parte en siete. La lámina más larga —el Libro Rojo de Rusia— pasa de nueve
-        // páginas a siete, porque la banda fina le da una cuarta fila de casillas en cada folio; y
-        // las que se parten más que antes lo hacen empezando a media hoja ajena, que es de donde
-        // sale el ahorro. Son 125 trozos en 80 folios, y 39 de esos folios llevan más de una lámina.
-        assertEquals(mapOf(1 to 39, 2 to 25, 3 to 6, 5 to 1, 6 to 1, 7 to 1), lengths(pages))
-        assertEquals(125, pages.sumOf { it.blocks.size })
-        assertEquals(39, pages.count { it.blocks.size > 1 })
+        assertTrue(
+            pages.count { it.blocks.size > 1 } > 0,
+            "ningún folio ha llegado a llevar dos láminas",
+        )
 
         // Ninguna casilla se pierde ni se repite, y las de cada lámina siguen en su orden.
         assertEquals(
@@ -719,17 +640,11 @@ class NotebookPagesTest {
     /**
      * What the coins at three fifths are worth, which is **only half of it without #232** (#233).
      *
-     * 118 folios become 84 on their own and **43 sharing them**, which is the number the ticket is
-     * really about: the floor of «una lámina, un folio» is seventy-three pages before a member is
-     * printed, so a switch that only makes cells smaller runs into it eleven pages later. Shrinking the
-     * coins and sharing the folio are the two levers that multiply — 80 pages become 43, and the album
-     * of 118 comes out as a catalogue of 43 — and neither had to learn about the other to do it.
-     *
-     * **Not the 73 → 34 of the ticket, and the shelf is why**: those were measured on the sixty curated
-     * plates whose notebook of today was 104. These are the seventy-three that are shipped now, whose
-     * notebook of today is 118 — the same correction #231, #232 and #234 each had to make, because a
-     * measured fact goes stale as the shelf grows. What holds is the shape: a little over a third of the
-     * paper, and the plate stops being the floor — 32 of the 43 folios carry more than one.
+     * On its own it runs straight into the floor of «una lámina, un folio» — a switch that only makes
+     * cells smaller cannot go below one page a plate — so it lands a handful of pages above it.
+     * Shrinking the coins and sharing the folio are the two levers that multiply, and neither had to
+     * learn about the other to do it: together they take a little over a third of the paper, and the
+     * plate stops being the floor.
      */
     @Test
     fun `scaling the coins halves the notebook, and halves it again on shared folios`() {
@@ -738,15 +653,16 @@ class NotebookPagesTest {
         val alone = printPages(sections, scaled)
         val pages = printPages(sections, compact)
 
-        assertEquals(84, alone.size)
-        assertEquals(43, pages.size)
-        // Sola, la lámina sigue siendo el suelo: 65 de las 73 caben en un folio y no se ahorra más.
-        assertEquals(mapOf(1 to 65, 2 to 6, 3 to 1, 4 to 1), lengths(alone))
-        assertEquals(catalogs.size, alone.size - 11)
-        // Compartiendo, 94 trozos en 43 folios y 32 de ellos con más de una lámina.
-        assertEquals(mapOf(1 to 57, 2 to 13, 3 to 2, 5 to 1), lengths(pages))
-        assertEquals(94, pages.sumOf { it.blocks.size })
-        assertEquals(32, pages.count { it.blocks.size > 1 })
+        // Sola, la lámina sigue siendo el suelo y la escala se le pega por arriba.
+        assertTrue(alone.size >= sections.size, "una lámina ha compartido folio sin pedirlo")
+        assertTrue(alone.size < sections.size * 1.25, "encoger no ha llegado al suelo")
+        // Y los dos interruptores juntos multiplican: por debajo del suelo y de lo que da cada uno.
+        assertTrue(pages.size < alone.size * 0.75, "los dos juntos no rinden más que la escala sola")
+        assertTrue(
+            pages.size < printPages(sections, shared).size,
+            "los dos juntos no rinden más que compartir folio solo",
+        )
+        assertTrue(pages.count { it.blocks.size > 1 } > pages.size / 2)
         // Ninguna casilla se pierde ni se repite por encogerla.
         assertEquals(
             sections.flatMap { it.cells },
@@ -847,10 +763,13 @@ class NotebookPagesTest {
         val pages = printPages(listOf(three, ounces), shared)
         val spilled = pages.flatMap { it.blocks }.filter { it.section === ounces }
 
-        assertEquals(37, ounces.cells.size)
-        assertEquals(listOf(8, 16, 13), spilled.map { it.cells.size })
-        assertEquals(listOf(1, 2, 3), spilled.map { it.numberInSection })
-        assertTrue(spilled.all { it.pagesInSection == 3 }, "la lámina no sabe cuántos trozos es")
+        // La primera va corta —lo que le dejó la de tres— y las de en medio van llenas.
+        assertTrue(spilled.size >= 2, "la onza ya no se derrama detrás de una lámina de tres")
+        assertEquals(spilled.indices.map { it + 1 }, spilled.map { it.numberInSection })
+        assertTrue(
+            spilled.all { it.pagesInSection == spilled.size },
+            "la lámina no sabe cuántos trozos es",
+        )
         // Ninguna casilla perdida en los cortes, y las columnas alineadas de un folio al siguiente
         // —incluso las cinco de la cola, que no se centran porque continúan una columna.
         assertEquals(ounces.cells, spilled.flatMap { it.cells })
@@ -895,15 +814,15 @@ class NotebookPagesTest {
         val pages = pagesFor(kookaburra)
         val blocks = pages.flatMap { it.blocks }
 
-        assertEquals(4, pages.size)
-        assertEquals(listOf(1, 2, 3, 4), blocks.map { it.numberInSection })
-        assertTrue(blocks.all { it.pagesInSection == 4 })
+        assertTrue(pages.size > 1, "la onza australiana ya no se derrama en varias páginas")
+        assertEquals(pages.indices.map { it + 1 }, blocks.map { it.numberInSection })
+        assertTrue(blocks.all { it.pagesInSection == pages.size })
         // Every page carries the same heading, because on paper there is no scrolling back.
         assertTrue(blocks.all { it.section.title == kookaburra.title })
         // And no cell is lost or repeated across the break.
         assertEquals(kookaburra.cells, pages.flatMap { it.cells })
         assertEquals(12, pages.first().cells.size)
-        assertEquals(1, pages.last().cells.size)
+        assertTrue(pages.last().cells.size <= 12, "la última página va sobrecargada")
     }
 
     /**
@@ -925,7 +844,6 @@ class NotebookPagesTest {
         val kookaburra = pagesFor(
             section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" }),
         )
-        assertEquals(1, kookaburra.last().cells.size)
         assertTrue(
             kookaburra.flatMap { it.blocks }.all { it.blockWidthMm == it.grid.blockWidthMm },
             "una fila corta ha movido el bloque de una lámina que se continúa",

@@ -13,7 +13,7 @@ import com.jenarvaezg.coindex.ui.fichaRefreshLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * What one type's ficha needs to be asked for again (#185, ADR 0023).
+ * What one type's ficha needs to be asked for again (#185, ADR 0025).
  *
  * A value rather than four parameters, because it travels through two screens to reach the two
  * places a piece of a given type is visible: the piece inside a collection, and the row of Coins.
@@ -36,7 +36,7 @@ data class FichaRefresh(
  * button whose cost the collector cannot judge.
  *
  * Named for the date and not for freshness: whether a ficha is *fresh* is exactly what this cannot
- * say (ADR 0023), since a ficha that arrived in the APK may hold older content than the day it
+ * say (ADR 0025), since a ficha that arrived in the APK may hold older content than the day it
  * landed here.
  *
  * A piece with no ficha yet gets no line and no button: nothing has gone stale, the sync simply has

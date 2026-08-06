@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
 data class TypeRefreshReport(val typeId: Int, val changed: Boolean)
 
 /**
- * Asks Numista again for one type's ficha and writes it over the cached one (#185, ADR 0023).
+ * Asks Numista again for one type's ficha and writes it over the cached one (#185, ADR 0025).
  *
  * The type cache is permanent by design — a ficha costs an API call and catalog data barely ever
  * moves — and that was the right call for everything except the case that matters: **the data was

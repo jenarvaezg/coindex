@@ -24,8 +24,7 @@ class CuratedGroupingsTest {
 
     @Test
     fun `every shipped grouping parses and validates`() {
-        // Toda la plata venezolana ya es catálogo; quedan las dos de sueltas y la alemana.
-        assertEquals(3, groupings.size)
+        assertTrue(groupings.isNotEmpty())
         groupings.forEach { grouping ->
             assertNull(grouping.validate(), "inválida: ${grouping.id}")
             assertEquals(1, grouping.schemaVersion)

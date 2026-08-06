@@ -11,8 +11,8 @@ Hubo una primera implementación web en Rust (Axum, Maud, SQLx, Shuttle) que se 
 git checkout rust-frozen
 ```
 
-El apéndice de `spec.md` documenta esa fase, y sigue siendo la mejor descripción del dominio,
-de la API de Numista y de la estética.
+La especificación de aquella fase viaja en el mismo tag. Lo que de ella sigue vigente está en
+`spec.md`, que es la de la app.
 
 ## Estructura
 

@@ -87,7 +87,7 @@ class MappersTest {
 
     /**
      * La categoría sale del mismo sitio y por el mismo trato: la chip de clase de Monedas
-     * (ADR 0021 §1) funciona sobre las 829 fichas ya cacheadas sin migración ni llamada.
+     * (ADR 0021 §1) funciona sobre las fichas ya cacheadas sin migración ni llamada.
      */
     @Test
     fun `the category is read from the stored ficha, not from a column`() {

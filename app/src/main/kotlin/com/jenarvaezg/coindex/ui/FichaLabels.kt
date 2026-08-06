@@ -8,7 +8,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 /**
- * What refreshing one ficha costs, and it is the same number every time (ADR 0023).
+ * What refreshing one ficha costs, and it is the same number every time (ADR 0025).
  *
  * A constant rather than a measurement: `/types/{id}` needs no OAuth token, so the gesture is
  * exactly one reserved call. Counting the month's log before and after would have read a concurrent
@@ -21,7 +21,7 @@ const val FICHA_REFRESH_CALLS: Int = 1
  *
  * It says **traída** and not «es de», because that is the fact the cache actually holds: the day
  * this phone got the ficha. For a ficha the collector synced the two are the same thing; for one
- * that arrived in the APK the *content* may be older than the day it landed here (ADR 0023), and
+ * that arrived in the APK the *content* may be older than the day it landed here (ADR 0025), and
  * that is exactly why the gesture underneath is never hidden behind a «suficientemente fresca».
  *
  * Counted in calendar days rather than in elapsed milliseconds, so a ficha fetched last night reads

@@ -1,4 +1,4 @@
-# ADR 0023: A ficha can be asked again
+# ADR 0025: A ficha can be asked again
 
 - Status: accepted
 - Date: 2026-08-05

@@ -78,7 +78,7 @@ fun CoinsScreen(
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
     /**
-     * How old each ficha is and how to ask for it again (#185, ADR 0023).
+     * How old each ficha is and how to ask for it again (#185, ADR 0025).
      *
      * This is the surface that has to carry it. A type whose ficha looks like an unpublished draft
      * derives no card at all (#186), so its pieces are only ever reachable from here — and that is

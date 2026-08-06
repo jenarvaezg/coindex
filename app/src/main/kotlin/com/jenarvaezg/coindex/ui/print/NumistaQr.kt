@@ -71,7 +71,7 @@ val BitMatrix.qrModulesWithQuietZone: Int get() = width + QR_QUIET_MODULES * 2
  *
  * Drawn as runs and not one rectangle per module for the file's sake: a page of twelve codes is some
  * four thousand rectangles otherwise, every one of them a drawing command in the PDF, and a notebook
- * of 112 pages carries them all. Runs cut that by roughly half.
+ * of a hundred-odd pages carries them all. Runs cut that by roughly half.
  *
  * It is **not** about seams. Two rectangles that share an edge still share one from row to row, and
  * whether a renderer leaves a hair of paper between them is not something this can decide — what says

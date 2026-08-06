@@ -8,6 +8,7 @@ import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.thingsThatAreNotMoney
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
@@ -50,18 +51,18 @@ class CatalogObjectClassTest {
     /**
      * Por qué las medallas son **filtro y no sección** (ADR 0021 §1).
      *
-     * Veintiuna de las 27 exonumia de la caché sembrada son miembros de catálogos curados. Una
-     * sección «Medallas» tendría que arrancarlas de su lámina, y este test es la razón medida de que
-     * no exista: siguen siendo miembros de pleno derecho, y lo único que la clase hace con ellas es
+     * La mayoría de la exonumia de la caché sembrada son miembros de catálogos curados. Una sección
+     * «Medallas» tendría que arrancarlas de su lámina, y este test es la razón medida de que no
+     * exista: siguen siendo miembros de pleno derecho, y lo único que la clase hace con ellas es
      * dejar que el coleccionista las encuentre.
      *
      * El reparto se movió del 4 sobre 13 con que el ADR se escribió, y se movió a favor de §1: los
-     * diecisiete ECU y euros de la FNMT de #258 son «Monedas de fantasía» para Numista —el ECU fue
-     * una divisa de cuenta y España nunca dio curso legal a estas piezas— y son las dos láminas que
-     * el padre persigue. La mayoría de la exonumia sembrada vive ya dentro de una lámina, así que
-     * la sección no arrancaría cuatro casillas sino veintiuna.
+     * ECU y euros de la FNMT del #258 son «Monedas de fantasía» para Numista —el ECU fue una divisa
+     * de cuenta y España nunca dio curso legal a estas piezas— y son dos láminas que el padre
+     * persigue.
      *
-     * Rojo aquí no significa «saca la casilla». Significa que el reparto cambió y hay que releer §1.
+     * Rojo aquí no significa «saca la casilla». Significa que el reparto se dio la vuelta y hay que
+     * releer §1.
      */
     @Test
     fun `most curated exonumia is why the class is a chip and not a section`() {
@@ -72,14 +73,10 @@ class CatalogObjectClassTest {
             .filterValues { objectClassOf(it) == ObjectClass.Exonumia }
             .keys
 
-        assertEquals(27, exonumia.size)
-        assertEquals(
-            setOf(
-                13_333, 13_398, 18_156, 18_157, 18_159, 18_160, 18_161, 18_371, 18_520, 19_125,
-                19_406, 19_619, 28_059, 44_260, 76_763, 77_339, 78_201, 85_583, 93_010, 477_907,
-                485_082,
-            ),
-            exonumia intersect curatedTypeIds,
+        val curated = (exonumia intersect curatedTypeIds).size
+        assertTrue(
+            curated * 2 > exonumia.size,
+            "la exonumia sembrada ya no vive sobre todo en láminas: $curated de ${exonumia.size}",
         )
     }
 
