@@ -1,0 +1,30 @@
+{
+  "schema_version": 2,
+  "id": "mexico-5-pesos-plata-900",
+  "name": "5 Pesos de plata .900 · México 1947-1948 · 30 g",
+  "short_name": "5 Pesos de plata .900",
+  "issuer_code": "mexique",
+  "family": "5 Pesos de plata .900",
+  "weight_millioz": 965,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El patrón de 30 g y plata .900 muere con el 1948 y no vuelve: el 5 pesos de 1950 del Ferrocarril del Sureste ya es de 27,78 g y plata .720, y de ahí en adelante la denominación baja de ley y luego de tamaño —18,05 g desde 1955—.",
+  "source": "https://en.numista.com/catalogue/pieces10919.html",
+  "source_note": "Dos casillas, y el denominador se midió antes de escribirlo: se enumeraron los 5 pesos del emisor con la API y se leyó el peso y la ley de cada candidato de plata en su propia ficha —el de 1950 del Ferrocarril, la serie de 1951-1954, el bicentenario de Hidalgo de 1953, la serie de 1955-1957 y el centenario de la Constitución de 1957—. Ninguno es de 30 g ni de .900: los cinco son .720. Así que el patrón es este tipo y sólo estos dos años, y no una lámina de la que falten entregas por descubrir. Los patterns y las pruebas de la enumeración quedan fuera porque no se emitieron.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1947",
+      "label": "1947",
+      "year": 1947,
+      "numista_type_id": 10919
+    },
+    {
+      "id": "1948",
+      "label": "1948",
+      "year": 1948,
+      "numista_type_id": 10919
+    }
+  ]
+}

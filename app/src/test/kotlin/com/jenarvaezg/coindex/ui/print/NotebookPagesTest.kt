@@ -113,8 +113,8 @@ class NotebookPagesTest {
      * every variant, and a card without a catalog prints its pieces instead of 121 empty slots.
      */
     @Test
-    fun `the sixty-three shipped catalogs would print as one hundred and eight pages`() {
-        assertEquals(108, catalogs.sumOf { section(it).pages(paper) })
+    fun `the sixty-five shipped catalogs would print as one hundred and ten pages`() {
+        assertEquals(110, catalogs.sumOf { section(it).pages(paper) })
     }
 
     /**
@@ -123,7 +123,7 @@ class NotebookPagesTest {
      * This is the load-bearing test of #228: the geometry stopped being an `object` of constants and
      * became the value a configuration declares, threaded through `notebookSections`, `printGrid`,
      * `printPages` and the drawing of the page. A millimetre lost anywhere in that plumbing moves a
-     * plate from one column of this histogram to the next, where the sum of 108 might well hide it.
+     * plate from one column of this histogram to the next, where the sum of 110 might well hide it.
      */
     @Test
     fun `the default configuration reproduces today's notebook plate by plate`() {
@@ -136,14 +136,14 @@ class NotebookPagesTest {
         // de dos páginas: 29 casillas de 25,75 mm, que es la moneda más pequeña con lámina propia
         // después de los reales y los medios de Venezuela.
         assertEquals(
-            mapOf(1 to 41, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
+            mapOf(1 to 43, 2 to 13, 3 to 2, 4 to 5, 6 to 1, 9 to 1),
             pages.groupBy { it.section.title }
                 .map { (_, ofSection) -> ofSection.size }
                 .groupingBy { it }
                 .eachCount()
                 .toSortedMap(),
         )
-        assertEquals(108, pages.size)
+        assertEquals(110, pages.size)
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
         // sólo la última de cada lámina puede ir corta.

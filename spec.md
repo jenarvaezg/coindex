@@ -36,7 +36,7 @@
 
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
-1. **`data/collection-catalogs/*.json` — 63 catálogos curados** (el activo más caro de
+1. **`data/collection-catalogs/*.json` — 65 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
@@ -223,8 +223,8 @@ diseño estable, que julio dejaba fuera a propósito, se cataloga desde
 
 **Lo versionado**, medido sobre `data/`:
 
-- **63 catálogos** con 1.129 miembros: 31 abiertos y 32 cerrados. Por versión de esquema, 38
-  simples, 22 date runs, 2 conjuntos y 1 issue run.
+- **65 catálogos** con 1.135 miembros: 31 abiertos y 34 cerrados. Por versión de esquema, 38
+  simples, 24 date runs, 2 conjuntos y 1 issue run.
 - **3 agrupaciones curadas** (ADR 0013), que no afirman cobertura: las sueltas de 1 oz de la
   Royal Mint, el dólar de plata clásico de EE. UU. y las alemanas de plata de ley de 18 g. La
   tercera es la primera que se cura sobre una secuencia real y enumerada —94 motivos encargados

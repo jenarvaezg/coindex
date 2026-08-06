@@ -11645,6 +11645,220 @@
   },
   "weight": 31.104
  },
+ "13985": {
+  "id": 13985,
+  "url": "https://es.numista.com/13985",
+  "title": "5 Pesos",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1951,
+  "max_year": 1954,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "5 Pesos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 40,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 720 (Copper .280)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Las armas nacionales de México en el centro con una leyenda alrededor de la parte superior de la moneda y el contenido de plata y la pureza dividido por el emblema en ambos lados y el valor en letras debajo y la marca de ceca junto con la fecha en la parte inferior.",
+   "lettering": "ESTADOS UNIDOS MEXICANOS\r\nPESO 27 7/9 G  LEY 0.720\r\nCINCO PESOS\r\nMo 1952",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/63d6aed2dd2c22.33276579-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/63d6aed2dd2c22.33276579-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "description": "Busto de Hidalgo mirando a la izquierda rodeado de una corona de laurel.",
+   "lettering": "HIDALGO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/63d6aed3792ef1.28153571-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/63d6aed3792ef1.28153571-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "comments": "La acuñación de 1954 se detuvo debido a la inflación, lo que significaba que la moneda de 10 pesos del año siguiente tendría exactamente el mismo tamaño que ésta, por lo que para evitar confusiones se decidió no volver a acuñar ese año y esperar un año a que apareciera la moneda de 10 pesos &quot;tamaño 5 pesos&quot;.",
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "467"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "47"
+   }
+  ],
+  "weight": 27.78,
+  "orientation": "coin",
+  "edge": {
+   "description": "Liso con inscripción",
+   "lettering": "COMERCIO   AGRICULTURA   INDUSTRIA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/6a36c15c219be9.65756720-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/6a36c15c219be9.65756720-180.jpg",
+   "picture_copyright": "Michass",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
+ "13986": {
+  "id": 13986,
+  "url": "https://es.numista.com/13986",
+  "title": "5 Pesos",
+  "object_type": {
+   "id": 1,
+   "name": "Monedas circulantes normales"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1955,
+  "max_year": 1957,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "5 Pesos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 720 (Copper .280)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de México en el centro con la denominación, la ley de la plata y el peso de la moneda alrededor.",
+   "lettering": "CINCO PESOS \r\nESTADOS UNIDOS MEXICANOS\r\n18.055 G ·  1955 ·  LEY .720",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/68fb960ac73dc0.45587944-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/68fb960ac73dc0.45587944-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Albino del Moral"
+   ],
+   "description": "Cabeza de Miguel Hidalgo y Costilla mirando a la izquierda, con marca de ceca a la derecha.",
+   "lettering": "INDEPENDENCIA Y LIBERTAD\r\nHIDALGO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/68fb960cc48218.06509906-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/68fb960cc48218.06509906-180.jpg",
+   "picture_copyright": "La Catastrophe ultraviolette",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "tags": [
+   "Escudo de armas",
+   "Figura religiosa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "469"
+   }
+  ],
+  "weight": 18.055,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed.",
+   "picture": "https://en.numista.com/catalogue/photos/mexique/6a36c1789519a5.93151343-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/6a36c1789519a5.93151343-180.jpg",
+   "picture_copyright": "jasanche",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes normales"
+ },
  "14018": {
   "category": "coin",
   "comments": "Y#9.2 AH1319:<br />\r\n<a href=\"https://en.numista.com/catalogue/images/596ab22eb6fe0.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/596ab22eb6fe0.jpg\" alt=\"\" width=\"200\" height=\"199\" /></a> <a href=\"https://en.numista.com/catalogue/images/596ab237b0b81.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/596ab237b0b81.jpg\" alt=\"\" width=\"200\" height=\"199\" /></a><br />\r\n© Imagen cortesía de Stephen Album Rare Coins",
@@ -12589,6 +12803,121 @@
    "text": "2000 pesetas"
   },
   "weight": 18
+ },
+ "14754": {
+  "id": 14754,
+  "url": "https://es.numista.com/14754",
+  "title": "10 Pesos (War of Independence)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1960,
+  "max_year": 1960,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "10 Pesos",
+   "numeric_value": 10,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 40,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900 (Copper .100)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "\"Estados Unidos Mexicanos\" en semicírculo sobre el escudo de México: un águila real mexicana de pie sobre un nopal devorando una serpiente de cascabel. En la base del nopal hay una rama de encino a un lado y una de laurel al otro. El escudo está rodeado por la fecha, el peso, la pureza y la denominación.",
+   "lettering": "DIEZ PESOS\r\n28.888 G · 1960 · LEY 900\r\nESTADOS UNIDOS MEXICANOS\r\nMo",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/3926-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/3926-180.jpg",
+   "picture_copyright": "jasanche",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Bustos de Miguel Hidalgo Y Costilla y Francisco I. Madero uno junto al otro, de frente, con los apellidos bajo el busto respectivo. Fechas y leyenda rodean los bustos.",
+   "lettering": "INDEPENDENCIA Y LIBERTAD\r\n1810 1960 1910\r\nHIDALGO MADERO\r\nSUFRAGIO EFECTIVO NO REELECCION",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/3927-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/3927-180.jpg",
+   "picture_copyright": "jasanche",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "150 aniversario de la Guerra de la Independencia",
+  "tags": [
+   "Águila",
+   "Reptil",
+   "Independencia",
+   "Líder militar",
+   "Político",
+   "Escudo de armas",
+   "Guirnalda",
+   "Guerra"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "476"
+   }
+  ],
+  "weight": 28.888,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/mexique/6a36c1cd323ae5.41850644-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/6a36c1cd323ae5.41850644-180.jpg",
+   "picture_copyright": "jasanche",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "148206": {
   "category": "coin",
@@ -13595,6 +13924,111 @@
    "text": "30 euros"
   },
   "weight": 18
+ },
+ "15263": {
+  "id": 15263,
+  "url": "https://es.numista.com/15263",
+  "title": "5 Pesos (Bicentennial of Hidalgo's Birth)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1953,
+  "max_year": 1953,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "5 Pesos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 720 (Copper .280)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo nacional con la leyenda encima y peso, pureza, denominación y fecha debajo.",
+   "lettering": "ESTADOS UNIDOS MEXICANOS\r\nPESO\r\n27 7/9 G\r\nLEY \r\n0.720\r\nCINCO PESOS\r\nMo 1953",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/2923-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/2923-180.jpg",
+   "picture_copyright": "nalaberong"
+  },
+  "reverse": {
+   "engravers": [
+    "Lorenzo Rafael"
+   ],
+   "designers": [
+    "Lorenzo Rafael"
+   ],
+   "description": "Miguel Hidalgo y Costilla de frente con la iglesia Parroquia de Nuestra Señora de Dolores a la izquierda al fondo.",
+   "lettering": "AÑO DE HIDALGO\r\n1753\r\n1953",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/2922-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/2922-180.jpg",
+   "picture_copyright": "nalaberong"
+  },
+  "commemorated_topic": "Bicentenario del nacimiento de Hidalgo",
+  "tags": [
+   "Construcción religiosa",
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "468"
+   }
+  ],
+  "weight": 27.778,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con letras incusas",
+   "lettering": "AGRICULTURA INDUSTRIA COMERCIO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "15357": {
   "category": "coin",
@@ -21846,6 +22280,122 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "18759": {
+  "id": 18759,
+  "url": "https://es.numista.com/18759",
+  "title": "5 Pesos (Southeastern Railroad)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1950,
+  "max_year": 1950,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "5 Pesos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 40,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 720 (Copper .280)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Águila posada en un cactus con una serpiente en el pico.",
+   "lettering": "ESTADOS UNIDOS MEXICANOS\r\nLEY PESO\r\n.720 277/9 g\r\nCINCO PESOS \r\nMo 1950",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/631779d2dbcf43.37269571-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/631779d2dbcf43.37269571-180.jpg",
+   "picture_copyright": "coins_i_like",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Sol naciente con 1950 inscrito sobre el tren con dos palmeras.\r\nConmemora la inauguración de la línea ferroviaria que va desde la Ciudad de México hasta la Península de Yucatán y Puerto Progreso, en el extremo de la península.",
+   "lettering": "INAUGURACION DEL FERROCARRIL DEL SURESTE \r\n1950",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/631779d588dd37.11786413-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/631779d588dd37.11786413-180.jpg",
+   "picture_copyright": "coins_i_like",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Inauguración del Ferrocarril del Sureste",
+  "comments": "<p>Este tipo fue mal distribuido y la mayoría se almacenó en la Casa de Moneda de la Ciudad de México. Cuando llegó el momento de hacer otras monedas de plata se ordenó refundirlas. Esto destruyó más de la mitad de ellas, haciendo de ésta una de las monedas de plata de mediados del siglo XX más raras de México.<br><br>La plata resultante se utilizó para acuñar parte de la <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://en.numista.com/3855\">KM#479</a>.</p>",
+  "tags": [
+   "Águila",
+   "Reptil",
+   "Tren",
+   "Árbol",
+   "Alegoría",
+   "Escudo de armas",
+   "Sol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "466"
+   }
+  ],
+  "weight": 27.78,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con letras",
+   "lettering": "AGRICULTURA INDUSTRIA COMERCIO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "18797": {
   "id": 18797,
   "url": "https://es.numista.com/18797",
@@ -22296,6 +22846,109 @@
    "text": "10 Pesos"
   },
   "weight": 28.888
+ },
+ "18817": {
+  "id": 18817,
+  "url": "https://es.numista.com/18817",
+  "title": "10 Pesos (Constitution)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1957,
+  "max_year": 1957,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "10 Pesos",
+   "numeric_value": 10,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 40,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 900 (Copper .100)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Armas nacionales, águila a la izquierda.",
+   "lettering": "·DIEZ PESOS·\r\nESTADOS UNIDOS MEXICANOS\r\n28.888 G·1957·LEY 900",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/634c6dd122c055.61483195-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/634c6dd122c055.61483195-180.jpg",
+   "picture_copyright": "ciscoins",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Manuel Luna Negrete"
+   ],
+   "description": "Jefe Benito Juárez se fue.",
+   "lettering": "CENTENARIO DE LA CONSTITUCION DE MEXICO\r\nMo\r\n1857·1957",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/634c6dd16686d2.86364934-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/634c6dd16686d2.86364934-180.jpg",
+   "picture_copyright": "ciscoins",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "Centenario de la Constitución",
+  "tags": [
+   "Político"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "475"
+   }
+  ],
+  "weight": 28.888,
+  "orientation": "coin",
+  "edge": {
+   "description": "Con letras",
+   "lettering": "INDEPENDENCIA Y LIBERTAD",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "1885": {
   "category": "coin",
@@ -44823,6 +45476,101 @@
   },
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "31227": {
+  "id": 31227,
+  "url": "https://es.numista.com/31227",
+  "title": "5 Pesos (100th Anniversary of Constitution)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1957,
+  "max_year": 1957,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "5 Pesos",
+   "numeric_value": 5,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 36,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 720 (Copper .280)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Pequeño escudo de armas en el centro, con su leyenda alrededor. Y en el círculo exterior texto con valor facial, peso, fecha y ley.",
+   "lettering": "• CINCO PESOS •\r\nESTADOS UNIDOS MEXICANOS\r\n18.055 G • 1957 • LEY .720",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/1597-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/1597-180.jpg"
+  },
+  "reverse": {
+   "description": "Busto de Benito Juárez a la izquierda, con marca de ceca cerca de la nuca. Con leyenda conmemorativa alrededor.",
+   "lettering": "CENTENARIO DE LA CONSTITUCION DE MEXICO\r\nMo\r\n1857·1957",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/1598-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/1598-180.jpg"
+  },
+  "commemorated_topic": "Centenario de la Constitución",
+  "tags": [
+   "Político"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "470"
+   }
+  ],
+  "weight": 18.05,
+  "edge": {
+   "description": "Liso con letras.",
+   "lettering": "INDEPENDENCIA Y LIBERTAD",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "312488": {
   "id": 312488,
