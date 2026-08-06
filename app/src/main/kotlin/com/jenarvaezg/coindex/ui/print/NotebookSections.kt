@@ -11,8 +11,7 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.PiecesSubject
-import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.coverageLabel
+import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.piecesSubject
@@ -107,12 +106,7 @@ private fun piecesSection(
         subtitle = subject.variant,
         facts = buildList {
             subject.issuer?.let { issuer -> add("País" to issuer) }
-            add(
-                "Piezas" to (
-                    subject.coverage?.let(::coverageLabel)
-                        ?: countLabel(subject.distinctTypes, subject.quantity)
-                    ),
-            )
+            add("Piezas" to subject.countSentence)
         },
         source = "tu colección en Numista",
         cells = subject.pieces.map { piece ->
