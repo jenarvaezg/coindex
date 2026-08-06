@@ -367,8 +367,10 @@
       "numista_type_id": 298883,
       "numista_issue_ids": [
         675329,
-        920993
-      ]
+        920993,
+        675331
+      ],
+      "variant_note": "Además de las dos bullion —West Point 675329 y San Francisco 920993—, la casilla acepta la burnished uncirculated 675331, que es la moneda que Jose tiene y reconoció en la mano el 6 de agosto de 2026 (#216). **Esta ampliación es provisional y la única con deuda escrita**: a diferencia de la proof de 2023, aquí sí existe otra lámina posible que reclamaría la emisión, y está medida —la línea burnished del eagle son 20 filas sobre 18 años, de 2006 a 2025, sin 2009 ni 2010 y con dos filas en 2008 y en 2011, repartidas entre N#1493 y N#298883—. No se puede escribir hoy porque el acabado burnished no existe en el dominio y `inferFinish` sólo lee el título de la ficha, que en las dos fichas del eagle dice «Bullion Coin»: una lámina con ese acabado no se encontraría nunca con la pieza. El día que el dominio lo permita, esta casilla vuelve a sus dos bullion y la emisión 675331 se va a su lámina, porque el ADR 0019 no deja que una sola moneda marque dos casillas."
     },
     {
       "id": "2022",

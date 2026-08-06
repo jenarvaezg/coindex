@@ -457,6 +457,13 @@ class CuratedCatalogsTest {
      * Lo que sostiene ésta es que el eagle no tiene lámina proof hermana, así que la pieza no
      * marca ninguna otra casilla; donde sí la hay —Lunar Series III, Nautical de Ruanda— una
      * sola moneda marcaría dos, que es lo que el ADR 0019 impide.
+     *
+     * La de 2021 Type 2 acepta además la burnished 675331, y es la única ampliación **con deuda**:
+     * aquí sí hay otra lámina posible y está medida —20 filas de burnished sobre 18 años,
+     * 2006-2025—, pero no se puede escribir mientras el dominio no tenga ese acabado y mientras
+     * `inferFinish` lea sólo el título, que dice «Bullion Coin» en las dos fichas del eagle. La
+     * nota de la casilla dice cómo se deshace, y este test la vigila para que no se borre en
+     * silencio.
      */
     @Test
     fun `the american silver eagle is forty-two issue-qualified bullion years over two types`() {
@@ -487,6 +494,13 @@ class CuratedCatalogsTest {
         assertTrue(64_283 in type1.single { it.year == 1987 }.numistaIssueIds)
         assertTrue(1_059_386 in type2.single { it.year == 2026 }.numistaIssueIds)
         assertTrue(760_576 in type2.single { it.year == 2023 }.numistaIssueIds)
+        // La burnished 2021-W de Jose, con su deuda escrita en la nota de la casilla.
+        val slot2021 = type2.single { it.year == 2021 }
+        assertTrue(675_331 in slot2021.numistaIssueIds)
+        assertTrue(
+            slot2021.variantNote?.contains("provisional") == true,
+            "la ampliación de 2021 sin nota que diga cómo se deshace",
+        )
         // La otra fila «Proof» de 2023 no está: nadie la tiene y un id no se escribe por simetría.
         assertTrue(eagle.members.none { 760_578 in it.numistaIssueIds })
         assertTrue(eagle.members.none { 897_759 in it.numistaIssueIds })
@@ -508,7 +522,22 @@ class CuratedCatalogsTest {
         )
         assertTrue(eagle.memberMatches(type2.single { it.year == 2023 }, proof2023))
         assertTrue(eagle.memberMatches(type2.single { it.year == 2026 }, bullion2026))
-        assertEquals(1, eagle.members.count { it.variantNote != null })
+        // La burnished de Jose rellena la casilla en cuanto reetiquete su fila al tipo nuevo: hoy
+        // apunta a la proof 637384 de N#1493 y por eso el informe la sigue dando sin clasificar.
+        val burnished2021 = CollectedItem(
+            id = 3,
+            quantity = 1,
+            typeId = 298_883,
+            issueYear = 2021,
+            issueId = 675_331,
+        )
+        assertTrue(eagle.memberMatches(slot2021, burnished2021))
+        // Dos notas, y las dos son ampliaciones de acabado: la proof de 2023 y la burnished de
+        // 2021. Sólo la segunda dice «provisional», porque sólo ella tiene una lámina esperando.
+        assertEquals(
+            listOf("2021-type-2", "2023"),
+            eagle.members.filter { it.variantNote != null }.map { it.id },
+        )
     }
 
     /**
