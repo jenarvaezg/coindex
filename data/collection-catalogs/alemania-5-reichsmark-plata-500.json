@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "alemania-5-reichsmark-plata-500",
+  "name": "5 Reichsmark de plata .500 · Alemania 1925-1933 · 25 g",
+  "short_name": "5 Reichsmark de plata .500",
+  "issuer_code": "allemagne-pre1945",
+  "family": "5 Reichsmark de plata .500",
+  "weight_millioz": 804,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El Eichbaum de 1933 es el último 5 Reichsmark de 25 g. Ese mismo año la denominación pasa a 13,88 g de plata .900 empezando por el Lutero, que es otra variante física y por tanto otra lámina, y la ley .500 no vuelve nunca a los 5 Reichsmark.",
+  "source": "https://en.numista.com/catalogue/pieces15888.html",
+  "source_note": "Numista no da serie a ninguno de los diez tipos. La frontera se midió enumerando el emisor con la API, con dos búsquedas —«5 reichsmark» y «5 mark», porque el título de una ficha es prosa de quien la escribió y filtrar por la denominación como cadena es la trampa medida en #187—: 79 títulos que empiezan por «5 », de los que salen los patterns, las pruebas y los mules, que nunca se emitieron. Quedan diez tipos de 25 g y plata .500, nueve conmemorativos y el corriente, y los pesos y las leyes se leyeron uno a uno de la ficha sembrada. No se contrastó contra un catálogo de papel alemán, así que lo que sostiene esta frontera es la enumeración del emisor más el cambio de patrón de 1933; el tipo corriente hace una sola casilla a propósito, y sus siete años y sus cecas son otro eje que esta lámina no reparte.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1925-renania",
+      "label": "Milenio de Renania",
+      "year": 1925,
+      "numista_type_id": 31803
+    },
+    {
+      "id": "1927-bremerhaven",
+      "label": "Centenario de Bremerhaven",
+      "year": 1927,
+      "numista_type_id": 23143
+    },
+    {
+      "id": "1927-tubinga",
+      "label": "450 años de la Universidad de Tubinga",
+      "year": 1927,
+      "numista_type_id": 29885
+    },
+    {
+      "id": "1927-eichbaum",
+      "label": "Eichbaum, el tipo corriente (1927-1933)",
+      "year": 1927,
+      "numista_type_id": 15888
+    },
+    {
+      "id": "1929-constitucion",
+      "label": "Diez años de la Constitución de Weimar",
+      "year": 1929,
+      "numista_type_id": 22835
+    },
+    {
+      "id": "1929-lessing",
+      "label": "Doscientos años de Gotthold Ephraim Lessing",
+      "year": 1929,
+      "numista_type_id": 29890
+    },
+    {
+      "id": "1929-meissen",
+      "label": "Mil años del castillo y la ciudad de Meissen",
+      "year": 1929,
+      "numista_type_id": 29891
+    },
+    {
+      "id": "1930-zeppelin",
+      "label": "Vuelta al mundo del Graf Zeppelin",
+      "year": 1930,
+      "numista_type_id": 29892
+    },
+    {
+      "id": "1930-renania-liberada",
+      "label": "Liberación de Renania",
+      "year": 1930,
+      "numista_type_id": 42596
+    },
+    {
+      "id": "1932-goethe",
+      "label": "Centenario de la muerte de Goethe",
+      "year": 1932,
+      "numista_type_id": 29894
+    }
+  ]
+}

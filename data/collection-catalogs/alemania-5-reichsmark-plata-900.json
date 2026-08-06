@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "alemania-5-reichsmark-plata-900",
+  "name": "5 Reichsmark de plata .900 · Alemania 1933-1939 · 13,88 g",
+  "short_name": "5 Reichsmark de plata .900",
+  "issuer_code": "allemagne-pre1945",
+  "family": "5 Reichsmark de plata .900",
+  "weight_millioz": 446,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El Hindenburg con esvástica de 1939 es el último 5 Reichsmark de plata acuñado. De 1942 Numista sólo archiva pruebas sin emitir, que es precisamente la señal de que la plata no volvió a la denominación: la economía de guerra la retira y el Reich no la repone.",
+  "source": "https://en.numista.com/catalogue/pieces8565.html",
+  "source_note": "Numista no da serie a ninguno de los seis tipos, y la frontera se midió con la misma enumeración del emisor que la lámina hermana de 25 g —dos búsquedas por la trampa del título, patterns y pruebas fuera—, más el patrón de 13,88 g y plata .900 que arranca con el Lutero de 1933. Numista escribe 13,88 g en tres fichas y 13,889 en las otras tres, que es la clase de desacuerdo consigo misma que su peso tiene documentado; la lámina declara 13,88 g, el patrón de la ceca. Las dos fichas de la iglesia de la Guarnición de Potsdam son dos monedas distintas y no una duplicada: en N#10415 la iglesia parte la fecha, y en N#4690 lleva la marca de ceca debajo. Los dos Hindenburg se distinguen por el anverso, leído en la ficha: águila imperial en el de 1935-1936 y águila con esvástica dentro de corona en el de 1936-1939.",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "1933-lutero",
+      "label": "450 años del nacimiento de Lutero",
+      "year": 1933,
+      "numista_type_id": 8565
+    },
+    {
+      "id": "1934-guarnicion-parte-la-fecha",
+      "label": "Iglesia de la Guarnición de Potsdam, la iglesia parte la fecha",
+      "year": 1934,
+      "numista_type_id": 10415
+    },
+    {
+      "id": "1934-guarnicion-marca-de-ceca",
+      "label": "Iglesia de la Guarnición de Potsdam, con marca de ceca debajo (1934-1935)",
+      "year": 1934,
+      "numista_type_id": 4690
+    },
+    {
+      "id": "1934-schiller",
+      "label": "175 años del nacimiento de Schiller",
+      "year": 1934,
+      "numista_type_id": 15868
+    },
+    {
+      "id": "1935-hindenburg-aguila-imperial",
+      "label": "Hindenburg con águila imperial (1935-1936)",
+      "year": 1935,
+      "numista_type_id": 2544
+    },
+    {
+      "id": "1936-hindenburg-esvastica",
+      "label": "Hindenburg con águila y esvástica (1936-1939)",
+      "year": 1936,
+      "numista_type_id": 5218
+    }
+  ]
+}
