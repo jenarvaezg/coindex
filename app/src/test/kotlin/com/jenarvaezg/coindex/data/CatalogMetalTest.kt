@@ -61,7 +61,7 @@ class CatalogMetalTest {
     @Test
     fun `every catalog that is not a set declares its metal, two cupronickel and one bimetallic`() {
         val declared = catalogs.filterNot { it.isSet }.map { it.id to it.metal }
-        assertEquals(67, declared.size)
+        assertEquals(69, declared.size)
         assertEquals(
             listOf(
                 "espana-2-euros-conmemorativos" to Metal.Other,

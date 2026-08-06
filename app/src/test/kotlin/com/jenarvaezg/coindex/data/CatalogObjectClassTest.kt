@@ -50,15 +50,21 @@ class CatalogObjectClassTest {
     /**
      * Por qué las medallas son **filtro y no sección** (ADR 0021 §1).
      *
-     * Cuatro de las 13 exonumia de la caché sembrada son miembros de catálogos curados: las dos onzas
-     * mexicanas y dos casillas de Niue. Una sección «Medallas» tendría que arrancarlas de su lámina,
-     * y este test es la razón medida de que no exista: siguen siendo miembros de pleno derecho, y lo
-     * único que la clase hace con ellas es dejar que el coleccionista las encuentre.
+     * Veintiuna de las 27 exonumia de la caché sembrada son miembros de catálogos curados. Una
+     * sección «Medallas» tendría que arrancarlas de su lámina, y este test es la razón medida de que
+     * no exista: siguen siendo miembros de pleno derecho, y lo único que la clase hace con ellas es
+     * dejar que el coleccionista las encuentre.
+     *
+     * El reparto se movió del 4 sobre 13 con que el ADR se escribió, y se movió a favor de §1: los
+     * diecisiete ECU y euros de la FNMT de #258 son «Monedas de fantasía» para Numista —el ECU fue
+     * una divisa de cuenta y España nunca dio curso legal a estas piezas— y son las dos láminas que
+     * el padre persigue. La mayoría de la exonumia sembrada vive ya dentro de una lámina, así que
+     * la sección no arrancaría cuatro casillas sino veintiuna.
      *
      * Rojo aquí no significa «saca la casilla». Significa que el reparto cambió y hay que releer §1.
      */
     @Test
-    fun `four curated members are exonumia, which is why the class is a chip and not a section`() {
+    fun `most curated exonumia is why the class is a chip and not a section`() {
         val curatedTypeIds = catalogs
             .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } }
             .toSet()
@@ -66,8 +72,15 @@ class CatalogObjectClassTest {
             .filterValues { objectClassOf(it) == ObjectClass.Exonumia }
             .keys
 
-        assertEquals(13, exonumia.size)
-        assertEquals(setOf(13_333, 13_398, 477_907, 485_082), exonumia intersect curatedTypeIds)
+        assertEquals(27, exonumia.size)
+        assertEquals(
+            setOf(
+                13_333, 13_398, 18_156, 18_157, 18_159, 18_160, 18_161, 18_371, 18_520, 19_125,
+                19_406, 19_619, 28_059, 44_260, 76_763, 77_339, 78_201, 85_583, 93_010, 477_907,
+                485_082,
+            ),
+            exonumia intersect curatedTypeIds,
+        )
     }
 
     /**
@@ -75,8 +88,9 @@ class CatalogObjectClassTest {
      * `scripts/seed-type-cache.py` piden las dos `lang=es`. Una red así puede pudrirse hasta ser un
      * test que nunca falla si Numista cambia el idioma o la redacción, y eso no se notaría — sería
      * verde igual. Así que se fija el vocabulario contra los datos: las cinco clases están hoy en
-     * la caché —el ensayo es la Semeuse del padre, las fantasías sus cuatro españolas, y las dos de
-     * medallas y el medallón una ficha cada uno—, así que si alguna dejara de aparecer hay que
+     * la caché —el ensayo es la Semeuse del padre, las fantasías son sobre todo los ECU y euros de
+     * la FNMT, y las dos de medallas y el medallón una ficha cada uno—, así que si alguna dejara de
+     * aparecer hay que
      * mirar por qué antes de fiarse del cruce de arriba.
      */
     @Test
