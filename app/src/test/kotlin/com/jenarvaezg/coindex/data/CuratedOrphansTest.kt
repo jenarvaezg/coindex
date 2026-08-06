@@ -68,13 +68,28 @@ class CuratedOrphansTest {
      * «21 silver coins 1973-2013» is retrospective — and no source could have fixed it: five
      * commemorations over thirteen years are no date run, a set wants types issued together, and a
      * category is not a collection. Their five weights would have printed five cards anyway.
+     *
+     * The sixteen of 6 August 2026 are the largest block ever signed at once, and all sixteen are
+     * the **father's answer** to the five questions of #216 — not a measurement of ours. Four shapes
+     * were on the table and he closed each one in his own words: the Mexican Olympic 25 pesos of 68
+     * («juegos olímpicos, sola»); five pieces of old circulation silver, three of them writable date
+     * runs — the ½ rupee over four struck years, the 20 kopeks over three, the 5 kronor over
+     * eighteen — that he keeps as souvenirs («las demás las compré por baratas, podría venderlas»);
+     * and ten commemoratives of one country each, where the theme that would have joined two of them
+     * is abandoned by the only person who ever had it («pensé si, en el tema de animales, pero es que
+     * me cansé de Catawiki»). Two neighbours of that block are deliberately **not** here: the
+     * Maria Theresa thaler, which he reads as part of a «historia del real» theme with the 8 reales,
+     * and the 25 ringgit of Malaysia, whose own ficha says it shipped in a two-coin set with the 15
+     * ringgit — both are open questions and an open question is never signed.
      */
     @Test
     fun `the register carries the signed verdicts`() {
         assertEquals(
             listOf(
-                1_933, 3_416, 3_550, 6_918, 14_538, 18_852, 18_940, 19_880, 27_573, 34_721,
-                131_809, 132_242, 291_255, 451_057, 470_766, 571_460,
+                1_933, 1_952, 3_416, 3_550, 3_855, 6_918, 10_613, 11_440, 12_454, 12_994, 14_018,
+                14_538, 15_357, 18_852, 18_940, 19_880, 26_190, 27_573, 34_721, 38_130, 44_085,
+                59_404, 90_456, 98_259, 131_809, 132_242, 277_960, 291_255, 387_614, 451_057,
+                470_766, 571_460,
             ),
             orphans.orphans.map { it.numistaTypeId }.sorted(),
         )

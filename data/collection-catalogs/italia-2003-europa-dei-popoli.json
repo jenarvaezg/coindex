@@ -1,0 +1,27 @@
+{
+  "schema_version": 3,
+  "id": "italia-2003-europa-dei-popoli",
+  "name": "L'Europa dei Popoli · Italia 2003 · díptico de dos monedas de plata .925",
+  "short_name": "L'Europa dei Popoli",
+  "issuer_code": "italie",
+  "family": "Díptico L'Europa dei Popoli de 2003",
+  "series_status": "closed",
+  "closed_note": "Las dos monedas se vendieron juntas en un estuche del Istituto Poligrafico e Zecca dello Stato con certificado numerado —el «dittico» de 5 y 10 euros de 2003—, y son dos y sólo dos: cada ficha de Numista cita a la otra, «acuñada en serie con la moneda de 10 euros» y «acuñada en serie con la moneda de 5 euros». Palabras del padre el 6 de agosto de 2026: «esas dos monedas vinieron juntas en un estuche, para mí son un bonito conjunto y nada más».",
+  "source": "https://en.numista.com/catalogue/pieces13695.html",
+  "updated_at": "2026-08-06",
+  "members": [
+    {
+      "id": "5-euros-albero-dei-semi",
+      "label": "5 euros · 18 g",
+      "year": 2003,
+      "numista_type_id": 13695
+    },
+    {
+      "id": "10-euros-presidenza-europea",
+      "label": "10 euros · 22 g",
+      "year": 2003,
+      "numista_type_id": 13706
+    }
+  ],
+  "source_note": "Es un conjunto del ADR 0012 y no un date run: lo que reúne las dos monedas es el estuche, no un patrón físico, y de hecho no lo comparten —18 g y Ø32 la de 5 euros, 22 g y Ø34 la de 10—, las dos de plata .925. Numista no las agrupa en ninguna serie (`series: null` en las dos fichas) y lo que sostiene la frontera son los comentarios cruzados de sus fichas más el estuche oficial del IPZS, cuyas dos versiones —fior di conio y fondo specchio— no hacen casillas distintas porque un fichero de conjunto no declara acabado. La tirada que las fichas registran es la del díptico corriente, 50.000 rebajada a 25.000; el estuche proof fue de 8.000. El «y nada más» del padre es lo que cierra la serie: Italia siguió acuñando 5 y 10 euros de plata otros años, y ninguno de ellos entra aquí."
+}
