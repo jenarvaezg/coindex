@@ -8,6 +8,7 @@ import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.countLabel
@@ -86,7 +87,7 @@ private fun plateSection(
                 // the coin that goes in it. Only a member no Numista type backs at all — announced,
                 // unlisted — has nothing to be measured, and borrows the plate's.
                 diameterMm = state.diameterOf(member.numistaTypeId),
-                faces = state.facesOf(member.numistaTypeId, options),
+                faces = state.facesOf(member.numistaTypeId, options, catalog.printedSide),
                 filled = owned,
                 numistaUrl = state.qrUrlOf(member.numistaTypeId, options),
             )
@@ -122,7 +123,9 @@ private fun piecesSection(
                 state = null,
                 footnote = pieceLine(piece),
                 diameterMm = state.diameterOf(piece.typeId),
-                faces = state.facesOf(piece.typeId, options),
+                // The reverse, spelled out: a piece printed off a card with no issue list has no
+                // plate to declare a face (#227), so the honest thing is what it printed yesterday.
+                faces = state.facesOf(piece.typeId, options, PrintedSide.Reverse),
                 // Never a hole: a collection with no issue list has nothing to be missing from,
                 // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
                 filled = true,
@@ -137,7 +140,13 @@ private fun CollectionState.diameterOf(typeId: Int?): Float? =
     typeId?.let { typeMeta[it]?.sizeMillimetres?.toFloat() }
 
 /**
- * The faces this cell prints: none (#231), the reverse, or the obverse and the reverse (#230).
+ * The faces this cell prints: none (#231), the declared one, or the obverse and the reverse (#230).
+ *
+ * **Which one, when it is one, is the plate's declaration and not this function's** (#227). Every
+ * caller says which, with no default to fall through: a piece printed off a card with no issue list
+ * has no plate to declare anything and asks for [PrintedSide.Reverse] out loud, so the day that
+ * residue gets a face of its own — #216 is emptying it, 69 of the 911 cached types measured today —
+ * the place to write it is the call and not a silent parameter.
  *
  * **How many is the configuration's answer and not the cache's.** A type the cache has never seen —
  * an announced member, an unlisted one — gets its slots empty rather than fewer of them: the cells
@@ -150,10 +159,20 @@ private fun CollectionState.diameterOf(typeId: Int?): Float? =
  * closing message divides by a denominator of zero photographs — it cannot claim that three of them
  * failed to load in a notebook that never asked for one.
  */
-private fun CollectionState.facesOf(typeId: Int?, options: NotebookOptions): List<CoinPhoto> {
+private fun CollectionState.facesOf(
+    typeId: Int?,
+    options: NotebookOptions,
+    printedSide: PrintedSide,
+): List<CoinPhoto> {
     if (!options.photographs) return emptyList()
     val sides = typeId?.let { images[it] } ?: TypeImages()
-    return if (options.bothFaces) listOf(sides.obverse, sides.reverse) else listOf(sides.reverse)
+    if (options.bothFaces) return listOf(sides.obverse, sides.reverse)
+    return listOf(
+        when (printedSide) {
+            PrintedSide.Obverse -> sides.obverse
+            PrintedSide.Reverse -> sides.reverse
+        },
+    )
 }
 
 /**

@@ -16,6 +16,7 @@ import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.ui.notebookExportMessage
 import kotlin.test.Test
@@ -529,6 +530,87 @@ class NotebookPagesTest {
         val blank = faces(CollectionState(assembled), NotebookOptions(bothFaces = true))
         assertEquals(listOf(CoinPhoto(), CoinPhoto()), blank)
         assertTrue(blank.none { it.hasPicture }, "un hueco vacío no pide ninguna foto")
+    }
+
+    /**
+     * Cuál de las dos caras se imprime lo declara la lámina, y su silencio es el reverso (#227).
+     *
+     * «Reverso de Numista» no es «la cara de la moneda»: en Haití el reverso es el escudo y la
+     * sirena está en el anverso, y hoy el cuaderno imprime el escudo porque nadie eligió. Con la
+     * declaración en la cabecera, la casilla saca la cara que el curador dice que **es** la moneda,
+     * y la lámina que no declara nada saca el reverso, que es el cuaderno de hoy intacto.
+     *
+     * Lo que se calienta es la cara que se va a dibujar y no la otra (`notebookPhotographs`): una
+     * lámina de anversos con el reverso en la cola de descargas sería un cuaderno con agujeros y una
+     * petición inútil por moneda, que es exactamente el fallo del #169.
+     */
+    @Test
+    fun `the plate declares which face goes to paper and silence is the reverse`() {
+        val onlyPaquillos = listOf(
+            CollectedItem(id = 1, quantity = 1, typeId = 1885, issueId = 8508, issueYear = 1966),
+        )
+        val sides = TypeImages(
+            obverse = CoinPhoto(thumbnail = "anverso-180.jpg"),
+            reverse = CoinPhoto(thumbnail = "reverso-180.jpg"),
+        )
+        val cellsOf = { shelf: List<CollectionCatalog>, options: NotebookOptions ->
+            val curation = Curation(shelf)
+            val assembled = curation.assemble(
+                CollectionSnapshot(items = onlyPaquillos, typeMeta = typeMeta),
+            )
+            val state = CollectionState(assembled, images = mapOf(1885 to sides))
+            notebookSections(state, assembled.index, curation, options).single().cells
+        }
+        val declaring = { side: PrintedSide ->
+            catalogs.map { catalog ->
+                if (catalog.id == "espana-paquillos") catalog.copy(printedSide = side) else catalog
+            }
+        }
+
+        // Sin declaración, el reverso: la cabeza de Franco se queda en la app, como hoy.
+        assertEquals(
+            listOf(CoinPhoto(thumbnail = "reverso-180.jpg")),
+            cellsOf(catalogs, NotebookOptions()).first().faces,
+        )
+        // Declarándolo, el anverso, y en **todas** las casillas de la lámina: la excepción es de la
+        // lámina entera y no de un miembro, así que aquí no hay dos criterios que puedan discrepar.
+        val obverse = cellsOf(declaring(PrintedSide.Obverse), NotebookOptions())
+        assertEquals(5, obverse.size)
+        assertTrue(
+            obverse.all { it.faces == listOf(CoinPhoto(thumbnail = "anverso-180.jpg")) },
+            "una casilla de la lámina ha impreso otra cara que sus hermanas",
+        )
+        // Y declarar el reverso es escribir lo que ya pasaba, byte a byte.
+        assertEquals(
+            cellsOf(catalogs, NotebookOptions()),
+            cellsOf(declaring(PrintedSide.Reverse), NotebookOptions()),
+        )
+
+        // Con «ambas caras» la declaración no pinta nada: se imprimen las dos, anverso y después
+        // reverso, que es como se lee una ficha (#230). Es justo el caso donde deja de importar.
+        val both = NotebookOptions(bothFaces = true)
+        assertEquals(
+            listOf(
+                CoinPhoto(thumbnail = "anverso-180.jpg"),
+                CoinPhoto(thumbnail = "reverso-180.jpg"),
+            ),
+            cellsOf(declaring(PrintedSide.Obverse), both).first().faces,
+        )
+        assertEquals(cellsOf(catalogs, both), cellsOf(declaring(PrintedSide.Obverse), both))
+
+        // Y la cola de descargas es la de la cara declarada: una sola foto, la que se dibuja.
+        val plate = PrintSection(
+            eyebrow = "COINDEX · CATÁLOGO CURADO",
+            title = "Paquillos",
+            subtitle = null,
+            facts = emptyList(),
+            source = "https://en.numista.com/catalogue/pieces1885.html",
+            cells = cellsOf(declaring(PrintedSide.Obverse), NotebookOptions()),
+        )
+        assertEquals(
+            listOf("anverso-180.jpg"),
+            notebookPhotographs(printPages(listOf(plate), paper)),
+        )
     }
 
     /** Y con el interruptor apagado ninguna casilla lleva URL: el cuaderno de hoy, intacto. */

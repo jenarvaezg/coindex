@@ -219,7 +219,10 @@ data class PrintGeometry(
      */
     val minCellWidthMm: Float = 28f,
     /**
-     * How many faces of a coin one cell holds side by side: none, the reverse, or the two of them.
+     * How many faces of a coin one cell holds side by side: none, the declared one, or the two.
+     *
+     * **How many and never which**: which of the two a single face is belongs to the plate (#227),
+     * and it costs no width either way, so it never reaches these millimetres.
      *
      * A count and not a length, and it belongs among the millimetres all the same: at 1:1 a second
      * face cannot be paid for by shrinking the coin, so it is paid for in **width**, and that is

@@ -39,8 +39,8 @@
 1. **`data/collection-catalogs/*.json` — 73 catálogos curados** (el activo más caro de
    reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
    de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
-   `series_status`, el `status` de cada miembro, su fuente y su denominador— lo especifica el
-   ADR 0020**; lo que sigue es cómo identifica sus casillas:
+   `series_status`, el `status` de cada miembro, su fuente, su denominador y la cara que
+   imprime— lo especifica el ADR 0020**; lo que sigue es cómo identifica sus casillas:
    - `schema_version: 1`: miembros identificados por `numista_type_id` único; posesión =
      poseer el tipo. Fuente obligatoria: página de serie de Numista
      (`catalogue/series.php?id=N`).
@@ -162,7 +162,8 @@ de campo ornitológica: serif, paleta de papel, ficha de especificaciones físic
   ficha de Numista.
 - **Exportar**: la lámina como PNG por el share intent (ADR 0010 §8) y el cuaderno entero
   —lo que el índice esté enseñando, en el orden del comparador— como PDF vectorial a A4,
-  con sólo el reverso a tamaño real y una regla de 50 mm al pie (ADR 0021 §13).
+  con una sola cara a tamaño real —la que la lámina declara en `printed_side`, el reverso por
+  omisión (ADR 0020)— y una regla de 50 mm al pie (ADR 0021 §13).
 - **La app no es superficie de auditoría** (ADR 0021 §12): ni línea de razón en la ficha,
   ni gesto de «esta no va aquí». El desacuerdo se informa fuera, en un script que nunca se
   pone rojo.

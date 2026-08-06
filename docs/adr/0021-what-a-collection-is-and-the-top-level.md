@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228 and #227
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -27,6 +27,15 @@
 >
 > Nothing here is stored per card, so §7 is untouched: how a notebook is printed is what the
 > collector is looking through, like the filters of §1, not something recorded about a collection.
+
+> **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
+> claims wearing one sentence, and only the first was ever measured. That one face goes on paper at
+> 1:1 stands whole. Which one does not: the count of 121 distinct reverses against 17 obverses
+> measures what *varies* inside a plate, and what an album page wants is the face that **is** the
+> coin — on the 50 gourdes of Haiti that is the mermaid, and she is on the obverse. So the reverse
+> becomes the **default**, and which face goes to paper is now a declaration of the catalog,
+> `printed_side` (ADR 0020, #227). The rest of the bullet is untouched: the obverse is still a tap
+> away, and a hole still occupies its full diameter.
 
 ## Context
 
