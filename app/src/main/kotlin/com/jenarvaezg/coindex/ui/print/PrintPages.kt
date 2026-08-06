@@ -44,12 +44,21 @@ data class PrintSection(
     val facts: List<Pair<String, String>>,
     val source: String,
     val cells: List<PrintCell>,
-) {
-    /** Fixed by the largest coin of this section, so no page rescales a coin (#169). */
-    val grid: PrintGrid = printGrid(cells.mapNotNull { it.diameterMm }.maxOrNull())
+)
 
-    val pages: Int get() = pageCount(cells.size, grid)
-}
+/**
+ * The rejilla this section gets on [geometry]: fixed by its largest coin, so no page rescales a
+ * coin (#169).
+ *
+ * It hangs off the geometry rather than off the section, because since #228 the same section prints
+ * on more than one page shape: the grid is what the *configuration* makes of these cells, and a
+ * section is only the cells and their heading.
+ */
+fun PrintSection.grid(geometry: PrintGeometry): PrintGrid =
+    printGrid(cells.mapNotNull { it.diameterMm }.maxOrNull(), geometry)
+
+/** How many pages this section takes on [geometry]. */
+fun PrintSection.pages(geometry: PrintGeometry): Int = pageCount(cells.size, grid(geometry))
 
 /**
  * One printed page: a slice of one section's cells, under that section's heading.
@@ -61,10 +70,15 @@ data class PrintSection(
 data class PrintPage(
     val section: PrintSection,
     val cells: List<PrintCell>,
+    /** The rejilla this page's cells are laid out on, and the page shape they were fitted to. */
+    val grid: PrintGrid,
     /** 1-based within its section, so a spilled plate can say «2 de 4». */
     val numberInSection: Int,
     val pagesInSection: Int,
 ) {
+    /** The millimetres this page is drawn with, which is what its configuration declared (#228). */
+    val geometry: PrintGeometry get() = grid.geometry
+
     /**
      * The photographs this page will ask for, which is what the export waits on before capturing.
      *
@@ -83,9 +97,9 @@ data class PrintPage(
      */
     val columnsUsed: Int
         get() = if (pagesInSection > 1) {
-            section.grid.columns
+            grid.columns
         } else {
-            minOf(section.grid.columns, cells.size).coerceAtLeast(1)
+            minOf(grid.columns, cells.size).coerceAtLeast(1)
         }
 
     /**
@@ -94,13 +108,24 @@ data class PrintPage(
      * The **block** and not each row: centring row by row would move the short last row of a plate
      * that does not fill it, and an album page is read down its columns.
      */
-    val blockWidthMm: Float get() = section.grid.widthOfMm(columnsUsed)
+    val blockWidthMm: Float get() = grid.widthOfMm(columnsUsed)
 }
 
-/** The whole notebook, in the order the index handed its cards over. */
-fun printPages(sections: List<PrintSection>): List<PrintPage> = sections.flatMap { section ->
-    val perPage = section.grid.cellsPerPage.coerceAtLeast(1)
-    val pages = section.pages
+/**
+ * The whole notebook on [geometry], in the order the index handed its cards over.
+ *
+ * The geometry comes in rather than being read off a constant (#228), and it is what makes this
+ * function the whole of the notebook's arithmetic: how many pages the export will produce is
+ * `printPages(sections, geometry).size` and nothing else, which is what lets the export sheet recount
+ * on every tap without drawing anything.
+ */
+fun printPages(
+    sections: List<PrintSection>,
+    geometry: PrintGeometry,
+): List<PrintPage> = sections.flatMap { section ->
+    val grid = section.grid(geometry)
+    val perPage = grid.cellsPerPage.coerceAtLeast(1)
+    val pages = pageCount(section.cells.size, grid)
     // `chunked` on an empty list is empty, and an empty collection still gets its page: the
     // heading saying there is nothing in it is the honest page, not a section silently dropped.
     val slices = section.cells.chunked(perPage).ifEmpty { listOf(emptyList()) }
@@ -108,6 +133,7 @@ fun printPages(sections: List<PrintSection>): List<PrintPage> = sections.flatMap
         PrintPage(
             section = section,
             cells = cells,
+            grid = grid,
             numberInSection = index + 1,
             pagesInSection = pages,
         )

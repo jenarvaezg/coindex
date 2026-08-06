@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
+import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -12,6 +13,54 @@ class NotebookLabelsTest {
         assertEquals("Exportar 12 láminas", notebookExportLabel(12))
         assertEquals("Exportar 1 lámina", notebookExportLabel(1))
         assertEquals("Nada que exportar", notebookExportLabel(0))
+    }
+
+    /**
+     * The line under the five switches, which is what the export sheet exists for (#228).
+     *
+     * Pages first, because they are what the configuration moves and what the collector is deciding
+     * about; láminas after, because the filter already chose those and no switch changes them.
+     */
+    @Test
+    fun `the sheet says what the export is about to cost, in pages and in plates`() {
+        assertEquals("104 páginas · 60 láminas", notebookCostLabel(104, 60))
+        assertEquals("1 página · 1 lámina", notebookCostLabel(1, 1))
+        // A checklist of nineteen pages over the same sixty collections is the whole point of
+        // recounting: the láminas do not move and the paper does.
+        assertEquals("19 páginas · 60 láminas", notebookCostLabel(19, 60))
+    }
+
+    @Test
+    fun `every switch is named in the collector's own words`() {
+        assertEquals(
+            listOf("Fotos", "Ambas caras", "Tamaño real", "Compartir página", "QR de Numista"),
+            NotebookSwitch.entries.map(::notebookSwitchLabel),
+        )
+    }
+
+    /**
+     * Why a switch is grey, said on the spot rather than in a help screen.
+     *
+     * Two reasons and they read differently on purpose: **pending** is about the app and names the
+     * ticket, so grey cannot be mistaken for broken; **derived** is about the configuration the
+     * collector built, and resolves itself the moment they turn the coins back on.
+     */
+    @Test
+    fun `a greyed switch says which of the two reasons it is`() {
+        assertEquals(
+            "Pendiente · #231",
+            notebookSwitchNote(NotebookSwitch.Photographs, offered = true),
+        )
+        assertEquals(
+            "Sin fotos no hay nada que ajustar",
+            notebookSwitchNote(NotebookSwitch.ActualSize, offered = false),
+        )
+        // The configuration wins over the ticket: with no coins on the page, «#233 has not landed»
+        // is not the answer to why «tamaño real» cannot be touched.
+        assertEquals(
+            notebookSwitchNote(NotebookSwitch.BothFaces, offered = false),
+            notebookSwitchNote(NotebookSwitch.ActualSize, offered = false),
+        )
     }
 
     @Test

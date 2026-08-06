@@ -51,6 +51,7 @@ import com.jenarvaezg.coindex.ui.notebookExportLabel
 import com.jenarvaezg.coindex.ui.notebookStepLabel
 import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
+import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.seriesLabel
 import com.jenarvaezg.coindex.ui.shelf.IndexFacts
@@ -106,14 +107,22 @@ fun IndexScreen(
     onSync: () -> Unit,
     onOpen: (CardDestination) -> Unit,
     /**
-     * The cards this screen is showing, as printable pages.
+     * How the notebook is printed, as it was left last time (#228).
+     *
+     * The export sheet opens on it and works on a copy: what the collector is dragging switches
+     * around is a draft, and it only becomes how they print when they press «Exportar».
+     */
+    notebookOptions: NotebookOptions,
+    onNotebookPrinted: (NotebookOptions) -> Unit,
+    /**
+     * The cards this screen is showing, as printable pages on a given configuration.
      *
      * It takes the list rather than reading the index itself, so the notebook is what is on screen
-     * — filters and search included — and not what the collector had just narrowed away. Called on
-     * the tap and not on every recomposition: resolving every card's plate is work the index does
-     * not owe until somebody asks for paper.
+     * — filters and search included — and not what the collector had just narrowed away. Called
+     * once the export sheet is open and once per switch moved, never on an idle recomposition:
+     * resolving every card's plate is work the index does not owe until somebody asks for paper.
      */
-    notebook: (List<IndexCard>) -> List<PrintPage>,
+    notebook: (List<IndexCard>, NotebookOptions) -> List<PrintPage>,
     onMessage: (String) -> Unit,
     /**
      * Whether the notebook is being exported right now.
@@ -131,6 +140,13 @@ fun IndexScreen(
     // reshuffle the pages under the printer.
     var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
+    // The cards the export sheet is open over, frozen at the tap for the same reason `printing` is:
+    // the count under the switches has to be about the notebook the collector is configuring, and a
+    // sync landing while they read it must not change the number they are deciding on.
+    var configuring by remember { mutableStateOf<List<IndexCard>?>(null) }
+    // A draft, discarded on «Cancelar»: playing with the switches and backing out has not changed
+    // how this collector prints. Reset from the stored configuration each time the sheet opens.
+    var draft by remember { mutableStateOf(notebookOptions) }
     // Announced from the state and not from the tap, so cancelling and failing say it too: every
     // way out of an export goes through `printing` becoming null.
     LaunchedEffect(printing != null) { onExporting(printing != null) }
@@ -143,6 +159,13 @@ fun IndexScreen(
     // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
     // the notebook needs no mechanism of its own to choose pages.
     val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
+    // What the export sheet is showing the cost of, recounted when a switch moves and on nothing
+    // else. **Outside the grid**, like the export itself and for the same reason: a lazy item is
+    // disposed the moment it scrolls off, and resolving sixty plates again every time the sheet
+    // scrolls back into view is not what «recontado a cada toque» means.
+    val preview = remember(configuring, draft) {
+        configuring?.let { cards -> ExportPreview(cards.size, notebook(cards, draft)) }
+    }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
@@ -166,15 +189,15 @@ fun IndexScreen(
                     // for the index and not for the printer (#147).
                     exportableCards = shown.size,
                     exporting = printing != null,
+                    // Open the sheet once: a second tap would reset the switches under the thumb
+                    // that was moving them.
+                    busy = printing != null || configuring != null,
                     onSync = onSync,
+                    // The button no longer starts the printer: it opens the sheet that says what
+                    // pressing it would cost, on the configuration the collector last used (#228).
                     onExport = {
-                        val pages = notebook(shown)
-                        if (pages.isEmpty()) {
-                            onMessage("No hay ninguna colección que llevar al papel.")
-                        } else {
-                            step = NotebookExportStep.Drawing(0, pages.first().section.title)
-                            printing = pages
-                        }
+                        draft = notebookOptions
+                        configuring = shown
                     },
                 )
             }
@@ -195,6 +218,32 @@ fun IndexScreen(
                             onNarrow = onNarrow,
                         )
                     }
+                }
+            }
+
+            // The five switches and what they cost, before a single page is drawn (#228). In the
+            // same slot the progress card takes, because it is the same conversation: what is
+            // about to come out of the printer.
+            preview?.let { about ->
+                fullWidth {
+                    ExportOptions(
+                        options = draft,
+                        pages = about.pages.size,
+                        cards = about.cards,
+                        onChange = { draft = it },
+                        onExport = {
+                            val pages = about.pages
+                            if (pages.isEmpty()) {
+                                onMessage("No hay ninguna colección que llevar al papel.")
+                            } else {
+                                onNotebookPrinted(draft)
+                                step = NotebookExportStep.Drawing(0, pages.first().section.title)
+                                printing = pages
+                            }
+                            configuring = null
+                        },
+                        onDismiss = { configuring = null },
+                    )
                 }
             }
 
@@ -306,6 +355,16 @@ fun IndexScreen(
     }
 }
 
+/**
+ * What the export sheet is about to produce: how many collections, and how much paper (#228).
+ *
+ * The two travel together because they are recounted together — the láminas are what the filter
+ * chose and the pages are what the configuration makes of them — and holding the pages themselves
+ * rather than only their number is what lets «Exportar» start the printer on exactly what the sheet
+ * had been describing.
+ */
+private data class ExportPreview(val cards: Int, val pages: List<PrintPage>)
+
 /** What the notebook is doing right now, and the way out of it while there is one. */
 @Composable
 private fun ExportProgress(
@@ -407,6 +466,7 @@ private fun IndexHeading(
     spread: Boolean,
     exportableCards: Int,
     exporting: Boolean,
+    busy: Boolean,
     onSync: () -> Unit,
     onExport: () -> Unit,
 ) {
@@ -440,7 +500,7 @@ private fun IndexHeading(
                         notebookExportLabel(exportableCards)
                     },
                     onClick = onExport,
-                    enabled = !exporting && exportableCards > 0,
+                    enabled = !busy && exportableCards > 0,
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {

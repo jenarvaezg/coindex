@@ -20,7 +20,9 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
+import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.notebookSections
+import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -70,6 +72,14 @@ data class UiState(
      */
     val indexShelf: IndexShelf = IndexShelf(),
     val coinsShelf: CoinsShelf = CoinsShelf(),
+    /**
+     * How the notebook comes out of the printer (#228), across launches like the shelves above.
+     *
+     * In the state and not in the export sheet because it survives a launch: the collector who
+     * printed a checklist last month opens the sheet on a checklist. It is **not** per card
+     * (ADR 0021 §7) — it is how the paper looks, not something stored about a collection.
+     */
+    val notebookOptions: NotebookOptions = NotebookOptions(),
     /**
      * The types whose ficha is being asked for right now (#185).
      *
@@ -127,6 +137,7 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
                 lastSync = container.syncLog.last,
                 indexShelf = container.shelves.index,
                 coinsShelf = container.shelves.coins,
+                notebookOptions = container.notebook.options,
             )
         }
         start()
@@ -523,15 +534,39 @@ class CoindexViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     /**
-     * The given cards as printable pages, in the order they arrive (#169).
+     * The given cards as printable pages, on the configuration the collector chose (#169, #228).
      *
      * Built on demand and never observed: [cards] is what the index was showing when the button was
      * pressed, which is exactly what the collector chose to print. There is no `Notebook` behind it
      * — no table, no name, no second order (ADR 0021 §1).
+     *
+     * [options] comes in rather than being read off the state, because the export sheet recounts on
+     * every tap and what it is counting is the configuration **under the collector's thumb** — which
+     * is only stored once they press «Exportar».
      */
-    fun notebookPages(cards: List<IndexCard>): List<PrintPage> = printPages(
-        notebookSections(state = _state.value.collection, cards = cards, curation = curation),
+    fun notebookPages(
+        cards: List<IndexCard>,
+        options: NotebookOptions,
+    ): List<PrintPage> = printPages(
+        sections = notebookSections(
+            state = _state.value.collection,
+            cards = cards,
+            curation = curation,
+            options = options,
+        ),
+        geometry = printGeometry(options),
     )
+
+    /**
+     * Remembers how the notebook was printed, so the next export opens where this one left off.
+     *
+     * Written on the export and not on every toggle: a sheet the collector opened, played with and
+     * dismissed has not changed how they print, and storing each tap would make «Cancelar» a lie.
+     */
+    fun notebookPrinted(options: NotebookOptions) {
+        container.notebook.options = options
+        _state.update { it.copy(notebookOptions = options) }
+    }
 
     fun plate(catalogId: String): PlateResult =
         resolvePlate(_state.value.collection, curation, catalogId)

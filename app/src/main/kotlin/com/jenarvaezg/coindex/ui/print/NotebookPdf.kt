@@ -16,7 +16,7 @@ private const val POINTS_PER_INCH = 72f
 private const val MM_PER_INCH = 25.4f
 
 /** How much the recorded page shrinks on its way into the PDF, uniformly on both axes. */
-private const val POINTS_PER_PIXEL = POINTS_PER_INCH / (MM_PER_INCH * PrintPaper.PX_PER_MM)
+private const val POINTS_PER_PIXEL = POINTS_PER_INCH / (MM_PER_INCH * PrintGeometry.PX_PER_MM)
 
 /**
  * Appends one recorded page to [document], as drawing commands and not as a bitmap.
@@ -31,11 +31,16 @@ private const val POINTS_PER_PIXEL = POINTS_PER_INCH / (MM_PER_INCH * PrintPaper
  * scale uniform leaves the third of a point of difference inside the fifteen-millimetre margin,
  * where nothing is drawn.
  */
-fun addNotebookPage(document: PdfDocument, picture: Picture, number: Int) {
+fun addNotebookPage(
+    document: PdfDocument,
+    picture: Picture,
+    number: Int,
+    geometry: PrintGeometry,
+) {
     require(picture.width > 0 && picture.height > 0) { "la página aún no se ha dibujado" }
     val info = PdfDocument.PageInfo.Builder(
-        millimetresToPoints(PrintPaper.WIDTH_MM),
-        millimetresToPoints(PrintPaper.HEIGHT_MM),
+        millimetresToPoints(geometry.widthMm),
+        millimetresToPoints(geometry.heightMm),
         number,
     ).create()
     val page = document.startPage(info)

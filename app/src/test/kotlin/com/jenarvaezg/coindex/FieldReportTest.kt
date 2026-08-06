@@ -22,7 +22,11 @@ import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
+import com.jenarvaezg.coindex.ui.print.NotebookOptions
+import com.jenarvaezg.coindex.ui.print.grid
 import com.jenarvaezg.coindex.ui.print.notebookSections
+import com.jenarvaezg.coindex.ui.print.pages
+import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import java.io.File
 import kotlin.test.Test
@@ -112,16 +116,19 @@ class FieldReportTest {
      * hundred and one pages (`NotebookPagesTest`); a real collection is not the shelf.
      */
     private fun notebookReport(state: CollectionState, curation: Curation): String = buildString {
-        val sections = notebookSections(state, state.index, curation)
-        val pages = printPages(sections)
+        // El cuaderno de hoy, que es el que la configuración por omisión produce (#228).
+        val paper = printGeometry(NotebookOptions())
+        val sections = notebookSections(state, state.index, curation, NotebookOptions())
+        val pages = printPages(sections, paper)
         appendLine()
         appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
         appendLine("fotos que pediría: ${pages.sumOf { it.photographs }}")
-        for (section in sections.sortedByDescending { it.pages }) {
+        for (section in sections.sortedByDescending { it.pages(paper) }) {
+            val grid = section.grid(paper)
             appendLine(
-                "· ${section.pages} pág | ${section.cells.size} casillas | " +
-                    "Ø ${section.grid.diameterMm} mm | " +
-                    "${section.grid.columns}×${section.grid.rows} | ${section.title}",
+                "· ${section.pages(paper)} pág | ${section.cells.size} casillas | " +
+                    "Ø ${grid.diameterMm} mm | " +
+                    "${grid.columns}×${grid.rows} | ${section.title}",
             )
         }
     }

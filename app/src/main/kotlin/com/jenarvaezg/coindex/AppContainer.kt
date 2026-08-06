@@ -4,6 +4,7 @@ import android.content.Context
 import com.jenarvaezg.coindex.data.CallBudgetGate
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CredentialStore
+import com.jenarvaezg.coindex.data.NotebookStore
 import com.jenarvaezg.coindex.data.ShelfStore
 import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
@@ -44,6 +45,9 @@ class AppContainer(context: Context) {
 
     /** What the collector was looking through last time (ADR 0021 §1), on both hierarchies. */
     val shelves: ShelfStore by lazy { ShelfStore(applicationContext) }
+
+    /** How the collector printed their notebook last time: the five switches of #228. */
+    val notebook: NotebookStore by lazy { NotebookStore(applicationContext) }
 
     val repository: CoindexRepository by lazy {
         val catalogs = CatalogAssets.load(applicationContext.assets)
