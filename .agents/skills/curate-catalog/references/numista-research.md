@@ -10,6 +10,8 @@ Disclosed reference for the [`curate-catalog`](../SKILL.md) skill. Every item he
 
 Once the challenge is passed, `fetch('/catalogue/pieces<id>.html')` **from inside the page** reads individual fichas without tripping Cloudflare again: dozens of types in one browser call, for free (#32).
 
+**A blank challenge page is our own configuration, not Cloudflare.** The challenge is a reCAPTCHA, and its script comes from `recaptcha.net` — a host the browser's `--allowed-origins` in `.mcp.json` has to list, alongside `www.gstatic.com` and `www.google.com`. Without them `challenge.php` paints the Numista header over an empty page with nothing to click, and the console says `ERR_BLOCKED_BY_CLIENT` on `recaptcha.net/recaptcha/api.js` (#259). Read the console log before asking the human to pass a challenge that has not loaded. The same block is what refuses any non-Numista host, so a mint's own site is reached with WebFetch rather than through this browser.
+
 `browser_evaluate` duplicates backslashes on the way in, so regular expressions arrive corrupted. Use plain string operations.
 
 ## Route 1: walk the series
