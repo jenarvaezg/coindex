@@ -1,8 +1,8 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * The ten issuer codes whose Numista label is not the name of a country in Spanish, and what a card
- * says instead.
+ * The eleven issuer codes whose Numista label is not the name of a country in Spanish, and what a
+ * card says instead.
  *
  * Numista does not write countries: it writes **issuing entities with their period of validity**,
  * which is why `russie` arrives as «Federación de Rusia (1991-presente)» and `rome` as «Romano,
@@ -27,11 +27,15 @@ package com.jenarvaezg.coindex.domain
  * `russia-empire` is «Imperio ruso» and not «Rusia», beside the `ancienne_urss` the ficha already
  * calls «Unión Soviética». `allemagne-pre1945` is «Alemania» because that is what Numista itself
  * calls it: «Alemania (1871-1948)» is a country with a period, not the name of another state.
+ * `ghana` is the plainest reading of the first rule — «Ghana (1957-presente)» is today's Ghana
+ * served with its period — and it arrived with the Alien of Scottsdale, whose three first plates
+ * are Ghanaian before the range moved to Samoa. `samoa` needed nothing: the ficha already says
+ * «Samoa».
  *
- * **The tenth is here for a third reason: the language** (#257). `new_south_wales` arrives as «New
+ * **One is here for a third reason: the language** (#257). `new_south_wales` arrives as «New
  * South Wales» even with `lang=es`, which is a clean label — no period of validity, no inversion, 15
  * characters — and therefore the one vice [readsAsACountry] cannot see. It is the only English label
- * among the 25 issuer codes the curated files declare, measured over the shipped cache, and ADR 0021
+ * among the 27 issuer codes the curated files declare, measured over the shipped cache, and ADR 0021
  * §4 asks for Spanish. It takes its own name rather than «Australia» by the second rule above: in
  * 1813 it was a British colony and today it is a state, so it is nobody's country and «Nueva Gales
  * del Sur» is what it is called.
@@ -41,6 +45,7 @@ private val curedCountries: Map<String, String> = mapOf(
     "allemagne-pre1945" to "Alemania",
     "chine" to "China",
     "democratic_republic_congo_period" to "República Democrática del Congo",
+    "ghana" to "Ghana",
     "haiti" to "Haití",
     "new_south_wales" to "Nueva Gales del Sur",
     "republique_dominicaine" to "República Dominicana",

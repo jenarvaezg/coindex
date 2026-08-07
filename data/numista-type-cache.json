@@ -45257,6 +45257,100 @@
   },
   "weight": 31.1035
  },
+ "303228": {
+  "id": 303228,
+  "url": "https://es.numista.com/303228",
+  "title": "5 Cedis (Alien)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "ghana",
+   "name": "Ghana (1957-presente)"
+  },
+  "min_year": 2021,
+  "max_year": 2021,
+  "ruler": [
+   {
+    "id": 943,
+    "name": "República",
+    "wikidata_id": "Q117"
+   }
+  ],
+  "value": {
+   "text": "5 Cedis",
+   "numeric_value": 5,
+   "currency": {
+    "id": 257,
+    "name": "Third cedi",
+    "full_name": "Third cedi (2007-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Representación de la Reina Isabel II rodeada de agroglifos",
+   "lettering": "REPUBLIC OF GHANA. 2021\r\nFIVE CEDIS\r\n1 TROY OUNCE\r\n999 FINE SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ghana/6129841b593af5.08739427-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ghana/6129841b593af5.08739427-180.jpg",
+   "picture_copyright": "mickfinn",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "Un alienígena delante de un cohete que despega de la Tierra, con diseños futuristas de fondo.",
+   "picture": "https://en.numista.com/catalogue/photos/ghana/6129841bd43562.17462702-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ghana/6129841bd43562.17462702-180.jpg",
+   "picture_copyright": "mickfinn",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Aliens",
+  "tags": [
+   "Monarca",
+   "Espacio"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "163"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 4213,
+    "name": "Casa de Moneda de Scottsdale"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "304649": {
   "id": 304649,
   "url": "https://es.numista.com/304649",
@@ -52879,6 +52973,98 @@
    "text": "2 libras"
   },
   "weight": 31.21
+ },
+ "357999": {
+  "id": 357999,
+  "url": "https://es.numista.com/357999",
+  "title": "5 Cedis (Alien)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "ghana",
+   "name": "Ghana (1957-presente)"
+  },
+  "min_year": 2022,
+  "max_year": 2022,
+  "ruler": [
+   {
+    "id": 943,
+    "name": "República",
+    "wikidata_id": "Q117"
+   }
+  ],
+  "value": {
+   "text": "5 Cedis",
+   "numeric_value": 5,
+   "currency": {
+    "id": 257,
+    "name": "Third cedi",
+    "full_name": "Third cedi (2007-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Patrón cósmico y efigie de la Reina Isabel II",
+   "lettering": "REPUBLIC OF GHANA. 2022\r\nFIVE CEDIS\r\n1 TROY OUNCE\r\n999 FINE SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ghana/6406ed1bcf2948.84787478-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ghana/6406ed1bcf2948.84787478-180.jpg",
+   "picture_copyright": "Bird",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "Alien mirando fijamente el alma del espectador terrestre mientras se manifiesta desde una puerta estelar.",
+   "picture": "https://en.numista.com/catalogue/photos/ghana/6406ed1cb7d807.48711991-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ghana/6406ed1cb7d807.48711991-180.jpg",
+   "picture_copyright": "Bird",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Aliens",
+  "comments": "Acabado antiguo viene de la ceca en una cápsula y empaquetado en tarjeta de ceca de Scottsdale.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/64039a6b337d5.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64039a6b337d5.jpg\" alt=\"\" width=\"200\" height=\"209\" /></a><br />\r\n<a href=\"https://en.numista.com/catalogue/images/64039ab2eedb9.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/64039ab2eedb9.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a>",
+  "tags": [
+   "Monarca",
+   "Espacio"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "208"
+   }
+  ],
+  "weight": 31.1035,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 4213,
+    "name": "Casa de Moneda de Scottsdale"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "358743": {
   "category": "coin",
@@ -62708,6 +62894,97 @@
   },
   "weight": 17
  },
+ "428198": {
+  "id": 428198,
+  "url": "https://es.numista.com/428198",
+  "title": "20 Cedis (Aliens)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "ghana",
+   "name": "Ghana (1957-presente)"
+  },
+  "min_year": 2023,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 943,
+    "name": "República",
+    "wikidata_id": "Q117"
+   }
+  ],
+  "value": {
+   "text": "20 Cedis",
+   "numeric_value": 20,
+   "currency": {
+    "id": 257,
+    "name": "Third cedi",
+    "full_name": "Third cedi (2007-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "thickness": 3.1,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas en el centro rodeado de círculos de las cosechas",
+   "lettering": "REPUBLIC OF GHANA · 2023\r\n20 CEDIS\r\n1 TROY OUNCE\r\n999 FINE SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ghana/67d6b3a064c851.46962279-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ghana/67d6b3a064c851.46962279-180.jpg",
+   "picture_copyright": "backpacktrip",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "reverse": {
+   "description": "Dos alienígenas y una nave espacial listos para la batalla",
+   "lettering": "INVASION IS HERE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/ghana/67d6b3a129e279.02637407-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/ghana/67d6b3a129e279.02637407-180.jpg",
+   "picture_copyright": "backpacktrip",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "series": "Aliens",
+  "commemorated_topic": "Extraterrestres",
+  "comments": "<p>Moneda de la serie Alien / Aliens</p>",
+  "tags": [
+   "Espacio",
+   "Escudo de armas"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 4213,
+    "name": "Casa de Moneda de Scottsdale"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "42955": {
   "id": 42955,
   "url": "https://es.numista.com/42955",
@@ -72447,6 +72724,90 @@
   },
   "weight": 17.44
  },
+ "462088": {
+  "id": 462088,
+  "url": "https://es.numista.com/462088",
+  "title": "2 Dollars (Battle Alien)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "samoa",
+   "name": "Samoa"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 6825,
+    "name": "República",
+    "wikidata_id": "Q683"
+   }
+  ],
+  "value": {
+   "text": "2 Dollars",
+   "numeric_value": 2,
+   "currency": {
+    "id": 190,
+    "name": "Tala",
+    "full_name": "Tala (1967-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999 (With selective black rhodium plating)"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo en el centro",
+   "lettering": "1 TROY OUNCE WAR IS HERE\r\nTWO DOLLARS\r\nFA'AVAE I LE ATUA SAMOA\r\nSAMOA · 2024\r\n999 FINE SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/samoa/686956bcbecb97.06223011-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/samoa/686956bcbecb97.06223011-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "description": "Dos alienígenas listos para la batalla y una nave espacial",
+   "lettering": "WAR IS HERE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/samoa/686956bd5ef2f3.95242488-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/samoa/686956bd5ef2f3.95242488-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "series": "Alien",
+  "tags": [
+   "Espacio",
+   "Escudo de armas",
+   "Cruz"
+  ],
+  "weight": 31.1,
+  "orientation": "three",
+  "mints": [
+   {
+    "id": 4213,
+    "name": "Casa de Moneda de Scottsdale"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "465926": {
   "id": 465926,
   "url": "https://es.numista.com/465926",
@@ -82115,6 +82476,89 @@
    "text": "10 Diners"
   },
   "weight": 31.6
+ },
+ "596617": {
+  "id": 596617,
+  "url": "https://es.numista.com/596617",
+  "title": "2 Dollars (Alien Architects)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "samoa",
+   "name": "Samoa"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 6825,
+    "name": "República",
+    "wikidata_id": "Q683"
+   }
+  ],
+  "value": {
+   "text": "2 Dollars",
+   "numeric_value": 2,
+   "currency": {
+    "id": 190,
+    "name": "Tala",
+    "full_name": "Tala (1967-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "(en) Coat of arms, denomination above, country name below, surrounded by a ring with geometric design.",
+   "lettering": "1 TROY OUNCE WAR IS HERE\r\nTWO TALA \r\nFA'AVAE I LE ATUA SAMOA\r\nSAMOA · 2025\r\n999 FINE SILVER",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/samoa/6a7606ac04cb28.73497960-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/samoa/6a7606ac04cb28.73497960-180.jpg",
+   "picture_copyright": "jenarvaezg",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "(en) An alien with three pyramids in the background.",
+   "picture": "https://en.numista.com/catalogue/photos/samoa/6a76068c3cbd06.83721300-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/samoa/6a76068c3cbd06.83721300-180.jpg",
+   "picture_copyright": "jenarvaezg",
+   "picture_license_name": "CC BY-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
+  },
+  "series": "Alien",
+  "commemorated_topic": "(en) Alien Architects",
+  "tags": [
+   "Espacio",
+   "Escudo de armas"
+  ],
+  "weight": 31.1,
+  "orientation": "three",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 4213,
+    "name": "Casa de Moneda de Scottsdale"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "596646": {
   "id": 596646,
