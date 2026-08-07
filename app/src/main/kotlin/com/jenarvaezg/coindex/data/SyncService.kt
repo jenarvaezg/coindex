@@ -4,7 +4,6 @@ import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
-import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject

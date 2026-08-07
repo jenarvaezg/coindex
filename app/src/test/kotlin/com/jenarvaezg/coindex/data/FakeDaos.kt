@@ -57,6 +57,34 @@ class FakeTypeMetaDao : TypeMetaDao {
             }
         }
     }
+    private fun readBefore(version: Int) = rows.value.filter { it.readVersion < version }
+    override suspend fun countReadBefore(version: Int): Int = readBefore(version).size
+    override suspend fun rawReadBefore(version: Int, limit: Int): List<TypeRawRow> =
+        readBefore(version).take(limit).map { TypeRawRow(it.typeId, it.raw) }
+    override suspend fun setReading(
+        typeId: Int,
+        issuerName: String?,
+        composition: String?,
+        sizeMillimetres: Double?,
+        category: String?,
+        numistaUrl: String?,
+        version: Int,
+    ) {
+        rows.value = rows.value.map { row ->
+            if (row.typeId == typeId) {
+                row.copy(
+                    issuerName = issuerName,
+                    composition = composition,
+                    sizeMillimetres = sizeMillimetres,
+                    category = category,
+                    numistaUrl = numistaUrl,
+                    readVersion = version,
+                )
+            } else {
+                row
+            }
+        }
+    }
 }
 
 /**

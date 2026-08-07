@@ -1,9 +1,9 @@
 package com.jenarvaezg.coindex.ui.print
 
-import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
-import com.jenarvaezg.coindex.data.TypeImages
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Curation

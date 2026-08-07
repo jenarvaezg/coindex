@@ -46,10 +46,13 @@ calls it silver. `other` is **not** «unknown»: it is a composition with no dom
 in the seeded cache is the bimetallic 500 bolívares and one copper coin clad in cupronickel. A
 composition nobody recorded, or one the rules do not read, is `null`.
 
-It is **inferred on read** from `composition.text` inside the `raw` column of `TypeMetaEntity`,
-the same bargain that already gives the finish (ADR 0005) and the issuer name: every ficha already
-cached carries its own composition, so the field cost neither a cache migration nor a single API
-call. Everything inside parentheses is dropped before the rules run — the Koala of 2016 says
+It is **inferred on read** from `composition.text`, the same bargain that already gives the finish
+(ADR 0005) and the issuer name: every ficha already cached carries its own composition, so the
+field cost neither a single API call nor — when it landed — a cache migration. The prose it reads
+has been the `composition` column of `TypeMetaEntity` since version 6 rather than a parse of `raw`
+on every pass (#221), and that changes nothing here: what is stored is what Numista *wrote*, never
+this app's verdict about it, so a better rule still fixes fichas cached months ago.
+Everything inside parentheses is dropped before the rules run — the Koala of 2016 says
 «Plata 999 (highlighted in 24-carat gold)», and only the head of that sentence describes what the
 coin is made of.
 

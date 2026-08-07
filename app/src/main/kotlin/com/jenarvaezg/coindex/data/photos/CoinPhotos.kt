@@ -1,4 +1,4 @@
-package com.jenarvaezg.coindex.data
+package com.jenarvaezg.coindex.data.photos
 
 /**
  * The catalog pictures of one coin side, at the two sizes Numista publishes for it.

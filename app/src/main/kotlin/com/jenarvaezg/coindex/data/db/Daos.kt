@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.jenarvaezg.coindex.data.ficha.FichaReading
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -79,6 +80,57 @@ interface TypeMetaDao {
             "WHERE typeId = :typeId",
     )
     suspend fun setThumbnails(typeId: Int, obverse: String?, reverse: String?)
+
+    // By version and not by «is the column null», which is what the thumbnails had to settle for:
+    // a ficha with no composition at all would otherwise be read again on every single start.
+    @Query("SELECT COUNT(*) FROM type_meta WHERE readVersion < :version")
+    suspend fun countReadBefore(version: Int): Int
+
+    @Query("SELECT typeId, raw FROM type_meta WHERE readVersion < :version LIMIT :limit")
+    suspend fun rawReadBefore(version: Int, limit: Int): List<TypeRawRow>
+
+    /**
+     * Writes what a batch of bodies said, as one unit.
+     *
+     * One transaction and not one per row: the first launch after version 6 reads the whole cache,
+     * and a couple of thousand auto-committed `UPDATE`s is a couple of thousand `fsync`s in front
+     * of a collector waiting for their index to draw.
+     */
+    @Transaction
+    suspend fun setReadings(readings: Map<Int, FichaReading>, version: Int) {
+        readings.forEach { (typeId, reading) ->
+            setReading(
+                typeId = typeId,
+                issuerName = reading.issuerName,
+                composition = reading.composition,
+                sizeMillimetres = reading.sizeMillimetres,
+                category = reading.category,
+                numistaUrl = reading.numistaUrl,
+                version = version,
+            )
+        }
+    }
+
+    /**
+     * Writes what one body said into its columns.
+     *
+     * A targeted `UPDATE` and not [overwrite]: this is the same ficha read again, not a new one,
+     * and the row's `fetchedAt` still means the day this phone got it (#185, ADR 0025).
+     */
+    @Query(
+        "UPDATE type_meta SET issuerName = :issuerName, composition = :composition, " +
+            "sizeMillimetres = :sizeMillimetres, category = :category, " +
+            "numistaUrl = :numistaUrl, readVersion = :version WHERE typeId = :typeId",
+    )
+    suspend fun setReading(
+        typeId: Int,
+        issuerName: String?,
+        composition: String?,
+        sizeMillimetres: Double?,
+        category: String?,
+        numistaUrl: String?,
+        version: Int,
+    )
 }
 
 /**

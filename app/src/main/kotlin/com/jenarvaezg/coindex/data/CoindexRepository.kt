@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog

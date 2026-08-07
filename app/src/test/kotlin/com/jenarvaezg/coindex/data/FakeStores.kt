@@ -3,9 +3,11 @@ package com.jenarvaezg.coindex.data
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.PrefetchRefusal
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
+import com.jenarvaezg.coindex.ui.shelf.ShelfStore
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 

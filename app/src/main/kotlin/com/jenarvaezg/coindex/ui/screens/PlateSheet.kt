@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
-import com.jenarvaezg.coindex.data.TypeImages
-import com.jenarvaezg.coindex.ui.components.CoinSides
-import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
+import com.jenarvaezg.coindex.ui.components.CoinSides
+import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlin.math.ceil
 import kotlin.math.sqrt

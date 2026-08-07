@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.data.TypeImages
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
 import com.jenarvaezg.coindex.ui.recordInto
