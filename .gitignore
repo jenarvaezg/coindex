@@ -23,3 +23,6 @@ keystore.properties
 
 # Capturas privadas de colección (FieldReportTest); nunca al remoto
 .local/
+
+# Descargas y subsets del medidor de tipografías (#298); se regeneran con medir.py
+docs/ux/*/_work/
