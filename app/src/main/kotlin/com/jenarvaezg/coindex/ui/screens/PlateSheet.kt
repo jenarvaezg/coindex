@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.isSpecified
 import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
-import com.jenarvaezg.coindex.ui.components.coinSideImageCount
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -181,15 +180,6 @@ internal fun TextStyle.scaledBy(scale: Float): TextStyle = copy(
     lineHeight = if (lineHeight.isSpecified) lineHeight * scale else lineHeight,
     letterSpacing = if (letterSpacing.isSpecified) letterSpacing * scale else letterSpacing,
 )
-
-/** Total pictures the sheet will request, so the export knows when it can capture. */
-fun sheetImageCount(
-    cells: List<DrawnCell>,
-    images: Map<Int, TypeImages>,
-): Int = cells.sumOf { cell ->
-    val typeImages = cell.numistaTypeId?.let { images[it] }
-    coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
-}
 
 @Composable
 private fun SheetCell(

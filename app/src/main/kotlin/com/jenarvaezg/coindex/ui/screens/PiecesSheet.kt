@@ -23,7 +23,6 @@ import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
-import com.jenarvaezg.coindex.ui.components.coinSideImageCount
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.piecesSheetFacts
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -160,13 +159,4 @@ private fun PiecesSheetCell(
             color = Paper.muted,
         )
     }
-}
-
-/** Total pictures the sheet will request, so the export knows when it can capture. */
-fun piecesSheetImageCount(
-    pieces: List<DrawnPiece>,
-    images: Map<Int, TypeImages>,
-): Int = pieces.sumOf { piece ->
-    val typeImages = images[piece.item.typeId]
-    coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
 }

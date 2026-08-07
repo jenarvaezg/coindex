@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.TypeImages
+import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.screens.SheetLayout
 import com.jenarvaezg.coindex.ui.screens.sheetImageCount
 import kotlin.test.Test
@@ -15,6 +16,11 @@ private fun cell(id: String, typeId: Int) = DrawnCell(
     state = "Me falta",
     footnote = null,
     owned = false,
+)
+
+private fun piece(typeId: Int) = DrawnPiece(
+    item = CollectedItem(id = typeId.toLong(), quantity = 1, typeId = typeId),
+    emissionLabel = null,
 )
 
 class SheetLayoutTest {
@@ -80,8 +86,38 @@ class SheetLayoutTest {
             // Type 3 has no cached pictures at all and requests none.
         )
 
-        assertEquals(3, sheetImageCount(cells, images))
-        assertEquals(0, sheetImageCount(cells, emptyMap()))
+        assertEquals(3, sheetImageCount(cells, images) { it.numistaTypeId })
+        assertEquals(0, sheetImageCount(cells, emptyMap()) { it.numistaTypeId })
+    }
+
+    /**
+     * The same count, over the rows of a collection rather than the slots of a catalog.
+     *
+     * One function for the two sheets (#219): they differ in where the Numista type is read from —
+     * a cell's may be absent, a piece's never is — and in nothing else, and two copies of the
+     * arithmetic is how one of them would come to wait for a photograph the other does not.
+     */
+    @Test
+    fun `a sheet of pieces counts its pictures the same way`() {
+        val pieces = listOf(piece(1), piece(2), piece(3))
+        val images = mapOf(
+            1 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto(picture = "reverse")),
+            2 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto()),
+        )
+
+        assertEquals(3, sheetImageCount(pieces, images) { it.item.typeId })
+        assertEquals(0, sheetImageCount(pieces, emptyMap()) { it.item.typeId })
+    }
+
+    /** A slot no Numista type names asks for nothing rather than for the whole map. */
+    @Test
+    fun `a cell with no type requests no pictures`() {
+        val cells = listOf(cell("a", 1).copy(numistaTypeId = null))
+        val images = mapOf(
+            1 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto(picture = "reverse")),
+        )
+
+        assertEquals(0, sheetImageCount(cells, images) { it.numistaTypeId })
     }
 
     /**
@@ -99,6 +135,6 @@ class SheetLayoutTest {
             ),
         )
 
-        assertEquals(2, sheetImageCount(cells, images))
+        assertEquals(2, sheetImageCount(cells, images) { it.numistaTypeId })
     }
 }

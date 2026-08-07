@@ -82,7 +82,7 @@ fun notebookStepLabel(step: NotebookExportStep, pages: Int): String = when (step
 /**
  * What the collector is told once the notebook has been handed to the share sheet.
  *
- * The same criterion the single plate settled on (`plateExportMessage`): a photograph that never
+ * The same criterion the shared sheets settled on ([sheetExportMessage]): a photograph that never
  * arrived is a hole in a page that is about to be sent to somebody, so it is counted and said out
  * loud, and it never fails the export — eighty-three good pages are not thrown away for one blank
  * cell.

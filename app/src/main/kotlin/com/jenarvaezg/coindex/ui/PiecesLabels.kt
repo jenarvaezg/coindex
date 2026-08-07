@@ -31,24 +31,3 @@ fun piecesSheetFacts(subject: PiecesSubject): List<Pair<String, String>> = build
     subject.variant?.let { variant -> add("Variante" to variant) }
     add("Piezas" to subject.countSentence)
 }
-
-/**
- * What the collector is told once a sheet of pieces has been handed to the share sheet.
- *
- * It is given the subject and not two numbers: the message counts what the file counts, and the only
- * way to guarantee that is for both to read [countSentence] off the same collection.
- */
-fun piecesExportMessage(
-    subject: PiecesSubject,
-    expectedPhotos: Int,
-    loadedPhotos: Int,
-): String {
-    val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
-    return when (absent) {
-        // The same sentence the sheet itself prints under the title, so the message and the file
-        // that has just been shared cannot count differently.
-        0 -> "Hoja completa exportada · ${subject.countSentence}"
-        1 -> "Hoja exportada, pero una foto no llegó a cargar"
-        else -> "Hoja exportada, pero $absent fotos no llegaron a cargar"
-    }
-}

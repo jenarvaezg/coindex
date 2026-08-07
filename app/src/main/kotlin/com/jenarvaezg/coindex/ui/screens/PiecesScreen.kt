@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import android.graphics.Picture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,20 +15,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.BoxUpkeep
 import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -39,9 +36,7 @@ import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.pieceTitle
-import com.jenarvaezg.coindex.ui.piecesExportMessage
 import com.jenarvaezg.coindex.ui.piecesFileName
-import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -155,15 +150,32 @@ fun PiecesScreen(
             }
         }
 
+        // The same cycle a plate exports with, [SheetExport] (#219), pointed at a sheet that has no
+        // empty cell to draw. What this contributes is «hoja» rather than «lámina», and a tally
+        // that is the collection's own sentence rather than a count of casillas.
         if (exporting) {
-            PiecesSheetExport(
-                subject = subject,
-                state = state,
+            SheetExport(
+                key = subject.title,
+                items = subject.pieces,
+                images = state.images,
+                typeId = { it.item.typeId },
+                sheet = SharedSheet.PIECES,
+                tally = subject.countSentence,
+                fileName = piecesFileName(subject.title),
                 onFinished = { message ->
                     exporting = false
                     onMessage(message)
                 },
-            )
+            ) { layout, onImageSettled, recording ->
+                PiecesSheet(
+                    subject = subject,
+                    titles = { piece -> pieceTitle(state, piece) },
+                    images = state.images,
+                    layout = layout,
+                    onImageSettled = onImageSettled,
+                    modifier = recording,
+                )
+            }
         }
     }
 }
@@ -297,62 +309,5 @@ fun MissingSubject(explanation: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text("Colección desconocida", style = MaterialTheme.typography.headlineMedium)
         Text(explanation, style = MaterialTheme.typography.bodyLarge, color = Paper.muted)
-    }
-}
-
-/**
- * Composes the whole sheet off-screen, waits for every picture to settle, and shares it.
- *
- * The same machinery a plate exports with ([recordInto] + [shareSettledSheet]), pointed at a sheet
- * that has no empty cell to draw.
- */
-@Composable
-private fun PiecesSheetExport(
-    subject: PiecesSubject,
-    state: CollectionState,
-    onFinished: (String) -> Unit,
-) {
-    val context = LocalContext.current
-    val picture = remember(subject.title) { Picture() }
-    val layout = remember(subject.pieces.size) { SheetLayout.forMemberCount(subject.pieces.size) }
-    val expectedImages = remember(subject.pieces, state.images) {
-        piecesSheetImageCount(subject.pieces, state.images)
-    }
-    val settled = remember { mutableIntStateOf(0) }
-    val loaded = remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(subject.title) {
-        val outcome = shareSettledSheet(
-            context = context,
-            picture = picture,
-            fileName = piecesFileName(subject.title),
-            expectedImages = expectedImages,
-            settled = settled,
-        )
-        onFinished(
-            if (outcome.isFailure) {
-                "No se pudo exportar la hoja: ${outcome.exceptionOrNull()?.message}"
-            } else {
-                piecesExportMessage(
-                    subject = subject,
-                    expectedPhotos = expectedImages,
-                    loadedPhotos = loaded.intValue,
-                )
-            },
-        )
-    }
-
-    OffScreenSheet(layout) {
-        PiecesSheet(
-            subject = subject,
-            titles = { piece -> pieceTitle(state, piece) },
-            images = state.images,
-            layout = layout,
-            onImageSettled = { painted ->
-                settled.intValue += 1
-                if (painted) loaded.intValue += 1
-            },
-            modifier = Modifier.recordInto(picture),
-        )
     }
 }

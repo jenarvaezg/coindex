@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import android.graphics.Picture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,14 +13,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
@@ -34,11 +30,11 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
+import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.plateSubject
-import com.jenarvaezg.coindex.ui.plateExportMessage
+import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
-import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -91,68 +87,31 @@ private fun AvailablePlate(
             onOpenSource = onOpenSource,
             onExport = { exporting = true },
         )
+        // The whole export cycle is [SheetExport] (#219): what a plate contributes is the four
+        // values that make it a plate rather than a sheet of pieces.
         if (exporting) {
-            PlateSheetExport(
-                plate = plate,
+            SheetExport(
+                key = plate.catalogId,
+                items = plate.cells,
                 images = images,
+                typeId = { it.numistaTypeId },
+                sheet = SharedSheet.PLATE,
+                tally = plateSheetTally(plate.cells.size),
+                fileName = plateFileName(plate.catalogId),
                 onFinished = { message ->
                     exporting = false
                     onMessage(message)
                 },
-            )
+            ) { layout, onImageSettled, recording ->
+                PlateSheet(
+                    plate = plate,
+                    images = images,
+                    layout = layout,
+                    onImageSettled = onImageSettled,
+                    modifier = recording,
+                )
+            }
         }
-    }
-}
-
-/**
- * Composes the full sheet off-screen, waits for every picture to settle, and shares it.
- *
- * The sheet is measured with its own density and never painted: [recordInto] captures the
- * drawing commands instead of drawing them, so the export is the complete plate rather than
- * the part that happens to be on screen.
- */
-@Composable
-private fun PlateSheetExport(
-    plate: PlateSubject,
-    images: Map<Int, TypeImages>,
-    onFinished: (String) -> Unit,
-) {
-    val context = LocalContext.current
-    val picture = remember(plate.catalogId) { Picture() }
-    val layout = remember(plate.cells.size) { SheetLayout.forMemberCount(plate.cells.size) }
-    val expectedImages = remember(plate.cells, images) { sheetImageCount(plate.cells, images) }
-    val settled = remember { mutableIntStateOf(0) }
-    val loaded = remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(plate.catalogId) {
-        val outcome = shareSettledSheet(
-            context = context,
-            picture = picture,
-            fileName = plateFileName(plate.catalogId),
-            expectedImages = expectedImages,
-            settled = settled,
-        )
-        onFinished(
-            if (outcome.isFailure) {
-                "No se pudo exportar la lámina: ${outcome.exceptionOrNull()?.message}"
-            } else {
-                plateExportMessage(plate.cells.size, expectedImages, loaded.intValue)
-            },
-        )
-    }
-
-    OffScreenSheet(layout) {
-        PlateSheet(
-            plate = plate,
-            images = images,
-            layout = layout,
-            onImageSettled = { painted ->
-                settled.intValue += 1
-                if (painted) loaded.intValue += 1
-            },
-            // The sheet paints its own paper; recording it from the outside would drop it.
-            modifier = Modifier.recordInto(picture),
-        )
     }
 }
 
