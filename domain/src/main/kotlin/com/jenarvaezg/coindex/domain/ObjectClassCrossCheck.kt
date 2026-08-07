@@ -58,6 +58,7 @@ private val THINGS_THAT_ARE_NOT_MONEY = setOf(
  *
  * @param objectClassByType Numista's `type` per type id, from the seeded cache
  */
+@SuiteOnly
 fun objectClassDeviations(
     catalogs: List<CollectionCatalog>,
     objectClassByType: Map<Int, String?>,
@@ -73,4 +74,5 @@ fun objectClassDeviations(
 }
 
 /** The vocabulary [objectClassDeviations] reads, exposed so the suite can pin it against `data/`. */
+@SuiteOnly
 fun thingsThatAreNotMoney(): Set<String> = THINGS_THAT_ARE_NOT_MONEY

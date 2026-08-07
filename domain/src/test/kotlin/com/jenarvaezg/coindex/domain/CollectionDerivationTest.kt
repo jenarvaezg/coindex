@@ -73,7 +73,7 @@ class CollectionDerivationTest {
             12 to metadata(12, "Lunar ounce", 31.1, Finish.Bullion),
         )
 
-        val derivedCollections = buildDerivedCollections(items, typeMeta, emptyList())
+        val derivedCollections = deriveCollection(items, typeMeta, emptyList()).derivedCollections
 
         assertEquals(2, derivedCollections.size)
         val unconfirmed = derivedCollections.first { it.finish == null }
@@ -93,8 +93,8 @@ class CollectionDerivationTest {
             20 to metadata(20, "Lunar ounce", 31.1, Finish.Bullion),
         )
 
-        val firstUser = buildDerivedCollections(listOf(item(1, 10, 1)), typeMeta, emptyList())
-        val secondUser = buildDerivedCollections(listOf(item(2, 20, 2)), typeMeta, emptyList())
+        val firstUser = deriveCollection(listOf(item(1, 10, 1)), typeMeta, emptyList()).derivedCollections
+        val secondUser = deriveCollection(listOf(item(2, 20, 2)), typeMeta, emptyList()).derivedCollections
 
         assertEquals(1, firstUser.size)
         assertEquals("Lunar Series III", firstUser[0].family)
@@ -113,11 +113,11 @@ class CollectionDerivationTest {
             12 to metadata(12, "Lunar Series III", 31.1, null),
         )
 
-        val derivedCollections = buildDerivedCollections(
+        val derivedCollections = deriveCollection(
             listOf(item(1, 10, 1), item(2, 11, 1), item(3, 12, 1)),
             typeMeta,
             emptyList(),
-        )
+        ).derivedCollections
 
         assertEquals(3, derivedCollections.size)
         assertTrue(
@@ -160,11 +160,11 @@ class CollectionDerivationTest {
             21 to metadata(21, "System 19-2001", 31.1, null),
         )
 
-        val derivedCollections = buildDerivedCollections(
+        val derivedCollections = deriveCollection(
             listOf(item(1, 10, 1), item(2, 11, 1), item(3, 12, 1), item(4, 20, 1), item(5, 21, 1)),
             typeMeta,
             emptyList(),
-        )
+        ).derivedCollections
 
         // A technical family no longer costs the piece its card (ADR 0012); the raw value
         // stays in the key, and only the label reads as a monetary system.
@@ -363,11 +363,11 @@ class CollectionDerivationTest {
         )
 
         // ADR 0009 lets an undated holding open the plate by type without filling any dated slot.
-        val derivedCollections = buildDerivedCollections(
+        val derivedCollections = deriveCollection(
             listOf(item(1, 10_340, 1)),
             metadata,
             listOf(catalog),
-        )
+        ).derivedCollections
 
         assertEquals(listOf(catalog.key()), derivedCollections.map { it.key() })
     }
@@ -408,11 +408,11 @@ class CollectionDerivationTest {
             ),
         )
 
-        val derivedCollections = buildDerivedCollections(
+        val derivedCollections = deriveCollection(
             listOf(item(1, 448_800, 1), item(2, 470_766, 1)),
             typeMeta,
             listOf(catalog),
-        )
+        ).derivedCollections
 
         assertEquals(
             listOf(
@@ -474,11 +474,11 @@ class CollectionDerivationTest {
             metal = Metal.Silver,
         )
 
-        val derivedCollections = buildDerivedCollections(
+        val derivedCollections = deriveCollection(
             listOf(item(1, 577_854, 1)),
             mapOf(577_854 to submission),
             listOf(catalog),
-        )
+        ).derivedCollections
 
         assertEquals(listOf(catalog.key()), derivedCollections.map { it.key() })
     }
@@ -624,29 +624,29 @@ class CollectionDerivationTest {
         assertTrue(derivation.unclassified.isEmpty())
 
         // A real Numista family wins; a technical monetary system does not.
-        val real = buildDerivedCollections(
+        val real = deriveCollection(
             listOf(item(1, 4_369, 1)),
             mapOf(4_369 to quarter(4_369, "Familia oficial")),
             emptyList(),
             listOf(grouping),
-        )
+        ).derivedCollections
         assertEquals("Familia oficial", real[0].family)
-        val technical = buildDerivedCollections(
+        val technical = deriveCollection(
             listOf(item(1, 4_369, 1)),
             mapOf(4_369 to quarter(4_369, "System 1879-1936")),
             emptyList(),
             listOf(grouping),
-        )
+        ).derivedCollections
         assertEquals("Medios de Venezuela", technical[0].family)
 
         // And a catalog outranks the grouping, because it can also say what is missing.
         val catalog = dateRunCatalogStub()
-        val catalogued = buildDerivedCollections(
+        val catalogued = deriveCollection(
             listOf(item(1, 10_340, 1)),
             mapOf(10_340 to TypeMeta(id = 10_340, family = null, weightOz = ounces(25.0))),
             listOf(catalog),
             listOf(grouping.copy(id = "otra", typeIds = listOf(10_340))),
-        )
+        ).derivedCollections
         assertEquals("5 Bolívares de Venezuela", catalogued[0].family)
     }
 

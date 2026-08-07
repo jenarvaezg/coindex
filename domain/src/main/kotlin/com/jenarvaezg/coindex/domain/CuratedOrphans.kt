@@ -75,6 +75,7 @@ sealed class CuratedOrphansValidationError(val message: String) {
  * one of the two files, and making it fatal on boot would be the unsilenceable red #133
  * forbids (same bargain as the metal and object-class nets).
  */
+@SuiteOnly
 fun orphanCatalogCollisions(
     orphans: CuratedOrphans,
     catalogs: List<CollectionCatalog>,

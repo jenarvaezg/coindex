@@ -89,4 +89,5 @@ fun readsAsACountry(label: String): Boolean =
 private const val COUNTRY_NAME_CEILING = 40
 
 /** The corrected codes, for the net that checks them against the cache that ships (ADR 0023). */
+@SuiteOnly
 fun curedIssuerCodes(): Set<String> = curedCountries.keys

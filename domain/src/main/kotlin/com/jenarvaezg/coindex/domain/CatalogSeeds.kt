@@ -229,6 +229,7 @@ fun validateShortNamesAcross(
  * in the suite rather than as a fatal startup crash. Cross-checks against catalog claims
  * stay in the suite too ([orphanCatalogCollisions]).
  */
+@SuiteOnly
 object OrphanSeeds {
     fun parse(fileName: String, contents: String): CuratedOrphans {
         val orphans = try {
