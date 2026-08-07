@@ -8,11 +8,13 @@ package com.jenarvaezg.coindex.ui
  * printed notebook is not, and it counts pages rather than casillas, so it keeps a sentence of its
  * own (`notebookExportMessage`); that is a fact about Spanish and not an oversight.
  *
- * A type rather than a string so a third noun cannot be invented at a call site: a masculine one
- * would silently produce «Cuaderno completa exportada».
+ * A type rather than a string so an export cannot invent a noun of its own at the call site — which
+ * is what the two hand-written sentences did until #219. It does **not** make the agreement safe by
+ * construction: a masculine entry added here would read «Cuaderno completa exportada», and the
+ * guard against that is this note plus the notebook already having a sentence of its own.
  */
 enum class SharedSheet(
-    /** Lower case, because it is read behind an article: «No se pudo exportar la lámina». */
+    /** Feminine and lower case: it is read behind an article, «No se pudo exportar la lámina». */
     val noun: String,
 ) {
     PLATE("lámina"),
@@ -54,9 +56,15 @@ fun sheetExportMessage(
  * It keeps the [cause] because the two ways this fails are things the collector can act on — no
  * room on disk, no app to share to — and it names the sheet with the same noun the message above
  * would have used.
+ *
+ * An exception with nothing to say stops at the sentence. Interpolating it anyway is what put the
+ * word «null» in front of the collector, which reads as the app having broken rather than as an
+ * export that did not happen.
  */
-fun sheetExportFailure(sheet: SharedSheet, cause: String?): String =
-    "No se pudo exportar la ${sheet.noun}: $cause"
+fun sheetExportFailure(sheet: SharedSheet, cause: String?): String {
+    val sentence = "No se pudo exportar la ${sheet.noun}"
+    return cause?.takeIf { it.isNotBlank() }?.let { "$sentence: $it" } ?: "$sentence."
+}
 
 /**
  * What a plate says it holds: **«19 casillas»**.

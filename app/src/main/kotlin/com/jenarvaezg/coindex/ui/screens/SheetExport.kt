@@ -59,15 +59,17 @@ const val IMAGE_WAIT_MILLIS = 30_000L
  * and conflating them is what announced a sheet of twelve empty cells as complete (issue #67).
  *
  * The whole of it is keyed on [key] — the catalog's id, the collection's title — so exporting a
- * different subject starts a fresh recording rather than appending to the previous one.
+ * different subject starts a fresh recording **and fresh counters** rather than continuing the
+ * previous one's. A [String] and not an `Any`: a subject passed whole would compare by identity on
+ * some types and restart the export on every recomposition.
  */
 @Composable
 fun <T> SheetExport(
-    key: Any,
-    /** The members the sheet draws: they size the grid and say which pictures to wait for. */
+    key: String,
+    /** What the sheet draws, a slot or a row: sizes the grid, says which pictures to wait for. */
     items: List<T>,
     images: Map<Int, TypeImages>,
-    /** Where a member's Numista type is read. A catalog's slot may have none; a piece always has. */
+    /** Where an item's Numista type is read. A catalog's slot may have none; a piece always has. */
     typeId: (T) -> Int?,
     /** What this export is called, which is what the closing sentence and any failure are about. */
     sheet: SharedSheet,
@@ -85,9 +87,12 @@ fun <T> SheetExport(
     val context = LocalContext.current
     val picture = remember(key) { Picture() }
     val layout = remember(items.size) { SheetLayout.forMemberCount(items.size) }
-    val expectedImages = remember(items, images) { sheetImageCount(items, images, typeId) }
-    val settled = remember { mutableIntStateOf(0) }
-    val loaded = remember { mutableIntStateOf(0) }
+    // [typeId] is one of the keys and not just a captured lambda: both callers pass a
+    // non-capturing one today, and a capturing one would leave a stale count behind — the very
+    // kind of silent drift this composable exists to make impossible.
+    val expectedImages = remember(items, images, typeId) { sheetImageCount(items, images, typeId) }
+    val settled = remember(key) { mutableIntStateOf(0) }
+    val loaded = remember(key) { mutableIntStateOf(0) }
 
     LaunchedEffect(key) {
         val outcome = shareSettledSheet(

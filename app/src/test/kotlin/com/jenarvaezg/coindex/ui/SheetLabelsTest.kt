@@ -122,4 +122,22 @@ class SheetLabelsTest {
             sheetExportFailure(SharedSheet.PIECES, "ENOSPC"),
         )
     }
+
+    /**
+     * An exception with nothing to say stops at the sentence.
+     *
+     * Interpolated straight in, a null message put the word «null» in front of the collector, which
+     * reads as the app having broken rather than as an export that did not happen.
+     */
+    @Test
+    fun `an exception with no message never says null`() {
+        assertEquals(
+            "No se pudo exportar la lámina.",
+            sheetExportFailure(SharedSheet.PLATE, null),
+        )
+        assertEquals(
+            "No se pudo exportar la hoja.",
+            sheetExportFailure(SharedSheet.PIECES, "   "),
+        )
+    }
 }

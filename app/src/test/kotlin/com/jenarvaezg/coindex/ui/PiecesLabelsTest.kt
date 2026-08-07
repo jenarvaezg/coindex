@@ -84,5 +84,4 @@ class PiecesLabelsTest {
             piecesSheetFacts(subject(issuer = null, variant = null)),
         )
     }
-
 }
