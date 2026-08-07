@@ -8,14 +8,24 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.data.TypeImages
+import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.components.coinSideImageCount
+import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sharePlateSheet
+import com.jenarvaezg.coindex.ui.sheetExportFailure
+import com.jenarvaezg.coindex.ui.sheetExportMessage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -29,11 +39,108 @@ import kotlinx.coroutines.withTimeoutOrNull
 const val IMAGE_WAIT_MILLIS = 30_000L
 
 /**
+ * Composes a sheet off-screen, waits for every picture to settle, shares it, and says what it did.
+ *
+ * **The whole cycle and not the pieces of it.** A plate and a collection's pieces used to spell this
+ * out line for line — a [Picture], a [SheetLayout], the count of pictures to expect, two counters,
+ * an effect that shares and reports, and the off-screen composition that draws into the recording —
+ * and the two copies had already drifted (#219). What genuinely differs between the two exports is
+ * four values: how many members the geometry is for, where a member's Numista type is read from,
+ * what the file is called, and what the sheet says it holds. They are the parameters; the rest is
+ * here.
+ *
+ * The sheet is measured with its own density and **never painted**: [recordInto] captures the
+ * drawing commands instead of drawing them, so what gets shared is the complete sheet rather than
+ * the part that happens to fit on a screen.
+ *
+ * Two counters and not one, because they answer different questions: settled is «has every picture
+ * reported back», which is when it is safe to capture, and loaded is «did it arrive», which is what
+ * the closing sentence is about. A picture that failed reports back exactly like one that arrived,
+ * and conflating them is what announced a sheet of twelve empty cells as complete (issue #67).
+ *
+ * The whole of it is keyed on [key] — the catalog's id, the collection's title — so exporting a
+ * different subject starts a fresh recording rather than appending to the previous one.
+ */
+@Composable
+fun <T> SheetExport(
+    key: Any,
+    /** The members the sheet draws: they size the grid and say which pictures to wait for. */
+    items: List<T>,
+    images: Map<Int, TypeImages>,
+    /** Where a member's Numista type is read. A catalog's slot may have none; a piece always has. */
+    typeId: (T) -> Int?,
+    /** What this export is called, which is what the closing sentence and any failure are about. */
+    sheet: SharedSheet,
+    /** What the sheet says it holds, in its own words: «19 casillas», «4 de 12 · te faltan 8». */
+    tally: String,
+    fileName: String,
+    onFinished: (String) -> Unit,
+    /** Draws the sheet: at the geometry given, reporting each picture, into the recording. */
+    content: @Composable (
+        layout: SheetLayout,
+        onImageSettled: (painted: Boolean) -> Unit,
+        recording: Modifier,
+    ) -> Unit,
+) {
+    val context = LocalContext.current
+    val picture = remember(key) { Picture() }
+    val layout = remember(items.size) { SheetLayout.forMemberCount(items.size) }
+    val expectedImages = remember(items, images) { sheetImageCount(items, images, typeId) }
+    val settled = remember { mutableIntStateOf(0) }
+    val loaded = remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(key) {
+        val outcome = shareSettledSheet(
+            context = context,
+            picture = picture,
+            fileName = fileName,
+            expectedImages = expectedImages,
+            settled = settled,
+        )
+        onFinished(
+            if (outcome.isFailure) {
+                sheetExportFailure(sheet, outcome.exceptionOrNull()?.message)
+            } else {
+                sheetExportMessage(sheet, tally, expectedImages, loaded.intValue)
+            },
+        )
+    }
+
+    OffScreenSheet(layout) {
+        content(
+            layout,
+            { painted ->
+                settled.intValue += 1
+                if (painted) loaded.intValue += 1
+            },
+            // The sheet paints its own paper; recording it from the outside would drop it.
+            Modifier.recordInto(picture),
+        )
+    }
+}
+
+/**
+ * Total pictures a sheet will request, so the export knows when it can capture.
+ *
+ * One function for both sheets: a catalog's slots and a collection's rows differ only in where the
+ * Numista type is read from, and two copies of this arithmetic is how one of them would come to
+ * wait for a photograph the other never requests.
+ */
+fun <T> sheetImageCount(
+    items: List<T>,
+    images: Map<Int, TypeImages>,
+    typeId: (T) -> Int?,
+): Int = items.sumOf { item ->
+    val typeImages = typeId(item)?.let { images[it] }
+    coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
+}
+
+/**
  * Waits for a sheet's pictures to settle, then writes it out and hands it to the share sheet.
  *
- * Shared by the two sheets there are — a plate and a collection's pieces — because the waiting is
- * the delicate part and it is identical for both: what differs is what gets drawn, not when it is
- * safe to capture it.
+ * The step [SheetExport] is built around, kept apart from it because the waiting is the delicate
+ * part and it is identical for the two sheets there are: what differs is what gets drawn, not when
+ * it is safe to capture it.
  *
  * Timing out and failing outright come to the same thing here: whatever had not painted by now is
  * a hole in the sheet that is about to be shared, which is why the caller is handed [settled] to
