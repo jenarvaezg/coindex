@@ -1,6 +1,6 @@
 package com.jenarvaezg.coindex.ui.print
 
-import com.jenarvaezg.coindex.data.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
 
 /**
  * One cell of a printed page: one coin, at its own diameter, and what is written under it.

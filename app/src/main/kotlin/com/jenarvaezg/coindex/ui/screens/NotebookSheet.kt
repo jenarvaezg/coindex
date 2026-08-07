@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import com.jenarvaezg.coindex.data.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
 import com.jenarvaezg.coindex.ui.print.PrintBlock
@@ -54,8 +54,8 @@ import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.QR_QUIET_MODULES
 import com.jenarvaezg.coindex.ui.print.notebookSourceLabel
 import com.jenarvaezg.coindex.ui.print.numistaQr
-import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.printedDiameterLabel
+import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.qrRuns
 import com.jenarvaezg.coindex.ui.theme.Paper
 

@@ -5,7 +5,6 @@ import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
-import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

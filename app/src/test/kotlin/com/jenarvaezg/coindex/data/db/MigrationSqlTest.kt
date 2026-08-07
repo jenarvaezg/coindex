@@ -48,6 +48,14 @@ class MigrationSqlTest {
                     field.jsonObject.getValue("affinity").jsonPrimitive.content
             }
 
+    /** Everything Room writes after a column's name in `CREATE TABLE`: type, `NOT NULL`, default. */
+    private fun exportedDeclaration(version: Int, table: String, column: String): String =
+        exportedCreateSql(version)
+            .getValue(table)
+            .substringAfter("`$column` ")
+            .substringBefore(",")
+            .trim()
+
     @Test
     fun `the added tables are created exactly as Room declares them`() {
         val exported = exportedCreateSql(2)
@@ -167,6 +175,50 @@ class MigrationSqlTest {
                 exportedColumns(4, table),
                 exportedColumns(5, table),
                 "la versión 5 ha tocado $table",
+            )
+        }
+    }
+
+    /**
+     * La versión 6 mete en columnas los cinco campos que se parseaban del cuerpo en cada lectura
+     * (#221). Aditiva y anulable como la 3, con un `readVersion` que **no** es anulable: el cero
+     * por omisión es «a esta fila no la ha leído nadie», que es justo lo que hay al otro lado.
+     */
+    @Test
+    fun `version 6 adds the five read columns and the marker exactly as Room declares them`() {
+        val added = exportedColumns(6, "type_meta") - exportedColumns(5, "type_meta").keys
+
+        assertEquals(
+            mapOf(
+                "issuerName" to "TEXT",
+                "composition" to "TEXT",
+                "sizeMillimetres" to "REAL",
+                "category" to "TEXT",
+                "numistaUrl" to "TEXT",
+                "readVersion" to "INTEGER",
+            ),
+            added,
+        )
+        // Declaration and not affinity: `readVersion` is the first `NOT NULL` column this project
+        // has ever added, and SQLite refuses one without a default. Both halves — the `NOT NULL`
+        // and the `DEFAULT 0` — have to be the ones Room itself writes.
+        assertEquals(
+            added.keys.map { column ->
+                "ALTER TABLE `type_meta` ADD COLUMN `$column` " +
+                    exportedDeclaration(6, "type_meta", column)
+            },
+            CoindexDatabase.VERSION_6_COLUMNS,
+        )
+    }
+
+    @Test
+    fun `version 6 touches the type cache and nothing else`() {
+        assertEquals(exportedCreateSql(5).keys, exportedCreateSql(6).keys)
+        (exportedCreateSql(6).keys - "type_meta").forEach { table ->
+            assertEquals(
+                exportedColumns(5, table),
+                exportedColumns(6, table),
+                "la versión 6 ha tocado $table",
             )
         }
     }

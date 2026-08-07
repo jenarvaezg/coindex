@@ -2,8 +2,8 @@ package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.data.ficha.readFichaBody
 import com.jenarvaezg.coindex.data.numista.NumistaClient
-import com.jenarvaezg.coindex.data.seed.typeMetaEntity
 import kotlinx.serialization.json.Json
 
 /** What one refresh found. It always costs one call, so there is no count to report. */
@@ -46,15 +46,20 @@ class TypeRefresh(
      * Whether the ficha says anything different from the one that was there.
      *
      * The columns are compared as columns, and the bodies as **parsed JSON** rather than as bytes.
-     * Everything else the app reads — the issuer's name, the composition prose, the diameter, the
-     * category — is read out of `raw`, so ignoring it would report «sin cambios» over a corrected
-     * metal; but comparing the two strings would report a change on every seeded ficha, because the
-     * snapshot stores the asset re-encoded by this app and a refresh stores Numista's own body. A
-     * parsed [kotlinx.serialization.json.JsonObject] is a `Map`, so key order and whitespace stop
-     * counting and the fields start.
+     * Comparing the two strings would report a change on every seeded ficha, because the snapshot
+     * stores the asset re-encoded by this app and a refresh stores Numista's own body. A parsed
+     * [kotlinx.serialization.json.JsonObject] is a `Map`, so key order and whitespace stop counting
+     * and the fields start — and the issuer's name, the composition prose, the diameter and the
+     * category are inside it, so a corrected metal is a change even though no column moved.
+     *
+     * The cached row is re-read before the columns are compared. Those five *are* columns since
+     * version 6 (#221), and a row the backfill has not reached yet holds nulls in them: without
+     * this, the first refresh after an update would report «cambió» over a ficha that says exactly
+     * the same thing.
      */
     private fun differ(cached: TypeMetaEntity, fetched: TypeMetaEntity): Boolean {
-        val columnsDiffer = cached.copy(fetchedAt = fetched.fetchedAt, raw = fetched.raw) != fetched
+        val reread = cached.withReading(readFichaBody(cached.raw))
+        val columnsDiffer = reread.copy(fetchedAt = fetched.fetchedAt, raw = fetched.raw) != fetched
         return columnsDiffer || parse(cached.raw) != parse(fetched.raw)
     }
 

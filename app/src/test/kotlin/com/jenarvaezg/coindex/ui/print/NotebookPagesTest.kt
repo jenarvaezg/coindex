@@ -1,13 +1,13 @@
 package com.jenarvaezg.coindex.ui.print
 
 import com.jenarvaezg.coindex.data.CatalogFiles
-import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.TypeCacheFile
-import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
-import com.jenarvaezg.coindex.data.seed.typeMetaEntity
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.data.toDomain
+import com.jenarvaezg.coindex.data.typeMetaEntity
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog

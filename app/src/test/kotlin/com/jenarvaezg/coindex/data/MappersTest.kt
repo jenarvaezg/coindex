@@ -1,7 +1,8 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
-import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.data.ficha.FICHA_READING
+import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.domain.Metal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,101 +12,72 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 
 /**
- * The issue id is read back out of the stored response, not out of a column.
+ * A mapper is a mapper again: the type cache row is read column by column, and only the collected
+ * item still reaches into a stored response.
  *
- * `SyncService` keeps the untouched JSON element of every row, so a piece synced long before this
- * feature existed already carries its issue — the same bargain that lets the finish be inferred
- * on read. If this ever regressed, an issue run would quietly report every star as missing.
+ * There is no `fetchedAt` in this file any more. The five fields the ficha used to be parsed for on
+ * every read were memoized behind `(typeId, fetchedAt)`, so two assertions about one type
+ * contaminated each other unless each invented a moment of its own — nothing in the interface said
+ * so, it was discovered by the failure (#221). What the body says is now `FichaTest`'s subject and
+ * a column by the time it gets here.
  */
 class MappersTest {
-    // Distinct fetchedAt per row: the mapper reads each response once and remembers the answer,
-    // and two different responses for one type are only two rows if they were fetched apart.
-    private fun typeEntity(raw: String, fetchedAt: Long = 0) = TypeMetaEntity(
+    private val lenient = Json { ignoreUnknownKeys = true }
+
+    /** The row exactly as the sync, the refresh and the seed write it: through the one mapper. */
+    private fun typeEntity(raw: String) = typeMetaEntity(
         typeId = 404_044,
-        title = null,
-        family = null,
-        issuerCode = "australie",
-        minYear = null,
-        maxYear = null,
-        weightGrams = null,
-        obverseUrl = null,
-        reverseUrl = null,
+        dto = runCatching { lenient.decodeFromString(NumistaTypeDto.serializer(), raw) }
+            .getOrDefault(NumistaTypeDto()),
         raw = raw,
-        fetchedAt = fetchedAt,
+        fetchedAt = 0,
     )
 
     @Test
-    fun `the issuer's name comes from the cached type, not from a table of codes`() {
+    fun `the ficha's own fields travel from the body to the columns to the card`() {
         // The cache row keeps the whole response, so the 608 seeded types already carry the
         // name Numista wrote in the collector's own language: `australie` is «Australia».
-        assertEquals(
-            "Australia",
-            typeEntity(Fixtures.type(404_044), fetchedAt = 5).toDomain().issuerName,
-        )
+        val meta = typeEntity(Fixtures.type(404_044)).toDomain()
+
+        assertEquals("Australia", meta.issuerName)
+        assertEquals("australie", meta.issuerCode)
+        assertEquals("coin", meta.category)
+        assertEquals(32.6, meta.sizeMillimetres)
+        assertEquals("https://es.numista.com/404044", meta.numistaUrl)
     }
 
     @Test
-    fun `a type with no issuer, or unreadable json, simply has no issuer name`() {
-        assertNull(typeEntity("{}", fetchedAt = 1).toDomain().issuerName)
-        assertNull(typeEntity("no es json", fetchedAt = 2).toDomain().issuerName)
-        assertNull(
-            typeEntity("""{"issuer": {"code": "australie"}}""", fetchedAt = 3)
-                .toDomain()
-                .issuerName,
-        )
-        // The code is still the one stored in its column.
-        assertEquals("australie", typeEntity("{}", fetchedAt = 4).toDomain().issuerCode)
+    fun `a row is stamped with the reading that wrote it`() {
+        assertEquals(FICHA_READING, typeEntity(Fixtures.type(404_044)).readVersion)
     }
 
     /**
-     * El metal se deriva en lectura de `composition.text`, que ya viaja dentro de `raw`: las 723
-     * fichas sembradas lo tienen desde siempre, así que meterlo en la clave (#40) no costó ni una
-     * migración de la caché ni una llamada de presupuesto.
+     * El metal se deriva **en lectura** de la prosa de `composition.text`, que ahora es columna:
+     * lo que se guarda es lo que Numista escribió, nunca el veredicto de `inferMetal`, así que una
+     * regla mejor sigue arreglando las fichas cacheadas hace meses sin gastar una llamada.
      */
     @Test
-    fun `the metal is read from the stored ficha, not from a column`() {
-        assertEquals(
-            Metal.Silver,
-            typeEntity(Fixtures.type(404_044), fetchedAt = 10).toDomain().metal,
-        )
+    fun `the metal is inferred from the stored prose, never stored itself`() {
+        assertEquals(Metal.Silver, typeEntity(Fixtures.type(404_044)).toDomain().metal)
         assertEquals(
             Metal.Gold,
-            typeEntity("""{"composition": {"text": "Oro 999,9"}}""", fetchedAt = 11)
-                .toDomain()
-                .metal,
+            typeEntity("""{"composition": {"text": "Oro 999,9"}}""").toDomain().metal,
         )
     }
 
     @Test
-    fun `a type with no composition, or unreadable json, simply has no metal`() {
-        assertNull(typeEntity("{}", fetchedAt = 12).toDomain().metal)
-        assertNull(typeEntity("no es json", fetchedAt = 13).toDomain().metal)
-        assertNull(
-            typeEntity("""{"composition": {}}""", fetchedAt = 14).toDomain().metal,
-        )
-    }
-
-    /**
-     * La categoría sale del mismo sitio y por el mismo trato: la chip de clase de Monedas
-     * (ADR 0021 §1) funciona sobre las fichas ya cacheadas sin migración ni llamada.
-     */
-    @Test
-    fun `the category is read from the stored ficha, not from a column`() {
-        assertEquals(
-            "coin",
-            typeEntity(Fixtures.type(404_044), fetchedAt = 20).toDomain().category,
-        )
-        assertEquals(
-            "exonumia",
-            typeEntity("""{"category": "exonumia"}""", fetchedAt = 21).toDomain().category,
-        )
-    }
-
-    @Test
-    fun `a type with no category, or unreadable json, simply has none`() {
-        assertNull(typeEntity("{}", fetchedAt = 22).toDomain().category)
-        assertNull(typeEntity("no es json", fetchedAt = 23).toDomain().category)
-        assertNull(typeEntity("""{"category": ""}""", fetchedAt = 24).toDomain().category)
+    fun `a type with nothing in its body simply has none of it`() {
+        listOf("{}", "no es json", """{"composition": {}, "issuer": {"code": "australie"}}""")
+            .map { typeEntity(it).toDomain() }
+            .forEach { meta ->
+                assertNull(meta.metal)
+                assertNull(meta.issuerName)
+                assertNull(meta.category)
+                assertNull(meta.sizeMillimetres)
+                assertNull(meta.numistaUrl)
+            }
+        // The code is still the one stored in its column.
+        assertEquals("australie", typeEntity("""{"issuer": {"code": "australie"}}""").issuerCode)
     }
 
     private fun entity(raw: String) = CollectedItemEntity(

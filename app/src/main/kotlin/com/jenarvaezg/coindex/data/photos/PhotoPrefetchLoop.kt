@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.data.photos
 
-import com.jenarvaezg.coindex.data.TypeImages
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin

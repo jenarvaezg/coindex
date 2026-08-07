@@ -8,14 +8,14 @@ import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CredentialStore
 import com.jenarvaezg.coindex.data.KeystoreCredentialStore
 import com.jenarvaezg.coindex.data.NotebookStore
-import com.jenarvaezg.coindex.data.ShelfStore
+import com.jenarvaezg.coindex.data.SharedPreferenceValues
 import com.jenarvaezg.coindex.data.StoredNotebook
-import com.jenarvaezg.coindex.data.StoredShelves
 import com.jenarvaezg.coindex.data.StoredSyncLog
 import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.ficha.FichaBackfill
 import com.jenarvaezg.coindex.data.photos.CoilPhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.DevicePrefetchConditions
 import com.jenarvaezg.coindex.data.photos.GonePhotographs
@@ -34,6 +34,9 @@ import com.jenarvaezg.coindex.data.update.SystemUpdateInstaller
 import com.jenarvaezg.coindex.data.update.UpdateChecker
 import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateInstaller
+import com.jenarvaezg.coindex.ui.shelf.SHELF_PREFERENCES
+import com.jenarvaezg.coindex.ui.shelf.ShelfStore
+import com.jenarvaezg.coindex.ui.shelf.StoredShelves
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 
@@ -58,7 +61,9 @@ class AppContainer(context: Context) {
     private val syncLog: SyncLog by lazy { StoredSyncLog(applicationContext) }
 
     /** What the collector was looking through last time (ADR 0021 §1), on both hierarchies. */
-    val shelves: ShelfStore by lazy { StoredShelves(applicationContext) }
+    val shelves: ShelfStore by lazy {
+        StoredShelves(SharedPreferenceValues(applicationContext, SHELF_PREFERENCES))
+    }
 
     /** How the collector printed their notebook last time: the five switches of #228. */
     val notebook: NotebookStore by lazy { StoredNotebook(applicationContext) }
@@ -94,18 +99,26 @@ class AppContainer(context: Context) {
         TypeThumbnailBackfill(database.typeMeta())
     }
 
+    private val fichaBackfill: FichaBackfill by lazy { FichaBackfill(database.typeMeta()) }
+
     /**
      * Brings the ficha cache up to what the APK ships, before the collection is read.
      *
-     * Two steps and one moment. The seed used to be a **first-install** gift: every catalog curated
+     * Three steps and one moment. The seed used to be a **first-install** gift: every catalog curated
      * afterwards shipped its fichas in the asset and none of them reached a phone that already had
      * the app (#67). And a cache seeded before version 3 has no thumbnails, while a cached type is
      * never fetched again — without the backfill the plate would keep asking for the heavy originals
      * for ever on exactly those phones.
+     *
+     * The third step is the same move over the five columns of version 6 (#221): before it runs, a
+     * ficha cached by an older APK has no issuer name, no metal, no diameter and no QR, because
+     * those stopped being parsed on every read. Both backfills come **after** the seed, so the rows
+     * it has just written are already right and neither pass has anything to do on them.
      */
     suspend fun warmUpFichaCache() {
         typeCacheSeed.topUp(repository.curation.curatedTypeIds())
         typeThumbnailBackfill.run()
+        fichaBackfill.run()
     }
 
     private val syncService: SyncService by lazy {

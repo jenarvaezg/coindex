@@ -17,10 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.data.TypeImages
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.DrawnPiece
+import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.pieceLine

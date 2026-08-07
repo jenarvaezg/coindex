@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
+import com.jenarvaezg.coindex.data.typeMetaEntity
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -73,38 +74,3 @@ class TypeCacheSeed(
         }
     }
 }
-
-/**
- * The small picture of each face, read from a ficha the same way wherever it is read from.
- *
- * The cache is written from two places — the snapshot on the way in, and the backfill over the
- * fichas already stored — and a plate is only whole if both agree on what a thumbnail is.
- */
-data class FichaThumbnails(val obverse: String?, val reverse: String?) {
-    val isEmpty: Boolean = obverse == null && reverse == null
-}
-
-fun NumistaTypeDto.thumbnails(): FichaThumbnails =
-    FichaThumbnails(obverse = obverse?.thumbnail, reverse = reverse?.thumbnail)
-
-/** Maps a Numista type response onto the cache row, keeping the untouched body. */
-fun typeMetaEntity(
-    typeId: Int,
-    dto: NumistaTypeDto,
-    raw: String,
-    fetchedAt: Long,
-): TypeMetaEntity = TypeMetaEntity(
-    typeId = typeId,
-    title = dto.title,
-    family = dto.series,
-    issuerCode = dto.issuer?.code,
-    minYear = dto.minYear,
-    maxYear = dto.maxYear,
-    weightGrams = dto.weight,
-    obverseUrl = dto.obverse?.picture ?: dto.obverse?.thumbnail,
-    reverseUrl = dto.reverse?.picture ?: dto.reverse?.thumbnail,
-    raw = raw,
-    fetchedAt = fetchedAt,
-    obverseThumbnailUrl = dto.thumbnails().obverse,
-    reverseThumbnailUrl = dto.thumbnails().reverse,
-)

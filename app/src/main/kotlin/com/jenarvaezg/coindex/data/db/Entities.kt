@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.data.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -41,6 +42,13 @@ data class CollectedItemEntity(
  *
  * The thumbnail URLs arrived in version 3 and are the reason `raw` exists: every row already
  * held them, unread, so the whole cache could be filled in without a single API call.
+ *
+ * The five columns of version 6 arrived the same way, out of the body rather than out of the
+ * network (#221). What they store is what Numista *wrote* — the issuer's name, the composition
+ * prose, the diameter, the category, the short URL — and never what this app makes of it: the
+ * metal is still inferred from [composition] on read, the class still from [category]. So a rule
+ * improved tomorrow still fixes rows cached today, and only a better *reading of the body* needs a
+ * pass, which is what `FICHA_READING` and [readVersion] are for.
  */
 @Entity(tableName = "type_meta")
 data class TypeMetaEntity(
@@ -57,6 +65,19 @@ data class TypeMetaEntity(
     val fetchedAt: Long,
     val obverseThumbnailUrl: String? = null,
     val reverseThumbnailUrl: String? = null,
+    val issuerName: String? = null,
+    val composition: String? = null,
+    val sizeMillimetres: Double? = null,
+    val category: String? = null,
+    val numistaUrl: String? = null,
+    /**
+     * Which reading of the body filled the five columns above; `0` means «none yet».
+     *
+     * The default is declared to Room and not only to Kotlin: SQLite cannot add a `NOT NULL`
+     * column without one, so the exported schema and the `ALTER TABLE` of version 6 have to agree
+     * on it letter by letter or the app throws on opening the collector's database.
+     */
+    @ColumnInfo(defaultValue = "0") val readVersion: Int = 0,
 )
 
 /** The stored ficha of one type, for reading fields the columns never captured. */

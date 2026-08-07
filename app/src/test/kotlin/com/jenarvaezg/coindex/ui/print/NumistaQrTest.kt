@@ -3,7 +3,7 @@ package com.jenarvaezg.coindex.ui.print
 import com.google.zxing.qrcode.decoder.Decoder
 import com.jenarvaezg.coindex.data.TypeCacheFile
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
-import com.jenarvaezg.coindex.data.seed.typeMetaEntity
+import com.jenarvaezg.coindex.data.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test

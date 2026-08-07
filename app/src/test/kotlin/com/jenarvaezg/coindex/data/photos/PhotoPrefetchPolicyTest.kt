@@ -1,7 +1,5 @@
 package com.jenarvaezg.coindex.data.photos
 
-import com.jenarvaezg.coindex.data.CoinPhoto
-import com.jenarvaezg.coindex.data.TypeImages
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

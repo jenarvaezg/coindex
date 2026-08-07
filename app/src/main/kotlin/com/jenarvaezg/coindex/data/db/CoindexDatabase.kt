@@ -24,7 +24,7 @@ internal data class PreservedKey(
         OwnGroupingMemberEntity::class,
         ApiCallEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -231,9 +231,42 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 6 gives the type cache the five fields that were being parsed out of the body on
+         * every read (#221).
+         *
+         * Additive and nullable, like version 3 and for the same reason: the rows are filled in
+         * afterwards by `FichaBackfill`, from the ficha each one already stores, because SQLite on
+         * the oldest phone this app supports cannot be trusted to have `json_extract`.
+         *
+         * `readVersion` defaults to zero, which is «this row's columns were written by nobody» —
+         * exactly what is true of every row on the other side of this migration, and what makes
+         * the backfill find them.
+         */
+        internal val VERSION_6_COLUMNS: List<String> = listOf(
+            "ALTER TABLE `type_meta` ADD COLUMN `issuerName` TEXT",
+            "ALTER TABLE `type_meta` ADD COLUMN `composition` TEXT",
+            "ALTER TABLE `type_meta` ADD COLUMN `sizeMillimetres` REAL",
+            "ALTER TABLE `type_meta` ADD COLUMN `category` TEXT",
+            "ALTER TABLE `type_meta` ADD COLUMN `numistaUrl` TEXT",
+            "ALTER TABLE `type_meta` ADD COLUMN `readVersion` INTEGER NOT NULL DEFAULT 0",
+        )
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(connection: SQLiteConnection) {
+                VERSION_6_COLUMNS.forEach(connection::execSQL)
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(
+                    MIGRATION_1_2,
+                    MIGRATION_2_3,
+                    MIGRATION_3_4,
+                    MIGRATION_4_5,
+                    MIGRATION_5_6,
+                )
                 .build()
     }
 }

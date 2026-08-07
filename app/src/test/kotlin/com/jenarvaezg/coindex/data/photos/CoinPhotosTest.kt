@@ -1,6 +1,7 @@
-package com.jenarvaezg.coindex.data
+package com.jenarvaezg.coindex.data.photos
 
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.data.toImages
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

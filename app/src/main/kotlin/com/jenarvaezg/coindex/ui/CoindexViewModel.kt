@@ -10,7 +10,6 @@ import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CredentialStore
 import com.jenarvaezg.coindex.data.NotebookStore
 import com.jenarvaezg.coindex.data.PlateResult
-import com.jenarvaezg.coindex.data.ShelfStore
 import com.jenarvaezg.coindex.data.SyncOutcome
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -29,6 +28,7 @@ import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
+import com.jenarvaezg.coindex.ui.shelf.ShelfStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
