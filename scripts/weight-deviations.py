@@ -9,7 +9,12 @@ Tres bloques:
 
 - **Lo que el catálogo corrige**: miembros cuyo peso normalizado desde los gramos de
   Numista no es el `weight_millioz` que declara su catálogo. Ordenados por distancia
-  relativa al declarado, porque es lo que separa la variación de gramos del intruso.
+  relativa al declarado, porque es lo que separa la variación de gramos del intruso. Va
+  partido en dos: **sin mirar** son las líneas cuya explicación no está escrita en ningún
+  fichero —el trabajo que el informe pide, y lo único que se lista una a una—, y **ya
+  explicadas** van en cúmulos, porque cincuenta y nueve líneas idénticas son un hallazgo,
+  no cincuenta y nueve. Las de «sin mirar» traen la orden de resiembra: la caché no se
+  refresca sola y una corrección que Numista aceptó seguiría saliendo aquí para siempre.
 - **Lo que el imán mueve**: tipos que ningún catálogo reclama y a los que
   `normalizeWeightMillioz` mueve el peso —a un peso común de bullion o al declarado por
   un catálogo ajeno—. Son los únicos casos donde la variante se decide sin que nadie la
@@ -156,6 +161,7 @@ class Deviation:
     catalog_name: str
     member_id: str
     member_label: str | None
+    year: int | None
     numista_type_id: int
     declared_millioz: int
     measured_millioz: int
@@ -214,6 +220,38 @@ class MagnetPull:
 
 
 @dataclass(frozen=True)
+class Cluster:
+    """Las filas de un catálogo que dicen exactamente lo mismo.
+
+    Los 48 monumentos de 33,94 g repiten 48 veces una línea idéntica, y el trabajo que el
+    informe pide son las once que **no** tienen nota. Agrupar por catálogo, gramos, clave y
+    nota deja una línea por hallazgo y devuelve la tabla a un tamaño legible.
+    """
+
+    deviations: tuple[Deviation, ...]
+
+    @property
+    def first(self) -> Deviation:
+        return self.deviations[0]
+
+    @property
+    def count(self) -> int:
+        return len(self.deviations)
+
+    @property
+    def years(self) -> str | None:
+        """El tramo de años que abarca el cúmulo, que es lo que queda de las casillas."""
+        years = sorted(
+            deviation.year for deviation in self.deviations if deviation.year is not None
+        )
+        if not years:
+            return None
+        if years[0] == years[-1]:
+            return str(years[0])
+        return f"{years[0]}-{years[-1]}"
+
+
+@dataclass(frozen=True)
 class SplitCatalog:
     """Un catálogo cuyos miembros tomarían más de una clave de peso sin su autoridad."""
 
@@ -263,6 +301,29 @@ class Report:
     def explained_count(self) -> int:
         """Cuántas líneas ya tienen su explicación escrita, en la casilla o en la lámina."""
         return sum(1 for deviation in self.deviations if deviation.explained_by)
+
+    @property
+    def unexplained(self) -> tuple[Deviation, ...]:
+        """Las únicas líneas que piden trabajo: nadie ha escrito por qué se desvían."""
+        return tuple(deviation for deviation in self.deviations if not deviation.explained_by)
+
+    @property
+    def explained_clusters(self) -> tuple[Cluster, ...]:
+        return cluster_deviations(
+            tuple(deviation for deviation in self.deviations if deviation.explained_by)
+        )
+
+    @property
+    def refresh_type_ids(self) -> tuple[int, ...]:
+        """Los tipos que hay que resembrar antes de acusar a Numista de nada.
+
+        La caché de `data/` no se refresca sola: una corrección que Numista **acepta** deja
+        la ficha sembrada guardando el gramaje viejo, y la línea sigue saliendo aquí para
+        siempre. Sólo los de las líneas sin nota: las explicadas ya se miraron.
+        """
+        return tuple(
+            dict.fromkeys(deviation.numista_type_id for deviation in self.unexplained)
+        )
 
 
 def load_catalogs(directory: pathlib.Path = CATALOGS) -> list[Catalog]:
@@ -379,6 +440,7 @@ def find_deviations(
                     catalog_name=catalog.name,
                     member_id=member.member_id,
                     member_label=member.label,
+                    year=member.year,
                     numista_type_id=member.numista_type_id,
                     declared_millioz=declared,
                     measured_millioz=math.floor(ficha.weight_oz * 1_000.0 + 0.5),
@@ -483,6 +545,26 @@ def find_split_catalogs(
     return splits
 
 
+def cluster_deviations(deviations: tuple[Deviation, ...]) -> tuple[Cluster, ...]:
+    """Junta las filas que sólo se diferencian en qué casilla son.
+
+    El orden de los cúmulos es el de su primera fila, y las filas llegan ya ordenadas por
+    distancia: el cúmulo más lejano sigue arriba.
+    """
+    grouped: dict[tuple, list[Deviation]] = {}
+    for deviation in deviations:
+        key = (
+            deviation.catalog_id,
+            deviation.declared_millioz,
+            deviation.measured_millioz,
+            deviation.observed_millioz,
+            deviation.composition,
+            deviation.explained_by,
+        )
+        grouped.setdefault(key, []).append(deviation)
+    return tuple(Cluster(tuple(members)) for members in grouped.values())
+
+
 def build_report(
     catalogs: list[Catalog],
     grouping_families: dict[int, str],
@@ -551,6 +633,23 @@ def magnet_target(pull: MagnetPull) -> str:
     return magnet_origin(pull.snapped_millioz, pull.declaring_catalogs)
 
 
+def render_key(deviation: Deviation) -> str:
+    """La clave, y de quién tiró el imán cuando no son los gramos de la ficha."""
+    if not deviation.magnet_moved:
+        return str(deviation.observed_millioz)
+    origin = magnet_origin(deviation.observed_millioz, deviation.key_declared_by)
+    return f"{deviation.observed_millioz} · {origin}"
+
+
+def plain_magnet(deviation: Deviation) -> str:
+    if not deviation.magnet_moved:
+        return ""
+    origin = magnet_origin(
+        deviation.observed_millioz, deviation.key_declared_by
+    ).replace("`", "")
+    return f", clave {deviation.observed_millioz} ({origin})"
+
+
 def render_markdown(report: Report) -> str:
     near, far, beyond = report.buckets
     lines = [
@@ -592,33 +691,91 @@ def render_markdown(report: Report) -> str:
                 "Numista tal cual; `clave` es dónde los deja el imán, y cuando no son el "
                 "mismo número es que tiró de ellos un objetivo ajeno —el que se nombra al "
                 "lado—. La distancia se mide sobre la clave, que es la que decidiría la "
-                "tarjeta. La columna `nota` marca las líneas cuya explicación ya está "
-                f"escrita —{report.explained_count} de {len(report.deviations)}— y dice "
-                "dónde: `casilla` es el `variant_note` de ese miembro y `lámina` el "
-                "`source_note` de su catálogo, que explica la ley de todos sus miembros de "
-                "una vez. El curador las escribió a mano y no hay nada que mirar.",
+                "tarjeta.",
                 "",
-                "| distancia | catálogo | casilla | Numista | declara | ficha | clave | composición | nota |",
-                "|---|---|---|---|---|---|---|---|---|",
+                f"### Sin mirar · {len(report.unexplained)}",
+                "",
+                "Las líneas cuya explicación no está escrita en ningún fichero. **Son el "
+                "trabajo que este informe pide**, y las únicas que hay que abrir una a una.",
+                "",
             ]
         )
-        for deviation in report.deviations:
-            key = str(deviation.observed_millioz)
-            if deviation.magnet_moved:
-                key += " · " + magnet_origin(
-                    deviation.observed_millioz, deviation.key_declared_by
-                )
-            lines.append(
-                f"| {format_percent(deviation.relative_percent)} % "
-                f"| `{deviation.catalog_id}` "
-                f"| {cell(deviation.member_label or deviation.member_id, limit=40)} "
-                f"| {numista_link(deviation.numista_type_id)} "
-                f"| {deviation.declared_millioz} "
-                f"| {deviation.measured_millioz} ({format_grams(deviation.grams)}) "
-                f"| {key} "
-                f"| {cell(deviation.composition, limit=32)} "
-                f"| {deviation.explained_by or ''} |"
+        if report.unexplained:
+            lines.extend(
+                [
+                    "| distancia | catálogo | casilla | Numista | declara | ficha | clave | composición |",
+                    "|---|---|---|---|---|---|---|---|",
+                ]
             )
+            for deviation in report.unexplained:
+                lines.append(
+                    f"| {format_percent(deviation.relative_percent)} % "
+                    f"| `{deviation.catalog_id}` "
+                    f"| {cell(deviation.member_label or deviation.member_id, limit=40)} "
+                    f"| {numista_link(deviation.numista_type_id)} "
+                    f"| {deviation.declared_millioz} "
+                    f"| {deviation.measured_millioz} ({format_grams(deviation.grams)}) "
+                    f"| {render_key(deviation)} "
+                    f"| {cell(deviation.composition, limit=32)} |"
+                )
+            lines.extend(
+                [
+                    "",
+                    "Antes de abrir ninguna, resiembra sus fichas: la caché de `data/` no se "
+                    "refresca sola, así que una corrección que Numista ya **aceptó** se "
+                    "queda mintiendo aquí para siempre.",
+                    "",
+                    "```sh",
+                    "scripts/seed-type-cache.py --refresh --confirm-live-api "
+                    + " ".join(str(type_id) for type_id in report.refresh_type_ids),
+                    "```",
+                ]
+            )
+        else:
+            lines.append(
+                "_Ninguna: todas las desviaciones tienen su explicación escrita._"
+            )
+        lines.extend(
+            [
+                "",
+                f"### Ya explicadas · {report.explained_count} en "
+                f"{len(report.explained_clusters)} cúmulos",
+                "",
+                "La columna `nota` dice dónde está escrita la explicación: `casilla` es el "
+                "`variant_note` de ese miembro y `lámina` el `source_note` de su catálogo, "
+                "que explica la ley de todos sus miembros de una vez. El curador las "
+                "escribió a mano y no hay nada que mirar, así que van agrupadas: una línea "
+                "por catálogo, gramos, clave y nota, con cuántas casillas dicen lo mismo.",
+                "",
+            ]
+        )
+        if report.explained_clusters:
+            lines.extend(
+                [
+                    "| distancia | catálogo | casillas | años | declara | ficha | clave | composición | nota |",
+                    "|---|---|---|---|---|---|---|---|---|",
+                ]
+            )
+            for cluster in report.explained_clusters:
+                first = cluster.first
+                casillas = (
+                    f"×{cluster.count}"
+                    if cluster.count > 1
+                    else cell(first.member_label or first.member_id, limit=40)
+                )
+                lines.append(
+                    f"| {format_percent(first.relative_percent)} % "
+                    f"| `{first.catalog_id}` "
+                    f"| {casillas} "
+                    f"| {cluster.years or '—'} "
+                    f"| {first.declared_millioz} "
+                    f"| {first.measured_millioz} ({format_grams(first.grams)}) "
+                    f"| {render_key(first)} "
+                    f"| {cell(first.composition, limit=32)} "
+                    f"| {first.explained_by} |"
+                )
+        else:
+            lines.append("_Ninguna._")
     else:
         lines.append("_Ninguno._")
     lines.extend(
@@ -698,22 +855,41 @@ def render_plain(report: Report) -> str:
         f">{format_decimal(FAR_PERCENT)}% {beyond}",
     ]
     if report.deviations:
-        for deviation in report.deviations:
-            note = f" · nota en la {deviation.explained_by}" if deviation.explained_by else ""
-            magnet = ""
-            if deviation.magnet_moved:
-                origin = magnet_origin(
-                    deviation.observed_millioz, deviation.key_declared_by
-                ).replace("`", "")
-                magnet = f", clave {deviation.observed_millioz} ({origin})"
+        lines.append(f"  Sin mirar ({len(report.unexplained)}):")
+        for deviation in report.unexplained:
             lines.append(
                 f"  - {format_percent(deviation.relative_percent)}% "
                 f"{deviation.catalog_id}/{deviation.member_id} "
                 f"(Numista {deviation.numista_type_id}): declara "
                 f"{deviation.declared_millioz}, la ficha dice "
                 f"{deviation.measured_millioz} ({format_grams(deviation.grams)})"
-                f"{magnet}"
-                f" · {deviation.composition or 'sin composición'}{note}"
+                f"{plain_magnet(deviation)}"
+                f" · {deviation.composition or 'sin composición'}"
+            )
+        if report.unexplained:
+            lines.extend(
+                [
+                    "    Resiembra sus fichas antes de abrirlas:",
+                    "    scripts/seed-type-cache.py --refresh --confirm-live-api "
+                    + " ".join(str(type_id) for type_id in report.refresh_type_ids),
+                ]
+            )
+        else:
+            lines.append("  - (ninguna)")
+        lines.append(
+            f"  Ya explicadas ({report.explained_count} en "
+            f"{len(report.explained_clusters)} cúmulos):"
+        )
+        for cluster in report.explained_clusters:
+            first = cluster.first
+            lines.append(
+                f"  - {format_percent(first.relative_percent)}% "
+                f"{first.catalog_id} ×{cluster.count} ({cluster.years or 'sin año'}): "
+                f"declara {first.declared_millioz}, la ficha dice "
+                f"{first.measured_millioz} ({format_grams(first.grams)})"
+                f"{plain_magnet(first)}"
+                f" · {first.composition or 'sin composición'}"
+                f" · nota en la {first.explained_by}"
             )
     else:
         lines.append("  (ninguno)")
