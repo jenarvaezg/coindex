@@ -1,0 +1,59 @@
+{
+  "schema_version": 2,
+  "id": "alien-scottsdale-1oz-bullion",
+  "name": "Alien de Scottsdale Mint · onza de plata BU · desde 2021 · Ghana hasta 2023 y Samoa desde 2024",
+  "short_name": "Alien de Scottsdale Mint",
+  "issuer_code": "samoa",
+  "family": "Alien de Scottsdale Mint",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces596617.html",
+  "source_note": "La frontera la pone la ceca, no Numista: https://www.scottsdalemint.com/alien/. Scottsdale llama «Alien Series» a la gama, la fecha en 2021 y presenta el Alien Architects de 2025 como su quinta entrega, así que el date run empieza en 2021 y sigue abierto: 2026 tendrá casilla y `stale-catalogs.py` avisará del año que falte. Numista parte la misma gama en dos series porque las suyas son por emisor —«Aliens» (1304) para Ghana y «Alien» (9993) para Samoa—, y ninguna de las dos es el programa. El emisor cambió a mitad: 5 cedis de Ghana en 2021 y 2022, 20 cedis de Ghana en 2023, 2 dollars de Samoa desde 2024, y las tres casillas de Ghana declaran su `issuer_code` (precedente: Equilibrium, #170). El del fichero es `samoa` porque es donde vive la gama hoy, donde caerán los años que vengan y de dónde es la única pieza de la casa; la cejilla de la tarjeta no sabe repartirse entre dos países, así que la alternativa era rotular «Ghana» sobre una moneda que dice Samoa. La lámina es la hebra **BU**, que es la moneda corriente de cada año; proof, antigua, coloreada, chapada en rodio, media onza, 5 oz y oro son otros productos y no rellenan estas casillas. Eso obliga a cualificar la emisión en las tres de Ghana (ADR 0019): Numista mete la antigua en el **mismo tipo** que la BU —3.000 en 2021, 5.000 en 2022, y en 2023 un renglón «Antique Finish; Proof» de 5.000—, así que sin la lista una antigua llenaría la casilla del año. La proof de 2022 no hace falta excluirla porque vive en su propio tipo, N#400153, fuera del fichero. En 2024 y 2025 el tipo trae un solo renglón y no hay nada que cualificar. Los pesos que publica Numista son 31,1035 g en 2021 y 2022 y 31,1 g de 2023 en adelante; la lámina declara la onza. La cara que se imprime es el reverso, que es donde va el alien en las cinco casillas —el anverso es el escudo o la efigie—, así que el silencio del fichero es el acierto y no un descuido. Dos deudas aguas arriba, las dos abiertas y ninguna fatal para la casilla: N#462088 se contradice consigo mismo y su renglón no describe ninguna moneda emitida (#309), y N#596617 arrastró de él la tirada, el acabado y un lettering de reverso que su moneda no tiene (#295). La casilla de 2024 se apoya en que la única página de una onza de Samoa de 2024, sin cualificador en el título y con foto de plata lisa, es la moneda corriente; si un árbitro decide que era la chapada en rodio, esa casilla se queda sin tipo y pasa a `unlisted`.",
+  "updated_at": "2026-08-07",
+  "members": [
+    {
+      "id": "2021-alien-cohete",
+      "label": "Alien y cohete · 5 cedis",
+      "year": 2021,
+      "issuer_code": "ghana",
+      "numista_type_id": 303228,
+      "numista_issue_ids": [
+        683018
+      ]
+    },
+    {
+      "id": "2022-alien-stargate",
+      "label": "Alien y stargate · 5 cedis",
+      "year": 2022,
+      "issuer_code": "ghana",
+      "numista_type_id": 357999,
+      "numista_issue_ids": [
+        774531
+      ]
+    },
+    {
+      "id": "2023-dos-aliens-armados",
+      "label": "Dos aliens armados · 20 cedis",
+      "year": 2023,
+      "issuer_code": "ghana",
+      "numista_type_id": 428198,
+      "numista_issue_ids": [
+        926367
+      ]
+    },
+    {
+      "id": "2024-battle-alien",
+      "label": "Battle Alien",
+      "year": 2024,
+      "numista_type_id": 462088
+    },
+    {
+      "id": "2025-alien-architects",
+      "label": "Alien Architects",
+      "year": 2025,
+      "numista_type_id": 596617
+    }
+  ]
+}
