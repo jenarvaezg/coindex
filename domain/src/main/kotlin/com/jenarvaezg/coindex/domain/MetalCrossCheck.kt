@@ -28,6 +28,7 @@ data class MetalDeviation(
  *
  * @param compositionByType Numista's `composition.text` per type, from the seeded cache
  */
+@SuiteOnly
 fun metalDeviations(
     catalogs: List<CollectionCatalog>,
     compositionByType: Map<Int, String?>,

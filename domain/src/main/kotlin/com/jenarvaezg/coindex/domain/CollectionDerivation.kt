@@ -207,15 +207,6 @@ fun deriveCollection(
     return CollectionDerivation(derivedCollections, unclassified, itemsByKey)
 }
 
-/** Convenience wrapper over [deriveCollection] for callers that only need the collections. */
-fun buildDerivedCollections(
-    items: List<CollectedItem>,
-    typeMeta: TypeMetaIndex,
-    catalogs: List<CollectionCatalog>,
-    groupings: List<CuratedGrouping> = emptyList(),
-): List<DerivedCollection> =
-    deriveCollection(items, typeMeta, catalogs, groupings).derivedCollections
-
 private class DerivedCollectionAccumulator {
     val typeIds = mutableSetOf<Int>()
     val items = mutableListOf<CollectedItem>()

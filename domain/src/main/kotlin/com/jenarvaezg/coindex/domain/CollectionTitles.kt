@@ -25,8 +25,6 @@ class CollectionTitles(
     fun of(key: VariantKey): String =
         byKey[key] ?: byFamily[key.family] ?: familyLabel(key.family)
 
-    fun of(collection: DerivedCollection): String = of(collection.key())
-
     /**
      * Every name a curated file claims, which is what a new box has to avoid (ADR 0021 §4).
      *
