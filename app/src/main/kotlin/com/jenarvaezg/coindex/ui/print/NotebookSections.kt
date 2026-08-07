@@ -6,7 +6,6 @@ import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.TypeImages
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
@@ -19,10 +18,7 @@ import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.piecesSubject
-import com.jenarvaezg.coindex.ui.plateCellFootnote
-import com.jenarvaezg.coindex.ui.plateCommonFacts
-import com.jenarvaezg.coindex.ui.plateEntries
-import com.jenarvaezg.coindex.ui.plateMemberStateLabel
+import com.jenarvaezg.coindex.ui.plateSubject
 
 /**
  * The whole notebook as pages: one section per card, in the order they were handed over.
@@ -73,33 +69,32 @@ private fun plateSection(
     catalogId: String,
     options: NotebookOptions,
 ): PrintSection? {
-    val plate = resolvePlate(state, curation, catalogId) as? PlateResult.Available
+    val resolved = resolvePlate(state, curation, catalogId) as? PlateResult.Available
         ?: return null
-    val catalog = plate.catalog
-    val common = plateCommonFacts(catalog.members)
+    // The same plate the screen and the exported sheet draw (#218), so the three cannot word one
+    // catalog three ways: the heading, the specification and what every cell says arrive settled.
+    val plate = plateSubject(resolved)
     return PrintSection(
         // The same claim the exported sheet makes, and for the same reason: the paper outlives the
         // app, and a page that says «curado» about a list nobody curated cannot be taken back.
         eyebrow = "COINDEX · CATÁLOGO CURADO",
-        title = catalog.name,
+        title = plate.title,
         subtitle = null,
-        facts = plateEntries(catalog, plate.album.ownedMembers(), common, plate.programmes),
-        source = catalog.source,
-        cells = plate.album.members.map { albumMember ->
-            val member = albumMember.member
-            val owned = albumMember.status is CollectionCatalogMemberStatus.Owned
+        facts = plate.entries,
+        source = plate.source,
+        cells = plate.cells.map { cell ->
             PrintCell(
-                label = member.label,
-                state = plateMemberStateLabel(albumMember.status),
-                footnote = plateCellFootnote(member, common),
+                label = cell.label,
+                state = cell.state,
+                footnote = cell.footnote,
                 // A hole keeps **its own** real diameter: the type of a member the collector is
                 // missing is in the seeded cache like any other, so the empty mount is the size of
                 // the coin that goes in it. Only a member no Numista type backs at all — announced,
                 // unlisted — has nothing to be measured, and borrows the plate's.
-                diameterMm = state.diameterOf(member.numistaTypeId),
-                faces = state.facesOf(member.numistaTypeId, options, catalog.printedSide),
-                filled = owned,
-                numistaUrl = state.qrUrlOf(member.numistaTypeId, options),
+                diameterMm = state.diameterOf(cell.numistaTypeId),
+                faces = state.facesOf(cell.numistaTypeId, options, plate.printedSide),
+                filled = cell.owned,
+                numistaUrl = state.qrUrlOf(cell.numistaTypeId, options),
             )
         },
     )

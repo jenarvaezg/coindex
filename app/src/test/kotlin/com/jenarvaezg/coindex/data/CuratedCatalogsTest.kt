@@ -11,7 +11,7 @@ import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.deriveCollection
-import com.jenarvaezg.coindex.ui.plateEntries
+import com.jenarvaezg.coindex.ui.plateSubject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -1352,7 +1352,7 @@ class CuratedCatalogsTest {
         val album = buildCollectionCatalogAlbum(lunar, emptyList())
         assertEquals(7, album.issuedMembers())
         assertEquals(5, album.announcedMembers())
-        val entries = plateEntries(lunar, album.ownedMembers())
+        val entries = plateSubject(PlateResult.Available(lunar, album)).entries
         assertEquals("Progreso" to "0 / 7 emisiones", entries[0])
         assertEquals("Sin emitir" to "5 anunciadas", entries[1])
         // La línea de la Royal Australian Mint: misma serie en Numista, otra moneda.
