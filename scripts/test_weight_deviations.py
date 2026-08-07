@@ -36,11 +36,12 @@ def member(
     *,
     label: str | None = None,
     variant_note: str | None = None,
+    year: int | None = 2024,
 ):
     return weights.Member(
         member_id=member_id,
         label=label,
-        year=2024,
+        year=year,
         numista_type_id=type_id,
         variant_note=variant_note,
     )
@@ -253,6 +254,95 @@ class DeviationTests(unittest.TestCase):
             [ficha(117_328, 39.94)],
         )
         self.assertFalse(report.deviations[0].magnet_moved)
+
+    def test_the_lines_without_a_note_are_the_only_ones_listed_one_by_one(self) -> None:
+        report = report_for(
+            [
+                catalog(
+                    "lamina",
+                    1_000,
+                    member("explicada", 1, variant_note="La ceca varió los gramos."),
+                    member("sin-mirar", 2),
+                )
+            ],
+            [ficha(1, 35.0), ficha(2, 35.0)],
+        )
+        self.assertEqual(
+            ["sin-mirar"], [deviation.member_id for deviation in report.unexplained]
+        )
+        self.assertEqual(1, len(report.explained_clusters))
+        self.assertEqual("casilla", report.explained_clusters[0].first.explained_by)
+
+    def test_the_lines_that_say_the_same_collapse_into_one_cumulo(self) -> None:
+        # Los 59 monumentos de 33,94 g repetían 59 veces la misma línea: es un hallazgo.
+        report = report_for(
+            [
+                catalog(
+                    "monumentos",
+                    1_121,
+                    member("2005-uno", 1, year=2005),
+                    member("2010-dos", 2, year=2010),
+                    member("2012-tres", 3, year=2012),
+                    source_note="Una onza de plata fina en las dos leyes.",
+                )
+            ],
+            [ficha(1, 33.94), ficha(2, 33.94), ficha(3, 33.94)],
+        )
+        self.assertEqual(3, report.explained_count)
+        self.assertEqual(1, len(report.explained_clusters))
+        cluster = report.explained_clusters[0]
+        self.assertEqual(3, cluster.count)
+        self.assertEqual("2005-2012", cluster.years)
+        self.assertIn("| ×3 |", weights.render_markdown(report))
+
+    def test_two_gramajes_del_mismo_catalogo_no_se_juntan(self) -> None:
+        report = report_for(
+            [
+                catalog(
+                    "monumentos",
+                    1_121,
+                    member("uno", 1),
+                    member("otro", 2),
+                    source_note="Una onza de plata fina en las dos leyes.",
+                )
+            ],
+            [ficha(1, 33.94), ficha(2, 35.66)],
+        )
+        self.assertEqual(2, len(report.explained_clusters))
+        self.assertEqual([1, 1], [cluster.count for cluster in report.explained_clusters])
+
+    def test_the_refresh_command_names_only_the_lines_without_a_note(self) -> None:
+        # La caché no se refresca sola: sin esto, una corrección aceptada sigue saliendo.
+        report = report_for(
+            [
+                catalog(
+                    "lamina",
+                    1_000,
+                    member("explicada", 1, variant_note="La ceca varió los gramos."),
+                    member("sin-mirar", 2),
+                )
+            ],
+            [ficha(1, 35.0), ficha(2, 35.0)],
+        )
+        self.assertEqual((2,), report.refresh_type_ids)
+        body = weights.render_markdown(report)
+        self.assertIn("seed-type-cache.py --refresh --confirm-live-api 2", body)
+        self.assertIn("--refresh", weights.render_plain(report))
+
+    def test_a_report_with_every_line_explained_asks_for_no_refresh(self) -> None:
+        report = report_for(
+            [
+                catalog(
+                    "lamina",
+                    1_000,
+                    member("explicada", 1, variant_note="La ceca varió los gramos."),
+                )
+            ],
+            [ficha(1, 35.0)],
+        )
+        self.assertEqual((), report.refresh_type_ids)
+        self.assertNotIn("--refresh", weights.render_markdown(report))
+        self.assertIn("todas las desviaciones tienen su explicación escrita", weights.render_markdown(report))
 
     def test_buckets_split_at_two_and_five_per_cent(self) -> None:
         # 1000 declarado: 1020 son el 2 % justo, 1050 el 5 % justo y 1051 se pasa.
