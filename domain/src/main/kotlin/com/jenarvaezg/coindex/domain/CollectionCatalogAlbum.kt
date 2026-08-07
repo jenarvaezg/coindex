@@ -35,10 +35,19 @@ data class CollectionCatalogAlbumMember(
     val status: CollectionCatalogMemberStatus,
 )
 
-/** The per-collector comparison between a followed collection and its curated catalog. */
+/**
+ * The per-collector comparison between a followed collection and its curated catalog.
+ *
+ * **Every emission of a plate is counted here and nowhere else** (#218). The card's `CoverageRatio`
+ * and the plate's «Progreso» are the same sentence about the same collection, so they read the same
+ * four counters; counting the catalog's own member flags a second time in the UI made two rules for
+ * one number that agreed only as long as nobody touched [buildCollectionCatalogAlbum].
+ *
+ * It carries neither the catalog's id nor its name: it travels next to the catalog that produced it
+ * — inside `PlateResult.Available`, into `PlateSubject` — and a second copy of a name is a second
+ * thing to keep in step.
+ */
 data class CollectionCatalogAlbum(
-    val catalogId: String,
-    val name: String,
     val members: List<CollectionCatalogAlbumMember>,
 ) {
     fun ownedMembers(): Int =
@@ -58,14 +67,16 @@ data class CollectionCatalogAlbum(
 
     fun announcedMembers(): Int =
         members.count { it.status is CollectionCatalogMemberStatus.NotYetIssued }
+
+    /** Struck and sold, and outside the divisor because Numista has no type to measure it by. */
+    fun unlistedMembers(): Int =
+        members.count { it.status is CollectionCatalogMemberStatus.Unlisted }
 }
 
 fun buildCollectionCatalogAlbum(
     catalog: CollectionCatalog,
     items: List<CollectedItem>,
 ): CollectionCatalogAlbum = CollectionCatalogAlbum(
-    catalogId = catalog.id,
-    name = catalog.name,
     members = catalog.members.map { member ->
         val status = when {
             // Never inspect inventory for a member the Numista-backed inventory cannot represent.

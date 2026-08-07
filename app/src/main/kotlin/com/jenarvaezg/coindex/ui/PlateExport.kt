@@ -81,6 +81,26 @@ internal fun handToShareSheet(context: Context, file: File, mimeType: String, ti
 fun plateFileName(catalogId: String): String = "coindex-$catalogId"
 
 /**
+ * What the collector is told once the sheet has been handed to the share sheet.
+ *
+ * The exported plate **is** the product: it gets sent to whoever the collection is being shown
+ * to, holes included. The old message called any sheet complete as long as every picture had
+ * reported back, and a picture that failed reported back exactly like one that arrived — so a
+ * sheet with twelve empty cells announced itself as «lámina completa» (issue #67). Counting the
+ * ones that actually painted is what makes the sentence true.
+ */
+fun plateExportMessage(members: Int, expectedPhotos: Int, loadedPhotos: Int): String {
+    val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
+    return when (absent) {
+        // «Casillas» and not «emisiones»: a plate can draw a slot the mint has not struck, and
+        // the progress line right above it counts only what was.
+        0 -> "Lámina completa exportada · $members casillas"
+        1 -> "Lámina exportada, pero una foto no llegó a cargar"
+        else -> "Lámina exportada, pero $absent fotos no llegaron a cargar"
+    }
+}
+
+/**
  * The same, for a sheet of pieces, whose subject has no curated id to be named by.
  *
  * The title is prose the collector typed — accents, middle dots, double spaces — so it is

@@ -20,18 +20,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
 import com.jenarvaezg.coindex.data.TypeImages
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
-import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
-import com.jenarvaezg.coindex.ui.PlateCommonFacts
-import com.jenarvaezg.coindex.ui.plateCellFootnote
-import com.jenarvaezg.coindex.ui.plateCommonFacts
-import com.jenarvaezg.coindex.domain.ProgrammeStanding
-import com.jenarvaezg.coindex.ui.plateEntries
-import com.jenarvaezg.coindex.ui.plateMemberStateLabel
+import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlin.math.ceil
 import kotlin.math.sqrt
@@ -89,12 +82,9 @@ data class SheetLayout(
  */
 @Composable
 fun PlateSheet(
-    catalog: CollectionCatalog,
-    members: List<CollectionCatalogAlbumMember>,
-    ownedMembers: Int,
+    plate: PlateSubject,
     images: Map<Int, TypeImages>,
     layout: SheetLayout,
-    programmes: List<ProgrammeStanding> = emptyList(),
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -108,22 +98,16 @@ fun PlateSheet(
             .padding(SHEET_PADDING),
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
     ) {
-        val common = plateCommonFacts(catalog.members)
-        SheetHeading(
-            catalog = catalog,
-            entries = plateEntries(catalog, ownedMembers, common, programmes),
-            layout = layout,
-        )
-        members.chunked(layout.columns).forEach { row ->
+        SheetHeading(plate = plate, layout = layout)
+        plate.cells.chunked(layout.columns).forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
             ) {
-                row.forEach { albumMember ->
+                row.forEach { cell ->
                     SheetCell(
-                        albumMember = albumMember,
-                        images = albumMember.member.numistaTypeId?.let { images[it] },
-                        common = common,
+                        cell = cell,
+                        images = cell.numistaTypeId?.let { images[it] },
                         onImageSettled = onImageSettled,
                         modifier = Modifier.weight(1f),
                     )
@@ -135,7 +119,7 @@ fun PlateSheet(
             }
         }
         Text(
-            "Fuente: ${catalog.source}",
+            "Fuente: ${plate.source}",
             style = MaterialTheme.typography.labelSmall.scaledBy(layout.headerScale),
             color = Paper.muted,
         )
@@ -150,11 +134,7 @@ fun PlateSheet(
  * a printed plate needs it most. Here every pair stays together in its own column of the strip.
  */
 @Composable
-private fun SheetHeading(
-    catalog: CollectionCatalog,
-    entries: List<Pair<String, String>>,
-    layout: SheetLayout,
-) {
+private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
     val scale = layout.headerScale
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -166,7 +146,7 @@ private fun SheetHeading(
             color = Paper.rust,
         )
         Text(
-            catalog.name,
+            plate.title,
             style = MaterialTheme.typography.headlineMedium.scaledBy(scale * 1.55f),
         )
         HorizontalDivider(thickness = 2.dp * scale, color = Paper.ink)
@@ -178,7 +158,7 @@ private fun SheetHeading(
             horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER * 2),
             verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER * scale * 0.5f),
         ) {
-            entries.forEach { (label, value) ->
+            plate.entries.forEach { (label, value) ->
                 Column {
                     Text(
                         label.uppercase(),
@@ -204,42 +184,39 @@ internal fun TextStyle.scaledBy(scale: Float): TextStyle = copy(
 
 /** Total pictures the sheet will request, so the export knows when it can capture. */
 fun sheetImageCount(
-    members: List<CollectionCatalogAlbumMember>,
+    cells: List<DrawnCell>,
     images: Map<Int, TypeImages>,
-): Int = members.sumOf { albumMember ->
-    val typeImages = albumMember.member.numistaTypeId?.let { images[it] }
+): Int = cells.sumOf { cell ->
+    val typeImages = cell.numistaTypeId?.let { images[it] }
     coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
 }
 
 @Composable
 private fun SheetCell(
-    albumMember: CollectionCatalogAlbumMember,
+    cell: DrawnCell,
     images: TypeImages?,
-    common: PlateCommonFacts,
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
-    val stateLabel = plateMemberStateLabel(albumMember.status)
-    FieldCard(modifier = modifier, emphasized = owned != null, dashed = owned == null) {
+    FieldCard(modifier = modifier, emphasized = cell.owned, dashed = !cell.owned) {
         CoinSides(
-            label = albumMember.member.label,
+            label = cell.label,
             obverse = images?.obverse,
             reverse = images?.reverse,
-            missing = owned == null,
+            missing = !cell.owned,
             onImageSettled = onImageSettled,
             onPaper = true,
         )
         Text(
-            stateLabel.uppercase(),
+            cell.state.uppercase(),
             style = MaterialTheme.typography.labelMedium,
-            color = if (owned != null) Paper.rust else Paper.muted,
+            color = if (cell.owned) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 8.dp),
         )
-        Text(albumMember.member.label, style = MaterialTheme.typography.titleMedium)
+        Text(cell.label, style = MaterialTheme.typography.titleMedium)
         // Same rule as on screen, and it matters more here: what the sheet says under a coin is
         // read on paper, so it is the year or nothing.
-        plateCellFootnote(albumMember.member, common)?.let { footnote ->
+        cell.footnote?.let { footnote ->
             Text(
                 footnote,
                 style = MaterialTheme.typography.labelSmall,

@@ -26,21 +26,15 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.data.TypeImages
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
-import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
-import com.jenarvaezg.coindex.ui.PlateCommonFacts
-import com.jenarvaezg.coindex.ui.plateCellFootnote
-import com.jenarvaezg.coindex.ui.plateCommonFacts
-import com.jenarvaezg.coindex.domain.ProgrammeStanding
-import com.jenarvaezg.coindex.ui.plateEntries
-import com.jenarvaezg.coindex.ui.plateMemberStateLabel
+import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.PlateSubject
+import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateExportMessage
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.plateFileName
@@ -54,6 +48,10 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
  *
  * Owned members are shown at full colour; missing ones keep their catalog design in grayscale
  * so the plate reads as a collection with gaps. Every member links to its Numista page.
+ *
+ * The plate is worded once, here, and the grid and the exported sheet are handed the same
+ * [PlateSubject] (#218): the specification used to be rebuilt in the body of the lazy grid on every
+ * recomposition, and once more, in parallel, by the sheet while the export was in flight.
  */
 @Composable
 fun PlateScreen(
@@ -66,10 +64,7 @@ fun PlateScreen(
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
         is PlateResult.Available -> AvailablePlate(
-            catalog = result.catalog,
-            members = result.album.members,
-            ownedMembers = result.album.ownedMembers(),
-            programmes = result.programmes,
+            plate = remember(result) { plateSubject(result) },
             images = images,
             onOpenSource = onOpenSource,
             onMessage = onMessage,
@@ -80,10 +75,7 @@ fun PlateScreen(
 
 @Composable
 private fun AvailablePlate(
-    catalog: CollectionCatalog,
-    members: List<CollectionCatalogAlbumMember>,
-    ownedMembers: Int,
-    programmes: List<ProgrammeStanding>,
+    plate: PlateSubject,
     images: Map<Int, TypeImages>,
     onOpenSource: (String) -> Unit,
     onMessage: (String) -> Unit,
@@ -93,10 +85,7 @@ private fun AvailablePlate(
 
     Box(modifier = modifier) {
         PlateGrid(
-            catalog = catalog,
-            members = members,
-            ownedMembers = ownedMembers,
-            programmes = programmes,
+            plate = plate,
             images = images,
             exporting = exporting,
             onOpenSource = onOpenSource,
@@ -104,10 +93,7 @@ private fun AvailablePlate(
         )
         if (exporting) {
             PlateSheetExport(
-                catalog = catalog,
-                members = members,
-                ownedMembers = ownedMembers,
-                programmes = programmes,
+                plate = plate,
                 images = images,
                 onFinished = { message ->
                     exporting = false
@@ -127,25 +113,22 @@ private fun AvailablePlate(
  */
 @Composable
 private fun PlateSheetExport(
-    catalog: CollectionCatalog,
-    members: List<CollectionCatalogAlbumMember>,
-    ownedMembers: Int,
-    programmes: List<ProgrammeStanding>,
+    plate: PlateSubject,
     images: Map<Int, TypeImages>,
     onFinished: (String) -> Unit,
 ) {
     val context = LocalContext.current
-    val picture = remember(catalog.id) { Picture() }
-    val layout = remember(members.size) { SheetLayout.forMemberCount(members.size) }
-    val expectedImages = remember(members, images) { sheetImageCount(members, images) }
+    val picture = remember(plate.catalogId) { Picture() }
+    val layout = remember(plate.cells.size) { SheetLayout.forMemberCount(plate.cells.size) }
+    val expectedImages = remember(plate.cells, images) { sheetImageCount(plate.cells, images) }
     val settled = remember { mutableIntStateOf(0) }
     val loaded = remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(catalog.id) {
+    LaunchedEffect(plate.catalogId) {
         val outcome = shareSettledSheet(
             context = context,
             picture = picture,
-            fileName = plateFileName(catalog.id),
+            fileName = plateFileName(plate.catalogId),
             expectedImages = expectedImages,
             settled = settled,
         )
@@ -153,19 +136,16 @@ private fun PlateSheetExport(
             if (outcome.isFailure) {
                 "No se pudo exportar la lámina: ${outcome.exceptionOrNull()?.message}"
             } else {
-                plateExportMessage(members.size, expectedImages, loaded.intValue)
+                plateExportMessage(plate.cells.size, expectedImages, loaded.intValue)
             },
         )
     }
 
     OffScreenSheet(layout) {
         PlateSheet(
-            catalog = catalog,
-            members = members,
-            ownedMembers = ownedMembers,
+            plate = plate,
             images = images,
             layout = layout,
-            programmes = programmes,
             onImageSettled = { painted ->
                 settled.intValue += 1
                 if (painted) loaded.intValue += 1
@@ -178,10 +158,7 @@ private fun PlateSheetExport(
 
 @Composable
 private fun PlateGrid(
-    catalog: CollectionCatalog,
-    members: List<CollectionCatalogAlbumMember>,
-    ownedMembers: Int,
-    programmes: List<ProgrammeStanding>,
+    plate: PlateSubject,
     images: Map<Int, TypeImages>,
     exporting: Boolean,
     onOpenSource: (String) -> Unit,
@@ -194,13 +171,10 @@ private fun PlateGrid(
         horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
         verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
     ) {
-        // Read once for the whole plate: the heading says what every cell shares, the cells say
-        // the rest.
-        val common = plateCommonFacts(catalog.members)
         item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Eyebrow("Catálogo curado")
-                Text(catalog.name, style = MaterialTheme.typography.headlineMedium)
+                Text(plate.title, style = MaterialTheme.typography.headlineMedium)
                 Text(
                     "Referencia curada de las emisiones catalogadas de esta variante; no " +
                         "afirma que sea una serie cerrada.",
@@ -208,7 +182,7 @@ private fun PlateGrid(
                     color = Paper.muted,
                 )
                 SpecificationCard(
-                    entries = plateEntries(catalog, ownedMembers, common, programmes),
+                    entries = plate.entries,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 // Exporting the plate is what this screen is for, so it is the only filled
@@ -225,58 +199,50 @@ private fun PlateGrid(
                 )
                 ExternalLink(
                     text = "Fuente en Numista",
-                    onClick = { onOpenSource(catalog.source) },
+                    onClick = { onOpenSource(plate.source) },
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
-        items(members, key = { it.member.id }) { albumMember ->
-            PlateCell(
-                albumMember,
-                albumMember.member.numistaTypeId?.let { images[it] },
-                common,
-                onOpenSource,
-            )
+        items(plate.cells, key = { it.id }) { cell ->
+            PlateCell(cell, cell.numistaTypeId?.let { images[it] }, onOpenSource)
         }
     }
 }
 
 @Composable
 private fun PlateCell(
-    albumMember: CollectionCatalogAlbumMember,
+    cell: DrawnCell,
     images: TypeImages?,
-    common: PlateCommonFacts,
     onOpenSource: (String) -> Unit,
 ) {
-    val owned = albumMember.status as? CollectionCatalogMemberStatus.Owned
-    val stateLabel = plateMemberStateLabel(albumMember.status)
-    val typeId = albumMember.member.numistaTypeId
-    FieldCard(emphasized = owned != null, dashed = owned == null) {
+    FieldCard(emphasized = cell.owned, dashed = !cell.owned) {
         CoinSides(
-            label = albumMember.member.label,
+            label = cell.label,
             obverse = images?.obverse,
             reverse = images?.reverse,
-            missing = owned == null,
+            missing = !cell.owned,
         )
         Text(
-            stateLabel.uppercase(),
+            cell.state.uppercase(),
             style = MaterialTheme.typography.labelMedium,
-            color = if (owned != null) Paper.rust else Paper.muted,
+            color = if (cell.owned) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 10.dp),
         )
         // An announced member has no Numista page to open: the coin is not in the catalogue.
+        val typeId = cell.numistaTypeId
         if (typeId != null) {
             ExternalLink(
-                text = albumMember.member.label,
+                text = cell.label,
                 style = MaterialTheme.typography.titleMedium,
                 onClick = { onOpenSource(numistaTypeUrl(typeId)) },
             )
         } else {
-            Text(albumMember.member.label, style = MaterialTheme.typography.titleMedium)
+            Text(cell.label, style = MaterialTheme.typography.titleMedium)
         }
         // Only what tells this cell apart, which is at most the year: in a date run the title is
         // already it, and the type is reached by tapping the title right above.
-        plateCellFootnote(albumMember.member, common)?.let { footnote ->
+        cell.footnote?.let { footnote ->
             Text(
                 footnote,
                 style = MaterialTheme.typography.labelLarge,

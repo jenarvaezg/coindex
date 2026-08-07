@@ -309,7 +309,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 composable(Routes.PLATE) { entry ->
                     val catalogId = entry.arguments?.getString("catalogId").orEmpty()
                     PlateScreen(
-                        result = viewModel.plate(catalogId),
+                        // Resolved once per collection and not once per recomposition (#218):
+                        // building the album walks the whole inventory, and the screen recomposes
+                        // for reasons — a scroll, an export in flight — that leave it unchanged.
+                        result = remember(state.collection, catalogId) {
+                            viewModel.plate(catalogId)
+                        },
                         images = state.collection.images,
                         onOpenSource = openUrl,
                         onMessage = viewModel::showMessage,

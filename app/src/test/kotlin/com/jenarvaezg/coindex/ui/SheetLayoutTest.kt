@@ -2,18 +2,19 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CoinPhoto
 import com.jenarvaezg.coindex.data.TypeImages
-import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
-import com.jenarvaezg.coindex.domain.CollectionCatalogMember
-import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.ui.screens.SheetLayout
 import com.jenarvaezg.coindex.ui.screens.sheetImageCount
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-private fun member(id: String, typeId: Int) = CollectionCatalogAlbumMember(
-    member = CollectionCatalogMember(id, id, 2024, typeId),
-    status = CollectionCatalogMemberStatus.Missing,
+private fun cell(id: String, typeId: Int) = DrawnCell(
+    id = id,
+    label = id,
+    numistaTypeId = typeId,
+    state = "Me falta",
+    footnote = null,
+    owned = false,
 )
 
 class SheetLayoutTest {
@@ -72,15 +73,15 @@ class SheetLayoutTest {
 
     @Test
     fun `the expected picture count skips types with no cached pictures`() {
-        val members = listOf(member("a", 1), member("b", 2), member("c", 3))
+        val cells = listOf(cell("a", 1), cell("b", 2), cell("c", 3))
         val images = mapOf(
             1 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto(picture = "reverse")),
             2 to TypeImages(CoinPhoto(picture = "obverse"), CoinPhoto()),
             // Type 3 has no cached pictures at all and requests none.
         )
 
-        assertEquals(3, sheetImageCount(members, images))
-        assertEquals(0, sheetImageCount(members, emptyMap()))
+        assertEquals(3, sheetImageCount(cells, images))
+        assertEquals(0, sheetImageCount(cells, emptyMap()))
     }
 
     /**
@@ -90,7 +91,7 @@ class SheetLayoutTest {
      */
     @Test
     fun `a face counts once however many sizes of it there are to try`() {
-        val members = listOf(member("a", 1))
+        val cells = listOf(cell("a", 1))
         val images = mapOf(
             1 to TypeImages(
                 obverse = CoinPhoto(thumbnail = "small", picture = "big"),
@@ -98,6 +99,6 @@ class SheetLayoutTest {
             ),
         )
 
-        assertEquals(2, sheetImageCount(members, images))
+        assertEquals(2, sheetImageCount(cells, images))
     }
 }
