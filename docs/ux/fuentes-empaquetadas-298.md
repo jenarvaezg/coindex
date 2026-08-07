@@ -66,7 +66,7 @@ un carácter de texto. Va a la lista de efectos del
 **La `С` es una errata de Numista**: en `3 Roubles (Naval Сathedral of Saint Nicholas in
 Kronstadt)`, la primera letra de *Cathedral* es una **С cirílica** (U+0421) tecleada en un título
 en inglés. Ninguna fuente lo va a arreglar y ninguna candidata debería ser elegida por cubrirla.
-Se corrige en Numista, y se ha abierto como issue suelto.
+Se corrige en Numista: [#314](https://github.com/jenarvaezg/coindex/issues/314).
 
 ## Las serif: la prosa de la guía de campo
 
