@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -17,33 +18,37 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.data.photos.TypeImages
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
-import com.jenarvaezg.coindex.ui.components.CoinSides
+import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
-import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateFileName
+import com.jenarvaezg.coindex.ui.plateScreenEntries
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
+import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 /**
  * The plate of a followed collection against its curated catalog.
  *
- * Owned members are shown at full colour; missing ones keep their catalog design in grayscale
- * so the plate reads as a collection with gaps. Every member links to its Numista page.
+ * Owned members are shown at full colour; missing ones keep their catalog design as a 14% ghost
+ * inside a dotted die-cut rule. Every issued member links to its Numista page.
  *
  * The plate is worded once, here, and the grid and the exported sheet are handed the same
  * [PlateSubject] (#218): the specification used to be rebuilt in the body of the lazy grid on every
@@ -95,6 +100,7 @@ private fun AvailablePlate(
                 items = plate.cells,
                 images = images,
                 typeId = { it.numistaTypeId },
+                printedSide = plate.printedSide,
                 sheet = SharedSheet.PLATE,
                 tally = plateSheetTally(plate.cells.size),
                 fileName = plateFileName(plate.catalogId),
@@ -124,7 +130,7 @@ private fun PlateGrid(
     onExport: () -> Unit,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(PlateMetrics.minPlateCell),
+        columns = GridCells.Adaptive(104.dp),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
@@ -134,14 +140,8 @@ private fun PlateGrid(
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Eyebrow("Catálogo curado")
                 Text(plate.title, style = MaterialTheme.typography.headlineMedium)
-                Text(
-                    "Referencia curada de las emisiones catalogadas de esta variante; no " +
-                        "afirma que sea una serie cerrada.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Paper.muted,
-                )
                 SpecificationCard(
-                    entries = plate.entries,
+                    entries = plateScreenEntries(plate.entries),
                     modifier = Modifier.fillMaxWidth(),
                 )
                 // Exporting the plate is what this screen is for, so it is the only filled
@@ -164,7 +164,12 @@ private fun PlateGrid(
             }
         }
         items(plate.cells, key = { it.id }) { cell ->
-            PlateCell(cell, cell.numistaTypeId?.let { images[it] }, onOpenSource)
+            PlateCell(
+                cell = cell,
+                images = cell.numistaTypeId?.let { images[it] },
+                printedSide = plate.printedSide,
+                onOpenSource = onOpenSource,
+            )
         }
     }
 }
@@ -173,20 +178,17 @@ private fun PlateGrid(
 private fun PlateCell(
     cell: DrawnCell,
     images: TypeImages?,
+    printedSide: PrintedSide,
     onOpenSource: (String) -> Unit,
 ) {
-    FieldCard(emphasized = cell.owned, dashed = !cell.owned) {
-        CoinSides(
-            label = cell.label,
-            obverse = images?.obverse,
-            reverse = images?.reverse,
-            missing = !cell.owned,
-        )
-        Text(
-            cell.state,
-            style = MaterialTheme.typography.labelMedium,
-            color = if (cell.owned) Paper.rust else Paper.muted,
-            modifier = Modifier.padding(top = 10.dp),
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        AlbumHole(
+            photo = images?.printedPhoto(printedSide),
+            missing = cell.missing,
+            modifier = Modifier.size(104.dp),
         )
         // An announced member has no Numista page to open: the coin is not in the catalogue.
         val typeId = cell.numistaTypeId
@@ -197,7 +199,12 @@ private fun PlateCell(
                 onClick = { onOpenSource(numistaTypeUrl(typeId)) },
             )
         } else {
-            Text(cell.label, style = MaterialTheme.typography.titleMedium)
+            Text(
+                cell.label,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+            )
         }
         // Only what tells this cell apart, which is at most the year: in a date run the title is
         // already it, and the type is reached by tapping the title right above.
@@ -206,6 +213,7 @@ private fun PlateCell(
                 footnote,
                 style = MaterialTheme.typography.labelLarge,
                 color = Paper.muted,
+                textAlign = TextAlign.Center,
             )
         }
     }

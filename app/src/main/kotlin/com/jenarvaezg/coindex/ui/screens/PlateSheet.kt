@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -13,17 +14,20 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
-import com.jenarvaezg.coindex.ui.components.CoinSides
-import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlin.math.ceil
 import kotlin.math.sqrt
@@ -106,7 +110,9 @@ fun PlateSheet(
                 row.forEach { cell ->
                     SheetCell(
                         cell = cell,
-                        images = cell.numistaTypeId?.let { images[it] },
+                        photo = cell.numistaTypeId
+                            ?.let { images[it] }
+                            ?.printedPhoto(plate.printedSide),
                         onImageSettled = onImageSettled,
                         modifier = Modifier.weight(1f),
                     )
@@ -159,11 +165,13 @@ private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
         ) {
             plate.entries.forEach { (label, value) ->
                 Column {
-                    Text(
-                        label,
-                        style = MaterialTheme.typography.labelSmall.scaledBy(scale * 1.15f),
-                        color = Paper.muted,
-                    )
+                    if (label.isNotEmpty()) {
+                        Text(
+                            label,
+                            style = MaterialTheme.typography.labelSmall.scaledBy(scale * 1.15f),
+                            color = Paper.muted,
+                        )
+                    }
                     Text(
                         value,
                         style = MaterialTheme.typography.bodyMedium.scaledBy(scale * 1.35f),
@@ -184,26 +192,26 @@ internal fun TextStyle.scaledBy(scale: Float): TextStyle = copy(
 @Composable
 private fun SheetCell(
     cell: DrawnCell,
-    images: TypeImages?,
+    photo: CoinPhoto?,
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    FieldCard(modifier = modifier, emphasized = cell.owned, dashed = !cell.owned) {
-        CoinSides(
-            label = cell.label,
-            obverse = images?.obverse,
-            reverse = images?.reverse,
-            missing = !cell.owned,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier,
+    ) {
+        AlbumHole(
+            photo = photo,
+            missing = cell.missing,
             onImageSettled = onImageSettled,
-            onPaper = true,
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
         )
         Text(
-            cell.state,
-            style = MaterialTheme.typography.labelMedium,
-            color = if (cell.owned) Paper.rust else Paper.muted,
-            modifier = Modifier.padding(top = 8.dp),
+            cell.label,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 6.dp),
         )
-        Text(cell.label, style = MaterialTheme.typography.titleMedium)
         // Same rule as on screen, and it matters more here: what the sheet says under a coin is
         // read on paper, so it is the year or nothing.
         cell.footnote?.let { footnote ->
@@ -211,6 +219,7 @@ private fun SheetCell(
                 footnote,
                 style = MaterialTheme.typography.labelSmall,
                 color = Paper.muted,
+                textAlign = TextAlign.Center,
             )
         }
     }

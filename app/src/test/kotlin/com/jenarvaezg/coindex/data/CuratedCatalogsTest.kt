@@ -1354,7 +1354,7 @@ class CuratedCatalogsTest {
         assertEquals(5, album.announcedMembers())
         val entries = plateSubject(PlateResult.Available(lunar, album)).entries
         assertEquals("Progreso" to "0 / 7 emisiones", entries[0])
-        assertEquals("Sin emitir" to "5 anunciadas", entries[1])
+        assertEquals("" to "5 anunciadas", entries[1])
         // La línea de la Royal Australian Mint: misma serie en Numista, otra moneda.
         val royalAustralianMint =
             listOf(219_663, 266_550, 309_870, 355_589, 406_506, 444_584, 529_884)

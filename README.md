@@ -132,8 +132,9 @@ publicable, pero nunca publica.
 «Exportar lámina como imagen» compone la hoja **completa** fuera de pantalla —con su propia
 densidad, no la del móvil—, espera a que Coil termine con todas las imágenes y la graba en un
 `Picture` que se reproduce sobre un bitmap software. El PNG resultante lleva la cabecera con
-el progreso, todas las emisiones (las que faltan en gris) y la fuente al pie. Un catálogo de
-104 emisiones sale en ocho columnas a menor densidad para que el bitmap no se desmande.
+el progreso, una sola cara por emisión según `printed_side`, las que faltan como fantasma al
+14 % con filete de puntos y la fuente al pie. Un catálogo de 104 emisiones sale en ocho columnas
+a menor densidad para que el bitmap no se desmande.
 
 Los bitmaps de hardware están desactivados en Coil: un `Picture` no se puede reproducir sobre
 un canvas software si contiene alguno.

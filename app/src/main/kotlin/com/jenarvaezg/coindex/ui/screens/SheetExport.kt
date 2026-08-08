@@ -20,8 +20,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
+import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sharePlateSheet
 import com.jenarvaezg.coindex.ui.sheetExportFailure
@@ -71,6 +73,8 @@ fun <T> SheetExport(
     images: Map<Int, TypeImages>,
     /** Where an item's Numista type is read. A catalog's slot may have none; a piece always has. */
     typeId: (T) -> Int?,
+    /** A plate asks for its declared face; a pieces sheet keeps asking for both. */
+    printedSide: PrintedSide? = null,
     /** What this export is called, which is what the closing sentence and any failure are about. */
     sheet: SharedSheet,
     /** What the sheet says it holds, in its own words: «19 casillas», «4 de 12 · te faltan 8». */
@@ -90,7 +94,9 @@ fun <T> SheetExport(
     // [typeId] is one of the keys and not just a captured lambda: both callers pass a
     // non-capturing one today, and a capturing one would leave a stale count behind — the very
     // kind of silent drift this composable exists to make impossible.
-    val expectedImages = remember(items, images, typeId) { sheetImageCount(items, images, typeId) }
+    val expectedImages = remember(items, images, typeId, printedSide) {
+        sheetImageCount(items, images, printedSide, typeId)
+    }
     val settled = remember(key) { mutableIntStateOf(0) }
     val loaded = remember(key) { mutableIntStateOf(0) }
 
@@ -134,10 +140,15 @@ fun <T> SheetExport(
 fun <T> sheetImageCount(
     items: List<T>,
     images: Map<Int, TypeImages>,
+    printedSide: PrintedSide? = null,
     typeId: (T) -> Int?,
 ): Int = items.sumOf { item ->
     val typeImages = typeId(item)?.let { images[it] }
-    coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
+    if (printedSide == null) {
+        coinSideImageCount(typeImages?.obverse, typeImages?.reverse)
+    } else {
+        if (typeImages?.printedPhoto(printedSide)?.hasPicture == true) 1 else 0
+    }
 }
 
 /**
