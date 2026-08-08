@@ -7,6 +7,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 private val MADRID = ZoneId.of("Europe/Madrid")
@@ -82,6 +83,12 @@ class LastSyncLabelTest {
 
 class SyncReportLabelTest {
     @Test
+    fun `the maintenance action reports a sync in flight`() {
+        assertEquals("Sincronizar", syncActionLabel(syncing = false))
+        assertEquals("Sincronizando…", syncActionLabel(syncing = true))
+    }
+
+    @Test
     fun `a complete run reports its three counters`() {
         assertEquals(
             "22 piezas · 3 fichas nuevas · 5 llamadas",
@@ -124,10 +131,12 @@ class SyncErrorLabelTest {
     }
 
     @Test
-    fun `an exhausted budget names the numbers and the way out`() {
+    fun `an exhausted month only says to wait until day one`() {
         val label = syncErrorLabel(NumistaException.BudgetExhausted(1500, 1500))
-        assertTrue(label.contains("1500/1500"), label)
-        assertTrue(label.contains("Ajustes"), label)
+        assertTrue(label.contains("espera al día 1", ignoreCase = true), label)
+        assertFalse(label.contains("Ajustes"), label)
+        assertFalse(label.contains("Presupuesto"), label)
+        assertFalse(label.contains("1500"), label)
     }
 
     @Test

@@ -22,6 +22,9 @@ fun syncReportLabel(record: SyncRecord): String = buildString {
     record.partialFailure?.let { append(" · incompleto") }
 }
 
+fun syncActionLabel(syncing: Boolean): String =
+    if (syncing) "Sincronizando…" else "Sincronizar"
+
 /**
  * The durable line under the sync button.
  *
@@ -60,8 +63,7 @@ fun syncErrorLabel(error: Throwable): String = when (error) {
     is NumistaException.EmptyApiKey ->
         "Falta la API key de Numista. Añádela en Ajustes."
     is NumistaException.BudgetExhausted ->
-        "Presupuesto de la API agotado este mes (${error.used}/${error.budget}). " +
-            "Puedes subir el techo en Ajustes o esperar al día 1."
+        "Llamadas a la API agotadas este mes. Espera al día 1 para volver a intentarlo."
     is NumistaException.Transport ->
         "Sin conexión con Numista. Tu colección local sigue disponible."
     is NumistaException.Api -> when (error.status) {

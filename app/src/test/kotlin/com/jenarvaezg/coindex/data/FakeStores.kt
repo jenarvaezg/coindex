@@ -22,7 +22,6 @@ class FakeSyncLog(override var last: SyncRecord? = null) : SyncLog
 
 class FakeCredentialStore(
     private var stored: Credentials? = null,
-    override var monthlyBudget: Int = DEFAULT_MONTHLY_BUDGET,
 ) : CredentialStore {
     override fun credentials(): Credentials? = stored
 

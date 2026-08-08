@@ -48,14 +48,10 @@ fun fichaAgeLabel(
 }
 
 /**
- * The gesture, saying what it costs before it is spent — the same bargain the sync button keeps.
- *
- * With no budget left it says so instead of failing on the tap: an exhausted month is the normal,
- * expected outcome of a free API key, not an error to discover by pressing.
+ * The gesture, saying what it costs before it is spent.
  */
-fun fichaRefreshLabel(refreshing: Boolean, budgetRemaining: Int): String = when {
+fun fichaRefreshLabel(refreshing: Boolean): String = when {
     refreshing -> "Preguntando a Numista…"
-    budgetRemaining < FICHA_REFRESH_CALLS -> "Sin presupuesto este mes"
     else -> "Actualizar la ficha · ${callsLabel(FICHA_REFRESH_CALLS)}"
 }
 

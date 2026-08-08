@@ -12,6 +12,12 @@ import kotlin.test.assertEquals
  * a country selected would be the failure the persisted search text was rejected for.
  */
 class ShelfLabelsTest {
+    @Test
+    fun `the disclosure mark says whether the shelf is open`() {
+        assertEquals("▸ ", shelfDisclosure(expanded = false))
+        assertEquals("▾ ", shelfDisclosure(expanded = true))
+    }
+
     /** Both sides carry a sort (ADR 0021 §1), so both resting lines say the same thing. */
     @Test
     fun `an untouched shelf says what it is, not that nothing is on`() {

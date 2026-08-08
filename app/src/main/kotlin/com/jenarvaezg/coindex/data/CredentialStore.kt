@@ -14,17 +14,16 @@ private const val PREFS = "coindex-credentials"
 private const val KEY_ALIAS = "coindex-api-key"
 private const val KEY_API_KEY = "numista_api_key"
 private const val KEY_USER_ID = "numista_user_id"
-private const val KEY_BUDGET = "monthly_budget"
 private const val GCM_TAG_BITS = 128
 private const val IV_BYTES = 12
 
-/** Default monthly cap, kept below the observed ~2.000 limit to leave margin. */
+/** Internal monthly cap, kept below the observed ~2.000 limit to leave margin. */
 const val DEFAULT_MONTHLY_BUDGET: Int = 1500
 
 data class Credentials(val apiKey: String, val userId: Long)
 
 /**
- * The collector's own Numista credentials and their monthly cap.
+ * The collector's own Numista credentials.
  *
  * An interface because the real one is an Android Keystore away: onboarding, signing out and the
  * settings form are decisions about what was typed, and none of them should need a device to be
@@ -36,16 +35,13 @@ interface CredentialStore {
     fun save(apiKey: String, userId: Long)
 
     fun clear()
-
-    var monthlyBudget: Int
 }
 
 /**
  * Stores the collector's own Numista credentials on the device.
  *
  * The API key is encrypted with an AES/GCM key that lives in the Android Keystore and never
- * leaves it; only the ciphertext reaches shared preferences. The user id and the budget cap
- * are not secrets and are stored as-is.
+ * leaves it; only the ciphertext reaches shared preferences. The user id is stored as-is.
  */
 class KeystoreCredentialStore(context: Context) : CredentialStore {
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -66,12 +62,6 @@ class KeystoreCredentialStore(context: Context) : CredentialStore {
     override fun clear() {
         prefs.edit().remove(KEY_API_KEY).remove(KEY_USER_ID).apply()
     }
-
-    override var monthlyBudget: Int
-        get() = prefs.getInt(KEY_BUDGET, DEFAULT_MONTHLY_BUDGET)
-        set(value) {
-            prefs.edit().putInt(KEY_BUDGET, value.coerceIn(1, 100_000)).apply()
-        }
 
     private fun decryptedApiKey(): String? {
         val stored = prefs.getString(KEY_API_KEY, null) ?: return null

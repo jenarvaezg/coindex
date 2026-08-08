@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
-import com.jenarvaezg.coindex.data.ApiCallLedger
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CredentialStore
@@ -60,7 +59,6 @@ class CoindexViewModel(
     private val credentials: CredentialStore,
     private val shelves: ShelfStore,
     private val notebook: NotebookStore,
-    private val calls: ApiCallLedger,
     private val collectionSync: CollectionSync,
     private val typeRefresh: TypeRefresh,
     private val updates: UpdateFlow,
@@ -151,7 +149,6 @@ class CoindexViewModel(
             _state.update { it.copy(onboarded = credentials.credentials() != null) }
             try {
                 warmUpFichaCache()
-                refreshBudget()
                 repository.observeState().collect { collection ->
                     _state.update { it.copy(collection = collection, loading = false) }
                     prefetchPhotographs()
@@ -215,13 +212,12 @@ class CoindexViewModel(
         }
     }
 
-    /** The stored credentials and budget, so the settings screen opens on what is in effect. */
+    /** The stored credentials, so the settings screen opens on what is in effect. */
     fun currentSettings(): SettingsValues {
         val stored = credentials.credentials()
         return SettingsValues(
             apiKey = stored?.apiKey.orEmpty(),
             userId = stored?.userId?.toString().orEmpty(),
-            budgetCap = credentials.monthlyBudget,
         )
     }
 
@@ -230,17 +226,15 @@ class CoindexViewModel(
      *
      * @return true when everything was stored, so the caller can leave the screen.
      */
-    fun saveSettings(apiKey: String, userId: String, budgetCap: String): Boolean =
-        when (val entry = settingsEntry(apiKey, userId, budgetCap)) {
+    fun saveSettings(apiKey: String, userId: String): Boolean =
+        when (val entry = settingsEntry(apiKey, userId)) {
             is SettingsEntry.Refused -> {
                 _state.update { it.copy(validation = entry.problem) }
                 false
             }
             is SettingsEntry.Accepted -> {
                 credentials.save(entry.credentials.apiKey, entry.credentials.userId)
-                entry.budgetCap?.let { cap -> credentials.monthlyBudget = cap }
                 _state.update { it.copy(validation = null, message = SETTINGS_SAVED_MESSAGE) }
-                viewModelScope.launch { refreshBudget() }
                 true
             }
         }
@@ -335,7 +329,6 @@ class CoindexViewModel(
             // and being waited for.
             photos.yieldNetwork()
             val outcome = collectionSync.run(ready, userId)
-            refreshBudget()
             _state.update { state ->
                 when (outcome) {
                     is SyncOutcome.Done -> state.copy(
@@ -369,7 +362,6 @@ class CoindexViewModel(
         _state.update { it.copy(refreshingFichas = it.refreshingFichas + typeId, message = null) }
         viewModelScope.launch {
             val outcome = runCatching { typeRefresh.refresh(ready, typeId) }
-            refreshBudget()
             _state.update { state ->
                 state.copy(
                     refreshingFichas = state.refreshingFichas - typeId,
@@ -468,12 +460,6 @@ class CoindexViewModel(
     // left with the screen that asked: a card with a reachable plate now *is* the plate (ADR 0021
     // §9), so nothing between the index and the plate needs to explain a jump it cannot make.
 
-    private suspend fun refreshBudget() {
-        val cap = credentials.monthlyBudget
-        val used = calls.spentThisMonth()
-        _state.update { it.copy(budget = BudgetStatus(used, cap)) }
-    }
-
     companion object {
         /**
          * The one place the collaborators above are named twice.
@@ -490,7 +476,6 @@ class CoindexViewModel(
                     credentials = container.credentials,
                     shelves = container.shelves,
                     notebook = container.notebook,
-                    calls = container.calls,
                     collectionSync = container.collectionSync,
                     typeRefresh = container.typeRefresh,
                     updates = container.updates,

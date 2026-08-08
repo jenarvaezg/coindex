@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.ui.ONBOARDING_CREDENTIALS_EXPLANATION
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -27,8 +28,8 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 /**
  * First launch: the collector's own Numista credentials.
  *
- * Each user spends their own API budget, which is what makes the app local-first and removes
- * the shared ledger the web version needed.
+ * Each user supplies their own API credentials, which is what makes the app local-first and
+ * removes the shared account the web version needed.
  *
  * [validation] is the form's own channel, not the snackbar's: the two used to share one field,
  * so dismissing the snackbar also erased the text explaining what was wrong with the form.
@@ -55,9 +56,7 @@ fun OnboardingScreen(
         Eyebrow("Cuaderno de colección")
         Text("Coindex", style = MaterialTheme.typography.displayLarge)
         Text(
-            "Introduce tu API key de Numista y tu identificador de usuario. Se guardan " +
-                "cifrados en este teléfono y nunca salen de él: cada colección consume su " +
-                "propio presupuesto de la API.",
+            ONBOARDING_CREDENTIALS_EXPLANATION,
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
         )

@@ -2,6 +2,11 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.ui.plural
 
+const val SEARCH_PLACEHOLDER: String = "Buscar"
+const val SHELF_ACTION_SEPARATOR: String = " · "
+
+fun shelfDisclosure(expanded: Boolean): String = if (expanded) "▾ " else "▸ "
+
 /**
  * What the folded shelf says about itself.
  *

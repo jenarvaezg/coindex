@@ -99,7 +99,7 @@ class CoindexViewModelTest {
     private val types = FakeTypeMetaDao()
     private val ownGroupings = FakeOwnGroupingDao()
     private val apiCalls = FakeApiCallDao()
-    private val credentials = FakeCredentialStore(Credentials("key", 2104), monthlyBudget = 1500)
+    private val credentials = FakeCredentialStore(Credentials("key", 2104))
     private val shelves = FakeShelfStore()
     private val notebook = FakeNotebookStore()
     private val syncLog = FakeSyncLog()
@@ -189,7 +189,6 @@ class CoindexViewModelTest {
             credentials = credentials,
             shelves = shelves,
             notebook = notebook,
-            calls = ledger,
             collectionSync = CollectionSync(
                 syncService = SyncService(items, types, ledger) { NOW },
                 syncLog = syncLog,
@@ -260,7 +259,7 @@ class CoindexViewModelTest {
     }
 
     @Test
-    fun `a launch tops the fichas up before the collection is read, and counts the budget`() =
+    fun `a launch tops the fichas up before the collection is read`() =
         onViewModel(
             given = { apiCalls.calls += ApiCallEntity(endpoint = "/types/1", calledAt = NOW) },
         ) { viewModel ->
@@ -269,9 +268,6 @@ class CoindexViewModelTest {
             assertEquals(1, warmedUp)
             assertFalse(viewModel.state.value.loading)
             assertTrue(viewModel.state.value.onboarded)
-            assertEquals(1, viewModel.state.value.budget.used)
-            assertEquals(1500, viewModel.state.value.budget.cap)
-            assertEquals(1499, viewModel.state.value.budget.remaining)
         }
 
     @Test
@@ -312,7 +308,7 @@ class CoindexViewModelTest {
     }
 
     @Test
-    fun `a sync reports what it did, remembers it and recounts the budget`() =
+    fun `a sync reports what it did and remembers it`() =
         onViewModel { viewModel ->
             runCurrent()
 
@@ -324,7 +320,6 @@ class CoindexViewModelTest {
             assertEquals(3, state.lastSync?.callsSpent)
             assertEquals(NOW, state.lastSync?.atMillis)
             assertEquals("1 pieza · 1 ficha nueva · 3 llamadas", state.message)
-            assertEquals(3, state.budget.used)
             // Written down before it was announced: the snackbar is the copy.
             assertEquals(state.lastSync, syncLog.last)
         }
@@ -374,17 +369,15 @@ class CoindexViewModelTest {
     }
 
     @Test
-    fun `saving the settings stores the three of them and says so`() = onViewModel { viewModel ->
+    fun `saving the settings stores the credentials and says so`() = onViewModel { viewModel ->
         runCurrent()
 
-        val saved = viewModel.saveSettings(apiKey = " otra ", userId = "3105", budgetCap = "800")
+        val saved = viewModel.saveSettings(apiKey = " otra ", userId = "3105")
         runCurrent()
 
         assertTrue(saved)
         assertEquals(Credentials("otra", 3105), credentials.credentials())
-        assertEquals(800, credentials.monthlyBudget)
         assertEquals("Ajustes guardados.", viewModel.state.value.message)
-        assertEquals(800, viewModel.state.value.budget.cap)
         assertNull(viewModel.state.value.validation)
     }
 
@@ -392,14 +385,13 @@ class CoindexViewModelTest {
     fun `a settings form that is refused stores nothing at all`() = onViewModel { viewModel ->
         runCurrent()
 
-        val saved = viewModel.saveSettings(apiKey = "otra", userId = "3105", budgetCap = "0")
+        val saved = viewModel.saveSettings(apiKey = "otra", userId = "perfil")
         runCurrent()
 
         assertFalse(saved)
         assertEquals(Credentials("key", 2104), credentials.credentials())
-        assertEquals(1500, credentials.monthlyBudget)
         assertEquals(
-            "El techo de presupuesto tiene que ser un número de llamadas mayor que cero.",
+            "El identificador de usuario es el número de la URL de tu perfil de Numista.",
             viewModel.state.value.validation,
         )
     }

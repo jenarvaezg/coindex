@@ -63,15 +63,7 @@ class FichaRefreshLabelTest {
     fun `the action says what it costs before it is spent`() {
         assertEquals(
             "Actualizar la ficha · 1 llamada",
-            fichaRefreshLabel(refreshing = false, budgetRemaining = 400),
-        )
-    }
-
-    @Test
-    fun `an exhausted month says so instead of waiting for the tap to fail`() {
-        assertEquals(
-            "Sin presupuesto este mes",
-            fichaRefreshLabel(refreshing = false, budgetRemaining = 0),
+            fichaRefreshLabel(refreshing = false),
         )
     }
 
@@ -79,7 +71,7 @@ class FichaRefreshLabelTest {
     fun `while it is asking, it says who it is asking`() {
         assertEquals(
             "Preguntando a Numista…",
-            fichaRefreshLabel(refreshing = true, budgetRemaining = 400),
+            fichaRefreshLabel(refreshing = true),
         )
     }
 }

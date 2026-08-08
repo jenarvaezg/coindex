@@ -1,26 +1,37 @@
 package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.ui.shelf.SEARCH_PLACEHOLDER
+import com.jenarvaezg.coindex.ui.shelf.SHELF_ACTION_SEPARATOR
+import com.jenarvaezg.coindex.ui.shelf.shelfDisclosure
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
@@ -37,14 +48,55 @@ fun SearchField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedTextField(
+    BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text("Buscar", style = MaterialTheme.typography.bodyLarge) },
         singleLine = true,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Paper.ink),
+        cursorBrush = SolidColor(Paper.rust),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .background(Paper.card),
+        decorationBox = { field ->
+            Row(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                SearchGlyph()
+                Spacer(Modifier.width(10.dp))
+                Box(modifier = Modifier.weight(1f)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            SEARCH_PLACEHOLDER,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Paper.muted,
+                        )
+                    }
+                    field()
+                }
+            }
+        },
     )
+}
+
+@Composable
+private fun SearchGlyph() {
+    Canvas(Modifier.size(18.dp)) {
+        drawCircle(
+            color = Paper.muted,
+            radius = size.minDimension * 0.32f,
+            center = Offset(size.width * 0.42f, size.height * 0.42f),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.5.dp.toPx()),
+        )
+        drawLine(
+            color = Paper.muted,
+            start = Offset(size.width * 0.66f, size.height * 0.66f),
+            end = Offset(size.width * 0.92f, size.height * 0.92f),
+            strokeWidth = 1.5.dp.toPx(),
+        )
+    }
 }
 
 /**
@@ -62,25 +114,57 @@ fun FilterShelf(
     expanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    actionLabel: String? = null,
+    actionEnabled: Boolean = true,
+    onAction: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                // The whole line takes the tap and not just the caret: it is one line of a page,
-                // and a 12dp triangle is not a target on a phone held in one hand.
-                .clickable(role = Role.Button, onClick = onToggle)
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                "${if (expanded) "▾" else "▸"} $summary",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(end = 12.dp),
-            )
-            Text(tally, style = MaterialTheme.typography.labelMedium, color = Paper.rust)
+            // The summary and tally remain one large toggle target. A trailing action, when present,
+            // is its sibling rather than a clickable nested inside another clickable.
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(36.dp)
+                    .clickable(role = Role.Button, onClick = onToggle),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "${shelfDisclosure(expanded)}$summary",
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(end = 12.dp),
+                )
+                Text(tally, style = MaterialTheme.typography.labelMedium, color = Paper.rust)
+            }
+            if (actionLabel != null && onAction != null) {
+                Text(
+                    SHELF_ACTION_SEPARATOR,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Paper.muted,
+                )
+                Text(
+                    actionLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (actionEnabled) Paper.rust else Paper.muted,
+                    modifier = Modifier
+                        .height(36.dp)
+                        .then(
+                            if (actionEnabled) {
+                                Modifier.clickable(role = Role.Button, onClick = onAction)
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .padding(vertical = 6.dp),
+                )
+            }
         }
         if (expanded) {
             Column(
