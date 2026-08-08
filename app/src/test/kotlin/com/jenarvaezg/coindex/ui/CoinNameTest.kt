@@ -22,6 +22,8 @@ class CoinNameTest {
                 CoinName("10 Pesos", "First silver extraction from Pueblo Viejo Mine"),
             "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin)" to
                 CoinName("1 Dollar", "Koala"),
+            "1 Dollar - Elizabeth II (4th Portrait - Koala Silver Bullion Coin)" to
+                CoinName("1 Dollar", "Koala"),
             "1 Dollar \"American Silver Eagle\" New Reverse (Bullion Coin)" to
                 CoinName("1 Dollar", "American Silver Eagle"),
             "3 Roubles («Kropotkinskaya»)" to CoinName("3 Roubles", "Kropotkinskaya"),
