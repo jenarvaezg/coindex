@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228 and #227
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228 and #227, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -36,6 +36,25 @@
 > becomes the **default**, and which face goes to paper is now a declaration of the catalog,
 > `printed_side` (ADR 0020, #227). The rest of the bullet is untouched: the obverse is still a tap
 > away, and a hole still occupies its full diameter.
+
+> **Amended on 2026-08-08 (§1 and §9, [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)).** The
+> model stands whole; what changes is the count of the bar and one line of a card.
+>
+> - **§1: two sibling hierarchies become three.** «Las cifras» joins Collections and Coins, because
+>   what earns a cell is having a **grain of its own** — and the test that decides it is written in
+>   ADR 0026 §8. Each cell now names its grain with its count (cards, types, grams). The shelf
+>   invariant — filters, sort, live search, folded on entry — narrows to the hierarchies **with a
+>   list**, which are two of three, and the shelf gains one facet, **the axis** (by plate, by country,
+>   by year). The three consequences of §1 and the rejection of a home screen are untouched, because
+>   they follow from Collections **and** Coins existing, not from their being exactly two. §2 is
+>   untouched: there is still one species of collection.
+> - **§9: the eyebrow stops being the country.** The card stops being four lines of text and becomes a
+>   die-cut hole with its coin inside, so the hierarchy the eyebrow used to give is now the die-cut's
+>   job and the country goes back to being a facet. The variant line dies with it. The rest of §9 —
+>   the destination chosen by the capability of §3, the plate that does not merge, box maintenance as
+>   an `if` — stands.
+> - **§13 gains an export rule** — what is still travels to paper, what follows the finger, the sensor
+>   or the navigation stays in the app — and a **sixth switch**, the money.
 
 ## Context
 

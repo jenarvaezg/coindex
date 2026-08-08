@@ -133,43 +133,134 @@
 - **Orden del índice**: un único comparador `(tiene ratio ↓, ratio ↓, denominador ↓,
   short_name ↑)` (ADR 0021 §6).
 
-### 0.4 UI de referencia (la decide el ADR 0021, no la web congelada)
+### 0.4 UI de referencia (la deciden los ADR 0021 y 0026, no la web congelada)
 
-La web congelada dejó de ser la referencia el 4 de agosto de 2026. Lo que sigue es el
-resumen de la arquitectura de información que decidió el mapa
-[#16](https://github.com/jenarvaezg/coindex/issues/16) y que escribe el
-**[ADR 0021](docs/adr/0021-what-a-collection-is-and-the-top-level.md)**, que es la
-especificación.
+La web congelada dejó de ser la referencia el 4 de agosto de 2026. La **arquitectura de
+información** la decidió el mapa [#16](https://github.com/jenarvaezg/coindex/issues/16) y la
+escribe el **[ADR 0021](docs/adr/0021-what-a-collection-is-and-the-top-level.md)**; la **forma**
+—qué se ve, qué se mueve y cuánto texto cabe— la decidió el mapa
+[#278](https://github.com/jenarvaezg/coindex/issues/278) y la escribe el
+**[ADR 0026](docs/adr/0026-the-shape-of-coindex-an-album-sheet.md)**. Los dos son la
+especificación; lo de abajo es su resumen.
 
-- **Estética: guía de campo ornitológica, no cuadro de mandos.** Serif para los textos,
-  tipografía condensada para los datos, paleta apagada de papel, y las especificaciones
-  físicas presentadas como una ficha de campo junto a la lámina. Es el eje de identidad del
-  producto y se decidió antes que ninguna pantalla.
+**Lo que sigue describe lo aprobado, no lo construido.** A 8 de agosto de 2026, de esta sección
+está construida la arquitectura del ADR 0021 y **ninguna** de las decisiones de forma del ADR
+0026: son 19,5 sesiones en once bloques, y ninguna se ha visto todavía en un teléfono.
 
-- **Dos jerarquías hermanas en el primer nivel**: la app abre en **Colecciones** y una
-  barra inferior de dos destinos cruza a **Monedas**. «Sin clasificar» es el filtro «Sin
-  colección» de Monedas; las medallas son filtro y no sección; la moneda enlaza de vuelta a
-  sus colecciones. Los dos lados llevan filtros con recuento vivo, ordenación y buscador en
-  tiempo real, con la estantería plegada al entrar; filtros y orden persisten entre
-  arranques.
-- **Una sola especie de colección**, en una sola lista: catálogo curado, agrupación curada
-  y caja propia, sin bloques y **sin palabra de procedencia**. Cada tarjeta: eyebrow de
-  país, `short_name`, línea de variante (`peso · acabado`) cuando la hay, y la tercera
-  línea que dice la capacidad — `4 de 12 · te faltan 8` con lista de emisiones, `3 monedas
-  · 2 tipos` sin ella.
-- **Una tarjeta, un destino**: con lista de emisiones abre la lámina de un toque; sin ella
-  abre la lista de piezas, que es también donde vive la caja propia con su mantenimiento.
-- **La lámina** no cambia: cabecera con progreso `n / m emisiones`, fuente y variante;
-  rejilla con anverso/reverso, año y nº Numista por miembro, **los que faltan en gris
-  (grayscale + opacidad ~0.45) con su diseño visible**, y todos los miembros enlazan a su
-  ficha de Numista.
-- **Exportar**: la lámina como PNG por el share intent (ADR 0010 §8) y el cuaderno entero
-  —lo que el índice esté enseñando, en el orden del comparador— como PDF vectorial a A4,
-  con una sola cara a tamaño real —la que la lámina declara en `printed_side`, el reverso por
-  omisión (ADR 0020)— y una regla de 50 mm al pie (ADR 0021 §13).
-- **La app no es superficie de auditoría** (ADR 0021 §12): ni línea de razón en la ficha,
-  ni gesto de «esta no va aquí». El desacuerdo se informa fuera, en un script que nunca se
-  pone rojo.
+#### Identidad
+
+- **Guía de campo ornitológica, no cuadro de mandos.** Serif para los textos, condensada para
+  los datos, paleta apagada de papel. Es el eje de identidad del producto y **no se reabre**.
+- **Coindex es una hoja de álbum, no un listado** (ADR 0026 §1): una colección es un hueco
+  troquelado con su moneda dentro, y la lámina la misma hoja por años, con el diseño en fantasma
+  donde falta la pieza. Papel de fibra fina, sin sombra de hoja; el único brillo fijo es el
+  reflejo del acetato.
+- **Dos tipografías dentro del APK**: **Bitter + Barlow Condensed**, 245 KB, con versalitas y
+  cifras tabulares de verdad. Sin itálica y sin subsetear. `←`, `✓` y `↗` son iconos vectoriales,
+  porque ninguna de las dos los trae.
+- **Papel a cualquier hora** (ADR 0026 §2): la app no sigue el tema oscuro del sistema, no hay
+  interruptor en Ajustes, y `android:forceDarkAllowed` está a `false` en `Theme.Coindex`. La
+  noche la pone el sistema atenuando el panel.
+
+#### Primer nivel
+
+- **Tres jerarquías hermanas**: la app abre en **Colecciones** y una barra inferior de tres
+  celdas cruza a **Monedas** y a **Las cifras** (ADR 0021 §1, enmendado por el ADR 0026 §8).
+  Cada celda **nombra su grano con su recuento** — `Colecciones · 69` tarjetas, `Monedas · 192`
+  tipos, `Las cifras · 6,91 kg` gramos; nunca dinero.
+- **Lo que gana una celda es tener grano propio.** Si lo de dentro es lo de fuera con otro orden
+  puesto, es una faceta del estante y no un destino. Lo delatan un nombre que pelea con otro que
+  ya hay y un recuento prestado.
+- «Sin clasificar» es el filtro «Sin colección» de Monedas; las medallas son filtro y no sección;
+  la moneda enlaza de vuelta a sus colecciones.
+- **Las dos jerarquías con lista** llevan filtros con recuento vivo, ordenación y buscador en
+  tiempo real, con la estantería plegada al entrar; filtros y orden persisten entre arranques.
+  El estante lleva además la **faceta del eje** — por lámina (el de siempre), por país, por año.
+  **«Las cifras» no lleva estante**: su orden lo elige la cifra que tocas.
+
+#### Colecciones, la lámina y las monedas
+
+- **Una sola especie de colección**, en una sola lista: catálogo curado, agrupación curada y caja
+  propia, sin bloques y **sin palabra de procedencia**. La tarjeta es un hueco con la foto de la
+  **primera emisión que se tiene** y la fracción debajo: **mueren el eyebrow de país y la línea
+  de variante** (ADR 0026 §12), y el `short_name` curado carga con desambiguar.
+- **Una tarjeta, un destino**: con lista de emisiones abre la lámina de un toque; sin ella abre
+  la lista de piezas, que es también donde vive la caja propia con su mantenimiento.
+- **La lámina** es la misma hoja por años. Cada casilla tiene **dos objetivos**: el cuerpo del
+  hueco **gira la moneda** (420 ms) y el año es una **chapa hundida** que enlaza a Numista. La
+  cara en reposo es la que declara `printed_side` (ADR 0020). La que falta lleva su diseño en
+  fantasma; los rótulos `ANVERSO`/`REVERSO`/`TENGO` desaparecen.
+- **El sello de completado es un estado, no una medalla**: se estampa al abrir una hoja completa,
+  nunca al sincronizar, sólo en la lámina y sobre el cociente de la cabecera. La palabra es
+  **«completa»**, también en una serie abierta.
+- **La moneda viaja del índice a su casilla** —y a la ficha— y sólo ahí: donde no hay casilla
+  suya, no vuela.
+- **Una moneda tiene un dentro**: el hueco de Monedas abre una hoja con su ficha, y ahí se mudan
+  `Actualizar la ficha · 1 llamada`, la antigüedad de la ficha y los enlaces (ADR 0026 §13).
+- **El nombre de una moneda son dos cadenas** —denominación y tema—, derivadas de la ficha y
+  nunca curadas por tipo, iguales en pantalla y en papel. El buscador es la excepción al revés:
+  sigue indexando el título entero (ADR 0026 §7).
+- **Una pieza tiene dos años**: para casar con la casilla, el año grabado (`recordedYear`); para
+  colocarla en un eje, el gregoriano (`gregorianYear ?: recordedYear`). Las 23 piezas sin año
+  heredan el mínimo de su tipo cuando se dibuja el arco (ADR 0026 §9).
+
+#### Las cifras
+
+- **Una pieza vale el máximo de tres números**: su suelo de plata, su precio de mercado en
+  Numista por grado, y lo que se pagó (ADR 0026 §10).
+- **Compañero de compra, no gestión patrimonial**: lo que se lee pieza a pieza o lámina a lámina
+  se enseña; lo mismo totalizado para toda la colección, no. Sin histórico del spot, sin curva de
+  evolución, sin agregados de rendimiento, y sin totalizar la prima ni el coste de completar.
+- **La página abre entera sin una sola llamada** —peso, materia, escaleras, arco y emisores salen
+  del APK— y **el total nunca se enseña a medias**: mientras falte el precio de mercado, la
+  sección del dinero no está. El total dice **cobertura y no progreso**.
+- **Todo número traído de fuera se enseña con la fecha de su última lectura**, y un dato caducado
+  se sigue enseñando en vez de borrarse.
+
+#### Movimiento y exportación
+
+- **El techo se mide en movimientos, y cada uno debe una causa y un dato** (ADR 0026 §3). Los
+  aprobados son cuatro: el giro, el brillo, el estampado del sello y el viaje de la moneda. Un
+  movimiento decorativo falla la segunda condición sin necesidad de dibujarlo.
+- **El brillo es de la moneda, no del hueco**: brilla toda foto de moneda, troquelada o suelta;
+  el cartón vacío nunca.
+- **Regla de exportación**: lo quieto viaja al papel; lo que sigue al dedo, al sensor o a la
+  navegación se queda en la app. Así el sello sale en el PNG y el brillo no.
+- **Exportar**: la lámina como PNG por el share intent (ADR 0010 §8) y el cuaderno entero —lo que
+  el índice esté enseñando, en el orden del comparador— como PDF vectorial a A4, con una sola
+  cara a tamaño real —la que la lámina declara en `printed_side` (ADR 0020)— y una regla de 50 mm
+  al pie (ADR 0021 §13). El dinero es el **sexto interruptor** de la exportación configurable.
+
+#### Densidad
+
+- **El listón son tres cláusulas y no una cifra** (ADR 0026 §5): Colecciones ≤ **25 palabras de
+  mobiliario en el primer pliegue** (56 hoy); **ninguna cadena de mobiliario se imprime por fila,
+  por casilla ni por tarjeta**; y Ajustes y el alta quedan exentos por la regla de frecuencia, a
+  cambio de que ninguna de sus explicaciones aparezca en una pantalla del cuaderno.
+- **Regla de frecuencia**: una palabra cuesta lo que cuesta **multiplicada por las veces que se
+  imprime**. Donde una pantalla se visita una vez, un párrafo cuesta una vez; donde una cadena se
+  imprime por fila, por casilla o por tarjeta, no hay párrafo que valga.
+- **La pantalla puede decir menos que el papel cuando la pantalla tiene forma y el papel no.**
+- **Una cadena, un dueño**: toda copia visible vive en los doce ficheros de copy, sin exenciones,
+  y lo defiende `CopyLivesInOnePlaceTest`. El listón, en cambio, **no es un test**: lo defiende la
+  revisión con la medida del AVD delante, y si sale por encima de 25 se ajusta el listón con la
+  medida delante, no la medida al listón.
+- **El presupuesto de llamadas desaparece de la interfaz entera**, campo `Techo de llamadas al
+  mes` incluido: el techo pasa a ser un valor interno.
+
+#### Lo que la app no hace
+
+- **No es superficie de auditoría** (ADR 0021 §12): ni línea de razón en la ficha, ni gesto de
+  «esta no va aquí». El desacuerdo se informa fuera, en un script que nunca se pone rojo. El
+  dinero es la excepción declarada del ADR 0026 §10, y llega hasta donde llega el compañero de
+  compra.
+- **No hay fotos propias de las piezas.** Descartado el 7 de agosto de 2026
+  ([#15](https://github.com/jenarvaezg/coindex/issues/15)): las fotos son las de Numista. La
+  promesa contraria vivía en la especificación original —`rust-frozen:spec.md`— y **se retira
+  aquí**. Con ella siguen fuera el relieve y la reiluminación interactiva.
+- **Avisos y licencias**: tres palabras al pie de Ajustes abren una pantalla con las tres
+  atribuciones —Numista, software (Apache 2.0 y una MIT) y las tipografías (OFL 1.1)— y los tres
+  textos íntegros dentro, como assets del APK (ADR 0026 §14).
 
 ### 0.5 API de Numista — todo lo aprendido (válido para la app)
 
