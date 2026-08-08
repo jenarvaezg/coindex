@@ -111,7 +111,8 @@ by the curator, never renamed by the collector, and there are no display aliases
 _Avoid_: Family, name, family display alias, editorial scope
 
 **Card country**:
-The country a card says above its name, and the chip Coins filters by: `issuer_code` from the curated
+The country of a card, read by the shelf facet, the plate's ficha and paper — **no longer printed
+above its name**, since ADR 0026 §12 replaced the eyebrow with the die-cut hole: `issuer_code` from the curated
 file wherever one names the collection, and the pieces' own issuer where none does — silent when they
 disagree, because an eyebrow covering half a card is worse than no eyebrow. It is a **country and not
 an issuing entity**: Numista names entities with their period of validity, so nine of the 40 issuer
@@ -286,4 +287,46 @@ _Avoid_: Unobserved, unknown
 **Album**:
 A collector-specific view of curated series coverage, distinguishing owned, Missing, and
 not-yet-issued members. A collection with no issue list is not an Album.
+
+**Die-cut hole**:
+The unit of the album sheet, and since ADR 0026 the shape of both a collection in the index and a
+member on a plate: cardboard with an inner shadow, a light lip and a round window with the coin's
+photograph inside. Its body flips the coin; the year beside it is a **Sunken tag**. A hole with no
+coin shows the design as a **Ghost**; a hole with no cardboard behind it is a coin no collection
+claims. It is a drawing and not a domain object — it says nothing an issue list does not.
+_Avoid_: Cell, tile, card, slot (which is the member, not its drawing)
+
+**Ghost**:
+The design of a member the collector does not own, drawn at 14 % with a dotted rule inside its hole.
+It replaces the greyscale-and-opacity Missing member, and it is what makes progress **seen** rather
+than read. Distinct from **bare cardboard**, the third state of the year axis: a year with no slot to
+fill at all.
+_Avoid_: Greyed member, empty slot, placeholder
+
+**Completion stamp**:
+The rubber stamp a plate shows over the ratio in its header while every issued member is owned. It is
+a **state and not an event**: it is read from the inventory like the hole, it is stamped on opening
+the sheet and never on syncing, it is never shown in the index, and it says one word, «completa»,
+including for an open series. It travels to the exported PNG because it is a state.
+_Avoid_: Badge, achievement, medal, completion date
+
+**Furniture**:
+Any visible string that is not the datum: labels, tails, explanations and section titles. It is what
+the density bar of ADR 0026 §5 counts (Collections ≤ 25 words in the first fold) and what the
+**frequency rule** prices — a word costs what it costs multiplied by the number of times it is
+printed, so no furniture string is printed per row, per slot or per card.
+_Avoid_: Copy (which is every string, furniture or not), chrome, boilerplate
+
+**Grain of a cell**:
+What a top-level destination is made of, and the test for whether it deserves a cell at all: cards for
+Collections, types for Coins, grams for «Las cifras». A cell prints its grain as its count. If what is
+inside is what is outside with a different order applied, its grain is borrowed and it is an **Axis of
+the shelf**, not a destination.
+_Avoid_: Tab, section, count of what is inside
+
+**Axis of the shelf**:
+The order a hierarchy with a list is read in — by plate (the default), by country, by year — chosen in
+the folded shelf beside the filters and the sort. The country stain and the timeline are axes and not
+screens, because they are made of the same slots.
+_Avoid_: View, map screen, timeline screen
 _Avoid_: Collection proposal, inventory
