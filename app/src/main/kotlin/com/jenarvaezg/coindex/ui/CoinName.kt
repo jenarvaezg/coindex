@@ -17,12 +17,9 @@ private val silverWeightTail = Regex(
 private val portraitTail = Regex(
     """(?i)^(?:\d+(?:st|nd|rd|th)|first|second|third|fourth)\s+portrait$""",
 )
+private val bullionTail = Regex("""(?i)^.*\bbullion coin(?:age)?\b.*$""")
 private val proseTails = setOf(
-    "bullion coin",
-    "bullion coinage",
     "silver",
-    "silver bullion coin",
-    "silver bullion coinage",
     "silver proof",
     "proof",
 )
@@ -47,8 +44,8 @@ fun coinName(title: String): CoinName {
     }
     val withoutNickname = quotedNickname.replace(outside, "").trim()
     val head = withoutNickname.split(" - ").map(String::trim).filter(String::isNotEmpty)
-    val denomination = nicknameMatch
-        ?.let { raw.substring(0, it.range.first).trim() }
+    val denomination = quotedNickname.find(outside)
+        ?.let { outside.substring(0, it.range.first).trim() }
         ?.takeIf(String::isNotBlank)
         ?: head.firstOrNull().orEmpty().ifBlank { raw }
     val intermediate = head.drop(1)
@@ -73,6 +70,7 @@ fun coinName(title: String): CoinName {
 private fun cleanCandidate(value: String): String {
     val candidate = nestedAside.replace(value, "").trim(' ', '-', '·', ';', ',')
     val noise = candidate.lowercase() in proseTails ||
-        silverWeightTail.matches(candidate) || portraitTail.matches(candidate)
+        bullionTail.matches(candidate) || silverWeightTail.matches(candidate) ||
+        portraitTail.matches(candidate)
     return candidate.takeUnless { noise }.orEmpty()
 }

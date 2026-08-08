@@ -155,11 +155,12 @@ private fun PiecesSheetCell(
             name.denomination,
             style = MaterialTheme.typography.titleMedium,
             autoSize = TextAutoSize.StepBased(
-                minFontSize = 11.sp,
+                minFontSize = 1.sp,
                 maxFontSize = 17.sp,
                 stepSize = 0.5.sp,
             ),
             maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Visible,
             modifier = Modifier.padding(top = 8.dp),
         )
         name.theme?.let { theme ->

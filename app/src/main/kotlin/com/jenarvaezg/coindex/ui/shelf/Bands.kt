@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.GRAMS_PER_TROY_OUNCE
+import com.jenarvaezg.coindex.ui.UNKNOWN_YEAR_LABEL
 
 // Every band in this file is **total**: each has a member for the rows that have no value, so the
 // per-chip counts always add up to the facet's own total. That is not tidiness — a row reachable by no
@@ -51,7 +52,7 @@ enum class YearBand(val label: String, private val upToYear: Int) {
     ThroughTheSeventies("1900 – 1979", 1_979),
     EightiesAndNineties("1980 – 1999", 1_999),
     SinceTwoThousand("Desde 2000", Int.MAX_VALUE),
-    Undated("Sin año", Int.MIN_VALUE),
+    Undated(UNKNOWN_YEAR_LABEL, Int.MIN_VALUE),
     ;
 
     companion object {

@@ -47,13 +47,13 @@ fun AlbumCartouche(name: CoinName, modifier: Modifier = Modifier) {
             text = name.denomination,
             style = MaterialTheme.typography.labelLarge,
             autoSize = TextAutoSize.StepBased(
-                minFontSize = 8.sp,
+                minFontSize = 1.sp,
                 maxFontSize = 12.sp,
                 stepSize = 0.5.sp,
             ),
             textAlign = TextAlign.Center,
             maxLines = 1,
-            overflow = TextOverflow.Clip,
+            overflow = TextOverflow.Visible,
             modifier = Modifier.fillMaxWidth(),
         )
         name.theme?.let { theme ->

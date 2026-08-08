@@ -167,7 +167,7 @@ class NotebookSectionsTest {
             NotebookOptions(),
         ).single().cells.single()
 
-        assertEquals("5 Pounds", cell.denomination)
-        assertEquals("Red Dragon of Wales", cell.theme)
+        assertEquals("5 Pounds", cell.name?.denomination)
+        assertEquals("Red Dragon of Wales", cell.name?.theme)
     }
 }

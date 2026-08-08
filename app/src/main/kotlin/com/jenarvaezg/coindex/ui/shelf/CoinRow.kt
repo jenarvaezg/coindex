@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
+import com.jenarvaezg.coindex.ui.UNKNOWN_YEAR_LABEL
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.pieceName
@@ -111,7 +112,7 @@ fun ownedTypeCount(state: CollectionState): Int =
 
 /** The only identity left in the grid below the two-range name: year and a non-singular count. */
 fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
-    row.year?.toString() ?: "Sin año",
+    row.year?.toString() ?: UNKNOWN_YEAR_LABEL,
     "×${row.quantity}".takeIf { row.quantity > 1 },
 ).joinToString(" · ")
 

@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.print
 
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.ui.CoinName
 
 /**
  * One cell of a printed page: one coin, at its own diameter, and what is written under it.
@@ -10,10 +11,10 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
  * them can be [filled] false, and a sheet of pieces simply never is.
  */
 data class PrintCell(
-    val label: String,
-    /** Album-name ranges. Null for curated plate labels, which remain curator-authored whole. */
-    val denomination: String? = null,
-    val theme: String? = null,
+    /** Curator-authored whole label; mutually exclusive with [name]. */
+    val curatedLabel: String? = null,
+    /** Album-name ranges; mutually exclusive with [curatedLabel]. */
+    val name: CoinName? = null,
     /** The state on a plate — «Tengo», «Me falta» — and the piece's own line on a sheet. */
     val state: String?,
     /** What is left to tell this cell apart, usually the year. Null when nothing is. */
@@ -47,7 +48,15 @@ data class PrintCell(
      * one [NotebookOptions] the export was started under, which is what keeps them in step.
      */
     val numistaUrl: String? = null,
-)
+) {
+    init {
+        require((curatedLabel == null) != (name == null)) {
+            "una celda lleva un nombre de moneda o un rótulo curado"
+        }
+    }
+
+    val label: String get() = name?.text ?: requireNotNull(curatedLabel)
+}
 
 /**
  * One card of the index as it goes to paper: its heading, its cells and the grid they get.

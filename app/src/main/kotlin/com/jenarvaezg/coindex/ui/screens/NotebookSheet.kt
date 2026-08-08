@@ -350,20 +350,20 @@ private fun PrintedCell(
             }
         }
         CellState(cell, modifier = Modifier.padding(top = 1f.mm))
-        if (cell.denomination != null) {
+        if (cell.name != null) {
             Text(
-                cell.denomination,
+                cell.name.denomination,
                 style = PRINT_CELL_TITLE,
                 autoSize = TextAutoSize.StepBased(
-                    minFontSize = 2.1f.sp,
+                    minFontSize = 1f.sp,
                     maxFontSize = 2.9f.sp,
                     stepSize = 0.1f.sp,
                 ),
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                overflow = TextOverflow.Clip,
+                overflow = TextOverflow.Visible,
             )
-            cell.theme?.let { theme ->
+            cell.name.theme?.let { theme ->
                 Text(
                     theme,
                     style = PRINT_CELL_THEME,

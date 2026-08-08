@@ -12,11 +12,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.CoinName
+import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -57,18 +59,19 @@ fun PieceCard(
                     name.denomination,
                     style = MaterialTheme.typography.titleMedium,
                     autoSize = TextAutoSize.StepBased(
-                        minFontSize = 11.sp,
+                        minFontSize = 1.sp,
                         maxFontSize = 17.sp,
                         stepSize = 0.5.sp,
                     ),
                     maxLines = 1,
+                    overflow = TextOverflow.Visible,
                 )
                 name.theme?.let { theme ->
                     Text(
                         theme,
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 2,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
                 Text(
@@ -79,7 +82,7 @@ fun PieceCard(
                 )
                 extra()
                 ExternalLink(
-                    text = "Ver en Numista",
+                    text = COIN_VIEW_ON_NUMISTA,
                     onClick = { onOpenSource(numistaTypeUrl(piece.item.typeId)) },
                 )
                 // Under the link out on purpose: seeing the page is how the collector finds out that

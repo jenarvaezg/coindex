@@ -24,6 +24,7 @@ class CoinNameTest {
                 CoinName("1 Dollar", "Koala"),
             "1 Dollar \"American Silver Eagle\" New Reverse (Bullion Coin)" to
                 CoinName("1 Dollar", "American Silver Eagle"),
+            "3 Roubles («Kropotkinskaya»)" to CoinName("3 Roubles", "Kropotkinskaya"),
             "2 Pounds - Elizabeth II (4th portrait; 1 oz Fine Silver (.958))" to
                 CoinName("2 Pounds", "Elizabeth II"),
         )
@@ -41,10 +42,13 @@ class CoinNameTest {
             "1 Dollar - Elizabeth II (Bullion Coinage)",
             "1 Dollar - Elizabeth II (Silver Proof)",
             "1 Dollar - Elizabeth II (Proof)",
+            "5 Dollars - Elizabeth II (4th portrait; SML Bullion Coinage)",
+            "5 Dollars - Elizabeth II " +
+                "(4th portrait; SML Bullion Coinage with security marks and radial lines)",
         )
 
         assertEquals(
-            listOf("Elizabeth II", "Elizabeth II", "Elizabeth II", "Elizabeth II", "Elizabeth II"),
+            List(examples.size) { "Elizabeth II" },
             examples.map { coinName(it).theme },
         )
     }

@@ -39,9 +39,7 @@ import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
-import com.jenarvaezg.coindex.ui.CoinTap
 import com.jenarvaezg.coindex.ui.coinFichaIdentity
-import com.jenarvaezg.coindex.ui.coinTap
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
@@ -192,10 +190,8 @@ fun CoinsScreen(
                     picking = selection.active,
                     picked = selection.isPicked(row.typeId),
                     onTap = {
-                        when (coinTap(selection.active)) {
-                            CoinTap.ToggleSelection -> selection.toggle(row.typeId)
-                            CoinTap.OpenFicha -> selectedTypeId = row.typeId
-                        }
+                        if (selection.active) selection.toggle(row.typeId)
+                        else selectedTypeId = row.typeId
                     },
                 )
             }
@@ -355,7 +351,7 @@ private fun CoinAlbumCell(
     ) {
         AlbumHole(
             photo = photo,
-            backed = row.unclaimedPieces == 0,
+            backed = row.claims.isNotEmpty(),
             modifier = Modifier.size(104.dp),
         )
         AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))

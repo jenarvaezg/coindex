@@ -85,7 +85,7 @@ private fun plateSection(
         source = plate.source,
         cells = plate.cells.map { cell ->
             PrintCell(
-                label = cell.label,
+                curatedLabel = cell.label,
                 state = null,
                 footnote = cell.footnote,
                 // A hole keeps **its own** real diameter: the type of a member the collector is
@@ -120,9 +120,7 @@ private fun piecesSection(
             val item = piece.item
             val name = pieceName(state, item)
             PrintCell(
-                label = name.text,
-                denomination = name.denomination,
-                theme = name.theme,
+                name = name,
                 state = null,
                 footnote = pieceLine(piece),
                 diameterMm = state.diameterOf(item.typeId),
@@ -184,9 +182,7 @@ private fun unclaimedSection(
         cells = unclaimed.map { item ->
             val name = pieceName(state, item)
             PrintCell(
-                label = name.text,
-                denomination = name.denomination,
-                theme = name.theme,
+                name = name,
                 state = null,
                 // The emission label of a coin no catalog claims is normally nothing, but it is
                 // asked for rather than assumed: which emission a coin is is a fact about the coin,

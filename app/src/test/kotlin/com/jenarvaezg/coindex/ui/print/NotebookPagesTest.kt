@@ -97,7 +97,7 @@ class NotebookPagesTest {
         source = catalog.source,
         cells = catalog.members.map { member ->
             PrintCell(
-                label = member.label,
+                curatedLabel = member.label,
                 state = "Me falta",
                 footnote = member.year?.toString(),
                 diameterMm = member.numistaTypeId
