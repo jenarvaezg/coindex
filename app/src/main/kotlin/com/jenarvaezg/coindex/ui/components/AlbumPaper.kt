@@ -77,6 +77,8 @@ fun AlbumHole(
     photo: CoinPhoto?,
     modifier: Modifier = Modifier,
     missing: Boolean = false,
+    /** False for a loose coin: the photograph remains, but there is no album board around it. */
+    backed: Boolean = true,
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
 ) {
     val candidates = photo?.candidates.orEmpty()
@@ -88,26 +90,28 @@ fun AlbumHole(
     Box(modifier = modifier) {
         // The cardboard ring remains visible around the inset window: the dark upper arc is the
         // cut's inner wall and the pale lower arc is the freshly exposed edge.
-        Canvas(Modifier.fillMaxSize()) {
-            drawCircle(Paper.card)
-            drawCircle(
-                color = Paper.ink.copy(alpha = 0.22f),
-                radius = size.minDimension / 2f - 1.dp.toPx(),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx()),
-            )
-            drawArc(
-                color = Color.White.copy(alpha = 0.62f),
-                startAngle = 0f,
-                sweepAngle = 180f,
-                useCenter = false,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()),
-            )
+        if (backed) {
+            Canvas(Modifier.fillMaxSize()) {
+                drawCircle(Paper.card)
+                drawCircle(
+                    color = Paper.ink.copy(alpha = 0.22f),
+                    radius = size.minDimension / 2f - 1.dp.toPx(),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx()),
+                )
+                drawArc(
+                    color = Color.White.copy(alpha = 0.62f),
+                    startAngle = 0f,
+                    sweepAngle = 180f,
+                    useCenter = false,
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()),
+                )
+            }
         }
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(5.dp)
+                .padding(if (backed) 5.dp else 1.dp)
                 .clip(CircleShape)
                 .background(Paper.paperDeep),
         ) {

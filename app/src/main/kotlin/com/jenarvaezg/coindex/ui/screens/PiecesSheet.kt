@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -17,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.DrawnPiece
+import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -43,7 +46,7 @@ private val SHEET_PADDING = 24.dp
 @Composable
 fun PiecesSheet(
     subject: PiecesSubject,
-    titles: (CollectedItem) -> String,
+    names: (CollectedItem) -> CoinName,
     images: Map<Int, TypeImages>,
     layout: SheetLayout,
     onImageSettled: (painted: Boolean) -> Unit,
@@ -71,7 +74,7 @@ fun PiecesSheet(
                 row.forEach { piece ->
                     PiecesSheetCell(
                         piece = piece,
-                        title = titles(piece.item),
+                        name = names(piece.item),
                         images = images[piece.item.typeId],
                         onImageSettled = onImageSettled,
                         modifier = Modifier.weight(1f).fillMaxHeight(),
@@ -133,14 +136,14 @@ private fun SheetFact(label: String, value: String, scale: Float) {
 @Composable
 private fun PiecesSheetCell(
     piece: DrawnPiece,
-    title: String,
+    name: CoinName,
     images: TypeImages?,
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     FieldCard(modifier = modifier, emphasized = true) {
         CoinSides(
-            label = title,
+            label = name.text,
             obverse = images?.obverse,
             reverse = images?.reverse,
             // Never missing: everything on this sheet is a piece that is in the collection.
@@ -149,10 +152,25 @@ private fun PiecesSheetCell(
             onPaper = true,
         )
         Text(
-            title,
+            name.denomination,
             style = MaterialTheme.typography.titleMedium,
+            autoSize = TextAutoSize.StepBased(
+                minFontSize = 1.sp,
+                maxFontSize = 17.sp,
+                stepSize = 0.5.sp,
+            ),
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Visible,
             modifier = Modifier.padding(top = 8.dp),
         )
+        name.theme?.let { theme ->
+            Text(
+                theme,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
+        }
         Text(
             pieceLine(piece),
             style = MaterialTheme.typography.labelSmall,

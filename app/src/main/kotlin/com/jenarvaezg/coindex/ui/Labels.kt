@@ -7,6 +7,8 @@ import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.SeriesStatus
 
+const val UNKNOWN_YEAR_LABEL: String = "Sin año"
+
 /**
  * `1000` reads as "1 oz", `250` as "0,25 oz", `804` as "0,804 oz". An absent weight is a set
  * issued as a set, which has no single weight to show (ADR 0012).
@@ -142,7 +144,7 @@ fun indexCoverageLabel(coverage: CoverageRatio): String =
  */
 fun pieceLine(piece: DrawnPiece): String {
     val item = piece.item
-    val head = piece.emissionLabel ?: item.recordedYear?.toString() ?: "Sin año"
+    val head = piece.emissionLabel ?: item.recordedYear?.toString() ?: UNKNOWN_YEAR_LABEL
     val quantity = if (item.quantity > 1) " · ×${item.quantity}" else ""
     return "$head · Numista ${item.typeId}$quantity"
 }

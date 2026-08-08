@@ -138,10 +138,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             Column {
-                // Collections owns its chrome: the sewn edge is the album's masthead. Keeping the
-                // generic one above it would print COINDEX and Settings twice and spend the space
-                // this screen's die-cut grid just recovered (ADR 0026 §1).
-                if (route != Routes.INDEX) {
+                // Both album roots own their chrome: the sewn edge is their shared masthead.
+                // Keeping the generic one above either would print COINDEX and Settings twice and
+                // spend the space their die-cut grids just recovered (ADR 0026 §1, §13).
+                if (route != Routes.INDEX && route != Routes.COINS) {
                     Masthead(
                         subtitle = mastheadSubtitle(
                             screenTitle(route, subjectName),
@@ -222,6 +222,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         },
                         onCreateBox = viewModel::createOwnGrouping,
                         onAddToBox = viewModel::addToOwnGrouping,
+                        onOpenSource = openUrl,
+                        onSettings = { navController.navigate(Routes.SETTINGS) },
                         ficha = ficha,
                     )
                 }

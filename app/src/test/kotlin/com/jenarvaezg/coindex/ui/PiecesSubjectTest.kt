@@ -10,6 +10,7 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.VariantKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -181,5 +182,26 @@ class PiecesSubjectTest {
         assertEquals("Estrella 67 · Numista 1885", pieceLine(fromCollection.first()))
         assertEquals("1966 · Numista 1885", pieceLine(fromCollection.last()))
         assertEquals(listOf("Estrella 67"), fromBox.map { it.emissionLabel })
+    }
+
+    @Test
+    fun `a piece gets one structured name from its ficha with row and id fallbacks`() {
+        val cached = piece(1, 100, 1996, "Title from the inventory row")
+        val rowOnly = piece(2, 101, 1997, "8 Reales - Charles IV")
+        val unnamed = piece(3, 102, null)
+        val state = CollectionState(
+            AssembledCollection(
+                typeMeta = mapOf(
+                    100 to TypeMeta(
+                        id = 100,
+                        title = "1 Dollar - Elizabeth II (2nd portrait, Confederation)",
+                    ),
+                ),
+            ),
+        )
+
+        assertEquals(CoinName("1 Dollar", "Confederation"), pieceName(state, cached))
+        assertEquals(CoinName("8 Reales", "Charles IV"), pieceName(state, rowOnly))
+        assertEquals(CoinName("Pieza 3", null), pieceName(state, unnamed))
     }
 }

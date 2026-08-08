@@ -17,6 +17,7 @@ import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.pieceLine
+import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesSubject
 import com.jenarvaezg.coindex.ui.plateSubject
 
@@ -84,7 +85,7 @@ private fun plateSection(
         source = plate.source,
         cells = plate.cells.map { cell ->
             PrintCell(
-                label = cell.label,
+                curatedLabel = cell.label,
                 state = null,
                 footnote = cell.footnote,
                 // A hole keeps **its own** real diameter: the type of a member the collector is
@@ -117,10 +118,9 @@ private fun piecesSection(
         source = "tu colección en Numista",
         cells = subject.pieces.map { piece ->
             val item = piece.item
+            val name = pieceName(state, item)
             PrintCell(
-                label = state.typeMeta[item.typeId]?.displayTitle
-                    ?: item.title
-                    ?: "Pieza ${item.id}",
+                name = name,
                 state = null,
                 footnote = pieceLine(piece),
                 diameterMm = state.diameterOf(item.typeId),
@@ -180,10 +180,9 @@ private fun unclaimedSection(
         ),
         source = "tu colección en Numista",
         cells = unclaimed.map { item ->
+            val name = pieceName(state, item)
             PrintCell(
-                label = state.typeMeta[item.typeId]?.displayTitle
-                    ?: item.title
-                    ?: "Pieza ${item.id}",
+                name = name,
                 state = null,
                 // The emission label of a coin no catalog claims is normally nothing, but it is
                 // asked for rather than assumed: which emission a coin is is a fact about the coin,

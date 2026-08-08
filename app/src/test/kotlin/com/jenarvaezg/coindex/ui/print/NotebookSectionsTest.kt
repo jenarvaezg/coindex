@@ -14,6 +14,8 @@ import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
+import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -136,5 +138,36 @@ class NotebookSectionsTest {
             listOf("País" to "Francia", "Piezas" to "0 de 12 · te faltan 12"),
             section.facts,
         )
+    }
+
+    @Test
+    fun `a notebook piece cell preserves the same two name ranges as the screen`() {
+        val item = CollectedItem(id = 1, quantity = 1, typeId = 100, issueYear = 2024)
+        val card = IndexCard.Box(
+            name = "Dragones",
+            issuer = "Reino Unido",
+            box = OwnGroupingView(OwnGrouping(1, "Dragones", listOf(100)), listOf(item)),
+        )
+        val state = CollectionState(
+            AssembledCollection(
+                typeMeta = mapOf(
+                    100 to TypeMeta(
+                        id = 100,
+                        title = "5 Pounds - Elizabeth II (Red Dragon of Wales; 2 oz Fine Silver)",
+                    ),
+                ),
+            ),
+        )
+
+        val cell = notebookSections(
+            state,
+            listOf(card),
+            emptyList(),
+            Curation(emptyList()),
+            NotebookOptions(),
+        ).single().cells.single()
+
+        assertEquals("5 Pounds", cell.name?.denomination)
+        assertEquals("Red Dragon of Wales", cell.name?.theme)
     }
 }
