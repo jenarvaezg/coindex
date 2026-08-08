@@ -122,7 +122,7 @@ private fun PiecesSheetHeading(subject: PiecesSubject, layout: SheetLayout) {
 private fun SheetFact(label: String, value: String, scale: Float) {
     Column {
         Text(
-            label.uppercase(),
+            label,
             style = MaterialTheme.typography.labelSmall.scaledBy(scale * 1.15f),
             color = Paper.muted,
         )

@@ -11,11 +11,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -44,11 +48,15 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
@@ -59,7 +67,7 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 @Composable
 fun Eyebrow(text: String, modifier: Modifier = Modifier) {
     Text(
-        text = text.uppercase(),
+        text = text,
         style = MaterialTheme.typography.labelMedium,
         color = Paper.rust,
         modifier = modifier,
@@ -138,6 +146,7 @@ fun CardAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    icon: (@Composable () -> Unit)? = null,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -148,6 +157,10 @@ fun CardAction(
         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
         modifier = modifier,
     ) {
+        icon?.let {
+            it()
+            Spacer(modifier = Modifier.size(8.dp))
+        }
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
 }
@@ -155,8 +168,9 @@ fun CardAction(
 /**
  * Level 3: a link that leaves the app.
  *
- * A [LinkText] with «↗» appended: the underline says it opens something, the arrow says the
- * something is a browser rather than another page of this notebook.
+ * An underlined link with a drawn arrow appended: the underline says it opens something, the
+ * arrow says the something is a browser rather than another page of this notebook. The arrow is
+ * inline content after a non-breaking space, so wrapping never strands it on a line of its own.
  */
 @Composable
 fun ExternalLink(
@@ -165,13 +179,90 @@ fun ExternalLink(
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
-    LinkText(
-        // Non-breaking: a title that wraps must not leave the arrow alone on the last line.
-        text = "$text\u00A0↗",
-        style = style,
-        onClick = onClick,
-        modifier = modifier,
+    val markedText = buildAnnotatedString {
+        append(text)
+        append('\u00A0')
+        appendInlineContent(EXTERNAL_LINK_GLYPH_ID)
+    }
+    Text(
+        text = markedText,
+        inlineContent = mapOf(
+            EXTERNAL_LINK_GLYPH_ID to InlineTextContent(
+                placeholder = Placeholder(
+                    width = 0.85.em,
+                    height = 0.85.em,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter,
+                ),
+            ) {
+                ExternalLinkGlyph(color = Paper.moss, modifier = Modifier.fillMaxSize())
+            },
+        ),
+        style = style.copy(textDecoration = TextDecoration.Underline),
+        color = Paper.moss,
+        modifier = modifier
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = 6.dp),
     )
+}
+
+private const val EXTERNAL_LINK_GLYPH_ID = "external-link-glyph"
+
+@Composable
+fun BackGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.size(width = 13.dp, height = 10.dp)) {
+        val stroke = size.minDimension * 0.14f
+        val left = Offset(size.width * 0.10f, size.height * 0.50f)
+        val elbow = Offset(size.width * 0.42f, size.height * 0.12f)
+        drawLine(color, left, elbow, strokeWidth = stroke)
+        drawLine(color, left, Offset(size.width * 0.42f, size.height * 0.88f), strokeWidth = stroke)
+        drawLine(color, left, Offset(size.width * 0.92f, size.height * 0.50f), strokeWidth = stroke)
+    }
+}
+
+@Composable
+fun CheckGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.size(12.dp)) {
+        val stroke = size.minDimension * 0.14f
+        val joint = Offset(size.width * 0.42f, size.height * 0.76f)
+        drawLine(
+            color,
+            Offset(size.width * 0.10f, size.height * 0.48f),
+            joint,
+            strokeWidth = stroke,
+        )
+        drawLine(
+            color,
+            joint,
+            Offset(size.width * 0.90f, size.height * 0.16f),
+            strokeWidth = stroke,
+        )
+    }
+}
+
+@Composable
+private fun ExternalLinkGlyph(color: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier) {
+        val stroke = size.minDimension * 0.12f
+        val corner = Offset(size.width * 0.84f, size.height * 0.16f)
+        drawLine(
+            color,
+            Offset(size.width * 0.22f, size.height * 0.78f),
+            corner,
+            strokeWidth = stroke,
+        )
+        drawLine(
+            color,
+            Offset(size.width * 0.48f, size.height * 0.16f),
+            corner,
+            strokeWidth = stroke,
+        )
+        drawLine(
+            color,
+            corner,
+            Offset(size.width * 0.84f, size.height * 0.52f),
+            strokeWidth = stroke,
+        )
+    }
 }
 
 /**
@@ -271,7 +362,7 @@ fun SpecificationCard(entries: List<Pair<String, String>>, modifier: Modifier = 
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = label.uppercase(),
+                    text = label,
                     style = MaterialTheme.typography.labelSmall,
                     color = Paper.muted,
                 )
@@ -420,7 +511,7 @@ private fun CoinSide(
             }
         }
         Text(
-            text = caption.uppercase(),
+            text = caption,
             style = MaterialTheme.typography.labelSmall,
             color = Paper.muted,
             textAlign = TextAlign.Center,

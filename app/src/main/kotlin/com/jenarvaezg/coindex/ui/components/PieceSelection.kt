@@ -75,9 +75,14 @@ fun rememberPieceSelection(): PieceSelection = remember { PieceSelection() }
 @Composable
 fun PieceSelectionToggle(picked: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
     CardAction(
-        text = if (picked) "✓ Elegida" else "Elegir",
+        text = if (picked) "Elegida" else "Elegir",
         onClick = onToggle,
         modifier = modifier.padding(top = 8.dp),
+        icon = if (picked) {
+            { CheckGlyph() }
+        } else {
+            null
+        },
     )
 }
 

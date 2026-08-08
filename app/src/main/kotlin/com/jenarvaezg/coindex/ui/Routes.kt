@@ -21,6 +21,7 @@ object Routes {
      */
     const val COINS = "coins"
     const val SETTINGS = "settings"
+    const val NOTICES = "notices"
     const val PLATE = "plate/{catalogId}"
     const val DERIVED_COLLECTION =
         "$DERIVED_COLLECTION_PATH?family={family}&weight={weight}&finish={finish}&metal={metal}"

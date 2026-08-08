@@ -44,10 +44,10 @@ fun SettingsScreen(
     values: SettingsValues,
     budget: BudgetStatus,
     photoCache: PhotoCacheStatus,
-    versionName: String,
     validation: String?,
     onSave: (apiKey: String, userId: String, budgetCap: String) -> Unit,
     onSignOut: () -> Unit,
+    onOpenNotices: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var apiKey by remember(values) { mutableStateOf(values.apiKey) }
@@ -146,10 +146,6 @@ fun SettingsScreen(
             CardAction(text = "Cerrar sesión", onClick = onSignOut)
         }
 
-        Text(
-            if (versionName.isEmpty()) "Coindex" else "Coindex v$versionName",
-            style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-        )
+        CardAction(text = "Avisos y licencias", onClick = onOpenNotices)
     }
 }
