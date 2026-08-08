@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnPiece
+import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -33,7 +36,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 @Composable
 fun PieceCard(
     piece: DrawnPiece,
-    title: String,
+    name: CoinName,
     images: TypeImages?,
     onOpenSource: (String) -> Unit,
     ficha: FichaRefresh,
@@ -43,14 +46,31 @@ fun PieceCard(
     FieldCard(modifier = modifier.fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             CoinSides(
-                label = title,
+                label = name.text,
                 obverse = images?.obverse,
                 reverse = images?.reverse,
                 missing = false,
                 modifier = Modifier.width(150.dp),
             )
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    name.denomination,
+                    style = MaterialTheme.typography.titleMedium,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 11.sp,
+                        maxFontSize = 17.sp,
+                        stepSize = 0.5.sp,
+                    ),
+                    maxLines = 1,
+                )
+                name.theme?.let { theme ->
+                    Text(
+                        theme,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    )
+                }
                 Text(
                     pieceLine(piece),
                     style = MaterialTheme.typography.labelLarge,

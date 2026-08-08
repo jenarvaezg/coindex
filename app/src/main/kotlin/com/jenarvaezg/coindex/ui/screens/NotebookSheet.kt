@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -107,6 +108,11 @@ private val PRINT_CELL_TITLE = TextStyle(
     fontFamily = BitterFamily,
     fontSize = 2.9f.sp,
     lineHeight = 3.3f.sp,
+)
+private val PRINT_CELL_THEME = TextStyle(
+    fontFamily = BitterFamily,
+    fontSize = 2.5f.sp,
+    lineHeight = 2.9f.sp,
 )
 private val PRINT_FOOTNOTE = TextStyle(
     fontFamily = BarlowCondensedFamily,
@@ -344,13 +350,37 @@ private fun PrintedCell(
             }
         }
         CellState(cell, modifier = Modifier.padding(top = 1f.mm))
-        Text(
-            cell.label,
-            style = PRINT_CELL_TITLE,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
+        if (cell.denomination != null) {
+            Text(
+                cell.denomination,
+                style = PRINT_CELL_TITLE,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 2.1f.sp,
+                    maxFontSize = 2.9f.sp,
+                    stepSize = 0.1f.sp,
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+            )
+            cell.theme?.let { theme ->
+                Text(
+                    theme,
+                    style = PRINT_CELL_THEME,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        } else {
+            Text(
+                cell.label,
+                style = PRINT_CELL_TITLE,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         cell.footnote?.let { footnote ->
             Text(
                 footnote,

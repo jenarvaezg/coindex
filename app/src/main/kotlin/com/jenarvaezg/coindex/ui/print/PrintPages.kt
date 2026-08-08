@@ -11,6 +11,9 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
  */
 data class PrintCell(
     val label: String,
+    /** Album-name ranges. Null for curated plate labels, which remain curator-authored whole. */
+    val denomination: String? = null,
+    val theme: String? = null,
     /** The state on a plate — «Tengo», «Me falta» — and the piece's own line on a sheet. */
     val state: String?,
     /** What is left to tell this cell apart, usually the year. Null when nothing is. */

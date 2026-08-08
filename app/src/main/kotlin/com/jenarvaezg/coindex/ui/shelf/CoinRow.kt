@@ -8,9 +8,11 @@ import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.objectClassOf
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.fold
-import com.jenarvaezg.coindex.ui.pieceTitle
+import com.jenarvaezg.coindex.ui.pieceName
+import com.jenarvaezg.coindex.ui.pieceRawTitle
 import java.text.Collator
 import java.util.Locale
 
@@ -32,7 +34,9 @@ data class CoinClaim(val name: String, val destination: CardDestination)
  */
 data class CoinRow(
     val typeId: Int,
-    val title: String,
+    val name: CoinName,
+    /** The untouched ficha title: searchable even where the cartouche deliberately omits words. */
+    val rawTitle: String,
     /**
      * The country, in Spanish, unsaid when the type is uncached.
      *
@@ -61,9 +65,11 @@ data class CoinRow(
      */
     val unclaimedPieces: Int,
 ) {
+    val title: String get() = name.text
+
     /** What the search box compares against: everything printed on the row, folded once. */
     val haystack: String = fold(
-        listOfNotNull(title, issuer, year?.toString(), typeId.toString())
+        listOfNotNull(rawTitle, issuer, year?.toString(), typeId.toString())
             .plus(claims.map { it.name })
             .joinToString(" "),
     )
@@ -86,7 +92,8 @@ fun coinRows(state: CollectionState): List<CoinRow> {
         val meta = state.typeMeta[typeId]
         CoinRow(
             typeId = typeId,
-            title = pieceTitle(state, pieces.first()),
+            name = pieceName(state, pieces.first()),
+            rawTitle = pieceRawTitle(state, pieces.first()),
             issuer = meta?.country,
             year = meta?.minYear,
             objectClass = objectClassOf(meta?.category),
@@ -101,6 +108,12 @@ fun coinRows(state: CollectionState): List<CoinRow> {
 /** How many Numista types the collector owns, which is how many rows [coinRows] draws. */
 fun ownedTypeCount(state: CollectionState): Int =
     state.items.filter { it.quantity > 0 }.distinctBy { it.typeId }.size
+
+/** The only identity left in the grid below the two-range name: year and a non-singular count. */
+fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
+    row.year?.toString() ?: "Sin año",
+    "×${row.quantity}".takeIf { row.quantity > 1 },
+).joinToString(" · ")
 
 /**
  * Who claims what, read once off the index.

@@ -1,14 +1,23 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,14 +25,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
+import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
+import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
+import com.jenarvaezg.coindex.ui.CoinTap
+import com.jenarvaezg.coindex.ui.coinFichaIdentity
+import com.jenarvaezg.coindex.ui.coinTap
+import com.jenarvaezg.coindex.ui.components.AlbumCartouche
+import com.jenarvaezg.coindex.ui.components.AlbumChrome
+import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Facet
 import com.jenarvaezg.coindex.ui.components.FichaBrought
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
@@ -31,20 +54,19 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.LinkText
-import com.jenarvaezg.coindex.ui.components.PieceSelectionToggle
+import com.jenarvaezg.coindex.ui.components.PaperGrain
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
-import com.jenarvaezg.coindex.ui.countLabel
+import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.objectClassChip
-import com.jenarvaezg.coindex.ui.objectClassLabel
-import com.jenarvaezg.coindex.ui.plural
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.shelf.CoinSort
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.GramBand
 import com.jenarvaezg.coindex.ui.shelf.Membership
 import com.jenarvaezg.coindex.ui.shelf.YearBand
+import com.jenarvaezg.coindex.ui.shelf.coinAlbumFootnote
 import com.jenarvaezg.coindex.ui.shelf.coinRows
 import com.jenarvaezg.coindex.ui.shelf.coinsFacetCounts
 import com.jenarvaezg.coindex.ui.shelf.coinsShelfSummary
@@ -52,7 +74,6 @@ import com.jenarvaezg.coindex.ui.shelf.coinsTally
 import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.theme.Paper
-import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 /**
  * Coins: the other hierarchy of the top level (ADR 0021 §1).
@@ -68,6 +89,7 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
  * curator, and that already works.
  */
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun CoinsScreen(
     state: CollectionState,
     shelf: CoinsShelf,
@@ -77,13 +99,15 @@ fun CoinsScreen(
     onOpen: (CardDestination) -> Unit,
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
+    onOpenSource: (url: String) -> Unit,
+    onSettings: () -> Unit,
     /**
      * How old each ficha is and how to ask for it again (#185, ADR 0025).
      *
-     * This is the surface that has to carry it. A type whose ficha looks like an unpublished draft
-     * derives no card at all (#186), so its pieces are only ever reachable from here — and that is
-     * exactly the coin the issue was opened about: N#596807, whose family reads «The» until a referee
-     * publishes the page and somebody on this side can ask again.
+     * This bottom sheet is the surface that has to carry it. A type whose ficha looks like an
+     * unpublished draft derives no card at all (#186), so its pieces are only ever reachable from
+     * here — and that is exactly the coin the issue was opened about: N#596807, whose family reads
+     * «The» until a referee publishes the page and somebody on this side can ask again.
      */
     ficha: (typeId: Int) -> FichaRefresh,
     modifier: Modifier = Modifier,
@@ -95,6 +119,7 @@ fun CoinsScreen(
     // word here and half the collection hidden reads as an app that has lost something.
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
+    var selectedTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
     val shown = remember(rows, shelf, query) { shelf.narrow(rows, query) }
     val selection = rememberPieceSelection()
     // The seed exists only while something is narrowing the list: without a filter «Agrupar estas
@@ -104,59 +129,99 @@ fun CoinsScreen(
         curatedNames + state.ownGroupings.map { it.name }
     }
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+    BoxWithConstraints(
+        modifier = modifier.fillMaxWidth().background(Paper.paper),
     ) {
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                RootHeading(
-                    destination = "Monedas",
-                    sentence = countLabel(rows.size, rows.sumOf { it.quantity }),
-                )
-                SearchField(value = query, onValueChange = { query = it })
-                FilterShelf(
-                    summary = coinsShelfSummary(shelf),
-                    tally = coinsTally(shown.size, rows.size),
-                    expanded = open,
-                    onToggle = { open = !open },
-                ) {
-                    CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
+        val columns = indexColumns(maxWidth)
+        PaperGrain(Modifier.matchParentSize())
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            // The two-range cartouche itself pays the measured height cost. Reusing the album's
+            // 6 dp row seam keeps that cost from being paid a second time as empty cardboard.
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            coinFullWidth {
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    AlbumChrome(
+                        collections = state.index.size,
+                        coins = state.items.sumOf { item -> item.quantity },
+                        types = rows.size,
+                        onSettings = onSettings,
+                    )
+                    SearchField(value = query, onValueChange = { query = it })
+                    FilterShelf(
+                        summary = coinsShelfSummary(shelf),
+                        tally = coinsTally(shown.size, rows.size),
+                        expanded = open,
+                        onToggle = { open = !open },
+                    ) {
+                        CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
+                    }
+                    if (rows.isNotEmpty()) {
+                        SelectionControls(
+                            selection = selection,
+                            existing = state.ownGroupings,
+                            taken = taken,
+                            shown = shown.map { it.typeId },
+                            seeded = seeded,
+                            onCreate = onCreateBox,
+                            onAddTo = onAddToBox,
+                        )
+                    }
                 }
-                // Under the shelf, because the shelf is what decides whether it seeds: the button
-                // reads the same list the tally above it just counted (ADR 0021 §11).
-                if (rows.isNotEmpty()) {
-                    SelectionControls(
-                        selection = selection,
-                        existing = state.ownGroupings,
-                        taken = taken,
-                        shown = shown.map { it.typeId },
-                        seeded = seeded,
-                        onCreate = onCreateBox,
-                        onAddTo = onAddToBox,
+            }
+
+            if (shown.isEmpty()) {
+                coinFullWidth {
+                    EmptyCoins(
+                        everything = rows.isEmpty(),
+                        onClear = { onNarrow(CoinsShelf()); query = "" },
                     )
                 }
             }
-        }
 
-        if (shown.isEmpty()) {
-            item {
-                EmptyCoins(
-                    everything = rows.isEmpty(),
-                    onClear = { onNarrow(CoinsShelf()); query = "" },
+            items(shown, key = { it.typeId }) { row ->
+                val images = state.images[row.typeId]
+                val photo = images?.reverse?.takeIf { it.hasPicture } ?: images?.obverse
+                CoinAlbumCell(
+                    row = row,
+                    photo = photo,
+                    picking = selection.active,
+                    picked = selection.isPicked(row.typeId),
+                    onTap = {
+                        when (coinTap(selection.active)) {
+                            CoinTap.ToggleSelection -> selection.toggle(row.typeId)
+                            CoinTap.OpenFicha -> selectedTypeId = row.typeId
+                        }
+                    },
                 )
             }
         }
+    }
 
-        items(shown, key = { it.typeId }) { row ->
-            CoinCard(
-                row = row,
-                onOpen = onOpen,
-                ficha = ficha(row.typeId),
-                picking = selection.active,
-                picked = selection.isPicked(row.typeId),
-                onTogglePick = { selection.toggle(row.typeId) },
+    rows.firstOrNull { it.typeId == selectedTypeId }?.let { selected ->
+        ModalBottomSheet(
+            onDismissRequest = { selectedTypeId = null },
+            containerColor = Paper.paper,
+            contentColor = Paper.ink,
+            tonalElevation = 0.dp,
+        ) {
+            CoinFicha(
+                row = selected,
+                ficha = ficha(selected.typeId),
+                onOpenSource = {
+                    selectedTypeId = null
+                    onOpenSource(
+                        state.typeMeta[selected.typeId]?.numistaUrl ?: numistaTypeUrl(selected.typeId),
+                    )
+                },
+                onOpen = { destination ->
+                    selectedTypeId = null
+                    onOpen(destination)
+                },
             )
         }
     }
@@ -271,58 +336,73 @@ private fun CoinsFacets(
     }
 }
 
-/**
- * One coin: what it is, how many of it are loose, and every collection that claims it.
- *
- * The links are a list because a type may be claimed by more than one collection (§10) — a curated
- * grouping and a box can both name it, and the commemorative programmes of ADR 0022 are what make
- * that ordinary. No photographs: this list is 192 rows long on the father's phone, and two pictures a
- * row is the whole type cache on screen at once.
- */
 @Composable
-private fun CoinCard(
+private fun CoinAlbumCell(
     row: CoinRow,
-    onOpen: (CardDestination) -> Unit,
-    ficha: FichaRefresh,
+    photo: CoinPhoto?,
     picking: Boolean,
     picked: Boolean,
-    onTogglePick: () -> Unit,
+    onTap: () -> Unit,
 ) {
-    FieldCard(modifier = Modifier.fillMaxWidth()) {
-        row.issuer?.let { issuer ->
-            Eyebrow(issuer, modifier = Modifier.fillMaxWidth())
-        }
-        Text(row.title, style = MaterialTheme.typography.titleMedium)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (picked) Modifier.border(2.dp, Paper.rust) else Modifier)
+            .semantics(mergeDescendants = true) { selected = picking && picked }
+            .clickable(role = Role.Button, onClick = onTap)
+            .padding(bottom = 4.dp),
+    ) {
+        AlbumHole(
+            photo = photo,
+            backed = row.unclaimedPieces == 0,
+            modifier = Modifier.size(104.dp),
+        )
+        AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))
         Text(
-            coinLine(row),
+            coinAlbumFootnote(row),
+            style = MaterialTheme.typography.labelMedium,
+            color = Paper.muted,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            modifier = Modifier.padding(top = 3.dp),
+        )
+    }
+}
+
+/** Exact identity and upkeep live inside the coin instead of being repeated under every hole. */
+@Composable
+private fun CoinFicha(
+    row: CoinRow,
+    ficha: FichaRefresh,
+    onOpenSource: () -> Unit,
+    onOpen: (CardDestination) -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
+    ) {
+        Text(
+            row.rawTitle,
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Text(
+            coinFichaIdentity(row),
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
-            modifier = Modifier.padding(top = 4.dp),
         )
-        if (row.claims.isEmpty()) {
-            Text(
-                "En ninguna colección",
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.rust,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-        } else if (row.unclaimedPieces > 0) {
-            // In a collection *and* holding a loose piece: an issue-qualified catalog claimed one
-            // row of this type and not its sibling (ADR 0019). Saying *which* is what the «Sin
-            // colección» chip is for; saying *why* is the field report's (ADR 0021 §12).
-            Text(
-                "${plural(row.unclaimedPieces, "pieza", "piezas")} sin colección",
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.rust,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-        }
+        FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
+        ExternalLink(
+            text = COIN_VIEW_ON_NUMISTA,
+            onClick = onOpenSource,
+            modifier = Modifier.padding(top = 2.dp),
+        )
         if (row.claims.isNotEmpty()) {
             Text(
-                if (row.claims.size == 1) "En esta colección" else "En estas colecciones",
+                if (row.claims.size == 1) COIN_IN_ONE_COLLECTION else COIN_IN_SEVERAL_COLLECTIONS,
                 style = MaterialTheme.typography.labelLarge,
                 color = Paper.muted,
-                modifier = Modifier.padding(top = 6.dp),
+                modifier = Modifier.padding(top = 8.dp),
             )
             row.claims.forEach { claim ->
                 LinkText(
@@ -333,20 +413,8 @@ private fun CoinCard(
                 )
             }
         }
-        FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
-        if (picking) {
-            PieceSelectionToggle(picked = picked, onToggle = onTogglePick)
-        }
     }
 }
-
-/** The identity line of a coin: the year, its Numista number, how many, and «medalla» if it is one. */
-private fun coinLine(row: CoinRow): String = listOfNotNull(
-    row.year?.toString() ?: "Sin año",
-    "N# ${row.typeId}",
-    objectClassLabel(row.objectClass),
-    "×${row.quantity}".takeIf { row.quantity > 1 },
-).joinToString(" · ")
 
 /**
  * Nothing to show, and which of the two reasons it is.
@@ -374,4 +442,9 @@ private fun EmptyCoins(everything: Boolean, onClear: () -> Unit) {
             )
         }
     }
+}
+
+/** A shelf or empty state spans the album page rather than occupying one coin slot. */
+private fun LazyGridScope.coinFullWidth(content: @Composable () -> Unit) {
+    item(span = { GridItemSpan(maxLineSpan) }) { content() }
 }

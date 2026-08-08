@@ -97,10 +97,22 @@ fun piecesSubject(state: CollectionState, card: IndexCard): PiecesSubject = when
  * Shared by the three lists that draw a coin — a collection's pieces, its exported sheet, and Coins
  * (ADR 0021 §1) — so the same coin cannot be called two things one tap apart.
  */
-internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
+fun pieceName(state: CollectionState, item: CollectedItem): CoinName = coinName(
     state.typeMeta[item.typeId]?.displayTitle
+        ?: state.typeMeta[item.typeId]?.title
+        ?: item.title
+        ?: "Pieza ${item.id}",
+)
+
+/** Full Numista title, kept separately from the album name for search and the ficha. */
+fun pieceRawTitle(state: CollectionState, item: CollectedItem): String =
+    state.typeMeta[item.typeId]?.title
+        ?: state.typeMeta[item.typeId]?.displayTitle
         ?: item.title
         ?: "Pieza ${item.id}"
+
+internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
+    pieceName(state, item).text
 
 /**
  * The pieces of one collection, in reading order and each carrying what names it.

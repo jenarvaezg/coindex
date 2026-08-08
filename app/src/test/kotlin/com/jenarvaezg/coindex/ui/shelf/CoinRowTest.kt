@@ -6,6 +6,8 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.CoinName
+import com.jenarvaezg.coindex.ui.coinFichaIdentity
 import com.jenarvaezg.coindex.ui.matchesQuery
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -146,5 +148,41 @@ class CoinRowTest {
         )
         // Y la búsqueda sigue alcanzando el país que la fila pinta.
         assertTrue(matchesQuery(coinRows(rusas).first().haystack, "rusia"))
+    }
+
+    @Test
+    fun `a coin keeps its full title searchable behind its structured album name`() {
+        val state = CollectionState(
+            AssembledCollection(
+                items = listOf(CollectedItem(id = 1, quantity = 1, typeId = 500)),
+                typeMeta = mapOf(
+                    500 to TypeMeta(
+                        id = 500,
+                        title = "1 Dollar - Elizabeth II (Red Dragon of Wales; 2 oz Fine Silver)",
+                    ),
+                ),
+            ),
+        )
+
+        val row = coinRows(state).single()
+
+        assertEquals(CoinName("1 Dollar", "Red Dragon of Wales"), row.name)
+        assertEquals(
+            "1 Dollar - Elizabeth II (Red Dragon of Wales; 2 oz Fine Silver)",
+            row.rawTitle,
+        )
+        assertTrue(matchesQuery(row.haystack, "Elizabeth"))
+        assertTrue(matchesQuery(row.haystack, "Fine Silver"))
+        assertEquals("Sin año · N# 500", coinFichaIdentity(row))
+    }
+
+    @Test
+    fun `the album grid keeps only year and necessary quantity under the cartouche`() {
+        val britannia = rows.single { it.typeId == ShelfFixtures.ONZA_MEXICANA }
+        val fuerte = rows.single { it.typeId == ShelfFixtures.FUERTE }
+
+        assertEquals(britannia.year.toString(), coinAlbumFootnote(britannia))
+        assertEquals("${fuerte.year} · ×3", coinAlbumFootnote(fuerte))
+        assertTrue(ShelfFixtures.ONZA_MEXICANA.toString() !in coinAlbumFootnote(britannia))
     }
 }

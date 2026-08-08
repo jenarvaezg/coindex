@@ -35,7 +35,7 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countSentence
-import com.jenarvaezg.coindex.ui.pieceTitle
+import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesFileName
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -131,7 +131,7 @@ fun PiecesScreen(
             items(subject.pieces, key = { it.item.id }) { piece ->
                 PieceCard(
                     piece = piece,
-                    title = pieceTitle(state, piece.item),
+                    name = pieceName(state, piece.item),
                     images = state.images[piece.item.typeId],
                     onOpenSource = onOpenSource,
                     ficha = ficha(piece.item.typeId),
@@ -169,7 +169,7 @@ fun PiecesScreen(
             ) { layout, onImageSettled, recording ->
                 PiecesSheet(
                     subject = subject,
-                    titles = { piece -> pieceTitle(state, piece) },
+                    names = { piece -> pieceName(state, piece) },
                     images = state.images,
                     layout = layout,
                     onImageSettled = onImageSettled,
