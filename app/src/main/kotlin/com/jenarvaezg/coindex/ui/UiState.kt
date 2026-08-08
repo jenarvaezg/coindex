@@ -8,12 +8,8 @@ import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 
-data class BudgetStatus(val used: Int, val cap: Int) {
-    val remaining: Int get() = (cap - used).coerceAtLeast(0)
-}
-
 /** What the settings screen edits, read from the credential store when it opens. */
-data class SettingsValues(val apiKey: String, val userId: String, val budgetCap: Int)
+data class SettingsValues(val apiKey: String, val userId: String)
 
 /**
  * @param message a one-off notice for the snackbar; it is consumed once shown.
@@ -26,7 +22,6 @@ data class UiState(
     val loading: Boolean = true,
     val syncing: Boolean = false,
     val collection: CollectionState = CollectionState(),
-    val budget: BudgetStatus = BudgetStatus(0, 0),
     val lastSync: SyncRecord? = null,
     val message: String? = null,
     val validation: String? = null,

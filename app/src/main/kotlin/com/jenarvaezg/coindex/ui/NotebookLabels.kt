@@ -17,6 +17,9 @@ fun notebookExportLabel(cards: Int): String = when (cards) {
     else -> "Exportar ${plural(cards, "lámina", "láminas")}"
 }
 
+/** The temporary label while the notebook is being rendered. */
+const val NOTEBOOK_EXPORTING_LABEL = "Exportando…"
+
 /**
  * What the export sheet is about to cost, recounted on every tap (#228).
  *

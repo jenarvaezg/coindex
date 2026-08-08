@@ -31,6 +31,12 @@ data class CoverageRatio(val owned: Int, val issued: Int) {
     val nothingMissing: Boolean get() = owned == issued
 }
 
+/** The owned coin shown inside one index card's die-cut hole. */
+data class IndexCover(
+    val typeId: Int,
+    val printedSide: PrintedSide,
+)
+
 /**
  * One card of the index: one species of collection, in one list, sorted by one comparator
  * (ADR 0021 §2).
@@ -53,6 +59,9 @@ sealed interface IndexCard {
 
     val quantity: Int
 
+    /** The first owned emission in album order, on the face the album prints. */
+    val cover: IndexCover?
+
     /** A collection derived from the pieces the collector owns right now (ADR 0007). */
     data class Derived(
         override val name: String,
@@ -64,6 +73,7 @@ sealed interface IndexCard {
          * open: the same conditions `resolvePlate` applies, so a dead action is never drawn.
          */
         val plateCatalogId: String?,
+        override val cover: IndexCover? = null,
         /**
          * Whether the catalog behind this card declares its series still being issued (ADR 0020),
          * or null where no catalog names the collection.
@@ -89,6 +99,7 @@ sealed interface IndexCard {
         override val name: String,
         override val issuer: String?,
         val box: OwnGroupingView,
+        override val cover: IndexCover? = null,
     ) : IndexCard {
         override val coverage: CoverageRatio? get() = null
         override val distinctTypes: Int get() = box.distinctTypes
@@ -162,15 +173,21 @@ class CollectionIndex(
         val cards = derivation.derivedCollections.map { collection ->
             val key = collection.key()
             val catalog = catalogsByKey[key]
+            val album = catalog?.let { buildCollectionCatalogAlbum(it, items) }
             IndexCard.Derived(
                 name = titles.of(key),
-                coverage = catalog?.let { coverageOf(it, items) },
+                coverage = album?.coverage(),
                 issuer = issuers.of(
                     declaredCode = declaredIssuerCode(key),
                     pieces = derivation.itemsByKey[key].orEmpty(),
                 ),
                 collection = collection,
                 plateCatalogId = catalog?.takeIf { it.isEvidencedBy(items) }?.id,
+                cover = if (catalog == null) {
+                    derivation.itemsByKey[key].orEmpty().firstOwnedCover()
+                } else {
+                    album?.firstOwnedCover(catalog.printedSide)
+                },
                 seriesStatus = catalog?.seriesStatus,
             )
         } + boxes.map { box ->
@@ -178,6 +195,7 @@ class CollectionIndex(
                 name = box.name,
                 issuer = issuers.of(declaredCode = null, pieces = box.items),
                 box = box,
+                cover = box.items.firstOwnedCover(),
             )
         }
         return cards.sortedWith(indexOrder())
@@ -193,18 +211,25 @@ class CollectionIndex(
     private fun declaredIssuerCode(key: VariantKey): String? =
         catalogsByKey[key]?.issuerCode ?: groupingIssuers[key.family]
 
-    private fun coverageOf(
-        catalog: CollectionCatalog,
-        items: List<CollectedItem>,
-    ): CoverageRatio? {
-        val album = buildCollectionCatalogAlbum(catalog, items)
-        val issued = album.issuedMembers()
+    private fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
+        val issued = issuedMembers()
         // A catalog whose every member is announced or unlisted has nothing measurable to divide
         // by, so it offers no ratio rather than a zero one.
         if (issued == 0) return null
-        return CoverageRatio(album.ownedMembers(), issued)
+        return CoverageRatio(ownedMembers(), issued)
     }
 }
+
+private fun CollectionCatalogAlbum.firstOwnedCover(printedSide: PrintedSide): IndexCover? =
+    members.firstNotNullOfOrNull { member ->
+        val owned = member.status as? CollectionCatalogMemberStatus.Owned
+        owned?.items?.firstOrNull()?.let { item -> IndexCover(item.typeId, printedSide) }
+    }
+
+private fun List<CollectedItem>.firstOwnedCover(): IndexCover? =
+    firstOrNull { it.quantity > 0 }?.let { item ->
+        IndexCover(item.typeId, PrintedSide.Reverse)
+    }
 
 /**
  * Who issued a collection, for the eyebrow of its card.

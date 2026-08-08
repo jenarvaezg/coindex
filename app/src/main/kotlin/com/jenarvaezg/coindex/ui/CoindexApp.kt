@@ -40,6 +40,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.components.BackGlyph
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
@@ -82,13 +83,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     }
 
     // Built here, once, for the two surfaces that show a piece of a type (#185): both read the same
-    // cache date, the same in-flight set and the same budget the index prints, so the two cards can
-    // never disagree about how old a ficha is or about what asking again would cost.
+    // cache date and the same in-flight set, so the two cards can never disagree about how old a
+    // ficha is or whether it is already being refreshed.
     val ficha: (Int) -> FichaRefresh = { typeId ->
         FichaRefresh(
             fetchedAt = state.collection.fichaFetchedAt[typeId],
             refreshing = typeId in state.refreshingFichas,
-            budgetRemaining = state.budget.remaining,
             onRefresh = { viewModel.refreshFicha(typeId) },
         )
     }
@@ -138,14 +138,19 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             Column {
-                Masthead(
-                    subtitle = mastheadSubtitle(
-                        screenTitle(route, subjectName),
-                        state.versionName,
-                    ),
-                    onBack = onBack,
-                    onOpenSettings = onOpenSettings,
-                )
+                // Collections owns its chrome: the sewn edge is the album's masthead. Keeping the
+                // generic one above it would print COINDEX and Settings twice and spend the space
+                // this screen's die-cut grid just recovered (ADR 0026 §1).
+                if (route != Routes.INDEX) {
+                    Masthead(
+                        subtitle = mastheadSubtitle(
+                            screenTitle(route, subjectName),
+                            state.versionName,
+                        ),
+                        onBack = onBack,
+                        onOpenSettings = onOpenSettings,
+                    )
+                }
                 (state.update as? UpdateStatus.Available)?.let { available ->
                     UpdateBanner(available, state.updating, viewModel::installUpdate)
                 }
@@ -191,16 +196,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 composable(Routes.INDEX) {
                     IndexScreen(
                         state = state.collection,
-                        budget = state.budget,
                         loading = state.loading,
-                        syncing = state.syncing,
                         lastSync = state.lastSync,
                         shelf = state.indexShelf,
                         onNarrow = viewModel::narrowIndex,
-                        onSync = viewModel::sync,
                         onOpen = { destination ->
                             navController.navigate(routeOf(destination))
                         },
+                        onSettings = { navController.navigate(Routes.SETTINGS) },
                         notebookOptions = state.notebookOptions,
                         onNotebookPrinted = viewModel::notebookPrinted,
                         notebook = viewModel::notebookPages,
@@ -289,11 +292,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     LaunchedEffect(Unit) { viewModel.clearValidation() }
                     SettingsScreen(
                         values = values,
-                        budget = state.budget,
                         photoCache = state.photoCache,
+                        syncing = state.syncing,
                         validation = state.validation,
-                        onSave = { apiKey, userId, budgetCap ->
-                            if (viewModel.saveSettings(apiKey, userId, budgetCap)) {
+                        onSave = { apiKey, userId ->
+                            if (viewModel.saveSettings(apiKey, userId)) {
                                 navController.popBackStack()
                             }
                         },
@@ -305,6 +308,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             navController.popBackStack(Routes.INDEX, inclusive = false)
                             viewModel.signOut()
                         },
+                        onSync = viewModel::sync,
                         onOpenNotices = { navController.navigate(Routes.NOTICES) },
                     )
                 }
@@ -496,7 +500,7 @@ private fun Masthead(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("COINDEX", style = MaterialTheme.typography.titleLarge)
+            Text(APP_NAME, style = MaterialTheme.typography.titleLarge)
             when {
                 onBack != null -> CardAction(
                     text = "Volver",

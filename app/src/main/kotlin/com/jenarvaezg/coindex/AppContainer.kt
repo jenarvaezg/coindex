@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.data.CallBudgetGate
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CredentialStore
+import com.jenarvaezg.coindex.data.DEFAULT_MONTHLY_BUDGET
 import com.jenarvaezg.coindex.data.KeystoreCredentialStore
 import com.jenarvaezg.coindex.data.NotebookStore
 import com.jenarvaezg.coindex.data.SharedPreferenceValues
@@ -166,7 +167,7 @@ class AppContainer(context: Context) {
     private val httpClient: HttpClient by lazy { HttpClient(OkHttp) }
 
     private val budgetGate: CallBudgetGate by lazy {
-        CallBudgetGate(calls, monthlyBudget = { credentials.monthlyBudget })
+        CallBudgetGate(calls, monthlyBudget = { DEFAULT_MONTHLY_BUDGET })
     }
 
     /**

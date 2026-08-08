@@ -22,10 +22,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
-import com.jenarvaezg.coindex.ui.BudgetStatus
+import com.jenarvaezg.coindex.ui.SETTINGS_CREDENTIALS_HEADING
 import com.jenarvaezg.coindex.ui.SettingsValues
-import com.jenarvaezg.coindex.ui.callsLabel
 import com.jenarvaezg.coindex.ui.photoCacheLabel
+import com.jenarvaezg.coindex.ui.syncActionLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -42,17 +42,17 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 @Composable
 fun SettingsScreen(
     values: SettingsValues,
-    budget: BudgetStatus,
     photoCache: PhotoCacheStatus,
+    syncing: Boolean,
     validation: String?,
-    onSave: (apiKey: String, userId: String, budgetCap: String) -> Unit,
+    onSave: (apiKey: String, userId: String) -> Unit,
     onSignOut: () -> Unit,
+    onSync: () -> Unit,
     onOpenNotices: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var apiKey by remember(values) { mutableStateOf(values.apiKey) }
     var userId by remember(values) { mutableStateOf(values.userId) }
-    var budgetCap by remember(values) { mutableStateOf(values.budgetCap.toString()) }
     // The onboarding copy promises the key is stored encrypted, so it is masked here by
     // default; it is also the one field a collector needs to read back to spot a typo.
     var revealKey by remember { mutableStateOf(false) }
@@ -65,12 +65,17 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Eyebrow("Ajustes")
-        Text("Credenciales y presupuesto", style = MaterialTheme.typography.headlineMedium)
+        Text(SETTINGS_CREDENTIALS_HEADING, style = MaterialTheme.typography.headlineMedium)
         Text(
             "Se guardan cifradas en este teléfono y nunca salen de él. Si Numista rechaza tus " +
                 "sincronizaciones, la API key es lo primero que hay que revisar aquí.",
             style = MaterialTheme.typography.bodyMedium,
             color = Paper.muted,
+        )
+        CardAction(
+            text = syncActionLabel(syncing),
+            onClick = onSync,
+            enabled = !syncing,
         )
 
         OutlinedTextField(
@@ -97,27 +102,12 @@ fun SettingsScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
         )
-        OutlinedTextField(
-            value = budgetCap,
-            onValueChange = { budgetCap = it.filter(Char::isDigit) },
-            label = { Text("Techo de llamadas al mes") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Text(
-            "Llevas ${callsLabel(budget.used)} este mes. La API gratuita de Numista ronda las " +
-                "2.000, y el techo existe para que una tarde de pruebas no se coma el mes.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Paper.muted,
-        )
-
         validation?.let { text ->
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
         PrimaryAction(
             text = "Guardar ajustes",
-            onClick = { onSave(apiKey, userId, budgetCap) },
+            onClick = { onSave(apiKey, userId) },
         )
 
         // The photographs are the one thing here that is not a setting: nothing on this card can

@@ -7,7 +7,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.ui.FICHA_REFRESH_CALLS
 import com.jenarvaezg.coindex.ui.fichaAgeLabel
 import com.jenarvaezg.coindex.ui.fichaRefreshLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -20,13 +19,10 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  *
  * @param fetchedAt when this phone got the ficha; null when it has none at all, which is a piece
  *   waiting for a sync to complete rather than a stale ficha.
- * @param budgetRemaining calls left this month, read where every other budget line reads it, so the
- *   card can say «sin presupuesto» before the tap instead of after it.
  */
 data class FichaRefresh(
     val fetchedAt: Long?,
     val refreshing: Boolean,
-    val budgetRemaining: Int,
     val onRefresh: () -> Unit,
 )
 
@@ -56,9 +52,9 @@ fun FichaBrought(
             color = Paper.muted,
         )
         CardAction(
-            text = fichaRefreshLabel(ficha.refreshing, ficha.budgetRemaining),
+            text = fichaRefreshLabel(ficha.refreshing),
             onClick = ficha.onRefresh,
-            enabled = !ficha.refreshing && ficha.budgetRemaining >= FICHA_REFRESH_CALLS,
+            enabled = !ficha.refreshing,
             modifier = Modifier.padding(top = 6.dp),
         )
     }

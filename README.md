@@ -59,8 +59,8 @@ scripts/record-fixture.py --confirm-live-api --type-id 404044
 
 La app pide la API key de Numista y el identificador de usuario. La key se cifra con una
 clave AES/GCM que vive en el Android Keystore y nunca sale de él; solo el criptograma llega
-a `SharedPreferences`. Cada usuario gasta su propio presupuesto de API, con un techo mensual
-configurable (1500 por defecto) que se cuenta en `api_call_log` antes de cada llamada.
+a `SharedPreferences`. Cada usuario gasta sus propias llamadas de API, con un techo mensual
+interno de 1500 que se cuenta en `api_call_log` antes de cada llamada.
 
 La caché de tipos se siembra con `data/numista-type-cache.json` (687 tipos, ~650 llamadas de
 API que nadie tiene que volver a gastar). **No solo en la primera instalación**: en cada

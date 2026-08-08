@@ -1,9 +1,18 @@
 package com.jenarvaezg.coindex.ui
 
+import java.time.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MastheadLabelsTest {
+    @Test
+    fun `the sewn edge owns the three counts and minute`() {
+        assertEquals(
+            "70 col · 574 monedas · 192 tipos · hoy 18:47",
+            sewnEdgeLabel(70, 574, 192, LocalTime.of(18, 47)),
+        )
+    }
+
     /**
      * The two hierarchies of the top level are one notebook (ADR 0021 §1), so both keep its
      * strapline: the bottom bar says which of the two you are in, and the heading names it in full.

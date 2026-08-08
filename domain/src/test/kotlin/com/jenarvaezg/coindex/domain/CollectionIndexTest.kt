@@ -15,6 +15,32 @@ import kotlin.test.assertTrue
  * that plate a single slot**.
  */
 class CollectionIndexTest {
+    @Test
+    fun `the cover is the first owned issue in album order on its printed side`() {
+        val bolivar = catalog("venezuela-bolivar", "1 Bolívar", members = 4, typeBase = 10_000)
+            .copy(printedSide = PrintedSide.Obverse)
+        val firstOwned = item(10_003L, 10_003)
+        val laterOwned = item(10_004L, 10_004)
+        val items = listOf(laterOwned, firstOwned)
+        val index = CollectionIndex(
+            listOf(bolivar),
+            emptyList(),
+            CollectionTitles(listOf(bolivar), emptyList()),
+        )
+
+        val card = index.build(
+            derivation = derivation(
+                listOf(bolivar.key()),
+                items,
+                piecesByKey = mapOf(bolivar.key() to items),
+            ),
+            boxes = emptyList(),
+            snapshot = CollectionSnapshot(items = items),
+        ).single()
+
+        assertEquals(IndexCover(typeId = 10_003, printedSide = PrintedSide.Obverse), card.cover)
+    }
+
     /**
      * The golden table of the comparator.
      *

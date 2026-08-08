@@ -94,7 +94,7 @@ fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, Stri
 fun plural(count: Int, singular: String, plural: String): String =
     if (count == 1) "$count $singular" else "$count $plural"
 
-/** The API budget is counted on the index, in the settings screen and in the sync report. */
+/** A count of API calls, used in sync and refresh outcomes. */
 fun callsLabel(count: Int): String = plural(count, "llamada", "llamadas")
 
 /**
@@ -124,6 +124,10 @@ fun coverageLabel(coverage: CoverageRatio): String {
     val counted = "${coverage.owned} de ${coverage.issued}"
     return if (coverage.nothingMissing) counted else "$counted · te faltan ${coverage.missing}"
 }
+
+/** The compact fraction printed beneath a collection hole in the album index. */
+fun indexCoverageLabel(coverage: CoverageRatio): String =
+    "${coverage.owned}/${coverage.issued}"
 
 /**
  * The identity line of one inventory row: what tells it apart, its Numista type and how many

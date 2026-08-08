@@ -1,13 +1,14 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -18,35 +19,39 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
-import com.jenarvaezg.coindex.ui.BudgetStatus
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.destinationOf
+import com.jenarvaezg.coindex.ui.components.AlbumChrome
+import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.Facet
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
-import com.jenarvaezg.coindex.ui.components.LinkText
-import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.PaperGrain
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.coverageLabel
-import com.jenarvaezg.coindex.ui.lastSyncLabel
+import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
+import com.jenarvaezg.coindex.ui.indexCoverageLabel
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookExportLabel
 import com.jenarvaezg.coindex.ui.notebookStepLabel
@@ -70,18 +75,17 @@ import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.theme.Paper
-import com.jenarvaezg.coindex.ui.theme.PlateMetrics
-import com.jenarvaezg.coindex.ui.variantLabel
 
-/** Narrower than this a card cannot hold its own action row on one line. */
-private val MIN_CARD_WIDTH = 340.dp
+/** The album cell: one round coin and two short lines under it. */
+private val MIN_CARD_WIDTH = 104.dp
 
-private val PAGE_MARGIN = 20.dp
+private val PAGE_MARGIN = 12.dp
+private val INDEX_GUTTER = 8.dp
 
 /** How many cards fit side by side, counted from the page rather than from the device. */
 internal fun indexColumns(availableWidth: Dp): Int {
-    val usable = availableWidth - PAGE_MARGIN * 2 + PlateMetrics.gutter
-    val perColumn = MIN_CARD_WIDTH + PlateMetrics.gutter
+    val usable = availableWidth - PAGE_MARGIN * 2 + INDEX_GUTTER
+    val perColumn = MIN_CARD_WIDTH + INDEX_GUTTER
     return (usable / perColumn).toInt().coerceAtLeast(1)
 }
 
@@ -94,21 +98,18 @@ internal fun indexColumns(availableWidth: Dp): Int {
  * `(has ratio ↓, ratio ↓, denominator ↓, name ↑)` (ADR 0021 §6), applied in the domain: this
  * screen draws [CollectionState.index] in the order it arrives.
  *
- * The cards are laid out as a grid rather than a column. In portrait that is the same single
- * column it always was; held sideways, or on a tablet, the second column is free — and the
- * heading folds into two so the first card is not pushed below the fold by it.
+ * Three compact cells fit across the measured Pixel 7. Wider screens keep adding cells rather than
+ * stretching the holes, so the album keeps the same reading density in every orientation.
  */
 @Composable
 fun IndexScreen(
     state: CollectionState,
-    budget: BudgetStatus,
     loading: Boolean,
-    syncing: Boolean,
     lastSync: SyncRecord?,
     shelf: IndexShelf,
     onNarrow: (IndexShelf) -> Unit,
-    onSync: () -> Unit,
     onOpen: (CardDestination) -> Unit,
+    onSettings: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).
      *
@@ -188,51 +189,52 @@ fun IndexScreen(
         }
     }
 
-    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Paper.paper),
+    ) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
         // same answer: one column is a page, two are a spread.
         val columns = indexColumns(maxWidth)
 
+        PaperGrain(Modifier.matchParentSize())
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = PAGE_MARGIN, vertical = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-            verticalArrangement = Arrangement.spacedBy(PlateMetrics.cardStack),
+            contentPadding = PaddingValues(horizontal = PAGE_MARGIN, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(INDEX_GUTTER),
+            // 6dp is the measured pitch that leaves 3.68 rows in the Pixel 7 fold: 11.04 cards.
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             fullWidth {
-                IndexHeading(
-                    budget = budget,
-                    syncing = syncing,
-                    lastSync = lastSync,
-                    spread = columns > 1,
-                    // One card, one page at least: what stays out of the notebook is a question
-                    // for the index and not for the printer (#147).
-                    exportableCards = shown.size,
-                    exporting = printing != null,
-                    onSync = onSync,
-                    // The button no longer starts the printer: it opens the sheet that says what
-                    // pressing it would cost, on the configuration the collector last used (#228).
-                    //
-                    // It stays enabled while the sheet is open, and a second tap is a no-op rather
-                    // than a reset: the sheet is a card in the list and can be scrolled past, so a
-                    // greyed button would be the only way back to it — and one that resets the
-                    // switches under the thumb that was moving them is worse than none.
-                    onExport = {
-                        if (!configuring) draft = notebookOptions
-                        configuring = true
-                    },
+                AlbumChrome(
+                    collections = state.index.size,
+                    coins = state.items.sumOf { item -> item.quantity },
+                    types = state.items.mapTo(mutableSetOf()) { item -> item.typeId }.size,
+                    onSettings = onSettings,
                 )
             }
 
             fullWidth {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column {
                     SearchField(value = query, onValueChange = { query = it })
                     FilterShelf(
                         summary = indexShelfSummary(shelf),
                         tally = indexTally(shown.size, state.index.size),
                         expanded = open,
                         onToggle = { open = !open },
+                        actionLabel = if (printing != null) {
+                            NOTEBOOK_EXPORTING_LABEL
+                        } else {
+                            notebookExportLabel(shown.size)
+                        },
+                        actionEnabled = printing == null && shown.isNotEmpty(),
+                        onAction = {
+                            if (!configuring) draft = notebookOptions
+                            configuring = true
+                        },
                     ) {
                         IndexFacets(
                             facts = facts,
@@ -315,7 +317,7 @@ fun IndexScreen(
 
             // An incomplete sync outlives its snackbar: what it left half-done is a property of
             // the collection on screen, not a notice about something four seconds old.
-            lastSync?.partialFailure?.let { failure ->
+            if (lastSync?.partialFailure != null) {
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Eyebrow("Sincronización incompleta")
@@ -323,12 +325,6 @@ fun IndexScreen(
                             "La última sincronización no terminó, así que puede faltar alguna " +
                                 "pieza o ficha. Vuelve a sincronizar cuando puedas.",
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 6.dp),
-                        )
-                        Text(
-                            failure,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Paper.rust,
                             modifier = Modifier.padding(top = 6.dp),
                         )
                     }
@@ -366,7 +362,13 @@ fun IndexScreen(
             }
 
             items(shown, key = ::cardKey) { card ->
-                CollectionCard(card = card, onOpen = { openCard(card) })
+                val images = card.cover?.let { cover -> state.images[cover.typeId] }
+                val photo = when (card.cover?.printedSide) {
+                    PrintedSide.Obverse -> images?.obverse
+                    PrintedSide.Reverse -> images?.reverse
+                    null -> null
+                }
+                CollectionCard(card = card, photo = photo, onOpen = { openCard(card) })
             }
         }
 
@@ -445,127 +447,44 @@ private fun cardKey(card: IndexCard): String = when (card) {
  * two of them would drift apart the first time one grew a line. What varies is drawn from what the
  * card *has* — a physical variant, a ratio, a reachable plate — never from which case it is.
  *
- * The eyebrow is the country, said by the file wherever a file names this collection (ADR 0021 §9).
- * There is no word of provenance: what the card does is the only signal, and the third line is it —
- * `4 de 12 · te faltan 8` with an issue list, `3 tipos distintos · 4 piezas` without one.
+ * The photograph now carries the hierarchy the former country eyebrow and physical-variant line
+ * were doing badly. Under the hole only the card name and its ratio/count remain (ADR 0026 §12).
  *
- * **The title is the whole of what the card does.** It used to carry a «Ver lámina» action besides,
+ * **The card is the whole of what the card does.** It used to carry a «Ver lámina» action besides,
  * which was a second destination on a card that has one (ADR 0021 §9): where a plate exists the
- * title now opens it, and where it does not there was never a button to draw.
+ * hole, name and fraction now open it as one target.
  */
 @Composable
 private fun CollectionCard(
     card: IndexCard,
+    photo: CoinPhoto?,
     onOpen: () -> Unit,
 ) {
-    val derived = card as? IndexCard.Derived
-    FieldCard(modifier = Modifier.fillMaxWidth()) {
-        card.issuer?.let { issuer -> Eyebrow(issuer) }
-        LinkText(
-            text = card.name,
-            style = MaterialTheme.typography.titleLarge,
-            onClick = onOpen,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) {}
+            .clickable(role = Role.Button, onClick = onOpen),
+    ) {
+        AlbumHole(
+            photo = photo,
+            modifier = Modifier
+                .size(104.dp),
         )
-        // A box spans whatever the collector put in it, so it has no physical variant to state.
-        derived?.collection?.let { collection ->
-            Text(
-                variantLabel(collection.weightMillioz, collection.finish, collection.metal),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
         Text(
-            card.coverage?.let(::coverageLabel) ?: countLabel(card.distinctTypes, card.quantity),
+            text = card.name,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
+        )
+        Text(
+            card.coverage?.let(::indexCoverageLabel) ?: countLabel(card.distinctTypes, card.quantity),
             style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-            modifier = Modifier.padding(top = 4.dp),
+            color = Paper.rust,
+            textAlign = TextAlign.Center,
         )
-    }
-}
-
-/**
- * The masthead of the page: what this screen is, what it can do, and where the budget stands.
- *
- * [spread] lays the two halves side by side. Stacked they are around 300dp of heading, which on
- * a phone held sideways is the whole viewport — the review found the index looking empty while
- * holding twenty cards.
- */
-@Composable
-private fun IndexHeading(
-    budget: BudgetStatus,
-    syncing: Boolean,
-    lastSync: SyncRecord?,
-    spread: Boolean,
-    exportableCards: Int,
-    exporting: Boolean,
-    onSync: () -> Unit,
-    onExport: () -> Unit,
-) {
-    val title = @Composable {
-        RootHeading(
-            destination = "Colecciones",
-            sentence = "Colecciones a partir de las piezas que tienes ahora mismo.",
-        )
-    }
-    val actions = @Composable {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            // Two buttons where there were three: «Sin clasificar · N» was never a screen of its
-            // own, it was the «Sin colección» chip of Coins (ADR 0021 §1), and the bottom bar is
-            // now the way there.
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                itemVerticalAlignment = Alignment.CenterVertically,
-            ) {
-                PrimaryAction(
-                    text = if (syncing) "Sincronizando…" else "Sincronizar",
-                    onClick = onSync,
-                    enabled = !syncing,
-                )
-                // Level 2 and not the filled button: what this screen exists for is the collection
-                // arriving from Numista, and the notebook is what the collector then does with it.
-                CardAction(
-                    text = if (exporting) {
-                        "Exportando…"
-                    } else {
-                        notebookExportLabel(exportableCards)
-                    },
-                    onClick = onExport,
-                    enabled = !exporting && exportableCards > 0,
-                )
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    lastSync?.let { lastSyncLabel(it, System.currentTimeMillis()) }
-                        ?: "Todavía no has sincronizado con Numista.",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Paper.muted,
-                )
-                Text(
-                    "Presupuesto de la API: ${budget.used} / ${budget.cap} llamadas este mes",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Paper.muted,
-                )
-            }
-        }
-    }
-
-    if (spread) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            Column(modifier = Modifier.weight(1f)) { title() }
-            Column(modifier = Modifier.weight(1f)) { actions() }
-        }
-    } else {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            title()
-            actions()
-        }
     }
 }
 
