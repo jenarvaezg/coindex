@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.debug.calibration
 
+import androidx.compose.ui.graphics.Color
+import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -12,6 +14,15 @@ enum class CalibrationControl(val range: ClosedFloatingPointRange<Float>) {
     STAMPING_DURATION_MILLIS(100f..700f),
     RECESS_DEPTH_DP(0f..8f),
     GHOST_OPACITY(0f..0.3f),
+    CARTOUCHE_ALPHA(0f..1f),
+    CARD_ALPHA(0f..1f),
+    HAIRLINE_TONE(32f..223f),
+    CARTOUCHE_RULE_ALPHA(0f..1f),
+}
+
+enum class CalibrationTab {
+    EFFECTS,
+    TONE,
 }
 
 data class CalibrationState(
@@ -23,7 +34,21 @@ data class CalibrationState(
     val recessDepthDp: Float = 3f,
     val ghostOpacity: Float = 0.14f,
     val showGhost: Boolean = false,
+    val selectedTab: CalibrationTab = CalibrationTab.EFFECTS,
+    val cartoucheAlpha: Float = 0.72f,
+    val cardAlpha: Float = 87f / 255f,
+    val hairlineTone: Int = 0x9F,
+    val cartoucheRuleAlpha: Float = 0.24f,
 ) {
+    val hairlineColorRgb: Int
+        get() {
+            val green = (155f + (hairlineTone - 159) * 22f / 24f).roundToInt()
+            val blue = (139f + (hairlineTone - 159) * 20f / 24f).roundToInt()
+            return (hairlineTone shl 16) or
+                (green.coerceIn(0, 255) shl 8) or
+                blue.coerceIn(0, 255)
+        }
+
     fun withControl(control: CalibrationControl, requestedValue: Float): CalibrationState {
         val value = requestedValue.coerceIn(control.range)
         return when (control) {
@@ -35,10 +60,16 @@ data class CalibrationState(
                 copy(stampingDurationMillis = value.roundToInt())
             CalibrationControl.RECESS_DEPTH_DP -> copy(recessDepthDp = value)
             CalibrationControl.GHOST_OPACITY -> copy(ghostOpacity = value)
+            CalibrationControl.CARTOUCHE_ALPHA -> copy(cartoucheAlpha = value)
+            CalibrationControl.CARD_ALPHA -> copy(cardAlpha = value)
+            CalibrationControl.HAIRLINE_TONE -> copy(hairlineTone = value.roundToInt())
+            CalibrationControl.CARTOUCHE_RULE_ALPHA -> copy(cartoucheRuleAlpha = value)
         }
     }
 
     fun withGhostShown(shown: Boolean): CalibrationState = copy(showGhost = shown)
+
+    fun withTab(tab: CalibrationTab): CalibrationState = copy(selectedTab = tab)
 
     companion object {
         const val GRAIN_MOSAIC_PX = 256
@@ -47,6 +78,13 @@ data class CalibrationState(
         const val YEAR_TAG_HEIGHT_DP = 28f
     }
 }
+
+internal fun CalibrationState.albumToneConfig(): AlbumToneConfig = AlbumToneConfig(
+    cartoucheAlpha = cartoucheAlpha,
+    cardAlpha = cardAlpha,
+    hairlineColor = Color(0xFF000000 or hairlineColorRgb.toLong()),
+    cartoucheTopRuleAlpha = cartoucheRuleAlpha,
+)
 
 /** Maps the accelerometer's lateral gravity to the gloss's signed ±45° travel. */
 fun lateralTiltFraction(x: Float, y: Float, z: Float): Float {

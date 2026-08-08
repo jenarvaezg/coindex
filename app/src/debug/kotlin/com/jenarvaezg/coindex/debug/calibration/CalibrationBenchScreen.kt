@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -28,9 +29,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,6 +65,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.ui.CoinName
+import com.jenarvaezg.coindex.ui.components.AlbumCartouche
+import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.Paper
 import java.util.Locale
@@ -75,6 +82,11 @@ private val REVERSE_URLS = listOf(
     "https://en.numista.com/catalogue/photos/venezuela/502-180.jpg",
     "https://en.numista.com/catalogue/photos/venezuela/502-original.jpg",
 )
+private val TONE_CALIBRATION_PHOTO = CoinPhoto(
+    thumbnail = OBVERSE_URLS[0],
+    picture = OBVERSE_URLS[1],
+)
+private val TONE_CALIBRATION_NAME = CoinName("1 Bolívar", "Simón Bolívar")
 private val GHOST_FILTER = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
 
 @Composable
@@ -85,6 +97,7 @@ fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 20.dp),
         ) {
@@ -96,24 +109,115 @@ fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
                 letterSpacing = 1.2.sp,
                 color = Paper.moss,
             )
-            Text(
-                text = "1 Bolívar · 1960",
-                style = MaterialTheme.typography.headlineMedium,
-            )
-            Text(
-                text = "N#5316 · una sola ranura real, todos los efectos en vivo",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Paper.muted,
+            CalibrationTabs(
+                selected = state.selectedTab,
+                onSelected = { tab -> state = state.withTab(tab) },
             )
             Spacer(Modifier.height(14.dp))
-            CalibrationSlot(state, glossPositionFraction)
-            Spacer(Modifier.height(18.dp))
-            CalibrationControls(
-                state = state,
-                onChange = { control, value -> state = state.withControl(control, value) },
-                onGhostShownChange = { shown -> state = state.withGhostShown(shown) },
+            when (state.selectedTab) {
+                CalibrationTab.EFFECTS -> {
+                    Text(
+                        text = "1 Bolívar · 1960",
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    Text(
+                        text = "N#5316 · una sola ranura real, todos los efectos en vivo",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Paper.muted,
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    CalibrationSlot(state, glossPositionFraction)
+                    Spacer(Modifier.height(18.dp))
+                    CalibrationControls(
+                        state = state,
+                        onChange = { control, value -> state = state.withControl(control, value) },
+                        onGhostShownChange = { shown -> state = state.withGhostShown(shown) },
+                    )
+                }
+                CalibrationTab.TONE -> {
+                    Text(
+                        text = "1 Bolívar · 1960",
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    Text(
+                        text = "Separación papel↔objeto · cuatro valores independientes",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Paper.muted,
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    ToneCalibrationPreview(state)
+                    Spacer(Modifier.height(18.dp))
+                    ToneCalibrationControls(
+                        state = state,
+                        onChange = { control, value -> state = state.withControl(control, value) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CalibrationTabs(
+    selected: CalibrationTab,
+    onSelected: (CalibrationTab) -> Unit,
+) {
+    val tabs = CalibrationTab.entries
+    PrimaryTabRow(
+        selectedTabIndex = tabs.indexOf(selected),
+        containerColor = Color.Transparent,
+        contentColor = Paper.ink,
+        divider = {},
+    ) {
+        tabs.forEach { tab ->
+            Tab(
+                selected = selected == tab,
+                onClick = { onSelected(tab) },
+                text = {
+                    Text(
+                        text = when (tab) {
+                            CalibrationTab.EFFECTS -> "EFECTOS"
+                            CalibrationTab.TONE -> "TONO"
+                        },
+                        fontFamily = BarlowCondensedFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.7.sp,
+                    )
+                },
             )
         }
+    }
+}
+
+@Composable
+private fun ToneCalibrationPreview(state: CalibrationState) {
+    val tone = state.albumToneConfig()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, tone.hairlineColor, RoundedCornerShape(3.dp))
+            .background(Paper.paper)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        AlbumCartouche(
+            name = TONE_CALIBRATION_NAME,
+            modifier = Modifier.height(58.dp),
+            tone = tone,
+        )
+        Spacer(Modifier.height(18.dp))
+        AlbumHole(
+            photo = TONE_CALIBRATION_PHOTO,
+            modifier = Modifier.size(166.dp),
+            tone = tone,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "1960",
+            fontFamily = BarlowCondensedFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 13.sp,
+        )
     }
 }
 
@@ -538,6 +642,45 @@ private fun CalibrationControls(
 }
 
 @Composable
+private fun ToneCalibrationControls(
+    state: CalibrationState,
+    onChange: (CalibrationControl, Float) -> Unit,
+) {
+    CalibrationSection(title = "CARTELA") {
+        ControlSlider(
+            label = "Fondo",
+            value = state.cartoucheAlpha,
+            control = CalibrationControl.CARTOUCHE_ALPHA,
+            display = percent(state.cartoucheAlpha),
+            onChange = onChange,
+        )
+        ControlSlider(
+            label = "Regla",
+            value = state.cartoucheRuleAlpha,
+            control = CalibrationControl.CARTOUCHE_RULE_ALPHA,
+            display = percent(state.cartoucheRuleAlpha),
+            onChange = onChange,
+        )
+    }
+    CalibrationSection(title = "TROQUEL") {
+        ControlSlider(
+            label = "Cartón",
+            value = state.cardAlpha,
+            control = CalibrationControl.CARD_ALPHA,
+            display = percent(state.cardAlpha),
+            onChange = onChange,
+        )
+        ControlSlider(
+            label = "Tono filo",
+            value = state.hairlineTone.toFloat(),
+            control = CalibrationControl.HAIRLINE_TONE,
+            display = rgbHex(state.hairlineColorRgb),
+            onChange = onChange,
+        )
+    }
+}
+
+@Composable
 private fun CalibrationSection(title: String, content: @Composable () -> Unit) {
     HorizontalDivider(color = Paper.hairline.copy(alpha = 0.55f))
     Text(
@@ -593,3 +736,5 @@ private fun percent(value: Float): String = "${(value * 100).toInt()} %"
 
 private fun decimal(value: Float, suffix: String): String =
     String.format(Locale.ROOT, "%.1f%s", value, suffix)
+
+private fun rgbHex(rgb: Int): String = String.format(Locale.ROOT, "#%06X", rgb)

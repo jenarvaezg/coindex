@@ -81,6 +81,27 @@ fun AlbumHole(
     backed: Boolean = true,
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
 ) {
+    AlbumHole(
+        photo = photo,
+        modifier = modifier,
+        missing = missing,
+        backed = backed,
+        tone = AlbumToneConfig.Default,
+        onImageSettled = onImageSettled,
+    )
+}
+
+/** Configurable seam used by the calibration bench while preserving the production API. */
+@Composable
+fun AlbumHole(
+    photo: CoinPhoto?,
+    modifier: Modifier = Modifier,
+    missing: Boolean = false,
+    /** False for a loose coin: the photograph remains, but there is no album board around it. */
+    backed: Boolean = true,
+    tone: AlbumToneConfig,
+    onImageSettled: ((painted: Boolean) -> Unit)? = null,
+) {
     val candidates = photo?.candidates.orEmpty()
     var attempt by remember(candidates) { mutableIntStateOf(0) }
     var painted by remember(candidates) { mutableStateOf(false) }
@@ -92,9 +113,9 @@ fun AlbumHole(
         // cut's inner wall and the pale lower arc is the freshly exposed edge.
         if (backed) {
             Canvas(Modifier.fillMaxSize()) {
-                drawCircle(Paper.card)
+                drawCircle(Paper.card.copy(alpha = tone.cardAlpha))
                 drawCircle(
-                    color = Paper.ink.copy(alpha = 0.22f),
+                    color = tone.hairlineColor,
                     radius = size.minDimension / 2f - 1.dp.toPx(),
                     style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx()),
                 )

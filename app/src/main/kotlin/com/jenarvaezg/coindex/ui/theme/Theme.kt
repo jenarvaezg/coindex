@@ -21,14 +21,14 @@ import com.jenarvaezg.coindex.R
  */
 object Paper {
     val ink = Color(0xFF2D3029)
-    val muted = Color(0xFF696B5E)
+    val muted = Color(0xFF686A5D)
     val paper = Color(0xFFEEE8D7)
     val paperDeep = Color(0xFFDDD3BB)
     val line = Color(0xFF7D806C)
     val moss = Color(0xFF495C49)
     val rust = Color(0xFF8B553C)
-    val card = Color(0x57FFFCF2)
-    val hairline = Color(0xFF9F9B8B)
+    val card = Color(0x94FFFCF2)
+    val hairline = Color(0xFF878577)
 }
 
 /** Dimensions shared by the plate and the index, so cards line up across screens. */
