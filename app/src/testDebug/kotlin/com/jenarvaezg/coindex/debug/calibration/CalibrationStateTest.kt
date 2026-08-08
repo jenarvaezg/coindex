@@ -17,6 +17,7 @@ class CalibrationStateTest {
         assertEquals(48.3f, CalibrationState.YEAR_TAG_WIDTH_DP)
         assertEquals(28f, CalibrationState.YEAR_TAG_HEIGHT_DP)
         assertEquals(0.14f, state.ghostOpacity)
+        assertEquals(false, state.showGhost)
     }
 
     @Test
@@ -41,6 +42,19 @@ class CalibrationStateTest {
         assertEquals(0.09f, adjusted.ghostOpacity)
         assertEquals(48.3f, CalibrationState.YEAR_TAG_WIDTH_DP)
         assertEquals(28f, CalibrationState.YEAR_TAG_HEIGHT_DP)
+    }
+
+    @Test
+    fun `the same slot can expose the missing ghost state`() {
+        assertEquals(true, CalibrationState().withGhostShown(true).showGhost)
+    }
+
+    @Test
+    fun `lateral acceleration becomes a signed gloss position saturated at 45 degrees`() {
+        assertEquals(0f, lateralTiltFraction(x = 0f, y = 0f, z = 9.81f), 0.001f)
+        assertEquals(1f, lateralTiltFraction(x = 9.81f, y = 0f, z = 9.81f), 0.001f)
+        assertEquals(-1f, lateralTiltFraction(x = -9.81f, y = 0f, z = 9.81f), 0.001f)
+        assertEquals(1f, lateralTiltFraction(x = 100f, y = 0f, z = 1f), 0.001f)
     }
 
     @Test

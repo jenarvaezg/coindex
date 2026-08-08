@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.debug.calibration
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -29,9 +30,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,26 +47,38 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.Paper
 import java.util.Locale
+import kotlinx.coroutines.delay
 
-private const val OBVERSE_URL =
-    "https://en.numista.com/catalogue/photos/venezuela/503-original.jpg"
-private const val REVERSE_URL =
-    "https://en.numista.com/catalogue/photos/venezuela/502-original.jpg"
+private val OBVERSE_URLS = listOf(
+    "https://en.numista.com/catalogue/photos/venezuela/503-180.jpg",
+    "https://en.numista.com/catalogue/photos/venezuela/503-original.jpg",
+)
+private val REVERSE_URLS = listOf(
+    "https://en.numista.com/catalogue/photos/venezuela/502-180.jpg",
+    "https://en.numista.com/catalogue/photos/venezuela/502-original.jpg",
+)
+private val GHOST_FILTER = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
 
 @Composable
-fun CalibrationBenchScreen() {
+fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
     var state by remember { mutableStateOf(CalibrationState()) }
 
     Surface(color = Paper.paper, modifier = Modifier.fillMaxSize()) {
@@ -90,18 +106,19 @@ fun CalibrationBenchScreen() {
                 color = Paper.muted,
             )
             Spacer(Modifier.height(14.dp))
-            CalibrationSlot(state)
+            CalibrationSlot(state, glossPositionFraction)
             Spacer(Modifier.height(18.dp))
             CalibrationControls(
                 state = state,
                 onChange = { control, value -> state = state.withControl(control, value) },
+                onGhostShownChange = { shown -> state = state.withGhostShown(shown) },
             )
         }
     }
 }
 
 @Composable
-private fun CalibrationSlot(state: CalibrationState) {
+private fun CalibrationSlot(state: CalibrationState, glossPositionFraction: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,39 +128,11 @@ private fun CalibrationSlot(state: CalibrationState) {
             .background(Paper.paperDeep)
             .border(1.dp, Paper.hairline.copy(alpha = 0.55f), RoundedCornerShape(3.dp)),
     ) {
-        GhostDesign(state.ghostOpacity)
-        DottedRule(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center)
-                .padding(horizontal = 24.dp),
-        )
         GrainOverlay(state.grainOpacity)
 
-        Text(
-            text = "VENEZUELA",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(18.dp),
-            fontFamily = BarlowCondensedFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 12.sp,
-            letterSpacing = 1.sp,
-            color = Paper.moss,
-        )
-        Text(
-            text = "1/1",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 18.dp, end = 23.dp),
-            fontFamily = BarlowCondensedFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = Paper.ink,
-        )
-
-        FlippingCoin(
+        CoinRecess(
             state = state,
+            glossPositionFraction = glossPositionFraction,
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(bottom = 30.dp),
@@ -155,7 +144,7 @@ private fun CalibrationSlot(state: CalibrationState) {
                 .align(Alignment.BottomStart)
                 .padding(start = 18.dp, bottom = 18.dp),
         )
-        Stamp(
+        CompletionRatio(
             durationMillis = state.stampingDurationMillis,
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -165,25 +154,30 @@ private fun CalibrationSlot(state: CalibrationState) {
 }
 
 @Composable
-private fun GhostDesign(opacity: Float) {
-    AsyncImage(
-        model = REVERSE_URL,
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp)
-            .alpha(opacity),
-    )
-}
-
-@Composable
-private fun DottedRule(modifier: Modifier = Modifier) {
-    Canvas(modifier.height(1.dp)) {
-        var x = 0f
-        while (x < size.width) {
-            drawCircle(Paper.ink.copy(alpha = 0.46f), radius = 1.2f, center = center.copy(x = x))
-            x += 7f
+private fun CoinRecess(
+    state: CalibrationState,
+    glossPositionFraction: Float,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(133.dp)
+            .drawWithCache {
+                val coinRadius = 60.5.dp.toPx()
+                onDrawBehind {
+                    drawCircle(Paper.ink.copy(alpha = 0.24f), radius = coinRadius + 5.dp.toPx())
+                    drawCircle(Color.White.copy(alpha = 0.48f), radius = coinRadius + 2.dp.toPx())
+                    drawCircle(Paper.paperDeep, radius = coinRadius)
+                }
+            },
+    ) {
+        if (state.showGhost) {
+            GhostCoin(state.ghostOpacity)
+        } else {
+            FlippingCoin(state, glossPositionFraction)
         }
+        StaticAcetateReflection()
     }
 }
 
@@ -221,7 +215,56 @@ private fun GrainOverlay(opacity: Float) {
 }
 
 @Composable
-private fun FlippingCoin(state: CalibrationState, modifier: Modifier = Modifier) {
+private fun GhostCoin(opacity: Float) {
+    Box(
+        modifier = Modifier
+            .size(121.dp)
+            .clip(CircleShape)
+            .background(Paper.paperDeep),
+    ) {
+        CatalogFace(
+            candidates = REVERSE_URLS,
+            contentDescription = "Fantasma del Bolívar de 1960",
+            colorFilter = GHOST_FILTER,
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(opacity),
+        )
+        Canvas(Modifier.fillMaxSize().padding(5.dp)) {
+            drawCircle(
+                color = Paper.ink.copy(alpha = 0.46f),
+                style = Stroke(
+                    width = 1.dp.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 4.dp.toPx())),
+                ),
+            )
+        }
+    }
+}
+
+@Composable
+private fun StaticAcetateReflection() {
+    Canvas(
+        Modifier
+            .size(121.dp)
+            .clip(CircleShape),
+    ) {
+        drawCircle(
+            brush = Brush.linearGradient(
+                0f to Color.Transparent,
+                0.42f to Color.Transparent,
+                0.5f to Color.White.copy(alpha = 0.24f),
+                0.58f to Color.Transparent,
+                1f to Color.Transparent,
+                start = androidx.compose.ui.geometry.Offset(0f, size.height),
+                end = androidx.compose.ui.geometry.Offset(size.width, 0f),
+            ),
+        )
+    }
+}
+
+@Composable
+private fun FlippingCoin(state: CalibrationState, glossPositionFraction: Float) {
     val transition = rememberInfiniteTransition(label = "coin calibration")
     val rotation by transition.animateFloat(
         initialValue = 0f,
@@ -246,31 +289,42 @@ private fun FlippingCoin(state: CalibrationState, modifier: Modifier = Modifier)
             .clip(CircleShape)
             .background(Paper.paper),
     ) {
-        AsyncImage(
-            model = if (showsObverse) OBVERSE_URL else REVERSE_URL,
+        CatalogFace(
+            candidates = if (showsObverse) OBVERSE_URLS else REVERSE_URLS,
             contentDescription = if (showsObverse) "Anverso del Bolívar de 1960" else "Reverso del Bolívar de 1960",
             modifier = Modifier.fillMaxSize(),
         )
-        GlossOverlay(state.glossIntensity, state.glossTravelDp.dp)
+        GlossOverlay(state.glossIntensity, state.glossTravelDp.dp, glossPositionFraction)
     }
 }
 
 @Composable
-private fun GlossOverlay(intensity: Float, travel: Dp) {
-    val transition = rememberInfiniteTransition(label = "gloss calibration")
-    val travelPx = with(androidx.compose.ui.platform.LocalDensity.current) { travel.toPx() }
-    val position by transition.animateFloat(
-        initialValue = -travelPx,
-        targetValue = travelPx,
-        animationSpec = infiniteRepeatable(
-            animation = tween(900, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "±${travel.value} dp gloss travel",
+private fun CatalogFace(
+    candidates: List<String>,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    colorFilter: ColorFilter? = null,
+) {
+    var attempt by remember(candidates) { mutableIntStateOf(0) }
+    AsyncImage(
+        model = candidates[attempt],
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Crop,
+        colorFilter = colorFilter,
+        onState = { state ->
+            if (state is AsyncImagePainter.State.Error && attempt < candidates.lastIndex) {
+                attempt += 1
+            }
+        },
+        modifier = modifier,
     )
+}
 
+@Composable
+private fun GlossOverlay(intensity: Float, travel: Dp, positionFraction: Float) {
     Canvas(Modifier.fillMaxSize()) {
         val bandWidth = size.width * 0.32f
+        val position = positionFraction * travel.toPx()
         drawContext.canvas.save()
         drawContext.canvas.nativeCanvas.rotate(
             CalibrationState.GLOSS_ANGLE_DEGREES,
@@ -326,33 +380,52 @@ private fun RecessedYearTag(depth: Dp, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Stamp(durationMillis: Int, modifier: Modifier = Modifier) {
-    val transition = rememberInfiniteTransition(label = "stamp calibration")
-    val scale by transition.animateFloat(
-        initialValue = 1.16f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "$durationMillis ms stamp",
-    )
+private fun CompletionRatio(durationMillis: Int, modifier: Modifier = Modifier) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier.size(width = 84.dp, height = 76.dp)) {
+        Text(
+            text = "22/22",
+            modifier = Modifier.padding(top = 14.dp),
+            fontFamily = BarlowCondensedFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            color = Paper.rust.copy(alpha = 0.45f),
+        )
+        Stamp(durationMillis)
+    }
+}
+
+@Composable
+private fun Stamp(durationMillis: Int) {
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(durationMillis) {
+        while (true) {
+            progress.snapTo(0f)
+            progress.animateTo(1f, animationSpec = tween(durationMillis))
+            delay(1_200)
+        }
+    }
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier
             .size(width = 84.dp, height = 76.dp)
             .graphicsLayer {
+                val scale = 1.16f - progress.value * 0.16f
                 scaleX = scale
                 scaleY = scale
                 rotationZ = 5.5f
+                alpha = progress.value
+                blendMode = BlendMode.Multiply
             }
-            .border(2.dp, Paper.rust.copy(alpha = 0.72f), RoundedCornerShape(50)),
+            .border(2.dp, Paper.rust.copy(alpha = 0.82f), RoundedCornerShape(1.dp))
+            .padding(4.dp)
+            .border(1.dp, Paper.rust.copy(alpha = 0.72f), RoundedCornerShape(1.dp)),
     ) {
         Text(
             text = "COMPLETA",
+            modifier = Modifier.padding(top = 7.dp),
             fontFamily = BarlowCondensedFamily,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 11.sp,
+            fontSize = 10.sp,
             letterSpacing = 0.8.sp,
             color = Paper.rust.copy(alpha = 0.82f),
         )
@@ -363,6 +436,7 @@ private fun Stamp(durationMillis: Int, modifier: Modifier = Modifier) {
 private fun CalibrationControls(
     state: CalibrationState,
     onChange: (CalibrationControl, Float) -> Unit,
+    onGhostShownChange: (Boolean) -> Unit,
 ) {
     CalibrationSection(title = "PAPEL · MOSAICO 256 PX · SOFT-LIGHT") {
         ControlSlider(
@@ -417,6 +491,14 @@ private fun CalibrationControls(
         )
     }
     CalibrationSection(title = "FANTASMA · DISEÑO Y REGLA PUNTEADA") {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = "Casilla vacía", style = MaterialTheme.typography.bodyMedium)
+            Switch(checked = state.showGhost, onCheckedChange = onGhostShownChange)
+        }
         ControlSlider(
             label = "Opacidad",
             value = state.ghostOpacity,
