@@ -7,10 +7,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * How many cards the index puts side by side.
+ * The pure layout decisions behind the collection index.
  *
- * The count is the layout's one decision: it picks the number of columns and, with it, whether
- * the heading folds into a spread. A phone in portrait must stay exactly as it was.
+ * The column count decides whether the heading folds into a spread. The rendered height of the
+ * card name is covered on-device by `CollectionNameTest`, where Compose can measure the text.
  */
 class IndexLayoutTest {
     @Test

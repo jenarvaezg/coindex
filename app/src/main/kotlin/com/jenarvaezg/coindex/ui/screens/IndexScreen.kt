@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,8 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
@@ -78,6 +81,9 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one round coin and two short lines under it. */
 private val MIN_CARD_WIDTH = 104.dp
+
+/** Every card reserves the same name range, so the fractions form one baseline across a row. */
+internal const val COLLECTION_NAME_LINES = 2
 
 private val PAGE_MARGIN = 12.dp
 private val INDEX_GUTTER = 8.dp
@@ -472,13 +478,7 @@ private fun CollectionCard(
             modifier = Modifier
                 .size(104.dp),
         )
-        Text(
-            text = card.name,
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
-        )
+        CollectionName(card.name)
         Text(
             card.coverage?.let(::indexCoverageLabel) ?: countLabel(card.distinctTypes, card.quantity),
             style = MaterialTheme.typography.labelLarge,
@@ -486,6 +486,25 @@ private fun CollectionCard(
             textAlign = TextAlign.Center,
         )
     }
+}
+
+/** The fixed two-line cartouche shared by every collection card in a grid row. */
+@Composable
+internal fun CollectionName(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = name,
+        style = MaterialTheme.typography.titleMedium,
+        autoSize = TextAutoSize.StepBased(
+            minFontSize = 13.sp,
+            maxFontSize = 17.sp,
+            stepSize = 0.5.sp,
+        ),
+        textAlign = TextAlign.Center,
+        minLines = COLLECTION_NAME_LINES,
+        maxLines = COLLECTION_NAME_LINES,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier.padding(top = 6.dp, bottom = 2.dp),
+    )
 }
 
 /**
