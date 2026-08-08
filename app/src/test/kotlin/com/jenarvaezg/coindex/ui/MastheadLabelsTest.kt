@@ -17,6 +17,7 @@ class MastheadLabelsTest {
     @Test
     fun `every screen reached through them names itself`() {
         assertEquals("Ajustes", screenTitle(Routes.SETTINGS))
+        assertEquals("Avisos y licencias", screenTitle(Routes.NOTICES))
     }
 
     @Test

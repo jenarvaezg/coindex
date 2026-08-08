@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,6 +57,8 @@ import com.jenarvaezg.coindex.ui.print.printedDiameterLabel
 import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.qrRuns
 import com.jenarvaezg.coindex.ui.theme.Paper
+import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
+import com.jenarvaezg.coindex.ui.theme.BitterFamily
 
 /** The density that makes one dp a millimetre of paper: the layout is written in millimetres. */
 val printDensity = Density(density = PrintGeometry.PX_PER_MM, fontScale = 1f)
@@ -70,47 +71,47 @@ private val Float.mm: Dp get() = Dp(this)
 // multiple of a phone's. A4 is not, and paper diverges from the screen on purpose (#169) — 3 mm of
 // serif is around 8,5 pt, which is what a printed album caption is set in.
 private val PRINT_EYEBROW = TextStyle(
-    fontFamily = FontFamily.SansSerif,
-    fontWeight = FontWeight.Bold,
+    fontFamily = BarlowCondensedFamily,
+    fontWeight = FontWeight.SemiBold,
     fontSize = 2.6f.sp,
-    letterSpacing = 0.35f.sp,
+    fontFeatureSettings = "'smcp', 'tnum'",
 )
 private val PRINT_TITLE = TextStyle(
-    fontFamily = FontFamily.Serif,
+    fontFamily = BitterFamily,
     fontSize = 7f.sp,
     lineHeight = 8f.sp,
 )
 private val PRINT_SUBTITLE = TextStyle(
-    fontFamily = FontFamily.Serif,
+    fontFamily = BitterFamily,
     fontSize = 3.6f.sp,
     lineHeight = 4.2f.sp,
 )
 private val PRINT_FACT_LABEL = TextStyle(
-    fontFamily = FontFamily.SansSerif,
-    fontWeight = FontWeight.Bold,
+    fontFamily = BarlowCondensedFamily,
+    fontWeight = FontWeight.SemiBold,
     fontSize = 2.2f.sp,
-    letterSpacing = 0.25f.sp,
+    fontFeatureSettings = "'smcp', 'tnum'",
 )
 private val PRINT_FACT_VALUE = TextStyle(
-    fontFamily = FontFamily.Serif,
+    fontFamily = BitterFamily,
     fontSize = 3.2f.sp,
     lineHeight = 3.6f.sp,
 )
 private val PRINT_STATE = TextStyle(
-    fontFamily = FontFamily.SansSerif,
-    fontWeight = FontWeight.Bold,
+    fontFamily = BarlowCondensedFamily,
+    fontWeight = FontWeight.SemiBold,
     fontSize = 2.3f.sp,
-    letterSpacing = 0.25f.sp,
+    fontFeatureSettings = "'smcp', 'tnum'",
 )
 private val PRINT_CELL_TITLE = TextStyle(
-    fontFamily = FontFamily.Serif,
+    fontFamily = BitterFamily,
     fontSize = 2.9f.sp,
     lineHeight = 3.3f.sp,
 )
 private val PRINT_FOOTNOTE = TextStyle(
-    fontFamily = FontFamily.SansSerif,
+    fontFamily = BarlowCondensedFamily,
     fontSize = 2.3f.sp,
-    letterSpacing = 0.1f.sp,
+    fontFeatureSettings = "'tnum'",
 )
 
 /** The side of the box that gets ticked on a page with no photographs (#231). */
@@ -238,7 +239,7 @@ private fun PlateHeading(block: PrintBlock) {
             ) {
                 section.facts.forEach { (label, value) ->
                     Column {
-                        Text(label.uppercase(), style = PRINT_FACT_LABEL, color = Paper.muted)
+                        Text(label, style = PRINT_FACT_LABEL, color = Paper.muted)
                         Text(value, style = PRINT_FACT_VALUE, maxLines = 1)
                     }
                 }
@@ -453,7 +454,7 @@ private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modif
 private fun CellState(cell: PrintCell, modifier: Modifier = Modifier) {
     val state = cell.state ?: return
     Text(
-        state.uppercase(),
+        state,
         style = PRINT_STATE,
         color = if (cell.filled) Paper.rust else Paper.muted,
         maxLines = 1,

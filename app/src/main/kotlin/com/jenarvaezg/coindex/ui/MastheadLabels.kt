@@ -12,6 +12,7 @@ private const val STRAPLINE = "Inventario de campo · plata bullion"
 
 fun screenTitle(route: String?, subjectName: String? = null): String = when {
     route == Routes.SETTINGS -> "Ajustes"
+    route == Routes.NOTICES -> "Avisos y licencias"
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
     // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
     // «Tu agrupación» was the last place in the app that ranked a box below the rest.

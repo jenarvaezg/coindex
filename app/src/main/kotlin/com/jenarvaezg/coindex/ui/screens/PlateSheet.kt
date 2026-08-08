@@ -160,7 +160,7 @@ private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
             plate.entries.forEach { (label, value) ->
                 Column {
                     Text(
-                        label.uppercase(),
+                        label,
                         style = MaterialTheme.typography.labelSmall.scaledBy(scale * 1.15f),
                         color = Paper.muted,
                     )
@@ -198,7 +198,7 @@ private fun SheetCell(
             onPaper = true,
         )
         Text(
-            cell.state.uppercase(),
+            cell.state,
             style = MaterialTheme.typography.labelMedium,
             color = if (cell.owned) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 8.dp),

@@ -5,11 +5,15 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jenarvaezg.coindex.R
 
 /**
  * Ornithological field-guide palette, carried over from the frozen web prototype so both
@@ -57,62 +61,76 @@ private val fieldColors = lightColorScheme(
     outline = Paper.line,
 )
 
+@OptIn(ExperimentalTextApi::class)
+val BitterFamily = FontFamily(
+    Font(
+        R.font.bitter_variable,
+        weight = FontWeight.Normal,
+        variationSettings = FontVariation.Settings(FontVariation.weight(400)),
+    ),
+)
+
+val BarlowCondensedFamily = FontFamily(
+    Font(R.font.barlow_condensed_regular, weight = FontWeight.Normal),
+    Font(R.font.barlow_condensed_semibold, weight = FontWeight.SemiBold),
+)
+
 /**
  * A guide, not a dashboard: serif for prose, a condensed sans in small caps for data. The
  * palette is paper-toned in both system themes on purpose — the plate is a printed page.
  */
 private val fieldTypography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = BitterFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 40.sp,
         lineHeight = 42.sp,
     ),
     headlineMedium = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = BitterFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 26.sp,
         lineHeight = 30.sp,
     ),
     titleLarge = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = BitterFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 21.sp,
         lineHeight = 25.sp,
     ),
     titleMedium = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = BitterFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 17.sp,
         lineHeight = 21.sp,
     ),
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = BitterFamily,
         fontSize = 16.sp,
         lineHeight = 23.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = BitterFamily,
         fontSize = 14.sp,
         lineHeight = 20.sp,
     ),
     labelLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
+        fontFamily = BarlowCondensedFamily,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp,
-        letterSpacing = 0.8.sp,
+        fontFeatureSettings = "'smcp', 'tnum'",
     ),
     labelMedium = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
+        fontFamily = BarlowCondensedFamily,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 11.sp,
-        letterSpacing = 1.4.sp,
+        fontFeatureSettings = "'smcp', 'tnum'",
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
+        fontFamily = BarlowCondensedFamily,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 10.sp,
-        letterSpacing = 1.2.sp,
+        fontFeatureSettings = "'smcp', 'tnum'",
     ),
 )
 

@@ -57,7 +57,8 @@ class LabelsTest {
     fun `a card with an issue list says its progress, and claims no closure when nothing is missing`() {
         assertEquals("4 de 12 · te faltan 8", coverageLabel(CoverageRatio(4, 12)))
         assertEquals("0 de 52 · te faltan 52", coverageLabel(CoverageRatio(0, 52)))
-        // Ni «completa» ni «22/22 ✓»: por el ADR 0020 una serie abierta no tiene completitud que
+        // Ni «completa» ni una marca de 22/22: por el ADR 0020 una serie abierta no tiene
+        // completitud que
         // afirmar, y este enero las mismas 22 casillas pueden ser 23.
         assertEquals("22 de 22", coverageLabel(CoverageRatio(22, 22)))
     }

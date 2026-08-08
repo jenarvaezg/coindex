@@ -183,7 +183,7 @@ private fun PlateCell(
             missing = !cell.owned,
         )
         Text(
-            cell.state.uppercase(),
+            cell.state,
             style = MaterialTheme.typography.labelMedium,
             color = if (cell.owned) Paper.rust else Paper.muted,
             modifier = Modifier.padding(top = 10.dp),

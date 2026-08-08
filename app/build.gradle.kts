@@ -1,4 +1,28 @@
 import java.util.Properties
+import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
+
+@CacheableTask
+abstract class GenerateReleaseRuntimeLicenseGroups : DefaultTask() {
+    @get:Input
+    abstract val groups: SetProperty<String>
+
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
+
+    @TaskAction
+    fun generate() {
+        val output = outputFile.get().asFile
+        output.parentFile.mkdirs()
+        output.writeText(groups.get().sorted().joinToString(separator = "\n", postfix = "\n"))
+    }
+}
 
 plugins {
     // AGP 9 ships built-in Kotlin support; applying `kotlin-android` is now an error.
@@ -16,8 +40,8 @@ android {
         applicationId = "com.jenarvaezg.coindex"
         minSdk = 29
         targetSdk = 36
-        versionCode = 24
-        versionName = "0.16.0"
+        versionCode = 25
+        versionName = "0.17.0"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
@@ -69,6 +93,21 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+val releaseRuntimeGroupsFile =
+    layout.buildDirectory.file("generated/licenses/release-runtime-groups.txt")
+val generateReleaseRuntimeLicenseGroups =
+    tasks.register<GenerateReleaseRuntimeLicenseGroups>("generateReleaseRuntimeLicenseGroups") {
+        description = "Writes the unique external module groups in the release runtime classpath."
+        outputFile.set(releaseRuntimeGroupsFile)
+        groups.set(configurations.named("releaseRuntimeClasspath").map { configuration ->
+            configuration.incoming.resolutionResult.allComponents
+                .mapNotNull { component ->
+                    (component.id as? ModuleComponentIdentifier)?.group
+                }
+                .toSet()
+        })
+    }
+
 // The unit tests read the curated seeds and the recorded Numista responses straight from the repo
 // root —`../data` and `../fixtures`, see `Fixtures.kt`— instead of from a copy on the classpath, so
 // Gradle sees no dependency on either. A catalog or a fixture could change and the cached test
@@ -76,6 +115,13 @@ ksp {
 // and only `--rerun` revealed the failure. Declaring both directories as inputs is what makes a
 // data-only change invalidate that cache.
 tasks.withType<Test>().configureEach {
+    dependsOn(generateReleaseRuntimeLicenseGroups)
+    inputs.file(releaseRuntimeGroupsFile)
+        .withPropertyName("releaseRuntimeDependencyGroups")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(layout.projectDirectory.dir("src/main/assets/licenses"))
+        .withPropertyName("packagedLicenseNotices")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.dir(rootProject.layout.projectDirectory.dir("data"))
         .withPropertyName("curatedSeedData")
         .withPathSensitivity(PathSensitivity.RELATIVE)

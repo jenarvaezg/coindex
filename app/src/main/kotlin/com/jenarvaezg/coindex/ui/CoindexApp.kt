@@ -40,6 +40,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.ui.components.BackGlyph
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
@@ -47,6 +48,7 @@ import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.MissingSubject
+import com.jenarvaezg.coindex.ui.screens.NoticesScreen
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
@@ -289,7 +291,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         values = values,
                         budget = state.budget,
                         photoCache = state.photoCache,
-                        versionName = state.versionName,
                         validation = state.validation,
                         onSave = { apiKey, userId, budgetCap ->
                             if (viewModel.saveSettings(apiKey, userId, budgetCap)) {
@@ -304,7 +305,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             navController.popBackStack(Routes.INDEX, inclusive = false)
                             viewModel.signOut()
                         },
+                        onOpenNotices = { navController.navigate(Routes.NOTICES) },
                     )
+                }
+                composable(Routes.NOTICES) {
+                    NoticesScreen()
                 }
                 composable(Routes.PLATE) { entry ->
                     val catalogId = entry.arguments?.getString("catalogId").orEmpty()
@@ -493,7 +498,11 @@ private fun Masthead(
         ) {
             Text("COINDEX", style = MaterialTheme.typography.titleLarge)
             when {
-                onBack != null -> CardAction(text = "← Volver", onClick = onBack)
+                onBack != null -> CardAction(
+                    text = "Volver",
+                    onClick = onBack,
+                    icon = { BackGlyph() },
+                )
                 onOpenSettings != null -> CardAction(text = "Ajustes", onClick = onOpenSettings)
             }
         }
