@@ -40,8 +40,9 @@ android {
         applicationId = "com.jenarvaezg.coindex"
         minSdk = 29
         targetSdk = 36
-        versionCode = 26
-        versionName = "0.18.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 27
+        versionName = "0.18.1"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
@@ -145,6 +146,10 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.junit)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
