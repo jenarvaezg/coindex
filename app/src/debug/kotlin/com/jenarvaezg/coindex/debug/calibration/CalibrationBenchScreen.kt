@@ -162,22 +162,50 @@ private fun CoinRecess(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(133.dp)
-            .drawWithCache {
-                val coinRadius = 60.5.dp.toPx()
-                onDrawBehind {
-                    drawCircle(Paper.ink.copy(alpha = 0.24f), radius = coinRadius + 5.dp.toPx())
-                    drawCircle(Color.White.copy(alpha = 0.48f), radius = coinRadius + 2.dp.toPx())
-                    drawCircle(Paper.paperDeep, radius = coinRadius)
-                }
-            },
+            .size(133.dp),
     ) {
+        Spacer(
+            Modifier
+                .size(127.dp)
+                .clip(CircleShape)
+                .background(Paper.paperDeep),
+        )
         if (state.showGhost) {
             GhostCoin(state.ghostOpacity)
         } else {
             FlippingCoin(state, glossPositionFraction)
         }
+        RecessEdge()
         StaticAcetateReflection()
+    }
+}
+
+@Composable
+private fun RecessEdge() {
+    Canvas(Modifier.size(127.dp)) {
+        val inset = 3.dp.toPx()
+        val arcSize = androidx.compose.ui.geometry.Size(
+            width = size.width - inset * 2,
+            height = size.height - inset * 2,
+        )
+        drawArc(
+            color = Paper.ink.copy(alpha = 0.24f),
+            startAngle = 180f,
+            sweepAngle = 180f,
+            useCenter = false,
+            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
+            size = arcSize,
+            style = Stroke(width = 5.dp.toPx()),
+        )
+        drawArc(
+            color = Color.White.copy(alpha = 0.52f),
+            startAngle = 0f,
+            sweepAngle = 180f,
+            useCenter = false,
+            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
+            size = arcSize,
+            style = Stroke(width = 2.dp.toPx()),
+        )
     }
 }
 
