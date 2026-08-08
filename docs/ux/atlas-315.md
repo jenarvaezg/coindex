@@ -8,8 +8,8 @@ por el dominio de verdad — `Curation.assemble` y `buildCollectionCatalogAlbum`
 
 **La colección entera de una vez no es una pantalla nueva: es el cuaderno con otro eje.** La mancha
 de países y el eje de años son dos órdenes de la misma hoja de álbum, elegidos en el estante plegado
-que la app ya tiene (ADR 0021 §1). **El primer nivel no crece**, y el pie sigue teniendo cuatro
-cubos.
+que la app ya tiene (ADR 0021 §1). **El primer nivel no crece**: la barra de jerarquías sigue siendo
+dos mitades de una raya, «Colecciones · 69» y «Monedas · 192».
 
 ## Antes de dibujar: tres premisas del ticket estaban mal
 
@@ -63,6 +63,10 @@ nadie tiene que aprender nada. El estante nace plegado, y cerrarlo paga en sitio
 un cuarto de pantalla menos. Plegado nombra el eje sólo cuando no es el de siempre, que es la regla
 que `shelfSummary` ya aplica al orden; abierto no lo nombra, porque la pestañita está a la vista.
 
+**Y el estante no lleva botón de «cerrar»**: la fila entera es el control, así que la palabra era un
+segundo mando para lo mismo. Una cadena menos de las 176 que censó el
+[#297](https://github.com/jenarvaezg/coindex/issues/297).
+
 ### El eje por año tiene tres estados, no dos
 
 Moneda si tiene algo de ese año, **hueco fantasma** si alguna lámina nombra ese año y no lo tiene, y
@@ -115,7 +119,7 @@ pasa de 36 a **37 emisores**.
 | **La tira de años con roturas** | 2,31 pantallas y 58 palabras, porque «10 años sin nada que buscar» se repite veinte veces y cada rotura gasta una fila entera. Los rótulos de dos cifras («80», «91», «13») son ambiguos entre siglos. |
 | **La tabla de países** | Una pantalla, 26 palabras y **cero monedas**: el cuadro de mandos que prohíbe `spec.md §0.4`, en ropa de papel. Sirvió de control: prueba que los datos caben en una pantalla, y que lo que la hoja añade es ver monedas en vez de porcentajes. |
 | **Llamar «láminas» al cubo de Colecciones** | **20 de las 69 tarjetas del índice del padre no tienen lámina que abrir** (`plateCatalogId` nulo): «100 francs Egalité», «5 francs Semeuse», «Alemanas de plata de ley»… En la de Jose son 4 de 47. El nombre prometería una lámina al 29 % de sus tarjetas, y el glosario de `CONTEXT.md` reserva *plate* para la lámina **de un catálogo**. |
-| **Un quinto cubo en el pie** | Cabe —cinco versalitas de 13,5 px en 411 dp— y no hace falta: si la hoja necesita un nombre que compita con «Colecciones», es que no es un destino. |
+| **Una tercera celda en la barra** | La barra de jerarquías son **dos** celdas con su recuento, no cuatro cubos: `HierarchyBar` sólo cruza Colecciones ↔ Monedas, Ajustes cuelga de la cabecera y **el cuaderno no es un destino sino la exportación**. Una tercera celda tendría que traer su propio recuento, y el de la hoja son casillas —«El mundo · 678»—, que es otro grano que las tarjetas y los tipos. Y hubo que ponerle un nombre: el único que servía, «tu colección», competía con «Colecciones». Si una pantalla necesita un nombre que pelea con el que ya hay, no es una pantalla. |
 
 ![El mapa del mundo: 15 emisores coloreados y 81 palabras de disculpa](atlas-315/descarte-mapa.jpg)
 ![Los mapitas: 56 dp por emisor para decir lo que dice el rótulo](atlas-315/descarte-mapitas.jpg)
@@ -127,6 +131,11 @@ pasa de 36 a **37 emisores**.
 
 - **El ADR 0021 no se enmienda por esto.** El primer nivel no crece: la hoja es Colecciones con el
   eje puesto. Lo que sí gana el estante es una faceta —el eje—, y eso es §1, no §2.
+- **Corrección de esta misma sesión**: las primeras capturas dibujaban un pie de cuatro cubos
+  —«colecciones · monedas · cuaderno · ajustes»— que **la app no tiene**. Están rehechas con
+  `HierarchyBar`. El cuaderno impreso no se toca: sigue siendo la exportación del índice
+  («Exportar N láminas», #228), que el [#305](https://github.com/jenarvaezg/coindex/issues/305) bajó
+  a la regleta.
   [#317](https://github.com/jenarvaezg/coindex/issues/317) recibe este argumento con el dibujo
   delante.
 - **Los dos años de una pieza** —el grabado y el gregoriano— piden una línea en la especificación,
