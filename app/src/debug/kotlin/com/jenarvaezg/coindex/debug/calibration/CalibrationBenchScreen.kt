@@ -308,7 +308,7 @@ private fun FlippingCoin(state: CalibrationState, glossPositionFraction: Float) 
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = Modifier
             .size(121.dp)
             .graphicsLayer {
                 rotationY = faceRotation
