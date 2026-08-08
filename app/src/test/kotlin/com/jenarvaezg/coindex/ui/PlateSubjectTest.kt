@@ -149,7 +149,7 @@ class PlateSubjectTest {
 
         assertEquals(1, album.issuedMembers())
         assertEquals("Progreso" to "1 / 1 emisiones", plate.entries[0])
-        assertEquals("Sin ficha" to "1 emisión no medible", plate.entries[1])
+        assertEquals("" to "1 emisión no medible", plate.entries[1])
     }
 
     @Test
@@ -318,16 +318,20 @@ class PlateSubjectTest {
         )
 
         assertEquals("Progreso" to "1 / 2 emisiones", plate.entries[0])
-        assertEquals("Sin emitir" to "1 anunciada", plate.entries[1])
-        assertEquals("Sin ficha" to "1 emisión no medible", plate.entries[2])
+        assertEquals("" to "1 anunciada", plate.entries[1])
+        assertEquals("" to "1 emisión no medible", plate.entries[2])
     }
 
-    /**
-     * The four states a casilla can be in, said in the cells rather than by each drawer: the screen
-     * and the sheet used to ask for the prose themselves, and the notebook asked again.
-     */
     @Test
-    fun `every album status is prose in its own cell`() {
+    fun `the screen shows the ratio without printing the Progreso label`() {
+        val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879)))
+
+        assertEquals("Progreso" to "1 / 2 emisiones", plate.entries[0])
+        assertEquals("" to "1 / 2 emisiones", plateScreenEntries(plate.entries)[0])
+    }
+
+    @Test
+    fun `only a Missing member is drawn as a ghost`() {
         val members = dateRun + unlisted + announced
         val catalog = catalog(members)
         val album = CollectionCatalogAlbum(
@@ -347,11 +351,8 @@ class PlateSubjectTest {
 
         val plate = plateSubject(PlateResult.Available(catalog, album))
 
-        assertEquals(
-            listOf("Tengo · ×2", "Me falta", "Sin ficha", "Sin emitir"),
-            plate.cells.map { it.state },
-        )
         assertEquals(listOf(true, false, false, false), plate.cells.map { it.owned })
+        assertEquals(listOf(false, true, false, false), plate.cells.map { it.missing })
         // What identifies a cell to a drawer: its key, its title and the type behind it.
         assertEquals(listOf("1879", "1886", "2023-rabbit", "2027-goat"), plate.cells.map { it.id })
         assertEquals(
@@ -360,10 +361,4 @@ class PlateSubjectTest {
         )
     }
 
-    @Test
-    fun `a single owned piece says «Tengo» without a count`() {
-        val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879)))
-
-        assertEquals(listOf("Tengo", "Me falta"), plate.cells.map { it.state })
-    }
 }

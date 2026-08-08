@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -50,11 +52,17 @@ data class DrawnCell(
     val label: String,
     /** The Numista type behind it, or null for an announced or unlisted casilla. */
     val numistaTypeId: Int?,
-    /** «Tengo · ×2», «Me falta», «Sin ficha», «Sin emitir». */
-    val state: String,
     val footnote: String?,
     val owned: Boolean,
+    /** Only an issued member absent from the collection gets the catalog-design ghost. */
+    val missing: Boolean,
 )
+
+/** The one catalog photograph a resting plate shows and exports. */
+fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
+    PrintedSide.Obverse -> obverse
+    PrintedSide.Reverse -> reverse
+}
 
 /**
  * The plate of one catalog, worded once.
@@ -78,9 +86,9 @@ fun plateSubject(plate: PlateResult.Available): PlateSubject {
                 id = albumMember.member.id,
                 label = albumMember.member.label,
                 numistaTypeId = albumMember.member.numistaTypeId,
-                state = plateMemberStateLabel(albumMember.status),
                 footnote = plateCellFootnote(albumMember.member, common),
                 owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
+                missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
             )
         },
     )
@@ -127,15 +135,6 @@ private fun plateCellFootnote(member: CollectionCatalogMember, common: PlateComm
     return year.toString()
 }
 
-/** The state prose shared by the interactive plate and the exported sheet. */
-private fun plateMemberStateLabel(status: CollectionCatalogMemberStatus): String = when (status) {
-    CollectionCatalogMemberStatus.Missing -> "Me falta"
-    CollectionCatalogMemberStatus.Unlisted -> "Sin ficha"
-    CollectionCatalogMemberStatus.NotYetIssued -> "Sin emitir"
-    is CollectionCatalogMemberStatus.Owned ->
-        if (status.quantity > 1) "Tengo · ×${status.quantity}" else "Tengo"
-}
-
 /**
  * The plate's specification block, said once for the three drawers.
  *
@@ -155,13 +154,13 @@ private fun plateEntries(
     add("Progreso" to "${album.ownedMembers()} / ${album.issuedMembers()} emisiones")
     val announced = album.announcedMembers()
     if (announced > 0) {
-        add("Sin emitir" to if (announced == 1) "1 anunciada" else "$announced anunciadas")
+        add("" to if (announced == 1) "1 anunciada" else "$announced anunciadas")
     }
     val unlisted = album.unlistedMembers()
     if (unlisted > 0) {
         add(
-            "Sin ficha" to
-                if (unlisted == 1) "1 emisión no medible" else "$unlisted emisiones no medibles",
+            "" to
+                if (unlisted == 1) "1 emisión no medible" else "$unlisted no medibles",
         )
     }
     // The second reading (ADR 0022), after the plate's own progress and never mixed into it:
@@ -177,3 +176,9 @@ private fun plateEntries(
     common.year?.let { year -> add("Año" to year.toString()) }
     add("Actualizado" to catalog.updatedAt)
 }
+
+/** Screen furniture omits the progress label; exported paper keeps the shared fact intact. */
+fun plateScreenEntries(entries: List<Pair<String, String>>): List<Pair<String, String>> =
+    entries.map { (label, value) ->
+        if (label == "Progreso") "" to value else label to value
+    }

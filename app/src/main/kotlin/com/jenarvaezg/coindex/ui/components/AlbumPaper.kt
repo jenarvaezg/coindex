@@ -13,11 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -73,10 +76,13 @@ fun PaperGrain(
 fun AlbumHole(
     photo: CoinPhoto?,
     modifier: Modifier = Modifier,
+    missing: Boolean = false,
+    onImageSettled: ((painted: Boolean) -> Unit)? = null,
 ) {
     val candidates = photo?.candidates.orEmpty()
     var attempt by remember(candidates) { mutableIntStateOf(0) }
     var painted by remember(candidates) { mutableStateOf(false) }
+    var settled by remember(candidates) { mutableStateOf(false) }
     val url = candidates.getOrNull(attempt)
 
     Box(modifier = modifier) {
@@ -115,14 +121,27 @@ fun AlbumHole(
                     contentScale = ContentScale.Crop,
                     onState = { state ->
                         when (state) {
-                            is AsyncImagePainter.State.Success -> painted = true
+                            is AsyncImagePainter.State.Success -> {
+                                painted = true
+                                if (!settled) {
+                                    settled = true
+                                    onImageSettled?.invoke(true)
+                                }
+                            }
                             is AsyncImagePainter.State.Error -> {
-                                if (attempt < candidates.lastIndex) attempt += 1
+                                if (attempt < candidates.lastIndex) {
+                                    attempt += 1
+                                } else if (!settled) {
+                                    settled = true
+                                    onImageSettled?.invoke(false)
+                                }
                             }
                             else -> Unit
                         }
                     },
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(if (missing) 0.14f else 1f),
                 )
             }
 
@@ -161,6 +180,19 @@ fun AlbumHole(
                         end = androidx.compose.ui.geometry.Offset(size.width, 0f),
                     ),
                 )
+                if (missing) {
+                    drawCircle(
+                        color = Paper.ink.copy(alpha = 0.48f),
+                        radius = size.minDimension / 2f - 6.dp.toPx(),
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(
+                            width = 1.dp.toPx(),
+                            cap = StrokeCap.Round,
+                            pathEffect = PathEffect.dashPathEffect(
+                                floatArrayOf(1.dp.toPx(), 4.dp.toPx()),
+                            ),
+                        ),
+                    )
+                }
             }
         }
     }

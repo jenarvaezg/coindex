@@ -85,7 +85,7 @@ private fun plateSection(
         cells = plate.cells.map { cell ->
             PrintCell(
                 label = cell.label,
-                state = cell.state,
+                state = null,
                 footnote = cell.footnote,
                 // A hole keeps **its own** real diameter: the type of a member the collector is
                 // missing is in the seeded cache like any other, so the empty mount is the size of

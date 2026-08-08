@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.screens.SheetLayout
 import com.jenarvaezg.coindex.ui.screens.sheetImageCount
 import kotlin.test.Test
@@ -13,9 +14,9 @@ private fun cell(id: String, typeId: Int) = DrawnCell(
     id = id,
     label = id,
     numistaTypeId = typeId,
-    state = "Me falta",
     footnote = null,
     owned = false,
+    missing = true,
 )
 
 private fun piece(typeId: Int) = DrawnPiece(
@@ -88,6 +89,35 @@ class SheetLayoutTest {
 
         assertEquals(3, sheetImageCount(cells, images) { it.numistaTypeId })
         assertEquals(0, sheetImageCount(cells, emptyMap()) { it.numistaTypeId })
+    }
+
+    @Test
+    fun `a plate waits only for the catalog printed side`() {
+        val cells = listOf(cell("a", 1), cell("b", 2))
+        val images = mapOf(
+            1 to TypeImages(CoinPhoto(picture = "obverse-1"), CoinPhoto(picture = "reverse-1")),
+            2 to TypeImages(CoinPhoto(), CoinPhoto(picture = "reverse-2")),
+        )
+
+        assertEquals(
+            1,
+            sheetImageCount(cells, images, PrintedSide.Obverse) { it.numistaTypeId },
+        )
+        assertEquals(
+            2,
+            sheetImageCount(cells, images, PrintedSide.Reverse) { it.numistaTypeId },
+        )
+    }
+
+    @Test
+    fun `the catalog declaration chooses the resting screen and PNG photo`() {
+        val images = TypeImages(
+            obverse = CoinPhoto(picture = "the-obverse"),
+            reverse = CoinPhoto(picture = "the-reverse"),
+        )
+
+        assertEquals("the-obverse", images.printedPhoto(PrintedSide.Obverse).picture)
+        assertEquals("the-reverse", images.printedPhoto(PrintedSide.Reverse).picture)
     }
 
     /**

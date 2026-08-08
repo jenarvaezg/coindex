@@ -553,6 +553,36 @@ class NotebookPagesTest {
         )
     }
 
+    @Test
+    fun `a plate PDF keeps labeled progress but prints no status per hole`() {
+        val curation = Curation(catalogs)
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = listOf(
+                    CollectedItem(
+                        id = 1,
+                        quantity = 1,
+                        typeId = 1885,
+                        issueId = 8508,
+                        issueYear = 1966,
+                    ),
+                ),
+                typeMeta = typeMeta,
+            ),
+        )
+
+        val plate = notebookSections(
+            CollectionState(assembled),
+            listOf(assembled.index.single()),
+            emptyList(),
+            curation,
+            NotebookOptions(),
+        ).single()
+
+        assertEquals("Progreso", plate.facts.first().first)
+        assertTrue(plate.cells.all { it.state == null })
+    }
+
     /** Y con el interruptor apagado ninguna casilla lleva URL: el cuaderno de hoy, intacto. */
     @Test
     fun `with the switch off no cell carries a url at all`() {
