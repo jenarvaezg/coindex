@@ -98,6 +98,9 @@ fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                // The bench calibrates the grain on the production surface itself (#351): the same
+                // Modifier the app paints its sheet with, so the bench cannot drift from what ships.
+                .paperSurface(state.grainOpacity)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 20.dp),
@@ -230,12 +233,9 @@ private fun CalibrationSlot(state: CalibrationState, glossPositionFraction: Floa
             .aspectRatio(0.94f)
             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
             .clip(RoundedCornerShape(3.dp))
-            // The bench paints the production surface itself (#351): the grain is calibrated on
-            // the paper it is drawn on, and the bench can no longer drift from what ships.
-            .paperSurface(state.grainOpacity)
+            .background(Paper.paperDeep)
             .border(1.dp, Paper.hairline.copy(alpha = 0.55f), RoundedCornerShape(3.dp)),
     ) {
-
         CoinRecess(
             state = state,
             glossPositionFraction = glossPositionFraction,

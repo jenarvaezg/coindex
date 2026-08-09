@@ -37,8 +37,11 @@ Las dos filas de ceros no son un error de medida: **la lámina y la franja del
 canto eran papel liso**, un tono plano de un solo valor. El grano vivía en
 Colecciones y en Monedas y se acababa ahí.
 
-`lamina-antes.png` sirve además de captura de la salida que no se eligió: una
-lámina sin grano *es* la opción «retirarlo».
+De las tres salidas del ticket sólo se capturó la elegida. «Dejarlo como está»
+es `lamina-antes.png` en su columna de Monedas —el grano al 4 %—, y de
+«retirarlo» no se compiló una rama propia: la lámina de antes enseña ya cómo se
+ve una superficie sin grano, que es a lo que esa salida llevaba las cinco. Se
+dice aquí en vez de dar la casilla por marcada.
 
 ![Papel a 1:1, antes y después](papel-1a1.png)
 

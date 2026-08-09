@@ -53,10 +53,10 @@ internal const val GRAIN_TILES_PER_SIDE = 4
 private const val GRAIN_FIBRE_WIDTH_DP = 0.5f
 
 /** Radians of slant a fibre may take either way: enough to break the banding of a single angle. */
-private const val GRAIN_SLANT_SPREAD = 0.9f
+internal const val GRAIN_SLANT_SPREAD = 0.9f
 
 /** Soft-light strength of the fibre, calibrated at 1:1 on the AVD (#351). */
-const val GRAIN_OPACITY = 0.75f
+internal const val GRAIN_OPACITY = 0.75f
 
 /** One fibre, in tile-local pixels: it starts inside its tile and may run past its edge. */
 internal data class GrainFibre(
@@ -123,8 +123,16 @@ private fun DrawScope.drawPaperGrain(atlas: GrainAtlas, origin: Offset) {
     }
 }
 
-/** Read and written only from composition, which is the main thread. */
-private var cachedAtlas: Triple<Float, Float, GrainAtlas>? = null
+private data class GrainKey(val density: Float, val opacity: Float)
+
+/**
+ * Read and written only from composition, which is the main thread. Room for more than one entry
+ * because an export composes at its own density: with a single slot, every exported sheet evicted
+ * the screen's mosaic and both were baked again on the way back.
+ */
+private val cachedAtlases = LinkedHashMap<GrainKey, GrainAtlas>()
+
+private const val GRAIN_ATLASES_KEPT = 3
 
 /**
  * The atlas is baked once per density and opacity, and not per frame: the first version drew some
@@ -132,11 +140,13 @@ private var cachedAtlas: Triple<Float, Float, GrainAtlas>? = null
  * raising the opacity expensive rather than free (#351).
  */
 private fun grainAtlas(density: Density, opacity: Float): GrainAtlas {
-    cachedAtlas?.let { (cachedDensity, cachedOpacity, atlas) ->
-        if (cachedDensity == density.density && cachedOpacity == opacity) return atlas
-    }
+    val key = GrainKey(density.density, opacity)
+    cachedAtlases[key]?.let { return it }
     val atlas = bakeGrainAtlas(density, opacity)
-    cachedAtlas = Triple(density.density, opacity, atlas)
+    cachedAtlases[key] = atlas
+    while (cachedAtlases.size > GRAIN_ATLASES_KEPT) {
+        cachedAtlases.remove(cachedAtlases.keys.first())
+    }
     return atlas
 }
 

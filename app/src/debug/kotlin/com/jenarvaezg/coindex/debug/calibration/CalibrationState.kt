@@ -77,8 +77,6 @@ data class CalibrationState(
     fun withTab(tab: CalibrationTab): CalibrationState = copy(selectedTab = tab)
 
     companion object {
-        /** The tile is measured in dp and owned by production, so the bench cannot drift. */
-        const val GRAIN_TILE_DP = com.jenarvaezg.coindex.ui.components.GRAIN_TILE_DP
         const val GLOSS_ANGLE_DEGREES = 105f
         const val YEAR_TAG_WIDTH_DP = 48.3f
         const val YEAR_TAG_HEIGHT_DP = 28f

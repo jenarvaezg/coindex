@@ -37,9 +37,10 @@ class PaperGrainTest {
 
     @Test
     fun `every fibre starts inside its tile so tiles can be baked as one image`() {
-        val fibres = (0 until 4).flatMap { y -> (0 until 4).flatMap { x -> grainFibres(x, y, TILE) } }
+        val side = 0 until GRAIN_TILES_PER_SIDE
+        val fibres = side.flatMap { y -> side.flatMap { x -> grainFibres(x, y, TILE) } }
 
-        assertEquals(GRAIN_FIBRES * 16, fibres.size)
+        assertEquals(GRAIN_FIBRES * GRAIN_TILES_PER_SIDE * GRAIN_TILES_PER_SIDE, fibres.size)
         assertTrue(fibres.all { it.x in 0f..TILE && it.y in 0f..TILE })
         assertTrue(fibres.all { it.length > 0f })
     }
@@ -64,7 +65,7 @@ class PaperGrainTest {
         val slants = grainFibres(1, 1, TILE).map { it.slant }
 
         assertTrue(slants.any { it > 0.1f } && slants.any { it < -0.1f })
-        assertTrue(slants.all { it in -1f..1f })
+        assertTrue(slants.all { it in -GRAIN_SLANT_SPREAD / 2f..GRAIN_SLANT_SPREAD / 2f })
     }
 
     @Test

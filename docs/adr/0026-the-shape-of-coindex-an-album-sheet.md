@@ -1,6 +1,6 @@
 # ADR 0026: The shape of Coindex — an album sheet, and what moves owes a datum
 
-- Status: accepted
+- Status: accepted, §15 amended by #351 (the grain's approved value)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -507,13 +507,24 @@ written**.
 
 | parameter | approved value | who decides |
 | --- | --- | --- |
-| grain opacity of the paper | 96 dp mosaic in `soft-light` at 0.75 (#351; was a 256 px mosaic at 0.08, which measured indistinguishable at 1:1 and was raised rather than withdrawn) | the bench — and if the grain is indistinguishable at 1:1 it is withdrawn without reopening #300 |
+| grain opacity of the paper | 96 dp mosaic in `soft-light` at 0.75 (#351; was a 256 px mosaic at 0.08) | the bench — and if the grain is indistinguishable at 1:1 it is withdrawn without reopening #300 |
 | gloss intensity and travel | half the video's, ±55 dp at 105° | the bench |
 | flip duration | 420 ms | the bench |
 | stamping duration | 300 ms | the bench |
 | depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp) |
 | the ghost | design at 14 % with a dotted rule | the bench |
 | **the gesture, the place, the drawing** | — | **the map**: an implementation session never changes form without coming back |
+
+> **Amended on 2026-08-09 (§15, #351).** The bench's rule stands whole, and it fired: the approved
+> 256 px mosaic at 0.08 measured **indistinguishable at 1:1** — 4.17 % of the pixels of an empty
+> region, 12 levels of amplitude, 0.78 of standard deviation — and the mosaic repeated exactly under
+> a one-tile shift. What the rule offered was withdrawal; the owner chose the other reading of the
+> same sentence, **raise it until it is distinguishable**, and the three costs #351 priced were paid:
+> variation per tile, the tile measured in dp, and the paper as one surface painted in `CoindexTheme`
+> and reaching the plate and the PDF. The calibrated value is a 96 dp mosaic of 2,600 fibres at 0.75,
+> and the grain now touches 62 % of the pixels of the same kind of region. The numbers, including a
+> drawing cost that regressed on the emulator and is not measured on a phone, are in
+> `docs/ux/implementacion-351/`.
 
 ### 16. The order, the cost, and three PRs per screen
 

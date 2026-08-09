@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.debug.calibration
 
 import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
+import com.jenarvaezg.coindex.ui.components.GRAIN_TILE_DP
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -10,7 +11,7 @@ class CalibrationStateTest {
     fun `approved values are the initial bench values`() {
         val state = CalibrationState()
 
-        assertEquals(96f, CalibrationState.GRAIN_TILE_DP)
+        assertEquals(96f, GRAIN_TILE_DP)
         assertEquals(GRAIN_OPACITY, state.grainOpacity)
         assertEquals(105f, CalibrationState.GLOSS_ANGLE_DEGREES)
         assertEquals(0.5f, state.glossIntensity)
