@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -163,14 +165,20 @@ private fun PiecesSheetCell(
             overflow = androidx.compose.ui.text.style.TextOverflow.Visible,
             modifier = Modifier.padding(top = 8.dp),
         )
-        name.theme?.let { theme ->
-            Text(
-                theme,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-            )
+        Box(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            name.theme?.let { theme ->
+                Text(
+                    theme,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                )
+            }
         }
+        // The year stays outside the cartouche; #337 owns its separate rendering change.
         Text(
             pieceLine(piece),
             style = MaterialTheme.typography.labelSmall,

@@ -355,6 +355,7 @@ private fun CoinAlbumCell(
             modifier = Modifier.size(104.dp),
         )
         AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))
+        // The year stays outside this cartouche; #337 owns its separate rendering change.
         Text(
             coinAlbumFootnote(row),
             style = MaterialTheme.typography.labelMedium,
