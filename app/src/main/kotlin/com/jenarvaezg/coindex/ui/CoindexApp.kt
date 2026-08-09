@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -137,7 +138,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         containerColor = Paper.paper,
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
-            Column {
+            TopChrome {
                 // Both album roots own their chrome: the sewn edge is their shared masthead.
                 // Keeping the generic one above either would print COINDEX and Settings twice and
                 // spend the space their die-cut grids just recovered (ADR 0026 §1, §13).
@@ -406,7 +407,7 @@ private fun HierarchyCell(
  * and it does not block: a pending update is not a reason to stop looking at the collection.
  */
 @Composable
-private fun UpdateBanner(
+internal fun UpdateBanner(
     update: UpdateStatus.Available,
     updating: Boolean,
     onInstall: () -> Unit,
@@ -478,12 +479,31 @@ private fun UpdateBanner(
 }
 
 /**
- * The notebook's masthead, kept clear of the status bar.
+ * Everything the [Scaffold] stacks above the page, kept clear of the status bar.
  *
  * With targetSdk 36 the window is edge-to-edge and there is no way back: without
- * [statusBarsPadding] the title sits under the clock and the system bar swallows the taps
- * meant for «Volver». The paper background is painted before the padding so the inset strip
- * still reads as part of the page.
+ * [statusBarsPadding] whatever comes first sits under the clock and the system bar swallows its
+ * taps. `Scaffold` does not pad its `topBar` slot — `contentWindowInsets` reaches the body only —
+ * so the strip is paid here, once, rather than by whoever happens to be first: the masthead used
+ * to pay it for both, and when the album roots dropped it (ADR 0026 §1) the update banner was
+ * left drawing under the clock with «Instalar» sharing the strip with the system icons (#356).
+ *
+ * The paper background is painted before the padding so the inset strip still reads as part of
+ * the page, and not as a loose band of whatever colour the first occupant happens to use.
+ */
+@Composable
+internal fun TopChrome(content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        modifier = Modifier.background(Paper.paper).statusBarsPadding(),
+        content = content,
+    )
+}
+
+/**
+ * The notebook's masthead.
+ *
+ * The status-bar inset is [TopChrome]'s, not this composable's: it is one of several occupants
+ * of the top bar and only one of them may pay the strip.
  *
  * The right-hand slot holds at most one action, and only when it does something: [onBack] away
  * from the start destination, [onOpenSettings] on it.
@@ -494,7 +514,7 @@ private fun Masthead(
     onBack: (() -> Unit)?,
     onOpenSettings: (() -> Unit)?,
 ) {
-    Column(modifier = Modifier.background(Paper.paper).statusBarsPadding()) {
+    Column(modifier = Modifier.background(Paper.paper)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
