@@ -1,8 +1,11 @@
 package com.jenarvaezg.coindex.debug.calibration
 
 import androidx.compose.ui.graphics.Color
+import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
+import com.jenarvaezg.coindex.ui.components.DieCutWall
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
 import com.jenarvaezg.coindex.ui.components.GRAIN_TILE_DP
+import com.jenarvaezg.coindex.ui.components.HOLE_CARD_PADDING_DP
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,10 +26,19 @@ class CalibrationStateTest {
         assertEquals(0.14f, state.ghostOpacity)
         assertEquals(false, state.showGhost)
         assertEquals(CalibrationTab.EFFECTS, state.selectedTab)
-        assertEquals(0.72f, state.cartoucheAlpha)
-        assertEquals(87f / 255f, state.cardAlpha)
-        assertEquals(0x9F9B8B, state.hairlineColorRgb)
-        assertEquals(0.24f, state.cartoucheRuleAlpha)
+        assertEquals(0x878577, state.hairlineColorRgb)
+    }
+
+    @Test
+    fun `the tone tab opens exactly where production paints`() {
+        // The bench used to open at the tones the app had before #349 calibrated them, so what it
+        // showed was never what shipped. #357 was measured on the shipped drawing, not the bench's.
+        assertEquals(AlbumToneConfig.Default, CalibrationState().albumToneConfig())
+    }
+
+    @Test
+    fun `the wall of the die cannot be asked to cover the photograph`() {
+        assertEquals(HOLE_CARD_PADDING_DP, CalibrationControl.DIE_WALL_WIDTH_DP.range.endInclusive)
     }
 
     @Test
@@ -87,22 +99,32 @@ class CalibrationStateTest {
     fun `tone controls update independently`() {
         val initial = CalibrationState()
 
-        val cartouche = initial.withControl(CalibrationControl.CARTOUCHE_ALPHA, 0.9f)
-        val card = initial.withControl(CalibrationControl.CARD_ALPHA, 0.58f)
-        val hairline = initial.withControl(CalibrationControl.HAIRLINE_TONE, 135f)
-        val rule = initial.withControl(CalibrationControl.CARTOUCHE_RULE_ALPHA, 0.34f)
+        val cartouche = initial.withControl(CalibrationControl.CARTOUCHE_ALPHA, 0.55f)
+        val card = initial.withControl(CalibrationControl.CARD_ALPHA, 0.31f)
+        val hairline = initial.withControl(CalibrationControl.HAIRLINE_TONE, 159f)
+        val rule = initial.withControl(CalibrationControl.CARTOUCHE_RULE_ALPHA, 0.18f)
+        val width = initial.withControl(CalibrationControl.DIE_WALL_WIDTH_DP, 3.5f)
+        val shadow = initial.withControl(CalibrationControl.DIE_WALL_SHADOW_ALPHA, 0.11f)
+        val sheen = initial.withControl(CalibrationControl.DIE_WALL_SHEEN_ALPHA, 0.7f)
 
-        assertEquals(0.9f, cartouche.cartoucheAlpha)
+        assertEquals(0.55f, cartouche.cartoucheAlpha)
         assertEquals(initial.cardAlpha, cartouche.cardAlpha)
         assertEquals(initial.hairlineColorRgb, cartouche.hairlineColorRgb)
         assertEquals(initial.cartoucheRuleAlpha, cartouche.cartoucheRuleAlpha)
 
-        assertEquals(0.58f, card.cardAlpha)
+        assertEquals(0.31f, card.cardAlpha)
         assertEquals(initial.cartoucheAlpha, card.cartoucheAlpha)
-        assertEquals(0x878577, hairline.hairlineColorRgb)
+        assertEquals(0x9F9B8B, hairline.hairlineColorRgb)
         assertEquals(initial.cartoucheRuleAlpha, hairline.cartoucheRuleAlpha)
-        assertEquals(0.34f, rule.cartoucheRuleAlpha)
+        assertEquals(0.18f, rule.cartoucheRuleAlpha)
         assertEquals(initial.hairlineColorRgb, rule.hairlineColorRgb)
+
+        assertEquals(3.5f, width.dieWall.widthDp)
+        assertEquals(initial.dieWall.shadowAlpha, width.dieWall.shadowAlpha)
+        assertEquals(0.11f, shadow.dieWall.shadowAlpha)
+        assertEquals(initial.dieWall.sheenAlpha, shadow.dieWall.sheenAlpha)
+        assertEquals(0.7f, sheen.dieWall.sheenAlpha)
+        assertEquals(initial.dieWall.widthDp, sheen.dieWall.widthDp)
     }
 
     @Test
@@ -112,6 +134,7 @@ class CalibrationStateTest {
             cardAlpha = 0.49f,
             hairlineTone = 135,
             cartoucheRuleAlpha = 0.31f,
+            dieWall = DieCutWall(widthDp = 2.5f, shadowAlpha = 0.17f, sheenAlpha = 0.66f),
         )
 
         val tone = state.albumToneConfig()
@@ -120,6 +143,7 @@ class CalibrationStateTest {
         assertEquals(0.49f, tone.cardAlpha)
         assertEquals(Color(0xFF878577), tone.hairlineColor)
         assertEquals(0.31f, tone.cartoucheTopRuleAlpha)
+        assertEquals(DieCutWall(widthDp = 2.5f, shadowAlpha = 0.17f, sheenAlpha = 0.66f), tone.dieWall)
     }
 
     @Test
@@ -130,11 +154,17 @@ class CalibrationStateTest {
             .withControl(CalibrationControl.CARD_ALPHA, -1f)
             .withControl(CalibrationControl.HAIRLINE_TONE, 300f)
             .withControl(CalibrationControl.CARTOUCHE_RULE_ALPHA, -1f)
+            .withControl(CalibrationControl.DIE_WALL_WIDTH_DP, 40f)
+            .withControl(CalibrationControl.DIE_WALL_SHADOW_ALPHA, 2f)
+            .withControl(CalibrationControl.DIE_WALL_SHEEN_ALPHA, -3f)
 
         assertEquals(CalibrationTab.TONE, adjusted.selectedTab)
         assertEquals(1f, adjusted.cartoucheAlpha)
         assertEquals(0f, adjusted.cardAlpha)
         assertEquals(CalibrationControl.HAIRLINE_TONE.range.endInclusive.toInt(), adjusted.hairlineTone)
         assertEquals(0f, adjusted.cartoucheRuleAlpha)
+        assertEquals(HOLE_CARD_PADDING_DP, adjusted.dieWall.widthDp)
+        assertEquals(1f, adjusted.dieWall.shadowAlpha)
+        assertEquals(0f, adjusted.dieWall.sheenAlpha)
     }
 }

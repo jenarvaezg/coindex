@@ -144,7 +144,7 @@ fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
                         style = MaterialTheme.typography.headlineMedium,
                     )
                     Text(
-                        text = "Separación papel↔objeto · cuatro valores independientes",
+                        text = "Separación papel↔objeto · siete valores independientes",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Paper.muted,
                     )
@@ -281,37 +281,10 @@ private fun CoinRecess(
         } else {
             FlippingCoin(state, glossPositionFraction)
         }
-        RecessEdge()
+        // No edge of the recess is drawn over the coin here either: production retired that pair of
+        // half arcs in #357, and a slot that keeps them would be calibrating a shape the app no
+        // longer paints.
         StaticAcetateReflection()
-    }
-}
-
-@Composable
-private fun RecessEdge() {
-    Canvas(Modifier.size(127.dp)) {
-        val inset = 3.dp.toPx()
-        val arcSize = androidx.compose.ui.geometry.Size(
-            width = size.width - inset * 2,
-            height = size.height - inset * 2,
-        )
-        drawArc(
-            color = Paper.ink.copy(alpha = 0.24f),
-            startAngle = 180f,
-            sweepAngle = 180f,
-            useCenter = false,
-            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-            size = arcSize,
-            style = Stroke(width = 5.dp.toPx()),
-        )
-        drawArc(
-            color = Color.White.copy(alpha = 0.52f),
-            startAngle = 0f,
-            sweepAngle = 180f,
-            useCenter = false,
-            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-            size = arcSize,
-            style = Stroke(width = 2.dp.toPx()),
-        )
     }
 }
 
@@ -631,7 +604,7 @@ private fun ToneCalibrationControls(
             onChange = onChange,
         )
     }
-    CalibrationSection(title = "TROQUEL") {
+    CalibrationSection(title = "TROQUEL · FILETE DE 1 DP") {
         ControlSlider(
             label = "Cartón",
             value = state.cardAlpha,
@@ -640,10 +613,33 @@ private fun ToneCalibrationControls(
             onChange = onChange,
         )
         ControlSlider(
-            label = "Tono filo",
+            label = "Tono filete",
             value = state.hairlineTone.toFloat(),
             control = CalibrationControl.HAIRLINE_TONE,
             display = rgbHex(state.hairlineColorRgb),
+            onChange = onChange,
+        )
+    }
+    CalibrationSection(title = "PARED DEL TROQUEL · BARRIDO SIN COSTURA") {
+        ControlSlider(
+            label = "Ancho",
+            value = state.dieWall.widthDp,
+            control = CalibrationControl.DIE_WALL_WIDTH_DP,
+            display = decimal(state.dieWall.widthDp, " dp"),
+            onChange = onChange,
+        )
+        ControlSlider(
+            label = "Sombra",
+            value = state.dieWall.shadowAlpha,
+            control = CalibrationControl.DIE_WALL_SHADOW_ALPHA,
+            display = percent(state.dieWall.shadowAlpha),
+            onChange = onChange,
+        )
+        ControlSlider(
+            label = "Canto",
+            value = state.dieWall.sheenAlpha,
+            control = CalibrationControl.DIE_WALL_SHEEN_ALPHA,
+            display = percent(state.dieWall.sheenAlpha),
             onChange = onChange,
         )
     }

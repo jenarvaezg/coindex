@@ -14,4 +14,13 @@ class AlbumToneConfigTest {
         assertEquals(Color(0xFF878577), tone.hairlineColor)
         assertEquals(0.34f, tone.cartoucheTopRuleAlpha)
     }
+
+    @Test
+    fun `the die-cut carries the wall the bench calibrated`() {
+        val wall = AlbumToneConfig().dieWall
+
+        assertEquals(5f, wall.widthDp)
+        assertEquals(0.22f, wall.shadowAlpha)
+        assertEquals(0.85f, wall.sheenAlpha)
+    }
 }

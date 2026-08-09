@@ -15,10 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -64,22 +66,26 @@ fun AlbumHole(
     val url = candidates.getOrNull(attempt)
 
     Box(modifier = modifier) {
-        // The cardboard ring remains visible around the inset window: the dark upper arc is the
-        // cut's inner wall and the pale lower arc is the freshly exposed edge.
+        // The cardboard ring remains visible around the inset window: the wall of the cut is dark
+        // at the top, where it shades itself, and pale at the bottom, where the die exposed a
+        // fresh edge. It is one sweep and not two half arcs, and it stops at the photograph.
         if (backed) {
             Canvas(Modifier.fillMaxSize()) {
                 drawCircle(Paper.card.copy(alpha = tone.cardAlpha))
+                val wallWidth = tone.dieWall.widthDp.dp.toPx()
+                drawCircle(
+                    brush = Brush.sweepGradient(*tone.dieWall.stops(), center = center),
+                    radius = size.minDimension / 2f - wallWidth / 2f,
+                    style = Stroke(width = wallWidth),
+                )
+                // A different job from the wall: this is the rule that separates cardboard from
+                // paper, and 1 dp of it at 3:1 is what #349 won. The wall does not have to be dark
+                // — or opaque — for the cardboard to read.
+                val hairlineWidth = 1.dp.toPx()
                 drawCircle(
                     color = tone.hairlineColor,
-                    radius = size.minDimension / 2f - 1.dp.toPx(),
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx()),
-                )
-                drawArc(
-                    color = Color.White.copy(alpha = 0.62f),
-                    startAngle = 0f,
-                    sweepAngle = 180f,
-                    useCenter = false,
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()),
+                    radius = size.minDimension / 2f - hairlineWidth / 2f,
+                    style = Stroke(width = hairlineWidth),
                 )
             }
         }
@@ -87,7 +93,7 @@ fun AlbumHole(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(if (backed) 5.dp else 1.dp)
+                .padding(if (backed) HOLE_CARD_PADDING_DP.dp else 1.dp)
                 .clip(CircleShape)
                 .background(Paper.paperDeep),
         ) {
@@ -125,30 +131,16 @@ fun AlbumHole(
                 )
             }
 
+            // The die's shadow used to be painted here too, eight dp inside the edge and therefore
+            // squarely on the coin's face. It is gone: the photograph brings its own light baked in
+            // from the upper left (#303), and a second model of light drawn on top of the first
+            // contradicted it — which is what read as a mark on the metal. The wall of the cut now
+            // lives on the cardboard, where the shadow of a cut wall belongs.
+            //
+            // What stays is the acetate's fixed reflection. Whether it survives is not this
+            // ticket's call: #337 freezes it and #338 would replace it with the gloss of variant H,
+            // and both together rebuild #303's discarded variant D.
             Canvas(Modifier.fillMaxSize()) {
-                val inset = 3.dp.toPx()
-                val arcSize = androidx.compose.ui.geometry.Size(
-                    width = size.width - inset * 2,
-                    height = size.height - inset * 2,
-                )
-                drawArc(
-                    color = Paper.ink.copy(alpha = 0.28f),
-                    startAngle = 180f,
-                    sweepAngle = 180f,
-                    useCenter = false,
-                    topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-                    size = arcSize,
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx()),
-                )
-                drawArc(
-                    color = Color.White.copy(alpha = 0.52f),
-                    startAngle = 0f,
-                    sweepAngle = 180f,
-                    useCenter = false,
-                    topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-                    size = arcSize,
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()),
-                )
                 drawCircle(
                     brush = Brush.linearGradient(
                         0f to Color.Transparent,
@@ -156,15 +148,15 @@ fun AlbumHole(
                         0.5f to Color.White.copy(alpha = 0.24f),
                         0.58f to Color.Transparent,
                         1f to Color.Transparent,
-                        start = androidx.compose.ui.geometry.Offset(0f, size.height),
-                        end = androidx.compose.ui.geometry.Offset(size.width, 0f),
+                        start = Offset(0f, size.height),
+                        end = Offset(size.width, 0f),
                     ),
                 )
                 if (missing) {
                     drawCircle(
                         color = Paper.ink.copy(alpha = 0.48f),
                         radius = size.minDimension / 2f - 6.dp.toPx(),
-                        style = androidx.compose.ui.graphics.drawscope.Stroke(
+                        style = Stroke(
                             width = 1.dp.toPx(),
                             cap = StrokeCap.Round,
                             pathEffect = PathEffect.dashPathEffect(

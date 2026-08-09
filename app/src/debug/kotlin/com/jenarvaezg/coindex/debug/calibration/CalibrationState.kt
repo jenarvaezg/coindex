@@ -2,7 +2,9 @@ package com.jenarvaezg.coindex.debug.calibration
 
 import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
+import com.jenarvaezg.coindex.ui.components.DieCutWall
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
+import com.jenarvaezg.coindex.ui.components.HOLE_CARD_PADDING_DP
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -23,6 +25,14 @@ enum class CalibrationControl(
     CARD_ALPHA(0f..1f),
     HAIRLINE_TONE(32f..223f),
     CARTOUCHE_RULE_ALPHA(0f..1f),
+
+    /**
+     * Wider than the cardboard the die leaves free would put the wall on the photograph, so the
+     * slider cannot ask for it (#357).
+     */
+    DIE_WALL_WIDTH_DP(1f..HOLE_CARD_PADDING_DP),
+    DIE_WALL_SHADOW_ALPHA(0f..1f),
+    DIE_WALL_SHEEN_ALPHA(0f..1f),
 }
 
 enum class CalibrationTab {
@@ -40,10 +50,15 @@ data class CalibrationState(
     val ghostOpacity: Float = 0.14f,
     val showGhost: Boolean = false,
     val selectedTab: CalibrationTab = CalibrationTab.EFFECTS,
-    val cartoucheAlpha: Float = 0.72f,
-    val cardAlpha: Float = 87f / 255f,
-    val hairlineTone: Int = 0x9F,
-    val cartoucheRuleAlpha: Float = 0.24f,
+    // The tone tab opens where production stands, the way the grain slider already does. It used
+    // to open at #349's starting point, and a bench that shows a tone the app does not paint is a
+    // bench that cannot tell you whether what you are looking at is the defect (#357).
+    val cartoucheAlpha: Float = AlbumToneConfig.Default.cartoucheAlpha,
+    val cardAlpha: Float = AlbumToneConfig.Default.cardAlpha,
+    /** 0x87 is the tone whose ramp lands exactly on the calibrated `#878577`. */
+    val hairlineTone: Int = 0x87,
+    val cartoucheRuleAlpha: Float = AlbumToneConfig.Default.cartoucheTopRuleAlpha,
+    val dieWall: DieCutWall = AlbumToneConfig.Default.dieWall,
 ) {
     val hairlineColorRgb: Int
         get() {
@@ -69,6 +84,11 @@ data class CalibrationState(
             CalibrationControl.CARD_ALPHA -> copy(cardAlpha = value)
             CalibrationControl.HAIRLINE_TONE -> copy(hairlineTone = value.roundToInt())
             CalibrationControl.CARTOUCHE_RULE_ALPHA -> copy(cartoucheRuleAlpha = value)
+            CalibrationControl.DIE_WALL_WIDTH_DP -> copy(dieWall = dieWall.copy(widthDp = value))
+            CalibrationControl.DIE_WALL_SHADOW_ALPHA ->
+                copy(dieWall = dieWall.copy(shadowAlpha = value))
+            CalibrationControl.DIE_WALL_SHEEN_ALPHA ->
+                copy(dieWall = dieWall.copy(sheenAlpha = value))
         }
     }
 
@@ -88,6 +108,7 @@ internal fun CalibrationState.albumToneConfig(): AlbumToneConfig = AlbumToneConf
     cardAlpha = cardAlpha,
     hairlineColor = Color(0xFF000000 or hairlineColorRgb.toLong()),
     cartoucheTopRuleAlpha = cartoucheRuleAlpha,
+    dieWall = dieWall,
 )
 
 /** Maps the accelerometer's lateral gravity to the gloss's signed ±45° travel. */
