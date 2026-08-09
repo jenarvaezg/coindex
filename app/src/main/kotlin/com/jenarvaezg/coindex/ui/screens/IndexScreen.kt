@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -50,7 +49,6 @@ import com.jenarvaezg.coindex.ui.components.Facet
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
-import com.jenarvaezg.coindex.ui.components.PaperGrain
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
@@ -197,14 +195,12 @@ fun IndexScreen(
 
     BoxWithConstraints(
         modifier = modifier
-            .fillMaxWidth()
-            .background(Paper.paper),
+            .fillMaxWidth(),
     ) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
         // same answer: one column is a page, two are a spread.
         val columns = indexColumns(maxWidth)
 
-        PaperGrain(Modifier.matchParentSize())
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),

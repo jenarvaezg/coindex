@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +51,6 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.LinkText
-import com.jenarvaezg.coindex.ui.components.PaperGrain
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
@@ -128,10 +126,9 @@ fun CoinsScreen(
     }
 
     BoxWithConstraints(
-        modifier = modifier.fillMaxWidth().background(Paper.paper),
+        modifier = modifier.fillMaxWidth(),
     ) {
         val columns = indexColumns(maxWidth)
-        PaperGrain(Modifier.matchParentSize())
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             modifier = Modifier.fillMaxWidth(),

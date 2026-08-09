@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,7 @@ import com.jenarvaezg.coindex.ui.components.BackGlyph
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
@@ -135,7 +137,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         }
 
     Scaffold(
-        containerColor = Paper.paper,
+        // Transparent so the sheet [CoindexTheme] paints reaches the strip behind the status bar:
+        // painting paper here left that strip plain wherever the top bar was empty, and a grain
+        // that stops at the clock is two papers again (#351).
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             TopChrome {
@@ -330,7 +335,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         images = state.collection.images,
                         onOpenSource = openUrl,
                         onMessage = viewModel::showMessage,
-                        modifier = Modifier.fillMaxSize().background(Paper.paper),
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
             }
@@ -494,7 +499,7 @@ internal fun UpdateBanner(
 @Composable
 internal fun TopChrome(content: @Composable ColumnScope.() -> Unit) {
     Column(
-        modifier = Modifier.background(Paper.paper).statusBarsPadding(),
+        modifier = Modifier.statusBarsPadding(),
         content = content,
     )
 }
@@ -514,7 +519,7 @@ private fun Masthead(
     onBack: (() -> Unit)?,
     onOpenSettings: (() -> Unit)?,
 ) {
-    Column(modifier = Modifier.background(Paper.paper)) {
+    Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

@@ -15,61 +15,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
-
-private const val GRAIN_MOSAIC_PX = 256
-private const val GRAIN_FIBRES = 180
-
-/** Fine offset-paper fibre, repeated as a deterministic 256 px soft-light mosaic. */
-@Composable
-fun PaperGrain(
-    modifier: Modifier = Modifier,
-    opacity: Float = 0.08f,
-) {
-    Canvas(
-        modifier = modifier.graphicsLayer {
-            compositingStrategy = CompositingStrategy.Offscreen
-        },
-    ) {
-        var tileTop = 0f
-        while (tileTop < size.height) {
-            var tileLeft = 0f
-            while (tileLeft < size.width) {
-                repeat(GRAIN_FIBRES) { fibre ->
-                    val x = ((fibre * 73 + 19) % GRAIN_MOSAIC_PX).toFloat()
-                    val y = ((fibre * 151 + fibre * fibre + 7) % GRAIN_MOSAIC_PX).toFloat()
-                    val length = 3f + ((fibre * 17) % 18)
-                    val hash = (fibre * 47 + 31) and 0xFF
-                    val tone = if (hash and 1 == 0) Color.White else Paper.ink
-                    drawLine(
-                        color = tone.copy(alpha = opacity * (0.25f + hash / 510f)),
-                        start = androidx.compose.ui.geometry.Offset(tileLeft + x, tileTop + y),
-                        end = androidx.compose.ui.geometry.Offset(
-                            tileLeft + x + length,
-                            tileTop + y + 0.7f,
-                        ),
-                        strokeWidth = 1f,
-                        blendMode = BlendMode.Softlight,
-                    )
-                }
-                tileLeft += GRAIN_MOSAIC_PX
-            }
-            tileTop += GRAIN_MOSAIC_PX
-        }
-    }
-}
 
 /** One catalog face sunk into cardboard, with a fixed acetate reflection over it. */
 @Composable
