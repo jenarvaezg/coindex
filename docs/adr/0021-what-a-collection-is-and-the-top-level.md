@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228 and #227, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227 and #354, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -27,6 +27,12 @@
 >
 > Nothing here is stored per card, so §7 is untouched: how a notebook is printed is what the
 > collector is looking through, like the filters of §1, not something recorded about a collection.
+
+> **Amended on 2026-08-09 (§13, #354).** The button no longer names the size of the export. The live
+> tally beside it already owns the number of visible collections, and the options sheet owns the
+> honest plate and page counts after applying the persisted «Sin colección» option. Repeating
+> `shown.size` in the action was therefore redundant and could be false by one plate. The action is
+> count-free instead of duplicating the preview formula in a second owner.
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at

@@ -234,7 +234,7 @@ fun IndexScreen(
                         actionLabel = if (printing != null) {
                             NOTEBOOK_EXPORTING_LABEL
                         } else {
-                            notebookExportLabel(shown.size)
+                            notebookExportLabel()
                         },
                         actionEnabled = printing == null && shown.isNotEmpty(),
                         onAction = {

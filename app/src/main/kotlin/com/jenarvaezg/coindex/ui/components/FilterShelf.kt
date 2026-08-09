@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -119,9 +122,15 @@ fun FilterShelf(
     onAction: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val verticallyCenteredItem = Modifier
+        .wrapContentHeight(Alignment.CenterVertically)
+        .heightIn(min = 48.dp)
+
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // The summary and tally remain one large toggle target. A trailing action, when present,
@@ -129,7 +138,7 @@ fun FilterShelf(
             Row(
                 modifier = Modifier
                     .weight(1f)
-                    .height(36.dp)
+                    .fillMaxHeight()
                     .clickable(role = Role.Button, onClick = onToggle),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -141,28 +150,25 @@ fun FilterShelf(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(end = 12.dp),
                 )
-                Text(tally, style = MaterialTheme.typography.labelMedium, color = Paper.rust)
+                Text(
+                    tally,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Paper.rust,
+                    modifier = verticallyCenteredItem,
+                )
             }
             if (actionLabel != null && onAction != null) {
                 Text(
                     SHELF_ACTION_SEPARATOR,
                     style = MaterialTheme.typography.labelMedium,
                     color = Paper.muted,
+                    modifier = verticallyCenteredItem,
                 )
-                Text(
-                    actionLabel,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (actionEnabled) Paper.rust else Paper.muted,
-                    modifier = Modifier
-                        .height(36.dp)
-                        .then(
-                            if (actionEnabled) {
-                                Modifier.clickable(role = Role.Button, onClick = onAction)
-                            } else {
-                                Modifier
-                            },
-                        )
-                        .padding(vertical = 6.dp),
+                CardAction(
+                    text = actionLabel,
+                    onClick = onAction,
+                    enabled = actionEnabled,
+                    modifier = verticallyCenteredItem,
                 )
             }
         }
