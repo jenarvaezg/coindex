@@ -9,13 +9,6 @@ import kotlin.test.assertTrue
 
 /** What the notebook says about itself before, during and after an export that takes minutes. */
 class NotebookLabelsTest {
-    @Test
-    fun `the button promises the size of what it is starting`() {
-        assertEquals("Exportar 12 láminas", notebookExportLabel(12))
-        assertEquals("Exportar 1 lámina", notebookExportLabel(1))
-        assertEquals("Nada que exportar", notebookExportLabel(0))
-    }
-
     /**
      * The line under the five switches, which is what the export sheet exists for (#228).
      *

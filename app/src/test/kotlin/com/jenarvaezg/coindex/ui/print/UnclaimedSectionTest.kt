@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.print
 
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.ui.notebookExportLabel
 import com.jenarvaezg.coindex.ui.shelf.ShelfFixtures
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import kotlin.test.Test
@@ -40,6 +41,15 @@ class UnclaimedSectionTest {
         assertEquals(comoAntes, entero.dropLast(1))
         assertEquals("Sin colección", entero.last().title)
         assertEquals("COINDEX · SIN COLECCIÓN", entero.last().eyebrow)
+    }
+
+    @Test
+    fun `la acción no promete un número cuando sin colección añade una lámina`() {
+        val visibles = sections(NotebookOptions())
+        val entero = sections(NotebookOptions(unclaimed = true))
+
+        assertEquals(visibles.size + 1, entero.size)
+        assertEquals("Exportar láminas", notebookExportLabel())
     }
 
     /**

@@ -6,16 +6,11 @@ import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 /**
  * What the export button says it is about to do.
  *
- * The count is the promise: pressing it can take minutes and produce eighty-four pages, so the
- * button names the size of what it is starting rather than saying «Exportar» and finding out.
- * «Láminas» and not «páginas», because what the collector chose is a set of collections — how many
- * pages each takes is the printer's business, and since #228 the sheet the button opens says it
- * before a single one is drawn.
+ * The shelf tally already owns the number of visible collections, while the options sheet owns the
+ * honest plate and page counts. Keeping this label count-free means it cannot promise one plate too
+ * few when the persisted «Sin colección» option adds the loose-coin plate (#354).
  */
-fun notebookExportLabel(cards: Int): String = when (cards) {
-    0 -> "Nada que exportar"
-    else -> "Exportar ${plural(cards, "lámina", "láminas")}"
-}
+fun notebookExportLabel(): String = "Exportar láminas"
 
 /** The temporary label while the notebook is being rendered. */
 const val NOTEBOOK_EXPORTING_LABEL = "Exportando…"
