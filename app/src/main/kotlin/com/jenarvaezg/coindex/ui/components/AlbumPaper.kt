@@ -72,19 +72,20 @@ fun AlbumHole(
         if (backed) {
             Canvas(Modifier.fillMaxSize()) {
                 drawCircle(Paper.card.copy(alpha = tone.cardAlpha))
-                val wallWidth = tone.dieWallWidthDp.dp.toPx()
+                val wallWidth = tone.dieWall.widthDp.dp.toPx()
                 drawCircle(
-                    brush = Brush.sweepGradient(*dieCutWallStops(tone), center = center),
+                    brush = Brush.sweepGradient(*tone.dieWall.stops(), center = center),
                     radius = size.minDimension / 2f - wallWidth / 2f,
                     style = Stroke(width = wallWidth),
                 )
                 // A different job from the wall: this is the rule that separates cardboard from
                 // paper, and 1 dp of it at 3:1 is what #349 won. The wall does not have to be dark
                 // — or opaque — for the cardboard to read.
+                val hairlineWidth = 1.dp.toPx()
                 drawCircle(
                     color = tone.hairlineColor,
-                    radius = size.minDimension / 2f - 0.5.dp.toPx(),
-                    style = Stroke(width = 1.dp.toPx()),
+                    radius = size.minDimension / 2f - hairlineWidth / 2f,
+                    style = Stroke(width = hairlineWidth),
                 )
             }
         }

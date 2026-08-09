@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.debug.calibration
 
 import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
+import com.jenarvaezg.coindex.ui.components.DieCutWall
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
 import com.jenarvaezg.coindex.ui.components.GRAIN_TILE_DP
 import com.jenarvaezg.coindex.ui.components.HOLE_CARD_PADDING_DP
@@ -118,12 +119,12 @@ class CalibrationStateTest {
         assertEquals(0.18f, rule.cartoucheRuleAlpha)
         assertEquals(initial.hairlineColorRgb, rule.hairlineColorRgb)
 
-        assertEquals(3.5f, width.dieWallWidthDp)
-        assertEquals(initial.dieWallShadowAlpha, width.dieWallShadowAlpha)
-        assertEquals(0.11f, shadow.dieWallShadowAlpha)
-        assertEquals(initial.dieWallSheenAlpha, shadow.dieWallSheenAlpha)
-        assertEquals(0.7f, sheen.dieWallSheenAlpha)
-        assertEquals(initial.dieWallWidthDp, sheen.dieWallWidthDp)
+        assertEquals(3.5f, width.dieWall.widthDp)
+        assertEquals(initial.dieWall.shadowAlpha, width.dieWall.shadowAlpha)
+        assertEquals(0.11f, shadow.dieWall.shadowAlpha)
+        assertEquals(initial.dieWall.sheenAlpha, shadow.dieWall.sheenAlpha)
+        assertEquals(0.7f, sheen.dieWall.sheenAlpha)
+        assertEquals(initial.dieWall.widthDp, sheen.dieWall.widthDp)
     }
 
     @Test
@@ -133,9 +134,7 @@ class CalibrationStateTest {
             cardAlpha = 0.49f,
             hairlineTone = 135,
             cartoucheRuleAlpha = 0.31f,
-            dieWallWidthDp = 2.5f,
-            dieWallShadowAlpha = 0.17f,
-            dieWallSheenAlpha = 0.66f,
+            dieWall = DieCutWall(widthDp = 2.5f, shadowAlpha = 0.17f, sheenAlpha = 0.66f),
         )
 
         val tone = state.albumToneConfig()
@@ -144,9 +143,7 @@ class CalibrationStateTest {
         assertEquals(0.49f, tone.cardAlpha)
         assertEquals(Color(0xFF878577), tone.hairlineColor)
         assertEquals(0.31f, tone.cartoucheTopRuleAlpha)
-        assertEquals(2.5f, tone.dieWallWidthDp)
-        assertEquals(0.17f, tone.dieWallShadowAlpha)
-        assertEquals(0.66f, tone.dieWallSheenAlpha)
+        assertEquals(DieCutWall(widthDp = 2.5f, shadowAlpha = 0.17f, sheenAlpha = 0.66f), tone.dieWall)
     }
 
     @Test
@@ -166,8 +163,8 @@ class CalibrationStateTest {
         assertEquals(0f, adjusted.cardAlpha)
         assertEquals(CalibrationControl.HAIRLINE_TONE.range.endInclusive.toInt(), adjusted.hairlineTone)
         assertEquals(0f, adjusted.cartoucheRuleAlpha)
-        assertEquals(HOLE_CARD_PADDING_DP, adjusted.dieWallWidthDp)
-        assertEquals(1f, adjusted.dieWallShadowAlpha)
-        assertEquals(0f, adjusted.dieWallSheenAlpha)
+        assertEquals(HOLE_CARD_PADDING_DP, adjusted.dieWall.widthDp)
+        assertEquals(1f, adjusted.dieWall.shadowAlpha)
+        assertEquals(0f, adjusted.dieWall.sheenAlpha)
     }
 }

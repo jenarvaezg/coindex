@@ -16,11 +16,11 @@ class AlbumToneConfigTest {
     }
 
     @Test
-    fun `the die-cut carries the geometry the bench calibrated`() {
-        val tone = AlbumToneConfig()
+    fun `the die-cut carries the wall the bench calibrated`() {
+        val wall = AlbumToneConfig().dieWall
 
-        assertEquals(5f, tone.dieWallWidthDp)
-        assertEquals(0.22f, tone.dieWallShadowAlpha)
-        assertEquals(0.85f, tone.dieWallSheenAlpha)
+        assertEquals(5f, wall.widthDp)
+        assertEquals(0.22f, wall.shadowAlpha)
+        assertEquals(0.85f, wall.sheenAlpha)
     }
 }

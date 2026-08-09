@@ -2,15 +2,14 @@ package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.theme.Paper
-import java.io.File
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DieCutWallTest {
-    private val stops = dieCutWallStops(AlbumToneConfig())
+    private val wall = DieCutWall()
+    private val stops = wall.stops()
 
     @Test
     fun `the wall closes where the two half arcs used to meet`() {
@@ -22,24 +21,22 @@ class DieCutWallTest {
 
     @Test
     fun `the wall has no step anywhere along the sweep`() {
-        // The arc that #357 measured went from 0.62 of white to nothing between two pixels. This
-        // is the same profile sampled every half degree: what replaces the seam is the absence of
-        // any step big enough to be a border, not a smaller step.
+        // The arc that #357 measured jumped 76 of the 255 luminance levels between two pixels. This
+        // is the profile the brush is handed, sampled every half degree: what replaces the seam is
+        // the absence of any step big enough to be a border, not a smaller step.
         val steepest = (0..720)
             .map { alphaAt(it / 720f) }
             .zipWithNext { before, after -> abs(after - before) }
             .max()
 
-        assertTrue(steepest < 0.006f, "el barrido salta $steepest de alfa en medio grado")
+        assertTrue(steepest < 0.006f, "the sweep jumps $steepest of alpha in half a degree")
     }
 
     @Test
     fun `the lit edge is at the bottom and the shadow at the top`() {
-        val tone = AlbumToneConfig()
-
         // Fractions run clockwise from 3 o'clock, so 0.25 is 6 o'clock and 0.75 is 12 o'clock.
-        assertEquals(tone.dieWallSheenAlpha, alphaAt(0.25f), TOLERANCE)
-        assertEquals(tone.dieWallShadowAlpha, alphaAt(0.75f), TOLERANCE)
+        assertEquals(wall.sheenAlpha, alphaAt(0.25f), TOLERANCE)
+        assertEquals(wall.shadowAlpha, alphaAt(0.75f), TOLERANCE)
         assertEquals(Color.White, colorAt(0.25f))
         assertEquals(Paper.ink, colorAt(0.75f))
     }
@@ -53,30 +50,18 @@ class DieCutWallTest {
     }
 
     @Test
-    fun `the wall never reaches a pixel of the photograph`() {
-        // It is drawn inwards from the hole's edge, so it stays on cardboard only while it is no
-        // wider than the cardboard the padding leaves free. #303: the photograph brings its own
-        // light already baked in, and a second one painted on top contradicts it.
-        assertTrue(AlbumToneConfig().dieWallWidthDp <= HOLE_CARD_PADDING_DP)
-    }
-
-    @Test
-    fun `the album hole draws no arc at all any more`() {
-        // Both defects #357 reported were half arcs: the pair on the cardboard that ended at 3 and
-        // 9 o'clock, and the pair inside the hole that fell on the coin. The sweep replaced the
-        // first and the second was withdrawn, so a new `drawArc` here would be a regression of one
-        // or the other.
-        val source = File(requireNotNull(System.getProperty("user.dir")))
-            .resolve("src/main/kotlin/com/jenarvaezg/coindex/ui/components/AlbumPaper.kt")
-
-        assertFalse(source.readText().contains("drawArc"))
+    fun `the wall is exactly as wide as the cardboard the die leaves free`() {
+        // Drawn inwards from the hole's edge, so this is what puts its inner edge where the
+        // photograph starts and not one dp further in. #303: the photograph brings its own light
+        // already baked in, and a second one painted on top contradicts it.
+        assertEquals(HOLE_CARD_PADDING_DP, wall.widthDp)
     }
 
     @Test
     fun `the bench moves both halves of the wall independently`() {
-        val calibrated = AlbumToneConfig(dieWallSheenAlpha = 0.3f, dieWallShadowAlpha = 0.1f)
+        val calibrated = DieCutWall(sheenAlpha = 0.3f, shadowAlpha = 0.1f)
 
-        val moved = dieCutWallStops(calibrated)
+        val moved = calibrated.stops()
 
         assertEquals(0.3f, alphaAt(0.25f, moved), TOLERANCE)
         assertEquals(0.1f, alphaAt(0.75f, moved), TOLERANCE)

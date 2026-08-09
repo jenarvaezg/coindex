@@ -623,23 +623,23 @@ private fun ToneCalibrationControls(
     CalibrationSection(title = "PARED DEL TROQUEL · BARRIDO SIN COSTURA") {
         ControlSlider(
             label = "Ancho",
-            value = state.dieWallWidthDp,
+            value = state.dieWall.widthDp,
             control = CalibrationControl.DIE_WALL_WIDTH_DP,
-            display = decimal(state.dieWallWidthDp, " dp"),
+            display = decimal(state.dieWall.widthDp, " dp"),
             onChange = onChange,
         )
         ControlSlider(
             label = "Sombra",
-            value = state.dieWallShadowAlpha,
+            value = state.dieWall.shadowAlpha,
             control = CalibrationControl.DIE_WALL_SHADOW_ALPHA,
-            display = percent(state.dieWallShadowAlpha),
+            display = percent(state.dieWall.shadowAlpha),
             onChange = onChange,
         )
         ControlSlider(
             label = "Canto",
-            value = state.dieWallSheenAlpha,
+            value = state.dieWall.sheenAlpha,
             control = CalibrationControl.DIE_WALL_SHEEN_ALPHA,
-            display = percent(state.dieWallSheenAlpha),
+            display = percent(state.dieWall.sheenAlpha),
             onChange = onChange,
         )
     }

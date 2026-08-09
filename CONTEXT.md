@@ -290,8 +290,9 @@ not-yet-issued members. A collection with no issue list is not an Album.
 
 **Die-cut hole**:
 The unit of the album sheet, and since ADR 0026 the shape of both a collection in the index and a
-member on a plate: cardboard with an inner shadow, a light lip and a round window with the coin's
-photograph inside. Its body flips the coin; the year beside it is a **Sunken tag**. A hole with no
+member on a plate: cardboard whose cut wall is shaded at the top and pale at the bottom, and a round
+window with the coin's photograph inside. Since #357 the wall lives entirely on the cardboard — the
+photograph carries its own light and nothing is drawn over it but the acetate's reflection. Its body flips the coin; the year beside it is a **Sunken tag**. A hole with no
 coin shows the design as a **Ghost**; a hole with no cardboard behind it is a coin no collection
 claims. It is a drawing and not a domain object — it says nothing an issue list does not.
 _Avoid_: Cell, tile, card, slot (which is the member, not its drawing)
