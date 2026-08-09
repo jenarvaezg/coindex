@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import com.jenarvaezg.coindex.ui.components.lateralTiltFraction
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 
 class CalibrationActivity : ComponentActivity(), SensorEventListener {

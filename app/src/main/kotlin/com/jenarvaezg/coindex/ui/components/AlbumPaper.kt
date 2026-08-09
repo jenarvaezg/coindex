@@ -18,9 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -46,7 +44,7 @@ private const val HALF_TURN = 180f
 /** Shallow enough that the near edge of the coin grows as it swings, as a real one does. */
 private const val COIN_CAMERA_DISTANCE = 12f
 
-/** One catalog face sunk into cardboard, with a fixed acetate reflection over it. */
+/** One catalog face sunk into cardboard, with the metal's own light over it. */
 @Composable
 fun AlbumHole(
     photo: CoinPhoto?,
@@ -184,38 +182,28 @@ fun AlbumHole(
                     modifier = Modifier
                         .fillMaxSize()
                         // The coin turns; the casilla does not. Only the photograph goes into the
-                        // layer, so the cardboard around it and the acetate's reflection over it
-                        // stay exactly where they are while the metal comes round.
+                        // layer, so the cardboard around it stays exactly where it is while the
+                        // metal comes round — and the gloss, which is inside the same layer, turns
+                        // with the face it belongs to (#338).
                         .graphicsLayer {
                             rotationY = faceTurn
                             cameraDistance = COIN_CAMERA_DISTANCE * density
                         }
-                        .alpha(if (missing) 0.14f else 1f),
+                        .alpha(if (missing) 0.14f else 1f)
+                        // A ghost is the catalog's design, not a coin the collector has: it is the
+                        // same case as empty cardboard and it does not gloss either.
+                        .then(if (missing) Modifier else Modifier.coinGloss()),
                 )
             }
 
-            // The die's shadow used to be painted here too, eight dp inside the edge and therefore
-            // squarely on the coin's face. It is gone: the photograph brings its own light baked in
-            // from the upper left (#303), and a second model of light drawn on top of the first
-            // contradicted it — which is what read as a mark on the metal. The wall of the cut now
-            // lives on the cardboard, where the shadow of a cut wall belongs.
-            //
-            // What stays is the acetate's fixed reflection. Whether it survives is not this
-            // ticket's call: #337 freezes it and #338 would replace it with the gloss of variant H,
-            // and both together rebuild #303's discarded variant D.
-            Canvas(Modifier.fillMaxSize()) {
-                drawCircle(
-                    brush = Brush.linearGradient(
-                        0f to Color.Transparent,
-                        0.42f to Color.Transparent,
-                        0.5f to Color.White.copy(alpha = 0.24f),
-                        0.58f to Color.Transparent,
-                        1f to Color.Transparent,
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, 0f),
-                    ),
-                )
-                if (missing) {
+            // Nothing else is painted over the photograph any more. The die's shadow went in #357 —
+            // eight dp inside the edge and therefore squarely on the coin's face — and the acetate's
+            // fixed reflection went here, in #338: leaving it under the gloss would have rebuilt
+            // #303's discarded variant D, two layers for the result of one. The wall of the cut
+            // lives on the cardboard, where the shadow of a cut wall belongs, and what is over the
+            // metal is the metal's own light.
+            if (missing) {
+                Canvas(Modifier.fillMaxSize()) {
                     drawCircle(
                         color = Paper.ink.copy(alpha = 0.48f),
                         radius = size.minDimension / 2f - 6.dp.toPx(),

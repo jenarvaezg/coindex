@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.debug.calibration
 
 import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
+import com.jenarvaezg.coindex.ui.components.CoinGloss
 import com.jenarvaezg.coindex.ui.components.DieCutWall
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
 import com.jenarvaezg.coindex.ui.components.GRAIN_TILE_DP
@@ -16,9 +17,9 @@ class CalibrationStateTest {
 
         assertEquals(96f, GRAIN_TILE_DP)
         assertEquals(GRAIN_OPACITY, state.grainOpacity)
-        assertEquals(105f, CalibrationState.GLOSS_ANGLE_DEGREES)
-        assertEquals(0.5f, state.glossIntensity)
-        assertEquals(55f, state.glossTravelDp)
+        assertEquals(105f, CoinGloss.Default.angleDegrees)
+        assertEquals(CoinGloss.Default.intensity, state.glossIntensity)
+        assertEquals(CoinGloss.Default.travel, state.glossTravel)
         assertEquals(420, state.flipDurationMillis)
         assertEquals(300, state.stampingDurationMillis)
         assertEquals(48.3f, CalibrationState.YEAR_TAG_WIDTH_DP)
@@ -37,6 +38,16 @@ class CalibrationStateTest {
     }
 
     @Test
+    fun `and so does the gloss, which is the same drawing the plate paints`() {
+        assertEquals(CoinGloss.Default, CalibrationState().glossConfig())
+    }
+
+    @Test
+    fun `the travel is a fraction of the diameter and cannot reach the edge`() {
+        assertEquals(0.5f, CalibrationControl.GLOSS_TRAVEL.range.endInclusive)
+    }
+
+    @Test
     fun `the wall of the die cannot be asked to cover the photograph`() {
         assertEquals(HOLE_CARD_PADDING_DP, CalibrationControl.DIE_WALL_WIDTH_DP.range.endInclusive)
     }
@@ -48,7 +59,7 @@ class CalibrationStateTest {
         val adjusted = initial
             .withControl(CalibrationControl.GRAIN_OPACITY, 0.18f)
             .withControl(CalibrationControl.GLOSS_INTENSITY, 0.4f)
-            .withControl(CalibrationControl.GLOSS_TRAVEL_DP, 42f)
+            .withControl(CalibrationControl.GLOSS_TRAVEL, 0.42f)
             .withControl(CalibrationControl.FLIP_DURATION_MILLIS, 510f)
             .withControl(CalibrationControl.STAMPING_DURATION_MILLIS, 260f)
             .withControl(CalibrationControl.RECESS_DEPTH_DP, 5f)
@@ -56,7 +67,7 @@ class CalibrationStateTest {
 
         assertEquals(0.18f, adjusted.grainOpacity)
         assertEquals(0.4f, adjusted.glossIntensity)
-        assertEquals(42f, adjusted.glossTravelDp)
+        assertEquals(0.42f, adjusted.glossTravel)
         assertEquals(510, adjusted.flipDurationMillis)
         assertEquals(260, adjusted.stampingDurationMillis)
         assertEquals(5f, adjusted.recessDepthDp)
@@ -71,23 +82,15 @@ class CalibrationStateTest {
     }
 
     @Test
-    fun `lateral acceleration becomes a signed gloss position saturated at 45 degrees`() {
-        assertEquals(0f, lateralTiltFraction(x = 0f, y = 0f, z = 9.81f), 0.001f)
-        assertEquals(1f, lateralTiltFraction(x = 9.81f, y = 0f, z = 9.81f), 0.001f)
-        assertEquals(-1f, lateralTiltFraction(x = -9.81f, y = 0f, z = 9.81f), 0.001f)
-        assertEquals(1f, lateralTiltFraction(x = 100f, y = 0f, z = 1f), 0.001f)
-    }
-
-    @Test
     fun `controls clamp values to the range exposed by the HUD`() {
         val adjusted = CalibrationState()
             .withControl(CalibrationControl.GRAIN_OPACITY, 3f)
-            .withControl(CalibrationControl.GLOSS_TRAVEL_DP, -1f)
+            .withControl(CalibrationControl.GLOSS_TRAVEL, -1f)
             .withControl(CalibrationControl.FLIP_DURATION_MILLIS, 1f)
             .withControl(CalibrationControl.GHOST_OPACITY, -2f)
 
         assertEquals(CalibrationControl.GRAIN_OPACITY.range.endInclusive, adjusted.grainOpacity)
-        assertEquals(CalibrationControl.GLOSS_TRAVEL_DP.range.start, adjusted.glossTravelDp)
+        assertEquals(CalibrationControl.GLOSS_TRAVEL.range.start, adjusted.glossTravel)
         assertEquals(
             CalibrationControl.FLIP_DURATION_MILLIS.range.start.toInt(),
             adjusted.flipDurationMillis,
