@@ -52,7 +52,6 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.LinkText
-import com.jenarvaezg.coindex.ui.components.PaperGrain
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
@@ -128,10 +127,9 @@ fun CoinsScreen(
     }
 
     BoxWithConstraints(
-        modifier = modifier.fillMaxWidth().background(Paper.paper),
+        modifier = modifier.fillMaxWidth(),
     ) {
         val columns = indexColumns(maxWidth)
-        PaperGrain(Modifier.matchParentSize())
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             modifier = Modifier.fillMaxWidth(),

@@ -69,6 +69,7 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.Paper
 import java.util.Locale
@@ -229,10 +230,11 @@ private fun CalibrationSlot(state: CalibrationState, glossPositionFraction: Floa
             .aspectRatio(0.94f)
             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
             .clip(RoundedCornerShape(3.dp))
-            .background(Paper.paperDeep)
+            // The bench paints the production surface itself (#351): the grain is calibrated on
+            // the paper it is drawn on, and the bench can no longer drift from what ships.
+            .paperSurface(state.grainOpacity)
             .border(1.dp, Paper.hairline.copy(alpha = 0.55f), RoundedCornerShape(3.dp)),
     ) {
-        GrainOverlay(state.grainOpacity)
 
         CoinRecess(
             state = state,
@@ -310,39 +312,6 @@ private fun RecessEdge() {
             size = arcSize,
             style = Stroke(width = 2.dp.toPx()),
         )
-    }
-}
-
-@Composable
-private fun GrainOverlay(opacity: Float) {
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen },
-    ) {
-        val mosaic = CalibrationState.GRAIN_MOSAIC_PX.toFloat()
-        var tileTop = 0f
-        while (tileTop < size.height) {
-            var tileLeft = 0f
-            while (tileLeft < size.width) {
-                repeat(180) { fibre ->
-                    val x = ((fibre * 73 + 19) % CalibrationState.GRAIN_MOSAIC_PX).toFloat()
-                    val y = ((fibre * 151 + fibre * fibre + 7) % CalibrationState.GRAIN_MOSAIC_PX).toFloat()
-                    val length = 3f + ((fibre * 17) % 18)
-                    val hash = (fibre * 47 + 31) and 0xFF
-                    val tone = if (hash and 1 == 0) Color.White else Paper.ink
-                    drawLine(
-                        color = tone.copy(alpha = opacity * (0.25f + hash / 510f)),
-                        start = androidx.compose.ui.geometry.Offset(tileLeft + x, tileTop + y),
-                        end = androidx.compose.ui.geometry.Offset(tileLeft + x + length, tileTop + y + 0.7f),
-                        strokeWidth = 1f,
-                        blendMode = BlendMode.Softlight,
-                    )
-                }
-                tileLeft += mosaic
-            }
-            tileTop += mosaic
-        }
     }
 }
 
@@ -570,7 +539,7 @@ private fun CalibrationControls(
     onChange: (CalibrationControl, Float) -> Unit,
     onGhostShownChange: (Boolean) -> Unit,
 ) {
-    CalibrationSection(title = "PAPEL · MOSAICO 256 PX · SOFT-LIGHT") {
+    CalibrationSection(title = "PAPEL · MOSAICO 96 DP · SOFT-LIGHT") {
         ControlSlider(
             label = "Opacidad",
             value = state.grainOpacity,
@@ -718,6 +687,7 @@ private fun ControlSlider(
             value = value,
             onValueChange = { onChange(control, it) },
             valueRange = control.range,
+            steps = control.steps,
             modifier = Modifier.weight(1f),
         )
         Text(

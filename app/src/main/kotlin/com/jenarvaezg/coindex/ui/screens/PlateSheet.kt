@@ -28,6 +28,7 @@ import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.printedPhoto
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlin.math.ceil
 import kotlin.math.sqrt
@@ -97,7 +98,7 @@ fun PlateSheet(
         // on a transparent background that every viewer fills with a colour of its own.
         modifier = modifier
             .width(layout.width)
-            .background(Paper.paper)
+            .paperSurface()
             .padding(SHEET_PADDING),
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
     ) {

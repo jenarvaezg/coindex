@@ -57,6 +57,7 @@ import com.jenarvaezg.coindex.ui.print.numistaQr
 import com.jenarvaezg.coindex.ui.print.printedDiameterLabel
 import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.qrRuns
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.BitterFamily
@@ -162,7 +163,7 @@ fun NotebookPageSheet(
         // comes out transparent and every viewer fills it with a colour of its own.
         modifier = modifier
             .size(geometry.widthMm.mm, geometry.heightMm.mm)
-            .background(Paper.paper)
+            .paperSurface()
             // Nothing is drawn outside the paper, which is the guarantee the packer makes when it
             // gives a plate a folio to itself «even where a single row would overflow»: at shipped
             // diameters that never happens, and if it ever did what came off the bottom would be

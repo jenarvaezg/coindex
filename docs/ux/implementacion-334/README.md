@@ -23,9 +23,14 @@ celdas de la barra inferior. Ninguna tarjeta aporta mobiliario: sólo imprime su
 nombre y la fracción. El volcado no contiene eyebrow de país ni línea de
 variante.
 
-El mosaico de fibra a opacidad 0,08 se distingue en la captura a 1:1, por lo
-que se conserva. El techo mensual y su medidor tampoco aparecen en el volcado
-de Ajustes.
+El mosaico de fibra a opacidad 0,08 **no** se distingue a 1:1, y esta página
+afirmó lo contrario sin número: recontado sobre `despues.png`, en una región de
+920 × 600 px de papel vacío, el grano toca el 4,17 % de los píxeles con 12
+niveles de amplitud y 0,78 de desviación típica, y el mosaico repite exacto cada
+256 px. La condición de retirada del [#300](https://github.com/jenarvaezg/coindex/issues/300)
+se cumplía y no se aplicó; el [#351](https://github.com/jenarvaezg/coindex/issues/351)
+lo midió y lo resolvió subiéndolo — ver `docs/ux/implementacion-351/`. El techo
+mensual y su medidor tampoco aparecen en el volcado de Ajustes.
 
 - [`antes.png`](antes.png): índice heredado del bloque 2.
 - [`despues.png`](despues.png): canto, regleta y huecos troquelados.

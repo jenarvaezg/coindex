@@ -30,6 +30,7 @@ import com.jenarvaezg.coindex.ui.components.CoinSides
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.piecesSheetFacts
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 private val SHEET_GUTTER = 12.dp
@@ -59,7 +60,7 @@ fun PiecesSheet(
         // background that every viewer fills with a colour of its own.
         modifier = modifier
             .width(layout.width)
-            .background(Paper.paper)
+            .paperSurface()
             .padding(SHEET_PADDING),
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
     ) {

@@ -1,10 +1,13 @@
 package com.jenarvaezg.coindex.ui.theme
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -12,6 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.R
 
@@ -140,6 +144,9 @@ fun CoindexTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = fieldColors,
         typography = fieldTypography,
-        content = content,
-    )
+    ) {
+        // The sheet is the window, and not a background each screen paints for itself: the grain
+        // used to live on two screens and stop at the edge of the third (#351).
+        Box(modifier = Modifier.fillMaxSize().paperSurface(), content = { content() })
+    }
 }

@@ -507,7 +507,7 @@ written**.
 
 | parameter | approved value | who decides |
 | --- | --- | --- |
-| grain opacity of the paper | 256 px mosaic in `soft-light` | the bench — and if the grain is indistinguishable at 1:1 it is withdrawn without reopening #300 |
+| grain opacity of the paper | 96 dp mosaic in `soft-light` at 0.75 (#351; was a 256 px mosaic at 0.08, which measured indistinguishable at 1:1 and was raised rather than withdrawn) | the bench — and if the grain is indistinguishable at 1:1 it is withdrawn without reopening #300 |
 | gloss intensity and travel | half the video's, ±55 dp at 105° | the bench |
 | flip duration | 420 ms | the bench |
 | stamping duration | 300 ms | the bench |
