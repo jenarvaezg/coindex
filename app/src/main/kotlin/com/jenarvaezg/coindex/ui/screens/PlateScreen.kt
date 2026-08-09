@@ -5,22 +5,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -42,14 +47,17 @@ import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
+import com.jenarvaezg.coindex.ui.components.StampedRatio
+import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
+import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
-import com.jenarvaezg.coindex.ui.plateScreenEntries
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
+import kotlinx.coroutines.flow.first
 
 /**
  * The plate of a followed collection against its curated catalog.
@@ -144,8 +152,11 @@ private fun PlateGrid(
         // which would hang 54 dp of empty cardboard under the twenty date-run casillas of the
         // 1 Bolívar for the sake of the two titled `1945 (acuñada en 1947)`.
         val namedRows = plate.cells.chunked(columns).map { row -> row.any { it.label != it.year } }
+        val grid = rememberLazyGridState()
+        OpenWhereTheCoinLands(plate.landingCell, grid)
         LazyVerticalGrid(
             columns = GridCells.Adaptive(104.dp),
+            state = grid,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = PLATE_MARGIN, vertical = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
@@ -154,9 +165,9 @@ private fun PlateGrid(
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Eyebrow("Catálogo curado")
-                    Text(plate.title, style = MaterialTheme.typography.headlineMedium)
+                    PlateHeading(title = plate.title, ratio = plate.ratio, complete = plate.complete)
                     SpecificationCard(
-                        entries = plateScreenEntries(plate.entries),
+                        entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
                     )
                     // Exporting the plate is what this screen is for, so it is the only filled
@@ -184,6 +195,11 @@ private fun PlateGrid(
                     images = cell.numistaTypeId?.let { images[it] },
                     printedSide = plate.printedSide,
                     named = namedRows.getOrElse(index / columns) { false },
+                    // Where the coin of the index card is flying to, and nowhere else: it is the
+                    // same casilla the plate is scrolled to, so the landing is the one thing the
+                    // journey promised — «es la misma moneda» (ADR 0026 §3).
+                    travelling = index == plate.landingCell,
+                    catalogId = plate.catalogId,
                     onOpenSource = onOpenSource,
                 )
             }
@@ -207,12 +223,64 @@ internal fun plateColumns(
     gutter: Dp = PlateMetrics.gutter,
 ): Int = maxOf(1, ((available + gutter) / (minimum + gutter)).toInt())
 
+/**
+ * The plate's own heading: the title, and the ratio raised out of the specification onto it.
+ *
+ * The figure sits at the top right because that is where the stamp lands (#304): the ceremony eats
+ * the datum that was already on the sheet instead of adding a line of its own, and it fires on
+ * opening — when you are at the top — so a stamp anywhere further down would be pressed off screen.
+ *
+ * A plate with no measurable denominator has no figure to raise, and then the title takes the width.
+ */
+@Composable
+private fun PlateHeading(title: String, ratio: String?, complete: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Text(
+            title,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.weight(1f),
+        )
+        ratio?.let { figure -> StampedRatio(ratio = figure, complete = complete) }
+    }
+}
+
+/**
+ * Opens the sheet at the casilla the coin is flying to, when it would otherwise land off screen.
+ *
+ * The four Bolívares the father owns are casillas 19 to 22 of 22, so a plate that always opened at
+ * the top would promise «es la misma moneda» and then land it below the fold (#304). It is only ever
+ * a jump the collector never sees, made before the first frame they do: [LazyGridState.scrollToItem]
+ * and not `animateScrollToItem`, which would race the shared element it exists to serve.
+ *
+ * **Nothing moves when the landing is already visible**, which is every complete plate: the first
+ * casilla a complete sheet owns *is* its first casilla, so the ceremony falls where the eye is.
+ */
+@Composable
+private fun OpenWhereTheCoinLands(landingCell: Int?, grid: LazyGridState) {
+    LaunchedEffect(landingCell) {
+        if (landingCell == null) return@LaunchedEffect
+        // The grid has measured nothing yet on the frame this effect runs in, so what is visible is
+        // asked for once there is a layout to ask: reading it earlier reports an empty sheet and
+        // scrolls every plate, complete ones included.
+        val visible = snapshotFlow { grid.layoutInfo.visibleItemsInfo }.first { it.isNotEmpty() }
+        // The heading is item 0, so a casilla is one further along than its own index.
+        val item = landingCell + 1
+        if (visible.none { it.index == item }) grid.scrollToItem(item)
+    }
+}
+
 @Composable
 private fun PlateCell(
     cell: DrawnCell,
     images: TypeImages?,
     printedSide: PrintedSide,
     named: Boolean,
+    travelling: Boolean,
+    catalogId: String,
     onOpenSource: (String) -> Unit,
 ) {
     // An announced member has no Numista page to open: the coin is not in the catalogue.
@@ -227,7 +295,9 @@ private fun PlateCell(
             // Two targets on a casilla and not one (#302): the body of the hole turns the coin
             // over, and the year under it goes out to Numista.
             otherSide = images?.printedPhoto(printedSide.other),
-            modifier = Modifier.size(104.dp),
+            modifier = Modifier
+                .size(104.dp)
+                .travellingCoin(catalogId.takeIf { travelling }),
         )
         if (named) {
             PlateCellName(name = cell.label.takeIf { it != cell.year }.orEmpty())

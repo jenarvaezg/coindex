@@ -1,6 +1,8 @@
 # ADR 0026: The shape of Coindex — an album sheet, and what moves owes a datum
 
-- Status: accepted, §15 amended by #351 (the grain's approved value) and by #357 (the die-cut's wall)
+- Status: accepted, §15 amended by #351 (the grain's approved value), by #357 (the die-cut's wall)
+  and by #338 (the gloss confirmed and the acetate withdrawn); §3 amended by #339 (the stamp keeps
+  no bit)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -143,13 +145,32 @@ prototype video's: the photograph already carries its light baked in from the up
 *just* become complete» — because there is no event to remember. It is read from the inventory like
 the die-cut: 84 × 76 dp of rubber stamp in `multiply`, rotated 5.5°, landing **on the ratio the header
 already showed**, so it adds not one word and not one figure. It is stamped **on opening the sheet and
-never on syncing** (one bit per catalog in `NamedValues`), and **only on the plate** — an index card
+never on syncing** — see the amendment of 9 August below — and **only on the plate**: an index card
 is never opened, so a stamp there would fire the ceremony on scroll. The word is **«completa»**, the
 only one, including for an open series.
 
 The measurement that changed this decision before anything was drawn: **the father's six complete
 plates have been complete since the day we curated their catalog**. He has never completed one inside
 Coindex. So the ceremony **does not congratulate — it reveals.**
+
+> **Amended on 2026-08-09 (§3, #339). The bit is withdrawn: the sheet stamps every time it is
+> opened.** #304 had costed the ceremony at «one bit per catalog in `NamedValues`» — *ya te lo
+> enseñé* — and its own test plan contradicted it in the next paragraph («volver a abrirlos vuelve a
+> estampar sin guardar ningún hecho»). The owner settled it on 9 August, and the test plan was
+> right. Three reasons, and the first is the ceremony's own: with a bit the stamping happens
+> **exactly six times in the life of a phone**, once per complete plate, and each of those six is
+> unrepeatable — a photograph that has not painted yet, or an eye somewhere else, spends the only
+> one there was. The second is that **no other movement of the app is spent**: the flip answers the
+> finger every time it is touched and the gloss answers the sensor always, so a stamp with a memory
+> would be the one effect that runs out, which is what turns a state back into the half-event #304
+> refused. The third is that ADR 0021 §7 left the app storing **nothing per card** and #276 retired
+> the last of it: a 1.0.0 does not reopen that door for an animation. The consequence accepted is
+> that the ink falls again on a sheet whose owner has already seen it fall; at 300 ms on a screen
+> that is opened rarely, that is the cheaper of the two mistakes. The bench fired a third time and
+> confirmed the rest of the block without moving a value: the `multiply` over #351's grained paper
+> leaves the grain **3.6 % off what multiplying the paper predicts**, where a flat ink would be 100 %
+> off, and the long title of a real catalog — four lines of it — no longer reaches the stamp, which
+> closes #319 where it was opened. The numbers are in `docs/ux/implementacion-339/`.
 
 **The journey** flies the coin **only where it is the protagonist**: its slot on a plate, and the
 coin's ficha sheet (§5). In `Pieces` and `Box` it does not fly, because on the other side there is no

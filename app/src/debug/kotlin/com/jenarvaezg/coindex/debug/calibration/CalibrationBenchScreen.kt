@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -73,6 +74,9 @@ import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CoinTilt
 import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
 import com.jenarvaezg.coindex.ui.components.LocalCoinTilt
+import com.jenarvaezg.coindex.ui.components.LocalStamping
+import com.jenarvaezg.coindex.ui.components.StampedRatio
+import com.jenarvaezg.coindex.ui.components.Stamping
 import com.jenarvaezg.coindex.ui.components.coinGloss
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
@@ -455,56 +459,30 @@ private fun RecessedYearTag(depth: Dp, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * The stamp of a complete sheet, falling on a loop so the millisecond can be judged.
+ *
+ * **The production drawing itself and not a copy of it**, the way the gloss already is: the ink the
+ * sliders time here is the ink the plate presses, which is the whole point of calibrating on a
+ * bench. What the bench adds is the repetition — a plate stamps once, on opening, and a number you
+ * can only see once is a number you cannot calibrate.
+ */
 @Composable
 private fun CompletionRatio(durationMillis: Int, modifier: Modifier = Modifier) {
-    Box(contentAlignment = Alignment.Center, modifier = modifier.size(width = 84.dp, height = 76.dp)) {
-        Text(
-            text = "22/22",
-            modifier = Modifier.padding(top = 14.dp),
-            fontFamily = BarlowCondensedFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            color = Paper.rust.copy(alpha = 0.45f),
-        )
-        Stamp(durationMillis)
-    }
-}
-
-@Composable
-private fun Stamp(durationMillis: Int) {
-    val progress = remember { Animatable(0f) }
+    var press by remember { mutableIntStateOf(0) }
     LaunchedEffect(durationMillis) {
         while (true) {
-            progress.snapTo(0f)
-            progress.animateTo(1f, animationSpec = tween(durationMillis))
-            delay(1_200)
+            delay(durationMillis + 1_200L)
+            press += 1
         }
     }
-    Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = Modifier
-            .size(width = 84.dp, height = 76.dp)
-            .graphicsLayer {
-                val scale = 1.16f - progress.value * 0.16f
-                scaleX = scale
-                scaleY = scale
-                rotationZ = 5.5f
-                alpha = progress.value
-                blendMode = BlendMode.Multiply
-            }
-            .border(2.dp, Paper.rust.copy(alpha = 0.82f), RoundedCornerShape(1.dp))
-            .padding(4.dp)
-            .border(1.dp, Paper.rust.copy(alpha = 0.72f), RoundedCornerShape(1.dp)),
-    ) {
-        Text(
-            text = "COMPLETA",
-            modifier = Modifier.padding(top = 7.dp),
-            fontFamily = BarlowCondensedFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 10.sp,
-            letterSpacing = 0.8.sp,
-            color = Paper.rust.copy(alpha = 0.82f),
-        )
+    // Keyed on the press: the stamp falls when it enters composition, so a fresh one is what a
+    // repeat is. Toggling `complete` instead would animate the ink back *out* first, which is a
+    // withdrawal production never draws.
+    key(press) {
+        CompositionLocalProvider(LocalStamping provides Stamping(durationMillis)) {
+            StampedRatio(ratio = "22/22", complete = true, modifier = modifier)
+        }
     }
 }
 

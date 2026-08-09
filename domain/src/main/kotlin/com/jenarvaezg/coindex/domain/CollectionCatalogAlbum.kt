@@ -73,6 +73,23 @@ data class CollectionCatalogAlbum(
         members.count { it.status is CollectionCatalogMemberStatus.Unlisted }
 }
 
+/**
+ * What this collector has of this catalog, as the one ratio the whole app divides by.
+ *
+ * Null for a catalog whose every member is announced or unlisted: there is nothing measurable to
+ * divide by, so it offers no ratio rather than a zero one.
+ *
+ * It lives next to the counters and not inside the index because the index is no longer the only
+ * caller (ADR 0026 §3): the completion stamp is **read from the inventory like the die-cut**, and
+ * reading it from a second rule is how the card's ratio in rust and the stamp on the plate would
+ * come to disagree about the same collection one tap apart.
+ */
+fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
+    val issued = issuedMembers()
+    if (issued == 0) return null
+    return CoverageRatio(ownedMembers(), issued)
+}
+
 fun buildCollectionCatalogAlbum(
     catalog: CollectionCatalog,
     items: List<CollectedItem>,

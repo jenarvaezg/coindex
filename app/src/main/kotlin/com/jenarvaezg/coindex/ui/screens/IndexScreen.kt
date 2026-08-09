@@ -50,6 +50,7 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.SearchField
+import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
 import com.jenarvaezg.coindex.ui.indexCoverageLabel
@@ -370,7 +371,15 @@ fun IndexScreen(
                     PrintedSide.Reverse -> images?.reverse
                     null -> null
                 }
-                CollectionCard(card = card, photo = photo, onOpen = { openCard(card) })
+                CollectionCard(
+                    card = card,
+                    photo = photo,
+                    // A coin only flies where it has a casilla of its own to land in, which is
+                    // exactly the cards that open a plate (ADR 0026 §3). The other 20 of the
+                    // father's 69 have no ratio, and that is what tells them apart before touching.
+                    travelsTo = (card as? IndexCard.Derived)?.plateCatalogId,
+                    onOpen = { openCard(card) },
+                )
             }
         }
 
@@ -460,6 +469,7 @@ private fun cardKey(card: IndexCard): String = when (card) {
 private fun CollectionCard(
     card: IndexCard,
     photo: CoinPhoto?,
+    travelsTo: String?,
     onOpen: () -> Unit,
 ) {
     Column(
@@ -472,7 +482,8 @@ private fun CollectionCard(
         AlbumHole(
             photo = photo,
             modifier = Modifier
-                .size(104.dp),
+                .size(104.dp)
+                .travellingCoin(travelsTo),
         )
         CollectionName(card.name)
         Text(

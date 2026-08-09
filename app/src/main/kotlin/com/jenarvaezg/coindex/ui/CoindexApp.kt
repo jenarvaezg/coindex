@@ -2,6 +2,9 @@ package com.jenarvaezg.coindex.ui
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +23,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +50,8 @@ import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.components.BackGlyph
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
+import com.jenarvaezg.coindex.ui.components.LocalNavAnimation
+import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
@@ -194,12 +200,17 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 onSave = viewModel::saveCredentials,
                 modifier = content,
             )
-            else -> NavHost(
+            // The journey of ADR 0026 §3 needs one layout over both ends of it, and the NavHost is
+            // the only thing in the app that is on both sides of a navigation. What actually flies
+            // is decided far from here — `Modifier.travellingCoin` on the two die-cut holes — so
+            // the host provides the scope and knows nothing about coins.
+            else -> TravelLayout(content) { NavHost(
                 navController = navController,
                 startDestination = Routes.INDEX,
-                modifier = content,
+                modifier = Modifier.fillMaxSize(),
             ) {
                 composable(Routes.INDEX) {
+                    Travelling(this) {
                     IndexScreen(
                         state = state.collection,
                         loading = state.loading,
@@ -216,6 +227,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         onMessage = viewModel::showMessage,
                         onExporting = viewModel::notebookExporting,
                     )
+                    }
                 }
                 composable(Routes.COINS) {
                     CoinsScreen(
@@ -325,6 +337,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 }
                 composable(Routes.PLATE) { entry ->
                     val catalogId = entry.arguments?.getString("catalogId").orEmpty()
+                    Travelling(this) {
                     PlateScreen(
                         // Resolved once per collection and not once per recomposition (#218):
                         // building the album walks the whole inventory, and the screen recomposes
@@ -337,10 +350,32 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         onMessage = viewModel::showMessage,
                         modifier = Modifier.fillMaxSize(),
                     )
+                    }
                 }
-            }
+            } }
         }
     }
+}
+
+/**
+ * The one shared-element layout of the app, over both ends of every navigation.
+ *
+ * It is here and not around a screen because a shared element is a promise about two screens: the
+ * hole of a card and the hole of a casilla are the same object seen twice (#300), and the layout is
+ * what lets Compose believe it.
+ */
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun TravelLayout(modifier: Modifier, content: @Composable () -> Unit) {
+    SharedTransitionLayout(modifier = modifier) {
+        CompositionLocalProvider(LocalSharedTransition provides this, content = content)
+    }
+}
+
+/** Hands one destination its own arrival, which is the half of a journey a screen can see. */
+@Composable
+private fun Travelling(scope: AnimatedVisibilityScope, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalNavAnimation provides scope, content = content)
 }
 
 /**

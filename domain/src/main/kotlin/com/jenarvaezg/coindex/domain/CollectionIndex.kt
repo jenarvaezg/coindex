@@ -210,14 +210,6 @@ class CollectionIndex(
      */
     private fun declaredIssuerCode(key: VariantKey): String? =
         catalogsByKey[key]?.issuerCode ?: groupingIssuers[key.family]
-
-    private fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
-        val issued = issuedMembers()
-        // A catalog whose every member is announced or unlisted has nothing measurable to divide
-        // by, so it offers no ratio rather than a zero one.
-        if (issued == 0) return null
-        return CoverageRatio(ownedMembers(), issued)
-    }
 }
 
 private fun CollectionCatalogAlbum.firstOwnedCover(printedSide: PrintedSide): IndexCover? =
