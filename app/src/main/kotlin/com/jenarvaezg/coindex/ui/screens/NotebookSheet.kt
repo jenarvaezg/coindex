@@ -114,6 +114,9 @@ private val PRINT_CELL_THEME = TextStyle(
     fontSize = 2.5f.sp,
     lineHeight = 2.9f.sp,
 )
+// Denomination plus the worst-case two theme lines. The rest of the 16 mm caption stays untouched,
+// so fixing alignment cannot change the page count (#350).
+private const val PRINT_CARTOUCHE_MM = 9.1f
 private val PRINT_FOOTNOTE = TextStyle(
     fontFamily = BarlowCondensedFamily,
     fontSize = 2.3f.sp,
@@ -351,26 +354,36 @@ private fun PrintedCell(
         }
         CellState(cell, modifier = Modifier.padding(top = 1f.mm))
         if (cell.name != null) {
-            Text(
-                cell.name.denomination,
-                style = PRINT_CELL_TITLE,
-                autoSize = TextAutoSize.StepBased(
-                    minFontSize = 1f.sp,
-                    maxFontSize = 2.9f.sp,
-                    stepSize = 0.1f.sp,
-                ),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Visible,
-            )
-            cell.name.theme?.let { theme ->
+            Column(
+                modifier = Modifier.fillMaxWidth().height(PRINT_CARTOUCHE_MM.mm),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(
-                    theme,
-                    style = PRINT_CELL_THEME,
+                    cell.name.denomination,
+                    style = PRINT_CELL_TITLE,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 1f.sp,
+                        maxFontSize = 2.9f.sp,
+                        stepSize = 0.1f.sp,
+                    ),
                     textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible,
                 )
+                Box(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    cell.name.theme?.let { theme ->
+                        Text(
+                            theme,
+                            style = PRINT_CELL_THEME,
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
             }
         } else {
             Text(
@@ -381,6 +394,7 @@ private fun PrintedCell(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+        // The year remains outside the cartouche; #337 owns its separate rendering change.
         cell.footnote?.let { footnote ->
             Text(
                 footnote,

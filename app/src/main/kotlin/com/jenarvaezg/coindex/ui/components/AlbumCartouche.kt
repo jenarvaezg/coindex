@@ -1,13 +1,15 @@
 package com.jenarvaezg.coindex.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -19,7 +21,9 @@ import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.theme.Paper
 
-/** Static recessed album label: one denomination range and at most two theme lines. */
+private val ALBUM_CARTOUCHE_HEIGHT = 52.dp
+
+/** Static recessed album label: one denomination range and a two-line theme slot. */
 @Composable
 fun AlbumCartouche(
     name: CoinName,
@@ -29,7 +33,9 @@ fun AlbumCartouche(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 52.dp)
+            // The measured worst case already fits in 52 dp; exact height keeps every label equal
+            // without adding 26 dp to the row pitch (#350).
+            .height(ALBUM_CARTOUCHE_HEIGHT)
             .drawBehind {
                 drawRect(Paper.paperDeep.copy(alpha = tone.cartoucheAlpha))
                 drawLine(
@@ -60,18 +66,23 @@ fun AlbumCartouche(
             overflow = TextOverflow.Visible,
             modifier = Modifier.fillMaxWidth(),
         )
-        name.theme?.let { theme ->
-            Text(
-                text = theme,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 13.sp,
-                ),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
-            )
+        Box(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentAlignment = Alignment.Center,
+        ) {
+            name.theme?.let { theme ->
+                Text(
+                    text = theme,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 11.sp,
+                        lineHeight = 13.sp,
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }
