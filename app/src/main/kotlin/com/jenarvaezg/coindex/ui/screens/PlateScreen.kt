@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.data.photos.TypeImages
@@ -192,20 +197,10 @@ private fun PlateCell(
         )
         // An announced member has no Numista page to open: the coin is not in the catalogue.
         val typeId = cell.numistaTypeId
-        if (typeId != null) {
-            ExternalLink(
-                text = cell.label,
-                style = MaterialTheme.typography.titleMedium,
-                onClick = { onOpenSource(numistaTypeUrl(typeId)) },
-            )
-        } else {
-            Text(
-                cell.label,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-            )
-        }
+        PlateCellName(
+            name = cell.label,
+            onOpen = typeId?.let { { onOpenSource(numistaTypeUrl(it)) } },
+        )
         // Only what tells this cell apart, which is at most the year: in a date run the title is
         // already it, and the type is reached by tapping the title right above.
         cell.footnote?.let { footnote ->
@@ -218,6 +213,74 @@ private fun PlateCell(
         }
     }
 }
+
+/**
+ * The name under a hole, in the two-line range every cell of the plate reserves.
+ *
+ * The plate is the last of the three surfaces that print a name under a hole to get this: the
+ * index card autosizes and truncates since #348 and the Coins cartouche since #350, while the cell
+ * of the plate let the name decide its own height. With 235 of the 1.188 members in `data/` past
+ * two lines — 66 of them in one single plate — the year of a row landed on three different
+ * baselines and the tallest name pushed its neighbours' apart.
+ *
+ * The label is the curator's and is never shortened here: 1.086 of those 1.188 are not a year, and
+ * many are legitimate descriptions of the issue. What gives is the type on screen.
+ *
+ * [onOpen] is null for an announced member, which has no Numista page to open.
+ */
+@Composable
+internal fun PlateCellName(
+    name: String,
+    onOpen: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    val style = MaterialTheme.typography.titleMedium
+    // Reserved in dp and not in lines: two lines of a name that shrank to 13 sp are shorter than
+    // two lines of one that did not, so `minLines` alone still left three years of a row on three
+    // baselines. The box is always the two tallest lines the cell can print.
+    val reserved = with(LocalDensity.current) {
+        style.lineHeight.toDp() * PLATE_CELL_NAME_LINES + NAME_PADDING * 2
+    }
+    Box(
+        modifier = modifier.fillMaxWidth().height(reserved),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        if (onOpen != null) {
+            ExternalLink(
+                text = name,
+                style = style,
+                textAlign = TextAlign.Center,
+                autoSize = PLATE_CELL_NAME_AUTO_SIZE,
+                maxLines = PLATE_CELL_NAME_LINES,
+                onClick = onOpen,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        } else {
+            Text(
+                text = name,
+                style = style,
+                textAlign = TextAlign.Center,
+                autoSize = PLATE_CELL_NAME_AUTO_SIZE,
+                maxLines = PLATE_CELL_NAME_LINES,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth().padding(vertical = NAME_PADDING),
+            )
+        }
+    }
+}
+
+/** Every cell reserves the same name range, so a row's years share one baseline. */
+private const val PLATE_CELL_NAME_LINES = 2
+
+/** The breathing room [ExternalLink] adds around its own text, matched by the plain branch. */
+private val NAME_PADDING = 6.dp
+
+/** Bitter shrinks before the cell cuts, the same ladder the index card walks down (#348). */
+private val PLATE_CELL_NAME_AUTO_SIZE = TextAutoSize.StepBased(
+    minFontSize = 13.sp,
+    maxFontSize = 17.sp,
+    stepSize = 0.5.sp,
+)
 
 @Composable
 private fun UnavailablePlate(reason: PlateUnavailable, modifier: Modifier = Modifier) {
