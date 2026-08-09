@@ -34,15 +34,15 @@ data class CoinGloss(
     val intensity: Float = 0.5f,
     /** How far the band travels from the centre, each way, as a fraction of the diameter. */
     val travel: Float = 0.45f,
-    /** Half the width of the band, as a fraction of the diameter. */
-    val band: Float = 0.32f,
+    /** Half the width of the band, as a fraction of the diameter — the gradient's own reach. */
+    val halfBand: Float = 0.32f,
     val angleDegrees: Float = 105f,
 ) {
     /** Where the band's white sits right now, in pixels from the centre of the coin. */
     fun bandCentre(diameterPx: Float, lateral: Float): Float =
         lateral.coerceIn(-1f, 1f) * travel * diameterPx
 
-    fun bandHalfWidth(diameterPx: Float): Float = band * diameterPx
+    fun bandHalfWidth(diameterPx: Float): Float = halfBand * diameterPx
 
     companion object {
         val Default = CoinGloss()
@@ -58,22 +58,23 @@ data class CoinGloss(
  */
 val LocalCoinGloss = staticCompositionLocalOf<CoinGloss?> { CoinGloss.Default }
 
-/** Where the light is falling for this tree. */
-val LocalCoinTilt = staticCompositionLocalOf { CoinTilt.Still }
-
 /**
  * Marks a photograph as metal: the gloss goes over it and the accelerometer moves it.
  *
  * One modifier and not a list of screens (ADR 0026 §4): **every coin photograph glosses**, die-cut
- * or loose — the plate, the index, `PieceCard` and the side sheets. Empty cardboard never does, for
- * the direct reason that there is no coin there, and neither does the ghost of a missing one.
+ * or loose — the plate, the index, `PieceCard` and the side sheets.
+ *
+ * [isCoin] is where the other half of the rule lives, so that a third surface cannot forget it:
+ * empty cardboard never glosses, for the direct reason that there is no coin there, and neither does
+ * the desaturated design of an issue the collector is missing — that is the catalog's drawing, not
+ * metal.
  *
  * Being composed is also what registers the sensor: while no coin is on screen the accelerometer is
- * not worth its battery, and neither surface has to say so out loud.
+ * not worth its battery, and no surface has to say so out loud.
  */
 @Composable
-fun Modifier.coinGloss(): Modifier {
-    val gloss = LocalCoinGloss.current ?: return this
+fun Modifier.coinGloss(isCoin: Boolean = true): Modifier {
+    val gloss = LocalCoinGloss.current?.takeIf { isCoin } ?: return this
     val tilt = LocalCoinTilt.current
     DisposableEffect(tilt) {
         tilt.coinAppeared()

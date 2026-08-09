@@ -19,9 +19,10 @@ enum class CalibrationControl(
     /**
      * A fraction of the diameter and not dp: the prototype's ±55 dp were ±45 % of a 121 dp hole, and
      * the same dp on production's 104 dp casilla would be ±53 % — a band that spends more time off
-     * the coin than on it. Half the diameter is the ceiling because past it the white is gone.
+     * the coin than on it. The ceiling leaves room above the approved ±45 % — a slider that opens at
+     * 90 % of its own range can only be pushed one way.
      */
-    GLOSS_TRAVEL(0f..0.5f),
+    GLOSS_TRAVEL(0f..0.7f),
     FLIP_DURATION_MILLIS(200f..900f),
     STAMPING_DURATION_MILLIS(100f..700f),
     RECESS_DEPTH_DP(0f..8f),

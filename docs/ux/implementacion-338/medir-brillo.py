@@ -17,8 +17,11 @@ Las tres cifras que decidieron el calibrado:
 * **señal contra la hoja de hoy**: diferencia media y máxima entre la casilla de
   hoy y la misma casilla en reposo con el brillo puesto.
 * **ruido de la propia foto**: amplitud pico a pico del perfil de luminancia de la
-  fotografía por ese mismo eje. Es la vara: el #338 midió 162 niveles, y el reflejo
-  fijo del acetato movía 13.
+  fotografía por ese mismo eje. Es la vara con la que se compara la señal, y cambia
+  con la moneda: el #338 midió 162 niveles sobre el 1 Bolívar de
+  `implementacion-336/monedas.png` y aquí salen 91,9 sobre la casilla de los
+  Fuertes. Lo que no cambia es el término de comparación — el reflejo fijo del
+  acetato movía 13.
 """
 
 import argparse

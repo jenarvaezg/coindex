@@ -49,7 +49,7 @@ class CoinGlossTest {
 
     @Test
     fun `the band is as wide as the prototype's, also in proportion`() {
-        assertEquals(0.32f, CoinGloss.Default.band)
+        assertEquals(0.32f, CoinGloss.Default.halfBand)
         assertEquals(casilla * 0.32f, CoinGloss.Default.bandHalfWidth(casilla))
     }
 }

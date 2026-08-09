@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.ui.components.GRAIN_TILE_DP
 import com.jenarvaezg.coindex.ui.components.HOLE_CARD_PADDING_DP
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CalibrationStateTest {
     @Test
@@ -43,8 +44,9 @@ class CalibrationStateTest {
     }
 
     @Test
-    fun `the travel is a fraction of the diameter and cannot reach the edge`() {
-        assertEquals(0.5f, CalibrationControl.GLOSS_TRAVEL.range.endInclusive)
+    fun `the travel is a fraction of the diameter, with room above the approved value`() {
+        assertEquals(0.7f, CalibrationControl.GLOSS_TRAVEL.range.endInclusive)
+        assertTrue(CoinGloss.Default.travel < CalibrationControl.GLOSS_TRAVEL.range.endInclusive)
     }
 
     @Test

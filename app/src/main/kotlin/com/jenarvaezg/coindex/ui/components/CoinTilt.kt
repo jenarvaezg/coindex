@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -33,6 +34,9 @@ interface CoinTilt {
         }
     }
 }
+
+/** Where the light is falling for this tree. */
+val LocalCoinTilt = staticCompositionLocalOf { CoinTilt.Still }
 
 /**
  * The accelerometer, behind a seam.

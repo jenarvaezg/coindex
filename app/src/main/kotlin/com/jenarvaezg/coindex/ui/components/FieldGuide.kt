@@ -514,9 +514,8 @@ private fun CoinSide(
                         .alpha(if (missing) 0.45f else 1f)
                         // A coin is metal wherever it is photographed, die-cut or loose (ADR 0026
                         // §4), and the studio white around it is left alone: soft-light cannot move
-                        // a pure white. What is missing is a design and not a coin, so it does not
-                        // gloss — and the exported sheet has the gloss switched off above it.
-                        .then(if (missing) Modifier else Modifier.coinGloss()),
+                        // a pure white. The exported sheet has the gloss switched off above it.
+                        .coinGloss(isCoin = !missing),
                 )
             }
         }

@@ -190,9 +190,7 @@ fun AlbumHole(
                             cameraDistance = COIN_CAMERA_DISTANCE * density
                         }
                         .alpha(if (missing) 0.14f else 1f)
-                        // A ghost is the catalog's design, not a coin the collector has: it is the
-                        // same case as empty cardboard and it does not gloss either.
-                        .then(if (missing) Modifier else Modifier.coinGloss()),
+                        .coinGloss(isCoin = !missing),
                 )
             }
 

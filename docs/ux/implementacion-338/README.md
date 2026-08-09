@@ -40,6 +40,12 @@ mitad del vídeo mueve **104,7 contra 91,9**, es decir **1,1 veces** ese ruido �
 veces más señal que el acetato. Por eso el valor aprobado entra tal cual:
 **intensidad 0,50 y recorrido ±45 % del diámetro**.
 
+Y el diámetro es **el de la fotografía, no el del hueco**: el prototipo del #303 medía
+±55 dp sobre una moneda de 121 dp dentro de una ranura de 133, así que la fracción se
+aplica a los 94 dp de foto que deja el troquel, no a los 104 dp de casilla. Sobre la
+hoja de hoy son **±42,3 dp**, y no los ±47 que estimó el ticket tomando la fracción del
+hueco entero.
+
 Y no es veladura, que era el techo que el #303 le puso a la variante B: la
 desviación típica dentro del disco **sube** de 29,1 a 34,8 y el detalle de alta
 frecuencia sube de 25,0 a 26,2. Lo que baja es la luminancia media, de 163 a 153,
@@ -53,6 +59,9 @@ El banco pinta ahora, además de su ranura de 133 dp, **una tira de tres casilla
 las tres pantallas que pintan un hueco usan 104. Cuatro intensidades, tres poses:
 
 ![49, 64, 79 y 99 % · −45°, reposo, +45°](barrido-intensidad.png)
+
+Los porcentajes son los que cayó el deslizador, no los pedidos: **49 %** es su paso más
+cercano al 0,50 que se envía.
 
 | intensidad | recorrido pico a pico | peor píxel | canto en sombra | detalle (σ alta frecuencia) |
 | ---: | ---: | ---: | ---: | ---: |
@@ -83,7 +92,8 @@ En la lámina «Plata a valor facial» (33/37), entre las dos poses extremas:
 diseño del catálogo, no metal, y el modificador no llega a pedirse.
 
 Las cuatro superficies con fotografía de moneda la tienen: la lámina, el índice,
-Monedas y las hojas laterales con `PieceCard`. En las sueltas el efecto se detiene
+Monedas y las hojas laterales con `PieceCard`. La quinta que el ADR §4 nombra, «Las
+cifras», es el bloque 10 y todavía no existe; cuando exista pedirá el mismo modificador. En las sueltas el efecto se detiene
 en la moneda y **el paspartú blanco del montaje no se mueve**, porque `Softlight` no
 puede mover un blanco puro:
 

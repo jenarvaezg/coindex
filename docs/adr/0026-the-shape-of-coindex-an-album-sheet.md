@@ -59,8 +59,9 @@ index goes from **2.07 to 11.04 collections per screen** and shows coins for the
 - **Paper is fine fibre in `soft-light`, flat, with no sheet shadow.** The shadow is redundant, not
   expensive: with the entry sunk into the cardboard the relief is already the die-cut's job. The
   **acetate sleeve reflection** was the one fixed highlight, static, and it did survive the exported
-  PNG; #338 withdrew it from inside the hole (§15) and today the only light over the metal is the
-  gloss, which travels nowhere.
+  PNG. #338 withdrew it (§15), and since inside the hole was the only place it was ever painted, the
+  sheet has no fixed highlight any more: the only light over the metal is the gloss, which travels
+  nowhere.
 - **Numista's photographs solve themselves.** A round hole with `cover` cropping makes the cut-out
   over a light background simply invisible. Measured: of the father's 192 types, **188 have a seeded
   ficha and all 188 carry an image**; the other four have no ficha until the first sync.
@@ -175,7 +176,8 @@ in the side sheets. Two components paint one by the time the block was written �
 is die-cut and `CoinSides` for what is loose — and the wider scope still costs no session, because
 what they share is one composable modifier, `Modifier.coinGloss()`. **Empty cardboard never glosses**,
 now for the direct reason: there is no coin. Nor does the ghost of a missing issue, which is the
-catalog's design and not metal.
+catalog's design and not metal. «Las cifras» is block 10 and does not exist yet; when it does, its
+photographs get the same modifier and nothing else.
 
 ### 5. Density: three clauses, and a word costs what it costs times how often it is printed
 
@@ -544,7 +546,7 @@ written**.
 > remaining layer over the photograph is the acetate's reflection. The numbers are in
 > `docs/ux/implementacion-357/`.
 
-> **Amended on 2026-08-09 (§1, §3 and §15, #338).** The bench fired a second time and this time it
+> **Amended on 2026-08-09 (§1, §3, §4 and §15, #338).** The bench fired a second time and this time it
 > confirmed the approved value instead of moving it. The ticket predicted that half the video's
 > intensity would fall short on production's 104 dp hole — it does not: on the father's own sheet the
 > gloss moves the casilla **104.7 of 255 levels peak to peak** against the **91.9** the photograph
@@ -553,9 +555,12 @@ written**.
 > from 29.1 to 34.8. The sweep did find a ceiling, and it is not variant B's haze but **the edge of
 > the coin**: at 99 % the darkest twentieth of the outer ring falls to 14 of 255 and the coin stops
 > having a rim against its hole. Two things changed shape and so were the map's call, and the owner
-> made both on 9 August: **the travel is written as a fraction of the diameter** — ±45 %, which is
-> what the prototype's ±55 dp over a 121 dp hole actually were, and what survives «Las cifras»
-> bringing a hole of its own — and **the acetate's reflection is withdrawn from inside the recess**,
+> made both on 9 August: **the travel is written as a fraction of the diameter** — ±45 % of the
+> *photograph*, which is what the prototype's ±55 dp over its 121 dp coin actually were, and what
+> survives «Las cifras» bringing a hole of its own. On production's casilla that is ±42.3 dp and not
+> the ±47 the ticket estimated, because the ticket took the fraction of the 104 dp hole while the
+> prototype had measured the 121 dp coin inside a 133 dp recess. And **the acetate's reflection is
+> withdrawn from inside the recess**,
 > because leaving it under the gloss rebuilds #303's discarded variant D, two layers for the result
 > of one. Moving it out to the cardboard was weighed and dropped: the ring is 5 dp wide and already
 > carries #357's die-cut wall. The numbers, including a drawing cost measured only on the emulator,
