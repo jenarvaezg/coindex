@@ -60,7 +60,10 @@ interface TiltSensor {
  * Letting go also returns the sheet to rest, which matters for what comes back: a plate resumed
  * from a pause must not open with the light of wherever the phone was when it left.
  */
-class SensedCoinTilt(private val sensor: TiltSensor) : CoinTilt {
+class SensedCoinTilt(
+    private val sensor: TiltSensor,
+    private val response: TiltResponse = TiltResponse.Default,
+) : CoinTilt {
     private val reading = mutableFloatStateOf(0f)
     private var coins = 0
     private var foreground = false
@@ -96,7 +99,13 @@ class SensedCoinTilt(private val sensor: TiltSensor) : CoinTilt {
         if (wanted == listening) return
         listening = wanted
         if (wanted) {
-            sensor.start { x, y, z -> reading.floatValue = lateralTiltFraction(x, y, z) }
+            sensor.start { x, y, z ->
+                reading.floatValue = smoothedTilt(
+                    current = reading.floatValue,
+                    reading = lateralTiltFraction(x, y, z, response),
+                    response = response,
+                )
+            }
         } else {
             sensor.stop()
             reading.floatValue = 0f
@@ -105,12 +114,62 @@ class SensedCoinTilt(private val sensor: TiltSensor) : CoinTilt {
 }
 
 /**
- * Maps the accelerometer's lateral gravity to the gloss's signed ±45° travel.
+ * How the phone's lean becomes the gloss's signed travel, and how much of the hand is filtered out.
  *
- * Only the component of gravity, which is why `TYPE_ACCELEROMETER` is enough and no gyroscope is
- * asked for: what the effect wants to know is which way the sheet is leaning, not how fast it turned.
+ * Both values are the bench's (ADR 0026 §15) and both were wrong in 1.0.0 — in the same direction,
+ * which is why the effect read as *nervous*: a tiny signal under a large noise (#372).
  */
-fun lateralTiltFraction(x: Float, y: Float, z: Float): Float {
-    val degrees = Math.toDegrees(atan2(x.toDouble(), sqrt((y * y + z * z).toDouble())))
-    return (degrees / 45.0).toFloat().coerceIn(-1f, 1f)
+@Stable
+data class TiltResponse(
+    /**
+     * The lean that spends the whole travel.
+     *
+     * It was 45°, which is the phone nearly on its edge. **A hand holding a phone leans it 10 to
+     * 15°**, so in real use the gloss only ever spent a third of the travel it had and lived in the
+     * middle of the coin. What the #338 bench approved is the travel in fractions of the diameter,
+     * ±45 %, and that is untouched: this is what it costs to spend it.
+     */
+    val saturationDegrees: Float = 20f,
+    /**
+     * How much of a new reading is believed, per sample, in 0..1.
+     *
+     * A one-pole low-pass, which is the cheapest thing that turns a jittery series into a lean. At
+     * `SENSOR_DELAY_UI` — about 16 samples a second — 0.18 settles a real turn in some four frames
+     * and swallows the hand's tremor, which is uncorrelated between samples and therefore exactly
+     * what an average kills. 1 is the unfiltered reading of 1.0.0.
+     */
+    val smoothing: Float = 0.18f,
+) {
+    companion object {
+        val Default = TiltResponse()
+    }
 }
+
+/**
+ * Maps gravity's lateral component to the gloss's signed travel, saturating at [response].
+ *
+ * Only the component of gravity, which is why no gyroscope is asked for **here**: what the effect
+ * wants to know is which way the sheet is leaning, not how fast it turned. Whether the reading
+ * arrives already free of the hand is the sensor's business — see [AccelerometerTiltSensor], which
+ * asks Android for `TYPE_GRAVITY` and lets the platform use the gyroscope if the phone has one.
+ */
+fun lateralTiltFraction(
+    x: Float,
+    y: Float,
+    z: Float,
+    response: TiltResponse = TiltResponse.Default,
+): Float {
+    val degrees = Math.toDegrees(atan2(x.toDouble(), sqrt((y * y + z * z).toDouble())))
+    return (degrees / response.saturationDegrees).toFloat().coerceIn(-1f, 1f)
+}
+
+/**
+ * The lean as it is drawn, once the tremor of the hand has been taken out of it.
+ *
+ * Every sample moves the drawn value a fraction of the way to the reading, so a turn arrives whole
+ * within a few frames while a tremor — which changes sign between samples — averages to nothing.
+ * It is the reading itself, not the raw gravity, that is filtered: filtering the axes and then
+ * taking an angle would smooth the phone's pose rather than the coin's light.
+ */
+fun smoothedTilt(current: Float, reading: Float, response: TiltResponse): Float =
+    current + (reading - current) * response.smoothing.coerceIn(0f, 1f)

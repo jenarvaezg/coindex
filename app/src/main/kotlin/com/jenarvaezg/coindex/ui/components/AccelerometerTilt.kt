@@ -11,19 +11,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 
 /**
- * The phone's own accelerometer, at `SENSOR_DELAY_UI`.
+ * Which way gravity is falling, at `SENSOR_DELAY_UI`.
  *
- * A phone with no accelerometer — none of the two real ones, but an emulator can be told to have
- * none — simply never reports, and the sheet stays in its resting pose.
+ * **`TYPE_GRAVITY` and not `TYPE_ACCELEROMETER`** (#372). The raw accelerometer measures gravity
+ * *plus whatever the hand is doing*, and the gloss was reading the hand: a tremor of 0.3 m/s² is
+ * 1.75° of apparent lean, sixteen times a second, on an effect whose whole useful signal is some
+ * 15°. `TYPE_GRAVITY` is the composite sensor Android already fuses — with the gyroscope where the
+ * phone has one, with its own low-pass where it does not — and it is literally the question the
+ * gloss asks: which way is the sheet leaning. It costs no permission and it is API 9.
+ *
+ * The accelerometer stays as the fallback, because a composite sensor is not guaranteed to exist.
+ * A phone with neither — an emulator can be told to have none — simply never reports, and the sheet
+ * stays in its resting pose.
  */
 class AccelerometerTiltSensor(context: Context) : TiltSensor, SensorEventListener {
     private val sensors = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val accelerometer = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    private val gravity = sensors.getDefaultSensor(Sensor.TYPE_GRAVITY)
+        ?: sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private var onGravity: ((Float, Float, Float) -> Unit)? = null
 
     override fun start(onGravity: (x: Float, y: Float, z: Float) -> Unit) {
         this.onGravity = onGravity
-        accelerometer?.let { sensors.registerListener(this, it, SensorManager.SENSOR_DELAY_UI) }
+        gravity?.let { sensors.registerListener(this, it, SensorManager.SENSOR_DELAY_UI) }
     }
 
     override fun stop() {
@@ -32,7 +41,9 @@ class AccelerometerTiltSensor(context: Context) : TiltSensor, SensorEventListene
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type != Sensor.TYPE_ACCELEROMETER || event.values.size < 3) return
+        // Whichever of the two answered: both report gravity in the same three axes and the same
+        // units, and which one the phone gave us is not something the gloss has any use for.
+        if (event.values.size < 3) return
         onGravity?.invoke(event.values[0], event.values[1], event.values[2])
     }
 

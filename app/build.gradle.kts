@@ -41,13 +41,11 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 34
-        // The 1.0.0, and it falls on the stamp and the journey rather than at the end of the map
-        // (#339): the diagnosis of 7 August had two halves — the app looks plain **and** it lacks
-        // wow — and until this block only the first was answered. With the flip, the gloss, the
-        // stamp and the journey Coindex is an object in the hand, which is what map #278 set out
-        // for. The blocks 6 (#337) and 7 (#338) do not publish on their own: they travel here.
-        versionName = "1.0.0"
+        versionCode = 35
+        // The 1.0.0 fell on the stamp and the journey (#339) rather than at the end of the map:
+        // with the flip, the gloss, the stamp and the journey Coindex is an object in the hand,
+        // which is what map #278 set out for. The patch takes the hand out of the gloss (#372).
+        versionName = "1.0.1"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
