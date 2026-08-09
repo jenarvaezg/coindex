@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.debug.calibration
 
+import androidx.compose.ui.graphics.Color
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,6 +19,11 @@ class CalibrationStateTest {
         assertEquals(28f, CalibrationState.YEAR_TAG_HEIGHT_DP)
         assertEquals(0.14f, state.ghostOpacity)
         assertEquals(false, state.showGhost)
+        assertEquals(CalibrationTab.EFFECTS, state.selectedTab)
+        assertEquals(0.72f, state.cartoucheAlpha)
+        assertEquals(87f / 255f, state.cardAlpha)
+        assertEquals(0x9F9B8B, state.hairlineColorRgb)
+        assertEquals(0.24f, state.cartoucheRuleAlpha)
     }
 
     @Test
@@ -72,5 +78,60 @@ class CalibrationStateTest {
             adjusted.flipDurationMillis,
         )
         assertEquals(CalibrationControl.GHOST_OPACITY.range.start, adjusted.ghostOpacity)
+    }
+
+    @Test
+    fun `tone controls update independently`() {
+        val initial = CalibrationState()
+
+        val cartouche = initial.withControl(CalibrationControl.CARTOUCHE_ALPHA, 0.9f)
+        val card = initial.withControl(CalibrationControl.CARD_ALPHA, 0.58f)
+        val hairline = initial.withControl(CalibrationControl.HAIRLINE_TONE, 135f)
+        val rule = initial.withControl(CalibrationControl.CARTOUCHE_RULE_ALPHA, 0.34f)
+
+        assertEquals(0.9f, cartouche.cartoucheAlpha)
+        assertEquals(initial.cardAlpha, cartouche.cardAlpha)
+        assertEquals(initial.hairlineColorRgb, cartouche.hairlineColorRgb)
+        assertEquals(initial.cartoucheRuleAlpha, cartouche.cartoucheRuleAlpha)
+
+        assertEquals(0.58f, card.cardAlpha)
+        assertEquals(initial.cartoucheAlpha, card.cartoucheAlpha)
+        assertEquals(0x878577, hairline.hairlineColorRgb)
+        assertEquals(initial.cartoucheRuleAlpha, hairline.cartoucheRuleAlpha)
+        assertEquals(0.34f, rule.cartoucheRuleAlpha)
+        assertEquals(initial.hairlineColorRgb, rule.hairlineColorRgb)
+    }
+
+    @Test
+    fun `tone preview config mirrors all current control values`() {
+        val state = CalibrationState(
+            cartoucheAlpha = 0.81f,
+            cardAlpha = 0.49f,
+            hairlineTone = 135,
+            cartoucheRuleAlpha = 0.31f,
+        )
+
+        val tone = state.albumToneConfig()
+
+        assertEquals(0.81f, tone.cartoucheAlpha)
+        assertEquals(0.49f, tone.cardAlpha)
+        assertEquals(Color(0xFF878577), tone.hairlineColor)
+        assertEquals(0.31f, tone.cartoucheTopRuleAlpha)
+    }
+
+    @Test
+    fun `tone controls clamp values and tabs remain independent`() {
+        val adjusted = CalibrationState()
+            .withTab(CalibrationTab.TONE)
+            .withControl(CalibrationControl.CARTOUCHE_ALPHA, 2f)
+            .withControl(CalibrationControl.CARD_ALPHA, -1f)
+            .withControl(CalibrationControl.HAIRLINE_TONE, 300f)
+            .withControl(CalibrationControl.CARTOUCHE_RULE_ALPHA, -1f)
+
+        assertEquals(CalibrationTab.TONE, adjusted.selectedTab)
+        assertEquals(1f, adjusted.cartoucheAlpha)
+        assertEquals(0f, adjusted.cardAlpha)
+        assertEquals(CalibrationControl.HAIRLINE_TONE.range.endInclusive.toInt(), adjusted.hairlineTone)
+        assertEquals(0f, adjusted.cartoucheRuleAlpha)
     }
 }

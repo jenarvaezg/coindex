@@ -41,8 +41,8 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 27
-        versionName = "0.18.1"
+        versionCode = 28
+        versionName = "0.18.2"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

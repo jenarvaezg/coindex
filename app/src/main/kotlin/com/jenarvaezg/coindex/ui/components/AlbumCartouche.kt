@@ -21,15 +21,19 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** Static recessed album label: one denomination range and at most two theme lines. */
 @Composable
-fun AlbumCartouche(name: CoinName, modifier: Modifier = Modifier) {
+fun AlbumCartouche(
+    name: CoinName,
+    modifier: Modifier = Modifier,
+    tone: AlbumToneConfig = AlbumToneConfig.Default,
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 52.dp)
             .drawBehind {
-                drawRect(Paper.paperDeep.copy(alpha = 0.72f))
+                drawRect(Paper.paperDeep.copy(alpha = tone.cartoucheAlpha))
                 drawLine(
-                    Paper.ink.copy(alpha = 0.24f),
+                    Paper.ink.copy(alpha = tone.cartoucheTopRuleAlpha),
                     start = Offset.Zero,
                     end = Offset(size.width, 0f),
                     strokeWidth = 2.dp.toPx(),

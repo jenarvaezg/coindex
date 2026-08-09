@@ -180,7 +180,7 @@ fun SelectionControls(
  *
  * It is a card on paper rather than a Material dialog, because it is part of the notebook — and it
  * carries its **own opaque background**, which is the defect the prototype of #161 destapó: `FieldCard`
- * paints `Paper.card`, 34 % alpha meant to sit on the page, and inside a `Dialog` there is no page
+ * paints the translucent `Paper.card` meant to sit on the page, and inside a `Dialog` there is no page
  * underneath. Nobody had seen it because nobody had ever reached this dialog (#17).
  *
  * «O añádelas a una que ya tienes» stays, because from Coins it is the only way to grow a box: the
