@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -173,9 +172,10 @@ fun CardAction(
  * arrow says the something is a browser rather than another page of this notebook. The arrow is
  * inline content after a non-breaking space, so wrapping never strands it on a line of its own.
  *
- * [autoSize] and [maxLines] are for a link written inside a cell of a grid rather than in the flow
- * of prose: the plate's names shrink and then truncate instead of pushing the year down the
- * column (#337).
+ * It is for prose, and the casilla of a plate is the one place that asked it to be something else:
+ * the name under a hole had to shrink and truncate inside a 113 dp cell, and the arrow was 19 dp of
+ * that cell. The plate's names are plain ink now and the year's recessed tag opens Numista instead
+ * (#337), so the parameters that grid asked for are gone again.
  */
 @Composable
 fun ExternalLink(
@@ -183,9 +183,6 @@ fun ExternalLink(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.bodyLarge,
-    textAlign: TextAlign? = null,
-    autoSize: TextAutoSize? = null,
-    maxLines: Int = Int.MAX_VALUE,
 ) {
     val markedText = buildAnnotatedString {
         append(text)
@@ -207,10 +204,6 @@ fun ExternalLink(
         ),
         style = style.copy(textDecoration = TextDecoration.Underline),
         color = Paper.moss,
-        textAlign = textAlign,
-        autoSize = autoSize,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = 6.dp),

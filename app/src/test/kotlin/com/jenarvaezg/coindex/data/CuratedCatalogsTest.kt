@@ -54,6 +54,24 @@ class CuratedCatalogsTest {
     }
 
     /**
+     * En la lámina el año es la chapa hundida, y la chapa es lo que abre Numista (#337): una
+     * casilla con ficha y sin año se quedaría sin asa, en silencio y sin que nada lo denunciara.
+     *
+     * Hoy no hay ninguna en los 74 catálogos, así que esto fija una propiedad que ya se cumple en
+     * vez de arreglar nada. Lo que no se pide es lo contrario: un miembro anunciado no tiene ficha
+     * y a menudo tampoco año, y esa casilla es un rótulo y no un objetivo.
+     */
+    @Test
+    fun `todo miembro con ficha de Numista trae su año, que es lo que la lámina hace pulsable`() {
+        val sinAño = catalogs.flatMap { catalog ->
+            catalog.members
+                .filter { it.numistaTypeId != null && it.year == null }
+                .map { "${catalog.id}/${it.id}" }
+        }
+        assertEquals(emptyList(), sinAño)
+    }
+
+    /**
      * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los cerrados
      * llevan su nota y los abiertos no afirman nada más que «N de N catalogadas».
      *
