@@ -1,6 +1,6 @@
 # ADR 0026: The shape of Coindex — an album sheet, and what moves owes a datum
 
-- Status: accepted, §15 amended by #351 (the grain's approved value)
+- Status: accepted, §15 amended by #351 (the grain's approved value) and by #357 (the die-cut's wall)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -513,6 +513,7 @@ written**.
 | stamping duration | 300 ms | the bench |
 | depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp) |
 | the ghost | design at 14 % with a dotted rule | the bench |
+| the wall of the die-cut | one 5 dp sweep on the cardboard: ink at 22 % at the top, white at 85 % at the bottom, nothing at the horizontals (#357) | the bench |
 | **the gesture, the place, the drawing** | — | **the map**: an implementation session never changes form without coming back |
 
 > **Amended on 2026-08-09 (§15, #351).** The bench's rule stands whole, and it fired: the approved
@@ -525,6 +526,19 @@ written**.
 > and the grain now touches 62 % of the pixels of the same kind of region. The numbers, including a
 > drawing cost that regressed on the emulator and is not measured on a phone, are in
 > `docs/ux/implementacion-351/`.
+
+> **Amended on 2026-08-09 (§15, #357).** Raising the contrast in #349 put on show a drawing nobody
+> had ever calibrated, and the bench could not calibrate it: its four parameters were all colour or
+> alpha. The die-cut's wall is now the bench's too — width, shadow and sheen — and two things it used
+> to paint are gone. The pair of 180° arcs on the cardboard **jumped 76 of the 255 luminance levels
+> inside 2° of arc** at 3 and at 9 o'clock, three times the 29 the ticket had measured on the other
+> pair, and a sweep that fades to nothing at both horizontals brings that to 0.6 and 0.0. The pair
+> **inside** the hole was withdrawn, not recalibrated: it fell eight dp inside the edge, squarely on
+> the coin's face, and a second model of light drawn over the one the photograph already carries
+> (#303) is what read as a mark on the metal. That last one is form and so it is the map's call — the
+> owner made it on 9 August with the 1:1 crop in front of him, and it hands #338 a hole whose only
+> remaining layer over the photograph is the acetate's reflection. The numbers are in
+> `docs/ux/implementacion-357/`.
 
 ### 16. The order, the cost, and three PRs per screen
 
