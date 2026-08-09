@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.debug.calibration
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -51,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
@@ -77,6 +75,7 @@ import com.jenarvaezg.coindex.ui.components.LocalCoinTilt
 import com.jenarvaezg.coindex.ui.components.LocalStamping
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.Stamping
+import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.coinGloss
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
@@ -481,7 +480,12 @@ private fun CompletionRatio(durationMillis: Int, modifier: Modifier = Modifier) 
     // withdrawal production never draws.
     key(press) {
         CompositionLocalProvider(LocalStamping provides Stamping(durationMillis)) {
-            StampedRatio(ratio = "22/22", complete = true, modifier = modifier)
+            StampedRatio(
+                ratio = "22/22",
+                complete = true,
+                fall = rememberInkFall(complete = true),
+                modifier = modifier,
+            )
         }
     }
 }

@@ -10,6 +10,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import com.jenarvaezg.coindex.domain.coverage
+import com.jenarvaezg.coindex.domain.firstOwnedIndex
 
 /**
  * What the three drawers of a plate are looking at: the screen, the exported sheet, the notebook.
@@ -54,10 +55,10 @@ data class PlateSubject(
     /**
      * The casilla the coin of the index card flies to, or null where no cell can receive it.
      *
-     * The first owned member in album order, which is **the same rule the card's photograph is
-     * chosen by** (`CollectionIndex.firstOwnedCover`): the coin that took off is the coin that
-     * lands, so the two cannot be picked apart. A plate the collector owns nothing of has no
-     * landing cell — and no plate either, because `resolvePlate` needs evidence to open one.
+     * [CollectionCatalogAlbum.firstOwnedIndex], which is **the very rule the card's photograph is
+     * chosen by**: the coin that took off is the coin that lands, and one function is what keeps the
+     * two from being picked apart. A plate the collector owns nothing of has no landing cell — and no
+     * plate either, because `resolvePlate` needs evidence to open one.
      */
     val landingCell: Int?,
 )
@@ -132,7 +133,7 @@ fun plateSubject(plate: PlateResult.Available): PlateSubject {
         cells = cells,
         ratio = coverage?.let { "${it.owned}/${it.issued}" },
         complete = coverage?.nothingMissing == true,
-        landingCell = cells.indexOfFirst { it.owned }.takeIf { it >= 0 },
+        landingCell = plate.album.firstOwnedIndex(),
     )
 }
 

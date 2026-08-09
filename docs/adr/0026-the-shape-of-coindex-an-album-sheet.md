@@ -1,8 +1,8 @@
 # ADR 0026: The shape of Coindex — an album sheet, and what moves owes a datum
 
 - Status: accepted, §15 amended by #351 (the grain's approved value), by #357 (the die-cut's wall)
-  and by #338 (the gloss confirmed and the acetate withdrawn); §3 amended by #339 (the stamp keeps
-  no bit)
+  and by #338 (the gloss confirmed and the acetate withdrawn); §3 and §5 amended by #339 (the stamp
+  keeps no bit, and the ratio leaves the specification wherever the stamp reaches it)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -231,6 +231,16 @@ Two further rules come out of the same pruning:
 > 16-word tail line goes entirely — it lives only in `PlateScreen.kt:138` and never travelled to the
 > PNG or to the 90 pages — and `Progreso` loses its label on screen while keeping it on paper, because
 > the stamp lands on that very ratio.
+
+> **Amended on 2026-08-09 (§5, #339). The ratio leaves the specification on both surfaces the stamp
+> reaches.** The clause above was written while §4 was still deciding, and it no longer agrees with
+> itself: the stamp **does** travel to the PNG, and it lands on the ratio, so screen and exported
+> sheet now have the same form — `22/22` at the top right of the title, with the ink over it — and
+> keeping «Progreso · 22 / 22 emisiones» in the card underneath would print the same figure twice on
+> the same surface, which is what the frequency rule of this very section prices. The printed notebook
+> keeps the row whole, because its page has no header to raise a figure into: that is where the
+> original clause still holds. What the row brought with it — «1 anunciada», «2 no medibles» — stays
+> everywhere, because it is not the ratio.
 
 > **One string, one owner.** Eleven literals for four strings today; ten chips and six words for «no
 > filter», which become **`Cualquiera`**, one, in all ten; four wordings of «this collection no longer

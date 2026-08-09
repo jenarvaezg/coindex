@@ -32,7 +32,7 @@ class CompletionStampTest {
     // D8 forbids spaces in method names below DEX 040, so instrumented tests cannot use backticks.
     fun aCompleteSheetSaysTheOneWord() {
         compose.setContent {
-            CoindexTheme { StampedRatio(ratio = "22/22", complete = true) }
+            CoindexTheme { StampedRatio(ratio = "22/22", complete = true, fall = rememberInkFall(true)) }
         }
         compose.waitForIdle()
 
@@ -45,7 +45,7 @@ class CompletionStampTest {
     @Test
     fun aPlateThatIsMissingEightGetsNoInk() {
         compose.setContent {
-            CoindexTheme { StampedRatio(ratio = "4/22", complete = false) }
+            CoindexTheme { StampedRatio(ratio = "4/22", complete = false, fall = rememberInkFall(false)) }
         }
         compose.waitForIdle()
 
@@ -64,7 +64,7 @@ class CompletionStampTest {
             CoindexTheme {
                 OffScreenSheet(Density(1f)) {
                     stamping = LocalStamping.current
-                    StampedRatio(ratio = "22/22", complete = true)
+                    StampedRatio(ratio = "22/22", complete = true, fall = rememberInkFall(true))
                 }
             }
         }
@@ -81,7 +81,11 @@ class CompletionStampTest {
         compose.setContent {
             CoindexTheme {
                 OffScreenSheet(Density(1f)) {
-                    StampedRatio(ratio = "19/20", complete = false)
+                    StampedRatio(
+                        ratio = "19/20",
+                        complete = false,
+                        fall = rememberInkFall(false),
+                    )
                 }
             }
         }

@@ -74,6 +74,13 @@ ya desplazada hasta el 1945 —el primero que él tiene— en vez de aterrizar l
 fuera de pantalla. Sobre una lámina completa no se desplaza nada, y no por suerte: la
 primera casilla que tiene *es* la primera, así que el estampado cae donde está el ojo.
 
+Las dos mitades tienen que funcionar **juntas**, que es donde estaba el riesgo: si la
+hoja no se hubiera desplazado a tiempo, la casilla de destino no estaría compuesta cuando
+arranca la transición y la moneda se apagaría en el aire. No pasa —el desplazamiento
+ocurre en el primer trazado, antes del primer fotograma que se ve:
+
+![El viaje del 1 Bolívar, que aterriza en la casilla 19 de 22](viaje-bajo-el-pliegue.png)
+
 ![El cociente pelado de una lámina incompleta](cabecera-incompleta.png)
 
 Y el sello cuelga del `n/n`, no de la lámina: el 4/22 entra en óxido pleno, sin tinta
@@ -120,3 +127,22 @@ retiró lo último, y no se reabre esa puerta por una animación.
 Sincronizar no estampa nada, y no hace falta un mecanismo para conseguirlo: el sello sólo
 se dibuja en la lámina, y el índice —donde una tarjeta no se abre nunca— sigue marcando
 las completas con el cociente en óxido del #300.
+
+## Ni al hacer scroll, que es por donde se coló la ceremonia una vez
+
+La cabecera de la lámina es un `item` de una rejilla perezosa: se destruye al bajar y se
+vuelve a crear al subir. Con la tinta guardada dentro de ella, **el sello volvía a caer
+cada vez que el coleccionista subía** — que es exactamente la ceremonia al hacer scroll
+que el #304 rechazó para el índice, colada por la puerta de al lado. La tinta pasa a
+vivir donde vive la hoja (`AvailablePlate`), y baja a quien la dibuja. Medido sobre los
+Fuertes, bajando dos pantallas y volviendo, con el reloj a ×10 —donde una caída duraría
+tres segundos— y cuatro capturas seguidas al llegar arriba:
+
+| captura al volver arriba | píxeles de tinta |
+| --- | ---: |
+| 1 | 7.914 |
+| 2 | 7.677 |
+| 3 | 7.677 |
+| 4 | 7.677 |
+
+Puesta y quieta. Una caída en curso habría dado una rampa.

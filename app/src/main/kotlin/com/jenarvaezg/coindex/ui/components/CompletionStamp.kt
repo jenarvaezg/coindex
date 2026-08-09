@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -51,6 +52,34 @@ data class Stamping(
 val LocalStamping = staticCompositionLocalOf<Stamping?> { Stamping.Default }
 
 /**
+ * The ink of one **opening of the sheet**, held above whatever draws it.
+ *
+ * It is hoisted on purpose and it is the whole of what «se estampa al abrir la hoja» costs. The
+ * header of a plate is an item of a lazy grid, so it is disposed the moment the collector scrolls
+ * past it: a stamp that kept its own progress would fall again on the way back up, which is exactly
+ * the ceremony-on-scroll that ADR 0026 §3 refused for the index. Remembered where the sheet lives,
+ * it falls once per opening, however far down the collector goes.
+ *
+ * An [Animatable] and not `animateFloatAsState`, which starts at its own target: the ink would be
+ * dry on the frame the sheet opens and the movement would never once be seen. Losing completeness
+ * snaps instead of animating — a plate that grew from 19/19 to 19/20 «deja de enseñarlo, sin drama»,
+ * and drama is precisely a stamp fading out of a sheet.
+ */
+@Composable
+fun rememberInkFall(complete: Boolean): State<Float> {
+    val stamping = LocalStamping.current
+    val landed = if (complete) 1f else 0f
+    val ink = remember(stamping) { Animatable(if (stamping == null) landed else 0f) }
+    LaunchedEffect(stamping, landed) {
+        when {
+            stamping == null || landed == 0f -> ink.snapTo(landed)
+            else -> ink.animateTo(landed, tween(stamping.durationMillis))
+        }
+    }
+    return ink.asState()
+}
+
+/**
  * The ratio a plate heads itself with, and the rubber stamp over it while nothing is missing.
  *
  * **One composable and not two**, because the stamp is not an ornament beside the figure: it lands
@@ -69,18 +98,10 @@ val LocalStamping = staticCompositionLocalOf<Stamping?> { Stamping.Default }
 fun StampedRatio(
     ratio: String,
     complete: Boolean,
+    /** How far the ink has fallen, from [rememberInkFall] — held by whoever owns the sheet. */
+    fall: State<Float>,
     modifier: Modifier = Modifier,
 ) {
-    val stamping = LocalStamping.current
-    val landed = if (complete) 1f else 0f
-    // An [Animatable] and **not** `animateFloatAsState`, which starts at its own target: the ink
-    // would already be dry on the frame the sheet opens, and the one movement of this block would
-    // never once be seen. Here the ceremony is the entrance itself — the plate is composed with the
-    // stamp in the air and it falls — which is what «se estampa al abrir la hoja» means.
-    val fall = remember(stamping) { Animatable(if (stamping == null) landed else 0f) }
-    LaunchedEffect(stamping, landed) {
-        if (stamping == null) fall.snapTo(landed) else fall.animateTo(landed, tween(stamping.durationMillis))
-    }
     val ink = fall.value
 
     Box(

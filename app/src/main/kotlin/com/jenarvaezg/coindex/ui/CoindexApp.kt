@@ -204,155 +204,157 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             // the only thing in the app that is on both sides of a navigation. What actually flies
             // is decided far from here — `Modifier.travellingCoin` on the two die-cut holes — so
             // the host provides the scope and knows nothing about coins.
-            else -> TravelLayout(content) { NavHost(
-                navController = navController,
-                startDestination = Routes.INDEX,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                composable(Routes.INDEX) {
-                    Travelling(this) {
-                    IndexScreen(
-                        state = state.collection,
-                        loading = state.loading,
-                        lastSync = state.lastSync,
-                        shelf = state.indexShelf,
-                        onNarrow = viewModel::narrowIndex,
-                        onOpen = { destination ->
-                            navController.navigate(routeOf(destination))
-                        },
-                        onSettings = { navController.navigate(Routes.SETTINGS) },
-                        notebookOptions = state.notebookOptions,
-                        onNotebookPrinted = viewModel::notebookPrinted,
-                        notebook = viewModel::notebookPages,
-                        onMessage = viewModel::showMessage,
-                        onExporting = viewModel::notebookExporting,
-                    )
-                    }
-                }
-                composable(Routes.COINS) {
-                    CoinsScreen(
-                        state = state.collection,
-                        shelf = state.coinsShelf,
-                        curatedNames = viewModel.curatedNames,
-                        onNarrow = viewModel::narrowCoins,
-                        onOpen = { destination ->
-                            navController.navigate(routeOf(destination))
-                        },
-                        onCreateBox = viewModel::createOwnGrouping,
-                        onAddToBox = viewModel::addToOwnGrouping,
-                        onOpenSource = openUrl,
-                        onSettings = { navController.navigate(Routes.SETTINGS) },
-                        ficha = ficha,
-                    )
-                }
-                composable(Routes.OWN_GROUPING) { entry ->
-                    val boxId = entry.arguments?.getString("groupingId")?.toLongOrNull()
-                    val card = boxId?.let(state.collection::piecesCardForBox)
-                    PiecesScreen(
-                        state = state.collection,
-                        subject = card?.let { piecesSubject(state.collection, it) },
-                        onOpenSource = openUrl,
-                        onMessage = viewModel::showMessage,
-                        ficha = ficha,
-                        upkeep = card?.let { box ->
-                            BoxUpkeep(
-                                onRename = { name ->
-                                    viewModel.renameOwnGrouping(box.box.id, name)
+            else -> TravelLayout(modifier = content) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Routes.INDEX,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    composable(Routes.INDEX) {
+                        Travelling(this) {
+                            IndexScreen(
+                                state = state.collection,
+                                loading = state.loading,
+                                lastSync = state.lastSync,
+                                shelf = state.indexShelf,
+                                onNarrow = viewModel::narrowIndex,
+                                onOpen = { destination ->
+                                    navController.navigate(routeOf(destination))
                                 },
-                                onRemoveType = { typeId ->
-                                    viewModel.removeFromOwnGrouping(box.box.id, typeId)
-                                },
-                                // Undoing it leaves nothing to look at, so the screen goes too.
-                                onDelete = {
-                                    viewModel.deleteOwnGrouping(box.box.id)
-                                    navController.popBackStack()
-                                },
+                                onSettings = { navController.navigate(Routes.SETTINGS) },
+                                notebookOptions = state.notebookOptions,
+                                onNotebookPrinted = viewModel::notebookPrinted,
+                                notebook = viewModel::notebookPages,
+                                onMessage = viewModel::showMessage,
+                                onExporting = viewModel::notebookExporting,
                             )
-                        },
-                    )
-                }
-                composable(Routes.DERIVED_COLLECTION) { entry ->
-                    val key = variantKeyFromRoute(
-                        family = entry.arguments?.getString("family"),
-                        weight = entry.arguments?.getString("weight"),
-                        finish = entry.arguments?.getString("finish"),
-                        metal = entry.arguments?.getString("metal"),
-                    )
-                    // A route that does not describe a canonical key is not guessed at: the key
-                    // is the identity of the cards no curated file names (ADR 0021 §5), and half
-                    // a key names none of them.
-                    if (key == null) {
-                        MissingSubject(
-                            "Ese enlace no describe ninguna variante de tu colección. Vuelve " +
-                                "al índice.",
-                            Modifier.fillMaxSize().padding(20.dp),
+                        }
+                    }
+                    composable(Routes.COINS) {
+                        CoinsScreen(
+                            state = state.collection,
+                            shelf = state.coinsShelf,
+                            curatedNames = viewModel.curatedNames,
+                            onNarrow = viewModel::narrowCoins,
+                            onOpen = { destination ->
+                                navController.navigate(routeOf(destination))
+                            },
+                            onCreateBox = viewModel::createOwnGrouping,
+                            onAddToBox = viewModel::addToOwnGrouping,
+                            onOpenSource = openUrl,
+                            onSettings = { navController.navigate(Routes.SETTINGS) },
+                            ficha = ficha,
                         )
-                    } else {
-                        val card = state.collection.piecesCardFor(key)
-                        // No upkeep: a derived collection is not something anyone typed. The
-                        // explanation is this route's own, because there are two ways to lose one and
-                        // the second is new (#185): refreshing a ficha can move its coins to another
-                        // card, since the family is part of the key the route carries.
+                    }
+                    composable(Routes.OWN_GROUPING) { entry ->
+                        val boxId = entry.arguments?.getString("groupingId")?.toLongOrNull()
+                        val card = boxId?.let(state.collection::piecesCardForBox)
                         PiecesScreen(
                             state = state.collection,
                             subject = card?.let { piecesSubject(state.collection, it) },
                             onOpenSource = openUrl,
                             onMessage = viewModel::showMessage,
                             ficha = ficha,
-                            missingExplanation = "Esta colección ya no existe: o has dejado de " +
-                                "tener piezas de esta variante, o la ficha de Numista ha cambiado " +
-                                "y sus monedas están ahora en otra colección. Vuelve al índice.",
+                            upkeep = card?.let { box ->
+                                BoxUpkeep(
+                                    onRename = { name ->
+                                        viewModel.renameOwnGrouping(box.box.id, name)
+                                    },
+                                    onRemoveType = { typeId ->
+                                        viewModel.removeFromOwnGrouping(box.box.id, typeId)
+                                    },
+                                    // Undoing it leaves nothing to look at, so the screen goes too.
+                                    onDelete = {
+                                        viewModel.deleteOwnGrouping(box.box.id)
+                                        navController.popBackStack()
+                                    },
+                                )
+                            },
                         )
                     }
-                }
-                composable(Routes.SETTINGS) {
-                    // Read once per visit: the form owns its own edits from then on, and it
-                    // opens on a clean slate rather than on the last visit's complaint.
-                    val values = remember { viewModel.currentSettings() }
-                    LaunchedEffect(Unit) { viewModel.clearValidation() }
-                    SettingsScreen(
-                        values = values,
-                        photoCache = state.photoCache,
-                        syncing = state.syncing,
-                        validation = state.validation,
-                        onSave = { apiKey, userId ->
-                            if (viewModel.saveSettings(apiKey, userId)) {
-                                navController.popBackStack()
-                            }
-                        },
-                        // Popped before the state flips: the NavHost leaves composition on
-                        // sign-out, but the controller outlives it, and a surviving «settings»
-                        // entry would make the masthead say «Ajustes» over the onboarding form
-                        // and drop the collector back into settings once they sign in again.
-                        onSignOut = {
-                            navController.popBackStack(Routes.INDEX, inclusive = false)
-                            viewModel.signOut()
-                        },
-                        onSync = viewModel::sync,
-                        onOpenNotices = { navController.navigate(Routes.NOTICES) },
-                    )
-                }
-                composable(Routes.NOTICES) {
-                    NoticesScreen()
-                }
-                composable(Routes.PLATE) { entry ->
-                    val catalogId = entry.arguments?.getString("catalogId").orEmpty()
-                    Travelling(this) {
-                    PlateScreen(
-                        // Resolved once per collection and not once per recomposition (#218):
-                        // building the album walks the whole inventory, and the screen recomposes
-                        // for reasons — a scroll, an export in flight — that leave it unchanged.
-                        result = remember(state.collection, catalogId) {
-                            viewModel.plate(catalogId)
-                        },
-                        images = state.collection.images,
-                        onOpenSource = openUrl,
-                        onMessage = viewModel::showMessage,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    composable(Routes.DERIVED_COLLECTION) { entry ->
+                        val key = variantKeyFromRoute(
+                            family = entry.arguments?.getString("family"),
+                            weight = entry.arguments?.getString("weight"),
+                            finish = entry.arguments?.getString("finish"),
+                            metal = entry.arguments?.getString("metal"),
+                        )
+                        // A route that does not describe a canonical key is not guessed at: the key
+                        // is the identity of the cards no curated file names (ADR 0021 §5), and half
+                        // a key names none of them.
+                        if (key == null) {
+                            MissingSubject(
+                                "Ese enlace no describe ninguna variante de tu colección. Vuelve " +
+                                    "al índice.",
+                                Modifier.fillMaxSize().padding(20.dp),
+                            )
+                        } else {
+                            val card = state.collection.piecesCardFor(key)
+                            // No upkeep: a derived collection is not something anyone typed. The
+                            // explanation is this route's own, because there are two ways to lose one and
+                            // the second is new (#185): refreshing a ficha can move its coins to another
+                            // card, since the family is part of the key the route carries.
+                            PiecesScreen(
+                                state = state.collection,
+                                subject = card?.let { piecesSubject(state.collection, it) },
+                                onOpenSource = openUrl,
+                                onMessage = viewModel::showMessage,
+                                ficha = ficha,
+                                missingExplanation = "Esta colección ya no existe: o has dejado de " +
+                                    "tener piezas de esta variante, o la ficha de Numista ha cambiado " +
+                                    "y sus monedas están ahora en otra colección. Vuelve al índice.",
+                            )
+                        }
+                    }
+                    composable(Routes.SETTINGS) {
+                        // Read once per visit: the form owns its own edits from then on, and it
+                        // opens on a clean slate rather than on the last visit's complaint.
+                        val values = remember { viewModel.currentSettings() }
+                        LaunchedEffect(Unit) { viewModel.clearValidation() }
+                        SettingsScreen(
+                            values = values,
+                            photoCache = state.photoCache,
+                            syncing = state.syncing,
+                            validation = state.validation,
+                            onSave = { apiKey, userId ->
+                                if (viewModel.saveSettings(apiKey, userId)) {
+                                    navController.popBackStack()
+                                }
+                            },
+                            // Popped before the state flips: the NavHost leaves composition on
+                            // sign-out, but the controller outlives it, and a surviving «settings»
+                            // entry would make the masthead say «Ajustes» over the onboarding form
+                            // and drop the collector back into settings once they sign in again.
+                            onSignOut = {
+                                navController.popBackStack(Routes.INDEX, inclusive = false)
+                                viewModel.signOut()
+                            },
+                            onSync = viewModel::sync,
+                            onOpenNotices = { navController.navigate(Routes.NOTICES) },
+                        )
+                    }
+                    composable(Routes.NOTICES) {
+                        NoticesScreen()
+                    }
+                    composable(Routes.PLATE) { entry ->
+                        val catalogId = entry.arguments?.getString("catalogId").orEmpty()
+                        Travelling(this) {
+                            PlateScreen(
+                                // Resolved once per collection and not once per recomposition (#218):
+                                // building the album walks the whole inventory, and the screen recomposes
+                                // for reasons — a scroll, an export in flight — that leave it unchanged.
+                                result = remember(state.collection, catalogId) {
+                                    viewModel.plate(catalogId)
+                                },
+                                images = state.collection.images,
+                                onOpenSource = openUrl,
+                                onMessage = viewModel::showMessage,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
                 }
-            } }
+            }
         }
     }
 }

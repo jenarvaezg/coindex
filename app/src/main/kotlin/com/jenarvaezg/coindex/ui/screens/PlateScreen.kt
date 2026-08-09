@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
+import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
@@ -98,11 +100,15 @@ private fun AvailablePlate(
     modifier: Modifier = Modifier,
 ) {
     var exporting by remember { mutableStateOf(false) }
+    // Held here and not in the header of the grid, which is an item and is disposed on the way down:
+    // the ink falls once per opening of the sheet, and scrolling back up finds it dry (ADR 0026 §3).
+    val ink = rememberInkFall(plate.complete)
 
     Box(modifier = modifier) {
         PlateGrid(
             plate = plate,
             images = images,
+            ink = ink,
             exporting = exporting,
             onOpenSource = onOpenSource,
             onExport = { exporting = true },
@@ -140,6 +146,7 @@ private fun AvailablePlate(
 private fun PlateGrid(
     plate: PlateSubject,
     images: Map<Int, TypeImages>,
+    ink: State<Float>,
     exporting: Boolean,
     onOpenSource: (String) -> Unit,
     onExport: () -> Unit,
@@ -153,7 +160,7 @@ private fun PlateGrid(
         // 1 Bolívar for the sake of the two titled `1945 (acuñada en 1947)`.
         val namedRows = plate.cells.chunked(columns).map { row -> row.any { it.label != it.year } }
         val grid = rememberLazyGridState()
-        OpenWhereTheCoinLands(plate.landingCell, grid)
+        OpenWhereTheCoinLands(plate.landingCell, plate.cells.size, grid)
         LazyVerticalGrid(
             columns = GridCells.Adaptive(104.dp),
             state = grid,
@@ -165,7 +172,12 @@ private fun PlateGrid(
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Eyebrow("Catálogo curado")
-                    PlateHeading(title = plate.title, ratio = plate.ratio, complete = plate.complete)
+                    PlateHeading(
+                        title = plate.title,
+                        ratio = plate.ratio,
+                        complete = plate.complete,
+                        ink = ink,
+                    )
                     SpecificationCard(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
@@ -198,8 +210,7 @@ private fun PlateGrid(
                     // Where the coin of the index card is flying to, and nowhere else: it is the
                     // same casilla the plate is scrolled to, so the landing is the one thing the
                     // journey promised — «es la misma moneda» (ADR 0026 §3).
-                    travelling = index == plate.landingCell,
-                    catalogId = plate.catalogId,
+                    travellingFrom = plate.catalogId.takeIf { index == plate.landingCell },
                     onOpenSource = onOpenSource,
                 )
             }
@@ -233,7 +244,12 @@ internal fun plateColumns(
  * A plate with no measurable denominator has no figure to raise, and then the title takes the width.
  */
 @Composable
-private fun PlateHeading(title: String, ratio: String?, complete: Boolean) {
+private fun PlateHeading(
+    title: String,
+    ratio: String?,
+    complete: Boolean,
+    ink: State<Float>,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -244,7 +260,9 @@ private fun PlateHeading(title: String, ratio: String?, complete: Boolean) {
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.weight(1f),
         )
-        ratio?.let { figure -> StampedRatio(ratio = figure, complete = complete) }
+        ratio?.let { figure ->
+            StampedRatio(ratio = figure, complete = complete, fall = ink)
+        }
     }
 }
 
@@ -260,16 +278,18 @@ private fun PlateHeading(title: String, ratio: String?, complete: Boolean) {
  * casilla a complete sheet owns *is* its first casilla, so the ceremony falls where the eye is.
  */
 @Composable
-private fun OpenWhereTheCoinLands(landingCell: Int?, grid: LazyGridState) {
+private fun OpenWhereTheCoinLands(landingCell: Int?, casillas: Int, grid: LazyGridState) {
     LaunchedEffect(landingCell) {
         if (landingCell == null) return@LaunchedEffect
         // The grid has measured nothing yet on the frame this effect runs in, so what is visible is
         // asked for once there is a layout to ask: reading it earlier reports an empty sheet and
         // scrolls every plate, complete ones included.
-        val visible = snapshotFlow { grid.layoutInfo.visibleItemsInfo }.first { it.isNotEmpty() }
-        // The heading is item 0, so a casilla is one further along than its own index.
-        val item = landingCell + 1
-        if (visible.none { it.index == item }) grid.scrollToItem(item)
+        val layout = snapshotFlow { grid.layoutInfo }.first { it.totalItemsCount > 0 }
+        // Whatever the grid holds that is not a casilla comes first — the heading, today, as one
+        // spanning item — so the offset is counted rather than written down as a 1 that a second
+        // header would quietly break.
+        val item = layout.totalItemsCount - casillas + landingCell
+        if (layout.visibleItemsInfo.none { it.index == item }) grid.scrollToItem(item)
     }
 }
 
@@ -279,8 +299,8 @@ private fun PlateCell(
     images: TypeImages?,
     printedSide: PrintedSide,
     named: Boolean,
-    travelling: Boolean,
-    catalogId: String,
+    /** The catalog whose card this casilla receives the coin from, and null for every other one. */
+    travellingFrom: String?,
     onOpenSource: (String) -> Unit,
 ) {
     // An announced member has no Numista page to open: the coin is not in the catalogue.
@@ -297,7 +317,7 @@ private fun PlateCell(
             otherSide = images?.printedPhoto(printedSide.other),
             modifier = Modifier
                 .size(104.dp)
-                .travellingCoin(catalogId.takeIf { travelling }),
+                .travellingCoin(travellingFrom),
         )
         if (named) {
             PlateCellName(name = cell.label.takeIf { it != cell.year }.orEmpty())

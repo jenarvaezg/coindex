@@ -90,6 +90,18 @@ fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
     return CoverageRatio(ownedMembers(), issued)
 }
 
+/**
+ * The first member of this album the collector actually owns, or null where there is none.
+ *
+ * **One rule with two readers, so they cannot disagree about one coin** (ADR 0026 §3): the index
+ * takes the photograph of its card from here, and the plate takes the casilla the coin flies to.
+ * The rule is «the first *owned* member» and not «the first member» — the card of the 1 Bolívar
+ * would otherwise show the 1879 the father does not have, and the journey would land a coin in full
+ * colour on the hole where that same coin is a ghost.
+ */
+fun CollectionCatalogAlbum.firstOwnedIndex(): Int? =
+    members.indexOfFirst { it.status is CollectionCatalogMemberStatus.Owned }.takeIf { it >= 0 }
+
 fun buildCollectionCatalogAlbum(
     catalog: CollectionCatalog,
     items: List<CollectedItem>,

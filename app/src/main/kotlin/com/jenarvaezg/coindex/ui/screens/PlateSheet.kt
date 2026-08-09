@@ -29,6 +29,7 @@ import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.StampedRatio
+import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.components.paperSurface
@@ -176,7 +177,11 @@ private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
                         fontScale = 1f,
                     ),
                 ) {
-                    StampedRatio(ratio = ratio, complete = plate.complete)
+                    StampedRatio(
+                        ratio = ratio,
+                        complete = plate.complete,
+                        fall = rememberInkFall(plate.complete),
+                    )
                 }
             }
         }
