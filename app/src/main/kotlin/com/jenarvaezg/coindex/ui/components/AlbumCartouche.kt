@@ -23,6 +23,35 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 
 private val ALBUM_CARTOUCHE_HEIGHT = 52.dp
 
+/**
+ * A recess pressed into the album board: the shadow the die leaves at the top edge and the fresh
+ * cardboard it exposes at the bottom one.
+ *
+ * The board has one physics and not two (#337). The cartouche of Coins was the first thing sunk
+ * into it (#350) and the year tag of a plate cell is the second, so they are the same three
+ * strokes rather than two drawings that happen to agree today. The sides are deliberately not
+ * drawn: the cartouche spans its card and has none, and giving only the tag four edges would be
+ * exactly the second physics this exists to avoid.
+ */
+fun Modifier.recessedInBoard(
+    fillAlpha: Float = AlbumToneConfig.Default.cartoucheAlpha,
+    topRuleAlpha: Float = AlbumToneConfig.Default.cartoucheTopRuleAlpha,
+): Modifier = drawBehind {
+    drawRect(Paper.paperDeep.copy(alpha = fillAlpha))
+    drawLine(
+        Paper.ink.copy(alpha = topRuleAlpha),
+        start = Offset.Zero,
+        end = Offset(size.width, 0f),
+        strokeWidth = 2.dp.toPx(),
+    )
+    drawLine(
+        Color.White.copy(alpha = 0.55f),
+        start = Offset(0f, size.height),
+        end = Offset(size.width, size.height),
+        strokeWidth = 1.dp.toPx(),
+    )
+}
+
 /** Static recessed album label: one denomination range and a two-line theme slot. */
 @Composable
 fun AlbumCartouche(
@@ -36,21 +65,7 @@ fun AlbumCartouche(
             // The measured worst case already fits in 52 dp; exact height keeps every label equal
             // without adding 26 dp to the row pitch (#350).
             .height(ALBUM_CARTOUCHE_HEIGHT)
-            .drawBehind {
-                drawRect(Paper.paperDeep.copy(alpha = tone.cartoucheAlpha))
-                drawLine(
-                    Paper.ink.copy(alpha = tone.cartoucheTopRuleAlpha),
-                    start = Offset.Zero,
-                    end = Offset(size.width, 0f),
-                    strokeWidth = 2.dp.toPx(),
-                )
-                drawLine(
-                    Color.White.copy(alpha = 0.55f),
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = 1.dp.toPx(),
-                )
-            }
+            .recessedInBoard(tone.cartoucheAlpha, tone.cartoucheTopRuleAlpha)
             .padding(horizontal = 5.dp, vertical = 4.dp),
     ) {
         Text(

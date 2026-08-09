@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.PlateResult
@@ -38,6 +40,7 @@ import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateFileName
@@ -46,7 +49,6 @@ import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.printedPhoto
-import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 /**
@@ -134,58 +136,87 @@ private fun PlateGrid(
     onOpenSource: (String) -> Unit,
     onExport: () -> Unit,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(104.dp),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-        verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-    ) {
-        item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Eyebrow("Catálogo curado")
-                Text(plate.title, style = MaterialTheme.typography.headlineMedium)
-                SpecificationCard(
-                    entries = plateScreenEntries(plate.entries),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                // Exporting the plate is what this screen is for, so it is the only filled
-                // button on it; as a bare text button it read as another section heading.
-                PrimaryAction(
-                    text = if (exporting) {
-                        "Preparando la lámina…"
-                    } else {
-                        "Exportar lámina como imagen"
-                    },
-                    onClick = onExport,
-                    enabled = !exporting,
-                    share = !exporting,
-                )
-                ExternalLink(
-                    text = "Fuente en Numista",
-                    onClick = { onOpenSource(plate.source) },
-                    style = MaterialTheme.typography.bodyMedium,
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        // Which cells share a row is what decides where the tags line up, and the grid will not say
+        // it until it measures, so the same arithmetic it uses is read off the width here (#337).
+        val columns = plateColumns(maxWidth - PLATE_MARGIN * 2)
+        // A row reserves the name box when one of its cells is named — and not the whole plate,
+        // which would hang 54 dp of empty cardboard under the twenty date-run casillas of the
+        // 1 Bolívar for the sake of the two titled `1945 (acuñada en 1947)`.
+        val namedRows = plate.cells.chunked(columns).map { row -> row.any { it.label != it.year } }
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(104.dp),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = PLATE_MARGIN, vertical = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+            verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+        ) {
+            item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Eyebrow("Catálogo curado")
+                    Text(plate.title, style = MaterialTheme.typography.headlineMedium)
+                    SpecificationCard(
+                        entries = plateScreenEntries(plate.entries),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    // Exporting the plate is what this screen is for, so it is the only filled
+                    // button on it; as a bare text button it read as another section heading.
+                    PrimaryAction(
+                        text = if (exporting) {
+                            "Preparando la lámina…"
+                        } else {
+                            "Exportar lámina como imagen"
+                        },
+                        onClick = onExport,
+                        enabled = !exporting,
+                        share = !exporting,
+                    )
+                    ExternalLink(
+                        text = "Fuente en Numista",
+                        onClick = { onOpenSource(plate.source) },
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+            itemsIndexed(plate.cells, key = { _, cell -> cell.id }) { index, cell ->
+                PlateCell(
+                    cell = cell,
+                    images = cell.numistaTypeId?.let { images[it] },
+                    printedSide = plate.printedSide,
+                    named = namedRows.getOrElse(index / columns) { false },
+                    onOpenSource = onOpenSource,
                 )
             }
         }
-        items(plate.cells, key = { it.id }) { cell ->
-            PlateCell(
-                cell = cell,
-                images = cell.numistaTypeId?.let { images[it] },
-                printedSide = plate.printedSide,
-                onOpenSource = onOpenSource,
-            )
-        }
     }
 }
+
+/** The page margin the plate keeps on both sides, and what the columns are measured inside. */
+private val PLATE_MARGIN = 20.dp
+
+/**
+ * How many casillas `GridCells.Adaptive(104.dp)` will put on a row of [available] width.
+ *
+ * The grid keeps this to itself until it measures, and the plate has to know it one step earlier:
+ * which cells share a row is what decides which of them reserve a name box, and a row whose tags
+ * do not line up is the whole defect (#337). Same arithmetic, said out loud and tested.
+ */
+internal fun plateColumns(
+    available: Dp,
+    minimum: Dp = 104.dp,
+    gutter: Dp = PlateMetrics.gutter,
+): Int = maxOf(1, ((available + gutter) / (minimum + gutter)).toInt())
 
 @Composable
 private fun PlateCell(
     cell: DrawnCell,
     images: TypeImages?,
     printedSide: PrintedSide,
+    named: Boolean,
     onOpenSource: (String) -> Unit,
 ) {
+    // An announced member has no Numista page to open: the coin is not in the catalogue.
+    val open = cell.numistaTypeId?.let { typeId -> { onOpenSource(numistaTypeUrl(typeId)) } }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),
@@ -193,24 +224,15 @@ private fun PlateCell(
         AlbumHole(
             photo = images?.printedPhoto(printedSide),
             missing = cell.missing,
+            // Two targets on a casilla and not one (#302): the body of the hole turns the coin
+            // over, and the year under it goes out to Numista.
+            otherSide = images?.printedPhoto(printedSide.other),
             modifier = Modifier.size(104.dp),
         )
-        // An announced member has no Numista page to open: the coin is not in the catalogue.
-        val typeId = cell.numistaTypeId
-        PlateCellName(
-            name = cell.label,
-            onOpen = typeId?.let { { onOpenSource(numistaTypeUrl(it)) } },
-        )
-        // Only what tells this cell apart, which is at most the year: in a date run the title is
-        // already it, and the type is reached by tapping the title right above.
-        cell.footnote?.let { footnote ->
-            Text(
-                footnote,
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.muted,
-                textAlign = TextAlign.Center,
-            )
+        if (named) {
+            PlateCellName(name = cell.label.takeIf { it != cell.year }.orEmpty())
         }
+        cell.year?.let { year -> RecessedYearTag(year = year, onOpen = open) }
     }
 }
 
@@ -226,14 +248,15 @@ private fun PlateCell(
  * The label is the curator's and is never shortened here: 1.086 of those 1.188 are not a year, and
  * many are legitimate descriptions of the issue. What gives is the type on screen.
  *
- * [onOpen] is null for an announced member, which has no Numista page to open.
+ * It is plain ink and no longer a link: what opens Numista is the year's recessed tag underneath
+ * (#302), and a title that kept its arrow would print twenty-two of them in the system typeface on a
+ * sheet of paper — neither Bitter nor Barlow has that glyph (#298).
+ *
+ * [name] is empty for a casilla whose label is already its year: the box stays, so the tags of a
+ * row still share a baseline.
  */
 @Composable
-internal fun PlateCellName(
-    name: String,
-    onOpen: (() -> Unit)?,
-    modifier: Modifier = Modifier,
-) {
+internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {
     val style = MaterialTheme.typography.titleMedium
     // Reserved in dp and not in lines: two lines of a name that shrank to 13 sp are shorter than
     // two lines of one that did not, so `minLines` alone still left three years of a row on three
@@ -245,34 +268,22 @@ internal fun PlateCellName(
         modifier = modifier.fillMaxWidth().height(reserved),
         contentAlignment = Alignment.TopCenter,
     ) {
-        if (onOpen != null) {
-            ExternalLink(
-                text = name,
-                style = style,
-                textAlign = TextAlign.Center,
-                autoSize = PLATE_CELL_NAME_AUTO_SIZE,
-                maxLines = PLATE_CELL_NAME_LINES,
-                onClick = onOpen,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        } else {
-            Text(
-                text = name,
-                style = style,
-                textAlign = TextAlign.Center,
-                autoSize = PLATE_CELL_NAME_AUTO_SIZE,
-                maxLines = PLATE_CELL_NAME_LINES,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(vertical = NAME_PADDING),
-            )
-        }
+        Text(
+            text = name,
+            style = style,
+            textAlign = TextAlign.Center,
+            autoSize = PLATE_CELL_NAME_AUTO_SIZE,
+            maxLines = PLATE_CELL_NAME_LINES,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth().padding(vertical = NAME_PADDING),
+        )
     }
 }
 
 /** Every cell reserves the same name range, so a row's years share one baseline. */
 private const val PLATE_CELL_NAME_LINES = 2
 
-/** The breathing room [ExternalLink] adds around its own text, matched by the plain branch. */
+/** The breathing room the name keeps between the hole above it and the tag below. */
 private val NAME_PADDING = 6.dp
 
 /** Bitter shrinks before the cell cuts, the same ladder the index card walks down (#348). */

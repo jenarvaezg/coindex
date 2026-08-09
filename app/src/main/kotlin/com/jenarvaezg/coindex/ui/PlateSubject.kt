@@ -53,6 +53,15 @@ data class DrawnCell(
     /** The Numista type behind it, or null for an announced or unlisted casilla. */
     val numistaTypeId: Int?,
     val footnote: String?,
+    /**
+     * The year on the casilla's recessed tag, which on screen is also what opens Numista (#337).
+     *
+     * Not the same thing as [footnote], which is what the *paper* has left to say under a coin and
+     * therefore goes silent when the whole plate shares one year. The tag is not a note: it is the
+     * handle, so it keeps the year in the twelve casillas of four catalogs where the footnote
+     * drops it rather than leaving them with nothing to press.
+     */
+    val year: String?,
     val owned: Boolean,
     /** Only an issued member absent from the collection gets the catalog-design ghost. */
     val missing: Boolean,
@@ -87,6 +96,7 @@ fun plateSubject(plate: PlateResult.Available): PlateSubject {
                 label = albumMember.member.label,
                 numistaTypeId = albumMember.member.numistaTypeId,
                 footnote = plateCellFootnote(albumMember.member, common),
+                year = albumMember.member.year?.toString(),
                 owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
                 missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
             )

@@ -3,7 +3,6 @@ package com.jenarvaezg.coindex.ui.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -12,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -32,16 +32,16 @@ class PlateCellNameTest {
 
     @Test
     // D8 forbids spaces in method names below DEX 040, so instrumented tests cannot use backticks.
-    fun theYearsOfARowShareOneBaselineWhateverTheNamesAbove() {
+    fun theTagsOfARowShareOneBaselineWhateverTheNamesAbove() {
         compose.setContent {
             CoindexTheme {
                 Row {
-                    // A date run, where the label already is the year.
-                    Cell(name = "1879", year = "1879", onOpen = {})
+                    // A date run cell, whose label is already its year and prints no name.
+                    Cell(name = "", year = "1879")
                     // Two lines: the one Fuertes member whose label is not a year.
-                    Cell(name = "1 Venezolano", year = "1876", onOpen = {})
-                    // Seven lines if nothing stops it, and announced, so it takes the other branch.
-                    Cell(name = LONGEST_LABEL, year = "1934", onOpen = null)
+                    Cell(name = "1 Venezolano", year = "1876")
+                    // Seven lines of Bitter if nothing stops it.
+                    Cell(name = LONGEST_LABEL, year = "1934")
                 }
             }
         }
@@ -56,18 +56,18 @@ class PlateCellNameTest {
     fun aTruncatedNameKeepsItsWholeTextInSemantics() {
         compose.setContent {
             CoindexTheme {
-                PlateCellName(LONGEST_LABEL, onOpen = {}, modifier = Modifier.width(CELL_WIDTH))
+                PlateCellName(LONGEST_LABEL, modifier = Modifier.width(CELL_WIDTH))
             }
         }
 
-        compose.onNodeWithText(LONGEST_LABEL, substring = true).assertExists()
+        compose.onNodeWithText(LONGEST_LABEL).assertExists()
     }
 
     @Composable
-    private fun Cell(name: String, year: String, onOpen: (() -> Unit)?) {
+    private fun Cell(name: String, year: String) {
         Column(modifier = Modifier.width(CELL_WIDTH)) {
-            PlateCellName(name, onOpen = onOpen)
-            Text(year, modifier = Modifier.testTag("year-$year"))
+            PlateCellName(name)
+            RecessedYearTag(year, onOpen = {}, modifier = Modifier.testTag("year-$year"))
         }
     }
 

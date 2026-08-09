@@ -330,6 +330,34 @@ class PlateSubjectTest {
         assertEquals("" to "1 / 2 emisiones", plateScreenEntries(plate.entries)[0])
     }
 
+    /**
+     * The footnote goes silent when the plate already said the year; the tag does not, because it
+     * is not a note but the handle that opens Numista (#337). Twelve casillas of four shipped
+     * catalogs live in this gap, and without the year they would have nothing to press.
+     */
+    @Test
+    fun `the tag keeps the year the footnote drops`() {
+        val plate = subject(issueRun)
+
+        assertNull(plate.cells[0].footnote)
+        assertEquals(listOf("1966", "1966"), plate.cells.map { it.year })
+    }
+
+    @Test
+    fun `a date run titles its cells with the very year its tag carries`() {
+        val plate = subject(dateRun)
+
+        assertEquals(plate.cells.map { it.label }, plate.cells.map { it.year })
+    }
+
+    @Test
+    fun `an announced casilla has no year to press`() {
+        val plate = subject(dateRun + announced)
+
+        assertNull(plate.cells.last().year)
+        assertNull(plate.cells.last().numistaTypeId)
+    }
+
     @Test
     fun `only a Missing member is drawn as a ghost`() {
         val members = dateRun + unlisted + announced

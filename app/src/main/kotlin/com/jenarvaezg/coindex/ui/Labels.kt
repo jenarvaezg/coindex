@@ -149,6 +149,15 @@ fun pieceLine(piece: DrawnPiece): String {
     return "$head · Numista ${item.typeId}$quantity"
 }
 
+/**
+ * What tapping the body of a casilla does, for the reader that cannot see it happen.
+ *
+ * Nothing on the sheet writes this: the gesture is announced by the coin having two sides and by
+ * nothing else, which is the whole point of a hole you can press. It exists so that the one reader
+ * who is told what a control does is told the truth.
+ */
+const val TURN_THE_COIN_OVER: String = "Dar la vuelta a la moneda"
+
 /** Why a plate cannot be opened, in terms of what the collector can do about it. */
 fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."

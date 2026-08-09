@@ -32,4 +32,18 @@ enum class PrintedSide {
 
     @SerialName("reverse")
     Reverse,
+    ;
+
+    /**
+     * The face the sheet is not printing, which is the one on the back of the coin.
+     *
+     * The screen needs it and the paper never does: a casilla turns over on a tap (#337), and what
+     * it turns to is defined here rather than at the point of use so that «the other side» cannot
+     * come to mean two things.
+     */
+    val other: PrintedSide
+        get() = when (this) {
+            Obverse -> Reverse
+            Reverse -> Obverse
+        }
 }

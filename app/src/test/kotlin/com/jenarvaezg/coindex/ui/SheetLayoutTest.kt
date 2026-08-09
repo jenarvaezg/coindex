@@ -15,6 +15,7 @@ private fun cell(id: String, typeId: Int) = DrawnCell(
     label = id,
     numistaTypeId = typeId,
     footnote = null,
+    year = null,
     owned = false,
     missing = true,
 )
