@@ -23,6 +23,7 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
+import com.jenarvaezg.coindex.ui.components.LocalStamping
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.recordInto
@@ -225,6 +226,10 @@ fun OffScreenSheet(density: Density, content: @Composable () -> Unit) {
             // that what the father shows other people carries no metal: the app is where he looks
             // at his collection, the PNG is where he shows it.
             LocalCoinGloss provides null,
+            // The same rule, and the same line, cutting the other way (#339): the **stamp** is a
+            // state and travels, the **stamping** is alive and does not. A sheet composed off
+            // screen finds the ink already dry rather than watching it fall into a picture.
+            LocalStamping provides null,
             content = content,
         )
     }

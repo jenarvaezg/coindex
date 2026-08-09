@@ -210,21 +210,20 @@ class CollectionIndex(
      */
     private fun declaredIssuerCode(key: VariantKey): String? =
         catalogsByKey[key]?.issuerCode ?: groupingIssuers[key.family]
-
-    private fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
-        val issued = issuedMembers()
-        // A catalog whose every member is announced or unlisted has nothing measurable to divide
-        // by, so it offers no ratio rather than a zero one.
-        if (issued == 0) return null
-        return CoverageRatio(ownedMembers(), issued)
-    }
 }
 
-private fun CollectionCatalogAlbum.firstOwnedCover(printedSide: PrintedSide): IndexCover? =
-    members.firstNotNullOfOrNull { member ->
-        val owned = member.status as? CollectionCatalogMemberStatus.Owned
-        owned?.items?.firstOrNull()?.let { item -> IndexCover(item.typeId, printedSide) }
-    }
+/**
+ * The coin a card shows: the first emission the collector owns, on the face the album prints.
+ *
+ * The index and the plate read [firstOwnedIndex] rather than each picking a first of their own,
+ * because the coin that takes off from a card is the coin that has to land in its casilla
+ * (ADR 0026 §3).
+ */
+private fun CollectionCatalogAlbum.firstOwnedCover(printedSide: PrintedSide): IndexCover? {
+    val member = firstOwnedIndex()?.let { members[it] } ?: return null
+    val owned = member.status as? CollectionCatalogMemberStatus.Owned ?: return null
+    return owned.items.firstOrNull()?.let { item -> IndexCover(item.typeId, printedSide) }
+}
 
 private fun List<CollectedItem>.firstOwnedCover(): IndexCover? =
     firstOrNull { it.quantity > 0 }?.let { item ->

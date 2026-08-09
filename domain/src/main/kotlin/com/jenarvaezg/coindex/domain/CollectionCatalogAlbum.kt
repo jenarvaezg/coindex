@@ -73,6 +73,35 @@ data class CollectionCatalogAlbum(
         members.count { it.status is CollectionCatalogMemberStatus.Unlisted }
 }
 
+/**
+ * What this collector has of this catalog, as the one ratio the whole app divides by.
+ *
+ * Null for a catalog whose every member is announced or unlisted: there is nothing measurable to
+ * divide by, so it offers no ratio rather than a zero one.
+ *
+ * It lives next to the counters and not inside the index because the index is no longer the only
+ * caller (ADR 0026 §3): the completion stamp is **read from the inventory like the die-cut**, and
+ * reading it from a second rule is how the card's ratio in rust and the stamp on the plate would
+ * come to disagree about the same collection one tap apart.
+ */
+fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
+    val issued = issuedMembers()
+    if (issued == 0) return null
+    return CoverageRatio(ownedMembers(), issued)
+}
+
+/**
+ * The first member of this album the collector actually owns, or null where there is none.
+ *
+ * **One rule with two readers, so they cannot disagree about one coin** (ADR 0026 §3): the index
+ * takes the photograph of its card from here, and the plate takes the casilla the coin flies to.
+ * The rule is «the first *owned* member» and not «the first member» — the card of the 1 Bolívar
+ * would otherwise show the 1879 the father does not have, and the journey would land a coin in full
+ * colour on the hole where that same coin is a ghost.
+ */
+fun CollectionCatalogAlbum.firstOwnedIndex(): Int? =
+    members.indexOfFirst { it.status is CollectionCatalogMemberStatus.Owned }.takeIf { it >= 0 }
+
 fun buildCollectionCatalogAlbum(
     catalog: CollectionCatalog,
     items: List<CollectedItem>,

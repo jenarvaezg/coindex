@@ -9,6 +9,8 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.ProgrammeStanding
+import com.jenarvaezg.coindex.domain.coverage
+import com.jenarvaezg.coindex.domain.firstOwnedIndex
 
 /**
  * What the three drawers of a plate are looking at: the screen, the exported sheet, the notebook.
@@ -35,6 +37,30 @@ data class PlateSubject(
     /** The specification block, in the order all three drawers print it. */
     val entries: List<Pair<String, String>>,
     val cells: List<DrawnCell>,
+    /**
+     * The ratio the header prints, and what the stamp lands on: `22/22` (ADR 0026 §3).
+     *
+     * The short form and not «Progreso»'s sentence, because it is drawn as a figure over the title
+     * and not as a row of the specification — see [plateEntriesBesideRatio], which is what takes it out
+     * of the card so the same number is never printed twice.
+     */
+    val ratio: String?,
+    /**
+     * Every issued member owned, which is the whole of what the completion stamp is (ADR 0026 §3).
+     *
+     * **A state and not an event**: it is read from the inventory like the die-cut, so a plate that
+     * stops being complete stops showing it, and nothing anywhere remembers that it once did.
+     */
+    val complete: Boolean,
+    /**
+     * The casilla the coin of the index card flies to, or null where no cell can receive it.
+     *
+     * [CollectionCatalogAlbum.firstOwnedIndex], which is **the very rule the card's photograph is
+     * chosen by**: the coin that took off is the coin that lands, and one function is what keeps the
+     * two from being picked apart. A plate the collector owns nothing of has no landing cell — and no
+     * plate either, because `resolvePlate` needs evidence to open one.
+     */
+    val landingCell: Int?,
 )
 
 /**
@@ -84,23 +110,30 @@ fun plateSubject(plate: PlateResult.Available): PlateSubject {
     // Off the album and not off the catalog, so the heading is lifted out of the very cells the
     // plate is about to draw: the album is the plate as this collector has it.
     val common = plateCommonFacts(plate.album.members.map { it.member })
+    // The card's ratio itself (#218, ADR 0026 §3): what the index prints in rust, what the header
+    // prints over the title, and what the stamp is read from are one measurement.
+    val coverage = plate.album.coverage()
+    val cells = plate.album.members.map { albumMember ->
+        DrawnCell(
+            id = albumMember.member.id,
+            label = albumMember.member.label,
+            numistaTypeId = albumMember.member.numistaTypeId,
+            footnote = plateCellFootnote(albumMember.member, common),
+            year = albumMember.member.year?.toString(),
+            owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
+            missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
+        )
+    }
     return PlateSubject(
         catalogId = catalog.id,
         title = catalog.name,
         source = catalog.source,
         printedSide = catalog.printedSide,
         entries = plateEntries(catalog, plate.album, common, plate.programmes),
-        cells = plate.album.members.map { albumMember ->
-            DrawnCell(
-                id = albumMember.member.id,
-                label = albumMember.member.label,
-                numistaTypeId = albumMember.member.numistaTypeId,
-                footnote = plateCellFootnote(albumMember.member, common),
-                year = albumMember.member.year?.toString(),
-                owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
-                missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
-            )
-        },
+        cells = cells,
+        ratio = coverage?.let { "${it.owned}/${it.issued}" },
+        complete = coverage?.nothingMissing == true,
+        landingCell = plate.album.firstOwnedIndex(),
     )
 }
 
@@ -161,7 +194,7 @@ private fun plateEntries(
     programmes: List<ProgrammeStanding>,
 ): List<Pair<String, String>> = buildList {
     // The divisor is what the app can measure (#48), which is exactly the issued members.
-    add("Progreso" to "${album.ownedMembers()} / ${album.issuedMembers()} emisiones")
+    add(PROGRESS_LABEL to "${album.ownedMembers()} / ${album.issuedMembers()} emisiones")
     val announced = album.announcedMembers()
     if (announced > 0) {
         add("" to if (announced == 1) "1 anunciada" else "$announced anunciadas")
@@ -187,8 +220,21 @@ private fun plateEntries(
     add("Actualizado" to catalog.updatedAt)
 }
 
-/** Screen furniture omits the progress label; exported paper keeps the shared fact intact. */
-fun plateScreenEntries(entries: List<Pair<String, String>>): List<Pair<String, String>> =
-    entries.map { (label, value) ->
-        if (label == "Progreso") "" to value else label to value
-    }
+/**
+ * The specification with the progress row taken out, for the two drawers that print the ratio
+ * themselves.
+ *
+ * The screen and the exported sheet both head the plate with `22/22` over the title, which is where
+ * the stamp lands (ADR 0026 §3); leaving «Progreso · 22 / 22 emisiones» in the card underneath would
+ * print the same number twice, and the frequency rule of §5 prices a word by how often it is printed.
+ * The lines the progress *brought with it* — «1 anunciada», «2 no medibles» — stay: they are not the
+ * ratio, and the figure over the title deliberately says nothing about them.
+ *
+ * The printed notebook does not call this: its page has no header of its own to raise the ratio into,
+ * so [plateSubject]'s entries reach it whole.
+ */
+fun plateEntriesBesideRatio(entries: List<Pair<String, String>>): List<Pair<String, String>> =
+    entries.filterNot { (label, _) -> label == PROGRESS_LABEL }
+
+/** What the progress row is called in the specification, in the one place that has to match. */
+private const val PROGRESS_LABEL = "Progreso"

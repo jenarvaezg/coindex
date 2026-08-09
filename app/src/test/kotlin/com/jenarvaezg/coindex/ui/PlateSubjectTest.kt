@@ -18,7 +18,9 @@ import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 /**
  * The plate as its three drawers receive it — the screen, the exported sheet, the notebook page.
@@ -322,12 +324,82 @@ class PlateSubjectTest {
         assertEquals("" to "1 emisión no medible", plate.entries[2])
     }
 
+    /**
+     * The two drawers that head the plate with the figure itself take the row out from under it.
+     *
+     * The printed notebook does not, which is why this is a function and not a shape of `entries`:
+     * a page of the cuaderno has no header to raise a ratio into, so «Progreso · 1 / 2 emisiones»
+     * is the only place it says it.
+     */
     @Test
-    fun `the screen shows the ratio without printing the Progreso label`() {
-        val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879)))
+    fun `the ratio is printed once, and never twice on the same surface`() {
+        val plate = subject(dateRun + unlisted, owned = listOf(coin(1, 10_340, 1879)))
 
         assertEquals("Progreso" to "1 / 2 emisiones", plate.entries[0])
-        assertEquals("" to "1 / 2 emisiones", plateScreenEntries(plate.entries)[0])
+        assertEquals("1/2", plate.ratio)
+        val beside = plateEntriesBesideRatio(plate.entries)
+        assertEquals(emptyList(), beside.filter { it.first == "Progreso" })
+        // What the progress brought with it stays: it is not the ratio, and the figure over the
+        // title deliberately says nothing about an emission the app cannot measure.
+        assertEquals("" to "1 emisión no medible", beside[0])
+    }
+
+    /**
+     * The stamp is read from the inventory like the die-cut (ADR 0026 §3), so it is the album's
+     * `owned == issued` and nothing else — no date, no flag, nothing remembered.
+     */
+    @Test
+    fun `a plate with every issued member owned says it is complete`() {
+        val complete = subject(dateRun, owned = listOf(coin(1, 10_340, 1879), coin(2, 10_340, 1886)))
+
+        assertEquals("2/2", complete.ratio)
+        assertTrue(complete.complete)
+    }
+
+    /**
+     * Completing expires: `issuedMembers` leaves announced members out of the divisor, so the day
+     * the curator turns an announced year into a real casilla the same catalog reads 2 of 3 and
+     * the stamp is simply not drawn. 33 of the 74 catalogs are open series.
+     */
+    @Test
+    fun `a date run that grows loses the stamp without drama`() {
+        val owned = listOf(coin(1, 10_340, 1879), coin(2, 10_340, 1886))
+        val grown = subject(dateRun + member("1887", "1887", 1887, 10_340), owned = owned)
+
+        assertEquals("2/3", grown.ratio)
+        assertFalse(grown.complete)
+    }
+
+    /** A catalog with nothing measurable divides by nothing, so it heads itself with no figure. */
+    @Test
+    fun `a plate with no measurable emission offers no ratio and no stamp`() {
+        val plate = subject(listOf(announced))
+
+        assertNull(plate.ratio)
+        assertFalse(plate.complete)
+    }
+
+    /**
+     * Where the coin of the index card lands, which is the first casilla this collector **owns**
+     * and not the first of the catalog (#304).
+     *
+     * It is the same rule `CollectionIndex.firstOwnedCover` picks the card's photograph by, and it
+     * has to be: the card of the 1 Bolívar shows the 1945 he has, and flying it to the 1879 would
+     * land a coin in full colour on a hole where it is a ghost.
+     */
+    @Test
+    fun `the coin lands on the first casilla the collector owns`() {
+        val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1886)))
+
+        assertEquals(1, plate.landingCell)
+    }
+
+    /** A complete sheet lands on its own first casilla, so the ceremony falls where the eye is. */
+    @Test
+    fun `a complete plate lands on the top of the sheet`() {
+        val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879), coin(2, 10_340, 1886)))
+
+        assertEquals(0, plate.landingCell)
     }
 
     /**

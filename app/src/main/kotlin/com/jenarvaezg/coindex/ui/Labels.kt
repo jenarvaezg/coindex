@@ -158,6 +158,20 @@ fun pieceLine(piece: DrawnPiece): String {
  */
 const val TURN_THE_COIN_OVER: String = "Dar la vuelta a la moneda"
 
+/**
+ * The one word the completion stamp says (ADR 0026 §3).
+ *
+ * **One word and not two, open series included.** The #304 prototype drew «al día» for a plate whose
+ * series is still being issued and that is the only thing the ticket never got to pronounce; it is
+ * closed here by default, because the case does not exist today — none of the father's six complete
+ * plates is an open series — and a second word is new vocabulary that would have to be explained on
+ * the one screen ADR 0026 §5 was pruning words out of.
+ *
+ * Written in lower case because that is the word; the stamp prints it in capitals, which is a fact
+ * about rubber and not about the copy.
+ */
+const val COMPLETE_STAMP_WORD: String = "completa"
+
 /** Why a plate cannot be opened, in terms of what the collector can do about it. */
 fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."

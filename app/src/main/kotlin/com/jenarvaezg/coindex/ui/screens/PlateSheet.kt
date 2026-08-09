@@ -13,8 +13,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -26,6 +28,9 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.StampedRatio
+import com.jenarvaezg.coindex.ui.components.rememberInkFall
+import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -150,10 +155,36 @@ private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
             style = MaterialTheme.typography.labelMedium.scaledBy(scale * 1.3f),
             color = Paper.rust,
         )
-        Text(
-            plate.title,
-            style = MaterialTheme.typography.headlineMedium.scaledBy(scale * 1.55f),
-        )
+        // The stamp travels and the stamping does not (ADR 0026 §4): what the father shows other
+        // people is a complete sheet that says so, and the ink is dry before the picture is taken —
+        // `OffScreenSheet` is where that is decided, not here.
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(
+                plate.title,
+                style = MaterialTheme.typography.headlineMedium.scaledBy(scale * 1.55f),
+                modifier = Modifier.weight(1f),
+            )
+            plate.ratio?.let { ratio ->
+                // Composed at its own density rather than resized dp by dp: the stamp grows with
+                // the masthead as **one drawing**, corners and rules included.
+                CompositionLocalProvider(
+                    LocalDensity provides Density(
+                        density = LocalDensity.current.density * scale * 1.55f,
+                        fontScale = 1f,
+                    ),
+                ) {
+                    StampedRatio(
+                        ratio = ratio,
+                        complete = plate.complete,
+                        fall = rememberInkFall(plate.complete),
+                    )
+                }
+            }
+        }
         HorizontalDivider(thickness = 2.dp * scale, color = Paper.ink)
         // Flowed rather than divided into equal columns: what the plate has to say about itself
         // grew with the catalogs that share a type or a year, and six equal columns broke the
@@ -163,7 +194,7 @@ private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
             horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER * 2),
             verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER * scale * 0.5f),
         ) {
-            plate.entries.forEach { (label, value) ->
+            plateEntriesBesideRatio(plate.entries).forEach { (label, value) ->
                 Column {
                     if (label.isNotEmpty()) {
                         Text(
