@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.recordInto
@@ -216,6 +217,15 @@ fun OffScreenSheet(density: Density, content: @Composable () -> Unit) {
             .size(0.dp)
             .wrapContentSize(unbounded = true, align = Alignment.TopStart),
     ) {
-        CompositionLocalProvider(LocalDensity provides density, content = content)
+        CompositionLocalProvider(
+            LocalDensity provides density,
+            // The export rule of ADR 0026 §4, in the one place all three exports pass through:
+            // what is still travels to paper, what is alive does not. The gloss follows a sensor,
+            // so a PNG must not carry it — not even the pose it rests in. It is accepted knowingly
+            // that what the father shows other people carries no metal: the app is where he looks
+            // at his collection, the PNG is where he shows it.
+            LocalCoinGloss provides null,
+            content = content,
+        )
     }
 }

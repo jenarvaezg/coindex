@@ -2,12 +2,11 @@ package com.jenarvaezg.coindex.debug.calibration
 
 import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
+import com.jenarvaezg.coindex.ui.components.CoinGloss
 import com.jenarvaezg.coindex.ui.components.DieCutWall
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
 import com.jenarvaezg.coindex.ui.components.HOLE_CARD_PADDING_DP
-import kotlin.math.atan2
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 enum class CalibrationControl(
     val range: ClosedFloatingPointRange<Float>,
@@ -16,7 +15,14 @@ enum class CalibrationControl(
 ) {
     GRAIN_OPACITY(0f..1f, steps = 19),
     GLOSS_INTENSITY(0f..1f),
-    GLOSS_TRAVEL_DP(0f..96f),
+
+    /**
+     * A fraction of the diameter and not dp: the prototype's ±55 dp were ±45 % of a 121 dp hole, and
+     * the same dp on production's 104 dp casilla would be ±53 % — a band that spends more time off
+     * the coin than on it. The ceiling leaves room above the approved ±45 % — a slider that opens at
+     * 90 % of its own range can only be pushed one way.
+     */
+    GLOSS_TRAVEL(0f..0.7f),
     FLIP_DURATION_MILLIS(200f..900f),
     STAMPING_DURATION_MILLIS(100f..700f),
     RECESS_DEPTH_DP(0f..8f),
@@ -42,8 +48,11 @@ enum class CalibrationTab {
 
 data class CalibrationState(
     val grainOpacity: Float = GRAIN_OPACITY,
-    val glossIntensity: Float = 0.5f,
-    val glossTravelDp: Float = 55f,
+    // The gloss opens where production stands, for the same reason the tone tab does (#357): a
+    // bench showing a value the app does not paint cannot tell you whether what you see is the
+    // defect.
+    val glossIntensity: Float = CoinGloss.Default.intensity,
+    val glossTravel: Float = CoinGloss.Default.travel,
     val flipDurationMillis: Int = 420,
     val stampingDurationMillis: Int = 300,
     val recessDepthDp: Float = 3f,
@@ -74,7 +83,7 @@ data class CalibrationState(
         return when (control) {
             CalibrationControl.GRAIN_OPACITY -> copy(grainOpacity = value)
             CalibrationControl.GLOSS_INTENSITY -> copy(glossIntensity = value)
-            CalibrationControl.GLOSS_TRAVEL_DP -> copy(glossTravelDp = value)
+            CalibrationControl.GLOSS_TRAVEL -> copy(glossTravel = value)
             CalibrationControl.FLIP_DURATION_MILLIS -> copy(flipDurationMillis = value.roundToInt())
             CalibrationControl.STAMPING_DURATION_MILLIS ->
                 copy(stampingDurationMillis = value.roundToInt())
@@ -97,11 +106,14 @@ data class CalibrationState(
     fun withTab(tab: CalibrationTab): CalibrationState = copy(selectedTab = tab)
 
     companion object {
-        const val GLOSS_ANGLE_DEGREES = 105f
         const val YEAR_TAG_WIDTH_DP = 48.3f
         const val YEAR_TAG_HEIGHT_DP = 28f
     }
 }
+
+/** What the bench is asking the production effect to draw right now. */
+internal fun CalibrationState.glossConfig(): CoinGloss =
+    CoinGloss(intensity = glossIntensity, travel = glossTravel)
 
 internal fun CalibrationState.albumToneConfig(): AlbumToneConfig = AlbumToneConfig(
     cartoucheAlpha = cartoucheAlpha,
@@ -110,9 +122,3 @@ internal fun CalibrationState.albumToneConfig(): AlbumToneConfig = AlbumToneConf
     cartoucheTopRuleAlpha = cartoucheRuleAlpha,
     dieWall = dieWall,
 )
-
-/** Maps the accelerometer's lateral gravity to the gloss's signed ±45° travel. */
-fun lateralTiltFraction(x: Float, y: Float, z: Float): Float {
-    val degrees = Math.toDegrees(atan2(x.toDouble(), sqrt((y * y + z * z).toDouble())))
-    return (degrees / 45.0).toFloat().coerceIn(-1f, 1f)
-}

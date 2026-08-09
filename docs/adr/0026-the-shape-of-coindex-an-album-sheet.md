@@ -57,8 +57,11 @@ index goes from **2.07 to 11.04 collections per screen** and shows coins for the
   already paints them with a different font; with packaged type they would be three obvious foreign
   bodies.
 - **Paper is fine fibre in `soft-light`, flat, with no sheet shadow.** The shadow is redundant, not
-  expensive: with the entry sunk into the cardboard the relief is already the die-cut's job. The only
-  fixed highlight is the **acetate sleeve reflection**, static, so it survives the exported PNG.
+  expensive: with the entry sunk into the cardboard the relief is already the die-cut's job. The
+  **acetate sleeve reflection** was the one fixed highlight, static, and it did survive the exported
+  PNG. #338 withdrew it (§15), and since inside the hole was the only place it was ever painted, the
+  sheet has no fixed highlight any more: the only light over the metal is the gloss, which travels
+  nowhere.
 - **Numista's photographs solve themselves.** A round hole with `cover` cropping makes the cut-out
   over a light background simply invisible. Measured: of the father's 192 types, **188 have a seeded
   ficha and all 188 carry an image**; the other four have no ficha until the first sync.
@@ -106,7 +109,7 @@ they are the first four movements in the life of the app:
 
 | movement | cause | datum | to paper? |
 | --- | --- | --- | --- |
-| **the flip** — `rotationY` + `cameraDistance`, 420 ms; cardboard and acetate stay still | tapping the hole | the other face | no · the PNG comes out on `printed_side` |
+| **the flip** — `rotationY` + `cameraDistance`, 420 ms; the cardboard stays still | tapping the hole | the other face | no · the PNG comes out on `printed_side` |
 | **the gloss** — a black→transparent→white gradient at 105° in `BlendMode.Softlight`, moved by the accelerometer | tilting the phone | it is metal | **no** |
 | **the stamping** — the ink falls on the ratio when a complete sheet is opened | opening the sheet | it is complete | the stamp yes, the stamping no |
 | **the journey** — the coin flies from the card to **its** slot, `SharedTransitionLayout` | navigating | it is the same coin | no |
@@ -169,9 +172,12 @@ it.
 
 **The gloss belongs to the coin, not to the hole** — the second amendment to #303. Every coin
 photograph glosses, die-cut or loose: on the plate, in the index, in «Las cifras», in `PieceCard` and
-in the side sheets. All four share `CoinSides` (`FieldGuide.kt:334`), so the wider scope costs no
-session — it is the same modifier. **Empty cardboard never glosses**, now for the direct reason: there
-is no coin.
+in the side sheets. Two components paint one by the time the block was written — `AlbumHole` for what
+is die-cut and `CoinSides` for what is loose — and the wider scope still costs no session, because
+what they share is one composable modifier, `Modifier.coinGloss()`. **Empty cardboard never glosses**,
+now for the direct reason: there is no coin. Nor does the ghost of a missing issue, which is the
+catalog's design and not metal. «Las cifras» is block 10 and does not exist yet; when it does, its
+photographs get the same modifier and nothing else.
 
 ### 5. Density: three clauses, and a word costs what it costs times how often it is printed
 
@@ -508,7 +514,7 @@ written**.
 | parameter | approved value | who decides |
 | --- | --- | --- |
 | grain opacity of the paper | 96 dp mosaic in `soft-light` at 0.75 (#351; was a 256 px mosaic at 0.08) | the bench — and if the grain is indistinguishable at 1:1 it is withdrawn without reopening #300 |
-| gloss intensity and travel | half the video's, ±55 dp at 105° | the bench |
+| gloss intensity and travel | half the video's at 105°, and the travel as **±45 % of the diameter** rather than the prototype's ±55 dp (#338) | the bench |
 | flip duration | 420 ms | the bench |
 | stamping duration | 300 ms | the bench |
 | depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp) |
@@ -539,6 +545,26 @@ written**.
 > owner made it on 9 August with the 1:1 crop in front of him, and it hands #338 a hole whose only
 > remaining layer over the photograph is the acetate's reflection. The numbers are in
 > `docs/ux/implementacion-357/`.
+
+> **Amended on 2026-08-09 (§1, §3, §4 and §15, #338).** The bench fired a second time and this time it
+> confirmed the approved value instead of moving it. The ticket predicted that half the video's
+> intensity would fall short on production's 104 dp hole — it does not: on the father's own sheet the
+> gloss moves the casilla **104.7 of 255 levels peak to peak** against the **91.9** the photograph
+> varies by itself along the same axis, where the acetate's fixed reflection moved 13, «one twelfth
+> of the photograph's own noise». Nor is it haze: the standard deviation inside the disc **rises**
+> from 29.1 to 34.8. The sweep did find a ceiling, and it is not variant B's haze but **the edge of
+> the coin**: at 99 % the darkest twentieth of the outer ring falls to 14 of 255 and the coin stops
+> having a rim against its hole. Two things changed shape and so were the map's call, and the owner
+> made both on 9 August: **the travel is written as a fraction of the diameter** — ±45 % of the
+> *photograph*, which is what the prototype's ±55 dp over its 121 dp coin actually were, and what
+> survives «Las cifras» bringing a hole of its own. On production's casilla that is ±42.3 dp and not
+> the ±47 the ticket estimated, because the ticket took the fraction of the 104 dp hole while the
+> prototype had measured the 121 dp coin inside a 133 dp recess. And **the acetate's reflection is
+> withdrawn from inside the recess**,
+> because leaving it under the gloss rebuilds #303's discarded variant D, two layers for the result
+> of one. Moving it out to the cardboard was weighed and dropped: the ring is 5 dp wide and already
+> carries #357's die-cut wall. The numbers, including a drawing cost measured only on the emulator,
+> are in `docs/ux/implementacion-338/`.
 
 ### 16. The order, the cost, and three PRs per screen
 

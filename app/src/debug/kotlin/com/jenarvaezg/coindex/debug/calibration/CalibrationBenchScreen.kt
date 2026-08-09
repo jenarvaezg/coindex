@@ -36,8 +36,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,14 +51,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +70,10 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.CoinTilt
+import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
+import com.jenarvaezg.coindex.ui.components.LocalCoinTilt
+import com.jenarvaezg.coindex.ui.components.coinGloss
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -93,6 +98,11 @@ private val GHOST_FILTER = ColorFilter.colorMatrix(ColorMatrix().apply { setToSa
 @Composable
 fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
     var state by remember { mutableStateOf(CalibrationState()) }
+    // The bench holds the tilt the same way the app does — read in the draw phase — so moving the
+    // virtual sensor repaints the coins instead of recomposing the whole HUD under the sliders.
+    val reading = remember { mutableFloatStateOf(0f) }
+    SideEffect { reading.floatValue = glossPositionFraction }
+    val tilt = remember { object : CoinTilt { override val lateral get() = reading.floatValue } }
 
     Surface(color = Paper.paper, modifier = Modifier.fillMaxSize()) {
         Column(
@@ -130,7 +140,9 @@ fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
                         color = Paper.muted,
                     )
                     Spacer(Modifier.height(14.dp))
-                    CalibrationSlot(state, glossPositionFraction)
+                    CalibrationSlot(state, tilt)
+                    Spacer(Modifier.height(14.dp))
+                    ProductionStrip(state, tilt)
                     Spacer(Modifier.height(18.dp))
                     CalibrationControls(
                         state = state,
@@ -226,7 +238,7 @@ private fun ToneCalibrationPreview(state: CalibrationState) {
 }
 
 @Composable
-private fun CalibrationSlot(state: CalibrationState, glossPositionFraction: Float) {
+private fun CalibrationSlot(state: CalibrationState, tilt: CoinTilt) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -238,7 +250,7 @@ private fun CalibrationSlot(state: CalibrationState, glossPositionFraction: Floa
     ) {
         CoinRecess(
             state = state,
-            glossPositionFraction = glossPositionFraction,
+            tilt = tilt,
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(bottom = 30.dp),
@@ -262,7 +274,7 @@ private fun CalibrationSlot(state: CalibrationState, glossPositionFraction: Floa
 @Composable
 private fun CoinRecess(
     state: CalibrationState,
-    glossPositionFraction: Float,
+    tilt: CoinTilt,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -279,12 +291,12 @@ private fun CoinRecess(
         if (state.showGhost) {
             GhostCoin(state.ghostOpacity)
         } else {
-            FlippingCoin(state, glossPositionFraction)
+            FlippingCoin(state, tilt)
         }
-        // No edge of the recess is drawn over the coin here either: production retired that pair of
-        // half arcs in #357, and a slot that keeps them would be calibrating a shape the app no
-        // longer paints.
-        StaticAcetateReflection()
+        // Nothing is drawn over the coin here either: production retired the pair of half arcs in
+        // #357 and the acetate's fixed reflection in #338 — two layers for the result of one, which
+        // is the variant D #303 discarded. A slot that kept them would be calibrating a drawing the
+        // app no longer paints.
     }
 }
 
@@ -317,28 +329,7 @@ private fun GhostCoin(opacity: Float) {
 }
 
 @Composable
-private fun StaticAcetateReflection() {
-    Canvas(
-        Modifier
-            .size(121.dp)
-            .clip(CircleShape),
-    ) {
-        drawCircle(
-            brush = Brush.linearGradient(
-                0f to Color.Transparent,
-                0.42f to Color.Transparent,
-                0.5f to Color.White.copy(alpha = 0.24f),
-                0.58f to Color.Transparent,
-                1f to Color.Transparent,
-                start = androidx.compose.ui.geometry.Offset(0f, size.height),
-                end = androidx.compose.ui.geometry.Offset(size.width, 0f),
-            ),
-        )
-    }
-}
-
-@Composable
-private fun FlippingCoin(state: CalibrationState, glossPositionFraction: Float) {
+private fun FlippingCoin(state: CalibrationState, tilt: CoinTilt) {
     val transition = rememberInfiniteTransition(label = "coin calibration")
     val rotation by transition.animateFloat(
         initialValue = 0f,
@@ -366,9 +357,47 @@ private fun FlippingCoin(state: CalibrationState, glossPositionFraction: Float) 
         CatalogFace(
             candidates = if (showsObverse) OBVERSE_URLS else REVERSE_URLS,
             contentDescription = if (showsObverse) "Anverso del Bolívar de 1960" else "Reverso del Bolívar de 1960",
-            modifier = Modifier.fillMaxSize(),
+            // The production effect itself and not a copy of it: what the sliders move here is the
+            // same drawing the plate paints, which is the whole point of calibrating on a bench.
+            modifier = Modifier.fillMaxSize().coinGloss(state.glossConfig(), tilt),
         )
-        GlossOverlay(state.glossIntensity, state.glossTravelDp.dp, glossPositionFraction)
+    }
+}
+
+/**
+ * The same coin at the size it actually ships at, next to the slot that is three times bigger.
+ *
+ * #303 judged the gloss on a 121 dp hole and already called it *subtle* there; the three surfaces
+ * that paint one use **104 dp** (`IndexScreen`, `CoinsScreen`, `PlateScreen`), so a bench that only
+ * shows the big slot would calibrate an effect nobody sees. Three of them and not one because what
+ * is at stake is the grid: a casilla in a row of casillas, which is where the father looks.
+ */
+@Composable
+private fun ProductionStrip(state: CalibrationState, tilt: CoinTilt) {
+    Column {
+        Text(
+            text = "A 104 DP · EL TAMAÑO DE LAS TRES PANTALLAS",
+            fontFamily = BarlowCondensedFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 11.sp,
+            letterSpacing = 0.7.sp,
+            color = Paper.moss,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        CompositionLocalProvider(
+            LocalCoinGloss provides state.glossConfig(),
+            LocalCoinTilt provides tilt,
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                repeat(3) {
+                    AlbumHole(
+                        photo = TONE_CALIBRATION_PHOTO,
+                        modifier = Modifier.size(104.dp),
+                        tone = state.albumToneConfig(),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -392,33 +421,6 @@ private fun CatalogFace(
         },
         modifier = modifier,
     )
-}
-
-@Composable
-private fun GlossOverlay(intensity: Float, travel: Dp, positionFraction: Float) {
-    Canvas(Modifier.fillMaxSize()) {
-        val bandWidth = size.width * 0.32f
-        val position = positionFraction * travel.toPx()
-        drawContext.canvas.save()
-        drawContext.canvas.nativeCanvas.rotate(
-            CalibrationState.GLOSS_ANGLE_DEGREES,
-            center.x,
-            center.y,
-        )
-        drawRect(
-            brush = Brush.horizontalGradient(
-                0f to Color.Black.copy(alpha = intensity),
-                0.24f to Color.Transparent,
-                0.5f to Color.White.copy(alpha = intensity),
-                0.76f to Color.Transparent,
-                1f to Color.Black.copy(alpha = intensity),
-                startX = center.x + position - bandWidth,
-                endX = center.x + position + bandWidth,
-            ),
-            blendMode = BlendMode.Softlight,
-        )
-        drawContext.canvas.restore()
-    }
 }
 
 @Composable
@@ -531,9 +533,9 @@ private fun CalibrationControls(
         )
         ControlSlider(
             label = "Recorrido",
-            value = state.glossTravelDp,
-            control = CalibrationControl.GLOSS_TRAVEL_DP,
-            display = "±${state.glossTravelDp.toInt()} dp",
+            value = state.glossTravel,
+            control = CalibrationControl.GLOSS_TRAVEL,
+            display = "±${(state.glossTravel * 100).toInt()} %",
             onChange = onChange,
         )
     }
