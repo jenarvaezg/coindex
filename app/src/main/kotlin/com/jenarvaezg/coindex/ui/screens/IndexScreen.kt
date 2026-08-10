@@ -40,6 +40,7 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
@@ -147,10 +148,11 @@ fun IndexScreen(
     modifier: Modifier = Modifier,
 ) {
     val openCard: (IndexCard) -> Unit = { card -> onOpen(destinationOf(card)) }
-    // Null while nothing is being printed. The list itself is the switch: what is being exported is
+    // Null while nothing is being printed. The job itself is the switch: what is being exported is
     // the notebook as it was when the button was pressed, so a sync landing mid-export cannot
-    // reshuffle the pages under the printer.
-    var printing by remember { mutableStateOf<List<PrintPage>?>(null) }
+    // reshuffle the pages under the printer. [destination] says whether it lands in Descargas or
+    // leaves for another app (#285).
+    var printing by remember { mutableStateOf<NotebookJob?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
     // Whether the export sheet is open, and **not** the cards it was opened over: the shelf and the
     // search box stay live above it, so a sheet holding the list from the moment of the tap would go
@@ -254,6 +256,22 @@ fun IndexScreen(
             // about to come out of the printer.
             preview?.let { about ->
                 fullWidth {
+                    fun begin(destination: ExportDestination) {
+                        val pages = about.pages
+                        if (pages.isEmpty()) {
+                            onMessage("No hay ninguna colección que llevar al papel.")
+                        } else {
+                            onNotebookPrinted(draft)
+                            step = NotebookExportStep.Drawing(
+                                0,
+                                // The plate at the top of the folio, which since #232 may not
+                                // be the only one on it.
+                                pages.first().blocks.first().section.title,
+                            )
+                            printing = NotebookJob(pages, destination)
+                        }
+                        configuring = false
+                    }
                     ExportOptions(
                         options = draft,
                         pages = about.pages.size,
@@ -262,22 +280,8 @@ fun IndexScreen(
                         // switch with no lámina behind it is greyed instead of ticked and inert.
                         loose = looseShown.size,
                         onChange = { draft = it },
-                        onExport = {
-                            val pages = about.pages
-                            if (pages.isEmpty()) {
-                                onMessage("No hay ninguna colección que llevar al papel.")
-                            } else {
-                                onNotebookPrinted(draft)
-                                step = NotebookExportStep.Drawing(
-                                    0,
-                                    // The plate at the top of the folio, which since #232 may not
-                                    // be the only one on it.
-                                    pages.first().blocks.first().section.title,
-                                )
-                                printing = pages
-                            }
-                            configuring = false
-                        },
+                        onDownload = { begin(ExportDestination.Download) },
+                        onShare = { begin(ExportDestination.Share) },
                         onDismiss = { configuring = false },
                     )
                 }
@@ -285,11 +289,11 @@ fun IndexScreen(
 
             // Visible progress and a way out, which is what a job of eighty-four pages and a
             // thousand photographs owes whoever pressed the button (#169).
-            printing?.let { pages ->
+            printing?.let { job ->
                 fullWidth {
                     ExportProgress(
                         step = step,
-                        pages = pages.size,
+                        pages = job.pages.size,
                         // Every step but the write, which would close the document under the
                         // thread serializing it.
                         onCancel = when (val current = step) {
@@ -308,7 +312,10 @@ fun IndexScreen(
                                 {
                                     printing = null
                                     onMessage(
-                                        notebookCancelledMessage(current.pagesDone, pages.size),
+                                        notebookCancelledMessage(
+                                            current.pagesDone,
+                                            job.pages.size,
+                                        ),
                                     )
                                 }
                             }
@@ -386,9 +393,10 @@ fun IndexScreen(
         // Outside the grid on purpose: a lazy item is disposed the moment it scrolls off, and the
         // page being recorded would go with it — the export would restart, or stop, depending on
         // where the collector's thumb was.
-        printing?.let { pages ->
+        printing?.let { job ->
             NotebookPdfExport(
-                pages = pages,
+                pages = job.pages,
+                destination = job.destination,
                 onStep = { step = it },
                 onFinished = { message ->
                     printing = null
@@ -404,10 +412,19 @@ fun IndexScreen(
  *
  * The two travel together because they are recounted together — the láminas are what the filter
  * chose and the pages are what the configuration makes of them — and holding the pages themselves
- * rather than only their number is what lets «Exportar» start the printer on exactly what the sheet
- * had been describing.
+ * rather than only their number is what lets «Descargar» / «Compartir» start the printer on exactly
+ * what the sheet had been describing.
  */
 private data class ExportPreview(val cards: Int, val pages: List<PrintPage>)
+
+/**
+ * The notebook in flight: the pages frozen at the tap, and whether they land in Descargas or leave
+ * for another app (#285).
+ */
+private data class NotebookJob(
+    val pages: List<PrintPage>,
+    val destination: ExportDestination,
+)
 
 /** What the notebook is doing right now, and the way out of it while there is one. */
 @Composable

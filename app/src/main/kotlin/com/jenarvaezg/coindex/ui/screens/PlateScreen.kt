@@ -40,13 +40,16 @@ import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
+import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
@@ -58,6 +61,7 @@ import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.printedPhoto
+import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 import kotlinx.coroutines.flow.first
 
@@ -99,7 +103,7 @@ private fun AvailablePlate(
     onMessage: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var exporting by remember { mutableStateOf(false) }
+    var exporting by remember { mutableStateOf<ExportDestination?>(null) }
     // Held here and not in the header of the grid, which is an item and is disposed on the way down:
     // the ink falls once per opening of the sheet, and scrolling back up finds it dry (ADR 0026 §3).
     val ink = rememberInkFall(plate.complete)
@@ -109,13 +113,15 @@ private fun AvailablePlate(
             plate = plate,
             images = images,
             ink = ink,
-            exporting = exporting,
+            exporting = exporting != null,
             onOpenSource = onOpenSource,
-            onExport = { exporting = true },
+            onDownload = { exporting = ExportDestination.Download },
+            onShare = { exporting = ExportDestination.Share },
         )
         // The whole export cycle is [SheetExport] (#219): what a plate contributes is the four
-        // values that make it a plate rather than a sheet of pieces.
-        if (exporting) {
+        // values that make it a plate rather than a sheet of pieces. Descargas is the default;
+        // the share sheet is the secondary action on the same heading (#285).
+        exporting?.let { destination ->
             SheetExport(
                 key = plate.catalogId,
                 items = plate.cells,
@@ -125,8 +131,9 @@ private fun AvailablePlate(
                 sheet = SharedSheet.PLATE,
                 tally = plateSheetTally(plate.cells.size),
                 fileName = plateFileName(plate.catalogId),
+                destination = destination,
                 onFinished = { message ->
-                    exporting = false
+                    exporting = null
                     onMessage(message)
                 },
             ) { layout, onImageSettled, recording ->
@@ -149,7 +156,8 @@ private fun PlateGrid(
     ink: State<Float>,
     exporting: Boolean,
     onOpenSource: (String) -> Unit,
-    onExport: () -> Unit,
+    onDownload: () -> Unit,
+    onShare: () -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         // Which cells share a row is what decides where the tags line up, and the grid will not say
@@ -182,17 +190,22 @@ private fun PlateGrid(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    // Exporting the plate is what this screen is for, so it is the only filled
-                    // button on it; as a bare text button it read as another section heading.
+                    // Descargar is what this screen is for (#285); compartir stays beside it as the
+                    // secondary action, because Jose still hands the PNG to another app.
                     PrimaryAction(
                         text = if (exporting) {
                             "Preparando la lámina…"
                         } else {
-                            "Exportar lámina como imagen"
+                            "Descargar lámina"
                         },
-                        onClick = onExport,
+                        onClick = onDownload,
                         enabled = !exporting,
-                        share = !exporting,
+                    )
+                    CardAction(
+                        text = "Compartir",
+                        onClick = onShare,
+                        enabled = !exporting,
+                        icon = { ShareGlyph(color = Paper.ink) },
                     )
                     ExternalLink(
                         text = "Fuente en Numista",

@@ -12,10 +12,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.notebookDownloadFailure
+import com.jenarvaezg.coindex.ui.notebookDownloadMessage
 import com.jenarvaezg.coindex.ui.notebookExportMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.addNotebookPage
+import com.jenarvaezg.coindex.ui.print.downloadNotebookPdf
 import com.jenarvaezg.coindex.ui.print.notebookFileName
 import com.jenarvaezg.coindex.ui.print.notebookPhotographs
 import com.jenarvaezg.coindex.ui.print.shareNotebookPdf
@@ -39,7 +43,7 @@ import com.jenarvaezg.coindex.ui.recordInto
 private const val PAGE_WAIT_MILLIS = 4_000L
 
 /**
- * Draws the whole notebook into one PDF, one page at a time, and shares it.
+ * Draws the whole notebook into one PDF, one page at a time, and sends it to [destination].
  *
  * **Photographs first, pages second.** Every picture the notebook needs is fetched once, up front
  * (`warmNotebookPhotographs`), and only then is the first page composed. Asking page by page is what
@@ -63,10 +67,14 @@ private const val PAGE_WAIT_MILLIS = 4_000L
  * [NotebookExportStep.Writing]: `writeTo` is a blocking native call that would not notice the
  * coroutine being cancelled, so the parent has to stop offering a cancel that would close the
  * document while it is being serialized.
+ *
+ * [destination] is Descargas by default and the share sheet beside it (#285): both buttons on the
+ * options sheet reach this same drawing; only the last step differs.
  */
 @Composable
 fun NotebookPdfExport(
     pages: List<PrintPage>,
+    destination: ExportDestination = ExportDestination.Download,
     onStep: (NotebookExportStep) -> Unit,
     onFinished: (String) -> Unit,
 ) {
@@ -124,18 +132,33 @@ fun NotebookPdfExport(
             return@LaunchedEffect
         }
         onStep(NotebookExportStep.Writing)
-        val shared = runCatching {
-            shareNotebookPdf(context, document, notebookFileName())
+        val written = runCatching {
+            when (destination) {
+                ExportDestination.Download ->
+                    downloadNotebookPdf(context, document, notebookFileName())
+                ExportDestination.Share ->
+                    shareNotebookPdf(context, document, notebookFileName())
+            }
         }
         onFinished(
-            if (shared.isFailure) {
-                "No se pudo exportar el cuaderno: ${shared.exceptionOrNull()?.message}"
+            if (written.isFailure) {
+                val cause = written.exceptionOrNull()?.message
+                when (destination) {
+                    ExportDestination.Download -> notebookDownloadFailure(cause)
+                    ExportDestination.Share ->
+                        "No se pudo exportar el cuaderno: $cause"
+                }
             } else {
-                notebookExportMessage(
-                    pages = pages.size,
-                    expectedPhotos = expectedPhotographs,
-                    loadedPhotos = loadedPhotographs.intValue,
-                )
+                when (destination) {
+                    ExportDestination.Download ->
+                        notebookDownloadMessage(expectedPhotographs, loadedPhotographs.intValue)
+                    ExportDestination.Share ->
+                        notebookExportMessage(
+                            pages = pages.size,
+                            expectedPhotos = expectedPhotographs,
+                            loadedPhotos = loadedPhotographs.intValue,
+                        )
+                }
             },
         )
     }

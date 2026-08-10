@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227 and #354, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354 and #285, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -33,6 +33,12 @@
 > honest plate and page counts after applying the persisted «Sin colección» option. Repeating
 > `shown.size` in the action was therefore redundant and could be false by one plate. The action is
 > count-free instead of duplicating the preview formula in a second owner.
+
+> **Amended on 2026-08-10 (§13, #285).** The PNG of a plate and the PDF of the notebook still leave
+> through the send intent when the collector asks to share — that gesture is Jose's. What the
+> father asked for is Descargar: one tap into `MediaStore.Downloads`, no chooser, no permission,
+> with Compartir beside it. The unit still decides the format; the destination is no longer only
+> the share sheet.
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at
@@ -366,10 +372,11 @@ name on — the index already is one.
 - **`page(card) = its destination`**, inherited from §9: a card with a list prints its plate, a card
   without one prints the sheet `PiecesScreen` already exports, and a box comes in through that same
   door. Two kinds of page, none invented.
-- **The unit decides the format.** A plate stays a **PNG** shared through the send intent, which is
-  the gesture the collector already makes and which a chat can show inline. The notebook is a
-  **vector PDF**: `recordInto` records drawing commands in a `Picture`, and `PdfDocument` replays
-  them on its canvas, so the PDF is vectorial with **no new dependencies**. A notebook filtered down
+- **The unit decides the format.** A plate stays a **PNG**, the notebook a **vector PDF**. Both
+  land in Descargas by default and still leave through the send intent when shared (#285): the
+  father wants the file and Jose still hands it to a chat. `recordInto` records drawing commands
+  in a `Picture`, and `PdfDocument` replays them on its canvas, so the PDF is vectorial with **no
+  new dependencies**. A notebook filtered down
   to one card is still a PDF: the button that was tapped decides, not the size of the result.
 - **A4, one plate per page**, header repeated when a plate continues. Neither shrinking a plate to
   fit (121 slots would print at some 8 mm per coin) nor a continuous flow.

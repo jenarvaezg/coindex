@@ -25,6 +25,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.BoxUpkeep
+import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.boxName
@@ -34,6 +35,7 @@ import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesFileName
@@ -81,7 +83,7 @@ fun PiecesScreen(
     }
 
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
-    var exporting by remember { mutableStateOf(false) }
+    var exporting by remember { mutableStateOf<ExportDestination?>(null) }
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -93,9 +95,10 @@ fun PiecesScreen(
                 PiecesHeading(
                     subject = subject,
                     upkeep = upkeep,
-                    exporting = exporting,
+                    exporting = exporting != null,
                     renaming = renaming,
-                    onExport = { exporting = true },
+                    onDownload = { exporting = ExportDestination.Download },
+                    onShare = { exporting = ExportDestination.Share },
                     onToggleRename = { renaming = !renaming },
                 )
             }
@@ -152,8 +155,9 @@ fun PiecesScreen(
 
         // The same cycle a plate exports with, [SheetExport] (#219), pointed at a sheet that has no
         // empty cell to draw. What this contributes is «hoja» rather than «lámina», and a tally
-        // that is the collection's own sentence rather than a count of casillas.
-        if (exporting) {
+        // that is the collection's own sentence rather than a count of casillas. Descargas and
+        // the share sheet coexist here too (#285).
+        exporting?.let { destination ->
             SheetExport(
                 key = subject.title,
                 items = subject.pieces,
@@ -162,8 +166,9 @@ fun PiecesScreen(
                 sheet = SharedSheet.PIECES,
                 tally = subject.countSentence,
                 fileName = piecesFileName(subject.title),
+                destination = destination,
                 onFinished = { message ->
-                    exporting = false
+                    exporting = null
                     onMessage(message)
                 },
             ) { layout, onImageSettled, recording ->
@@ -200,7 +205,8 @@ private fun PiecesHeading(
     upkeep: BoxUpkeep?,
     exporting: Boolean,
     renaming: Boolean,
-    onExport: () -> Unit,
+    onDownload: () -> Unit,
+    onShare: () -> Unit,
     onToggleRename: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -214,14 +220,19 @@ private fun PiecesHeading(
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
         )
-        // The sheet is the only product this screen can have — by ADR 0020 there is no gap here
-        // to report — so it is the filled button, exactly as the export is on a plate.
+        // Descargar is the filled action, exactly as on a plate (#285); compartir stays
+        // secondary so a sheet can still leave for another app.
         PrimaryAction(
-            text = if (exporting) "Preparando la hoja…" else "Exportar como imagen",
-            onClick = onExport,
+            text = if (exporting) "Preparando la hoja…" else "Descargar hoja",
+            onClick = onDownload,
             enabled = !exporting && subject.pieces.isNotEmpty(),
-            share = !exporting,
             modifier = Modifier.padding(top = 12.dp),
+        )
+        CardAction(
+            text = "Compartir",
+            onClick = onShare,
+            enabled = !exporting && subject.pieces.isNotEmpty(),
+            icon = { ShareGlyph(color = Paper.ink) },
         )
         if (upkeep != null) {
             FlowRow(
