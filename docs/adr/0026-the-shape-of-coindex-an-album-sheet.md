@@ -2,7 +2,8 @@
 
 - Status: accepted, §15 amended by #351 (the grain's approved value), by #357 (the die-cut's wall)
   and by #338 (the gloss confirmed and the acetate withdrawn); §3 and §5 amended by #339 (the stamp
-  keeps no bit, and the ratio leaves the specification wherever the stamp reaches it)
+  keeps no bit, and the ratio leaves the specification wherever the stamp reaches it); §3 and §13
+  amended by #370 (the ficha sheet is the landing of the second journey)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -173,11 +174,22 @@ Coindex. So the ceremony **does not congratulate — it reveals.**
 > closes #319 where it was opened. The numbers are in `docs/ux/implementacion-339/`.
 
 **The journey** flies the coin **only where it is the protagonist**: its slot on a plate, and the
-coin's ficha sheet (§5). In `Pieces` and `Box` it does not fly, because on the other side there is no
+coin's ficha sheet (§5 / §13). In `Pieces` and in `Box` it does not fly, because on the other side there is no
 slot of its own but inventory rows where `CoinSides` paints both faces at 150 dp — promising «it is
 this one» and landing on the first of twelve is a lie. That some cards fly and others do not **is
 visible before touching**: the ones that do not carry no ratio (ADR 0021 §3), which is exactly what
 already tells them apart. They are 20 of the father's 69 cards.
+
+> **Amended on 2026-08-10 (§3 and §13, #370).** The ficha sheet carries the landing: a **104 dp
+> die-cut** centred above the title — the same hole the cell left, cardboard only when a collection
+> claims the type (the form «En ninguna colección» already used in the grid). It is not a loose coin
+> and not a full-screen destination: `ModalBottomSheet` is a dialog window and cannot host a shared
+> element, so the sheet stays a Compose overlay under the same `SharedTransitionLayout` as the
+> plate journey, with caller-managed visibility on the type key. The catalog journey (`coin-$id`)
+> and the type journey (`type-$id`) keep separate keys so Lunar Series III's Snake can be both a
+> card cover and a Monedas cell without Compose picking the wrong end. The INDEX ↔ PLATE routes
+> enter and exit with nothing of their own: a destination crossfade washed the casillas while the
+> coin was still in the air and snapped them opaque as it landed.
 
 ### 4. The export rule: what is still travels to paper, what is alive does not
 
@@ -497,10 +509,12 @@ its collections; the card itself leads nowhere. That is why the maintenance toll
 the grid — **16 of the 37 content words of Coins (43 %), printed 192 times**; 25 of 56 (45 %) in
 Pieces.
 
-The hole in Coins **opens a bottom sheet with the coin's ficha**, and inside move: `Actualizar la
+The hole in Coins **opens a bottom sheet with the coin's ficha**, and inside move: the same 104 dp
+die-cut the cell left (#370), `Actualizar la
 ficha · 1 llamada` (from 192 impressions to one — the action is untouched, its frequency is not), the
 `Ficha traída hoy` / `hace N meses` line **with words**, `Ver en Numista`, and the links to its
-collections. `En ninguna colección` stays outside **as form**: a hole with no cardboard behind it.
+collections. `En ninguna colección` stays outside **as form**: a hole with no cardboard behind it —
+and the landing hole of the sheet obeys the same rule.
 
 Yes, this is new mechanism, and this map does not invent mechanism. The distinction that justifies it:
 a «by country» sort order would have been inventing a place to put a line that was surplus; this is

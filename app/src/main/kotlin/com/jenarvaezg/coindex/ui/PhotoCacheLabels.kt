@@ -40,4 +40,4 @@ fun photoCacheLabel(status: PhotoCacheStatus): String {
  * in Spanish: «10.9 MB» in the middle of it reads as a typo, not as a setting.
  */
 fun megabytesLabel(bytes: Long): String =
-    String.format(Locale("es", "ES"), "%.1f MB", bytes / 1_000_000.0)
+    String.format(Locale.forLanguageTag("es-ES"), "%.1f MB", bytes / 1_000_000.0)
