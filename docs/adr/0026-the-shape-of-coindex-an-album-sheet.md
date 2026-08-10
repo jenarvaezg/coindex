@@ -3,7 +3,8 @@
 - Status: accepted, §15 amended by #351 (the grain's approved value), by #357 (the die-cut's wall)
   and by #338 (the gloss confirmed and the acetate withdrawn); §3 and §5 amended by #339 (the stamp
   keeps no bit, and the ratio leaves the specification wherever the stamp reaches it); §3 and §13
-  amended by #370 (the ficha sheet is the landing of the second journey); §4 amended by #371 (the
+  amended by #370 (the ficha sheet is the landing of the second journey) and again by #381 (a
+  destination paints its own paper, and only the leaf on top is animated); §4 amended by #371 (the
   stamp reaches the printed notebook too)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
@@ -191,6 +192,24 @@ already tells them apart. They are 20 of the father's 69 cards.
 > card cover and a Monedas cell without Compose picking the wrong end. The INDEX ↔ PLATE routes
 > enter and exit with nothing of their own: a destination crossfade washed the casillas while the
 > coin was still in the air and snapped them opaque as it landed.
+>
+> **Amended on 2026-08-10 (§3, #381), the same day: a destination paints its own paper, and only
+> the leaf on top is animated.** The paragraph above blamed the crossfade and the sentence before
+> this one is what it settled on instead — both were wrong about the same thing. A destination
+> painted no paper of its own (the grain has been the window's since #351), so the two ends of a
+> navigation, which are composed together for as long as the coin is in the air, were two
+> transparencies. The crossfade let the paper show through both; `None` on all four let the plate be
+> drawn whole over the whole index, half a second of double exposure per journey, which is what a
+> video at real speed showed on the 10th. **Every route now paints `paperSurface`**, which is what
+> lets one destination cover another at all — and it does not reopen #351, because that mosaic is
+> anchored to the window, so the destination's leaf falls on the theme's in register. What is left
+> then follows from the NavHost stacking by depth: going in, the plate arrives on top and needs
+> nothing; coming back it is *still* on top while it leaves, so it is given a 180 ms fade out, and
+> without it the plate sits opaque through the whole flight home and vanishes in one frame — the pop
+> of #370 from the other side. Nothing else is animated, in either direction. Measured in
+> `docs/ux/implementacion-381/`, which also retires `viaje.png` of #339: that strip was recorded
+> with the crossfade and has the double exposure inside it, described at the time as «the grid
+> arrives behind».
 
 ### 4. The export rule: what is still travels to paper, what is alive does not
 
