@@ -50,6 +50,7 @@ import com.jenarvaezg.coindex.ui.print.PrintGeometry
 import com.jenarvaezg.coindex.ui.print.PrintGrid
 import com.jenarvaezg.coindex.ui.print.PrintHeading
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.PrintedCompletionStamp
 import com.jenarvaezg.coindex.ui.print.QR_QUIET_MODULES
 import com.jenarvaezg.coindex.ui.print.notebookSourceLabel
 import com.jenarvaezg.coindex.ui.print.numistaQr
@@ -220,16 +221,25 @@ private fun PlateHeading(block: PrintBlock) {
                 )
             }
         }
-        // Two lines where the band has room for two, because the title on a plate is the catalog's
-        // editorial name and it says what the list does and does not claim: «1 oz bullion anual (sin
-        // proof, burnished ni privy)» truncated at one line is exactly the qualification a printed
-        // page cannot afford to lose — and what the thin band of a shared folio gives up to fit.
-        Text(
-            section.title,
-            style = PRINT_TITLE,
-            maxLines = heading.titleLines,
-            overflow = TextOverflow.Ellipsis,
-        )
+        // Title and stamp share the row the screen already uses: the caucho lands on this plate's
+        // own heading, so a shared folio (#232) stamps each complete plate and not the page (#371).
+        // The Progress row below stays whole — a notebook page has no header figure to raise the
+        // ratio into (ADR 0026 §5) — and the ink is only the word.
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(
+                section.title,
+                style = PRINT_TITLE,
+                maxLines = heading.titleLines,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+            if (section.complete) {
+                PrintedCompletionStamp(heading = heading)
+            }
+        }
         section.subtitle?.takeIf { heading.subtitle }?.let { subtitle ->
             Text(subtitle, style = PRINT_SUBTITLE, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }

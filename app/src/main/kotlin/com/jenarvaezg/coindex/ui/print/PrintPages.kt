@@ -80,6 +80,16 @@ data class PrintSection(
      */
     val source: String,
     val cells: List<PrintCell>,
+    /**
+     * Every issued member owned — the completion stamp of ADR 0026 §3, which §4 sends to the PDF
+     * the same way it already travels to the PNG (#371).
+     *
+     * False for every page that is not a plate (pieces, box, unclaimed): there is no album to be
+     * complete against. The Progress row stays in [facts] either way; a notebook page has no header
+     * figure to raise the ratio into (ADR 0026 §5), so this bit is what the brush reads and not a
+     * substitute for the specification.
+     */
+    val complete: Boolean = false,
 )
 
 /**
