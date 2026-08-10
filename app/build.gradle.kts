@@ -41,10 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 39
-        // Patch on top of 1.1.0: a tap on the country or year axis opens Coins with that filter
-        // already on — banner: «Toca un país o un año y ves esas monedas».
-        versionName = "1.1.1"
+        versionCode = 40
+        // Patch on top of 1.1.1: closing a Monedas ficha yields the shared element so the coin
+        // flies home instead of popping — banner: «La moneda vuelve a su casilla al cerrar».
+        versionName = "1.1.2"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

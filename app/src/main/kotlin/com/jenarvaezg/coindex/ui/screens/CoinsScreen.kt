@@ -231,6 +231,10 @@ fun CoinsScreen(
                 row = row,
                 photo = photo,
                 otherSide = otherSide,
+                // The sheet yields on dismiss the same way the cell yielded on open (#370):
+                // `exitRow` keeps the hole composed through the exit, but ownership follows
+                // `selectedTypeId`, or both ends claim the photograph and the return pops.
+                ownsCoin = selectedTypeId == row.typeId,
                 ficha = ficha(row.typeId),
                 onDismiss = { selectedTypeId = null },
                 onOpenSource = {
@@ -265,6 +269,7 @@ private fun CoinFichaSheet(
     row: CoinRow,
     photo: CoinPhoto?,
     otherSide: CoinPhoto?,
+    ownsCoin: Boolean,
     ficha: FichaRefresh,
     onDismiss: () -> Unit,
     onOpenSource: () -> Unit,
@@ -298,6 +303,7 @@ private fun CoinFichaSheet(
                 row = row,
                 photo = photo,
                 otherSide = otherSide,
+                ownsCoin = ownsCoin,
                 ficha = ficha,
                 onOpenSource = onOpenSource,
                 onOpen = onOpen,
@@ -475,6 +481,7 @@ private fun CoinFicha(
     row: CoinRow,
     photo: CoinPhoto?,
     otherSide: CoinPhoto?,
+    ownsCoin: Boolean,
     ficha: FichaRefresh,
     onOpenSource: () -> Unit,
     onOpen: (CardDestination) -> Unit,
@@ -491,7 +498,7 @@ private fun CoinFicha(
             modifier = Modifier
                 .padding(top = 20.dp, bottom = 12.dp)
                 .size(104.dp)
-                .travellingTypeCoin(row.typeId, visible = true),
+                .travellingTypeCoin(row.typeId, visible = ownsCoin),
         )
         Text(
             row.rawTitle,
