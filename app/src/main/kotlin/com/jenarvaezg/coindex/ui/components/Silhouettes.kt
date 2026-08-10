@@ -45,13 +45,14 @@ internal data class Silhouette(
  * twenty-six density-independent pixels is a body on four legs with a snout, and never a breed.
  */
 private val DOG = Silhouette(
-    width = 120f,
+    width = 124f,
     height = 84f,
-    body = "M16 34 C22 26 34 22 52 22 L84 22 C94 22 100 26 104 32 " +
-        "L114 30 L112 40 L104 42 C104 52 100 58 94 60 " +
-        "L94 80 L86 80 L86 62 L62 62 L62 80 L54 80 L54 60 " +
-        "L36 60 L36 80 L28 80 L28 58 C20 54 14 46 16 34 Z " +
-        "M16 30 C10 22 12 12 20 10 C22 18 22 26 20 32 Z",
+    body = "M26 34 L88 34 C98 34 104 40 104 50 L104 62 L96 62 L96 80 L88 80 L88 64 L64 64 " +
+        "L64 80 L56 80 L56 64 L42 64 L42 80 L34 80 L34 62 L26 62 C18 62 14 54 14 46 " +
+        "C14 38 18 34 26 34 Z " +
+        "M16 40 L2 44 L2 52 L16 54 Z " +
+        "M22 26 L34 34 L12 36 Z " +
+        "M100 36 C110 22 120 22 122 32 C114 30 108 34 104 46 Z",
 )
 
 /**
@@ -68,16 +69,19 @@ private val SILHOUETTES: Map<Referent, Silhouette> = mapOf(
     Referent.Brick to Silhouette(
         width = 100f,
         height = 46f,
-        body = "M2 4 L98 4 L98 42 L2 42 Z",
-        cutouts = "M2 21 L98 21 L98 25 L2 25 Z",
+        body = "M2 14 L26 4 L98 4 L98 32 L74 42 L2 42 Z",
+        cutouts = "M2 13 L75 13 L75 16 L2 16 Z M72 15 L75 15 L75 42 L72 42 Z",
     ),
+    // A sitting cat, drawn as four overlapping shapes that fill as one: the ears are what say «cat»
+    // and the tail is what keeps it from reading as a snowman. Two arc-command attempts read as a bug
+    // with antennae on the AVD; explicit curves are what fixed it.
     Referent.Cat to Silhouette(
-        width = 78f,
+        width = 96f,
         height = 100f,
-        body = "M16 98 C16 66 26 54 34 50 C28 44 28 30 33 25 L40 34 " +
-            "C46 31 54 31 60 34 L67 25 C72 30 72 44 66 50 " +
-            "C74 54 74 98 60 98 Z " +
-            "M58 98 C74 94 78 74 68 62 L60 70 C68 80 66 90 52 94 Z",
+        body = "M50 10 C61 10 70 19 70 30 C70 41 61 50 50 50 C39 50 30 41 30 30 C30 19 39 10 50 10 Z " +
+            "M32 12 L41 31 L25 26 Z M68 12 L75 26 L59 31 Z " +
+            "M32 44 L68 44 C79 55 83 76 81 98 L19 98 C17 76 21 55 32 44 Z " +
+            "M78 98 C93 89 91 65 77 57 L70 67 C80 74 80 88 65 93 Z",
     ),
     Referent.BowlingBall to Silhouette(
         width = 88f,
@@ -133,8 +137,9 @@ private val SILHOUETTES: Map<Referent, Silhouette> = mapOf(
     Referent.Whale to Silhouette(
         width = 168f,
         height = 62f,
-        body = "M8 40 C24 16 60 8 96 12 C126 15 146 24 152 30 " +
-            "L166 12 L164 46 L150 36 C140 46 116 54 88 54 C50 54 18 50 8 40 Z " +
+        body = "M8 40 C24 16 60 8 96 12 C126 15 144 22 152 28 " +
+            "L168 14 L156 31 L168 48 L152 34 " +
+            "C142 45 116 54 88 54 C50 54 18 50 8 40 Z " +
             "M62 11 C66 3 73 3 78 9 C73 7 67 8 62 11 Z",
     ),
     Referent.Stool to Silhouette(

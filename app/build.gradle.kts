@@ -41,10 +41,12 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 41
-        // Patch on top of 1.1.2: the year axis opens Coins on that exact year, not an era band —
-        // banner: «Un año del eje abre ese año, no una época».
-        versionName = "1.1.3"
+        versionCode = 42
+        // Minor: a capability the app did not have — a third cell of the bottom bar and a page that
+        // did not exist (ADR 0026 §8, §10; ADR 0028). It carries a schema migration of its own, so
+        // nothing else travels with it: if something goes wrong on his phone there is one thing to
+        // look at — banner: «Las cifras: lo que pesa y lo que vale».
+        versionName = "1.2.0"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

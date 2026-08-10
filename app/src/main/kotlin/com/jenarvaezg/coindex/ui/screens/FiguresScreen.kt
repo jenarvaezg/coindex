@@ -182,9 +182,15 @@ fun FiguresScreen(
             subject.figures.size?.let { size ->
                 item("size") {
                     Block(FiguresLabels.SIZE_HEADING) {
+                        // Centred, because what the block is is a **comparison**: the two coins side
+                        // by side with the sheet's margin on both of them, and not a pair pushed
+                        // against the left edge with half a screen of paper to their right.
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                space = 28.dp,
+                                alignment = Alignment.CenterHorizontally,
+                            ),
                             verticalAlignment = Alignment.Bottom,
                         ) {
                             CoinToScale(size.smallest, size.largest.millimetres)
