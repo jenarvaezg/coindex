@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -117,7 +118,15 @@ private fun PiecesSheetHeading(subject: PiecesSubject, layout: SheetLayout) {
         )
         Text(subject.title, style = MaterialTheme.typography.headlineMedium.scaledBy(scale * 1.55f))
         HorizontalDivider(thickness = 2.dp * scale, color = Paper.ink)
-        Row(horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER * 2)) {
+        // Flowed rather than forced into one row: a two-column sheet is only 448 dp wide, and
+        // country + variant + count do not fit — the third fact used to keep a character of width
+        // and print «1 moneda · 1 tipo» one letter per line (#292). Same remedy as the plate's
+        // masthead since #232.
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(SHEET_GUTTER * 2),
+            verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER * scale * 0.5f),
+        ) {
             piecesSheetFacts(subject).forEach { (label, value) -> SheetFact(label, value, scale) }
         }
     }
