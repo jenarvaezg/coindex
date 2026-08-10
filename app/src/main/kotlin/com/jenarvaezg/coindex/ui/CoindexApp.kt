@@ -254,6 +254,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 onOpen = { destination ->
                                     navController.navigate(routeOf(destination))
                                 },
+                                onOpenCoins = { coinsShelf ->
+                                    viewModel.narrowCoins(coinsShelf)
+                                    navController.navigate(Routes.COINS) {
+                                        popUpTo(Routes.INDEX) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
                                 onSettings = { navController.navigate(Routes.SETTINGS) },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
