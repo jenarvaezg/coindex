@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "id": "uk-british-lion-1oz-bullion",
+  "name": "British Lion · Reino Unido · 1 oz de plata bullion",
+  "short_name": "British Lion",
+  "issuer_code": "royaume-uni",
+  "family": "British Lion",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/pieces476689.html",
+  "source_note": "Es un date run y no una onza suelta, y lo dice la propia ceca: la Royal Mint presenta la de 2026 con «Back for 2026 following a successful debut in 2025», con el mismo reverso de David Lawrence —el león con el escudo sobre la animación de la Union Flag— y la misma tirada limitada de 50.000, que es la cifra que dan los distribuidores y el comentario de la ficha («A limited mintage of 50,000» para 2025 y «The 2026 coin design was issued on 21/05/2026. Again with a limited mintage of 50,000»). El debut de 2025 es el arranque y la serie sigue abierta: 2027 tendrá casilla y `stale-catalogs.py` avisará del año que falte. Numista no parte los dos años en dos tipos: el N#476689 los cubre con una emisión por año, la 963416 de 2025 y la 1095623 de 2026, las dos «Bullion», así que las dos casillas comparten tipo y se distinguen por su año, que es lo que permite un date run (ADR 0009) y lo que ya hace `lion-eagle-uk-1oz-bullion` con el N#404024. La lámina es la **onza de plata bullion**: la gama sale «in a variety of metals and denominations», y el oro y las fracciones son otros productos. Sale de la agrupación `uk-royal-mint-1oz-silver-sueltas`, que lo tenía por suelta cuando sólo existía el año de debut; una agrupación pierde la familia ante cualquier catálogo que nombre el tipo (ADR 0013), y aquí la pierde con razón, porque no era una suelta sino dos años del mismo programa. Los 31,21 g que publica Numista son lo que la Royal Mint declara para todas sus onzas de plata bullion —los mismos gramos que la D-Day, el Angel, el león y el águila y San Jorge—, un redondeo de los 31,1035 de la onza fina, así que la lámina declara la onza y no los 1003 que saldrían de esa cifra. La cara que imprime es el reverso, que es donde está el león; el anverso es la efigie de Carlos III de Martin Jennings. https://www.royalmint.com/invest/bullion/bullion-coins/silver-coins/the-british-lion-2026-1oz-silver-bullion-coin/ y https://www.chards.co.uk/2026-British-Lion-1-oz-Silver-Bullion-Coin/23164",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "id": "2025-british-lion",
+      "label": "El león británico",
+      "year": 2025,
+      "numista_type_id": 476689
+    },
+    {
+      "id": "2026-british-lion",
+      "label": "El león británico",
+      "year": 2026,
+      "numista_type_id": 476689
+    }
+  ]
+}
