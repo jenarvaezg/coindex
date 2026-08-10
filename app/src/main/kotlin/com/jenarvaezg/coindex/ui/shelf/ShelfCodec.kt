@@ -26,6 +26,7 @@ import com.jenarvaezg.coindex.domain.readsAsACountry
  */
 object ShelfCodec {
     const val INDEX_SORT = "index_sort"
+    const val INDEX_AXIS = "index_axis"
     const val INDEX_ISSUER = "index_issuer"
     const val INDEX_WEIGHT = "index_weight"
     const val INDEX_STARTS_IN = "index_starts_in"
@@ -33,6 +34,7 @@ object ShelfCodec {
     const val INDEX_SERIES = "index_series"
 
     const val COINS_SORT = "coins_sort"
+    const val COINS_AXIS = "coins_axis"
     const val COINS_ISSUER = "coins_issuer"
     const val COINS_WEIGHT = "coins_weight"
     const val COINS_YEAR = "coins_year"
@@ -43,6 +45,7 @@ object ShelfCodec {
         // The default is written as the default and not as an absence, so «Más completas» chosen
         // on purpose and never chosen at all read back the same — which they are.
         INDEX_SORT to shelf.sort.name,
+        INDEX_AXIS to shelf.axis.name,
         INDEX_ISSUER to shelf.issuer,
         INDEX_WEIGHT to shelf.weight?.name,
         INDEX_STARTS_IN to shelf.startsIn?.name,
@@ -52,6 +55,7 @@ object ShelfCodec {
 
     fun encode(shelf: CoinsShelf): Map<String, String?> = mapOf(
         COINS_SORT to shelf.sort.name,
+        COINS_AXIS to shelf.axis.name,
         COINS_ISSUER to shelf.issuer,
         COINS_WEIGHT to shelf.weight?.name,
         COINS_YEAR to shelf.year?.name,
@@ -61,6 +65,7 @@ object ShelfCodec {
 
     fun decodeIndex(read: (String) -> String?): IndexShelf = IndexShelf(
         sort = named<IndexSort>(read(INDEX_SORT)) ?: IndexSort.MostComplete,
+        axis = named<NotebookAxis>(read(INDEX_AXIS)) ?: NotebookAxis.ByPlate,
         issuer = country(read(INDEX_ISSUER)),
         weight = named<OunceBand>(read(INDEX_WEIGHT)),
         startsIn = named<StartBand>(read(INDEX_STARTS_IN)),
@@ -70,6 +75,7 @@ object ShelfCodec {
 
     fun decodeCoins(read: (String) -> String?): CoinsShelf = CoinsShelf(
         sort = named<CoinSort>(read(COINS_SORT)) ?: CoinSort.ByCountry,
+        axis = named<NotebookAxis>(read(COINS_AXIS)) ?: NotebookAxis.ByPlate,
         issuer = country(read(COINS_ISSUER)),
         weight = named<GramBand>(read(COINS_WEIGHT)),
         year = named<YearBand>(read(COINS_YEAR)),

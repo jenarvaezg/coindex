@@ -31,6 +31,13 @@ enum class Membership(val label: String) {
  */
 data class CoinsShelf(
     val sort: CoinSort = CoinSort.ByCountry,
+    /**
+     * How the list is ordered on the axis of the notebook (ADR 0026 §8–§9).
+     *
+     * Same facet the index carries: the two hierarchies with a list both gain it. It is not a
+     * filter, so it is not counted in [active].
+     */
+    val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,
     val weight: GramBand? = null,
     val year: YearBand? = null,
@@ -76,10 +83,21 @@ enum class CoinSort(val label: String) {
     MostPieces("Más piezas"),
 }
 
-/** The coins this shelf and this query leave, in the order the shelf's sort asks for. */
+/** The coins this shelf and this query leave, in the order the shelf's axis and sort ask for. */
 fun CoinsShelf.narrow(rows: List<CoinRow>, query: String): List<CoinRow> = rows
     .filter { row -> matches(row) && matchesQuery(row.haystack, query) }
-    .sortedWith(coinSortOrder(sort))
+    .sortedWith(coinSortOrder(effectiveSort()))
+
+/**
+ * The axis is the same facet Collections carries (ADR 0026 §8–§9): on Coins it chooses the reading
+ * order when it is not «por lámina». «Por país» and «por año» are the field-notebook orders; the
+ * collector's own sort only applies on the default axis.
+ */
+private fun CoinsShelf.effectiveSort(): CoinSort = when (axis) {
+    NotebookAxis.ByPlate -> sort
+    NotebookAxis.ByCountry -> CoinSort.ByCountry
+    NotebookAxis.ByYear -> CoinSort.Newest
+}
 
 /**
  * Every order but the default is built on top of it, never instead of it.
