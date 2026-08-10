@@ -3,6 +3,41 @@
 - Status: accepted
 - Date: 2026-08-04
 
+> **Amended on 2026-08-10 (#387).** Nothing below changes. What arrives is the first programme that
+> is not one mint's denominations: `serie-iberoamericana-i-encuentro-de-dos-mundos` is **fourteen
+> countries, one slot each** — the coins the FNMT proposed, coordinated and struck in Madrid for the
+> 1492-1992 quincentenary, 27 g of silver and 40 mm on the real de a ocho module.
+>
+> Three fields were written assuming a single mint, and all three keep their shape, because none of
+> them reaches a screen — the plate prints `short_name` and the count and nothing else.
+> `issuer_code` names **the mint that coordinated the programme** (`espagne`) and not the issuer of
+> its members, which are fourteen. `year` names **the year the series was issued** (1991) and not a
+> single date, since Portugal's coin is dated 1992 and Mexico's carries 1991 and 1992. And a
+> member's `label` reads as a **country** rather than a denomination. Widening either field into a
+> list would rename it in the three shipped files to describe something no screen shows, which is
+> the same trade ADR 0020 refused for `issuer_codes`.
+>
+> Two things this file confirms rather than changes. **The boundary is never a Numista fact**, and
+> here Numista proves it against itself: series 4138 «Ibero-American» holds 130 fichas of thirteen
+> series (1991-2024) and of the first one it **lacks** Argentina, both Portuguese types and Peru's
+> vertical variety, and files Cuba's under «Christopher Colombus» (#389). What draws the line is the
+> FNMT plus the coin itself, whose obverse rings its own arms with **the thirteen shields of the
+> other countries** — counted one by one on the photograph. And it is still a second reading of a
+> coin that already has a card: its Portuguese member is the 1992 slot of
+> `portugal-1000-escudos-plata-500`, so that plate is the only screen where the count appears. The
+> thematic **catalog** of the same fourteen coins is what the collector would rather have, and it is
+> blocked on #149 — that Portuguese coin would then sit on two plates at once, which is a `PARAR`
+> and not a precedence to resolve at runtime.
+>
+> One consequence for measuring, which is why «one slot per country» could be decided at all: a
+> programme's `owned / total` appeared in **no** report, and this one has a member hanging off a
+> derived card that prints no specification block, so it was unmeasurable from the field. The report
+> now prints a «PROGRAMAS CONMEMORATIVOS» section. Measured the same day over the two private
+> captures: the father reads **2 de 14** and Jose **0 de 14**, with both indexes untouched — 68
+> cards and 31 unclassified for the father, 43 and 10 for Jose, identical with the file present and
+> absent. The promise that a programme produces no card, remeasured over a file that spans fourteen
+> countries.
+
 ## Context
 
 Curating the Portuguese circulating commemoratives (#157) produced a criterion and a request at

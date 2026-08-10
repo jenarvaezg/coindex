@@ -85,4 +85,44 @@ class CuratedProgrammesTest {
         val cincuenta = catalogs.first { it.id == "portugal-50-escudos-plata-650" }
         assertEquals(emptyList(), programmeStandings(cincuenta, programmes, emptyList()))
     }
+
+    /**
+     * El primer programa multinacional (#387): una casilla por país sobre las catorce monedas que
+     * la FNMT coordinó para la I Serie Iberoamericana, y la única de las catorce que un catálogo
+     * reclama es la portuguesa, que es justamente la que hace aparecer la lectura en pantalla.
+     *
+     * Lo que fija este test es la forma de la lista: catorce miembros y ningún país repetido, para
+     * que un desdoble de acabado —la proof portuguesa de .925, la leyenda vertical peruana— no se
+     * cuele como una casilla más y el denominador deje de contar países.
+     */
+    @Test
+    fun `the ibero-american programme is one slot per country over fourteen`() {
+        val serie = find("serie-iberoamericana-i-encuentro-de-dos-mundos")
+        assertEquals(1991, serie.year)
+        assertEquals(14, serie.members.size)
+        assertEquals(
+            listOf(
+                27_800, 30_224, 30_273, 27_182, 22_028, 31_590, 31_592,
+                31_593, 26_293, 31_923, 28_339, 15_463, 31_924, 31_925,
+            ),
+            serie.members.map { it.numistaTypeId },
+        )
+        val countries = serie.members.map { it.label.substringBefore(" ·") }
+        assertEquals(countries.distinct(), countries)
+
+        // Las fichas que quedan fuera a propósito, escritas en `source_note`: la proof portuguesa
+        // de .925, la variante vertical peruana y la prueba brasileña.
+        val members = serie.members.map { it.numistaTypeId }.toSet()
+        assertTrue(25_337 !in members)
+        assertTrue(67_304 !in members)
+        assertTrue(596_861 !in members)
+
+        // La lectura sale en la lámina de los 1000 escudos, que es el único catálogo que comparte
+        // un tipo con el programa: la casilla de 1992 del Encontro de Dois Mundos.
+        val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
+        val touched = catalogs.filter { catalog ->
+            programmeStandings(catalog, listOf(serie), emptyList()).isNotEmpty()
+        }
+        assertEquals(listOf("portugal-1000-escudos-plata-500"), touched.map { it.id })
+    }
 }

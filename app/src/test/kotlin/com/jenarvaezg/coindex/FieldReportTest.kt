@@ -103,6 +103,7 @@ class FieldReportTest {
 
         println(header(directory, curation, collection))
         println(indexReport(collection))
+        println(programmesReport(curation, items))
         println(notebookReport(state, curation))
         println(unclassifiedReport(collection.unclassified, typeMeta))
         println(unpublishedReport(items, typeMeta))
@@ -203,6 +204,27 @@ class FieldReportTest {
             "catálogos: ${curation.catalogs.size} · " +
                 "agrupaciones curadas: ${curation.groupings.size}",
         )
+    }
+
+    /**
+     * The second reading of ADR 0022, collection by collection: a commemorative programme produces
+     * no card, so its `owned / total` appears nowhere in the index above and nowhere in the printed
+     * notebook — only inside the specification block of whichever plate happens to touch it.
+     *
+     * Without this section a curator cannot **measure** what a programme file did for the two
+     * collections; the Ibero-American programme of #387 is the case that showed it, since one of
+     * its two owned coins hangs off a derived card that prints no specification block at all.
+     */
+    private fun programmesReport(
+        curation: Curation,
+        items: List<CollectedItem>,
+    ): String = buildString {
+        appendLine()
+        appendLine("== PROGRAMAS CONMEMORATIVOS (${curation.programmes.size}) ==")
+        curation.programmes.forEach { programme ->
+            val progress = programme.progress(items)
+            appendLine("· ${programme.shortName} | ${progress.owned} de ${progress.total}")
+        }
     }
 
     /**

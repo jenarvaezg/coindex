@@ -29975,6 +29975,256 @@
   },
   "weight": 28.2
  },
+ "22028": {
+  "id": 22028,
+  "url": "https://es.numista.com/22028",
+  "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "colombie",
+   "name": "Colombia"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 4088,
+    "name": "República",
+    "wikidata_id": "Q739"
+   }
+  ],
+  "value": {
+   "text": "10 000 Pesos",
+   "numeric_value": 10000,
+   "currency": {
+    "id": 147,
+    "name": "Peso decimalized",
+    "full_name": "Peso decimalized (1847-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Armas en el centro, denominación debajo, escudos alrededor",
+   "lettering": "10000 PESOS 1991 REPUBLICA DE COLOMBIA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/colombie/340-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/colombie/340-180.jpg",
+   "picture_copyright": "cetoo27"
+  },
+  "reverse": {
+   "description": "Moneda antigua, dos fechas abajo",
+   "lettering": "ENCUENTRO DE DOS MUNDOS 1492 1992\r\nCASA DE MONEDA\r\nSANTA FE - BOGOTA\r\n1620",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/colombie/341-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/colombie/341-180.jpg",
+   "picture_copyright": "cetoo27"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Fundación de la Casa de la Moneda de Santa Fe / Bogotá",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "284"
+   },
+   {
+    "catalogue": {
+     "id": 347,
+     "code": "Hernández"
+    },
+    "number": "665"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "220874": {
   "category": "coin",
   "commemorated_topic": "Mayflower",
@@ -35169,6 +35419,259 @@
   },
   "weight": 31.103
  },
+ "26293": {
+  "id": 26293,
+  "url": "https://es.numista.com/26293",
+  "title": "100 Pesos (Columnaria)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "mexique",
+   "name": "México"
+  },
+  "min_year": 1991,
+  "max_year": 1992,
+  "ruler": [
+   {
+    "id": 4029,
+    "name": "Estados Unidos Mexicanos/República",
+    "wikidata_id": "Q96"
+   }
+  ],
+  "value": {
+   "text": "100 Pesos",
+   "numeric_value": 100,
+   "currency": {
+    "id": 150,
+    "name": "Peso",
+    "full_name": "Peso (1863-1992)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1995-11-15"
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Armas de México en el centro con los escudos de todos los demás países que acuñaron monedas para esta primera serie a su alrededor.",
+   "lettering": "ESTADOS UNIDOS MEXICANOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/62bc503ebaade6.93224139-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/62bc503ebaade6.93224139-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "reverse": {
+   "description": "El diseño Columnaria: las dos columnas de Hércules del escudo español, los barcos de Colón, dos Tierras (una muestra América y la otra el resto de continentes).",
+   "lettering": "ENCUENTRO DE DOS MUNDOS\r\n$100\r\n1992\r\nMo\r\n+ 1492 - 1992 +",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/mexique/62bc503f39bc23.54481977-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/mexique/62bc503f39bc23.54481977-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "540"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "26478": {
   "id": 26478,
   "url": "https://es.numista.com/26478",
@@ -35395,6 +35898,257 @@
   ],
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
+ },
+ "27182": {
+  "id": 27182,
+  "url": "https://es.numista.com/27182",
+  "title": "10 000 Pesos (Ibero-American Series)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "chili",
+   "name": "Chile"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 3299,
+    "name": "República",
+    "wikidata_id": "Q298"
+   }
+  ],
+  "value": {
+   "text": "10 000 Pesos",
+   "numeric_value": 10000,
+   "currency": {
+    "id": 146,
+    "name": "Peso",
+    "full_name": "Peso (1975-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "El círculo interior contiene el escudo de Chile, la denominación dentro del círculo exterior, 13 escudos rodean",
+   "lettering": "REPVBLICA DE CHILE\r\n$10.000",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/chili/944-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/chili/944-180.jpg",
+   "picture_copyright": "Paulo Schepeler"
+  },
+  "reverse": {
+   "description": "Tres fechas debajo de tres barcos, globo terráqueo al fondo",
+   "lettering": "ENCVENTRO DE DOS MVNDOS\r\n1492  1992\r\n1991",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/chili/945-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/chili/945-180.jpg",
+   "picture_copyright": "Paulo Schepeler"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Mapa",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "230"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 294,
+    "name": "Casa de Moneda de Chile"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "272140": {
   "category": "coin",
@@ -36037,6 +36791,276 @@
    "text": "30 Francs"
   },
   "weight": 31.1
+ },
+ "27800": {
+  "id": 27800,
+  "url": "https://es.numista.com/27800",
+  "title": "1000 Australes (Encounter of Two Worlds)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "argentine",
+   "name": "Argentina"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 3983,
+    "name": "República Federal",
+    "wikidata_id": "Q414"
+   }
+  ],
+  "value": {
+   "text": "1000 Australes",
+   "numeric_value": 1000,
+   "currency": {
+    "id": 144,
+    "name": "Austral",
+    "full_name": "Austral (1985-1991)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1993-12-31"
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925 (Ag 925 Cu 75)"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "El reverso muestra el valor nominal \"A1000\", el año de acuñación \"1991\", la leyenda \"REPVBLICA ARGENTINA\", alrededor el Escudo Nacional, y rodeando externamente la leyenda, los escudos de los restantes países que componen la EMISIÓN.",
+   "lettering": "REPVBLICA ARGENTINA\r\n: A 1.000 : 1991 :",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/argentine/798-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/argentine/798-180.jpg",
+   "picture_copyright": "gvaicika",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "description": "En el campo central, presenta las columnas de Hércules en las que se lee la leyenda \"PLVS VLTRA\". Ambas descansan sobre el \"MAR OCÉANO\", nexo entre los dos mundos. Sobre ellas el sol, cuatro coronas que representan a los Virreyes de México, Nueva Granada, Perú y Río de la Plata, y cuatro estrellas que simbolizan a las Capitanas Generales de Cuba, Guatemala, Venezuela y Chile. En el arco superior, la leyenda \"ENCVENTRO DE DOS MVNDOS\", en el inferior \"1492-1992\".",
+   "lettering": ": ENCVENTRO DE DOS MVNDOS :\r\n1492-1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/argentine/1337-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/argentine/1337-180.jpg",
+   "picture_copyright": "gvaicika",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "series": "Ibero-American Series II",
+  "commemorated_topic": "V Centenario del descubrimiento de América",
+  "comments": "<span style=\"font-weight:bold;\">V Centenario del Descubrimiento de América</span><br /><br />\r\nSe trata de una moneda conmemorativa del V Centenario del Descubrimiento de América que forma parte de una iniciativa conjunta de Argentina, Bolivia, Brasil, Chile, Colombia, Cuba, Ecuador, España, México, Nicaragua, Perú, Portugal, Uruguay y Venezuela.",
+  "related_types": [
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Sol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "106"
+   },
+   {
+    "catalogue": {
+     "id": 160,
+     "code": "CJ"
+    },
+    "number": "371"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "106"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 294,
+    "name": "Casa de Moneda de Chile"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "28059": {
   "id": 28059,
@@ -38573,6 +39597,251 @@
   ],
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
+ },
+ "28339": {
+  "id": 28339,
+  "url": "https://es.numista.com/28339",
+  "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "perou",
+   "name": "Perú"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 3757,
+    "name": "República",
+    "wikidata_id": "Q419"
+   }
+  ],
+  "value": {
+   "text": "1 Sol",
+   "numeric_value": 1,
+   "currency": {
+    "id": 184,
+    "name": "Nuevo sol",
+    "full_name": "Nuevo sol (1991-2015) / Sol (2016-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 2.09,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Armando F. Pareja"
+   ],
+   "description": "Armas nacionales dentro de emblemas variados alrededor del borde",
+   "lettering": "BANCO CENTRAL DE RESERVA DEL PÉRU  1991 -\r\nUN NUEVO SOL\r\nPLATA .925",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/perou/1746-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/perou/1746-180.jpg"
+  },
+  "reverse": {
+   "engravers": [
+    "Armando F. Pareja"
+   ],
+   "description": "Cabezas unidas en decúbito supino con manos que sostienen un tallo de maíz y una cruz",
+   "lettering": "Encuentro de dos mundos  1492-1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/perou/1745-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/perou/1745-180.jpg"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Primera Serie",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "302"
+   }
+  ],
+  "weight": 24.98,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "28574": {
   "category": "coin",
@@ -45152,6 +46421,271 @@
   },
   "weight": 31.104
  },
+ "30224": {
+  "id": 30224,
+  "url": "https://es.numista.com/30224",
+  "title": "10 Bolivianos (Ibero-American Series)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "bolivie",
+   "name": "Bolivia"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 4379,
+    "name": "República",
+    "wikidata_id": "Q750"
+   }
+  ],
+  "value": {
+   "text": "10 bolivianos",
+   "numeric_value": 10,
+   "currency": {
+    "id": 8,
+    "name": "Segundo boliviano",
+    "full_name": "Segundo boliviano (1986-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1991-00-00"
+  },
+  "size": 40,
+  "thickness": 2.09,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Armas nacionales dentro de la leyenda, armas alrededor",
+   "lettering": "REPUBLICA DE BOLIVIA\r\n1991\r\nBOLIVIA\r\nESTADOS UNIDOS MEXICANOS\r\nREPUBLICA DE NICARAGUA · AMERICA CENTRAL ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/bolivie/388-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/bolivie/388-180.jpg"
+  },
+  "reverse": {
+   "description": "Sol radiante detrás del Cerro Rico, denominación, dentro de un círculo, dos fechas debajo.",
+   "lettering": "ENCUENTRO DE DOS MUNDOS\r\nCERRO\r\nDE\r\nPOTOSI\r\nBs.10\r\n1492 1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/bolivie/389-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/bolivie/389-180.jpg"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "comments": "El Cerro Rico en la ciudad de Potosí fue la montaña de plata más importante del Continente Americano, durante la época colonial millones de toneladas de plata fueron enviadas a Europa. Desde que la plata fue llevada a su fin alrededor de 1800 se extrajeron y se siguen extrayendo otros metales como el estaño y el plomo.<br /><br />\r\nNota: Bolivia autorizó una acuñación máxima de 50.000 piezas, pero finalmente sólo se acuñaron 20.000.",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Camello o camélido",
+   "Construcción religiosa",
+   "Montaña",
+   "Árbol",
+   "Escudo de armas",
+   "Bandera",
+   "Sol",
+   "Arma de fuego"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "207"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "42"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "302302": {
   "category": "coin",
   "commemorated_topic": "Energía libre",
@@ -45256,6 +46790,264 @@
    "text": "100 dinares"
   },
   "weight": 31.1035
+ },
+ "30273": {
+  "id": 30273,
+  "url": "https://es.numista.com/30273",
+  "title": "500 Cruzeiros (Ibero-American Series)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "bresil",
+   "name": "Brasil"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 2684,
+    "name": "Federative Republic of Brazil",
+    "wikidata_id": "Q155"
+   }
+  ],
+  "value": {
+   "text": "500 Cruzeiros",
+   "numeric_value": 500,
+   "currency": {
+    "id": 209,
+    "name": "Cruzeiro",
+    "full_name": "Cruzeiro (1990-1993)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1994-09-15"
+  },
+  "size": 40,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "El escudo de Brasil en el centro, la denominación debajo y los 13 escudos que rodean a los demás países emisores.",
+   "lettering": "BRASIL\r\n1991\r\nREPUBLICA FEDERATIVA DO BRASIL\r\n15 de Novembro de 1889\r\n500 CRUZEIROS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/bresil/900-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/bresil/900-180.jpg"
+  },
+  "reverse": {
+   "description": "Flor de viento en el centro, velero a la izquierda, mapa del mundo a la derecha y dos fechas en la parte inferior.",
+   "lettering": "ENCONTRO DE DOIS MUNDOS \r\n1492 · 1992 ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/bresil/901-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/bresil/901-180.jpg"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Mapa",
+   "Bote o embarcación"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "621"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "130"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1335,
+    "name": "Casa de la Moneda de Brasil"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "303228": {
   "id": 303228,
@@ -47429,6 +49221,628 @@
   },
   "weight": 34.88
  },
+ "31590": {
+  "id": 31590,
+  "url": "https://es.numista.com/31590",
+  "title": "10 Pesos (Cristobal Colón)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "cuba",
+   "name": "Cuba"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 4118,
+    "name": "Segunda República",
+    "wikidata_id": "Q241"
+   }
+  ],
+  "value": {
+   "text": "10 Pesos",
+   "numeric_value": 10,
+   "currency": {
+    "id": 148,
+    "name": "Cuban Peso",
+    "full_name": "Cuban Peso (moneda nacional, 1914-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1991-00-00"
+  },
+  "size": 40,
+  "thickness": 2.09,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Alberto González Pereztol"
+   ],
+   "description": "Armas nacionales de Cuba, nombre del país en la parte superior, denominación debajo, ley y peso a los lados, todo dentro del círculo interior; círculo exterior de 13 armas de los demás países participantes en la serie.\r\n\r\nEscudo cubano, nombre del país arriba, valor facial abajao, pureza y peso a los lados, todo dentro del círculo interior; afuera, circulo de 13 escudos de los otros pañises participantes en la serie.",
+   "lettering": "REPUBLICA DE CUBA\r\nLEY .925\r\n27 GRS.\r\n10 PESOS\r\nBOLIVIA\r\nREPÚBLICA FEDERATIVA DO BRASIL\r\n15 de Novembro      de 1889\r\nPOR LA RAZÓN O LA FUERZA\r\nPLVS VLTRA\r\nESTADOS UNIDOS MEXICANOS\r\nREPUBLICA DE NICARAGUA\r\n · AMERICA CENTRAL ·\r\n19 DE ABRIL DE 1810        20 DE FEBRERO DE 1859\r\nINDEPENDENCIA       FEDERACIÓN\r\nREPÚBLICA DE VENEZUELA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/cuba/378-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/cuba/378-180.jpg"
+  },
+  "reverse": {
+   "designers": [
+    "Alberto González Pereztol"
+   ],
+   "description": "Estatua de Colón en Cárdenas; sobre fondo silueta de España arriba a la derecha, uba y América Central y del Sur abajo a la izquierda. Descripción a la izquierda, fechas a la derecha, marca de ceca abajo a la derecha.\r\n\r\nEstatua de Colón en Cárdenas; atrás silueta de España arriba a la derecha, Cuba y ameríca Central y del Sur abajo a la izquierda. Descripción a la izquierda, fechas a la derecha, marca de ceca abajo a la derecha.",
+   "lettering": "ENCUENTRO DE DOS MUNDOS\r\nESTATUA\r\nA COLON\r\nERIGIDA EN\r\nCARDENAS 1862\r\n1492\r\n1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/cuba/379-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/cuba/379-180.jpg"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Cristóbal Colón",
+  "comments": "El diseño de estas monedas se realizó en Cuba, y se acuñaron en México, razón por la cual muestran la marca de ceca cubana.<br />\r\nLa acuñación máxima autorizada fue de 51 000, la acuñación final de 25 000; 20 000 formaban parte de series, y las otras 5 000 se vendieron por separado. En Krause se muestra la acuñación mas. También en krause, por error aparece como plata 0.999, en lugar de 0.925 (en la foto se muestra claramente la finura de la moneda).<br /><br />\r\nEl diseño de esta moneda fué realizado en Cuba, y fueron acuñadas en México, por esta razón llevan la marca de ceca de Cuba.<br />\r\nAcuñación autorizada 51 000, realizada 25 000; de ellas 20 000 fueron parte de los sets, y 5 000 vendidas separadas. En Krause se muestra la acuñación autorizada, no lo realmente acuñado. También, por error, está listada como plata 0.999, en lugar de 0.925 (se ve en la imágen la pureza en la moneda).",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Explorador",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "337"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed\r\n\r\nEstriado"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "31592": {
+  "id": 31592,
+  "url": "https://es.numista.com/31592",
+  "title": "5000 Sucres (Ibero-American Series)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "equateur",
+   "name": "Ecuador"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 3758,
+    "name": "República",
+    "wikidata_id": "Q736"
+   }
+  ],
+  "value": {
+   "text": "5000 Sucres",
+   "numeric_value": 5000,
+   "currency": {
+    "id": 187,
+    "name": "Sucre",
+    "full_name": "Sucre (1884-2000)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2000-09-10"
+  },
+  "size": 40,
+  "thickness": 2.1,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Armas nacionales, rodeadas de todas las demás armas nacionales de los países que acuñaron monedas para esta 1ª serie.",
+   "lettering": "REPUBLICA DEL ECUADOR\r\n1991",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/equateur/630884b30dea06.50017040-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/equateur/630884b30dea06.50017040-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "reverse": {
+   "description": "Denominación, imagen de tres barcos de Cristóbal Colón y una máscara indígena",
+   "lettering": "ENCUENTRO DE DOS MUNDOS\r\n1492\r\n1992\r\n5000 SUCRES",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/equateur/630884b33ea5e8.89536322-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/equateur/630884b33ea5e8.89536322-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Ave",
+   "Explorador",
+   "Mapa",
+   "Bote o embarcación",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "95"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "89"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "31593": {
+  "id": 31593,
+  "url": "https://es.numista.com/31593",
+  "title": "2000 Pesetas (Columnario)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "espagne",
+   "name": "España"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 151,
+    "name": "Juan Carlos I",
+    "wikidata_id": "Q19943",
+    "group": {
+     "id": 44,
+     "name": "Casa de Borbón"
+    }
+   }
+  ],
+  "value": {
+   "text": "2000 pesetas",
+   "numeric_value": 2000,
+   "currency": {
+    "id": 142,
+    "name": "Peseta",
+    "full_name": "Peseta (1868-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 40,
+  "thickness": 2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Escudo coronado de España rodeado de escudos de los países participantes en esta serie.",
+   "lettering": ": JUAN : CARLOS I : REY :\r\n2000 PTAS\r\nESTADOS UNIDOS MEXICANOS\r\nREPUBLICA DE NICARAGUA · AMERICA CENTRAL ·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "2000 Pesetas",
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67461d6d9eacc4.98524083-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67461d6d9eacc4.98524083-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Alfonso Morales Muñoz"
+   ],
+   "description": "Diseño de moneda tipo \"Columnario\".",
+   "lettering": "ESPAÑA : ENCUENTRO : DE : DOS : MUNDOS : 1492-1992\r\nM 2000 500\r\nPLVS VLTRA\r\n500 91 M",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/espagne/67461d6e3069e4.47548183-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/espagne/67461d6e3069e4.47548183-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "I Serie: Encuentro de dos mundos",
+  "tags": [
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "891"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 24,
+    "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "31623": {
   "category": "coin",
   "composition": {
@@ -47678,6 +50092,541 @@
   },
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
+ },
+ "31923": {
+  "id": 31923,
+  "url": "https://es.numista.com/31923",
+  "title": "1 Córdoba (Encounter of Two Worlds)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "nicaragua",
+   "name": "Nicaragua"
+  },
+  "issuing_entity": {
+   "id": 863,
+   "name": "Banco Central de Nicaragua",
+   "wikidata_id": "Q4504274"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 4284,
+    "name": "República",
+    "wikidata_id": "Q811"
+   }
+  ],
+  "value": {
+   "text": "1 Córdoba",
+   "numeric_value": 1,
+   "currency": {
+    "id": 3150,
+    "name": "Third Córdoba \"Oro\"",
+    "full_name": "Third Córdoba \"Oro\" (1991-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 2.09,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas en el centro con su leyenda alrededor. En el círculo exterior, los escudos de todos los demás países que acuñaron monedas para esta primera serie.",
+   "lettering": "· REPUBLICA DE NICARAGUA ·\r\nAMERICA CENTRAL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/nicaragua/266-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/nicaragua/266-180.jpg"
+  },
+  "reverse": {
+   "description": "Mapa detrás de figuras de pie dándose la mano dentro de un círculo.",
+   "lettering": "· ENCUENTRO DE DOS MUNDOS ·\r\nUN CORDOBA\r\nMo\r\nLEY .925\r\n1991\r\n1492-1992",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/nicaragua/267-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/nicaragua/267-180.jpg"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31924,
+    "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "uruguay",
+     "name": "Uruguay"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Explorador",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "77"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "75"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 29,
+    "name": "Mexican Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "31924": {
+  "id": 31924,
+  "url": "https://es.numista.com/31924",
+  "title": "50 000 Nuevos Pesos (Ibero-American Series)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "uruguay",
+   "name": "Uruguay"
+  },
+  "issuing_entity": {
+   "id": 30,
+   "name": "Banco Central del Uruguay",
+   "wikidata_id": "Q4504285"
+  },
+  "min_year": 1991,
+  "max_year": 1991,
+  "ruler": [
+   {
+    "id": 3897,
+    "name": "Oriental Republic of Uruguay",
+    "wikidata_id": "Q77"
+   }
+  ],
+  "value": {
+   "text": "50 000 Nuevos Pesos",
+   "numeric_value": 50000,
+   "currency": {
+    "id": 297,
+    "name": "Nuevo peso",
+    "full_name": "Nuevo peso (1975-1993)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "1991-00-00"
+  },
+  "size": 40,
+  "thickness": 2.09,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Armas dentro del círculo central de valor, nombre del país\r\nnombre y armas variadas",
+   "lettering": "URUGUAY\r\nN$ 50.000",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/uruguay/62f625e0799118.55762703-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/uruguay/62f625e0799118.55762703-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "reverse": {
+   "description": "Banderas cruzadas y escudo coronado\r\ndivide las fechas",
+   "lettering": "REPUBLICA ORIENTAL DEL URUGUAY\r\n1492 1992\r\n1991\r\nENCUENTRO DE DOS MUNDOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/uruguay/62f625e0d39af6.54801330-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/uruguay/62f625e0d39af6.54801330-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "series": "Ibero-American",
+  "commemorated_topic": "Serie Iberoamericana I - Encuentro de dos mundos",
+  "related_types": [
+   {
+    "id": 27800,
+    "title": "1000 Australes (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "argentine",
+     "name": "Argentina"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30224,
+    "title": "10 Bolivianos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bolivie",
+     "name": "Bolivia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 30273,
+    "title": "500 Cruzeiros (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "bresil",
+     "name": "Brasil"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 27182,
+    "title": "10 000 Pesos (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "chili",
+     "name": "Chile"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 22028,
+    "title": "10 000 Pesos (Santa Fe - Bogotá Mint)",
+    "category": "coin",
+    "country": {
+     "code": "colombie",
+     "name": "Colombia"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31590,
+    "title": "10 Pesos (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "cuba",
+     "name": "Cuba"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31592,
+    "title": "5000 Sucres (Ibero-American Series)",
+    "category": "coin",
+    "country": {
+     "code": "equateur",
+     "name": "Ecuador"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 26293,
+    "title": "100 Pesos (Columnaria)",
+    "category": "coin",
+    "country": {
+     "code": "mexique",
+     "name": "México"
+    },
+    "minYear": 1991,
+    "maxYear": 1992
+   },
+   {
+    "id": 31923,
+    "title": "1 Córdoba (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "nicaragua",
+     "name": "Nicaragua"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 28339,
+    "title": "1 Nuevo Sol (Encounter of two Worlds, horizontal)",
+    "category": "coin",
+    "country": {
+     "code": "perou",
+     "name": "Perú"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 15463,
+    "title": "1000 Escudos (Encounter of Two Worlds)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 25337,
+    "title": "1000 Escudos (Encounter of Two Worlds, Proof Issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 1992,
+    "maxYear": 1992
+   },
+   {
+    "id": 31593,
+    "title": "2000 Pesetas (Columnario)",
+    "category": "coin",
+    "country": {
+     "code": "espagne",
+     "name": "España"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   },
+   {
+    "id": 31925,
+    "title": "1100 Bolívares (Cristobal Colón)",
+    "category": "coin",
+    "country": {
+     "code": "venezuela",
+     "name": "Venezuela"
+    },
+    "minYear": 1991,
+    "maxYear": 1991
+   }
+  ],
+  "tags": [
+   "Escudo de armas",
+   "Bandera"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "100"
+   },
+   {
+    "catalogue": {
+     "id": 709,
+     "code": "SA"
+    },
+    "number": "E.14"
+   },
+   {
+    "catalogue": {
+     "id": 2069,
+     "code": "CG"
+    },
+    "number": "147"
+   }
+  ],
+  "weight": 27,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 294,
+    "name": "Casa de Moneda de Chile"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "31925": {
   "category": "coin",

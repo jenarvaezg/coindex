@@ -266,6 +266,11 @@ they are **not** bounded by what the catalogs hold: the 25 escudos of the 1977 a
 programmes sit in no catalog, so its denominator counts three where a join across catalogs would
 have printed two. Its boundary is never a Numista fact, so it cites any host and its prose note is
 required. It reads today on the plate, beside the plate's own progress and never mixed into it.
+A programme need not be one mint's denominations: the I Serie Iberoamericana is **one slot per
+country** over fourteen countries, so its header `issuer_code` names the mint that coordinated the
+programme rather than the issuer of its members, its `year` the year the series was issued, and each
+member's label a country (ADR 0022 amended). What a programme cannot do is show that count beside a
+coin whose card has no plate — which is why the field report prints the programmes too.
 _Avoid_: Subseries, set catalog, curated grouping, thematic collection
 
 **Curated series**:
