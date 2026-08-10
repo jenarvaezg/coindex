@@ -83,6 +83,9 @@ private fun plateSection(
         subtitle = null,
         facts = plate.entries,
         source = plate.source,
+        // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371): the subject
+        // already knew, and until now the section threw the bit away.
+        complete = plate.complete,
         cells = plate.cells.map { cell ->
             PrintCell(
                 curatedLabel = cell.label,

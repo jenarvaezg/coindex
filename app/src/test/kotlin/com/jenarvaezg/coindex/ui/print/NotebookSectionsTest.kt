@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionSnapshot
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Curation
@@ -15,9 +16,12 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * What a page of pieces says about each one, which is the one place the emission label reaches paper.
@@ -169,5 +173,112 @@ class NotebookSectionsTest {
 
         assertEquals("5 Pounds", cell.name?.denomination)
         assertEquals("Red Dragon of Wales", cell.name?.theme)
+    }
+
+    /**
+     * The stamp is a state of the plate (ADR 0026 §3 / §4), and the notebook page has to carry it
+     * the same way the PNG does (#371). The Progress row stays whole — a page of the cuaderno has
+     * no header figure to raise the ratio into (ADR 0026 §5) — so completeness travels as its own
+     * bit on the section, not by eating the specification.
+     */
+    @Test
+    fun `a complete plate section says so and keeps the progress row`() {
+        val section = dateRunSection(ownedYears = listOf(1879, 1886))
+
+        assertTrue(section.complete)
+        assertEquals("Progreso" to "2 / 2 emisiones", section.facts.first())
+    }
+
+    /** Missing one is the same plate with no ink: the stamp is read off the inventory, not remembered. */
+    @Test
+    fun `an incomplete plate section carries no stamp`() {
+        val section = dateRunSection(ownedYears = listOf(1879))
+
+        assertFalse(section.complete)
+        assertEquals("Progreso" to "1 / 2 emisiones", section.facts.first())
+    }
+
+    /** A page of pieces has no plate to be complete, so the rubber stamp never lands on it. */
+    @Test
+    fun `a pieces page never carries the completion stamp`() {
+        val card = IndexCard.Box(
+            name = "Dragones",
+            issuer = "Reino Unido",
+            box = OwnGroupingView(
+                OwnGrouping(1, "Dragones", typeIds = listOf(100)),
+                listOf(CollectedItem(id = 1, quantity = 1, typeId = 100, issueYear = 2024)),
+            ),
+        )
+
+        val section = notebookSections(
+            CollectionState(),
+            listOf(card),
+            emptyList(),
+            Curation(emptyList()),
+            NotebookOptions(),
+        ).single()
+
+        assertFalse(section.complete)
+    }
+
+    /**
+     * A two-year date run resolved the way `resolvePlate` resolves production plates: the card
+     * names the catalog, the state carries the evidence, and `notebookSections` is what reads
+     * completeness off the subject.
+     */
+    private fun dateRunSection(ownedYears: List<Int>): PrintSection {
+        val typeId = 10_340
+        val catalog = CollectionCatalog(
+            schemaVersion = 2,
+            id = "venezuela-fuertes-test",
+            name = "Fuertes · Venezuela",
+            shortName = "Fuertes",
+            issuerCode = "venezuela",
+            family = "Fuertes de Venezuela",
+            weightMillioz = 804,
+            finish = null,
+            metal = Metal.Silver,
+            seriesStatus = SeriesStatus.Closed,
+            source = "https://en.numista.com/catalogue/pieces10340.html",
+            updatedAt = "2026-08-01",
+            members = listOf(
+                CollectionCatalogMember(id = "1879", label = "1879", year = 1879, numistaTypeId = typeId),
+                CollectionCatalogMember(id = "1886", label = "1886", year = 1886, numistaTypeId = typeId),
+            ),
+        )
+        val key = catalog.key()
+        val items = ownedYears.mapIndexed { index, year ->
+            CollectedItem(id = index + 1L, quantity = 1, typeId = typeId, issueYear = year)
+        }
+        val card = IndexCard.Derived(
+            name = catalog.name,
+            coverage = CoverageRatio(owned = ownedYears.size, issued = 2),
+            issuer = "Venezuela",
+            collection = DerivedCollection(
+                family = key.family,
+                weightMillioz = key.weightMillioz,
+                finish = key.finish,
+                metal = key.metal,
+                distinctTypes = 1,
+                quantity = items.size,
+            ),
+            plateCatalogId = catalog.id,
+        )
+        val state = CollectionState(
+            AssembledCollection(
+                items = items,
+                index = listOf(card),
+                derivedCollections = listOf(card.collection),
+                evidencedCatalogIds = setOf(catalog.id),
+                itemsByKey = mapOf(key to items),
+            ),
+        )
+        return notebookSections(
+            state,
+            listOf(card),
+            emptyList(),
+            Curation(listOf(catalog)),
+            NotebookOptions(),
+        ).single()
     }
 }

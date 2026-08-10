@@ -3,7 +3,8 @@
 - Status: accepted, §15 amended by #351 (the grain's approved value), by #357 (the die-cut's wall)
   and by #338 (the gloss confirmed and the acetate withdrawn); §3 and §5 amended by #339 (the stamp
   keeps no bit, and the ratio leaves the specification wherever the stamp reaches it); §3 and §13
-  amended by #370 (the ficha sheet is the landing of the second journey)
+  amended by #370 (the ficha sheet is the landing of the second journey); §4 amended by #371 (the
+  stamp reaches the printed notebook too)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -202,6 +203,14 @@ and not an animation; and **the gloss does not**, amending #303, which had reaso
 defined pose and therefore composable. The consequence is accepted knowingly: what the father shows
 other people carries no metal. The app is where he looks at his collection; the PNG is where he shows
 it.
+
+> **Amended on 2026-08-10 (§4, #371). The stamp reaches the PDF too.** Block 8 (#339) carried the
+> ink to the exported sheet and left the printed notebook without it — the rule above already named
+> both surfaces, and only one of them painted. The notebook keeps «Progreso · n / n emisiones» in
+> the specification (§5), so the caucho is drawn in millimetres of paper on each plate's own
+> heading — not by reusing `StampedRatio`, which is sized in dp and lands on the ratio — and a
+> shared folio (#232) stamps every complete plate on the page, each in its band. The slim heading
+> gets a smaller frame so the ink still fits fourteen millimetres.
 
 **The gloss belongs to the coin, not to the hole** — the second amendment to #303. Every coin
 photograph glosses, die-cut or loose: on the plate, in the index, in «Las cifras», in `PieceCard` and
