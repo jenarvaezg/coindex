@@ -102,6 +102,20 @@ fun notebookExportMessage(pages: Int, expectedPhotos: Int, loadedPhotos: Int): S
 }
 
 /**
+ * What the collector is told once the notebook has landed in Descargas (#285).
+ *
+ * Same sentence as a sheet download: the notification names the PDF.
+ */
+fun notebookDownloadMessage(expectedPhotos: Int, loadedPhotos: Int): String =
+    downloadMessage(expectedPhotos, loadedPhotos)
+
+/** A notebook that never reached Descargas, with the cause when there is one to act on. */
+fun notebookDownloadFailure(cause: String?): String {
+    val sentence = "No se pudo descargar el cuaderno"
+    return cause?.takeIf { it.isNotBlank() }?.let { "$sentence: $it" } ?: "$sentence."
+}
+
+/**
  * What a cancelled export says.
  *
  * It has to say that nothing was shared. The file is only written once the last page is drawn, so a

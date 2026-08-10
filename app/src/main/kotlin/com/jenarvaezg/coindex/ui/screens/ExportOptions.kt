@@ -16,6 +16,7 @@ import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.components.ToggleRow
 import com.jenarvaezg.coindex.ui.notebookCostLabel
 import com.jenarvaezg.coindex.ui.notebookSwitchLabel
@@ -56,7 +57,8 @@ fun ExportOptions(
      */
     loose: Int,
     onChange: (NotebookOptions) -> Unit,
-    onExport: () -> Unit,
+    onDownload: () -> Unit,
+    onShare: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -96,7 +98,13 @@ fun ExportOptions(
             itemVerticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 12.dp),
         ) {
-            PrimaryAction(text = "Exportar", onClick = onExport)
+            // Descargar is the «y ya» (#285); compartir keeps the old path beside it.
+            PrimaryAction(text = "Descargar", onClick = onDownload)
+            CardAction(
+                text = "Compartir",
+                onClick = onShare,
+                icon = { ShareGlyph(color = Paper.ink) },
+            )
             CardAction(text = "Cancelar", onClick = onDismiss)
         }
     }

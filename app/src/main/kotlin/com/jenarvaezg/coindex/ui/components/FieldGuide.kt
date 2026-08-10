@@ -110,7 +110,7 @@ fun LinkText(
  * Level 1 of the action system: the action a screen exists for.
  *
  * Filled ink, as «Sincronizar» always was, and rare enough that the eye finds it without
- * reading. [share] adds the share mark for the one action that hands the plate to another app.
+ * reading.
  */
 @Composable
 fun PrimaryAction(
@@ -118,7 +118,6 @@ fun PrimaryAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    share: Boolean = false,
 ) {
     Button(
         onClick = onClick,
@@ -126,9 +125,6 @@ fun PrimaryAction(
         shape = RectangleShape,
         modifier = modifier,
     ) {
-        if (share) {
-            ShareGlyph(color = Paper.paper, modifier = Modifier.padding(end = 8.dp))
-        }
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
 }

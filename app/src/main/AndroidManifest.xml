@@ -8,6 +8,9 @@
     <!-- Coindex se distribuye por APK, así que se actualiza a sí misma. La instalación
          siempre la confirma el usuario: nada de esto instala en silencio. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- La notificación de una descarga en Descargas (#285). Sin ella, en API 33+ el shade
+         se queda callado; el snackbar y el fichero siguen bastando. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".CoindexApplication"

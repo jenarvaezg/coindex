@@ -67,6 +67,37 @@ fun sheetExportFailure(sheet: SharedSheet, cause: String?): String {
 }
 
 /**
+ * What the collector is told once a sheet has landed in Descargas (#285).
+ *
+ * Short on purpose: the openable notification already names the file, so the snackbar only
+ * has to confirm the tap worked. Holes still get counted — a lámina with empty cells is not
+ * «Descargado» and nothing more.
+ */
+fun sheetDownloadMessage(expectedPhotos: Int, loadedPhotos: Int): String =
+    downloadMessage(expectedPhotos, loadedPhotos)
+
+/** The same failure sentence, for a download that never reached Descargas. */
+fun sheetDownloadFailure(sheet: SharedSheet, cause: String?): String {
+    val sentence = "No se pudo descargar la ${sheet.noun}"
+    return cause?.takeIf { it.isNotBlank() }?.let { "$sentence: $it" } ?: "$sentence."
+}
+
+/**
+ * The snackbar for any download that reached Descargas (#285).
+ *
+ * One sentence for the sheet and the notebook: both land the same way, and a hole is a hole
+ * whether it was a casilla or a page.
+ */
+fun downloadMessage(expectedPhotos: Int, loadedPhotos: Int): String {
+    val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
+    return when (absent) {
+        0 -> "Descargado"
+        1 -> "Descargado, pero una foto no llegó a cargar"
+        else -> "Descargado, pero $absent fotos no llegaron a cargar"
+    }
+}
+
+/**
  * What a plate says it holds: **«19 casillas»**.
  *
  * «Casillas» and not «emisiones»: a plate can draw a slot the mint has not struck, and the progress

@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Picture
 import android.graphics.pdf.PdfDocument
 import com.jenarvaezg.coindex.ui.EXPORT_DIR
+import com.jenarvaezg.coindex.ui.datedExportFileName
+import com.jenarvaezg.coindex.ui.handToDownloads
 import com.jenarvaezg.coindex.ui.handToShareSheet
 import java.io.File
 import kotlin.math.roundToInt
@@ -54,13 +56,29 @@ fun addNotebookPage(
 
 /** Writes the finished notebook to the cache and hands it to the Android share sheet. */
 suspend fun shareNotebookPdf(context: Context, document: PdfDocument, fileName: String) {
-    val file = withContext(Dispatchers.IO) {
-        val directory = File(context.cacheDir, EXPORT_DIR).apply { mkdirs() }
-        File(directory, "$fileName.pdf").also { target ->
-            target.outputStream().use { stream -> document.writeTo(stream) }
-        }
-    }
+    val file = writeNotebookPdf(context, document, fileName)
     handToShareSheet(context, file, "application/pdf", "Compartir el cuaderno")
+}
+
+/**
+ * Writes the finished notebook to Descargas, with the stamp that keeps a second tap from
+ * overwriting the first (#285).
+ */
+suspend fun downloadNotebookPdf(context: Context, document: PdfDocument, fileName: String) {
+    val displayName = datedExportFileName(fileName, "pdf")
+    val file = writeNotebookPdf(context, document, fileName)
+    handToDownloads(context, file, "application/pdf", displayName)
+}
+
+private suspend fun writeNotebookPdf(
+    context: Context,
+    document: PdfDocument,
+    fileName: String,
+): File = withContext(Dispatchers.IO) {
+    val directory = File(context.cacheDir, EXPORT_DIR).apply { mkdirs() }
+    File(directory, "$fileName.pdf").also { target ->
+        target.outputStream().use { stream -> document.writeTo(stream) }
+    }
 }
 
 /**

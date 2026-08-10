@@ -25,9 +25,13 @@ import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
 import com.jenarvaezg.coindex.ui.components.LocalStamping
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
+import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.downloadPlateSheet
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sharePlateSheet
+import com.jenarvaezg.coindex.ui.sheetDownloadFailure
+import com.jenarvaezg.coindex.ui.sheetDownloadMessage
 import com.jenarvaezg.coindex.ui.sheetExportFailure
 import com.jenarvaezg.coindex.ui.sheetExportMessage
 import kotlinx.coroutines.flow.first
@@ -43,7 +47,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 const val IMAGE_WAIT_MILLIS = 30_000L
 
 /**
- * Composes a sheet off-screen, waits for every picture to settle, shares it, and says what it did.
+ * Composes a sheet off-screen, waits for every picture to settle, exports it, and says what it did.
  *
  * **The whole cycle and not the pieces of it.** A plate and a collection's pieces used to spell this
  * out line for line — a [Picture], a [SheetLayout], the count of pictures to expect, two counters,
@@ -51,7 +55,8 @@ const val IMAGE_WAIT_MILLIS = 30_000L
  * and the two copies had already drifted (#219). What genuinely differs between the two exports is
  * four values: how many members the geometry is for, where a member's Numista type is read from,
  * what the file is called, and what the sheet says it holds. They are the parameters; the rest is
- * here.
+ * here. [destination] is the fifth: Descargas or the share sheet, and both coexist on the screen
+ * that starts this (#285).
  *
  * The sheet is measured with its own density and **never painted**: [recordInto] captures the
  * drawing commands instead of drawing them, so what gets shared is the complete sheet rather than
@@ -82,6 +87,7 @@ fun <T> SheetExport(
     /** What the sheet says it holds, in its own words: «19 casillas», «4 de 12 · te faltan 8». */
     tally: String,
     fileName: String,
+    destination: ExportDestination = ExportDestination.Download,
     onFinished: (String) -> Unit,
     /** Draws the sheet: at the geometry given, reporting each picture, into the recording. */
     content: @Composable (
@@ -102,19 +108,29 @@ fun <T> SheetExport(
     val settled = remember(key) { mutableIntStateOf(0) }
     val loaded = remember(key) { mutableIntStateOf(0) }
 
-    LaunchedEffect(key) {
-        val outcome = shareSettledSheet(
+    LaunchedEffect(key, destination) {
+        val outcome = exportSettledSheet(
             context = context,
             picture = picture,
             fileName = fileName,
             expectedImages = expectedImages,
             settled = settled,
+            destination = destination,
         )
         onFinished(
             if (outcome.isFailure) {
-                sheetExportFailure(sheet, outcome.exceptionOrNull()?.message)
+                val cause = outcome.exceptionOrNull()?.message
+                when (destination) {
+                    ExportDestination.Download -> sheetDownloadFailure(sheet, cause)
+                    ExportDestination.Share -> sheetExportFailure(sheet, cause)
+                }
             } else {
-                sheetExportMessage(sheet, tally, expectedImages, loaded.intValue)
+                when (destination) {
+                    ExportDestination.Download ->
+                        sheetDownloadMessage(expectedImages, loaded.intValue)
+                    ExportDestination.Share ->
+                        sheetExportMessage(sheet, tally, expectedImages, loaded.intValue)
+                }
             },
         )
     }
@@ -154,31 +170,37 @@ fun <T> sheetImageCount(
 }
 
 /**
- * Waits for a sheet's pictures to settle, then writes it out and hands it to the share sheet.
+ * Waits for a sheet's pictures to settle, then writes it out to [destination].
  *
  * The step [SheetExport] is built around, kept apart from it because the waiting is the delicate
  * part and it is identical for the two sheets there are: what differs is what gets drawn, not when
- * it is safe to capture it.
+ * it is safe to capture it. Descargas and the share sheet are two endings of the same wait (#285).
  *
  * Timing out and failing outright come to the same thing here: whatever had not painted by now is
- * a hole in the sheet that is about to be shared, which is why the caller is handed [settled] to
+ * a hole in the sheet that is about to leave, which is why the caller is handed [settled] to
  * count against and reports the shortfall in its own words.
  */
-suspend fun shareSettledSheet(
+suspend fun exportSettledSheet(
     context: Context,
     picture: Picture,
     fileName: String,
     expectedImages: Int,
     settled: IntState,
+    destination: ExportDestination = ExportDestination.Download,
 ): Result<Unit> {
     awaitSettledImages(expectedImages, settled)
-    return runCatching { sharePlateSheet(context, picture, fileName) }
+    return runCatching {
+        when (destination) {
+            ExportDestination.Download -> downloadPlateSheet(context, picture, fileName)
+            ExportDestination.Share -> sharePlateSheet(context, picture, fileName)
+        }
+    }
 }
 
 /**
  * Waits until every picture of what is being drawn has reported back, or until the budget runs out.
  *
- * Split out of [shareSettledSheet] because the printed notebook waits the same way and then does
+ * Split out of [exportSettledSheet] because the printed notebook waits the same way and then does
  * something else with the result — a page of a PDF rather than a file to share — and the waiting is
  * the delicate part: what is not painted when this returns is a hole in what is about to be
  * captured, in all three exports alike.
