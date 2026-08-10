@@ -14,6 +14,8 @@ import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
+import com.jenarvaezg.coindex.data.prices.ValuationLoop
+import com.jenarvaezg.coindex.data.prices.valuationPlan
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateFlow
@@ -63,6 +65,8 @@ class CoindexViewModel(
     private val typeRefresh: TypeRefresh,
     private val updates: UpdateFlow,
     private val photos: PhotoPrefetchLoop,
+    /** When the catalog prices are asked for, and who yields to whom (ADR 0028). */
+    private val valuation: ValuationLoop,
     /** A client bound to the stored API key, or null while onboarding is pending. */
     private val client: () -> NumistaClient?,
     /**
@@ -123,8 +127,31 @@ class CoindexViewModel(
         }
         start()
         watchPhotoCache()
+        watchValuation()
+        watchPrices()
         checkForUpdate(force = true)
         pollForUpdates()
+    }
+
+    /**
+     * Mirrors how far the valuation pass has got (ADR 0028).
+     *
+     * Observed for the same reason the photograph count is: the pass outlives the screen that started it,
+     * and on the second launch of a month there is no new pass at all — the plan has not changed — so a
+     * status that travelled with the pass would leave the money section absent over a phone that holds
+     * every price it needs.
+     */
+    private fun watchValuation() {
+        viewModelScope.launch {
+            valuation.status.collect { status -> _state.update { it.copy(valuation = status) } }
+        }
+    }
+
+    /** The prices themselves, which change while a pass runs and never rebuild the index. */
+    private fun watchPrices() {
+        viewModelScope.launch {
+            repository.observePrices().collect { book -> _state.update { it.copy(prices = book) } }
+        }
     }
 
     /**
@@ -158,6 +185,7 @@ class CoindexViewModel(
                 repository.observeState().collect { collection ->
                     _state.update { it.copy(collection = collection, loading = false) }
                     prefetchPhotographs()
+                    valuePrices()
                 }
             } catch (error: Exception) {
                 _state.update {
@@ -184,14 +212,37 @@ class CoindexViewModel(
     }
 
     /**
+     * Asks Numista for the prices of what is owned and of the holes within reach (ADR 0028).
+     *
+     * On every emission and cheap to call twice, like the photographs: [ValuationLoop] holds the rules
+     * about what a second call is worth, and the plan it compares is the plan itself rather than a count
+     * two changes could cancel out.
+     */
+    private fun valuePrices(force: Boolean = false) {
+        val state = _state.value.collection
+        valuation.start(
+            scope = viewModelScope,
+            plan = valuationPlan(state.items, curation, state.evidencedCatalogIds),
+            force = force,
+        )
+    }
+
+    /**
      * Gives the network back while the notebook is being exported, and takes it up again after.
      *
      * The export takes all four of the loader's slots and the collector is watching it happen; two
      * of those four held by pictures nobody has asked for is exactly the theft this prefetch was
-     * designed not to commit (#191).
+     * designed not to commit (#191). The valuation stands down for the same reason and one more of its
+     * own: an export is what the collector is waiting for, and the pass is not.
      */
     fun notebookExporting(active: Boolean) {
-        if (active) photos.cancel() else prefetchPhotographs(force = true)
+        if (active) {
+            photos.cancel()
+            valuation.cancel()
+        } else {
+            prefetchPhotographs(force = true)
+            valuePrices(force = true)
+        }
     }
 
     /**
@@ -332,8 +383,11 @@ class CoindexViewModel(
         _state.update { it.copy(syncing = true, message = null) }
         viewModelScope.launch {
             // The photographs give the network back to the sync, which is both spending API budget
-            // and being waited for.
+            // and being waited for. The valuation gives back something graver — the **calls
+            // themselves**, out of the same monthly bote — so a pass in flight could otherwise eat
+            // what the sync needs and make it fail with `BudgetExhausted` (ADR 0028 §6).
             photos.yieldNetwork()
+            valuation.yieldNetwork()
             val outcome = collectionSync.run(ready, userId)
             _state.update { state ->
                 when (outcome) {
@@ -349,8 +403,11 @@ class CoindexViewModel(
                 }
             }
             // Forced, because a sync that changed nothing emits nothing, and the pass it cancelled
-            // would otherwise wait for the next launch to be picked up again.
+            // would otherwise wait for the next launch to be picked up again. The end of a sync is
+            // also the valuation's second trigger: it is the ceremony that already spends budget and
+            // already says what it spent (ADR 0028 §3).
             prefetchPhotographs(force = true)
+            valuePrices(force = true)
         }
     }
 
@@ -444,6 +501,21 @@ class CoindexViewModel(
             unclaimed = unclaimed,
             curation = curation,
             options = options,
+            // The money switch is answered once, here, by handing the printer either a value or
+            // nothing (#228, ADR 0021 §13). And nothing is also what it gets while the market has
+            // not landed: a total at 60 % is false on paper too, and paper cannot be taken back.
+            plateValue = { resolved ->
+                if (!options.money || !_state.value.valuation.settled) {
+                    null
+                } else {
+                    plateValue(
+                        resolved.album,
+                        _state.value.collection,
+                        _state.value.prices.spot,
+                        _state.value.prices::of,
+                    )
+                }
+            },
         ),
         geometry = printGeometry(options),
     )
@@ -486,6 +558,7 @@ class CoindexViewModel(
                     typeRefresh = container.typeRefresh,
                     updates = container.updates,
                     photos = container.photos,
+                    valuation = container.valuation,
                     client = container::numistaClient,
                     warmUpFichaCache = container::warmUpFichaCache,
                     installedVersionName = container.installedVersionName(),

@@ -25,6 +25,18 @@ data class NotebookOptions(
     val numistaQr: Boolean = false,
     /** The coins no collection claims, as one last lámina, and the notebook is the whole of it. */
     val unclaimed: Boolean = false,
+    /**
+     * What the collection is worth, on paper (ADR 0026 §10).
+     *
+     * **Off by default, like every switch whose default is the notebook of today**: nobody finds their
+     * notebook carrying amounts without having asked. It is what makes «mira qué bonito» and «mira lo
+     * que vale» two things the person exporting chooses between.
+     *
+     * Off it withdraws the amount **and every figure derived from one**, which is the trap the prototype
+     * fell into: «Venezuela · 30 % del valor» is money as much as a total is, and it went out with the
+     * money switched off.
+     */
+    val money: Boolean = false,
 ) {
     operator fun get(switch: NotebookSwitch): Boolean = when (switch) {
         NotebookSwitch.Photographs -> photographs
@@ -33,6 +45,7 @@ data class NotebookOptions(
         NotebookSwitch.SharePage -> sharePage
         NotebookSwitch.NumistaQr -> numistaQr
         NotebookSwitch.Unclaimed -> unclaimed
+        NotebookSwitch.Money -> money
     }
 
     fun with(switch: NotebookSwitch, on: Boolean): NotebookOptions = when (switch) {
@@ -42,6 +55,7 @@ data class NotebookOptions(
         NotebookSwitch.SharePage -> copy(sharePage = on)
         NotebookSwitch.NumistaQr -> copy(numistaQr = on)
         NotebookSwitch.Unclaimed -> copy(unclaimed = on)
+        NotebookSwitch.Money -> copy(money = on)
     }
 
     /**
@@ -60,11 +74,12 @@ data class NotebookOptions(
         NotebookSwitch.BothFaces, NotebookSwitch.ActualSize -> photographs
         NotebookSwitch.Photographs, NotebookSwitch.SharePage, NotebookSwitch.NumistaQr -> true
         NotebookSwitch.Unclaimed -> true
+        NotebookSwitch.Money -> true
     }
 }
 
 /**
- * The six switches, in the order the export sheet draws them.
+ * The seven switches, in the order the export sheet draws them.
  *
  * «Cabecera fina» is deliberately **not** one of them: it is derived from «compartir página», since
  * a band of forty millimetres per plate makes no sense once two of them share a folio — and that
@@ -101,4 +116,14 @@ enum class NotebookSwitch {
      * about **what** is printed rather than about how. It is last because the lámina is last.
      */
     Unclaimed,
+
+    /**
+     * What the collection is worth, printed with it (ADR 0026 §10).
+     *
+     * Named the **sixth** switch by the ADR, which counted the five of #228; #275 had already made the
+     * lámina of loose coins a sixth, so on the shelf it is the seventh. It is last for the same reason
+     * that one is: it is the only one about **what** is printed rather than about how, and it is the only
+     * one that has ever been off by default.
+     */
+    Money,
 }

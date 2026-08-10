@@ -20,6 +20,14 @@ object Routes {
      * pieces are now the «Sin colección» chip of this one, reached from where they already live.
      */
     const val COINS = "coins"
+
+    /**
+     * The third hierarchy of the top level (ADR 0026 §8), and the only one that is not made of slots.
+     *
+     * It earns a cell because it has a grain of its own — grams — and it is last because the app still
+     * opens in Collections. It carries no shelf: its order is chosen by the figure you touch.
+     */
+    const val FIGURES = "figures"
     const val SETTINGS = "settings"
     const val NOTICES = "notices"
     const val PLATE = "plate/{catalogId}"
@@ -49,12 +57,20 @@ object Routes {
     fun isOwnGrouping(route: String?): Boolean = route == OWN_GROUPING
 
     /**
-     * The two destinations of the bottom bar, which are the two hierarchies and nothing else.
+     * The three destinations of the bottom bar, which are the three hierarchies and nothing else.
      *
      * Everything else in the app is reached *through* one of them, so this is also the answer to
      * «does the masthead offer Ajustes or «Volver»?»: a root has nothing underneath to pop.
      */
-    fun isRoot(route: String?): Boolean = route == INDEX || route == COINS
+    fun isRoot(route: String?): Boolean = route == INDEX || route == COINS || route == FIGURES
+
+    /**
+     * The roots that draw their own album chrome instead of the generic masthead.
+     *
+     * All three of them now: the sewn edge is their shared masthead, and keeping the generic one above
+     * any of them would print COINDEX and Ajustes twice (ADR 0026 §1).
+     */
+    fun ownsChrome(route: String?): Boolean = isRoot(route)
 
     /**
      * The two routes that open `PiecesScreen`.

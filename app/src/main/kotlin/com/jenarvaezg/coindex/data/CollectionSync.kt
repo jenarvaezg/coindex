@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.numista.NumistaClient
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * What one sync attempt left behind.
@@ -37,8 +38,21 @@ class CollectionSync(
     /** The last sync there was, so a launch opens on it instead of on a blank line. */
     val last: SyncRecord? get() = syncLog.last
 
+    private val running = AtomicBoolean(false)
+
+    /**
+     * Whether a sync is running right now, asked by whoever else spends the same budget (ADR 0028 §6).
+     *
+     * Here and not in the screen's state, and atomic rather than a plain flag, because the reader is on
+     * another thread: the valuation pass asks this from `Dispatchers.IO` three seconds after a launch, and
+     * what it is deciding is whether to take calls the sync is about to need.
+     */
+    val inFlight: Boolean get() = running.get()
+
     suspend fun run(client: NumistaClient, userId: Long): SyncOutcome {
+        running.set(true)
         val outcome = runCatching { syncService.run(client, userId) }
+        running.set(false)
         return outcome.fold(
             onSuccess = { report ->
                 val record = SyncRecord(

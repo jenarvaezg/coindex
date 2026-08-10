@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.placementYear
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

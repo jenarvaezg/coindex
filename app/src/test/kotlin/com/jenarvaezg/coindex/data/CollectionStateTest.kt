@@ -142,6 +142,7 @@ class CollectionStateTest {
             collectedItemDao = collectedItemDao,
             typeMetaDao = typeMetaDao,
             ownGroupingDao = FakeOwnGroupingDao(),
+            priceDao = FakePriceDao(),
             curation = Curation(catalogs = listOf(SOUTHERN_CROSS)),
         )
     }

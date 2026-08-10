@@ -486,7 +486,7 @@ class NotebookOptionsTest {
      * that adds a page instead of rearranging the ones there are.
      */
     @Test
-    fun `the six switches are in the order the sheet draws them`() {
+    fun `the seven switches are in the order the sheet draws them`() {
         assertEquals(
             listOf(
                 NotebookSwitch.Photographs,
@@ -495,6 +495,7 @@ class NotebookOptionsTest {
                 NotebookSwitch.SharePage,
                 NotebookSwitch.NumistaQr,
                 NotebookSwitch.Unclaimed,
+                NotebookSwitch.Money,
             ),
             NotebookSwitch.entries.toList(),
         )

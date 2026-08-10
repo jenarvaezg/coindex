@@ -10,19 +10,24 @@ import com.jenarvaezg.coindex.data.FakeCredentialStore
 import com.jenarvaezg.coindex.data.FakeNotebookStore
 import com.jenarvaezg.coindex.data.FakeOwnGroupingDao
 import com.jenarvaezg.coindex.data.FakePhotoPrefetch
+import com.jenarvaezg.coindex.data.FakePriceDao
 import com.jenarvaezg.coindex.data.FakeShelfStore
 import com.jenarvaezg.coindex.data.FakeSyncLog
 import com.jenarvaezg.coindex.data.FakeTypeMetaDao
+import com.jenarvaezg.coindex.data.FakeValuationPass
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
+import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.photos.PrefetchConditions
+import com.jenarvaezg.coindex.data.prices.OwnedIssue
+import com.jenarvaezg.coindex.data.prices.ValuationLoop
 import com.jenarvaezg.coindex.data.update.FakeUpdateInstaller
 import com.jenarvaezg.coindex.data.update.UpdateChecker
 import com.jenarvaezg.coindex.data.update.UpdateFlow
@@ -46,6 +51,7 @@ import kotlin.test.assertTrue
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -104,12 +110,18 @@ class CoindexViewModelTest {
     private val notebook = FakeNotebookStore()
     private val syncLog = FakeSyncLog()
     private val prefetch = FakePhotoPrefetch(PhotoCacheStatus(wanted = 2, missing = 1))
+    private val prices = FakePriceDao()
+    private val valuationPass = FakeValuationPass()
 
     /** Held outside the ViewModel, exactly as `AppContainer` holds it. */
     private val photos = PhotoPrefetchLoop(
         prefetch,
         { syncing -> PrefetchConditions(unmeteredNetwork = true, syncing = syncing) },
     )
+
+    /** Held outside it for the same reason, and told whether a sync is in flight the same way. */
+    private val valuation = ValuationLoop(valuationPass, { syncing })
+    private var syncing = false
     private val installer = FakeUpdateInstaller()
     private var warmedUp = 0
 
@@ -181,6 +193,7 @@ class CoindexViewModelTest {
             collectedItemDao = items,
             typeMetaDao = types,
             ownGroupingDao = ownGroupings,
+            priceDao = prices,
             curation = Curation(catalogs = emptyList()),
         )
         val ledger = ApiCallLedger(apiCalls) { NOW }
@@ -196,6 +209,7 @@ class CoindexViewModelTest {
             typeRefresh = TypeRefresh(types) { NOW },
             updates = UpdateFlow(updateChecker(), installer) { NOW },
             photos = photos,
+            valuation = valuation,
             client = client,
             warmUpFichaCache = warmUp,
             installedVersionName = "0.15.0",
@@ -226,6 +240,29 @@ class CoindexViewModelTest {
             viewModel.viewModelScope.cancel()
         }
     }
+
+
+    /**
+     * One piece of the ficha above, with the issue the valuation is addressed by.
+     *
+     * The issue id lives in the stored body and not in a column (ADR 0028), so a row that means to carry
+     * one has to have it in `raw` — which is also the only place a real sync ever puts it.
+     */
+    private fun collected(typeId: Int = LOOSE_TYPE, issueId: Int = 8_508) = CollectedItemEntity(
+        id = 1,
+        typeId = typeId,
+        quantity = 1,
+        title = "5 Bolívares",
+        issuerCode = "venezuela",
+        issueYear = 1929,
+        gregorianYear = 1929,
+        grade = "unc",
+        price = null,
+        forSwap = false,
+        collectionName = null,
+        raw = """{"issue":{"id":$issueId}}""",
+        syncedAt = NOW,
+    )
 
     private fun ficha(typeId: Int = LOOSE_TYPE) = TypeMetaEntity(
         typeId = typeId,
@@ -497,6 +534,68 @@ class CoindexViewModelTest {
             prefetch.passes.single().images.map { it.obverse.thumbnail },
         )
         assertEquals(1, viewModel.state.value.photoCache.missing)
+    }
+
+
+    /**
+     * The valuation runs on the same trigger as the photographs, and asks about the issues the
+     * collection carries (ADR 0028 §3).
+     *
+     * Every launch, because asking for what is missing is idempotent: with everything cached the second
+     * launch of a month costs zero calls, which is what makes «every launch» affordable at all.
+     */
+    @Test
+    fun `the prices are asked for once the collection has been read`() = onViewModel(
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+        },
+    ) { viewModel ->
+        runCurrent()
+        assertTrue(valuationPass.passes.isEmpty())
+
+        advanceTimeBy(4_000)
+
+        assertEquals(
+            listOf(OwnedIssue(typeId = LOOSE_TYPE, issueId = 8_508)),
+            valuationPass.passes.single().plan.owned,
+        )
+        assertEquals(0, viewModel.state.value.valuation.missing)
+    }
+
+    /**
+     * **A sync launched during a pass wins, and it does not fail with `BudgetExhausted`.**
+     *
+     * The gravest of the yields, and the one this loop is stricter about than its photographic sibling:
+     * the two spend the *same* monthly allowance, so a pass still unwinding can be inside `reserve()`
+     * taking a call the sync is about to need. Waited for, and not merely cancelled (ADR 0028 §6).
+     */
+    @Test
+    fun `a sync during a pass takes the budget back and waits for it`() = onViewModel(
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+            valuationPass.gate = CompletableDeferred()
+        },
+    ) { viewModel ->
+        runCurrent()
+        advanceTimeBy(4_000)
+        assertEquals(1, valuationPass.passes.size)
+
+        viewModel.sync()
+        // Waited for by its own outcome and never with `advanceUntilIdle`: the update poll is an endless
+        // `while (true)`, so the scheduler is never idle and a test that waited for it would hang.
+        val state = viewModel.state.first { it.lastSync != null }
+
+        assertEquals(1, valuationPass.cancelled)
+        // And the sync went through: it is the one that must not fail with `BudgetExhausted`, and the
+        // record it wrote is the proof it got its calls.
+        assertFalse(state.syncing)
+        assertEquals(NOW, state.lastSync?.atMillis)
+        assertTrue(
+            requested.none { it.contains("prices") },
+            "el pase cancelado no ha llegado a pedir precios",
+        )
     }
 
     /**

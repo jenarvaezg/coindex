@@ -3,8 +3,13 @@ package com.jenarvaezg.coindex.data
 import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
+import com.jenarvaezg.coindex.data.db.PriceDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.photos.TypeImages
+import com.jenarvaezg.coindex.data.prices.PriceBook
+import com.jenarvaezg.coindex.data.prices.SILVER_SYMBOL
+import com.jenarvaezg.coindex.data.prices.priceBook
+import com.jenarvaezg.coindex.data.prices.toDomain
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
@@ -101,9 +106,22 @@ class CoindexRepository(
     private val collectedItemDao: CollectedItemDao,
     private val typeMetaDao: TypeMetaDao,
     private val ownGroupingDao: OwnGroupingDao,
+    private val priceDao: PriceDao,
     /** The curated files, tied once, and the only door into the domain (#217). */
     val curation: Curation,
 ) {
+    /**
+     * Every price and the spot, as one value (ADR 0028).
+     *
+     * Kept apart from [observeState] rather than folded into it, and the seam is the arrival time: the
+     * collection changes when the collector syncs and the prices change while a background pass runs, so
+     * combining them would rebuild the whole index — 1.600 fichas through the domain — once per price
+     * row that lands.
+     */
+    fun observePrices(): Flow<PriceBook> = combine(
+        priceDao.observePrices(),
+        priceDao.observeSpot(SILVER_SYMBOL),
+    ) { prices, spot -> priceBook(prices, spot?.toDomain()) }
     fun observeState(): Flow<CollectionState> = combine(
         collectedItemDao.observeAll(),
         typeMetaDao.observeAll(),

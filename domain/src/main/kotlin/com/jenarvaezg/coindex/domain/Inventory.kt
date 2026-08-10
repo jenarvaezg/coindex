@@ -75,7 +75,53 @@ data class TypeMeta(
      * no part in the variant key, in the matching or in any ratio.
      */
     val numistaUrl: String? = null,
+    /**
+     * Millesimal fineness of the silver in this type, inferred from `composition.text` like the
+     * metal is (`silverFineness`).
+     *
+     * A rule read on the way in and not the prose itself, exactly like [metal]: the silver floor of a
+     * piece is its **fine** silver, and a .835 coin is 16,5 % copper. Null for a type that is not
+     * silver, and also for the two fichas that say «Plata» and no number — a piece with no declared
+     * fineness has no floor rather than a floor of one.
+     */
+    val fineness: Double? = null,
+    /**
+     * The coin's thickness in millimetres, Numista's `thickness`.
+     *
+     * The only measurement of the collection that is **extrapolated** rather than measured: it is
+     * missing in a third of the types, so the ladder of the stack says «unos 94 cm» over the pieces
+     * that have one, scaled to all of them (`docs/ux/cifras-316.md`). It takes no part in the variant
+     * key, in the matching or in any ratio.
+     */
+    val thicknessMillimetres: Double? = null,
+    /**
+     * Whether this is still money anywhere, Numista's `demonetization.is_demonetized`.
+     *
+     * Null is «Numista does not say», which is 2 % of his types and is not «still legal tender»: the
+     * figure at the margin is a percentage of the whole collection and declares nothing about the rows
+     * nobody filled in.
+     */
+    val demonetized: Boolean? = null,
+    /**
+     * Every hand that drew or engraved either face: `engravers` and `designers` of obverse and
+     * reverse, as one set.
+     *
+     * One list and not four, because the figure it feeds is «246 were engraved by the same hand» and
+     * a name signing both faces is one hand and not two. Numista files the same person under either
+     * key depending on who typed the ficha.
+     */
+    val hands: List<String> = emptyList(),
+    /** The mints that struck this type, Numista's `mints`. */
+    val mints: List<String> = emptyList(),
 ) {
+    /**
+     * The type's weight in grams, which is what Numista publishes and what mass is measured in.
+     *
+     * Derived from [weightOz] rather than stored beside it: the ounce is what the variant key is
+     * built on (ADR 0018), and two columns for one measurement is two things that can disagree.
+     */
+    val weightGrams: Double? get() = weightOz?.let { ounces -> ounces * GRAMS_PER_TROY_OUNCE }
+
     /**
      * The country this type is from, which is what a card and a coin row paint (ADR 0023).
      *

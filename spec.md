@@ -143,9 +143,11 @@ escribe el **[ADR 0021](docs/adr/0021-what-a-collection-is-and-the-top-level.md)
 **[ADR 0026](docs/adr/0026-the-shape-of-coindex-an-album-sheet.md)**. Los dos son la
 especificación; lo de abajo es su resumen.
 
-**Lo que sigue describe lo aprobado, no lo construido.** A 8 de agosto de 2026, de esta sección
-está construida la arquitectura del ADR 0021 y **ninguna** de las decisiones de forma del ADR
-0026: son 19,5 sesiones en once bloques, y ninguna se ha visto todavía en un teléfono.
+**Lo que sigue describe lo aprobado, y ya casi todo lo construido.** A 10 de agosto de 2026 están
+en el teléfono la arquitectura del ADR 0021 y **diez de los once bloques** de forma del ADR 0026,
+«Las cifras» incluida. Lo que queda pendiente es el bloque 11 —la poda de vocabulario y los dos
+tests de copy ([#342](https://github.com/jenarvaezg/coindex/issues/342))—, así que las cláusulas de
+**una cadena, un dueño** de más abajo describen aprobado y no construido.
 
 #### Identidad
 
@@ -216,6 +218,15 @@ está construida la arquitectura del ADR 0021 y **ninguna** de las decisiones de
   sección del dinero no está. El total dice **cobertura y no progreso**.
 - **Todo número traído de fuera se enseña con la fecha de su última lectura**, y un dato caducado
   se sigue enseñando en vez de borrarse.
+- **Los precios llegan en un solo pase** (ADR 0028): las emisiones que se tienen más los huecos de
+  las láminas a **diez casillas o menos** de cerrarse —487 llamadas—, al arrancar y al acabar un
+  sync, en silencio, **sin esperar al wifi** y **cediendo ante el sync**, que gasta del mismo bote.
+  Sin clave de API no corre; con el presupuesto agotado no escribe nada y Ajustes dice por qué.
+- **Tres estados y no dos**: precio, «Numista no da precio» —que **se guarda**, o se volvería a
+  pedir en cada pase— y fallo, que no escribe fila. Un precio caduca a los 30 días y el spot al
+  día; **caducar no es borrar**.
+- **Una pieza se tasa en su grado**, con el vecino cuando el suyo no existe; **un hueco en `unc`**.
+  El spot son dos llamadas sin clave que **no gastan presupuesto** y **no se siembran en el APK**.
 
 #### Movimiento y exportación
 

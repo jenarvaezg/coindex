@@ -3,6 +3,8 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
+import com.jenarvaezg.coindex.data.prices.PriceBook
+import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
@@ -55,4 +57,20 @@ data class UiState(
     val refreshingFichas: Set<Int> = emptySet(),
     /** What the phone holds of the catalog's photographs (#191). Read only in the settings screen. */
     val photoCache: PhotoCacheStatus = PhotoCacheStatus(),
+    /**
+     * Every catalog price and the last spot (ADR 0028).
+     *
+     * In the state rather than fetched by «Las cifras» when it opens: the value of a piece also lands in
+     * its ficha and in the header of its plate, and three screens reading three books is three totals
+     * that can disagree about the same coin.
+     */
+    val prices: PriceBook = PriceBook(),
+    /**
+     * How far the valuation pass has got, which is what decides whether the money section exists at all.
+     *
+     * **Absence and not zero** (ADR 0028 §7): while this says the market is still arriving, the total
+     * would be `max(silver, paid)` — some 60 % of the real figure — and a total at 60 % is not
+     * incomplete, it is false.
+     */
+    val valuation: ValuationStatus = ValuationStatus(),
 )

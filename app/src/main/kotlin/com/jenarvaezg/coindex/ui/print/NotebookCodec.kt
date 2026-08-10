@@ -20,6 +20,7 @@ object NotebookCodec {
         NotebookSwitch.SharePage -> "notebook_share_page"
         NotebookSwitch.NumistaQr -> "notebook_numista_qr"
         NotebookSwitch.Unclaimed -> "notebook_unclaimed"
+        NotebookSwitch.Money -> "notebook_money"
     }
 
     /**

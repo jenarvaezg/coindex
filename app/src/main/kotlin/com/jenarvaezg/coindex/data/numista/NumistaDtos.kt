@@ -47,9 +47,35 @@ data class IssuerDto(val code: String? = null, val name: String? = null)
 
 @Serializable
 data class IssueDto(
+    /**
+     * The issue's own id, which is what `/issues/{id}/prices` is addressed by.
+     *
+     * Parsed here for the **catalog's** issues, listed by `/types/{id}/issues`. A piece the collector
+     * owns does not need this DTO to find its own: `Mappers.issueIdFromRaw` reads it out of the stored
+     * response body, so every row already synced carries it without a migration (ADR 0028).
+     */
+    val id: Int? = null,
     val year: Int? = null,
     @SerialName("gregorian_year") val gregorianYear: Int? = null,
 )
+
+/**
+ * Numista's estimated prices for one issue, one per grade, in the currency asked for.
+ *
+ * One call answers **every** grade of the issue, which is what makes 223 calls enough for his whole
+ * collection however each row is graded (ADR 0028 §1).
+ *
+ * An answer with an empty list is the second of the three states — «Numista has no price for this» —
+ * and it is a datum to store rather than a failure to retry (ADR 0028 §4).
+ */
+@Serializable
+data class IssuePricesResponse(
+    val currency: String? = null,
+    val prices: List<IssuePriceDto>? = null,
+)
+
+@Serializable
+data class IssuePriceDto(val grade: String? = null, val price: Double? = null)
 
 @Serializable
 data class PriceDto(val value: Double? = null, val currency: String? = null)

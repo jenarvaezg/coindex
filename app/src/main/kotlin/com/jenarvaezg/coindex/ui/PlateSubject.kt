@@ -61,6 +61,15 @@ data class PlateSubject(
      * plate either, because `resolvePlate` needs evidence to open one.
      */
     val landingCell: Int?,
+    /**
+     * What the coins in these casillas are worth, or null when there is no money to say (ADR 0026 §10).
+     *
+     * Null in three different situations that all mean the same thing on the page — the market has not
+     * landed yet (ADR 0028 §7), the plate holds nothing, or **this drawer is the export with the money
+     * switched off** (#228, ADR 0021 §13). One nullable field rather than a flag per drawer, so a drawer
+     * cannot print an amount it was not given.
+     */
+    val value: String? = null,
 )
 
 /**
@@ -105,7 +114,7 @@ fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
  * Takes the resolution and not its pieces so that the pieces cannot arrive apart: an album belongs
  * to the catalog it was built from, and the programmes to both.
  */
-fun plateSubject(plate: PlateResult.Available): PlateSubject {
+fun plateSubject(plate: PlateResult.Available, value: PlateValue? = null): PlateSubject {
     val catalog = plate.catalog
     // Off the album and not off the catalog, so the heading is lifted out of the very cells the
     // plate is about to draw: the album is the plate as this collector has it.
@@ -134,6 +143,7 @@ fun plateSubject(plate: PlateResult.Available): PlateSubject {
         ratio = coverage?.let { "${it.owned}/${it.issued}" },
         complete = coverage?.nothingMissing == true,
         landingCell = plate.album.firstOwnedIndex(),
+        value = value?.let(::plateValueLabel),
     )
 }
 

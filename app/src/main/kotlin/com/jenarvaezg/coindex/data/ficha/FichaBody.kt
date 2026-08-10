@@ -5,8 +5,10 @@ import com.jenarvaezg.coindex.domain.recordedDiameter
 import com.jenarvaezg.coindex.domain.recordedText
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -29,6 +31,16 @@ data class FichaReading(
     val sizeMillimetres: Double? = null,
     val category: String? = null,
     val numistaUrl: String? = null,
+    /**
+     * The four «Las cifras» reads out of the body it was already storing (ADR 0028 §7).
+     *
+     * Nine fields now, not five, and the bargain is unchanged: the page opens whole on a phone that
+     * has never called Numista because every one of these was already in the APK's own fichas.
+     */
+    val thicknessMillimetres: Double? = null,
+    val demonetized: Boolean? = null,
+    val hands: List<String> = emptyList(),
+    val mints: List<String> = emptyList(),
 )
 
 /**
@@ -39,7 +51,7 @@ data class FichaReading(
  * bargain the five read-on-every-pass fields had, moved from every read to one write: what a
  * column costs is that improving the rule needs a pass, and this integer is that pass's trigger.
  */
-const val FICHA_READING: Int = 1
+const val FICHA_READING: Int = 2
 
 /**
  * Reads one stored Numista body.
@@ -67,6 +79,18 @@ fun readFichaBody(raw: String): FichaReading {
         // Numista's host and about which language the ficha was asked in — printed onto paper,
         // where nobody can correct it.
         numistaUrl = recordedText(body.text("url")),
+        // A diameter of zero is not a diameter and neither is a thickness of zero, so the domain's
+        // own rule is reused rather than restated (`recordedDiameter`).
+        thicknessMillimetres = recordedDiameter(body.number("thickness")),
+        // Absent is **not** false: 2 % of his types say nothing about demonetization, and a figure
+        // that read silence as «still legal tender» would be a percentage nobody can check.
+        demonetized = runCatching {
+            body["demonetization"]?.jsonObject?.get("is_demonetized")?.jsonPrimitive?.booleanOrNull
+        }.getOrNull(),
+        // Engravers and designers of both faces as one set: Numista files the same person under
+        // either key depending on who typed the ficha, and a name signing both faces is one hand.
+        hands = body.names("engravers") + body.names("designers"),
+        mints = body.namedList("mints"),
     )
 }
 
@@ -104,3 +128,29 @@ private fun JsonObject.number(field: String): Double? = runCatching {
 private fun JsonObject.text(field: String, nested: String): String? = runCatching {
     this[field]?.jsonObject?.get(nested)?.jsonPrimitive?.contentOrNull
 }.getOrNull()
+
+/**
+ * The names in an array of strings that hangs off **each face**, in order and without duplicates.
+ *
+ * `engravers` and `designers` are per side, so a ficha holds up to four of these lists; distinct
+ * because a hand credited on both faces is one hand, and the figure at the margin counts hands.
+ */
+private fun JsonObject.names(field: String): List<String> = SIDES
+    .flatMap { side ->
+        runCatching {
+            this[side]?.jsonObject?.get(field)?.jsonArray?.mapNotNull {
+                it.jsonPrimitive.contentOrNull
+            }
+        }.getOrNull().orEmpty()
+    }
+    .mapNotNull(::recordedText)
+    .distinct()
+
+/** The `name` of every object in a top-level array: `mints` is the only one of these today. */
+private fun JsonObject.namedList(field: String): List<String> = runCatching {
+    this[field]?.jsonArray?.mapNotNull { entry ->
+        entry.jsonObject["name"]?.jsonPrimitive?.contentOrNull
+    }
+}.getOrNull().orEmpty().mapNotNull(::recordedText).distinct()
+
+private val SIDES = listOf("obverse", "reverse")

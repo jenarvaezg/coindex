@@ -58,6 +58,7 @@ import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.plateSheetTally
+import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.printedPhoto
@@ -79,6 +80,13 @@ import kotlinx.coroutines.flow.first
 fun PlateScreen(
     result: PlateResult,
     images: Map<Int, TypeImages>,
+    /**
+     * What the coins of this plate are worth, or null while the market has not landed (ADR 0028 §7).
+     *
+     * A function of the resolution and not a value, because the plate is resolved here: the album it
+     * needs to know which casillas are filled only exists on the other side of `result`.
+     */
+    value: (PlateResult.Available) -> PlateValue?,
     onOpenSource: (String) -> Unit,
     onMessage: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -86,7 +94,7 @@ fun PlateScreen(
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
         is PlateResult.Available -> AvailablePlate(
-            plate = remember(result) { plateSubject(result) },
+            plate = remember(result, value) { plateSubject(result, value(result)) },
             images = images,
             onOpenSource = onOpenSource,
             onMessage = onMessage,
@@ -186,6 +194,16 @@ private fun PlateGrid(
                         complete = plate.complete,
                         ink = ink,
                     )
+                    // The value of what is in these casillas, and never the cost of closing them:
+                    // per plate the first is a shopping companion and the second is a plan, and both
+                    // become wealth management the moment they are totalled (ADR 0026 §10).
+                    plate.value?.let { value ->
+                        Text(
+                            value,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Paper.rust,
+                        )
+                    }
                     SpecificationCard(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),

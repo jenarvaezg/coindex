@@ -13,6 +13,7 @@ import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
@@ -54,9 +55,19 @@ fun notebookSections(
     unclaimed: List<CollectedItem>,
     curation: Curation,
     options: NotebookOptions,
+    /**
+     * What a plate is worth, or null for every plate when the money switch is off (#228, ADR 0021 §13).
+     *
+     * The switch is answered **here and once**, by handing this function nothing rather than by asking
+     * the options again further down: a drawer that has no amount cannot print one, which is what makes
+     * «apagarlo no deja escapar ninguna cifra derivada de dinero» a property of the code rather than a
+     * promise about it.
+     */
+    plateValue: (PlateResult.Available) -> PlateValue? = { null },
 ): List<PrintSection> = cards.map { card ->
     when (val destination = destinationOf(card)) {
-        is CardDestination.Plate -> plateSection(state, curation, destination.catalogId, options)
+        is CardDestination.Plate ->
+            plateSection(state, curation, destination.catalogId, options, plateValue)
             // A plate that will not resolve is not a reason to skip the card: its pieces are still
             // a collection, and the same fallback the screens have is the one the paper gets.
             ?: piecesSection(state, card, options)
@@ -69,19 +80,23 @@ private fun plateSection(
     curation: Curation,
     catalogId: String,
     options: NotebookOptions,
+    plateValue: (PlateResult.Available) -> PlateValue?,
 ): PrintSection? {
     val resolved = resolvePlate(state, curation, catalogId) as? PlateResult.Available
         ?: return null
     // The same plate the screen and the exported sheet draw (#218), so the three cannot word one
     // catalog three ways: the heading, the specification and what every cell says arrive settled.
-    val plate = plateSubject(resolved)
+    val plate = plateSubject(resolved, plateValue(resolved))
     return PrintSection(
         // The same claim the exported sheet makes, and for the same reason: the paper outlives the
         // app, and a page that says «curado» about a list nobody curated cannot be taken back.
         eyebrow = "COINDEX · CATÁLOGO CURADO",
         title = plate.title,
         subtitle = null,
-        facts = plate.entries,
+        // The value joins the specification rather than the heading, because the printed page has no
+        // header to raise a figure into — which is the same reason the ratio reaches paper as a row
+        // (`plateEntriesBesideRatio` is deliberately not called here).
+        facts = plate.entries + listOfNotNull(plate.value?.let { VALUE_LABEL to it }),
         source = plate.source,
         // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371): the subject
         // already knew, and until now the section threw the bit away.
@@ -261,3 +276,6 @@ private fun CollectionState.facesOf(
  */
 private fun CollectionState.qrUrlOf(typeId: Int?, options: NotebookOptions): String? =
     typeId?.takeIf { options.numistaQr }?.let { typeMeta[it]?.numistaUrl }
+
+/** What the value row is called on paper. Same word the screen uses over the plate. */
+private const val VALUE_LABEL = "Valor"
