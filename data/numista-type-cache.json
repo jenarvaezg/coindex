@@ -1634,39 +1634,55 @@
   "type": "Monedas circulantes conmemorativas"
  },
  "104170": {
-  "category": "coin",
-  "commemorated_topic": "Charlemagme",
-  "composition": {
-   "text": "Plata 925"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "Reed"
-  },
   "id": 104170,
-  "issuer": {
-   "code": "gibraltar",
-   "name": "Gibraltar"
-  },
-  "max_year": 1993,
-  "min_year": 1992,
-  "mints": [
-   {
-    "id": 26,
-    "name": "Casa de la Moneda de Pobjoy"
-   }
-  ],
+  "url": "https://es.numista.com/104170",
+  "title": "35 ECUs / 25 Pounds - Elizabeth II (Knight)",
   "object_type": {
    "id": 2,
    "name": "Monedas circulantes conmemorativas"
   },
+  "issuer": {
+   "code": "gibraltar",
+   "name": "Gibraltar"
+  },
+  "min_year": 1992,
+  "max_year": 1993,
+  "ruler": [
+   {
+    "id": 2999,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 831,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "35 ECUs ",
+   "numeric_value": 25,
+   "currency": {
+    "id": 10387,
+    "name": "Ecu",
+    "full_name": "Ecu (1990-1996)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.6,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
   "obverse": {
-   "description": "Busto sin corona de la reina Isabel II, mirando hacia la derecha, con la diadema de Estado de Jorge IV, leyenda y fecha alrededor.",
    "designers": [
     "Raphael David Maklouf"
    ],
+   "description": "Busto sin corona de la reina Isabel II, mirando hacia la derecha, con la diadema de Estado de Jorge IV, leyenda y fecha alrededor.",
    "lettering": "ELIZABETH II GIBRALTAR·1991\r\nRDM\r\nPM",
    "lettering_scripts": [
     {
@@ -1674,20 +1690,10 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/gibraltar/2156-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/gibraltar/2156-180.jpg",
    "picture_copyright": "GNDM",
-   "picture_copyright_url": "http://archiwum.gndm.pl/",
-   "thumbnail": "https://en.numista.com/catalogue/photos/gibraltar/2156-180.jpg"
+   "picture_copyright_url": "http://archiwum.gndm.pl/"
   },
-  "orientation": "medal",
-  "references": [
-   {
-    "catalogue": {
-     "code": "KM",
-     "id": 3
-    },
-    "number": "110"
-   }
-  ],
   "reverse": {
    "description": "Caballero acorazado montado a caballo y mirando hacia la derecha, 12 estrellas alrededor.",
    "lettering": "35 ECUS\r\n25 POUNDS",
@@ -1697,45 +1703,39 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/gibraltar/2157-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/gibraltar/2157-180.jpg",
    "picture_copyright": "GNDM",
-   "picture_copyright_url": "http://archiwum.gndm.pl/",
-   "thumbnail": "https://en.numista.com/catalogue/photos/gibraltar/2157-180.jpg"
+   "picture_copyright_url": "http://archiwum.gndm.pl/"
   },
-  "ruler": [
-   {
-    "group": {
-     "id": 831,
-     "name": "Casa de Windsor"
-    },
-    "id": 2999,
-    "name": "Isabel II",
-    "wikidata_id": "Q9682"
-   }
-  ],
   "series": "Charlemagme - Mounted Knight",
-  "shape": "Circular",
-  "size": 38.6,
+  "commemorated_topic": "Carlomagno",
   "tags": [
    "Caballo o equino",
    "Armadura",
    "Arma blanca"
   ],
-  "technique": {
-   "text": "Acuñación a máquina"
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "110"
+   }
+  ],
+  "weight": 28.28,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
   },
-  "title": "35 ECUs / 25 Pounds - Elizabeth II (Knight)",
-  "type": "Monedas circulantes conmemorativas",
-  "url": "https://es.numista.com/104170",
-  "value": {
-   "currency": {
-    "full_name": "Ecu (1990-1996)",
-    "id": 10387,
-    "name": "Ecu"
-   },
-   "numeric_value": 25,
-   "text": "35 ECUs "
-  },
-  "weight": 28.28
+  "mints": [
+   {
+    "id": 26,
+    "name": "Casa de la Moneda de Pobjoy"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "106032": {
   "id": 106032,
@@ -70367,6 +70367,7 @@
    "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/65ed103c2c9630.01446232-180.jpg",
    "picture_copyright": "The Royal Mint, 2024"
   },
+  "series": "The Lion and the Eagle",
   "comments": "<p>Lanzada en colaboración con GovMint.com y grabada por el duodécimo grabador jefe de la Fábrica de la Moneda de los Estados Unidos, John M. Mercanti. La moneda conmemora la duradera relación entre el Reino Unido y los Estados Unidos de América.<br><br>Esta moneda se acuñó individualmente, la de lingote en 2024 y la de prueba en 2023. El diseño también se acuñó en diversas denominaciones y metales.</p>",
   "related_types": [
    {
@@ -71675,6 +71676,7 @@
    "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/66768a937d0ca7.07756280-180.jpg",
    "picture_copyright": "The Royal Mint, 2024"
   },
+  "series": "St George and the Dragon",
   "comments": "<p>Acuñada en una onza de plata de ley 999 y acabada según el estándar de lingotes de The Royal Mint.</p>",
   "related_types": [
    {
@@ -85636,6 +85638,7 @@
    "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6808e88888d306.87637776-180.jpg",
    "picture_copyright": "The Royal Mint, 2025"
   },
+  "series": "St George and the Dragon",
   "comments": "<p>Reimaginación de un diseño creado originalmente por George Kruger Gray para el Jubileo de Plata de Jorge V. Acuñada en una onza de plata de ley 999 y acabada según el estándar de lingotes de la Royal Mint.</p>",
   "related_types": [
    {
@@ -92592,43 +92595,55 @@
   "weight": 13.88
  },
  "52234": {
-  "category": "coin",
-  "commemorated_topic": "Monumentos arquitectónicos de Rusia",
-  "comments": "Fecha de emisión: 01 AGO 2013",
-  "composition": {
-   "text": "Plata 925"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "300 ondulaciones"
-  },
   "id": 52234,
-  "issuer": {
-   "code": "russie",
-   "name": "Federación de Rusia (1991-presente)"
-  },
-  "max_year": 2013,
-  "min_year": 2013,
-  "mints": [
-   {
-    "id": 7,
-    "name": "Saint Petersburg"
-   }
-  ],
+  "url": "https://es.numista.com/52234",
+  "title": "3 Roubles (Naval Cathedral of Saint Nicholas in Kronstadt)",
   "object_type": {
    "id": 3,
    "name": "Monedas no circulantes"
   },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "thickness": 3.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
   "obverse": {
-   "description": "En el centro - el emblema del Banco de Rusia [el águila bicéfala con las alas hacia abajo, debajo - la inscripción semicircular \"БАНК РОССИИ\" (BANCO DE RUSIA)] enmarcado por un círculo de puntos e inscripciones a lo largo del borde - en la parte superior: \"ТРИ РУБЛЯ\" (TRES ROBLES), abajo: a la izquierda - indicaciones del metal precioso y su ley, en el centro - el año de emisión, a la derecha - el contenido de metal fino y la marca de ceca.",
-   "designers": [
-    "Alexander Vasilyevich Baklanov"
-   ],
    "engravers": [
     "Alexander Vasilyevich Baklanov"
    ],
+   "designers": [
+    "Alexander Vasilyevich Baklanov"
+   ],
+   "description": "En el centro - el emblema del Banco de Rusia [el águila bicéfala con las alas hacia abajo, debajo - la inscripción semicircular \"БАНК РОССИИ\" (BANCO DE RUSIA)] enmarcado por un círculo de puntos e inscripciones a lo largo del borde - en la parte superior: \"ТРИ РУБЛЯ\" (TRES ROBLES), abajo: a la izquierda - indicaciones del metal precioso y su ley, en el centro - el año de emisión, a la derecha - el contenido de metal fino y la marca de ceca.",
    "lettering": "ТРИ РУБЛЯ\r\nБАНК РОССИИ\r\n•  Ag 925  •  2013 г.  •  31,1 СПМД •",
    "lettering_scripts": [
     {
@@ -92639,42 +92654,18 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/russie/65fdf22904d802.79680765-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/65fdf22904d802.79680765-180.jpg",
    "picture_copyright": "Auction House Alexander",
-   "picture_copyright_url": "http://www.adacoins.ru/",
-   "thumbnail": "https://en.numista.com/catalogue/photos/russie/65fdf22904d802.79680765-180.jpg"
+   "picture_copyright_url": "http://www.adacoins.ru/"
   },
-  "orientation": "medal",
-  "references": [
-   {
-    "catalogue": {
-     "code": "Y",
-     "id": 9
-    },
-    "number": "1463"
-   },
-   {
-    "catalogue": {
-     "code": "CBR",
-     "id": 203
-    },
-    "number": "5111-0268"
-   },
-   {
-    "catalogue": {
-     "code": "Schön",
-     "id": 24
-    },
-    "number": "1405"
-   }
-  ],
   "reverse": {
-   "description": "En el centro del disco en el campo de espejo - la imagen en relieve de una catedral, debajo de ella en el campo mate - la inscripción a lo largo del borde: \"КРОНШТАДТ\" (KRONSTADT), arriba a lo largo del borde - la inscripción semicircular: \"НИКОЛЬСКИЙ МОРСКОЙ СОБОР\" (LA CATEDRAL MARINA DE NIKOLAS).",
-   "designers": [
-    "Lidiya Alexandrovna Evdokimova"
-   ],
    "engravers": [
     "Lidiya Alexandrovna Evdokimova"
    ],
+   "designers": [
+    "Lidiya Alexandrovna Evdokimova"
+   ],
+   "description": "En el centro del disco en el campo de espejo - la imagen en relieve de una catedral, debajo de ella en el campo mate - la inscripción a lo largo del borde: \"КРОНШТАДТ\" (KRONSTADT), arriba a lo largo del borde - la inscripción semicircular: \"НИКОЛЬСКИЙ МОРСКОЙ СОБОР\" (LA CATEDRAL MARINA DE NIKOLAS).",
    "lettering": "НИКОЛЬСКИЙ МОРСКОЙ СОБОР\r\nКРОНШТАДТ",
    "lettering_scripts": [
     {
@@ -92682,40 +92673,52 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/russie/65fdf229667fa9.43799684-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/65fdf229667fa9.43799684-180.jpg",
    "picture_copyright": "Auction House Alexander",
-   "picture_copyright_url": "http://www.adacoins.ru/",
-   "thumbnail": "https://en.numista.com/catalogue/photos/russie/65fdf229667fa9.43799684-180.jpg"
+   "picture_copyright_url": "http://www.adacoins.ru/"
   },
-  "ruler": [
-   {
-    "id": 1573,
-    "name": "Russian Federation",
-    "wikidata_id": "Q159"
-   }
-  ],
   "series": "Architectural Monuments of Russia",
-  "shape": "Circular",
-  "size": 39,
+  "commemorated_topic": "Monumentos arquitectónicos de Rusia",
+  "comments": "Fecha de emisión: 01 AGO 2013",
   "tags": [
    "Construcción religiosa"
   ],
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "thickness": 3.3,
-  "title": "3 Roubles (Naval Сathedral of Saint Nicholas in Kronstadt)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/52234",
-  "value": {
-   "currency": {
-    "full_name": "Rouble (1998-date)",
-    "id": 169,
-    "name": "Rouble"
+  "references": [
+   {
+    "catalogue": {
+     "id": 9,
+     "code": "Y"
+    },
+    "number": "1463"
    },
-   "numeric_value": 3,
-   "text": "3 Roubles"
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5111-0268"
+   },
+   {
+    "catalogue": {
+     "id": 24,
+     "code": "Schön"
+    },
+    "number": "1405"
+   }
+  ],
+  "weight": 33.94,
+  "orientation": "medal",
+  "edge": {
+   "description": "300 ondulaciones"
   },
-  "weight": 33.94
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "52235": {
   "category": "coin",
@@ -93601,6 +93604,7 @@
    "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6952e29be0a204.21240935-180.jpg",
    "picture_copyright": "The Royal Mint, 2026"
   },
+  "series": "The Lion and the Eagle",
   "comments": "<p style=\"margin-left:0px;\">Emitidos individualmente, celebran la continua amistad entre el Reino Unido y los Estados Unidos.</p>",
   "tags": [
    "Gato o felino",
@@ -94766,39 +94770,55 @@
   "type": "Monedas no circulantes"
  },
  "557132": {
-  "category": "coin",
-  "commemorated_topic": "Koala",
-  "composition": {
-   "text": "Plata 999"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "Reed"
-  },
   "id": 557132,
-  "issuer": {
-   "code": "australie",
-   "name": "Australia"
-  },
-  "max_year": 2026,
-  "min_year": 2026,
-  "mints": [
-   {
-    "id": 28,
-    "name": "Royal Australian Mint"
-   }
-  ],
+  "url": "https://es.numista.com/557132",
+  "title": "1 Dollar - Charles III (1st Portrait - Koala - Silver)",
   "object_type": {
    "id": 3,
    "name": "Monedas no circulantes"
   },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
   "obverse": {
-   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda.",
    "designers": [
     "Dan Thorne"
    ],
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda.",
    "lettering": "· CHARLES III · AUSTRALIA 2026 ·\r\nDT\r\n1 DOLLAR",
    "lettering_scripts": [
     {
@@ -94806,16 +94826,15 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/australie/698538aa65a347.21618165-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/698538aa65a347.21618165-180.jpg",
    "picture_copyright": "Royal Australian Mint",
-   "picture_copyright_url": "http://www.ramint.gov.au",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/698538aa65a347.21618165-180.jpg"
+   "picture_copyright_url": "http://www.ramint.gov.au"
   },
-  "orientation": "medal",
   "reverse": {
-   "description": "Un koala comiendo hojas de chicle con Joey a la espalda a la izquierda, un koala durmiendo en la rama de un árbol de chicle a la derecha.",
    "designers": [
     "Lydia Ashe"
    ],
+   "description": "Un koala comiendo hojas de chicle con Joey a la espalda a la izquierda, un koala durmiendo en la rama de un árbol de chicle a la derecha.",
    "lettering": "LA\r\nKOALA\r\n1 oz .999 Ag",
    "lettering_scripts": [
     {
@@ -94823,43 +94842,29 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/australie/698538ab75dbd8.23916939-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/698538ab75dbd8.23916939-180.jpg",
    "picture_copyright": "Royal Australian Mint",
-   "picture_copyright_url": "http://www.ramint.gov.au",
-   "thumbnail": "https://en.numista.com/catalogue/photos/australie/698538ab75dbd8.23916939-180.jpg"
+   "picture_copyright_url": "http://www.ramint.gov.au"
   },
-  "ruler": [
-   {
-    "group": {
-     "id": 825,
-     "name": "Casa de Windsor"
-    },
-    "id": 6815,
-    "name": "Carlos III",
-    "wikidata_id": "Q43274"
-   }
-  ],
-  "shape": "Circular",
-  "size": 40,
+  "series": "Australian Koala",
+  "commemorated_topic": "Koala",
   "tags": [
    "Marsupial",
    "Árbol"
   ],
-  "technique": {
-   "text": "Acuñación a máquina"
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
   },
-  "title": "1 Dollar - Charles III (1st Portrait - Koala - Silver)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/557132",
-  "value": {
-   "currency": {
-    "full_name": "Dólar (1966-presente)",
-    "id": 243,
-    "name": "Dólar"
-   },
-   "numeric_value": 1,
-   "text": "1 Dollar"
-  },
-  "weight": 31.1
+  "mints": [
+   {
+    "id": 28,
+    "name": "Royal Australian Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "557309": {
   "id": 557309,
@@ -99807,84 +99812,75 @@
   "weight": 31.21
  },
  "577892": {
-  "category": "coin",
-  "comments": "(en) <p>The third release in the St George and the Dragon Bullion Coin Collection to celebrate the 500th anniversary of the legendary scene captured on British coinage. Struck in one ounce of 999 fine silver and finished to The Royal Mint’s bullion standard. Also available in gold bullion.</p>",
-  "composition": {
-   "text": "Plata 999"
-  },
-  "demonetization": {
-   "is_demonetized": false
-  },
-  "edge": {
-   "description": "Reed"
-  },
   "id": 577892,
-  "issue_terms": {
-   "is_issued": true,
-   "issue_date": "2026-05-00"
+  "url": "https://es.numista.com/577892",
+  "title": "2 Pounds - Charles III (St George & The Dragon; 1oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
   },
   "issuer": {
    "code": "royaume-uni",
    "name": "Reino Unido"
   },
-  "max_year": 2026,
   "min_year": 2026,
-  "mints": [
+  "max_year": 2026,
+  "ruler": [
    {
-    "id": 16,
-    "name": "Royal Mint"
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
    }
   ],
-  "object_type": {
-   "id": 3,
-   "name": "Monedas no circulantes"
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-05-00"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
   },
   "obverse": {
-   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda alrededor.",
    "designers": [
     "Martin Jennings"
    ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda alrededor.",
    "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
    "lettering_scripts": [
     {
      "name": "Latina"
     }
    ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
    "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6a0187d4c925b9.63904207-original.jpg",
-   "picture_copyright": "The Royal Mint, 2026",
    "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6a0187d4c925b9.63904207-180.jpg",
-   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor"
+   "picture_copyright": "The Royal Mint, 2026"
   },
-  "orientation": "medal",
-  "related_types": [
-   {
-    "category": "coin",
-    "country": {
-     "code": "royaume-uni",
-     "name": "Reino Unido"
-    },
-    "id": 577894,
-    "maxYear": 2026,
-    "minYear": 2026,
-    "title": "25 Pounds - Charles III (St George & The Dragon; 1/4oz Fine Gold)"
-   },
-   {
-    "category": "coin",
-    "country": {
-     "code": "royaume-uni",
-     "name": "Reino Unido"
-    },
-    "id": 577893,
-    "maxYear": 2026,
-    "minYear": 2026,
-    "title": "100 Pounds - Charles III (St George & The Dragon; 1oz Fine Gold)"
-   }
-  ],
   "reverse": {
-   "description": "Representación de una batalla entre San Jorge a caballo y el dragón.",
    "designers": [
     "Sandra Deiana"
    ],
+   "description": "Representación de una batalla entre San Jorge a caballo y el dragón.",
    "lettering": "1OZ . FINE SILVER . 999 . 2026.\r\nTALI DICATA SIGNO MENS FLVCTVARI NEQVIT\r\nSD",
    "lettering_scripts": [
     {
@@ -99892,43 +99888,53 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6a0187d5da65a0.80416909-original.jpg",
-   "picture_copyright": "The Royal Mint, 2026",
-   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6a0187d5da65a0.80416909-180.jpg"
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6a0187d5da65a0.80416909-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
   },
-  "ruler": [
+  "series": "St George and the Dragon",
+  "comments": "(en) <p>The third release in the St George and the Dragon Bullion Coin Collection to celebrate the 500th anniversary of the legendary scene captured on British coinage. Struck in one ounce of 999 fine silver and finished to The Royal Mint’s bullion standard. Also available in gold bullion.</p>",
+  "related_types": [
    {
-    "group": {
-     "id": 527,
-     "name": "Casa de Windsor"
+    "id": 577894,
+    "title": "25 Pounds - Charles III (St George & The Dragon; 1/4oz Fine Gold)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
     },
-    "id": 6814,
-    "name": "Carlos III",
-    "wikidata_id": "Q43274"
+    "minYear": 2026,
+    "maxYear": 2026
+   },
+   {
+    "id": 577893,
+    "title": "100 Pounds - Charles III (St George & The Dragon; 1oz Fine Gold)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2026,
+    "maxYear": 2026
    }
   ],
-  "shape": "Circular",
-  "size": 38.61,
   "tags": [
    "Animal fantástico",
    "Caballo o equino",
    "Armadura"
   ],
-  "technique": {
-   "text": "Acuñación a máquina"
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
   },
-  "title": "2 Pounds - Charles III (St George & The Dragon; 1oz Fine Silver)",
-  "type": "Monedas no circulantes",
-  "url": "https://es.numista.com/577892",
-  "value": {
-   "currency": {
-    "full_name": "Pound sterling (decimalized, 1971-date)",
-    "id": 126,
-    "name": "Pound sterling"
-   },
-   "numeric_value": 2,
-   "text": "2 libras"
-  },
-  "weight": 31.1
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "578835": {
   "category": "exonumia",
