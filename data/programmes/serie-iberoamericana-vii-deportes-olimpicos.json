@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-vii-deportes-olimpicos",
+  "name": "Serie Iberoamericana VII · Los países iberoamericanos y los deportes olímpicos · nueve países, 2007",
+  "short_name": "Serie Iberoamericana VII",
+  "issuer_code": "espagne",
+  "year": 2007,
+  "source": "https://www.fnmt.es/coleccionista/anos-anteriores/emisiones-2008/vii-serie-iberoamericana-paises-iberoamericanos-y-los-deportes-olimpicos",
+  "source_note": "Las nueve monedas de la VII Serie Iberoamericana, «Los países iberoamericanos y los deportes olímpicos», la séptima acuñación conjunta que coordinó la FNMT: 27 g de plata .925 y 40 mm para todos los países, una casilla por país. La página de la FNMT enumera nueve monedas y una medalla, con la denominación de cada país. Participan Argentina, Cuba, Ecuador, España, Guatemala, México, Nicaragua, Perú y Portugal. El límite no lo pone Numista y no puede ponerlo: de las nueve monedas, su serie 4138 no tiene la argentina (N#36015), y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —nueve monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#13316, la que su decreto puso en circulación, y fuera quedan N#16831 (la proof de plata .925 de los mismos juegos olímpicos). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: ninguna de las dos colecciones tiene ninguna de estas piezas, y ningún catálogo curado reclama ninguno de sus tipos, así que este fichero viaja en el APK sin salir en ninguna pantalla. Se versiona a sabiendas, por decisión del coleccionista el 10 de agosto de 2026: «no pasa nada si viaja, tengo planes a futuro».",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 36015
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 62913
+    },
+    {
+      "label": "Ecuador · 1 sucre",
+      "numista_type_id": 72876
+    },
+    {
+      "label": "España · 10 euros",
+      "numista_type_id": 45372
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 72877
+    },
+    {
+      "label": "México · 5 pesos",
+      "numista_type_id": 57029
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 72878
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 46263
+    },
+    {
+      "label": "Portugal · 10 euros",
+      "numista_type_id": 13316
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 472030
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-iii-danzas-y-trajes-tipicos",
+  "name": "Serie Iberoamericana III · Danzas y trajes típicos · doce países, 1997",
+  "short_name": "Serie Iberoamericana III",
+  "issuer_code": "espagne",
+  "year": 1997,
+  "source": "https://monedasuruguay.com/bib/f/fnmtsi3.pdf",
+  "source_note": "Las doce monedas de la III Serie Iberoamericana, «Danzas y trajes típicos», la tercera acuñación conjunta que coordinó la FNMT: 27 g de plata .925 y 40 mm para todos los países, una casilla por país. El folleto de la III Serie es de la propia FNMT y enumera las doce monedas y la medalla, una por país. Participan Argentina, Bolivia, Cuba, Ecuador, España, Guatemala, México, Nicaragua, Paraguay, Perú, Portugal y Uruguay. El límite no lo pone Numista y no puede ponerlo: de las doce monedas, su serie 4138 no tiene la argentina (N#27798), la guatemalteca (N#72870, etiquetada como II) ni la portuguesa, y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —doce monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#11120, la que su decreto puso en circulación, y fuera quedan N#109078 (la proof de plata .925 de los mismos pauliteiros, KM# 704a). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: el padre tiene 1 de 13 —la portuguesa N#11120, que ya es casilla de `portugal-1000-escudos-plata-500`, y por eso esta lectura sale en esa lámina— y Jose 0.",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 27798
+    },
+    {
+      "label": "Bolivia · 10 bolivianos",
+      "numista_type_id": 62888
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 62889
+    },
+    {
+      "label": "Ecuador · 5000 sucres",
+      "numista_type_id": 62934
+    },
+    {
+      "label": "España · 2000 pesetas",
+      "numista_type_id": 72869
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 72870
+    },
+    {
+      "label": "México · 5 pesos",
+      "numista_type_id": 57097
+    },
+    {
+      "label": "Nicaragua · 5 córdobas",
+      "numista_type_id": 63001
+    },
+    {
+      "label": "Paraguay · 1 guaraní",
+      "numista_type_id": 62948
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 46258
+    },
+    {
+      "label": "Portugal · 1000 escudos",
+      "numista_type_id": 11120
+    },
+    {
+      "label": "Uruguay · 250 pesos",
+      "numista_type_id": 48093
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 379141
+    }
+  ]
+}

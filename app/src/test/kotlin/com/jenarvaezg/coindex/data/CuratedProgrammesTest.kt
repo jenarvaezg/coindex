@@ -125,4 +125,53 @@ class CuratedProgrammesTest {
         }
         assertEquals(listOf("portugal-1000-escudos-plata-500"), touched.map { it.id })
     }
+
+    /**
+     * Las trece series enteras (#387), que es lo que el coleccionista pidió después de la primera.
+     *
+     * Tres cosas fija este test, y las tres son la forma editorial que las notas declaran: una
+     * casilla por país en todas, la medalla de la FNMT donde la FNMT define así la colección, y
+     * ningún tipo repetido entre series —una moneda pertenece a una sola serie, y la reaparición de
+     * un tipo sería una casilla mal atribuida—.
+     */
+    @Test
+    fun `the thirteen ibero-american series are one file each, with no type in two of them`() {
+        val serie = programmes.filter { it.shortName.startsWith("Serie Iberoamericana ") }
+        assertEquals(13, serie.size)
+        assertEquals(
+            setOf(
+                "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII",
+            ),
+            serie.map { it.shortName.removePrefix("Serie Iberoamericana ") }.toSet(),
+        )
+
+        // Un país, una casilla, en las trece.
+        serie.forEach { programme ->
+            val slots = programme.members.map { it.label.substringBefore(" ·") }
+            assertEquals(slots.distinct(), slots, programme.id)
+        }
+
+        // Ningún tipo en dos series.
+        val types = serie.flatMap { it.members.map { member -> member.numistaTypeId } }
+        assertEquals(types.distinct().size, types.size)
+
+        // La cabecera es la ceca que coordinó, no el emisor de los miembros (ADR 0022 enmendado).
+        assertTrue(serie.all { it.issuerCode == "espagne" })
+
+        // Sólo las cuatro primeras tocan una lámina, porque la moneda portuguesa de esas series es
+        // un 1000 escudos de plata .500 y las de la V en adelante son euros que no cura nadie.
+        val plata500 = CatalogSeeds.parseAll(CatalogFiles.all())
+            .first { it.id == "portugal-1000-escudos-plata-500" }
+        assertEquals(
+            listOf(
+                "Serie Iberoamericana I",
+                "Serie Iberoamericana II",
+                "Serie Iberoamericana III",
+                "Serie Iberoamericana IV",
+            ),
+            programmeStandings(plata500, programmes, emptyList())
+                .map { it.programme.shortName }
+                .sorted(),
+        )
+    }
 }

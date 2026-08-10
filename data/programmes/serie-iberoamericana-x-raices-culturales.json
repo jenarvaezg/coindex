@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-x-raices-culturales",
+  "name": "Serie Iberoamericana X · Raíces culturales · nueve países, 2015",
+  "short_name": "Serie Iberoamericana X",
+  "issuer_code": "espagne",
+  "year": 2015,
+  "source": "https://www.fnmt.es/coleccionista/emisiones-2015/x-serie-iberoamericana",
+  "source_note": "Las nueve monedas de la X Serie Iberoamericana, «Raíces culturales», la décima acuñación conjunta que coordinó la FNMT: 13,5 g de plata .925 y 33 mm para todos los países, una casilla por país. La página de la FNMT enumera nueve monedas y una medalla, con la denominación de cada país. Participan Argentina, Cuba, Ecuador, España, Guatemala, Nicaragua, Paraguay, Perú y Portugal. El límite no lo pone Numista y no puede ponerlo: de las nueve monedas, su serie 4138 no tiene la argentina (N#75759), y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —nueve monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#71665, la de plata .925 en la métrica de la serie, y fuera quedan N#71664 (el mismo Viriato en cuproníquel de 18,5 g, que es el que circuló). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Aquí cambia la métrica de toda la serie: de los 27 g y 40 mm del real de a ocho a los 13,5 g y 33 mm del de cuatro reales, y así sigue en las siguientes. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: ninguna de las dos colecciones tiene ninguna de estas piezas, y ningún catálogo curado reclama ninguno de sus tipos, así que este fichero viaja en el APK sin salir en ninguna pantalla. Se versiona a sabiendas, por decisión del coleccionista el 10 de agosto de 2026: «no pasa nada si viaja, tengo planes a futuro».",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 75759
+    },
+    {
+      "label": "Cuba · 5 pesos",
+      "numista_type_id": 75761
+    },
+    {
+      "label": "Ecuador · 1 sucre",
+      "numista_type_id": 75762
+    },
+    {
+      "label": "España · 5 euros",
+      "numista_type_id": 75763
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 75757
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 75716
+    },
+    {
+      "label": "Paraguay · 1 guaraní",
+      "numista_type_id": 75764
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 80268
+    },
+    {
+      "label": "Portugal · 7½ euros",
+      "numista_type_id": 71665
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 472020
+    }
+  ]
+}

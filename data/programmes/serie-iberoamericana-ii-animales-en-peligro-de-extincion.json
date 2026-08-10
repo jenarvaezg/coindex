@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-ii-animales-en-peligro-de-extincion",
+  "name": "Serie Iberoamericana II · Animales en peligro de extinción · diez países, 1994",
+  "short_name": "Serie Iberoamericana II",
+  "issuer_code": "espagne",
+  "year": 1994,
+  "source": "https://www.fnmt.es/documents/10179/129160/Folleto+de+la+IX+Serie+Iberoamericana.pdf",
+  "source_note": "Las diez monedas de la II Serie Iberoamericana, «Animales en peligro de extinción», la segunda acuñación conjunta que coordinó la FNMT: 27 g de plata .925 y 40 mm para todos los países, una casilla por país. El folleto de la IX Serie, de la propia FNMT, narra las ocho series anteriores y nombra los motivos de esta: el tatú carreta argentino, el carpintero real cubano, el lince ibérico español y la tortuga golfina mexicana. La lista de diez países se cerró cruzándolo con la serie 4138 de Numista y con los estuches completos que ofrece el mercado; no se localizó página propia de la FNMT para 1994. Participan Argentina, Cuba, Ecuador, España, Guatemala, México, Nicaragua, Perú, Portugal y Uruguay. El límite no lo pone Numista y no puede ponerlo: de las diez monedas, su serie 4138 no tiene la argentina (N#27797) ni la portuguesa, y a la guatemalteca de 1997 la etiqueta como II, y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —diez monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#25338, la que su decreto puso en circulación, y fuera quedan N#34420 (la proof de plata .925 del mismo lobo, la que va en el estuche de la FNMT). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: el padre tiene 1 de 11 —la portuguesa N#25338, que ya es casilla de `portugal-1000-escudos-plata-500`, y por eso esta lectura sale en esa lámina— y Jose 0.",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 27797
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 34410
+    },
+    {
+      "label": "Ecuador · 5000 sucres",
+      "numista_type_id": 34408
+    },
+    {
+      "label": "España · 2000 pesetas",
+      "numista_type_id": 60991
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 34415
+    },
+    {
+      "label": "México · 5 nuevos pesos",
+      "numista_type_id": 34414
+    },
+    {
+      "label": "Nicaragua · 5 córdobas",
+      "numista_type_id": 34412
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 34421
+    },
+    {
+      "label": "Portugal · 1000 escudos",
+      "numista_type_id": 25338
+    },
+    {
+      "label": "Uruguay · 200 pesos",
+      "numista_type_id": 34419
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 379139
+    }
+  ]
+}
