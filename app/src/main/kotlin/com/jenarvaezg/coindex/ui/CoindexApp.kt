@@ -2,14 +2,18 @@ package com.jenarvaezg.coindex.ui
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -43,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -207,12 +213,25 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             // is decided far from here — `Modifier.travellingCoin` on the two die-cut holes — so
             // the host provides the scope and knows nothing about coins.
             //
-            // INDEX ↔ PLATE enter and exit with nothing of their own: a crossfade on the whole
-            // destination washed the casillas out while the coin was still in the air and then
-            // snapped them opaque as it landed — the pop on the Lunar Series recording. The shared
-            // element is the movement; the sheet arrives behind it. The host carries the silence
-            // for every route so INDEX and PLATE cannot drift apart, and the other screens have
-            // never asked for a transition of their own.
+            // **Only the leaf on top is animated, and which one that is changes direction with
+            // the journey.** Both ends of a navigation are composed together for as long as the
+            // coin is in the air, so what is seen in that half second is decided here and nowhere
+            // else. Two attempts got it wrong for the same reason: a destination painted no paper
+            // of its own, so a stack of two of them was a stack of two transparencies. Compose's
+            // crossfade let the paper show through both and the casillas washed out mid-flight,
+            // then snapped opaque on landing; `None` on all four (#377) faded nothing and drew the
+            // plate whole over the whole index, a double exposure for half of every journey (#381).
+            // `page` is what fixes both: an opaque destination can simply cover the one it
+            // replaces, and then the only question left is who covers whom.
+            //
+            // The NavHost stacks by depth, so going in, the plate arrives on top — it needs no
+            // transition, it just covers the index, and the index below it needs none either
+            // because nothing of it is left to see. Coming back the same stacking works against
+            // us: the plate is *still* on top while it leaves, so with nothing of its own it sits
+            // there opaque for the whole flight home and then vanishes in one frame. That is the
+            // snap of #370 arriving from the other side, and it is why the return — and only the
+            // return — is given a fade out. Short: the index is uncovered early and the coin lands
+            // on a sheet that has been settled for most of its flight.
             else -> TravelLayout(modifier = content) {
                 NavHost(
                     navController = navController,
@@ -221,9 +240,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     enterTransition = { EnterTransition.None },
                     exitTransition = { ExitTransition.None },
                     popEnterTransition = { EnterTransition.None },
-                    popExitTransition = { ExitTransition.None },
+                    popExitTransition = { fadeOut(tween(LIFT_MS)) },
                 ) {
-                    composable(Routes.INDEX) {
+                    page(Routes.INDEX) {
                         Travelling(this) {
                             IndexScreen(
                                 state = state.collection,
@@ -243,7 +262,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             )
                         }
                     }
-                    composable(Routes.COINS) {
+                    page(Routes.COINS) {
                         CoinsScreen(
                             state = state.collection,
                             shelf = state.coinsShelf,
@@ -259,7 +278,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             ficha = ficha,
                         )
                     }
-                    composable(Routes.OWN_GROUPING) { entry ->
+                    page(Routes.OWN_GROUPING) { entry ->
                         val boxId = entry.arguments?.getString("groupingId")?.toLongOrNull()
                         val card = boxId?.let(state.collection::piecesCardForBox)
                         PiecesScreen(
@@ -285,7 +304,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             },
                         )
                     }
-                    composable(Routes.DERIVED_COLLECTION) { entry ->
+                    page(Routes.DERIVED_COLLECTION) { entry ->
                         val key = variantKeyFromRoute(
                             family = entry.arguments?.getString("family"),
                             weight = entry.arguments?.getString("weight"),
@@ -319,7 +338,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             )
                         }
                     }
-                    composable(Routes.SETTINGS) {
+                    page(Routes.SETTINGS) {
                         // Read once per visit: the form owns its own edits from then on, and it
                         // opens on a clean slate rather than on the last visit's complaint.
                         val values = remember { viewModel.currentSettings() }
@@ -346,10 +365,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onOpenNotices = { navController.navigate(Routes.NOTICES) },
                         )
                     }
-                    composable(Routes.NOTICES) {
+                    page(Routes.NOTICES) {
                         NoticesScreen()
                     }
-                    composable(Routes.PLATE) { entry ->
+                    page(Routes.PLATE) { entry ->
                         val catalogId = entry.arguments?.getString("catalogId").orEmpty()
                         Travelling(this) {
                             PlateScreen(
@@ -391,6 +410,31 @@ private fun TravelLayout(modifier: Modifier, content: @Composable () -> Unit) {
 @Composable
 private fun Travelling(scope: AnimatedVisibilityScope, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalNavAnimation provides scope, content = content)
+}
+
+/** How long the leaf on top takes to lift off the one underneath, on the way back. */
+private const val LIFT_MS = 180
+
+/**
+ * A destination that is a leaf of paper: opaque, so it can be laid over the one it replaces.
+ *
+ * Every route goes through here rather than through `composable` directly, because being opaque is
+ * not a property of one screen — it is what makes a transition possible at all. Two destinations are
+ * composed together for as long as a navigation lasts, and while they were transparent there was no
+ * honest way to cross between them: the paper showed through both of them at once (#381).
+ *
+ * This does not take the sheet back to the days of #351, when the grain lived on two screens and
+ * stopped at the edge of the third. [paperSurface] anchors its mosaic to the window and not to the
+ * surface, so this leaf falls exactly on top of the one [com.jenarvaezg.coindex.ui.theme.CoindexTheme]
+ * paints behind everything — same tone, same fibre, in register. It is still one sheet; there are
+ * simply no gaps in it now, which is the case that anchoring was for.
+ */
+private fun NavGraphBuilder.page(
+    route: String,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit,
+) = composable(route) { entry ->
+    val arrival = this
+    Box(modifier = Modifier.fillMaxSize().paperSurface()) { arrival.content(entry) }
 }
 
 /**
