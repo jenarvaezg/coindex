@@ -17,9 +17,6 @@ import kotlinx.coroutines.withContext
  */
 private const val PREFETCH_CONCURRENCY = 2
 
-/** How often the collector-visible count is updated while the prefetch runs. */
-private const val PROGRESS_EVERY = 25
-
 /**
  * What the phone holds of the catalog's photographs, and what it is still missing.
  *
@@ -99,7 +96,7 @@ class CoilPhotoPrefetch(
      *   and two readings of a phone that is changing underneath would not have to agree.
      * @param onStatus called with the counts **before** the first request — a settings screen
      *   opened during the first pass must show what is happening rather than «no hay fotos que
-     *   traer» — and then every [PROGRESS_EVERY] photographs.
+     *   traer» — and then every [PREFETCH_PROGRESS_EVERY] photographs.
      */
     override suspend fun run(
         images: Collection<TypeImages>,
@@ -108,9 +105,9 @@ class CoilPhotoPrefetch(
     ): PhotoCacheStatus = withContext(Dispatchers.IO) {
         val wanted = photographsToPrefetch(images, gone.all())
         val missing = wanted.filterNot { isCached(it) }
-        val opening = PhotoCacheStatus(wanted.size, missing.size, cacheBytes(), held)
+        val opening = photoCacheStatus(wanted, ::isCached, cacheBytes(), held)
         onStatus(opening)
-        if (missing.isEmpty() || held != null) return@withContext opening
+        if (prefetchAlreadySettled(missing.size, held)) return@withContext opening
         val landed = AtomicInteger(0)
         val asked = AtomicInteger(0)
         warmPhotographs(
@@ -124,18 +121,22 @@ class CoilPhotoPrefetch(
             // Counted apart from the ones that arrived: a photograph that failed is still missing,
             // and a progress line that counted it as brought would be a lie that settles itself
             // only at the end of the pass.
-            if (asked.incrementAndGet() % PROGRESS_EVERY == 0) {
+            if (shouldReportPrefetchProgress(asked.incrementAndGet())) {
                 // The size is read again each time: on a first run it starts at zero, and a line
                 // that said «0,0 MB» while six hundred pictures landed would be the one number on
                 // the card that is checkable and wrong.
-                onStatus(opening.copy(missing = missing.size - landed.get(), bytes = cacheBytes()))
+                onStatus(
+                    opening.copy(
+                        missing = prefetchMissingAfter(missing.size, landed.get()),
+                        bytes = cacheBytes(),
+                    ),
+                )
             }
         }
         // Counted again rather than derived from what landed: the interceptor may have learnt in
         // the meantime that some of these are gone, and those stop being missing — they stop being
         // wanted. Anything that merely failed is still missing, and is asked for on the next launch.
-        val stillWanted = photographsToPrefetch(images, gone.all())
-        PhotoCacheStatus(stillWanted.size, stillWanted.count { !isCached(it) }, cacheBytes(), held)
+        photoCacheStatus(photographsToPrefetch(images, gone.all()), ::isCached, cacheBytes(), held)
     }
 
     private fun cacheBytes(): Long = imageLoader().diskCache?.size ?: 0L

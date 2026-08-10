@@ -57,16 +57,14 @@ class PhotoRetryPolicyTest {
     }
 
     @Test
-    fun `the app's User-Agent says who it is and where to complain`() {
-        // Without any User-Agent Cloudflare answers 403 to every photograph. Today the header
-        // is whatever OkHttp writes underneath Coil, so the pictures work by inertia.
-        assertEquals(
-            "Coindex/0.8.0 (+https://github.com/jenarvaezg/coindex)",
-            coinPhotoUserAgent("0.8.0"),
-        )
-        assertEquals(
-            "Coindex/dev (+https://github.com/jenarvaezg/coindex)",
-            coinPhotoUserAgent(""),
-        )
+    fun `a 404 is the picture being gone, and a throttle never is`() {
+        assertEquals(true, PhotoRetryPolicy.isGone(404))
+        assertEquals(true, PhotoRetryPolicy.isGone(410))
+        // 403 is deliberately not remembered: without a User-Agent Cloudflare answers it to every
+        // photograph (ADR 0017), so a bad afternoon at the edge would switch the catalog off for
+        // good on this phone. It is not retried either — it is simply asked again another day.
+        listOf(403, 429, 500, 503).forEach { status ->
+            assertEquals(false, PhotoRetryPolicy.isGone(status), "$status no es una foto perdida")
+        }
     }
 }
