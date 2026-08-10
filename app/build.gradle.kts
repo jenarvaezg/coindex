@@ -41,10 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 40
-        // Patch on top of 1.1.1: closing a Monedas ficha yields the shared element so the coin
-        // flies home instead of popping — banner: «La moneda vuelve a su casilla al cerrar».
-        versionName = "1.1.2"
+        versionCode = 41
+        // Patch on top of 1.1.2: the year axis opens Coins on that exact year, not an era band —
+        // banner: «Un año del eje abre ese año, no una época».
+        versionName = "1.1.3"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

@@ -74,7 +74,7 @@ import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.OunceBand
 import com.jenarvaezg.coindex.ui.shelf.PlateStatus
 import com.jenarvaezg.coindex.ui.shelf.StartBand
-import com.jenarvaezg.coindex.ui.shelf.YearBand
+import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.countryAxis
 import com.jenarvaezg.coindex.ui.shelf.countryAxisTally
 import com.jenarvaezg.coindex.ui.shelf.indexFacetCounts
@@ -500,7 +500,7 @@ fun IndexScreen(
                         onYearClick = { year ->
                             onOpenCoins(
                                 CoinsShelf(
-                                    year = YearBand.of(year),
+                                    year = YearFilter.Of(year),
                                     axis = NotebookAxis.ByYear,
                                 ),
                             )

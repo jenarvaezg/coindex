@@ -76,7 +76,7 @@ import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.GramBand
 import com.jenarvaezg.coindex.ui.shelf.Membership
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
-import com.jenarvaezg.coindex.ui.shelf.YearBand
+import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.coinAlbumFootnote
 import com.jenarvaezg.coindex.ui.shelf.coinRows
 import com.jenarvaezg.coindex.ui.shelf.coinsFacetCounts
@@ -84,6 +84,7 @@ import com.jenarvaezg.coindex.ui.shelf.coinsShelfSummary
 import com.jenarvaezg.coindex.ui.shelf.coinsTally
 import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
+import com.jenarvaezg.coindex.ui.shelf.years
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
@@ -386,14 +387,14 @@ private fun CoinsFacets(
             selected = shelf.year == null,
             onClick = { onNarrow(shelf.copy(year = null)) },
         )
-        // «Sin año» is one of these and not an extra: on the seeded cache it is the two unpublished
-        // submissions of #186, the only coins whose ficha a referee still owes.
-        YearBand.entries.forEach { band ->
+        // Exact years, newest first — same shape as País, so a seat on the year axis and a chip
+        // here say the same number. «Sin año» is one of these when the ficha still owes a date.
+        counts.year.years().forEach { (filter, count) ->
             FilterChip(
-                label = band.label,
-                count = counts.year.of(band),
-                selected = shelf.year == band,
-                onClick = { onNarrow(shelf.copy(year = band)) },
+                label = filter.label,
+                count = count,
+                selected = shelf.year == filter,
+                onClick = { onNarrow(shelf.copy(year = filter)) },
             )
         }
     }

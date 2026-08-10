@@ -43,12 +43,28 @@ class ShelfCodecTest {
             axis = NotebookAxis.ByYear,
             issuer = "México",
             weight = GramBand.Ounce,
-            year = YearBand.SinceTwoThousand,
+            year = YearFilter.Of(2020),
             objectClass = ObjectClass.Exonumia,
             membership = Membership.InNone,
         )
 
         assertEquals(shelf, roundTrip(shelf))
+    }
+
+    @Test
+    fun `Sin ano persists as Undated and an old era name is no filter`() {
+        assertEquals(
+            YearFilter.Undated,
+            ShelfCodec.decodeCoins { key -> "Undated".takeIf { key == ShelfCodec.COINS_YEAR } }.year,
+        )
+        // What an upgrade looks like: a phone that still had «Desde 2000» stored under the old
+        // era-band codec reopens with no year filter rather than inventing a year from the name.
+        assertEquals(
+            CoinsShelf(),
+            ShelfCodec.decodeCoins { key ->
+                "SinceTwoThousand".takeIf { key == ShelfCodec.COINS_YEAR }
+            },
+        )
     }
 
     @Test

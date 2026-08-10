@@ -41,6 +41,9 @@ object ShelfCodec {
     const val COINS_CLASS = "coins_class"
     const val COINS_MEMBERSHIP = "coins_membership"
 
+    /** Persistence key for [YearFilter.Undated] — not a Gregorian year string. */
+    private const val UNDATED_YEAR = "Undated"
+
     fun encode(shelf: IndexShelf): Map<String, String?> = mapOf(
         // The default is written as the default and not as an absence, so «Más completas» chosen
         // on purpose and never chosen at all read back the same — which they are.
@@ -58,7 +61,7 @@ object ShelfCodec {
         COINS_AXIS to shelf.axis.name,
         COINS_ISSUER to shelf.issuer,
         COINS_WEIGHT to shelf.weight?.name,
-        COINS_YEAR to shelf.year?.name,
+        COINS_YEAR to yearKey(shelf.year),
         COINS_CLASS to shelf.objectClass?.name,
         COINS_MEMBERSHIP to shelf.membership?.name,
     )
@@ -78,7 +81,7 @@ object ShelfCodec {
         axis = named<NotebookAxis>(read(COINS_AXIS)) ?: NotebookAxis.ByPlate,
         issuer = country(read(COINS_ISSUER)),
         weight = named<GramBand>(read(COINS_WEIGHT)),
-        year = named<YearBand>(read(COINS_YEAR)),
+        year = year(read(COINS_YEAR)),
         objectClass = named<ObjectClass>(read(COINS_CLASS)),
         membership = named<Membership>(read(COINS_MEMBERSHIP)),
     )
@@ -92,6 +95,25 @@ object ShelfCodec {
      */
     private fun country(stored: String?): String? =
         stored?.takeIf { it.isNotBlank() && readsAsACountry(it) }
+
+    /**
+     * A stored year filter: a Gregorian year, «Undated», or nothing.
+     *
+     * The year facet used to be four era names (`SinceTwoThousand`, …). Those strings are not years
+     * and are not «Undated», so a phone that still has one selected reopens with no year filter —
+     * the same bargain every unknown enum already made.
+     */
+    private fun year(stored: String?): YearFilter? = when {
+        stored.isNullOrBlank() -> null
+        stored == UNDATED_YEAR -> YearFilter.Undated
+        else -> stored.toIntOrNull()?.let(YearFilter::Of)
+    }
+
+    private fun yearKey(year: YearFilter?): String? = when (year) {
+        is YearFilter.Of -> year.year.toString()
+        YearFilter.Undated -> UNDATED_YEAR
+        null -> null
+    }
 
     /** An enum by name, or nothing: a name this version has never heard of is not a filter. */
     private inline fun <reified T : Enum<T>> named(stored: String?): T? =

@@ -7,9 +7,9 @@ import kotlin.test.assertEquals
 /**
  * Where the chips of the two shelves put a weight and a year.
  *
- * The property that matters across all four is that **every band is total**: a row with no value lands
- * on a chip of its own rather than on none, because a row no chip of a facet can reach is a row that
- * disappears without anything on screen saying so.
+ * The property that matters across the weight and start bands is that **every band is total**: a row
+ * with no value lands on a chip of its own rather than on none. The year facet of Coins keeps the
+ * same bargain via [YearFilter.Undated], but offers each dated year rather than an era.
  */
 class BandsTest {
     @Test
@@ -29,14 +29,12 @@ class BandsTest {
     }
 
     @Test
-    fun `the year bands split where the two collections do`() {
-        assertEquals(YearBand.BeforeNineteenHundred, YearBand.of(1874))
-        assertEquals(YearBand.ThroughTheSeventies, YearBand.of(1966))
-        assertEquals(YearBand.ThroughTheSeventies, YearBand.of(1979))
-        assertEquals(YearBand.EightiesAndNineties, YearBand.of(1980))
-        assertEquals(YearBand.SinceTwoThousand, YearBand.of(2026))
+    fun `the year of a coin is that year, and Sin ano is its own chip`() {
+        assertEquals(YearFilter.Of(1874), YearFilter.of(1874))
+        assertEquals(YearFilter.Of(1966), YearFilter.of(1966))
+        assertEquals(YearFilter.Of(2026), YearFilter.of(2026))
         // The two unpublished submissions of #186 have no year, and «Sin año» is their chip.
-        assertEquals(YearBand.Undated, YearBand.of(null))
+        assertEquals(YearFilter.Undated, YearFilter.of(null))
     }
 
     @Test

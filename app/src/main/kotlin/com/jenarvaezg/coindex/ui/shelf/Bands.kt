@@ -41,23 +41,26 @@ enum class GramBand(val label: String, private val upToGrams: Double) {
 }
 
 /**
- * When a coin is from, as the four eras the two collections actually span plus the undated.
+ * The year facet of Coins: one year on the coin, or «Sin año».
  *
- * [Undated] is a chip and not an omission: the two types the seeded cache has no year for are the two
- * unpublished submissions of #186, and a facet that dropped them would hide from the collector exactly
- * the pieces waiting on a referee.
+ * Exact years, not eras — the year axis of the notebook is a calendar of seats, and tapping one has
+ * to open Monedas on that year, not on a band that swallows decades beside it. [Undated] stays a
+ * chip of its own: the two types the seeded cache has no year for are the unpublished submissions
+ * of #186, and dropping them would hide the pieces waiting on a referee.
  */
-enum class YearBand(val label: String, private val upToYear: Int) {
-    BeforeNineteenHundred("Antes de 1900", 1_899),
-    ThroughTheSeventies("1900 – 1979", 1_979),
-    EightiesAndNineties("1980 – 1999", 1_999),
-    SinceTwoThousand("Desde 2000", Int.MAX_VALUE),
-    Undated(UNKNOWN_YEAR_LABEL, Int.MIN_VALUE),
-    ;
+sealed interface YearFilter {
+    val label: String
+
+    data class Of(val year: Int) : YearFilter {
+        override val label: String get() = year.toString()
+    }
+
+    data object Undated : YearFilter {
+        override val label: String get() = UNKNOWN_YEAR_LABEL
+    }
 
     companion object {
-        fun of(year: Int?): YearBand =
-            year?.let { entries.first { band -> it <= band.upToYear } } ?: Undated
+        fun of(year: Int?): YearFilter = year?.let(::Of) ?: Undated
     }
 }
 

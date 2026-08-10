@@ -202,7 +202,7 @@ fun YearAxisDigitHeader(modifier: Modifier = Modifier) {
  * holes in the middle. Ghosts keep the dashed hole; coins carry a rust count when more than one
  * piece lands on the year. Cells share the width after the decade label so ten still fit a phone.
  *
- * Coin and ghost seats open Monedas on that year's era band; bare cardboard stays quiet — there is
+ * Coin and ghost seats open Monedas on that exact year; bare cardboard stays quiet — there is
  * nothing of this collection to read there.
  */
 @Composable

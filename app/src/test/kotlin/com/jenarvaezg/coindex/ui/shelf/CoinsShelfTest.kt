@@ -139,7 +139,24 @@ class CoinsShelfTest {
         assertEquals(counts.weight.total, counts.weight.byValue.values.sum())
         assertEquals(counts.objectClass.total, counts.objectClass.byValue.values.sum())
         assertEquals(counts.membership.total, counts.membership.byValue.values.sum())
-        assertEquals(1, counts.year.of(YearBand.Undated))
+        assertEquals(1, counts.year.of(YearFilter.Undated))
         assertEquals(1, counts.weight.of(GramBand.Unweighed))
+    }
+
+    @Test
+    fun `a year chip leaves only that year, and the chips list newest first`() {
+        val shelf = CoinsShelf(year = YearFilter.Of(1929))
+        val counts = coinsFacetCounts(rows, CoinsShelf(), "")
+
+        assertEquals(listOf(ShelfFixtures.FUERTE), shelf.narrow(rows, "").map { it.typeId })
+        assertEquals(
+            listOf(
+                YearFilter.Of(2020) to 1,
+                YearFilter.Of(1978) to 1,
+                YearFilter.Of(1929) to 1,
+                YearFilter.Undated to 1,
+            ),
+            counts.year.years(),
+        )
     }
 }

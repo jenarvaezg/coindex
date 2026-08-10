@@ -40,7 +40,7 @@ data class CoinsShelf(
     val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,
     val weight: GramBand? = null,
-    val year: YearBand? = null,
+    val year: YearFilter? = null,
     val objectClass: ObjectClass? = null,
     val membership: Membership? = null,
 ) {
@@ -50,7 +50,7 @@ data class CoinsShelf(
     internal fun matches(row: CoinRow, except: CoinsFacet? = null): Boolean =
         (except == CoinsFacet.Issuer || issuer == null || row.issuer == issuer) &&
             (except == CoinsFacet.Weight || weight == null || GramBand.of(row.weightOz) == weight) &&
-            (except == CoinsFacet.Year || year == null || YearBand.of(row.year) == year) &&
+            (except == CoinsFacet.Year || year == null || YearFilter.of(row.year) == year) &&
             (
                 except == CoinsFacet.Class ||
                     objectClass == null ||
@@ -131,7 +131,7 @@ fun coinsFacetCounts(
     return CoinsFacetCounts(
         issuer = facetCounts(rows, keeping(CoinsFacet.Issuer)) { it.issuer },
         weight = facetCounts(rows, keeping(CoinsFacet.Weight)) { GramBand.of(it.weightOz) },
-        year = facetCounts(rows, keeping(CoinsFacet.Year)) { YearBand.of(it.year) },
+        year = facetCounts(rows, keeping(CoinsFacet.Year)) { YearFilter.of(it.year) },
         objectClass = facetCounts(rows, keeping(CoinsFacet.Class)) { it.objectClass },
         membership = facetCounts(rows, keeping(CoinsFacet.Membership), ::membershipOf),
     )
@@ -140,7 +140,7 @@ fun coinsFacetCounts(
 data class CoinsFacetCounts(
     val issuer: FacetCounts<String>,
     val weight: FacetCounts<GramBand>,
-    val year: FacetCounts<YearBand>,
+    val year: FacetCounts<YearFilter>,
     val objectClass: FacetCounts<ObjectClass>,
     val membership: FacetCounts<Membership>,
 )

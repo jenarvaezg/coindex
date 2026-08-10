@@ -28,6 +28,21 @@ fun FacetCounts<String>.issuers(): List<Pair<String, Int>> = populated()
     .sortedWith(compareByDescending<Pair<String, Int>> { it.second }.thenBy { it.first })
 
 /**
+ * The years worth a chip on Coins, newest first — «Sin año» last when it has anyone.
+ *
+ * Same bargain as [issuers]: every year with a row is offered, and the shelf being folded means a
+ * calendar of chips costs nothing until opened. Era bands used to compress this into four buckets;
+ * the year axis made that compression a lie the moment a seat opened Monedas on a decade it was not.
+ */
+fun FacetCounts<YearFilter>.years(): List<Pair<YearFilter, Int>> {
+    val dated = populated()
+        .mapNotNull { (value, count) -> (value as? YearFilter.Of)?.let { it to count } }
+        .sortedByDescending { (filter, _) -> filter.year }
+    val undated = populated().filter { (value, _) -> value is YearFilter.Undated }
+    return dated + undated
+}
+
+/**
  * Counts one facet over the rows the *other* filters leave, grouped by the value each row has.
  *
  * @param rows every row of the list, before this shelf narrowed anything
