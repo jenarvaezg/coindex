@@ -100,6 +100,7 @@ class YearAxisTest {
         assertEquals(2, model.ownedYears)
         assertEquals(1876 - 1813 + 1, model.totalYears)
         assertIs<YearCellState.Bare>(model.cells.first { it.year == 1850 }.state)
+        assertEquals("SIGLO 19", model.centuries.single().label)
     }
 
     @Test
@@ -121,9 +122,10 @@ class YearAxisTest {
     }
 
     @Test
-    fun `an undated ancient piece does not open a two-millennium axis`() {
-        // The denarius inherits year 270, but the sheet's span is the dated Thaler at 1780 and the
-        // plate at 1876-1878 — 1.62 screens, not 1,700 years of bare cardboard before the first coin.
+    fun `an undated ancient piece lands on an island instead of opening two millennia`() {
+        // The denarius inherits year 270; the sheet's calendar stays the dated Thaler at 1780 and
+        // the plate at 1876-1878. The Roman coin opens a front island under its country, not 1,700
+        // years of bare cardboard before the first modern cell.
         val model = yearAxis(
             state = state(
                 items = listOf(
@@ -131,7 +133,12 @@ class YearAxisTest {
                     item(2, TYPE_B, year = 1780),
                 ),
                 typeMeta = mapOf(
-                    TYPE_A to meta(TYPE_A, 270),
+                    TYPE_A to TypeMeta(
+                        id = TYPE_A,
+                        minYear = 270,
+                        issuerCode = "rome",
+                        issuerName = "Romano, Imperio (27 a. C. - 395 d. C.)",
+                    ),
                     TYPE_B to meta(TYPE_B, 1780),
                 ),
                 evidenced = setOf("later"),
@@ -144,6 +151,31 @@ class YearAxisTest {
         assertEquals(1780, model.cells.first().year)
         assertTrue(model.totalYears < 300)
         assertTrue(model.cells.none { it.year == 270 })
+        assertEquals(1, model.islands.size)
+        assertEquals("Imperio romano", model.islands.single().title)
+        assertEquals(TYPE_A, model.islands.single().coins.single().typeId)
+    }
+
+    @Test
+    fun `an undated piece inside the dated span still paints on the calendar, not an island`() {
+        val model = yearAxis(
+            state = state(
+                items = listOf(
+                    CollectedItem(id = 1, quantity = 1, typeId = TYPE_A, issueYear = null),
+                    item(2, TYPE_B, year = 1780),
+                    item(3, TYPE_B, year = 1929),
+                ),
+                typeMeta = mapOf(
+                    TYPE_A to meta(TYPE_A, 1813),
+                    TYPE_B to meta(TYPE_B, 1780),
+                ),
+                evidenced = emptySet(),
+            ),
+            catalogs = emptyList(),
+        )
+
+        assertTrue(model.islands.isEmpty())
+        assertIs<YearCellState.Coin>(model.cells.first { it.year == 1813 }.state)
     }
 
     @Test

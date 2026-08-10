@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -31,6 +33,7 @@ import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.TURN_THE_COIN_OVER
 import com.jenarvaezg.coindex.ui.theme.Paper
+import kotlin.math.min
 
 /**
  * How long the coin takes to come round, decided on an HTML prototype at phone size (#302) and
@@ -100,25 +103,37 @@ fun AlbumHole(
     val faceTurn = if (showsFront) turn else turn - HALF_TURN
     val face = if (showsFront) photo else otherSide
 
+    val density = LocalDensity.current
     val candidates = face?.candidates.orEmpty()
     var attempt by remember(candidates) { mutableIntStateOf(0) }
     var painted by remember(candidates) { mutableStateOf(false) }
     var settled by remember(candidates) { mutableStateOf(false) }
+    var sidePx by remember { mutableIntStateOf(0) }
     val url = candidates.getOrNull(attempt)
+    // 5 dp was measured on the 104 dp card (#357). Axis holes are 34 dp; scale the ring so the
+    // cardboard/coin ratio matches entrada-default instead of swallowing the metal.
+    val ringDp = if (!backed || sidePx == 0) {
+        HOLE_CARD_PADDING_DP
+    } else {
+        val holeDp = sidePx / density.density
+        holeCardPaddingDp(holeDp) * (tone.dieWall.widthDp / HOLE_CARD_PADDING_DP)
+    }
 
     Box(
-        modifier = modifier.then(
-            if (otherSide != null) {
-                Modifier.clickable(
-                    role = Role.Button,
-                    onClickLabel = TURN_THE_COIN_OVER,
-                    indication = null,
-                    interactionSource = null,
-                ) { turned = !turned }
-            } else {
-                Modifier
-            },
-        ),
+        modifier = modifier
+            .onSizeChanged { sidePx = min(it.width, it.height) }
+            .then(
+                if (otherSide != null) {
+                    Modifier.clickable(
+                        role = Role.Button,
+                        onClickLabel = TURN_THE_COIN_OVER,
+                        indication = null,
+                        interactionSource = null,
+                    ) { turned = !turned }
+                } else {
+                    Modifier
+                },
+            ),
     ) {
         // The cardboard ring remains visible around the inset window: the wall of the cut is dark
         // at the top, where it shades itself, and pale at the bottom, where the die exposed a
@@ -126,7 +141,7 @@ fun AlbumHole(
         if (backed) {
             Canvas(Modifier.fillMaxSize()) {
                 drawCircle(Paper.card.copy(alpha = tone.cardAlpha))
-                val wallWidth = tone.dieWall.widthDp.dp.toPx()
+                val wallWidth = ringDp.dp.toPx()
                 drawCircle(
                     brush = Brush.sweepGradient(*tone.dieWall.stops(), center = center),
                     radius = size.minDimension / 2f - wallWidth / 2f,
@@ -147,7 +162,7 @@ fun AlbumHole(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(if (backed) HOLE_CARD_PADDING_DP.dp else 1.dp)
+                .padding(if (backed) ringDp.dp else 1.dp)
                 .clip(CircleShape)
                 .background(Paper.paperDeep),
         ) {
@@ -187,7 +202,7 @@ fun AlbumHole(
                         // with the face it belongs to (#338).
                         .graphicsLayer {
                             rotationY = faceTurn
-                            cameraDistance = COIN_CAMERA_DISTANCE * density
+                            cameraDistance = COIN_CAMERA_DISTANCE * density.density
                         }
                         .alpha(if (missing) 0.14f else 1f)
                         .coinGloss(isCoin = !missing),
@@ -202,9 +217,11 @@ fun AlbumHole(
             // metal is the metal's own light.
             if (missing) {
                 Canvas(Modifier.fillMaxSize()) {
+                    val holeDp = size.minDimension / density.density
+                    val dashInset = (6f * holeDp / DESIGN_HOLE_DP).coerceAtLeast(1.5f).dp.toPx()
                     drawCircle(
                         color = Paper.ink.copy(alpha = 0.48f),
-                        radius = size.minDimension / 2f - 6.dp.toPx(),
+                        radius = size.minDimension / 2f - dashInset,
                         style = Stroke(
                             width = 1.dp.toPx(),
                             cap = StrokeCap.Round,

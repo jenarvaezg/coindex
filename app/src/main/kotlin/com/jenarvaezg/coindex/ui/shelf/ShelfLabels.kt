@@ -33,11 +33,11 @@ fun coinsShelfSummary(shelf: CoinsShelf, expanded: Boolean = false): String =
         axis = shelf.axis.summaryName().takeIf { !expanded },
     )
 
-/** Folded name of a non-default axis: «eje país», never «eje por país». */
+/** Folded name of a non-default axis: «Eje País», never «eje por país». */
 private fun NotebookAxis.summaryName(): String? = when (this) {
     NotebookAxis.ByPlate -> null
-    NotebookAxis.ByCountry -> "país"
-    NotebookAxis.ByYear -> "año"
+    NotebookAxis.ByCountry -> "País"
+    NotebookAxis.ByYear -> "Año"
 }
 
 /**
@@ -49,7 +49,7 @@ private fun NotebookAxis.summaryName(): String? = when (this) {
 private fun shelfSummary(active: Int, sort: String?, axis: String? = null): String {
     val filters = active.takeIf { it > 0 }?.let { plural(it, "filtro", "filtros") }
     val order = sort?.let { "orden ${it.lowercase()}" }
-    val namedAxis = axis?.let { "eje $it" }
+    val namedAxis = axis?.let { "Eje $it" }
     return listOfNotNull(filters, order, namedAxis).takeIf { it.isNotEmpty() }?.joinToString(" · ")
         ?: "Filtros y orden"
 }

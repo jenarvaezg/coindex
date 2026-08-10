@@ -66,10 +66,10 @@ class ShelfLabelsTest {
 
     @Test
     fun `the axis is named only while folded and only when it is not por lamina`() {
-        assertEquals("eje país", indexShelfSummary(IndexShelf(axis = NotebookAxis.ByCountry)))
-        assertEquals("eje año", indexShelfSummary(IndexShelf(axis = NotebookAxis.ByYear)))
+        assertEquals("Eje País", indexShelfSummary(IndexShelf(axis = NotebookAxis.ByCountry)))
+        assertEquals("Eje Año", indexShelfSummary(IndexShelf(axis = NotebookAxis.ByYear)))
         assertEquals(
-            "1 filtro · eje país",
+            "1 filtro · Eje País",
             indexShelfSummary(IndexShelf(axis = NotebookAxis.ByCountry, issuer = "Italia")),
         )
         // Open: the chip is in view, so the line stays quiet about the axis (atlas-315).
@@ -77,7 +77,7 @@ class ShelfLabelsTest {
             "Filtros y orden",
             indexShelfSummary(IndexShelf(axis = NotebookAxis.ByCountry), expanded = true),
         )
-        assertEquals("eje año", coinsShelfSummary(CoinsShelf(axis = NotebookAxis.ByYear)))
+        assertEquals("Eje Año", coinsShelfSummary(CoinsShelf(axis = NotebookAxis.ByYear)))
         assertEquals(
             "Filtros y orden",
             coinsShelfSummary(CoinsShelf(axis = NotebookAxis.ByYear), expanded = true),

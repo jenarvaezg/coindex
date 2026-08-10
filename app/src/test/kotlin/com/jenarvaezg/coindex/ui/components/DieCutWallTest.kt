@@ -58,6 +58,14 @@ class DieCutWallTest {
     }
 
     @Test
+    fun `a dense axis hole keeps a readable cardboard ring without the 104 dp bite`() {
+        // 5 dp on 104 dp is the measured ring. Pure proportion on 34 dp is ~1.6 dp and vanishes;
+        // 2 dp is the floor that still reads on dark metal without the country-axis «mucho borde».
+        assertEquals(HOLE_CARD_PADDING_DP, holeCardPaddingDp(DESIGN_HOLE_DP))
+        assertEquals(2f, holeCardPaddingDp(34f), 0.01f)
+    }
+
+    @Test
     fun `the bench moves both halves of the wall independently`() {
         val calibrated = DieCutWall(sheenAlpha = 0.3f, shadowAlpha = 0.1f)
 

@@ -11,9 +11,9 @@ import com.jenarvaezg.coindex.domain.TypeMeta
  * opens the same and nobody has to learn anything.
  */
 enum class NotebookAxis(val label: String) {
-    ByPlate("por lámina"),
-    ByCountry("por país"),
-    ByYear("por año"),
+    ByPlate("Por lámina"),
+    ByCountry("Por país"),
+    ByYear("Por año"),
 }
 
 /**

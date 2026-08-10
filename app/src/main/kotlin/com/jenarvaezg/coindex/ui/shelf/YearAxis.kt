@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.cardCountry
 
 /**
  * Three states of a year on the year axis (ADR 0026 §9) — coin, ghost hole, bare cardboard.
@@ -22,6 +23,23 @@ data class YearAxisCell(
     val state: YearCellState,
 )
 
+/**
+ * A front sheet for owned pieces whose placement year falls outside the dated/slot calendar.
+ *
+ * Romans without an engraved year inherit 270 or 316; putting them on the calendar would paint
+ * seventeen centuries of bare cardboard before the first Thaler. They open here under their
+ * country instead — one island, not N empty centuries (atlas-315 / #340).
+ */
+data class YearAxisIslandCoin(
+    val typeId: Int,
+    val quantity: Int,
+)
+
+data class YearAxisIsland(
+    val title: String,
+    val coins: List<YearAxisIslandCoin>,
+)
+
 data class YearAxisDecade(
     val decade: Int,
     val cells: List<YearAxisCell>,
@@ -31,10 +49,11 @@ data class YearAxisCentury(
     val century: Int,
     val decades: List<YearAxisDecade>,
 ) {
+    /** Atlas-315 paints arabic centuries («SIGLO 20»); BC keeps Roman so a minus sign never shows. */
     val label: String
         get() = when {
             century <= 0 -> "SIGLO ${roman(-century + 1)}"
-            else -> "SIGLO ${roman(century)}"
+            else -> "SIGLO $century"
         }
 }
 
@@ -42,6 +61,7 @@ data class YearAxisModel(
     val cells: List<YearAxisCell>,
     val ownedYears: Int,
     val totalYears: Int,
+    val islands: List<YearAxisIsland> = emptyList(),
 ) {
     val centuries: List<YearAxisCentury>
         get() = cells
@@ -68,10 +88,9 @@ data class YearAxisModel(
  * names and nobody owns is bare cardboard.
  *
  * **The range is dated pieces and slots, not undated inheritances.** The type minimum (#326) still
- * places an undated piece when it falls inside that range (Portuguese escudos). Letting a Roman
- * denarius of year 270 open the axis would paint 1,700 years of bare cardboard before the first
- * Thaler — the opposite of the 1.62-screen sheet atlas-315 measured. The 1,756-year figure belongs
- * to «Las cifras»'s arco, not to this sheet.
+ * places an undated piece when it falls inside that range (Portuguese escudos). An undated Roman
+ * whose inherited year falls outside opens a front [YearAxisIsland] under its country — never the
+ * 1,756-year calendar that belongs to «Las cifras».
  */
 fun yearAxis(
     state: CollectionState,
@@ -81,7 +100,15 @@ fun yearAxis(
     /** Owned pieces that survive the shelf (by row id), or null for every piece. */
     keptItemIds: Set<Long>? = null,
 ): YearAxisModel {
-    val ownedByYear = linkedMapOf<Int, MutableList<Pair<Int, Int>>>()
+    data class Placement(
+        val typeId: Int,
+        val quantity: Int,
+        val year: Int,
+        val dated: Boolean,
+        val country: String,
+    )
+
+    val placements = mutableListOf<Placement>()
     val datedYears = sortedSetOf<Int>()
     for (piece in state.items) {
         if (piece.quantity <= 0) continue
@@ -90,8 +117,18 @@ fun yearAxis(
         val dated = listOfNotNull(piece.gregorianYear, piece.recordedYear).firstOrNull { it > 0 }
         val year = placementYear(piece, meta) ?: continue
         if (dated != null) datedYears.add(dated)
-        ownedByYear.getOrPut(year) { mutableListOf() }
-            .add(piece.typeId to piece.quantity)
+        val country = cardCountry(meta?.issuerCode, meta?.issuerName)
+            ?: meta?.issuerName
+            ?: "Sin país"
+        placements.add(
+            Placement(
+                typeId = piece.typeId,
+                quantity = piece.quantity,
+                year = year,
+                dated = dated != null,
+                country = country,
+            ),
+        )
     }
 
     val slotYears = linkedSetOf<Int>()
@@ -113,20 +150,29 @@ fun yearAxis(
     }
 
     val rangeYears = (datedYears + slotYears).ifEmpty {
-        // A collection of only undated pieces still deserves a sheet: fall back to inherited years.
-        ownedByYear.keys.filter { it > 0 }.toSet()
+        // Only inherited years and no slots: the calendar is those years (no island needed).
+        placements.map { it.year }.filter { it > 0 }.toSet()
     }
     if (rangeYears.isEmpty()) {
         return YearAxisModel(cells = emptyList(), ownedYears = 0, totalYears = 0)
     }
     val first = rangeYears.min()
     val last = rangeYears.max()
-    // Undated pieces whose inherited year falls outside the dated/slot span stay off this sheet;
-    // the country axis still shows them.
-    val ownedInRange = ownedByYear.filterKeys { it in first..last }
+
+    val ownedByYear = linkedMapOf<Int, MutableList<Pair<Int, Int>>>()
+    val islandPlacements = mutableListOf<Placement>()
+    for (placement in placements) {
+        if (placement.year in first..last) {
+            ownedByYear.getOrPut(placement.year) { mutableListOf() }
+                .add(placement.typeId to placement.quantity)
+        } else {
+            islandPlacements.add(placement)
+        }
+    }
+
     val cells = (first..last).map { year ->
-        val owned = ownedInRange[year]
-        val state = when {
+        val owned = ownedByYear[year]
+        val cellState = when {
             !owned.isNullOrEmpty() -> YearCellState.Coin(
                 quantity = owned.sumOf { it.second },
                 typeId = owned.first().first,
@@ -134,12 +180,32 @@ fun yearAxis(
             year in slotYears -> YearCellState.Ghost
             else -> YearCellState.Bare
         }
-        YearAxisCell(year = year, state = state)
+        YearAxisCell(year = year, state = cellState)
     }
+
+    val islands = islandPlacements
+        .groupBy { it.country }
+        .entries
+        .sortedBy { (_, coins) -> coins.minOf { it.year } }
+        .map { (country, coins) ->
+            YearAxisIsland(
+                title = country,
+                coins = coins
+                    .groupBy { it.typeId }
+                    .map { (typeId, group) ->
+                        YearAxisIslandCoin(
+                            typeId = typeId,
+                            quantity = group.sumOf { it.quantity },
+                        )
+                    },
+            )
+        }
+
     return YearAxisModel(
         cells = cells,
         ownedYears = cells.count { it.state is YearCellState.Coin },
         totalYears = cells.size,
+        islands = islands,
     )
 }
 
