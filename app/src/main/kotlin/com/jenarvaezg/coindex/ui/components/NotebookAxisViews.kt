@@ -230,7 +230,8 @@ fun LazyGridScope.yearAxisItems(
         }
         items(
             items = century.decades,
-            key = { "decade-${it.decade}" },
+            // Century in the key: year 100 and year 101 share decade 100 across two centuries.
+            key = { "decade-${century.century}-${it.decade}" },
             span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) },
         ) { decade ->
             YearAxisDecadeRow(decade = decade, images = images)

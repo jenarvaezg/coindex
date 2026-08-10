@@ -66,6 +66,12 @@ data class YearAxisModel(
  * Owned pieces are placed by [placementYear] — Gregorian first — so Hijri engraved years do not
  * stretch the arc. A year a plate names and the collector does not own is a ghost; a year nobody
  * names and nobody owns is bare cardboard.
+ *
+ * **The range is dated pieces and slots, not undated inheritances.** The type minimum (#326) still
+ * places an undated piece when it falls inside that range (Portuguese escudos). Letting a Roman
+ * denarius of year 270 open the axis would paint 1,700 years of bare cardboard before the first
+ * Thaler — the opposite of the 1.62-screen sheet atlas-315 measured. The 1,756-year figure belongs
+ * to «Las cifras»'s arco, not to this sheet.
  */
 fun yearAxis(
     state: CollectionState,
@@ -76,10 +82,14 @@ fun yearAxis(
     keptItemIds: Set<Long>? = null,
 ): YearAxisModel {
     val ownedByYear = linkedMapOf<Int, MutableList<Pair<Int, Int>>>()
+    val datedYears = sortedSetOf<Int>()
     for (piece in state.items) {
         if (piece.quantity <= 0) continue
         if (keptItemIds != null && piece.id !in keptItemIds) continue
-        val year = placementYear(piece, state.typeMeta[piece.typeId]) ?: continue
+        val meta = state.typeMeta[piece.typeId]
+        val dated = listOfNotNull(piece.gregorianYear, piece.recordedYear).firstOrNull { it > 0 }
+        val year = placementYear(piece, meta) ?: continue
+        if (dated != null) datedYears.add(dated)
         ownedByYear.getOrPut(year) { mutableListOf() }
             .add(piece.typeId to piece.quantity)
     }
@@ -98,18 +108,24 @@ fun yearAxis(
                 continue
             }
             val year = axisSlotYear(catalog, albumMember.member.year, state) ?: continue
-            slotYears.add(year)
+            if (year > 0) slotYears.add(year)
         }
     }
 
-    val years = (ownedByYear.keys + slotYears)
-    if (years.isEmpty()) {
+    val rangeYears = (datedYears + slotYears).ifEmpty {
+        // A collection of only undated pieces still deserves a sheet: fall back to inherited years.
+        ownedByYear.keys.filter { it > 0 }.toSet()
+    }
+    if (rangeYears.isEmpty()) {
         return YearAxisModel(cells = emptyList(), ownedYears = 0, totalYears = 0)
     }
-    val first = years.min()
-    val last = years.max()
+    val first = rangeYears.min()
+    val last = rangeYears.max()
+    // Undated pieces whose inherited year falls outside the dated/slot span stay off this sheet;
+    // the country axis still shows them.
+    val ownedInRange = ownedByYear.filterKeys { it in first..last }
     val cells = (first..last).map { year ->
-        val owned = ownedByYear[year]
+        val owned = ownedInRange[year]
         val state = when {
             !owned.isNullOrEmpty() -> YearCellState.Coin(
                 quantity = owned.sumOf { it.second },
@@ -150,7 +166,8 @@ private fun axisSlotYear(
 
 private fun centuryOf(year: Int): Int = when {
     year > 0 -> (year - 1) / 100 + 1
-    else -> year / 100
+    year < 0 -> year / 100 // e.g. -50 → century 0 in the BC labelling branch
+    else -> 1 // year 0 does not occur after [placementYear]; keep labels unique if it did
 }
 
 private fun roman(n: Int): String {

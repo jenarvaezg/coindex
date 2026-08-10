@@ -121,6 +121,32 @@ class YearAxisTest {
     }
 
     @Test
+    fun `an undated ancient piece does not open a two-millennium axis`() {
+        // The denarius inherits year 270, but the sheet's span is the dated Thaler at 1780 and the
+        // plate at 1876-1878 — 1.62 screens, not 1,700 years of bare cardboard before the first coin.
+        val model = yearAxis(
+            state = state(
+                items = listOf(
+                    CollectedItem(id = 1, quantity = 1, typeId = TYPE_A, issueYear = null),
+                    item(2, TYPE_B, year = 1780),
+                ),
+                typeMeta = mapOf(
+                    TYPE_A to meta(TYPE_A, 270),
+                    TYPE_B to meta(TYPE_B, 1780),
+                ),
+                evidenced = setOf("later"),
+            ),
+            catalogs = listOf(
+                dateRun(id = "later", issuer = "france", typeId = TYPE_B, years = 1876..1878),
+            ),
+        )
+
+        assertEquals(1780, model.cells.first().year)
+        assertTrue(model.totalYears < 300)
+        assertTrue(model.cells.none { it.year == 270 })
+    }
+
+    @Test
     fun `a year the collector owns is never painted empty even when no plate names it`() {
         // The prototype bug: eleven owned years painted as empty because placement read the
         // wrong year. Here an owned year with no slot must still be Coin, not Bare.

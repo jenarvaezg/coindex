@@ -39,6 +39,23 @@ class PlacementYearTest {
     }
 
     @Test
+    fun `Numista year zero is not a placement year`() {
+        assertEquals(
+            1895,
+            placementYear(
+                item(issueYear = 0, gregorianYear = 0),
+                meta = TypeMeta(id = 1, minYear = 1895),
+            ),
+        )
+        assertNull(
+            placementYear(
+                item(issueYear = 0, gregorianYear = 0),
+                meta = null,
+            ),
+        )
+    }
+
+    @Test
     fun `an undated piece inherits the type minimum`() {
         assertEquals(
             1813,
