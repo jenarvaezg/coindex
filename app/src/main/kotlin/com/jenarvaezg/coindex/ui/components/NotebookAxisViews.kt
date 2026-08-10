@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
@@ -65,16 +67,22 @@ private val BARE_DOT = 3.dp
  *
  * Loose cells keep the photograph and drop the cardboard ([AlbumHole.backed] = false), which is
  * how a piece no casilla claims still reads as a coin and not as a hole to fill.
+ *
+ * A tap opens Monedas with that country already on the shelf — the axis shows the album; the list
+ * is where those pieces are read one by one.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CountryAxisRow(
     block: CountryAxisBlock,
     images: Map<Int, TypeImages>,
+    onCountryClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Button, onClick = { onCountryClick(block.country) }),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Column(modifier = Modifier.width(COUNTRY_LABEL_WIDTH)) {
@@ -108,6 +116,7 @@ fun CountryAxisRow(
 fun CountryAxisTail(
     blocks: List<CountryAxisBlock>,
     images: Map<Int, TypeImages>,
+    onCountryClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
@@ -119,6 +128,10 @@ fun CountryAxisTail(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.clickable(
+                    role = Role.Button,
+                    onClick = { onCountryClick(block.country) },
+                ),
             ) {
                 Text(
                     block.country,
@@ -188,11 +201,15 @@ fun YearAxisDigitHeader(modifier: Modifier = Modifier) {
  * Bare cardboard is a pinprick (atlas-315), not an empty seat — without it the calendar reads as
  * holes in the middle. Ghosts keep the dashed hole; coins carry a rust count when more than one
  * piece lands on the year. Cells share the width after the decade label so ten still fit a phone.
+ *
+ * Coin and ghost seats open Monedas on that year's era band; bare cardboard stays quiet — there is
+ * nothing of this collection to read there.
  */
 @Composable
 fun YearAxisDecadeRow(
     decade: YearAxisDecade,
     images: Map<Int, TypeImages>,
+    onYearClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val byOffset = decade.cells.associateBy { it.year - decade.decade }
@@ -212,10 +229,22 @@ fun YearAxisDecadeRow(
         ) {
             for (offset in 0..9) {
                 val cell = byOffset[offset]
+                val year = cell?.year ?: (decade.decade + offset)
+                val opens = cell?.state is YearCellState.Coin || cell?.state == YearCellState.Ghost
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .aspectRatio(1f),
+                        .aspectRatio(1f)
+                        .then(
+                            if (opens) {
+                                Modifier.clickable(
+                                    role = Role.Button,
+                                    onClick = { onYearClick(year) },
+                                )
+                            } else {
+                                Modifier
+                            },
+                        ),
                     contentAlignment = Alignment.Center,
                 ) {
                     when (val state = cell?.state) {
@@ -270,15 +299,23 @@ fun YearAxisCenturyHeader(century: YearAxisCentury, modifier: Modifier = Modifie
  *
  * Same reading as a country block of only loose coins — name, count, photographs without a slot
  * to fill — so the calendar below never opens seventeen empty centuries for two denarii.
+ *
+ * A tap opens Monedas on that country: the island is already titled by issuer, and that is the
+ * shelf facet that reaches those pieces without inventing an era they do not sit in.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun YearAxisIslandRow(
     island: YearAxisIsland,
     images: Map<Int, TypeImages>,
+    onCountryClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Button, onClick = { onCountryClick(island.title) }),
+    ) {
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -328,9 +365,10 @@ fun YearAxisIslandRow(
 fun LazyGridScope.countryAxisItems(
     model: CountryAxisModel,
     images: Map<Int, TypeImages>,
+    onCountryClick: (String) -> Unit,
 ) {
     items(model.body, key = { "country-${it.country}" }) { block ->
-        CountryAxisRow(block = block, images = images)
+        CountryAxisRow(block = block, images = images, onCountryClick = onCountryClick)
     }
     if (model.tail.isNotEmpty()) {
         item(
@@ -340,6 +378,7 @@ fun LazyGridScope.countryAxisItems(
             CountryAxisTail(
                 blocks = model.tail,
                 images = images,
+                onCountryClick = onCountryClick,
                 modifier = Modifier.padding(top = 8.dp),
             )
         }
@@ -350,6 +389,8 @@ fun LazyGridScope.countryAxisItems(
 fun LazyGridScope.yearAxisItems(
     model: YearAxisModel,
     images: Map<Int, TypeImages>,
+    onCountryClick: (String) -> Unit,
+    onYearClick: (Int) -> Unit,
 ) {
     items(
         items = model.islands,
@@ -359,6 +400,7 @@ fun LazyGridScope.yearAxisItems(
         YearAxisIslandRow(
             island = island,
             images = images,
+            onCountryClick = onCountryClick,
             modifier = Modifier.padding(bottom = 10.dp),
         )
     }
@@ -386,6 +428,7 @@ fun LazyGridScope.yearAxisItems(
             YearAxisDecadeRow(
                 decade = decade,
                 images = images,
+                onYearClick = onYearClick,
                 modifier = Modifier.padding(vertical = 2.dp),
             )
         }

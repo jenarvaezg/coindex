@@ -66,6 +66,7 @@ import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.seriesLabel
+import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexFacts
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexSort
@@ -73,6 +74,7 @@ import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.OunceBand
 import com.jenarvaezg.coindex.ui.shelf.PlateStatus
 import com.jenarvaezg.coindex.ui.shelf.StartBand
+import com.jenarvaezg.coindex.ui.shelf.YearBand
 import com.jenarvaezg.coindex.ui.shelf.countryAxis
 import com.jenarvaezg.coindex.ui.shelf.countryAxisTally
 import com.jenarvaezg.coindex.ui.shelf.indexFacetCounts
@@ -128,6 +130,11 @@ fun IndexScreen(
     catalogs: List<CollectionCatalog>,
     onNarrow: (IndexShelf) -> Unit,
     onOpen: (CardDestination) -> Unit,
+    /**
+     * Open Monedas with a shelf already narrowed — country or year axis seats that want the list,
+     * not another plate.
+     */
+    onOpenCoins: (CoinsShelf) -> Unit,
     onSettings: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).
@@ -465,10 +472,40 @@ fun IndexScreen(
                     )
                 }
                 NotebookAxis.ByCountry -> countryModel?.let { model ->
-                    countryAxisItems(model = model, images = state.images)
+                    countryAxisItems(
+                        model = model,
+                        images = state.images,
+                        onCountryClick = { country ->
+                            onOpenCoins(
+                                CoinsShelf(
+                                    issuer = country,
+                                    axis = NotebookAxis.ByCountry,
+                                ),
+                            )
+                        },
+                    )
                 }
                 NotebookAxis.ByYear -> yearModel?.let { model ->
-                    yearAxisItems(model = model, images = state.images)
+                    yearAxisItems(
+                        model = model,
+                        images = state.images,
+                        onCountryClick = { country ->
+                            onOpenCoins(
+                                CoinsShelf(
+                                    issuer = country,
+                                    axis = NotebookAxis.ByCountry,
+                                ),
+                            )
+                        },
+                        onYearClick = { year ->
+                            onOpenCoins(
+                                CoinsShelf(
+                                    year = YearBand.of(year),
+                                    axis = NotebookAxis.ByYear,
+                                ),
+                            )
+                        },
+                    )
                 }
             }
         }

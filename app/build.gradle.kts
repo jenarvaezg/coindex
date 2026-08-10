@@ -41,10 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 38
-        // Minor: the notebook gains the country and year axes (#340). Same collection, another
-        // order — banner: «Mira tu colección por país o por año».
-        versionName = "1.1.0"
+        versionCode = 39
+        // Patch on top of 1.1.0: a tap on the country or year axis opens Coins with that filter
+        // already on — banner: «Toca un país o un año y ves esas monedas».
+        versionName = "1.1.1"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
