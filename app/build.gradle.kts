@@ -41,10 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 36
+        versionCode = 37
         // Patch on top of 1.0.1: Descargar lands the lámina and the cuaderno in Descargas, and
         // Compartir stays beside it (#285). The father's «y ya» — no chooser — is the point.
-        versionName = "1.0.2"
+        versionName = "1.0.3"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
