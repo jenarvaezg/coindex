@@ -158,9 +158,11 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Las dos gamas de lingote de la Royal Mint que Numista no agrupa: sus seis tipos declaran
-     * `series: null`, así que sin catálogo salen huérfanas y con él afirman algo que la familia de
-     * Numista no dice (#28). El límite lo pone la propia ceca, no una serie.
+     * Dos gamas de lingote de la Royal Mint cuyo límite pone la propia ceca y no una serie. Nacieron
+     * cuando sus cinco tipos declaraban `series: null` —sin catálogo salían huérfanas y con él
+     * afirman algo que la familia de Numista no decía (#28)—, y siguen enteras después de que
+     * Numista aceptara las series 10572 y 13401 que se propusieron desde aquí (#85, #86): una serie
+     * propone agrupación y no afirma cobertura, así que no retira un catálogo (#83).
      *
      * La casilla es el año aunque el diseño no cambie, y ahí se separan las dos: St George reparte
      * un tipo por año y The Lion and the Eagle mete 2024 y 2025 en N#404024 —el mismo reverso de
@@ -188,6 +190,31 @@ class CuratedCatalogsTest {
         assertEquals(
             listOf(404_024, 404_024),
             eagle.members.filter { it.year in 2024..2025 }.map { it.numistaTypeId },
+        )
+    }
+
+    /**
+     * El British Lion estuvo en la agrupación de onzas sueltas mientras sólo existía su año de
+     * debut. En cuanto la ceca lo devolvió —«Back for 2026 following a successful debut in 2025»,
+     * mismo reverso de David Lawrence y otros 50.000— dejó de ser una suelta y pasó a ser lo mismo
+     * que el león y el águila: un date run cuyas dos casillas comparten el N#476689, que Numista
+     * fecha con una emisión por año.
+     *
+     * Sale de la agrupación al entrar aquí, porque una agrupación pierde la familia ante cualquier
+     * catálogo que nombre el tipo (ADR 0013), y allí queda lo que sí es de un solo año: la D-Day 80
+     * de 2024 y The Angel de 2026.
+     */
+    @Test
+    fun `the british lion stopped being a loose ounce when 2026 returned`() {
+        val lion = find("uk-british-lion-1oz-bullion")
+        assertTrue(lion.isDateRun)
+        assertEquals(Finish.Bullion, lion.finish)
+        assertEquals(1_000, lion.weightMillioz)
+        assertEquals(Metal.Silver, lion.metal)
+        assertOpenRunFrom(2025, lion)
+        assertEquals(
+            listOf(476_689, 476_689),
+            lion.members.map { it.numistaTypeId },
         )
     }
 

@@ -5,11 +5,10 @@
   "short_name": "Onzas sueltas de la Royal Mint",
   "family": "Onzas de plata sueltas de la Royal Mint",
   "issuer_code": "royaume-uni",
-  "source": "https://en.numista.com/catalogue/pieces476689.html",
-  "updated_at": "2026-08-01",
+  "source": "https://en.numista.com/catalogue/pieces436016.html",
+  "updated_at": "2026-08-10",
   "type_ids": [
     436016,
-    476689,
     581702
   ]
 }
