@@ -65,6 +65,13 @@ detrás. Vuela **sólo donde hay cociente**: las 20 tarjetas del padre que abren
 o `Box` no llevan elemento compartido, porque al otro lado no hay una casilla suya sino
 filas de inventario con las dos caras a 150 dp.
 
+> **Corregido el 10 de agosto de 2026 (#381).** «La rejilla entra detrás» describe un
+> defecto, no un acierto, y esta tira lo tiene dentro: en las poses 3 a 6 el `22/22`,
+> «Exportar lámina completa» y «Fuente en Numista» se leen sobre las nueve tarjetas del
+> índice, que siguen enteras debajo. Era un doble expuesto de las dos pantallas, porque
+> ningún destino del `NavHost` pintaba papel propio. La tira buena está en
+> `docs/ux/implementacion-381/`; el resto de este documento se sostiene.
+
 ## La hoja se abre por donde cae la moneda
 
 ![La lámina del 1 Bolívar abierta en 1945](lamina-incompleta.png)

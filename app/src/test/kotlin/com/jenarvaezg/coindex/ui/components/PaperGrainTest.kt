@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.components
 
+import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -66,6 +67,16 @@ class PaperGrainTest {
 
         assertTrue(slants.any { it > 0.1f } && slants.any { it < -0.1f })
         assertTrue(slants.all { it in -GRAIN_SLANT_SPREAD / 2f..GRAIN_SLANT_SPREAD / 2f })
+    }
+
+    @Test
+    fun `the sheet is opaque, which is what lets one destination cover another`() {
+        // #381: the two ends of a navigation are composed together for as long as the coin is in
+        // the air, and each of them paints this paper. While the tone carried any transparency the
+        // one arriving could not cover the one leaving, and half of every journey was the index and
+        // the plate drawn over each other. The grain is baked on top of this rect, so the whole
+        // mosaic is opaque exactly as long as this is.
+        assertEquals(1f, Paper.paper.alpha)
     }
 
     @Test
