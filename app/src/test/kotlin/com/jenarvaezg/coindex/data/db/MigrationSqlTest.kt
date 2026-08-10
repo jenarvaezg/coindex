@@ -222,4 +222,64 @@ class MigrationSqlTest {
             )
         }
     }
+
+    /**
+     * La versión 7 le da sitio al dinero (ADR 0028): tres tablas que el teléfono no tenía y cuatro
+     * columnas más en la caché de fichas.
+     *
+     * Aditiva de punta a punta, y sin una sola llamada: las columnas las rellena después
+     * `FichaBackfill` desde los cuerpos que cada fila ya guarda, como la 3 y la 6. El `issue_id` que
+     * el #327 esperaba migrar ya se lee del cuerpo guardado, así que la instantánea de la colección
+     * no se toca.
+     */
+    @Test
+    fun `version 7 creates the three money tables exactly as Room declares them`() {
+        val exported = exportedCreateSql(7)
+        val added = exported.keys - exportedCreateSql(6).keys
+
+        assertEquals(setOf("issue_price_reads", "issue_prices", "metal_spot"), added)
+        assertEquals(
+            listOf("issue_price_reads", "issue_prices", "metal_spot").map(exported::getValue),
+            CoindexDatabase.VERSION_7_TABLES,
+        )
+    }
+
+    @Test
+    fun `version 7 adds the four ficha columns exactly as Room declares them`() {
+        val added = exportedColumns(7, "type_meta") - exportedColumns(6, "type_meta").keys
+
+        assertEquals(
+            mapOf(
+                "thicknessMillimetres" to "REAL",
+                "demonetized" to "INTEGER",
+                "hands" to "TEXT",
+                "mints" to "TEXT",
+            ),
+            added,
+        )
+        assertEquals(
+            added.map { (column, type) -> "ALTER TABLE `type_meta` ADD COLUMN `$column` $type" },
+            CoindexDatabase.VERSION_7_COLUMNS,
+        )
+        // Anulables las cuatro: una columna `NOT NULL` sin defecto no se puede añadir en SQLite, y el
+        // silencio de Numista sobre la desmonetización no es un «sigue siendo dinero».
+        added.keys.forEach { column ->
+            assertTrue(
+                "NOT NULL" !in exportedDeclaration(7, "type_meta", column),
+                "la columna $column de la versión 7 no es anulable",
+            )
+        }
+    }
+
+    /** Y no toca nada más: la colección sincronizada y las cajas del coleccionista siguen costando. */
+    @Test
+    fun `version 7 touches the type cache and adds tables, and nothing else`() {
+        (exportedCreateSql(6).keys - "type_meta").forEach { table ->
+            assertEquals(
+                exportedColumns(6, table),
+                exportedColumns(7, table),
+                "la versión 7 ha tocado $table",
+            )
+        }
+    }
 }

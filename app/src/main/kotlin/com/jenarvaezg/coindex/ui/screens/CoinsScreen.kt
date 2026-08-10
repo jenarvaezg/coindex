@@ -48,10 +48,12 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.coinFichaIdentity
+import com.jenarvaezg.coindex.ui.coinValueLabel
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
@@ -112,6 +114,13 @@ fun CoinsScreen(
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
     onOpenSource: (url: String) -> Unit,
     onSettings: () -> Unit,
+    /**
+     * What one coin is worth, or null while the market has not landed (ADR 0028 §7).
+     *
+     * Handed in the way [ficha] is, and built in the same place: the value of a piece also heads its
+     * plate, and two screens computing it apart is two totals that can disagree about one coin.
+     */
+    value: (Int) -> CoinValue?,
     /**
      * How old each ficha is and how to ask for it again (#185, ADR 0025).
      *
@@ -237,6 +246,7 @@ fun CoinsScreen(
                 // `selectedTypeId`, or both ends claim the photograph and the return pops.
                 ownsCoin = selectedTypeId == row.typeId,
                 ficha = ficha(row.typeId),
+                value = value(row.typeId),
                 onDismiss = { selectedTypeId = null },
                 onOpenSource = {
                     selectedTypeId = null
@@ -272,6 +282,7 @@ private fun CoinFichaSheet(
     otherSide: CoinPhoto?,
     ownsCoin: Boolean,
     ficha: FichaRefresh,
+    value: CoinValue?,
     onDismiss: () -> Unit,
     onOpenSource: () -> Unit,
     onOpen: (CardDestination) -> Unit,
@@ -306,6 +317,7 @@ private fun CoinFichaSheet(
                 otherSide = otherSide,
                 ownsCoin = ownsCoin,
                 ficha = ficha,
+                value = value,
                 onOpenSource = onOpenSource,
                 onOpen = onOpen,
             )
@@ -484,6 +496,7 @@ private fun CoinFicha(
     otherSide: CoinPhoto?,
     ownsCoin: Boolean,
     ficha: FichaRefresh,
+    value: CoinValue?,
     onOpenSource: () -> Unit,
     onOpen: (CardDestination) -> Unit,
 ) {
@@ -514,6 +527,17 @@ private fun CoinFicha(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
+        // The value with its origin said, because a number with no provenance in an app with two
+        // users is a number nobody can check (#316).
+        value?.let { reading ->
+            Text(
+                coinValueLabel(reading),
+                style = MaterialTheme.typography.labelLarge,
+                color = Paper.rust,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 6.dp).fillMaxWidth(),
+            )
+        }
         FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp).fillMaxWidth())
         ExternalLink(
             text = COIN_VIEW_ON_NUMISTA,

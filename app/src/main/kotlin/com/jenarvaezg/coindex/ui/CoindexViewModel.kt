@@ -501,6 +501,21 @@ class CoindexViewModel(
             unclaimed = unclaimed,
             curation = curation,
             options = options,
+            // The money switch is answered once, here, by handing the printer either a value or
+            // nothing (#228, ADR 0021 §13). And nothing is also what it gets while the market has
+            // not landed: a total at 60 % is false on paper too, and paper cannot be taken back.
+            plateValue = { resolved ->
+                if (!options.money || !_state.value.valuation.settled) {
+                    null
+                } else {
+                    plateValue(
+                        resolved.album,
+                        _state.value.collection,
+                        _state.value.prices.spot,
+                        _state.value.prices::of,
+                    )
+                }
+            },
         ),
         geometry = printGeometry(options),
     )

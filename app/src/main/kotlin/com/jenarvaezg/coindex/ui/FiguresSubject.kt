@@ -1,7 +1,8 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.CollectionFigures
 import com.jenarvaezg.coindex.domain.CollectionValue
 import com.jenarvaezg.coindex.domain.Ladder
@@ -9,6 +10,7 @@ import com.jenarvaezg.coindex.domain.LadderKind
 import com.jenarvaezg.coindex.domain.LadderPlacement
 import com.jenarvaezg.coindex.domain.Ladders
 import com.jenarvaezg.coindex.domain.SilverSpot
+import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.collectionFigures
 import com.jenarvaezg.coindex.domain.collectionValue
 import com.jenarvaezg.coindex.domain.fineSilverGrams
@@ -174,14 +176,80 @@ private class MutableCountry {
 }
 
 /**
- * What one piece is worth, for the ficha and the plate header.
+ * What one coin is worth, for its ficha.
  *
- * The same three sources the page totals, read for one row: the grain is what tells a shopping companion
- * from wealth management (ADR 0026 §10), and per piece it is the companion.
+ * The same three sources the page totals, read for one type. **The grain is the whole argument**
+ * (ADR 0026 §10): read piece by piece or plate by plate this is a shopping companion — the premium is
+ * the scale of that purchase — and the same thing totalled for the shelf is wealth management, which
+ * stays outside.
+ *
+ * @param pieces how many pieces of the type the total covers, so «×3» is not read as one coin's price.
+ * @param source and [grade] only when **every** piece agrees on them. Two pieces of one type graded
+ *   differently are two origins, and one of them printed for both would be the wrong one half the time.
  */
-fun pieceReading(
-    item: CollectedItem,
+data class CoinValue(
+    val eur: Double,
+    val pieces: Int,
+    val source: ValueSource?,
+    val grade: String?,
+)
+
+fun coinValue(
+    typeId: Int,
     state: CollectionState,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
-) = pieceValue(item, state.typeMeta[item.typeId], spot, prices)
+): CoinValue? {
+    val meta = state.typeMeta[typeId]
+    val valued = state.items
+        .filter { it.typeId == typeId }
+        .mapNotNull { item ->
+            pieceValue(item, meta, spot, prices)?.let { it to item.quantity.coerceAtLeast(1) }
+        }
+    if (valued.isEmpty()) return null
+    val sources = valued.map { (value, _) -> value.source to value.grade }.distinct()
+    val agreed = sources.singleOrNull()
+    return CoinValue(
+        eur = valued.sumOf { (value, quantity) -> value.eur * quantity },
+        pieces = valued.fold(0) { total, (_, quantity) -> saturatingAdd(total, quantity) },
+        source = agreed?.first,
+        grade = agreed?.second,
+    )
+}
+
+/** What a plate's own coins are worth, for the figure over its title. */
+data class PlateValue(val eur: Double, val pieces: Int)
+
+/**
+ * The value of what a plate holds, which is the other place the grain rule allows a total.
+ *
+ * Only the pieces the plate's own casillas are filled with, so it is the plate's value and not the
+ * value of every coin of those types: a type that fills one casilla and sits loose in three more rows is
+ * one casilla here.
+ *
+ * **The cost of closing it is deliberately not here.** «A una casilla» is what is missing rather than
+ * what is there, and its place is this same header — but it is a different figure, and totalling it for
+ * the shelf is the reproach ADR 0026 §10 refused.
+ */
+fun plateValue(
+    album: CollectionCatalogAlbum,
+    state: CollectionState,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): PlateValue? {
+    val filled = album.members
+        .mapNotNull { it.status as? CollectionCatalogMemberStatus.Owned }
+        .flatMap { owned -> owned.items }
+        .map { it.itemId }
+        .toSet()
+    if (filled.isEmpty()) return null
+    var total = 0.0
+    var pieces = 0
+    for (item in state.items.filter { it.id in filled }) {
+        val value = pieceValue(item, state.typeMeta[item.typeId], spot, prices) ?: continue
+        val quantity = item.quantity.coerceAtLeast(1)
+        total += value.eur * quantity
+        pieces = saturatingAdd(pieces, quantity)
+    }
+    return if (pieces == 0) null else PlateValue(total, pieces)
+}

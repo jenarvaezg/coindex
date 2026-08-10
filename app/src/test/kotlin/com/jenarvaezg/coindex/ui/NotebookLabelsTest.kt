@@ -34,6 +34,7 @@ class NotebookLabelsTest {
                 "Compartir página",
                 "QR de Numista",
                 "Sin colección",
+                "El valor",
             ),
             NotebookSwitch.entries.map(::notebookSwitchLabel),
         )

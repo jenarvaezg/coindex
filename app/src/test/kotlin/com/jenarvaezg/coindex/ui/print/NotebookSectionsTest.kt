@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.print
 
 import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
@@ -17,6 +18,7 @@ import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -221,12 +223,45 @@ class NotebookSectionsTest {
         assertFalse(section.complete)
     }
 
+
+    /**
+     * **With the money off, nothing derived from an amount reaches the page** (#228, ADR 0021 §13).
+     *
+     * The switch is answered once, by handing the printer nothing rather than by asking the options
+     * again further down, so a drawer that has no amount cannot print one. That is what makes
+     * «apagarlo no deja escapar ninguna cifra derivada de dinero» a property of the code and not a
+     * promise about it.
+     */
+    @Test
+    fun `with the money off no fact of the page carries an amount`() {
+        val section = dateRunSection(listOf(1879), options = NotebookOptions(money = false))
+
+        assertEquals(emptyList(), section.facts.filter { (label, _) -> label == "Valor" })
+        assertTrue(section.facts.none { (_, value) -> "€" in value })
+    }
+
+    /** With it on, the plate's own value joins its specification, because paper has no header. */
+    @Test
+    fun `with the money on the plate prints what is in it`() {
+        val section = dateRunSection(
+            listOf(1879),
+            options = NotebookOptions(money = true),
+            plateValue = { PlateValue(eur = 54.0, pieces = 1) },
+        )
+
+        assertEquals(listOf("Valor" to "54 €"), section.facts.filter { it.first == "Valor" })
+    }
+
     /**
      * A two-year date run resolved the way `resolvePlate` resolves production plates: the card
      * names the catalog, the state carries the evidence, and `notebookSections` is what reads
      * completeness off the subject.
      */
-    private fun dateRunSection(ownedYears: List<Int>): PrintSection {
+    private fun dateRunSection(
+        ownedYears: List<Int>,
+        options: NotebookOptions = NotebookOptions(),
+        plateValue: (PlateResult.Available) -> PlateValue? = { null },
+    ): PrintSection {
         val typeId = 10_340
         val catalog = CollectionCatalog(
             schemaVersion = 2,
@@ -278,7 +313,8 @@ class NotebookSectionsTest {
             listOf(card),
             emptyList(),
             Curation(listOf(catalog)),
-            NotebookOptions(),
+            options,
+            plateValue,
         ).single()
     }
 }

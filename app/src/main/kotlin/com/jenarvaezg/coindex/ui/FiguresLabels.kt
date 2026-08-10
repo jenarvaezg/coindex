@@ -227,3 +227,25 @@ fun readAtLabel(readAtMillis: Long, nowMillis: Long): String {
 /** The arc, which is two years and the distance between them. */
 fun arcLabel(years: Int): String = "$years años"
 
+/**
+ * What a coin's ficha says about its value, with the origin.
+ *
+ * The origin is not an ornament: «un número sin procedencia en una app de dos usuarios es un número que
+ * nadie puede comprobar» (#316). It is dropped only when the pieces of the type do not agree on one,
+ * because then no single origin is true of all of them.
+ */
+fun coinValueLabel(value: CoinValue): String {
+    val head = eurosLabel(value.eur)
+    val origin = value.source?.let { FiguresLabels.valueOrigin(it, value.grade) }
+    val pieces = "${value.pieces} piezas".takeIf { value.pieces > 1 }
+    return listOfNotNull(head, pieces, origin).joinToString(" · ")
+}
+
+/**
+ * What a plate's header says about the value of what is in it.
+ *
+ * A total over the casillas of one plate, which the grain rule allows: per plate it is a plan, and the
+ * same sum over the whole shelf would be «te faltan decenas de miles de euros» (ADR 0026 §10).
+ */
+fun plateValueLabel(value: PlateValue): String = eurosLabel(value.eur)
+

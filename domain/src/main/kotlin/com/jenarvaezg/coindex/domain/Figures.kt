@@ -76,8 +76,11 @@ fun metalSplit(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MetalSplit 
                 // No fineness declared is not «pure»: the whole mass goes to the metal named, because
                 // that is all the ficha supports, and nothing is credited to copper it did not say.
                 val fineness = meta.fineness ?: 1.0
-                masses.merge(metal, mass * fineness, Double::plus)
-                val alloy = mass * (1.0 - fineness)
+                val fine = mass * fineness
+                masses.merge(metal, fine, Double::plus)
+                // The remainder and not `mass × (1 − fineness)`: the two are the same number and only
+                // one of them is 16,5 rather than 16,500000000000004 on the label.
+                val alloy = mass - fine
                 if (alloy > 0.0) masses.merge(Metal.Copper, alloy, Double::plus)
                 measured += mass
             }
@@ -92,8 +95,10 @@ fun metalSplit(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MetalSplit 
         }
     }
     return MetalSplit(
+        // Heaviest first, and on a tie the precious metal: two metals of the same mass would otherwise
+        // swap places between launches with the order of the inventory.
         masses = masses.map { (metal, grams) -> MetalMass(metal, grams) }
-            .sortedByDescending { it.grams },
+            .sortedWith(compareByDescending<MetalMass> { it.grams }.thenBy { metalOrder(it.metal) }),
         measuredGrams = measured,
         grams = total,
     )

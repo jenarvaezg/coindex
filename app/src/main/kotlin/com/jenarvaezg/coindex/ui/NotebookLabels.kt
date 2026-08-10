@@ -34,6 +34,7 @@ fun notebookSwitchLabel(switch: NotebookSwitch): String = when (switch) {
     NotebookSwitch.SharePage -> "Compartir página"
     NotebookSwitch.NumistaQr -> "QR de Numista"
     NotebookSwitch.Unclaimed -> "Sin colección"
+    NotebookSwitch.Money -> "El valor"
 }
 
 /**

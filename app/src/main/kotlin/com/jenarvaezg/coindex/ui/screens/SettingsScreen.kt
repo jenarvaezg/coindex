@@ -22,9 +22,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
+import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.ui.SETTINGS_CREDENTIALS_HEADING
 import com.jenarvaezg.coindex.ui.SettingsValues
 import com.jenarvaezg.coindex.ui.photoCacheLabel
+import com.jenarvaezg.coindex.ui.valuationLabel
 import com.jenarvaezg.coindex.ui.syncActionLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -43,6 +45,8 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 fun SettingsScreen(
     values: SettingsValues,
     photoCache: PhotoCacheStatus,
+    /** How far the valuation pass has got, and why it is held if it is (ADR 0028 §6). */
+    valuation: ValuationStatus,
     syncing: Boolean,
     validation: String?,
     onSave: (apiKey: String, userId: String) -> Unit,
@@ -118,6 +122,19 @@ fun SettingsScreen(
             Text("Fotos del catálogo", style = MaterialTheme.typography.titleMedium)
             Text(
                 photoCacheLabel(photoCache),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Paper.muted,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+
+        // The pass is silent everywhere else, and this is the one line it is allowed (ADR 0028 §6):
+        // «Las cifras» with no money section looks the same whether the prices are on their way or
+        // the month's allowance is gone, and only one of the two is worth waiting for.
+        FieldCard(modifier = Modifier.fillMaxWidth()) {
+            Text("Precios de catálogo", style = MaterialTheme.typography.titleMedium)
+            Text(
+                valuationLabel(valuation),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 4.dp),

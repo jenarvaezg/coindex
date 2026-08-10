@@ -53,6 +53,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.components.BackGlyph
@@ -101,6 +102,25 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     val openUrl: (String) -> Unit = { url ->
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    }
+
+    // Built here, once, for the three surfaces that print money — the ficha of a coin, the header of
+    // its plate and «Las cifras» — so none of them can disagree with another about one coin. The
+    // market has to have landed: while it has not, `settled` is false and there is no amount to give
+    // anybody (ADR 0028 §7).
+    val coinValue: (Int) -> CoinValue? = { typeId ->
+        if (!state.valuation.settled) {
+            null
+        } else {
+            coinValue(typeId, state.collection, state.prices.spot, state.prices::of)
+        }
+    }
+    val plateValue: (PlateResult.Available) -> PlateValue? = { resolved ->
+        if (!state.valuation.settled) {
+            null
+        } else {
+            plateValue(resolved.album, state.collection, state.prices.spot, state.prices::of)
+        }
     }
 
     // Built here, once, for the two surfaces that show a piece of a type (#185): both read the same
@@ -297,6 +317,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onOpenSource = openUrl,
                             onSettings = { navController.navigate(Routes.SETTINGS) },
                             ficha = ficha,
+                            value = coinValue,
                         )
                     }
                     page(Routes.FIGURES) {
@@ -396,6 +417,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         SettingsScreen(
                             values = values,
                             photoCache = state.photoCache,
+                            valuation = state.valuation,
                             syncing = state.syncing,
                             validation = state.validation,
                             onSave = { apiKey, userId ->
@@ -429,6 +451,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     viewModel.plate(catalogId)
                                 },
                                 images = state.collection.images,
+                                value = plateValue,
                                 onOpenSource = openUrl,
                                 onMessage = viewModel::showMessage,
                                 modifier = Modifier.fillMaxSize(),
