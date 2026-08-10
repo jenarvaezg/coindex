@@ -26,6 +26,7 @@ class ShelfCodecTest {
     fun `a whole shelf of the index comes back as it went in`() {
         val shelf = IndexShelf(
             sort = IndexSort.RecentlyAdded,
+            axis = NotebookAxis.ByCountry,
             issuer = "Rusia",
             weight = OunceBand.Spanning,
             startsIn = StartBand.BeforeFifty,
@@ -39,6 +40,7 @@ class ShelfCodecTest {
     @Test
     fun `a whole shelf of Coins comes back as it went in`() {
         val shelf = CoinsShelf(
+            axis = NotebookAxis.ByYear,
             issuer = "México",
             weight = GramBand.Ounce,
             year = YearBand.SinceTwoThousand,
@@ -56,11 +58,11 @@ class ShelfCodecTest {
         // The sort is written as the default rather than as an absence, so «chosen on purpose» and
         // «never chosen» read back the same — which they are. Nothing else is stored.
         assertEquals(
-            listOf(ShelfCodec.INDEX_SORT),
+            listOf(ShelfCodec.INDEX_SORT, ShelfCodec.INDEX_AXIS),
             ShelfCodec.encode(IndexShelf()).filterValues { it != null }.keys.toList(),
         )
         assertEquals(
-            listOf(ShelfCodec.COINS_SORT),
+            listOf(ShelfCodec.COINS_SORT, ShelfCodec.COINS_AXIS),
             ShelfCodec.encode(CoinsShelf()).filterValues { it != null }.keys.toList(),
         )
     }

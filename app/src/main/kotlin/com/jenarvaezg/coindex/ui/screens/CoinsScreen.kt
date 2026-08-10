@@ -75,6 +75,7 @@ import com.jenarvaezg.coindex.ui.shelf.CoinSort
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.GramBand
 import com.jenarvaezg.coindex.ui.shelf.Membership
+import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearBand
 import com.jenarvaezg.coindex.ui.shelf.coinAlbumFootnote
 import com.jenarvaezg.coindex.ui.shelf.coinRows
@@ -168,7 +169,7 @@ fun CoinsScreen(
                         )
                         SearchField(value = query, onValueChange = { query = it })
                         FilterShelf(
-                            summary = coinsShelfSummary(shelf),
+                            summary = coinsShelfSummary(shelf, expanded = open),
                             tally = coinsTally(shown.size, rows.size),
                             expanded = open,
                             onToggle = { open = !open },
@@ -320,6 +321,16 @@ private fun CoinsFacets(
 ) {
     val counts = coinsFacetCounts(rows, shelf, query)
 
+    Facet("Eje") {
+        NotebookAxis.entries.forEach { axis ->
+            FilterChip(
+                label = axis.label,
+                count = null,
+                selected = shelf.axis == axis,
+                onClick = { onNarrow(shelf.copy(axis = axis)) },
+            )
+        }
+    }
     Facet("Orden") {
         CoinSort.entries.forEach { sort ->
             FilterChip(

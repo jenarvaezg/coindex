@@ -63,6 +63,13 @@ interface ShelfSubject {
 /** What the shelf of the index is narrowing by, and in what order it leaves what is left. */
 data class IndexShelf(
     val sort: IndexSort = IndexSort.MostComplete,
+    /**
+     * How the sheet is ordered (ADR 0026 §9): by plate, by country or by year.
+     *
+     * A facet and not a filter — it does not narrow — so it is not counted in [active]. The default
+     * is today's Collections; the folded summary names it only when it is not that one.
+     */
+    val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,
     val weight: OunceBand? = null,
     val startsIn: StartBand? = null,

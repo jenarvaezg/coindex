@@ -249,6 +249,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 loading = state.loading,
                                 lastSync = state.lastSync,
                                 shelf = state.indexShelf,
+                                catalogs = viewModel.catalogs,
                                 onNarrow = viewModel::narrowIndex,
                                 onOpen = { destination ->
                                     navController.navigate(routeOf(destination))

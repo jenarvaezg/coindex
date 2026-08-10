@@ -36,6 +36,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
@@ -51,7 +52,9 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.SearchField
+import com.jenarvaezg.coindex.ui.components.countryAxisItems
 import com.jenarvaezg.coindex.ui.components.travellingCoin
+import com.jenarvaezg.coindex.ui.components.yearAxisItems
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
 import com.jenarvaezg.coindex.ui.indexCoverageLabel
@@ -66,9 +69,12 @@ import com.jenarvaezg.coindex.ui.seriesLabel
 import com.jenarvaezg.coindex.ui.shelf.IndexFacts
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexSort
+import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.OunceBand
 import com.jenarvaezg.coindex.ui.shelf.PlateStatus
 import com.jenarvaezg.coindex.ui.shelf.StartBand
+import com.jenarvaezg.coindex.ui.shelf.countryAxis
+import com.jenarvaezg.coindex.ui.shelf.countryAxisTally
 import com.jenarvaezg.coindex.ui.shelf.indexFacetCounts
 import com.jenarvaezg.coindex.ui.shelf.indexFacts
 import com.jenarvaezg.coindex.ui.shelf.indexShelfSummary
@@ -77,6 +83,8 @@ import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
+import com.jenarvaezg.coindex.ui.shelf.yearAxis
+import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one round coin and two short lines under it. */
@@ -113,6 +121,11 @@ fun IndexScreen(
     loading: Boolean,
     lastSync: SyncRecord?,
     shelf: IndexShelf,
+    /**
+     * The curated catalogs, so the country and year axes can walk every evidenced plate
+     * (ADR 0026 §9). The index of cards is not enough: a member's country is not the card's.
+     */
+    catalogs: List<CollectionCatalog>,
     onNarrow: (IndexShelf) -> Unit,
     onOpen: (CardDestination) -> Unit,
     onSettings: () -> Unit,
@@ -179,6 +192,59 @@ fun IndexScreen(
     // that lives in a box — but a filtered notebook still takes only the loose coins it is about.
     val loose = remember(state) { unclaimedFacts(state) }
     val looseShown = remember(loose, shelf, query) { shelf.narrowUnclaimed(loose, query) }
+    // Catalogs and loose rows that survive the shelf: the country/year axes honour the same chips
+    // the plate axis does, so a weight filter does not leave Rusia painted in full beside a
+    // narrowed card grid.
+    val keptCatalogIds = remember(shown) {
+        shown.mapNotNull { card -> (card as? IndexCard.Derived)?.plateCatalogId }.toSet()
+    }
+    val keptLooseIds = remember(looseShown) { looseShown.map { it.id }.toSet() }
+    val countryModel = remember(state, catalogs, keptCatalogIds, keptLooseIds, shelf.axis) {
+        if (shelf.axis != NotebookAxis.ByCountry) {
+            null
+        } else {
+            countryAxis(
+                state = state,
+                catalogs = catalogs,
+                keptCatalogIds = keptCatalogIds,
+                keptLooseIds = keptLooseIds,
+            )
+        }
+    }
+    val yearModel = remember(state, catalogs, keptCatalogIds, shelf.axis) {
+        if (shelf.axis != NotebookAxis.ByYear) {
+            null
+        } else {
+            // Years walk every owned piece that still belongs to a kept catalog or is loose-kept;
+            // pieces inside a hidden card stay off the arc with it.
+            val keptItemIds = buildSet {
+                for (card in shown) {
+                    when (card) {
+                        is IndexCard.Derived -> {
+                            state.itemsByKey[card.key]?.forEach { add(it.id) }
+                        }
+                        is IndexCard.Box -> card.box.items.forEach { add(it.id) }
+                    }
+                }
+                addAll(keptLooseIds)
+            }
+            yearAxis(
+                state = state,
+                catalogs = catalogs,
+                keptCatalogIds = keptCatalogIds,
+                keptItemIds = keptItemIds,
+            )
+        }
+    }
+    val axisTally = when (shelf.axis) {
+        NotebookAxis.ByPlate -> indexTally(shown.size, state.index.size)
+        NotebookAxis.ByCountry -> countryModel?.let {
+            countryAxisTally(it.ownedSlots, it.totalSlots)
+        } ?: indexTally(shown.size, state.index.size)
+        NotebookAxis.ByYear -> yearModel?.let {
+            yearAxisTally(it.ownedYears, it.totalYears)
+        } ?: indexTally(shown.size, state.index.size)
+    }
     // What the export sheet is showing the cost of: recounted when a switch moves, and when the
     // narrowing under it moves. **Outside the grid**, like the export itself and for the same
     // reason: a lazy item is disposed the moment it scrolls off, and resolving sixty plates again
@@ -201,8 +267,12 @@ fun IndexScreen(
             .fillMaxWidth(),
     ) {
         // Counted here rather than left to GridCells.Adaptive, because the heading needs the
-        // same answer: one column is a page, two are a spread.
-        val columns = indexColumns(maxWidth)
+        // same answer: one column is a page, two are a spread. The country and year axes are one
+        // column of blocks; the plate axis keeps the album density.
+        val columns = when (shelf.axis) {
+            NotebookAxis.ByPlate -> indexColumns(maxWidth)
+            NotebookAxis.ByCountry, NotebookAxis.ByYear -> 1
+        }
 
 
         LazyVerticalGrid(
@@ -226,8 +296,8 @@ fun IndexScreen(
                 Column {
                     SearchField(value = query, onValueChange = { query = it })
                     FilterShelf(
-                        summary = indexShelfSummary(shelf),
-                        tally = indexTally(shown.size, state.index.size),
+                        summary = indexShelfSummary(shelf, expanded = open),
+                        tally = axisTally,
                         expanded = open,
                         onToggle = { open = !open },
                         actionLabel = if (printing != null) {
@@ -346,7 +416,12 @@ fun IndexScreen(
             //
             // A shelf that hides everything is the third case, and it owes the way out on the spot:
             // the shelf enters folded, so the chip responsible may be two taps away.
-            if (shown.isEmpty()) {
+            val axisEmpty = when (shelf.axis) {
+                NotebookAxis.ByPlate -> shown.isEmpty()
+                NotebookAxis.ByCountry -> countryModel?.blocks.isNullOrEmpty()
+                NotebookAxis.ByYear -> yearModel?.cells.isNullOrEmpty() == true
+            }
+            if (axisEmpty) {
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -371,22 +446,30 @@ fun IndexScreen(
                 }
             }
 
-            items(shown, key = ::cardKey) { card ->
-                val images = card.cover?.let { cover -> state.images[cover.typeId] }
-                val photo = when (card.cover?.printedSide) {
-                    PrintedSide.Obverse -> images?.obverse
-                    PrintedSide.Reverse -> images?.reverse
-                    null -> null
+            when (shelf.axis) {
+                NotebookAxis.ByPlate -> items(shown, key = ::cardKey) { card ->
+                    val images = card.cover?.let { cover -> state.images[cover.typeId] }
+                    val photo = when (card.cover?.printedSide) {
+                        PrintedSide.Obverse -> images?.obverse
+                        PrintedSide.Reverse -> images?.reverse
+                        null -> null
+                    }
+                    CollectionCard(
+                        card = card,
+                        photo = photo,
+                        // A coin only flies where it has a casilla of its own to land in, which is
+                        // exactly the cards that open a plate (ADR 0026 §3). The other 20 of the
+                        // father's 69 have no ratio, and that is what tells them apart before touching.
+                        travelsTo = (card as? IndexCard.Derived)?.plateCatalogId,
+                        onOpen = { openCard(card) },
+                    )
                 }
-                CollectionCard(
-                    card = card,
-                    photo = photo,
-                    // A coin only flies where it has a casilla of its own to land in, which is
-                    // exactly the cards that open a plate (ADR 0026 §3). The other 20 of the
-                    // father's 69 have no ratio, and that is what tells them apart before touching.
-                    travelsTo = (card as? IndexCard.Derived)?.plateCatalogId,
-                    onOpen = { openCard(card) },
-                )
+                NotebookAxis.ByCountry -> countryModel?.let { model ->
+                    countryAxisItems(model = model, images = state.images)
+                }
+                NotebookAxis.ByYear -> yearModel?.let { model ->
+                    yearAxisItems(model = model, images = state.images)
+                }
             }
         }
 
@@ -532,10 +615,11 @@ internal fun CollectionName(name: String, modifier: Modifier = Modifier) {
 }
 
 /**
- * The six chip rows of Collections: the sort first, then the five filters.
+ * The chip rows of Collections: the axis first, then the sort, then the five filters.
  *
- * The sort leads because it is the one control that answers «why is this card at the top?», which is
- * the question ADR 0021 §6 created by making the order a measured ratio rather than the alphabet.
+ * The axis leads because it is the one control that answers «what is a cell?» (ADR 0026 §9), and
+ * the sort follows because it answers «why is this card at the top?» — which is the question
+ * ADR 0021 §6 created by making the order a measured ratio rather than the alphabet.
  */
 @Composable
 private fun IndexFacets(
@@ -546,6 +630,16 @@ private fun IndexFacets(
 ) {
     val counts = indexFacetCounts(facts, shelf, query)
 
+    Facet("Eje") {
+        NotebookAxis.entries.forEach { axis ->
+            FilterChip(
+                label = axis.label,
+                count = null,
+                selected = shelf.axis == axis,
+                onClick = { onNarrow(shelf.copy(axis = axis)) },
+            )
+        }
+    }
     Facet("Orden") {
         IndexSort.entries.forEach { sort ->
             FilterChip(

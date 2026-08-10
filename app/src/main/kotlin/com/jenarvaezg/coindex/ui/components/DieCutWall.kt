@@ -12,6 +12,22 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 internal const val HOLE_CARD_PADDING_DP = 5f
 
 /**
+ * Hole size the die-cut was measured against (Collections / Monedas cards, #357).
+ *
+ * Axis holes are 34 dp; keeping a flat 5 dp ring there eats a third of the metal. Padding and wall
+ * scale with the hole so the cardboard/coin ratio stays the one entrada-default already shows.
+ */
+internal const val DESIGN_HOLE_DP = 104f
+
+/** Cardboard ring width for a hole of [holeDp], never above the measured 5 dp. */
+internal fun holeCardPaddingDp(holeDp: Float): Float {
+    val proportional = HOLE_CARD_PADDING_DP * (holeDp / DESIGN_HOLE_DP)
+    // Pure proportion on 34 dp is ~1.6 dp and vanishes on dark metal; 2.5 dp read as «mucho borde»
+    // on the country axis. 2 dp keeps the hairline company without eating the photograph.
+    return proportional.coerceIn(2f, HOLE_CARD_PADDING_DP)
+}
+
+/**
  * The wall of the die-cut, drawn as one continuous sweep around the hole.
  *
  * It used to be two strokes of `sweepAngle = 180f` facing each other, and a 180° stroke ends at

@@ -87,7 +87,13 @@ class CoindexViewModel(
      */
     private val curation get() = repository.curation
 
-    private val catalogs get() = curation.catalogs
+    /**
+     * The curated catalogs the country and year axes walk (ADR 0026 §9).
+     *
+     * The index of cards is not enough: a member's country is not the card's (#170), and the year
+     * axis needs every measurable slot, not only the ones that opened a plate today.
+     */
+    val catalogs get() = curation.catalogs
 
     /**
      * The card-sized name of every curated collection (#22). The plate keeps the long [name] —
