@@ -11,6 +11,7 @@ import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.deriveCollection
+import com.jenarvaezg.coindex.domain.validate
 import com.jenarvaezg.coindex.ui.plateSubject
 import kotlin.test.Test
 import kotlin.test.assertEquals

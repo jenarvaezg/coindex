@@ -1,12 +1,23 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -14,11 +25,11 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -33,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
@@ -54,6 +67,7 @@ import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
+import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
@@ -85,7 +99,6 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * curator, and that already works.
  */
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun CoinsScreen(
     state: CollectionState,
     shelf: CoinsShelf,
@@ -124,97 +137,169 @@ fun CoinsScreen(
     val taken = remember(curatedNames, state.ownGroupings) {
         curatedNames + state.ownGroupings.map { it.name }
     }
+    val selected = rows.firstOrNull { it.typeId == selectedTypeId }
+    // Kept across dismiss so AnimatedVisibility still has a row to draw while the sheet exits.
+    var exitRow by remember { mutableStateOf<CoinRow?>(null) }
+    SideEffect {
+        if (selected != null) exitRow = selected
+    }
 
-    BoxWithConstraints(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        val columns = indexColumns(maxWidth)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            // The two-range cartouche itself pays the measured height cost. Reusing the album's
-            // 6 dp row seam keeps that cost from being paid a second time as empty cardboard.
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            coinFullWidth {
-                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    AlbumChrome(
-                        collections = state.index.size,
-                        coins = state.items.sumOf { item -> item.quantity },
-                        types = rows.size,
-                        onSettings = onSettings,
-                    )
-                    SearchField(value = query, onValueChange = { query = it })
-                    FilterShelf(
-                        summary = coinsShelfSummary(shelf),
-                        tally = coinsTally(shown.size, rows.size),
-                        expanded = open,
-                        onToggle = { open = !open },
-                    ) {
-                        CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
+    BackHandler(enabled = selected != null) { selectedTypeId = null }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val columns = indexColumns(maxWidth)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                // The two-range cartouche itself pays the measured height cost. Reusing the album's
+                // 6 dp row seam keeps that cost from being paid a second time as empty cardboard.
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                coinFullWidth {
+                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        AlbumChrome(
+                            collections = state.index.size,
+                            coins = state.items.sumOf { item -> item.quantity },
+                            types = rows.size,
+                            onSettings = onSettings,
+                        )
+                        SearchField(value = query, onValueChange = { query = it })
+                        FilterShelf(
+                            summary = coinsShelfSummary(shelf),
+                            tally = coinsTally(shown.size, rows.size),
+                            expanded = open,
+                            onToggle = { open = !open },
+                        ) {
+                            CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
+                        }
+                        if (rows.isNotEmpty()) {
+                            SelectionControls(
+                                selection = selection,
+                                existing = state.ownGroupings,
+                                taken = taken,
+                                shown = shown.map { it.typeId },
+                                seeded = seeded,
+                                onCreate = onCreateBox,
+                                onAddTo = onAddToBox,
+                            )
+                        }
                     }
-                    if (rows.isNotEmpty()) {
-                        SelectionControls(
-                            selection = selection,
-                            existing = state.ownGroupings,
-                            taken = taken,
-                            shown = shown.map { it.typeId },
-                            seeded = seeded,
-                            onCreate = onCreateBox,
-                            onAddTo = onAddToBox,
+                }
+
+                if (shown.isEmpty()) {
+                    coinFullWidth {
+                        EmptyCoins(
+                            everything = rows.isEmpty(),
+                            onClear = { onNarrow(CoinsShelf()); query = "" },
                         )
                     }
                 }
-            }
 
-            if (shown.isEmpty()) {
-                coinFullWidth {
-                    EmptyCoins(
-                        everything = rows.isEmpty(),
-                        onClear = { onNarrow(CoinsShelf()); query = "" },
+                items(shown, key = { it.typeId }) { row ->
+                    val (photo, _) = coinAlbumFaces(state.images[row.typeId])
+                    CoinAlbumCell(
+                        row = row,
+                        photo = photo,
+                        // The cell yields the coin while its ficha is open, so the shared element
+                        // has one owner at a time (#370).
+                        travelling = selectedTypeId != row.typeId,
+                        picking = selection.active,
+                        picked = selection.isPicked(row.typeId),
+                        onTap = {
+                            if (selection.active) selection.toggle(row.typeId)
+                            else selectedTypeId = row.typeId
+                        },
                     )
                 }
             }
-
-            items(shown, key = { it.typeId }) { row ->
-                val images = state.images[row.typeId]
-                val photo = images?.reverse?.takeIf { it.hasPicture } ?: images?.obverse
-                CoinAlbumCell(
-                    row = row,
-                    photo = photo,
-                    picking = selection.active,
-                    picked = selection.isPicked(row.typeId),
-                    onTap = {
-                        if (selection.active) selection.toggle(row.typeId)
-                        else selectedTypeId = row.typeId
-                    },
-                )
-            }
         }
-    }
 
-    rows.firstOrNull { it.typeId == selectedTypeId }?.let { selected ->
-        ModalBottomSheet(
-            onDismissRequest = { selectedTypeId = null },
-            containerColor = Paper.paper,
-            contentColor = Paper.ink,
-            tonalElevation = 0.dp,
+        // Compose sheet and not ModalBottomSheet: a dialog window cannot host a shared element
+        // (Compose animation docs), and the ficha is the second end of the journey in ADR 0026 §3.
+        AnimatedVisibility(
+            visible = selected != null,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
         ) {
-            CoinFicha(
-                row = selected,
-                ficha = ficha(selected.typeId),
+            val row = exitRow ?: return@AnimatedVisibility
+            val (photo, otherSide) = coinAlbumFaces(state.images[row.typeId])
+            CoinFichaSheet(
+                row = row,
+                photo = photo,
+                otherSide = otherSide,
+                ficha = ficha(row.typeId),
+                onDismiss = { selectedTypeId = null },
                 onOpenSource = {
                     selectedTypeId = null
                     onOpenSource(
-                        state.typeMeta[selected.typeId]?.numistaUrl ?: numistaTypeUrl(selected.typeId),
+                        state.typeMeta[row.typeId]?.numistaUrl ?: numistaTypeUrl(row.typeId),
                     )
                 },
                 onOpen = { destination ->
                     selectedTypeId = null
                     onOpen(destination)
                 },
+            )
+        }
+    }
+}
+
+/**
+ * The face Monedas shows in the hole, and the other face when both exist.
+ *
+ * Reverse first matches the grid that was already shipping: commemoratives read by their motif, not
+ * by the portrait. The ficha must take off and land on the same photograph or the journey pops.
+ */
+internal fun coinAlbumFaces(images: TypeImages?): Pair<CoinPhoto?, CoinPhoto?> {
+    val reverse = images?.reverse?.takeIf { it.hasPicture }
+    val obverse = images?.obverse?.takeIf { it.hasPicture }
+    return if (reverse != null) reverse to obverse else obverse to null
+}
+
+@Composable
+private fun CoinFichaSheet(
+    row: CoinRow,
+    photo: CoinPhoto?,
+    otherSide: CoinPhoto?,
+    ficha: FichaRefresh,
+    onDismiss: () -> Unit,
+    onOpenSource: () -> Unit,
+    onOpen: (CardDestination) -> Unit,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.32f))
+                .clickable(
+                    role = Role.Button,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = onDismiss,
+                ),
+        )
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(Paper.paper, RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .navigationBarsPadding()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = {},
+                ),
+        ) {
+            CoinFicha(
+                row = row,
+                photo = photo,
+                otherSide = otherSide,
+                ficha = ficha,
+                onOpenSource = onOpenSource,
+                onOpen = onOpen,
             )
         }
     }
@@ -333,6 +418,7 @@ private fun CoinsFacets(
 private fun CoinAlbumCell(
     row: CoinRow,
     photo: CoinPhoto?,
+    travelling: Boolean,
     picking: Boolean,
     picked: Boolean,
     onTap: () -> Unit,
@@ -349,7 +435,9 @@ private fun CoinAlbumCell(
         AlbumHole(
             photo = photo,
             backed = row.claims.isNotEmpty(),
-            modifier = Modifier.size(104.dp),
+            modifier = Modifier
+                .size(104.dp)
+                .travellingTypeCoin(row.typeId, visible = travelling),
         )
         AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))
         // The year stays outside this cartouche; #337 owns its separate rendering change.
@@ -364,39 +452,61 @@ private fun CoinAlbumCell(
     }
 }
 
-/** Exact identity and upkeep live inside the coin instead of being repeated under every hole. */
+/**
+ * Exact identity and upkeep live inside the coin instead of being repeated under every hole.
+ *
+ * The die-cut at the top is the landing of ADR 0026 §3's second journey (#370): same 104 dp hole as
+ * the cell it left, cardboard only when a collection claims the type — the form «En ninguna
+ * colección» already used in the grid.
+ */
 @Composable
 private fun CoinFicha(
     row: CoinRow,
+    photo: CoinPhoto?,
+    otherSide: CoinPhoto?,
     ficha: FichaRefresh,
     onOpenSource: () -> Unit,
     onOpen: (CardDestination) -> Unit,
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
     ) {
+        AlbumHole(
+            photo = photo,
+            backed = row.claims.isNotEmpty(),
+            otherSide = otherSide,
+            modifier = Modifier
+                .padding(top = 20.dp, bottom = 12.dp)
+                .size(104.dp)
+                .travellingTypeCoin(row.typeId, visible = true),
+        )
         Text(
             row.rawTitle,
             style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
         )
         Text(
             coinFichaIdentity(row),
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
         )
-        FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
+        FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp).fillMaxWidth())
         ExternalLink(
             text = COIN_VIEW_ON_NUMISTA,
             onClick = onOpenSource,
-            modifier = Modifier.padding(top = 2.dp),
+            modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
         )
         if (row.claims.isNotEmpty()) {
             Text(
                 if (row.claims.size == 1) COIN_IN_ONE_COLLECTION else COIN_IN_SEVERAL_COLLECTIONS,
                 style = MaterialTheme.typography.labelLarge,
                 color = Paper.muted,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
             )
             row.claims.forEach { claim ->
                 LinkText(
@@ -404,6 +514,7 @@ private fun CoinFicha(
                     style = MaterialTheme.typography.bodyLarge,
                     onClick = { onOpen(claim.destination) },
                     maxLines = 1,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

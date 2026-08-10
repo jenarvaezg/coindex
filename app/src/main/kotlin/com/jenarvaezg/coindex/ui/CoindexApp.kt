@@ -3,6 +3,8 @@ package com.jenarvaezg.coindex.ui
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
@@ -204,11 +206,22 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             // the only thing in the app that is on both sides of a navigation. What actually flies
             // is decided far from here — `Modifier.travellingCoin` on the two die-cut holes — so
             // the host provides the scope and knows nothing about coins.
+            //
+            // INDEX ↔ PLATE enter and exit with nothing of their own: a crossfade on the whole
+            // destination washed the casillas out while the coin was still in the air and then
+            // snapped them opaque as it landed — the pop on the Lunar Series recording. The shared
+            // element is the movement; the sheet arrives behind it. The host carries the silence
+            // for every route so INDEX and PLATE cannot drift apart, and the other screens have
+            // never asked for a transition of their own.
             else -> TravelLayout(modifier = content) {
                 NavHost(
                     navController = navController,
                     startDestination = Routes.INDEX,
                     modifier = Modifier.fillMaxSize(),
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None },
                 ) {
                     composable(Routes.INDEX) {
                         Travelling(this) {

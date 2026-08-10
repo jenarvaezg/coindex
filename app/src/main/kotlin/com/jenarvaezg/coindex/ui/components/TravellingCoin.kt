@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui.components
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
@@ -22,6 +23,12 @@ val LocalSharedTransition = compositionLocalOf<SharedTransitionScope?> { null }
 
 val LocalNavAnimation = compositionLocalOf<AnimatedVisibilityScope?> { null }
 
+/** Shared-content key for the index → casilla journey (ADR 0026 §3). */
+fun travellingCatalogKey(catalogId: String): String = "coin-$catalogId"
+
+/** Shared-content key for the Monedas → ficha journey (ADR 0026 §3, #370). */
+fun travellingTypeKey(typeId: Int): String = "type-$typeId"
+
 /**
  * Flies this coin between the index card of a collection and **its** casilla on the plate.
  *
@@ -40,6 +47,9 @@ val LocalNavAnimation = compositionLocalOf<AnimatedVisibilityScope?> { null }
  * The catalog is enough of a key on its own: both ends resolve «the first owned member in album
  * order» from the same album, so a key that also carried the type would be two chances to disagree
  * about one coin.
+ *
+ * The overlay is clipped to a circle: without it the shared element's rectangular bounds flash a
+ * square halo as the coin lands, which is the pop between the mid-flight and the settled casilla.
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -49,8 +59,30 @@ fun Modifier.travellingCoin(catalogId: String?): Modifier {
     val destination = LocalNavAnimation.current ?: return this
     return with(layout) {
         this@travellingCoin.sharedElement(
-            sharedContentState = rememberSharedContentState(key = "coin-$catalogId"),
+            sharedContentState = rememberSharedContentState(key = travellingCatalogKey(catalogId)),
             animatedVisibilityScope = destination,
+            clipInOverlayDuringTransition = OverlayClip(CircleShape),
+        )
+    }
+}
+
+/**
+ * Flies this coin between its hole in Monedas and the hole at the top of its ficha sheet (#370).
+ *
+ * The ficha is not a navigation destination — it stays a sheet over the grid — and
+ * `ModalBottomSheet` cannot host a shared element (it is a dialog window). Visibility is therefore
+ * caller-managed: the cell yields the coin when the sheet opens, and the sheet yields it back when
+ * the sheet closes. [visible] is true on the end that currently owns the photograph.
+ */
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun Modifier.travellingTypeCoin(typeId: Int, visible: Boolean): Modifier {
+    val layout = LocalSharedTransition.current ?: return this
+    return with(layout) {
+        this@travellingTypeCoin.sharedElementWithCallerManagedVisibility(
+            sharedContentState = rememberSharedContentState(key = travellingTypeKey(typeId)),
+            visible = visible,
+            clipInOverlayDuringTransition = OverlayClip(CircleShape),
         )
     }
 }
