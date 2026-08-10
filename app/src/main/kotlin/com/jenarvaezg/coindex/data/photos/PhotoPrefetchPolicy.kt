@@ -71,3 +71,51 @@ fun photographsToPrefetch(
     .filterNot { it in gone }
     .distinct()
     .toList()
+
+/** How often the collector-visible count is updated while the prefetch runs. */
+const val PREFETCH_PROGRESS_EVERY = 25
+
+/**
+ * Whether this opening status is already the whole pass: nothing to fetch, or a reason not to.
+ *
+ * Kept as arithmetic so the early return in [CoilPhotoPrefetch.run] is the same sentence a test
+ * can read, rather than an `if` buried under `Dispatchers.IO`.
+ */
+fun prefetchAlreadySettled(missingCount: Int, held: PrefetchRefusal?): Boolean =
+    missingCount == 0 || held != null
+
+/**
+ * How many of the photographs asked for in this pass are still missing after [landed] arrived.
+ *
+ * Failures are not subtracted: a photograph that did not land is still missing, and a progress
+ * line that counted it as brought would be a lie that only settles at the end of the pass.
+ */
+fun prefetchMissingAfter(askedFor: Int, landed: Int): Int = askedFor - landed
+
+/**
+ * Whether this many requests is a moment to tell the settings screen what is left.
+ *
+ * [asked] counts attempts, not arrivals: every URL is asked once, and progress must move even
+ * when some of them fail.
+ */
+fun shouldReportPrefetchProgress(asked: Int, every: Int = PREFETCH_PROGRESS_EVERY): Boolean =
+    asked > 0 && asked % every == 0
+
+/**
+ * The counts a settings screen can show for a set of wanted URLs.
+ *
+ * Used at the opening of a pass and again at the end: the interceptor may have learnt meanwhile
+ * that some photographs are gone, so the wanted list is rebuilt and counted from scratch rather
+ * than derived from what landed.
+ */
+fun photoCacheStatus(
+    wanted: Collection<String>,
+    cached: (String) -> Boolean,
+    bytes: Long,
+    held: PrefetchRefusal?,
+): PhotoCacheStatus = PhotoCacheStatus(
+    wanted = wanted.size,
+    missing = wanted.count { !cached(it) },
+    bytes = bytes,
+    held = held,
+)

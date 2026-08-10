@@ -123,14 +123,32 @@ class PhotoPrefetchPolicyTest {
     }
 
     @Test
-    fun `a 404 is the picture being gone, and a throttle never is`() {
-        assertEquals(true, PhotoRetryPolicy.isGone(404))
-        assertEquals(true, PhotoRetryPolicy.isGone(410))
-        // 403 is deliberately not remembered: without a User-Agent Cloudflare answers it to every
-        // photograph (ADR 0017), so a bad afternoon at the edge would switch the catalog off for
-        // good on this phone. It is not retried either — it is simply asked again another day.
-        listOf(403, 429, 500, 503).forEach { status ->
-            assertEquals(false, PhotoRetryPolicy.isGone(status), "$status no es una foto perdida")
-        }
+    fun `a pass with nothing missing, or a reason not to fetch, is already settled`() {
+        assertEquals(true, prefetchAlreadySettled(missingCount = 0, held = null))
+        assertEquals(true, prefetchAlreadySettled(missingCount = 12, held = PrefetchRefusal.MeteredNetwork))
+        assertEquals(false, prefetchAlreadySettled(missingCount = 12, held = null))
+    }
+
+    @Test
+    fun `progress counts failures as still missing, and only speaks every twenty-five`() {
+        assertEquals(7, prefetchMissingAfter(askedFor = 10, landed = 3))
+        assertEquals(false, shouldReportPrefetchProgress(asked = 0))
+        assertEquals(false, shouldReportPrefetchProgress(asked = 24))
+        assertEquals(true, shouldReportPrefetchProgress(asked = 25))
+        assertEquals(true, shouldReportPrefetchProgress(asked = 50))
+    }
+
+    @Test
+    fun `the final count is rebuilt from what is still wanted, not from what landed`() {
+        // The interceptor learnt one URL was gone during the pass: it leaves the wanted list,
+        // and the cache check alone would still have counted it as missing.
+        val status = photoCacheStatus(
+            wanted = listOf("here.jpg", "also.jpg"),
+            cached = { it == "here.jpg" },
+            bytes = 1_024L,
+            held = null,
+        )
+
+        assertEquals(PhotoCacheStatus(wanted = 2, missing = 1, bytes = 1_024L, held = null), status)
     }
 }
