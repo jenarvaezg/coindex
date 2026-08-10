@@ -63,6 +63,7 @@ import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
+import com.jenarvaezg.coindex.ui.screens.FiguresScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.MissingSubject
@@ -70,6 +71,9 @@ import com.jenarvaezg.coindex.ui.screens.NoticesScreen
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
+import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
+import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
+import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.ownedTypeCount
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -137,6 +141,17 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // from **both** roots now (ADR 0021 §1), because neither is more the home than the other.
     // Onboarding has no masthead actions at all.
     val atRoot = state.onboarded && Routes.isRoot(route)
+
+    // Assembled once per collection and per price book, and never per recomposition: it walks the whole
+    // inventory, and the bottom bar reads its weight on every screen the bar is drawn on.
+    val figures = remember(state.collection, state.prices, state.valuation.settled) {
+        figuresSubject(
+            state = state.collection,
+            spot = state.prices.spot,
+            prices = state.prices::of,
+            settled = state.valuation.settled,
+        )
+    }
     val onBack: (() -> Unit)? =
         if (state.onboarded && route != null && !Routes.isRoot(route)) {
             { navController.popBackStack() }
@@ -161,7 +176,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 // Both album roots own their chrome: the sewn edge is their shared masthead.
                 // Keeping the generic one above either would print COINDEX and Settings twice and
                 // spend the space their die-cut grids just recovered (ADR 0026 §1, §13).
-                if (route != Routes.INDEX && route != Routes.COINS) {
+                if (!Routes.ownsChrome(route)) {
                     Masthead(
                         subtitle = mastheadSubtitle(
                             screenTitle(route, subjectName),
@@ -187,6 +202,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     // Read from the same place Coins draws its rows, so the bar cannot promise a
                     // number the screen behind it then contradicts.
                     coins = ownedTypeCount(state.collection),
+                    // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
+                    grams = figures.figures.weight.value,
                     onCross = { destination ->
                         navController.navigate(destination) {
                             // The two roots are siblings, not a stack: crossing over and back must
@@ -255,12 +272,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     navController.navigate(routeOf(destination))
                                 },
                                 onOpenCoins = { coinsShelf ->
-                                    viewModel.narrowCoins(coinsShelf)
-                                    navController.navigate(Routes.COINS) {
-                                        popUpTo(Routes.INDEX) { saveState = true }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    crossToCoins(navController, viewModel, coinsShelf)
                                 },
                                 onSettings = { navController.navigate(Routes.SETTINGS) },
                                 notebookOptions = state.notebookOptions,
@@ -285,6 +297,35 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onOpenSource = openUrl,
                             onSettings = { navController.navigate(Routes.SETTINGS) },
                             ficha = ficha,
+                        )
+                    }
+                    page(Routes.FIGURES) {
+                        FiguresScreen(
+                            subject = figures,
+                            collections = state.collection.index.size,
+                            coins = ownedTypeCount(state.collection),
+                            // Read once per composition of the page: what it dates is the spot, and a
+                            // clock that ticked would make «plata de hoy» a thing that changes while
+                            // you look at it, which is the pocket ticker #316 refused.
+                            nowMillis = remember(state.prices.spot) { System.currentTimeMillis() },
+                            onOpenCountry = { country ->
+                                crossToCoins(
+                                    navController,
+                                    viewModel,
+                                    CoinsShelf(issuer = country, axis = NotebookAxis.ByCountry),
+                                )
+                            },
+                            onOpenYear = { year ->
+                                crossToCoins(
+                                    navController,
+                                    viewModel,
+                                    CoinsShelf(
+                                        year = YearFilter.Of(year),
+                                        axis = NotebookAxis.ByYear,
+                                    ),
+                                )
+                            },
+                            onSettings = { navController.navigate(Routes.SETTINGS) },
                         )
                     }
                     page(Routes.OWN_GROUPING) { entry ->
@@ -401,6 +442,26 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 }
 
 /**
+ * Crosses to Coins with the shelf already narrowed.
+ *
+ * The one gesture three surfaces share: the country and year axes of the index (#386) and now every
+ * touchable figure of «Las cifras». Sibling roots are not a stack, so crossing must not pile up entries
+ * and each side keeps its own scroll position.
+ */
+private fun crossToCoins(
+    navController: androidx.navigation.NavHostController,
+    viewModel: CoindexViewModel,
+    shelf: CoinsShelf,
+) {
+    viewModel.narrowCoins(shelf)
+    navController.navigate(Routes.COINS) {
+        popUpTo(Routes.INDEX) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+/**
  * The one shared-element layout of the app, over both ends of every navigation.
  *
  * It is here and not around a screen because a shared element is a promise about two screens: the
@@ -447,23 +508,27 @@ private fun NavGraphBuilder.page(
 }
 
 /**
- * The bottom bar of two destinations: Collections and Coins (ADR 0021 §1).
+ * The bottom bar of three destinations: Collections, Coins and «Las cifras» (ADR 0021 §1, amended by
+ * ADR 0026 §8).
  *
- * **The app opens in Collections and this crosses to Coins and back.** A home screen that asked which
- * hierarchy you wanted was prototyped and rejected — it charged a tap per launch to choose the same
- * thing every time — and Coins is not a view inside a collection, so it could not be a button on the
- * index either.
+ * **The app still opens in Collections and the third is last.** A home screen that asked which hierarchy
+ * you wanted was prototyped and rejected — it charged a tap per launch to choose the same thing every
+ * time — and with three cells that argument is stronger, not weaker.
  *
- * Each cell carries how many cards are behind it, which is the number the destination itself then
- * prints: 58 collections, and one row per Numista type owned. Drawn as two halves of a rule rather
- * than as Material's `NavigationBar`, which brings its own elevation, ripple and icon slot into a
- * notebook that has none of the three.
+ * **Each cell names its grain with its count**, and the count is what the destination is *made of*
+ * rather than how many things are inside it: cards, Numista types owned, and grams. «Las cifras» counts
+ * weight and **never money** — an amount in a permanent bar is a pocket ticker that changes on its own
+ * and puts the collector's estate in front of anyone glancing at the phone (#316).
+ *
+ * Drawn as three parts of a rule rather than as Material's `NavigationBar`, which brings its own
+ * elevation, ripple and icon slot into a notebook that has none of the three.
  */
 @Composable
 private fun HierarchyBar(
     route: String?,
     collections: Int,
     coins: Int,
+    grams: Double,
     onCross: (String) -> Unit,
 ) {
     Column {
@@ -479,6 +544,12 @@ private fun HierarchyBar(
                 label = "Monedas · $coins",
                 selected = route == Routes.COINS,
                 onClick = { onCross(Routes.COINS) },
+                modifier = Modifier.weight(1f),
+            )
+            HierarchyCell(
+                label = "${FiguresLabels.DESTINATION} · ${figuresCellCount(grams)}",
+                selected = route == Routes.FIGURES,
+                onClick = { onCross(Routes.FIGURES) },
                 modifier = Modifier.weight(1f),
             )
         }

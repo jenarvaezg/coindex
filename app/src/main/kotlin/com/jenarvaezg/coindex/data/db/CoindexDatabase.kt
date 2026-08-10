@@ -23,8 +23,11 @@ internal data class PreservedKey(
         OwnGroupingEntity::class,
         OwnGroupingMemberEntity::class,
         ApiCallEntity::class,
+        IssuePriceReadEntity::class,
+        IssuePriceEntity::class,
+        MetalSpotEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -32,6 +35,7 @@ abstract class CoindexDatabase : RoomDatabase() {
     abstract fun typeMeta(): TypeMetaDao
     abstract fun ownGroupings(): OwnGroupingDao
     abstract fun apiCalls(): ApiCallDao
+    abstract fun prices(): PriceDao
 
     companion object {
         /**
@@ -258,6 +262,45 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 7 gives money a place to live (ADR 0028), and it is additive from end to end.
+         *
+         * Three tables the phone has never had — the prices per grade, the reads that tell «asked and
+         * empty» from «not asked yet», and the last spot — and four more columns on the type cache,
+         * filled in afterwards by `FichaBackfill` from the fichas already stored, like version 3 and
+         * version 6 before it. Not one API call, and nothing about the collection snapshot: the
+         * `issue_id` #327 expected to migrate for is already read out of the stored body.
+         *
+         * Kept as data for the reason [VERSION_2_TABLES] is: a keyword of drift between this and what
+         * Room derives from the entities is a crash at open time on the collector's phone.
+         */
+        internal val VERSION_7_TABLES: List<String> = listOf(
+            "CREATE TABLE IF NOT EXISTS `issue_price_reads` " +
+                "(`typeId` INTEGER NOT NULL, `issueId` INTEGER NOT NULL, " +
+                "`readAt` INTEGER NOT NULL, `hasPrices` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`typeId`, `issueId`))",
+            "CREATE TABLE IF NOT EXISTS `issue_prices` " +
+                "(`typeId` INTEGER NOT NULL, `issueId` INTEGER NOT NULL, `grade` TEXT NOT NULL, " +
+                "`eur` REAL NOT NULL, PRIMARY KEY(`typeId`, `issueId`, `grade`))",
+            "CREATE TABLE IF NOT EXISTS `metal_spot` " +
+                "(`symbol` TEXT NOT NULL, `eurPerTroyOunce` REAL NOT NULL, " +
+                "`readAt` INTEGER NOT NULL, PRIMARY KEY(`symbol`))",
+        )
+
+        internal val VERSION_7_COLUMNS: List<String> = listOf(
+            "ALTER TABLE `type_meta` ADD COLUMN `thicknessMillimetres` REAL",
+            "ALTER TABLE `type_meta` ADD COLUMN `demonetized` INTEGER",
+            "ALTER TABLE `type_meta` ADD COLUMN `hands` TEXT",
+            "ALTER TABLE `type_meta` ADD COLUMN `mints` TEXT",
+        )
+
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(connection: SQLiteConnection) {
+                VERSION_7_TABLES.forEach(connection::execSQL)
+                VERSION_7_COLUMNS.forEach(connection::execSQL)
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
                 .addMigrations(
@@ -266,6 +309,7 @@ abstract class CoindexDatabase : RoomDatabase() {
                     MIGRATION_3_4,
                     MIGRATION_4_5,
                     MIGRATION_5_6,
+                    MIGRATION_6_7,
                 )
                 .build()
     }

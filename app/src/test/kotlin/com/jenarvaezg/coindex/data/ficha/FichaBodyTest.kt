@@ -85,24 +85,28 @@ class FichaBodyTest {
     /**
      * The tripwire the memo did not need.
      *
-     * A memo re-read the body whenever the row changed; a column is written once, so a sixth field
+     * A memo re-read the body whenever the row changed; a column is written once, so a tenth field
      * added here reaches nothing that is already cached unless [FICHA_READING] goes up with it —
      * and no cached type is ever fetched again. Both halves are pinned so that adding one without
      * the other turns this red.
+     *
+     * It has caught it once already, which is what the pinning is for: the four fields «Las cifras»
+     * needed (ADR 0028 §7) arrived with the reading still at 1, and every ficha in the collector's
+     * cache would have stayed without a thickness, a demonetization, a hand or a mint for ever.
      */
     @Test
-    fun `a sixth field would have to be read into the fichas already cached`() {
+    fun `a tenth field would have to be read into the fichas already cached`() {
         // Instance fields only: the Compose compiler adds a static `$stable` to every class it
         // sees, and this module is one of them.
         val fields = FichaReading::class.java.declaredFields
             .filterNot { Modifier.isStatic(it.modifiers) }
 
         assertEquals(
-            5,
+            9,
             fields.size,
             "si añades un campo a FichaReading, sube FICHA_READING: si no, las fichas ya " +
                 "cacheadas se quedan sin él para siempre",
         )
-        assertEquals(1, FICHA_READING)
+        assertEquals(2, FICHA_READING)
     }
 }

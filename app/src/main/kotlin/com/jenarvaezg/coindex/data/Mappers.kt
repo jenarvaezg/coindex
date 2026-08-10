@@ -18,6 +18,7 @@ import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
 import com.jenarvaezg.coindex.domain.inferMetal
+import com.jenarvaezg.coindex.domain.silverFineness
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
@@ -86,10 +87,30 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     weightOz = weightGrams?.let(::gramsToOunces),
     finish = inferFinish(title, family),
     metal = inferMetal(composition),
+    // The third rule read off the composition prose, beside the metal and for the same reason: the
+    // silver floor of a piece is its *fine* silver, and a .835 coin is 16,5 % copper (ADR 0028 §8).
+    fineness = silverFineness(composition),
     sizeMillimetres = sizeMillimetres,
     category = category,
     numistaUrl = numistaUrl,
+    thicknessMillimetres = thicknessMillimetres,
+    demonetized = demonetized,
+    hands = hands.toNameList(),
+    mints = mints.toNameList(),
 )
+
+/**
+ * One name per line, which is how version 7 stores a list in a column.
+ *
+ * Split and not parsed: Numista names hold commas and quotes but never a newline, and a JSON array per
+ * row would put a parse back on a mapper that runs over sixteen hundred rows every redraw (#221).
+ */
+private fun String?.toNameList(): List<String> =
+    this?.lineSequence()?.filter(String::isNotBlank)?.toList().orEmpty()
+
+/** The same list on the way in. Null and not the empty string when there is nothing to say. */
+internal fun List<String>.toNameColumn(): String? =
+    filter(String::isNotBlank).takeIf { it.isNotEmpty() }?.joinToString("\n")
 
 /**
  * The two faces of a type as pictures to ask for.
@@ -144,6 +165,10 @@ internal fun TypeMetaEntity.withReading(reading: FichaReading): TypeMetaEntity =
     sizeMillimetres = reading.sizeMillimetres,
     category = reading.category,
     numistaUrl = reading.numistaUrl,
+    thicknessMillimetres = reading.thicknessMillimetres,
+    demonetized = reading.demonetized,
+    hands = reading.hands.toNameColumn(),
+    mints = reading.mints.toNameColumn(),
     readVersion = FICHA_READING,
 )
 

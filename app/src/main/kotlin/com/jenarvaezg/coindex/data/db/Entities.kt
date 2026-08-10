@@ -78,6 +78,22 @@ data class TypeMetaEntity(
      * on it letter by letter or the app throws on opening the collector's database.
      */
     @ColumnInfo(defaultValue = "0") val readVersion: Int = 0,
+    /**
+     * The four columns of version 7, and the same bargain again: read out of the body every row
+     * already stores, so «Las cifras» opens whole on a phone that has never called Numista (ADR 0028
+     * §7).
+     *
+     * [thicknessMillimetres] is Numista's `thickness`, missing in a third of the types, which is why
+     * the stack is the one figure the app gives extrapolated. [demonetized] is
+     * `demonetization.is_demonetized`, and null is «Numista does not say» and not «still money».
+     * [hands] and [mints] are the names of `engravers`/`designers` of both faces and of `mints`, one
+     * per line: a delimited string and not JSON, because a mapper that ran on sixteen hundred rows per
+     * redraw is exactly what version 6 was built to stop (#221).
+     */
+    val thicknessMillimetres: Double? = null,
+    val demonetized: Boolean? = null,
+    val hands: String? = null,
+    val mints: String? = null,
 )
 
 /** The stored ficha of one type, for reading fields the columns never captured. */
@@ -126,4 +142,51 @@ data class ApiCallEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val endpoint: String,
     val calledAt: Long,
+)
+
+/**
+ * That one issue's prices were read, and whether Numista had any (ADR 0028 §4).
+ *
+ * **This table is what makes three states out of two**, and it is the reason there are two of them
+ * rather than one. A price row exists per grade; an issue Numista answered for and had no price for
+ * has no grade to be keyed on, and without a row of its own those 19 issues of his 223 would be asked
+ * for again on every pass, for ever. A pass that **failed** writes neither, so «not asked yet» and
+ * «asked and empty» stay different questions.
+ *
+ * [readAt] is also the only clock: a price expires 30 days after the issue was read, not per grade,
+ * because one call brought every grade at the same instant. And **expiry is not deletion** — the row
+ * stays and is shown with this date until a newer read replaces it.
+ */
+@Entity(tableName = "issue_price_reads", primaryKeys = ["typeId", "issueId"])
+data class IssuePriceReadEntity(
+    val typeId: Int,
+    val issueId: Int,
+    val readAt: Long,
+    val hasPrices: Boolean,
+)
+
+/** Numista's estimated price for one issue in one grade, in euros. */
+@Entity(tableName = "issue_prices", primaryKeys = ["typeId", "issueId", "grade"])
+data class IssuePriceEntity(
+    val typeId: Int,
+    val issueId: Int,
+    val grade: String,
+    val eur: Double,
+)
+
+/**
+ * The last spot this phone read for one metal, in euros per troy ounce, and when.
+ *
+ * One row per symbol and **no history**: a table of daily spots is how wealth management would arrive
+ * without anybody deciding it, and that stays outside (ADR 0026 §10, ADR 0028). What is kept is the
+ * last reading and its date, because the date is what stops the number reading as a quotation.
+ *
+ * It is not seeded in the APK either: a seeded spot would only buy the silver floor of a piece opened
+ * with no network, and the silver floor alone is precisely the figure the page refuses to show.
+ */
+@Entity(tableName = "metal_spot")
+data class MetalSpotEntity(
+    @PrimaryKey val symbol: String,
+    val eurPerTroyOunce: Double,
+    val readAt: Long,
 )

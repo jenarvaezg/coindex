@@ -10,9 +10,11 @@ import com.jenarvaezg.coindex.data.FakeCredentialStore
 import com.jenarvaezg.coindex.data.FakeNotebookStore
 import com.jenarvaezg.coindex.data.FakeOwnGroupingDao
 import com.jenarvaezg.coindex.data.FakePhotoPrefetch
+import com.jenarvaezg.coindex.data.FakePriceDao
 import com.jenarvaezg.coindex.data.FakeShelfStore
 import com.jenarvaezg.coindex.data.FakeSyncLog
 import com.jenarvaezg.coindex.data.FakeTypeMetaDao
+import com.jenarvaezg.coindex.data.FakeValuationPass
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
@@ -23,6 +25,7 @@ import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.photos.PrefetchConditions
+import com.jenarvaezg.coindex.data.prices.ValuationLoop
 import com.jenarvaezg.coindex.data.update.FakeUpdateInstaller
 import com.jenarvaezg.coindex.data.update.UpdateChecker
 import com.jenarvaezg.coindex.data.update.UpdateFlow
@@ -104,12 +107,18 @@ class CoindexViewModelTest {
     private val notebook = FakeNotebookStore()
     private val syncLog = FakeSyncLog()
     private val prefetch = FakePhotoPrefetch(PhotoCacheStatus(wanted = 2, missing = 1))
+    private val prices = FakePriceDao()
+    private val valuationPass = FakeValuationPass()
 
     /** Held outside the ViewModel, exactly as `AppContainer` holds it. */
     private val photos = PhotoPrefetchLoop(
         prefetch,
         { syncing -> PrefetchConditions(unmeteredNetwork = true, syncing = syncing) },
     )
+
+    /** Held outside it for the same reason, and told whether a sync is in flight the same way. */
+    private val valuation = ValuationLoop(valuationPass, { syncing })
+    private var syncing = false
     private val installer = FakeUpdateInstaller()
     private var warmedUp = 0
 
@@ -181,6 +190,7 @@ class CoindexViewModelTest {
             collectedItemDao = items,
             typeMetaDao = types,
             ownGroupingDao = ownGroupings,
+            priceDao = prices,
             curation = Curation(catalogs = emptyList()),
         )
         val ledger = ApiCallLedger(apiCalls) { NOW }
@@ -196,6 +206,7 @@ class CoindexViewModelTest {
             typeRefresh = TypeRefresh(types) { NOW },
             updates = UpdateFlow(updateChecker(), installer) { NOW },
             photos = photos,
+            valuation = valuation,
             client = client,
             warmUpFichaCache = warmUp,
             installedVersionName = "0.15.0",

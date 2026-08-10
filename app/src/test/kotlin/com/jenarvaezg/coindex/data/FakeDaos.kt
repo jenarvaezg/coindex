@@ -6,7 +6,11 @@ import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
+import com.jenarvaezg.coindex.data.db.IssuePriceEntity
+import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
+import com.jenarvaezg.coindex.data.db.MetalSpotEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
+import com.jenarvaezg.coindex.data.db.PriceDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
@@ -68,6 +72,10 @@ class FakeTypeMetaDao : TypeMetaDao {
         sizeMillimetres: Double?,
         category: String?,
         numistaUrl: String?,
+        thicknessMillimetres: Double?,
+        demonetized: Boolean?,
+        hands: String?,
+        mints: String?,
         version: Int,
     ) {
         rows.value = rows.value.map { row ->
@@ -78,6 +86,10 @@ class FakeTypeMetaDao : TypeMetaDao {
                     sizeMillimetres = sizeMillimetres,
                     category = category,
                     numistaUrl = numistaUrl,
+                    thicknessMillimetres = thicknessMillimetres,
+                    demonetized = demonetized,
+                    hands = hands,
+                    mints = mints,
                     readVersion = version,
                 )
             } else {
@@ -141,4 +153,38 @@ class FakeApiCallDao : ApiCallDao {
     override suspend fun countSince(since: Long): Int = calls.count { it.calledAt >= since }
     override fun observeCountSince(since: Long): Flow<Int> =
         MutableStateFlow(calls.count { it.calledAt >= since })
+}
+
+/**
+ * The prices and the spot, in memory.
+ *
+ * The three states of ADR 0028 §4 are visible from here and that is the point of the stand-in: [reads]
+ * with `hasPrices = false` is «Numista answered and had none», and **no** row at all is «not asked yet».
+ * A pass that failed must leave the second, not the first.
+ */
+class FakePriceDao : PriceDao {
+    val prices = MutableStateFlow<List<IssuePriceEntity>>(emptyList())
+    val reads = MutableStateFlow<List<IssuePriceReadEntity>>(emptyList())
+    val spots = MutableStateFlow<List<MetalSpotEntity>>(emptyList())
+
+    override fun observePrices(): Flow<List<IssuePriceEntity>> = prices
+    override fun observeReads(): Flow<List<IssuePriceReadEntity>> = reads
+    override fun observeSpot(symbol: String): Flow<MetalSpotEntity?> =
+        MutableStateFlow(spots.value.firstOrNull { it.symbol == symbol })
+    override suspend fun reads(): List<IssuePriceReadEntity> = reads.value
+    override suspend fun spot(symbol: String): MetalSpotEntity? =
+        spots.value.firstOrNull { it.symbol == symbol }
+    override suspend fun putSpot(spot: MetalSpotEntity) {
+        spots.value = spots.value.filterNot { it.symbol == spot.symbol } + spot
+    }
+    override suspend fun deletePrices(typeId: Int, issueId: Int) {
+        prices.value = prices.value.filterNot { it.typeId == typeId && it.issueId == issueId }
+    }
+    override suspend fun insertPrices(prices: List<IssuePriceEntity>) {
+        this.prices.value = this.prices.value + prices
+    }
+    override suspend fun insertRead(read: IssuePriceReadEntity) {
+        reads.value = reads.value
+            .filterNot { it.typeId == read.typeId && it.issueId == read.issueId } + read
+    }
 }

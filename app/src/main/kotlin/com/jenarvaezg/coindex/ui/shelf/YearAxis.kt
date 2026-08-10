@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.cardCountry
+import com.jenarvaezg.coindex.domain.placementYear
 
 /**
  * Three states of a year on the year axis (ADR 0026 §9) — coin, ghost hole, bare cardboard.

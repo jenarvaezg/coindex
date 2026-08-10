@@ -81,6 +81,33 @@ class NumistaClient(
             header(API_KEY_HEADER, apiKey)
         }
 
+    /**
+     * The issues of one type, which is the only way to learn a hole's `issue_id`.
+     *
+     * A curated member stores `numista_type_id` and `year` and never the issue, so valuing a hole
+     * costs this call plus one for its prices — which is the whole reason the valuation pass stops at
+     * the plates ten slots from closing (ADR 0028 §1).
+     *
+     * The endpoint answers a bare array, not an object with a field.
+     */
+    suspend fun fetchIssues(typeId: Int): RawResponse<List<IssueDto>> =
+        request("/types/$typeId/issues") {
+            parameter("lang", "es")
+            header(API_KEY_HEADER, apiKey)
+        }
+
+    /**
+     * Numista's estimated prices for one issue, every grade at once, in euros.
+     *
+     * `currency` is asked for explicitly: without it Numista answers in whatever it decides, and a
+     * number whose currency was inferred is a number that cannot be added to another one.
+     */
+    suspend fun fetchIssuePrices(typeId: Int, issueId: Int): RawResponse<IssuePricesResponse> =
+        request("/types/$typeId/issues/$issueId/prices") {
+            parameter("currency", "EUR")
+            header(API_KEY_HEADER, apiKey)
+        }
+
     private suspend fun accessToken(): String {
         // Holding the lock across the refresh coalesces simultaneous refreshes into one call.
         tokenMutex.withLock {

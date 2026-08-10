@@ -23,6 +23,11 @@ import com.jenarvaezg.coindex.data.photos.GonePhotographs
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.photos.StoredGonePhotographs
+import com.jenarvaezg.coindex.data.prices.HttpSpotReader
+import com.jenarvaezg.coindex.data.prices.NumistaValuationPass
+import com.jenarvaezg.coindex.data.prices.SpotStore
+import com.jenarvaezg.coindex.data.prices.ValuationLoop
+import com.jenarvaezg.coindex.data.prices.ValuationPass
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -82,6 +87,7 @@ class AppContainer(context: Context) {
             collectedItemDao = database.collectedItems(),
             typeMetaDao = database.typeMeta(),
             ownGroupingDao = database.ownGroupings(),
+            priceDao = database.prices(),
             curation = Curation(
                 catalogs = catalogs,
                 groupings = groupings,
@@ -169,6 +175,36 @@ class AppContainer(context: Context) {
     private val budgetGate: CallBudgetGate by lazy {
         CallBudgetGate(calls, monthlyBudget = { DEFAULT_MONTHLY_BUDGET })
     }
+
+    /**
+     * The silver spot, from two keyless calls that are **not** counted against the budget of ADR 0003:
+     * neither host is `api.numista.com`, the same distinction ADR 0024 draws for CDN photographs.
+     */
+    private val spot: SpotStore by lazy {
+        SpotStore(database.prices(), HttpSpotReader(httpClient))
+    }
+
+    private val valuationPass: ValuationPass by lazy {
+        NumistaValuationPass(database.prices(), ::numistaClient, spot)
+    }
+
+    /**
+     * When the catalog prices are asked for (ADR 0028).
+     *
+     * Held here for the same reason [photos] is: what it remembers has to outlive the screen. With every
+     * price already on the phone, the second launch of a month must cost **zero** calls, and a loop
+     * rebuilt with each ViewModel would ask the database again on every rotation.
+     */
+    val valuation: ValuationLoop by lazy { ValuationLoop(valuationPass, { isSyncing() }) }
+
+    /**
+     * Whether a sync is in flight, asked of the one thing that knows.
+     *
+     * Read through the sync itself rather than handed in by the ViewModel, because the pass has to be
+     * able to ask **at the moment it starts its first call**: the two spend the same monthly allowance,
+     * and three seconds of a cold start is long enough for the collector to have pressed «Sincronizar».
+     */
+    private fun isSyncing(): Boolean = collectionSync.inFlight
 
     /**
      * Self-update against the public GitHub releases. These requests go to GitHub, never to

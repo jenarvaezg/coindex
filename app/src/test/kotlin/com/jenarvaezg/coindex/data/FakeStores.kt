@@ -4,6 +4,10 @@ import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.PrefetchRefusal
 import com.jenarvaezg.coindex.data.photos.TypeImages
+import com.jenarvaezg.coindex.data.prices.ValuationPass
+import com.jenarvaezg.coindex.data.prices.ValuationPlan
+import com.jenarvaezg.coindex.data.prices.ValuationRefusal
+import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
@@ -60,6 +64,36 @@ class FakePhotoPrefetch(private val result: PhotoCacheStatus = PhotoCacheStatus(
         onStatus: (PhotoCacheStatus) -> Unit,
     ): PhotoCacheStatus {
         passes += Pass(images.toList(), held)
+        try {
+            gate?.await()
+        } catch (stopped: CancellationException) {
+            cancelled += 1
+            throw stopped
+        }
+        onStatus(result)
+        return result
+    }
+}
+
+/**
+ * A valuation pass that asks nobody and remembers being asked.
+ *
+ * [gate] does what its sibling's does: with it set the pass holds still there, which is the only way to
+ * watch a sync take the **budget** off one that is already running (ADR 0028 §6).
+ */
+class FakeValuationPass(private val result: ValuationStatus = ValuationStatus()) : ValuationPass {
+    data class Pass(val plan: ValuationPlan, val held: ValuationRefusal?)
+
+    val passes = mutableListOf<Pass>()
+    var cancelled = 0
+    var gate: CompletableDeferred<Unit>? = null
+
+    override suspend fun run(
+        plan: ValuationPlan,
+        held: ValuationRefusal?,
+        onStatus: (ValuationStatus) -> Unit,
+    ): ValuationStatus {
+        passes += Pass(plan, held)
         try {
             gate?.await()
         } catch (stopped: CancellationException) {

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.jenarvaezg.coindex.data.ficha.FichaReading
+import com.jenarvaezg.coindex.data.toNameColumn
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -106,6 +107,10 @@ interface TypeMetaDao {
                 sizeMillimetres = reading.sizeMillimetres,
                 category = reading.category,
                 numistaUrl = reading.numistaUrl,
+                thicknessMillimetres = reading.thicknessMillimetres,
+                demonetized = reading.demonetized,
+                hands = reading.hands.toNameColumn(),
+                mints = reading.mints.toNameColumn(),
                 version = version,
             )
         }
@@ -120,7 +125,9 @@ interface TypeMetaDao {
     @Query(
         "UPDATE type_meta SET issuerName = :issuerName, composition = :composition, " +
             "sizeMillimetres = :sizeMillimetres, category = :category, " +
-            "numistaUrl = :numistaUrl, readVersion = :version WHERE typeId = :typeId",
+            "numistaUrl = :numistaUrl, thicknessMillimetres = :thicknessMillimetres, " +
+            "demonetized = :demonetized, hands = :hands, mints = :mints, " +
+            "readVersion = :version WHERE typeId = :typeId",
     )
     suspend fun setReading(
         typeId: Int,
@@ -129,6 +136,10 @@ interface TypeMetaDao {
         sizeMillimetres: Double?,
         category: String?,
         numistaUrl: String?,
+        thicknessMillimetres: Double?,
+        demonetized: Boolean?,
+        hands: String?,
+        mints: String?,
         version: Int,
     )
 }
@@ -205,4 +216,58 @@ interface ApiCallDao {
 
     @Query("SELECT COUNT(*) FROM api_call_log WHERE calledAt >= :since")
     fun observeCountSince(since: Long): Flow<Int>
+}
+
+/**
+ * The catalog prices and the spot: everything money on this phone is made of (ADR 0028).
+ *
+ * One DAO over three tables, because they are one subject and are always read together — a total needs
+ * the prices, the reads that say which issues are answered for, and the spot that buys the silver floor
+ * — and a valuation assembled from three DAOs is three things a caller could forget one of.
+ */
+@Dao
+interface PriceDao {
+    @Query("SELECT * FROM issue_prices")
+    fun observePrices(): Flow<List<IssuePriceEntity>>
+
+    @Query("SELECT * FROM issue_price_reads")
+    fun observeReads(): Flow<List<IssuePriceReadEntity>>
+
+    @Query("SELECT * FROM metal_spot WHERE symbol = :symbol")
+    fun observeSpot(symbol: String): Flow<MetalSpotEntity?>
+
+    @Query("SELECT * FROM issue_price_reads")
+    suspend fun reads(): List<IssuePriceReadEntity>
+
+    @Query("SELECT * FROM metal_spot WHERE symbol = :symbol")
+    suspend fun spot(symbol: String): MetalSpotEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun putSpot(spot: MetalSpotEntity)
+
+    /**
+     * Writes what one issue answered, as one unit.
+     *
+     * The old grades are deleted first and not merged over: a grade Numista has stopped pricing would
+     * otherwise survive for ever under a fresh [IssuePriceReadEntity.readAt], which is a price with a
+     * date that is not its own.
+     *
+     * Called only for an answer that arrived. A failure writes nothing at all, so being cut off between
+     * the delete and the insert is the one thing this transaction is for.
+     */
+    @Transaction
+    suspend fun putIssue(read: IssuePriceReadEntity, prices: List<IssuePriceEntity>) {
+        deletePrices(read.typeId, read.issueId)
+        insertPrices(prices)
+        insertRead(read)
+    }
+
+    @Query("DELETE FROM issue_prices WHERE typeId = :typeId AND issueId = :issueId")
+    suspend fun deletePrices(typeId: Int, issueId: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPrices(prices: List<IssuePriceEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRead(read: IssuePriceReadEntity)
 }
