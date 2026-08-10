@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-i-encuentro-de-dos-mundos",
+  "name": "Serie Iberoamericana I · Encuentro de Dos Mundos · catorce países, 1991-1992",
+  "short_name": "Serie Iberoamericana I",
+  "issuer_code": "espagne",
+  "year": 1991,
+  "source": "https://www.fnmt.es/coleccionista/emisiones-2013/ix-serie-iberoamericana",
+  "source_note": "Las catorce monedas de la I Serie Iberoamericana, la que propuso y coordinó la FNMT y que se acuñó entera en Madrid: 27 g de plata y 40 mm sobre el módulo del real de a ocho, un país por casilla. El límite no lo pone Numista y no puede ponerlo: su serie 4138 «Ibero-American» tiene 130 fichas de las trece series (1991-2024) y de la primera le faltan Argentina (N#27800), las dos portuguesas (N#15463 y N#25337) y la variante vertical del Perú (N#67304), y la cubana la archiva bajo «Christopher Colombus». Lo pone la moneda misma: el anverso de cada pieza lleva los trece escudos de los demás países que acuñaron para esta primera serie —contados uno a uno en la foto de la venezolana N#31925—, y con ellos coinciden la página de la FNMT (catorce naciones, 1991, 27 g, 40 mm, réplica del real de a ocho) y dos listados independientes que enumeran los mismos catorce países: Argentina, Bolivia, Brasil, Chile, Colombia, Cuba, Ecuador, España, México, Nicaragua, Perú, Portugal, Uruguay y Venezuela. Ni Guatemala ni Paraguay están; entran en la II y la III serie. Una casilla por país, y tres fichas quedan fuera a propósito: Portugal desdobla su 1000 escudos en la conmemorativa de circulación de plata .500 (N#15463, KM# 657, la del decreto-lei 449/91 que ya cita `portugal-1000-escudos-plata-500`) y una proof de .925 (N#25337, KM# 657a), y cuenta la primera, la que creó la ley, porque el desdoble es acabado y un denominador que cuenta acabados deja de contar países; el Perú desdobla el suyo en leyenda horizontal (N#28339, KM# 302) y vertical (N#67304, sin número de Krause), y cuenta la que cataloga Krause; y el 500 cruzeiros brasileño tiene además una ficha de prueba (N#596861, «Trial»), que no es moneda emitida. Portugal es el único cuya ley se aparta del patrón —.500 en vez de .925, con el mismo peso y el mismo diámetro—, y el resto son .925 de 27 g verificados ficha a ficha el 10 de agosto de 2026. Los 24,98 g de las dos fichas peruanas son un error de Numista y no otra moneda: 24,98 g es exactamente la plata fina de 27 g al .925, o sea el contenido fino escrito en la casilla del peso bruto (corrección pedida en el #388, y lo que falta en la serie 4138 en el #389). Medido el mismo día sobre las dos capturas privadas: el padre tiene 2 de 14 —la venezolana N#31925 y la portuguesa N#15463— y Jose 0 de 14. Se cura como programa y no como lámina porque su moneda portuguesa ya es la primera casilla de `portugal-1000-escudos-plata-500`: una lámina temática de catorce casillas exigiría antes el cambio de dominio del #149. La cabecera dice `espagne` y 1991 porque el fichero sólo admite un emisor y un año: es la ceca que coordinó y acuñó las catorce, y el año en que arrancó la serie —la portuguesa está fechada en 1992 y la mexicana lleva 1991 y 1992—, mientras la conmemoración es el V centenario de 1492-1992.",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 1000 australes",
+      "numista_type_id": 27800
+    },
+    {
+      "label": "Bolivia · 10 bolivianos",
+      "numista_type_id": 30224
+    },
+    {
+      "label": "Brasil · 500 cruzeiros",
+      "numista_type_id": 30273
+    },
+    {
+      "label": "Chile · 10 000 pesos",
+      "numista_type_id": 27182
+    },
+    {
+      "label": "Colombia · 10 000 pesos",
+      "numista_type_id": 22028
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 31590
+    },
+    {
+      "label": "Ecuador · 5000 sucres",
+      "numista_type_id": 31592
+    },
+    {
+      "label": "España · 2000 pesetas",
+      "numista_type_id": 31593
+    },
+    {
+      "label": "México · 100 pesos",
+      "numista_type_id": 26293
+    },
+    {
+      "label": "Nicaragua · 1 córdoba",
+      "numista_type_id": 31923
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 28339
+    },
+    {
+      "label": "Portugal · 1000 escudos",
+      "numista_type_id": 15463
+    },
+    {
+      "label": "Uruguay · 50 000 nuevos pesos",
+      "numista_type_id": 31924
+    },
+    {
+      "label": "Venezuela · 1100 bolívares",
+      "numista_type_id": 31925
+    }
+  ]
+}

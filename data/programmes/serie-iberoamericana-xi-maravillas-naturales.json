@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-xi-maravillas-naturales",
+  "name": "Serie Iberoamericana XI · Maravillas naturales · nueve países, 2017",
+  "short_name": "Serie Iberoamericana XI",
+  "issuer_code": "espagne",
+  "year": 2017,
+  "source": "https://www.fnmt.es/coleccionista/emisiones-2017/xi-serie-iberoamericana",
+  "source_note": "Las nueve monedas de la XI Serie Iberoamericana, «Maravillas naturales», la undécima acuñación conjunta que coordinó la FNMT: 13,5 g de plata .925 y 33 mm para todos los países, una casilla por país. La página de la FNMT enumera nueve monedas y una medalla, con la denominación de cada país. Participan Argentina, Cuba, Ecuador, España, Guatemala, Nicaragua, Paraguay, Perú y Portugal. El límite no lo pone Numista y no puede ponerlo: de las nueve monedas, su serie 4138 no tiene la argentina (N#120136), y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —nueve monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#106032, la que su decreto puso en circulación, y fuera quedan N#106033 (la misma Madeira en plata .925 de 13,5 g). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: ninguna de las dos colecciones tiene ninguna de estas piezas, y ningún catálogo curado reclama ninguno de sus tipos, así que este fichero viaja en el APK sin salir en ninguna pantalla. Se versiona a sabiendas, por decisión del coleccionista el 10 de agosto de 2026: «no pasa nada si viaja, tengo planes a futuro».",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 120136
+    },
+    {
+      "label": "Cuba · 5 pesos",
+      "numista_type_id": 133061
+    },
+    {
+      "label": "Ecuador · 1 sucre",
+      "numista_type_id": 152360
+    },
+    {
+      "label": "España · 5 euros",
+      "numista_type_id": 128020
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 127117
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 306889
+    },
+    {
+      "label": "Paraguay · 1 guaraní",
+      "numista_type_id": 123775
+    },
+    {
+      "label": "Perú · 1 sol",
+      "numista_type_id": 118274
+    },
+    {
+      "label": "Portugal · 7½ euros",
+      "numista_type_id": 106032
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 482626
+    }
+  ]
+}

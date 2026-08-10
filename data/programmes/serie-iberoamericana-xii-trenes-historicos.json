@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-xii-trenes-historicos",
+  "name": "Serie Iberoamericana XII · Trenes históricos · siete países, 2020",
+  "short_name": "Serie Iberoamericana XII",
+  "issuer_code": "espagne",
+  "year": 2020,
+  "source": "https://www.fnmt.es/coleccionista/emisiones-2020/xii-serie-iberoamericana",
+  "source_note": "Las siete monedas de la XII Serie Iberoamericana, «Trenes históricos», la duodécima acuñación conjunta que coordinó la FNMT: 13,5 g de plata .925 y 33 mm para todos los países, una casilla por país. La página de la FNMT enumera siete monedas y una medalla, con la denominación de cada país. Participan Ecuador, España, Guatemala, Nicaragua, Paraguay, Perú y Portugal. El límite no lo pone Numista y no puede ponerlo: su serie 4138 tiene las siete monedas y la medalla, y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —siete monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#224726, la que su decreto puso en circulación, y fuera quedan N#224727 (los mismos trenes en plata .925); N#276266 (la misma locomotora peruana, coloreada). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Es la única serie sin Argentina: la FNMT enumera siete países. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: ninguna de las dos colecciones tiene ninguna de estas piezas, y ningún catálogo curado reclama ninguno de sus tipos, así que este fichero viaja en el APK sin salir en ninguna pantalla. Se versiona a sabiendas, por decisión del coleccionista el 10 de agosto de 2026: «no pasa nada si viaja, tengo planes a futuro».",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Ecuador · 1 sucre",
+      "numista_type_id": 276086
+    },
+    {
+      "label": "España · 5 euros",
+      "numista_type_id": 250558
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 277207
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 277208
+    },
+    {
+      "label": "Paraguay · 1 guaraní",
+      "numista_type_id": 276076
+    },
+    {
+      "label": "Perú · 1 sol",
+      "numista_type_id": 460404
+    },
+    {
+      "label": "Portugal · 7½ euros",
+      "numista_type_id": 224726
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 284223
+    }
+  ]
+}

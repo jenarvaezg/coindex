@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-ix-20-aniversario",
+  "name": "Serie Iberoamericana IX · 20 aniversario de la Serie Iberoamericana · nueve países, 2012",
+  "short_name": "Serie Iberoamericana IX",
+  "issuer_code": "espagne",
+  "year": 2012,
+  "source": "https://www.fnmt.es/documents/10179/129160/Folleto+de+la+IX+Serie+Iberoamericana.pdf",
+  "source_note": "Las nueve monedas de la IX Serie Iberoamericana, «20 aniversario de la Serie Iberoamericana», la novena acuñación conjunta que coordinó la FNMT: 27 g de plata .925 y 40 mm para todos los países, una casilla por país. El folleto de la IX Serie, de la FNMT, dice en su página de la medalla que en el reverso están los escudos de todos los países participantes «a saber, Argentina, Cuba, España, Guatemala, México, Nicaragua, Paraguay, Perú y Portugal». Participan Argentina, Cuba, España, Guatemala, México, Nicaragua, Paraguay, Perú y Portugal. El límite no lo pone Numista y no puede ponerlo: de las nueve piezas, su serie 4138 no tiene la argentina (N#46783) ni la mexicana (N#55253), y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —nueve monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#70859, la de plata .925 en la métrica de la serie, y fuera quedan N#40129 (el mismo 10 euros del 20 aniversario en cuproníquel, que es el que circuló). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. La pieza mexicana de esta serie es una **medalla** y no una moneda —N#55253, «Commemorative medals» en Numista, 27 g de plata .925—: México dejó de acuñar moneda para la serie después de la VIII y la FNMT lo sigue contando entre los nueve participantes, así que la casilla es suya igual, porque un programa cuenta lo que se acuñó para la conmemoración y no lo que es curso legal. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: ninguna de las dos colecciones tiene ninguna de estas piezas, y ningún catálogo curado reclama ninguno de sus tipos, así que este fichero viaja en el APK sin salir en ninguna pantalla. Se versiona a sabiendas, por decisión del coleccionista el 10 de agosto de 2026: «no pasa nada si viaja, tengo planes a futuro».",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 46783
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 56328
+    },
+    {
+      "label": "España · 10 euros",
+      "numista_type_id": 55775
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 56317
+    },
+    {
+      "label": "México · medalla",
+      "numista_type_id": 55253
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 55038
+    },
+    {
+      "label": "Paraguay · 20 guaraníes",
+      "numista_type_id": 55489
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 46581
+    },
+    {
+      "label": "Portugal · 10 euros",
+      "numista_type_id": 70859
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 99917
+    }
+  ]
+}

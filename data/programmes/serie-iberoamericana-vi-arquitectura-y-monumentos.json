@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-vi-arquitectura-y-monumentos",
+  "name": "Serie Iberoamericana VI · Arquitectura y monumentos · diez países, 2005",
+  "short_name": "Serie Iberoamericana VI",
+  "issuer_code": "espagne",
+  "year": 2005,
+  "source": "https://www.fnmt.es/coleccionista/anos-anteriores/emisiones-2005/vi-serie-iberoamericana-arquitectura-y-monumentos",
+  "source_note": "Las diez monedas de la VI Serie Iberoamericana, «Arquitectura y monumentos», la sexta acuñación conjunta que coordinó la FNMT: 27 g de plata .925 y 40 mm para todos los países, una casilla por país. La página de la FNMT enumera diez monedas y una medalla, con la denominación de cada país. Participan Argentina, Cuba, Ecuador, España, Guatemala, México, Nicaragua, Paraguay, Perú y Portugal. El límite no lo pone Numista y no puede ponerlo: de las diez monedas, su serie 4138 no tiene la argentina (N#36014), y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. La medalla conmemorativa de la FNMT hace casilla porque la FNMT define así la colección —diez monedas y una medalla—, y lleva la misma plata y el mismo módulo que ellas. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#13313, la que su decreto puso en circulación, y fuera quedan N#17047 (la proof de plata .925 de la misma catedral de Oporto). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: ninguna de las dos colecciones tiene ninguna de estas piezas, y ningún catálogo curado reclama ninguno de sus tipos, así que este fichero viaja en el APK sin salir en ninguna pantalla. Se versiona a sabiendas, por decisión del coleccionista el 10 de agosto de 2026: «no pasa nada si viaja, tengo planes a futuro».",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 36014
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 62914
+    },
+    {
+      "label": "Ecuador · 25 000 sucres",
+      "numista_type_id": 62938
+    },
+    {
+      "label": "España · 10 euros",
+      "numista_type_id": 57213
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 72874
+    },
+    {
+      "label": "México · 5 pesos",
+      "numista_type_id": 57020
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 72875
+    },
+    {
+      "label": "Paraguay · 1 guaraní",
+      "numista_type_id": 51512
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 46261
+    },
+    {
+      "label": "Portugal · 10 euros",
+      "numista_type_id": 13313
+    },
+    {
+      "label": "Medalla conmemorativa · FNMT",
+      "numista_type_id": 472027
+    }
+  ]
+}

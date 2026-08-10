@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "serie-iberoamericana-iv-el-hombre-y-su-caballo",
+  "name": "Serie Iberoamericana IV · El hombre y su caballo · once países, 2000",
+  "short_name": "Serie Iberoamericana IV",
+  "issuer_code": "espagne",
+  "year": 2000,
+  "source": "https://www.fnmt.es/documents/10179/129160/Folleto+de+la+IX+Serie+Iberoamericana.pdf",
+  "source_note": "Las once monedas de la IV Serie Iberoamericana, «El hombre y su caballo», la cuarta acuñación conjunta que coordinó la FNMT: 27 g de plata .925 y 40 mm para todos los países, una casilla por país. El folleto de la IX Serie, de la FNMT, describe esta como «El hombre y su caballo» y nombra la doma argentina, el caballo lusitano portugués, el jerezano español y el paso de la muerte mexicano. Las once monedas del estuche se cerraron cruzando la serie 4138 de Numista con los estuches completos del mercado; no se localizó página propia de la FNMT para 2000. Participan Argentina, Cuba, Ecuador, España, Guatemala, México, Nicaragua, Paraguay, Perú, Portugal y Uruguay. El límite no lo pone Numista y no puede ponerlo: de las once monedas, su serie 4138 no tiene la argentina (N#27799) ni la portuguesa, y las que le faltan se localizaron buscando por peso en el catálogo y verificando la ficha una a una el 10 de agosto de 2026 —las ocho monedas argentinas de la I a la VIII coinciden motivo por motivo con la lista que el propio folleto de la FNMT imprime en su página de Argentina. Esta serie no lleva medalla: los estuches completos del mercado son de once monedas y nada más. Portugal desdobla su moneda en varias fichas, y la casilla es una: se queda N#11702, la que su decreto puso en circulación, y fuera quedan N#39005 (la proof de plata .925 del mismo caballo lusitano, KM# 727a, que es la que está en los 27 g exactos de la serie). La regla es la misma en las trece series: la casilla es la moneda del país, y el desdoble de acabado o de aleación no es un país más. Se prefiere la que circuló porque es la que hay en casa —esconder una moneda que el coleccionista tiene es la misma mentira que inventarle una que no existe (ADR 0022)—, y donde lo que circuló es cuproníquel la casilla se va a la de plata, porque esta serie es de plata. Medido el 10 de agosto de 2026 sobre las dos capturas privadas: el padre tiene 1 de 11 —la portuguesa N#11702, que ya es casilla de `portugal-1000-escudos-plata-500`, y por eso esta lectura sale en esa lámina— y Jose 0.",
+  "updated_at": "2026-08-10",
+  "members": [
+    {
+      "label": "Argentina · 25 pesos",
+      "numista_type_id": 27799
+    },
+    {
+      "label": "Cuba · 10 pesos",
+      "numista_type_id": 62909
+    },
+    {
+      "label": "Ecuador · 5000 sucres",
+      "numista_type_id": 62936
+    },
+    {
+      "label": "España · 2000 pesetas",
+      "numista_type_id": 72871
+    },
+    {
+      "label": "Guatemala · 1 quetzal",
+      "numista_type_id": 72872
+    },
+    {
+      "label": "México · 5 pesos",
+      "numista_type_id": 57015
+    },
+    {
+      "label": "Nicaragua · 10 córdobas",
+      "numista_type_id": 72873
+    },
+    {
+      "label": "Paraguay · 1 guaraní",
+      "numista_type_id": 51498
+    },
+    {
+      "label": "Perú · 1 nuevo sol",
+      "numista_type_id": 46259
+    },
+    {
+      "label": "Portugal · 1000 escudos",
+      "numista_type_id": 11702
+    },
+    {
+      "label": "Uruguay · 250 pesos",
+      "numista_type_id": 48094
+    }
+  ]
+}
