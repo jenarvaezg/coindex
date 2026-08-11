@@ -150,3 +150,40 @@ decía bien:
   con él apagado esa casilla enseña la plata.
 - **Nada de esto se ha visto en un teléfono.** Se decidió en HTML, como el #300 y el #315. La primera
   sesión de implementación empieza confirmándolo en el AVD.
+
+## Lo que el teléfono corrigió, tres días después
+
+El [#398](https://github.com/jenarvaezg/coindex/issues/398) es lo que respondió a la última línea de
+arriba, y lo abrió el coleccionista viendo la v1.2.0 en su móvil: *«el diseño se ve regular, el texto es
+poco claro; lo de plata de hoy no queda claro… aparte de eso en general guay»*. Cinco cosas, ninguna
+estructural — los seis bloques y su orden aguantan.
+
+![Las tres escaleras con la magnitud de cada referente, y el metal](cifras-326/f-escaleras-con-magnitudes.jpg)
+
+- **El sello del spot decía `PLATA DE HOY` y se leía como el rótulo del bloque siguiente.** Iba en las
+  mismas versalitas y el mismo rust que `EL VALOR` o `LA MATERIA`, y pegado al filete de cierre. Ahora
+  dice **`plata: 56,06 €/oz · hoy 11:02`**, en gris, y va **arriba, contra el importe** en lugar de al
+  final del bloque: la explicación del método cierra, y lo que toca el filete es prosa serif que no puede
+  confundirse con un encabezado. La hora es la que este mapa pedía —«el sello del spot con su hora»— y
+  nunca había llegado; el precio estaba en `SilverSpot` al lado de la fecha, sin enseñarse. Un sello sin
+  cifra no impide leer el total como una cotización, que es todo su trabajo (ADR 0028 §5).
+- **Los días eran días transcurridos y no de calendario.** Un spot leído ayer a las 23:00 y mirado a las
+  08:00 daba nueve horas, que son cero días, que se anunciaban como «hoy». Invisible mientras la línea no
+  llevaba hora; una contradicción en cuanto la lleva.
+- **La escalera había perdido las magnitudes de sus referentes.** El prototipo ponía `ladrillo 2,00 kg`
+  bajo cada silueta y la implementación dejó sólo `LADRILLO`. Sin el número, los cinco nombres son un
+  orden que hay que creerse: nada dice por qué el ladrillo va antes del gato, y la marca sólo se puede
+  contrastar con el equiespaciado de las marquitas, que es ordinal a propósito y no dice nada de
+  distancias. Es la decisión que ordena la página entera y era la que había quedado más muda.
+- **«La materia» decía el peso dos veces.** La línea de resumen abría con `7,14 kg` y la primera escalera
+  lo repetía tres líneas más abajo en cuerpo de display. Se queda con el censo —`580 piezas de 35
+  emisores`— y las onzas finas se van al bloque del metal, que es donde este mapa las tenía.
+- **Y allí resultaron ser la misma cifra dos veces.** Bajo `PLATA 6,14 KG (86 %)`, el «de plata pura,
+  196,4 oz finas» del prototipo se lee como un dato nuevo cuando es esa misma plata pesada en la unidad
+  del bullion. Dicho como conversión —**«que son 196,4 oz finas de plata pura»**— deja de haber nada que
+  reconciliar. Esto no lo vio el HTML: en el prototipo las dos líneas estaban separadas por la barra y
+  media pantalla de contexto.
+
+Queda una cosa sin tocar, y es del orden de la nomenclatura y no de esta página: la barra dice
+`198 monedas` y «la materia» dice `580 piezas`. Son dos granos de verdad —tipos poseídos y ejemplares—
+pero nada en pantalla lo explica.

@@ -7,8 +7,11 @@ import com.jenarvaezg.coindex.domain.LadderUnit
 import com.jenarvaezg.coindex.domain.Ladders
 import com.jenarvaezg.coindex.domain.MarginFigure
 import com.jenarvaezg.coindex.domain.Referent
+import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.place
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -92,20 +95,77 @@ class FiguresLabelsTest {
     }
 
     /**
-     * Every number brought from outside carries the date it was read, and an expired one still does.
+     * The two halves of «la materia» after #398: the census here, the silver under the metal bar.
      *
-     * It is what stops the total reading as a quotation, and «caducar no es borrar» read out loud: a phone
-     * with no network for a month says «plata de hace 40 días» rather than emptying itself.
+     * The weight is not in either of them — it was said in the summary line and again three lines below in
+     * display size, under «todas juntas pesan». And the ounces read as a **conversion**: sat under
+     * `PLATA 6,14 KG (86 %)`, «de plata pura, 196,4 oz finas» looked like a second figure when it is the
+     * same silver in the unit bullion is quoted in.
      */
     @Test
-    fun `the silver is dated, however old it is`() {
-        val now = 1_754_600_000_000L
-        val day = 24L * 60 * 60 * 1_000
-
-        assertEquals("plata de hoy", readAtLabel(now, now))
-        assertEquals("plata de ayer", readAtLabel(now - day, now))
-        assertEquals("plata de hace 40 días", readAtLabel(now - 40 * day, now))
+    fun `the matter says its census and the silver says it is a conversion`() {
+        assertEquals("580 piezas de 35 emisores", matterCensusLabel(580, 35))
+        assertEquals("que son 196,4 oz finas de plata pura", fineSilverSentence(196.42))
     }
+
+    /**
+     * The stamp says **which** silver price and when, and an expired one still says it.
+     *
+     * It is what stops the total reading as a quotation, and «caducar no es borrar» read out loud: a phone
+     * with no network for a month says «hace 40 días» rather than emptying itself. The price is half of the
+     * job — «plata de hoy» named a date and no figure, so nothing in it could be checked (#398).
+     */
+    @Test
+    fun `the stamp carries the price of the silver and when it was read`() {
+        val read = spot(day = 8, hour = 11, minute = 52)
+
+        assertEquals(
+            "plata: 55,23 €/oz · hoy 11:52",
+            spotStampLabel(read, millis(day = 8, hour = 23, minute = 10), MADRID),
+        )
+        assertEquals(
+            "plata: 55,23 €/oz · ayer 11:52",
+            spotStampLabel(read, millis(day = 9, hour = 8, minute = 0), MADRID),
+        )
+        // Past yesterday the hour explains nothing, so it goes: the figure is the age of the reading.
+        assertEquals(
+            "plata: 55,23 €/oz · hace 40 días",
+            spotStampLabel(read, millis(day = 48, hour = 8, minute = 0), MADRID),
+        )
+    }
+
+    /**
+     * Yesterday at 23:00 seen this morning is **ayer**, which twenty-four-hour blocks got wrong.
+     *
+     * `toDays(now - readAt)` counted nine hours as zero days and announced them as «hoy»: invisible while
+     * the line carried no hour, a plain contradiction — «hoy 23:00» read before midday — now that it does.
+     */
+    @Test
+    fun `the days are calendar days and not elapsed ones`() {
+        assertEquals(
+            "plata: 55,23 €/oz · ayer 23:00",
+            spotStampLabel(
+                spot(day = 8, hour = 23, minute = 0),
+                millis(day = 9, hour = 8, minute = 0),
+                MADRID,
+            ),
+        )
+    }
+
+    /** A pinned zone, so the hour the stamp prints is the same one wherever the suite runs. */
+    private val MADRID = ZoneId.of("Europe/Madrid")
+
+    private val AUGUST_8 = ZonedDateTime.of(2026, 8, 8, 0, 0, 0, 0, MADRID)
+
+    /** A wall clock in August 2026, where `day` counts on past the end of the month. */
+    private fun millis(day: Int, hour: Int, minute: Int): Long = AUGUST_8
+        .plusDays((day - 8).toLong())
+        .withHour(hour)
+        .withMinute(minute)
+        .toInstant()
+        .toEpochMilli()
+
+    private fun spot(day: Int, hour: Int, minute: Int) = SilverSpot(55.23, millis(day, hour, minute))
 
     /**
      * The one line the pass is allowed, and it has to tell the two silences apart.

@@ -45,15 +45,16 @@ import com.jenarvaezg.coindex.ui.components.ReferentLadder
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.demonetizedSentence
 import com.jenarvaezg.coindex.ui.eurosLabel
-import com.jenarvaezg.coindex.ui.fineOuncesLabel
+import com.jenarvaezg.coindex.ui.fineSilverSentence
 import com.jenarvaezg.coindex.ui.kilogramsLabel
+import com.jenarvaezg.coindex.ui.matterCensusLabel
 import com.jenarvaezg.coindex.ui.metalLabel
 import com.jenarvaezg.coindex.ui.mintSentence
 import com.jenarvaezg.coindex.ui.percentLabel
 import com.jenarvaezg.coindex.ui.portraitSharesLabel
-import com.jenarvaezg.coindex.ui.readAtLabel
 import com.jenarvaezg.coindex.ui.sameHandSentence
 import com.jenarvaezg.coindex.ui.screenDiameterLabel
+import com.jenarvaezg.coindex.ui.spotStampLabel
 import com.jenarvaezg.coindex.ui.squareMetresLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -115,6 +116,14 @@ fun FiguresScreen(
                             eurosLabel(money.value.eur),
                             style = MaterialTheme.typography.displayLarge,
                         )
+                        // The stamp rides **against the amount** and the method closes the block, which
+                        // is the order that stops the small caps reading as a heading: in rust and
+                        // pressed against the divider they were the eyebrow of the block below (#398).
+                        Text(
+                            spotStampLabel(money.spot, nowMillis),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Paper.muted,
+                        )
                         coverageLabel(money.value.valued, money.value.pieces)?.let { coverage ->
                             Text(
                                 coverage,
@@ -127,18 +136,13 @@ fun FiguresScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = Paper.muted,
                         )
-                        Text(
-                            readAtLabel(money.spot.readAtMillis, nowMillis),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Paper.rust,
-                        )
                     }
                 }
             }
             item("matter") {
                 Block(FiguresLabels.MATTER_HEADING) {
                     Text(
-                        weightSentence(subject),
+                        matterCensusLabel(subject.figures.pieces, subject.figures.issuers),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Paper.muted,
                     )
@@ -157,7 +161,20 @@ fun FiguresScreen(
                 }
             }
             item("metal") {
-                Block(FiguresLabels.METAL_HEADING) { MetalBar(subject.figures.metals) }
+                Block(FiguresLabels.METAL_HEADING) {
+                    MetalBar(subject.figures.metals)
+                    // The fine ounces, where the prototype had them: right under the bar that has just
+                    // split the mass, and not next to a weight «la materia» already says (#398). A
+                    // collection with no silver in it does not say it has none — it says nothing.
+                    if (subject.figures.fineSilver.value > 0.0) {
+                        Text(
+                            fineSilverSentence(gramsToOunces(subject.figures.fineSilver.value)),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Paper.ink,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                }
             }
             subject.portrait?.let { portrait ->
                 item("portrait") {
@@ -221,18 +238,6 @@ fun FiguresScreen(
             }
         }
     }
-}
-
-/**
- * The weight, said once in prose above the three ladders.
- *
- * The kilos and the fine ounces are the two numbers the collector already knew he wanted, and the cell of
- * the bottom bar prints the first of them. The ladders are what make them mean something.
- */
-private fun weightSentence(subject: FiguresSubject): String {
-    val weight = kilogramsLabel(subject.figures.weight.value)
-    val silver = fineOuncesLabel(gramsToOunces(subject.figures.fineSilver.value))
-    return "$weight · $silver · ${subject.figures.pieces} piezas de ${subject.figures.issuers} emisores"
 }
 
 @Composable
