@@ -252,7 +252,10 @@ class NotebookSectionsTest {
             plateValue = { PlateValue(eur = 54.0, pieces = 1) },
         )
 
-        assertEquals(listOf("Valor" to "54 €"), section.facts.filter { it.first == "Valor" })
+        assertEquals(
+            listOf("Valor" to "54 € · al mayor de tres precios"),
+            section.facts.filter { it.first == "Valor" },
+        )
     }
 
     /**

@@ -247,6 +247,20 @@ class FiguresLabelsTest {
         assertEquals("540 € · 2 piezas", coinValueLabel(CoinValue(540.0, 2, null, null)))
     }
 
+    /**
+     * The plate's total carries the criterion, like the ficha carries its origin (#408).
+     *
+     * «4.116 €» alone was the only money surface without a provenance tag: the ficha says
+     * «lo que pagaste» and Las cifras spells the method. The plate prints the same criterion once.
+     */
+    @Test
+    fun `a plate's value line names the criterion`() {
+        assertEquals(
+            "4.116 € · al mayor de tres precios",
+            plateValueLabel(PlateValue(4_116.0, pieces = 12)),
+        )
+    }
+
     /** Every referent has a name, or a rung would be a drawing with a blank under it. */
     @Test
     fun `every referent is named`() {

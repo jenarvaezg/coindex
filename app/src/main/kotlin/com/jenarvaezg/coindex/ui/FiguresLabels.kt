@@ -42,6 +42,13 @@ object FiguresLabels {
         "El mayor de tres precios en cada moneda: el catálogo de Numista, lo que pagaste o lo que " +
             "vale su plata."
 
+    /**
+     * The same criterion, short enough for the plate's one-line total (#408).
+     *
+     * Las cifras spells the three sources under the amount; the plate only has room for the method.
+     */
+    const val MONEY_CRITERION: String = "al mayor de tres precios"
+
     const val MATTER_HEADING: String = "La materia"
     const val METAL_HEADING: String = "El metal, por masa"
     const val PORTRAIT_HEADING: String = "El retrato"
@@ -75,7 +82,7 @@ object FiguresLabels {
         Referent.Person -> "persona"
     }
 
-    /** Where a piece's own value came from, in the ficha and in the plate's header. */
+    /** Where a piece's own value came from, in the ficha. */
     fun valueOrigin(source: ValueSource, grade: String?): String = when (source) {
         ValueSource.Market -> "precio de catálogo en ${grade.orEmpty()}"
         ValueSource.NeighbouringGrade -> "precio de catálogo en ${grade.orEmpty()}, el grado vecino"
@@ -367,7 +374,10 @@ fun coinValueLabel(value: CoinValue): String {
  * What a plate's header says about the value of what is in it.
  *
  * A total over the casillas of one plate, which the grain rule allows: per plate it is a plan, and the
- * same sum over the whole shelf would be «te faltan decenas de miles de euros» (ADR 0026 §10).
+ * same sum over the whole shelf would be «te faltan decenas de miles de euros» (ADR 0026 §10). The
+ * criterion rides with the amount — «al mayor de tres precios» — so the plate is not the only money
+ * surface without a provenance tag (#408).
  */
-fun plateValueLabel(value: PlateValue): String = eurosLabel(value.eur)
+fun plateValueLabel(value: PlateValue): String =
+    "${eurosLabel(value.eur)} · ${FiguresLabels.MONEY_CRITERION}"
 
