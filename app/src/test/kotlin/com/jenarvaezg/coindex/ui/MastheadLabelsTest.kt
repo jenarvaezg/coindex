@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui
 
-import java.time.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -10,12 +9,14 @@ class MastheadLabelsTest {
      * Same three magnitudes on every root (#400): collections, **pieces** (quantities), and types —
      * never «monedas», which already names the sibling hierarchy and its type count in the bar.
      * All three words are written in full: abbreviating only «col» left the line half-spoken.
+     * The wall-clock minute is gone (#419): the system clock is five millimetres away, and the
+     * line never meant «last sync».
      */
     @Test
-    fun `the sewn edge owns the three counts and minute`() {
+    fun `the sewn edge owns the three counts`() {
         assertEquals(
-            "70 colecciones · 574 piezas · 192 tipos · hoy 18:47",
-            sewnEdgeLabel(SewnEdgeCounts(70, 574, 192), LocalTime.of(18, 47)),
+            "70 colecciones · 574 piezas · 192 tipos",
+            sewnEdgeLabel(SewnEdgeCounts(70, 574, 192)),
         )
     }
 

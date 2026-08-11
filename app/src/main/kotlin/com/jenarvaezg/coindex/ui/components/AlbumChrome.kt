@@ -12,11 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -30,23 +25,13 @@ import com.jenarvaezg.coindex.ui.SETTINGS_LABEL
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.sewnEdgeLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
-import java.time.LocalTime
-import kotlinx.coroutines.delay
 
-/** The sewn album edge, including a minute ticker whose lifecycle follows this composition. */
+/** The sewn album edge: three counts and the way into Ajustes. */
 @Composable
 fun AlbumChrome(
     counts: SewnEdgeCounts,
     onSettings: () -> Unit,
 ) {
-    var now by remember { mutableStateOf(LocalTime.now()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(60_000L - System.currentTimeMillis() % 60_000L)
-            now = LocalTime.now()
-        }
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +43,7 @@ fun AlbumChrome(
     ) {
         Text(APP_NAME, style = MaterialTheme.typography.titleMedium, color = Paper.paper)
         Text(
-            sewnEdgeLabel(counts, now),
+            sewnEdgeLabel(counts),
             style = MaterialTheme.typography.labelSmall,
             color = Paper.paperDeep,
             maxLines = 1,

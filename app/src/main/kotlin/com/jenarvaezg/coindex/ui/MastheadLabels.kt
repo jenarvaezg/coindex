@@ -1,9 +1,5 @@
 package com.jenarvaezg.coindex.ui
 
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
 const val APP_NAME: String = "COINDEX"
 const val SETTINGS_LABEL: String = "Ajustes"
 
@@ -37,8 +33,6 @@ const val FATAL_EXPLANATION: String =
     "Los datos curados que viajan con la app no son válidos, así que Coindex se detiene en lugar " +
         "de mostrarte una lámina incorrecta."
 
-private val SEWN_EDGE_TIME = DateTimeFormatter.ofPattern("'hoy' HH:mm", Locale.forLanguageTag("es"))
-
 /**
  * The three magnitudes of the sewn edge, computed once above the three roots so Colecciones,
  * Monedas and Las cifras cannot invent three totals for the same words (#400).
@@ -51,11 +45,11 @@ data class SewnEdgeCounts(val collections: Int, val pieces: Int, val types: Int)
  * The middle count is **pieces** (quantities ×N), never «monedas»: that word already names the
  * sibling hierarchy and its type count in the bar, and using it here made Las cifras print the
  * type count twice under two names (#400). All three words are written in full — abbreviating
- * only «col» left the line half-spoken.
+ * only «col» left the line half-spoken. The wall-clock minute is gone (#419): the system clock is
+ * five millimetres away, and the line never meant «last sync».
  */
-fun sewnEdgeLabel(counts: SewnEdgeCounts, now: LocalTime): String =
-    "${counts.collections} colecciones · ${counts.pieces} piezas · ${counts.types} tipos · " +
-        now.format(SEWN_EDGE_TIME)
+fun sewnEdgeLabel(counts: SewnEdgeCounts): String =
+    "${counts.collections} colecciones · ${counts.pieces} piezas · ${counts.types} tipos"
 
 /**
  * What the masthead says you are looking at.
