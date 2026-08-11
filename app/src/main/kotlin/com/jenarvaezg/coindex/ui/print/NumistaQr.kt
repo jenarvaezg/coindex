@@ -18,7 +18,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
  * And version 3 would be the worse trade in the place it lands. The caption is a constant of the
  * layout, so the code's side in millimetres is fixed for the whole notebook: 29 modules in the same
  * square are **smaller** modules under the same phone camera. Seven per cent of recovery on a
- * 0,303 mm module beats fifteen on a 0,270 mm one when what is being read is a fresh laser print.
+ * 0,364 mm module beats fifteen on a 0,324 mm one when what is being read is a fresh laser print.
  */
 private val QR_CORRECTION = ErrorCorrectionLevel.L
 

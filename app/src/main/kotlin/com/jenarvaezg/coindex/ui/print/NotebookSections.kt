@@ -98,8 +98,9 @@ private fun plateSection(
         // (`plateEntriesBesideRatio` is deliberately not called here).
         facts = plate.entries + listOfNotNull(plate.value?.let { VALUE_LABEL to it }),
         source = plate.source,
-        // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371): the subject
-        // already knew, and until now the section threw the bit away.
+        // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371), together with
+        // the exact ratio the subject already measured. The paper must not reconstruct it from cells.
+        ratio = plate.ratio,
         complete = plate.complete,
         cells = plate.cells.map { cell ->
             PrintCell(

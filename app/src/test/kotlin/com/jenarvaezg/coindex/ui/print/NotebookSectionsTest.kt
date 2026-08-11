@@ -188,6 +188,7 @@ class NotebookSectionsTest {
         val section = dateRunSection(ownedYears = listOf(1879, 1886))
 
         assertTrue(section.complete)
+        assertEquals("2/2", section.ratio)
         assertEquals("Progreso" to "2 / 2 emisiones", section.facts.first())
     }
 
@@ -197,6 +198,7 @@ class NotebookSectionsTest {
         val section = dateRunSection(ownedYears = listOf(1879))
 
         assertFalse(section.complete)
+        assertEquals("1/2", section.ratio)
         assertEquals("Progreso" to "1 / 2 emisiones", section.facts.first())
     }
 
@@ -221,6 +223,7 @@ class NotebookSectionsTest {
         ).single()
 
         assertFalse(section.complete)
+        assertEquals(null, section.ratio)
     }
 
 

@@ -58,9 +58,9 @@ class NumistaQrTest {
      * Every type of the seeded cache carries a URL, and every one of them is a version 2.
      *
      * This is the measurement the whole cost of the switch rests on. 25 × 25 modules with their quiet
-     * zone is 33, and it is 33 that the ten millimetres of the caption were chosen against: a type
+     * zone is 33, and it is 33 that the twelve millimetres of the caption were chosen against: a type
      * whose URL spilled into a version 3 would still fit the square —the drawing divides by the
-     * symbol's own module count— and would print at 0,270 mm a module instead of 0,303, which is the
+     * symbol's own module count— and would print at 0,324 mm a module instead of 0,364, which is the
      * one number the printed folio of the ticket was about.
      */
     @Test
@@ -71,6 +71,7 @@ class NumistaQrTest {
         val versions = seeded.mapNotNull { numistaQr(it.numistaUrl)?.width }.distinct()
 
         assertEquals(listOf(25), versions, "no todos los tipos sembrados son versión 2")
+        assertEquals(4, QR_QUIET_MODULES)
         assertEquals(33, numistaQr(paquillos)!!.qrModulesWithQuietZone)
     }
 

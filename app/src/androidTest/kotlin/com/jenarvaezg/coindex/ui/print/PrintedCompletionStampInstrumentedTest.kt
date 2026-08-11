@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.ui.COMPLETE_STAMP_WORD
 import com.jenarvaezg.coindex.ui.screens.printDensity
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,7 +31,7 @@ class PrintedCompletionStampInstrumentedTest {
         compose.setContent {
             CoindexTheme {
                 CompositionLocalProvider(LocalDensity provides printDensity) {
-                    PrintedCompletionStamp(heading = PrintHeading.Masthead)
+                    PrintedCompletionStamp(heading = PrintHeading.Masthead, ratio = "22/22")
                 }
             }
         }
@@ -38,6 +39,11 @@ class PrintedCompletionStampInstrumentedTest {
 
         compose.onNodeWithContentDescription(COMPLETE_STAMP_WORD).assertIsDisplayed()
         compose.onNodeWithText(COMPLETE_STAMP_WORD.uppercase()).assertIsDisplayed()
+        compose.onNodeWithText("22 / 22").assertIsDisplayed()
+        val ratio = compose.onNodeWithText("22 / 22").fetchSemanticsNode().boundsInRoot
+        val word = compose.onNodeWithText(COMPLETE_STAMP_WORD.uppercase())
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("el ratio invade COMPLETA: $ratio / $word", ratio.bottom < word.top)
     }
 
     @Test
@@ -45,12 +51,18 @@ class PrintedCompletionStampInstrumentedTest {
         compose.setContent {
             CoindexTheme {
                 CompositionLocalProvider(LocalDensity provides printDensity) {
-                    PrintedCompletionStamp(heading = PrintHeading.Slim)
+                    PrintedCompletionStamp(heading = PrintHeading.Slim, ratio = "22/22")
                 }
             }
         }
         compose.waitForIdle()
 
         compose.onNodeWithContentDescription(COMPLETE_STAMP_WORD).assertIsDisplayed()
+        compose.onNodeWithText(COMPLETE_STAMP_WORD.uppercase()).assertIsDisplayed()
+        compose.onNodeWithText("22 / 22").assertIsDisplayed()
+        val ratio = compose.onNodeWithText("22 / 22").fetchSemanticsNode().boundsInRoot
+        val word = compose.onNodeWithText(COMPLETE_STAMP_WORD.uppercase())
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("el ratio slim invade COMPLETA: $ratio / $word", ratio.bottom < word.top)
     }
 }

@@ -164,7 +164,7 @@ class NotebookPagesTest {
     /**
      * What the QR costs in paper, and what it must never cost.
      *
-     * The caption is a constant of the layout, so this is what the switch is: the code is 10 mm and
+     * The caption is a constant of the layout, so this is what the switch is: the code is 12 mm and
      * every cell of every plate reserves them, whether or not that cell has a code to draw. That is
      * also the reason the decision was «under the name» — beside it would have forced a 44 mm cell
      * and taken a **column** from almost every coin, which this grid cannot spare.
