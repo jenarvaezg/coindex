@@ -111,6 +111,7 @@ interface TypeMetaDao {
                 demonetized = reading.demonetized,
                 hands = reading.hands.toNameColumn(),
                 mints = reading.mints.toNameColumn(),
+                issuedYear = reading.issuedYear,
                 version = version,
             )
         }
@@ -127,7 +128,7 @@ interface TypeMetaDao {
             "sizeMillimetres = :sizeMillimetres, category = :category, " +
             "numistaUrl = :numistaUrl, thicknessMillimetres = :thicknessMillimetres, " +
             "demonetized = :demonetized, hands = :hands, mints = :mints, " +
-            "readVersion = :version WHERE typeId = :typeId",
+            "issuedYear = :issuedYear, readVersion = :version WHERE typeId = :typeId",
     )
     suspend fun setReading(
         typeId: Int,
@@ -140,6 +141,7 @@ interface TypeMetaDao {
         demonetized: Boolean?,
         hands: String?,
         mints: String?,
+        issuedYear: Int?,
         version: Int,
     )
 }

@@ -94,6 +94,14 @@ data class TypeMetaEntity(
     val demonetized: Boolean? = null,
     val hands: String? = null,
     val mints: String? = null,
+    /**
+     * The year a medal was issued, read out of `issue_terms.issue_date` (#460).
+     *
+     * Its own column and not merged into [minYear] on the way in, for the reason every column of
+     * version 6 has one: what is stored is what Numista wrote, and which of the two a card prints is
+     * a rule — `TypeMetaEntity.toDomain` decides, and can be improved without a pass over the cache.
+     */
+    val issuedYear: Int? = null,
 )
 
 /** The stored ficha of one type, for reading fields the columns never captured. */

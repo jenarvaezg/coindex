@@ -41,6 +41,16 @@ data class FichaReading(
     val demonetized: Boolean? = null,
     val hands: List<String> = emptyList(),
     val mints: List<String> = emptyList(),
+    /**
+     * The year a **medal** was issued, which is the only place its date is written (#460).
+     *
+     * A coin type carries `min_year` and `max_year`; a medal carries neither and puts its date in
+     * `issue_terms.issue_date`, as `1995-00-00` — Numista's way of saying «this year, no month, no
+     * day». Two of the father's pieces are medals and both looked undated because nothing read this
+     * field: his silver bicentenary medal of Sucre, N#581856, says 1795-1995 on its own face and
+     * «Sin año» on the card.
+     */
+    val issuedYear: Int? = null,
 )
 
 /**
@@ -51,7 +61,7 @@ data class FichaReading(
  * bargain the five read-on-every-pass fields had, moved from every read to one write: what a
  * column costs is that improving the rule needs a pass, and this integer is that pass's trigger.
  */
-const val FICHA_READING: Int = 2
+const val FICHA_READING: Int = 3
 
 /**
  * Reads one stored Numista body.
@@ -91,6 +101,7 @@ fun readFichaBody(raw: String): FichaReading {
         // either key depending on who typed the ficha, and a name signing both faces is one hand.
         hands = body.names("engravers") + body.names("designers"),
         mints = body.namedList("mints"),
+        issuedYear = issuedYear(body.text("issue_terms", "issue_date")),
     )
 }
 
@@ -109,6 +120,18 @@ data class FichaThumbnails(val obverse: String?, val reverse: String?) {
 
 fun NumistaTypeDto.thumbnails(): FichaThumbnails =
     FichaThumbnails(obverse = obverse?.thumbnail, reverse = reverse?.thumbnail)
+
+/**
+ * The year out of a Numista issue date, or null when there is no year in it.
+ *
+ * The date is `1995-00-00` on the medals that have one: a year, and zeros where Numista does not
+ * know the month or the day. Only the year is taken, and only if it is a year — the same rule the
+ * domain states about a zero, applied to the string it arrives in.
+ */
+private fun issuedYear(issueDate: String?): Int? = issueDate
+    ?.substringBefore('-')
+    ?.toIntOrNull()
+    ?.takeIf { it > 0 }
 
 private val lenient = Json { ignoreUnknownKeys = true }
 

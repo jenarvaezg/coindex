@@ -102,6 +102,39 @@ class CoinRowTest {
         assertTrue(matchesQuery(row.haystack, "1980"))
     }
 
+    /**
+     * Numista's `0` on an undated medal is not the year zero (#460).
+     *
+     * The father has two of these, both medals whose ficha carries no `min_year` either: the row says
+     * `"year": 0, "is_dated": true`, which is Numista's way of saying it has an issue and no date for
+     * it. `placementYear` already refused it — «treating it as a placement would open the axis on year
+     * 0 and paint two thousand years of bare cardboard» — and the card has to refuse it too, or #448
+     * turns a «Sin año» into a «0», which is worse: a wrong answer reads as an answer.
+     */
+    @Test
+    fun `the zero Numista stores on an undated medal is not a year`() {
+        val state = stateOf(
+            meta = null,
+            items = listOf(piece(id = 1, typeId = 581_856, year = 0)),
+        )
+
+        val row = coinRows(state).single()
+
+        assertTrue(row.years.isEmpty())
+        assertEquals("Sin año", coinAlbumFootnote(row))
+    }
+
+    /** And with a ficha that does know the year, the zero steps aside for it. */
+    @Test
+    fun `an undated row takes the year its ficha knows`() {
+        val state = stateOf(
+            meta = TypeMeta(id = 581_856, title = "Medalla", minYear = 1_995),
+            items = listOf(piece(id = 1, typeId = 581_856, year = 0)),
+        )
+
+        assertEquals(listOf(1_995), coinRows(state).single().years)
+    }
+
     @Test
     fun `a coin with neither ficha nor dated piece says so`() {
         val state = stateOf(meta = null, items = listOf(piece(id = 1, typeId = 500, year = null)))

@@ -48,9 +48,14 @@ enum class GramBand(val label: String, private val upToGrams: Double) {
  * The year facet of Coins: one year on the coin, or «Sin año».
  *
  * Exact years, not eras — the year axis of the notebook is a calendar of seats, and tapping one has
- * to open Monedas on that year, not on a band that swallows decades beside it. [Undated] stays a
- * chip of its own: the two types the seeded cache has no year for are the unpublished submissions
- * of #186, and dropping them would hide the pieces waiting on a referee.
+ * to open Monedas on that year, not on a band that swallows decades beside it.
+ *
+ * [Undated] stays a chip of its own even though **no ficha in the seeded cache needs it any more**.
+ * The two that did were the unpublished submissions of #186, and both were medals whose year was in
+ * `issue_terms.issue_date` all along, unread until #460. The chip stays because the state it names
+ * has not stopped existing: a piece Numista has no issue for, a type still waiting on a referee, a
+ * ficha this phone has not managed to fetch. A facet that drops the rows it cannot value is a facet
+ * that hides them.
  */
 sealed interface YearFilter {
     val label: String

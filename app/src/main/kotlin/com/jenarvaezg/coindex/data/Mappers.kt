@@ -82,8 +82,10 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     family = family,
     issuerCode = issuerCode,
     issuerName = issuerName,
-    minYear = minYear,
-    maxYear = maxYear,
+    // A medal has no `min_year`; what it has is the year it was issued, and for the one question
+    // the app asks — «what year is this piece from» — they are the same answer (#460).
+    minYear = minYear ?: issuedYear,
+    maxYear = maxYear ?: issuedYear,
     weightOz = weightGrams?.let(::gramsToOunces),
     finish = inferFinish(title, family),
     metal = inferMetal(composition),
@@ -169,6 +171,7 @@ internal fun TypeMetaEntity.withReading(reading: FichaReading): TypeMetaEntity =
     demonetized = reading.demonetized,
     hands = reading.hands.toNameColumn(),
     mints = reading.mints.toNameColumn(),
+    issuedYear = reading.issuedYear,
     readVersion = FICHA_READING,
 )
 

@@ -37,7 +37,8 @@ class BandsTest {
             listOf(YearFilter.Of(1879), YearFilter.Of(1904), YearFilter.Of(1936)),
             YearFilter.of(listOf(1879, 1904, 1936)),
         )
-        // The two unpublished submissions of #186 have no year, and «Sin año» is their chip.
+        // «Sin año» is the chip of a piece nobody has dated — the two medals of #186 had one
+        // after all, in `issue_terms.issue_date` (#460), but the state they stood for still exists.
         assertEquals(listOf(YearFilter.Undated), YearFilter.of(emptyList()))
     }
 
