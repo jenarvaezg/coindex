@@ -95,15 +95,21 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     LaunchedEffect(state.message) {
         state.message?.let { notice ->
+            // Offer Abrir only when something can open the file — a button that crashes is worse
+            // than no button (#436). The try/catch in openDownloadedFile still covers the race
+            // where the viewer vanishes between the check and the tap.
+            val openFile = notice.openFile?.takeIf { file ->
+                canViewDownloadedFile(context, Uri.parse(file.uri), file.mimeType)
+            }
             val result = snackbarHost.showSnackbar(
                 message = notice.text,
-                actionLabel = notice.openFile?.let { DOWNLOAD_OPEN_ACTION },
+                actionLabel = openFile?.let { DOWNLOAD_OPEN_ACTION },
             )
             if (result == SnackbarResult.ActionPerformed) {
-                notice.openFile?.let { file ->
-                    context.startActivity(
-                        viewDownloadedFileIntent(Uri.parse(file.uri), file.mimeType),
-                    )
+                openFile?.let { file ->
+                    if (!openDownloadedFile(context, Uri.parse(file.uri), file.mimeType)) {
+                        snackbarHost.showSnackbar(DOWNLOAD_NO_VIEWER_MESSAGE)
+                    }
                 }
             }
             viewModel.dismissMessage()

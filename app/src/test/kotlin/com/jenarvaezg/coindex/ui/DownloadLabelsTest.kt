@@ -8,8 +8,9 @@ import kotlin.test.assertNull
  * What the collector is told once a sheet has landed in Descargas (#285, #403).
  *
  * The snackbar names the folder — «Descargado en Descargas» — and carries Abrir so a tap opens
- * the file without digging through the phone. The notification still says the shorter
- * «Descargado» with the file name underneath; holes in the sheet are still counted.
+ * the file without digging through the phone. Without a viewer, Abrir is withheld and a failed
+ * open says so aloud (#436). The notification still says the shorter «Descargado» with the file
+ * name underneath; holes in the sheet are still counted.
  */
 class DownloadLabelsTest {
     @Test
@@ -47,6 +48,15 @@ class DownloadLabelsTest {
     @Test
     fun `Abrir is the snackbar action that opens what landed`() {
         assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
+    }
+
+    @Test
+    fun `without a viewer Abrir says so instead of crashing`() {
+        // Phones without a PDF (or image) viewer exist; ACTION_VIEW must not take the app down (#436).
+        assertEquals(
+            "No hay ninguna aplicación que pueda abrirlo",
+            DOWNLOAD_NO_VIEWER_MESSAGE,
+        )
     }
 
     @Test

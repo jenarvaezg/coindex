@@ -12,6 +12,20 @@
          se queda callado; el snackbar y el fichero siguen bastando. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Abrir and the download notification ask resolveActivity whether a viewer exists (#436).
+         Without these, package visibility would always answer no on API 30+ even when Photos
+         or a PDF reader is installed. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/pdf" />
+        </intent>
+    </queries>
+
     <application
         android:name=".CoindexApplication"
         android:label="Coindex"

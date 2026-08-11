@@ -182,6 +182,14 @@ const val DOWNLOAD_LANDED_MESSAGE: String = "Descargado en Descargas"
 const val DOWNLOAD_OPEN_ACTION: String = "Abrir"
 
 /**
+ * What Abrir says when the phone has no app for that file (#436).
+ *
+ * Stripped-down builds ship without a PDF (or even image) viewer; ACTION_VIEW must not take
+ * the whole app down with them.
+ */
+const val DOWNLOAD_NO_VIEWER_MESSAGE: String = "No hay ninguna aplicación que pueda abrirlo"
+
+/**
  * The openable notification that says a file reached Descargas (#285).
  *
  * Short title plus the file name underneath; Abrir on the snackbar is the other door (#403).
