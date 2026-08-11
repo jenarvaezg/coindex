@@ -193,18 +193,20 @@ class NotebookLabelsTest {
     }
 
     @Test
-    fun `paper-only switches are annotated only when the result is a PNG`() {
-        assertEquals(
-            "Sólo en el cuaderno",
-            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = true, pages = 1),
-        )
-        assertEquals(
-            "Sólo en el cuaderno",
-            sheetExportSwitchNote(NotebookSwitch.NumistaQr, offered = true, pages = 1),
-        )
-        assertNull(sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = true, pages = 2))
-        assertNull(sheetExportSwitchNote(NotebookSwitch.Money, offered = true, pages = 2))
-        assertNull(sheetExportSwitchNote(NotebookSwitch.Photographs, offered = true, pages = 1))
+    fun `paper switches are annotated only when the result is a PNG`() {
+        for (switch in listOf(
+            NotebookSwitch.Photographs,
+            NotebookSwitch.BothFaces,
+            NotebookSwitch.ActualSize,
+            NotebookSwitch.NumistaQr,
+            NotebookSwitch.Money,
+        )) {
+            assertEquals(
+                "Sólo en el cuaderno",
+                sheetExportSwitchNote(switch, offered = true, pages = 1),
+            )
+            assertNull(sheetExportSwitchNote(switch, offered = true, pages = 2))
+        }
         assertEquals(
             "Sin fotos no hay nada que ajustar",
             sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false, pages = 1),

@@ -43,8 +43,8 @@
 > **Amended on 2026-08-11 (§13, #401).** Descargar and Compartir on a lámina or a hoja open the same
 > «Cómo se exporta» surface as the index — minus «Sin colección» and «Compartir página». **What fits
 > in one page is a PNG; what needs more is a PDF**, measured by the pages the panel already
-> computes — not by which screen was opened. Switches that only a bitmap cannot honour are annotated
-> when the result is a PNG; when it is a PDF they apply for real.
+> computes — not by which screen was opened. When the result is a PNG none of the switches reach the
+> bitmap, so they are annotated; when it is a PDF they apply for real.
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at
@@ -383,8 +383,8 @@ name on — the index already is one.
 - **What fits in one page is a PNG; what needs more is a PDF** (#401). Measured by the pages the
   options panel already computes — Descargar or Compartir on a lámina or hoja leaves a bitmap when
   there is one page, and the vector PDF of that section when there are more («Plata a valor facial»
-  is two). The notebook from the index is always the PDF. The cost line announces the format; switches
-  that only paper can honour are annotated under the row when the result is still a PNG. Both still
+  is two). The notebook from the index is always the PDF.   The cost line announces the format; when the result is still a PNG every switch on the sheet is
+  annotated under the row, because the bitmap ignores the draft. Both still
   land in Descargas by default and still leave through the send intent when shared (#285): the father
   wants the file and Jose still hands it to a chat. `recordInto` records drawing commands in a
   `Picture`, and `PdfDocument` replays them on its canvas, so the PDF is vectorial with **no new

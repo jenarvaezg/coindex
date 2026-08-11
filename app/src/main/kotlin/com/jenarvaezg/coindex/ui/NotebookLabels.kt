@@ -105,17 +105,14 @@ fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when
 /**
  * Why a switch on a single lámina or hoja is annotated (#401).
  *
- * When the measured result is a PDF, tamaño real, the QR and the money land on paper and need no
- * note. When it is a PNG, those three cannot honour the image, so the row says so rather than
- * pretending this export will. Fotos and Ambas caras stay a live question for the image until the
- * PNG learns them; until then they still remember how the next cuaderno will print.
+ * When the measured result is a PDF, every switch on this surface lands on paper. When it is a PNG,
+ * none of them reach the bitmap — PlateSheet / PiecesSheet ignore the draft — so the row says so
+ * rather than pretending this export will honour them. They still remember how the next cuaderno
+ * will print, and flipping Fotos or Ambas caras can change the page count and flip the format.
  */
 fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean, pages: Int): String? = when {
     !offered -> notebookSwitchNote(switch, offered)
-    sheetExportAsBitmap(pages) &&
-        (switch == NotebookSwitch.ActualSize ||
-            switch == NotebookSwitch.NumistaQr ||
-            switch == NotebookSwitch.Money) -> "Sólo en el cuaderno"
+    sheetExportAsBitmap(pages) -> "Sólo en el cuaderno"
     else -> null
 }
 
