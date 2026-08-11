@@ -71,9 +71,9 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
 /**
  * Writes a recorded sheet to Descargas as a PNG (#401).
  *
- * A single lámina or hoja **fits in a photo**, so both Descargar and Compartir leave a bitmap;
- * the PDF is the notebook that does not fit in one sheet. The cache holds the temporary, and
- * [handToDownloads] turns it into a durable file without a chooser (#285).
+ * Used when the options panel measures one page — what fits in a photo. More pages take the PDF
+ * path instead. The cache holds the temporary, and [handToDownloads] turns it into a durable file
+ * without a chooser (#285).
  */
 suspend fun downloadPlateSheet(context: Context, picture: Picture, fileName: String) {
     val displayName = datedExportFileName(fileName, "png")

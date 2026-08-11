@@ -86,7 +86,8 @@ fun ExportOptions(
     costLabel: String = notebookCostLabel(pages, cards),
     /**
      * Why a switch is annotated under its row. The index uses [notebookSwitchNote]; a single sheet
-     * passes [sheetExportSwitchNote] so paper-only switches say «Sólo en el cuaderno» (#401).
+     * passes [sheetExportSwitchNote] so paper-only switches say «Sólo en el cuaderno» when the
+     * measured result is still a PNG (#401).
      */
     switchNote: (NotebookSwitch, Boolean) -> String? = ::notebookSwitchNote,
     modifier: Modifier = Modifier,

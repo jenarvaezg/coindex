@@ -58,10 +58,10 @@ const val IMAGE_WAIT_MILLIS = 30_000L
  * what the file is called, and what the sheet says it holds. They are the parameters; the rest is
  * here. [destination] is Descargas or the share sheet (#285).
  *
- * **What fits in a sheet is a PNG** (#401). A single lámina or hoja — Descargar or Compartir —
- * leaves through this cycle as one image. The notebook that does not fit in one sheet is the PDF
- * from the index. The options panel still opens first so the collector chooses and remembers; the
- * switches that only paper can honour are annotated under the row.
+ * **What fits in one page is a PNG** (#401). The options panel measures the pages first; when
+ * there is one, Descargar / Compartir leave through this cycle as a bitmap. When there are more,
+ * the same doors take the PDF section of the notebook instead, and the switches that only paper
+ * can honour apply for real.
  *
  * The sheet is measured with its own density and **never painted**: [recordInto] captures the
  * drawing commands instead of drawing them, so what gets shared is the complete sheet rather than

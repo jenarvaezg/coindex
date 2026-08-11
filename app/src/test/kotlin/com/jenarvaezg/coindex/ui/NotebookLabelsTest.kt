@@ -153,20 +153,24 @@ class NotebookLabelsTest {
 
     /**
      * The cost under a single lámina is not the index: there is no filter above it, and the
-     * notebook's scope sentence would lie about where the pages come from (#401).
+     * notebook's scope sentence would lie about where the pages come from (#401). The format is
+     * measured by pages — one is a PNG, more is a PDF — and the line announces it.
      */
     @Test
     fun `a single sheet says the cost is about this plate or this leaf`() {
         assertEquals(
-            "La imagen es esta lámina; las páginas son cómo saldría en el cuaderno.",
+            "Es esta lámina, con la configuración elegida.",
             sheetExportCostScope(SharedSheet.PLATE),
         )
         assertEquals(
-            "La imagen es esta hoja; las páginas son cómo saldría en el cuaderno.",
+            "Es esta hoja, con la configuración elegida.",
             sheetExportCostScope(SharedSheet.PIECES),
         )
-        assertEquals("1 página · 1 lámina", sheetExportCostLabel(SharedSheet.PLATE, 1))
-        assertEquals("3 páginas · 1 hoja", sheetExportCostLabel(SharedSheet.PIECES, 3))
+        assertEquals("1 página · 1 lámina · PNG", sheetExportCostLabel(SharedSheet.PLATE, 1))
+        assertEquals("2 páginas · 1 lámina · PDF", sheetExportCostLabel(SharedSheet.PLATE, 2))
+        assertEquals("3 páginas · 1 hoja · PDF", sheetExportCostLabel(SharedSheet.PIECES, 3))
+        assertTrue(sheetExportAsBitmap(1))
+        assertTrue(!sheetExportAsBitmap(2))
     }
 
     /**
@@ -189,19 +193,21 @@ class NotebookLabelsTest {
     }
 
     @Test
-    fun `paper-only switches on a sheet say they belong to the notebook`() {
+    fun `paper-only switches are annotated only when the result is a PNG`() {
         assertEquals(
             "Sólo en el cuaderno",
-            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = true),
+            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = true, pages = 1),
         )
         assertEquals(
             "Sólo en el cuaderno",
-            sheetExportSwitchNote(NotebookSwitch.NumistaQr, offered = true),
+            sheetExportSwitchNote(NotebookSwitch.NumistaQr, offered = true, pages = 1),
         )
-        assertNull(sheetExportSwitchNote(NotebookSwitch.Photographs, offered = true))
+        assertNull(sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = true, pages = 2))
+        assertNull(sheetExportSwitchNote(NotebookSwitch.Money, offered = true, pages = 2))
+        assertNull(sheetExportSwitchNote(NotebookSwitch.Photographs, offered = true, pages = 1))
         assertEquals(
             "Sin fotos no hay nada que ajustar",
-            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false),
+            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false, pages = 1),
         )
     }
 }

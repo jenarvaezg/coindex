@@ -41,17 +41,28 @@ const val NOTEBOOK_COST_SCOPE: String = "Es lo que hay en el índice ahora mismo
  * neither, and repeating that sentence would claim pages came from a narrowing that is not there.
  */
 fun sheetExportCostScope(sheet: SharedSheet): String =
-    "La imagen es esta ${sheet.noun}; las páginas son cómo saldría en el cuaderno."
+    "Es esta ${sheet.noun}, con la configuración elegida."
+
+/**
+ * Whether this export leaves a bitmap (#401).
+ *
+ * Measured by the pages the options panel already computes: one page fits in a photo; more than
+ * one needs the PDF — «Plata a valor facial» is the case that made the rule, two pages.
+ */
+fun sheetExportAsBitmap(pages: Int): Boolean = pages <= 1
 
 /**
  * What a single lámina or hoja is about to cost (#401).
  *
  * The notebook's line counts láminas because the filter chose many; a sheet opened from its own
  * screen is always one, and the noun has to be this sheet's — «1 lámina» under a hoja would rename
- * what the collector is looking at.
+ * what the collector is looking at. The format follows the page count: one page is a PNG, more is
+ * a PDF, and the cost line says so so it speaks of the file that will leave.
  */
-fun sheetExportCostLabel(sheet: SharedSheet, pages: Int): String =
-    "${plural(pages, "página", "páginas")} · 1 ${sheet.noun}"
+fun sheetExportCostLabel(sheet: SharedSheet, pages: Int): String {
+    val format = if (sheetExportAsBitmap(pages)) "PNG" else "PDF"
+    return "${plural(pages, "página", "páginas")} · 1 ${sheet.noun} · $format"
+}
 
 /**
  * What the export sheet is about to cost, recounted on every tap (#228).
@@ -94,17 +105,17 @@ fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when
 /**
  * Why a switch on a single lámina or hoja is annotated (#401).
  *
- * **What fits in a sheet is a PNG** — Descargar and Compartir both leave a bitmap. Tamaño real,
- * the QR and the money only land on the notebook's paper, so the sheet says so under them rather
- * than letting this export look as if it will honour a switch the image cannot. Fotos and Ambas
- * caras stay a live question for the image until the PNG learns them; until then they still
- * remember how the next cuaderno will print.
+ * When the measured result is a PDF, tamaño real, the QR and the money land on paper and need no
+ * note. When it is a PNG, those three cannot honour the image, so the row says so rather than
+ * pretending this export will. Fotos and Ambas caras stay a live question for the image until the
+ * PNG learns them; until then they still remember how the next cuaderno will print.
  */
-fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when {
+fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean, pages: Int): String? = when {
     !offered -> notebookSwitchNote(switch, offered)
-    switch == NotebookSwitch.ActualSize ||
-        switch == NotebookSwitch.NumistaQr ||
-        switch == NotebookSwitch.Money -> "Sólo en el cuaderno"
+    sheetExportAsBitmap(pages) &&
+        (switch == NotebookSwitch.ActualSize ||
+            switch == NotebookSwitch.NumistaQr ||
+            switch == NotebookSwitch.Money) -> "Sólo en el cuaderno"
     else -> null
 }
 
