@@ -113,6 +113,8 @@ COINDEX_FIELD_SNAPSHOT=<dir> ./gradlew :app:testDebugUnitTest --tests '*FieldRep
 
 A curation that teaches something changes the documents too: `CONTEXT.md` when a term is new, `spec.md` when a section it describes is now false, and a fresh ADR when you had to *decide* rather than look up. Say which of the three you touched, and why the others needed nothing.
 
+Most curations touch none of them, and that is the expected answer. `spec.md` carries rules, not a census: which catalogs exist, how many there are and which was the first of its class are read from `data/`, so a new plate is not by itself a reason to edit it. Read the section you need — it has an index — rather than the whole file.
+
 ## Branch: an open catalog that is behind
 
 `scripts/stale-catalogs.py` and the [Catálogos abiertos por detrás](https://github.com/jenarvaezg/coindex/issues/136) issue name the tail. Adding this year's casilla is steps 3 through 8 only — the sequence already proved itself, so re-litigating step 1 wastes the collector's time.
