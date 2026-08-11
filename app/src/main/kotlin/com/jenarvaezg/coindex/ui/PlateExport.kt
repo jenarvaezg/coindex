@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -168,7 +169,7 @@ data class DownloadedExport(
  *
  * Best-effort: on API 33+ without [android.Manifest.permission.POST_NOTIFICATIONS] the shade
  * stays quiet, and that is fine — asking would put a dialog in front of the «y ya» the father
- * asked for. The snackbar names Descargas and offers Abrir either way (#403).
+ * asked for. The snackbar names Descargas and offers Abrir when a viewer exists (#403, #436).
  */
 internal fun announceDownload(
     context: Context,
@@ -186,17 +187,23 @@ internal fun announceDownload(
             ).apply { description = DOWNLOAD_CHANNEL_EXPLANATION },
         )
     }
-    val pending = PendingIntent.getActivity(
-        context,
-        displayName.hashCode(),
-        viewDownloadedFileIntent(uri, mimeType),
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-    )
+    // Only promise a tap when something can actually open the file — a dead PendingIntent
+    // is not a crash, but it is a lie (#436).
+    val intent = viewDownloadedFileIntent(uri, mimeType)
+    val open = intent.takeIf { intent.resolveActivity(context.packageManager) != null }
+        ?.let { view ->
+            PendingIntent.getActivity(
+                context,
+                displayName.hashCode(),
+                view,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+        }
     val notification = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
         .setSmallIcon(android.R.drawable.stat_sys_download_done)
         .setContentTitle(DOWNLOAD_NOTIFICATION_TITLE)
         .setContentText(downloadNotificationText(displayName))
-        .setContentIntent(pending)
+        .setContentIntent(open)
         .setAutoCancel(true)
         .build()
     manager.notify(displayName.hashCode(), notification)
@@ -207,6 +214,30 @@ fun viewDownloadedFileIntent(uri: Uri, mimeType: String): Intent =
     Intent(Intent.ACTION_VIEW).apply {
         setDataAndType(uri, mimeType)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
+/**
+ * Whether anything on the phone can handle [viewDownloadedFileIntent] (#436).
+ *
+ * Used to withhold Abrir and the notification's tap when the answer is no — promising a door
+ * that opens onto nothing is worse than leaving the file in Descargas alone.
+ */
+fun canViewDownloadedFile(context: Context, uri: Uri, mimeType: String): Boolean =
+    viewDownloadedFileIntent(uri, mimeType).resolveActivity(context.packageManager) != null
+
+/**
+ * Opens a file from Descargas without taking the app down when no viewer is installed (#436).
+ *
+ * Same posture as the update installer's protected starts: an unresolved ACTION_VIEW must not
+ * be fatal. Only [android.content.ActivityNotFoundException] counts as «no viewer» — other
+ * failures still surface. Returns false so the caller can say so aloud.
+ */
+fun openDownloadedFile(context: Context, uri: Uri, mimeType: String): Boolean =
+    try {
+        context.startActivity(viewDownloadedFileIntent(uri, mimeType))
+        true
+    } catch (_: ActivityNotFoundException) {
+        false
     }
 
 /** File-system safe name for an exported plate. */
