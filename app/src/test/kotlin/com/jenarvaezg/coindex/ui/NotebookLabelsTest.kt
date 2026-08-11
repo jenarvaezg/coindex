@@ -194,8 +194,16 @@ class NotebookLabelsTest {
         )
     }
 
+    /**
+     * The PNG honours the switches now, so nothing here is annotated for being one (#431).
+     *
+     * The note used to be true: the bitmap was a drawing of its own that received no options, so all
+     * five said «Sólo en el cuaderno» whenever the measure came out a photo. Since the PNG became the
+     * printed page trimmed to its folio, every one of them reaches the file — «tamaño real» included,
+     * with the ruler at the foot — and a note that distinguishes nothing is a word for nothing.
+     */
     @Test
-    fun `paper switches are annotated only when the result is a PNG`() {
+    fun `no switch is greyed for landing in a PNG, because they all land in it`() {
         for (switch in listOf(
             NotebookSwitch.Photographs,
             NotebookSwitch.BothFaces,
@@ -203,15 +211,16 @@ class NotebookLabelsTest {
             NotebookSwitch.NumistaQr,
             NotebookSwitch.Money,
         )) {
-            assertEquals(
-                "Sólo en el cuaderno",
-                sheetExportSwitchNote(switch, offered = true, pages = 1),
-            )
-            assertNull(sheetExportSwitchNote(switch, offered = true, pages = 2))
+            assertNull(sheetExportSwitchNote(switch, offered = true))
         }
+        // The two reasons that survive are the notebook's own, and both are the collector's to undo.
         assertEquals(
             "Sin fotos no hay nada que ajustar",
-            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false, pages = 1),
+            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false),
+        )
+        assertEquals(
+            notebookSwitchNote(NotebookSwitch.Unclaimed, offered = false),
+            sheetExportSwitchNote(NotebookSwitch.Unclaimed, offered = false),
         )
     }
 }

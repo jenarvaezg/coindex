@@ -90,7 +90,7 @@ fun rememberInkFall(complete: Boolean): State<Float> {
  * is complete before it is opened cannot show a fixed figure under an ink that has not fallen.
  *
  * It is drawn at **one size, in dp**, and a sheet that needs it bigger raises the density it is
- * composed at (`PlateSheet`) rather than passing a factor in. Multiplying each dp by hand looks like
+ * composed at — as the shared PNG does, at twice the paper's — rather than passing a factor in. Multiplying each dp by hand looks like
  * the same thing and is not: the 1 dp corners and the two rules stop being proportional to the frame,
  * and on an eight-column export the stamp came out with its own outline broken at the corners.
  */

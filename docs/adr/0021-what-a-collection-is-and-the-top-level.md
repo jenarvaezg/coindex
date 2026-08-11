@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401 and #434, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401, #434 and #431, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -46,6 +46,17 @@
 > computes — not by which screen was opened. When the result is a PNG none of the switches reach the
 > bitmap, so they are annotated; when it is a PDF they apply for real.
 >
+> **Amended on 2026-08-11 (§13, #431).** «Lo que cabe en una página es un PNG» stands; what stops
+> being true is that the PNG is a **drawing of its own**. A lámina had two — the page of the notebook,
+> which honours every switch, and a bitmap that received none — so the panel had to annotate all five
+> with «Sólo en el cuaderno» whenever the measure came out a photo. What was measured is that the two
+> differ in the **folio** and not in the drawing, so the PNG is now the printed page with the height
+> it is not using cut off: same width, same rejilla, same coin at 1:1. Fotos, ambas caras, tamaño
+> real, el QR and el valor reach the shared file, and **the ruler goes with them** — the PNG never had
+> one, and it is what makes «tamaño real» checkable against a viewer's «ajustar a la página». The
+> measure itself is untouched: it is still taken on A4, so what the collector gets out of one gesture
+> is what they got before.
+
 > **Amended on 2026-08-11 (§13, #434).** They no longer open it as a pair. Two buttons in — Descargar
 > and Compartir — into a card that ends in Descargar / Compartir / Cancelar were two entrances to one
 > conversation, and the first of them named a destination the second would ask about anyway. What a

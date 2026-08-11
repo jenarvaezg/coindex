@@ -34,7 +34,11 @@ import com.jenarvaezg.coindex.ui.sheetExportSwitchNote
 sealed class SheetExportJob {
     abstract val destination: ExportDestination
 
-    data class Bitmap(override val destination: ExportDestination) : SheetExportJob()
+    /** One page: the printed folio, trimmed to what it draws and recorded as a PNG (#431). */
+    data class Bitmap(
+        val page: PrintPage,
+        override val destination: ExportDestination,
+    ) : SheetExportJob()
 
     data class Pdf(
         val pages: List<PrintPage>,
@@ -68,14 +72,18 @@ class SheetExportSurface(
  * `PlateScreen` and `PiecesScreen` each carried a copy of it — two twin sealed classes, the same
  * four pieces of state, the same `begin()` measuring pages and picking a format, the same
  * `ExportProgress` with its cancellation by step, and the same final `when` dispatching to
- * [SheetExport] or [NotebookPdfExport]. Twins drift: #219 had already merged the drawing half of
+ * [SheetPngExport] or [NotebookPdfExport]. Twins drift: #219 had already merged the drawing half of
  * this for the same reason, and the halves that were left apart went on to grow the second entrance
- * #434 removed. What genuinely differs between a plate and a leaf of pieces is what the bitmap
- * draws, and that is the [bitmap] slot.
+ * #434 removed.
+ *
+ * **Nothing is left that the two screens do not share** (#431). What used to differ was the bitmap —
+ * a plate drew `PlateSheet` and a leaf `PiecesSheet`, neither of which received the switches — and
+ * since the PNG became the printed page there is one drawing for both, chosen by the same measure as
+ * before: one page is a photo, more is the notebook's PDF.
  *
  * @param key what a fresh export is keyed on — the catalog's id, the collection's title — so that
  *   moving to another subject recounts its pages instead of showing the previous one's.
- * @param bitmap draws the one-page export, which is the only thing the two screens do not share.
+ * @param tally what the sheet says it holds, in its own words, for the closing message.
  * @param content the screen itself, handed the door and the two cards to place.
  */
 @Composable
@@ -88,7 +96,7 @@ fun SheetExportFlow(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onMessage: (UiNotice) -> Unit,
-    bitmap: @Composable (destination: ExportDestination, onFinished: (UiNotice) -> Unit) -> Unit,
+    tally: String,
     modifier: Modifier = Modifier,
     content: @Composable (SheetExportSurface) -> Unit,
 ) {
@@ -113,7 +121,7 @@ fun SheetExportFlow(
         } else {
             onNotebookPrinted(draft)
             job = if (sheetExportAsBitmap(measured.size)) {
-                SheetExportJob.Bitmap(destination)
+                SheetExportJob.Bitmap(measured.single(), destination)
             } else {
                 step = NotebookExportStep.Drawing(
                     0,
@@ -150,9 +158,7 @@ fun SheetExportFlow(
                     switches = sheetExportSwitches(),
                     costScope = sheetExportCostScope(sheet),
                     costLabel = sheetExportCostLabel(sheet, measured.size),
-                    switchNote = { switch, offered ->
-                        sheetExportSwitchNote(switch, offered, measured.size)
-                    },
+                    switchNote = ::sheetExportSwitchNote,
                 )
             }
         },
@@ -200,10 +206,17 @@ fun SheetExportFlow(
     Box(modifier = modifier) {
         content(surface)
         when (val current = job) {
-            is SheetExportJob.Bitmap -> bitmap(current.destination) { message ->
-                job = null
-                onMessage(message)
-            }
+            is SheetExportJob.Bitmap -> SheetPngExport(
+                page = current.page,
+                destination = current.destination,
+                fileName = fileName,
+                sheet = sheet,
+                tally = tally,
+                onFinished = { message ->
+                    job = null
+                    onMessage(message)
+                },
+            )
             is SheetExportJob.Pdf -> NotebookPdfExport(
                 pages = current.pages,
                 destination = current.destination,
