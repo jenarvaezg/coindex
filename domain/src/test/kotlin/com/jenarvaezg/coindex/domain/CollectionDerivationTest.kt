@@ -425,21 +425,28 @@ class CollectionDerivationTest {
 
     @Test
     fun `an unpublished submission derives no collection, whatever family it half-declares`() {
-        // N#596807: a page awaiting a referee, whose `series` reads «The» because whoever created
-        // it stopped mid-word. #38 accepted the card on the grounds that it would vanish by itself
-        // once published; #185 measured that a cached type is never fetched again, so it would not.
+        // #38 accepted such a card on the grounds that it would vanish by itself once published;
+        // #185 measured that a cached type is never fetched again, so it would not.
+        //
+        // This one is written from no coin in particular, and saying so matters. It used to be
+        // N#596807, and that was wrong twice over: the shield is a missing year (`looksUnpublished`,
+        // Inventory.kt), the ficha of N#596807 declares 2026 and always did, and the card it was
+        // supposed to prevent was on the collector's phone on 11 August 2026 (#404). Of the two
+        // yearless fichas in the seeded cache — N#578835 and N#581856, the two Venezuelan medals of
+        // #60 and #61 — neither declares a family, so nothing owned today reaches this branch. The
+        // shield stays for the draft that arrives tomorrow with a family typed in.
         val submission = TypeMeta(
-            id = 596_807,
-            title = "2 Pounds - Charles III (250th Anniversary of the Declaration of the American",
-            family = "The",
+            id = 999_001,
+            title = "Una propuesta cualquiera a la espera de árbitro",
+            family = "Wedge-tailed Eagle",
             weightOz = ounces(31.1),
             finish = Finish.Bullion,
             metal = Metal.Silver,
         )
 
         val derivation = deriveCollection(
-            listOf(item(1, 596_807, 1)),
-            mapOf(596_807 to submission),
+            listOf(item(1, 999_001, 1)),
+            mapOf(999_001 to submission),
             emptyList(),
         )
 
@@ -448,6 +455,87 @@ class CollectionDerivationTest {
             listOf(UnclassifiedReason.UnpublishedType),
             derivation.unclassified.map { it.reason },
         )
+    }
+
+    @Test
+    fun `a family made only of articles is read as no family at all`() {
+        // N#596807 as Numista published it: the page is live and dated 2026, so nothing about it
+        // looks unpublished any more, and its `series` still reads «The» (#404). Verbatim printing
+        // gave the collector a card called «The» over one coin; the residue says «sin familia en
+        // Numista», which is what a half-typed field amounts to.
+        val published = TypeMeta(
+            id = 596_807,
+            title = "2 Pounds - Charles III (American Declaration of Independence; 1 oz Fine Silver",
+            family = "The",
+            minYear = 2026,
+            maxYear = 2026,
+            weightOz = ounces(31.1),
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+        )
+
+        val derivation = deriveCollection(
+            listOf(item(1, 596_807, 1)),
+            mapOf(596_807 to published),
+            emptyList(),
+        )
+
+        assertEquals(emptyList(), derivation.derivedCollections.map { it.key() })
+        assertEquals(
+            listOf(UnclassifiedReason.NoFamilyOrCatalog),
+            derivation.unclassified.map { it.reason },
+        )
+    }
+
+    @Test
+    fun `an article-only family is what a curated file and a grouping are for`() {
+        val published = TypeMeta(
+            id = 596_807,
+            title = "2 Pounds - Charles III (American Declaration of Independence; 1 oz Fine Silver",
+            family = "The",
+            minYear = 2026,
+            maxYear = 2026,
+            weightOz = ounces(31.1),
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+        )
+        val grouping = CuratedGrouping(
+            schemaVersion = 1,
+            id = "declaration-of-independence",
+            name = "Declaration of Independence",
+            shortName = "Declaration",
+            family = "Declaration of Independence",
+            issuerCode = "royaume-uni",
+            source = "https://en.numista.com/catalogue/pieces596807.html",
+            updatedAt = "2026-08-11",
+            typeIds = listOf(596_807),
+        )
+
+        val derivation = deriveCollection(
+            listOf(item(1, 596_807, 1)),
+            mapOf(596_807 to published),
+            emptyList(),
+            listOf(grouping),
+        )
+
+        // The residue is where the piece waits, not where it is condemned: the moment a curator
+        // says what this coin belongs to, the card is the curator's word and not Numista's typo.
+        assertEquals(emptyList(), derivation.unclassified.map { it.reason })
+        assertEquals(
+            listOf("Declaration of Independence"),
+            derivation.derivedCollections.map { it.family },
+        )
+    }
+
+    @Test
+    fun `only a family with no word of its own is a placeholder`() {
+        for (placeholder in listOf("The", "the", "La", "El", "Le", "De la", "The  of ")) {
+            assertTrue(isPlaceholderFamily(placeholder), placeholder)
+        }
+        // A name says something besides its article, and an initialism is a name.
+        for (family in listOf("The Royal Tudor Beasts", "Noah's Ark", "SML", "UN", "Disney", "Lunar ounce")) {
+            assertFalse(isPlaceholderFamily(family), family)
+        }
     }
 
     @Test

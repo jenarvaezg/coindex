@@ -138,9 +138,11 @@ fun CoinsScreen(
      * How old each ficha is and how to ask for it again (#185, ADR 0025).
      *
      * This bottom sheet is the surface that has to carry it. A type whose ficha looks like an
-     * unpublished draft derives no card at all (#186), so its pieces are only ever reachable from
-     * here — and that is exactly the coin the issue was opened about: N#596807, whose family reads
-     * «The» until a referee publishes the page and somebody on this side can ask again.
+     * unpublished draft derives no card at all (#186), and neither does one whose family is a
+     * half-typed «The» (#404), so their pieces are only ever reachable from here — which is
+     * exactly the coin the issue was opened about: N#596807, whose page Numista has since
+     * published with its `series` still cut after the article. The fix is upstream, and it reaches
+     * this phone only when somebody asks for the ficha again on this very sheet.
      */
     ficha: (typeId: Int) -> FichaRefresh,
     modifier: Modifier = Modifier,
