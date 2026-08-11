@@ -46,8 +46,22 @@ data class CoinRow(
      * Rusia (1991-presente)» took a chip row to itself in the shelf below (ADR 0023).
      */
     val issuer: String?,
-    /** The type's first year, which for these collections is the year on the coin. */
-    val year: Int?,
+    /**
+     * The years of the coins the collector holds, oldest first — the ficha's when none of them is
+     * dated, and empty when there is neither (#448).
+     *
+     * **The piece and not the type.** `TypeMeta.minYear` is the year Numista's type *opens*, which is
+     * the year of a coin only where the type has one year. Measured over the father's collection, 63
+     * rows of 34 types said otherwise: his ¼ bolívar of 1948 printed 1894, his Libertad of 2024
+     * printed 2000, his Morgan of 1898 printed 1878. The rest of the app had it right all along —
+     * `pieceLine` reads `recordedYear` and `placementYear` prefers it over the ficha — and Coins was
+     * the one surface throwing away the year that arrives with the collection row itself.
+     *
+     * A list and not one year, because a type is one card however many of it there are: seven of his
+     * 170 dated types span several years and one of them spans twenty-one. [coinYearsLabel] prints
+     * the arc, and the chips below take **every** year in it, so filtering by 1904 still finds it.
+     */
+    val years: List<Int>,
     val objectClass: ObjectClass,
     val weightOz: Double?,
     /** How many pieces of this type there are, saturating rather than wrapping. */
@@ -68,9 +82,27 @@ data class CoinRow(
 ) {
     val title: String get() = name.text
 
-    /** What the search box compares against: everything printed on the row, folded once. */
+    /**
+     * The oldest year this coin is placed by, and the newest — what «Más antiguas» and «Más nuevas»
+     * sort on. Null on a row with no year at all, which both orders put last.
+     */
+    val oldestYear: Int? get() = years.firstOrNull()
+    val newestYear: Int? get() = years.lastOrNull()
+
+    /** Which year chips this row answers to: one per year it holds, or «Sin año» (#448). */
+    val yearFilters: List<YearFilter> = YearFilter.of(years)
+
+    /**
+     * What the search box compares against: everything printed on the row, folded once.
+     *
+     * **Every** year and not just the printed arc: a row that spans 1879 to 1936 is found by typing
+     * 1904, the same as tapping the 1904 chip finds it.
+     */
     val haystack: String = fold(
-        listOfNotNull(rawTitle, issuer, year?.toString(), typeId.toString())
+        listOf(rawTitle)
+            .plus(listOfNotNull(issuer))
+            .plus(years.map(Int::toString))
+            .plus(typeId.toString())
             .plus(claims.map { it.name })
             .joinToString(" "),
     )
@@ -98,7 +130,7 @@ fun coinRows(state: CollectionState): List<CoinRow> {
             name = pieceName(state, pieces.first()),
             rawTitle = pieceRawTitle(state, pieces.first()),
             issuer = meta?.country,
-            year = meta?.minYear,
+            years = yearsOf(pieces, meta),
             objectClass = objectClassOf(meta?.category),
             weightOz = meta?.weightOz,
             quantity = pieces.fold(0) { total, piece ->
@@ -110,9 +142,36 @@ fun coinRows(state: CollectionState): List<CoinRow> {
     }.sortedWith(coinReadingOrder())
 }
 
+/**
+ * The years of a coin, as the card says them (#448).
+ *
+ * One year when the collector's pieces agree on one, the arc between the ends when they do not, and
+ * «Sin año» when there is nothing to say. The arc and not the list: twenty-one years of a Venezuelan
+ * 5 bolívares would be a paragraph in a cartouche that has one line, and the year the collector is
+ * after is one chip away.
+ */
+fun coinYearsLabel(years: List<Int>): String = when (years.size) {
+    0 -> UNKNOWN_YEAR_LABEL
+    1 -> years.single().toString()
+    else -> "${years.first()} – ${years.last()}"
+}
+
+/**
+ * The years of the pieces of one type, oldest first, falling back on the ficha and then on nothing.
+ *
+ * [CollectedItem.recordedYear] and not the Gregorian reading, which is the same choice `pieceLine`
+ * makes: what the card says is what is engraved on the coin, so a Moroccan dirham of 1316 says 1316
+ * (ADR 0016) on both screens rather than 1899 on one of them.
+ */
+private fun yearsOf(pieces: List<CollectedItem>, meta: TypeMeta?): List<Int> =
+    pieces.mapNotNull { it.recordedYear }
+        .distinct()
+        .sorted()
+        .ifEmpty { listOfNotNull(meta?.minYear) }
+
 /** The only identity left in the grid below the two-range name: year and a non-singular count. */
 fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
-    row.year?.toString() ?: UNKNOWN_YEAR_LABEL,
+    coinYearsLabel(row.years),
     "×${row.quantity}".takeIf { row.quantity > 1 },
 ).joinToString(" · ")
 
@@ -162,7 +221,7 @@ private fun coinReadingOrder(): Comparator<CoinRow> {
     val collator = Collator.getInstance(Locale.forLanguageTag("es"))
     return compareBy<CoinRow> { it.issuer == null }
         .thenBy(collator) { it.issuer.orEmpty() }
-        .thenBy { it.year ?: Int.MAX_VALUE }
+        .thenBy { it.oldestYear ?: Int.MAX_VALUE }
         .thenBy(collator) { it.title }
         .thenBy { it.typeId }
 }

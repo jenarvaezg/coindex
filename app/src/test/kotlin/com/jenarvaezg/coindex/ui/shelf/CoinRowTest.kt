@@ -19,6 +19,99 @@ import kotlin.test.assertTrue
 class CoinRowTest {
     private val rows = coinRows(ShelfFixtures.state)
 
+    /**
+     * The card is dated by **the coin the collector has**, not by the first year of the design (#448).
+     *
+     * The father said it of his 75 bolívares and it turned out to be the smaller half: measured over
+     * his collection, 63 rows of 34 types printed a year that is not their coin's, because `minYear`
+     * is when Numista's type opens. His ¼ bolívar of 1948 said 1894; his Libertad of 2024 said 2000.
+     */
+    @Test
+    fun `a coin is dated by the piece the collector holds, not by the type`() {
+        val state = stateOf(
+            meta = TypeMeta(id = 10, title = "¼ Bolívar", minYear = 1_894),
+            items = listOf(piece(id = 1, typeId = 10, year = 1_948)),
+        )
+
+        val row = coinRows(state).single()
+
+        assertEquals(listOf(1_948), row.years)
+        assertEquals("1948", coinAlbumFootnote(row))
+    }
+
+    /**
+     * A type the collector holds in several years prints the arc, not one of its ends.
+     *
+     * Seven of his 170 dated types are like this, and one of them is the whole reason it is a range
+     * and not a list: his 5 bolívares N#10340 is twenty-one years, 1879 to 1936. The individual years
+     * are still one screen away — «Piezas» prints them one by one — and still reachable, because the
+     * year chips below take every one of them.
+     */
+    @Test
+    fun `a type held in several years prints the arc it covers`() {
+        val state = stateOf(
+            meta = TypeMeta(id = 10, title = "5 Bolívares", minYear = 1_879),
+            items = listOf(
+                piece(id = 1, typeId = 10, year = 1_936),
+                piece(id = 2, typeId = 10, year = 1_879),
+                piece(id = 3, typeId = 10, year = 1_904),
+            ),
+        )
+
+        val row = coinRows(state).single()
+
+        assertEquals(listOf(1_879, 1_904, 1_936), row.years)
+        assertEquals("1879 – 1936 · ×3", coinAlbumFootnote(row))
+    }
+
+    /**
+     * With no year on any piece the ficha answers, which is what it is good for.
+     *
+     * Twenty-one of his types are in this state — a row Numista holds no issue for — and the type's
+     * first year is a truthful thing to say about them: it is the year of the design, and there is no
+     * coin's own year to contradict it.
+     */
+    @Test
+    fun `a coin whose pieces carry no year falls back on the ficha`() {
+        val state = stateOf(
+            meta = TypeMeta(id = 10, title = "1 Onza", minYear = 1_978),
+            items = listOf(piece(id = 1, typeId = 10, year = null)),
+        )
+
+        assertEquals(listOf(1_978), coinRows(state).single().years)
+    }
+
+    /**
+     * And with neither, «Sin año» — the same hole, said out loud.
+     *
+     * This is the father's 75 bolívares as his phone has it (#448): the ficha never arrived, because
+     * the valuation pass had spent his month (#452). The row's own piece carries 1980 and the card
+     * now says so, ficha or no ficha.
+     */
+    @Test
+    fun `a coin with no ficha still prints the year its piece carries`() {
+        val state = stateOf(
+            meta = null,
+            items = listOf(piece(id = 1, typeId = 18_940, year = 1_980)),
+        )
+
+        val row = coinRows(state).single()
+
+        assertEquals(listOf(1_980), row.years)
+        assertEquals("1980 · N# 18940", coinFichaIdentity(row))
+        assertTrue(matchesQuery(row.haystack, "1980"))
+    }
+
+    @Test
+    fun `a coin with neither ficha nor dated piece says so`() {
+        val state = stateOf(meta = null, items = listOf(piece(id = 1, typeId = 500, year = null)))
+
+        val row = coinRows(state).single()
+
+        assertTrue(row.years.isEmpty())
+        assertEquals("Sin año", coinAlbumFootnote(row))
+    }
+
     @Test
     fun `a coin held twice is one coin, not two receipts`() {
         val fuerte = rows.single { it.typeId == ShelfFixtures.FUERTE }
@@ -56,7 +149,7 @@ class CoinRowTest {
         val orphan = rows.single { it.typeId == ShelfFixtures.UNCACHED }
 
         assertNull(orphan.issuer)
-        assertNull(orphan.year)
+        assertTrue(orphan.years.isEmpty())
         assertNull(orphan.weightOz)
         // Money is the default with two chips and no third place to put it.
         assertEquals(ObjectClass.Coin, orphan.objectClass)
@@ -207,8 +300,18 @@ class CoinRowTest {
         val britannia = rows.single { it.typeId == ShelfFixtures.ONZA_MEXICANA }
         val fuerte = rows.single { it.typeId == ShelfFixtures.FUERTE }
 
-        assertEquals(britannia.year.toString(), coinAlbumFootnote(britannia))
-        assertEquals("${fuerte.year} · ×3", coinAlbumFootnote(fuerte))
+        assertEquals(britannia.oldestYear.toString(), coinAlbumFootnote(britannia))
+        assertEquals("${fuerte.oldestYear} · ×3", coinAlbumFootnote(fuerte))
         assertTrue(ShelfFixtures.ONZA_MEXICANA.toString() !in coinAlbumFootnote(britannia))
     }
+
+    private fun piece(id: Long, typeId: Int, year: Int?) =
+        CollectedItem(id = id, quantity = 1, typeId = typeId, issueYear = year)
+
+    private fun stateOf(meta: TypeMeta?, items: List<CollectedItem>) = CollectionState(
+        AssembledCollection(
+            items = items,
+            typeMeta = meta?.let { mapOf(it.id to it) }.orEmpty(),
+        ),
+    )
 }

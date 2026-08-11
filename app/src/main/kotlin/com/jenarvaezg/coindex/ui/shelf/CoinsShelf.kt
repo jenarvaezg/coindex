@@ -50,7 +50,7 @@ data class CoinsShelf(
     internal fun matches(row: CoinRow, except: CoinsFacet? = null): Boolean =
         (except == CoinsFacet.Issuer || issuer == null || row.issuer == issuer) &&
             (except == CoinsFacet.Weight || weight == null || GramBand.of(row.weightOz) == weight) &&
-            (except == CoinsFacet.Year || year == null || YearFilter.of(row.year) == year) &&
+            (except == CoinsFacet.Year || year == null || year in row.yearFilters) &&
             (
                 except == CoinsFacet.Class ||
                     objectClass == null ||
@@ -110,10 +110,12 @@ private fun CoinsShelf.effectiveSort(): CoinSort = when (axis) {
 private fun coinSortOrder(sort: CoinSort): Comparator<CoinRow> = when (sort) {
     CoinSort.ByCountry -> Comparator { _, _ -> 0 }
     CoinSort.Alphabetical -> coinTitleOrder()
-    CoinSort.Newest -> compareBy<CoinRow> { it.year == null }
-        .thenByDescending { it.year ?: 0 }
-    CoinSort.Oldest -> compareBy<CoinRow> { it.year == null }
-        .thenBy { it.year ?: 0 }
+    // By the newest year it holds and the oldest respectively: a type spanning 1879 to 1936 is the
+    // collection's oldest coin and also one of its later ones, and each order asks a different end.
+    CoinSort.Newest -> compareBy<CoinRow> { it.newestYear == null }
+        .thenByDescending { it.newestYear ?: 0 }
+    CoinSort.Oldest -> compareBy<CoinRow> { it.oldestYear == null }
+        .thenBy { it.oldestYear ?: 0 }
     CoinSort.Heaviest -> compareBy<CoinRow> { it.weightOz == null }
         .thenByDescending { it.weightOz ?: 0.0 }
     CoinSort.MostPieces -> compareByDescending { it.quantity }
@@ -131,7 +133,7 @@ fun coinsFacetCounts(
     return CoinsFacetCounts(
         issuer = facetCounts(rows, keeping(CoinsFacet.Issuer)) { it.issuer },
         weight = facetCounts(rows, keeping(CoinsFacet.Weight)) { GramBand.of(it.weightOz) },
-        year = facetCounts(rows, keeping(CoinsFacet.Year)) { YearFilter.of(it.year) },
+        year = facetCountsOfEach(rows, keeping(CoinsFacet.Year)) { it.yearFilters },
         objectClass = facetCounts(rows, keeping(CoinsFacet.Class)) { it.objectClass },
         membership = facetCounts(rows, keeping(CoinsFacet.Membership), ::membershipOf),
     )
