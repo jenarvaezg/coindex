@@ -73,12 +73,13 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
  *
  * Used when the options panel measures one page — what fits in a photo. More pages take the PDF
  * path instead. The cache holds the temporary, and [handToDownloads] turns it into a durable file
- * without a chooser (#285).
+ * without a chooser (#285). Returns the landed URI so Abrir on the snackbar can open it (#403).
  */
-suspend fun downloadPlateSheet(context: Context, picture: Picture, fileName: String) {
+suspend fun downloadPlateSheet(context: Context, picture: Picture, fileName: String): DownloadedExport {
     val displayName = datedExportFileName(fileName, "png")
     val file = writePlatePng(context, picture, fileName)
-    handToDownloads(context, file, "image/png", displayName)
+    val uri = handToDownloads(context, file, "image/png", displayName)
+    return DownloadedExport(uri, "image/png")
 }
 
 private suspend fun writePlatePng(context: Context, picture: Picture, fileName: String): File {
@@ -123,15 +124,15 @@ internal fun handToShareSheet(context: Context, file: File, mimeType: String, ti
  *
  * `minSdk = 29`, so scoped storage already applies and this insert needs no permission: the
  * entry is pending while the bytes land, then released, and the system Files app sees it like
- * any other download. The notification is what makes «y ya» true without opening a chooser —
- * the snackbar only says the word; the shade holds the file.
+ * any other download. Returns the content URI so the snackbar's Abrir can open the same file
+ * the notification does (#403).
  */
 internal fun handToDownloads(
     context: Context,
     file: File,
     mimeType: String,
     displayName: String,
-) {
+): Uri {
     val resolver = context.contentResolver
     val values = ContentValues().apply {
         put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
@@ -153,14 +154,21 @@ internal fun handToDownloads(
         throw failure
     }
     announceDownload(context, uri, displayName, mimeType)
+    return uri
 }
+
+/** What [handToDownloads] left behind, enough for Abrir on the snackbar (#403). */
+data class DownloadedExport(
+    val uri: Uri,
+    val mimeType: String,
+)
 
 /**
  * A notification that opens the file, so «Descargado» is not only a word on a snackbar (#285).
  *
  * Best-effort: on API 33+ without [android.Manifest.permission.POST_NOTIFICATIONS] the shade
  * stays quiet, and that is fine — asking would put a dialog in front of the «y ya» the father
- * asked for. The snackbar and Descargas still do the job.
+ * asked for. The snackbar names Descargas and offers Abrir either way (#403).
  */
 internal fun announceDownload(
     context: Context,
@@ -178,14 +186,10 @@ internal fun announceDownload(
             ).apply { description = DOWNLOAD_CHANNEL_EXPLANATION },
         )
     }
-    val open = Intent(Intent.ACTION_VIEW).apply {
-        setDataAndType(uri, mimeType)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
     val pending = PendingIntent.getActivity(
         context,
         displayName.hashCode(),
-        open,
+        viewDownloadedFileIntent(uri, mimeType),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
     val notification = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
@@ -197,6 +201,13 @@ internal fun announceDownload(
         .build()
     manager.notify(displayName.hashCode(), notification)
 }
+
+/** ACTION_VIEW for a file in Descargas — snackbar Abrir and the notification share it (#403). */
+fun viewDownloadedFileIntent(uri: Uri, mimeType: String): Intent =
+    Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(uri, mimeType)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
 
 /** File-system safe name for an exported plate. */
 fun plateFileName(catalogId: String): String = "coindex-$catalogId"

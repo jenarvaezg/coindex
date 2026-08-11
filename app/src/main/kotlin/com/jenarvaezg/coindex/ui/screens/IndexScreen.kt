@@ -43,6 +43,7 @@ import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
+import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
@@ -172,7 +173,7 @@ fun IndexScreen(
      * belongs in the notebook is this screen's answer, and the printer only decides where it goes.
      */
     notebook: (List<IndexCard>, List<CollectedItem>, NotebookOptions) -> List<PrintPage>,
-    onMessage: (String) -> Unit,
+    onMessage: (UiNotice) -> Unit,
     /**
      * Whether the notebook is being exported right now.
      *
@@ -350,7 +351,7 @@ fun IndexScreen(
                     fun begin(destination: ExportDestination) {
                         val pages = about.pages
                         if (pages.isEmpty()) {
-                            onMessage(NOTHING_TO_PRINT_MESSAGE)
+                            onMessage(UiNotice(NOTHING_TO_PRINT_MESSAGE))
                         } else {
                             onNotebookPrinted(draft)
                             step = NotebookExportStep.Drawing(
@@ -392,9 +393,11 @@ fun IndexScreen(
                                 {
                                     printing = null
                                     onMessage(
-                                        notebookWarmCancelledMessage(
-                                            current.photographsDone,
-                                            current.photographs,
+                                        UiNotice(
+                                            notebookWarmCancelledMessage(
+                                                current.photographsDone,
+                                                current.photographs,
+                                            ),
                                         ),
                                     )
                                 }
@@ -403,9 +406,11 @@ fun IndexScreen(
                                 {
                                     printing = null
                                     onMessage(
-                                        notebookCancelledMessage(
-                                            current.pagesDone,
-                                            job.pages.size,
+                                        UiNotice(
+                                            notebookCancelledMessage(
+                                                current.pagesDone,
+                                                job.pages.size,
+                                            ),
                                         ),
                                     )
                                 }

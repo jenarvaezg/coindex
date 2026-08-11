@@ -142,16 +142,17 @@ class SheetLabelsTest {
     }
 
     /**
-     * The two things a downloaded file is announced by say the same word (#285).
+     * Snackbar and notification share the landing, not the same sentence (#285, #403).
      *
-     * The snackbar is allowed to be short only because the notification names the file, so the two
-     * are one event on two surfaces: «Descargado» has to be the same word in both, and the file name
-     * has to be the notification's and not the snackbar's.
+     * The snackbar names the folder and offers Abrir; the notification keeps the short title
+     * and the file name underneath — two surfaces of one event, each with its own job.
      */
     @Test
-    fun `the notification and the snackbar say Descargado with one word`() {
-        assertEquals(DOWNLOAD_NOTIFICATION_TITLE, downloadMessage(38, 38))
+    fun `the snackbar names Descargas and the notification keeps Descargado`() {
+        assertEquals("Descargado en Descargas", downloadMessage(38, 38))
+        assertEquals("Descargado", DOWNLOAD_NOTIFICATION_TITLE)
         assertEquals("Descargas · coindex-venezuela.png", downloadNotificationText("coindex-venezuela.png"))
+        assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
     }
 
     /** Where a sheet came from, said the same way whether the source is a catalog or the collection. */

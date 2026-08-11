@@ -292,7 +292,7 @@ class CoindexViewModel(
             }
             is SettingsEntry.Accepted -> {
                 credentials.save(entry.credentials.apiKey, entry.credentials.userId)
-                _state.update { it.copy(validation = null, message = SETTINGS_SAVED_MESSAGE) }
+                _state.update { it.copy(validation = null, message = UiNotice(SETTINGS_SAVED_MESSAGE)) }
                 true
             }
         }
@@ -333,10 +333,10 @@ class CoindexViewModel(
     /** Creates one of the collector's own boxes (ADR 0013, ADR 0021 §11), or says why not. */
     fun createOwnGrouping(name: String, typeIds: List<Int>) {
         when (val entry = boxToCreate(name, typeIds)) {
-            is BoxEntry.Refused -> _state.update { it.copy(message = entry.message) }
+            is BoxEntry.Refused -> _state.update { it.copy(message = UiNotice(entry.message)) }
             is BoxEntry.Accepted -> viewModelScope.launch {
                 repository.createOwnGrouping(entry.name, typeIds)
-                _state.update { it.copy(message = boxCreatedMessage(entry.name)) }
+                _state.update { it.copy(message = UiNotice(boxCreatedMessage(entry.name))) }
             }
         }
     }
@@ -348,7 +348,7 @@ class CoindexViewModel(
 
     fun renameOwnGrouping(groupingId: Long, name: String) {
         when (val entry = boxToRename(name)) {
-            is BoxEntry.Refused -> _state.update { it.copy(message = entry.message) }
+            is BoxEntry.Refused -> _state.update { it.copy(message = UiNotice(entry.message)) }
             is BoxEntry.Accepted -> viewModelScope.launch {
                 repository.renameOwnGrouping(groupingId, entry.name)
             }
@@ -372,7 +372,7 @@ class CoindexViewModel(
     private fun clientOrComplain(): NumistaClient? {
         val ready = client()
         if (ready == null) {
-            _state.update { it.copy(message = syncErrorLabel(NumistaException.EmptyApiKey())) }
+            _state.update { it.copy(message = UiNotice(syncErrorLabel(NumistaException.EmptyApiKey()))) }
         }
         return ready
     }
@@ -395,11 +395,11 @@ class CoindexViewModel(
                     is SyncOutcome.Done -> state.copy(
                         syncing = false,
                         lastSync = outcome.record,
-                        message = syncReportLabel(outcome.record),
+                        message = UiNotice(syncReportLabel(outcome.record)),
                     )
                     is SyncOutcome.Failed -> state.copy(
                         syncing = false,
-                        message = syncErrorLabel(outcome.error),
+                        message = UiNotice(syncErrorLabel(outcome.error)),
                     )
                 }
             }
@@ -429,9 +429,11 @@ class CoindexViewModel(
             _state.update { state ->
                 state.copy(
                     refreshingFichas = state.refreshingFichas - typeId,
-                    message = outcome.fold(
-                        onSuccess = ::fichaRefreshMessage,
-                        onFailure = { error -> fichaRefreshErrorLabel(typeId, error) },
+                    message = UiNotice(
+                        outcome.fold(
+                            onSuccess = ::fichaRefreshMessage,
+                            onFailure = { error -> fichaRefreshErrorLabel(typeId, error) },
+                        ),
                     ),
                 )
             }
@@ -458,17 +460,22 @@ class CoindexViewModel(
         if (_state.value.updating) return
         viewModelScope.launch {
             val outcome = updates.install(available) {
-                _state.update { it.copy(updating = true, message = UPDATE_DOWNLOADING_MESSAGE) }
+                _state.update { it.copy(updating = true, message = UiNotice(UPDATE_DOWNLOADING_MESSAGE)) }
             }
             _state.update {
-                it.copy(updating = false, message = installOutcomeMessage(outcome))
+                it.copy(updating = false, message = installOutcomeMessage(outcome)?.let(::UiNotice))
             }
         }
     }
 
     /** Surfaces a one-off message in the snackbar (export outcomes, validation notes). */
     fun showMessage(message: String) {
-        _state.update { it.copy(message = message) }
+        showMessage(UiNotice(message))
+    }
+
+    /** Same, when the notice may carry Abrir for a file in Descargas (#403). */
+    fun showMessage(notice: UiNotice) {
+        _state.update { it.copy(message = notice) }
     }
 
     fun dismissMessage() {

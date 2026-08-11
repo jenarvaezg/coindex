@@ -14,8 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.UiNotice
+import com.jenarvaezg.coindex.ui.downloadLandedNotice
 import com.jenarvaezg.coindex.ui.notebookDownloadFailure
-import com.jenarvaezg.coindex.ui.notebookDownloadMessage
 import com.jenarvaezg.coindex.ui.notebookExportMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.PrintPage
@@ -27,7 +28,6 @@ import com.jenarvaezg.coindex.ui.print.shareNotebookPdf
 import com.jenarvaezg.coindex.ui.print.warmNotebookPhotographs
 import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sheetDownloadFailure
-import com.jenarvaezg.coindex.ui.sheetDownloadMessage
 import com.jenarvaezg.coindex.ui.sheetExportFailure
 import com.jenarvaezg.coindex.ui.sheetPdfExportMessage
 
@@ -84,7 +84,7 @@ fun NotebookPdfExport(
     pages: List<PrintPage>,
     destination: ExportDestination = ExportDestination.Download,
     onStep: (NotebookExportStep) -> Unit,
-    onFinished: (String) -> Unit,
+    onFinished: (UiNotice) -> Unit,
     fileName: String = notebookFileName(),
     sheet: SharedSheet? = null,
 ) {
@@ -134,8 +134,10 @@ fun NotebookPdfExport(
         if (appended.isFailure) {
             val cause = appended.exceptionOrNull()?.message
             onFinished(
-                sheet?.let { sheetExportFailure(it, cause) }
-                    ?: "No se pudo exportar el cuaderno: $cause",
+                UiNotice(
+                    sheet?.let { sheetExportFailure(it, cause) }
+                        ?: "No se pudo exportar el cuaderno: $cause",
+                ),
             )
             return@LaunchedEffect
         }
@@ -148,7 +150,7 @@ fun NotebookPdfExport(
             when (destination) {
                 ExportDestination.Download ->
                     downloadNotebookPdf(context, document, fileName)
-                ExportDestination.Share ->
+                ExportDestination.Share -> {
                     shareNotebookPdf(
                         context,
                         document,
@@ -156,37 +158,48 @@ fun NotebookPdfExport(
                         chooserTitle = sheet?.let { "Compartir la ${it.noun}" }
                             ?: "Compartir el cuaderno",
                     )
+                    null
+                }
             }
         }
         onFinished(
             if (written.isFailure) {
                 val cause = written.exceptionOrNull()?.message
-                when (destination) {
-                    ExportDestination.Download ->
-                        sheet?.let { sheetDownloadFailure(it, cause) }
-                            ?: notebookDownloadFailure(cause)
-                    ExportDestination.Share ->
-                        sheet?.let { sheetExportFailure(it, cause) }
-                            ?: "No se pudo exportar el cuaderno: $cause"
-                }
+                UiNotice(
+                    when (destination) {
+                        ExportDestination.Download ->
+                            sheet?.let { sheetDownloadFailure(it, cause) }
+                                ?: notebookDownloadFailure(cause)
+                        ExportDestination.Share ->
+                            sheet?.let { sheetExportFailure(it, cause) }
+                                ?: "No se pudo exportar el cuaderno: $cause"
+                    },
+                )
             } else {
                 when (destination) {
-                    ExportDestination.Download ->
-                        sheet?.let {
-                            sheetDownloadMessage(expectedPhotographs, loadedPhotographs.intValue)
-                        } ?: notebookDownloadMessage(expectedPhotographs, loadedPhotographs.intValue)
+                    ExportDestination.Download -> {
+                        val landed = requireNotNull(written.getOrThrow())
+                        downloadLandedNotice(
+                            expectedPhotos = expectedPhotographs,
+                            loadedPhotos = loadedPhotographs.intValue,
+                            uri = landed.uri,
+                            mimeType = landed.mimeType,
+                        )
+                    }
                     ExportDestination.Share ->
-                        sheet?.let {
-                            sheetPdfExportMessage(
-                                sheet = it,
+                        UiNotice(
+                            sheet?.let {
+                                sheetPdfExportMessage(
+                                    sheet = it,
+                                    pages = pages.size,
+                                    expectedPhotos = expectedPhotographs,
+                                    loadedPhotos = loadedPhotographs.intValue,
+                                )
+                            } ?: notebookExportMessage(
                                 pages = pages.size,
                                 expectedPhotos = expectedPhotographs,
                                 loadedPhotos = loadedPhotographs.intValue,
-                            )
-                        } ?: notebookExportMessage(
-                            pages = pages.size,
-                            expectedPhotos = expectedPhotographs,
-                            loadedPhotos = loadedPhotographs.intValue,
+                            ),
                         )
                 }
             },

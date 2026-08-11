@@ -37,6 +37,7 @@ import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
 import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -81,7 +82,7 @@ fun PiecesScreen(
     state: CollectionState,
     subject: PiecesSubject?,
     onOpenSource: (url: String) -> Unit,
-    onMessage: (String) -> Unit,
+    onMessage: (UiNotice) -> Unit,
     /**
      * How old each piece's ficha is and how to ask Numista again for it (#185). One type per tap:
      * there is no «refrescar la tarjeta entera» here, because a collection of twenty pieces would be
@@ -144,7 +145,7 @@ fun PiecesScreen(
                 item {
                     fun begin(destination: ExportDestination) {
                         if (pages.isEmpty()) {
-                            onMessage(NOTHING_TO_PRINT_MESSAGE)
+                            onMessage(UiNotice(NOTHING_TO_PRINT_MESSAGE))
                         } else {
                             onNotebookPrinted(draft)
                             job = if (sheetExportAsBitmap(pages.size)) {
@@ -188,9 +189,11 @@ fun PiecesScreen(
                                 {
                                     job = null
                                     onMessage(
-                                        notebookWarmCancelledMessage(
-                                            current.photographsDone,
-                                            current.photographs,
+                                        UiNotice(
+                                            notebookWarmCancelledMessage(
+                                                current.photographsDone,
+                                                current.photographs,
+                                            ),
                                         ),
                                     )
                                 }
@@ -199,9 +202,11 @@ fun PiecesScreen(
                                 {
                                     job = null
                                     onMessage(
-                                        notebookCancelledMessage(
-                                            current.pagesDone,
-                                            pdf.pages.size,
+                                        UiNotice(
+                                            notebookCancelledMessage(
+                                                current.pagesDone,
+                                                pdf.pages.size,
+                                            ),
                                         ),
                                     )
                                 }

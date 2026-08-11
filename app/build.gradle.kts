@@ -41,9 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 47
-        // Patch on top of 1.2.4: lámina and hoja open «Cómo se exporta» like the index (#401).
-        versionName = "1.2.5"
+        versionCode = 48
+        // Patch on top of 1.2.5: Descargado names Descargas and offers Abrir (#403).
+        versionName = "1.2.6"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
