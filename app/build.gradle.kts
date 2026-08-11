@@ -41,9 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 48
-        // Patch on top of 1.2.5: Descargado names Descargas and offers Abrir (#403).
-        versionName = "1.2.6"
+        versionCode = 49
+        // Patch on top of 1.2.6: the sewn edge drops the wall-clock minute (#419).
+        versionName = "1.2.7"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
