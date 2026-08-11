@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.printedPhoto
@@ -35,6 +37,7 @@ import com.jenarvaezg.coindex.ui.shelf.YearAxisDecade
 import com.jenarvaezg.coindex.ui.shelf.YearAxisIsland
 import com.jenarvaezg.coindex.ui.shelf.YearAxisModel
 import com.jenarvaezg.coindex.ui.shelf.YearCellState
+import com.jenarvaezg.coindex.ui.shelf.yearAxisQuantityMark
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
@@ -61,6 +64,19 @@ private val YEAR_DECADE_LABEL_WIDTH = 36.dp
 
 /** Pinprick of bare cardboard — the atlas's third state, not an empty Box. */
 private val BARE_DOT = 3.dp
+
+/**
+ * Vertical pitch of a decade row (#406).
+ *
+ * Two density-independent pixels left the rust quantity mark kissing the next decade in a dense
+ * siglo XX; five keeps the calendar tight without stacking counts on the row below.
+ */
+private val YEAR_DECADE_ROW_PAD = 5.dp
+
+/** Rust quantity on a year seat — larger than [labelLarge] so ×N still reads in a dense calendar. */
+@Composable
+private fun yearAxisQuantityStyle() =
+    MaterialTheme.typography.labelLarge.copy(fontSize = 14.sp)
 
 /**
  * One country block: label and ratio on the left, wrapping holes on the right (atlas-315).
@@ -164,6 +180,20 @@ private fun AxisHole(cell: CountryAxisCell, images: Map<Int, TypeImages>) {
     }
 }
 
+/** Rust «×N» over a year-axis hole when more than one piece shares the seat (#406). */
+@Composable
+private fun YearAxisQuantityMark(quantity: Int, modifier: Modifier = Modifier) {
+    yearAxisQuantityMark(quantity)?.let { mark ->
+        Text(
+            mark,
+            style = yearAxisQuantityStyle(),
+            color = Paper.rust,
+            textAlign = TextAlign.Center,
+            modifier = modifier.padding(end = 2.dp, bottom = 2.dp),
+        )
+    }
+}
+
 /**
  * Digit header of the year axis (atlas-315): «0»…«9» above the ten seats of every decade.
  *
@@ -257,15 +287,7 @@ fun YearAxisDecadeRow(
                                 contentAlignment = Alignment.BottomEnd,
                             ) {
                                 AlbumHole(photo = photo, modifier = Modifier.fillMaxSize())
-                                if (state.quantity > 1) {
-                                    Text(
-                                        state.quantity.toString(),
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = Paper.rust,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.padding(end = 1.dp, bottom = 1.dp),
-                                    )
-                                }
+                                YearAxisQuantityMark(state.quantity)
                             }
                         }
                         YearCellState.Ghost -> AlbumHole(
@@ -346,15 +368,7 @@ fun YearAxisIslandRow(
                         photo = photo,
                         modifier = Modifier.size(AXIS_HOLE),
                     )
-                    if (coin.quantity > 1) {
-                        Text(
-                            coin.quantity.toString(),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Paper.rust,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(end = 1.dp, bottom = 1.dp),
-                        )
-                    }
+                    YearAxisQuantityMark(coin.quantity)
                 }
             }
         }
@@ -385,7 +399,13 @@ fun LazyGridScope.countryAxisItems(
     }
 }
 
-/** Items of the year axis: islands first, then the digit header and the calendar. */
+/**
+ * Items of the year axis: islands first, then a sticky digit header and the calendar (#406).
+ *
+ * The «0»…«9» row used to be a single scroll item above the first century, so a dense siglo XX
+ * lost the column legend. It pins under the chrome once the calendar reaches it; paper behind it
+ * keeps decade holes from showing through while stuck.
+ */
 fun LazyGridScope.yearAxisItems(
     model: YearAxisModel,
     images: Map<Int, TypeImages>,
@@ -405,11 +425,12 @@ fun LazyGridScope.yearAxisItems(
         )
     }
     if (model.cells.isNotEmpty()) {
-        item(
-            key = "year-digits",
-            span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) },
-        ) {
-            YearAxisDigitHeader(modifier = Modifier.padding(bottom = 2.dp))
+        stickyHeader(key = "year-digits") {
+            YearAxisDigitHeader(
+                modifier = Modifier
+                    .background(Paper.paper)
+                    .padding(top = 2.dp, bottom = 4.dp),
+            )
         }
     }
     for (century in model.centuries) {
@@ -429,7 +450,7 @@ fun LazyGridScope.yearAxisItems(
                 decade = decade,
                 images = images,
                 onYearClick = onYearClick,
-                modifier = Modifier.padding(vertical = 2.dp),
+                modifier = Modifier.padding(vertical = YEAR_DECADE_ROW_PAD),
             )
         }
     }

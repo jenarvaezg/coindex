@@ -142,6 +142,15 @@ fun yearAxisTally(ownedYears: Int, totalYears: Int): String =
         "$ownedYears de ${plural(totalYears, "año", "años")}"
     }
 
+/**
+ * Rust mark on a year seat when more than one piece lands there (#406).
+ *
+ * Same «×N» shape as Monedas, so the calendar and the list say multiplicity the same way — and a
+ * bare digit was too easy to miss against a dense decade row.
+ */
+fun yearAxisQuantityMark(quantity: Int): String? =
+    "×$quantity".takeIf { quantity > 1 }
+
 /** How many measurable slots the country axis is showing against the sheet's total. */
 fun countryAxisTally(ownedSlots: Int, totalSlots: Int): String =
     if (ownedSlots == totalSlots) {
