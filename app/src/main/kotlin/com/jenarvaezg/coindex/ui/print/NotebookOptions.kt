@@ -131,7 +131,7 @@ enum class NotebookSwitch {
 /**
  * The switches a single lámina or hoja can still be asked (#401).
  *
- * «Compartir página» needs two plates on one folio, and «Sin colección» is the index's loose-coin
+ * «Dos por página» needs two plates on one folio, and «Sin colección» is the index's loose-coin
  * plate — neither is a question once the collector is already looking at one collection. The other
  * five are the same how-and-what the notebook asks, so the sheet reuses [ExportOptions] rather than
  * inventing a second panel.

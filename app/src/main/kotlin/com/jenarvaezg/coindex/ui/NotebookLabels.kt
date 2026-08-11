@@ -80,7 +80,11 @@ fun notebookSwitchLabel(switch: NotebookSwitch): String = when (switch) {
     NotebookSwitch.Photographs -> "Fotos"
     NotebookSwitch.BothFaces -> "Ambas caras"
     NotebookSwitch.ActualSize -> "Tamaño real"
-    NotebookSwitch.SharePage -> "Compartir página"
+    // «Compartir página» was this switch's name until #420: two plates sharing a folio, and the
+    // panel's own Compartir button three centimetres below it meaning the send intent. The word had
+    // to go to the button, which is the one that cannot be called anything else. What is left says
+    // what the switch does to the count printed right above it — «3 páginas · 5 láminas».
+    NotebookSwitch.SharePage -> "Dos por página"
     NotebookSwitch.NumistaQr -> "QR de Numista"
     NotebookSwitch.Unclaimed -> "Sin colección"
     NotebookSwitch.Money -> "El valor"

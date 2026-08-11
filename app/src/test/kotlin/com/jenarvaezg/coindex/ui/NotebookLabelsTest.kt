@@ -31,7 +31,9 @@ class NotebookLabelsTest {
                 "Fotos",
                 "Ambas caras",
                 "Tamaño real",
-                "Compartir página",
+                // Not «Compartir página»: the panel ends in a Compartir button and the two meant
+                // different things three centimetres apart (#420).
+                "Dos por página",
                 "QR de Numista",
                 "Sin colección",
                 "El valor",
