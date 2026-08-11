@@ -198,9 +198,9 @@ class NotebookOptionsTest {
         val paper = printGeometry(NotebookOptions())
         val coded = printGeometry(NotebookOptions(numistaQr = true))
 
-        // 16 mm de rótulo, 2 de aire y los 10 del código con su zona de silencio.
-        assertEquals(28f, coded.captionMm)
-        assertEquals(10f, coded.qrMm)
+        // 16 mm de rótulo, 2 de aire y los 12 del código con su zona de silencio.
+        assertEquals(30f, coded.captionMm)
+        assertEquals(12f, coded.qrMm)
         assertEquals(2f, coded.qrGapMm)
         // Y las palabras siguen teniendo los 16 mm del #169: el código se **suma** al pie de foto, no
         // le quita sitio al rótulo. Un estado, un título de dos líneas y un año siguen cabiendo.
@@ -209,9 +209,8 @@ class NotebookOptionsTest {
             paper,
             coded.copy(captionMm = paper.captionMm, qrMm = paper.qrMm, qrGapMm = paper.qrGapMm),
         )
-        // Un módulo de 0,303 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 10 mm.
-        // El folio de calibración leyó hasta los 9 mm (módulo de 0,273), así que esto va sobrado.
-        assertEquals(0.303f, coded.qrMm / 33f, 0.001f)
+        // Un módulo de 0,364 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 12 mm.
+        assertEquals(0.364f, coded.qrMm / 33f, 0.001f)
     }
 
     /**
@@ -338,9 +337,9 @@ class NotebookOptionsTest {
         // Dos onzas de 24,54 mm y la calle de 3 que las separa, contra los 84,8 del 1:1.
         assertEquals(52.08f, doubled.coinBandWidthMm(40.9f), 0.01f)
         assertEquals(scaled, doubled.copy(facesPerCell = scaled.facesPerCell))
-        // El código se suma al rótulo escalado, sea el que sea: 18 más los 2 de aire y los 10 del QR.
-        assertEquals(30f, coded.captionMm)
-        assertEquals(10f, coded.qrMm)
+        // El código se suma al rótulo escalado, sea el que sea: 18 más los 2 de aire y los 12 del QR.
+        assertEquals(32f, coded.captionMm)
+        assertEquals(12f, coded.qrMm)
         // Y compartir folio adelgaza la cabecera y no toca ni la escala ni el suelo de la casilla.
         assertEquals(PrintHeading.Slim, folio.heading)
         assertEquals(0.6f, folio.coinScale)
@@ -364,8 +363,8 @@ class NotebookOptionsTest {
         val both = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
 
         assertEquals(2, both.facesPerCell)
-        assertEquals(28f, both.captionMm)
-        assertEquals(10f, both.qrMm)
+        assertEquals(30f, both.captionMm)
+        assertEquals(12f, both.qrMm)
         assertEquals(
             printGeometry(NotebookOptions(numistaQr = true)),
             both.copy(facesPerCell = 1),
@@ -410,33 +409,34 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The code closes the line instead of sitting under it, so it costs the row three millimetres.
+     * The code closes the line instead of sitting under it, so it costs the row five millimetres.
      *
      * On a page of coins the caption grows by the code's whole band, because the cell is read top to
      * bottom and there is a name to stack it under. A line is read left to right and has a right edge
      * going spare, so what the code costs is only the height it does not already have: seven
-     * millimetres of line become the ten of the square.
+     * millimetres of line become the twelve of the square.
      *
      * And no air of its own: [PrintGeometry.qrGapMm] is what separates a code from a caption stacked
      * over it, which is a thing a line does not have — the row already spaces what is on it, and the
-     * ten millimetres of the square carry the symbol's own quiet zone. A gap the renderer never spends
+     * twelve millimetres of the square carry the symbol's own quiet zone. A gap the renderer never spends
      * would be a millimetre in the arithmetic that is nowhere on the paper.
      */
     @Test
     fun `on a page of lines the code costs the row its own height and no more`() {
         val coded = printGeometry(NotebookOptions(photographs = false, numistaQr = true))
 
-        assertEquals(10f, coded.captionMm)
-        assertEquals(10f, coded.qrMm)
+        assertEquals(12f, coded.captionMm)
+        assertEquals(12f, coded.qrMm)
         assertEquals(0f, coded.qrGapMm)
-        assertEquals(10f, coded.cellHeightMm(40.9f))
+        assertEquals(12f, coded.cellHeightMm(40.9f))
         // Sólo el pie de foto se mueve: la cabecera, el pie de página y las columnas siguen igual.
         assertEquals(
             printGeometry(NotebookOptions(photographs = false)),
             coded.copy(captionMm = 7f, qrMm = 0f),
         )
-        // 23 líneas por columna pasan a 18, que es lo que cuesta llevar el código encima.
-        assertEquals(18, printGrid(40.9f, coded).rows)
+        // El código más robusto reduce las filas, pero la rejilla sigue cabiendo entera en el folio.
+        val bare = printGeometry(NotebookOptions(photographs = false))
+        assertTrue(printGrid(40.9f, coded).rows < printGrid(40.9f, bare).rows)
     }
 
     /**

@@ -81,13 +81,19 @@ data class PrintSection(
     val source: String,
     val cells: List<PrintCell>,
     /**
+     * The plate's already-counted `owned/issued` figure, or null for a page that is not a plate.
+     *
+     * [com.jenarvaezg.coindex.ui.PlateSubject] is the only place that measures coverage. Paper keeps
+     * that answer so the completion stamp can celebrate the same ratio without counting cells again.
+     */
+    val ratio: String? = null,
+    /**
      * Every issued member owned — the completion stamp of ADR 0026 §3, which §4 sends to the PDF
      * the same way it already travels to the PNG (#371).
      *
      * False for every page that is not a plate (pieces, box, unclaimed): there is no album to be
-     * complete against. The Progress row stays in [facts] either way; a notebook page has no header
-     * figure to raise the ratio into (ADR 0026 §5), so this bit is what the brush reads and not a
-     * substitute for the specification.
+     * complete against. The Progress row stays in [facts] either way; [ratio] belongs to the
+     * celebration inside the stamp and is not a substitute for the specification.
      */
     val complete: Boolean = false,
 )

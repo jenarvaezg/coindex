@@ -224,8 +224,8 @@ private fun PlateHeading(block: PrintBlock) {
         }
         // Title and stamp share the row the screen already uses: the caucho lands on this plate's
         // own heading, so a shared folio (#232) stamps each complete plate and not the page (#371).
-        // The Progress row below stays whole — a notebook page has no header figure to raise the
-        // ratio into (ADR 0026 §5) — and the ink is only the word.
+        // The Progress row below stays whole; the ratio inside the ink is the celebration rather
+        // than a replacement for that labelled specification.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
@@ -238,7 +238,9 @@ private fun PlateHeading(block: PrintBlock) {
                 modifier = Modifier.weight(1f),
             )
             if (section.complete) {
-                PrintedCompletionStamp(heading = heading)
+                section.ratio?.let { ratio ->
+                    PrintedCompletionStamp(heading = heading, ratio = ratio)
+                }
             }
         }
         section.subtitle?.takeIf { heading.subtitle }?.let { subtitle ->
@@ -567,11 +569,14 @@ private fun TickBox(ticked: Boolean, modifier: Modifier = Modifier) {
  * constant of the layout, and it is what the page count was computed against.
  */
 @Composable
-private fun NumistaCode(url: String?, sideMm: Float) {
+internal fun NumistaCode(url: String?, sideMm: Float, modifier: Modifier = Modifier) {
     // Encoded once per URL rather than on every recomposition: a page of twelve cells is twelve
     // encodings, and the same type shows up on several pages of the notebook.
     val code = remember(url) { numistaQr(url) } ?: return
-    Canvas(modifier = Modifier.size(sideMm.mm)) {
+    Canvas(modifier = modifier.size(sideMm.mm)) {
+        // PaperGrain belongs to the sheet, never to a QR. Paint one opaque, perfectly even field
+        // behind both the light modules and the four-module quiet zone before laying down the ink.
+        drawRect(color = Paper.paper)
         val module = size.minDimension / code.qrModulesWithQuietZone
         val quiet = module * QR_QUIET_MODULES
         for (row in 0 until code.height) {

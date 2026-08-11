@@ -41,9 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 49
-        // Patch on top of 1.2.6: the sewn edge drops the wall-clock minute (#419).
-        versionName = "1.2.7"
+        versionCode = 50
+        // Patch on top of 1.2.7: printed completion stamps and QR codes are robust on paper.
+        versionName = "1.2.8"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

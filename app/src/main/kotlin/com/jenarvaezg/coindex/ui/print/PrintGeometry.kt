@@ -4,7 +4,7 @@ import kotlin.math.floor
 import kotlin.math.max
 
 /** The side the QR gets on paper, quiet zone included. See [PrintGeometry.qrMm]. */
-private const val QR_SIDE_MM = 10f
+private const val QR_SIDE_MM = 12f
 
 /** Between the last line of a caption and the code under it. Less than this and they read as one. */
 private const val QR_GAP_MM = 2f
@@ -252,24 +252,17 @@ data class PrintGeometry(
      *
      * **Including the quiet zone**, because a code printed flush against a caption is a code that
      * does not scan: what is reserved here is what the symbol needs, not what its dark part measures.
-     * Every URL of the cache is 33 modules across with its frame (`NumistaQr` says why), so ten
-     * millimetres is a module of 0,303 mm.
-     *
-     * **Ten and not twelve, and a printed folio is why.** A calibration sheet —the same encoder, the
-     * same ink on the same paper, a 50 mm ruler to prove the print was 1:1— carried the code at six
-     * sizes from 9 to 14 mm, and the phone read **every one of them, the 9 mm included**. So the
-     * floor is at or below 9 and the size is no longer a question of reading but of paper, and paper
-     * answers in steps: a cell's height is quantised by how many rows fit a page, and every size from
-     * 7 to 10,1 mm prints the sixty curated plates in the same 112 pages. Ten is the largest module
-     * on the cheapest step — going down to the 9 mm that was measured buys nothing at all and only
-     * spends margin, and twelve cost thirteen pages for a legibility nobody needed.
+     * Every URL of the cache is 33 modules across with its frame (`NumistaQr` says why), so twelve
+     * millimetres gives each module 0,364 mm. This is the conservative printed size: large enough to
+     * tolerate ordinary printer and camera variation, while still fitting under the caption without
+     * widening a cell or changing the vector drawing.
      */
     val qrMm: Float = 0f,
     /**
      * The air between the last line of a caption and the code under it. Less and they read as one.
      *
      * **Zero on a page of lines** (#231), and not because the code needs no air: a row already spaces
-     * everything on it, and the ten millimetres of [qrMm] carry the symbol's own quiet zone. What this
+     * everything on it, and the twelve millimetres of [qrMm] carry the symbol's own quiet zone. What this
      * buys on a page of coins is separation from a caption stacked directly above, which a line does
      * not have.
      *
@@ -581,8 +574,8 @@ private fun PrintGeometry.shared(): PrintGeometry = copy(
  *
  * On a page of lines the code goes at the **end of the line**, where the width already runs left to
  * right and there is nothing to stack it under. So it costs no height of its own — the row is the
- * taller of the line and the code, and ten millimetres of it is what the list pays — and no air
- * either: the row spaces what is on it, and the ten millimetres carry the symbol's own quiet zone.
+ * taller of the line and the code, and twelve millimetres of it is what the list pays — and no air
+ * either: the row spaces what is on it, and the twelve millimetres carry the symbol's own quiet zone.
  */
 private fun PrintGeometry.withNumistaCode(): PrintGeometry = copy(
     captionMm = if (printsCoins) captionMm + QR_GAP_MM + QR_SIDE_MM else max(captionMm, QR_SIDE_MM),

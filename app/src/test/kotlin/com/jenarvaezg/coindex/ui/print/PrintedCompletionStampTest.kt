@@ -13,6 +13,12 @@ import kotlin.test.assertTrue
  */
 class PrintedCompletionStampTest {
     @Test
+    fun `the printed celebration gives the dynamic ratio typographic air`() {
+        assertEquals("22 / 22", printedCompletionRatio("22/22"))
+        assertEquals("3 / 3", printedCompletionRatio("3 / 3"))
+    }
+
+    @Test
     fun `the masthead stamp fits inside the forty-millimetre band`() {
         val size = printedStampSize(PrintHeading.Masthead)
 
