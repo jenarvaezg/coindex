@@ -247,6 +247,20 @@ class FiguresTest {
         assertEquals(100.0, figures.weight.value)
         assertEquals(90.0, figures.fineSilver.value)
     }
+
+    /**
+     * The sewn edge and «La materia» share one census (#400): a hostile zero still counts as one
+     * piece, the same way the magnitudes do.
+     */
+    @Test
+    fun `pieceCount is the figures census, including a coerced zero`() {
+        val items = listOf(
+            item(id = 1, typeId = 1, quantity = 3),
+            item(id = 2, typeId = 2, quantity = 0),
+        )
+        assertEquals(4, pieceCount(items))
+        assertEquals(4, collectionFigures(items, emptyMap()).pieces)
+    }
 }
 
 private fun round(value: Double, decimals: Int): Double {

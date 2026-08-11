@@ -40,6 +40,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.pieceCount
 import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.ExportDestination
@@ -310,7 +311,7 @@ fun IndexScreen(
             fullWidth {
                 AlbumChrome(
                     collections = state.index.size,
-                    coins = state.items.sumOf { item -> item.quantity },
+                    pieces = pieceCount(state.items),
                     types = state.items.mapTo(mutableSetOf()) { item -> item.typeId }.size,
                     onSettings = onSettings,
                 )

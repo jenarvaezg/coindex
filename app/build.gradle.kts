@@ -41,12 +41,11 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 44
-        // Patch on top of 1.2.1: no new capability, only «Las cifras» read the way it was meant to —
-        // the spot's stamp says which silver price and at what hour instead of «plata de hoy», and the
-        // ladders carry each referent's magnitude again (#398) — banner: «Las cifras se leen mejor: el
-        // valor dice con qué plata está contado».
-        versionName = "1.2.2"
+        versionCode = 45
+        // Patch on top of 1.2.2: the sewn edge says «piezas» on every root and Las cifras stops
+        // printing the type count under that name (#400) — banner: «La cabecera cuenta piezas en
+        // las tres pestañas».
+        versionName = "1.2.3"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

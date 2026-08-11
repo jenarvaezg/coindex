@@ -6,10 +6,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class MastheadLabelsTest {
+    /**
+     * Same three magnitudes on every root (#400): collections, **pieces** (quantities), and types —
+     * never «monedas», which already names the sibling hierarchy and its type count in the bar.
+     */
     @Test
     fun `the sewn edge owns the three counts and minute`() {
         assertEquals(
-            "70 col · 574 monedas · 192 tipos · hoy 18:47",
+            "70 col · 574 piezas · 192 tipos · hoy 18:47",
             sewnEdgeLabel(70, 574, 192, LocalTime.of(18, 47)),
         )
     }

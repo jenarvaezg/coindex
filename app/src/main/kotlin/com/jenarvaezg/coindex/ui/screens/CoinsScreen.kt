@@ -47,6 +47,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.domain.pieceCount
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
@@ -183,7 +184,7 @@ fun CoinsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         AlbumChrome(
                             collections = state.index.size,
-                            coins = state.items.sumOf { item -> item.quantity },
+                            pieces = pieceCount(state.items),
                             types = rows.size,
                             onSettings = onSettings,
                         )

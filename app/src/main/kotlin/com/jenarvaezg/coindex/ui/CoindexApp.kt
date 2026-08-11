@@ -324,7 +324,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         FiguresScreen(
                             subject = figures,
                             collections = state.collection.index.size,
-                            coins = ownedTypeCount(state.collection),
                             // Read once per composition of the page: what it dates is the spot, and a
                             // clock that ticked would make «plata de hoy» a thing that changes while
                             // you look at it, which is the pocket ticker #316 refused.

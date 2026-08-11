@@ -81,7 +81,6 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 fun FiguresScreen(
     subject: FiguresSubject,
     collections: Int,
-    coins: Int,
     nowMillis: Long,
     onOpenCountry: (String) -> Unit,
     onOpenYear: (Int) -> Unit,
@@ -89,9 +88,11 @@ fun FiguresScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
+        // Pieces from the same census «La materia» prints, so the sewn edge cannot say one number
+        // for piezas while the page below says another — and never the type count under that name (#400).
         AlbumChrome(
             collections = collections,
-            coins = coins,
+            pieces = subject.figures.pieces,
             types = subject.figures.types,
             onSettings = onSettings,
         )

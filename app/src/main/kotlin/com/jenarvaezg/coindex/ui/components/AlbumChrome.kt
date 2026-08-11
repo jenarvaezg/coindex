@@ -35,7 +35,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun AlbumChrome(
     collections: Int,
-    coins: Int,
+    pieces: Int,
     types: Int,
     onSettings: () -> Unit,
 ) {
@@ -58,7 +58,7 @@ fun AlbumChrome(
     ) {
         Text(APP_NAME, style = MaterialTheme.typography.titleMedium, color = Paper.paper)
         Text(
-            sewnEdgeLabel(collections, coins, types, now),
+            sewnEdgeLabel(collections, pieces, types, now),
             style = MaterialTheme.typography.labelSmall,
             color = Paper.paperDeep,
             maxLines = 1,
