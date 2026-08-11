@@ -127,3 +127,29 @@ enum class NotebookSwitch {
      */
     Money,
 }
+
+/**
+ * The switches a single lámina or hoja can still be asked (#401).
+ *
+ * «Compartir página» needs two plates on one folio, and «Sin colección» is the index's loose-coin
+ * plate — neither is a question once the collector is already looking at one collection. The other
+ * five are the same how-and-what the notebook asks, so the sheet reuses [ExportOptions] rather than
+ * inventing a second panel.
+ */
+fun sheetExportSwitches(): List<NotebookSwitch> = listOf(
+    NotebookSwitch.Photographs,
+    NotebookSwitch.BothFaces,
+    NotebookSwitch.ActualSize,
+    NotebookSwitch.NumistaQr,
+    NotebookSwitch.Money,
+)
+
+/**
+ * What a single-sheet export actually prints under (#401).
+ *
+ * Packing and the loose-coin plate are cleared for the page arithmetic — one section cannot share a
+ * folio, and the loose plate is not this collection — without rewriting what the collector has
+ * stored for the next full notebook. The sheet UI never offers those two, so [forSheetExport] is
+ * what keeps a leftover `true` from the index from thinning this lámina's heading for no reason.
+ */
+fun NotebookOptions.forSheetExport(): NotebookOptions = copy(sharePage = false, unclaimed = false)

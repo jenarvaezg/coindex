@@ -41,10 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 46
-        // Patch on top of 1.2.3: selection mode names the real gesture (tap the coin) instead of a
-        // phantom «Elegir» (#402) — banner: «Al agrupar, toca la moneda; ya no pide Elegir».
-        versionName = "1.2.4"
+        versionCode = 47
+        // Patch on top of 1.2.4: lámina and hoja open «Cómo se exporta» like the index (#401).
+        versionName = "1.2.5"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

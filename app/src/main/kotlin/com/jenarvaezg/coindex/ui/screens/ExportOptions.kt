@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.DOWNLOAD_ACTION
 import com.jenarvaezg.coindex.ui.NOTEBOOK_COST_SCOPE
+import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_EYEBROW
+import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORT_PATIENCE
 import com.jenarvaezg.coindex.ui.NOTEBOOK_OPTIONS_EYEBROW
 import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -24,8 +26,10 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.components.ToggleRow
 import com.jenarvaezg.coindex.ui.notebookCostLabel
+import com.jenarvaezg.coindex.ui.notebookStepLabel
 import com.jenarvaezg.coindex.ui.notebookSwitchLabel
 import com.jenarvaezg.coindex.ui.notebookSwitchNote
+import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -59,23 +63,44 @@ fun ExportOptions(
      * The sheet holds it and [NotebookOptions] does not, because it is a fact about the collection
      * on screen and not about the configuration: the switches know nothing about the inventory, and
      * teaching them would put the index inside them.
+     *
+     * A single lámina never asks «Sin colección» (#401), so the count stays zero there and the
+     * switch is simply not drawn.
      */
     loose: Int,
     onChange: (NotebookOptions) -> Unit,
     onDownload: () -> Unit,
     onShare: () -> Unit,
     onDismiss: () -> Unit,
+    /**
+     * Which switches this surface asks (#401). The index draws all seven; a single lámina or hoja
+     * drops packing and the loose-coin plate, which only make sense over many cards.
+     */
+    switches: List<NotebookSwitch> = NotebookSwitch.entries,
+    /** What the cost line is counted over — the index, or this one sheet (#401). */
+    costScope: String = NOTEBOOK_COST_SCOPE,
+    /**
+     * The cost line itself. Defaults to the notebook's pages · láminas arithmetic; a single hoja
+     * passes [sheetExportCostLabel] so the noun matches the sheet (#401).
+     */
+    costLabel: String = notebookCostLabel(pages, cards),
+    /**
+     * Why a switch is annotated under its row. The index uses [notebookSwitchNote]; a single sheet
+     * passes [sheetExportSwitchNote] so every switch says «Sólo en el cuaderno» when the
+     * measured result is still a PNG (#401).
+     */
+    switchNote: (NotebookSwitch, Boolean) -> String? = ::notebookSwitchNote,
     modifier: Modifier = Modifier,
 ) {
     FieldCard(modifier = modifier.fillMaxWidth()) {
         Eyebrow(NOTEBOOK_OPTIONS_EYEBROW)
         Column(modifier = Modifier.padding(top = 6.dp)) {
-            NotebookSwitch.entries.forEach { switch ->
+            switches.forEach { switch ->
                 val offered = options.offers(switch) &&
                     (switch != NotebookSwitch.Unclaimed || loose > 0)
                 ToggleRow(
                     label = notebookSwitchLabel(switch),
-                    note = notebookSwitchNote(switch, offered),
+                    note = switchNote(switch, offered),
                     checked = options[switch],
                     // Two reasons to be grey, and the note says which: the configuration has made
                     // the question moot, or there is no lámina left to add. «Pendiente · #233» went
@@ -87,12 +112,12 @@ fun ExportOptions(
         }
         HorizontalDivider(color = Paper.hairline, modifier = Modifier.padding(vertical = 10.dp))
         Text(
-            notebookCostLabel(pages, cards),
+            costLabel,
             style = MaterialTheme.typography.titleMedium,
             color = Paper.rust,
         )
         Text(
-            NOTEBOOK_COST_SCOPE,
+            costScope,
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
             modifier = Modifier.padding(top = 2.dp),
@@ -111,6 +136,37 @@ fun ExportOptions(
                 icon = { ShareGlyph(color = Paper.ink) },
             )
             CardAction(text = CANCEL_ACTION, onClick = onDismiss)
+        }
+    }
+}
+
+/** What the notebook is doing right now, and the way out of it while there is one. */
+@Composable
+fun ExportProgress(
+    step: NotebookExportStep,
+    pages: Int,
+    onCancel: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    FieldCard(modifier = modifier.fillMaxWidth()) {
+        Eyebrow(NOTEBOOK_EXPORTING_EYEBROW)
+        Text(
+            notebookStepLabel(step, pages),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 6.dp),
+        )
+        Text(
+            NOTEBOOK_EXPORT_PATIENCE,
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.muted,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+        onCancel?.let { cancel ->
+            CardAction(
+                text = CANCEL_ACTION,
+                onClick = cancel,
+                modifier = Modifier.padding(top = 10.dp),
+            )
         }
     }
 }

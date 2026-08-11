@@ -40,7 +40,6 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
-import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
@@ -58,16 +57,13 @@ import com.jenarvaezg.coindex.ui.components.countryAxisItems
 import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.components.yearAxisItems
 import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_EYEBROW
 import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
-import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORT_PATIENCE
 import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EXPLANATION
 import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EYEBROW
 import com.jenarvaezg.coindex.ui.indexCoverageLabel
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookExportLabel
-import com.jenarvaezg.coindex.ui.notebookStepLabel
 import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
@@ -551,36 +547,6 @@ private data class NotebookJob(
     val pages: List<PrintPage>,
     val destination: ExportDestination,
 )
-
-/** What the notebook is doing right now, and the way out of it while there is one. */
-@Composable
-private fun ExportProgress(
-    step: NotebookExportStep,
-    pages: Int,
-    onCancel: (() -> Unit)?,
-) {
-    FieldCard(modifier = Modifier.fillMaxWidth()) {
-        Eyebrow(NOTEBOOK_EXPORTING_EYEBROW)
-        Text(
-            notebookStepLabel(step, pages),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 6.dp),
-        )
-        Text(
-            NOTEBOOK_EXPORT_PATIENCE,
-            style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-        onCancel?.let { cancel ->
-            CardAction(
-                text = CANCEL_ACTION,
-                onClick = cancel,
-                modifier = Modifier.padding(top = 10.dp),
-            )
-        }
-    }
-}
 
 /**
  * What tells one card of the grid from another across recompositions.

@@ -47,7 +47,8 @@ import kotlinx.coroutines.withTimeoutOrNull
 const val IMAGE_WAIT_MILLIS = 30_000L
 
 /**
- * Composes a sheet off-screen, waits for every picture to settle, exports it, and says what it did.
+ * Composes a sheet off-screen, waits for every picture to settle, exports it as a PNG, and says
+ * what it did.
  *
  * **The whole cycle and not the pieces of it.** A plate and a collection's pieces used to spell this
  * out line for line — a [Picture], a [SheetLayout], the count of pictures to expect, two counters,
@@ -55,8 +56,12 @@ const val IMAGE_WAIT_MILLIS = 30_000L
  * and the two copies had already drifted (#219). What genuinely differs between the two exports is
  * four values: how many members the geometry is for, where a member's Numista type is read from,
  * what the file is called, and what the sheet says it holds. They are the parameters; the rest is
- * here. [destination] is the fifth: Descargas or the share sheet, and both coexist on the screen
- * that starts this (#285).
+ * here. [destination] is Descargas or the share sheet (#285).
+ *
+ * **What fits in one page is a PNG** (#401). The options panel measures the pages first; when
+ * there is one, Descargar / Compartir leave through this cycle as a bitmap. When there are more,
+ * the same doors take the PDF section of the notebook instead, and the switches that only paper
+ * can honour apply for real.
  *
  * The sheet is measured with its own density and **never painted**: [recordInto] captures the
  * drawing commands instead of drawing them, so what gets shared is the complete sheet rather than

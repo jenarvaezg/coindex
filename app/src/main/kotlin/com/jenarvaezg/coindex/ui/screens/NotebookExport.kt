@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.notebookDownloadFailure
 import com.jenarvaezg.coindex.ui.notebookDownloadMessage
 import com.jenarvaezg.coindex.ui.notebookExportMessage
@@ -25,6 +26,10 @@ import com.jenarvaezg.coindex.ui.print.notebookPhotographs
 import com.jenarvaezg.coindex.ui.print.shareNotebookPdf
 import com.jenarvaezg.coindex.ui.print.warmNotebookPhotographs
 import com.jenarvaezg.coindex.ui.recordInto
+import com.jenarvaezg.coindex.ui.sheetDownloadFailure
+import com.jenarvaezg.coindex.ui.sheetDownloadMessage
+import com.jenarvaezg.coindex.ui.sheetExportFailure
+import com.jenarvaezg.coindex.ui.sheetPdfExportMessage
 
 /**
  * How long one page of the notebook waits for its pictures.
@@ -70,6 +75,9 @@ private const val PAGE_WAIT_MILLIS = 4_000L
  *
  * [destination] is Descargas by default and the share sheet beside it (#285): both buttons on the
  * options sheet reach this same drawing; only the last step differs.
+ *
+ * [sheet] turns the closing copy into a single lámina or hoja (#401): the drawing is the same PDF
+ * path the notebook uses, and only the product named in the snackbar and the file stem change.
  */
 @Composable
 fun NotebookPdfExport(
@@ -77,6 +85,8 @@ fun NotebookPdfExport(
     destination: ExportDestination = ExportDestination.Download,
     onStep: (NotebookExportStep) -> Unit,
     onFinished: (String) -> Unit,
+    fileName: String = notebookFileName(),
+    sheet: SharedSheet? = null,
 ) {
     val context = LocalContext.current
     val document = remember { PdfDocument() }
@@ -122,8 +132,10 @@ fun NotebookPdfExport(
             addNotebookPage(document, picture, pageIndex + 1, current.geometry)
         }
         if (appended.isFailure) {
+            val cause = appended.exceptionOrNull()?.message
             onFinished(
-                "No se pudo exportar el cuaderno: ${appended.exceptionOrNull()?.message}",
+                sheet?.let { sheetExportFailure(it, cause) }
+                    ?: "No se pudo exportar el cuaderno: $cause",
             )
             return@LaunchedEffect
         }
@@ -135,25 +147,43 @@ fun NotebookPdfExport(
         val written = runCatching {
             when (destination) {
                 ExportDestination.Download ->
-                    downloadNotebookPdf(context, document, notebookFileName())
+                    downloadNotebookPdf(context, document, fileName)
                 ExportDestination.Share ->
-                    shareNotebookPdf(context, document, notebookFileName())
+                    shareNotebookPdf(
+                        context,
+                        document,
+                        fileName,
+                        chooserTitle = sheet?.let { "Compartir la ${it.noun}" }
+                            ?: "Compartir el cuaderno",
+                    )
             }
         }
         onFinished(
             if (written.isFailure) {
                 val cause = written.exceptionOrNull()?.message
                 when (destination) {
-                    ExportDestination.Download -> notebookDownloadFailure(cause)
+                    ExportDestination.Download ->
+                        sheet?.let { sheetDownloadFailure(it, cause) }
+                            ?: notebookDownloadFailure(cause)
                     ExportDestination.Share ->
-                        "No se pudo exportar el cuaderno: $cause"
+                        sheet?.let { sheetExportFailure(it, cause) }
+                            ?: "No se pudo exportar el cuaderno: $cause"
                 }
             } else {
                 when (destination) {
                     ExportDestination.Download ->
-                        notebookDownloadMessage(expectedPhotographs, loadedPhotographs.intValue)
+                        sheet?.let {
+                            sheetDownloadMessage(expectedPhotographs, loadedPhotographs.intValue)
+                        } ?: notebookDownloadMessage(expectedPhotographs, loadedPhotographs.intValue)
                     ExportDestination.Share ->
-                        notebookExportMessage(
+                        sheet?.let {
+                            sheetPdfExportMessage(
+                                sheet = it,
+                                pages = pages.size,
+                                expectedPhotos = expectedPhotographs,
+                                loadedPhotos = loadedPhotographs.intValue,
+                            )
+                        } ?: notebookExportMessage(
                             pages = pages.size,
                             expectedPhotos = expectedPhotographs,
                             loadedPhotos = loadedPhotographs.intValue,

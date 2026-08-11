@@ -69,11 +69,11 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
 }
 
 /**
- * Writes a recorded sheet to Descargas, where it survives «Borrar caché» and opens from the
- * notification (#285).
+ * Writes a recorded sheet to Descargas as a PNG (#401).
  *
- * The cache still holds the intermediate PNG — that is the right place for the temporary — and
- * [handToDownloads] is what turns it into a durable file the collector can find without a chooser.
+ * Used when the options panel measures one page — what fits in a photo. More pages take the PDF
+ * path instead. The cache holds the temporary, and [handToDownloads] turns it into a durable file
+ * without a chooser (#285).
  */
 suspend fun downloadPlateSheet(context: Context, picture: Picture, fileName: String) {
     val displayName = datedExportFileName(fileName, "png")

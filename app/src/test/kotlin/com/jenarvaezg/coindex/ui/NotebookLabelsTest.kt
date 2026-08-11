@@ -150,4 +150,66 @@ class NotebookLabelsTest {
             notebookWarmCancelledMessage(320, 623),
         )
     }
+
+    /**
+     * The cost under a single lámina is not the index: there is no filter above it, and the
+     * notebook's scope sentence would lie about where the pages come from (#401). The format is
+     * measured by pages — one is a PNG, more is a PDF — and the line announces it.
+     */
+    @Test
+    fun `a single sheet says the cost is about this plate or this leaf`() {
+        assertEquals(
+            "Es esta lámina, con la configuración elegida.",
+            sheetExportCostScope(SharedSheet.PLATE),
+        )
+        assertEquals(
+            "Es esta hoja, con la configuración elegida.",
+            sheetExportCostScope(SharedSheet.PIECES),
+        )
+        assertEquals("1 página · 1 lámina · PNG", sheetExportCostLabel(SharedSheet.PLATE, 1))
+        assertEquals("2 páginas · 1 lámina · PDF", sheetExportCostLabel(SharedSheet.PLATE, 2))
+        assertEquals("3 páginas · 1 hoja · PDF", sheetExportCostLabel(SharedSheet.PIECES, 3))
+        assertTrue(sheetExportAsBitmap(1))
+        assertTrue(!sheetExportAsBitmap(2))
+    }
+
+    /**
+     * Sharing one PDF page of a lámina still names the lámina, not the whole notebook (#401).
+     */
+    @Test
+    fun `sharing a single sheet names the sheet and counts its pages`() {
+        assertEquals(
+            "Lámina exportada · 1 página",
+            sheetPdfExportMessage(SharedSheet.PLATE, pages = 1, expectedPhotos = 19, loadedPhotos = 19),
+        )
+        assertEquals(
+            "Hoja exportada · 3 páginas, pero una foto no llegó a cargar",
+            sheetPdfExportMessage(SharedSheet.PIECES, pages = 3, expectedPhotos = 12, loadedPhotos = 11),
+        )
+        assertEquals(
+            "Lámina exportada · 2 páginas, pero 4 fotos no llegaron a cargar",
+            sheetPdfExportMessage(SharedSheet.PLATE, pages = 2, expectedPhotos = 40, loadedPhotos = 36),
+        )
+    }
+
+    @Test
+    fun `paper switches are annotated only when the result is a PNG`() {
+        for (switch in listOf(
+            NotebookSwitch.Photographs,
+            NotebookSwitch.BothFaces,
+            NotebookSwitch.ActualSize,
+            NotebookSwitch.NumistaQr,
+            NotebookSwitch.Money,
+        )) {
+            assertEquals(
+                "Sólo en el cuaderno",
+                sheetExportSwitchNote(switch, offered = true, pages = 1),
+            )
+            assertNull(sheetExportSwitchNote(switch, offered = true, pages = 2))
+        }
+        assertEquals(
+            "Sin fotos no hay nada que ajustar",
+            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false, pages = 1),
+        )
+    }
 }

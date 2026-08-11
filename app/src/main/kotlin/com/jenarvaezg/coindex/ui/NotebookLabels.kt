@@ -35,6 +35,36 @@ const val NOTEBOOK_OPTIONS_EYEBROW: String = "Cómo se exporta"
 const val NOTEBOOK_COST_SCOPE: String = "Es lo que hay en el índice ahora mismo, con los filtros puestos."
 
 /**
+ * What the cost under a single lámina or hoja is counted over (#401).
+ *
+ * The notebook's scope names the index and its filters; a sheet opened from its own screen has
+ * neither, and repeating that sentence would claim pages came from a narrowing that is not there.
+ */
+fun sheetExportCostScope(sheet: SharedSheet): String =
+    "Es esta ${sheet.noun}, con la configuración elegida."
+
+/**
+ * Whether this export leaves a bitmap (#401).
+ *
+ * Measured by the pages the options panel already computes: one page fits in a photo; more than
+ * one needs the PDF — «Plata a valor facial» is the case that made the rule, two pages.
+ */
+fun sheetExportAsBitmap(pages: Int): Boolean = pages <= 1
+
+/**
+ * What a single lámina or hoja is about to cost (#401).
+ *
+ * The notebook's line counts láminas because the filter chose many; a sheet opened from its own
+ * screen is always one, and the noun has to be this sheet's — «1 lámina» under a hoja would rename
+ * what the collector is looking at. The format follows the page count: one page is a PNG, more is
+ * a PDF, and the cost line says so so it speaks of the file that will leave.
+ */
+fun sheetExportCostLabel(sheet: SharedSheet, pages: Int): String {
+    val format = if (sheetExportAsBitmap(pages)) "PNG" else "PDF"
+    return "${plural(pages, "página", "páginas")} · 1 ${sheet.noun} · $format"
+}
+
+/**
  * What the export sheet is about to cost, recounted on every tap (#228).
  *
  * The pages first, because they are what the configuration moves and what the collector is deciding
@@ -70,6 +100,20 @@ fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when
     offered -> null
     switch == NotebookSwitch.Unclaimed -> "No hay monedas sueltas que imprimir"
     else -> "Sin fotos no hay nada que ajustar"
+}
+
+/**
+ * Why a switch on a single lámina or hoja is annotated (#401).
+ *
+ * When the measured result is a PDF, every switch on this surface lands on paper. When it is a PNG,
+ * none of them reach the bitmap — PlateSheet / PiecesSheet ignore the draft — so the row says so
+ * rather than pretending this export will honour them. They still remember how the next cuaderno
+ * will print, and flipping Fotos or Ambas caras can change the page count and flip the format.
+ */
+fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean, pages: Int): String? = when {
+    !offered -> notebookSwitchNote(switch, offered)
+    sheetExportAsBitmap(pages) -> "Sólo en el cuaderno"
+    else -> null
 }
 
 /**
@@ -118,6 +162,28 @@ fun notebookExportMessage(pages: Int, expectedPhotos: Int, loadedPhotos: Int): S
         0 -> "Cuaderno completo exportado · $counted"
         1 -> "Cuaderno exportado en $counted, pero una foto no llegó a cargar"
         else -> "Cuaderno exportado en $counted, pero $absent fotos no llegaron a cargar"
+    }
+}
+
+/**
+ * What the collector is told once a single lámina or hoja has been handed to the share sheet (#401).
+ *
+ * Same holes arithmetic as [notebookExportMessage], but the product is this sheet — saying
+ * «cuaderno» about one PDF of one collection would rename what the collector just asked for.
+ */
+fun sheetPdfExportMessage(
+    sheet: SharedSheet,
+    pages: Int,
+    expectedPhotos: Int,
+    loadedPhotos: Int,
+): String {
+    val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
+    val head = sheet.noun.replaceFirstChar(Char::uppercaseChar)
+    val counted = plural(pages, "página", "páginas")
+    return when (absent) {
+        0 -> "$head exportada · $counted"
+        1 -> "$head exportada · $counted, pero una foto no llegó a cargar"
+        else -> "$head exportada · $counted, pero $absent fotos no llegaron a cargar"
     }
 }
 

@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354 and #285, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285 and #401, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -39,6 +39,12 @@
 > father asked for is Descargar: one tap into `MediaStore.Downloads`, no chooser, no permission,
 > with Compartir beside it. The unit still decides the format; the destination is no longer only
 > the share sheet.
+>
+> **Amended on 2026-08-11 (§13, #401).** Descargar and Compartir on a lámina or a hoja open the same
+> «Cómo se exporta» surface as the index — minus «Sin colección» and «Compartir página». **What fits
+> in one page is a PNG; what needs more is a PDF**, measured by the pages the panel already
+> computes — not by which screen was opened. When the result is a PNG none of the switches reach the
+> bitmap, so they are annotated; when it is a PDF they apply for real.
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at
@@ -356,9 +362,11 @@ ADR 0016 just crowned; and it would need a destination, which is what §10 decid
 
 ### 13. Exporting: a plate is a PNG, the notebook is the printed index
 
-> Amended by #228 — see the note at the top. The layout below is now the **default** and no longer
-> the only output, and the export button opens a sheet of switches with the live page count under
-> them. The PNG of a single plate is untouched.
+> Amended by #228 and #401 — see the notes at the top. The layout below is now the **default** and
+> no longer the only output, and both the index export button and a single lámina or hoja open a
+> sheet of switches with the live page count under them. A single sheet drops the two index-only
+> questions; the format follows the page count (one → PNG, more → PDF), and the notebook from the
+> index stays the PDF.
 
 **The notebook is not an object; it is the index printed.** It needs no entity, no table, no naming
 and no cover page, because §4 and §6 gave it the two things it lacked: a canonical order and a
@@ -372,12 +380,15 @@ name on — the index already is one.
 - **`page(card) = its destination`**, inherited from §9: a card with a list prints its plate, a card
   without one prints the sheet `PiecesScreen` already exports, and a box comes in through that same
   door. Two kinds of page, none invented.
-- **The unit decides the format.** A plate stays a **PNG**, the notebook a **vector PDF**. Both
-  land in Descargas by default and still leave through the send intent when shared (#285): the
-  father wants the file and Jose still hands it to a chat. `recordInto` records drawing commands
-  in a `Picture`, and `PdfDocument` replays them on its canvas, so the PDF is vectorial with **no
-  new dependencies**. A notebook filtered down
-  to one card is still a PDF: the button that was tapped decides, not the size of the result.
+- **What fits in one page is a PNG; what needs more is a PDF** (#401). Measured by the pages the
+  options panel already computes — Descargar or Compartir on a lámina or hoja leaves a bitmap when
+  there is one page, and the vector PDF of that section when there are more («Plata a valor facial»
+  is two). The notebook from the index is always the PDF.   The cost line announces the format; when the result is still a PNG every switch on the sheet is
+  annotated under the row, because the bitmap ignores the draft. Both still
+  land in Descargas by default and still leave through the send intent when shared (#285): the father
+  wants the file and Jose still hands it to a chat. `recordInto` records drawing commands in a
+  `Picture`, and `PdfDocument` replays them on its canvas, so the PDF is vectorial with **no new
+  dependencies**.
 - **A4, one plate per page**, header repeated when a plate continues. Neither shrinking a plate to
   fit (121 slots would print at some 8 mm per coin) nor a continuous flow.
 - **Only the reverse goes on paper, at life size.** A printed coin measures what the coin measures,

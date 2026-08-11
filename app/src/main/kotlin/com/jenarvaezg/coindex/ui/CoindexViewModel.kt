@@ -24,6 +24,7 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.forSheetExport
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
@@ -519,6 +520,32 @@ class CoindexViewModel(
         ),
         geometry = printGeometry(options),
     )
+
+    /**
+     * One curated plate as printable pages, under the configuration the collector chose for this
+     * lámina (#401).
+     *
+     * The card is looked up by [catalogId] rather than passed in, because the plate screen already
+     * resolved the album and does not hold the [IndexCard] the index drew — and `página(tarjeta) =
+     * su destino` still has to go through [notebookSections].
+     */
+    fun notebookPagesForPlate(catalogId: String, options: NotebookOptions): List<PrintPage> {
+        val card = _state.value.collection.index
+            .filterIsInstance<IndexCard.Derived>()
+            .firstOrNull { it.plateCatalogId == catalogId }
+            ?: return emptyList()
+        return notebookPages(listOf(card), emptyList(), options.forSheetExport())
+    }
+
+    /**
+     * One collection without a plate, or a box, as printable pages (#401).
+     *
+     * Same door as the index: [destinationOf] decides the pieces section, and packing / the loose
+     * plate are cleared by [forSheetExport] so a leftover switch from the notebook cannot thin a
+     * heading that has nothing to share a folio with.
+     */
+    fun notebookPagesForCard(card: IndexCard, options: NotebookOptions): List<PrintPage> =
+        notebookPages(listOf(card), emptyList(), options.forSheetExport())
 
     /**
      * Remembers how the notebook was printed, so the next export opens where this one left off.
