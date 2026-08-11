@@ -84,4 +84,45 @@ class PiecesLabelsTest {
             piecesSheetFacts(subject(issuer = null, variant = null)),
         )
     }
+
+    /**
+     * The grouping button carries the cost before it is pressed (ADR 0021 §11).
+     *
+     * Seeding unconditionally offered «Agrupar estas 191» — the whole collection — so the count is on
+     * the button precisely so the collector sees that the filter wants narrowing first. With nothing
+     * narrowing the list there is nothing to seed, so it says neither a count nor «estas».
+     */
+    @Test
+    fun `grouping says how many it would seed, and only when there is a seed`() {
+        assertEquals("Agrupar estas 59", groupPiecesLabel(seeded = true, shown = 59))
+        assertEquals("Agrupar piezas", groupPiecesLabel(seeded = false, shown = 191))
+    }
+
+    /** Which side the work starts from: with a seed there is something to remove, without one nothing yet. */
+    @Test
+    fun `the selection hint says which way the work goes`() {
+        assertEquals(
+            "Vienen elegidas las 59 que enseñaba el filtro. Quita las que no.",
+            selectionHintLabel(seeded = true, shown = 59),
+        )
+        assertEquals(
+            "Toca «Elegir» en cada moneda que quieras.",
+            selectionHintLabel(seeded = false, shown = 0),
+        )
+    }
+
+    @Test
+    fun `the box dialog counts what is about to go in it`() {
+        assertEquals("Agrupar 2 monedas", boxDialogHeading(2))
+        assertEquals("Agrupar 1 moneda", boxDialogHeading(1))
+        assertEquals("Nombrar la caja · 2", namePickedBoxLabel(2))
+    }
+
+    @Test
+    fun `the two toggles say what pressing them will do`() {
+        assertEquals("Elegir", pieceSelectionToggleLabel(picked = false))
+        assertEquals("Elegida", pieceSelectionToggleLabel(picked = true))
+        assertEquals("Renombrar", renameToggleLabel(renaming = false))
+        assertEquals("Cerrar el nombre", renameToggleLabel(renaming = true))
+    }
 }

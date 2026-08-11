@@ -31,3 +31,78 @@ fun piecesSheetFacts(subject: PiecesSubject): List<Pair<String, String>> = build
     subject.variant?.let { variant -> add("Variante" to variant) }
     add("Piezas" to subject.countSentence)
 }
+
+/**
+ * The one wording of a collection that is no longer there (ADR 0026 §5).
+ *
+ * There were **four**, in three files — 13, 16, 8 and 32 words — for one fact. The 32-word one went
+ * for engineer's prose: it explained that refreshing a ficha can move its coins to another card,
+ * which is true, is the reason the route broke, and is of no use whatsoever to somebody holding a
+ * phone. The short one is the one kept, because the way out is the whole message: the collection is
+ * gone, and the índice is where the ones that are left are.
+ *
+ * It reads correctly on the three screens that reach for it — a route with nothing behind it, a
+ * derived collection whose last piece went, and a plate whose variant no longer describes anything —
+ * because they are one event seen from three places.
+ */
+const val COLLECTION_NO_LONGER_EXISTS: String = "Esta colección ya no existe. Vuelve al índice."
+
+/**
+ * What a box with nothing in it says, which is **not** the sentence above.
+ *
+ * A box survives empty, because it is the one thing the collector typed and having it vanish would
+ * read as data loss (ADR 0021 §11). A derived collection cannot: with no pieces there is nothing
+ * left to derive it from.
+ */
+const val EMPTY_BOX_EXPLANATION: String =
+    "Ahora mismo no tienes ninguna de las piezas de esta colección. Sigue aquí por si vuelven."
+
+/** A link that describes no variant of this collection, which is not the same as one that is gone. */
+const val UNKNOWN_VARIANT_LINK: String =
+    "Ese enlace no describe ninguna variante de tu colección. Vuelve al índice."
+
+const val PIECES_HEADING: String = "Tus piezas"
+const val REMOVE_TYPE_FROM_COLLECTION: String = "Quitar de la colección"
+const val DELETE_COLLECTION_ACTION: String = "Deshacer la colección"
+
+fun renameToggleLabel(renaming: Boolean): String =
+    if (renaming) "Cerrar el nombre" else "Renombrar"
+
+/**
+ * The field a box is named in, and the one word above it.
+ *
+ * Said the same way in the baptism and in the rename, because it is the same field with the same
+ * limit and the same counter (ADR 0021 §4): a rename cannot produce a name the card could not hold.
+ */
+const val BOX_NAME_FIELD_LABEL: String = "Cómo se llama"
+const val BOX_NAME_SAVE_ACTION: String = "Guardar el nombre"
+const val BOX_EYEBROW: String = "Tu caja"
+const val BOX_CREATE_ACTION: String = "Crear"
+
+/** Stays, because from Coins it is the only way to grow a box (ADR 0021 §11). */
+const val BOX_ADD_TO_EXISTING: String = "O añádelas a una que ya tienes:"
+
+fun boxDialogHeading(count: Int): String = "Agrupar ${plural(count, "moneda", "monedas")}"
+
+/** The per-coin control of an open selection. */
+fun pieceSelectionToggleLabel(picked: Boolean): String = if (picked) "Elegida" else "Elegir"
+
+fun namePickedBoxLabel(count: Int): String = "Nombrar la caja · $count"
+
+/**
+ * The two forms of the grouping button (ADR 0021 §11).
+ *
+ * The count rides in the label so **the cost is written on it before it is pressed**: seeding
+ * unconditionally offered «Agrupar estas 191» — the whole collection — and what the collector needs
+ * to see is that the filter wants narrowing first.
+ */
+fun groupPiecesLabel(seeded: Boolean, shown: Int): String =
+    if (seeded) "Agrupar estas $shown" else "Agrupar piezas"
+
+/** Which side the work starts from, said once and only while the mode is open. */
+fun selectionHintLabel(seeded: Boolean, shown: Int): String =
+    if (seeded) {
+        "Vienen elegidas las $shown que enseñaba el filtro. Quita las que no."
+    } else {
+        "Toca «Elegir» en cada moneda que quieras."
+    }

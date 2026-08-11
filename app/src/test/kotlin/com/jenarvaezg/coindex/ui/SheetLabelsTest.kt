@@ -140,4 +140,53 @@ class SheetLabelsTest {
             sheetExportFailure(SharedSheet.PIECES, "   "),
         )
     }
+
+    /**
+     * The two things a downloaded file is announced by say the same word (#285).
+     *
+     * The snackbar is allowed to be short only because the notification names the file, so the two
+     * are one event on two surfaces: «Descargado» has to be the same word in both, and the file name
+     * has to be the notification's and not the snackbar's.
+     */
+    @Test
+    fun `the notification and the snackbar say Descargado with one word`() {
+        assertEquals(DOWNLOAD_NOTIFICATION_TITLE, downloadMessage(38, 38))
+        assertEquals("Descargas · coindex-venezuela.png", downloadNotificationText("coindex-venezuela.png"))
+    }
+
+    /** Where a sheet came from, said the same way whether the source is a catalog or the collection. */
+    @Test
+    fun `an exported sheet names its source`() {
+        assertEquals("Fuente: Numista", sheetSourceLabel("Numista"))
+        assertEquals("Fuente: tu colección en Numista", sheetSourceLabel(PIECES_SHEET_SOURCE))
+    }
+
+    /**
+     * The one claim a sheet of pieces must not make.
+     *
+     * Nobody curated a sequence there, and the PNG outlives the app to say otherwise: the masthead is
+     * «COLECCIÓN» where a plate's is «CATÁLOGO CURADO» (ADR 0021 §1).
+     */
+    @Test
+    fun `a sheet of pieces never calls itself a curated catalog`() {
+        assertEquals("COINDEX · CATÁLOGO CURADO", PLATE_SHEET_MASTHEAD)
+        assertEquals("COINDEX · COLECCIÓN", PIECES_SHEET_MASTHEAD)
+    }
+
+    /**
+     * Each sheet downloads under its own noun, and the pair of sentences is written once.
+     *
+     * Both nouns are feminine, which is what lets one pair serve both — the same fact that lets
+     * [sheetExportMessage] be one sentence (#219).
+     */
+    @Test
+    fun `each sheet downloads under its own noun`() {
+        assertEquals("Descargar lámina", sheetDownloadLabel(SharedSheet.PLATE, exporting = false))
+        assertEquals(
+            "Preparando la lámina…",
+            sheetDownloadLabel(SharedSheet.PLATE, exporting = true),
+        )
+        assertEquals("Descargar hoja", sheetDownloadLabel(SharedSheet.PIECES, exporting = false))
+        assertEquals("Preparando la hoja…", sheetDownloadLabel(SharedSheet.PIECES, exporting = true))
+    }
 }

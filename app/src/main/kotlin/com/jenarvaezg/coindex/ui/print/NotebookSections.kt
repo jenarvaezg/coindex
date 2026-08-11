@@ -179,10 +179,8 @@ private fun unclaimedSection(
 ): PrintSection? {
     if (unclaimed.isEmpty()) return null
     return PrintSection(
-        // Not «COLECCIÓN», which is the eyebrow of a page that is one: this is the page of the coins
-        // that are in none, and the header is where that is said once instead of cell by cell.
-        eyebrow = "COINDEX · SIN COLECCIÓN",
-        title = "Sin colección",
+        eyebrow = UNCLAIMED_SECTION_EYEBROW,
+        title = UNCLAIMED_SECTION_TITLE,
         subtitle = null,
         // No «País»: a page that spans twenty of them has none to name, and the countries are the
         // order the coins are already in.

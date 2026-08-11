@@ -252,10 +252,18 @@ tests de copy ([#342](https://github.com/jenarvaezg/coindex/issues/342))—, as�
   imprime**. Donde una pantalla se visita una vez, un párrafo cuesta una vez; donde una cadena se
   imprime por fila, por casilla o por tarjeta, no hay párrafo que valga.
 - **La pantalla puede decir menos que el papel cuando la pantalla tiene forma y el papel no.**
-- **Una cadena, un dueño**: toda copia visible vive en los doce ficheros de copy, sin exenciones,
-  y lo defiende `CopyLivesInOnePlaceTest`. El listón, en cambio, **no es un test**: lo defiende la
+- **Una cadena, un dueño**: toda copia visible vive en los ficheros de copy —quince, no los doce que
+  contó el ADR 0026 §6: la mudanza del bloque 11 le dio dueño a lo que no lo tenía—, sin exenciones. Ajustes
+  y el alta también: la exención de la regla de frecuencia dice **cuánto texto vale, no dónde se
+  escribe**. Lo que lo defiende es `CopyLivesInOnePlaceTest`, y defiende exactamente esto: **ningún
+  literal con prosa llega a una ranura visible** de `ui/`. No lleva lista blanca de ficheros —un
+  fichero de copy no tiene ranuras visibles, así que no necesita permiso— y **no cuenta nada**: una
+  parrafada nueva dentro de `Labels.kt` entra verde, y una cadena que llega a la pantalla por un
+  `val` en vez de por una ranura también. El listón, por su parte, **no es un test**: lo defiende la
   revisión con la medida del AVD delante, y si sale por encima de 25 se ajusta el listón con la
   medida delante, no la medida al listón.
+- **No hay tema oscuro** y lo fija `SinglePaletteTest`, que además guarda los dos suelos de
+  contraste de la paleta sobre el papel: `muted` ≥ 4,50 (texto) y `hairline` ≥ 3,00 (no textual).
 - **El presupuesto de llamadas desaparece de la interfaz entera**, campo `Techo de llamadas al
   mes` incluido: el techo pasa a ser un valor interno.
 

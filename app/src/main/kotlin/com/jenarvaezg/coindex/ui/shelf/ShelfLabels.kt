@@ -5,6 +5,86 @@ import com.jenarvaezg.coindex.ui.plural
 const val SEARCH_PLACEHOLDER: String = "Buscar"
 const val SHELF_ACTION_SEPARATOR: String = " · "
 
+/**
+ * The chip that means «no filter on this facet», in one word across the ten of them (ADR 0026 §5).
+ *
+ * Ten chips said six different words — `Todos`, `Todas`, `Todo`, `Cualquiera`, `Cualquier año`, `Da
+ * igual` — because each one was written next to the facet it belonged to and agreed with **that
+ * facet's** noun. Read as a shelf they are six ways of saying nothing is narrowed, and a collector
+ * scanning for the way back to everything had to read six labels to find the same button.
+ *
+ * `Cualquiera` and not `Todos`: it agrees with nothing in particular, which is exactly what a chip
+ * standing in for an absent filter has to do, and it is the only one of the six that says «pick from
+ * all of them» rather than «all of them at once» — the chip does not select every country, it stops
+ * selecting by country.
+ */
+const val ANY_FILTER: String = "Cualquiera"
+
+/**
+ * What the facets are called, and they are called the same thing on both shelves.
+ *
+ * Collections and Coins are two hierarchies of one notebook (ADR 0021 §1), and a facet that filters
+ * by país is «País» on both: one string is what stops the pair from drifting into «Emisor» on one
+ * side. What differs between the shelves is which facets each one has, never their names.
+ */
+const val AXIS_FACET: String = "Eje"
+const val SORT_FACET: String = "Orden"
+const val COUNTRY_FACET: String = "País"
+const val WEIGHT_FACET: String = "Peso"
+const val YEAR_FACET: String = "Año"
+const val STARTS_IN_FACET: String = "Empieza en"
+const val STATUS_FACET: String = "Estado"
+const val SERIES_FACET: String = "Serie"
+const val CLASS_FACET: String = "Clase"
+const val MEMBERSHIP_FACET: String = "Colección"
+
+/** The way out of a shelf that has hidden everything, offered on the spot on both sides. */
+const val CLEAR_FILTERS_ACTION: String = "Quitar los filtros"
+
+/**
+ * Why nothing is showing, which is three questions and not one.
+ *
+ * Reading the collection off the database takes a frame or two, and «todavía no hay colecciones» in
+ * that gap is a lie about a collection that is on the device already. A shelf that hides everything
+ * is the third case, and it owes the way out on the spot ([CLEAR_FILTERS_ACTION]).
+ */
+fun indexEmptyLabel(loading: Boolean, anyCollections: Boolean): String =
+    if (loading) {
+        "Leyendo tu colección…"
+    } else {
+        emptyShelfLabel("colección", "colecciones", narrowed = anyCollections)
+    }
+
+/** The same on the other side, where there is nothing to read off the database first. */
+fun coinsEmptyLabel(anyCoins: Boolean): String =
+    emptyShelfLabel("moneda", "monedas", narrowed = anyCoins)
+
+/**
+ * One pair of sentences for both shelves, which only Spanish makes possible.
+ *
+ * «Ninguna colección» and «Ninguna moneda» are both feminine singular, and «colecciones» and
+ * «monedas» both feminine plural, so the two nouns drop into one shape — the same accident of gender
+ * that lets [SharedSheet] carry one export sentence for the plate and the hoja. It is a fact about
+ * Spanish and not a guarantee: a masculine grain added here would read «Ninguna tipo», and what
+ * guards against that is this note.
+ */
+private fun emptyShelfLabel(singular: String, plural: String, narrowed: Boolean): String =
+    if (narrowed) {
+        "Ninguna $singular pasa por lo que has puesto."
+    } else {
+        "Todavía no hay $plural. Sincroniza para traer tu colección de Numista."
+    }
+
+/**
+ * Why «recién añadidas» is not «recién compradas».
+ *
+ * Numista's `collected_items` carries no date of any kind, so the order is by row id — «alta en
+ * Numista», not «compra». Said where the order is chosen rather than left to be guessed at from a
+ * surprising result.
+ */
+const val RECENTLY_ADDED_NOTE: String =
+    "Numista no guarda fecha de compra, así que este orden es el del alta en Numista."
+
 fun shelfDisclosure(expanded: Boolean): String = if (expanded) "▾ " else "▸ "
 
 /**

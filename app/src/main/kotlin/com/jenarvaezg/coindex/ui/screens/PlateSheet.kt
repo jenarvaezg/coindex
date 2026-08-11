@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.isSpecified
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.PLATE_SHEET_MASTHEAD
+import com.jenarvaezg.coindex.ui.sheetSourceLabel
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.StampedRatio
@@ -129,7 +131,7 @@ fun PlateSheet(
             }
         }
         Text(
-            "Fuente: ${plate.source}",
+            sheetSourceLabel(plate.source),
             style = MaterialTheme.typography.labelSmall.scaledBy(layout.headerScale),
             color = Paper.muted,
         )
@@ -151,7 +153,7 @@ private fun SheetHeading(plate: PlateSubject, layout: SheetLayout) {
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER * scale * 0.5f),
     ) {
         Text(
-            "COINDEX · CATÁLOGO CURADO",
+            PLATE_SHEET_MASTHEAD,
             style = MaterialTheme.typography.labelMedium.scaledBy(scale * 1.3f),
             color = Paper.rust,
         )

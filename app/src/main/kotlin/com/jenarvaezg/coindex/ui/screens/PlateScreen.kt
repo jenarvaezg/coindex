@@ -39,9 +39,13 @@ import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
+import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.PlateSubject
+import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
+import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
+import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -58,6 +62,7 @@ import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.plateSheetTally
+import com.jenarvaezg.coindex.ui.sheetDownloadLabel
 import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
@@ -187,7 +192,7 @@ private fun PlateGrid(
         ) {
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Eyebrow("Catálogo curado")
+                    Eyebrow(CURATED_CATALOG_EYEBROW)
                     PlateHeading(
                         title = plate.title,
                         ratio = plate.ratio,
@@ -211,22 +216,18 @@ private fun PlateGrid(
                     // Descargar is what this screen is for (#285); compartir stays beside it as the
                     // secondary action, because Jose still hands the PNG to another app.
                     PrimaryAction(
-                        text = if (exporting) {
-                            "Preparando la lámina…"
-                        } else {
-                            "Descargar lámina"
-                        },
+                        text = sheetDownloadLabel(SharedSheet.PLATE, exporting),
                         onClick = onDownload,
                         enabled = !exporting,
                     )
                     CardAction(
-                        text = "Compartir",
+                        text = SHARE_ACTION,
                         onClick = onShare,
                         enabled = !exporting,
                         icon = { ShareGlyph(color = Paper.ink) },
                     )
                     ExternalLink(
-                        text = "Fuente en Numista",
+                        text = NUMISTA_SOURCE_LINK,
                         onClick = { onOpenSource(plate.source) },
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -421,7 +422,7 @@ private fun UnavailablePlate(reason: PlateUnavailable, modifier: Modifier = Modi
         modifier = modifier.fillMaxSize().padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Eyebrow("Lámina no disponible")
+        Eyebrow(PLATE_UNAVAILABLE_EYEBROW)
         Text(explanation, style = MaterialTheme.typography.bodyLarge)
     }
 }

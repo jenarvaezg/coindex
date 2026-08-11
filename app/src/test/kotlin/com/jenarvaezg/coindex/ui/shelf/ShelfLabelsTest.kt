@@ -98,4 +98,43 @@ class ShelfLabelsTest {
         assertEquals("191 tipos", coinsTally(191, 191))
         assertEquals("6 de 191 tipos", coinsTally(6, 191))
     }
+
+    /**
+     * Three questions and not one: reading the collection off the database takes a frame or two, and
+     * «todavía no hay colecciones» in that gap is a lie about a collection already on the device.
+     */
+    @Test
+    fun `an empty index says which of the three cases it is`() {
+        assertEquals(
+            "Leyendo tu colección…",
+            indexEmptyLabel(loading = true, anyCollections = false),
+        )
+        assertEquals(
+            "Ninguna colección pasa por lo que has puesto.",
+            indexEmptyLabel(loading = false, anyCollections = true),
+        )
+        assertEquals(
+            "Todavía no hay colecciones. Sincroniza para traer tu colección de Numista.",
+            indexEmptyLabel(loading = false, anyCollections = false),
+        )
+    }
+
+    /** The other side has nothing to read off the database first, so it has two cases and not three. */
+    @Test
+    fun `an empty Coins tells a filter from an empty collection`() {
+        assertEquals("Ninguna moneda pasa por lo que has puesto.", coinsEmptyLabel(anyCoins = true))
+        assertEquals(
+            "Todavía no hay monedas. Sincroniza para traer tu colección de Numista.",
+            coinsEmptyLabel(anyCoins = false),
+        )
+    }
+
+    /** Loading wins over the filter: a shelf cannot have hidden what has not been read yet. */
+    @Test
+    fun `the loading gap is never reported as a filter`() {
+        assertEquals(
+            indexEmptyLabel(loading = true, anyCollections = false),
+            indexEmptyLabel(loading = true, anyCollections = true),
+        )
+    }
 }

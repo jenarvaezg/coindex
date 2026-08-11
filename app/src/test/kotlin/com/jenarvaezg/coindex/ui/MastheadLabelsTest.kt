@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import java.time.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class MastheadLabelsTest {
     @Test
@@ -74,5 +75,27 @@ class MastheadLabelsTest {
     fun `the installed version rides along, and is omitted when unknown`() {
         assertEquals("Ajustes · v0.3.1", mastheadSubtitle("Ajustes", "0.3.1"))
         assertEquals("Ajustes", mastheadSubtitle("Ajustes", ""))
+    }
+
+    /**
+     * Each cell of the hierarchy bar names its grain with the count of it.
+     *
+     * The count is what the destination is **made of** and not how many things are inside it: cards,
+     * Numista types owned, and grams. «Las cifras» counts weight and never money — an amount in a
+     * permanent bar is a pocket ticker that puts the estate in front of anyone glancing at the phone
+     * (#316) — so this label is handed a count and has no way to be given an amount.
+     */
+    @Test
+    fun `the three cells count what their destination is made of`() {
+        assertEquals("Colecciones · 58", collectionsCellLabel(58))
+        assertEquals("Monedas · 191", coinsCellLabel(191))
+        assertEquals("Las cifras · 4,2 kg", figuresCellLabel("4,2 kg"))
+    }
+
+    /** Stopping instead of drawing a wrong plate, said in those terms because nobody can fix the assets. */
+    @Test
+    fun `a fatal start says it stopped rather than that it lost anything`() {
+        assertEquals("No se pudo arrancar", FATAL_HEADING)
+        assertTrue("lámina incorrecta" in FATAL_EXPLANATION)
     }
 }

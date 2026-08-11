@@ -52,6 +52,33 @@ fun printedDiameterLabel(millimetres: Float?): String? {
  * It outlives the app, which is why it is on the paper at all: a list that does not say where it came
  * from cannot be checked later either.
  */
+/**
+ * The page of the coins that are in no collection.
+ *
+ * The eyebrow is not «COLECCIÓN», which is what a page that *is* one says: this is the page of the
+ * ones that are in none, and the header is where that is said once instead of cell by cell.
+ */
+const val UNCLAIMED_SECTION_EYEBROW: String = "COINDEX · SIN COLECCIÓN"
+const val UNCLAIMED_SECTION_TITLE: String = "Sin colección"
+
+/**
+ * Which sheet of a section this folio is, printed only where there is a break to explain.
+ *
+ * «PÁGINA 1 DE 1» is noise on paper, so the caller asks for this only when the section spans more
+ * than one — the sentence exists because a plate cut across two folios is otherwise indistinguishable
+ * from two plates.
+ */
+fun printedPageOfSection(number: Int, pagesInSection: Int): String =
+    "PÁGINA $number DE $pagesInSection"
+
+/**
+ * The legend under the ruler, which is the promise the ruler makes.
+ *
+ * It says the scale as well as the length, because a bar of millimetres on a page that turned out
+ * not to be 1:1 is worse than no bar: the collector would measure a coin against it.
+ */
+fun printedRulerLabel(millimetres: Int): String = "$millimetres MM · ESCALA 1:1"
+
 fun notebookSourceLabel(sources: List<String>): String {
     val named = sources.distinct()
     return when (named.size) {

@@ -317,6 +317,31 @@ has tests.**
   first half passes today, the second does not — which is how a test that declares an unkept promise
   should be born.
 
+> **Amended on 2026-08-11 (§6, [#342](https://github.com/jenarvaezg/coindex/issues/342)). Both tests
+> came out different from what was imagined here, and in opposite directions.**
+>
+> **`SinglePaletteTest` was not born half red: it was born green.** Block 1 closed
+> `android:forceDarkAllowed` before the test was written, so the unkept promise it was meant to
+> declare was already kept, and what it is is a **regression guardrail** — which is worth having and
+> is not what this section described. It did get born half red in the end, but for something else:
+> [#349](https://github.com/jenarvaezg/coindex/issues/349) measured `Paper.muted` at 4,44 against the
+> paper and `Paper.hairline` at 2,28, and those two floors went into this test as its second half.
+>
+> **`CopyLivesInOnePlaceTest` found more than the 51 sites in 13 files counted here: 117 in 17.**
+> The count above was taken with a line-based grep, and copy does not respect lines — `Text(` with its
+> string on the next line, and `text = if (x) "Ocultar" else "Mostrar"` with two strings behind a
+> conditional, are the two shapes it could not see. The test reads the whole argument instead, so the
+> number it gives is the real one.
+>
+> Two things the list of slots had to learn, and neither is an exemption. `Text(` is matched **on a
+> word boundary**, because `setContentText(` is a notification and not a Compose slot. And `Eyebrow(`
+> and `Facet(` are on the list, because their parameters already are — `fun Eyebrow(text: String)`,
+> `fun Facet(title: String)` — and an album that wraps `Text` in a composable of its own moved the
+> slot, not the copy. **The list only grows**; what §6 forbids is taking something off it. A literal
+> whose only letters are inside an interpolation is not prose and not an exemption either: what is
+> left of `"$label · $it"` once the interpolations go is a middle dot, and a middle dot has no wording
+> to diverge — while `"Colecciones · $collections"` has one, and went.
+
 Said plainly: a new wall of prose written correctly *inside* `Labels.kt` passes green. The test
 defends that prose is **visible in one place**, not the bar. The declared registry that would have
 made the bar an `assertEquals` was chosen and then dropped: it meant moving 110 strings and rewriting

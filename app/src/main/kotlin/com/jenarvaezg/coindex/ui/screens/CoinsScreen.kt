@@ -72,15 +72,25 @@ import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.objectClassChip
+import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
+import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
+import com.jenarvaezg.coindex.ui.shelf.CLASS_FACET
+import com.jenarvaezg.coindex.ui.shelf.CLEAR_FILTERS_ACTION
+import com.jenarvaezg.coindex.ui.shelf.COUNTRY_FACET
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.shelf.CoinSort
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.GramBand
+import com.jenarvaezg.coindex.ui.shelf.MEMBERSHIP_FACET
 import com.jenarvaezg.coindex.ui.shelf.Membership
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
+import com.jenarvaezg.coindex.ui.shelf.SORT_FACET
+import com.jenarvaezg.coindex.ui.shelf.WEIGHT_FACET
+import com.jenarvaezg.coindex.ui.shelf.YEAR_FACET
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.coinAlbumFootnote
 import com.jenarvaezg.coindex.ui.shelf.coinRows
+import com.jenarvaezg.coindex.ui.shelf.coinsEmptyLabel
 import com.jenarvaezg.coindex.ui.shelf.coinsFacetCounts
 import com.jenarvaezg.coindex.ui.shelf.coinsShelfSummary
 import com.jenarvaezg.coindex.ui.shelf.coinsTally
@@ -340,7 +350,7 @@ private fun CoinsFacets(
 ) {
     val counts = coinsFacetCounts(rows, shelf, query)
 
-    Facet("Eje") {
+    Facet(AXIS_FACET) {
         NotebookAxis.entries.forEach { axis ->
             FilterChip(
                 label = axis.label,
@@ -350,7 +360,7 @@ private fun CoinsFacets(
             )
         }
     }
-    Facet("Orden") {
+    Facet(SORT_FACET) {
         CoinSort.entries.forEach { sort ->
             FilterChip(
                 label = sort.label,
@@ -360,9 +370,9 @@ private fun CoinsFacets(
             )
         }
     }
-    Facet("País") {
+    Facet(COUNTRY_FACET) {
         FilterChip(
-            label = "Todos",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.issuer == null,
             onClick = { onNarrow(shelf.copy(issuer = null)) },
@@ -376,9 +386,9 @@ private fun CoinsFacets(
             )
         }
     }
-    Facet("Peso") {
+    Facet(WEIGHT_FACET) {
         FilterChip(
-            label = "Cualquiera",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.weight == null,
             onClick = { onNarrow(shelf.copy(weight = null)) },
@@ -392,9 +402,9 @@ private fun CoinsFacets(
             )
         }
     }
-    Facet("Año") {
+    Facet(YEAR_FACET) {
         FilterChip(
-            label = "Cualquiera",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.year == null,
             onClick = { onNarrow(shelf.copy(year = null)) },
@@ -410,9 +420,9 @@ private fun CoinsFacets(
             )
         }
     }
-    Facet("Clase") {
+    Facet(CLASS_FACET) {
         FilterChip(
-            label = "Todo",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.objectClass == null,
             onClick = { onNarrow(shelf.copy(objectClass = null)) },
@@ -426,9 +436,9 @@ private fun CoinsFacets(
             )
         }
     }
-    Facet("Colección") {
+    Facet(MEMBERSHIP_FACET) {
         FilterChip(
-            label = "Da igual",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.membership == null,
             onClick = { onNarrow(shelf.copy(membership = null)) },
@@ -574,17 +584,13 @@ private fun CoinFicha(
 private fun EmptyCoins(everything: Boolean, onClear: () -> Unit) {
     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
         Text(
-            if (everything) {
-                "Todavía no hay monedas. Sincroniza para traer tu colección de Numista."
-            } else {
-                "Ninguna moneda pasa por lo que has puesto."
-            },
+            coinsEmptyLabel(anyCoins = !everything),
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
         )
         if (!everything) {
             CardAction(
-                text = "Quitar los filtros",
+                text = CLEAR_FILTERS_ACTION,
                 onClick = onClear,
                 modifier = Modifier.padding(top = 10.dp),
             )

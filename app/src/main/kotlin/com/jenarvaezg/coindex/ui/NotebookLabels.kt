@@ -15,6 +15,25 @@ fun notebookExportLabel(): String = "Exportar láminas"
 /** The temporary label while the notebook is being rendered. */
 const val NOTEBOOK_EXPORTING_LABEL = "Exportando…"
 
+const val NOTEBOOK_EXPORTING_EYEBROW: String = "Exportando el cuaderno"
+
+/**
+ * Why the wait is safe, said next to the «Cancelar» that would end it.
+ *
+ * The file is only written once the last page is drawn, so cancelling at page forty leaves no half
+ * a notebook anywhere — which is the one thing a collector needs to know before pressing it.
+ */
+const val NOTEBOOK_EXPORT_PATIENCE: String =
+    "Se comparte cuando esté entero. Puedes cancelar sin perder nada."
+
+/** An export asked for with nothing on the shelf to print. */
+const val NOTHING_TO_PRINT_MESSAGE: String = "No hay ninguna colección que llevar al papel."
+
+const val NOTEBOOK_OPTIONS_EYEBROW: String = "Cómo se exporta"
+
+/** What the cost above it is counted over, which is the index and not the whole collection (#228). */
+const val NOTEBOOK_COST_SCOPE: String = "Es lo que hay en el índice ahora mismo, con los filtros puestos."
+
 /**
  * What the export sheet is about to cost, recounted on every tap (#228).
  *

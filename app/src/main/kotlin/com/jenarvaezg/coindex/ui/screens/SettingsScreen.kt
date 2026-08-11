@@ -23,13 +23,22 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.prices.ValuationStatus
+import com.jenarvaezg.coindex.ui.API_KEY_FIELD_LABEL
+import com.jenarvaezg.coindex.ui.CREDENTIALS_EXPLANATION
+import com.jenarvaezg.coindex.ui.NOTICES_LABEL
+import com.jenarvaezg.coindex.ui.PHOTO_CACHE_HEADING
 import com.jenarvaezg.coindex.ui.SETTINGS_CREDENTIALS_HEADING
+import com.jenarvaezg.coindex.ui.SETTINGS_SAVE_ACTION
+import com.jenarvaezg.coindex.ui.SIGN_OUT_ACTION
+import com.jenarvaezg.coindex.ui.SIGN_OUT_EXPLANATION
 import com.jenarvaezg.coindex.ui.SettingsValues
+import com.jenarvaezg.coindex.ui.USER_ID_FIELD_LABEL
+import com.jenarvaezg.coindex.ui.VALUATION_HEADING
+import com.jenarvaezg.coindex.ui.apiKeyRevealLabel
 import com.jenarvaezg.coindex.ui.photoCacheLabel
 import com.jenarvaezg.coindex.ui.valuationLabel
 import com.jenarvaezg.coindex.ui.syncActionLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -68,11 +77,11 @@ fun SettingsScreen(
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Eyebrow("Ajustes")
+        // No eyebrow: the masthead of this screen already says «Ajustes», and printing it twice
+        // one line apart is the furniture §5 prices.
         Text(SETTINGS_CREDENTIALS_HEADING, style = MaterialTheme.typography.headlineMedium)
         Text(
-            "Se guardan cifradas en este teléfono y nunca salen de él. Si Numista rechaza tus " +
-                "sincronizaciones, la API key es lo primero que hay que revisar aquí.",
+            CREDENTIALS_EXPLANATION,
             style = MaterialTheme.typography.bodyMedium,
             color = Paper.muted,
         )
@@ -85,7 +94,7 @@ fun SettingsScreen(
         OutlinedTextField(
             value = apiKey,
             onValueChange = { apiKey = it },
-            label = { Text("API key de Numista") },
+            label = { Text(API_KEY_FIELD_LABEL) },
             singleLine = true,
             visualTransformation = if (revealKey) {
                 VisualTransformation.None
@@ -95,13 +104,13 @@ fun SettingsScreen(
             modifier = Modifier.fillMaxWidth(),
         )
         CardAction(
-            text = if (revealKey) "Ocultar la API key" else "Mostrar la API key",
+            text = apiKeyRevealLabel(revealKey),
             onClick = { revealKey = !revealKey },
         )
         OutlinedTextField(
             value = userId,
             onValueChange = { userId = it.filter(Char::isDigit) },
-            label = { Text("Identificador de usuario") },
+            label = { Text(USER_ID_FIELD_LABEL) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
@@ -110,7 +119,7 @@ fun SettingsScreen(
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
         PrimaryAction(
-            text = "Guardar ajustes",
+            text = SETTINGS_SAVE_ACTION,
             onClick = { onSave(apiKey, userId) },
         )
 
@@ -119,7 +128,7 @@ fun SettingsScreen(
         // it is here because «faltan 320 y están cayendo» and «faltan 320 porque estás con datos»
         // look identical from the outside and are not.
         FieldCard(modifier = Modifier.fillMaxWidth()) {
-            Text("Fotos del catálogo", style = MaterialTheme.typography.titleMedium)
+            Text(PHOTO_CACHE_HEADING, style = MaterialTheme.typography.titleMedium)
             Text(
                 photoCacheLabel(photoCache),
                 style = MaterialTheme.typography.bodyMedium,
@@ -132,7 +141,7 @@ fun SettingsScreen(
         // «Las cifras» with no money section looks the same whether the prices are on their way or
         // the month's allowance is gone, and only one of the two is worth waiting for.
         FieldCard(modifier = Modifier.fillMaxWidth()) {
-            Text("Precios de catálogo", style = MaterialTheme.typography.titleMedium)
+            Text(VALUATION_HEADING, style = MaterialTheme.typography.titleMedium)
             Text(
                 valuationLabel(valuation),
                 style = MaterialTheme.typography.bodyMedium,
@@ -142,17 +151,17 @@ fun SettingsScreen(
         }
 
         FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
-            Text("Cerrar sesión", style = MaterialTheme.typography.titleMedium)
+            // No title: the word is the button, and a card whose heading repeats its only
+            // control says it twice (§5).
             Text(
-                "Borra la API key y el identificador de este teléfono y vuelve al alta. Las " +
-                    "piezas ya sincronizadas se quedan donde están.",
+                SIGN_OUT_EXPLANATION,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Paper.muted,
-                modifier = Modifier.padding(top = 4.dp, bottom = 10.dp),
+                modifier = Modifier.padding(bottom = 10.dp),
             )
-            CardAction(text = "Cerrar sesión", onClick = onSignOut)
+            CardAction(text = SIGN_OUT_ACTION, onClick = onSignOut)
         }
 
-        CardAction(text = "Avisos y licencias", onClick = onOpenNotices)
+        CardAction(text = NOTICES_LABEL, onClick = onOpenNotices)
     }
 }

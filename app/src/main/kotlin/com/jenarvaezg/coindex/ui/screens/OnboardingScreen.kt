@@ -20,7 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.ui.ONBOARDING_CREDENTIALS_EXPLANATION
+import com.jenarvaezg.coindex.ui.API_KEY_FIELD_LABEL
+import com.jenarvaezg.coindex.ui.CREDENTIALS_EXPLANATION
+import com.jenarvaezg.coindex.ui.ONBOARDING_CREDENTIALS_SOURCE
+import com.jenarvaezg.coindex.ui.ONBOARDING_EYEBROW
+import com.jenarvaezg.coindex.ui.ONBOARDING_SAVE_ACTION
+import com.jenarvaezg.coindex.ui.ONBOARDING_TITLE
+import com.jenarvaezg.coindex.ui.USER_ID_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -53,24 +59,24 @@ fun OnboardingScreen(
             .padding(horizontal = 20.dp, vertical = 28.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Eyebrow("Cuaderno de colección")
-        Text("Coindex", style = MaterialTheme.typography.displayLarge)
+        Eyebrow(ONBOARDING_EYEBROW)
+        Text(ONBOARDING_TITLE, style = MaterialTheme.typography.displayLarge)
         Text(
-            ONBOARDING_CREDENTIALS_EXPLANATION,
+            CREDENTIALS_EXPLANATION,
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
         )
         OutlinedTextField(
             value = apiKey,
             onValueChange = { apiKey = it },
-            label = { Text("API key de Numista") },
+            label = { Text(API_KEY_FIELD_LABEL) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = userId,
             onValueChange = { userId = it.filter(Char::isDigit) },
-            label = { Text("Identificador de usuario") },
+            label = { Text(USER_ID_FIELD_LABEL) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
@@ -81,13 +87,12 @@ fun OnboardingScreen(
         // Pressing it with an empty form could only produce the complaint the form can already
         // see coming, so it waits until there is something to save.
         PrimaryAction(
-            text = "Guardar y empezar",
+            text = ONBOARDING_SAVE_ACTION,
             onClick = { onSave(apiKey, userId) },
             enabled = apiKey.isNotBlank() && userId.isNotBlank(),
         )
         Text(
-            "La API key se obtiene en numista.com › Mi perfil › API. El identificador de " +
-                "usuario aparece en la URL de tu perfil.",
+            ONBOARDING_CREDENTIALS_SOURCE,
             style = MaterialTheme.typography.bodyMedium,
             color = Paper.muted,
         )
