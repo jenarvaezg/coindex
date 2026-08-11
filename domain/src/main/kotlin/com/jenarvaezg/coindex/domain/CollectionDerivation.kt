@@ -115,7 +115,12 @@ fun deriveCollection(
             unclassifiedGrouped.record(item, UnclassifiedReason.MissingTypeMetadata)
             continue
         }
-        val numistaFamily = metadata.family?.let(::normalizeFamily)
+        // A family made only of articles is the beginning of a name and not a name, so it is read
+        // as the absent field it is (#404). No reason of its own: «sin familia en Numista» is what
+        // the residue will say, and for a «The» that is the truth — whereas a card called «The»
+        // was not. A curated file still outranks it, as it does everywhere else, because
+        // [curatedFamily] answers precisely when Numista has nothing to give.
+        val numistaFamily = metadata.family?.let(::normalizeFamily)?.takeUnless(::isPlaceholderFamily)
         val candidateCatalogs = catalogsByType[item.typeId].orEmpty()
         val issueQualifiedClaim = candidateCatalogs.any { candidate ->
             candidate.members.any { member ->

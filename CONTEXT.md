@@ -10,6 +10,17 @@ The exact catalog family under which Numista groups related coin types. A family
 multiple physical variants and is not necessarily a curated series.
 _Avoid_: Series
 
+**Placeholder family**:
+A Numista family made **entirely** of articles and the like — the «The» that N#596807 declares —
+which is the start of a name and not a name. Since #404 it is read as the absent field it is: the
+piece joins the unclassified residue as one with no family at all, instead of heading a card called
+«The». It is not a judgement about ugly names: every word must be a function word, an initialism is
+always a name, and a curated file or grouping outranks it as it outranks any other silence from
+Numista. Unlike an **unpublished type**, its page can be perfectly live — this one was published
+between 4 and 11 August 2026 with the field still cut — so the repair is an edit upstream plus the
+collector's gesture of asking for the ficha again.
+_Avoid_: Unpublished type, family display alias, Numista error
+
 **Physical variant**:
 A distinct form within a Numista family, identified by its normalized weight, finish and
 dominant metal. For example, one-ounce bullion, two-ounce bullion, and one-ounce coloured
