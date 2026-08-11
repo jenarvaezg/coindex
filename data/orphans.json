@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-06",
+  "updated_at": "2026-08-11",
   "orphans": [
     {
       "numista_type_id": 1933,
@@ -125,6 +125,14 @@
     {
       "numista_type_id": 596646,
       "reason": "5 euros de plata de 2026, «Campeones del Mundo» del Mundial de la FIFA 2026 (13,5 g, .925, 33 mm, ceca M, tirada 50.000): existe el programa y no existe la lámina. La FNMT vende cuatro piezas de la «Copa Mundial FIFA 2026» y las cuatro son de denominación distinta —10 € de plata de 27 g y 100 € y 400 € de oro, todas de emisión 2025, más este 5 € de 2026 (https://tienda.fnmt.es/fnmttv/fnmt/es/Productos/Monedas/CAMPEONES-DEL-MUNDIAL-FIFA-2026/p/92967070)—, y Numista tiene las cuatro fichas y ninguna más: N#463575, N#463576, N#471160 y esta. Ninguna denominación repite, así que ninguna forma secuencia; es lo contrario del 250.º aniversario de la Independencia de EE. UU., donde las ocho de 10 € sí la formaban y las de 50 € y 200 € se quedaron fuera. Se consideró un fichero de programa del ADR 0022 y se descartó por lo mismo que en el Dune de Tuvalu: un programa sólo se ve en la lámina de un catálogo que toque sus tipos, y aquí ninguno lo hace. Tampoco cabe en la denominación: los 5 € de plata de 13,5 g de España son muchas subseries temáticas distintas y una de ellas, las capitales de provincia, ya es lámina propia. La ficha está publicada —sale al enumerar el emisor por peso y al buscar «Spain champion»—, así que el id es verificado."
+    },
+    {
+      "numista_type_id": 192181,
+      "reason": "2 dólares de Niue de 2019, Isabel II, «Lion King» (plata .999, 31,39 g, 39 mm): la licencia de Disney no es una lámina, y el padre no la persigue. Palabras de Jose el 11 de agosto de 2026, con la forma sobre la mesa: no persigue Disney. Medido en Numista enumerando la serie entera (https://en.numista.com/catalogue/series.php?id=3038): la serie «Disney» son 315 tipos de cuatro emisores —Cook, Salomón, Niue y Tuvalu— y ya tiene fichas de 2026, así que no cierra por ningún extremo y no hay denominador que reclamar. La línea de Niue por sí sola son unos 190 tipos de 2014 a 2026, un personaje por ficha y sin calendario. Su propia emisión de 2019 tampoco forma secuencia: la única hermana es N#206292, 250 dólares de oro .9999 de 31,1 g, otra denominación y otro metal, así que no habría dos filas de la misma variante física. Lo que encajaría sería una agrupación de los 2 dólares de onza de plata, y su frontera sería sólo nuestra: además no ganaría la familia, porque «Disney» es familia cruda declarada y no técnica (CollectionDerivation.kt:152-157, medido al cerrar el #353). La ficha está publicada y su serie está mal puesta —dice «Disney 100 Years of Wonder», la campaña del centenario de 2023—, corrección pedida a Numista en el #363: el veredicto no depende de eso, porque es el mismo con una serie o con la otra."
+    },
+    {
+      "numista_type_id": 484131,
+      "reason": "2 dólares de Niue de 2025, Carlos III, «Scrooge McDuck» (plata .999, 31,1 g, 39 mm): la otra Disney de la colección, y por lo mismo. Medido sobre la captura privada de la colección del padre: de sus 229 filas, éstas dos son las únicas de Disney, y no tienen entre sí más relación que la licencia —el 25.º aniversario del Rey León de 2019 y el pato de 2025—. Pertenece a la misma serie abierta de 315 tipos que N#192181 y le vale su mismo razonamiento; el ADR 0020 pide que una de las dos colecciones persiga la secuencia y ninguna la persigue. No confundir con las fichas de Scrooge McDuck que Numista marca con el tema «75.º aniversario» —N#346344 y N#346607 de 2022, N#433965 de 2024—: la serie que declara esta ficha es «Disney», genérica, y su tema conmemorado está vacío."
     }
   ]
 }
