@@ -103,13 +103,16 @@ fun figuresCellCount(grams: Double?): String =
  * The pass is silent everywhere else — this line exists for the same reason the photographs' does:
  * «faltan y están cayendo» and «faltan porque se acabó el presupuesto» look identical from outside and
  * need different things from the collector (ADR 0028 §6).
+ *
+ * Settled ignores `held`: a spent budget (or sync, or offline) is only news while something is still
+ * missing — otherwise «faltan 0… seguirán el mes que viene» contradicts itself (#421).
  */
 fun valuationLabel(status: ValuationStatus): String {
     if (status.wanted == 0) {
         return "Todavía no hay emisiones que tasar en este teléfono."
     }
-    if (status.settled && status.held == null) {
-        return "Los precios de las ${status.wanted} emisiones de tu colección están en este teléfono."
+    if (status.settled) {
+        return "Los precios de las ${status.wanted} emisiones están al día."
     }
     val head = "Faltan los precios de ${status.missing} de ${status.wanted} emisiones. "
     return head + when (status.held) {
