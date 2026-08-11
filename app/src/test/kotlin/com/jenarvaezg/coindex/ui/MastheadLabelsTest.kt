@@ -77,12 +77,6 @@ class MastheadLabelsTest {
         assertEquals("Inventario de campo · plata bullion", screenTitle("quién-sabe"))
     }
 
-    @Test
-    fun `the installed version rides along, and is omitted when unknown`() {
-        assertEquals("Ajustes · v0.3.1", mastheadSubtitle("Ajustes", "0.3.1"))
-        assertEquals("Ajustes", mastheadSubtitle("Ajustes", ""))
-    }
-
     /**
      * Each cell of the hierarchy bar names its grain with the count of it.
      *

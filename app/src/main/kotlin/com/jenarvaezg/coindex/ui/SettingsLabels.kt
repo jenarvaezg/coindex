@@ -96,6 +96,16 @@ val NOTICES_ATTRIBUTIONS: List<String> = listOf(
     "Tipografías: Bitter y Barlow Condensed — SIL Open Font License 1.1.",
 )
 
+/**
+ * The installed APK, named once on Avisos y licencias (#410).
+ *
+ * The masthead used to carry `· v…` on every interior screen so a sideloaded build could be
+ * identified from a screenshot. That made the version permanent furniture; here it sits with the
+ * licences, which is where an APK version is read when it is needed.
+ */
+fun installedVersionLabel(versionName: String): String =
+    if (versionName.isEmpty()) "Coindex" else "Coindex · v$versionName"
+
 /** The name over the sign-up form, in the notebook's own capitals rather than the masthead's. */
 const val ONBOARDING_TITLE: String = "Coindex"
 const val ONBOARDING_EYEBROW: String = "Cuaderno de colección"

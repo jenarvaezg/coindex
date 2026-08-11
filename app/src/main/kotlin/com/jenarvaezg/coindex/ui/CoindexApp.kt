@@ -216,10 +216,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 // spend the space their die-cut grids just recovered (ADR 0026 §1, §13).
                 if (!Routes.ownsChrome(route)) {
                     Masthead(
-                        subtitle = mastheadSubtitle(
-                            screenTitle(route, subjectName),
-                            state.versionName,
-                        ),
+                        // The installed version lives in Avisos y licencias (#410): printing it on
+                        // every interior masthead was permanent furniture the collector does not need.
+                        subtitle = screenTitle(route, subjectName),
                         onBack = onBack,
                         onOpenSettings = onOpenSettings,
                     )
@@ -466,7 +465,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         )
                     }
                     page(Routes.NOTICES) {
-                        NoticesScreen()
+                        NoticesScreen(versionName = state.versionName)
                     }
                     page(Routes.PLATE) { entry ->
                         val catalogId = entry.arguments?.getString("catalogId").orEmpty()
