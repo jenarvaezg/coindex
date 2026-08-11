@@ -93,12 +93,14 @@ class CoinRowTest {
     /**
      * The bottom bar promises a number and this screen has to be able to keep it (ADR 0021 §1).
      *
-     * The bar cannot afford to build every row on each recomposition, so it counts types directly —
-     * and this is what stops the two answers from drifting apart.
+     * After #424 the bar reads [collectionFigures].types (via [SewnEdgeCounts]), not a parallel
+     * type walk — so the fixture check is the same census [coinRows] draws (#426, #427).
      */
     @Test
     fun `the count the bottom bar prints is the number of rows Coins draws`() {
-        assertEquals(rows.size, ownedTypeCount(ShelfFixtures.state))
+        val figures = collectionFigures(ShelfFixtures.state.items, ShelfFixtures.state.typeMeta)
+
+        assertEquals(figures.types, rows.size)
     }
 
     /**

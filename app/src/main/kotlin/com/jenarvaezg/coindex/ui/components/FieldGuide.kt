@@ -222,26 +222,6 @@ fun BackGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CheckGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier.size(12.dp)) {
-        val stroke = size.minDimension * 0.14f
-        val joint = Offset(size.width * 0.42f, size.height * 0.76f)
-        drawLine(
-            color,
-            Offset(size.width * 0.10f, size.height * 0.48f),
-            joint,
-            strokeWidth = stroke,
-        )
-        drawLine(
-            color,
-            joint,
-            Offset(size.width * 0.90f, size.height * 0.16f),
-            strokeWidth = stroke,
-        )
-    }
-}
-
-@Composable
 private fun ExternalLinkGlyph(color: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
         val stroke = size.minDimension * 0.12f
