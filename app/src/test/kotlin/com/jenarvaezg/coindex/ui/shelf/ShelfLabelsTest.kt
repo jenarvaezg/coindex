@@ -91,6 +91,13 @@ class ShelfLabelsTest {
     }
 
     @Test
+    fun `a year seat says ×N only when more than one piece lands there`() {
+        assertEquals(null, yearAxisQuantityMark(1))
+        assertEquals("×2", yearAxisQuantityMark(2))
+        assertEquals("×12", yearAxisQuantityMark(12))
+    }
+
+    @Test
     fun `the tally says N de M only while something is narrowed`() {
         assertEquals("58 colecciones", indexTally(58, 58))
         assertEquals("5 de 58 colecciones", indexTally(5, 58))
