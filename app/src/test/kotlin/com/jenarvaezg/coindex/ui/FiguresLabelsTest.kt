@@ -189,11 +189,31 @@ class FiguresLabelsTest {
             valuationLabel(falling.copy(held = ValuationRefusal.Syncing))
                 .contains("sincronizado"),
         )
-        assertTrue(
-            valuationLabel(ValuationStatus(wanted = 223, missing = 0))
-                .contains("están en este teléfono"),
+        assertEquals(
+            "Los precios de las 223 emisiones están al día.",
+            valuationLabel(ValuationStatus(wanted = 223, missing = 0)),
         )
         assertTrue(valuationLabel(ValuationStatus()).contains("Todavía no hay emisiones"))
+    }
+
+    /**
+     * Zero missing is done, even when the monthly budget is already spent (#421).
+     *
+     * «Faltan 0… seguirán el mes que viene» promised more work after the work had finished. The
+     * budget is only news while there is still something to bring.
+     */
+    @Test
+    fun `settled prices do not mention a spent budget`() {
+        assertEquals(
+            "Los precios de las 231 emisiones están al día.",
+            valuationLabel(
+                ValuationStatus(
+                    wanted = 231,
+                    missing = 0,
+                    held = ValuationRefusal.BudgetExhausted,
+                ),
+            ),
+        )
     }
 
     /** The origin of a value, because a number with no provenance is one nobody can check (#316). */
