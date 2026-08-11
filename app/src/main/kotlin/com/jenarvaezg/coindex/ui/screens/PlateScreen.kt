@@ -47,6 +47,7 @@ import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
@@ -105,7 +106,7 @@ fun PlateScreen(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
-    onMessage: (String) -> Unit,
+    onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (result) {
@@ -133,7 +134,7 @@ private fun AvailablePlate(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
-    onMessage: (String) -> Unit,
+    onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Same conversation as the index (#401): Descargar / Compartir open the options card; the
@@ -172,7 +173,7 @@ private fun AvailablePlate(
                     fun begin(destination: ExportDestination) {
                         val pages = about.pages
                         if (pages.isEmpty()) {
-                            onMessage(NOTHING_TO_PRINT_MESSAGE)
+                            onMessage(UiNotice(NOTHING_TO_PRINT_MESSAGE))
                         } else {
                             onNotebookPrinted(draft)
                             job = if (sheetExportAsBitmap(pages.size)) {
@@ -215,9 +216,11 @@ private fun AvailablePlate(
                                 {
                                     job = null
                                     onMessage(
-                                        notebookWarmCancelledMessage(
-                                            current.photographsDone,
-                                            current.photographs,
+                                        UiNotice(
+                                            notebookWarmCancelledMessage(
+                                                current.photographsDone,
+                                                current.photographs,
+                                            ),
                                         ),
                                     )
                                 }
@@ -226,9 +229,11 @@ private fun AvailablePlate(
                                 {
                                     job = null
                                     onMessage(
-                                        notebookCancelledMessage(
-                                            current.pagesDone,
-                                            pdf.pages.size,
+                                        UiNotice(
+                                            notebookCancelledMessage(
+                                                current.pagesDone,
+                                                pdf.pages.size,
+                                            ),
                                         ),
                                     )
                                 }

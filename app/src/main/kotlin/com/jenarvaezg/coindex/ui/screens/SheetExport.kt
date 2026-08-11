@@ -21,17 +21,19 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
+import com.jenarvaezg.coindex.ui.DownloadedExport
+import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
 import com.jenarvaezg.coindex.ui.components.LocalStamping
 import com.jenarvaezg.coindex.ui.components.coinSideImageCount
-import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.downloadLandedNotice
 import com.jenarvaezg.coindex.ui.downloadPlateSheet
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.recordInto
 import com.jenarvaezg.coindex.ui.sharePlateSheet
 import com.jenarvaezg.coindex.ui.sheetDownloadFailure
-import com.jenarvaezg.coindex.ui.sheetDownloadMessage
 import com.jenarvaezg.coindex.ui.sheetExportFailure
 import com.jenarvaezg.coindex.ui.sheetExportMessage
 import kotlinx.coroutines.flow.first
@@ -93,7 +95,7 @@ fun <T> SheetExport(
     tally: String,
     fileName: String,
     destination: ExportDestination = ExportDestination.Download,
-    onFinished: (String) -> Unit,
+    onFinished: (UiNotice) -> Unit,
     /** Draws the sheet: at the geometry given, reporting each picture, into the recording. */
     content: @Composable (
         layout: SheetLayout,
@@ -125,16 +127,27 @@ fun <T> SheetExport(
         onFinished(
             if (outcome.isFailure) {
                 val cause = outcome.exceptionOrNull()?.message
-                when (destination) {
-                    ExportDestination.Download -> sheetDownloadFailure(sheet, cause)
-                    ExportDestination.Share -> sheetExportFailure(sheet, cause)
-                }
+                UiNotice(
+                    when (destination) {
+                        ExportDestination.Download -> sheetDownloadFailure(sheet, cause)
+                        ExportDestination.Share -> sheetExportFailure(sheet, cause)
+                    },
+                )
             } else {
                 when (destination) {
-                    ExportDestination.Download ->
-                        sheetDownloadMessage(expectedImages, loaded.intValue)
+                    ExportDestination.Download -> {
+                        val landed = requireNotNull(outcome.getOrThrow())
+                        downloadLandedNotice(
+                            expectedPhotos = expectedImages,
+                            loadedPhotos = loaded.intValue,
+                            uri = landed.uri,
+                            mimeType = landed.mimeType,
+                        )
+                    }
                     ExportDestination.Share ->
-                        sheetExportMessage(sheet, tally, expectedImages, loaded.intValue)
+                        UiNotice(
+                            sheetExportMessage(sheet, tally, expectedImages, loaded.intValue),
+                        )
                 }
             },
         )
@@ -192,12 +205,15 @@ suspend fun exportSettledSheet(
     expectedImages: Int,
     settled: IntState,
     destination: ExportDestination = ExportDestination.Download,
-): Result<Unit> {
+): Result<DownloadedExport?> {
     awaitSettledImages(expectedImages, settled)
     return runCatching {
         when (destination) {
             ExportDestination.Download -> downloadPlateSheet(context, picture, fileName)
-            ExportDestination.Share -> sharePlateSheet(context, picture, fileName)
+            ExportDestination.Share -> {
+                sharePlateSheet(context, picture, fileName)
+                null
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
+import android.net.Uri
+
 /**
  * What an export calls what it has just shared.
  *
@@ -67,11 +69,10 @@ fun sheetExportFailure(sheet: SharedSheet, cause: String?): String {
 }
 
 /**
- * What the collector is told once a sheet has landed in Descargas (#285).
+ * What the collector is told once a sheet has landed in Descargas (#285, #403).
  *
- * Short on purpose: the openable notification already names the file, so the snackbar only
- * has to confirm the tap worked. Holes still get counted — a lámina with empty cells is not
- * «Descargado» and nothing more.
+ * Names the folder so the phone is not a scavenger hunt, and pairs with Abrir on the snackbar.
+ * Holes still get counted — a lámina with empty cells is not «Descargado en Descargas» alone.
  */
 fun sheetDownloadMessage(expectedPhotos: Int, loadedPhotos: Int): String =
     downloadMessage(expectedPhotos, loadedPhotos)
@@ -83,20 +84,36 @@ fun sheetDownloadFailure(sheet: SharedSheet, cause: String?): String {
 }
 
 /**
- * The snackbar for any download that reached Descargas (#285).
+ * The snackbar for any download that reached Descargas (#285, #403).
  *
  * One sentence for the sheet and the notebook: both land the same way, and a hole is a hole
- * whether it was a casilla or a page.
+ * whether it was a casilla or a page. The folder is in the sentence because the notification
+ * may stay silent without POST_NOTIFICATIONS — the snackbar has to be enough by itself.
  */
 fun downloadMessage(expectedPhotos: Int, loadedPhotos: Int): String {
     val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
-    val landed = DOWNLOAD_NOTIFICATION_TITLE
+    val landed = DOWNLOAD_LANDED_MESSAGE
     return when (absent) {
         0 -> landed
         1 -> "$landed, pero una foto no llegó a cargar"
         else -> "$landed, pero $absent fotos no llegaron a cargar"
     }
 }
+
+/**
+ * Snackbar notice for a file that reached Descargas, with Abrir pointing at it (#403).
+ *
+ * Same sentence the labels already own; the URI is what turns «Abrir» into ACTION_VIEW.
+ */
+fun downloadLandedNotice(
+    expectedPhotos: Int,
+    loadedPhotos: Int,
+    uri: Uri,
+    mimeType: String,
+): UiNotice = UiNotice(
+    text = downloadMessage(expectedPhotos, loadedPhotos),
+    openFile = OpenDownloadedFile(uri.toString(), mimeType),
+)
 
 /**
  * What a plate says it holds: **«19 casillas»**.
@@ -154,11 +171,20 @@ const val PLATE_SHEET_MASTHEAD: String = "COINDEX · CATÁLOGO CURADO"
 const val PIECES_SHEET_MASTHEAD: String = "COINDEX · COLECCIÓN"
 
 /**
+ * Where a download landed, said on the snackbar (#403).
+ *
+ * The notification keeps the shorter [DOWNLOAD_NOTIFICATION_TITLE]; the snackbar has to name the
+ * folder because it is the surface that always shows, permission or not.
+ */
+const val DOWNLOAD_LANDED_MESSAGE: String = "Descargado en Descargas"
+
+/** Snackbar action that opens the file that just landed (#403). */
+const val DOWNLOAD_OPEN_ACTION: String = "Abrir"
+
+/**
  * The openable notification that says a file reached Descargas (#285).
  *
- * It says «Descargado» with the same word the snackbar uses — [downloadMessage] — because they are
- * one event reported on two surfaces, and the file name is the notification's own job: that is why
- * the snackbar is allowed to be short.
+ * Short title plus the file name underneath; Abrir on the snackbar is the other door (#403).
  */
 const val DOWNLOAD_NOTIFICATION_TITLE: String = "Descargado"
 const val DOWNLOAD_CHANNEL_NAME: String = "Descargas"

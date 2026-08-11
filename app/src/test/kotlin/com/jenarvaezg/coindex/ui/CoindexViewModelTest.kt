@@ -339,7 +339,7 @@ class CoindexViewModelTest {
         assertFalse(viewModel.state.value.syncing)
         assertEquals(
             "Falta la API key de Numista. Añádela en Ajustes.",
-            viewModel.state.value.message,
+            viewModel.state.value.message?.text,
         )
         assertTrue(requested.isEmpty())
     }
@@ -356,7 +356,7 @@ class CoindexViewModelTest {
             // Token, collection and the one ficha nobody had: three calls, and the report says so.
             assertEquals(3, state.lastSync?.callsSpent)
             assertEquals(NOW, state.lastSync?.atMillis)
-            assertEquals("1 pieza · 1 ficha nueva · 3 llamadas", state.message)
+            assertEquals("1 pieza · 1 ficha nueva · 3 llamadas", state.message?.text)
             // Written down before it was announced: the snackbar is the copy.
             assertEquals(state.lastSync, syncLog.last)
         }
@@ -389,7 +389,7 @@ class CoindexViewModelTest {
         // Each of the two was asked for, and the snackbar names the ficha it is talking about —
         // whichever of the two answered last, because the two calls are independent.
         assertEquals(2, requested.count { it.contains("/types/") })
-        assertTrue(state.message!!.startsWith("Ficha de Numista 99022"), state.message!!)
+        assertTrue(state.message!!.text.startsWith("Ficha de Numista 99022"), state.message!!.text)
     }
 
     @Test
@@ -414,7 +414,7 @@ class CoindexViewModelTest {
 
         assertTrue(saved)
         assertEquals(Credentials("otra", 3105), credentials.credentials())
-        assertEquals("Ajustes guardados.", viewModel.state.value.message)
+        assertEquals("Ajustes guardados.", viewModel.state.value.message?.text)
         assertNull(viewModel.state.value.validation)
     }
 
@@ -478,7 +478,7 @@ class CoindexViewModelTest {
 
             assertEquals(
                 "Ponle un nombre a la colección y elige al menos una moneda.",
-                viewModel.state.value.message,
+                viewModel.state.value.message?.text,
             )
             assertTrue(ownGroupings.groupings.value.isEmpty())
         }
@@ -491,7 +491,7 @@ class CoindexViewModelTest {
         runCurrent()
 
         assertEquals("Las francesas", ownGroupings.groupings.value.single().name)
-        assertEquals("Colección «Las francesas» creada.", viewModel.state.value.message)
+        assertEquals("Colección «Las francesas» creada.", viewModel.state.value.message?.text)
     }
 
     @Test
@@ -511,7 +511,7 @@ class CoindexViewModelTest {
 
             assertEquals(
                 "Concede a Coindex permiso para instalar aplicaciones y vuelve a pulsar Instalar.",
-                state.message,
+                state.message?.text,
             )
             // The button is never disabled for a branch that fetches nothing.
             assertFalse(state.updating)

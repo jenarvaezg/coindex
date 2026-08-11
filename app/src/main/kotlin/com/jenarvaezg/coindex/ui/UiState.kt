@@ -14,6 +14,24 @@ import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 data class SettingsValues(val apiKey: String, val userId: String)
 
 /**
+ * A one-off snackbar notice.
+ *
+ * [openFile] is set after a download lands in Descargas so the snackbar can offer Abrir (#403);
+ * every other notice leaves it null.
+ */
+data class UiNotice(
+    val text: String,
+    val openFile: OpenDownloadedFile? = null,
+)
+
+/** The file Abrir on the download snackbar hands to ACTION_VIEW (#403). */
+data class OpenDownloadedFile(
+    /** Content URI as text — `android.net.Uri` is not available to JVM unit tests. */
+    val uri: String,
+    val mimeType: String,
+)
+
+/**
  * @param message a one-off notice for the snackbar; it is consumed once shown.
  * @param validation a form error that belongs next to the field that caused it and stays until
  *   the form is submitted again. Keeping the two apart is what stops a dismissed snackbar from
@@ -25,7 +43,7 @@ data class UiState(
     val syncing: Boolean = false,
     val collection: CollectionState = CollectionState(),
     val lastSync: SyncRecord? = null,
-    val message: String? = null,
+    val message: UiNotice? = null,
     val validation: String? = null,
     val fatalError: String? = null,
     val update: UpdateStatus = UpdateStatus.UpToDate,

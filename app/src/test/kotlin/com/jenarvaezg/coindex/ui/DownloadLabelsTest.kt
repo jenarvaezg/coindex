@@ -2,21 +2,28 @@ package com.jenarvaezg.coindex.ui
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /**
- * What the collector is told once a sheet has landed in Descargas (#285).
+ * What the collector is told once a sheet has landed in Descargas (#285, #403).
  *
- * The snackbar is short on purpose — «Descargado» — because the openable notification already
- * names the file. Holes in the sheet still get said: eighty-three painted cells are not a
- * complete lámina, and silence would be a lie.
+ * The snackbar names the folder — «Descargado en Descargas» — and carries Abrir so a tap opens
+ * the file without digging through the phone. The notification still says the shorter
+ * «Descargado» with the file name underneath; holes in the sheet are still counted.
  */
 class DownloadLabelsTest {
     @Test
-    fun `a complete download is only the word Descargado`() {
-        assertEquals("Descargado", sheetDownloadMessage(expectedPhotos = 38, loadedPhotos = 38))
-        assertEquals("Descargado", sheetDownloadMessage(expectedPhotos = 0, loadedPhotos = 0))
+    fun `a complete download names Descargas`() {
         assertEquals(
-            "Descargado",
+            "Descargado en Descargas",
+            sheetDownloadMessage(expectedPhotos = 38, loadedPhotos = 38),
+        )
+        assertEquals(
+            "Descargado en Descargas",
+            sheetDownloadMessage(expectedPhotos = 0, loadedPhotos = 0),
+        )
+        assertEquals(
+            "Descargado en Descargas",
             notebookDownloadMessage(expectedPhotos = 120, loadedPhotos = 120),
         )
     }
@@ -24,17 +31,43 @@ class DownloadLabelsTest {
     @Test
     fun `a download with holes still says how many photos never arrived`() {
         assertEquals(
-            "Descargado, pero 10 fotos no llegaron a cargar",
+            "Descargado en Descargas, pero 10 fotos no llegaron a cargar",
             sheetDownloadMessage(expectedPhotos = 38, loadedPhotos = 28),
         )
         assertEquals(
-            "Descargado, pero una foto no llegó a cargar",
+            "Descargado en Descargas, pero una foto no llegó a cargar",
             sheetDownloadMessage(expectedPhotos = 38, loadedPhotos = 37),
         )
         assertEquals(
-            "Descargado, pero 3 fotos no llegaron a cargar",
+            "Descargado en Descargas, pero 3 fotos no llegaron a cargar",
             notebookDownloadMessage(expectedPhotos = 120, loadedPhotos = 117),
         )
+    }
+
+    @Test
+    fun `Abrir is the snackbar action that opens what landed`() {
+        assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
+    }
+
+    @Test
+    fun `a landed download notice carries Abrir to the file`() {
+        // URI as text: android.net.Uri is unavailable to JVM unit tests (same as routes).
+        val notice = UiNotice(
+            text = downloadMessage(expectedPhotos = 38, loadedPhotos = 38),
+            openFile = OpenDownloadedFile(
+                uri = "content://downloads/coindex-test.png",
+                mimeType = "image/png",
+            ),
+        )
+        assertEquals("Descargado en Descargas", notice.text)
+        assertEquals("content://downloads/coindex-test.png", notice.openFile!!.uri)
+        assertEquals("image/png", notice.openFile!!.mimeType)
+        assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
+    }
+
+    @Test
+    fun `a plain notice has no file to open`() {
+        assertNull(UiNotice("Ajustes guardados.").openFile)
     }
 
     @Test
