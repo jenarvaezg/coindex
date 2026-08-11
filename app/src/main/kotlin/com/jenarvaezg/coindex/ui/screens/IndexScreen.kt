@@ -709,10 +709,10 @@ private fun IndexFacets(
             selected = shelf.weight == null,
             onClick = { onNarrow(shelf.copy(weight = null)) },
         )
-        OunceBand.entries.forEach { band ->
+        counts.weight.populatedIn(OunceBand.entries, keep = shelf.weight).forEach { (band, count) ->
             FilterChip(
                 label = band.label,
-                count = counts.weight.of(band),
+                count = count,
                 selected = shelf.weight == band,
                 onClick = { onNarrow(shelf.copy(weight = band)) },
             )
@@ -725,10 +725,10 @@ private fun IndexFacets(
             selected = shelf.startsIn == null,
             onClick = { onNarrow(shelf.copy(startsIn = null)) },
         )
-        StartBand.entries.forEach { band ->
+        counts.startsIn.populatedIn(StartBand.entries, keep = shelf.startsIn).forEach { (band, count) ->
             FilterChip(
                 label = band.label,
-                count = counts.startsIn.of(band),
+                count = count,
                 selected = shelf.startsIn == band,
                 onClick = { onNarrow(shelf.copy(startsIn = band)) },
             )
@@ -741,10 +741,10 @@ private fun IndexFacets(
             selected = shelf.status == null,
             onClick = { onNarrow(shelf.copy(status = null)) },
         )
-        PlateStatus.entries.forEach { status ->
+        counts.status.populatedIn(PlateStatus.entries, keep = shelf.status).forEach { (status, count) ->
             FilterChip(
                 label = status.label,
-                count = counts.status.of(status),
+                count = count,
                 selected = shelf.status == status,
                 onClick = { onNarrow(shelf.copy(status = status)) },
             )
@@ -757,10 +757,10 @@ private fun IndexFacets(
             selected = shelf.series == null,
             onClick = { onNarrow(shelf.copy(series = null)) },
         )
-        SeriesStatus.entries.forEach { status ->
+        counts.series.populatedIn(SeriesStatus.entries, keep = shelf.series).forEach { (status, count) ->
             FilterChip(
                 label = seriesLabel(status),
-                count = counts.series.of(status),
+                count = count,
                 selected = shelf.series == status,
                 onClick = { onNarrow(shelf.copy(series = status)) },
             )

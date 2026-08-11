@@ -159,4 +159,37 @@ class CoinsShelfTest {
             counts.year.years(),
         )
     }
+
+    /**
+     * #413: a chip that would leave nobody is not offered. País already hid empties via
+     * [FacetCounts.issuers]; the enum bands do the same, keeping the band order so «Sin peso»
+     * stays last when it has anyone.
+     */
+    @Test
+    fun `a weight chip that would leave nobody is not offered`() {
+        val counts = coinsFacetCounts(rows, CoinsShelf(issuer = "Venezuela"), "")
+
+        // Only the Bolívar remains: 25 g → «10 – 25 g». «Una onza · 0» and «Sin peso · 0» stay off.
+        assertEquals(
+            listOf(GramBand.TenToTwentyFive to 1),
+            counts.weight.populatedIn(GramBand.entries),
+        )
+        assertEquals(0, counts.weight.of(GramBand.Ounce))
+        assertEquals(0, counts.weight.of(GramBand.Unweighed))
+    }
+
+    /**
+     * A second filter can empty the band the collector already chose; that chip stays at «· 0»
+     * so the shelf still names what emptied the list.
+     */
+    @Test
+    fun `the weight chip already chosen stays offered even at zero`() {
+        val shelf = CoinsShelf(issuer = "Venezuela", weight = GramBand.Ounce)
+        val counts = coinsFacetCounts(rows, shelf, "")
+
+        assertEquals(
+            listOf(GramBand.TenToTwentyFive to 1, GramBand.Ounce to 0),
+            counts.weight.populatedIn(GramBand.entries, keep = shelf.weight),
+        )
+    }
 }

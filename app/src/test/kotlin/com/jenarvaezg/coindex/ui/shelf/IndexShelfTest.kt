@@ -125,4 +125,19 @@ class IndexShelfTest {
         assertEquals(1, counts.weight.of(OunceBand.Spanning))
         assertEquals(counts.series.total - 1, counts.series.byValue.values.sum())
     }
+
+    /**
+     * #413: «Sin fecha · 0» is the dead end the audit named — hide it once another chip has
+     * already left nobody undated, same bargain País already keeps.
+     */
+    @Test
+    fun `a start chip that would leave nobody is not offered`() {
+        val counts = indexFacetCounts(facts, IndexShelf(issuer = "Venezuela"), "")
+
+        assertEquals(
+            listOf(StartBand.BeforeFifty to 1),
+            counts.startsIn.populatedIn(StartBand.entries),
+        )
+        assertEquals(0, counts.startsIn.of(StartBand.Unknown))
+    }
 }

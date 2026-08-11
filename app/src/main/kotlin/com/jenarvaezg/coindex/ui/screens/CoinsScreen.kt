@@ -396,10 +396,10 @@ private fun CoinsFacets(
             selected = shelf.weight == null,
             onClick = { onNarrow(shelf.copy(weight = null)) },
         )
-        GramBand.entries.forEach { band ->
+        counts.weight.populatedIn(GramBand.entries, keep = shelf.weight).forEach { (band, count) ->
             FilterChip(
                 label = band.label,
-                count = counts.weight.of(band),
+                count = count,
                 selected = shelf.weight == band,
                 onClick = { onNarrow(shelf.copy(weight = band)) },
             )
@@ -430,10 +430,10 @@ private fun CoinsFacets(
             selected = shelf.objectClass == null,
             onClick = { onNarrow(shelf.copy(objectClass = null)) },
         )
-        ObjectClass.entries.forEach { value ->
+        counts.objectClass.populatedIn(ObjectClass.entries, keep = shelf.objectClass).forEach { (value, count) ->
             FilterChip(
                 label = objectClassChip(value),
-                count = counts.objectClass.of(value),
+                count = count,
                 selected = shelf.objectClass == value,
                 onClick = { onNarrow(shelf.copy(objectClass = value)) },
             )
@@ -446,10 +446,10 @@ private fun CoinsFacets(
             selected = shelf.membership == null,
             onClick = { onNarrow(shelf.copy(membership = null)) },
         )
-        Membership.entries.forEach { value ->
+        counts.membership.populatedIn(Membership.entries, keep = shelf.membership).forEach { (value, count) ->
             FilterChip(
                 label = value.label,
-                count = counts.membership.of(value),
+                count = count,
                 selected = shelf.membership == value,
                 onClick = { onNarrow(shelf.copy(membership = value)) },
             )
