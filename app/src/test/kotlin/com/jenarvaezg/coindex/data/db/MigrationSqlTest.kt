@@ -282,4 +282,34 @@ class MigrationSqlTest {
             )
         }
     }
+
+    /** La versión 8 le da sitio a los listados de emisiones (#452). */
+    @Test
+    fun `version 8 creates the two listing tables exactly as Room declares them`() {
+        val exported = exportedCreateSql(8)
+        val added = exported.keys - exportedCreateSql(7).keys
+
+        assertEquals(setOf("type_issue_reads", "type_issues"), added)
+        assertEquals(
+            listOf("type_issue_reads", "type_issues").map(exported::getValue),
+            CoindexDatabase.VERSION_8_TABLES,
+        )
+    }
+
+    /**
+     * Y no toca nada más — ni una columna.
+     *
+     * Es la migración de un ahorro y no de una función: los precios de la versión 7 valen lo que
+     * costaron, y el punto entero del #452 es dejar de volver a comprarlos.
+     */
+    @Test
+    fun `version 8 adds tables and touches nothing else`() {
+        exportedCreateSql(7).keys.forEach { table ->
+            assertEquals(
+                exportedColumns(7, table),
+                exportedColumns(8, table),
+                "la versión 8 ha tocado $table",
+            )
+        }
+    }
 }

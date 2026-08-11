@@ -289,8 +289,9 @@ nohup caffeinate -dims emulator -avd coindex-ux -no-window -no-audio \
 adb shell settings put global window_animation_scale 0     # y transition_ y animator_
 ./gradlew :app:assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
+scripts/avd-db.sh restore                # la colección entera, sin una sola llamada
 
-# el alta se completa con NUMISTA_API_KEY_PADRE de .env y el id 568461, y «Sincronizar»
+# el alta guarda la clave y el id, y no toca la red: NO pulsar «Sincronizar»
 adb exec-out screencap -p > pantalla.png
 adb exec-out uiautomator dump /dev/tty > pantalla.xml    # de aquí salen las palabras
 
@@ -298,6 +299,34 @@ adb exec-out uiautomator dump /dev/tty > pantalla.xml    # de aquí salen las pa
 COINDEX_FIELD_SNAPSHOT=$PWD/.local/padre \
   ./gradlew :app:testDebugUnitTest --tests '*FieldReportTest*' --rerun
 ```
+
+### Una sesión de medición cuesta cero llamadas
+
+Hasta el #452 costaba **446**, y salían de la clave del padre: esta receta decía
+`NUMISTA_API_KEY_PADRE`, el AVD abría la app con la base vacía, se sincronizaba, y a los tres
+segundos la tasación pedía sus 223 emisiones, 102 listados y 121 huecos. Cuatro sesiones de UX y su
+mes estaba gastado — en agosto de 2026 llegó a 1.999 de 2.000 y su móvil se quedó sin presupuesto
+para bajar las fichas que le faltaban (#448). Cambiar de clave no arregla eso: sólo cambia a quién
+se le apaga la app.
+
+Lo que lo arregla es no volver a pedir nada. `coindex.db` lleva la colección, las fichas, los
+precios y —desde el #452— los listados de emisiones, así que restaurada tiene ya todo lo que una
+pasada le pediría a Numista:
+
+```bash
+scripts/avd-db.sh save        # una vez, con el AVD poblado
+scripts/avd-db.sh restore     # en cada sesión, después de instalar
+```
+
+El volcado es privado y vive en `/private/tmp/coindex-privado/avd/`, porque es la colección. El
+alta sigue haciendo falta —la clave se cifra contra la Keystore del dispositivo y no viaja en la
+base de datos— pero es gratis: el formulario valida el formato y guarda, sin tocar la red. Lo que
+cuesta es «Sincronizar», y con la base restaurada no hay nada que sincronizar.
+
+Dos cosas que vigilar. Los precios caducan a los treinta días y los listados a los noventa: pasado
+ese plazo la pasada vuelve a pedirlos, así que un volcado viejo hay que refrescarlo a propósito y
+con una clave elegida a conciencia, no de rebote en una sesión de capturas. Y si el AVD se resiembra
+desde cero, el volcado es lo primero que se restaura, antes de que a nadie se le ocurra sincronizar.
 
 Dos trampas del emulador que cuestan media hora cada una: el teclado virtual **se traga los
 gestos** —un `input swipe` sobre él escribe palabras por deslizamiento en el buscador— y un

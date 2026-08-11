@@ -11,6 +11,8 @@ import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.MetalSpotEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
+import com.jenarvaezg.coindex.data.db.TypeIssueEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
@@ -167,6 +169,10 @@ class FakePriceDao : PriceDao {
     val reads = MutableStateFlow<List<IssuePriceReadEntity>>(emptyList())
     val spots = MutableStateFlow<List<MetalSpotEntity>>(emptyList())
 
+    /** The listings of #452, which tell «listed and empty» from «never listed» the same way. */
+    val typeIssueReads = MutableStateFlow<List<TypeIssueReadEntity>>(emptyList())
+    val typeIssues = MutableStateFlow<List<TypeIssueEntity>>(emptyList())
+
     override fun observePrices(): Flow<List<IssuePriceEntity>> = prices
     override fun observeReads(): Flow<List<IssuePriceReadEntity>> = reads
     override fun observeSpot(symbol: String): Flow<MetalSpotEntity?> =
@@ -186,5 +192,19 @@ class FakePriceDao : PriceDao {
     override suspend fun insertRead(read: IssuePriceReadEntity) {
         reads.value = reads.value
             .filterNot { it.typeId == read.typeId && it.issueId == read.issueId } + read
+    }
+    override suspend fun typeIssueReads(): List<TypeIssueReadEntity> = typeIssueReads.value
+    // Ordenado como lo ordena la consulta de verdad: la posición decide qué emisión tasa un hueco.
+    override suspend fun typeIssues(): List<TypeIssueEntity> =
+        typeIssues.value.sortedWith(compareBy({ it.typeId }, { it.position }))
+    override suspend fun deleteTypeIssues(typeId: Int) {
+        typeIssues.value = typeIssues.value.filterNot { it.typeId == typeId }
+    }
+    override suspend fun insertTypeIssues(issues: List<TypeIssueEntity>) {
+        typeIssues.value = typeIssues.value + issues
+    }
+    override suspend fun insertTypeIssueRead(read: TypeIssueReadEntity) {
+        typeIssueReads.value =
+            typeIssueReads.value.filterNot { it.typeId == read.typeId } + read
     }
 }

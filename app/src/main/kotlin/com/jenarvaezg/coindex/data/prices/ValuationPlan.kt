@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.data.prices
 
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
@@ -23,6 +25,17 @@ const val HOLE_THRESHOLD_SLOTS: Int = 10
 
 /** A catalog price is read again after thirty days. Catalog prices move slowly (ADR 0028 §5). */
 const val PRICE_LIFETIME_MILLIS: Long = 30L * 24 * 60 * 60 * 1_000
+
+/**
+ * A type's issue listing is read again after ninety days (#452).
+ *
+ * Three times a price's life, because the catalogue moves slower than the market: which issue is the
+ * 1905 of a type is a fact that only changes when Numista publishes a new one. Not «never», though —
+ * an open date run grows a slot every January, and a listing that never expired would leave that new
+ * hole silently unpriceable for the life of the phone. Over the father's 102 listed types this is
+ * about one lookup a day amortised, against the 102 per cold start it replaces.
+ */
+const val LISTING_LIFETIME_MILLIS: Long = 90L * 24 * 60 * 60 * 1_000
 
 /** One issue the collector owns a piece of, addressable straight away. */
 data class OwnedIssue(val typeId: Int, val issueId: Int)
@@ -106,8 +119,72 @@ fun ownedIssuesToAsk(
     reads: Collection<IssuePriceReadEntity>,
     nowMillis: Long,
 ): List<OwnedIssue> {
-    val fresh = freshReads(reads, nowMillis)
+    val fresh = freshIssues(reads, nowMillis)
     return plan.owned.filterNot { (it.typeId to it.issueId) in fresh }
+}
+
+/**
+ * What this phone already knows of Numista's issue listings (#452).
+ *
+ * The listing was the one call of the three that left no trace: `issue_price_reads` recorded what
+ * `/prices` answered and nothing recorded what `/types/{id}/issues` did, so a hole whose curated file
+ * does not name its issue — 111 of the father's 121 — could never recognise the price it already
+ * held, and its type was listed again on every pass. Measured over his collection, that was 102
+ * listings and 111 prices on every cold start: 213 of the 1.999 calls Numista let him make in August.
+ *
+ * **Two fields and not one**, for the reason [IssuePriceReadEntity] is two tables: a type Numista
+ * listed with no issue matching the hole's year still counts as listed, or an empty answer is
+ * indistinguishable from an unasked one and costs the lookup for ever.
+ *
+ * What it holds is what is **still fresh** by [LISTING_LIFETIME_MILLIS]. A type whose listing has
+ * expired is absent from both fields at once, and that is deliberate: it is about to be listed again
+ * in this same pass, and answering the hole from the stale map would price the wrong issue and then
+ * price the right one, paying twice for the mistake.
+ */
+data class IssueListings(
+    /** The types this phone has listed, whatever the listing said. */
+    val listedTypeIds: Set<Int> = emptySet(),
+    /** Which issue is a given year of a given type, as the stored listings answered. */
+    val issueIdByTypeAndYear: Map<Pair<Int, Int>, Int> = emptyMap(),
+) {
+    /** The issue this hole is priced by according to the stored listing, if one answered for it. */
+    fun issueOf(hole: PlateHole): Int? =
+        hole.year?.let { issueIdByTypeAndYear[hole.typeId to it] }
+
+    companion object {
+        /** What a caller with nothing stored passes, and what the phone holds before its first pass. */
+        val EMPTY: IssueListings = IssueListings()
+
+        /**
+         * The two tables read as the one question the plan asks of them, expiry included.
+         *
+         * [issues] must arrive in the order Numista listed them, because **the first match wins**: a
+         * year can have more than one issue, and the pass that looked the type up priced the first of
+         * them. Reading it back any other way would address the price to a different issue and miss
+         * the one already on the phone.
+         */
+        fun of(
+            reads: Collection<TypeIssueReadEntity>,
+            issues: Collection<TypeIssueEntity>,
+            nowMillis: Long,
+        ): IssueListings {
+            val listed = reads
+                .filter { nowMillis - it.readAt < LISTING_LIFETIME_MILLIS }
+                .map { it.typeId }
+                .toSet()
+            return IssueListings(
+                listedTypeIds = listed,
+                issueIdByTypeAndYear = buildMap {
+                    for (issue in issues.filter { it.typeId in listed }) {
+                        // Both readings of the year reach the same issue: a plate built on the Hijri
+                        // 1316 finds it, and one built on the 1899 beside it finds it too.
+                        issue.year?.let { putIfAbsent(issue.typeId to it, issue.issueId) }
+                        issue.gregorianYear?.let { putIfAbsent(issue.typeId to it, issue.issueId) }
+                    }
+                },
+            )
+        }
+    }
 }
 
 /**
@@ -117,16 +194,19 @@ fun ownedIssuesToAsk(
  * `/types/{id}/issues` answers every year of it: asking per hole would turn the 126 lookups his 138
  * holes need into 138.
  *
- * A hole whose curated file already names its issues needs no lookup at all, and it is dropped from
- * this map: its prices are asked for directly.
+ * Three kinds of hole leave, and only the third is new: one whose curated file already names its
+ * issues, one whose price is already fresh, and one whose **type has already been listed** — whether
+ * or not the listing named its year. [resolvedHoleIssues] is where the first two go on to be priced.
  */
 fun holeIssuesToAsk(
     plan: ValuationPlan,
     reads: Collection<IssuePriceReadEntity>,
     nowMillis: Long,
+    listings: IssueListings = IssueListings.EMPTY,
 ): Map<Int, List<PlateHole>> {
-    val fresh = freshReads(reads, nowMillis)
+    val fresh = freshIssues(reads, nowMillis)
     return plan.holes
+        .filter { hole -> hole.typeId !in listings.listedTypeIds }
         .filter { hole -> hole.issueIds.none { (hole.typeId to it) in fresh } }
         .filter { hole -> hole.declaredIssue() == null }
         .filter { hole -> hole.year != null }
@@ -134,20 +214,27 @@ fun holeIssuesToAsk(
 }
 
 /**
- * The holes whose issue the curated file already declares, and which therefore cost one call.
+ * The holes whose issue is already known, and which therefore cost one call and not two.
+ *
+ * Known two ways: the curated file names it — an issue run declares its issues (ADR 0014) — or a
+ * stored listing answered for its year (#452). A hole of neither kind has nothing to address a price
+ * to, and stays [holeIssuesToAsk]'s business until it has.
  *
  * Kept as its own reading rather than folded into [holeIssuesToAsk] because the two answer different
  * questions — «which types have to be listed» against «which issues can be priced straight away» —
  * and one function returning both is a caller that has to remember which half it is holding.
  */
-fun declaredHoleIssues(
+fun resolvedHoleIssues(
     plan: ValuationPlan,
     reads: Collection<IssuePriceReadEntity>,
     nowMillis: Long,
+    listings: IssueListings = IssueListings.EMPTY,
 ): List<OwnedIssue> {
-    val fresh = freshReads(reads, nowMillis)
+    val fresh = freshIssues(reads, nowMillis)
     return plan.holes
-        .mapNotNull { hole -> hole.declaredIssue()?.let { OwnedIssue(hole.typeId, it) } }
+        .mapNotNull { hole ->
+            (hole.declaredIssue() ?: listings.issueOf(hole))?.let { OwnedIssue(hole.typeId, it) }
+        }
         .distinct()
         .filterNot { (it.typeId to it.issueId) in fresh }
 }
@@ -161,7 +248,13 @@ fun declaredHoleIssues(
  */
 private fun PlateHole.declaredIssue(): Int? = issueIds.firstOrNull()
 
-private fun freshReads(
+/**
+ * The issues whose price this phone holds and has not expired, as `(typeId, issueId)`.
+ *
+ * Public because the pass needs it too: a listing that has just arrived can name an issue whose price
+ * is already fresh, and asking for it again is the 111 calls of #452.
+ */
+fun freshIssues(
     reads: Collection<IssuePriceReadEntity>,
     nowMillis: Long,
 ): Set<Pair<Int, Int>> = reads
@@ -172,7 +265,7 @@ private fun freshReads(
 /**
  * How many calls a pass would spend right now, which is what the settings line says.
  *
- * One per owned issue, one per hole whose issue is already declared, one per type still to be listed,
+ * One per owned issue, one per hole whose issue is already known, one per type still to be listed,
  * and one per hole of those types. It is an upper bound and not an estimate: a type whose listing
  * answers no matching year spends the lookup and no price call.
  */
@@ -180,10 +273,11 @@ fun valuationCallCount(
     plan: ValuationPlan,
     reads: Collection<IssuePriceReadEntity>,
     nowMillis: Long,
+    listings: IssueListings = IssueListings.EMPTY,
 ): Int {
-    val lookups = holeIssuesToAsk(plan, reads, nowMillis)
+    val lookups = holeIssuesToAsk(plan, reads, nowMillis, listings)
     return ownedIssuesToAsk(plan, reads, nowMillis).size +
-        declaredHoleIssues(plan, reads, nowMillis).size +
+        resolvedHoleIssues(plan, reads, nowMillis, listings).size +
         lookups.size +
         lookups.values.sumOf { it.size }
 }
