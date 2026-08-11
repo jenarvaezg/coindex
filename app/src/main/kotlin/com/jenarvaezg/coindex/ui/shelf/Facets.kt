@@ -5,8 +5,9 @@ package com.jenarvaezg.coindex.ui.shelf
  *
  * [total] is what the facet's «all» chip says, and it is the count with **this facet's own choice
  * dropped** and every other filter kept — which is what makes a shelf navigable: the number on a
- * chip is what you would get by tapping it, so a chip that says zero is a dead end you can see
- * before spending a tap on it.
+ * chip is what you would get by tapping it. A chip that would leave nobody is not offered
+ * ([populated] / [populatedIn]): the count already conditioned on the other filters is enough
+ * signal, and a tap into an empty list is not.
  */
 data class FacetCounts<T>(val total: Int, val byValue: Map<T, Int>) {
     fun of(value: T?): Int = if (value == null) total else byValue[value] ?: 0
@@ -15,6 +16,19 @@ data class FacetCounts<T>(val total: Int, val byValue: Map<T, Int>) {
     fun populated(): List<Pair<T, Int>> = byValue.entries
         .filter { (_, count) -> count > 0 }
         .map { (value, count) -> value to count }
+
+    /**
+     * The values of [order] that would leave something, keeping [order]'s sequence.
+     *
+     * Enum bands use this so «Sin peso» / «Sin fecha» stay last when they have anyone, instead of
+     * drifting to first-seen-in-rows order the way [populated] would. [keep] is the shelf's current
+     * choice of this facet: even at zero it stays visible so the collector can see what emptied the
+     * list and clear it (via «Cualquiera»), rather than a selected chip vanishing under them.
+     */
+    fun populatedIn(order: Iterable<T>, keep: T? = null): List<Pair<T, Int>> = order.mapNotNull { value ->
+        val count = of(value)
+        if (count > 0 || value == keep) value to count else null
+    }
 }
 
 /**

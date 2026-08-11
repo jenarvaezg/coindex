@@ -200,9 +200,9 @@ fun Facet(title: String, content: @Composable FlowRowScope.() -> Unit) {
  * One chip of a facet, with the live count of what tapping it would leave.
  *
  * A [count] of null is the facet's «all» chip in the cases where a number beside it would be the
- * same number the tally already prints two lines up. Zero is drawn rather than hidden: a dead end
- * you can see is cheaper than a chip that vanishes and takes the collector's place in the shelf
- * with it.
+ * same number the tally already prints two lines up. Callers omit chips whose count is zero
+ * ([FacetCounts.populated] / [FacetCounts.populatedIn]): offering a dead end costs a tap into an
+ * empty list, and the other filters already condition the counts.
  */
 @Composable
 fun FilterChip(
