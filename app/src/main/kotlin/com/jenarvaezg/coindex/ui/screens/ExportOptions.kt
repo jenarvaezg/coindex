@@ -84,6 +84,11 @@ fun ExportOptions(
      * passes [sheetExportCostLabel] so the noun matches the sheet (#401).
      */
     costLabel: String = notebookCostLabel(pages, cards),
+    /**
+     * Why a switch is annotated under its row. The index uses [notebookSwitchNote]; a single sheet
+     * passes [sheetExportSwitchNote] so paper-only switches say «Sólo en el cuaderno» (#401).
+     */
+    switchNote: (NotebookSwitch, Boolean) -> String? = ::notebookSwitchNote,
     modifier: Modifier = Modifier,
 ) {
     FieldCard(modifier = modifier.fillMaxWidth()) {
@@ -94,7 +99,7 @@ fun ExportOptions(
                     (switch != NotebookSwitch.Unclaimed || loose > 0)
                 ToggleRow(
                     label = notebookSwitchLabel(switch),
-                    note = notebookSwitchNote(switch, offered),
+                    note = switchNote(switch, offered),
                     checked = options[switch],
                     // Two reasons to be grey, and the note says which: the configuration has made
                     // the question moot, or there is no lámina left to add. «Pendiente · #233» went

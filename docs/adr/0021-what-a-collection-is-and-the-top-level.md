@@ -40,11 +40,11 @@
 > with Compartir beside it. The unit still decides the format; the destination is no longer only
 > the share sheet.
 >
-> **Amended on 2026-08-11 (§13, #401).** The PNG of a single plate is no longer untouched. Descargar
-> and Compartir on a lámina or a hoja open the same «Cómo se exporta» surface as the index — minus
-> «Sin colección» and «Compartir página», which only make sense over many cards — and the file that
-> comes out is one section of the notebook PDF under those switches. The screen sheet stays a PNG
-> in memory for nothing the collector taps; paper is where tamaño real, the QR and the money land.
+> **Amended on 2026-08-11 (§13, #401).** Descargar and Compartir on a lámina or a hoja open the same
+> «Cómo se exporta» surface as the index — minus «Sin colección» and «Compartir página». **What fits
+> in a sheet is a PNG** (both doors); the notebook that does not fit in one sheet stays the PDF.
+> Switches that only paper can honour are annotated under the row and remembered for the next
+> cuaderno; the image is what leaves now.
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at
@@ -365,7 +365,7 @@ ADR 0016 just crowned; and it would need a destination, which is what §10 decid
 > Amended by #228 and #401 — see the notes at the top. The layout below is now the **default** and
 > no longer the only output, and both the index export button and a single lámina or hoja open a
 > sheet of switches with the live page count under them. A single sheet drops the two index-only
-> questions and prints one section of the same PDF.
+> questions and leaves a PNG; the notebook that does not fit in one sheet stays the PDF.
 
 **The notebook is not an object; it is the index printed.** It needs no entity, no table, no naming
 and no cover page, because §4 and §6 gave it the two things it lacked: a canonical order and a
@@ -379,14 +379,14 @@ name on — the index already is one.
 - **`page(card) = its destination`**, inherited from §9: a card with a list prints its plate, a card
   without one prints the sheet `PiecesScreen` already exports, and a box comes in through that same
   door. Two kinds of page, none invented.
-- **The unit decides the format.** A plate opened from the index used to stay a **PNG** and the
-  notebook a **vector PDF**; #401 puts a single lámina or hoja on the same PDF path under the
-  switches, because tamaño real, the QR and the money have nowhere to land on the old bitmap. Both
-  still land in Descargas by default and still leave through the send intent when shared (#285): the
-  father wants the file and Jose still hands it to a chat. `recordInto` records drawing commands
-  in a `Picture`, and `PdfDocument` replays them on its canvas, so the PDF is vectorial with **no
-  new dependencies**. A notebook filtered down
-  to one card is still a PDF: the button that was tapped decides, not the size of the result.
+- **What fits in a sheet is a PNG; what does not is a PDF** (#401). A single lámina or hoja —
+  Descargar or Compartir — leaves as one image, because it fits in a photo. The notebook from the
+  index is the vector PDF, because it does not fit in one sheet. The options panel still opens on
+  the sheet so the collector chooses and remembers; switches that only paper can honour are
+  annotated under the row. Both still land in Descargas by default and still leave through the send
+  intent when shared (#285): the father wants the file and Jose still hands it to a chat.
+  `recordInto` records drawing commands in a `Picture`, and `PdfDocument` replays them on its canvas,
+  so the PDF is vectorial with **no new dependencies**.
 - **A4, one plate per page**, header repeated when a plate continues. Neither shrinking a plate to
   fit (121 slots would print at some 8 mm per coin) nor a continuous flow.
 - **Only the reverse goes on paper, at life size.** A printed coin measures what the coin measures,

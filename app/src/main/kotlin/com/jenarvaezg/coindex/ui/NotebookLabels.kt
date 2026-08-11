@@ -41,7 +41,7 @@ const val NOTEBOOK_COST_SCOPE: String = "Es lo que hay en el índice ahora mismo
  * neither, and repeating that sentence would claim pages came from a narrowing that is not there.
  */
 fun sheetExportCostScope(sheet: SharedSheet): String =
-    "Es esta ${sheet.noun}, con la configuración elegida."
+    "La imagen es esta ${sheet.noun}; las páginas son cómo saldría en el cuaderno."
 
 /**
  * What a single lámina or hoja is about to cost (#401).
@@ -89,6 +89,23 @@ fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when
     offered -> null
     switch == NotebookSwitch.Unclaimed -> "No hay monedas sueltas que imprimir"
     else -> "Sin fotos no hay nada que ajustar"
+}
+
+/**
+ * Why a switch on a single lámina or hoja is annotated (#401).
+ *
+ * **What fits in a sheet is a PNG** — Descargar and Compartir both leave a bitmap. Tamaño real,
+ * the QR and the money only land on the notebook's paper, so the sheet says so under them rather
+ * than letting this export look as if it will honour a switch the image cannot. Fotos and Ambas
+ * caras stay a live question for the image until the PNG learns them; until then they still
+ * remember how the next cuaderno will print.
+ */
+fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when {
+    !offered -> notebookSwitchNote(switch, offered)
+    switch == NotebookSwitch.ActualSize ||
+        switch == NotebookSwitch.NumistaQr ||
+        switch == NotebookSwitch.Money -> "Sólo en el cuaderno"
+    else -> null
 }
 
 /**

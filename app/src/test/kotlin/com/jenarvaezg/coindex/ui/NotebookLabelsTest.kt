@@ -158,11 +158,11 @@ class NotebookLabelsTest {
     @Test
     fun `a single sheet says the cost is about this plate or this leaf`() {
         assertEquals(
-            "Es esta lámina, con la configuración elegida.",
+            "La imagen es esta lámina; las páginas son cómo saldría en el cuaderno.",
             sheetExportCostScope(SharedSheet.PLATE),
         )
         assertEquals(
-            "Es esta hoja, con la configuración elegida.",
+            "La imagen es esta hoja; las páginas son cómo saldría en el cuaderno.",
             sheetExportCostScope(SharedSheet.PIECES),
         )
         assertEquals("1 página · 1 lámina", sheetExportCostLabel(SharedSheet.PLATE, 1))
@@ -185,6 +185,23 @@ class NotebookLabelsTest {
         assertEquals(
             "Lámina exportada · 2 páginas, pero 4 fotos no llegaron a cargar",
             sheetPdfExportMessage(SharedSheet.PLATE, pages = 2, expectedPhotos = 40, loadedPhotos = 36),
+        )
+    }
+
+    @Test
+    fun `paper-only switches on a sheet say they belong to the notebook`() {
+        assertEquals(
+            "Sólo en el cuaderno",
+            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = true),
+        )
+        assertEquals(
+            "Sólo en el cuaderno",
+            sheetExportSwitchNote(NotebookSwitch.NumistaQr, offered = true),
+        )
+        assertNull(sheetExportSwitchNote(NotebookSwitch.Photographs, offered = true))
+        assertEquals(
+            "Sin fotos no hay nada que ajustar",
+            sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false),
         )
     }
 }

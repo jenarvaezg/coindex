@@ -31,7 +31,6 @@ import com.jenarvaezg.coindex.ui.COLLECTION_NO_LONGER_EXISTS
 import com.jenarvaezg.coindex.ui.DELETE_COLLECTION_ACTION
 import com.jenarvaezg.coindex.ui.EMPTY_BOX_EXPLANATION
 import com.jenarvaezg.coindex.ui.ExportDestination
-import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.PIECES_HEADING
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
@@ -46,11 +45,8 @@ import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.countSentence
-import com.jenarvaezg.coindex.ui.notebookCancelledMessage
-import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesFileName
-import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.sheetExportSwitches
@@ -58,6 +54,7 @@ import com.jenarvaezg.coindex.ui.renameToggleLabel
 import com.jenarvaezg.coindex.ui.sheetDownloadLabel
 import com.jenarvaezg.coindex.ui.sheetExportCostLabel
 import com.jenarvaezg.coindex.ui.sheetExportCostScope
+import com.jenarvaezg.coindex.ui.sheetExportSwitchNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -108,14 +105,13 @@ fun PiecesScreen(
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
     var configuring by remember { mutableStateOf(false) }
     var draft by remember { mutableStateOf(notebookOptions) }
-    var printing by remember { mutableStateOf<PiecesNotebookJob?>(null) }
-    var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
-    LaunchedEffect(printing != null) { onExporting(printing != null) }
+    var exporting by remember { mutableStateOf<ExportDestination?>(null) }
+    LaunchedEffect(exporting != null) { onExporting(exporting != null) }
     val preview = remember(configuring, draft, subject.title) {
         if (!configuring) null else notebookPages(draft)
     }
-    val preparing = printing != null
-    val actionsEnabled = !configuring && printing == null
+    val preparing = exporting != null
+    val actionsEnabled = !configuring && exporting == null
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -141,16 +137,8 @@ fun PiecesScreen(
             preview?.let { pages ->
                 item {
                     fun begin(destination: ExportDestination) {
-                        if (pages.isEmpty()) {
-                            onMessage(NOTHING_TO_PRINT_MESSAGE)
-                        } else {
-                            onNotebookPrinted(draft)
-                            step = NotebookExportStep.Drawing(
-                                0,
-                                pages.first().blocks.first().section.title,
-                            )
-                            printing = PiecesNotebookJob(pages, destination)
-                        }
+                        onNotebookPrinted(draft)
+                        exporting = destination
                         configuring = false
                     }
                     ExportOptions(
@@ -165,40 +153,7 @@ fun PiecesScreen(
                         switches = sheetExportSwitches(),
                         costScope = sheetExportCostScope(SharedSheet.PIECES),
                         costLabel = sheetExportCostLabel(SharedSheet.PIECES, pages.size),
-                    )
-                }
-            }
-
-            printing?.let { job ->
-                item {
-                    ExportProgress(
-                        step = step,
-                        pages = job.pages.size,
-                        onCancel = when (val current = step) {
-                            is NotebookExportStep.Warming -> {
-                                {
-                                    printing = null
-                                    onMessage(
-                                        notebookWarmCancelledMessage(
-                                            current.photographsDone,
-                                            current.photographs,
-                                        ),
-                                    )
-                                }
-                            }
-                            is NotebookExportStep.Drawing -> {
-                                {
-                                    printing = null
-                                    onMessage(
-                                        notebookCancelledMessage(
-                                            current.pagesDone,
-                                            job.pages.size,
-                                        ),
-                                    )
-                                }
-                            }
-                            NotebookExportStep.Writing -> null
-                        },
+                        switchNote = ::sheetExportSwitchNote,
                     )
                 }
             }
@@ -253,26 +208,33 @@ fun PiecesScreen(
             }
         }
 
-        printing?.let { job ->
-            NotebookPdfExport(
-                pages = job.pages,
-                destination = job.destination,
-                onStep = { step = it },
+        exporting?.let { destination ->
+            SheetExport(
+                key = subject.title,
+                items = subject.pieces,
+                images = state.images,
+                typeId = { it.item.typeId },
+                sheet = SharedSheet.PIECES,
+                tally = subject.countSentence,
+                fileName = piecesFileName(subject.title),
+                destination = destination,
                 onFinished = { message ->
-                    printing = null
+                    exporting = null
                     onMessage(message)
                 },
-                fileName = piecesFileName(subject.title),
-                sheet = SharedSheet.PIECES,
-            )
+            ) { layout, onImageSettled, recording ->
+                PiecesSheet(
+                    subject = subject,
+                    names = { piece -> pieceName(state, piece) },
+                    images = state.images,
+                    layout = layout,
+                    onImageSettled = onImageSettled,
+                    modifier = recording,
+                )
+            }
         }
     }
 }
-
-private data class PiecesNotebookJob(
-    val pages: List<PrintPage>,
-    val destination: ExportDestination,
-)
 
 /**
  * The heading: country, name, what it is made of, and what can be done to it.

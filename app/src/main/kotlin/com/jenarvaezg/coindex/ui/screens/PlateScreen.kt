@@ -40,7 +40,6 @@ import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.ExportDestination
-import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateSubject
@@ -58,14 +57,12 @@ import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.travellingCoin
-import com.jenarvaezg.coindex.ui.notebookCancelledMessage
-import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
+import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
-import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.sheetExportSwitches
@@ -73,6 +70,7 @@ import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.sheetDownloadLabel
 import com.jenarvaezg.coindex.ui.sheetExportCostLabel
 import com.jenarvaezg.coindex.ui.sheetExportCostScope
+import com.jenarvaezg.coindex.ui.sheetExportSwitchNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -133,17 +131,15 @@ private fun AvailablePlate(
     onMessage: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Same conversation as the index (#401): Descargar / Compartir open the options card; only the
-    // second tap freezes the pages and starts the PDF. The PNG path stayed until the switches had a
-    // paper to land on — a bitmap cannot honour tamaño real or the QR.
+    // Same conversation as the index (#401): Descargar / Compartir open the options card.
+    // **What fits in a sheet is a PNG** — both doors leave a bitmap; the PDF is the notebook.
     var configuring by remember { mutableStateOf(false) }
     var draft by remember { mutableStateOf(notebookOptions) }
-    var printing by remember { mutableStateOf<SheetNotebookJob?>(null) }
-    var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
+    var exporting by remember { mutableStateOf<ExportDestination?>(null) }
     // Held here and not in the header of the grid, which is an item and is disposed on the way down:
     // the ink falls once per opening of the sheet, and scrolling back up finds it dry (ADR 0026 §3).
     val ink = rememberInkFall(plate.complete)
-    LaunchedEffect(printing != null) { onExporting(printing != null) }
+    LaunchedEffect(exporting != null) { onExporting(exporting != null) }
     val preview = remember(configuring, draft, plate.catalogId) {
         if (!configuring) {
             null
@@ -157,8 +153,8 @@ private fun AvailablePlate(
             plate = plate,
             images = images,
             ink = ink,
-            preparing = printing != null,
-            actionsEnabled = !configuring && printing == null,
+            preparing = exporting != null,
+            actionsEnabled = !configuring && exporting == null,
             onOpenSource = onOpenSource,
             onExport = {
                 if (!configuring) draft = notebookOptions
@@ -167,17 +163,8 @@ private fun AvailablePlate(
             options = preview?.let { about ->
                 {
                     fun begin(destination: ExportDestination) {
-                        val pages = about.pages
-                        if (pages.isEmpty()) {
-                            onMessage(NOTHING_TO_PRINT_MESSAGE)
-                        } else {
-                            onNotebookPrinted(draft)
-                            step = NotebookExportStep.Drawing(
-                                0,
-                                pages.first().blocks.first().section.title,
-                            )
-                            printing = SheetNotebookJob(pages, destination)
-                        }
+                        onNotebookPrinted(draft)
+                        exporting = destination
                         configuring = false
                     }
                     ExportOptions(
@@ -192,65 +179,41 @@ private fun AvailablePlate(
                         switches = sheetExportSwitches(),
                         costScope = sheetExportCostScope(SharedSheet.PLATE),
                         costLabel = sheetExportCostLabel(SharedSheet.PLATE, about.pages.size),
+                        switchNote = ::sheetExportSwitchNote,
                     )
                 }
             },
-            progress = printing?.let { job ->
-                {
-                    ExportProgress(
-                        step = step,
-                        pages = job.pages.size,
-                        onCancel = when (val current = step) {
-                            is NotebookExportStep.Warming -> {
-                                {
-                                    printing = null
-                                    onMessage(
-                                        notebookWarmCancelledMessage(
-                                            current.photographsDone,
-                                            current.photographs,
-                                        ),
-                                    )
-                                }
-                            }
-                            is NotebookExportStep.Drawing -> {
-                                {
-                                    printing = null
-                                    onMessage(
-                                        notebookCancelledMessage(
-                                            current.pagesDone,
-                                            job.pages.size,
-                                        ),
-                                    )
-                                }
-                            }
-                            NotebookExportStep.Writing -> null
-                        },
-                    )
-                }
-            },
+            progress = null,
         )
-        printing?.let { job ->
-            NotebookPdfExport(
-                pages = job.pages,
-                destination = job.destination,
-                onStep = { step = it },
+        exporting?.let { destination ->
+            SheetExport(
+                key = plate.catalogId,
+                items = plate.cells,
+                images = images,
+                typeId = { it.numistaTypeId },
+                printedSide = plate.printedSide,
+                sheet = SharedSheet.PLATE,
+                tally = plateSheetTally(plate.cells.size),
+                fileName = plateFileName(plate.catalogId),
+                destination = destination,
                 onFinished = { message ->
-                    printing = null
+                    exporting = null
                     onMessage(message)
                 },
-                fileName = plateFileName(plate.catalogId),
-                sheet = SharedSheet.PLATE,
-            )
+            ) { layout, onImageSettled, recording ->
+                PlateSheet(
+                    plate = plate,
+                    images = images,
+                    layout = layout,
+                    onImageSettled = onImageSettled,
+                    modifier = recording,
+                )
+            }
         }
     }
 }
 
 private data class SheetExportPreview(val pages: List<PrintPage>)
-
-private data class SheetNotebookJob(
-    val pages: List<PrintPage>,
-    val destination: ExportDestination,
-)
 
 @Composable
 private fun PlateGrid(
