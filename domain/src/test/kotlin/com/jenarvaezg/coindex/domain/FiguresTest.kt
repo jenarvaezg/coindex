@@ -253,12 +253,11 @@ class FiguresTest {
      * piece, the same way the magnitudes do.
      */
     @Test
-    fun `pieceCount is the figures census, including a coerced zero`() {
+    fun `a coerced zero still counts as one piece in the figures census`() {
         val items = listOf(
             item(id = 1, typeId = 1, quantity = 3),
             item(id = 2, typeId = 2, quantity = 0),
         )
-        assertEquals(4, pieceCount(items))
         assertEquals(4, collectionFigures(items, emptyMap()).pieces)
     }
 }

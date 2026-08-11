@@ -37,6 +37,7 @@ import com.jenarvaezg.coindex.domain.placementYear
 import com.jenarvaezg.coindex.ui.CountryPortrait
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.FiguresSubject
+import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.arcLabel
 import com.jenarvaezg.coindex.ui.commonestYearSentence
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
@@ -80,7 +81,8 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 @Composable
 fun FiguresScreen(
     subject: FiguresSubject,
-    collections: Int,
+    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    sewnEdge: SewnEdgeCounts,
     nowMillis: Long,
     onOpenCountry: (String) -> Unit,
     onOpenYear: (Int) -> Unit,
@@ -88,12 +90,8 @@ fun FiguresScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        // Pieces from the same census «La materia» prints, so the sewn edge cannot say one number
-        // for piezas while the page below says another — and never the type count under that name (#400).
         AlbumChrome(
-            collections = collections,
-            pieces = subject.figures.pieces,
-            types = subject.figures.types,
+            counts = sewnEdge,
             onSettings = onSettings,
         )
         LazyColumn(

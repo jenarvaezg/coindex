@@ -75,7 +75,6 @@ import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
-import com.jenarvaezg.coindex.ui.shelf.ownedTypeCount
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 @Composable
@@ -172,6 +171,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             settled = state.valuation.settled,
         )
     }
+    // One census for the sewn edge of every root (#400): collections from the index, pieces and
+    // types from the same figures walk «La materia» already uses — so the three tabs cannot invent
+    // three totals, and the HierarchyBar's type count is the same number.
+    val sewnEdge = SewnEdgeCounts(
+        collections = state.collection.index.size,
+        pieces = figures.figures.pieces,
+        types = figures.figures.types,
+    )
     val onBack: (() -> Unit)? =
         if (state.onboarded && route != null && !Routes.isRoot(route)) {
             { navController.popBackStack() }
@@ -218,10 +225,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             if (atRoot) {
                 HierarchyBar(
                     route = route,
-                    collections = state.collection.index.size,
-                    // Read from the same place Coins draws its rows, so the bar cannot promise a
-                    // number the screen behind it then contradicts.
-                    coins = ownedTypeCount(state.collection),
+                    collections = sewnEdge.collections,
+                    // Same type count the sewn edge prints, and the same place Coins draws its rows
+                    // from when quantities are honest — figures.types is that distinct set.
+                    coins = sewnEdge.types,
                     // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
                     grams = figures.figures.weight.value,
                     onCross = { destination ->
@@ -294,6 +301,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 onOpenCoins = { coinsShelf ->
                                     crossToCoins(navController, viewModel, coinsShelf)
                                 },
+                                sewnEdge = sewnEdge,
                                 onSettings = { navController.navigate(Routes.SETTINGS) },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
@@ -315,6 +323,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onCreateBox = viewModel::createOwnGrouping,
                             onAddToBox = viewModel::addToOwnGrouping,
                             onOpenSource = openUrl,
+                            sewnEdge = sewnEdge,
                             onSettings = { navController.navigate(Routes.SETTINGS) },
                             ficha = ficha,
                             value = coinValue,
@@ -323,7 +332,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     page(Routes.FIGURES) {
                         FiguresScreen(
                             subject = figures,
-                            collections = state.collection.index.size,
+                            sewnEdge = sewnEdge,
                             // Read once per composition of the page: what it dates is the spot, and a
                             // clock that ticked would make «plata de hoy» a thing that changes while
                             // you look at it, which is the pocket ticker #316 refused.

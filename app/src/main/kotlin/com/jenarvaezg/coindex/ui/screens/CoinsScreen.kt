@@ -47,12 +47,12 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
-import com.jenarvaezg.coindex.domain.pieceCount
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
+import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.coinFichaIdentity
 import com.jenarvaezg.coindex.ui.coinValueLabel
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
@@ -124,6 +124,8 @@ fun CoinsScreen(
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
     onOpenSource: (url: String) -> Unit,
+    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    sewnEdge: SewnEdgeCounts,
     onSettings: () -> Unit,
     /**
      * What one coin is worth, or null while the market has not landed (ADR 0028 §7).
@@ -183,9 +185,7 @@ fun CoinsScreen(
                 coinFullWidth {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         AlbumChrome(
-                            collections = state.index.size,
-                            pieces = pieceCount(state.items),
-                            types = rows.size,
+                            counts = sewnEdge,
                             onSettings = onSettings,
                         )
                         SearchField(value = query, onValueChange = { query = it })

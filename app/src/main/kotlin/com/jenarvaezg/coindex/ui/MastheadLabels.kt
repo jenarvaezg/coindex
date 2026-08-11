@@ -40,14 +40,22 @@ const val FATAL_EXPLANATION: String =
 private val SEWN_EDGE_TIME = DateTimeFormatter.ofPattern("'hoy' HH:mm", Locale.forLanguageTag("es"))
 
 /**
+ * The three magnitudes of the sewn edge, computed once above the three roots so Colecciones,
+ * Monedas and Las cifras cannot invent three totals for the same words (#400).
+ */
+data class SewnEdgeCounts(val collections: Int, val pieces: Int, val types: Int)
+
+/**
  * The complete sewn-edge line, owned here so the album chrome carries no copy of its own.
  *
  * The middle count is **pieces** (quantities ×N), never «monedas»: that word already names the
  * sibling hierarchy and its type count in the bar, and using it here made Las cifras print the
- * type count twice under two names (#400).
+ * type count twice under two names (#400). All three words are written in full — abbreviating
+ * only «col» left the line half-spoken.
  */
-fun sewnEdgeLabel(collections: Int, pieces: Int, types: Int, now: LocalTime): String =
-    "$collections col · $pieces piezas · $types tipos · ${now.format(SEWN_EDGE_TIME)}"
+fun sewnEdgeLabel(counts: SewnEdgeCounts, now: LocalTime): String =
+    "${counts.collections} colecciones · ${counts.pieces} piezas · ${counts.types} tipos · " +
+        now.format(SEWN_EDGE_TIME)
 
 /**
  * What the masthead says you are looking at.

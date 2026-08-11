@@ -77,10 +77,12 @@ index goes from **2.07 to 11.04 collections per screen** and shows coins for the
   the symmetry the code had (`IndexShelf.kt`, `CoinsShelf.kt`, `Bands.kt`) and the interface did not
   show. The shelf loses its «cerrar» button: the whole row is already the control.
 - **The masthead is replaced by a sewn edge** carrying the three counts and the hour:
-  `70 col · 574 piezas · 192 tipos · hoy 18:47`, with Ajustes as an icon.
+  `70 colecciones · 574 piezas · 192 tipos · hoy 18:47`, with Ajustes as an icon.
   (Amended by [#400](https://github.com/jenarvaezg/coindex/issues/400): the middle count is
   **pieces**, never «monedas», so the word that already names the sibling hierarchy and its type
-  count in the bar is not reused for a different magnitude one line above.)
+  count in the bar is not reused for a different magnitude one line above; the three words are
+  written in full; and the three numbers are assembled once above the roots so the tabs cannot
+  invent three censuses.)
 
 ### 2. Paper at any hour: there is no dark theme, and the promise is declared
 

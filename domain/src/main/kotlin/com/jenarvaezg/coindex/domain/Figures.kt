@@ -256,25 +256,12 @@ private const val SQUARE_METRES_PER_A4 = 0.06237
 /** How many A4 sheets the collection spread out would cover, which is what 0,35 m² means. */
 fun Magnitude.a4Sheets(): Double = value / SQUARE_METRES_PER_A4
 
-/**
- * Pieces owned, quantities included — the middle number of the sewn edge and of «La materia».
- *
- * Same fold [collectionFigures] uses, so Colecciones, Monedas and Las cifras cannot print three
- * different totals for the same word (#400).
- */
-fun pieceCount(items: List<CollectedItem>): Int {
-    var pieces = 0
-    for (item in items) {
-        pieces = saturatingAdd(pieces, item.quantity.coerceAtLeast(1))
-    }
-    return pieces
-}
-
 fun collectionFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): CollectionFigures {
-    val pieces = pieceCount(items)
+    var pieces = 0
     val accumulator = MagnitudeSums()
     for (item in items) {
         val quantity = item.quantity.coerceAtLeast(1)
+        pieces = saturatingAdd(pieces, quantity)
         val meta = typeMeta[item.typeId]
         accumulator.add(meta, quantity)
     }
