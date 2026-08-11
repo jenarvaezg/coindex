@@ -110,10 +110,6 @@ fun coinRows(state: CollectionState): List<CoinRow> {
     }.sortedWith(coinReadingOrder())
 }
 
-/** How many Numista types the collector owns, which is how many rows [coinRows] draws. */
-fun ownedTypeCount(state: CollectionState): Int =
-    state.items.distinctBy { it.typeId }.size
-
 /** The only identity left in the grid below the two-range name: year and a non-singular count. */
 fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
     row.year?.toString() ?: UNKNOWN_YEAR_LABEL,
