@@ -49,6 +49,10 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * Without it a mistyped or expired API key was a dead end: every sync failed with a 401 and the
  * only cure was clearing the app's data, taking the synced collection with it. Signing out is
  * offered separately, and keeps the collection.
+ *
+ * Reading order (#422): credentials first, «Guardar ajustes» beside the fields it keeps, then
+ * «Sincronizar» as the one filled action on the screen — never before the credentials it needs,
+ * and never as a bordered secondary lost between the prose and the form.
  */
 @Composable
 fun SettingsScreen(
@@ -85,11 +89,6 @@ fun SettingsScreen(
             style = MaterialTheme.typography.bodyMedium,
             color = Paper.muted,
         )
-        CardAction(
-            text = syncActionLabel(syncing),
-            onClick = onSync,
-            enabled = !syncing,
-        )
 
         OutlinedTextField(
             value = apiKey,
@@ -118,9 +117,18 @@ fun SettingsScreen(
         validation?.let { text ->
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
-        PrimaryAction(
+        // Beside the fields it keeps; CardAction so «Sincronizar» stays the one PrimaryAction
+        // on the screen (docs/ux/p1-jul-2026.md §1, #422).
+        CardAction(
             text = SETTINGS_SAVE_ACTION,
             onClick = { onSave(apiKey, userId) },
+        )
+        // After the credentials it needs, and filled: FieldGuide's level 1, not a CardAction
+        // stranded between the explanation and the fields (#422).
+        PrimaryAction(
+            text = syncActionLabel(syncing),
+            onClick = onSync,
+            enabled = !syncing,
         )
 
         // The photographs are the one thing here that is not a setting: nothing on this card can
