@@ -100,6 +100,15 @@ class PrunedVocabularyTest {
         assertEquals(NOTICES_LABEL, screenTitle(Routes.NOTICES))
     }
 
+    /**
+     * The installed APK is named once, on Avisos y licencias (#410) — not on every masthead.
+     */
+    @Test
+    fun `the installed version is named once with the notices`() {
+        assertEquals("Coindex · v1.2.2", installedVersionLabel("1.2.2"))
+        assertEquals("Coindex", installedVersionLabel(""))
+    }
+
     /** Ajustes is named once, by the masthead, and the screen no longer repeats it. */
     @Test
     fun `Ajustes is the masthead's word`() {

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.NOTICES_ATTRIBUTIONS
+import com.jenarvaezg.coindex.ui.installedVersionLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 private data class PackagedLicense(val heading: String, val asset: String)
@@ -25,7 +26,10 @@ private val packagedLicenses = listOf(
 )
 
 @Composable
-fun NoticesScreen(modifier: Modifier = Modifier) {
+fun NoticesScreen(
+    versionName: String,
+    modifier: Modifier = Modifier,
+) {
     val assets = LocalContext.current.assets
     val licenseTexts = remember(assets) {
         packagedLicenses.map { license ->
@@ -41,7 +45,13 @@ fun NoticesScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // No eyebrow: the masthead already names this screen, and «Avisos y licencias» over a
-        // page of licence text is the word said twice (§5).
+        // page of licence text is the word said twice (§5). The installed version sits here
+        // instead of the masthead (#410): one place an APK build needs to be identifiable.
+        Text(
+            installedVersionLabel(versionName),
+            style = MaterialTheme.typography.bodyMedium,
+            color = Paper.muted,
+        )
         NOTICES_ATTRIBUTIONS.forEach { attribution ->
             Text(attribution, style = MaterialTheme.typography.bodyMedium)
         }
