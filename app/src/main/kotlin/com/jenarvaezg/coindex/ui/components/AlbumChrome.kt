@@ -23,9 +23,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.SETTINGS_LABEL
+import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.sewnEdgeLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 import java.time.LocalTime
@@ -34,9 +36,7 @@ import kotlinx.coroutines.delay
 /** The sewn album edge, including a minute ticker whose lifecycle follows this composition. */
 @Composable
 fun AlbumChrome(
-    collections: Int,
-    coins: Int,
-    types: Int,
+    counts: SewnEdgeCounts,
     onSettings: () -> Unit,
 ) {
     var now by remember { mutableStateOf(LocalTime.now()) }
@@ -58,10 +58,11 @@ fun AlbumChrome(
     ) {
         Text(APP_NAME, style = MaterialTheme.typography.titleMedium, color = Paper.paper)
         Text(
-            sewnEdgeLabel(collections, coins, types, now),
+            sewnEdgeLabel(counts, now),
             style = MaterialTheme.typography.labelSmall,
             color = Paper.paperDeep,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
         SettingsGlyph(onClick = onSettings)

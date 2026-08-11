@@ -37,6 +37,7 @@ import com.jenarvaezg.coindex.domain.placementYear
 import com.jenarvaezg.coindex.ui.CountryPortrait
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.FiguresSubject
+import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.arcLabel
 import com.jenarvaezg.coindex.ui.commonestYearSentence
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
@@ -80,8 +81,8 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 @Composable
 fun FiguresScreen(
     subject: FiguresSubject,
-    collections: Int,
-    coins: Int,
+    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    sewnEdge: SewnEdgeCounts,
     nowMillis: Long,
     onOpenCountry: (String) -> Unit,
     onOpenYear: (Int) -> Unit,
@@ -90,9 +91,7 @@ fun FiguresScreen(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         AlbumChrome(
-            collections = collections,
-            coins = coins,
-            types = subject.figures.types,
+            counts = sewnEdge,
             onSettings = onSettings,
         )
         LazyColumn(

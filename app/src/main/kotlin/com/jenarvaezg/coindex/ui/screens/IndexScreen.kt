@@ -43,6 +43,7 @@ import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
@@ -152,6 +153,8 @@ fun IndexScreen(
      * not another plate.
      */
     onOpenCoins: (CoinsShelf) -> Unit,
+    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    sewnEdge: SewnEdgeCounts,
     onSettings: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).
@@ -309,9 +312,7 @@ fun IndexScreen(
         ) {
             fullWidth {
                 AlbumChrome(
-                    collections = state.index.size,
-                    coins = state.items.sumOf { item -> item.quantity },
-                    types = state.items.mapTo(mutableSetOf()) { item -> item.typeId }.size,
+                    counts = sewnEdge,
                     onSettings = onSettings,
                 )
             }
