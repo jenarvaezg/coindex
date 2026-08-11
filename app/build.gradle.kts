@@ -41,12 +41,11 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 42
-        // Minor: a capability the app did not have — a third cell of the bottom bar and a page that
-        // did not exist (ADR 0026 §8, §10; ADR 0028). It carries a schema migration of its own, so
-        // nothing else travels with it: if something goes wrong on his phone there is one thing to
-        // look at — banner: «Las cifras: lo que pesa y lo que vale».
-        versionName = "1.2.0"
+        versionCode = 43
+        // Patch on top of 1.2.0: a plate that has to jump to the landing casilla now opens on it,
+        // so the coin has somewhere to land and flies in as well as home (#396) — banner: «La
+        // moneda viaja también a la ida».
+        versionName = "1.2.1"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
