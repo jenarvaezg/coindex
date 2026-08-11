@@ -175,6 +175,49 @@ data class IssuePriceEntity(
 )
 
 /**
+ * That this phone has listed the issues of one type, and when (#452).
+ *
+ * The sibling of [IssuePriceReadEntity], and it exists for the same reason: without it, «Numista
+ * listed this type and none of its issues is the year this hole wants» is indistinguishable from
+ * «nobody has asked yet», and the lookup is spent again on every pass, for ever. A listing that
+ * **failed** writes neither this nor [TypeIssueEntity], so the next pass retries it.
+ *
+ * [readAt] is a clock, but a **much slower one than a price's**: `PRICE_LIFETIME_MILLIS` is thirty
+ * days because the market moves, and `LISTING_LIFETIME_MILLIS` is ninety because the catalogue barely
+ * does. It cannot be «never», tempting as that is at 102 lookups a pass: an open date run grows a
+ * slot every January, and a listing that never expired would leave that new hole unpriceable for the
+ * life of the phone, silently — `ValuationStatus.missing` counts owned issues and would not say a
+ * word. Ninety days amortises to about one lookup a day over his collection.
+ */
+@Entity(tableName = "type_issue_reads")
+data class TypeIssueReadEntity(
+    @PrimaryKey val typeId: Int,
+    val readAt: Long,
+)
+
+/**
+ * One issue of one type, as `/types/{id}/issues` listed it.
+ *
+ * Only the fields a hole is matched on. Both readings of the year are kept because a hole can be
+ * either: the Hijri 1316 of a Moroccan dirham is its `year` and the 1899 beside it is its
+ * `gregorianYear`, and the curated file may name whichever the plate is built on.
+ *
+ * [position] is where Numista put it in the listing, and it is stored for one reason: a year can have
+ * more than one issue — 1987 has two on the type this is tested against — and the hole is priced by
+ * **the first that matches**, which is the same choice the plate makes between two varieties of one
+ * slot. Without the order, a listing read back from the table would pick a different issue than the
+ * pass that stored it, and the price it already holds would go unrecognised.
+ */
+@Entity(tableName = "type_issues", primaryKeys = ["typeId", "issueId"])
+data class TypeIssueEntity(
+    val typeId: Int,
+    val issueId: Int,
+    val position: Int,
+    val year: Int?,
+    val gregorianYear: Int?,
+)
+
+/**
  * The last spot this phone read for one metal, in euros per troy ounce, and when.
  *
  * One row per symbol and **no history**: a table of daily spots is how wealth management would arrive

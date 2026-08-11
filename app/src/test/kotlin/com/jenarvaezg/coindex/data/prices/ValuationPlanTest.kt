@@ -146,7 +146,7 @@ class ValuationPlanTest {
 
         // The first of the declared issues, which is the same choice the plate makes: a slot holding two
         // varieties of one issue is one slot, and closing it costs one of them.
-        assertEquals(listOf(OwnedIssue(10, 8_508)), declaredHoleIssues(plan, emptyList(), NOW))
+        assertEquals(listOf(OwnedIssue(10, 8_508)), resolvedHoleIssues(plan, emptyList(), NOW))
         assertEquals(mapOf(20 to plan.holes.drop(1)), holeIssuesToAsk(plan, emptyList(), NOW))
     }
 
@@ -191,6 +191,103 @@ class ValuationPlanTest {
         val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
 
         assertEquals(0, valuationCallCount(plan, listOf(read(10, 100, NOW, true)), NOW))
+    }
+
+    /**
+     * A type whose listing is on the phone is not listed again — which is the whole of #452.
+     *
+     * The hole does not declare its issue, so before the listing was stored there was no way to tell
+     * its cached price from an unasked one: `hole.issueIds.none { it in fresh }` is `true` over an
+     * empty list, so the type was listed again on every pass, for ever. Measured over the father's
+     * collection that was 102 listings and 111 prices on every cold start, 213 of the 1.999 calls
+     * Numista let him make in August.
+     */
+    @Test
+    fun `a type already listed is not listed again`() {
+        val plan = ValuationPlan(
+            owned = emptyList(),
+            holes = listOf(PlateHole("dates", typeId = 20, year = 1_905)),
+        )
+        val listings = IssueListings(
+            listedTypeIds = setOf(20),
+            issueIdByTypeAndYear = mapOf((20 to 1_905) to 900),
+        )
+
+        assertTrue(holeIssuesToAsk(plan, emptyList(), NOW, listings).isEmpty())
+        // The price is still owed, and now it is addressable without spending the listing.
+        assertEquals(
+            listOf(OwnedIssue(20, 900)),
+            resolvedHoleIssues(plan, emptyList(), NOW, listings),
+        )
+        assertEquals(1, valuationCallCount(plan, emptyList(), NOW, listings))
+    }
+
+    /**
+     * With the listing stored **and** the price fresh, the hole costs nothing at all.
+     *
+     * This is the assertion the old `with everything cached` one could not make: it only ever covered
+     * the owned half, and the holes were the half that bled.
+     */
+    @Test
+    fun `with the listing stored and the price fresh a hole costs zero calls`() {
+        val plan = ValuationPlan(
+            owned = emptyList(),
+            holes = listOf(PlateHole("dates", typeId = 20, year = 1_905)),
+        )
+        val listings = IssueListings(
+            listedTypeIds = setOf(20),
+            issueIdByTypeAndYear = mapOf((20 to 1_905) to 900),
+        )
+
+        assertEquals(0, valuationCallCount(plan, listOf(read(20, 900, NOW, true)), NOW, listings))
+    }
+
+    /**
+     * A year the listing does not have costs nothing either, once the listing has been stored.
+     *
+     * It used to cost the lookup for ever: the KDoc of `askHoles` called that «not a datum», and over
+     * a plate whose curated file names a year Numista has no issue for it was a lookup every pass.
+     * «This type was listed» is a datum about *this phone*, which is all that is needed to stop.
+     */
+    @Test
+    fun `a year the stored listing does not have is not looked up again`() {
+        val plan = ValuationPlan(
+            owned = emptyList(),
+            holes = listOf(PlateHole("dates", typeId = 20, year = 1_904)),
+        )
+        val listings = IssueListings(
+            listedTypeIds = setOf(20),
+            issueIdByTypeAndYear = mapOf((20 to 1_905) to 900),
+        )
+
+        assertTrue(holeIssuesToAsk(plan, emptyList(), NOW, listings).isEmpty())
+        assertTrue(resolvedHoleIssues(plan, emptyList(), NOW, listings).isEmpty())
+        assertEquals(0, valuationCallCount(plan, emptyList(), NOW, listings))
+    }
+
+    /**
+     * An expired price is asked again without listing the type a second time.
+     *
+     * The two clocks are different on purpose: a price is the market and expires in thirty days, and
+     * «which issue is the 1905 of this type» is the catalogue and does not.
+     */
+    @Test
+    fun `an expired hole price is re-asked but the listing is not`() {
+        val plan = ValuationPlan(
+            owned = emptyList(),
+            holes = listOf(PlateHole("dates", typeId = 20, year = 1_905)),
+        )
+        val listings = IssueListings(
+            listedTypeIds = setOf(20),
+            issueIdByTypeAndYear = mapOf((20 to 1_905) to 900),
+        )
+        val expired = read(20, 900, NOW - PRICE_LIFETIME_MILLIS - 1, hasPrices = true)
+
+        assertTrue(holeIssuesToAsk(plan, listOf(expired), NOW, listings).isEmpty())
+        assertEquals(
+            listOf(OwnedIssue(20, 900)),
+            resolvedHoleIssues(plan, listOf(expired), NOW, listings),
+        )
     }
 }
 

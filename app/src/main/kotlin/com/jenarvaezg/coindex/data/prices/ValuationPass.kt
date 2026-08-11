@@ -3,6 +3,9 @@ package com.jenarvaezg.coindex.data.prices
 import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
+import com.jenarvaezg.coindex.data.db.TypeIssueEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
+import com.jenarvaezg.coindex.data.numista.IssueDto
 import com.jenarvaezg.coindex.data.numista.IssuePricesResponse
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
@@ -108,7 +111,9 @@ class NumistaValuationPass(
 
         val now = nowMillis()
         val reads = prices.reads()
-        val issues = ownedIssuesToAsk(plan, reads, now) + declaredHoleIssues(plan, reads, now)
+        val listings = storedListings(now)
+        val issues = ownedIssuesToAsk(plan, reads, now) +
+            resolvedHoleIssues(plan, reads, now, listings)
         var asked = 0
         var stopped: ValuationRefusal? = null
         for (issue in issues) {
@@ -121,7 +126,11 @@ class NumistaValuationPass(
             }
         }
         if (stopped == null) {
-            stopped = askHoles(numista, holeIssuesToAsk(plan, reads, now))
+            stopped = askHoles(
+                numista,
+                holeIssuesToAsk(plan, reads, now, listings),
+                freshIssues(reads, now),
+            )
         }
         // Counted from the table again rather than from what landed: an issue that failed is still
         // missing, and one that answered with no prices has stopped being missing without a price.
@@ -134,21 +143,31 @@ class NumistaValuationPass(
      * One listing per **type** and not per hole: a plate's holes are years of one type nine times out
      * of ten, and one `/types/{id}/issues` answers all of them.
      *
-     * A year the listing does not have spends the lookup and no price call, and writes nothing. It is
-     * not a failure — Numista simply has no issue for that year — but it is not a datum either: what
-     * would be stored is «this type has no 1904», which is a claim about the catalogue and not about a
-     * price, and the curated file is the authority on whether the coin exists (#48).
+     * **The listing is written down before anything is priced** (#452). It used to be spent and
+     * thrown away, on the grounds that «this type has no 1904» is a claim about the catalogue and not
+     * about a price — true, and it is not what is stored: what is stored is that *this phone* has
+     * read the listing, which is the only thing that stops it reading it again on the next pass, and
+     * on every pass after that. Over the father's collection that was 102 lookups per cold start.
+     *
+     * A hole whose price is already fresh is skipped rather than re-priced, which is the other half
+     * of the same bill: 111 prices he had already paid for.
      */
     private suspend fun askHoles(
         numista: NumistaClient,
         lookups: Map<Int, List<PlateHole>>,
+        fresh: Set<Pair<Int, Int>>,
     ): ValuationRefusal? {
         for ((typeId, holes) in lookups) {
             val listing = try {
-                numista.fetchIssues(typeId).value
+                // Only the issues that can be addressed: an entry Numista lists with no id of its own
+                // is not a candidate, and it must not be one here either — `storeListing` drops it,
+                // so counting it as the match would make this pass and the next one disagree about
+                // which issue a hole is priced by, and pay for both.
+                numista.fetchIssues(typeId).value.filter { it.id != null }
             } catch (error: NumistaException) {
                 return refusalFor(error) ?: continue
             }
+            storeListing(typeId, listing)
             for (hole in holes) {
                 val issueId = listing
                     .firstOrNull { issue ->
@@ -157,6 +176,7 @@ class NumistaValuationPass(
                     }
                     ?.id
                     ?: continue
+                if ((typeId to issueId) in fresh) continue
                 askOne(numista, typeId, issueId)?.let { return it }
             }
         }
@@ -187,6 +207,27 @@ class NumistaValuationPass(
         }
         store(typeId, issueId, answer)
         return null
+    }
+
+    /** What the phone has already listed and has not expired, read once per pass (#452). */
+    private suspend fun storedListings(now: Long): IssueListings =
+        IssueListings.of(prices.typeIssueReads(), prices.typeIssues(), now)
+
+    /**
+     * Writes down one type's listing, empty answer included.
+     *
+     * An empty listing is as much a datum as an empty price: it is the answer that says this phone
+     * has nothing left to ask about this type, and without the row the lookup comes back for ever.
+     */
+    private suspend fun storeListing(typeId: Int, listing: List<IssueDto>) {
+        prices.putListing(
+            read = TypeIssueReadEntity(typeId, nowMillis()),
+            issues = listing.mapIndexedNotNull { position, issue ->
+                issue.id?.let {
+                    TypeIssueEntity(typeId, it, position, issue.year, issue.gregorianYear)
+                }
+            },
+        )
     }
 
     private suspend fun store(typeId: Int, issueId: Int, answer: IssuePricesResponse) {

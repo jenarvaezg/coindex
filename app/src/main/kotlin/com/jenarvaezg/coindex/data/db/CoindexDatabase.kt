@@ -26,8 +26,10 @@ internal data class PreservedKey(
         IssuePriceReadEntity::class,
         IssuePriceEntity::class,
         MetalSpotEntity::class,
+        TypeIssueReadEntity::class,
+        TypeIssueEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -301,6 +303,30 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 8 gives the issue listings somewhere to be remembered (#452).
+         *
+         * Two tables, nothing dropped and nothing rewritten — the version 7 prices stay exactly as
+         * they were. The phone starts on the other side with no listing stored, so the first pass
+         * after the update spends the lookups once and no pass after it does.
+         *
+         * Kept as data for the reason [VERSION_2_TABLES] is: a keyword of drift between this and what
+         * Room derives from the entities is a crash at open time on the collector's phone.
+         */
+        internal val VERSION_8_TABLES: List<String> = listOf(
+            "CREATE TABLE IF NOT EXISTS `type_issue_reads` " +
+                "(`typeId` INTEGER NOT NULL, `readAt` INTEGER NOT NULL, PRIMARY KEY(`typeId`))",
+            "CREATE TABLE IF NOT EXISTS `type_issues` " +
+                "(`typeId` INTEGER NOT NULL, `issueId` INTEGER NOT NULL, `position` INTEGER NOT NULL, " +
+                "`year` INTEGER, `gregorianYear` INTEGER, PRIMARY KEY(`typeId`, `issueId`))",
+        )
+
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(connection: SQLiteConnection) {
+                VERSION_8_TABLES.forEach(connection::execSQL)
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
                 .addMigrations(
@@ -310,6 +336,7 @@ abstract class CoindexDatabase : RoomDatabase() {
                     MIGRATION_4_5,
                     MIGRATION_5_6,
                     MIGRATION_6_7,
+                    MIGRATION_7_8,
                 )
                 .build()
     }

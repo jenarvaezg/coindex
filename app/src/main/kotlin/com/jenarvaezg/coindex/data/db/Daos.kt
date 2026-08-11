@@ -239,6 +239,13 @@ interface PriceDao {
     @Query("SELECT * FROM issue_price_reads")
     suspend fun reads(): List<IssuePriceReadEntity>
 
+    @Query("SELECT * FROM type_issue_reads")
+    suspend fun typeIssueReads(): List<TypeIssueReadEntity>
+
+    /** In the order Numista listed them, which is what decides the issue a hole is priced by. */
+    @Query("SELECT * FROM type_issues ORDER BY typeId, position")
+    suspend fun typeIssues(): List<TypeIssueEntity>
+
     @Query("SELECT * FROM metal_spot WHERE symbol = :symbol")
     suspend fun spot(symbol: String): MetalSpotEntity?
 
@@ -270,4 +277,27 @@ interface PriceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRead(read: IssuePriceReadEntity)
+
+    /**
+     * Writes what one type's listing answered, as one unit (#452).
+     *
+     * The same shape as [putIssue] and for the same reasons: the old rows go first, so an issue
+     * Numista has withdrawn does not survive under a fresh read, and the mark is written last, so
+     * being cut off leaves the type unlisted rather than listed-and-empty.
+     */
+    @Transaction
+    suspend fun putListing(read: TypeIssueReadEntity, issues: List<TypeIssueEntity>) {
+        deleteTypeIssues(read.typeId)
+        insertTypeIssues(issues)
+        insertTypeIssueRead(read)
+    }
+
+    @Query("DELETE FROM type_issues WHERE typeId = :typeId")
+    suspend fun deleteTypeIssues(typeId: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTypeIssues(issues: List<TypeIssueEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTypeIssueRead(read: TypeIssueReadEntity)
 }

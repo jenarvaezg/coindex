@@ -146,34 +146,17 @@ class ValuationPassTest {
     }
 
     /**
-     * A hole is looked up by year and then priced, and a year the listing does not have writes nothing.
+     * A hole is looked up by year and then priced, and the listing itself is written down (#452).
      *
-     * Not a failure — Numista simply has no issue for that year — but not a datum either: what would be
-     * stored is a claim about the catalogue, and the curated file is the authority on whether the coin
-     * exists (#48).
+     * A year the listing does not have still leaves no price row — Numista simply has no issue for it,
+     * and the curated file is the authority on whether the coin exists (#48). What is new is that the
+     * *listing* is stored, which is a fact about this phone and not a claim about the catalogue.
      */
     @Test
-    fun `a hole is listed then priced, and an absent year writes nothing`() = runTest {
-        val pass = pass(
-            handler = { request ->
-                if (request.url.encodedPath.endsWith("/issues")) {
-                    respond(ISSUES, HttpStatusCode.OK, JSON)
-                } else {
-                    respond(PRICED_BODY, HttpStatusCode.OK, JSON)
-                }
-            },
-        )
+    fun `a hole is listed then priced, and the listing is written down`() = runTest {
+        val pass = pass(LISTING_THEN_PRICE)
 
-        pass.run(
-            ValuationPlan(
-                owned = emptyList(),
-                holes = listOf(
-                    PlateHole("dates", typeId = 30, year = 1_987),
-                    PlateHole("dates", typeId = 30, year = 1_904),
-                ),
-            ),
-            held = null,
-        )
+        pass.run(twoHoles(), held = null)
 
         // One listing for the type, and one price for the year it does have.
         assertEquals(
@@ -181,6 +164,115 @@ class ValuationPassTest {
             asked,
         )
         assertEquals(listOf(297), prices.reads.value.map { it.issueId })
+        assertEquals(listOf(30), prices.typeIssueReads.value.map { it.typeId })
+        // Las dos emisiones de 1987 que el listado trae, en el orden en que llegaron: el hueco se
+        // tasa por la primera, y ese orden es lo que la columna `position` conserva.
+        assertEquals(
+            listOf(297 to 0, 278_721 to 1),
+            prices.typeIssues.value.map { it.issueId to it.position },
+        )
+    }
+
+    /**
+     * And the pass after it asks Numista for **nothing at all** — which is the whole of #452.
+     *
+     * Before the listing was stored this second run cost the lookup and the price all over again: the
+     * hole does not declare its issue, so `hole.issueIds.none { it in fresh }` was `true` over an empty
+     * list and there was no way to tell the price it already held from one never asked for. Over the
+     * father's collection that was 102 lookups and 111 prices on every cold start — 213 of the 1.999
+     * calls Numista let him make in August, after which his app had no budget left for the fichas it
+     * was missing (#448).
+     */
+    @Test
+    fun `with the listing stored the next pass asks for nothing`() = runTest {
+        pass(LISTING_THEN_PRICE).run(twoHoles(), held = null)
+        asked.clear()
+
+        pass(LISTING_THEN_PRICE).run(twoHoles(), held = null)
+
+        assertTrue(asked.isEmpty(), "la segunda pasada no vuelve a comprar lo que ya está guardado")
+    }
+
+    /**
+     * A listing that **failed** is asked again, because nothing was written down.
+     *
+     * The same bargain a price makes: «asked and empty» is a datum and is kept, and a dead network is
+     * not an answer at all (ADR 0025).
+     */
+    @Test
+    fun `a listing that failed is asked again next pass`() = runTest {
+        pass(handler = { throw java.io.IOException("sin red") }).run(twoHoles(), held = null)
+        assertTrue(prices.typeIssueReads.value.isEmpty())
+        asked.clear()
+
+        pass(LISTING_THEN_PRICE).run(twoHoles(), held = null)
+
+        assertEquals("/v3/types/30/issues", asked.first())
+    }
+
+    /**
+     * An entry with no issue id of its own is no candidate — in **both** readings of the listing.
+     *
+     * `storeListing` cannot keep it, because there is nothing to key a price on. If `askHoles` still
+     * counted it as the match, this pass would skip the hole and the next one — reading the stored,
+     * filtered listing — would price the issue behind it, so the type would be paid for twice and the
+     * two «first match» rules would disagree for ever.
+     */
+    @Test
+    fun `an issue with no id of its own is not the match in either reading`() = runTest {
+        val handler: io.ktor.client.engine.mock.MockRequestHandler = { request ->
+            if (request.url.encodedPath.endsWith("/issues")) {
+                respond(ISSUES_FIRST_WITHOUT_ID, HttpStatusCode.OK, JSON)
+            } else {
+                respond(PRICED_BODY, HttpStatusCode.OK, JSON)
+            }
+        }
+        pass(handler).run(twoHoles(), held = null)
+
+        assertEquals(listOf(278_721), prices.reads.value.map { it.issueId })
+        asked.clear()
+        pass(handler).run(twoHoles(), held = null)
+
+        assertTrue(asked.isEmpty(), "las dos lecturas del listado eligen la misma emisión")
+    }
+
+    /**
+     * Ninety days later the listing is read again, because the catalogue does move — slowly.
+     *
+     * An open date run grows a slot every January. A listing that never expired would leave that new
+     * hole unpriceable for the life of the phone, and `missing` counts owned issues, so nothing on
+     * screen would say a word about it.
+     */
+    @Test
+    fun `a listing older than ninety days is read again`() = runTest {
+        val old = LISTING_LIFETIME_MILLIS + 1
+        pass(LISTING_THEN_PRICE, now = NOW - old).run(twoHoles(), held = null)
+        asked.clear()
+
+        pass(LISTING_THEN_PRICE).run(twoHoles(), held = null)
+
+        assertEquals("/v3/types/30/issues", asked.first())
+    }
+
+    /**
+     * A type Numista lists with **no** issue for the hole's year is written down as listed all the same.
+     *
+     * Otherwise an empty answer is indistinguishable from an unasked one and the lookup comes back on
+     * every pass for the life of the phone, which is what the old KDoc of `askHoles` accepted.
+     */
+    @Test
+    fun `a listing with no matching year still stops the lookup`() = runTest {
+        val onlyHole = ValuationPlan(
+            owned = emptyList(),
+            holes = listOf(PlateHole("dates", typeId = 30, year = 1_904)),
+        )
+        pass(LISTING_THEN_PRICE).run(onlyHole, held = null)
+        assertTrue(prices.reads.value.isEmpty(), "un año que el listado no tiene no deja precio")
+        asked.clear()
+
+        pass(LISTING_THEN_PRICE).run(onlyHole, held = null)
+
+        assertTrue(asked.isEmpty())
     }
 
     /**
@@ -230,6 +322,15 @@ class ValuationPassTest {
     private fun plan(vararg owned: OwnedIssue) =
         ValuationPlan(owned = owned.toList(), holes = emptyList())
 
+    /** Two holes of one type: the year the listing has, and one it does not. */
+    private fun twoHoles() = ValuationPlan(
+        owned = emptyList(),
+        holes = listOf(
+            PlateHole("dates", typeId = 30, year = 1_987),
+            PlateHole("dates", typeId = 30, year = 1_904),
+        ),
+    )
+
     private fun pass(
         handler: io.ktor.client.engine.mock.MockRequestHandler,
         budget: suspend (String) -> Unit = {},
@@ -266,8 +367,21 @@ private const val PRICED_BODY =
 private const val ISSUES =
     """[{"id":297,"year":1987,"gregorian_year":1987},{"id":278721,"year":1987}]"""
 
+/** The same 1987 twice, and the first of them with no id Numista can be asked a price for. */
+private const val ISSUES_FIRST_WITHOUT_ID =
+    """[{"year":1987,"gregorian_year":1987},{"id":278721,"year":1987}]"""
+
 private val PRICED: io.ktor.client.engine.mock.MockRequestHandler =
     { respond(PRICED_BODY, HttpStatusCode.OK, JSON) }
 
 private val EMPTY_PRICES: io.ktor.client.engine.mock.MockRequestHandler =
     { respond("""{"currency":"EUR","prices":[]}""", HttpStatusCode.OK, JSON) }
+
+/** Numista answering both calls a hole costs: the listing of its type, then the price of an issue. */
+private val LISTING_THEN_PRICE: io.ktor.client.engine.mock.MockRequestHandler = { request ->
+    if (request.url.encodedPath.endsWith("/issues")) {
+        respond(ISSUES, HttpStatusCode.OK, JSON)
+    } else {
+        respond(PRICED_BODY, HttpStatusCode.OK, JSON)
+    }
+}

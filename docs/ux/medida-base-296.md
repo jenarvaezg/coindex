@@ -290,7 +290,7 @@ adb shell settings put global window_animation_scale 0     # y transition_ y ani
 ./gradlew :app:assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 
-# el alta se completa con NUMISTA_API_KEY_PADRE de .env y el id 568461, y «Sincronizar»
+# el alta se completa con NUMISTA_API_KEY_JOSE de .env y el id de esa clave, y «Sincronizar»
 adb exec-out screencap -p > pantalla.png
 adb exec-out uiautomator dump /dev/tty > pantalla.xml    # de aquí salen las palabras
 
@@ -298,6 +298,14 @@ adb exec-out uiautomator dump /dev/tty > pantalla.xml    # de aquí salen las pa
 COINDEX_FIELD_SNAPSHOT=$PWD/.local/padre \
   ./gradlew :app:testDebugUnitTest --tests '*FieldReportTest*' --rerun
 ```
+
+**La clave del alta es la de Jose y no la del padre**, y esta línea decía lo contrario hasta el
+#452. Un AVD recién sembrado abre la app con la base de datos vacía, y a los tres segundos arranca
+una pasada de tasación: sobre la colección del padre eran 446 llamadas por sesión de medición
+—223 emisiones propias, 102 listados y 121 huecos— contra el presupuesto del que depende **su**
+móvil. En agosto de 2026 su clave llegó a 1.999 de 2.000 y se quedó sin poder bajar las fichas que
+le faltaban (#448). Medir con su clave le apaga la app; medir con la de Jose no le cuesta nada a
+nadie que esté usando Coindex de verdad.
 
 Dos trampas del emulador que cuestan media hora cada una: el teclado virtual **se traga los
 gestos** —un `input swipe` sobre él escribe palabras por deslizamiento en el buscador— y un
