@@ -3,12 +3,16 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.domain.GRAMS_PER_TROY_OUNCE
 import com.jenarvaezg.coindex.ui.UNKNOWN_YEAR_LABEL
 
-// Every band in this file is **total**: each has a member for the rows that have no value, so the
-// per-chip counts always add up to the facet's own total. That is not tidiness — a row reachable by no
-// chip of a facet is a row the collector can only find by *not* using that facet, and nothing on
-// screen would say so: the counts would simply fall short of the tally and nobody would notice. The
-// uncached type, the coin nobody weighed and the box of types no ficha has arrived for are exactly the
-// rows worth reaching.
+// Every band in this file is **total**: each has a member for the rows that have no value, so no row
+// of a facet is unreachable. That is not tidiness — a row reachable by no chip of a facet is a row the
+// collector can only find by *not* using that facet, and nothing on screen would say so. The uncached
+// type, the coin nobody weighed and the box of types no ficha has arrived for are exactly the rows
+// worth reaching.
+//
+// Totality is «no row without a chip», and for every band here except the years it also means the
+// per-chip counts add up to the facet's total. The years are the exception since #448: a coin held in
+// three years is counted by three chips, because each of them has to find it. A chip still never
+// counts a row twice, and the facet's total is still the number of *coins*.
 
 /**
  * The weight of a coin, in the grams Numista records rather than in the ounces a card prints.
@@ -60,7 +64,15 @@ sealed interface YearFilter {
     }
 
     companion object {
-        fun of(year: Int?): YearFilter = year?.let(::Of) ?: Undated
+        /**
+         * Every chip one coin answers to: one per year it holds, or «Sin año» (#448).
+         *
+         * A list because a coin is one card however many years of it the collector has, and each of
+         * those years is a chip that has to find it. It is the only reading of [YearFilter] there is:
+         * the row is what is being filtered, and the row has years in the plural.
+         */
+        fun of(years: List<Int>): List<YearFilter> =
+            years.map(::Of).ifEmpty { listOf(Undated) }
     }
 }
 

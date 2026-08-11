@@ -27,6 +27,7 @@ internal object ShelfFixtures {
     const val ONZA_MEXICANA = 200
     const val BRITANNIA = 300
     const val UNCACHED = 400
+    const val CINCO_BOLIVARES = 10_340
 
     private val typeMeta = mapOf(
         FUERTE to TypeMeta(
@@ -146,6 +147,33 @@ internal object ShelfFixtures {
         collection = state.collection.copy(
             index = state.index.filterNot { it is IndexCard.Box },
             ownGroupings = emptyList(),
+        ),
+    )
+
+    /**
+     * One coin the collector holds in three years, which is the shape seven of the father's types
+     * have and one — the 5 bolívares N#10340, 1879 to 1936 — has twenty-one times over (#448).
+     *
+     * Its own shelf and not a sixth row of [state], because it is the case that breaks the «the chips
+     * add up to the total» arithmetic on purpose, and mixing it into the fixture every other test
+     * counts would make that arithmetic unreadable everywhere else.
+     */
+    val stateWithASpanningCoin = CollectionState(
+        AssembledCollection(
+            items = listOf(
+                CollectedItem(id = 1, quantity = 1, typeId = CINCO_BOLIVARES, issueYear = 1_936),
+                CollectedItem(id = 2, quantity = 1, typeId = CINCO_BOLIVARES, issueYear = 1_879),
+                CollectedItem(id = 3, quantity = 1, typeId = CINCO_BOLIVARES, issueYear = 1_904),
+            ),
+            typeMeta = mapOf(
+                CINCO_BOLIVARES to TypeMeta(
+                    id = CINCO_BOLIVARES,
+                    displayTitle = "5 Bolívares",
+                    issuerName = "Venezuela",
+                    minYear = 1_879,
+                    category = "coin",
+                ),
+            ),
         ),
     )
 

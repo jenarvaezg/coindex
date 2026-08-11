@@ -62,3 +62,25 @@ internal fun <R, T> facetCounts(
     }
     return FacetCounts(kept.size, byValue)
 }
+
+/**
+ * The same count for a facet a row can answer to in **more than one** value (#448).
+ *
+ * A coin held in three years belongs to three year chips, and tapping any of them has to find it —
+ * the chip's number is a promise about what the tap returns. [FacetCounts.total] stays the number of
+ * *rows*, not of values, so the «Cualquiera» chip keeps saying how many coins there are.
+ */
+internal fun <R, T> facetCountsOfEach(
+    rows: List<R>,
+    keep: (R) -> Boolean,
+    valuesOf: (R) -> List<T>,
+): FacetCounts<T> {
+    val kept = rows.filter(keep)
+    val byValue = LinkedHashMap<T, Int>()
+    for (row in kept) {
+        for (value in valuesOf(row).distinct()) {
+            byValue[value] = (byValue[value] ?: 0) + 1
+        }
+    }
+    return FacetCounts(kept.size, byValue)
+}

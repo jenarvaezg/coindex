@@ -30,11 +30,15 @@ class BandsTest {
 
     @Test
     fun `the year of a coin is that year, and Sin ano is its own chip`() {
-        assertEquals(YearFilter.Of(1874), YearFilter.of(1874))
-        assertEquals(YearFilter.Of(1966), YearFilter.of(1966))
-        assertEquals(YearFilter.Of(2026), YearFilter.of(2026))
+        assertEquals(listOf(YearFilter.Of(1874)), YearFilter.of(listOf(1874)))
+        assertEquals(listOf(YearFilter.Of(2026)), YearFilter.of(listOf(2026)))
+        // A coin held in three years answers to three chips (#448).
+        assertEquals(
+            listOf(YearFilter.Of(1879), YearFilter.Of(1904), YearFilter.Of(1936)),
+            YearFilter.of(listOf(1879, 1904, 1936)),
+        )
         // The two unpublished submissions of #186 have no year, and «Sin año» is their chip.
-        assertEquals(YearFilter.Undated, YearFilter.of(null))
+        assertEquals(listOf(YearFilter.Undated), YearFilter.of(emptyList()))
     }
 
     @Test

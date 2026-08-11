@@ -85,7 +85,7 @@ class CoinsShelfTest {
         // Newest first, and the coin nobody dated last rather than first.
         assertEquals(
             listOf(2020, 1978, 1929, null),
-            newest.map { it.year },
+            newest.map { it.newestYear },
         )
         // The unweighed coin sits at the bottom: it is not lighter, it is unweighed.
         assertEquals(ShelfFixtures.UNCACHED, heaviest.last().typeId)
@@ -129,6 +129,10 @@ class CoinsShelfTest {
      * The invariant that makes a shelf trustworthy: the chips of a facet add up to its total, so a
      * coin reachable by no chip cannot exist. The uncached coin is the case that proves it — it has
      * no year and no weight, and lands on «Sin año» and «Sin peso» rather than on nothing.
+     *
+     * The years add up here because no coin of this shelf is held in more than one; where one is, the
+     * sum is *larger* than the total on purpose, and that is
+     * [a coin of several years is found by every one of them]'s business.
      */
     @Test
     fun `every chip row adds up to its own total, so no coin is unreachable`() {
@@ -141,6 +145,37 @@ class CoinsShelfTest {
         assertEquals(counts.membership.total, counts.membership.byValue.values.sum())
         assertEquals(1, counts.year.of(YearFilter.Undated))
         assertEquals(1, counts.weight.of(GramBand.Unweighed))
+    }
+
+    /**
+     * A coin held in several years is found by tapping **any** of them (#448).
+     *
+     * The father's 5 bolívares N#10340 is twenty-one years in one card, 1879 to 1936. Its cartouche
+     * prints the arc, so the individual years exist nowhere on the row — and a chip that could not
+     * find it would be a coin only reachable by not using the year facet at all, which is the one
+     * thing this file's bands exist to prevent.
+     *
+     * The chips of the facet now sum to more than its total, and that is the honest reading: the
+     * total counts coins and each chip counts the coins it would leave, so a coin of three years is
+     * three chips' answer and one coin.
+     */
+    @Test
+    fun `a coin of several years is found by every one of them`() {
+        val spanning = coinRows(ShelfFixtures.stateWithASpanningCoin)
+        val counts = coinsFacetCounts(spanning, CoinsShelf(), "")
+
+        listOf(1_879, 1_904, 1_936).forEach { year ->
+            val shelf = CoinsShelf(year = YearFilter.Of(year))
+            assertEquals(
+                listOf(ShelfFixtures.CINCO_BOLIVARES),
+                shelf.narrow(spanning, "").map { it.typeId },
+                "el chip de $year no encuentra la moneda",
+            )
+            assertEquals(1, counts.year.of(YearFilter.Of(year)), "el chip de $year no la cuenta")
+        }
+        assertEquals(1, counts.year.total, "una moneda de tres años sigue siendo una moneda")
+        // Y el año que no tiene no la ofrece: el chip que dice cero es un callejón visible.
+        assertEquals(0, counts.year.of(YearFilter.Of(1_900)))
     }
 
     @Test
