@@ -86,7 +86,9 @@ data class CoinRow(
 fun coinRows(state: CollectionState): List<CoinRow> {
     val claimed = claimsOf(state)
     val byType = LinkedHashMap<Int, MutableList<CollectedItem>>()
-    for (item in state.items.filter { it.quantity > 0 }) {
+    // Same coerce as [collectionFigures]: a hostile zero is still one piece, so the bottom bar's
+    // type count and the rows Coins draws cannot drift (#426).
+    for (item in state.items) {
         byType.getOrPut(item.typeId) { mutableListOf() }.add(item)
     }
     return byType.map { (typeId, pieces) ->
@@ -99,7 +101,9 @@ fun coinRows(state: CollectionState): List<CoinRow> {
             year = meta?.minYear,
             objectClass = objectClassOf(meta?.category),
             weightOz = meta?.weightOz,
-            quantity = pieces.fold(0) { total, piece -> saturatingAdd(total, piece.quantity) },
+            quantity = pieces.fold(0) { total, piece ->
+                saturatingAdd(total, piece.quantity.coerceAtLeast(1))
+            },
             claims = claimed.byType[typeId].orEmpty(),
             unclaimedPieces = pieces.count { it.id !in claimed.rowIds },
         )
@@ -108,7 +112,7 @@ fun coinRows(state: CollectionState): List<CoinRow> {
 
 /** How many Numista types the collector owns, which is how many rows [coinRows] draws. */
 fun ownedTypeCount(state: CollectionState): Int =
-    state.items.filter { it.quantity > 0 }.distinctBy { it.typeId }.size
+    state.items.distinctBy { it.typeId }.size
 
 /** The only identity left in the grid below the two-range name: year and a non-singular count. */
 fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
