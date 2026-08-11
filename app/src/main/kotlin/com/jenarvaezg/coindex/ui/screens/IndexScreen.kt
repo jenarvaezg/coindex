@@ -27,6 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -611,10 +614,20 @@ private fun CollectionCard(
 
 /** The fixed two-line cartouche shared by every collection card in a grid row. */
 @Composable
-internal fun CollectionName(name: String, modifier: Modifier = Modifier) {
+internal fun CollectionName(
+    name: String,
+    modifier: Modifier = Modifier,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+) {
     Text(
         text = name,
-        style = MaterialTheme.typography.titleMedium,
+        // Simple + Auto: wrap at spaces/hyphens (with a real hyphen when the dictionary
+        // splits a word). Without them, HighQuality was carving «Ibero-American» into
+        // «Ibero-America» / «n» on the three-column card (#405).
+        style = MaterialTheme.typography.titleMedium.copy(
+            lineBreak = LineBreak.Simple,
+            hyphens = Hyphens.Auto,
+        ),
         autoSize = TextAutoSize.StepBased(
             minFontSize = 13.sp,
             maxFontSize = 17.sp,
@@ -624,6 +637,7 @@ internal fun CollectionName(name: String, modifier: Modifier = Modifier) {
         minLines = COLLECTION_NAME_LINES,
         maxLines = COLLECTION_NAME_LINES,
         overflow = TextOverflow.Ellipsis,
+        onTextLayout = onTextLayout,
         modifier = modifier.padding(top = 6.dp, bottom = 2.dp),
     )
 }
