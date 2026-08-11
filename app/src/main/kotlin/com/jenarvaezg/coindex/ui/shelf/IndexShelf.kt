@@ -1,8 +1,10 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.matchesQuery
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -47,13 +49,17 @@ enum class PlateStatus(val label: String) {
  * measured **as if it were a card of one piece with no plate**. Three of the five it answers off
  * its own ficha; the other two it answers the way a card with no catalog already does.
  *
+ * [countries] is the país facet: for a plate it is every member's cured country (ADR 0023 / #415),
+ * so the chip row speaks the same names the country axis paints. A card or loose piece with one
+ * issuer keeps a single-element set; none means the subject has no country to filter by.
+ *
  * [weight] is the one that is nullable here and not on a card. A card with no single weight is a
  * box or a set — [OunceBand.Spanning], «Conjunto o caja» — and a loose coin whose ficha declares no
  * weight is neither: it has **no answer**, so it falls out of any weight filter rather than
  * disguising itself as a box.
  */
 interface ShelfSubject {
-    val issuer: String?
+    val countries: Set<String>
     val weight: OunceBand?
     val startsIn: StartBand
     val status: PlateStatus
@@ -80,7 +86,7 @@ data class IndexShelf(
         get() = listOfNotNull(issuer, weight, startsIn, status, series).size
 
     internal fun matches(subject: ShelfSubject, except: IndexFacet? = null): Boolean =
-        (except == IndexFacet.Issuer || issuer == null || subject.issuer == issuer) &&
+        (except == IndexFacet.Issuer || issuer == null || issuer in subject.countries) &&
             (except == IndexFacet.Weight || weight == null || subject.weight == weight) &&
             (except == IndexFacet.StartsIn || startsIn == null || subject.startsIn == startsIn) &&
             (except == IndexFacet.Status || status == null || subject.status == status) &&
@@ -99,7 +105,7 @@ enum class IndexFacet { Issuer, Weight, StartsIn, Status, Series }
  */
 data class IndexFacts(
     val card: IndexCard,
-    override val issuer: String?,
+    override val countries: Set<String>,
     override val weight: OunceBand,
     override val startsIn: StartBand,
     override val status: PlateStatus,
@@ -115,32 +121,66 @@ data class IndexFacts(
     val haystack: String,
 ) : ShelfSubject
 
-/** Everything the shelf of the index needs, joined once from the state the screens already read. */
-fun indexFacts(state: CollectionState): List<IndexFacts> = state.index.map { card ->
-    val coverage = card.coverage
-    val pieces = when (card) {
-        is IndexCard.Derived -> state.itemsByKey[card.key].orEmpty()
-        is IndexCard.Box -> card.box.items
+/**
+ * Everything the shelf of the index needs, joined once from the state the screens already read.
+ *
+ * [catalogs] lets the país facet read **member** countries for evidenced plates — the same cure the
+ * country axis already applies (#415 / ADR 0023) — instead of only the card eyebrow, which for a
+ * spanning catalog is one header and not the issuers its casillas live in.
+ */
+fun indexFacts(
+    state: CollectionState,
+    catalogs: List<CollectionCatalog> = emptyList(),
+): List<IndexFacts> {
+    val catalogsById = catalogs.associateBy { it.id }
+    return state.index.map { card ->
+        val coverage = card.coverage
+        val pieces = when (card) {
+            is IndexCard.Derived -> state.itemsByKey[card.key].orEmpty()
+            is IndexCard.Box -> card.box.items
+        }
+        val variant = (card as? IndexCard.Derived)?.collection?.let { collection ->
+            variantLabel(collection.weightMillioz, collection.finish, collection.metal)
+        }
+        val countries = countriesOf(card, catalogsById, state.typeMeta)
+        IndexFacts(
+            card = card,
+            countries = countries,
+            weight = OunceBand.of((card as? IndexCard.Derived)?.collection?.weightMillioz),
+            startsIn = StartBand.of(
+                pieces.mapNotNull { piece -> state.typeMeta[piece.typeId]?.minYear }.minOrNull(),
+            ),
+            status = when {
+                coverage == null -> PlateStatus.NoPlate
+                coverage.nothingMissing -> PlateStatus.Complete
+                else -> PlateStatus.PartlyDone
+            },
+            series = (card as? IndexCard.Derived)?.seriesStatus,
+            latestRowId = pieces.maxOfOrNull { it.id } ?: 0L,
+            haystack = fold(
+                listOfNotNull(card.name, variant).plus(countries).joinToString(" "),
+            ),
+        )
     }
-    val variant = (card as? IndexCard.Derived)?.collection?.let { collection ->
-        variantLabel(collection.weightMillioz, collection.finish, collection.metal)
+}
+
+/**
+ * The countries a card belongs to for the país chip: every member of its plate when there is one,
+ * else the single eyebrow the card already carries.
+ */
+internal fun countriesOf(
+    card: IndexCard,
+    catalogsById: Map<String, CollectionCatalog>,
+    typeMeta: Map<Int, TypeMeta>,
+): Set<String> {
+    val catalog = (card as? IndexCard.Derived)?.plateCatalogId?.let { catalogsById[it] }
+    if (catalog != null) {
+        val fromMembers = catalog.members.mapNotNull { member ->
+            memberCountry(catalog, member, typeMeta)
+        }.toSet()
+        if (fromMembers.isNotEmpty()) return fromMembers
     }
-    IndexFacts(
-        card = card,
-        issuer = card.issuer,
-        weight = OunceBand.of((card as? IndexCard.Derived)?.collection?.weightMillioz),
-        startsIn = StartBand.of(
-            pieces.mapNotNull { piece -> state.typeMeta[piece.typeId]?.minYear }.minOrNull(),
-        ),
-        status = when {
-            coverage == null -> PlateStatus.NoPlate
-            coverage.nothingMissing -> PlateStatus.Complete
-            else -> PlateStatus.PartlyDone
-        },
-        series = (card as? IndexCard.Derived)?.seriesStatus,
-        latestRowId = pieces.maxOfOrNull { it.id } ?: 0L,
-        haystack = fold(listOfNotNull(card.name, card.issuer, variant).joinToString(" ")),
-    )
+    return setOfNotNull(card.issuer)
 }
 
 /** The cards this shelf and this query leave, in the order the shelf's sort asks for. */
@@ -183,7 +223,7 @@ fun indexFacetCounts(
         shelf.matches(row, except = facet) && matchesQuery(row.haystack, query)
     }
     return IndexFacetCounts(
-        issuer = facetCounts(facts, keeping(IndexFacet.Issuer)) { it.issuer },
+        issuer = facetCountsOfEach(facts, keeping(IndexFacet.Issuer)) { it.countries.toList() },
         weight = facetCounts(facts, keeping(IndexFacet.Weight)) { it.weight },
         startsIn = facetCounts(facts, keeping(IndexFacet.StartsIn)) { it.startsIn },
         status = facetCounts(facts, keeping(IndexFacet.Status)) { it.status },

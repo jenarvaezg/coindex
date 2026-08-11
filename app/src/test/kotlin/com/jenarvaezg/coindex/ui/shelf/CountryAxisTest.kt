@@ -161,6 +161,34 @@ class CountryAxisTest {
         assertTrue(model.body.isEmpty())
     }
 
+    @Test
+    fun `a país chip keeps only that country's cells on a spanning plate`() {
+        val model = countryAxis(
+            state = state(
+                items = listOf(item(1, THALER, year = 1780)),
+                typeMeta = mapOf(
+                    THALER to meta(THALER, "autriche-habsbourg", "Imperio austríaco"),
+                    REAL to meta(REAL, "mexique", "México"),
+                ),
+                evidenced = setOf("historia"),
+            ),
+            catalogs = listOf(
+                catalog(
+                    id = "historia",
+                    issuer = "mexique",
+                    members = listOf(
+                        member("thaler", THALER, 1780, issuerCode = "autriche-habsbourg"),
+                        member("real", REAL, 1791),
+                    ),
+                ),
+            ),
+            keptCountry = "Imperio austríaco",
+        )
+
+        assertEquals(listOf("Imperio austríaco"), model.blocks.map { it.country })
+        assertEquals("1/1", model.blocks.single().label)
+    }
+
     private fun state(
         items: List<CollectedItem>,
         typeMeta: Map<Int, TypeMeta>,
@@ -232,5 +260,7 @@ class CountryAxisTest {
         private const val FRANCE_A = 60
         private const val FRANCE_B = 61
         private const val FRANCE_C = 62
+        private const val THALER = 70
+        private const val REAL = 71
     }
 }
