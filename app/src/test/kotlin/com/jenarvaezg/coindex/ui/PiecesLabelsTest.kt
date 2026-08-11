@@ -98,7 +98,10 @@ class PiecesLabelsTest {
         assertEquals("Agrupar piezas", groupPiecesLabel(seeded = false, shown = 191))
     }
 
-    /** Which side the work starts from: with a seed there is something to remove, without one nothing yet. */
+    /**
+     * Which side the work starts from: with a seed there is something to remove; without one the
+     * gesture is the card itself — not a phantom «Elegir» (#402).
+     */
     @Test
     fun `the selection hint says which way the work goes`() {
         assertEquals(
@@ -106,7 +109,7 @@ class PiecesLabelsTest {
             selectionHintLabel(seeded = true, shown = 59),
         )
         assertEquals(
-            "Toca «Elegir» en cada moneda que quieras.",
+            "Toca cada moneda que quieras meter en la caja.",
             selectionHintLabel(seeded = false, shown = 0),
         )
     }
@@ -119,9 +122,7 @@ class PiecesLabelsTest {
     }
 
     @Test
-    fun `the two toggles say what pressing them will do`() {
-        assertEquals("Elegir", pieceSelectionToggleLabel(picked = false))
-        assertEquals("Elegida", pieceSelectionToggleLabel(picked = true))
+    fun `the rename toggle says what pressing it will do`() {
         assertEquals("Renombrar", renameToggleLabel(renaming = false))
         assertEquals("Cerrar el nombre", renameToggleLabel(renaming = true))
     }

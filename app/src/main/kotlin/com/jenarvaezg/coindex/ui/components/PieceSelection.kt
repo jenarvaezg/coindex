@@ -30,7 +30,6 @@ import com.jenarvaezg.coindex.ui.boxDialogHeading
 import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.groupPiecesLabel
 import com.jenarvaezg.coindex.ui.namePickedBoxLabel
-import com.jenarvaezg.coindex.ui.pieceSelectionToggleLabel
 import com.jenarvaezg.coindex.ui.selectionHintLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -79,21 +78,6 @@ class PieceSelection {
 
 @Composable
 fun rememberPieceSelection(): PieceSelection = remember { PieceSelection() }
-
-/** The per-coin control, shown inside a card only while a selection is open. */
-@Composable
-fun PieceSelectionToggle(picked: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
-    CardAction(
-        text = pieceSelectionToggleLabel(picked),
-        onClick = onToggle,
-        modifier = modifier.padding(top = 8.dp),
-        icon = if (picked) {
-            { CheckGlyph() }
-        } else {
-            null
-        },
-    )
-}
 
 /**
  * The whole box-making gesture in one control, born in Coins (ADR 0021 §11).
