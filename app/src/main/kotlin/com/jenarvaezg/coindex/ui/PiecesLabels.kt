@@ -20,8 +20,10 @@ val PiecesSubject.countSentence: String
  * The masthead of the sheet of pieces: what the collection is, and how much of it there is.
  *
  * A pure list rather than a composable's body so a JVM test can read what the shared file says.
- * `PiecesSheetHeading` was private and unreachable, and that is how the PNG came to count
- * differently from the screen that shared it without a single test going red.
+ * The heading of the sheet of pieces used to be a private composable nobody could reach, and that is
+ * how the PNG came to count differently from the screen that shared it without a single test going
+ * red (#226). The drawing it belonged to is gone since #431 — the PNG is the printed page now — and
+ * the reason for keeping the words out here outlived it: paper reads this too.
  *
  * What nothing can name goes unsaid instead of printed blank: the country is silent when the pieces
  * disagree about it, and a box states no variant at all — it spans whatever the collector put in it.

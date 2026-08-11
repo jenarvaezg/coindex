@@ -107,18 +107,23 @@ fun notebookSwitchNote(switch: NotebookSwitch, offered: Boolean): String? = when
 }
 
 /**
- * Why a switch on a single lámina or hoja is annotated (#401).
+ * Why a switch on a single lámina or hoja is greyed — the same two reasons as anywhere else (#431).
  *
- * When the measured result is a PDF, every switch on this surface lands on paper. When it is a PNG,
- * none of them reach the bitmap — PlateSheet / PiecesSheet ignore the draft — so the row says so
- * rather than pretending this export will honour them. They still remember how the next cuaderno
- * will print, and flipping Fotos or Ambas caras can change the page count and flip the format.
+ * **There is no third reason any more.** Until #431 every switch on this surface said «Sólo en el
+ * cuaderno» whenever the measure came out a PNG, and it was true: the bitmap was a drawing of its
+ * own that received no options. The PNG is the printed page now, trimmed to the folio it fills, so
+ * fotos, ambas caras, tamaño real, el QR and el valor all reach the file — and «tamaño real» reaches
+ * it with the ruler at the foot, which is what makes the claim checkable against a viewer's «ajustar
+ * a la página».
+ *
+ * A note that no longer distinguishes anything is a word in front of the collector for nothing, so
+ * the function is the notebook's own. It stays as a name rather than folding into
+ * [notebookSwitchNote] at the call site because the two surfaces answer the same question and only
+ * one of them has ever had an answer of its own — and if a switch ever earns one back, this is where
+ * it goes.
  */
-fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean, pages: Int): String? = when {
-    !offered -> notebookSwitchNote(switch, offered)
-    sheetExportAsBitmap(pages) -> "Sólo en el cuaderno"
-    else -> null
-}
+fun sheetExportSwitchNote(switch: NotebookSwitch, offered: Boolean): String? =
+    notebookSwitchNote(switch, offered)
 
 /**
  * Where the export has got to, said in pages and in the name of what is being drawn.

@@ -53,7 +53,7 @@ class SheetExportDoorTest {
                     notebookPages = { emptyList() },
                     onExporting = {},
                     onMessage = {},
-                    bitmap = { _, _ -> },
+                    tally = "12 casillas",
                 ) { export ->
                     Column {
                         PrimaryAction(

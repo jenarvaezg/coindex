@@ -123,8 +123,8 @@ private fun AvailablePlate(
     // the ink falls once per opening of the sheet, and scrolling back up finds it dry (ADR 0026 §3).
     val ink = rememberInkFall(plate.complete)
 
-    // The machine itself is [SheetExportFlow] and lives in one place (#430); what a plate brings to
-    // it is the bitmap of its own sheet.
+    // The machine itself is [SheetExportFlow] and lives in one place (#430), and since #431 the
+    // drawing does too: what a plate brings is its name, its file and what it says it holds.
     SheetExportFlow(
         sheet = SharedSheet.PLATE,
         key = plate.catalogId,
@@ -134,28 +134,7 @@ private fun AvailablePlate(
         notebookPages = notebookPages,
         onExporting = onExporting,
         onMessage = onMessage,
-        bitmap = { destination, onFinished ->
-            SheetExport(
-                key = plate.catalogId,
-                items = plate.cells,
-                images = images,
-                typeId = { it.numistaTypeId },
-                printedSide = plate.printedSide,
-                sheet = SharedSheet.PLATE,
-                tally = plateSheetTally(plate.cells.size),
-                fileName = plateFileName(plate.catalogId),
-                destination = destination,
-                onFinished = onFinished,
-            ) { layout, onImageSettled, recording ->
-                PlateSheet(
-                    plate = plate,
-                    images = images,
-                    layout = layout,
-                    onImageSettled = onImageSettled,
-                    modifier = recording,
-                )
-            }
-        },
+        tally = plateSheetTally(plate.cells.size),
         modifier = modifier,
     ) { export ->
         PlateGrid(

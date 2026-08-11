@@ -586,9 +586,9 @@ private fun PrintGeometry.withNumistaCode(): PrintGeometry = copy(
 /**
  * The rejilla of one plate: fixed by its largest coin, never by a constant of the notebook.
  *
- * The screen's sheet squares its grid off and shrinks the density as the catalog grows
- * (`SheetLayout`), which is right for a bitmap and wrong for paper: at 1:1 the coin's size is
- * given, so what varies is how many of them fit. Two plates of different coins therefore get
+ * The bitmap of a plate used to square its grid off and shrink its density as the catalog grew,
+ * which is right for a picture and wrong for paper: at 1:1 the coin's size is given, so what varies
+ * is how many of them fit. That drawing is gone (#431) and this is the rejilla both exports get. Two plates of different coins therefore get
  * different grids, and the same coin is the same size on every page of the notebook.
  */
 data class PrintGrid(

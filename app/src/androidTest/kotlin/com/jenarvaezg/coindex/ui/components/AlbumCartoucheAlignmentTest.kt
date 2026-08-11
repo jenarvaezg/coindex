@@ -22,8 +22,6 @@ import com.jenarvaezg.coindex.ui.print.PrintSection
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import com.jenarvaezg.coindex.ui.screens.NotebookPageSheet
-import com.jenarvaezg.coindex.ui.screens.PiecesSheet
-import com.jenarvaezg.coindex.ui.screens.SheetLayout
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import com.jenarvaezg.coindex.domain.CollectedItem
 import org.junit.Assert.assertEquals
@@ -105,56 +103,6 @@ class AlbumCartoucheAlignmentTest {
         assertEquals(yearTops[0], yearTops[2], 0.5f)
     }
 
-    @Test
-    fun aSharedPngAlignsYearsAcrossAllThreeCartoucheCases() {
-        val names = mapOf(
-            1 to CoinName("5 Deutsche Mark", null),
-            2 to CoinName("1 Dollar", "Ox"),
-            3 to CoinName("5 Euro", "D.Fernando II and Gloria Frigate"),
-        )
-        val pieces = names.keys.map { typeId ->
-            DrawnPiece(
-                item = CollectedItem(
-                    id = typeId.toLong(),
-                    quantity = 1,
-                    typeId = typeId,
-                    issueYear = 1899 + typeId,
-                ),
-                emissionLabel = null,
-            )
-        }
-        val subject = PiecesSubject(
-            title = "Tres cartelas",
-            issuer = null,
-            variant = null,
-            coverage = null,
-            distinctTypes = pieces.size,
-            quantity = pieces.size,
-            pieces = pieces,
-            boxId = null,
-        )
-
-        compose.setContent {
-            CoindexTheme {
-                PiecesSheet(
-                    subject = subject,
-                    names = { item -> names.getValue(item.typeId) },
-                    images = emptyMap(),
-                    layout = SheetLayout.forMemberCount(pieces.size),
-                    onImageSettled = {},
-                )
-            }
-        }
-
-        val yearTops = pieces.map { piece ->
-            compose.onNodeWithText("${piece.item.issueYear} · Numista ${piece.item.typeId}")
-                .fetchSemanticsNode()
-                .boundsInRoot
-                .top
-        }
-        assertEquals(yearTops[0], yearTops[1], 0.5f)
-        assertEquals(yearTops[0], yearTops[2], 0.5f)
-    }
 
     private fun printedCell(name: CoinName, year: String) = PrintCell(
         name = name,

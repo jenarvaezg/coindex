@@ -95,8 +95,8 @@ fun PiecesScreen(
 
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
 
-    // The machine itself is [SheetExportFlow] and lives in one place (#430); what a leaf of pieces
-    // brings to it is the bitmap of its own sheet.
+    // The machine itself is [SheetExportFlow] and lives in one place (#430), and since #431 the
+    // drawing does too: what a leaf of pieces brings is its name, its file and its own count.
     SheetExportFlow(
         sheet = SharedSheet.PIECES,
         key = subject.title,
@@ -106,28 +106,7 @@ fun PiecesScreen(
         notebookPages = notebookPages,
         onExporting = onExporting,
         onMessage = onMessage,
-        bitmap = { destination, onFinished ->
-            SheetExport(
-                key = subject.title,
-                items = subject.pieces,
-                images = state.images,
-                typeId = { it.item.typeId },
-                sheet = SharedSheet.PIECES,
-                tally = subject.countSentence,
-                fileName = piecesFileName(subject.title),
-                destination = destination,
-                onFinished = onFinished,
-            ) { layout, onImageSettled, recording ->
-                PiecesSheet(
-                    subject = subject,
-                    names = { piece -> pieceName(state, piece) },
-                    images = state.images,
-                    layout = layout,
-                    onImageSettled = onImageSettled,
-                    modifier = recording,
-                )
-            }
-        },
+        tally = subject.countSentence,
         modifier = modifier,
     ) { export ->
         LazyColumn(
