@@ -247,8 +247,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 HierarchyBar(
                     route = route,
                     collections = sewnEdge?.collections,
-                    // Same type count the sewn edge prints, and the same place Coins draws its rows
-                    // from when quantities are honest — figures.types is that distinct set.
+                    // Same type count the sewn edge prints, and the same distinct set [coinRows]
+                    // draws — including a hostile zero coerced to one piece (#426).
                     coins = sewnEdge?.types,
                     // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
                     // Null with the sewn edge (#418): «0,00 kg» while reading is a false empty collection.

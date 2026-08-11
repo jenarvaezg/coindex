@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.collectionFigures
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.coinFichaIdentity
@@ -98,6 +99,29 @@ class CoinRowTest {
     @Test
     fun `the count the bottom bar prints is the number of rows Coins draws`() {
         assertEquals(rows.size, ownedTypeCount(ShelfFixtures.state))
+    }
+
+    /**
+     * Sewn edge and Coins share one census (#426): figures coerce a hostile zero to one piece, and
+     * [coinRows] must draw that type too — otherwise the bar says «Monedas · N+1» while the screen
+     * paints N rows.
+     */
+    @Test
+    fun `a coerced zero still draws a row, matching the figures type count`() {
+        val state = CollectionState(
+            AssembledCollection(
+                items = listOf(
+                    CollectedItem(id = 1, quantity = 3, typeId = 100),
+                    CollectedItem(id = 2, quantity = 0, typeId = 200),
+                ),
+                typeMeta = emptyMap(),
+            ),
+        )
+        val figures = collectionFigures(state.items, state.typeMeta)
+        val drawn = coinRows(state)
+
+        assertEquals(figures.types, drawn.size)
+        assertEquals(1, drawn.single { it.typeId == 200 }.quantity)
     }
 
     @Test
