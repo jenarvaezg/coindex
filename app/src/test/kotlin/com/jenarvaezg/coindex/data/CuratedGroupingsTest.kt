@@ -60,21 +60,22 @@ class CuratedGroupingsTest {
 
     /**
      * Lo que la Royal Mint acuñó en una onza de plata y no metió en ninguna gama: el D-Day 80 de
-     * 2024 y The Angel de 2026, cada uno de un solo año. Las tres onzas de 2 £ que parecían sobras
-     * con ellos resultaron ser programas de la propia ceca y salieron de aquí como catálogo —St
-     * George and the Dragon, The Lion and the Eagle y el British Lion, que volvió en 2026 «following
-     * a successful debut in 2025» y es el date run `uk-british-lion-1oz-bullion`—, así que esta
-     * agrupación es el residuo de verdad y no la lista entera.
+     * 2024, The Angel de 2026 y la del 250.º de la Declaración de Independencia (N#596807), cada
+     * una de un solo año. Las tres onzas de 2 £ que parecían sobras con ellas resultaron ser
+     * programas de la propia ceca y salieron de aquí como catálogo —St George and the Dragon, The
+     * Lion and the Eagle y el British Lion, que volvió en 2026 «following a successful debut in
+     * 2025» y es el date run `uk-british-lion-1oz-bullion`—, así que esta agrupación es el residuo
+     * de verdad y no la lista entera.
      *
-     * N#596807 no entra: su ficha está sin publicar (#38) y un borrador se puede borrar con su id.
+     * N#596807 entra ahora que su ficha está publicada (#451): «The» es familia placeholder (#404),
+     * no una serie, y la agrupación le gana a ese silencio.
      */
     @Test
     fun `the loose royal mint ounces are what no range claims`() {
         val loose = find("uk-royal-mint-1oz-silver-sueltas")
-        assertEquals(listOf(436_016, 581_702), loose.typeIds)
+        assertEquals(listOf(436_016, 581_702, 596_807), loose.typeIds)
         assertTrue(476_689 !in loose.typeIds, "el British Lion es un date run, no una suelta")
         assertEquals("Onzas de plata sueltas de la Royal Mint", loose.family)
-        assertTrue(596_807 !in loose.typeIds)
     }
 
     /**
