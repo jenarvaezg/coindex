@@ -78,11 +78,11 @@ internal fun <R, T> facetCounts(
 }
 
 /**
- * The same count for a facet a row can answer to in **more than one** value (#448).
+ * The same count for a facet a row can answer to in **more than one** value (#448 / #415).
  *
- * A coin held in three years belongs to three year chips, and tapping any of them has to find it —
- * the chip's number is a promise about what the tap returns. [FacetCounts.total] stays the number of
- * *rows*, not of values, so the «Cualquiera» chip keeps saying how many coins there are.
+ * A coin held in three years belongs to three year chips, and a spanning plate contributes to each
+ * of its member countries — tapping any of them has to find it. [FacetCounts.total] stays the number
+ * of *rows*, not of values, so the «Cualquiera» chip keeps saying how many subjects there are.
  */
 internal fun <R, T> facetCountsOfEach(
     rows: List<R>,

@@ -207,7 +207,7 @@ fun IndexScreen(
     LaunchedEffect(printing != null) { onExporting(printing != null) }
     // Joined once per collection, not once per chip counted: five facets over sixty cards would
     // otherwise walk the inventory thirty times a redraw.
-    val facts = remember(state) { indexFacts(state) }
+    val facts = remember(state, catalogs) { indexFacts(state, catalogs) }
     // Saved across a rotation and never persisted (ADR 0021 §1), unlike the shelf above it.
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
@@ -226,7 +226,7 @@ fun IndexScreen(
         shown.mapNotNull { card -> (card as? IndexCard.Derived)?.plateCatalogId }.toSet()
     }
     val keptLooseIds = remember(looseShown) { looseShown.map { it.id }.toSet() }
-    val countryModel = remember(state, catalogs, keptCatalogIds, keptLooseIds, shelf.axis) {
+    val countryModel = remember(state, catalogs, keptCatalogIds, keptLooseIds, shelf.axis, shelf.issuer) {
         if (shelf.axis != NotebookAxis.ByCountry) {
             null
         } else {
@@ -235,6 +235,7 @@ fun IndexScreen(
                 catalogs = catalogs,
                 keptCatalogIds = keptCatalogIds,
                 keptLooseIds = keptLooseIds,
+                keptCountry = shelf.issuer,
             )
         }
     }

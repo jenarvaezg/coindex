@@ -21,7 +21,7 @@ import java.util.Locale
  */
 data class UnclaimedFacts(
     val piece: CollectedItem,
-    override val issuer: String?,
+    override val countries: Set<String>,
     override val weight: OunceBand?,
     override val startsIn: StartBand,
     /** The year to read it by: the row's own where it recorded one, else the type's first. */
@@ -34,6 +34,9 @@ data class UnclaimedFacts(
 
     /** No catalog names it, so no series does — the same silence a card with no catalog keeps. */
     override val series: SeriesStatus? get() = null
+
+    /** The single country a loose coin has, when it has one — for reading order. */
+    val issuer: String? get() = countries.singleOrNull() ?: countries.firstOrNull()
 }
 
 /**
@@ -62,7 +65,7 @@ fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
                 // The same country the card of a collection with no curated file shows: Numista's
                 // issuing entity carries its period of validity, and `country` is «Rusia» where the
                 // raw name is «Federación de Rusia (1991-presente)» (ADR 0023).
-                issuer = meta?.country,
+                countries = setOfNotNull(meta?.country),
                 // Numista's own grams, snapped to the common weights but **not** to the curated
                 // ones: a loose coin is by definition one no curated file has a weight for. Null
                 // where the ficha declares none, which keeps it out of every weight filter instead

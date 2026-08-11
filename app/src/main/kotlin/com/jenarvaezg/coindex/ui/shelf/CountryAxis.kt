@@ -86,6 +86,12 @@ fun countryAxis(
     keptCatalogIds: Set<String>? = null,
     /** Loose row ids that survive the shelf, or null to keep every unclaimed piece. */
     keptLooseIds: Set<Long>? = null,
+    /**
+     * When the país chip is on, only that country's cells paint (#415): a spanning plate kept
+     * because one of its members matched must not still open México and Nueva Gales del Sur beside
+     * the Imperio austríaco the collector asked for.
+     */
+    keptCountry: String? = null,
 ): CountryAxisModel {
     val byCountry = linkedMapOf<String, MutableList<CountryAxisCell>>()
     val catalogsToDraw = catalogs.filter { catalog ->
@@ -102,6 +108,7 @@ fun countryAxis(
             if (!owned && !missing) continue
             val member = albumMember.member
             val country = memberCountry(catalog, member, state.typeMeta) ?: continue
+            if (keptCountry != null && country != keptCountry) continue
             val quantity = (status as? CollectionCatalogMemberStatus.Owned)
                 ?.items
                 ?.sumOf { it.quantity }
@@ -123,6 +130,7 @@ fun countryAxis(
         if (keptLooseIds != null && piece.id !in keptLooseIds) continue
         val meta = state.typeMeta[piece.typeId]
         val country = meta?.country ?: continue
+        if (keptCountry != null && country != keptCountry) continue
         byCountry.getOrPut(country) { mutableListOf() }.add(
             CountryAxisCell.Loose(
                 itemId = piece.id,
