@@ -6,9 +6,13 @@ import com.jenarvaezg.coindex.domain.LadderKind
 import com.jenarvaezg.coindex.domain.LadderUnit
 import com.jenarvaezg.coindex.domain.MarginFigure
 import com.jenarvaezg.coindex.domain.Referent
+import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 /**
  * Every string «Las cifras» prints, in one place (ADR 0026 §6).
@@ -26,9 +30,17 @@ object FiguresLabels {
 
     const val MONEY_HEADING: String = "El valor"
 
-    /** Where the amount comes from, said under it: a number nobody can check is not a figure. */
+    /**
+     * Where the amount comes from, said under it: a number nobody can check is not a figure.
+     *
+     * «lo que vale su plata» and not «su plata»: the elliptical form put a coin's metal on the same
+     * grammatical footing as a price, and the third source is the only one of the three that is not
+     * quoted anywhere — it is weight times fineness times the spot, which is why the stamp under it
+     * exists (#398).
+     */
     const val MONEY_ORIGIN: String =
-        "El mayor de tres precios en cada moneda: el catálogo de Numista, lo que pagaste o su plata."
+        "El mayor de tres precios en cada moneda: el catálogo de Numista, lo que pagaste o lo que " +
+            "vale su plata."
 
     const val MATTER_HEADING: String = "La materia"
     const val METAL_HEADING: String = "El metal, por masa"
@@ -121,6 +133,24 @@ fun kilogramsLabel(grams: Double): String = "${decimal(grams / 1_000.0, 2)} kg"
 fun fineOuncesLabel(ounces: Double): String = "${decimal(ounces, 1)} oz finas"
 
 /**
+ * The fine silver, said in the metal block and **not** in «la materia».
+ *
+ * It is where the prototype had it («de plata pura, 192 oz») and where it belongs: the bar above it has
+ * just split the mass into silver and copper, and this is that silver weighed in the unit bullion is
+ * quoted in. In «la materia» it rode next to a `7,14 kg` that the first ladder repeated in display size
+ * three lines below (#398).
+ *
+ * **«que son» and not «de plata pura, …»**, which is what the prototype said and what the phone proved
+ * wrong: under `PLATA 6,14 KG (86 %)` the bare phrase reads as a second figure, when 6,14 kg and 196,4 oz
+ * are the same silver weighed twice. Said as a conversion it is the unit the collector buys in, and
+ * nothing new to reconcile.
+ */
+fun fineSilverSentence(ounces: Double): String = "que son ${fineOuncesLabel(ounces)} de plata pura"
+
+/** The collection's own census, which is pieces and issuers — the weight is the ladders' to say. */
+fun matterCensusLabel(pieces: Int, issuers: Int): String = "$pieces piezas de $issuers emisores"
+
+/**
  * A magnitude on a ladder, in that ladder's own unit.
  *
  * @param approximate the stack, and only the stack: `thickness` is missing in a third of the types, so
@@ -211,19 +241,45 @@ fun coverageLabel(valued: Int, pieces: Int): String? =
     if (valued >= pieces) null else "el valor de $valued de tus $pieces piezas"
 
 /**
- * When a figure brought from outside was last read.
+ * The stamp under the amount: **which** silver price bought the metal floor, and when it was read.
  *
- * Every number from outside carries this, and it is what stops the total reading as a quotation
- * (ADR 0028 §5). An expired one still says it, because expired is not deleted.
+ * It is what stops the total reading as a quotation (ADR 0028 §5), and until #398 it could not do that
+ * job: it said «plata de hoy» — a date with no figure in it, in the same small caps and the same rust as
+ * `EL VALOR` and `LA MATERIA`, so it read as the heading of the block below rather than as a note on
+ * the amount above. The price was already in hand: `SilverSpot` carries it next to the timestamp.
+ *
+ * The hour is the #326's own request («el sello del spot con su hora») and it belongs to the same day:
+ * the spot expires daily, so «hoy 11:52» says the floor is this morning's and not last night's. Past
+ * that it drops off, because on «hace 12 días» the hour of the twelfth day back explains nothing.
  */
-fun readAtLabel(readAtMillis: Long, nowMillis: Long): String {
-    val days = TimeUnit.MILLISECONDS.toDays((nowMillis - readAtMillis).coerceAtLeast(0))
+fun spotStampLabel(
+    spot: SilverSpot,
+    nowMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = "plata: ${eurosPerOunceLabel(spot.eurPerTroyOunce)} · ${readAtLabel(spot.readAtMillis, nowMillis, zone)}"
+
+fun eurosPerOunceLabel(eurPerTroyOunce: Double): String = "${decimal(eurPerTroyOunce, 2)} €/oz"
+
+/**
+ * When the spot was read, in **calendar** days and not elapsed ones.
+ *
+ * `toDays(now - readAt)` counted 24-hour blocks, so a spot read yesterday at 23:00 and looked at this
+ * morning at 08:00 came out as nine hours, which is zero days, which was announced as «hoy». Invisible
+ * while the line carried no hour; a plain contradiction the moment it carries one — «hoy 23:00» read
+ * before midday (#398).
+ */
+private fun readAtLabel(readAtMillis: Long, nowMillis: Long, zone: ZoneId): String {
+    val read = Instant.ofEpochMilli(readAtMillis).atZone(zone)
+    val now = Instant.ofEpochMilli(nowMillis).atZone(zone)
+    val days = ChronoUnit.DAYS.between(read.toLocalDate(), now.toLocalDate())
     return when {
-        days <= 0L -> "plata de hoy"
-        days == 1L -> "plata de ayer"
-        else -> "plata de hace $days días"
+        days <= 0L -> "hoy ${read.format(CLOCK)}"
+        days == 1L -> "ayer ${read.format(CLOCK)}"
+        else -> "hace $days días"
     }
 }
+
+private val CLOCK = DateTimeFormatter.ofPattern("HH:mm", SPANISH)
 
 /** The arc, which is two years and the distance between them. */
 fun arcLabel(years: Int): String = "$years años"

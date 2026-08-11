@@ -17,6 +17,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.domain.LadderUnit
+import com.jenarvaezg.coindex.domain.Rung as DomainRung
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.LadderReading
 import com.jenarvaezg.coindex.ui.ladderAmountLabel
@@ -120,14 +122,40 @@ private fun Rungs(reading: LadderReading) {
                 },
         )
         RungRow(modifier = Modifier.fillMaxWidth().padding(top = 2.dp), count = rungs.size) { index ->
-            Text(
-                FiguresLabels.referent(rungs[index].referent),
-                style = MaterialTheme.typography.labelSmall,
-                color = Paper.muted,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.width(LABEL_WIDTH),
-            )
+            Rung(rungs[index], reading.ladder.unit)
         }
+    }
+}
+
+/**
+ * One referent under the rule: what it is, and **how much of it there is**.
+ *
+ * The magnitude is what the implementation of #326 dropped and what the prototype had — `ladrillo
+ * 2,00 kg`. Without it the five names are an order the collector has to take on trust: nothing on
+ * screen says why the brick comes before the cat, and the mark cannot be checked against anything but
+ * the equal spacing of the ticks, which is ordinal and deliberately says nothing about distance (#398).
+ *
+ * It is the referent's own magnitude and never «unos»: the extrapolation belongs to the collection's
+ * figure — a third of the types have no `thickness` — and a bowling ball weighs 7,26 kg exactly.
+ */
+@Composable
+private fun Rung(rung: DomainRung, unit: LadderUnit) {
+    Column(
+        modifier = Modifier.width(LABEL_WIDTH),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            FiguresLabels.referent(rung.referent),
+            style = MaterialTheme.typography.labelSmall,
+            color = Paper.muted,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            ladderAmountLabel(unit, rung.amount, approximate = false),
+            style = MaterialTheme.typography.labelSmall,
+            color = Paper.line,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

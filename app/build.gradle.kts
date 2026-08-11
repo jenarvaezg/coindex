@@ -41,11 +41,12 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 43
-        // Patch on top of 1.2.0: a plate that has to jump to the landing casilla now opens on it,
-        // so the coin has somewhere to land and flies in as well as home (#396) — banner: «La
-        // moneda viaja también a la ida».
-        versionName = "1.2.1"
+        versionCode = 44
+        // Patch on top of 1.2.1: no new capability, only «Las cifras» read the way it was meant to —
+        // the spot's stamp says which silver price and at what hour instead of «plata de hoy», and the
+        // ladders carry each referent's magnitude again (#398) — banner: «Las cifras se leen mejor: el
+        // valor dice con qué plata está contado».
+        versionName = "1.2.2"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
