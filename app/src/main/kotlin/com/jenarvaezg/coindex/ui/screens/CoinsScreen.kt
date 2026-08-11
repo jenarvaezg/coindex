@@ -125,7 +125,7 @@ fun CoinsScreen(
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
     onOpenSource: (url: String) -> Unit,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
-    sewnEdge: SewnEdgeCounts,
+    sewnEdge: SewnEdgeCounts?,
     onSettings: () -> Unit,
     /**
      * What one coin is worth, or null while the market has not landed (ADR 0028 §7).

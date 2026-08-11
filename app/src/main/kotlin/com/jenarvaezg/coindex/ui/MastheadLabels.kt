@@ -14,9 +14,11 @@ const val BACK_LABEL: String = "Volver"
  * permanent bar is a pocket ticker that puts the collector's estate in front of anyone glancing at
  * the phone (#316).
  */
-fun collectionsCellLabel(collections: Int): String = "Colecciones · $collections"
+fun collectionsCellLabel(collections: Int?): String =
+    "Colecciones · ${collections?.toString() ?: UNKNOWN_COUNT}"
 
-fun coinsCellLabel(coins: Int): String = "Monedas · $coins"
+fun coinsCellLabel(coins: Int?): String =
+    "Monedas · ${coins?.toString() ?: UNKNOWN_COUNT}"
 
 fun figuresCellLabel(count: String): String = "${FiguresLabels.DESTINATION} · $count"
 
@@ -36,8 +38,15 @@ const val FATAL_EXPLANATION: String =
 /**
  * The three magnitudes of the sewn edge, computed once above the three roots so Colecciones,
  * Monedas and Las cifras cannot invent three totals for the same words (#400).
+ *
+ * **Absent while the snapshot is unread** (#418): a cold start with zeros would claim the
+ * collection is empty for a second before the placeholder finishes reading it. Callers pass
+ * `null` to [sewnEdgeLabel] until [UiState.loading] clears.
  */
 data class SewnEdgeCounts(val collections: Int, val pieces: Int, val types: Int)
+
+/** What a count says before the snapshot has landed (#418). */
+const val UNKNOWN_COUNT: String = "—"
 
 /**
  * The complete sewn-edge line, owned here so the album chrome carries no copy of its own.
@@ -47,9 +56,16 @@ data class SewnEdgeCounts(val collections: Int, val pieces: Int, val types: Int)
  * type count twice under two names (#400). All three words are written in full — abbreviating
  * only «col» left the line half-spoken. The wall-clock minute is gone (#419): the system clock is
  * five millimetres away, and the line never meant «last sync».
+ *
+ * While [counts] is null the line is just «—»: inventing «0 colecciones · 0 piezas · 0 tipos»
+ * would contradict the placeholder that is still reading (#418).
  */
-fun sewnEdgeLabel(counts: SewnEdgeCounts): String =
-    "${counts.collections} colecciones · ${counts.pieces} piezas · ${counts.types} tipos"
+fun sewnEdgeLabel(counts: SewnEdgeCounts?): String =
+    if (counts == null) {
+        UNKNOWN_COUNT
+    } else {
+        "${counts.collections} colecciones · ${counts.pieces} piezas · ${counts.types} tipos"
+    }
 
 /**
  * What the masthead says you are looking at.

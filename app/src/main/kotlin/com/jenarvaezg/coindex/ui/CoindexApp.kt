@@ -184,12 +184,17 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     }
     // One census for the sewn edge of every root (#400): collections from the index, pieces and
     // types from the same figures walk «La materia» already uses — so the three tabs cannot invent
-    // three totals, and the HierarchyBar's type count is the same number.
-    val sewnEdge = SewnEdgeCounts(
-        collections = state.collection.index.size,
-        pieces = figures.figures.pieces,
-        types = figures.figures.types,
-    )
+    // three totals, and the HierarchyBar's type count is the same number. Absent while still
+    // reading (#418): zeros here would claim the collection is empty before the snapshot lands.
+    val sewnEdge = if (state.loading) {
+        null
+    } else {
+        SewnEdgeCounts(
+            collections = state.collection.index.size,
+            pieces = figures.figures.pieces,
+            types = figures.figures.types,
+        )
+    }
     val onBack: (() -> Unit)? =
         if (state.onboarded && route != null && !Routes.isRoot(route)) {
             { navController.popBackStack() }
@@ -235,12 +240,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             if (atRoot) {
                 HierarchyBar(
                     route = route,
-                    collections = sewnEdge.collections,
+                    collections = sewnEdge?.collections,
                     // Same type count the sewn edge prints, and the same place Coins draws its rows
                     // from when quantities are honest — figures.types is that distinct set.
-                    coins = sewnEdge.types,
+                    coins = sewnEdge?.types,
                     // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
-                    grams = figures.figures.weight.value,
+                    // Null with the sewn edge (#418): «0,00 kg» while reading is a false empty collection.
+                    grams = sewnEdge?.let { figures.figures.weight.value },
                     onCross = { destination ->
                         navController.navigate(destination) {
                             // The two roots are siblings, not a stack: crossing over and back must
@@ -582,9 +588,9 @@ private fun NavGraphBuilder.page(
 @Composable
 private fun HierarchyBar(
     route: String?,
-    collections: Int,
-    coins: Int,
-    grams: Double,
+    collections: Int?,
+    coins: Int?,
+    grams: Double?,
     onCross: (String) -> Unit,
 ) {
     Column {

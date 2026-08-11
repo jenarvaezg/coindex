@@ -151,7 +151,7 @@ fun IndexScreen(
      */
     onOpenCoins: (CoinsShelf) -> Unit,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
-    sewnEdge: SewnEdgeCounts,
+    sewnEdge: SewnEdgeCounts?,
     onSettings: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).

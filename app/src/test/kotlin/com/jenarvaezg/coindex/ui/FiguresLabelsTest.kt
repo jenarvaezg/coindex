@@ -30,6 +30,9 @@ class FiguresLabelsTest {
     fun `the cell of the bottom bar counts weight`() {
         assertEquals("6,91 kg", figuresCellCount(6_907.4))
         assertEquals("0,00 kg", figuresCellCount(0.0))
+        // Absence, not zero (#418): while the snapshot is still being read, «0,00 kg» would claim
+        // the collection weighs nothing.
+        assertEquals("—", figuresCellCount(null))
     }
 
     /** The Spanish decimal comma, whatever language the phone is in. */

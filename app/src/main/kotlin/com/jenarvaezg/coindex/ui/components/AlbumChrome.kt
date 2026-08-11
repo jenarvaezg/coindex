@@ -29,7 +29,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 /** The sewn album edge: three counts and the way into Ajustes. */
 @Composable
 fun AlbumChrome(
-    counts: SewnEdgeCounts,
+    counts: SewnEdgeCounts?,
     onSettings: () -> Unit,
 ) {
     Row(

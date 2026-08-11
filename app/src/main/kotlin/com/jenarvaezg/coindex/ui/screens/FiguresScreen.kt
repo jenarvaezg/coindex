@@ -82,7 +82,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 fun FiguresScreen(
     subject: FiguresSubject,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
-    sewnEdge: SewnEdgeCounts,
+    sewnEdge: SewnEdgeCounts?,
     nowMillis: Long,
     onOpenCountry: (String) -> Unit,
     onOpenYear: (Int) -> Unit,

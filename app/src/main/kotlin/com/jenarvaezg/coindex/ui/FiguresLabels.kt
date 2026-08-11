@@ -90,8 +90,12 @@ object FiguresLabels {
  * An amount in a permanent bar is a pocket ticker — it changes on its own, with nobody touching
  * anything, and puts the collector's estate in front of whoever glances at the phone. The weight only
  * changes when a coin arrives (#316).
+ *
+ * **Absent while the snapshot is unread** (#418): `null` prints «—» rather than «0,00 kg», which
+ * would claim the collection weighs nothing for the second the placeholder is still reading.
  */
-fun figuresCellCount(grams: Double): String = kilogramsLabel(grams)
+fun figuresCellCount(grams: Double?): String =
+    if (grams == null) UNKNOWN_COUNT else kilogramsLabel(grams)
 
 /**
  * The one sentence of the valuation, in the settings screen.
