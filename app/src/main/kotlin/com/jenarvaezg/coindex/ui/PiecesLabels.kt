@@ -84,9 +84,6 @@ const val BOX_ADD_TO_EXISTING: String = "O añádelas a una que ya tienes:"
 
 fun boxDialogHeading(count: Int): String = "Agrupar ${plural(count, "moneda", "monedas")}"
 
-/** The per-coin control of an open selection. */
-fun pieceSelectionToggleLabel(picked: Boolean): String = if (picked) "Elegida" else "Elegir"
-
 fun namePickedBoxLabel(count: Int): String = "Nombrar la caja · $count"
 
 /**
@@ -99,10 +96,15 @@ fun namePickedBoxLabel(count: Int): String = "Nombrar la caja · $count"
 fun groupPiecesLabel(seeded: Boolean, shown: Int): String =
     if (seeded) "Agrupar estas $shown" else "Agrupar piezas"
 
-/** Which side the work starts from, said once and only while the mode is open. */
+/**
+ * Which side the work starts from, said once and only while the mode is open.
+ *
+ * Without a seed the gesture is the card itself (border when picked) — there is no «Elegir»
+ * control to name (#402).
+ */
 fun selectionHintLabel(seeded: Boolean, shown: Int): String =
     if (seeded) {
         "Vienen elegidas las $shown que enseñaba el filtro. Quita las que no."
     } else {
-        "Toca «Elegir» en cada moneda que quieras."
+        "Toca cada moneda que quieras meter en la caja."
     }

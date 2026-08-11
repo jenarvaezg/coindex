@@ -41,11 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 45
-        // Patch on top of 1.2.2: the sewn edge says «piezas» on every root and Las cifras stops
-        // printing the type count under that name (#400) — banner: «La cabecera cuenta piezas en
-        // las tres pestañas».
-        versionName = "1.2.3"
+        versionCode = 46
+        // Patch on top of 1.2.3: selection mode names the real gesture (tap the coin) instead of a
+        // phantom «Elegir» (#402) — banner: «Al agrupar, toca la moneda; ya no pide Elegir».
+        versionName = "1.2.4"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
