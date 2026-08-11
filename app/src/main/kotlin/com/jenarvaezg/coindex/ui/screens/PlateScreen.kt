@@ -19,12 +19,8 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -39,44 +35,30 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.DrawnCell
-import com.jenarvaezg.coindex.ui.ExportDestination
-import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.PlateValue
-import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.components.AlbumHole
-import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
-import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.travellingCoin
-import com.jenarvaezg.coindex.ui.notebookCancelledMessage
-import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
-import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
-import com.jenarvaezg.coindex.ui.print.sheetExportSwitches
 import com.jenarvaezg.coindex.ui.printedPhoto
-import com.jenarvaezg.coindex.ui.sheetDownloadLabel
-import com.jenarvaezg.coindex.ui.sheetExportAsBitmap
-import com.jenarvaezg.coindex.ui.sheetExportCostLabel
-import com.jenarvaezg.coindex.ui.sheetExportCostScope
-import com.jenarvaezg.coindex.ui.sheetExportSwitchNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -137,115 +119,23 @@ private fun AvailablePlate(
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Same conversation as the index (#401): Descargar / Compartir open the options card; the
-    // second tap freezes the pages and picks the format by measure — one page is a PNG, more is
-    // the PDF section of the notebook.
-    var configuring by remember { mutableStateOf(false) }
-    var draft by remember { mutableStateOf(notebookOptions) }
-    var job by remember { mutableStateOf<SheetExportJob?>(null) }
-    var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
     // Held here and not in the header of the grid, which is an item and is disposed on the way down:
     // the ink falls once per opening of the sheet, and scrolling back up finds it dry (ADR 0026 §3).
     val ink = rememberInkFall(plate.complete)
-    LaunchedEffect(job != null) { onExporting(job != null) }
-    val preview = remember(configuring, draft, plate.catalogId) {
-        if (!configuring) {
-            null
-        } else {
-            SheetExportPreview(pages = notebookPages(draft))
-        }
-    }
 
-    Box(modifier = modifier) {
-        PlateGrid(
-            plate = plate,
-            images = images,
-            ink = ink,
-            preparing = job != null,
-            actionsEnabled = !configuring && job == null,
-            onOpenSource = onOpenSource,
-            onExport = {
-                if (!configuring) draft = notebookOptions
-                configuring = true
-            },
-            options = preview?.let { about ->
-                {
-                    fun begin(destination: ExportDestination) {
-                        val pages = about.pages
-                        if (pages.isEmpty()) {
-                            onMessage(UiNotice(NOTHING_TO_PRINT_MESSAGE))
-                        } else {
-                            onNotebookPrinted(draft)
-                            job = if (sheetExportAsBitmap(pages.size)) {
-                                SheetExportJob.Bitmap(destination)
-                            } else {
-                                step = NotebookExportStep.Drawing(
-                                    0,
-                                    pages.first().blocks.first().section.title,
-                                )
-                                SheetExportJob.Pdf(pages, destination)
-                            }
-                        }
-                        configuring = false
-                    }
-                    ExportOptions(
-                        options = draft,
-                        pages = about.pages.size,
-                        cards = 1,
-                        loose = 0,
-                        onChange = { draft = it },
-                        onDownload = { begin(ExportDestination.Download) },
-                        onShare = { begin(ExportDestination.Share) },
-                        onDismiss = { configuring = false },
-                        switches = sheetExportSwitches(),
-                        costScope = sheetExportCostScope(SharedSheet.PLATE),
-                        costLabel = sheetExportCostLabel(SharedSheet.PLATE, about.pages.size),
-                        switchNote = { switch, offered ->
-                            sheetExportSwitchNote(switch, offered, about.pages.size)
-                        },
-                    )
-                }
-            },
-            progress = (job as? SheetExportJob.Pdf)?.let { pdf ->
-                {
-                    ExportProgress(
-                        step = step,
-                        pages = pdf.pages.size,
-                        onCancel = when (val current = step) {
-                            is NotebookExportStep.Warming -> {
-                                {
-                                    job = null
-                                    onMessage(
-                                        UiNotice(
-                                            notebookWarmCancelledMessage(
-                                                current.photographsDone,
-                                                current.photographs,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            }
-                            is NotebookExportStep.Drawing -> {
-                                {
-                                    job = null
-                                    onMessage(
-                                        UiNotice(
-                                            notebookCancelledMessage(
-                                                current.pagesDone,
-                                                pdf.pages.size,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            }
-                            NotebookExportStep.Writing -> null
-                        },
-                    )
-                }
-            },
-        )
-        when (val current = job) {
-            is SheetExportJob.Bitmap -> SheetExport(
+    // The machine itself is [SheetExportFlow] and lives in one place (#430); what a plate brings to
+    // it is the bitmap of its own sheet.
+    SheetExportFlow(
+        sheet = SharedSheet.PLATE,
+        key = plate.catalogId,
+        fileName = plateFileName(plate.catalogId),
+        notebookOptions = notebookOptions,
+        onNotebookPrinted = onNotebookPrinted,
+        notebookPages = notebookPages,
+        onExporting = onExporting,
+        onMessage = onMessage,
+        bitmap = { destination, onFinished ->
+            SheetExport(
                 key = plate.catalogId,
                 items = plate.cells,
                 images = images,
@@ -254,11 +144,8 @@ private fun AvailablePlate(
                 sheet = SharedSheet.PLATE,
                 tally = plateSheetTally(plate.cells.size),
                 fileName = plateFileName(plate.catalogId),
-                destination = current.destination,
-                onFinished = { message ->
-                    job = null
-                    onMessage(message)
-                },
+                destination = destination,
+                onFinished = onFinished,
             ) { layout, onImageSettled, recording ->
                 PlateSheet(
                     plate = plate,
@@ -268,30 +155,17 @@ private fun AvailablePlate(
                     modifier = recording,
                 )
             }
-            is SheetExportJob.Pdf -> NotebookPdfExport(
-                pages = current.pages,
-                destination = current.destination,
-                onStep = { step = it },
-                onFinished = { message ->
-                    job = null
-                    onMessage(message)
-                },
-                fileName = plateFileName(plate.catalogId),
-                sheet = SharedSheet.PLATE,
-            )
-            null -> Unit
-        }
+        },
+        modifier = modifier,
+    ) { export ->
+        PlateGrid(
+            plate = plate,
+            images = images,
+            ink = ink,
+            export = export,
+            onOpenSource = onOpenSource,
+        )
     }
-}
-
-private data class SheetExportPreview(val pages: List<PrintPage>)
-
-private sealed class SheetExportJob {
-    data class Bitmap(val destination: ExportDestination) : SheetExportJob()
-    data class Pdf(
-        val pages: List<PrintPage>,
-        val destination: ExportDestination,
-    ) : SheetExportJob()
 }
 
 @Composable
@@ -299,12 +173,8 @@ private fun PlateGrid(
     plate: PlateSubject,
     images: Map<Int, TypeImages>,
     ink: State<Float>,
-    preparing: Boolean,
-    actionsEnabled: Boolean,
+    export: SheetExportSurface,
     onOpenSource: (String) -> Unit,
-    onExport: () -> Unit,
-    options: (@Composable () -> Unit)?,
-    progress: (@Composable () -> Unit)?,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         // Which cells share a row is what decides where the tags line up, and the grid will not say
@@ -351,22 +221,16 @@ private fun PlateGrid(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    // Descargar opens «Cómo se exporta»; Compartir is the same door (#401, #285).
-                    // The panel itself owns Descargar / Compartir / Cancelar — two heading taps that
-                    // skipped the switches were the whole of the bug.
+                    // One door into «Cómo se exporta», the same shape the index has (#434): the
+                    // panel owns Descargar / Compartir / Cancelar, and asking the destination
+                    // twice — once on the way in and once on the way out — was the whole defect.
                     PrimaryAction(
-                        text = sheetDownloadLabel(SharedSheet.PLATE, preparing),
-                        onClick = onExport,
-                        enabled = actionsEnabled,
+                        text = export.label,
+                        onClick = export.onExport,
+                        enabled = export.enabled,
                     )
-                    CardAction(
-                        text = SHARE_ACTION,
-                        onClick = onExport,
-                        enabled = actionsEnabled,
-                        icon = { ShareGlyph(color = Paper.ink) },
-                    )
-                    options?.invoke()
-                    progress?.invoke()
+                    export.options?.invoke()
+                    export.progress?.invoke()
                     ExternalLink(
                         text = NUMISTA_SOURCE_LINK,
                         onClick = { onOpenSource(plate.source) },

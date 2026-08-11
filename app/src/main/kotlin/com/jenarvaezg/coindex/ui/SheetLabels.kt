@@ -136,15 +136,19 @@ const val SHARE_ACTION: String = "Compartir"
 const val DOWNLOAD_ACTION: String = "Descargar"
 
 /**
- * Downloading a sheet, in the noun the sheet itself carries.
+ * The one door into «Cómo se exporta», in the noun the sheet itself carries (#434).
+ *
+ * It used to be a pair — «Descargar lámina» with «Compartir» under it — and since #401 both opened
+ * the same panel, which ends in Descargar / Compartir / Cancelar. Two entrances to a conversation
+ * that already asks the destination at the end, and one of them promising a destination the panel
+ * would ask about again. What is left is the shape the index has had all along, [notebookExportLabel]:
+ * one gesture in, and the destination chosen where it is answered.
  *
  * One pair of sentences for the plate and for the collection, as [sheetDownloadFailure] already has
- * it: both nouns are feminine, which is what lets «Preparando la ${'$'}noun…» serve both, and writing
- * the pair twice is how the two screens would come to draw Descargar and Compartir the other way
- * round on one of them.
+ * it: both nouns are feminine, which is what lets «Preparando la ${'$'}noun…» serve both.
  */
-fun sheetDownloadLabel(sheet: SharedSheet, exporting: Boolean): String =
-    if (exporting) "Preparando la ${sheet.noun}…" else "Descargar ${sheet.noun}"
+fun sheetExportLabel(sheet: SharedSheet, exporting: Boolean): String =
+    if (exporting) "Preparando la ${sheet.noun}…" else "Exportar ${sheet.noun}"
 
 /** Where the coins on an exported sheet came from, which the PNG has to carry to be checkable. */
 fun sheetSourceLabel(source: String): String = "Fuente: $source"

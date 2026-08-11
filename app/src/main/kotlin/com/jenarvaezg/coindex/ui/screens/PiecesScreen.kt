@@ -1,7 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,12 +28,9 @@ import com.jenarvaezg.coindex.ui.BoxUpkeep
 import com.jenarvaezg.coindex.ui.COLLECTION_NO_LONGER_EXISTS
 import com.jenarvaezg.coindex.ui.DELETE_COLLECTION_ACTION
 import com.jenarvaezg.coindex.ui.EMPTY_BOX_EXPLANATION
-import com.jenarvaezg.coindex.ui.ExportDestination
-import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.PIECES_HEADING
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
-import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.boxName
@@ -45,22 +40,12 @@ import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
-import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.countSentence
-import com.jenarvaezg.coindex.ui.notebookCancelledMessage
-import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesFileName
-import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
-import com.jenarvaezg.coindex.ui.print.sheetExportSwitches
 import com.jenarvaezg.coindex.ui.renameToggleLabel
-import com.jenarvaezg.coindex.ui.sheetDownloadLabel
-import com.jenarvaezg.coindex.ui.sheetExportAsBitmap
-import com.jenarvaezg.coindex.ui.sheetExportCostLabel
-import com.jenarvaezg.coindex.ui.sheetExportCostScope
-import com.jenarvaezg.coindex.ui.sheetExportSwitchNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -109,18 +94,42 @@ fun PiecesScreen(
     }
 
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
-    var configuring by remember { mutableStateOf(false) }
-    var draft by remember { mutableStateOf(notebookOptions) }
-    var job by remember { mutableStateOf<PiecesExportJob?>(null) }
-    var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
-    LaunchedEffect(job != null) { onExporting(job != null) }
-    val preview = remember(configuring, draft, subject.title) {
-        if (!configuring) null else notebookPages(draft)
-    }
-    val preparing = job != null
-    val actionsEnabled = !configuring && job == null
 
-    Box(modifier = modifier) {
+    // The machine itself is [SheetExportFlow] and lives in one place (#430); what a leaf of pieces
+    // brings to it is the bitmap of its own sheet.
+    SheetExportFlow(
+        sheet = SharedSheet.PIECES,
+        key = subject.title,
+        fileName = piecesFileName(subject.title),
+        notebookOptions = notebookOptions,
+        onNotebookPrinted = onNotebookPrinted,
+        notebookPages = notebookPages,
+        onExporting = onExporting,
+        onMessage = onMessage,
+        bitmap = { destination, onFinished ->
+            SheetExport(
+                key = subject.title,
+                items = subject.pieces,
+                images = state.images,
+                typeId = { it.item.typeId },
+                sheet = SharedSheet.PIECES,
+                tally = subject.countSentence,
+                fileName = piecesFileName(subject.title),
+                destination = destination,
+                onFinished = onFinished,
+            ) { layout, onImageSettled, recording ->
+                PiecesSheet(
+                    subject = subject,
+                    names = { piece -> pieceName(state, piece) },
+                    images = state.images,
+                    layout = layout,
+                    onImageSettled = onImageSettled,
+                    modifier = recording,
+                )
+            }
+        },
+        modifier = modifier,
+    ) { export ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
@@ -130,92 +139,18 @@ fun PiecesScreen(
                 PiecesHeading(
                     subject = subject,
                     upkeep = upkeep,
-                    preparing = preparing,
-                    actionsEnabled = actionsEnabled && subject.pieces.isNotEmpty(),
+                    export = export,
+                    // A collection with no piece in it has no sheet to export, whatever the
+                    // machine says about being free.
+                    exportEnabled = export.enabled && subject.pieces.isNotEmpty(),
                     renaming = renaming,
-                    onExport = {
-                        if (!configuring) draft = notebookOptions
-                        configuring = true
-                    },
                     onToggleRename = { renaming = !renaming },
                 )
             }
 
-            preview?.let { pages ->
-                item {
-                    fun begin(destination: ExportDestination) {
-                        if (pages.isEmpty()) {
-                            onMessage(UiNotice(NOTHING_TO_PRINT_MESSAGE))
-                        } else {
-                            onNotebookPrinted(draft)
-                            job = if (sheetExportAsBitmap(pages.size)) {
-                                PiecesExportJob.Bitmap(destination)
-                            } else {
-                                step = NotebookExportStep.Drawing(
-                                    0,
-                                    pages.first().blocks.first().section.title,
-                                )
-                                PiecesExportJob.Pdf(pages, destination)
-                            }
-                        }
-                        configuring = false
-                    }
-                    ExportOptions(
-                        options = draft,
-                        pages = pages.size,
-                        cards = 1,
-                        loose = 0,
-                        onChange = { draft = it },
-                        onDownload = { begin(ExportDestination.Download) },
-                        onShare = { begin(ExportDestination.Share) },
-                        onDismiss = { configuring = false },
-                        switches = sheetExportSwitches(),
-                        costScope = sheetExportCostScope(SharedSheet.PIECES),
-                        costLabel = sheetExportCostLabel(SharedSheet.PIECES, pages.size),
-                        switchNote = { switch, offered ->
-                            sheetExportSwitchNote(switch, offered, pages.size)
-                        },
-                    )
-                }
-            }
+            export.options?.let { options -> item { options() } }
 
-            (job as? PiecesExportJob.Pdf)?.let { pdf ->
-                item {
-                    ExportProgress(
-                        step = step,
-                        pages = pdf.pages.size,
-                        onCancel = when (val current = step) {
-                            is NotebookExportStep.Warming -> {
-                                {
-                                    job = null
-                                    onMessage(
-                                        UiNotice(
-                                            notebookWarmCancelledMessage(
-                                                current.photographsDone,
-                                                current.photographs,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            }
-                            is NotebookExportStep.Drawing -> {
-                                {
-                                    job = null
-                                    onMessage(
-                                        UiNotice(
-                                            notebookCancelledMessage(
-                                                current.pagesDone,
-                                                pdf.pages.size,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            }
-                            NotebookExportStep.Writing -> null
-                        },
-                    )
-                }
-            }
+            export.progress?.let { progress -> item { progress() } }
 
             // The upkeep of a box is an `if` and not a screen: two actions in the heading above
             // and one per row below.
@@ -266,53 +201,7 @@ fun PiecesScreen(
                 }
             }
         }
-
-        when (val current = job) {
-            is PiecesExportJob.Bitmap -> SheetExport(
-                key = subject.title,
-                items = subject.pieces,
-                images = state.images,
-                typeId = { it.item.typeId },
-                sheet = SharedSheet.PIECES,
-                tally = subject.countSentence,
-                fileName = piecesFileName(subject.title),
-                destination = current.destination,
-                onFinished = { message ->
-                    job = null
-                    onMessage(message)
-                },
-            ) { layout, onImageSettled, recording ->
-                PiecesSheet(
-                    subject = subject,
-                    names = { piece -> pieceName(state, piece) },
-                    images = state.images,
-                    layout = layout,
-                    onImageSettled = onImageSettled,
-                    modifier = recording,
-                )
-            }
-            is PiecesExportJob.Pdf -> NotebookPdfExport(
-                pages = current.pages,
-                destination = current.destination,
-                onStep = { step = it },
-                onFinished = { message ->
-                    job = null
-                    onMessage(message)
-                },
-                fileName = piecesFileName(subject.title),
-                sheet = SharedSheet.PIECES,
-            )
-            null -> Unit
-        }
     }
-}
-
-private sealed class PiecesExportJob {
-    data class Bitmap(val destination: ExportDestination) : PiecesExportJob()
-    data class Pdf(
-        val pages: List<PrintPage>,
-        val destination: ExportDestination,
-    ) : PiecesExportJob()
 }
 
 /**
@@ -333,10 +222,9 @@ private sealed class PiecesExportJob {
 private fun PiecesHeading(
     subject: PiecesSubject,
     upkeep: BoxUpkeep?,
-    preparing: Boolean,
-    actionsEnabled: Boolean,
+    export: SheetExportSurface,
+    exportEnabled: Boolean,
     renaming: Boolean,
-    onExport: () -> Unit,
     onToggleRename: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -350,18 +238,14 @@ private fun PiecesHeading(
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
         )
-        // Descargar / Compartir open «Cómo se exporta» (#401); the panel owns the destination.
+        // One door into «Cómo se exporta», the same shape the index has (#434): the panel owns
+        // Descargar / Compartir / Cancelar, and asking the destination on the way in as well was
+        // the whole defect.
         PrimaryAction(
-            text = sheetDownloadLabel(SharedSheet.PIECES, preparing),
-            onClick = onExport,
-            enabled = actionsEnabled,
+            text = export.label,
+            onClick = export.onExport,
+            enabled = exportEnabled,
             modifier = Modifier.padding(top = 12.dp),
-        )
-        CardAction(
-            text = SHARE_ACTION,
-            onClick = onExport,
-            enabled = actionsEnabled,
-            icon = { ShareGlyph(color = Paper.ink) },
         )
         if (upkeep != null) {
             FlowRow(

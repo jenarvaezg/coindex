@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285 and #401, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401 and #434, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -45,6 +45,14 @@
 > in one page is a PNG; what needs more is a PDF**, measured by the pages the panel already
 > computes — not by which screen was opened. When the result is a PNG none of the switches reach the
 > bitmap, so they are annotated; when it is a PDF they apply for real.
+>
+> **Amended on 2026-08-11 (§13, #434).** They no longer open it as a pair. Two buttons in — Descargar
+> and Compartir — into a card that ends in Descargar / Compartir / Cancelar were two entrances to one
+> conversation, and the first of them named a destination the second would ask about anyway. What a
+> lámina and a hoja have is the shape the index has always had: **one door in** — «Exportar lámina»,
+> «Exportar hoja» — and the destination chosen where it is answered. Nothing about the panel or the
+> measure changes; what goes is the duplicate way in, and with it the twin export machines each
+> screen was carrying (#430).
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at
