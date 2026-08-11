@@ -101618,6 +101618,100 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "596807": {
+  "category": "coin",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "id": 596807,
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "max_year": 2026,
+  "min_year": 2026,
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "obverse": {
+   "description": "(en) Uncrowned portrait of King Charles III facing left, legend around.",
+   "designers": [
+    "Martin Jennings"
+   ],
+   "lettering": "CHARLES III · D · G · REX · F · D · 2 POUNDS MJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6a75e90526d741.20889962-original.jpg",
+   "picture_copyright": "The Royal Mint, 2026",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6a75e90526d741.20889962-180.jpg",
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor"
+  },
+  "orientation": "medal",
+  "reverse": {
+   "description": "(en) A hand holding a quill pen divides the design. To the right, an American bald eagle takes flight. The weight, fineness and date appear to the left, with the commemorative inscription around the rim.",
+   "designers": [
+    "Gordon Summers"
+   ],
+   "lettering": "250TH ANNIVERSARY OF THE DECLARATION OF INDEPENDENCE 1 OZ 999 FINE SILVER 2026 GS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6a75e906cc0628.58421140-original.jpg",
+   "picture_copyright": "The Royal Mint, 2026",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6a75e906cc0628.58421140-180.jpg",
+   "unabridged_legend": "250TH ANNIVERSARY OF THE DECLARATION OF INDEPENDENCE 1 OUNCE 999 FINE SILVER 2026 GORDON SUMMERS"
+  },
+  "ruler": [
+   {
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    },
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274"
+   }
+  ],
+  "series": "The",
+  "shape": "Circular",
+  "size": 38.61,
+  "tags": [
+   "Ave",
+   "Independencia"
+  ],
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "thickness": 3.15,
+  "title": "2 Pounds - Charles III (American Declaration of Independence; 1 oz Fine Silver",
+  "type": "Monedas no circulantes",
+  "url": "https://es.numista.com/596807",
+  "value": {
+   "currency": {
+    "full_name": "Pound sterling (decimalized, 1971-date)",
+    "id": 126,
+    "name": "Pound sterling"
+   },
+   "numeric_value": 2,
+   "text": "2 libras"
+  },
+  "weight": 31.1
+ },
  "59859": {
   "category": "coin",
   "commemorated_topic": "Monumentos arquitectónicos de Rusia",
