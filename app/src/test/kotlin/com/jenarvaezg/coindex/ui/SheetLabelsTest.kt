@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * What the collector is told once a sheet has left for the share sheet.
@@ -175,19 +176,38 @@ class SheetLabelsTest {
     }
 
     /**
-     * Each sheet downloads under its own noun, and the pair of sentences is written once.
+     * Each sheet exports under its own noun, and the pair of sentences is written once.
      *
      * Both nouns are feminine, which is what lets one pair serve both — the same fact that lets
      * [sheetExportMessage] be one sentence (#219).
+     *
+     * **«Exportar» and not «Descargar»** (#434): the button is the door into «Cómo se exporta», and
+     * the panel is where Descargar or Compartir is answered. A door that promised Descargar and then
+     * asked again was the second entrance, and it is gone.
      */
     @Test
-    fun `each sheet downloads under its own noun`() {
-        assertEquals("Descargar lámina", sheetDownloadLabel(SharedSheet.PLATE, exporting = false))
+    fun `each sheet exports under its own noun`() {
+        assertEquals("Exportar lámina", sheetExportLabel(SharedSheet.PLATE, exporting = false))
         assertEquals(
             "Preparando la lámina…",
-            sheetDownloadLabel(SharedSheet.PLATE, exporting = true),
+            sheetExportLabel(SharedSheet.PLATE, exporting = true),
         )
-        assertEquals("Descargar hoja", sheetDownloadLabel(SharedSheet.PIECES, exporting = false))
-        assertEquals("Preparando la hoja…", sheetDownloadLabel(SharedSheet.PIECES, exporting = true))
+        assertEquals("Exportar hoja", sheetExportLabel(SharedSheet.PIECES, exporting = false))
+        assertEquals("Preparando la hoja…", sheetExportLabel(SharedSheet.PIECES, exporting = true))
+    }
+
+    /**
+     * The destination is asked once, at the end (#434).
+     *
+     * Descargar and Compartir are the panel's own pair — [DOWNLOAD_ACTION] and [SHARE_ACTION] — and
+     * they stay exactly where the question is answered. What the lámina and the hoja no longer have
+     * is a second copy of them on the way in.
+     */
+    @Test
+    fun `Descargar and Compartir belong to the panel and not to the way in`() {
+        assertEquals("Descargar", DOWNLOAD_ACTION)
+        assertEquals("Compartir", SHARE_ACTION)
+        assertTrue(SHARE_ACTION !in sheetExportLabel(SharedSheet.PLATE, exporting = false))
+        assertTrue(DOWNLOAD_ACTION !in sheetExportLabel(SharedSheet.PIECES, exporting = false))
     }
 }
