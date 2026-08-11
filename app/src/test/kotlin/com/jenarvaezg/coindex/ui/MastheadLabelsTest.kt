@@ -21,6 +21,21 @@ class MastheadLabelsTest {
     }
 
     /**
+     * While the snapshot is still arriving, the chrome must not invent an empty collection (#418).
+     *
+     * «0 colecciones · 0 piezas · 0 tipos» and «Colecciones · 0» are false claims for a cold start:
+     * the placeholder already says the phone is still reading, so the sewn edge and the bar only
+     * keep the rótulo and leave the number as «—».
+     */
+    @Test
+    fun `while the snapshot is unread the chrome stays silent about counts`() {
+        assertEquals("—", sewnEdgeLabel(null))
+        assertEquals("Colecciones · —", collectionsCellLabel(null))
+        assertEquals("Monedas · —", coinsCellLabel(null))
+        assertEquals("Las cifras · —", figuresCellLabel(figuresCellCount(null)))
+    }
+
+    /**
      * The two hierarchies of the top level are one notebook (ADR 0021 §1), so both keep its
      * strapline: the bottom bar says which of the two you are in, and the heading names it in full.
      */
