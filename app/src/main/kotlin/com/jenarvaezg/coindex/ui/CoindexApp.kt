@@ -104,6 +104,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             val result = snackbarHost.showSnackbar(
                 message = notice.text,
                 actionLabel = openFile?.let { DOWNLOAD_OPEN_ACTION },
+                duration = noticeDuration(hasAction = openFile != null),
             )
             if (result == SnackbarResult.ActionPerformed) {
                 openFile?.let { file ->
