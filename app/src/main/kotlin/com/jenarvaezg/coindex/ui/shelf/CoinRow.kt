@@ -165,6 +165,10 @@ fun coinYearsLabel(years: List<Int>): String = when (years.size) {
  */
 private fun yearsOf(pieces: List<CollectedItem>, meta: TypeMeta?): List<Int> =
     pieces.mapNotNull { it.recordedYear }
+        // **Zero is not a year**, the same rule `placementYear` states: Numista stores `0` on an
+        // undated medal, and the father has two. Printing «0» on their cartouche would be worse than
+        // the «Sin año» it replaced — a wrong answer reads as an answer (#460).
+        .filter { it > 0 }
         .distinct()
         .sorted()
         .ifEmpty { listOfNotNull(meta?.minYear) }

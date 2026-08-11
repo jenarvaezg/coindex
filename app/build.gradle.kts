@@ -41,9 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 50
+        versionCode = 51
         // Patch on top of 1.2.7: printed completion stamps and QR codes are robust on paper.
-        versionName = "1.2.8"
+        versionName = "1.2.9"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

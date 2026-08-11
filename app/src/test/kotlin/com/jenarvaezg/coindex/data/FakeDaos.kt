@@ -78,6 +78,7 @@ class FakeTypeMetaDao : TypeMetaDao {
         demonetized: Boolean?,
         hands: String?,
         mints: String?,
+        issuedYear: Int?,
         version: Int,
     ) {
         rows.value = rows.value.map { row ->
@@ -92,6 +93,7 @@ class FakeTypeMetaDao : TypeMetaDao {
                     demonetized = demonetized,
                     hands = hands,
                     mints = mints,
+                    issuedYear = issuedYear,
                     readVersion = version,
                 )
             } else {

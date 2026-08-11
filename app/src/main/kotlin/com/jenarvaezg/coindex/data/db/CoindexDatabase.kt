@@ -29,7 +29,7 @@ internal data class PreservedKey(
         TypeIssueReadEntity::class,
         TypeIssueEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -327,6 +327,24 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 9 gives a medal's issue year a column of its own (#460).
+         *
+         * One nullable column, filled in afterwards by `FichaBackfill` from the fichas already
+         * stored — like version 3, version 6 and version 7 before it, and for the same reason: the
+         * body was kept precisely so a later reading could take a field this one ignored, without
+         * spending an API call on a phone whose month is already gone.
+         */
+        internal val VERSION_9_COLUMNS: List<String> = listOf(
+            "ALTER TABLE `type_meta` ADD COLUMN `issuedYear` INTEGER",
+        )
+
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(connection: SQLiteConnection) {
+                VERSION_9_COLUMNS.forEach(connection::execSQL)
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
                 .addMigrations(
@@ -337,6 +355,7 @@ abstract class CoindexDatabase : RoomDatabase() {
                     MIGRATION_5_6,
                     MIGRATION_6_7,
                     MIGRATION_7_8,
+                    MIGRATION_8_9,
                 )
                 .build()
     }

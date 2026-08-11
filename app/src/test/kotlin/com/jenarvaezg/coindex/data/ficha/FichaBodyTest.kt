@@ -29,6 +29,38 @@ class FichaBodyTest {
         assertEquals("https://es.numista.com/404044", reading.numistaUrl)
     }
 
+    /**
+     * A medal's date lives in `issue_terms.issue_date` and nowhere else (#460).
+     *
+     * A coin type has `min_year`; a medal has neither that nor `max_year`, and writes `1995-00-00`
+     * — a year, and zeros where Numista does not know the month or the day. Until this was read, the
+     * father's silver bicentenary medal of Sucre said «Sin año» on a card whose own photograph reads
+     * 1795-1995.
+     */
+    @Test
+    fun `a medal gives up the year of its issue date`() {
+        assertEquals(
+            1_995,
+            readFichaBody("""{"issue_terms":{"is_issued":true,"issue_date":"1995-00-00"}}""")
+                .issuedYear,
+        )
+    }
+
+    /** And a date that is not one says nothing, rather than saying zero. */
+    @Test
+    fun `an issue date with no year in it is no year`() {
+        listOf(
+            """{"issue_terms":{"issue_date":"0000-00-00"}}""",
+            """{"issue_terms":{"issue_date":""}}""",
+            """{"issue_terms":{"issue_date":"sin fecha"}}""",
+            """{"issue_terms":{"is_issued":true}}""",
+            """{"issue_terms":"1995"}""",
+            "{}",
+        ).forEach { body ->
+            assertNull(readFichaBody(body).issuedYear, "«$body» no trae año y no debe inventarlo")
+        }
+    }
+
     @Test
     fun `reading the same body twice says the same thing`() {
         assertEquals(readFichaBody(australianKookaburra), readFichaBody(australianKookaburra))
@@ -85,28 +117,30 @@ class FichaBodyTest {
     /**
      * The tripwire the memo did not need.
      *
-     * A memo re-read the body whenever the row changed; a column is written once, so a tenth field
-     * added here reaches nothing that is already cached unless [FICHA_READING] goes up with it —
-     * and no cached type is ever fetched again. Both halves are pinned so that adding one without
-     * the other turns this red.
+     * A memo re-read the body whenever the row changed; a column is written once, so a field added
+     * here reaches nothing that is already cached unless [FICHA_READING] goes up with it — and no
+     * cached type is ever fetched again. Both halves are pinned so that adding one without the other
+     * turns this red.
      *
-     * It has caught it once already, which is what the pinning is for: the four fields «Las cifras»
-     * needed (ADR 0028 §7) arrived with the reading still at 1, and every ficha in the collector's
-     * cache would have stayed without a thickness, a demonetization, a hand or a mint for ever.
+     * It has caught it **twice** now, which is what the pinning is for. The four fields «Las cifras»
+     * needed (ADR 0028 §7) arrived with the reading still at 1, and every ficha in the cache would
+     * have stayed without a thickness, a demonetization, a hand or a mint for ever. The tenth is the
+     * issue year of a medal (#460), and without the bump the two medals the father owns would have
+     * kept saying «Sin año» on a card whose own photograph reads 1795-1995.
      */
     @Test
-    fun `a tenth field would have to be read into the fichas already cached`() {
+    fun `an eleventh field would have to be read into the fichas already cached`() {
         // Instance fields only: the Compose compiler adds a static `$stable` to every class it
         // sees, and this module is one of them.
         val fields = FichaReading::class.java.declaredFields
             .filterNot { Modifier.isStatic(it.modifiers) }
 
         assertEquals(
-            9,
+            10,
             fields.size,
             "si añades un campo a FichaReading, sube FICHA_READING: si no, las fichas ya " +
                 "cacheadas se quedan sin él para siempre",
         )
-        assertEquals(2, FICHA_READING)
+        assertEquals(3, FICHA_READING)
     }
 }

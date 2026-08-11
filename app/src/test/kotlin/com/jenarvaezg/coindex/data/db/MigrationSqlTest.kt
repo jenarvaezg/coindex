@@ -312,4 +312,31 @@ class MigrationSqlTest {
             )
         }
     }
+
+    /** La versión 9 le da su columna al año de emisión de una medalla (#460). */
+    @Test
+    fun `version 9 adds the issued year column exactly as Room declares it`() {
+        val added = exportedColumns(9, "type_meta") - exportedColumns(8, "type_meta").keys
+
+        assertEquals(mapOf("issuedYear" to "INTEGER"), added)
+        assertEquals(
+            added.map { (column, type) -> "ALTER TABLE `type_meta` ADD COLUMN `$column` $type" },
+            CoindexDatabase.VERSION_9_COLUMNS,
+        )
+        // Anulable: la mayoría de las fichas no son medallas y no tienen fecha de emisión que dar.
+        assertTrue("NOT NULL" !in exportedDeclaration(9, "type_meta", "issuedYear"))
+    }
+
+    /** Y no toca nada más: los precios y los listados de la 7 y la 8 siguen donde estaban. */
+    @Test
+    fun `version 9 touches the type cache and nothing else`() {
+        assertEquals(exportedCreateSql(8).keys, exportedCreateSql(9).keys)
+        (exportedCreateSql(8).keys - "type_meta").forEach { table ->
+            assertEquals(
+                exportedColumns(8, table),
+                exportedColumns(9, table),
+                "la versión 9 ha tocado $table",
+            )
+        }
+    }
 }
