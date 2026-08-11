@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.BOX_NAME_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.BOX_NAME_SAVE_ACTION
@@ -31,14 +31,13 @@ import com.jenarvaezg.coindex.ui.COLLECTION_NO_LONGER_EXISTS
 import com.jenarvaezg.coindex.ui.DELETE_COLLECTION_ACTION
 import com.jenarvaezg.coindex.ui.EMPTY_BOX_EXPLANATION
 import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.PIECES_HEADING
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
 import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.boxName
-import com.jenarvaezg.coindex.ui.renameToggleLabel
-import com.jenarvaezg.coindex.ui.sheetDownloadLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
@@ -47,8 +46,18 @@ import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.ShareGlyph
 import com.jenarvaezg.coindex.ui.countSentence
+import com.jenarvaezg.coindex.ui.notebookCancelledMessage
+import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesFileName
+import com.jenarvaezg.coindex.ui.print.NotebookExportStep
+import com.jenarvaezg.coindex.ui.print.NotebookOptions
+import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.sheetExportSwitches
+import com.jenarvaezg.coindex.ui.renameToggleLabel
+import com.jenarvaezg.coindex.ui.sheetDownloadLabel
+import com.jenarvaezg.coindex.ui.sheetExportCostLabel
+import com.jenarvaezg.coindex.ui.sheetExportCostScope
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -77,6 +86,10 @@ fun PiecesScreen(
      * twenty calls spent on the nineteen nobody said were wrong (ADR 0025).
      */
     ficha: (typeId: Int) -> FichaRefresh,
+    notebookOptions: NotebookOptions,
+    onNotebookPrinted: (NotebookOptions) -> Unit,
+    notebookPages: (NotebookOptions) -> List<PrintPage>,
+    onExporting: (Boolean) -> Unit,
     /** Present exactly when the subject is a box: the same `if` all the way down. */
     upkeep: BoxUpkeep? = null,
     /**
@@ -93,7 +106,16 @@ fun PiecesScreen(
     }
 
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
-    var exporting by remember { mutableStateOf<ExportDestination?>(null) }
+    var configuring by remember { mutableStateOf(false) }
+    var draft by remember { mutableStateOf(notebookOptions) }
+    var printing by remember { mutableStateOf<PiecesNotebookJob?>(null) }
+    var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
+    LaunchedEffect(printing != null) { onExporting(printing != null) }
+    val preview = remember(configuring, draft, subject.title) {
+        if (!configuring) null else notebookPages(draft)
+    }
+    val preparing = printing != null
+    val actionsEnabled = !configuring && printing == null
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -105,12 +127,80 @@ fun PiecesScreen(
                 PiecesHeading(
                     subject = subject,
                     upkeep = upkeep,
-                    exporting = exporting != null,
+                    preparing = preparing,
+                    actionsEnabled = actionsEnabled && subject.pieces.isNotEmpty(),
                     renaming = renaming,
-                    onDownload = { exporting = ExportDestination.Download },
-                    onShare = { exporting = ExportDestination.Share },
+                    onExport = {
+                        if (!configuring) draft = notebookOptions
+                        configuring = true
+                    },
                     onToggleRename = { renaming = !renaming },
                 )
+            }
+
+            preview?.let { pages ->
+                item {
+                    fun begin(destination: ExportDestination) {
+                        if (pages.isEmpty()) {
+                            onMessage(NOTHING_TO_PRINT_MESSAGE)
+                        } else {
+                            onNotebookPrinted(draft)
+                            step = NotebookExportStep.Drawing(
+                                0,
+                                pages.first().blocks.first().section.title,
+                            )
+                            printing = PiecesNotebookJob(pages, destination)
+                        }
+                        configuring = false
+                    }
+                    ExportOptions(
+                        options = draft,
+                        pages = pages.size,
+                        cards = 1,
+                        loose = 0,
+                        onChange = { draft = it },
+                        onDownload = { begin(ExportDestination.Download) },
+                        onShare = { begin(ExportDestination.Share) },
+                        onDismiss = { configuring = false },
+                        switches = sheetExportSwitches(),
+                        costScope = sheetExportCostScope(SharedSheet.PIECES),
+                        costLabel = sheetExportCostLabel(SharedSheet.PIECES, pages.size),
+                    )
+                }
+            }
+
+            printing?.let { job ->
+                item {
+                    ExportProgress(
+                        step = step,
+                        pages = job.pages.size,
+                        onCancel = when (val current = step) {
+                            is NotebookExportStep.Warming -> {
+                                {
+                                    printing = null
+                                    onMessage(
+                                        notebookWarmCancelledMessage(
+                                            current.photographsDone,
+                                            current.photographs,
+                                        ),
+                                    )
+                                }
+                            }
+                            is NotebookExportStep.Drawing -> {
+                                {
+                                    printing = null
+                                    onMessage(
+                                        notebookCancelledMessage(
+                                            current.pagesDone,
+                                            job.pages.size,
+                                        ),
+                                    )
+                                }
+                            }
+                            NotebookExportStep.Writing -> null
+                        },
+                    )
+                }
             }
 
             // The upkeep of a box is an `if` and not a screen: two actions in the heading above
@@ -163,37 +253,26 @@ fun PiecesScreen(
             }
         }
 
-        // The same cycle a plate exports with, [SheetExport] (#219), pointed at a sheet that has no
-        // empty cell to draw. What this contributes is «hoja» rather than «lámina», and a tally
-        // that is the collection's own sentence rather than a count of casillas. Descargas and
-        // the share sheet coexist here too (#285).
-        exporting?.let { destination ->
-            SheetExport(
-                key = subject.title,
-                items = subject.pieces,
-                images = state.images,
-                typeId = { it.item.typeId },
-                sheet = SharedSheet.PIECES,
-                tally = subject.countSentence,
-                fileName = piecesFileName(subject.title),
-                destination = destination,
+        printing?.let { job ->
+            NotebookPdfExport(
+                pages = job.pages,
+                destination = job.destination,
+                onStep = { step = it },
                 onFinished = { message ->
-                    exporting = null
+                    printing = null
                     onMessage(message)
                 },
-            ) { layout, onImageSettled, recording ->
-                PiecesSheet(
-                    subject = subject,
-                    names = { piece -> pieceName(state, piece) },
-                    images = state.images,
-                    layout = layout,
-                    onImageSettled = onImageSettled,
-                    modifier = recording,
-                )
-            }
+                fileName = piecesFileName(subject.title),
+                sheet = SharedSheet.PIECES,
+            )
         }
     }
 }
+
+private data class PiecesNotebookJob(
+    val pages: List<PrintPage>,
+    val destination: ExportDestination,
+)
 
 /**
  * The heading: country, name, what it is made of, and what can be done to it.
@@ -213,10 +292,10 @@ fun PiecesScreen(
 private fun PiecesHeading(
     subject: PiecesSubject,
     upkeep: BoxUpkeep?,
-    exporting: Boolean,
+    preparing: Boolean,
+    actionsEnabled: Boolean,
     renaming: Boolean,
-    onDownload: () -> Unit,
-    onShare: () -> Unit,
+    onExport: () -> Unit,
     onToggleRename: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -230,18 +309,17 @@ private fun PiecesHeading(
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
         )
-        // Descargar is the filled action, exactly as on a plate (#285); compartir stays
-        // secondary so a sheet can still leave for another app.
+        // Descargar / Compartir open «Cómo se exporta» (#401); the panel owns the destination.
         PrimaryAction(
-            text = sheetDownloadLabel(SharedSheet.PIECES, exporting),
-            onClick = onDownload,
-            enabled = !exporting && subject.pieces.isNotEmpty(),
+            text = sheetDownloadLabel(SharedSheet.PIECES, preparing),
+            onClick = onExport,
+            enabled = actionsEnabled,
             modifier = Modifier.padding(top = 12.dp),
         )
         CardAction(
             text = SHARE_ACTION,
-            onClick = onShare,
-            enabled = !exporting && subject.pieces.isNotEmpty(),
+            onClick = onExport,
+            enabled = actionsEnabled,
             icon = { ShareGlyph(color = Paper.ink) },
         )
         if (upkeep != null) {

@@ -35,6 +35,25 @@ const val NOTEBOOK_OPTIONS_EYEBROW: String = "Cómo se exporta"
 const val NOTEBOOK_COST_SCOPE: String = "Es lo que hay en el índice ahora mismo, con los filtros puestos."
 
 /**
+ * What the cost under a single lámina or hoja is counted over (#401).
+ *
+ * The notebook's scope names the index and its filters; a sheet opened from its own screen has
+ * neither, and repeating that sentence would claim pages came from a narrowing that is not there.
+ */
+fun sheetExportCostScope(sheet: SharedSheet): String =
+    "Es esta ${sheet.noun}, con la configuración elegida."
+
+/**
+ * What a single lámina or hoja is about to cost (#401).
+ *
+ * The notebook's line counts láminas because the filter chose many; a sheet opened from its own
+ * screen is always one, and the noun has to be this sheet's — «1 lámina» under a hoja would rename
+ * what the collector is looking at.
+ */
+fun sheetExportCostLabel(sheet: SharedSheet, pages: Int): String =
+    "${plural(pages, "página", "páginas")} · 1 ${sheet.noun}"
+
+/**
  * What the export sheet is about to cost, recounted on every tap (#228).
  *
  * The pages first, because they are what the configuration moves and what the collector is deciding
@@ -118,6 +137,28 @@ fun notebookExportMessage(pages: Int, expectedPhotos: Int, loadedPhotos: Int): S
         0 -> "Cuaderno completo exportado · $counted"
         1 -> "Cuaderno exportado en $counted, pero una foto no llegó a cargar"
         else -> "Cuaderno exportado en $counted, pero $absent fotos no llegaron a cargar"
+    }
+}
+
+/**
+ * What the collector is told once a single lámina or hoja has been handed to the share sheet (#401).
+ *
+ * Same holes arithmetic as [notebookExportMessage], but the product is this sheet — saying
+ * «cuaderno» about one PDF of one collection would rename what the collector just asked for.
+ */
+fun sheetPdfExportMessage(
+    sheet: SharedSheet,
+    pages: Int,
+    expectedPhotos: Int,
+    loadedPhotos: Int,
+): String {
+    val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
+    val head = sheet.noun.replaceFirstChar(Char::uppercaseChar)
+    val counted = plural(pages, "página", "páginas")
+    return when (absent) {
+        0 -> "$head exportada · $counted"
+        1 -> "$head exportada · $counted, pero una foto no llegó a cargar"
+        else -> "$head exportada · $counted, pero $absent fotos no llegaron a cargar"
     }
 }
 

@@ -366,6 +366,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onOpenSource = openUrl,
                             onMessage = viewModel::showMessage,
                             ficha = ficha,
+                            notebookOptions = state.notebookOptions,
+                            onNotebookPrinted = viewModel::notebookPrinted,
+                            notebookPages = { options ->
+                                card?.let { viewModel.notebookPagesForCard(it, options) }
+                                    ?: emptyList()
+                            },
+                            onExporting = viewModel::notebookExporting,
                             upkeep = card?.let { box ->
                                 BoxUpkeep(
                                     onRename = { name ->
@@ -409,6 +416,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 onOpenSource = openUrl,
                                 onMessage = viewModel::showMessage,
                                 ficha = ficha,
+                                notebookOptions = state.notebookOptions,
+                                onNotebookPrinted = viewModel::notebookPrinted,
+                                notebookPages = { options ->
+                                    card?.let { viewModel.notebookPagesForCard(it, options) }
+                                        ?: emptyList()
+                                },
+                                onExporting = viewModel::notebookExporting,
                             )
                         }
                     }
@@ -455,6 +469,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 },
                                 images = state.collection.images,
                                 value = plateValue,
+                                notebookOptions = state.notebookOptions,
+                                onNotebookPrinted = viewModel::notebookPrinted,
+                                notebookPages = { options ->
+                                    viewModel.notebookPagesForPlate(catalogId, options)
+                                },
+                                onExporting = viewModel::notebookExporting,
                                 onOpenSource = openUrl,
                                 onMessage = viewModel::showMessage,
                                 modifier = Modifier.fillMaxSize(),

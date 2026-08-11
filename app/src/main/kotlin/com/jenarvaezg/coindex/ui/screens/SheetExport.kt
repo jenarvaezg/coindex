@@ -58,6 +58,11 @@ const val IMAGE_WAIT_MILLIS = 30_000L
  * here. [destination] is the fifth: Descargas or the share sheet, and both coexist on the screen
  * that starts this (#285).
  *
+ * **Not the collector's path since #401.** Descargar / Compartir on a lámina or hoja open
+ * [ExportOptions] and print one section of the notebook PDF, so tamaño real, the QR and the money
+ * have paper to land on. This PNG cycle stays as the off-screen capture helper if a bitmap export
+ * is wired again.
+ *
  * The sheet is measured with its own density and **never painted**: [recordInto] captures the
  * drawing commands instead of drawing them, so what gets shared is the complete sheet rather than
  * the part that happens to fit on a screen.

@@ -500,6 +500,47 @@ class NotebookOptionsTest {
             NotebookSwitch.entries.toList(),
         )
     }
+
+    /**
+     * A single lámina or hoja cannot share a folio with another plate, and «Sin colección» is the
+     * index's loose-coin plate (#401). What remains is the same how-and-what the notebook asks,
+     * minus the two questions that only make sense over many cards.
+     */
+    @Test
+    fun `a single sheet asks five switches, not the index-only ones`() {
+        assertEquals(
+            listOf(
+                NotebookSwitch.Photographs,
+                NotebookSwitch.BothFaces,
+                NotebookSwitch.ActualSize,
+                NotebookSwitch.NumistaQr,
+                NotebookSwitch.Money,
+            ),
+            sheetExportSwitches(),
+        )
+    }
+
+    /**
+     * Packing and the loose-coin plate stay as they were stored: the sheet UI never offers them, so
+     * confirming a lámina must not silently rewrite how the next full notebook will print (#401).
+     */
+    @Test
+    fun `sheet export clears packing and the loose plate without touching the rest`() {
+        val chosen = NotebookOptions(
+            photographs = false,
+            bothFaces = true,
+            actualSize = false,
+            sharePage = true,
+            numistaQr = true,
+            unclaimed = true,
+            money = true,
+        )
+
+        assertEquals(
+            chosen.copy(sharePage = false, unclaimed = false),
+            chosen.forSheetExport(),
+        )
+    }
 }
 
 /**

@@ -150,4 +150,41 @@ class NotebookLabelsTest {
             notebookWarmCancelledMessage(320, 623),
         )
     }
+
+    /**
+     * The cost under a single lámina is not the index: there is no filter above it, and the
+     * notebook's scope sentence would lie about where the pages come from (#401).
+     */
+    @Test
+    fun `a single sheet says the cost is about this plate or this leaf`() {
+        assertEquals(
+            "Es esta lámina, con la configuración elegida.",
+            sheetExportCostScope(SharedSheet.PLATE),
+        )
+        assertEquals(
+            "Es esta hoja, con la configuración elegida.",
+            sheetExportCostScope(SharedSheet.PIECES),
+        )
+        assertEquals("1 página · 1 lámina", sheetExportCostLabel(SharedSheet.PLATE, 1))
+        assertEquals("3 páginas · 1 hoja", sheetExportCostLabel(SharedSheet.PIECES, 3))
+    }
+
+    /**
+     * Sharing one PDF page of a lámina still names the lámina, not the whole notebook (#401).
+     */
+    @Test
+    fun `sharing a single sheet names the sheet and counts its pages`() {
+        assertEquals(
+            "Lámina exportada · 1 página",
+            sheetPdfExportMessage(SharedSheet.PLATE, pages = 1, expectedPhotos = 19, loadedPhotos = 19),
+        )
+        assertEquals(
+            "Hoja exportada · 3 páginas, pero una foto no llegó a cargar",
+            sheetPdfExportMessage(SharedSheet.PIECES, pages = 3, expectedPhotos = 12, loadedPhotos = 11),
+        )
+        assertEquals(
+            "Lámina exportada · 2 páginas, pero 4 fotos no llegaron a cargar",
+            sheetPdfExportMessage(SharedSheet.PLATE, pages = 2, expectedPhotos = 40, loadedPhotos = 36),
+        )
+    }
 }

@@ -55,9 +55,14 @@ fun addNotebookPage(
 }
 
 /** Writes the finished notebook to the cache and hands it to the Android share sheet. */
-suspend fun shareNotebookPdf(context: Context, document: PdfDocument, fileName: String) {
+suspend fun shareNotebookPdf(
+    context: Context,
+    document: PdfDocument,
+    fileName: String,
+    chooserTitle: String = "Compartir el cuaderno",
+) {
     val file = writeNotebookPdf(context, document, fileName)
-    handToShareSheet(context, file, "application/pdf", "Compartir el cuaderno")
+    handToShareSheet(context, file, "application/pdf", chooserTitle)
 }
 
 /**
