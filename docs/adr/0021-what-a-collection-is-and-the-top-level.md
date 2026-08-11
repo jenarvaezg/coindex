@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285 and #401, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401 and #434, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
