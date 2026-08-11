@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -20,13 +19,11 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -69,7 +66,6 @@ import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
-import kotlinx.coroutines.flow.first
 
 /**
  * The plate of a followed collection against its curated catalog.
@@ -180,8 +176,11 @@ private fun PlateGrid(
         // which would hang 54 dp of empty cardboard under the twenty date-run casillas of the
         // 1 Bolívar for the sake of the two titled `1945 (acuñada en 1947)`.
         val namedRows = plate.cells.chunked(columns).map { row -> row.any { it.label != it.year } }
-        val grid = rememberLazyGridState()
-        OpenWhereTheCoinLands(plate.landingCell, plate.cells.size, grid)
+        // Where the sheet opens is the grid's **initial state** and not an effect that runs on it,
+        // which is the whole of #396: see [plateOpeningItem].
+        val grid = rememberLazyGridState(
+            initialFirstVisibleItemIndex = plateOpeningItem(plate.landingCell, columns),
+        )
         LazyVerticalGrid(
             columns = GridCells.Adaptive(104.dp),
             state = grid,
@@ -190,6 +189,7 @@ private fun PlateGrid(
             horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
             verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
         ) {
+            // The one item of this grid that is not a casilla, and what [PLATE_LEAD_ITEMS] counts.
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Eyebrow(CURATED_CATALOG_EYEBROW)
@@ -298,32 +298,30 @@ private fun PlateHeading(
     }
 }
 
+/** Whatever the grid holds ahead of the casillas: the heading, today, as one spanning item. */
+private const val PLATE_LEAD_ITEMS = 1
+
 /**
- * Opens the sheet at the casilla the coin is flying to, when it would otherwise land off screen.
+ * The item the sheet opens on, so that the casilla the coin is flying to is there to receive it.
  *
  * The four Bolívares the father owns are casillas 19 to 22 of 22, so a plate that always opened at
- * the top would promise «es la misma moneda» and then land it below the fold (#304). It is only ever
- * a jump the collector never sees, made before the first frame they do: [LazyGridState.scrollToItem]
- * and not `animateScrollToItem`, which would race the shared element it exists to serve.
+ * the top would promise «es la misma moneda» and then land it below the fold (#304).
  *
- * **Nothing moves when the landing is already visible**, which is every complete plate: the first
- * casilla a complete sheet owns *is* its first casilla, so the ceremony falls where the eye is.
+ * **This is the grid's initial state and not a scroll performed on it**, which is the whole of #396.
+ * The jump used to be a `LaunchedEffect` that waited for a layout to ask what was visible, and by
+ * then it was a frame late for the one thing that depended on it: on the frame Compose matches the
+ * two ends of the journey the landing casilla was not composed yet, so the coin had somewhere to
+ * take off from and nowhere to land, and the flight in never happened. The way home never failed,
+ * because by then the sheet had been parked at the casilla for a while. Nine journeys were filmed
+ * and the split was exact: the plates that had to jump were the plates whose coin did not fly.
+ *
+ * **Nothing moves when the landing is on the first row**, which is every complete plate: the first
+ * casilla a complete sheet owns *is* its first casilla, so the ceremony falls where the eye is. The
+ * test is arithmetic — [columns] is the same count the grid measures with (#337) — because a
+ * question answered by measuring can only be answered a frame too late.
  */
-@Composable
-private fun OpenWhereTheCoinLands(landingCell: Int?, casillas: Int, grid: LazyGridState) {
-    LaunchedEffect(landingCell) {
-        if (landingCell == null) return@LaunchedEffect
-        // The grid has measured nothing yet on the frame this effect runs in, so what is visible is
-        // asked for once there is a layout to ask: reading it earlier reports an empty sheet and
-        // scrolls every plate, complete ones included.
-        val layout = snapshotFlow { grid.layoutInfo }.first { it.totalItemsCount > 0 }
-        // Whatever the grid holds that is not a casilla comes first — the heading, today, as one
-        // spanning item — so the offset is counted rather than written down as a 1 that a second
-        // header would quietly break.
-        val item = layout.totalItemsCount - casillas + landingCell
-        if (layout.visibleItemsInfo.none { it.index == item }) grid.scrollToItem(item)
-    }
-}
+internal fun plateOpeningItem(landingCell: Int?, columns: Int): Int =
+    if (landingCell == null || landingCell < columns) 0 else PLATE_LEAD_ITEMS + landingCell
 
 @Composable
 private fun PlateCell(
