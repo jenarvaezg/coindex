@@ -55,6 +55,8 @@ import com.jenarvaezg.coindex.ui.print.QR_QUIET_MODULES
 import com.jenarvaezg.coindex.ui.print.notebookSourceLabel
 import com.jenarvaezg.coindex.ui.print.numistaQr
 import com.jenarvaezg.coindex.ui.print.printedDiameterLabel
+import com.jenarvaezg.coindex.ui.print.printedPageOfSection
+import com.jenarvaezg.coindex.ui.print.printedRulerLabel
 import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.qrRuns
 import com.jenarvaezg.coindex.ui.components.paperSurface
@@ -212,10 +214,9 @@ private fun PlateHeading(block: PrintBlock) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(section.eyebrow, style = PRINT_EYEBROW, color = Paper.rust)
             Spacer(modifier = Modifier.weight(1f))
-            // Only where there is a break to explain: «página 1 de 1» is noise on paper.
             if (block.pagesInSection > 1) {
                 Text(
-                    "PÁGINA ${block.numberInSection} DE ${block.pagesInSection}",
+                    printedPageOfSection(block.numberInSection, block.pagesInSection),
                     style = PRINT_EYEBROW,
                     color = Paper.muted,
                 )
@@ -710,7 +711,7 @@ private fun PageFoot(page: PrintPage) {
             Column {
                 Ruler(geometry)
                 Text(
-                    "${geometry.rulerBarMm.toInt()} MM · ESCALA 1:1",
+                    printedRulerLabel(geometry.rulerBarMm.toInt()),
                     style = PRINT_FACT_LABEL,
                     color = Paper.muted,
                     modifier = Modifier.padding(top = 0.8f.mm),

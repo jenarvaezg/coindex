@@ -40,6 +40,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.destinationOf
@@ -56,7 +57,12 @@ import com.jenarvaezg.coindex.ui.components.countryAxisItems
 import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.components.yearAxisItems
 import com.jenarvaezg.coindex.ui.countLabel
+import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_EYEBROW
 import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
+import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORT_PATIENCE
+import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
+import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EXPLANATION
+import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EYEBROW
 import com.jenarvaezg.coindex.ui.indexCoverageLabel
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookExportLabel
@@ -66,6 +72,10 @@ import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.seriesLabel
+import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
+import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
+import com.jenarvaezg.coindex.ui.shelf.CLEAR_FILTERS_ACTION
+import com.jenarvaezg.coindex.ui.shelf.COUNTRY_FACET
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexFacts
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
@@ -73,10 +83,17 @@ import com.jenarvaezg.coindex.ui.shelf.IndexSort
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.OunceBand
 import com.jenarvaezg.coindex.ui.shelf.PlateStatus
+import com.jenarvaezg.coindex.ui.shelf.RECENTLY_ADDED_NOTE
+import com.jenarvaezg.coindex.ui.shelf.SERIES_FACET
+import com.jenarvaezg.coindex.ui.shelf.SORT_FACET
+import com.jenarvaezg.coindex.ui.shelf.STARTS_IN_FACET
+import com.jenarvaezg.coindex.ui.shelf.STATUS_FACET
 import com.jenarvaezg.coindex.ui.shelf.StartBand
+import com.jenarvaezg.coindex.ui.shelf.WEIGHT_FACET
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.countryAxis
 import com.jenarvaezg.coindex.ui.shelf.countryAxisTally
+import com.jenarvaezg.coindex.ui.shelf.indexEmptyLabel
 import com.jenarvaezg.coindex.ui.shelf.indexFacetCounts
 import com.jenarvaezg.coindex.ui.shelf.indexFacts
 import com.jenarvaezg.coindex.ui.shelf.indexShelfSummary
@@ -336,7 +353,7 @@ fun IndexScreen(
                     fun begin(destination: ExportDestination) {
                         val pages = about.pages
                         if (pages.isEmpty()) {
-                            onMessage("No hay ninguna colección que llevar al papel.")
+                            onMessage(NOTHING_TO_PRINT_MESSAGE)
                         } else {
                             onNotebookPrinted(draft)
                             step = NotebookExportStep.Drawing(
@@ -402,15 +419,12 @@ fun IndexScreen(
                 }
             }
 
-            // An incomplete sync outlives its snackbar: what it left half-done is a property of
-            // the collection on screen, not a notice about something four seconds old.
             if (lastSync?.partialFailure != null) {
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
-                        Eyebrow("Sincronización incompleta")
+                        Eyebrow(PARTIAL_SYNC_EYEBROW)
                         Text(
-                            "La última sincronización no terminó, así que puede faltar alguna " +
-                                "pieza o ficha. Vuelve a sincronizar cuando puedas.",
+                            PARTIAL_SYNC_EXPLANATION,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 6.dp),
                         )
@@ -418,11 +432,8 @@ fun IndexScreen(
                 }
             }
 
-            // Reading the collection off the database takes a frame or two, and «todavía no hay
-            // colecciones» in that gap is a lie about a collection that is on the device already.
-            //
-            // A shelf that hides everything is the third case, and it owes the way out on the spot:
-            // the shelf enters folded, so the chip responsible may be two taps away.
+            // A shelf that hides everything owes the way out on the spot: the shelf enters
+            // folded, so the chip responsible may be two taps away.
             val axisEmpty = when (shelf.axis) {
                 NotebookAxis.ByPlate -> shown.isEmpty()
                 NotebookAxis.ByCountry -> countryModel?.blocks.isNullOrEmpty()
@@ -432,19 +443,13 @@ fun IndexScreen(
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            when {
-                                loading -> "Leyendo tu colección…"
-                                state.index.isNotEmpty() ->
-                                    "Ninguna colección pasa por lo que has puesto."
-                                else -> "Todavía no hay colecciones. Sincroniza para traer " +
-                                    "tu colección de Numista."
-                            },
+                            indexEmptyLabel(loading, anyCollections = state.index.isNotEmpty()),
                             style = MaterialTheme.typography.bodyLarge,
                             color = Paper.muted,
                         )
                         if (!loading && state.index.isNotEmpty()) {
                             CardAction(
-                                text = "Quitar los filtros",
+                                text = CLEAR_FILTERS_ACTION,
                                 onClick = { onNarrow(IndexShelf()); query = "" },
                                 modifier = Modifier.padding(top = 10.dp),
                             )
@@ -554,21 +559,21 @@ private fun ExportProgress(
     onCancel: (() -> Unit)?,
 ) {
     FieldCard(modifier = Modifier.fillMaxWidth()) {
-        Eyebrow("Exportando el cuaderno")
+        Eyebrow(NOTEBOOK_EXPORTING_EYEBROW)
         Text(
             notebookStepLabel(step, pages),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 6.dp),
         )
         Text(
-            "Se comparte cuando esté entero. Puedes cancelar sin perder nada.",
+            NOTEBOOK_EXPORT_PATIENCE,
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
             modifier = Modifier.padding(top = 4.dp),
         )
         onCancel?.let { cancel ->
             CardAction(
-                text = "Cancelar",
+                text = CANCEL_ACTION,
                 onClick = cancel,
                 modifier = Modifier.padding(top = 10.dp),
             )
@@ -667,7 +672,7 @@ private fun IndexFacets(
 ) {
     val counts = indexFacetCounts(facts, shelf, query)
 
-    Facet("Eje") {
+    Facet(AXIS_FACET) {
         NotebookAxis.entries.forEach { axis ->
             FilterChip(
                 label = axis.label,
@@ -677,7 +682,7 @@ private fun IndexFacets(
             )
         }
     }
-    Facet("Orden") {
+    Facet(SORT_FACET) {
         IndexSort.entries.forEach { sort ->
             FilterChip(
                 label = sort.label,
@@ -687,19 +692,17 @@ private fun IndexFacets(
             )
         }
     }
-    // Numista's `collected_items` carries no date of any kind, so this order is by row id — «alta en
-    // Numista», not «compra». Said here rather than left to be guessed at from a surprising order.
     if (shelf.sort == IndexSort.RecentlyAdded) {
         Text(
-            "Numista no guarda fecha de compra, así que este orden es el del alta en Numista.",
+            RECENTLY_ADDED_NOTE,
             style = MaterialTheme.typography.bodyMedium,
             color = Paper.muted,
             modifier = Modifier.padding(top = 6.dp),
         )
     }
-    Facet("País") {
+    Facet(COUNTRY_FACET) {
         FilterChip(
-            label = "Todos",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.issuer == null,
             onClick = { onNarrow(shelf.copy(issuer = null)) },
@@ -713,9 +716,9 @@ private fun IndexFacets(
             )
         }
     }
-    Facet("Peso") {
+    Facet(WEIGHT_FACET) {
         FilterChip(
-            label = "Cualquiera",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.weight == null,
             onClick = { onNarrow(shelf.copy(weight = null)) },
@@ -729,9 +732,9 @@ private fun IndexFacets(
             )
         }
     }
-    Facet("Empieza en") {
+    Facet(STARTS_IN_FACET) {
         FilterChip(
-            label = "Cualquier año",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.startsIn == null,
             onClick = { onNarrow(shelf.copy(startsIn = null)) },
@@ -745,9 +748,9 @@ private fun IndexFacets(
             )
         }
     }
-    Facet("Estado") {
+    Facet(STATUS_FACET) {
         FilterChip(
-            label = "Todas",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.status == null,
             onClick = { onNarrow(shelf.copy(status = null)) },
@@ -761,9 +764,9 @@ private fun IndexFacets(
             )
         }
     }
-    Facet("Serie") {
+    Facet(SERIES_FACET) {
         FilterChip(
-            label = "Cualquiera",
+            label = ANY_FILTER,
             count = null,
             selected = shelf.series == null,
             onClick = { onNarrow(shelf.copy(series = null)) },

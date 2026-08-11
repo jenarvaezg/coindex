@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.domain.Ladder
 import com.jenarvaezg.coindex.domain.LadderUnit
 import com.jenarvaezg.coindex.domain.Ladders
+import com.jenarvaezg.coindex.domain.MarginFigure
 import com.jenarvaezg.coindex.domain.Referent
 import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.place
@@ -180,6 +181,83 @@ class FiguresLabelsTest {
         assertEquals(
             listOf("todas juntas pesan", "una al lado de otra llegan a", "una encima de otra levantan"),
             Ladders.all.map { FiguresLabels.ladderStatement(it.kind) },
+        )
+    }
+
+    /**
+     * The portrait's four shares, and the money one is absent rather than zero.
+     *
+     * The share of the value is money, so it goes exactly where the money section goes (ADR 0028
+     * §4): a country with no valued piece says three shares and not «0 % del valor», which would be
+     * a figure about a total the page is not showing.
+     */
+    @Test
+    fun `a country's shares drop the money clause instead of printing it empty`() {
+        fun venezuela(valueShare: Double?) = CountryPortrait(
+            country = "Venezuela",
+            pieces = 302,
+            pieceShare = 0.62,
+            massShare = 0.48,
+            silverShare = 0.51,
+            valueShare = valueShare,
+        )
+
+        assertEquals(
+            "62 % de tus piezas · 48 % del peso · 51 % de la plata · 39 % del valor",
+            portraitSharesLabel(venezuela(0.39)),
+        )
+        assertEquals(
+            "62 % de tus piezas · 48 % del peso · 51 % de la plata",
+            portraitSharesLabel(venezuela(null)),
+        )
+    }
+
+    /**
+     * On screen the coin beside the number is the measure, so the number is whole millimetres.
+     *
+     * The printed page keeps the tenth (`printedDiameterLabel`) because it has no coin to compare
+     * against, and on a scaled page no ruler either.
+     */
+    @Test
+    fun `a diameter on screen is whole millimetres`() {
+        assertEquals("38 mm", screenDiameterLabel(38.61))
+        assertEquals("40 mm", screenDiameterLabel(40.9))
+    }
+
+    /**
+     * The four sentences «al margen», which moved out of the screen they were written in.
+     *
+     * They are the reason the page reads as a field guide rather than a dashboard, and they were the
+     * one exception to this file's promise to hold every string «Las cifras» prints (ADR 0026 §6).
+     */
+    @Test
+    fun `the margin says the four things the ficha already knew`() {
+        // The denominator is the whole collection and not the types Numista answered for: a
+        // percentage over a moving denominator is a figure nobody can check.
+        assertEquals(
+            "75 % ya no son dinero en ninguna parte",
+            demonetizedSentence(MarginFigure(pieces = 429, outOf = 572)),
+        )
+        assertEquals(
+            "246 las grabó la misma mano: Tomás Francisco Prieto",
+            sameHandSentence(MarginFigure(246, 572, "Tomás Francisco Prieto")),
+        )
+        assertEquals(
+            "58 salieron de Casa de la Moneda de México, de 14 cecas distintas",
+            mintSentence(MarginFigure(58, 572, "Casa de la Moneda de México"), distinctMints = 14),
+        )
+        assertEquals(
+            "31 llevan la fecha de 1977",
+            commonestYearSentence(MarginFigure(31, 572, "1977")),
+        )
+    }
+
+    /** A figure counted over nothing is 0 % and not a division by zero. */
+    @Test
+    fun `a margin figure over an empty collection says zero`() {
+        assertEquals(
+            "0 % ya no son dinero en ninguna parte",
+            demonetizedSentence(MarginFigure(pieces = 0, outOf = 0)),
         )
     }
 }

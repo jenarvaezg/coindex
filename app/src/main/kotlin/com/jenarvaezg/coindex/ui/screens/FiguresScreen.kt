@@ -38,16 +38,22 @@ import com.jenarvaezg.coindex.ui.CountryPortrait
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.FiguresSubject
 import com.jenarvaezg.coindex.ui.arcLabel
+import com.jenarvaezg.coindex.ui.commonestYearSentence
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.ReferentLadder
 import com.jenarvaezg.coindex.ui.coverageLabel
+import com.jenarvaezg.coindex.ui.demonetizedSentence
 import com.jenarvaezg.coindex.ui.eurosLabel
 import com.jenarvaezg.coindex.ui.fineOuncesLabel
 import com.jenarvaezg.coindex.ui.kilogramsLabel
 import com.jenarvaezg.coindex.ui.metalLabel
+import com.jenarvaezg.coindex.ui.mintSentence
 import com.jenarvaezg.coindex.ui.percentLabel
+import com.jenarvaezg.coindex.ui.portraitSharesLabel
 import com.jenarvaezg.coindex.ui.readAtLabel
+import com.jenarvaezg.coindex.ui.sameHandSentence
+import com.jenarvaezg.coindex.ui.screenDiameterLabel
 import com.jenarvaezg.coindex.ui.squareMetresLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -203,11 +209,11 @@ fun FiguresScreen(
                 Block(FiguresLabels.MARGIN_HEADING) {
                     val margins = subject.figures.margins
                     MarginLine(demonetizedSentence(margins.demonetized))
-                    margins.sameHand?.let { MarginLine(handSentence(it)) }
+                    margins.sameHand?.let { MarginLine(sameHandSentence(it)) }
                     margins.mostMinted?.let { MarginLine(mintSentence(it, margins.distinctMints)) }
                     margins.commonestYear?.let { year ->
                         MarginLine(
-                            yearSentence(year),
+                            commonestYearSentence(year),
                             onClick = year.subject?.toIntOrNull()?.let { { onOpenYear(it) } },
                         )
                     }
@@ -311,12 +317,7 @@ private fun Portrait(portrait: CountryPortrait, onOpenCountry: (String) -> Unit)
     ) {
         Text(portrait.country, style = MaterialTheme.typography.headlineMedium, color = Paper.moss)
         Text(
-            buildString {
-                append("${percentLabel(portrait.pieceShare)} de tus piezas")
-                append(" · ${percentLabel(portrait.massShare)} del peso")
-                append(" · ${percentLabel(portrait.silverShare)} de la plata")
-                portrait.valueShare?.let { append(" · ${percentLabel(it)} del valor") }
-            },
+            portraitSharesLabel(portrait),
             style = MaterialTheme.typography.bodyMedium,
             color = Paper.muted,
         )
@@ -348,7 +349,7 @@ private fun CoinToScale(extreme: DiameterExtreme, largestMillimetres: Double) {
                 },
         )
         Text(
-            "${extreme.millimetres.toInt()} mm",
+            screenDiameterLabel(extreme.millimetres),
             style = MaterialTheme.typography.labelMedium,
         )
         Text(
@@ -376,25 +377,3 @@ private fun MarginLine(text: String, onClick: (() -> Unit)? = null) {
         }.padding(vertical = 2.dp),
     )
 }
-
-/**
- * The four sentences «al margen», out of the ficha that was already in the APK.
- *
- * Nobody asked for them. They are what the page has instead of a colophon, and they are the reason it
- * reads as a field guide: 75 % of his coins are no longer money anywhere, and 246 of them were engraved by
- * one man.
- */
-private fun demonetizedSentence(figure: MarginFigure): String =
-    "${percentLabel(figure.shareOfPieces())} ya no son dinero en ninguna parte"
-
-private fun handSentence(figure: MarginFigure): String =
-    "${figure.pieces} las grabó la misma mano: ${figure.subject.orEmpty()}"
-
-private fun mintSentence(figure: MarginFigure, distinctMints: Int): String =
-    "${figure.pieces} salieron de ${figure.subject.orEmpty()}, de $distinctMints cecas distintas"
-
-private fun yearSentence(figure: MarginFigure): String =
-    "${figure.pieces} llevan la fecha de ${figure.subject.orEmpty()}"
-
-private fun MarginFigure.shareOfPieces(): Double =
-    if (outOf <= 0) 0.0 else pieces.toDouble() / outOf

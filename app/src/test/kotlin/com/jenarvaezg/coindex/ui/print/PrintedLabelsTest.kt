@@ -50,4 +50,21 @@ class PrintedLabelsTest {
         // Y un folio sin láminas no existe, así que esto es una frase que nadie llega a leer.
         assertEquals("", notebookSourceLabel(emptyList()))
     }
+
+    /**
+     * La sección partida en dos folios lo dice; la que cabe en uno, no.
+     *
+     * «PÁGINA 1 DE 1» es ruido en papel, así que la condición está en quien la llama y no aquí: esta
+     * frase existe porque una lámina cortada entre dos folios es indistinguible de dos láminas.
+     */
+    @Test
+    fun `un folio de una sección partida dice cuál es`() {
+        assertEquals("PÁGINA 2 DE 3", printedPageOfSection(2, 3))
+    }
+
+    /** La regla dice la escala además de la medida: una barra de milímetros que no está a 1:1 es peor que ninguna. */
+    @Test
+    fun `la regla promete la escala que dibuja`() {
+        assertEquals("40 MM · ESCALA 1:1", printedRulerLabel(40))
+    }
 }

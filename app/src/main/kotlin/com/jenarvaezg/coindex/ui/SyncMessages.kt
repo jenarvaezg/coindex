@@ -26,6 +26,17 @@ fun syncActionLabel(syncing: Boolean): String =
     if (syncing) "Sincronizando…" else "Sincronizar"
 
 /**
+ * A run that stopped half-way, said on the índice rather than in a snackbar.
+ *
+ * What an incomplete sync left half-done is a property of the collection on screen and outlives the
+ * four seconds a snackbar lasts, which is why it has a card of its own.
+ */
+const val PARTIAL_SYNC_EYEBROW: String = "Sincronización incompleta"
+const val PARTIAL_SYNC_EXPLANATION: String =
+    "La última sincronización no terminó, así que puede faltar alguna pieza o ficha. Vuelve a " +
+        "sincronizar cuando puedas."
+
+/**
  * The durable line under the sync button.
  *
  * A time of day alone is ambiguous the next morning, and a full date is noise for a sync that

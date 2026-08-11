@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.update.InstallOutcome
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 /**
  * What the collector reads when installing a new APK goes one way or the other (#220, ADR 0011).
@@ -45,5 +46,26 @@ class InstallMessagesTest {
         // The system's own dialog is on screen asking for the confirmation; a snackbar under it
         // would be Coindex talking over the only screen that matters.
         assertNull(installOutcomeMessage(InstallOutcome.Handed))
+    }
+
+    @Test
+    fun `the banner names the version it is offering`() {
+        assertEquals("NUEVA VERSIÓN 1.2.0", updateAvailableLabel("1.2.0"))
+    }
+
+    /**
+     * The button says the word the refusals ask the collector to press again.
+     *
+     * «Instalar» and not «Actualizar»: all four refusals end in «vuelve a pulsar Instalar», and a
+     * button labelled otherwise would send them looking for a control that does not exist.
+     */
+    @Test
+    fun `the button says Instalar, which is the word the refusals name`() {
+        assertEquals("Instalar", updateInstallLabel(downloading = false))
+        assertEquals("Descargando…", updateInstallLabel(downloading = true))
+        assertTrue(
+            updateInstallLabel(downloading = false) in
+                installOutcomeMessage(InstallOutcome.PermissionAsked).orEmpty(),
+        )
     }
 }

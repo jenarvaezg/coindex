@@ -20,9 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.jenarvaezg.coindex.domain.OwnGroupingView
+import com.jenarvaezg.coindex.ui.BOX_ADD_TO_EXISTING
+import com.jenarvaezg.coindex.ui.BOX_CREATE_ACTION
+import com.jenarvaezg.coindex.ui.BOX_EYEBROW
+import com.jenarvaezg.coindex.ui.BOX_NAME_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
+import com.jenarvaezg.coindex.ui.CANCEL_ACTION
+import com.jenarvaezg.coindex.ui.boxDialogHeading
 import com.jenarvaezg.coindex.ui.boxName
-import com.jenarvaezg.coindex.ui.plural
+import com.jenarvaezg.coindex.ui.groupPiecesLabel
+import com.jenarvaezg.coindex.ui.namePickedBoxLabel
+import com.jenarvaezg.coindex.ui.pieceSelectionToggleLabel
+import com.jenarvaezg.coindex.ui.selectionHintLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
@@ -75,7 +84,7 @@ fun rememberPieceSelection(): PieceSelection = remember { PieceSelection() }
 @Composable
 fun PieceSelectionToggle(picked: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
     CardAction(
-        text = if (picked) "Elegida" else "Elegir",
+        text = pieceSelectionToggleLabel(picked),
         onClick = onToggle,
         modifier = modifier.padding(top = 8.dp),
         icon = if (picked) {
@@ -122,30 +131,29 @@ fun SelectionControls(
         ) {
             if (selection.active) {
                 PrimaryAction(
-                    text = "Nombrar la caja · ${selection.count}",
+                    text = namePickedBoxLabel(selection.count),
                     onClick = { naming = true },
                     enabled = selection.count > 0,
                 )
-                CardAction(text = "Cancelar", onClick = selection::cancel)
+                CardAction(text = CANCEL_ACTION, onClick = selection::cancel)
             } else if (seeded) {
                 CardAction(
-                    text = "Agrupar estas ${shown.size}",
+                    text = groupPiecesLabel(seeded = true, shown = shown.size),
                     onClick = { selection.start(shown) },
                     enabled = shown.isNotEmpty(),
                 )
             } else {
-                CardAction(text = "Agrupar piezas", onClick = { selection.start() })
+                CardAction(
+                    text = groupPiecesLabel(seeded = false, shown = shown.size),
+                    onClick = { selection.start() },
+                )
             }
         }
         // Which side the work starts from, said once and only while the mode is open: with a seed
         // there is something to remove, and without one there is nothing yet to remove from.
         if (selection.active) {
             Text(
-                if (seeded) {
-                    "Vienen elegidas las ${shown.size} que enseñaba el filtro. Quita las que no."
-                } else {
-                    "Toca «Elegir» en cada moneda que quieras."
-                },
+                selectionHintLabel(seeded, shown.size),
                 style = MaterialTheme.typography.labelLarge,
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 8.dp),
@@ -199,9 +207,9 @@ fun BoxDialog(
     val name = boxName(typed, taken)
     Dialog(onDismissRequest = onDismiss) {
         FieldCard(modifier = Modifier.fillMaxWidth().background(Paper.paper)) {
-            Eyebrow("Tu caja")
+            Eyebrow(BOX_EYEBROW)
             Text(
-                "Agrupar ${plural(count, "moneda", "monedas")}",
+                boxDialogHeading(count),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(top = 4.dp, bottom = 10.dp),
             )
@@ -210,7 +218,7 @@ fun BoxDialog(
                 // The limit is hard at the keystroke, so the 41st character never exists; the
                 // complaint below is for what a paste or an IME can still get past it.
                 onValueChange = { if (it.length <= BOX_NAME_LIMIT) typed = it },
-                label = { Text("Cómo se llama") },
+                label = { Text(BOX_NAME_FIELD_LABEL) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -234,11 +242,11 @@ fun BoxDialog(
                 modifier = Modifier.padding(top = 12.dp),
             ) {
                 PrimaryAction(
-                    text = "Crear",
+                    text = BOX_CREATE_ACTION,
                     onClick = { onCreate(name.stored) },
                     enabled = name.canSave,
                 )
-                CardAction(text = "Cancelar", onClick = onDismiss)
+                CardAction(text = CANCEL_ACTION, onClick = onDismiss)
             }
             if (existing.isNotEmpty()) {
                 Column(
@@ -246,7 +254,7 @@ fun BoxDialog(
                     modifier = Modifier.padding(top = 16.dp),
                 ) {
                     Text(
-                        "O añádelas a una que ya tienes:",
+                        BOX_ADD_TO_EXISTING,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Paper.muted,
                     )

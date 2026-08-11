@@ -173,9 +173,9 @@ internal fun announceDownload(
         manager.createNotificationChannel(
             NotificationChannel(
                 DOWNLOAD_CHANNEL_ID,
-                "Descargas",
+                DOWNLOAD_CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT,
-            ).apply { description = "Láminas y cuadernos guardados en Descargas" },
+            ).apply { description = DOWNLOAD_CHANNEL_EXPLANATION },
         )
     }
     val open = Intent(Intent.ACTION_VIEW).apply {
@@ -190,8 +190,8 @@ internal fun announceDownload(
     )
     val notification = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
         .setSmallIcon(android.R.drawable.stat_sys_download_done)
-        .setContentTitle("Descargado")
-        .setContentText("Descargas · $displayName")
+        .setContentTitle(DOWNLOAD_NOTIFICATION_TITLE)
+        .setContentText(downloadNotificationText(displayName))
         .setContentIntent(pending)
         .setAutoCancel(true)
         .build()

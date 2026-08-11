@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.em
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.ui.photographDescription
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -485,7 +486,7 @@ private fun CoinSide(
                 }
                 AsyncImage(
                     model = url,
-                    contentDescription = "$caption de $label",
+                    contentDescription = photographDescription(caption, label),
                     contentScale = ContentScale.Fit,
                     // Exporting the whole sheet has to wait for every picture, so both outcomes
                     // report back — but only once the last candidate has had its turn.

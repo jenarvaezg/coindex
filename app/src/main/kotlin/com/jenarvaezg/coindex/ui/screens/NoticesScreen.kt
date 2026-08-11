@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.NOTICES_ATTRIBUTIONS
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 private data class PackagedLicense(val heading: String, val asset: String)
@@ -40,21 +40,11 @@ fun NoticesScreen(modifier: Modifier = Modifier) {
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Eyebrow("Avisos y licencias")
-        Text(
-            "Fichas y fotografías: datos proporcionados por Numista (numista.com). " +
-                "Cada pieza lleva su N#.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Text(
-            "Software de terceros: Compose, AndroidX, Room, Ktor, OkHttp, Okio, Coil, ZXing " +
-                "y kotlinx — Apache 2.0; slf4j-api — MIT.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Text(
-            "Tipografías: Bitter y Barlow Condensed — SIL Open Font License 1.1.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        // No eyebrow: the masthead already names this screen, and «Avisos y licencias» over a
+        // page of licence text is the word said twice (§5).
+        NOTICES_ATTRIBUTIONS.forEach { attribution ->
+            Text(attribution, style = MaterialTheme.typography.bodyMedium)
+        }
         licenseTexts.forEach { (license, text) ->
             Text(
                 license.heading,

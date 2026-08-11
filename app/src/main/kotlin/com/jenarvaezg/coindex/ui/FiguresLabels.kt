@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.prices.ValuationRefusal
 import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.domain.LadderKind
 import com.jenarvaezg.coindex.domain.LadderUnit
+import com.jenarvaezg.coindex.domain.MarginFigure
 import com.jenarvaezg.coindex.domain.Referent
 import com.jenarvaezg.coindex.domain.ValueSource
 import java.util.Locale
@@ -226,6 +227,64 @@ fun readAtLabel(readAtMillis: Long, nowMillis: Long): String {
 
 /** The arc, which is two years and the distance between them. */
 fun arcLabel(years: Int): String = "$years años"
+
+/**
+ * What a country is, as the four shares of it that the portrait leads with.
+ *
+ * The share of the **value** is money, so it is absent exactly when the money section is (ADR 0028
+ * §4) — and absent means the clause is not written, not that it is written as zero.
+ *
+ * It takes the portrait and not its four numbers, as `plateUnavailableLabel` takes the reason and
+ * `syncReportLabel` the record: four `Double`s in a row are four chances to hand over the mass share
+ * where the silver one goes, and nothing would go red.
+ */
+fun portraitSharesLabel(portrait: CountryPortrait): String = buildString {
+    append("${percentLabel(portrait.pieceShare)} de tus piezas")
+    append(" · ${percentLabel(portrait.massShare)} del peso")
+    append(" · ${percentLabel(portrait.silverShare)} de la plata")
+    portrait.valueShare?.let { append(" · ${percentLabel(it)} del valor") }
+}
+
+/**
+ * A diameter under a coin drawn to scale, in whole millimetres.
+ *
+ * Whole and not one decimal, unlike the printed page: on screen the coin beside it *is* the measure,
+ * and the number is there to say which of the two extremes this one is. The paper has no coin to
+ * compare against and no ruler on a scaled page, so it keeps the tenth (`printedDiameterLabel`).
+ */
+fun screenDiameterLabel(millimetres: Double): String = "${millimetres.toInt()} mm"
+
+/**
+ * The four sentences «al margen», out of the ficha that was already in the APK.
+ *
+ * Nobody asked for them. They are what the page has instead of a colophon, and they are the reason
+ * it reads as a field guide: 75 % of his coins are no longer money anywhere, and 246 of them were
+ * engraved by one man.
+ *
+ * They were written inside the screen, which is where the copy of the densest page in the app was
+ * least visible — `FiguresLabels` promises to hold every string «Las cifras» prints, and four
+ * sentences hidden in `FiguresScreen.kt` were the promise's one exception (ADR 0026 §6).
+ */
+fun demonetizedSentence(figure: MarginFigure): String =
+    "${percentLabel(figure.shareOfPieces())} ya no son dinero en ninguna parte"
+
+fun sameHandSentence(figure: MarginFigure): String =
+    "${figure.pieces} las grabó la misma mano: ${figure.subject.orEmpty()}"
+
+fun mintSentence(figure: MarginFigure, distinctMints: Int): String =
+    "${figure.pieces} salieron de ${figure.subject.orEmpty()}, de $distinctMints cecas distintas"
+
+fun commonestYearSentence(figure: MarginFigure): String =
+    "${figure.pieces} llevan la fecha de ${figure.subject.orEmpty()}"
+
+/**
+ * The share the demonetized figure is a share **of**, which is the whole collection.
+ *
+ * Its denominator is every piece and not the types Numista answered for: a percentage over a moving
+ * denominator is a figure nobody can check.
+ */
+private fun MarginFigure.shareOfPieces(): Double =
+    if (outOf <= 0) 0.0 else pieces.toDouble() / outOf
 
 /**
  * What a coin's ficha says about its value, with the origin.

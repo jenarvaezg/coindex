@@ -17,11 +17,6 @@ sealed interface SettingsEntry {
     data class Refused(val problem: String) : SettingsEntry
 }
 
-const val SETTINGS_CREDENTIALS_HEADING: String = "Credenciales"
-const val ONBOARDING_CREDENTIALS_EXPLANATION: String =
-    "Introduce tu API key de Numista y tu identificador de usuario. Se guardan cifrados en este " +
-        "teléfono y nunca salen de él."
-
 /**
  * The onboarding form: an API key and the number in the collector's Numista profile URL.
  *
@@ -63,6 +58,3 @@ private fun typedCredentials(apiKey: String, userId: String): Credentials? {
     if (apiKey.isBlank() || parsedUserId <= 0) return null
     return Credentials(apiKey.trim(), parsedUserId)
 }
-
-/** Said once the credentials are stored. */
-const val SETTINGS_SAVED_MESSAGE: String = "Ajustes guardados."

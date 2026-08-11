@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.ui.DrawnPiece
+import com.jenarvaezg.coindex.ui.PIECES_SHEET_MASTHEAD
+import com.jenarvaezg.coindex.ui.PIECES_SHEET_SOURCE
+import com.jenarvaezg.coindex.ui.sheetSourceLabel
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.components.CoinSides
@@ -90,7 +93,7 @@ fun PiecesSheet(
             }
         }
         Text(
-            "Fuente: tu colección en Numista",
+            sheetSourceLabel(PIECES_SHEET_SOURCE),
             style = MaterialTheme.typography.labelSmall.scaledBy(layout.headerScale),
             color = Paper.muted,
         )
@@ -112,7 +115,7 @@ private fun PiecesSheetHeading(subject: PiecesSubject, layout: SheetLayout) {
         verticalArrangement = Arrangement.spacedBy(SHEET_GUTTER * scale * 0.5f),
     ) {
         Text(
-            "COINDEX · COLECCIÓN",
+            PIECES_SHEET_MASTHEAD,
             style = MaterialTheme.typography.labelMedium.scaledBy(scale * 1.3f),
             color = Paper.rust,
         )

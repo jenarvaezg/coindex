@@ -5,6 +5,19 @@ import com.jenarvaezg.coindex.data.update.InstallOutcome
 /** Said the moment the APK starts coming down, and replaced by whatever the install did. */
 const val UPDATE_DOWNLOADING_MESSAGE: String = "Descargando la actualización…"
 
+/** What the update banner is about, which is a version number and the word for it. */
+fun updateAvailableLabel(versionName: String): String = "NUEVA VERSIÓN $versionName"
+
+/**
+ * The banner's one button, in the two states it has.
+ *
+ * «Instalar» and not «Actualizar»: an app distributed outside a store is installed by the system's
+ * own installer, and the four refusals of [installOutcomeMessage] all end in «vuelve a pulsar
+ * Instalar» — the word on the button has to be the word in the message (ADR 0011).
+ */
+fun updateInstallLabel(downloading: Boolean): String =
+    if (downloading) "Descargando…" else "Instalar"
+
 /**
  * What an install attempt leaves the collector to do, or nothing when the system took over.
  *

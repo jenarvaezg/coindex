@@ -90,10 +90,11 @@ fun sheetDownloadFailure(sheet: SharedSheet, cause: String?): String {
  */
 fun downloadMessage(expectedPhotos: Int, loadedPhotos: Int): String {
     val absent = (expectedPhotos - loadedPhotos).coerceAtLeast(0)
+    val landed = DOWNLOAD_NOTIFICATION_TITLE
     return when (absent) {
-        0 -> "Descargado"
-        1 -> "Descargado, pero una foto no llegó a cargar"
-        else -> "Descargado, pero $absent fotos no llegaron a cargar"
+        0 -> landed
+        1 -> "$landed, pero una foto no llegó a cargar"
+        else -> "$landed, pero $absent fotos no llegaron a cargar"
     }
 }
 
@@ -105,3 +106,62 @@ fun downloadMessage(expectedPhotos: Int, loadedPhotos: Int): String {
  * pasted the number in front of the plural and would have read «1 casillas».
  */
 fun plateSheetTally(members: Int): String = plural(members, "casilla", "casillas")
+
+/**
+ * Handing a sheet to another app, said in one word on the three screens that offer it.
+ *
+ * Three literals for one word (§5). Compartir stays the secondary action everywhere — Descargar is
+ * the filled one since #285 — and one string is what keeps the pair from being drawn the other way
+ * round on the third screen.
+ */
+const val SHARE_ACTION: String = "Compartir"
+
+const val DOWNLOAD_ACTION: String = "Descargar"
+
+/**
+ * Downloading a sheet, in the noun the sheet itself carries.
+ *
+ * One pair of sentences for the plate and for the collection, as [sheetDownloadFailure] already has
+ * it: both nouns are feminine, which is what lets «Preparando la ${'$'}noun…» serve both, and writing
+ * the pair twice is how the two screens would come to draw Descargar and Compartir the other way
+ * round on one of them.
+ */
+fun sheetDownloadLabel(sheet: SharedSheet, exporting: Boolean): String =
+    if (exporting) "Preparando la ${sheet.noun}…" else "Descargar ${sheet.noun}"
+
+/** Where the coins on an exported sheet came from, which the PNG has to carry to be checkable. */
+fun sheetSourceLabel(source: String): String = "Fuente: $source"
+
+/** The way out of the album and into the catalog the plate was curated from. */
+const val NUMISTA_SOURCE_LINK: String = "Fuente en Numista"
+
+/** What a plate is, said once above its title: somebody else's list the collector is filling. */
+const val CURATED_CATALOG_EYEBROW: String = "Catálogo curado"
+
+const val PLATE_UNAVAILABLE_EYEBROW: String = "Lámina no disponible"
+
+/** What a sheet of pieces has instead of a curated catalog to name. */
+const val PIECES_SHEET_SOURCE: String = "tu colección en Numista"
+
+/**
+ * The two mastheads a shared PNG carries.
+ *
+ * They say which of the two hierarchies the sheet came out of, because a PNG arrives in a chat with
+ * no app around it: «catálogo curado» is somebody else's list the collector is filling, and
+ * «colección» is the collector's own pieces (ADR 0021 §1).
+ */
+const val PLATE_SHEET_MASTHEAD: String = "COINDEX · CATÁLOGO CURADO"
+const val PIECES_SHEET_MASTHEAD: String = "COINDEX · COLECCIÓN"
+
+/**
+ * The openable notification that says a file reached Descargas (#285).
+ *
+ * It says «Descargado» with the same word the snackbar uses — [downloadMessage] — because they are
+ * one event reported on two surfaces, and the file name is the notification's own job: that is why
+ * the snackbar is allowed to be short.
+ */
+const val DOWNLOAD_NOTIFICATION_TITLE: String = "Descargado"
+const val DOWNLOAD_CHANNEL_NAME: String = "Descargas"
+const val DOWNLOAD_CHANNEL_EXPLANATION: String = "Láminas y cuadernos guardados en Descargas"
+
+fun downloadNotificationText(fileName: String): String = "$DOWNLOAD_CHANNEL_NAME · $fileName"

@@ -23,12 +23,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
+import com.jenarvaezg.coindex.ui.BOX_NAME_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
+import com.jenarvaezg.coindex.ui.BOX_NAME_SAVE_ACTION
 import com.jenarvaezg.coindex.ui.BoxUpkeep
+import com.jenarvaezg.coindex.ui.COLLECTION_NO_LONGER_EXISTS
+import com.jenarvaezg.coindex.ui.DELETE_COLLECTION_ACTION
+import com.jenarvaezg.coindex.ui.EMPTY_BOX_EXPLANATION
 import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.PIECES_HEADING
 import com.jenarvaezg.coindex.ui.PiecesSubject
+import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
+import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.boxName
+import com.jenarvaezg.coindex.ui.renameToggleLabel
+import com.jenarvaezg.coindex.ui.sheetDownloadLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
@@ -74,7 +84,7 @@ fun PiecesScreen(
      * collection may also have moved, because refreshing a ficha can change the family its key is
      * built from (#185), and the route still names the old one.
      */
-    missingExplanation: String = "Esta colección ya no existe. Vuelve al índice.",
+    missingExplanation: String = COLLECTION_NO_LONGER_EXISTS,
     modifier: Modifier = Modifier,
 ) {
     if (subject == null) {
@@ -123,7 +133,7 @@ fun PiecesScreen(
                         // looking at the coins they want to group, not at a collection that already
                         // holds them.
                         Text(
-                            "Tus piezas",
+                            PIECES_HEADING,
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(top = 10.dp),
                         )
@@ -144,7 +154,7 @@ fun PiecesScreen(
                     // second membership rather than a move.
                     upkeep?.let { box ->
                         CardAction(
-                            text = "Quitar de la colección",
+                            text = REMOVE_TYPE_FROM_COLLECTION,
                             onClick = { box.onRemoveType(piece.item.typeId) },
                             modifier = Modifier.padding(top = 8.dp),
                         )
@@ -223,13 +233,13 @@ private fun PiecesHeading(
         // Descargar is the filled action, exactly as on a plate (#285); compartir stays
         // secondary so a sheet can still leave for another app.
         PrimaryAction(
-            text = if (exporting) "Preparando la hoja…" else "Descargar hoja",
+            text = sheetDownloadLabel(SharedSheet.PIECES, exporting),
             onClick = onDownload,
             enabled = !exporting && subject.pieces.isNotEmpty(),
             modifier = Modifier.padding(top = 12.dp),
         )
         CardAction(
-            text = "Compartir",
+            text = SHARE_ACTION,
             onClick = onShare,
             enabled = !exporting && subject.pieces.isNotEmpty(),
             icon = { ShareGlyph(color = Paper.ink) },
@@ -241,10 +251,10 @@ private fun PiecesHeading(
                 modifier = Modifier.padding(top = 4.dp),
             ) {
                 CardAction(
-                    text = if (renaming) "Cerrar el nombre" else "Renombrar",
+                    text = renameToggleLabel(renaming),
                     onClick = onToggleRename,
                 )
-                CardAction(text = "Deshacer la colección", onClick = upkeep.onDelete)
+                CardAction(text = DELETE_COLLECTION_ACTION, onClick = upkeep.onDelete)
             }
         }
     }
@@ -266,7 +276,7 @@ private fun RenameCard(current: String, onRename: (String) -> Unit) {
         OutlinedTextField(
             value = typed,
             onValueChange = { if (it.length <= BOX_NAME_LIMIT) typed = it },
-            label = { Text("Cómo se llama") },
+            label = { Text(BOX_NAME_FIELD_LABEL) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -277,7 +287,7 @@ private fun RenameCard(current: String, onRename: (String) -> Unit) {
             modifier = Modifier.padding(top = 6.dp),
         )
         PrimaryAction(
-            text = "Guardar el nombre",
+            text = BOX_NAME_SAVE_ACTION,
             onClick = { onRename(name.stored) },
             enabled = name.canSave,
             modifier = Modifier.padding(top = 12.dp),
@@ -296,13 +306,7 @@ private fun RenameCard(current: String, onRename: (String) -> Unit) {
 private fun EmptyCollection(isBox: Boolean) {
     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
         Text(
-            if (isBox) {
-                "Ahora mismo no tienes ninguna de las piezas de esta colección. Sigue aquí " +
-                    "por si vuelven."
-            } else {
-                "Ya no tienes piezas de esta variante, así que esta colección no existe. " +
-                    "Vuelve al índice."
-            },
+            if (isBox) EMPTY_BOX_EXPLANATION else COLLECTION_NO_LONGER_EXISTS,
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
         )
@@ -317,8 +321,9 @@ private fun EmptyCollection(isBox: Boolean) {
  */
 @Composable
 fun MissingSubject(explanation: String, modifier: Modifier = Modifier) {
+    // No heading over the sentence: «Colección desconocida» was a fifth wording of the very fact
+    // the sentence states, and the masthead already says which hierarchy this route belongs to.
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Colección desconocida", style = MaterialTheme.typography.headlineMedium)
         Text(explanation, style = MaterialTheme.typography.bodyLarge, color = Paper.muted)
     }
 }

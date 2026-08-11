@@ -387,25 +387,20 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         // a key names none of them.
                         if (key == null) {
                             MissingSubject(
-                                "Ese enlace no describe ninguna variante de tu colección. Vuelve " +
-                                    "al índice.",
+                                UNKNOWN_VARIANT_LINK,
                                 Modifier.fillMaxSize().padding(20.dp),
                             )
                         } else {
                             val card = state.collection.piecesCardFor(key)
-                            // No upkeep: a derived collection is not something anyone typed. The
-                            // explanation is this route's own, because there are two ways to lose one and
-                            // the second is new (#185): refreshing a ficha can move its coins to another
-                            // card, since the family is part of the key the route carries.
+                            // No upkeep: a derived collection is not something anyone typed. What
+                            // it says when it is gone is `PiecesScreen`'s own default, which is the
+                            // one wording of that event (ADR 0026 §5).
                             PiecesScreen(
                                 state = state.collection,
                                 subject = card?.let { piecesSubject(state.collection, it) },
                                 onOpenSource = openUrl,
                                 onMessage = viewModel::showMessage,
                                 ficha = ficha,
-                                missingExplanation = "Esta colección ya no existe: o has dejado de " +
-                                    "tener piezas de esta variante, o la ficha de Numista ha cambiado " +
-                                    "y sus monedas están ahora en otra colección. Vuelve al índice.",
                             )
                         }
                     }
@@ -558,19 +553,19 @@ private fun HierarchyBar(
         HorizontalDivider(thickness = 2.dp, color = Paper.ink)
         Row(modifier = Modifier.fillMaxWidth().navigationBarsPadding()) {
             HierarchyCell(
-                label = "Colecciones · $collections",
+                label = collectionsCellLabel(collections),
                 selected = route == Routes.INDEX,
                 onClick = { onCross(Routes.INDEX) },
                 modifier = Modifier.weight(1f),
             )
             HierarchyCell(
-                label = "Monedas · $coins",
+                label = coinsCellLabel(coins),
                 selected = route == Routes.COINS,
                 onClick = { onCross(Routes.COINS) },
                 modifier = Modifier.weight(1f),
             )
             HierarchyCell(
-                label = "${FiguresLabels.DESTINATION} · ${figuresCellCount(grams)}",
+                label = figuresCellLabel(figuresCellCount(grams)),
                 selected = route == Routes.FIGURES,
                 onClick = { onCross(Routes.FIGURES) },
                 modifier = Modifier.weight(1f),
@@ -643,7 +638,7 @@ internal fun UpdateBanner(
                 .padding(end = 12.dp),
         ) {
             Text(
-                "NUEVA VERSIÓN ${update.manifest.versionName}",
+                updateAvailableLabel(update.manifest.versionName),
                 style = MaterialTheme.typography.labelMedium,
                 color = Paper.rust,
             )
@@ -672,7 +667,7 @@ internal fun UpdateBanner(
             }
         }
         PrimaryAction(
-            text = if (updating) "Descargando…" else "Instalar",
+            text = updateInstallLabel(updating),
             onClick = onInstall,
             enabled = !updating,
         )
@@ -727,11 +722,12 @@ private fun Masthead(
             Text(APP_NAME, style = MaterialTheme.typography.titleLarge)
             when {
                 onBack != null -> CardAction(
-                    text = "Volver",
+                    text = BACK_LABEL,
                     onClick = onBack,
                     icon = { BackGlyph() },
                 )
-                onOpenSettings != null -> CardAction(text = "Ajustes", onClick = onOpenSettings)
+                onOpenSettings != null ->
+                    CardAction(text = SETTINGS_LABEL, onClick = onOpenSettings)
             }
         }
         Text(
@@ -752,10 +748,9 @@ private fun FatalError(message: String, modifier: Modifier = Modifier) {
         modifier = modifier.padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Text("No se pudo arrancar", style = MaterialTheme.typography.headlineMedium)
+        Text(FATAL_HEADING, style = MaterialTheme.typography.headlineMedium)
         Text(
-            "Los datos curados que viajan con la app no son válidos, así que Coindex se " +
-                "detiene en lugar de mostrarte una lámina incorrecta.",
+            FATAL_EXPLANATION,
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
         )

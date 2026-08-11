@@ -12,6 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.ui.CANCEL_ACTION
+import com.jenarvaezg.coindex.ui.DOWNLOAD_ACTION
+import com.jenarvaezg.coindex.ui.NOTEBOOK_COST_SCOPE
+import com.jenarvaezg.coindex.ui.NOTEBOOK_OPTIONS_EYEBROW
+import com.jenarvaezg.coindex.ui.SHARE_ACTION
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -63,7 +68,7 @@ fun ExportOptions(
     modifier: Modifier = Modifier,
 ) {
     FieldCard(modifier = modifier.fillMaxWidth()) {
-        Eyebrow("Cómo se exporta")
+        Eyebrow(NOTEBOOK_OPTIONS_EYEBROW)
         Column(modifier = Modifier.padding(top = 6.dp)) {
             NotebookSwitch.entries.forEach { switch ->
                 val offered = options.offers(switch) &&
@@ -87,7 +92,7 @@ fun ExportOptions(
             color = Paper.rust,
         )
         Text(
-            "Es lo que hay en el índice ahora mismo, con los filtros puestos.",
+            NOTEBOOK_COST_SCOPE,
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
             modifier = Modifier.padding(top = 2.dp),
@@ -99,13 +104,13 @@ fun ExportOptions(
             modifier = Modifier.padding(top = 12.dp),
         ) {
             // Descargar is the «y ya» (#285); compartir keeps the old path beside it.
-            PrimaryAction(text = "Descargar", onClick = onDownload)
+            PrimaryAction(text = DOWNLOAD_ACTION, onClick = onDownload)
             CardAction(
-                text = "Compartir",
+                text = SHARE_ACTION,
                 onClick = onShare,
                 icon = { ShareGlyph(color = Paper.ink) },
             )
-            CardAction(text = "Cancelar", onClick = onDismiss)
+            CardAction(text = CANCEL_ACTION, onClick = onDismiss)
         }
     }
 }

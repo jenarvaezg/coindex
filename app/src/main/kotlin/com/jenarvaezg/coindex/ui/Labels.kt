@@ -175,8 +175,8 @@ const val COMPLETE_STAMP_WORD: String = "completa"
 /** Why a plate cannot be opened, in terms of what the collector can do about it. */
 fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."
-    PlateUnavailable.NotACollection ->
-        "Ya no tienes piezas de esta variante, así que esa colección no existe."
+    // The same sentence the collection itself says when it goes: one event, one wording (§5).
+    PlateUnavailable.NotACollection -> COLLECTION_NO_LONGER_EXISTS
     PlateUnavailable.NoEvidence -> "Aún no tienes ninguna emisión oficial de este catálogo."
 }
 
@@ -204,3 +204,20 @@ fun objectClassChip(objectClass: ObjectClass): String = when (objectClass) {
 }
 
 fun numistaTypeUrl(typeId: Int): String = "https://en.numista.com/catalogue/pieces$typeId.html"
+
+/**
+ * Backing out of something, said in one word wherever it is offered (ADR 0026 §5).
+ *
+ * Four literals for this word, in three files. It is the same act every time — the export sheet, the
+ * export in progress, the box being named, the selection being made — and four copies of a word are
+ * four chances for one of them to become «Anular».
+ */
+const val CANCEL_ACTION: String = "Cancelar"
+
+/**
+ * What a photograph of a coin is, for the reader who cannot see it.
+ *
+ * The caption and the name are the cell's own — «Anverso», «1 Bolívar 1977» — so the description is
+ * this sentence and the two facts already on the page, and never a third wording of them.
+ */
+fun photographDescription(caption: String, name: String): String = "$caption de $name"
