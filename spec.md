@@ -1,17 +1,34 @@
 # spec.md — Coindex
 
-> Especificación viva de Coindex. Dirigida a un agente de codificación: léela completa
-> antes de escribir código.
+> Especificación viva de Coindex. **Los ADR de `docs/adr/` son la autoridad**: cuando discrepen
+> con este fichero, mandan ellos, que son posteriores. Aquí vive lo que no es una decisión de
+> arquitectura —la forma del producto, la API de Numista y lo que costó aprender curando— más el
+> mapa de qué ADR decide cada cosa.
 >
-> **PIVOT (29 de julio de 2026): Coindex es una app de Android local-first.**
-> Shuttle dejó de funcionar y se descartó el despliegue web. El dominio se portó a Kotlin y
-> el **30 de julio de 2026 la implementación Rust se retiró del árbol de trabajo**: vive en el
-> tag `rust-frozen` (`git checkout rust-frozen`) junto con la especificación de aquella fase,
-> que describía un modelo —`Slot`, emparejamiento heurístico, `ManualOverride`— que no se
-> portó y no vuelve (ADR 0010 §2, ADR 0021 §12). Lo que de ella seguía vivo está aquí abajo.
+> **Lee la sección que toca, no el fichero entero:**
 >
-> Esta sección y los ADR de `docs/adr/` son la especificación. Cuando discrepen, mandan
-> los ADR: son posteriores.
+> | § | qué contesta |
+> | --- | --- |
+> | 0.1 | qué es Coindex, y cómo se distribuye |
+> | 0.2 | qué activos del repo lee la app, y cómo identifica sus casillas cada `schema_version` |
+> | 0.3 | los invariantes del dominio: clave de variante, familias, nombres, orden |
+> | 0.4 | el eje de identidad visual, y dónde se decide cada parte de la forma |
+> | 0.5 | cómo se habla con la API de Numista sin tropezar |
+> | 0.6 | cómo se cura un catálogo |
+> | 0.7 | lo que costó aprender curando, caso a caso |
+> | 0.8 | las dos reglas del arranque que no son tarea cumplida |
+> | 0.9 | las cuatro cuestiones abiertas de la fase Android, y cómo se cerraron |
+>
+> **PIVOT (29 de julio de 2026): Coindex es una app de Android local-first.** Shuttle dejó de
+> funcionar y se descartó el despliegue web. El dominio se portó a Kotlin y el **30 de julio de
+> 2026 la implementación Rust se retiró del árbol de trabajo**: vive en el tag `rust-frozen`
+> (`git checkout rust-frozen`) junto con la especificación de aquella fase, que describía un
+> modelo —`Slot`, emparejamiento heurístico, `ManualOverride`— que no se portó y no vuelve
+> (ADR 0010 §2, ADR 0021 §12).
+>
+> **Y aquí no hay censo** (§0.7): cuántos catálogos, agrupaciones, programas o veredictos hay se
+> mide sobre `data/`, cambia cada semana, y cualquier cifra escrita aquí nace caducada — y pone
+> roja la sesión de al lado.
 
 ---
 
@@ -39,55 +56,46 @@
 ### 0.2 Activos del repo que la app reutiliza tal cual
 
 1. **`data/collection-catalogs/*.json` — los catálogos curados** (el activo más caro de
-   reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes
-   de versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
+   reproducir). Todos los `numista_type_id` fueron verificados contra numista.com antes de
+   versionarse. Se empaquetan como assets de la app. **Qué afirma un catálogo —su
    `series_status`, el `status` de cada miembro, su fuente, su denominador y la cara que
-   imprime— lo especifica el ADR 0020**; lo que sigue es cómo identifica sus casillas:
+   imprime— lo especifica el ADR 0020**; lo que sigue es sólo cómo identifica sus casillas.
+   Cuáles hay de cada clase se lee en `data/`, no aquí:
    - `schema_version: 1`: miembros identificados por `numista_type_id` único; posesión =
      poseer el tipo. Fuente obligatoria: página de serie de Numista
      (`catalogue/series.php?id=N`).
-   - `schema_version: 2` (**date runs**, ADR 0009): los miembros repiten un mismo tipo
-     con años distintos (único por `(numista_type_id, year)`); posesión = poseer el tipo
-     **y** que `issue_year` (o `gregorian_year`) del item coincida con el año del
-     miembro. Un item sin año nunca rellena un hueco. La fuente puede ser la ficha del
-     tipo (`catalogue/piecesNNN.html`). Primer date run vivo:
-     `venezuela-fuertes.json` (22 fechas: el venezolano de 1876, N#48672, más las 21 del
-     fuerte, N#10340; al padre le faltan 1904 y 1905).
+   - `schema_version: 2` (**date runs**, ADR 0009): los miembros repiten un mismo tipo con años
+     distintos (único por `(numista_type_id, year)`); posesión = poseer el tipo **y** que
+     `issue_year` (o `gregorian_year`) del item coincida con el año del miembro. Un item sin año
+     nunca rellena un hueco. La fuente puede ser la ficha del tipo (`catalogue/piecesNNN.html`).
    - `schema_version: 3` (**conjuntos emitidos como set**, ADR 0012): los miembros abarcan
-     varias variantes físicas, así que el catálogo no declara `weight_millioz`, `finish`
-     ni `metal`, y su clave de variante lleva el **peso ausente** (`-1` al persistirse). Un tipo listado
-     aquí deriva esa clave incluso si Numista le da familia: nombrar los tipos exactos que
-     se emitieron juntos es una afirmación más específica que la agrupación de Numista.
+     varias variantes físicas, así que el catálogo no declara `weight_millioz`, `finish` ni
+     `metal`, y su clave de variante lleva el **peso ausente** (`-1` al persistirse). Un tipo
+     listado aquí deriva esa clave incluso si Numista le da familia: nombrar los tipos exactos
+     que se emitieron juntos es una afirmación más específica que la agrupación de Numista.
      Criterio estrecho a propósito: **solo** conjuntos emitidos como un producto. El bullion
-     fraccional no es un conjunto (¼ oz y 1 oz son la misma moneda en dos tamaños y siguen
-     siendo colecciones separadas, como ya hacen Tudor Beasts y Lunar II). Los dos vivos:
-     `portugal-1983-exposicion-europea-de-arte.json` (500/750/1000 escudos de 1983,
-     7/12,5/21 g, emitidas en un mismo estuche; el padre las tiene las tres) y
-     `venezuela-1975-conservacion-plata.json` (el estuche de dos monedas de la Royal Mint para
-     el Banco Central de Venezuela, 28,28 g y 35 g).
-   - `schema_version: 5` (**issue runs**, ADR 0014): los miembros son emisiones de un mismo
-     tipo que comparten año y se distinguen por variedad, identificadas por
-     `numista_issue_ids`. Un catálogo simple o un date run puede **cualificar** una casilla
-     con ese mismo campo sin ser un issue run (ADR 0019). Único vivo: los paquillos de 100
-     pesetas de Franco.
-2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de tipos
-   (respuestas íntegras de `GET /types/{id}?lang=es`), empaquetado como seed de la tabla de
-   caché para que ningún usuario gaste esas llamadas. Cubre **todos** los tipos referenciados
-   por los ficheros curados, así que las láminas muestran todos los diseños (incluidos los «me
-   falta») sin tocar el presupuesto. Sembrar es parte de curar: `scripts/seed-type-cache.py`
-   omite lo ya cacheado y dice el coste con `--dry-run`, y `TypeCacheSeedTest` se pone rojo
-   con la lista de los que falten.
-3. **`data/series/*.json`** — **retirado**: las dos series curadas históricas (Lunar III,
-   Tudor Beasts) no las leía nadie (ADR 0010 §2) y viajaban en el APK como assets muertos.
-   Tudor Beasts ya tiene dos catálogos curados; el material de Lunar III (doce casillas con
-   etiqueta, motivo y `release_status`, sin un solo `numista_type_id`) queda en el commit
-   `9fc2582` para el catálogo que se cure. Ya no hay código que las valide en `main`.
-4. **`docs/adr/`** — las decisiones de dominio siguen vigentes; la 0007 (propuestas desde
-   inventario), 0008 (disposiciones durables), 0009 (date runs + fallback de familia), 0012
-   (familias técnicas, pesos de catálogo y conjuntos), 0013 (agrupaciones curadas), 0014
-   (issue runs), 0016 (un catálogo manda sobre la variante de sus miembros), 0018 (el metal
-   dominante en la clave) y 0019 (miembros cualificados por emisión) son la especificación del
-   comportamiento, y la 0020 la de lo que un catálogo afirma.
+     fraccional no es un conjunto: ¼ oz y 1 oz son la misma moneda en dos tamaños y siguen
+     siendo colecciones separadas.
+   - `schema_version: 5` (**issue runs**, ADR 0014): los miembros son emisiones de un mismo tipo
+     que comparten año y se distinguen por variedad, identificadas por `numista_issue_ids`. Un
+     catálogo simple o un date run puede **cualificar** una casilla con ese mismo campo sin ser
+     un issue run (ADR 0019).
+   - `schema_version: 4` **sigue libre**, y por qué lo cuenta §0.9.
+2. **`data/numista-type-cache.json`** — snapshot de la caché de metadatos de tipos (respuestas
+   íntegras de `GET /types/{id}?lang=es`), empaquetado como seed de la tabla de caché para que
+   ningún usuario gaste esas llamadas. Cubre **todos** los tipos referenciados por los ficheros
+   curados, así que las láminas muestran todos los diseños (incluidos los «me falta») sin tocar
+   el presupuesto. Sembrar es parte de curar: `scripts/seed-type-cache.py` omite lo ya cacheado
+   y dice el coste con `--dry-run`, y `TypeCacheSeedTest` se pone rojo con la lista de los que
+   falten.
+3. **`data/series/*.json`** — **retirado**: las dos series curadas históricas (Lunar III, Tudor
+   Beasts) no las leía nadie (ADR 0010 §2) y viajaban en el APK como assets muertos. El material
+   de Lunar III (doce casillas con etiqueta, motivo y `release_status`, sin un solo
+   `numista_type_id`) queda en el commit `9fc2582` para el catálogo que se cure. Ya no hay código
+   que las valide en `main`.
+4. **`docs/adr/`** — las decisiones de dominio son la especificación del comportamiento, y su
+   índice es el propio directorio: enumerarlas aquí sólo produce una lista que envejece. El
+   ADR 0020 es el que dice qué afirma un catálogo.
 
 ### 0.3 Modelo de dominio (invariantes)
 
@@ -133,153 +141,64 @@
 - **Orden del índice**: un único comparador `(tiene ratio ↓, ratio ↓, denominador ↓,
   short_name ↑)` (ADR 0021 §6).
 
-### 0.4 UI de referencia (la deciden los ADR 0021 y 0026, no la web congelada)
+### 0.4 Identidad y forma
 
 La web congelada dejó de ser la referencia el 4 de agosto de 2026. La **arquitectura de
-información** la decidió el mapa [#16](https://github.com/jenarvaezg/coindex/issues/16) y la
-escribe el **[ADR 0021](docs/adr/0021-what-a-collection-is-and-the-top-level.md)**; la **forma**
-—qué se ve, qué se mueve y cuánto texto cabe— la decidió el mapa
-[#278](https://github.com/jenarvaezg/coindex/issues/278) y la escribe el
+información** la escribe el
+**[ADR 0021](docs/adr/0021-what-a-collection-is-and-the-top-level.md)** y la **forma** —qué se ve,
+qué se mueve y cuánto texto cabe— el
 **[ADR 0026](docs/adr/0026-the-shape-of-coindex-an-album-sheet.md)**. Los dos son la
-especificación; lo de abajo es su resumen.
+especificación, **y no se resumen aquí**: un resumen que no manda es un documento más que hay que
+volver a sincronizar cada vez que se envía una pantalla, y que miente entre una cosa y la otra.
 
-**Lo que sigue describe lo aprobado, y ya casi todo lo construido.** A 10 de agosto de 2026 están
-en el teléfono la arquitectura del ADR 0021 y **diez de los once bloques** de forma del ADR 0026,
-«Las cifras» incluida. Lo que queda pendiente es el bloque 11 —la poda de vocabulario y los dos
-tests de copy ([#342](https://github.com/jenarvaezg/coindex/issues/342))—, así que las cláusulas de
-**una cadena, un dueño** de más abajo describen aprobado y no construido.
+Lo que sí vive aquí es el **eje de identidad**, porque lo declaró este documento y los ADR y los
+mapas de `docs/ux/` lo citan como el veto que aplican:
 
-#### Identidad
-
-- **Guía de campo ornitológica, no cuadro de mandos.** Serif para los textos, condensada para
-  los datos, paleta apagada de papel. Es el eje de identidad del producto y **no se reabre**.
+- **Guía de campo ornitológica, no cuadro de mandos.** Serif para los textos, condensada para los
+  datos, paleta apagada de papel. Es el eje de identidad del producto y **no se reabre**.
 - **Coindex es una hoja de álbum, no un listado** (ADR 0026 §1): una colección es un hueco
   troquelado con su moneda dentro, y la lámina la misma hoja por años, con el diseño en fantasma
   donde falta la pieza. Papel de fibra fina, sin sombra de hoja; el único brillo fijo es el
   reflejo del acetato.
+- **Papel a cualquier hora** (ADR 0026 §2): la app no sigue el tema oscuro del sistema, no hay
+  interruptor en Ajustes, y `android:forceDarkAllowed` está a `false` en `Theme.Coindex`. La noche
+  la pone el sistema atenuando el panel. Lo fija `SinglePaletteTest`, que además guarda los dos
+  suelos de contraste de la paleta sobre el papel: `muted` ≥ 4,50 (texto) y `hairline` ≥ 3,00 (no
+  textual).
 - **Dos tipografías dentro del APK**: **Bitter + Barlow Condensed**, 245 KB, con versalitas y
   cifras tabulares de verdad. Sin itálica y sin subsetear. `←`, `✓` y `↗` son iconos vectoriales,
   porque ninguna de las dos los trae.
-- **Papel a cualquier hora** (ADR 0026 §2): la app no sigue el tema oscuro del sistema, no hay
-  interruptor en Ajustes, y `android:forceDarkAllowed` está a `false` en `Theme.Coindex`. La
-  noche la pone el sistema atenuando el panel.
+- **La app no es superficie de auditoría** (ADR 0021 §12): ni línea de razón en la ficha, ni
+  gesto de «esta no va aquí». El desacuerdo se informa fuera, en un script que nunca se pone
+  rojo. El dinero es la excepción declarada del ADR 0026 §10, y llega hasta donde llega el
+  compañero de compra.
+- **No hay fotos propias de las piezas**, descartado el 7 de agosto de 2026
+  ([#15](https://github.com/jenarvaezg/coindex/issues/15)): las fotos son las de Numista. Con
+  ellas siguen fuera el relieve y la reiluminación interactiva. La promesa contraria vivía en la
+  especificación original —`rust-frozen:spec.md`— y **se retira aquí**.
 
-#### Primer nivel
+Y el mapa de dónde se decide cada parte de la forma:
 
-- **Tres jerarquías hermanas**: la app abre en **Colecciones** y una barra inferior de tres
-  celdas cruza a **Monedas** y a **Las cifras** (ADR 0021 §1, enmendado por el ADR 0026 §8).
-  Cada celda **nombra su grano con su recuento** — `Colecciones · 69` tarjetas, `Monedas · 192`
-  tipos, `Las cifras · 6,91 kg` gramos; nunca dinero.
-- **Lo que gana una celda es tener grano propio.** Si lo de dentro es lo de fuera con otro orden
-  puesto, es una faceta del estante y no un destino. Lo delatan un nombre que pelea con otro que
-  ya hay y un recuento prestado.
-- «Sin clasificar» es el filtro «Sin colección» de Monedas; las medallas son filtro y no sección;
-  la moneda enlaza de vuelta a sus colecciones.
-- **Las dos jerarquías con lista** llevan filtros con recuento vivo, ordenación y buscador en
-  tiempo real, con la estantería plegada al entrar; filtros y orden persisten entre arranques.
-  El estante lleva además la **faceta del eje** — por lámina (el de siempre), por país, por año.
-  **«Las cifras» no lleva estante**: su orden lo elige la cifra que tocas.
-
-#### Colecciones, la lámina y las monedas
-
-- **Una sola especie de colección**, en una sola lista: catálogo curado, agrupación curada y caja
-  propia, sin bloques y **sin palabra de procedencia**. La tarjeta es un hueco con la foto de la
-  **primera emisión que se tiene** y la fracción debajo: **mueren el eyebrow de país y la línea
-  de variante** (ADR 0026 §12), y el `short_name` curado carga con desambiguar.
-- **Una tarjeta, un destino**: con lista de emisiones abre la lámina de un toque; sin ella abre
-  la lista de piezas, que es también donde vive la caja propia con su mantenimiento.
-- **La lámina** es la misma hoja por años. Cada casilla tiene **dos objetivos**: el cuerpo del
-  hueco **gira la moneda** (420 ms) y el año es una **chapa hundida** que enlaza a Numista. La
-  cara en reposo es la que declara `printed_side` (ADR 0020). La que falta lleva su diseño en
-  fantasma; los rótulos `ANVERSO`/`REVERSO`/`TENGO` desaparecen.
-- **El sello de completado es un estado, no una medalla**: se estampa al abrir una hoja completa,
-  nunca al sincronizar, sólo en la lámina y sobre el cociente de la cabecera. La palabra es
-  **«completa»**, también en una serie abierta.
-- **La moneda viaja del índice a su casilla** —y a la ficha— y sólo ahí: donde no hay casilla
-  suya, no vuela.
-- **Una moneda tiene un dentro**: el hueco de Monedas abre una hoja con su ficha, y ahí se mudan
-  `Actualizar la ficha · 1 llamada`, la antigüedad de la ficha y los enlaces (ADR 0026 §13).
-- **El nombre de una moneda son dos cadenas** —denominación y tema—, derivadas de la ficha y
-  nunca curadas por tipo, iguales en pantalla y en papel. El buscador es la excepción al revés:
-  sigue indexando el título entero (ADR 0026 §7).
-- **Una pieza tiene dos años**: para casar con la casilla, el año grabado (`recordedYear`); para
-  colocarla en un eje, el gregoriano (`gregorianYear ?: recordedYear`). Las 23 piezas sin año
-  heredan el mínimo de su tipo cuando se dibuja el arco (ADR 0026 §9).
-
-#### Las cifras
-
-- **Una pieza vale el máximo de tres números**: su suelo de plata, su precio de mercado en
-  Numista por grado, y lo que se pagó (ADR 0026 §10).
-- **Compañero de compra, no gestión patrimonial**: lo que se lee pieza a pieza o lámina a lámina
-  se enseña; lo mismo totalizado para toda la colección, no. Sin histórico del spot, sin curva de
-  evolución, sin agregados de rendimiento, y sin totalizar la prima ni el coste de completar.
-- **La página abre entera sin una sola llamada** —peso, materia, escaleras, arco y emisores salen
-  del APK— y **el total nunca se enseña a medias**: mientras falte el precio de mercado, la
-  sección del dinero no está. El total dice **cobertura y no progreso**.
-- **Todo número traído de fuera se enseña con la fecha de su última lectura**, y un dato caducado
-  se sigue enseñando en vez de borrarse.
-- **Los precios llegan en un solo pase** (ADR 0028): las emisiones que se tienen más los huecos de
-  las láminas a **diez casillas o menos** de cerrarse —487 llamadas—, al arrancar y al acabar un
-  sync, en silencio, **sin esperar al wifi** y **cediendo ante el sync**, que gasta del mismo bote.
-  Sin clave de API no corre; con el presupuesto agotado no escribe nada y Ajustes dice por qué.
-- **Tres estados y no dos**: precio, «Numista no da precio» —que **se guarda**, o se volvería a
-  pedir en cada pase— y fallo, que no escribe fila. Un precio caduca a los 30 días y el spot al
-  día; **caducar no es borrar**.
-- **Una pieza se tasa en su grado**, con el vecino cuando el suyo no existe; **un hueco en `unc`**.
-  El spot son dos llamadas sin clave que **no gastan presupuesto** y **no se siembran en el APK**.
-
-#### Movimiento y exportación
-
-- **El techo se mide en movimientos, y cada uno debe una causa y un dato** (ADR 0026 §3). Los
-  aprobados son cuatro: el giro, el brillo, el estampado del sello y el viaje de la moneda. Un
-  movimiento decorativo falla la segunda condición sin necesidad de dibujarlo.
-- **El brillo es de la moneda, no del hueco**: brilla toda foto de moneda, troquelada o suelta;
-  el cartón vacío nunca.
-- **Regla de exportación**: lo quieto viaja al papel; lo que sigue al dedo, al sensor o a la
-  navegación se queda en la app. Así el sello sale en el PNG y el brillo no.
-- **Exportar**: la lámina como PNG por el share intent (ADR 0010 §8) y el cuaderno entero —lo que
-  el índice esté enseñando, en el orden del comparador— como PDF vectorial a A4, con una sola
-  cara a tamaño real —la que la lámina declara en `printed_side` (ADR 0020)— y una regla de 50 mm
-  al pie (ADR 0021 §13). El dinero es el **sexto interruptor** de la exportación configurable.
-
-#### Densidad
-
-- **El listón son tres cláusulas y no una cifra** (ADR 0026 §5): Colecciones ≤ **25 palabras de
-  mobiliario en el primer pliegue** (56 hoy); **ninguna cadena de mobiliario se imprime por fila,
-  por casilla ni por tarjeta**; y Ajustes y el alta quedan exentos por la regla de frecuencia, a
-  cambio de que ninguna de sus explicaciones aparezca en una pantalla del cuaderno.
-- **Regla de frecuencia**: una palabra cuesta lo que cuesta **multiplicada por las veces que se
-  imprime**. Donde una pantalla se visita una vez, un párrafo cuesta una vez; donde una cadena se
-  imprime por fila, por casilla o por tarjeta, no hay párrafo que valga.
-- **La pantalla puede decir menos que el papel cuando la pantalla tiene forma y el papel no.**
-- **Una cadena, un dueño**: toda copia visible vive en los ficheros de copy —quince, no los doce que
-  contó el ADR 0026 §6: la mudanza del bloque 11 le dio dueño a lo que no lo tenía—, sin exenciones. Ajustes
-  y el alta también: la exención de la regla de frecuencia dice **cuánto texto vale, no dónde se
-  escribe**. Lo que lo defiende es `CopyLivesInOnePlaceTest`, y defiende exactamente esto: **ningún
-  literal con prosa llega a una ranura visible** de `ui/`. No lleva lista blanca de ficheros —un
-  fichero de copy no tiene ranuras visibles, así que no necesita permiso— y **no cuenta nada**: una
-  parrafada nueva dentro de `Labels.kt` entra verde, y una cadena que llega a la pantalla por un
-  `val` en vez de por una ranura también. El listón, por su parte, **no es un test**: lo defiende la
-  revisión con la medida del AVD delante, y si sale por encima de 25 se ajusta el listón con la
-  medida delante, no la medida al listón.
-- **No hay tema oscuro** y lo fija `SinglePaletteTest`, que además guarda los dos suelos de
-  contraste de la paleta sobre el papel: `muted` ≥ 4,50 (texto) y `hairline` ≥ 3,00 (no textual).
-- **El presupuesto de llamadas desaparece de la interfaz entera**, campo `Techo de llamadas al
-  mes` incluido: el techo pasa a ser un valor interno.
-
-#### Lo que la app no hace
-
-- **No es superficie de auditoría** (ADR 0021 §12): ni línea de razón en la ficha, ni gesto de
-  «esta no va aquí». El desacuerdo se informa fuera, en un script que nunca se pone rojo. El
-  dinero es la excepción declarada del ADR 0026 §10, y llega hasta donde llega el compañero de
-  compra.
-- **No hay fotos propias de las piezas.** Descartado el 7 de agosto de 2026
-  ([#15](https://github.com/jenarvaezg/coindex/issues/15)): las fotos son las de Numista. La
-  promesa contraria vivía en la especificación original —`rust-frozen:spec.md`— y **se retira
-  aquí**. Con ella siguen fuera el relieve y la reiluminación interactiva.
-- **Avisos y licencias**: tres palabras al pie de Ajustes abren una pantalla con las tres
-  atribuciones —Numista, software (Apache 2.0 y una MIT) y las tipografías (OFL 1.1)— y los tres
-  textos íntegros dentro, como assets del APK (ADR 0026 §14).
+| qué | dónde se decide |
+| --- | --- |
+| Las tres jerarquías del primer nivel, su grano y su recuento | ADR 0021 §1, ADR 0026 §8 |
+| Qué es una colección, y que ninguna pieza se pierde por no tener familia | ADR 0021 §1 |
+| Que no queda nada persistido por tarjeta | ADR 0021 §7 |
+| El orden del índice, los filtros y el estante | ADR 0021 §6, ADR 0026 §8 |
+| La tarjeta: un hueco, una foto y una fracción, sin eyebrow ni línea de variante | ADR 0026 §12 |
+| La lámina, el giro, la chapa del año y el sello de «completa» | ADR 0026 §1; ADR 0020 (`printed_side`) |
+| El nombre de una moneda, y su ficha por dentro | ADR 0026 §7, §13 |
+| Los dos años de una pieza, y los dos ejes del cuaderno | ADR 0026 §9 |
+| «Las cifras»: qué vale una pieza, y qué no se totaliza | ADR 0026 §10 |
+| El pase de tasación, los tres estados y las caducidades | ADR 0026 §11, ADR 0028 |
+| El techo de movimientos, y qué debe una causa y un dato | ADR 0026 §3 |
+| La regla de exportación: lo quieto viaja al papel | ADR 0026 §4 |
+| Exportar la lámina en PNG y el cuaderno en PDF | ADR 0010 §8, ADR 0021 §13 |
+| El listón de densidad, y la regla de frecuencia | ADR 0026 §5 |
+| Una cadena, un dueño (`CopyLivesInOnePlaceTest`) | ADR 0026 §6 |
+| Avisos y licencias | ADR 0026 §14 |
+| Los nombres de país que la etiqueta de Numista no da bien | ADR 0023 |
+| Que el presupuesto de llamadas no aparece en la interfaz | ADR 0026 §5 |
 
 ### 0.5 API de Numista — todo lo aprendido (válido para la app)
 
@@ -340,7 +259,6 @@ usado (julio 2026) y reglas aprendidas:
    mismo año con el mismo peso, acabado y metal son dos casillas de una misma lámina, y un
    privy o un animal nuevo no parten nada. Un acabado distinto sí es otra lámina.
 
-
 ### 0.7 Lecciones de curar (lo que no se vuelve a aprender)
 
 **Aquí no hay censo.** Cuántos catálogos, agrupaciones, programas, fichas o veredictos hay se
@@ -395,26 +313,22 @@ tiene.
 Presupuesto de API: cada usuario gasta su propia key (~1.500-2.000 llamadas/mes), y el snapshot
 de caché existe para que ninguno repita lo ya descargado.
 
-### 0.8 Lo que ya está construido
+### 0.8 Reglas del arranque que no son tarea cumplida
 
-Los nueve pasos del arranque están hechos y son historia de git, no especificación: esqueleto
-Kotlin + Compose + Room, dominio portado con sus tablas doradas, onboarding con las credenciales
-cifradas en el Android Keystore, índice, láminas, huérfanas, exportar la lámina como PNG, firma
-del APK y distribución con autoactualización. Las decisiones del port están en el ADR 0010 y las
-de distribución en el ADR 0011.
-
-Lo que sigue siendo una regla y no una tarea cumplida:
+Los nueve pasos del arranque están hechos y son **historia de git, no especificación**: las
+decisiones del port están en el ADR 0010 y las de distribución en el ADR 0011. Lo que sigue
+siendo una regla:
 
 - Los assets se montan desde `data/` sin copiar; los catálogos se validan al arrancar y un fallo
-  **detiene la app** con el fichero y el motivo, en vez de degradarse en silencio.
+  **detiene la app** con el fichero y el motivo, en vez de degradarse en silencio. El error es
+  tipado a propósito, porque el destinatario del mensaje es el curador (ADR 0027).
 - **No** se portaron las series curadas ni las correcciones manuales, y no vuelven (ADR 0010 §2).
 
 ### 0.9 Las cuatro cuestiones abiertas de la fase Android, y cómo se cerraron
 
-Las tres de catálogos y datos las cerró el mapa
-[#14](https://github.com/jenarvaezg/coindex/issues/14) y las escribe el **ADR 0020**, que es la
-especificación de lo que un catálogo afirma; los detalles de identidad siguen en los ADR 0009,
-0012, 0013, 0014, 0016, 0018 y 0019. Lo que de sus respuestas sigue vinculando:
+Las tres de catálogos y datos las cerró el **ADR 0020**, que es la especificación de lo que un
+catálogo afirma; cómo identifica sus casillas está en §0.2. Lo que de sus respuestas sigue
+vinculando:
 
 - **Las emisiones anunciadas se expresan con `status` por miembro** —`issued` | `announced` |
   `unlisted`— y no con una versión de esquema nueva, porque el estado es propiedad de un miembro y
