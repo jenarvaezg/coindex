@@ -369,6 +369,13 @@ firmado **se puede reabrir**: el [#257](https://github.com/jenarvaezg/coindex/is
 firmado —la intención del padre— al describir un tema que la forma ofrecida en su día no
 contemplaba.
 
+**Y una huérfana puede tener tarjeta.** Las dos Disney de Niue del
+[#363](https://github.com/jenarvaezg/coindex/issues/363) —N#192181 y N#484131— son las primeras
+firmadas que declaran familia cruda: medido sobre la caché, las 31 anteriores tienen `series` a
+nulo, así que el registro se había llenado siempre desde el residuo. El veredicto no habla de la
+tarjeta sino de la lámina, y una familia cruda no tiene denominador que reclamar: la serie «Disney»
+son 315 tipos de cuatro emisores y sigue creciendo. Firmarlas no quita la tarjeta ni la pretende.
+
 **El peldaño 5 de la escalera de familias no produce ninguna tarjeta**, medido sobre las dos
 colecciones tras recorrer los sistemas monetarios portugueses
 ([#157](https://github.com/jenarvaezg/coindex/issues/157)). Sigue en el modelo como red de
