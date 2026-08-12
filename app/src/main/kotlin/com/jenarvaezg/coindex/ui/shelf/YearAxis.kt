@@ -231,8 +231,18 @@ private fun axisSlotYear(
     return state.typeMeta[typeId]?.minYear
 }
 
+/**
+ * The century a year belongs to, by the decade convention: «Siglo 20» is 1900-1999 (#407).
+ *
+ * Strict centuries (1801-1900) split the round hundred across two headers, so 1900 closed a row
+ * labelled «1900» under «Siglo 19» holding that year alone while «Siglo 20» opened with another
+ * «1900» holding 1901-1909 — two rows under one label, each with nine dead seats. The notebook
+ * reads by decade rows, so the row keeps its ten seats and the century takes the impurity.
+ *
+ * The BC branch is defensive: [yearAxis] only ever builds cells for years above zero.
+ */
 private fun centuryOf(year: Int): Int = when {
-    year > 0 -> (year - 1) / 100 + 1
+    year > 0 -> year / 100 + 1
     year < 0 -> year / 100 // e.g. -50 → century 0 in the BC labelling branch
     else -> 1 // year 0 does not occur after [placementYear]; keep labels unique if it did
 }

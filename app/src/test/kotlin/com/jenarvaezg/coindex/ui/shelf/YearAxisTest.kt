@@ -198,6 +198,46 @@ class YearAxisTest {
         assertIs<YearCellState.Coin>(model.cells.first().state)
     }
 
+    @Test
+    fun `the century seam never prints two rows with the same label`() {
+        // #407: with strict centuries (1801-1900) the year 1900 closed the «Siglo 19» in a row
+        // labelled «1900» and the «Siglo 20» opened with another «1900» holding 1901-1909. The
+        // row label the sheet paints is the decade's first year, so uniqueness is asserted on it.
+        val model = twoSeamsAxis()
+
+        val rows = model.centuries.flatMap { century -> century.decades.map { it.decade.toString() } }
+        assertEquals(rows.distinct(), rows, "a row label must appear once in the whole axis")
+    }
+
+    @Test
+    fun `a century holds its round hundred, so 1900 opens the Siglo 20 with ten seats`() {
+        val model = twoSeamsAxis()
+
+        assertEquals(
+            listOf("SIGLO 19", "SIGLO 20", "SIGLO 21"),
+            model.centuries.map { it.label },
+        )
+        val twentieth = model.centuries.single { it.century == 20 }
+        assertEquals(1900, twentieth.decades.first().decade)
+        assertEquals(1990, twentieth.decades.last().decade)
+        assertEquals(10, twentieth.decades.first().cells.size) // 1900-1909, whole row
+        assertEquals(
+            listOf(1898, 1899),
+            model.centuries.single { it.century == 19 }.decades.single().cells.map { it.year },
+        )
+        assertEquals(2000, model.centuries.single { it.century == 21 }.decades.single().decade)
+    }
+
+    /** An axis spanning 1898-2002: both century seams the #407 audit found, in one model. */
+    private fun twoSeamsAxis() = yearAxis(
+        state = state(
+            items = listOf(item(1, TYPE_A, year = 1898), item(2, TYPE_B, year = 2002)),
+            typeMeta = mapOf(TYPE_A to meta(TYPE_A, 1898), TYPE_B to meta(TYPE_B, 2002)),
+            evidenced = emptySet(),
+        ),
+        catalogs = emptyList(),
+    )
+
     private fun state(
         items: List<CollectedItem>,
         typeMeta: Map<Int, TypeMeta>,
