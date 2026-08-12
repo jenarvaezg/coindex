@@ -18,21 +18,27 @@ class PrintedCompletionStampTest {
         assertEquals("3 / 3", printedCompletionRatio("3 / 3"))
     }
 
+    /**
+     * What the band reserves is the **turned** rectangle and not the one it was drawn as (#476).
+     *
+     * A 24 × 22 frame tilted 5,5° measures 26,0 × 24,2, and those two millimetres are where the four
+     * corners of the caucho live: reserving the frame alone is what let a layer clip them off.
+     */
     @Test
-    fun `the masthead stamp fits inside the forty-millimetre band`() {
+    fun `the masthead stamp reserves the air its tilt needs and still fits the band`() {
         val size = printedStampSize(PrintHeading.Masthead)
 
-        assertEquals(24f, size.width.value)
-        assertEquals(22f, size.height.value)
+        assertEquals(26.0f, size.width.value, 0.05f)
+        assertEquals(24.2f, size.height.value, 0.05f)
         assertTrue(size.height.value < PrintHeading.Masthead.millimetres)
     }
 
     @Test
-    fun `the slim stamp of a shared folio fits inside fourteen millimetres`() {
+    fun `the slim stamp of a shared folio fits inside fourteen millimetres, tilt included`() {
         val size = printedStampSize(PrintHeading.Slim)
 
-        assertEquals(12f, size.width.value)
-        assertEquals(11f, size.height.value)
+        assertEquals(13.0f, size.width.value, 0.05f)
+        assertEquals(12.1f, size.height.value, 0.05f)
         assertTrue(size.height.value < PrintHeading.Slim.millimetres)
     }
 
