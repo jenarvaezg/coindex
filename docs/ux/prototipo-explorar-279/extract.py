@@ -100,6 +100,7 @@ for c in cats:
         floors = [m["floor"] for m in cas]
         explor.append(dict(
             id=c["id"], name=name, full=c["name"], issued=n, status=c.get("series_status"),
+            issuer=c.get("issuer_code"), updated=c.get("updated_at") or c.get("source", {}).get("read_at"),
             entry=(sum(floors) if n <= 10 and all(floors) else None),
             casillas=cas, tid=cas[0]["tid"], url=cas[0]["url"]))
 

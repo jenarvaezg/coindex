@@ -171,7 +171,7 @@ PHONES = "".join(
     f'<div class="phone" id="v{k}" style="display:none">{h}</div>' for k, _, h in VARIANTS
 )
 
-HTML = f"""<meta charset="utf-8">
+STYLE = f"""<meta charset="utf-8">
 <title>El escaparate de Coindex</title>
 <style>
 @font-face{{font-family:Bitter;src:url("{font('bitter')}") format("woff2");font-weight:400}}
@@ -309,7 +309,9 @@ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}}
 .mcost{{font:600 11px/13px Barlow;font-feature-settings:'smcp','tnum';color:var(--moss)}}
 {CSS_PHOTOS}
 </style>
-<header>{TABS}<button id="lit" onclick="toggleLit()">Luz: fantasma</button>
+"""
+
+HTML = STYLE + f"""<header>{TABS}<button id="lit" onclick="toggleLit()">Luz: fantasma</button>
 <span class="m" id="metric"></span></header>
 <div class="cap" id="cap"></div>
 <div class="stage">{PHONES}</div>
@@ -393,6 +395,10 @@ setState(location.hash.slice(1)||"0");
 </script>
 """
 
-out = f"{HERE}/explorar.html"
-open(out, "w").write(HTML)
-print(f"{out} · {len(HTML)/1024:.0f} KB · {len(used)} fotos embebidas")
+def write(path, html):
+    open(path, "w").write(html)
+    print(f"{path} · {len(html)/1024:.0f} KB · {len(used)} fotos embebidas")
+
+
+if __name__ == "__main__":
+    write(f"{HERE}/explorar.html", HTML)
