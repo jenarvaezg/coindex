@@ -41,10 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 56
-        // Patch on top of 1.2.13: the completion stamp reaches paper with its ink instead of as an
-        // empty frame. The phones are still on 1.2.10 — everything since has been merged unpublished.
-        versionName = "1.2.14"
+        versionCode = 57
+        // Patch on top of 1.2.14: the QR of a wide cell stops costing a row of coins. The phones are
+        // still on 1.2.10 — everything since has been merged unpublished.
+        versionName = "1.2.15"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
