@@ -41,9 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 54
-        // Patch on top of 1.2.11: the Lion King ounce carries the Disney series Numista fixed.
-        versionName = "1.2.12"
+        versionCode = 53
+        // Patch on top of 1.2.10: the shelf's tally names what it counts and sits on its own line.
+        versionName = "1.2.11"
+
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
