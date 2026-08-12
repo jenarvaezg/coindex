@@ -1,6 +1,7 @@
 # ADR 0016: A catalog is authoritative about its own members' variant
 
-- Status: accepted
+- Status: accepted, supersedes the catalog-declared snapping target of
+  [ADR 0012](0012-technical-families-catalog-weights-and-set-catalogs.md), amended by #288
 - Date: 2026-07-31
 
 ## Context
@@ -8,7 +9,8 @@
 ADR 0012 keys a proposal on the exact physical variant: family, weight in milli-ounces, and
 finish. The weight comes from the gram figure Numista records **per type**, normalized by
 `normalizeWeightMillioz`, which snaps to the common bullion weights and to the weights declared
-by curated catalogs. The snap tolerance is 10 milli-ounces, kept deliberately tight: 30 g sits
+by curated catalogs — the second of those retired by #288, see the amendment below. The snap
+tolerance is 10 milli-ounces, kept deliberately tight: 30 g sits
 965 milli-ounces from zero and a true ounce sits at 1000, so a loose tolerance would read a
 near-ounce piece as an ounce.
 
@@ -56,6 +58,16 @@ as specified by ADR 0019.
 Snapping stays. It still does the job the catalog cannot: a type of the same family that the
 catalog does **not** name — next year's issue, say — lands on the catalog's weight by snapping
 and shares its card instead of splitting off.
+
+> **Amended by [#288](https://github.com/jenarvaezg/coindex/issues/288).** Only snapping to the
+> common bullion weights stays; a weight a catalog declares is no longer a target for anything
+> outside that catalog. The paragraph above describes a case the magnet cannot tell apart from
+> an accident: it matches on grams, and the family has to agree by luck. Measured over 75
+> catalogs and 1050 seeded fichas, a declared weight was moving 22 unclaimed types and **not one
+> of them** landed on the card of a catalog of its own family — they were a Morgan dollar pulled
+> by a Spanish 10 euros, an Abd al-Aziz ½ dirham pulled by the Venezuelan medios, a Licinius I
+> nummus pulled by the Portuguese 2$50. Next year's issue reaches its plate the way every other
+> member does: someone curates it into the file.
 
 ## Consequences
 

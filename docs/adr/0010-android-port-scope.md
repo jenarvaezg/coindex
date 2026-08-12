@@ -29,7 +29,8 @@ con heurísticas que había que poder corregir.
 **Corrección (ADR 0021 §12, 4 de agosto de 2026).** El motivo que este párrafo daba —«las
 propuestas se derivan de la familia de Numista de forma determinista, sin heurísticas, así que no
 hay nada que corregir a mano»— **es falso**: 84 de los 804 tipos sembrados corren tres heurísticas
-(imán de peso, acabado por título, metal por prosa) y una de ellas cruza catálogos. `ManualOverride`
+(imán de peso, acabado por título, metal por prosa), y una de ellas cruzaba catálogos hasta que el
+#288 la retiró —el imán ya sólo tira de los pesos comunes de bullion—. `ManualOverride`
 se queda fuera por los motivos verdaderos: corregir en el móvil arregla un móvil y curar el catálogo
 arregla los dos y para siempre; sería una segunda autoridad compitiendo con el catálogo, que el ADR
 0016 corona como la única que manda sobre la variante de sus miembros; y necesitaría un destino, que

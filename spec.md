@@ -102,9 +102,10 @@
 - **Clave de variante física** (identidad de tarjeta, de preferencia y de catálogo):
   `(familia Numista cruda, peso normalizado en mili-onzas, acabado)`.
   - Peso: `round(oz*1000)`, con imán a los pesos comunes `[250, 500, 1000, 2000, 5000,
-    10000]` **y a los pesos declarados por los catálogos sembrados** (ADR 0012) si la
-    diferencia es ≤10, ganando el destino más cercano y, en empate, el menor (31,1 g → 1000;
-    30 g → 965, nunca 1000; 13,96 g → 450 porque un catálogo declara 450). Ausente (`-1` al
+    10000]` y **sólo** a ésos si la diferencia es ≤10 (31,1 g → 1000; 30 g → 965, nunca
+    1000). Lo que declara un catálogo manda sobre la variante de **sus** miembros (ADR 0016)
+    y no imanta a nadie más: los 13,96 g del Oporto se quedan en 449 y lo que los junta con
+    sus hermanos de 450 es el fichero que nombra a los siete (#288). Ausente (`-1` al
     persistirse) en los conjuntos emitidos como set, que no tienen un peso único.
   - Acabado (`Finish`): inferido del título del tipo con reglas auditables
     (`proof`+colour → ProofColoured; `proof`; colour/`coloriz`/colores lunares; `gild`/

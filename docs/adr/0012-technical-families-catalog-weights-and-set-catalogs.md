@@ -1,6 +1,7 @@
 # ADR 0012: Technical families, catalog-declared weights and set catalogs
 
-- Status: accepted
+- Status: accepted, the catalog-declared snapping target superseded by
+  [ADR 0016](0016-a-catalog-owns-its-members-variant.md) and retired by #288
 - Date: 2026-07-30
 
 ## Context
@@ -48,6 +49,27 @@ already applies to bullion weights, resolving ties by proximity and then by the
 smaller target. 13.96 g becomes 450. The bullion rule is unchanged: 30 g still
 stays at 965 and is never conflated with an ounce.
 
+> **Superseded by [ADR 0016](0016-a-catalog-owns-its-members-variant.md)**
+> ([#288](https://github.com/jenarvaezg/coindex/issues/288)), and only this third
+> decision — the technical family and schema 3 rules stand.
+>
+> This decision made sense while every piece passed through
+> `normalizeWeightMillioz`: the 13.96 g Porto 500 escudos needed the target to
+> join its 14 g siblings. ADR 0016 then gave the file authority over the variant
+> of its own members, and derivation started taking a claimed type's key straight
+> from `catalog.key()`. From that day the declared targets reached only the
+> opposite set — types **no** catalog claims, which is exactly the set nobody
+> declared a weight for. Measured on 75 catalogs, they were deciding the variant
+> of 22 unlooked-at types, among them a Morgan dollar whose 26.73 g are its legal
+> weight, pulled to the 868 of a Spanish commemorative 10 euros. (The report
+> listed 27 pulls; the other five are bullion snapping and survive.)
+>
+> Declared weights are therefore no longer targets, and `normalizeWeightMillioz`
+> takes no curated set. The bullion weights stay, because they are a real
+> convention a coin belongs to without anyone saying so. Do not reinstate this
+> without first re-reading ADR 0016: the case that motivated it can no longer
+> reach the function.
+
 **Collection catalog `schema_version: 3` describes a set issued as a set.** It
 declares no weight and no finish, and its members carry none either: the set is
 the collectible unit, so the physical variant of each member is not part of
@@ -87,3 +109,7 @@ Adding a catalog now affects weight normalization globally. That is the intended
 coupling — a curated weight is better evidence than an arbitrary gram figure —
 but it means a new catalog can merge two previously distinct near-weight
 proposals, which the golden table pins.
+
+*(That last consequence ended with the decision above: since #288 a catalog's
+declared weight moves its own members and nothing else, so curating one can no
+longer merge two cards it does not name.)*
