@@ -235,11 +235,3 @@ fun numistaTypeUrl(typeId: Int): String = "https://en.numista.com/catalogue/piec
  * four chances for one of them to become «Anular».
  */
 const val CANCEL_ACTION: String = "Cancelar"
-
-/**
- * What a photograph of a coin is, for the reader who cannot see it.
- *
- * The caption and the name are the cell's own — «Anverso», «1 Bolívar 1977» — so the description is
- * this sentence and the two facts already on the page, and never a third wording of them.
- */
-fun photographDescription(caption: String, name: String): String = "$caption de $name"

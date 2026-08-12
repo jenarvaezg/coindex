@@ -45,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
-import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinValue
@@ -53,6 +52,7 @@ import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
+import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.coinFichaIdentity
 import com.jenarvaezg.coindex.ui.coinValueLabel
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
@@ -274,18 +274,6 @@ fun CoinsScreen(
             )
         }
     }
-}
-
-/**
- * The face Monedas shows in the hole, and the other face when both exist.
- *
- * Reverse first matches the grid that was already shipping: commemoratives read by their motif, not
- * by the portrait. The ficha must take off and land on the same photograph or the journey pops.
- */
-internal fun coinAlbumFaces(images: TypeImages?): Pair<CoinPhoto?, CoinPhoto?> {
-    val reverse = images?.reverse?.takeIf { it.hasPicture }
-    val obverse = images?.obverse?.takeIf { it.hasPicture }
-    return if (reverse != null) reverse to obverse else obverse to null
 }
 
 @Composable

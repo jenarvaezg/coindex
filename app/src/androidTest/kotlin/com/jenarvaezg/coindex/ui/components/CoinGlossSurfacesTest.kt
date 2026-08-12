@@ -87,14 +87,25 @@ class CoinGlossSurfacesTest {
         assertEquals(0, tilt.coins)
     }
 
-    /** Loose coins too: the side sheets and `PieceCard` paint both faces of a piece. */
+    /**
+     * A loose coin glosses too, and it is the same hole doing it.
+     *
+     * `PieceCard` painted both faces of a piece as flat squares until #423; the piece of a collection
+     * is now the album's own hole without its cardboard, and one photograph asking for light is what
+     * says so.
+     */
     @Test
-    fun bothFacesOfALoosePieceGloss() {
+    fun aLoosePieceGlossesWithoutItsCardboard() {
         val tilt = tiltOf {
-            CoinSides(label = "1 Bolívar", obverse = OBVERSE, reverse = REVERSE, missing = false)
+            AlbumHole(
+                photo = OBVERSE,
+                otherSide = REVERSE,
+                backed = false,
+                modifier = Modifier.size(104.dp),
+            )
         }
 
-        assertEquals(2, tilt.coins)
+        assertEquals(1, tilt.coins)
     }
 
     @Test
@@ -107,13 +118,6 @@ class CoinGlossSurfacesTest {
                     OffScreenSheet(Density(1f)) {
                         gloss = LocalCoinGloss.current
                         AlbumHole(photo = OBVERSE, modifier = Modifier.size(104.dp))
-                        CoinSides(
-                            label = "1 Bolívar",
-                            obverse = OBVERSE,
-                            reverse = REVERSE,
-                            missing = false,
-                            onPaper = true,
-                        )
                     }
                 }
             }
