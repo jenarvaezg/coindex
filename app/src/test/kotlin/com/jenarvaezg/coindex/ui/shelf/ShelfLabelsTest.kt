@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * The folded shelf's own line, which is the only thing on screen that says a filter is on.
@@ -88,6 +89,42 @@ class ShelfLabelsTest {
     fun `the year-axis tally says N de M años`() {
         assertEquals("93 de 112 años", yearAxisTally(93, 112))
         assertEquals("112 años", yearAxisTally(112, 112))
+    }
+
+    /**
+     * The country axis names its unit, like the other two (#416).
+     *
+     * Changing the axis changes the magnitude under the same rótulo — «70 colecciones» becomes a
+     * count of casillas across the sheet — and a bare «170/678» beside «Exportar láminas» left the
+     * collector to guess which two things had been divided. The shape is the year axis's, so the
+     * three axes say the same sentence about three different units.
+     */
+    @Test
+    fun `the country-axis tally says N de M casillas`() {
+        assertEquals("170 de 678 casillas", countryAxisTally(170, 678))
+        assertEquals("678 casillas", countryAxisTally(678, 678))
+        assertEquals("1 casilla", countryAxisTally(1, 1))
+    }
+
+    /**
+     * No axis prints a cifra pelada: whatever a tally counts, the tally names (#416).
+     *
+     * The guard is the last character rather than the wording: a fraction that stops at a digit is
+     * exactly the failure, and any noun at all answers it.
+     */
+    @Test
+    fun `every axis tally ends in what it counted`() {
+        val tallies = listOf(
+            indexTally(5, 58),
+            indexTally(58, 58),
+            countryAxisTally(170, 678),
+            countryAxisTally(678, 678),
+            yearAxisTally(93, 112),
+            yearAxisTally(112, 112),
+        )
+        for (tally in tallies) {
+            assertTrue(tally.last().isLetter(), "«$tally» acaba en cifra y no dice qué cuenta")
+        }
     }
 
     @Test

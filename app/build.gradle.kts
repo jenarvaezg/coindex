@@ -41,9 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 52
-        // Patch on top of 1.2.9: the shared PNG is the printed page and honours every switch.
-        versionName = "1.2.10"
+        versionCode = 53
+        // Patch on top of 1.2.10: the shelf's tally names what it counts and sits on its own line.
+        versionName = "1.2.11"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
