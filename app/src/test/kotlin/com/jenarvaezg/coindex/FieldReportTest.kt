@@ -43,8 +43,8 @@ import org.junit.Assume.assumeTrue
  *
  * A field session used to mean transcribing «Sin clasificar» card by card off a phone screen.
  * That answers slowly and, worse, approximately: only [Curation.assemble] knows the family
- * precedence of ADR 0012 and ADR 0013, the weight normalization against curated weights, and
- * the inferred finish. A listing rebuilt by hand — or reimplemented in a script — reports
+ * precedence of ADR 0012 and ADR 0013, which types a catalog claims and therefore keys itself
+ * (ADR 0016, #288), the weight normalization of the rest, and the inferred finish. A listing rebuilt by hand — or reimplemented in a script — reports
  * orphans the app does not have, which is the one error this project cannot afford.
  *
  * It calls that assembly rather than reproducing it (#217). This file used to rebuild the body of

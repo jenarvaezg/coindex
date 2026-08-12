@@ -90,17 +90,21 @@ class NormalizeWeightTests(unittest.TestCase):
         near = weights.normalize_weight_millioz(30.0 / GRAMS_PER_TROY_OUNCE)
         self.assertEqual(965, near)
 
-    def test_a_curated_target_pulls_the_odd_gram_value(self) -> None:
-        # Los 13,96 g del Porto se juntan con sus hermanos de 14 g en 450 en vez de partirse.
-        measured = 13.96 / GRAMS_PER_TROY_OUNCE
-        self.assertEqual(449, weights.normalize_weight_millioz(measured))
-        self.assertEqual(450, weights.normalize_weight_millioz(measured, (450,)))
+    def test_a_declared_weight_is_not_a_target(self) -> None:
+        # Los 13,96 g del Porto se quedan en 449 aunque su catálogo declare 450: lo que junta
+        # a los siete hermanos es el fichero que los nombra, no el imán (#288).
+        self.assertEqual(449, weights.normalize_weight_millioz(13.96 / GRAMS_PER_TROY_OUNCE))
+        self.assertEqual(450, weights.normalize_weight_millioz(14.0 / GRAMS_PER_TROY_OUNCE))
+        # 26,73 g son el peso legal del Morgan dollar y nada los mueve al 868 de un ajeno.
+        self.assertEqual(859, weights.normalize_weight_millioz(26.73 / GRAMS_PER_TROY_OUNCE))
 
-    def test_the_nearest_target_wins_and_the_smaller_breaks_the_tie(self) -> None:
-        five_away = 1_005 / 1_000
-        self.assertEqual(1_000, weights.normalize_weight_millioz(five_away, (1_010,)))
-        tie = 1_005 / 1_000
-        self.assertEqual(1_000, weights.normalize_weight_millioz(tie, (1_010, 1_000)))
+    def test_only_the_common_weights_pull_and_only_within_tolerance(self) -> None:
+        # Diez milionzas entran y once no. Dos pesos comunes no pueden estar los dos en
+        # tolerancia —el más cercano son 250 milionzas—, así que el desempate no se alcanza.
+        self.assertEqual(1_000, weights.normalize_weight_millioz(1_010 / 1_000))
+        self.assertEqual(1_011, weights.normalize_weight_millioz(1_011 / 1_000))
+        self.assertEqual(1_000, weights.normalize_weight_millioz(990 / 1_000))
+        self.assertEqual(989, weights.normalize_weight_millioz(989 / 1_000))
 
     def test_rejects_what_is_not_a_weight(self) -> None:
         self.assertIsNone(weights.normalize_weight_millioz(0.0))
@@ -231,9 +235,10 @@ class DeviationTests(unittest.TestCase):
         self.assertIsNone(report.deviations[0].explained_by)
         self.assertEqual(0, report.explained_count)
 
-    def test_the_key_says_when_a_foreign_catalog_moved_it(self) -> None:
-        # Los 33,94 g rusos miden 1091 y acaban en el 1081 que declara la onza mexicana:
-        # la desviación contra los 1121 declarados la termina de escribir un catálogo ajeno.
+    def test_a_foreign_catalog_no_longer_writes_the_key(self) -> None:
+        # Los 33,94 g rusos miden 1091. Acababan en el 1081 que declara la onza mexicana, así
+        # que la desviación contra los 1121 de su propia lámina la terminaba de escribir un
+        # catálogo ajeno; desde el #288 la fila dice los gramos de la ficha y nada más.
         report = report_for(
             [
                 catalog("monumentos", 1_121, member("2005-kropotkinskaya", 29_017)),
@@ -243,10 +248,8 @@ class DeviationTests(unittest.TestCase):
         )
         deviation = report.deviations[0]
         self.assertEqual(1_091, deviation.measured_millioz)
-        self.assertEqual(1_081, deviation.observed_millioz)
-        self.assertTrue(deviation.magnet_moved)
-        self.assertEqual(("mexico-onza-troy-925",), deviation.key_declared_by)
-        self.assertIn("mexico-onza-troy-925", weights.render_markdown(report))
+        self.assertEqual(1_091, deviation.observed_millioz)
+        self.assertFalse(deviation.magnet_moved)
 
     def test_a_key_the_magnet_left_alone_says_so(self) -> None:
         report = report_for(
@@ -387,17 +390,17 @@ class MagnetPullTests(unittest.TestCase):
         self.assertEqual(1, report.unclaimed_count)
         self.assertEqual(1, report.unclaimed_without_weight)
 
-    def test_the_magnet_names_who_declared_the_target(self) -> None:
+    def test_a_declared_weight_does_not_pull_a_type_its_catalog_does_not_claim(self) -> None:
+        # El caso del #288: el Morgan dollar pesa 26,73 g de verdad y ningún catálogo lo
+        # reclama, así que el 868 que declara uno ajeno no le toca la clave. Los 31,39 g sí
+        # se mueven, porque la onza de bullion es una convención real.
         report = report_for(
             [catalog("dolar-de-plata", 868, member("1921", 1_000_001))],
             [ficha(1_000_001, 27.0), ficha(1_492, 26.73), ficha(192_181, 31.39)],
         )
         by_type = {pull.numista_type_id: pull for pull in report.pulls}
-        self.assertEqual(868, by_type[1_492].snapped_millioz)
-        self.assertFalse(by_type[1_492].snapped_to_common)
-        self.assertEqual(("dolar-de-plata",), by_type[1_492].declaring_catalogs)
+        self.assertNotIn(1_492, by_type)
         self.assertEqual(1_000, by_type[192_181].snapped_millioz)
-        self.assertTrue(by_type[192_181].snapped_to_common)
 
     def test_ordered_by_how_far_the_magnet_pulled(self) -> None:
         report = report_for(
@@ -535,11 +538,11 @@ class RealDataTests(unittest.TestCase):
                     f"{deviation.catalog_id}/{deviation.member_id} sin nota",
                 )
 
-    def test_every_pull_moves_the_weight_and_has_a_target(self) -> None:
+    def test_every_pull_moves_the_weight_to_a_common_one(self) -> None:
         for pull in self.report.pulls:
             self.assertNotEqual(pull.measured_millioz, pull.snapped_millioz)
             self.assertLessEqual(pull.pull_millioz, weights.SNAP_TOLERANCE_MILLIOZ)
-            self.assertTrue(pull.snapped_to_common or pull.declaring_catalogs)
+            self.assertIn(pull.snapped_millioz, weights.COMMON_WEIGHTS_MILLIOZ)
 
     def test_every_split_would_take_more_than_one_key(self) -> None:
         for split in self.report.splits:

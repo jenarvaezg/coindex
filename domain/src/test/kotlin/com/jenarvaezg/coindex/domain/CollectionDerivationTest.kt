@@ -43,23 +43,19 @@ class WeightNormalizationTest {
         assertNull(normalizeWeightMillioz(0.0001))
     }
 
+    /**
+     * The only targets are the common bullion weights. A weight a catalog declares rules its own
+     * members (ADR 0016) and reaches nothing else (#288), and those members never arrive here in
+     * the first place: their key comes from the file.
+     */
     @Test
-    fun `a curated weight pulls its near misses in without disturbing bullion`() {
-        val curated = setOf(450, 579)
-
-        // The 13,96 g Porto 500 escudos joins its 14 g siblings instead of splitting at 449.
-        assertEquals(450, normalizeWeightMillioz(ounces(13.96), curated))
-        assertEquals(450, normalizeWeightMillioz(ounces(14.0), curated))
-        // Without the catalog it stays exactly where Numista puts it.
+    fun `a weight a catalog declares is not a snapping target`() {
+        // The 13,96 g Porto 500 escudos stays where Numista puts it. Its siblings at 14 g are 450
+        // and it is 449, and what joins the seven of them is the catalog that names all seven.
         assertEquals(449, normalizeWeightMillioz(ounces(13.96)))
-        // Out of tolerance is left alone: 13,5 g is 434, eleven off the target.
-        assertEquals(434, normalizeWeightMillioz(ounces(13.5), curated))
-        // Bullion snapping is untouched, and 30 g still refuses to become an ounce.
-        assertEquals(1_000, normalizeWeightMillioz(ounces(31.1), curated))
-        assertEquals(965, normalizeWeightMillioz(ounces(30.0), curated))
-        // The nearest target wins when two are in range.
-        assertEquals(1_000, normalizeWeightMillioz(ounces(31.1), setOf(995)))
-        assertEquals(995, normalizeWeightMillioz(ounces(30.95), setOf(995)))
+        assertEquals(450, normalizeWeightMillioz(ounces(14.0)))
+        // 26,73 g are the Morgan dollar's legal weight, not a careless figure: nothing moves it.
+        assertEquals(859, normalizeWeightMillioz(ounces(26.73)))
     }
 }
 
@@ -239,11 +235,14 @@ class CollectionDerivationTest {
 
     /**
      * The 1000 escudos of Portugal are one coin whose weight Numista records three ways: 27, 28
-     * and 28.2 grams. Declaring 900 pulls in 28.2 g, seven milli-ounces away, but never 27 g,
-     * which sits 32 away — and widening the tolerance that far would read a 30 g piece as an
-     * ounce. So snapping can close part of the gap and never all of it. Measured on the real
-     * collection before this rule existed: one catalog produced two cards, and the five lightest
-     * pieces were counted in both.
+     * and 28.2 grams — 868, 900 and 907 milli-ounces, three keys for one card. Measured on the
+     * real collection before this rule existed: one catalog produced two cards, and the five
+     * lightest pieces were counted in both.
+     *
+     * Snapping never fixed this. It could close the seven milli-ounces to 28.2 g and never the
+     * thirty-two to 27 g, and widening the tolerance that far would read a 30 g piece as an ounce.
+     * What holds the three together is the file naming all three (ADR 0016), which is why the
+     * weight it declares no longer needs to be a target at all (#288).
      */
     @Test
     fun `a catalog claims its members whatever weight numista records for each`() {
@@ -271,10 +270,10 @@ class CollectionDerivationTest {
             11_697 to escudo(11_697, 28.0),
             11_120 to escudo(11_120, 28.2),
         )
-        // 28.2 g reaches the declared 900 by snapping; 27 g never can.
-        assertEquals(900, normalizeWeightMillioz(ounces(28.0), setOf(900)))
-        assertEquals(900, normalizeWeightMillioz(ounces(28.2), setOf(900)))
-        assertEquals(868, normalizeWeightMillioz(ounces(27.0), setOf(900)))
+        // Left to their grams the three are three different keys, declared weight or not.
+        assertEquals(868, normalizeWeightMillioz(ounces(27.0)))
+        assertEquals(900, normalizeWeightMillioz(ounces(28.0)))
+        assertEquals(907, normalizeWeightMillioz(ounces(28.2)))
 
         val derivation = deriveCollection(
             listOf(item(1, 15_463, 1), item(2, 11_697, 1), item(3, 11_120, 1)),
@@ -288,6 +287,46 @@ class CollectionDerivationTest {
         assertEquals(catalog.key(), collection.key())
         assertEquals(3, collection.distinctTypes)
         assertEquals(3, collection.quantity)
+    }
+
+    /**
+     * A weight a catalog declares reaches its own members and nobody else (#288).
+     *
+     * The Morgan dollar weighs 26.73 g — 859 milli-ounces, its legal weight, not a careless
+     * Numista figure — and no catalog claims it. While declared weights were targets for
+     * everyone, the 868 of a Spanish commemorative 10 euros fixed the variant of a 19th-century
+     * American silver coin nobody had looked at, and the same loose coin was weighed two ways:
+     * 859 in its shelf row, which never snapped to a curated target, and 868 in its card's key.
+     */
+    @Test
+    fun `a declared weight does not reach a type its catalog does not claim`() {
+        val catalog = portugueseAnnualCatalogStub().copy(
+            id = "us-independence-250th-spain-10-euros",
+            family = "250th anniversary of the United States Declaration of Independence",
+            weightMillioz = 868,
+            members = listOf(
+                CollectionCatalogMember("2026-declaration", "Declaración", 2026, 500_001),
+            ),
+        )
+        val typeMeta = mapOf(
+            1_492 to metadata(1_492, "Dólar de plata clásico de EE. UU.", 26.73, null),
+            // The catalog's own member, whose grams Numista records a shade off the declared 868.
+            500_001 to metadata(500_001, "250 aniversario", 26.9, null),
+        )
+
+        val derivation = deriveCollection(
+            listOf(item(1, 1_492, 1), item(2, 500_001, 1)),
+            typeMeta,
+            listOf(catalog),
+        )
+
+        val morgan = derivation.derivedCollections.single { it.family != catalog.family }
+        assertEquals("Dólar de plata clásico de EE. UU.", morgan.family)
+        assertEquals(859, morgan.weightMillioz)
+        // And the same 868 still rules the member it does name: that authority is the point.
+        val declaration = derivation.derivedCollections.single { it.family == catalog.family }
+        assertEquals(catalog.key(), declaration.key())
+        assertEquals(868, declaration.weightMillioz)
     }
 
     /**

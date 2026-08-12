@@ -66,10 +66,12 @@ fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
                 // issuing entity carries its period of validity, and `country` is «Rusia» where the
                 // raw name is «Federación de Rusia (1991-presente)» (ADR 0023).
                 countries = setOfNotNull(meta?.country),
-                // Numista's own grams, snapped to the common weights but **not** to the curated
-                // ones: a loose coin is by definition one no curated file has a weight for. Null
-                // where the ficha declares none, which keeps it out of every weight filter instead
-                // of parking it under «Conjunto o caja».
+                // Numista's own grams, snapped to the common bullion weights: a loose coin is by
+                // definition one no curated file has a weight for. This row used to be the only
+                // place that read it that way, and the same coin weighed one thing here and
+                // another in its card's key; since #288 there is one reading. Null where the ficha
+                // declares none, which keeps it out of every weight filter instead of parking it
+                // under «Conjunto o caja».
                 weight = meta?.weightOz
                     ?.let { ounces -> normalizeWeightMillioz(ounces) }
                     ?.let { millioz -> OunceBand.of(millioz) },

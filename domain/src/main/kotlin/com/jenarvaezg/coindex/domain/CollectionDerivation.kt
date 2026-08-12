@@ -99,7 +99,6 @@ fun deriveCollection(
             }
         }
     }
-    val curatedWeights: Set<Int> = catalogs.mapNotNullTo(mutableSetOf()) { it.weightMillioz }
     val grouped = LinkedHashMap<VariantKey, DerivedCollectionAccumulator>()
     val unclassifiedGrouped = LinkedHashMap<UnclassifiedGroupKey, UnclassifiedAccumulator>()
 
@@ -169,9 +168,10 @@ fun deriveCollection(
             grouped.record(catalog.key(), item)
             continue
         }
-        val weightMillioz = metadata.weightOz?.let { weightOz ->
-            normalizeWeightMillioz(weightOz, curatedWeights)
-        }
+        // Numista's own grams, snapped to the common bullion weights and to nothing a catalog
+        // declares: past this point the type is one no curated file has a weight for (#288), and
+        // `UnclaimedRows` already weighs that same loose coin exactly this way.
+        val weightMillioz = metadata.weightOz?.let(::normalizeWeightMillioz)
         if (weightMillioz == null) {
             unclassifiedGrouped.record(item, UnclassifiedReason.UnknownWeight(family))
             continue

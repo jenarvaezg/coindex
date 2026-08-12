@@ -16,9 +16,10 @@ Tres bloques:
   no cincuenta y nueve. Las de «sin mirar» traen la orden de resiembra: la caché no se
   refresca sola y una corrección que Numista aceptó seguiría saliendo aquí para siempre.
 - **Lo que el imán mueve**: tipos que ningún catálogo reclama y a los que
-  `normalizeWeightMillioz` mueve el peso —a un peso común de bullion o al declarado por
-  un catálogo ajeno—. Son los únicos casos donde la variante se decide sin que nadie la
-  haya verificado a mano.
+  `normalizeWeightMillioz` mueve el peso hasta un peso común de bullion. Son los únicos
+  casos donde la variante se decide sin que nadie la haya verificado a mano, y desde el
+  #288 el imán ya sólo tira de una convención real: lo que declara un catálogo manda
+  sobre sus miembros y no cruza a los tipos que no reclama.
 - **Las tarjetas que la autoridad del catálogo evita**: catálogos cuyos miembros tomarían
   más de una clave de peso si el fichero no mandara. Es el número que justifica el
   ADR 0016, y hacerlo visible es todo lo que el informe puede hacer con él.
@@ -77,21 +78,21 @@ NEAR_PERCENT = 2.0
 FAR_PERCENT = 5.0
 
 
-def normalize_weight_millioz(
-    weight_oz: float,
-    curated_targets: tuple[int, ...] = (),
-) -> int | None:
-    """Espejo de `normalizeWeightMillioz`: imán a los pesos comunes y a los curados."""
+def normalize_weight_millioz(weight_oz: float) -> int | None:
+    """Espejo de `normalizeWeightMillioz`: imán a los pesos comunes y a nada más.
+
+    Lo que declara un catálogo dejó de ser objetivo en el #288: manda sobre sus miembros
+    (ADR 0016) y sobre nadie más, y sus miembros ni siquiera pasan por aquí.
+    """
     if not math.isfinite(weight_oz) or weight_oz <= 0.0:
         return None
     # `Math.round` de Kotlin es floor(x + 0.5), no el redondeo bancario de `round`.
     measured = math.floor(weight_oz * 1_000.0 + 0.5)
     if measured <= 0:
         return None
-    targets = list(COMMON_WEIGHTS_MILLIOZ) + sorted(curated_targets)
     near = [
         target
-        for target in targets
+        for target in COMMON_WEIGHTS_MILLIOZ
         if abs(measured - target) <= SNAP_TOLERANCE_MILLIOZ
     ]
     if not near:
@@ -169,7 +170,6 @@ class Deviation:
     grams: float
     composition: str | None
     variant_note: str | None
-    key_declared_by: tuple[str, ...]
     catalog_note: str | None = None
 
     @property
@@ -193,7 +193,7 @@ class Deviation:
 
     @property
     def magnet_moved(self) -> bool:
-        """Si la clave no son los gramos de la ficha, es que la movió un objetivo ajeno."""
+        """Si la clave no son los gramos de la ficha, es que la movió un peso común."""
         return self.observed_millioz != self.measured_millioz
 
 
@@ -207,12 +207,7 @@ class MagnetPull:
     snapped_millioz: int
     grams: float
     composition: str | None
-    declaring_catalogs: tuple[str, ...]
     family: str | None
-
-    @property
-    def snapped_to_common(self) -> bool:
-        return self.snapped_millioz in COMMON_WEIGHTS_MILLIOZ
 
     @property
     def pull_millioz(self) -> int:
@@ -391,33 +386,10 @@ def derived_family(ficha: Ficha, grouping_families: dict[int, str]) -> str | Non
     return numista
 
 
-def curated_targets(catalogs: list[Catalog]) -> tuple[int, ...]:
-    return tuple(
-        sorted(
-            {
-                catalog.weight_millioz
-                for catalog in catalogs
-                if catalog.weight_millioz is not None
-            }
-        )
-    )
-
-
-def catalogs_by_weight(catalogs: list[Catalog]) -> dict[int, tuple[str, ...]]:
-    """Quién declara cada objetivo curado, que es de dónde sale el imán que cruza catálogos."""
-    by_weight: dict[int, list[str]] = {}
-    for catalog in catalogs:
-        if catalog.weight_millioz is not None:
-            by_weight.setdefault(catalog.weight_millioz, []).append(catalog.catalog_id)
-    return {weight: tuple(sorted(ids)) for weight, ids in by_weight.items()}
-
-
 def find_deviations(
     catalogs: list[Catalog],
     fichas: dict[int, Ficha],
-    targets: tuple[int, ...],
 ) -> list[Deviation]:
-    declared_by = catalogs_by_weight(catalogs)
     deviations: list[Deviation] = []
     for catalog in catalogs:
         declared = catalog.weight_millioz
@@ -431,7 +403,7 @@ def find_deviations(
             # convierte eso en un fallo.
             if ficha is None or ficha.weight_oz is None or ficha.grams is None:
                 continue
-            observed = normalize_weight_millioz(ficha.weight_oz, targets)
+            observed = normalize_weight_millioz(ficha.weight_oz)
             if observed is None or observed == declared:
                 continue
             deviations.append(
@@ -448,7 +420,6 @@ def find_deviations(
                     grams=ficha.grams,
                     composition=ficha.composition,
                     variant_note=member.variant_note,
-                    key_declared_by=declared_by.get(observed, ()),
                     catalog_note=catalog.source_note,
                 )
             )
@@ -466,7 +437,6 @@ def find_magnet_pulls(
     catalogs: list[Catalog],
     grouping_families: dict[int, str],
     fichas: dict[int, Ficha],
-    targets: tuple[int, ...],
 ) -> tuple[list[MagnetPull], int, int]:
     """Los tipos sin catálogo a los que el imán mueve el peso, y cuántos quedan fuera."""
     claimed = {
@@ -475,7 +445,6 @@ def find_magnet_pulls(
         for member in catalog.members
         if member.numista_type_id is not None
     }
-    declared_by = catalogs_by_weight(catalogs)
     pulls: list[MagnetPull] = []
     unclaimed = 0
     without_weight = 0
@@ -490,7 +459,7 @@ def find_magnet_pulls(
             without_weight += 1
             continue
         measured = math.floor(weight_oz * 1_000.0 + 0.5)
-        snapped = normalize_weight_millioz(weight_oz, targets)
+        snapped = normalize_weight_millioz(weight_oz)
         if snapped is None or snapped == measured:
             continue
         pulls.append(
@@ -501,7 +470,6 @@ def find_magnet_pulls(
                 snapped_millioz=snapped,
                 grams=ficha.grams or 0.0,
                 composition=ficha.composition,
-                declaring_catalogs=declared_by.get(snapped, ()),
                 family=derived_family(ficha, grouping_families),
             )
         )
@@ -514,7 +482,6 @@ def find_magnet_pulls(
 def find_split_catalogs(
     catalogs: list[Catalog],
     fichas: dict[int, Ficha],
-    targets: tuple[int, ...],
 ) -> list[SplitCatalog]:
     """Catálogos cuyos miembros tomarían más de una clave de peso sin la autoridad del fichero."""
     splits: list[SplitCatalog] = []
@@ -529,7 +496,7 @@ def find_split_catalogs(
             ficha = fichas.get(member.numista_type_id)
             if ficha is None or ficha.weight_oz is None:
                 continue
-            observed = normalize_weight_millioz(ficha.weight_oz, targets)
+            observed = normalize_weight_millioz(ficha.weight_oz)
             if observed is not None:
                 keys.add(observed)
         if len(keys) > 1:
@@ -572,17 +539,16 @@ def build_report(
     *,
     as_of: date | None = None,
 ) -> Report:
-    targets = curated_targets(catalogs)
     pulls, unclaimed, without_weight = find_magnet_pulls(
-        catalogs, grouping_families, fichas, targets
+        catalogs, grouping_families, fichas
     )
     return Report(
         as_of=as_of or date.today(),
         catalog_count=len(catalogs),
         ficha_count=len(fichas),
-        deviations=tuple(find_deviations(catalogs, fichas, targets)),
+        deviations=tuple(find_deviations(catalogs, fichas)),
         pulls=tuple(pulls),
-        splits=tuple(find_split_catalogs(catalogs, fichas, targets)),
+        splits=tuple(find_split_catalogs(catalogs, fichas)),
         unclaimed_count=unclaimed,
         unclaimed_without_weight=without_weight,
     )
@@ -618,36 +584,17 @@ def numista_link(type_id: int) -> str:
     return f"[{type_id}]({NUMISTA_TYPE_URL.format(type_id=type_id)})"
 
 
-def magnet_origin(millioz: int, declared_by: tuple[str, ...]) -> str:
-    """De qué objetivo tira el imán: un peso común de bullion o el de un catálogo ajeno."""
-    if millioz in COMMON_WEIGHTS_MILLIOZ:
-        return "peso común"
-    if declared_by:
-        return "declarado por " + ", ".join(
-            f"`{catalog_id}`" for catalog_id in declared_by
-        )
-    return "objetivo curado"
-
-
-def magnet_target(pull: MagnetPull) -> str:
-    return magnet_origin(pull.snapped_millioz, pull.declaring_catalogs)
-
-
 def render_key(deviation: Deviation) -> str:
-    """La clave, y de quién tiró el imán cuando no son los gramos de la ficha."""
+    """La clave, diciendo cuándo no son los gramos de la ficha sino un peso común."""
     if not deviation.magnet_moved:
         return str(deviation.observed_millioz)
-    origin = magnet_origin(deviation.observed_millioz, deviation.key_declared_by)
-    return f"{deviation.observed_millioz} · {origin}"
+    return f"{deviation.observed_millioz} · peso común"
 
 
 def plain_magnet(deviation: Deviation) -> str:
     if not deviation.magnet_moved:
         return ""
-    origin = magnet_origin(
-        deviation.observed_millioz, deviation.key_declared_by
-    ).replace("`", "")
-    return f", clave {deviation.observed_millioz} ({origin})"
+    return f", clave {deviation.observed_millioz} (peso común)"
 
 
 def render_markdown(report: Report) -> str:
@@ -689,9 +636,9 @@ def render_markdown(report: Report) -> str:
                 "La **composición** va en cada línea porque sin la ley el informe obliga a "
                 "abrir Numista para entender la desviación. `ficha` son los gramos de "
                 "Numista tal cual; `clave` es dónde los deja el imán, y cuando no son el "
-                "mismo número es que tiró de ellos un objetivo ajeno —el que se nombra al "
-                "lado—. La distancia se mide sobre la clave, que es la que decidiría la "
-                "tarjeta.",
+                "mismo número es que tiró de ellos un peso común de bullion, que es el "
+                "único objetivo que queda (#288). La distancia se mide sobre la clave, que "
+                "es la que decidiría la tarjeta.",
                 "",
                 f"### Sin mirar · {len(report.unexplained)}",
                 "",
@@ -784,9 +731,12 @@ def render_markdown(report: Report) -> str:
             "## Lo que el imán mueve",
             "",
             f"{len(report.pulls)} de los {report.unclaimed_count} tipos que ningún "
-            "catálogo reclama tienen el peso movido por `normalizeWeightMillioz`: a un "
-            "peso común de bullion o al que declara un catálogo ajeno. **Son los únicos "
-            "casos donde la variante se decide sin que nadie la haya verificado a mano.** "
+            "catálogo reclama tienen el peso movido por `normalizeWeightMillioz` hasta un "
+            "peso común de bullion. **Son los únicos casos donde la variante se decide sin "
+            "que nadie la haya verificado a mano**, y desde el "
+            "[#288](https://github.com/jenarvaezg/coindex/issues/288) el imán sólo tira de "
+            "esa convención: lo que declara un catálogo manda sobre sus miembros y no "
+            "cruza a los tipos que no reclama. "
             "La columna `familia` dice de dónde saldría la tarjeta —una agrupación curada, "
             "la serie de Numista— y `—` significa que el tipo no llega a tarjeta ninguna, "
             "así que el imán no decide nada por ahora.",
@@ -805,7 +755,7 @@ def render_markdown(report: Report) -> str:
                 f"| {numista_link(pull.numista_type_id)} "
                 f"| {cell(pull.title, limit=44)} "
                 f"| {pull.measured_millioz} ({format_grams(pull.grams)}) "
-                f"| {pull.snapped_millioz} · {magnet_target(pull)} "
+                f"| {pull.snapped_millioz} "
                 f"| {cell(pull.family, limit=36)} "
                 f"| {cell(pull.composition, limit=32)} |"
             )
@@ -904,8 +854,7 @@ def render_plain(report: Report) -> str:
         for pull in report.pulls:
             lines.append(
                 f"  - Numista {pull.numista_type_id}: {pull.measured_millioz} → "
-                f"{pull.snapped_millioz} ({format_grams(pull.grams)}), "
-                f"{magnet_target(pull).replace('`', '')}"
+                f"{pull.snapped_millioz} ({format_grams(pull.grams)})"
                 f" · familia {pull.family or '(ninguna)'}"
                 f" · {pull.composition or 'sin composición'}"
             )
