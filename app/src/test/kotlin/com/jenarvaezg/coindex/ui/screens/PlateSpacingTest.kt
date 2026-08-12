@@ -1,86 +1,59 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.ui.theme.fieldTypography
+import com.jenarvaezg.coindex.ui.components.YearTagMetrics
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
  * Proximity on the plate is a comparison and never a value, so it is tested as one (#411).
  *
- * The year of a casilla has two neighbours down the sheet — the name it belongs to, above it, and
- * the coins of the next row, below it — and the audit of 11 August found them at almost the same
- * distance: a row cut off at the top of the screen made its years read as labels of the row below.
- * These are the two distances that were confused, and the rule is that one is at least twice the
- * other.
+ * Each thing a casilla prints has two neighbours down the sheet, and the audit of 11 August found
+ * two of them at almost the same distance: a row cut off at the top of the screen made its years
+ * read as labels of the row below. Since #473 the casilla is read coin → tag → name, so what has to
+ * be compared is every step of that descent against the one gap that is not inside a member.
  */
 class PlateSpacingTest {
     @Test
-    fun `a year is at least twice as far from the next row as from its own name`() {
+    fun `a year is at least twice as far from the next row as from its own coin`() {
+        assertTrue(
+            PlateSpacing.betweenMembers >= PlateSpacing.underTheHole * 2,
+            "${PlateSpacing.betweenMembers} of air between members is not twice the " +
+                "${PlateSpacing.underTheHole} from a coin to its year",
+        )
+    }
+
+    @Test
+    fun `a name is at least twice as far from the next row as from its own year`() {
         assertTrue(
             PlateSpacing.betweenMembers >= PlateSpacing.insideMember * 2,
             "${PlateSpacing.betweenMembers} of air between members is not twice the " +
-                "${PlateSpacing.insideMember} inside one",
+                "${PlateSpacing.insideMember} from a year to its name",
         )
     }
 
     /**
-     * The name is centred in the box its row reserved since #412, so the shortest name on the
-     * tallest row hands its year more air than the factor of two above allows — and that is the one
-     * place the rule of this file was re-decided rather than kept.
-     *
-     * What #411 was defending is what is checked here instead: a year still belongs to the name over
-     * it and not to the coins under it. «Onza Troy» beside a three-line neighbour is the worst case
-     * there is, and the ceiling of `plateNameLinesCeiling` is what keeps it from ever being worse.
+     * The year belongs to the coin above it before it belongs to the name below it, which is what
+     * the order of #473 says out loud: the tag is the label of a hole, and the name is a gloss on
+     * the tag.
      */
     @Test
-    fun `even the shortest name on the tallest row keeps its year on its own side`() {
-        val worst = PlateSpacing.insideMemberCentred(
-            reserved = 3,
-            used = 1,
-            lineHeight = PlateSpacing.nameLine.value.dp,
-        )
-
-        assertTrue(
-            worst < PlateSpacing.betweenMembers,
-            "$worst of air under a centred one-line name reaches the " +
-                "${PlateSpacing.betweenMembers} that separate two members",
-        )
-    }
-
-    /**
-     * And the ceiling is what makes that true rather than luck: a line of 21 dp clears three lines,
-     * and the collector who enlarges the type past a quarter is given two.
-     */
-    @Test
-    fun `the third line is bought only while the air lasts`() {
-        assertEquals(3, plateNameLinesCeiling(21.dp))
-        assertEquals(3, plateNameLinesCeiling(25.dp))
-        assertEquals(2, plateNameLinesCeiling(26.dp))
-        assertEquals(2, plateNameLinesCeiling(42.dp))
-    }
-
-    /** A date run prints no name, and then the year hangs straight off the cardboard above it. */
-    @Test
-    fun `a casilla with no name keeps its year nearer still`() {
+    fun `a year hangs off its coin nearer than off its own name`() {
         assertTrue(PlateSpacing.underTheHole < PlateSpacing.insideMember)
-        assertTrue(PlateSpacing.betweenMembers >= PlateSpacing.underTheHole * 2)
     }
 
     /**
-     * The blank the reserved name box leaves under the hole when the name takes one of its two
-     * lines — the price of tags that line up (#337), and the only gap inside a member that the
-     * separation between members has to beat on its own.
+     * A casilla with no name ends at its tag, so the row below is further from it and never nearer
+     * — which is the defect #473 reported, said as the comparison it always was.
+     *
+     * What the tag of such a casilla has under it is [PlateSpacing.rowGap] **at least**: the row is
+     * as tall as its tallest casilla, so a nameless one beside a named one gets that name's lines
+     * added to its own foot.
      */
     @Test
-    fun `even the reserved line under a hole stays inside its own member`() {
-        assertTrue(PlateSpacing.betweenMembers > PlateSpacing.reservedNameLine)
-    }
+    fun `a casilla with no name keeps its year nearer its coin than the row below`() {
+        val untilTheNextRow = YearTagMetrics.slack + PlateSpacing.rowGap
 
-    /** The copy of the theme's line is arithmetic only while it is still the theme's line. */
-    @Test
-    fun `the mirrored line is the one the name box measures`() {
-        assertEquals(fieldTypography.titleMedium.lineHeight, PlateSpacing.nameLine)
+        assertTrue(PlateSpacing.underTheHole < untilTheNextRow)
+        assertTrue(untilTheNextRow >= PlateSpacing.underTheHole * 2)
     }
 }

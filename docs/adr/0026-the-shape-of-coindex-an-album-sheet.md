@@ -5,7 +5,8 @@
   keeps no bit, and the ratio leaves the specification wherever the stamp reaches it); §3 and §13
   amended by #370 (the ficha sheet is the landing of the second journey) and again by #381 (a
   destination paints its own paper, and only the leaf on top is animated); §4 amended by #371 (the
-  stamp reaches the printed notebook too)
+  stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
+  name goes under it)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -162,6 +163,24 @@ only one, including for an open series.
 The measurement that changed this decision before anything was drawn: **the father's six complete
 plates have been complete since the day we curated their catalog**. He has never completed one inside
 Coindex. So the ceremony **does not congratulate — it reveals.**
+
+> **Amended on 2026-08-12 (§3, #473). The tag hangs off the hole, and the name goes under it.** The
+> sunken year is unchanged — 48.3 × 28 dp, two targets per casilla, the same declaration paper obeys
+> — but it is now the **first** thing under the hole and the name is the last. This is form, so it is
+> the map's call by the rule of §15: the owner made it on 12 August with two dp-real mockups in front
+> of him (`docs/ux/prototipo-473/`), and the alternative he turned down was widening the gap between
+> rows.
+>
+> What it buys is that the tags of a row line up **by construction** — each hangs off its own hole by
+> the same ten dp — where before they only lined up if every casilla of the row reserved a name box
+> of one height (#337), measured per row against real Bitter (#412). A casilla with no name reserved
+> that box empty, and hung 54 dp of bare cardboard between its coin and its year against the 42 dp
+> that separated two rows: the year read as the label of the row below, which is the inversion #411
+> had gone looking for and #473 found where #411 could not reach. **No width of gap could have closed
+> it**: the box was measured in `sp` and the gap in `dp`, so a collector who enlarged the type
+> reopened it every time. Now what a name does not use falls at the foot of the casilla, where it is
+> added to the separation between rows instead of taken from it, and nothing inside a casilla is
+> measured in the collector's own type. The numbers are in `docs/ux/implementacion-473/`.
 
 > **Amended on 2026-08-09 (§3, #339). The bit is withdrawn: the sheet stamps every time it is
 > opened.** #304 had costed the ceremony at «one bit per catalog in `NamedValues`» — *ya te lo

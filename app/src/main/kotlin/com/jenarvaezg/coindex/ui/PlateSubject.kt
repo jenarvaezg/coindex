@@ -103,11 +103,12 @@ data class DrawnCell(
 )
 
 /**
- * The name a casilla prints under its hole, or null where its label is already its year.
+ * The name a casilla prints under its year, or null where its label is already that year.
  *
- * One reading of [DrawnCell.label] for the two questions the plate asks it — whether a row reserves
- * a name box at all, and how many lines that box needs (#412) — because a casilla titled with its
- * own year prints no name, and a year is therefore never what its row is measured by.
+ * A casilla titled with its own year would otherwise print it twice, once on the tag sunk into the
+ * cardboard and once as a gloss underneath. Null and not the empty string, because since #473 the
+ * difference is whether the casilla prints a third thing at all: nothing is reserved for a name
+ * that is not there, and what the casilla does not use falls into the gap between two rows.
  */
 val DrawnCell.printedName: String?
     get() = label.takeIf { it != year }
