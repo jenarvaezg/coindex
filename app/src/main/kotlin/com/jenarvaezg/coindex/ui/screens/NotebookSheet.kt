@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -365,85 +366,124 @@ private fun PrintedCell(
                 }
             }
         }
-        CellState(cell, modifier = Modifier.padding(top = 1f.mm))
-        if (cell.name != null) {
-            Column(
-                modifier = Modifier.fillMaxWidth().height(PRINT_CARTOUCHE_MM.mm),
-                horizontalAlignment = Alignment.CenterHorizontally,
+        // The code goes **beside** the caption where the cell has the width for it and under the name
+        // where it has not (#478). Which of the two is not this drawing's opinion: it is
+        // [PrintGeometry.qrBesideCaption], the same question the page count asked before any of this
+        // was composed — a cell drawn one way and counted the other is a row falling off a folio.
+        if (geometry.qrBesideCaption(cell.diameterMm ?: grid.diameterMm)) {
+            // The words and the code travel together and the pair is centred, rather than the code
+            // being pinned to the cell's edge: with «ambas caras» a cell is two coins wide and its
+            // edge is three millimetres from the **next** cell's coin, so a code anchored there ends
+            // up nearer its neighbour than its own caption. Grouped, it sits two millimetres from the
+            // name it belongs to, and the name gives up half the code's band of centring.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Bottom,
             ) {
-                Text(
-                    cell.name.denomination,
-                    style = PRINT_CELL_TITLE,
-                    autoSize = TextAutoSize.StepBased(
-                        minFontSize = 1f.sp,
-                        maxFontSize = 2.9f.sp,
-                        stepSize = 0.1f.sp,
-                    ),
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible,
-                )
-                Box(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
-                    contentAlignment = Alignment.Center,
+                Column(
+                    modifier = Modifier
+                        .width((grid.cellWidthMm - 2 * (geometry.qrMm + geometry.qrGapMm)).mm),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    cell.name.theme?.let { theme ->
-                        Text(
-                            theme,
-                            style = PRINT_CELL_THEME,
-                            textAlign = TextAlign.Center,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                    CellCaption(cell = cell, geometry = geometry)
                 }
+                Spacer(modifier = Modifier.width(geometry.qrGapMm.mm))
+                NumistaCode(url = cell.numistaUrl, sideMm = geometry.qrMm)
             }
         } else {
-            Text(
-                cell.label,
-                style = PRINT_CELL_TITLE,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            CellCaption(cell = cell, geometry = geometry)
+            // Under the year and against it, not at the foot of the cell.
+            //
+            // Both were printed. Anchored to the foot the codes line up across a row, and every one of
+            // them sits a finger's width from the caption it belongs to — because the words take some ten
+            // of the sixteen millimetres the caption budgets for them, and the slack fell between the
+            // name and the code. Against the caption the slack falls at the bottom of the cell instead,
+            // where a gutter already is, and «bajo el nombre» is what the page actually shows. The price
+            // is that a two-line title lowers its own code by a line; the codes of one plate are not read
+            // as a row.
+            if (geometry.qrMm > 0f) {
+                Spacer(modifier = Modifier.height(geometry.qrGapMm.mm))
+                NumistaCode(cell.numistaUrl, geometry.qrMm)
+            }
         }
-        // The year remains outside the cartouche; #337 owns its separate rendering change.
-        cell.footnote?.let { footnote ->
+    }
+}
+
+/**
+ * What is written under a coin: its state, its name, the year that tells it apart and its diameter.
+ *
+ * A composable of its own since #478, because the code can now sit beside it or under it and the words
+ * are the same words either way — the two arrangements differ in where twelve millimetres of symbol go
+ * and in nothing else.
+ */
+@Composable
+private fun ColumnScope.CellCaption(cell: PrintCell, geometry: PrintGeometry) {
+    CellState(cell, modifier = Modifier.padding(top = 1f.mm))
+    if (cell.name != null) {
+        Column(
+            modifier = Modifier.fillMaxWidth().height(PRINT_CARTOUCHE_MM.mm),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
-                footnote,
+                cell.name.denomination,
+                style = PRINT_CELL_TITLE,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 1f.sp,
+                    maxFontSize = 2.9f.sp,
+                    stepSize = 0.1f.sp,
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Visible,
+            )
+            Box(
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                cell.name.theme?.let { theme ->
+                    Text(
+                        theme,
+                        style = PRINT_CELL_THEME,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
+    } else {
+        Text(
+            cell.label,
+            style = PRINT_CELL_TITLE,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+    // The year remains outside the cartouche; #337 owns its separate rendering change.
+    cell.footnote?.let { footnote ->
+        Text(
+            footnote,
+            style = PRINT_FOOTNOTE,
+            color = Paper.muted,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+    // And under it the diameter, on a page with no ruler to lay a coin against (#233). A line of
+    // its own and not the end of the one above: the cells of a collection with no issue list fill
+    // that one with «1977 · Numista 681», and the ellipsis ate the millimetres.
+    if (geometry.printsDiameterLabel) {
+        printedDiameterLabel(cell.diameterMm)?.let { measure ->
+            Text(
+                measure,
                 style = PRINT_FOOTNOTE,
                 color = Paper.muted,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
             )
-        }
-        // And under it the diameter, on a page with no ruler to lay a coin against (#233). A line of
-        // its own and not the end of the one above: the cells of a collection with no issue list fill
-        // that one with «1977 · Numista 681», and the ellipsis ate the millimetres.
-        if (geometry.printsDiameterLabel) {
-            printedDiameterLabel(cell.diameterMm)?.let { measure ->
-                Text(
-                    measure,
-                    style = PRINT_FOOTNOTE,
-                    color = Paper.muted,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                )
-            }
-        }
-        // Under the year and against it, not at the foot of the cell.
-        //
-        // Both were printed. Anchored to the foot the codes line up across a row, and every one of
-        // them sits a finger's width from the caption it belongs to — because the words take some ten
-        // of the sixteen millimetres the caption budgets for them, and the slack fell between the
-        // name and the code. Against the caption the slack falls at the bottom of the cell instead,
-        // where a gutter already is, and «bajo el nombre» is what the page actually shows. The price
-        // is that a two-line title lowers its own code by a line; the codes of one plate are not read
-        // as a row.
-        if (geometry.qrMm > 0f) {
-            Spacer(modifier = Modifier.height(geometry.qrGapMm.mm))
-            NumistaCode(cell.numistaUrl, geometry.qrMm)
         }
     }
 }

@@ -414,14 +414,44 @@ data class PrintGeometry(
     fun cellWidthMm(diameterMm: Float): Float = max(coinBandWidthMm(diameterMm), minCellWidthMm)
 
     /**
-     * How tall a cell of coins this big is: the band they take, and the caption under it.
+     * How tall a cell of coins this big is: the band they take, the caption under it, and the code
+     * where the code costs height.
      *
      * Here for the same reason [cellWidthMm] is: the number of rows is what this answer decides, and
      * the drawing of the cell has to measure what the page count was computed from. With no coin band
      * (#231) a cell is its caption and nothing else — one line, whatever the coin measures.
+     *
+     * The code is the one measure that depends on the coin (#478): a cell wide enough carries it
+     * **beside** the caption for nothing, and only a narrow one has to stack it underneath. That is
+     * why the QR is not simply added to [captionMm] any more.
      */
     fun cellHeightMm(diameterMm: Float): Float =
-        (if (printsCoins) printedDiameterMm(diameterMm) else 0f) + captionMm
+        (if (printsCoins) printedDiameterMm(diameterMm) else 0f) +
+            captionMm +
+            if (qrCostsHeight(diameterMm)) qrGapMm + qrMm else 0f
+
+    /**
+     * Whether the code of a cell this wide sits **beside** the caption instead of under it (#478).
+     *
+     * The #234 put it under the name and said why: beside the name «forces a cell of 44 mm, and that
+     * takes a column away from almost every coin». True of a cell that holds one face — 40,9 mm for an
+     * ounce — and false of the same cell with «ambas caras» on, which is 84,8 and has the width to
+     * spare while paying fourteen millimetres of **height** per row for the code. On the shipped
+     * catalogs that is 42 folios of 247.
+     *
+     * The width it asks for is the code's band **on both sides**, so the caption keeps the middle of
+     * the cell and the name stays centred under the coin it belongs to. Asking for it on one side only
+     * would buy two more folios and print every name off-centre; sixty-six of the seventy-five plates
+     * clear this bar either way, and the nine that do not are the small coins, whose rows are short.
+     */
+    fun qrBesideCaption(diameterMm: Float): Boolean =
+        printsCoins &&
+            qrMm > 0f &&
+            cellWidthMm(diameterMm) - 2 * (qrMm + qrGapMm) >= minCellWidthMm
+
+    /** Whether the code of this cell is paid for in height, which is the same question turned round. */
+    fun qrCostsHeight(diameterMm: Float): Boolean =
+        printsCoins && qrMm > 0f && !qrBesideCaption(diameterMm)
 
     companion object {
         /**
@@ -564,13 +594,17 @@ private fun PrintGeometry.shared(): PrintGeometry = copy(
 )
 
 /**
- * The same page with a code on every cell (#234), which costs height on one shape and not the other.
+ * The same page with a code on every cell (#234), and it no longer costs a row of coins to have one.
  *
- * On a page of coins the code goes **under the name** and inside the cell's own width, which is the
- * whole of the decision: beside the name reads better and forces a cell of 44 mm, and that takes a
- * column away from almost every coin — the Russian 33 mm go from five to a row to four. Width is what
- * that grid is short of; height it can find, at 8 pages of the shipped plates. The caption grows by
- * the code's own band, so the words keep the sixteen millimetres they had.
+ * On a page of coins the code costs **whatever the cell has spare**, and that is a question about the
+ * coin rather than about the notebook: see [PrintGeometry.qrBesideCaption]. A wide cell — every plate
+ * printed with «ambas caras» — carries it beside the caption and pays nothing at all; a narrow one
+ * stacks it under the name as the #234 measured, and [PrintGeometry.cellHeightMm] is where that band
+ * is added. The caption itself is untouched either way, so the words keep the sixteen millimetres of
+ * #169.
+ *
+ * It used to be added to the caption here, before any diameter was known, which is why a plate of
+ * 40 mm commemoratives printed four coins on a folio with room for six (#478).
  *
  * On a page of lines the code goes at the **end of the line**, where the width already runs left to
  * right and there is nothing to stack it under. So it costs no height of its own — the row is the
@@ -578,7 +612,7 @@ private fun PrintGeometry.shared(): PrintGeometry = copy(
  * either: the row spaces what is on it, and the twelve millimetres carry the symbol's own quiet zone.
  */
 private fun PrintGeometry.withNumistaCode(): PrintGeometry = copy(
-    captionMm = if (printsCoins) captionMm + QR_GAP_MM + QR_SIDE_MM else max(captionMm, QR_SIDE_MM),
+    captionMm = if (printsCoins) captionMm else max(captionMm, QR_SIDE_MM),
     qrMm = QR_SIDE_MM,
     qrGapMm = if (printsCoins) QR_GAP_MM else 0f,
 )

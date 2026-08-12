@@ -186,31 +186,89 @@ class NotebookOptionsTest {
     }
 
     /**
-     * What the QR costs in millimetres, which is all it costs: only the caption moves.
+     * What the QR costs, which since #478 is **whatever the cell has spare** and not a fixed band.
      *
-     * The page, the margins, the heading and the ruler are untouched, and so is the width of a cell:
-     * beside the name would have forced a floor of 44 mm on every cell, and that is a column taken
-     * away from almost every coin in the collection. The code goes under the name and grows the one
-     * measure this grid has to spare.
+     * The page, the margins, the heading, the ruler and the caption are untouched: the words keep the
+     * sixteen millimetres of #169 whether or not there is a code. What moves is the height of a cell,
+     * and only of a cell too narrow to carry the code beside the caption — under one face an ounce is
+     * 40,9 mm wide and stacks it, with both faces it is 84,8 and does not.
      */
     @Test
-    fun `the qr grows the caption and nothing else`() {
+    fun `the qr costs a cell nothing where the cell has width to spare`() {
         val paper = printGeometry(NotebookOptions())
         val coded = printGeometry(NotebookOptions(numistaQr = true))
+        val doubled = printGeometry(NotebookOptions(numistaQr = true, bothFaces = true))
 
-        // 16 mm de rótulo, 2 de aire y los 12 del código con su zona de silencio.
-        assertEquals(30f, coded.captionMm)
+        // El rótulo no se toca: los 16 mm del #169 son los 16 mm del #169.
+        assertEquals(16f, coded.captionMm)
         assertEquals(12f, coded.qrMm)
         assertEquals(2f, coded.qrGapMm)
-        // Y las palabras siguen teniendo los 16 mm del #169: el código se **suma** al pie de foto, no
-        // le quita sitio al rótulo. Un estado, un título de dos líneas y un año siguen cabiendo.
-        assertEquals(paper.captionMm, coded.captionMm - coded.qrGapMm - coded.qrMm)
-        assertEquals(
-            paper,
-            coded.copy(captionMm = paper.captionMm, qrMm = paper.qrMm, qrGapMm = paper.qrGapMm),
-        )
+        assertEquals(paper, coded.copy(qrMm = paper.qrMm, qrGapMm = paper.qrGapMm))
         // Un módulo de 0,364 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 12 mm.
         assertEquals(0.364f, coded.qrMm / 33f, 0.001f)
+
+        // Una cara: la onza de 40,9 no da para el código a los lados, así que lo apila y paga 14 mm.
+        assertFalse(coded.qrBesideCaption(40.9f))
+        assertEquals(paper.cellHeightMm(40.9f) + 14f, coded.cellHeightMm(40.9f), 0.01f)
+        // Dos caras: la misma onza mide 84,8 mm de casilla y el código no cuesta ni un milímetro.
+        assertTrue(doubled.qrBesideCaption(40.9f))
+        assertEquals(
+            printGeometry(NotebookOptions(bothFaces = true)).cellHeightMm(40.9f),
+            doubled.cellHeightMm(40.9f),
+            0.01f,
+        )
+        // Y con dos caras de un medio de 16 mm la casilla vuelve a ser estrecha: 35 mm, código debajo.
+        assertFalse(doubled.qrBesideCaption(16f))
+    }
+
+    /**
+     * **The code never touches the coin** (#478).
+     *
+     * Whatever the QR does, it does to the caption's neighbourhood and never to the circle: the
+     * printed diameter, the band the faces take and the width of the cell are the same figures with the
+     * switch on and off, so a page with codes is a page whose coins are still at 1:1 and still round —
+     * the drawing gives a face a **square** of `printedDiameterMm` and a circle is what fills it. This
+     * is the invariant the whole notebook of #169 rests on, and moving the code was not allowed to cost
+     * it a millimetre.
+     */
+    @Test
+    fun `the code never touches the coin`() {
+        val paper = printGeometry(NotebookOptions(bothFaces = true))
+        val coded = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
+
+        // El 1000 escudos de Portugal, la lámina que abrió el ticket: 40,1 mm de plata.
+        assertEquals(40.1f, coded.printedDiameterMm(40.1f), 0.001f)
+        assertEquals(paper.printedDiameterMm(40.1f), coded.printedDiameterMm(40.1f), 0.001f)
+        assertEquals(paper.coinBandWidthMm(40.1f), coded.coinBandWidthMm(40.1f), 0.001f)
+        assertEquals(paper.cellWidthMm(40.1f), coded.cellWidthMm(40.1f), 0.001f)
+        assertEquals(1f, coded.coinScale)
+        // Y la casilla que era de dos filas es de tres: 56,1 mm de alto contra los 70,1 de antes.
+        assertEquals(56.1f, coded.cellHeightMm(40.1f), 0.01f)
+        assertEquals(70.1f, coded.cellHeightMm(40.1f) + 14f, 0.01f)
+    }
+
+    /**
+     * The bar the code has to clear to sit beside the caption, and what it is measured against (#478).
+     *
+     * The code's band is kept clear on **both** sides of the caption, so the name stays centred under
+     * the coin instead of drifting left on every cell of the notebook. What has to be left over is the
+     * floor a caption needs — [PrintGeometry.minCellWidthMm], the 28 mm of #233 — and the plates that
+     * do not clear it are the small coins, whose rows are short anyway.
+     */
+    @Test
+    fun `the code sits beside the caption from fifty-six millimetres of cell`() {
+        val coded = printGeometry(NotebookOptions(numistaQr = true, bothFaces = true))
+
+        // 28 de rótulo y dos bandas de 14: la casilla tiene que llegar a 56 mm.
+        assertEquals(56f, coded.minCellWidthMm + 2 * (coded.qrMm + coded.qrGapMm))
+        assertFalse(coded.qrBesideCaption(26f))
+        assertTrue(coded.qrBesideCaption(27f))
+        // Sin código no hay nada que colocar, ni al lado ni debajo.
+        assertFalse(printGeometry(NotebookOptions(bothFaces = true)).qrBesideCaption(40.9f))
+        // Y una página de líneas nunca lo apila: el código cierra la línea (#231).
+        val list = printGeometry(NotebookOptions(photographs = false, numistaQr = true))
+        assertFalse(list.qrBesideCaption(40.9f))
+        assertFalse(list.qrCostsHeight(40.9f))
     }
 
     /**
@@ -337,9 +395,11 @@ class NotebookOptionsTest {
         // Dos onzas de 24,54 mm y la calle de 3 que las separa, contra los 84,8 del 1:1.
         assertEquals(52.08f, doubled.coinBandWidthMm(40.9f), 0.01f)
         assertEquals(scaled, doubled.copy(facesPerCell = scaled.facesPerCell))
-        // El código se suma al rótulo escalado, sea el que sea: 18 más los 2 de aire y los 12 del QR.
-        assertEquals(32f, coded.captionMm)
+        // El código no toca el rótulo escalado: sigue en los 18 mm que la escala le dio, y lo que el
+        // QR mueve es la casilla —y sólo la que no tiene ancho para llevarlo al lado (#478).
+        assertEquals(18f, coded.captionMm)
         assertEquals(12f, coded.qrMm)
+        assertEquals(37.8f + 14f, coded.cellHeightMm(33f), 0.01f)
         // Y compartir folio adelgaza la cabecera y no toca ni la escala ni el suelo de la casilla.
         assertEquals(PrintHeading.Slim, folio.heading)
         assertEquals(0.6f, folio.coinScale)
@@ -354,16 +414,16 @@ class NotebookOptionsTest {
     /**
      * The code and the second face compose, which is what «cinco interruptores» buys.
      *
-     * Neither knows about the other: the code grows the caption, the second face widens the cell,
-     * and a notebook with both on pays for both. Models with a name were dropped precisely so the
-     * collector can combine, and the live page count is what tells them what the combination costs.
+     * Neither knows about the other in the millimetres they declare: the second face widens the cell
+     * and the code declares its band. They **do** meet in [PrintGeometry.cellHeightMm], and that is
+     * the point of #478 — the width the second face buys is what makes the code free.
      */
     @Test
     fun `the code and the second face compose without knowing about each other`() {
         val both = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
 
         assertEquals(2, both.facesPerCell)
-        assertEquals(30f, both.captionMm)
+        assertEquals(16f, both.captionMm)
         assertEquals(12f, both.qrMm)
         assertEquals(
             printGeometry(NotebookOptions(numistaQr = true)),
