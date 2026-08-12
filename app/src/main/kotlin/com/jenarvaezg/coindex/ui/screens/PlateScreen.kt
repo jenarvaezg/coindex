@@ -174,7 +174,9 @@ private fun PlateGrid(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = PLATE_MARGIN, vertical = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-            verticalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+            // Wider than the gutter, and it is the sheet's proximity and not its air: see
+            // [PlateSpacing]. Two members side by side are never confused; two rows were.
+            verticalArrangement = Arrangement.spacedBy(PlateSpacing.rowGap),
         ) {
             // The one item of this grid that is not a casilla, and what [PLATE_LEAD_ITEMS] counts.
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
@@ -366,11 +368,16 @@ internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {
     // two lines of one that did not, so `minLines` alone still left three years of a row on three
     // baselines. The box is always the two tallest lines the cell can print.
     val reserved = with(LocalDensity.current) {
-        style.lineHeight.toDp() * PLATE_CELL_NAME_LINES + NAME_PADDING * 2
+        style.lineHeight.toDp() * PLATE_CELL_NAME_LINES + PlateSpacing.namePadding * 2
     }
     Box(
         modifier = modifier.fillMaxWidth().height(reserved),
-        contentAlignment = Alignment.TopCenter,
+        // The name sits at the **bottom** of what its cell reserved, so that a name of one line
+        // and a name of two hand their year the same 16 dp (#411). Top-aligned, the line a short
+        // name did not use fell between the name and the year, which left the year floating
+        // further from the name it belongs to than from the coins of the next row. The blank
+        // rises to under the hole, where the coin above it is the only thing it can belong to.
+        contentAlignment = Alignment.BottomCenter,
     ) {
         Text(
             text = name,
@@ -379,16 +386,13 @@ internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {
             autoSize = PLATE_CELL_NAME_AUTO_SIZE,
             maxLines = PLATE_CELL_NAME_LINES,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth().padding(vertical = NAME_PADDING),
+            modifier = Modifier.fillMaxWidth().padding(vertical = PlateSpacing.namePadding),
         )
     }
 }
 
 /** Every cell reserves the same name range, so a row's years share one baseline. */
 private const val PLATE_CELL_NAME_LINES = 2
-
-/** The breathing room the name keeps between the hole above it and the tag below. */
-private val NAME_PADDING = 6.dp
 
 /** Bitter shrinks before the cell cuts, the same ladder the index card walks down (#348). */
 private val PLATE_CELL_NAME_AUTO_SIZE = TextAutoSize.StepBased(
