@@ -41,9 +41,9 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 52
-        // Patch on top of 1.2.9: the shared PNG is the printed page and honours every switch.
-        versionName = "1.2.10"
+        versionCode = 54
+        // Patch on top of 1.2.11: the Lion King ounce carries the Disney series Numista fixed.
+        versionName = "1.2.12"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
