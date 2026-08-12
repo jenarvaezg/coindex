@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.theme.fieldTypography
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,6 +23,42 @@ class PlateSpacingTest {
             "${PlateSpacing.betweenMembers} of air between members is not twice the " +
                 "${PlateSpacing.insideMember} inside one",
         )
+    }
+
+    /**
+     * The name is centred in the box its row reserved since #412, so the shortest name on the
+     * tallest row hands its year more air than the factor of two above allows — and that is the one
+     * place the rule of this file was re-decided rather than kept.
+     *
+     * What #411 was defending is what is checked here instead: a year still belongs to the name over
+     * it and not to the coins under it. «Onza Troy» beside a three-line neighbour is the worst case
+     * there is, and the ceiling of `plateNameLinesCeiling` is what keeps it from ever being worse.
+     */
+    @Test
+    fun `even the shortest name on the tallest row keeps its year on its own side`() {
+        val worst = PlateSpacing.insideMemberCentred(
+            reserved = 3,
+            used = 1,
+            lineHeight = PlateSpacing.nameLine.value.dp,
+        )
+
+        assertTrue(
+            worst < PlateSpacing.betweenMembers,
+            "$worst of air under a centred one-line name reaches the " +
+                "${PlateSpacing.betweenMembers} that separate two members",
+        )
+    }
+
+    /**
+     * And the ceiling is what makes that true rather than luck: a line of 21 dp clears three lines,
+     * and the collector who enlarges the type past a quarter is given two.
+     */
+    @Test
+    fun `the third line is bought only while the air lasts`() {
+        assertEquals(3, plateNameLinesCeiling(21.dp))
+        assertEquals(3, plateNameLinesCeiling(25.dp))
+        assertEquals(2, plateNameLinesCeiling(26.dp))
+        assertEquals(2, plateNameLinesCeiling(42.dp))
     }
 
     /** A date run prints no name, and then the year hangs straight off the cardboard above it. */

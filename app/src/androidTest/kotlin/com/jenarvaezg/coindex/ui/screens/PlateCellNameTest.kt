@@ -62,23 +62,43 @@ class PlateCellNameTest {
     }
 
     @Test
-    // The year hangs off the name right above it at one distance and not two (#411): the line a
-    // short name leaves unused is the box's, and it no longer falls between the name and its year.
-    fun theNameHandsItsYearTheSameAirWhateverItsLines() {
+    // A name that fills its box hands its year the 16 dp of #411, and a name that does not hands it
+    // half of what it left over, because the name is centred in the box since #412. What #411 was
+    // defending survives as the comparison `PlateSpacingTest` makes: even that wider gap stays well
+    // inside the air that separates two members, so a year never reads as the next row's label.
+    fun theAirUnderANameIsHalfOfWhatItLeftOver() {
         compose.setContent {
             CoindexTheme {
                 Row {
-                    // One line of Bitter at 113 dp, out of the two the box reserves: the line it
-                    // leaves unused is where the year used to float.
+                    // One line of Bitter at 113 dp, out of the two the box reserves.
                     Cell(name = SHORT_LABEL, year = "1876")
                     Cell(name = LONGEST_LABEL, year = "1934")
                 }
             }
         }
 
-        val expected = with(compose.density) { PlateSpacing.insideMember.toPx() }
-        assertEquals(expected, airBetween(SHORT_LABEL, "year-1876"), 0.5f)
-        assertEquals(expected, airBetween(LONGEST_LABEL, "year-1934"), 0.5f)
+        // Measured and not modelled: the autosize shrinks the line as well as the letter, so a name
+        // of two lines at 13 sp does not fill a box reserved for two of the tallest — which is why
+        // the box was ever reserved in dp (#411). What the arithmetic of `PlateSpacing` gives is the
+        // **worst case**, with lines at full height, and both of these have to stay under it.
+        val longName = airBetween(LONGEST_LABEL, "year-1934")
+        val shortName = airBetween(SHORT_LABEL, "year-1876")
+        val worst = with(compose.density) {
+            PlateSpacing.insideMemberCentred(
+                reserved = 2,
+                used = 1,
+                lineHeight = PlateSpacing.nameLine.toDp(),
+            ).toPx()
+        }
+        val between = with(compose.density) { PlateSpacing.betweenMembers.toPx() }
+
+        assertTrue(
+            "el nombre corto ($shortName px) no cede su mitad del hueco al de dos líneas " +
+                "($longName px)",
+            shortName > longName,
+        )
+        assertTrue("$shortName px pasa del peor caso de $worst px", shortName <= worst + 0.5f)
+        assertTrue("$shortName px alcanza los $between px que separan dos casillas", shortName < between)
     }
 
     @Test

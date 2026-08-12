@@ -300,11 +300,31 @@ internal fun plateCellWidth(
 internal fun plateRowNameLines(
     cells: List<DrawnCell>,
     columns: Int,
+    ceiling: Int = PLATE_CELL_NAME_MAX_LINES,
     linesOf: (String) -> Int,
 ): List<Int> = cells.chunked(columns).map { row ->
     val needed = row.mapNotNull { it.printedName }.maxOfOrNull(linesOf) ?: return@map 0
-    needed.coerceIn(PLATE_CELL_NAME_MIN_LINES, PLATE_CELL_NAME_MAX_LINES)
+    needed.coerceIn(PLATE_CELL_NAME_MIN_LINES, maxOf(PLATE_CELL_NAME_MIN_LINES, ceiling))
 }
+
+/**
+ * How many lines a row may reserve before centring the name would break the plate's proximity.
+ *
+ * The name is centred in its box since #412, so half of the line a short name leaves unused falls
+ * between it and its year: `PlateSpacing.insideMemberCentred`. That gap has to stay under the one
+ * that separates two members, and the box grows with the collector's font scale while
+ * `PlateSpacing.rowGap` does not — so the ceiling is a question about **this** collector's type and
+ * cannot be a constant. At font scale 1 a 21 dp line clears three lines with 5 dp to spare; a
+ * collector who enlarges the type by a quarter gets two lines and the longer names go back to being
+ * cut, which is the honest trade: the third line is a luxury the layout can no longer afford there.
+ */
+internal fun plateNameLinesCeiling(
+    lineHeight: Dp,
+    limit: Int = PLATE_CELL_NAME_MAX_LINES,
+): Int = (PLATE_CELL_NAME_MIN_LINES..limit).lastOrNull { lines ->
+    PlateSpacing.insideMemberCentred(reserved = lines, used = 1, lineHeight = lineHeight) <
+        PlateSpacing.betweenMembers
+} ?: PLATE_CELL_NAME_MIN_LINES
 
 /**
  * [plateRowNameLines] with Bitter actually measured, once per plate and per width.
@@ -318,12 +338,13 @@ private fun rememberPlateNameLines(cells: List<DrawnCell>, columns: Int, cellWid
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.titleMedium.copy(fontSize = PLATE_CELL_NAME_MIN_SIZE)
     val density = LocalDensity.current
-    return remember(cells, columns, cellWidth, style, density, measurer) {
+    val lineHeight = with(density) { MaterialTheme.typography.titleMedium.lineHeight.toDp() }
+    return remember(cells, columns, cellWidth, style, density, measurer, lineHeight) {
         val width = with(density) { cellWidth.roundToPx() }
         // One plate repeats a name across its casillas — the twenty-two «Onza Troy» of a date run —
         // and Bitter is measured once for each distinct one.
         val measured = mutableMapOf<String, Int>()
-        plateRowNameLines(cells, columns) { name ->
+        plateRowNameLines(cells, columns, plateNameLinesCeiling(lineHeight)) { name ->
             measured.getOrPut(name) {
                 measurer.measure(
                     text = name,
@@ -463,12 +484,18 @@ internal fun PlateCellName(
     }
     Box(
         modifier = modifier.fillMaxWidth().height(reserved),
-        // The name sits at the **bottom** of what its cell reserved, so that a name of one line
-        // and a name of two hand their year the same 16 dp (#411). Top-aligned, the line a short
-        // name did not use fell between the name and the year, which left the year floating
-        // further from the name it belongs to than from the coins of the next row. The blank
-        // rises to under the hole, where the coin above it is the only thing it can belong to.
-        contentAlignment = Alignment.BottomCenter,
+        // The name sits in the **middle** of what its row reserved, so that a name of one line, of
+        // two and of three are read off the same band of the casilla and a row is one line of type
+        // and not three (#412).
+        //
+        // This is the half of #411 that #412 re-decided, and only that half: the name used to hang
+        // at the bottom of its box so that every name handed its year the same 16 dp, which is what
+        // kept a year nearer its own name than the coins of the next row. What #411 was defending
+        // was **proximity**, and centring keeps it — see `PlateSpacingTest` for the arithmetic and
+        // [plateRowNameLines] for the ceiling that guards it when the collector enlarges the type:
+        // the widest gap centring can open is half the blank, where hanging it at the bottom put
+        // all of the blank above the name and none below it.
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = name,
