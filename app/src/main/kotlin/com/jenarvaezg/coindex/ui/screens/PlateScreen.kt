@@ -24,8 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +60,7 @@ import com.jenarvaezg.coindex.ui.plateSubject
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -158,11 +161,17 @@ private fun PlateGrid(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         // Which cells share a row is what decides where the tags line up, and the grid will not say
         // it until it measures, so the same arithmetic it uses is read off the width here (#337).
-        val columns = plateColumns(maxWidth - PLATE_MARGIN * 2)
+        val available = maxWidth - PLATE_MARGIN * 2
+        val columns = plateColumns(available)
         // A row reserves the name box when one of its cells is named — and not the whole plate,
         // which would hang 54 dp of empty cardboard under the twenty date-run casillas of the
-        // 1 Bolívar for the sake of the two titled `1945 (acuñada en 1947)`.
-        val namedRows = plate.cells.chunked(columns).map { row -> row.any { it.label != it.year } }
+        // 1 Bolívar for the sake of the two titled `1945 (acuñada en 1947)`. How many lines that
+        // box holds is the row's answer too, and it is measured and not guessed (#412).
+        val nameLines = rememberPlateNameLines(
+            cells = plate.cells,
+            columns = columns,
+            cellWidth = plateCellWidth(available, columns),
+        )
         // Where the sheet opens is the grid's **initial state** and not an effect that runs on it,
         // which is the whole of #396: see [plateOpeningItem].
         val grid = rememberLazyGridState(
@@ -224,7 +233,7 @@ private fun PlateGrid(
                     cell = cell,
                     images = cell.numistaTypeId?.let { images[it] },
                     printedSide = plate.printedSide,
-                    named = namedRows.getOrElse(index / columns) { false },
+                    nameLines = nameLines.getOrElse(index / columns) { 0 },
                     // Where the coin of the index card is flying to, and nowhere else: it is the
                     // same casilla the plate is scrolled to, so the landing is the one thing the
                     // journey promised — «es la misma moneda» (ADR 0026 §3).
@@ -251,6 +260,101 @@ internal fun plateColumns(
     minimum: Dp = 104.dp,
     gutter: Dp = PlateMetrics.gutter,
 ): Int = maxOf(1, ((available + gutter) / (minimum + gutter)).toInt())
+
+/**
+ * How wide one casilla of a row of [columns] is, which is the width a name has to fit in.
+ *
+ * The companion of [plateColumns] and read off the same width for the same reason: the box a name
+ * is given is decided before the grid measures, so the plate has to know the column too.
+ */
+internal fun plateCellWidth(
+    available: Dp,
+    columns: Int,
+    gutter: Dp = PlateMetrics.gutter,
+): Dp = (available - gutter * (columns - 1)) / columns
+
+/**
+ * How many lines of name each row of casillas reserves: none, or between two and three (#412).
+ *
+ * **The row decides, and every casilla on it obeys** — the rule #337 bought, because the tags of a
+ * row line up exactly when they all hang off boxes of one height. What is new is that the height is
+ * the row's own: 54 of the 75 catalogs of `data/` have no name past two lines and are drawn exactly
+ * as before, 14 are made whole by the third line, and inside those the rows that hold no long name
+ * pay nothing either. «V centenario de la primera vuelta al mundo» used to die in an ellipsis with no
+ * gesture anywhere to read the rest of it.
+ *
+ * **The third line is the last one, and what stops the fourth is the blank and not the name.** Of
+ * the 1.082 members that print a name, measured with real Bitter at 13 sp in the 113 dp column,
+ * 79 need three lines, 16 need four and 2 need five: cuts go from 97 to 18, and a fourth line would
+ * rescue 16 more. What it would cost is `PlateSpacing.reservedNameLine` twice over — a casilla of one
+ * line on a row that reserved four hangs 69 dp of empty cardboard above its name, against the 42 dp
+ * that separate two rows, where three lines hang 48 and two hang 27. The third line already puts
+ * that blank past the gap between rows, and it falls under the hole where the coin above it is the
+ * only thing it can belong to (#411, #473). Past three the name is still cut, and still whole in
+ * semantics, which is what search and the screen reader read. See `docs/ux/implementacion-412/`.
+ *
+ * [linesOf] is the text measurer, injected: what a name costs is a question about Bitter at a given
+ * width and only Compose can answer it, while the rule on top is arithmetic and testable without a
+ * device. A casilla whose label is its year is never asked — see [printedName].
+ */
+internal fun plateRowNameLines(
+    cells: List<DrawnCell>,
+    columns: Int,
+    ceiling: Int = PLATE_CELL_NAME_MAX_LINES,
+    linesOf: (String) -> Int,
+): List<Int> = cells.chunked(columns).map { row ->
+    val needed = row.mapNotNull { it.printedName }.maxOfOrNull(linesOf) ?: return@map 0
+    needed.coerceIn(PLATE_CELL_NAME_MIN_LINES, maxOf(PLATE_CELL_NAME_MIN_LINES, ceiling))
+}
+
+/**
+ * How many lines a row may reserve before centring the name would break the plate's proximity.
+ *
+ * The name is centred in its box since #412, so half of the line a short name leaves unused falls
+ * between it and its year: `PlateSpacing.insideMemberCentred`. That gap has to stay under the one
+ * that separates two members, and the box grows with the collector's font scale while
+ * `PlateSpacing.rowGap` does not — so the ceiling is a question about **this** collector's type and
+ * cannot be a constant. At font scale 1 a 21 dp line clears three lines with 5 dp to spare; a
+ * collector who enlarges the type by a quarter gets two lines and the longer names go back to being
+ * cut, which is the honest trade: the third line is a luxury the layout can no longer afford there.
+ */
+internal fun plateNameLinesCeiling(
+    lineHeight: Dp,
+    limit: Int = PLATE_CELL_NAME_MAX_LINES,
+): Int = (PLATE_CELL_NAME_MIN_LINES..limit).lastOrNull { lines ->
+    PlateSpacing.insideMemberCentred(reserved = lines, used = 1, lineHeight = lineHeight) <
+        PlateSpacing.betweenMembers
+} ?: PLATE_CELL_NAME_MIN_LINES
+
+/**
+ * [plateRowNameLines] with Bitter actually measured, once per plate and per width.
+ *
+ * Measured at the **smallest** type the cell will fall back to, because that is the size a name
+ * that needs the room ends up at: asking at 17 sp would buy a third line for a name that only
+ * wanted the ladder of #348, and every casilla of the plate would pay for it.
+ */
+@Composable
+private fun rememberPlateNameLines(cells: List<DrawnCell>, columns: Int, cellWidth: Dp): List<Int> {
+    val measurer = rememberTextMeasurer()
+    val style = MaterialTheme.typography.titleMedium.copy(fontSize = PLATE_CELL_NAME_MIN_SIZE)
+    val density = LocalDensity.current
+    val lineHeight = with(density) { MaterialTheme.typography.titleMedium.lineHeight.toDp() }
+    return remember(cells, columns, cellWidth, style, density, measurer, lineHeight) {
+        val width = with(density) { cellWidth.roundToPx() }
+        // One plate repeats a name across its casillas — the twenty-two «Onza Troy» of a date run —
+        // and Bitter is measured once for each distinct one.
+        val measured = mutableMapOf<String, Int>()
+        plateRowNameLines(cells, columns, plateNameLinesCeiling(lineHeight)) { name ->
+            measured.getOrPut(name) {
+                measurer.measure(
+                    text = name,
+                    style = style,
+                    constraints = Constraints(maxWidth = width),
+                ).lineCount
+            }
+        }
+    }
+}
 
 /**
  * The plate's own heading: the title, and the ratio raised out of the specification onto it.
@@ -314,7 +418,8 @@ private fun PlateCell(
     cell: DrawnCell,
     images: TypeImages?,
     printedSide: PrintedSide,
-    named: Boolean,
+    /** What this casilla's **row** reserves for a name, and zero on a row that prints none. */
+    nameLines: Int,
     /** The catalog whose card this casilla receives the coin from, and null for every other one. */
     travellingFrom: String?,
     onOpenSource: (String) -> Unit,
@@ -335,24 +440,27 @@ private fun PlateCell(
                 .size(104.dp)
                 .travellingCoin(travellingFrom),
         )
-        if (named) {
-            PlateCellName(name = cell.label.takeIf { it != cell.year }.orEmpty())
+        if (nameLines > 0) {
+            PlateCellName(name = cell.printedName.orEmpty(), lines = nameLines)
         }
         cell.year?.let { year -> RecessedYearTag(year = year, onOpen = open) }
     }
 }
 
 /**
- * The name under a hole, in the two-line range every cell of the plate reserves.
+ * The name under a hole, in the range of lines its row reserved.
  *
  * The plate is the last of the three surfaces that print a name under a hole to get this: the
  * index card autosizes and truncates since #348 and the Coins cartouche since #350, while the cell
  * of the plate let the name decide its own height. With 235 of the 1.188 members in `data/` past
  * two lines — 66 of them in one single plate — the year of a row landed on three different
- * baselines and the tallest name pushed its neighbours' apart.
+ * baselines and the tallest name pushed its neighbours' apart. That 235 is the count of #361, before
+ * the autosize ladder existed and at the type size it made unnecessary; measured again at 13 sp for
+ * #412 it is 97, which is the figure the reservation above is argued from.
  *
- * The label is the curator's and is never shortened here: 1.086 of those 1.188 are not a year, and
- * many are legitimate descriptions of the issue. What gives is the type on screen.
+ * The label is the curator's and is never shortened here: 1.082 of the 1.184 print a name, and
+ * many are legitimate descriptions of the issue. What gives is the type on screen — and since #412
+ * the box too, up to a third line where the row asked for one.
  *
  * It is plain ink and no longer a link: what opens Numista is the year's recessed tag underneath
  * (#302), and a title that kept its arrow would print twenty-two of them in the system typeface on a
@@ -362,41 +470,63 @@ private fun PlateCell(
  * row still share a baseline.
  */
 @Composable
-internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {
+internal fun PlateCellName(
+    name: String,
+    modifier: Modifier = Modifier,
+    lines: Int = PLATE_CELL_NAME_MIN_LINES,
+) {
     val style = MaterialTheme.typography.titleMedium
     // Reserved in dp and not in lines: two lines of a name that shrank to 13 sp are shorter than
     // two lines of one that did not, so `minLines` alone still left three years of a row on three
-    // baselines. The box is always the two tallest lines the cell can print.
+    // baselines. The box is always the tallest lines the cell can print.
     val reserved = with(LocalDensity.current) {
-        style.lineHeight.toDp() * PLATE_CELL_NAME_LINES + PlateSpacing.namePadding * 2
+        style.lineHeight.toDp() * lines + PlateSpacing.namePadding * 2
     }
     Box(
         modifier = modifier.fillMaxWidth().height(reserved),
-        // The name sits at the **bottom** of what its cell reserved, so that a name of one line
-        // and a name of two hand their year the same 16 dp (#411). Top-aligned, the line a short
-        // name did not use fell between the name and the year, which left the year floating
-        // further from the name it belongs to than from the coins of the next row. The blank
-        // rises to under the hole, where the coin above it is the only thing it can belong to.
-        contentAlignment = Alignment.BottomCenter,
+        // The name sits in the **middle** of what its row reserved, so that a name of one line, of
+        // two and of three are read off the same band of the casilla and a row is one line of type
+        // and not three (#412).
+        //
+        // This is the half of #411 that #412 re-decided, and only that half: the name used to hang
+        // at the bottom of its box so that every name handed its year the same 16 dp, which is what
+        // kept a year nearer its own name than the coins of the next row. What #411 was defending
+        // was **proximity**, and centring keeps it — see `PlateSpacingTest` for the arithmetic and
+        // [plateRowNameLines] for the ceiling that guards it when the collector enlarges the type:
+        // the widest gap centring can open is half the blank, where hanging it at the bottom put
+        // all of the blank above the name and none below it.
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = name,
             style = style,
             textAlign = TextAlign.Center,
             autoSize = PLATE_CELL_NAME_AUTO_SIZE,
-            maxLines = PLATE_CELL_NAME_LINES,
+            maxLines = lines,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth().padding(vertical = PlateSpacing.namePadding),
         )
     }
 }
 
-/** Every cell reserves the same name range, so a row's years share one baseline. */
-private const val PLATE_CELL_NAME_LINES = 2
+/**
+ * What a row reserves when its longest name asks for less, which is 54 of the 75 catalogs.
+ *
+ * The floor and no longer the whole rule (#412): the two lines are what the plate always reserved,
+ * and a row that needs none of the second one keeps it anyway so that nothing shifts where nothing
+ * was wrong. What every casilla of a row shares is the reservation, whatever it came out at.
+ */
+internal const val PLATE_CELL_NAME_MIN_LINES = 2
+
+/** And no row buys a fourth line: 16 casillas saved would cost 21 dp of cardboard (#412). */
+private const val PLATE_CELL_NAME_MAX_LINES = 3
+
+/** The smallest Bitter a casilla prints, and therefore the size a name is measured at. */
+private val PLATE_CELL_NAME_MIN_SIZE = 13.sp
 
 /** Bitter shrinks before the cell cuts, the same ladder the index card walks down (#348). */
 private val PLATE_CELL_NAME_AUTO_SIZE = TextAutoSize.StepBased(
-    minFontSize = 13.sp,
+    minFontSize = PLATE_CELL_NAME_MIN_SIZE,
     maxFontSize = 17.sp,
     stepSize = 0.5.sp,
 )

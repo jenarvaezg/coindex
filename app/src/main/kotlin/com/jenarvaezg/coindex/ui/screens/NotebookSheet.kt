@@ -113,6 +113,30 @@ private val PRINT_CELL_TITLE = TextStyle(
     fontSize = 2.9f.sp,
     lineHeight = 3.3f.sp,
 )
+
+/**
+ * Bitter shrinks before the paper cuts, which is the ladder of #348 brought to the notebook (#412).
+ *
+ * **The screen was given a third line and the paper cannot be**: the sixteen millimetres of
+ * [PrintGeometry.captionMm] are what the page count was computed from, so a taller caption is a
+ * longer notebook. What the paper has instead is resolution: 2,9 mm of serif is a comfortable
+ * caption at 300 dpi and there is room underneath it, while 13 sp was already the screen's floor.
+ *
+ * Measured over the 1.082 named members of `data/` in the narrowest cell there is — 28 mm, the floor
+ * a 2 euros of 25,75 mm falls back to, and the very coin whose names the report quoted: at the fixed
+ * 2,9 mm the paper cut 57 of them, and it cut **40 that the screen prints whole**. Down to 1,8 mm it
+ * cuts none of those, which is the property this exists for — no name is legible on the glass and an
+ * ellipsis on the page. Only 7 names ever reach the bottom of the ladder, and the last one to give in
+ * is «Saint Trinity Seraphim-Diveyevsky Monastery», whose hyphenated 19-letter word cannot break.
+ *
+ * The floor is small — 1,8 mm is about 5 pt — and it is only ever reached where the alternative is
+ * not reading the name at all. The footnote and the state of this same caption are set at 2,3 mm.
+ */
+private val PRINT_CELL_TITLE_AUTO_SIZE = TextAutoSize.StepBased(
+    minFontSize = 1.8f.sp,
+    maxFontSize = 2.9f.sp,
+    stepSize = 0.1f.sp,
+)
 private val PRINT_CELL_THEME = TextStyle(
     fontFamily = BitterFamily,
     fontSize = 2.5f.sp,
@@ -457,6 +481,7 @@ private fun ColumnScope.CellCaption(cell: PrintCell, geometry: PrintGeometry) {
             cell.label,
             style = PRINT_CELL_TITLE,
             textAlign = TextAlign.Center,
+            autoSize = PRINT_CELL_TITLE_AUTO_SIZE,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
@@ -521,6 +546,9 @@ private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modif
         Text(
             cell.label,
             style = PRINT_CELL_TITLE,
+            // One line and the same ladder, which on a line eighty millimetres wide reaches further
+            // than it does in a cell: the name gives up type before it gives up its tail (#412).
+            autoSize = PRINT_CELL_TITLE_AUTO_SIZE,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),

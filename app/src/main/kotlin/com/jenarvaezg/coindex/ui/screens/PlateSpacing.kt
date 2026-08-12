@@ -20,6 +20,11 @@ import com.jenarvaezg.coindex.ui.components.YearTagMetrics
  * So the numbers live here and the rule lives in `PlateSpacingTest`: **more air between two members
  * than inside one**, twice as much. That is the whole of proximity, and it is arithmetic and not a
  * screenshot.
+ *
+ * Since #412 the name is centred in the box its row reserved, so the gap inside a member is no longer
+ * one number and the factor of two holds only for a name that fills its box. What every case has to
+ * clear is the comparison itself — see [insideMemberCentred], and `plateNameLinesCeiling` for the
+ * reservation that is refused when it would not.
  */
 internal object PlateSpacing {
     /** The breathing room the name keeps between the hole above it and the tag below. */
@@ -41,9 +46,27 @@ internal object PlateSpacing {
     val insideMember: Dp = namePadding + YearTagMetrics.slack
 
     /**
-     * The line the reserved name box leaves empty under a hole when its name takes only one of the
-     * two — the price of the tags of a row sharing one baseline (#337), and the widest blank there
-     * is inside a member since the name sank to the bottom of its box.
+     * The same distance for a name that does **not** fill the box its row reserved (#412).
+     *
+     * Since the name is centred in that box, the line it did not use is split in two: half of it
+     * rises to under the hole and half falls between the name and its year. So the gap inside a
+     * member is no longer one number — it is widest for the shortest name on the tallest row, which
+     * is «Onza Troy» beside a three-line neighbour — and the rule of this file becomes a comparison
+     * over that worst case rather than over a constant.
+     *
+     * [lineHeight] is passed in and not read from [nameLine] because what matters is the line at the
+     * collector's own font scale: the box grows with the type and the gutter between rows does not.
+     */
+    fun insideMemberCentred(reserved: Int, used: Int, lineHeight: Dp): Dp =
+        insideMember + lineHeight * (reserved - used) / 2f
+
+    /**
+     * The line the reserved name box leaves empty when its name takes only one of the two — the price
+     * of the tags of a row sharing one baseline (#337).
+     *
+     * Since #412 the name is centred in that box, so this line is split: half rises under the hole
+     * and half falls between the name and its year ([insideMemberCentred]). It stays the widest blank
+     * there is inside a member, and the comparison it has to win is the same one.
      *
      * At font scale 1, which is where it can be compared with the rest. Two things it does not
      * cover, both of them the same shape and both older than this file: a casilla with **no** name

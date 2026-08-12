@@ -12,7 +12,7 @@
   "closed_note": "Después del Vargas de 1986 la denominación no volvió a acuñarse en plata: los diseños F (1998, 1999) y G (2001, 2002, 2004) son acero enchapado en 6% níquel de 6,8 g, y el bolívar se redenominó en bolívar fuerte el 1 de enero de 2008, con desmonetización el 31 de diciembre de 2011 que las cuatro fichas de Numista registran. La serie no puede crecer. https://www.numismatica.info.ve/es/monedas/mv100bs.htm",
   "source": "https://en.numista.com/catalogue/pieces19880.html",
   "source_note": "La frontera la dibuja el Catálogo Numismático de Venezuela en su propio índice de la denominación, no nosotros: de los siete diseños de 100 bolívares rotula «Conmemorativa» exactamente a cuatro —B (Muerte del Libertador, 1980), C (Natalicio de Andrés Bello, 1981), D (Natalicio del Libertador, 1983) y E (Bicentenario del Natalicio de Vargas, 1986)—, que son además los cuatro de plata. El diseño A de 1886-1889 es el «Pachano» de oro .900 de 32,258 g y los F y G de 1998-2004 son acero, así que el metal y la marca conmemorativa recortan el mismo bloque. Numista cita el código NCV de cada uno (mv100bs-ba, -ca, -da, -ea), y ninguna serie de Numista propone esta lista. Medido el 6 de agosto de 2026 leyendo las siete fichas de diseño y sus piezas, no el menú de navegación. https://www.numismatica.info.ve/es/monedas/mv100bs.htm",
-  "updated_at": "2026-08-06",
+  "updated_at": "2026-08-12",
   "members": [
     {
       "id": "1980-muerte-del-libertador",
@@ -30,14 +30,14 @@
     },
     {
       "id": "1983-bicentenario-del-libertador",
-      "label": "Bicentenario del natalicio del Libertador · 31,1 g de plata .900",
+      "label": "Bicentenario del natalicio del Libertador",
       "year": 1983,
       "numista_type_id": 37248,
       "variant_note": "La única de las cuatro emitida sólo en proof: el catálogo venezolano registra una pieza y una sola, NCV# mv100bs-da01p, 300.000 ejemplares de Vereinigte Deutsche Metallwerke, y la línea de emisión de Numista dice «Proof» sin acompañante de circulación. El título del tipo no lleva la palabra, así que la lámina declara acabado desconocido y la excepción se escribe aquí. Se vendió junto a un 3000 bolívares de oro .900 de 31,1035 g (N#59643): esa «colección alusiva» mezcla metales y nunca fue esta lámina."
     },
     {
       "id": "1986-bicentenario-de-vargas",
-      "label": "Bicentenario del natalicio de José María Vargas · 31,1 g de plata .900",
+      "label": "Bicentenario del natalicio de José María Vargas",
       "year": 1986,
       "numista_type_id": 34721
     }

@@ -1220,6 +1220,42 @@ class CuratedCatalogsTest {
         )
     }
 
+    /**
+     * El rótulo de una casilla dice la especificación **sólo cuando se desvía de la lámina** (#412).
+     *
+     * Los cuatro 100 bolívares llevaban su peso y su ley pegados al nombre, y en la casilla eso
+     * competía por dos líneas con el nombre para morir en puntos suspensivos. En dos de los cuatro
+     * la cola repetía lo que la lámina ya declara arriba —31,1 g de plata— y en los otros dos lo
+     * contradice: 22 g en el de 1980 y .835 en el de 1981. Lo que contradice la declaración es lo
+     * único que un rótulo tiene que añadir; lo que la repite se lee una vez, en la especificación.
+     *
+     * El `variant_note` de cada desviación sigue siendo la prosa con la fuente, y sigue sin
+     * imprimirse en ninguna superficie: es del curador y de los cruces de metal y clase de objeto.
+     */
+    @Test
+    fun `a member says its own weight only where it deviates from the plate`() {
+        val bolivares = find("venezuela-100-bolivares-plata")
+        // La lámina declara la onza de plata, que es lo que dos de las cuatro casillas pesan.
+        assertEquals(1_000, bolivares.weightMillioz)
+        assertEquals(Metal.Silver, bolivares.metal)
+        val labelled = bolivares.members.filter { it.label.contains(" g de plata") }
+        assertEquals(
+            listOf("1980-muerte-del-libertador", "1981-natalicio-de-andres-bello"),
+            labelled.map { it.id },
+        )
+        assertTrue(
+            labelled.all { it.variantNote != null },
+            "una cola en el rótulo sin nota que la sostenga",
+        )
+        assertEquals(
+            listOf(
+                "Bicentenario del natalicio del Libertador",
+                "Bicentenario del natalicio de José María Vargas",
+            ),
+            bolivares.members.filterNot { it in labelled }.map { it.label },
+        )
+    }
+
     @Test
     fun `catalogs target their exact derived collection variants`() {
         val tesla = find("nikola-tesla-serbia-1oz")
