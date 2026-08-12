@@ -41,15 +41,15 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 57
-        // Patch on top of 1.2.14: the QR of a wide cell stops costing a row of coins.
+        versionCode = 58
+        // Patch on top of 1.2.15: a long name gets the third line its row can pay for.
         //
         // The phones are on **1.2.11**, `versionCode` 53 — which is what the latest release's
         // `update.json` says, not what anybody remembers — so 1.2.12, 1.2.13 and 1.2.14 were merged
         // unpublished and reach a phone with this one. This line kept claiming 1.2.10 for four merges
         // after 1.2.11 was out, which is what it is for: `scripts/release.sh` reads the published
         // manifest and refuses a `versionCode` that does not beat it, and this says who is waiting.
-        versionName = "1.2.15"
+        versionName = "1.2.16"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

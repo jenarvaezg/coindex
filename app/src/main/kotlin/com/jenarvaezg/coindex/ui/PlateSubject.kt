@@ -102,6 +102,16 @@ data class DrawnCell(
     val missing: Boolean,
 )
 
+/**
+ * The name a casilla prints under its hole, or null where its label is already its year.
+ *
+ * One reading of [DrawnCell.label] for the two questions the plate asks it — whether a row reserves
+ * a name box at all, and how many lines that box needs (#412) — because a casilla titled with its
+ * own year prints no name, and a year is therefore never what its row is measured by.
+ */
+val DrawnCell.printedName: String?
+    get() = label.takeIf { it != year }
+
 /** The one catalog photograph a resting plate shows and exports. */
 fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
     PrintedSide.Obverse -> obverse
