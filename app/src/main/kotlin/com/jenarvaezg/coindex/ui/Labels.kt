@@ -20,9 +20,28 @@ fun weightLabel(weightMillioz: Int?): String {
     return if (fraction.isEmpty()) "$whole oz" else "$whole,$fraction oz"
 }
 
-/** The finish as a specification value, under a row whose label already says «acabado». */
-fun finishLabel(finish: Finish?): String = when (finish) {
-    null -> "Sin confirmar"
+/**
+ * The finish, said only where there is one to say (#409).
+ *
+ * **A declared finish only, so there is no absent case to word.** ADR 0005 files an unmarked type
+ * under an *unknown* finish, and printing that reading — «Acabado: Sin confirmar», «0,611 oz ·
+ * Acabado sin confirmar» — put the state of the curation datum on the collector's card: read
+ * straight, it sounds like an app half filled in. It also said it almost everywhere, which is the
+ * other half of why it went: 179 of the father's 191 types carry no marker in their Numista title,
+ * and 42 of the 75 curated catalogs printed the row. That is three words on nine cards out of ten to
+ * distinguish nothing — the same account that keeps «plata» out of [variantLabel] and «Moneda» out of
+ * [objectClassLabel].
+ *
+ * Nothing is lost where the finish is the distinction: of the whole corpus only two pairs of plates
+ * differ by it — the Nautical Ounce against its `antique`, Lunar III bullion against proof coloured —
+ * and in both the declared side still prints its word while the plate's own name already says it. For
+ * the curator the datum never lived here anyway: it lives in the catalog file.
+ *
+ * A **«normal»** was the other candidate and would have been a claim we cannot make: `inferFinish`
+ * returns null for a proof whose title omits the word too, so naming the absence would turn an honest
+ * silence into a wrong fact.
+ */
+fun finishLabel(finish: Finish): String = when (finish) {
     Finish.Bullion -> "Bullion"
     Finish.Proof -> "Proof"
     Finish.Coloured -> "Coloreado"
@@ -30,15 +49,6 @@ fun finishLabel(finish: Finish?): String = when (finish) {
     Finish.Gilded -> "Dorado"
     Finish.Antiqued -> "Envejecido"
 }
-
-/**
- * The same finish where nothing around it says what is unconfirmed.
- *
- * «0,611 oz · Por confirmar» read as a finish called that, or as a variant awaiting review; the
- * unconfirmed thing is the acabado, and on a line of its own it has to say so.
- */
-fun standaloneFinishLabel(finish: Finish?): String =
-    if (finish == null) "Acabado sin confirmar" else finishLabel(finish)
 
 /**
  * Whether a catalog's series is still being issued, as the two chips of the index's shelf.
@@ -80,16 +90,28 @@ fun metalLabel(metal: Metal?): String = when (metal) {
  */
 fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
     if (weightMillioz == null) return weightLabel(null)
-    val line = "${weightLabel(weightMillioz)} · ${standaloneFinishLabel(finish)}"
-    return if (metal == null || metal == Metal.Silver) line else "$line · ${metalLabel(metal)}"
+    return listOfNotNull(
+        weightLabel(weightMillioz),
+        finish?.let(::finishLabel),
+        metal?.takeUnless { it == Metal.Silver }?.let(::metalLabel),
+    ).joinToString(" · ")
 }
 
-/** Weight and finish as specification rows, omitted entirely for a set. */
+/**
+ * Weight and finish as specification rows, omitted entirely for a set.
+ *
+ * The acabado row is one of the two and not always: with no finish declared there is no row, for the
+ * reasons [finishLabel] states. The weight always has one — every coin weighs something, and a
+ * catalog that reached this branch has the figure.
+ */
 fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, String>> =
     if (weightMillioz == null) {
         listOf("Variante" to weightLabel(null))
     } else {
-        listOf("Peso" to weightLabel(weightMillioz), "Acabado" to finishLabel(finish))
+        listOfNotNull(
+            "Peso" to weightLabel(weightMillioz),
+            finish?.let { declared -> "Acabado" to finishLabel(declared) },
+        )
     }
 
 /** «1 pieza» / «22 piezas». Spanish counts nothing in the singular, so zero takes the plural. */

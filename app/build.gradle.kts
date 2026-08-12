@@ -41,11 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 53
-        // Patch on top of 1.2.10, which is what the phones have: a year on a plate is nearer its
-        // own name than the row below. The 1.2.11 and 1.2.12 in the history were merged and never
-        // published, so the number they spent goes back — a version is what a phone can install.
-        versionName = "1.2.11"
+        versionCode = 54
+        // Patch on top of 1.2.11: a card no longer tells the collector that its finish is a hole in
+        // the ficha. The phones are still on 1.2.10 — everything since has been merged unpublished.
+        versionName = "1.2.12"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
