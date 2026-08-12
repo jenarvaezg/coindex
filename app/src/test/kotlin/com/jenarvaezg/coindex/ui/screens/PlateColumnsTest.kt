@@ -5,11 +5,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * The plate reads the grid's own arithmetic one step ahead of it, because which casillas share a
- * row is what decides which of them reserve a name box (#337).
+ * The plate reads the grid's own arithmetic one step ahead of it, because the casilla the sheet
+ * opens on is an item index and the grid counts items by rows (#396).
  *
- * If `GridCells.Adaptive` ever counted differently, a row would reserve the box for a neighbour
- * that is not on it and the tags would stop lining up — quietly, and only on some screen widths.
+ * If `GridCells.Adaptive` ever counted differently, the sheet would open one row off the casilla the
+ * coin is flying to — quietly, and only on some screen widths.
  */
 class PlateColumnsTest {
     /** The Pixel 7 the whole map was measured on: 411 dp, 20 dp of margin on each side. */
@@ -30,15 +30,5 @@ class PlateColumnsTest {
         assertEquals(1, plateColumns(119.dp))
         assertEquals(2, plateColumns(224.dp))
         assertEquals(4, plateColumns(464.dp))
-    }
-
-    /**
-     * The width a name is measured against before it is drawn (#412): the gutters belong to the
-     * spaces *between* columns, so three columns on a Pixel 7 pay for two of them and not three.
-     */
-    @Test
-    fun `the width a name is measured against is the column the grid will give it`() {
-        assertEquals(113f, plateCellWidth(411.dp - 40.dp, columns = 3).value, 0.01f)
-        assertEquals(371f, plateCellWidth(411.dp - 40.dp, columns = 1).value, 0.01f)
     }
 }
