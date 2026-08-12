@@ -33,7 +33,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.shelf.SEARCH_PLACEHOLDER
-import com.jenarvaezg.coindex.ui.shelf.SHELF_ACTION_SEPARATOR
 import com.jenarvaezg.coindex.ui.shelf.shelfDisclosure
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -103,6 +102,16 @@ private fun SearchGlyph() {
 }
 
 /**
+ * Air, not punctuation, between the tally and the trailing action (#416).
+ *
+ * A « · » here read as the leftover seam of something that had been taken out: the button carries
+ * its own border, so what it needed from the count beside it was distance and not a mark saying
+ * «and then». Shared with the test that measures it, so the promise and the assertion are one
+ * number.
+ */
+val SHELF_ACTION_GAP = 12.dp
+
+/**
  * The shelf of filters, folded on entry.
  *
  * Folded because both hierarchies open on what the collector owns and not on a control panel: the
@@ -122,7 +131,12 @@ fun FilterShelf(
     onAction: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val verticallyCenteredItem = Modifier
+    // For the action, whose 48 dp is a touch target: the button grows to it and centres its own
+    // label. A **Text** given the same modifier does not centre anything — it lays out one 13 dp
+    // line at the top of a 48 dp box, which is where the tally of this shelf was printed, 17 dp
+    // above the line it belongs to. The Row is 48 dp tall and centres its children already, so the
+    // labels need nothing here.
+    val touchSizedAction = Modifier
         .wrapContentHeight(Alignment.CenterVertically)
         .heightIn(min = 48.dp)
 
@@ -143,32 +157,37 @@ fun FilterShelf(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // Weighted, and weighted so that the tally is measured **first**: a Row hands the
+                // unweighted children the room they ask for and leaves this one the remainder. With
+                // both children unweighted the summary took the whole width and «170 de 678
+                // casillas» wrapped into eight lines inside a 48 dp row. The summary is the one that
+                // can afford to give: it truncates by design, and half a count is worse than a
+                // shortened line about the filters.
                 Text(
                     "${shelfDisclosure(expanded)}$summary",
                     style = MaterialTheme.typography.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(end = 12.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp),
                 )
+                // No `maxLines` of its own: the weight above is what keeps this on one line, and it
+                // keeps it there at twice the type size too — measured, because the Row is 48 dp
+                // tall and a tally that wraps is read through half of its own second line.
                 Text(
                     tally,
                     style = MaterialTheme.typography.labelMedium,
                     color = Paper.rust,
-                    modifier = verticallyCenteredItem,
                 )
             }
             if (actionLabel != null && onAction != null) {
-                Text(
-                    SHELF_ACTION_SEPARATOR,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Paper.muted,
-                    modifier = verticallyCenteredItem,
-                )
+                Spacer(Modifier.width(SHELF_ACTION_GAP))
                 CardAction(
                     text = actionLabel,
                     onClick = onAction,
                     enabled = actionEnabled,
-                    modifier = verticallyCenteredItem,
+                    modifier = touchSizedAction,
                 )
             }
         }

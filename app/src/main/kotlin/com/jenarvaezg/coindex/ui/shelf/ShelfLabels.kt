@@ -3,7 +3,6 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.ui.plural
 
 const val SEARCH_PLACEHOLDER: String = "Buscar"
-const val SHELF_ACTION_SEPARATOR: String = " · "
 
 /**
  * The chip that means «no filter on this facet», in one word across the ten of them (ADR 0026 §5).
@@ -134,13 +133,20 @@ private fun shelfSummary(active: Int, sort: String?, axis: String? = null): Stri
         ?: "Filtros y orden"
 }
 
+/**
+ * How much of a list is showing, beside the shelf line, whatever the list is made of.
+ *
+ * It says «N de M» only while something is narrowed, because «58 de 58» invites the reader to look
+ * for the filter that is not there. One sentence for the four tallies: the rótulo holds its place
+ * while the axis changes the magnitude under it, so what must not change with the axis is the shape
+ * of the phrase.
+ */
+private fun tally(shown: Int, total: Int, one: String, many: String): String =
+    if (shown == total) plural(total, one, many) else "$shown de ${plural(total, one, many)}"
+
 /** How many years of the axis carry something the collector owns. */
 fun yearAxisTally(ownedYears: Int, totalYears: Int): String =
-    if (ownedYears == totalYears) {
-        plural(totalYears, "año", "años")
-    } else {
-        "$ownedYears de ${plural(totalYears, "año", "años")}"
-    }
+    tally(ownedYears, totalYears, "año", "años")
 
 /**
  * Rust mark on a year seat when more than one piece lands there (#406).
@@ -151,22 +157,17 @@ fun yearAxisTally(ownedYears: Int, totalYears: Int): String =
 fun yearAxisQuantityMark(quantity: Int): String? =
     "×$quantity".takeIf { quantity > 1 }
 
-/** How many measurable slots the country axis is showing against the sheet's total. */
-fun countryAxisTally(ownedSlots: Int, totalSlots: Int): String =
-    if (ownedSlots == totalSlots) {
-        plural(totalSlots, "casilla", "casillas")
-    } else {
-        "$ownedSlots/$totalSlots"
-    }
-
 /**
- * How much of the list is showing, beside the shelf line.
+ * How many measurable slots the country axis is showing against the sheet's total.
  *
- * It says «N de M» only while something is narrowed, because «58 de 58» invites the reader to look
- * for the filter that is not there.
+ * Named, and named in the year axis's own shape (#416): the rótulo keeps its place while the
+ * magnitude under it changes with the axis, so «70 colecciones» turning into «170/678» was a
+ * fraction of nothing in particular offered beside an export button. A ratio is the vocabulary
+ * *inside* the sheet, where the block it sits on says which country is being divided; out here the
+ * unit has to travel with the number.
  */
-private fun tally(shown: Int, total: Int, one: String, many: String): String =
-    if (shown == total) plural(total, one, many) else "$shown de ${plural(total, one, many)}"
+fun countryAxisTally(ownedSlots: Int, totalSlots: Int): String =
+    tally(ownedSlots, totalSlots, "casilla", "casillas")
 
 fun indexTally(shown: Int, total: Int): String = tally(shown, total, "colección", "colecciones")
 
