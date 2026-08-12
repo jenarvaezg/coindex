@@ -9,21 +9,32 @@ import kotlin.test.assertEquals
 /**
  * The lines a card writes about itself.
  *
- * Both cases here were UX findings rather than bugs: «Por confirmar» on its own line read as a
- * finish called that, and the metal, which the key needs in all four positions, is worth a word on
- * screen only where it is not the silver almost every card is made of.
+ * Both cases here were UX findings rather than bugs: the absent finish was writing the state of the
+ * curation datum onto the collector's card, and the metal, which the key needs in all four positions,
+ * is worth a word on screen only where it is not the silver almost every card is made of.
  */
 class LabelsTest {
+    /**
+     * Un acabado no declarado no escribe nada (#409). Decía «Acabado sin confirmar» en nueve de cada
+     * diez tarjetas —179 de los 191 tipos del padre no llevan marca en el título de Numista— y lo que
+     * anunciaba era el hueco del dato de curación, no un hecho de la moneda.
+     */
     @Test
-    fun `an unconfirmed finish names what is unconfirmed when nothing else does`() {
-        // Under a row already labelled ACABADO the word would be said twice.
-        assertEquals("Sin confirmar", finishLabel(null))
-        assertEquals("Acabado sin confirmar", standaloneFinishLabel(null))
+    fun `an undeclared finish says nothing at all`() {
+        assertEquals("0,804 oz", variantLabel(804, null, Metal.Silver))
+        // Sin acabado no hay fila que rellenar, y el peso se queda solo.
+        assertEquals(listOf("Peso" to "0,804 oz"), variantEntries(804, null))
+    }
 
-        // A known finish is the same word either way.
+    /** Los seis acabados declarados son justo donde la palabra se gana el sitio. */
+    @Test
+    fun `a declared finish is the same word on the card and in the specification`() {
         assertEquals("Bullion", finishLabel(Finish.Bullion))
-        assertEquals("Bullion", standaloneFinishLabel(Finish.Bullion))
-        assertEquals("0,804 oz · Acabado sin confirmar", variantLabel(804, null, Metal.Silver))
+        assertEquals("1 oz · Proof coloreado", variantLabel(1_000, Finish.ProofColoured, Metal.Silver))
+        assertEquals(
+            listOf("Peso" to "1 oz", "Acabado" to "Envejecido"),
+            variantEntries(1_000, Finish.Antiqued),
+        )
     }
 
     /**
@@ -37,10 +48,8 @@ class LabelsTest {
         // Una ficha sin composición legible tampoco escribe nada: no se sabe, no se afirma.
         assertEquals("1 oz · Bullion", variantLabel(1_000, Finish.Bullion, null))
         assertEquals("1 oz · Bullion · Oro", variantLabel(1_000, Finish.Bullion, Metal.Gold))
-        assertEquals(
-            "0,25 oz · Acabado sin confirmar · Cuproníquel",
-            variantLabel(250, null, Metal.Cupronickel),
-        )
+        // Y el hueco del acabado no deja separador suelto entre el peso y el metal (#409).
+        assertEquals("0,25 oz · Cuproníquel", variantLabel(250, null, Metal.Cupronickel))
         // Un conjunto no tiene variante física que describir, y el metal no cambia eso.
         assertEquals(
             "Conjunto de varias denominaciones",

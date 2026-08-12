@@ -9,6 +9,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.CommemorativeProgramme
 import com.jenarvaezg.coindex.domain.CommemorativeProgrammeMember
+import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.ItemRef
 import com.jenarvaezg.coindex.domain.MemberStatus
 import com.jenarvaezg.coindex.domain.PrintedSide
@@ -72,7 +73,10 @@ class PlateSubjectTest {
         sourceNote = "La ceca anunció el diseño, pero aún no lo ha emitido.",
     )
 
-    private fun catalog(members: List<CollectionCatalogMember>) = CollectionCatalog(
+    private fun catalog(
+        members: List<CollectionCatalogMember>,
+        finish: Finish? = null,
+    ) = CollectionCatalog(
         schemaVersion = 2,
         id = "venezuela-fuertes",
         name = "Fuertes · Venezuela",
@@ -80,7 +84,7 @@ class PlateSubjectTest {
         issuerCode = "venezuela",
         family = "Fuertes de Venezuela",
         weightMillioz = 804,
-        finish = null,
+        finish = finish,
         seriesStatus = SeriesStatus.Closed,
         closedNote = "La plata venezolana se acabó en 1965.",
         source = "https://en.numista.com/catalogue/pieces10340.html",
@@ -97,8 +101,9 @@ class PlateSubjectTest {
         members: List<CollectionCatalogMember>,
         owned: List<CollectedItem> = emptyList(),
         programmes: List<ProgrammeStanding> = emptyList(),
+        finish: Finish? = null,
     ): PlateSubject {
-        val catalog = catalog(members)
+        val catalog = catalog(members, finish)
         return plateSubject(
             PlateResult.Available(
                 catalog = catalog,
@@ -224,7 +229,27 @@ class PlateSubjectTest {
             listOf(
                 "Progreso" to "1 / 2 emisiones",
                 "Peso" to "0,804 oz",
-                "Acabado" to "Sin confirmar",
+                "Tipo" to "Numista 10340",
+                "Actualizado" to "2026-08-01",
+            ),
+            plate.entries,
+        )
+    }
+
+    /**
+     * Y un acabado declarado sí es una fila (#409). La especificación de los fuertes no la tiene
+     * porque los fuertes no tienen acabado que nombrar; la de una lámina proof la tiene entera, que es
+     * lo único que se pretendía conservar al callar el hueco.
+     */
+    @Test
+    fun `a declared finish keeps its row in the specification`() {
+        val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879)), finish = Finish.Proof)
+
+        assertEquals(
+            listOf(
+                "Progreso" to "1 / 2 emisiones",
+                "Peso" to "0,804 oz",
+                "Acabado" to "Proof",
                 "Tipo" to "Numista 10340",
                 "Actualizado" to "2026-08-01",
             ),
@@ -270,7 +295,6 @@ class PlateSubjectTest {
                 "Progreso" to "1 / 2 emisiones",
                 "Programa" to "Serie Alexandre Herculano 1977 · 1 de 3",
                 "Peso" to "0,804 oz",
-                "Acabado" to "Sin confirmar",
                 "Tipo" to "Numista 10340",
                 "Actualizado" to "2026-08-01",
             ),
@@ -289,7 +313,6 @@ class PlateSubjectTest {
             listOf(
                 "Progreso" to "2 / 2 emisiones",
                 "Peso" to "0,804 oz",
-                "Acabado" to "Sin confirmar",
                 "Actualizado" to "2026-08-01",
             ),
             plate.entries,
