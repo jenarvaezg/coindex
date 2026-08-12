@@ -41,11 +41,10 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 55
-        // Patch on top of 1.2.12: a piece of a collection is a coin in a hole that turns over, like
-        // every other coin of the album. The phones are still on 1.2.10 — everything since has been
-        // merged unpublished.
-        versionName = "1.2.13"
+        versionCode = 56
+        // Patch on top of 1.2.13: the completion stamp reaches paper with its ink instead of as an
+        // empty frame. The phones are still on 1.2.10 — everything since has been merged unpublished.
+        versionName = "1.2.14"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
