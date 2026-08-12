@@ -8,6 +8,8 @@ __pycache__/
 
 # Gradle y Android
 .gradle/
+# Sesiones del demonio de Kotlin: ruido de compilación, no del árbol
+.kotlin/
 /build/
 /app/build/
 /domain/build/

@@ -83,7 +83,7 @@ val BarlowCondensedFamily = FontFamily(
  * A guide, not a dashboard: serif for prose, a condensed sans in small caps for data. The
  * palette is paper-toned in both system themes on purpose — the plate is a printed page.
  */
-private val fieldTypography = Typography(
+internal val fieldTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = BitterFamily,
         fontWeight = FontWeight.Normal,

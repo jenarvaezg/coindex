@@ -38,8 +38,8 @@ fun RecessedYearTag(
     modifier: Modifier = Modifier,
 ) {
     val tag = Modifier
-        .widthIn(min = TAG_WIDTH)
-        .height(TAG_HEIGHT)
+        .widthIn(min = YearTagMetrics.width)
+        .height(YearTagMetrics.height)
         .recessedInBoard()
     Box(
         contentAlignment = Alignment.Center,
@@ -63,6 +63,21 @@ fun RecessedYearTag(
     }
 }
 
-/** The tag the #302 bench drew and the AVD confirmed: 48,3 × 28 dp. */
-private val TAG_WIDTH = 48.3.dp
-private val TAG_HEIGHT = 28.dp
+/**
+ * The drawing of the tag, and the blank its target leaves around it.
+ *
+ * The plate does its proximity arithmetic with these (`PlateSpacing`, #411): what the eye measures
+ * from is the ink, and between the ink and the next thing on the sheet there is always the
+ * transparent half of the target the tag bought with [minimumInteractiveComponentSize].
+ */
+internal object YearTagMetrics {
+    /** The tag the #302 bench drew and the AVD confirmed: 48,3 × 28 dp. */
+    val width = 48.3.dp
+    val height = 28.dp
+
+    /** Android's minimum target, which is what a tag of 28 dp of ink is centred inside. */
+    val target = 48.dp
+
+    /** The transparent air above and below the ink, on a tag that takes the click. */
+    val slack = (target - height) / 2
+}
