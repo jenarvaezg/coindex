@@ -18,9 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -211,6 +213,15 @@ fun IndexScreen(
     // Saved across a rotation and never persisted (ADR 0021 §1), unlike the shelf above it.
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
+    // Countries whose absences the collector unfolded (#417). Saved across a rotation like the
+    // search box and, like it, never persisted: which country you were reading is not a preference
+    // the app should still hold tomorrow, and the sheet opens folded so the axis keeps its measure.
+    var unfolded by rememberSaveable(
+        saver = listSaver<MutableState<Set<String>>, String>(
+            save = { it.value.toList() },
+            restore = { mutableStateOf(it.toSet()) },
+        ),
+    ) { mutableStateOf(emptySet<String>()) }
     // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
     // the notebook needs no mechanism of its own to choose pages.
     val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
@@ -493,6 +504,14 @@ fun IndexScreen(
                                     axis = NotebookAxis.ByCountry,
                                 ),
                             )
+                        },
+                        expandedCountries = unfolded,
+                        onToggleFold = { country ->
+                            unfolded = if (country in unfolded) {
+                                unfolded - country
+                            } else {
+                                unfolded + country
+                            }
                         },
                     )
                 }

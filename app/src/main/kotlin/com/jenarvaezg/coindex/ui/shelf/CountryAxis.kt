@@ -66,6 +66,54 @@ data class CountryAxisModel(
 }
 
 /**
+ * What a country block paints, and how many absences it keeps behind the fold (#417).
+ *
+ * Venezuela 42/115 printed seventy-three dotted holes: ten rows of identical circles to cross on
+ * the way to Haití, and the whole sheet measured 7,15 screens against the 2,25 the atlas had
+ * measured when this axis was chosen (`docs/ux/pliegue-417.md`).
+ */
+data class CountryAxisFold(
+    val cells: List<CountryAxisCell>,
+    /**
+     * Absences the fold would keep — the number the mark says, folded or open.
+     *
+     * Zero means there is no fold at all: the block paints every absence it has, and nothing offers
+     * to hide them. It is not the same as an open fold, which still counts what closing it hides.
+     */
+    val foldable: Int,
+)
+
+/**
+ * A country's coins first, then **one row** of absences, and the rest behind «… y faltan N».
+ *
+ * Three decisions, taken on the HTML mock-up of the #417 at phone size and none of them free:
+ *
+ * - **The coins come together.** To summarise absences at all they have to be at the end, so the
+ *   block stops saying *where* a coin falls inside its series. That reading moves to the plate,
+ *   which says it with the year and the name (#473); here the question is what this country is.
+ * - **One row of absences always**, so the absence keeps a face — a country that owns nothing of a
+ *   sequence still shows what the sequence looks like — and the cost stays predictable.
+ * - **The fold only appears when what it hides is more than that row.** Sudáfrica 2/9 prints its
+ *   seven holes whole: «… y faltan 2» is more ink than the two holes it would save.
+ *
+ * Loose pieces count as coins and not as absences: they are metal the collector owns, with no
+ * cardboard behind them (§9), so they travel with the owned slots.
+ *
+ * @param columns how many holes fit in one row, measured from the width the block actually has.
+ * @param expanded whether the collector opened this country's fold.
+ */
+fun CountryAxisBlock.fold(columns: Int, expanded: Boolean = false): CountryAxisFold {
+    val missing = cells.filter { it is CountryAxisCell.Slot && !it.owned }
+    val present = cells.filterNot { it is CountryAxisCell.Slot && !it.owned }
+    // A row of zero holes is not a measurement: paint the block whole rather than hide all of it.
+    val foldable = if (columns <= 0) 0 else (missing.size - columns).coerceAtLeast(0)
+    if (expanded || foldable == 0) {
+        return CountryAxisFold(cells = present + missing, foldable = foldable)
+    }
+    return CountryAxisFold(cells = present + missing.take(columns), foldable = foldable)
+}
+
+/**
  * The country axis of the notebook (ADR 0026 §9 / atlas-315).
  *
  * Each measurable member of every evidenced catalog becomes a cell in **the member's** country

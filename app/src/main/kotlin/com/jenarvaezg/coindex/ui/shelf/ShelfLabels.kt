@@ -228,6 +228,28 @@ fun yearAxisQuantityMark(quantity: Int): String? =
 fun countryAxisTally(ownedSlots: Int, totalSlots: Int): String =
     tally(ownedSlots, totalSlots, "casilla", "casillas")
 
+/**
+ * The fold at the end of a country's absences (#417).
+ *
+ * Says the number and not «ver más», because the number is the finding: the row of holes above it
+ * already shows what an absence looks like, so what the collector still does not know is how many
+ * there are. Folded it reads as the sentence the ratio started —«Venezuela 42/115 … y faltan 66»—
+ * and open it names the way back.
+ */
+fun countryAxisFoldLabel(hidden: Int, expanded: Boolean): String = when {
+    expanded && hidden == 1 -> "Plegar la que falta"
+    expanded -> "Plegar las $hidden"
+    hidden == 1 -> "… y falta 1"
+    else -> "… y faltan $hidden"
+}
+
+/** What the fold does when touched, for a collector who cannot see the holes it opens. */
+fun countryAxisFoldAction(hidden: Int, expanded: Boolean): String = if (expanded) {
+    "Volver a plegar las casillas que faltan"
+} else {
+    "Ver ${plural(hidden, "casilla que falta", "casillas que faltan")}"
+}
+
 fun indexTally(shown: Int, total: Int): String = tally(shown, total, "colección", "colecciones")
 
 fun coinsTally(shown: Int, total: Int): String = tally(shown, total, "tipo", "tipos")

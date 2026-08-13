@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,11 +20,13 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
@@ -37,6 +40,9 @@ import com.jenarvaezg.coindex.ui.shelf.YearAxisDecade
 import com.jenarvaezg.coindex.ui.shelf.YearAxisIsland
 import com.jenarvaezg.coindex.ui.shelf.YearAxisModel
 import com.jenarvaezg.coindex.ui.shelf.YearCellState
+import com.jenarvaezg.coindex.ui.shelf.countryAxisFoldAction
+import com.jenarvaezg.coindex.ui.shelf.countryAxisFoldLabel
+import com.jenarvaezg.coindex.ui.shelf.fold
 import com.jenarvaezg.coindex.ui.shelf.yearAxisQuantityMark
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -51,8 +57,11 @@ val AXIS_GAP = 5.dp
 /** Dense hole of the country and year axes — many casillas at once, not a card. */
 val AXIS_HOLE = 34.dp
 
-/** Country-axis label column: name + fraction, left of the wrapping holes. */
+/** Country-axis label column: name + fraction + fold, left of the wrapping holes. */
 private val COUNTRY_LABEL_WIDTH = 88.dp
+
+/** Between that column and the holes, and part of the width the fold counts columns in. */
+private val COUNTRY_LABEL_GAP = 8.dp
 
 /**
  * Decade label column of the year axis (atlas-315: «1870», «1960» left of the ten seats).
@@ -94,35 +103,94 @@ fun CountryAxisRow(
     images: Map<Int, TypeImages>,
     onCountryClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    expanded: Boolean = false,
+    onToggleFold: (String) -> Unit = {},
 ) {
-    Row(
+    // The fold needs to know how many holes fit in a row, and that is the width this block actually
+    // got — not a constant. A phone gives seven; a tablet or a fold gives more, and the sample row
+    // grows with it instead of hiding absences that had room to paint.
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .clickable(role = Role.Button, onClick = { onCountryClick(block.country) }),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Column(modifier = Modifier.width(COUNTRY_LABEL_WIDTH)) {
-            Text(
-                block.country,
-                style = MaterialTheme.typography.titleMedium,
-                color = Paper.ink,
-            )
-            Text(
-                block.label,
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.rust,
-                modifier = Modifier.padding(top = 2.dp),
-            )
-        }
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(AXIS_GAP),
-            verticalArrangement = Arrangement.spacedBy(AXIS_GAP),
-            modifier = Modifier.weight(1f),
-        ) {
-            for (cell in block.cells) {
-                AxisHole(cell = cell, images = images)
+        val holesWidth = maxWidth - COUNTRY_LABEL_WIDTH - COUNTRY_LABEL_GAP
+        val columns = ((holesWidth + AXIS_GAP) / (AXIS_HOLE + AXIS_GAP)).toInt()
+        val fold = block.fold(columns = columns, expanded = expanded)
+        Row(horizontalArrangement = Arrangement.spacedBy(COUNTRY_LABEL_GAP)) {
+            Column(modifier = Modifier.width(COUNTRY_LABEL_WIDTH)) {
+                Text(
+                    block.country,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Paper.ink,
+                )
+                Text(
+                    block.label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Paper.rust,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+                // The fold hangs from the ratio and not from the last row of holes: it is the rest
+                // of that sentence — «Venezuela 42/115 … y faltan 66» — and the column the name
+                // lives in is already tall enough to hold it. Put at the end of the holes it fell
+                // into a line of its own whenever the sample row came out full, which was a blank
+                // renglón for a mark that had a home.
+                if (fold.foldable > 0) {
+                    CountryAxisFoldMark(
+                        hidden = fold.foldable,
+                        expanded = expanded,
+                        onClick = { onToggleFold(block.country) },
+                    )
+                }
+            }
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(AXIS_GAP),
+                verticalArrangement = Arrangement.spacedBy(AXIS_GAP),
+                modifier = Modifier.weight(1f),
+            ) {
+                for (cell in fold.cells) {
+                    AxisHole(cell = cell, images = images)
+                }
             }
         }
+    }
+}
+
+/**
+ * The «… y faltan 66» at the end of a country's absences, and the way back (#417).
+ *
+ * A tap here does not open Monedas like the rest of the block: it unfolds the holes in place, which
+ * is why it takes its own click and stops the one behind it. Rust and underlined so it reads as the
+ * sentence the ratio started and as something that can be pressed.
+ *
+ * The ink is one line of [MaterialTheme.typography.labelLarge] and it buys the rest of its target
+ * with [minimumInteractiveComponentSize], exactly like the year tag of a casilla (#473): a mark
+ * that opens sixty-six holes cannot be harder to hit than the holes themselves.
+ */
+@Composable
+private fun CountryAxisFoldMark(
+    hidden: Int,
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .clickable(
+                role = Role.Button,
+                onClickLabel = countryAxisFoldAction(hidden = hidden, expanded = expanded),
+                onClick = onClick,
+            )
+            .padding(horizontal = 4.dp),
+    ) {
+        Text(
+            countryAxisFoldLabel(hidden = hidden, expanded = expanded),
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.rust,
+            textDecoration = TextDecoration.Underline,
+        )
     }
 }
 
@@ -380,9 +448,18 @@ fun LazyGridScope.countryAxisItems(
     model: CountryAxisModel,
     images: Map<Int, TypeImages>,
     onCountryClick: (String) -> Unit,
+    /** Countries whose fold the collector opened (#417). */
+    expandedCountries: Set<String> = emptySet(),
+    onToggleFold: (String) -> Unit = {},
 ) {
     items(model.body, key = { "country-${it.country}" }) { block ->
-        CountryAxisRow(block = block, images = images, onCountryClick = onCountryClick)
+        CountryAxisRow(
+            block = block,
+            images = images,
+            onCountryClick = onCountryClick,
+            expanded = block.country in expandedCountries,
+            onToggleFold = onToggleFold,
+        )
     }
     if (model.tail.isNotEmpty()) {
         item(
