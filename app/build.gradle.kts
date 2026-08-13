@@ -41,16 +41,17 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 60
-        // Patch on top of 1.2.17: a country's absences show one row and fold the rest behind
-        // «… y faltan 66», which takes the sheet from 7,15 screens to 3,30 (#417).
+        versionCode = 61
+        // Patch on top of 1.2.18: a plate that spills prints its masthead once and the thin name
+        // band on every page after it, which is 207 folios of the father's notebook against 188 —
+        // the specification under the rule was costing a row of coins to say nothing new (#480).
         //
         // The phones are on **1.2.11**, `versionCode` 53 — which is what the latest release's
         // `update.json` says, not what anybody remembers — so 1.2.12, 1.2.13 and 1.2.14 were merged
         // unpublished and reach a phone with this one. This line kept claiming 1.2.10 for four merges
         // after 1.2.11 was out, which is what it is for: `scripts/release.sh` reads the published
         // manifest and refuses a `versionCode` that does not beat it, and this says who is waiting.
-        versionName = "1.2.18"
+        versionName = "1.2.19"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

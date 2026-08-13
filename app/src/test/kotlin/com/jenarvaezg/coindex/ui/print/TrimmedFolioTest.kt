@@ -48,7 +48,7 @@ class TrimmedFolioTest {
         assertEquals(a4.footMm, trimmed.footMm)
         // What is left is exactly the block and the two things around it that are not the rejilla.
         assertEquals(
-            plate.grid(a4).blockHeightMm(plate.cells.size) + a4.marginMm * 2 + a4.footMm,
+            plate.grid(a4).blockHeightMm(plate.cells.size, a4.heading) + a4.marginMm * 2 + a4.footMm,
             trimmed.heightMm,
         )
     }

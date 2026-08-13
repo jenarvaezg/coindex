@@ -164,8 +164,14 @@ enum class PrintHeading(
      * printed folio. The subtitle and the second line of the title are what pays for the plate
      * underneath.
      *
-     * A plate that spills still repeats it on every one of its pages, for the reason it always did:
-     * on paper there is no scrolling back to find out which collection you are looking at.
+     * **And the band every page that continues a plate gets, whatever band its first page took**
+     * (#480). A plate that spills still repeats its name on every one of its pages, for the reason it
+     * always did — on paper there is no scrolling back to find out which collection you are looking at
+     * — but the specification under the rule says nothing on page two that page one has not just said,
+     * and it costs a row of coins. So what repeats is this band and not the masthead: the identity of
+     * the page survives, the summary does not. Measured over the seventy-five shipped catalogs with
+     * the collector's own switches it is 227 folios against 247, and 187 with the code beside the
+     * caption (#478).
      */
     Slim(millimetres = 14f, titleLines = 1, subtitle = false, facts = false),
 }
@@ -191,10 +197,13 @@ data class PrintGeometry(
     /** Wide enough that a domestic printer's unprintable border never eats a coin. */
     val marginMm: Float = 15f,
     /**
-     * The band each plate's heading gets, repeated on every page of one that spills over.
+     * The band a plate's heading gets on the **first** page it is printed on.
      *
      * It is the thin heading of «compartir página» (#232) that makes this a field rather than a
      * constant: two plates in one folio cannot each take forty millimetres of band.
+     *
+     * First page and no longer every page since #480: what a plate that spills prints again after the
+     * page turns is [continuationHeading], and this is the band that says everything once.
      */
     val heading: PrintHeading = PrintHeading.Masthead,
     /**
@@ -365,6 +374,31 @@ data class PrintGeometry(
     val headingMm: Float get() = heading.millimetres
 
     /**
+     * The band a page that **continues** a plate gets, which is the thin one (#480).
+     *
+     * **Derived and not a field**, because it is not a question a configuration answers: whatever band
+     * a plate's first page took, its second page has already said everything that band summarises, and
+     * what a reader still needs from it once the page has turned is the name. [PrintHeading.Slim] is
+     * exactly that band — #232 designed it for the folios two plates share — so this is not a fourth
+     * shape but the one that was already there, asked for by a second question.
+     *
+     * Never taller than [heading], and it cannot be: fourteen millimetres is the shortest of the three,
+     * so a plate that continues can only gain rows. And «compartir página» already prints `Slim` on
+     * every page of everything, so that switch comes out cut for cut as #232 left it.
+     */
+    val continuationHeading: PrintHeading get() = PrintHeading.Slim
+
+    /**
+     * The band one turn of a plate gets: its own the first time it is printed, the thin one after.
+     *
+     * The one place that question is answered, asked by the packer before anything is drawn and by the
+     * renderer that draws it (#480) — the height and the contents of a band are one value, so a second
+     * spelling of *which* band would be a heading drawing what nobody counted.
+     */
+    fun headingFor(continuation: Boolean): PrintHeading =
+        if (continuation) continuationHeading else heading
+
+    /**
      * The air between two plates on one folio, which is none at all where a folio holds one (#232).
      *
      * Derived from [sharesPage] rather than a field of its own, because a gap that could be set
@@ -386,6 +420,15 @@ data class PrintGeometry(
 
     /** What one plate's rejilla gets when it has the folio to itself: everything under its band. */
     val gridHeightMm: Float get() = contentHeightMm - headingMm
+
+    /**
+     * The same folio when what opens it is a plate **continuing**, whose band is the thin one (#480).
+     *
+     * The twenty-six millimetres between the two are the row of coins the repeated specification was
+     * costing: an ounce's rejilla goes from three rows to four, and the Kookaburra from ten pages to
+     * five with the collector's switches on.
+     */
+    val continuationGridHeightMm: Float get() = contentHeightMm - continuationHeading.millimetres
 
     /**
      * How wide the coins of one cell are: [facesPerCell] of them at [diameterMm], gutters between.
@@ -632,6 +675,14 @@ data class PrintGrid(
     val diameterMm: Float,
     val columns: Int,
     val rows: Int,
+    /**
+     * The rows a folio gives this plate when what opens it is a **continuation** of it (#480).
+     *
+     * At least [rows] and usually more, because the band over a continuation page is the thin one:
+     * a plate of ounces gets three rows on its first folio and four on every one after it. Fitted here
+     * and not asked of the geometry twice, so the two counts are measured against the same cell.
+     */
+    val continuationRows: Int,
 ) {
     /**
      * The millimetres that coin comes out at, which is the height of the band every cell reserves.
@@ -648,7 +699,11 @@ data class PrintGrid(
     /** The coin band and the caption under it, or the caption alone where no coin is printed. */
     val cellHeightMm: Float get() = geometry.cellHeightMm(diameterMm)
 
+    /** What the plate's **first** page holds, which is the band that says everything under it. */
     val cellsPerPage: Int get() = columns * rows
+
+    /** And what each of the pages it continues onto holds, under the thin band (#480). */
+    val continuationCellsPerPage: Int get() = columns * continuationRows
 
     /**
      * How wide a full row of this grid is, which is at most the printable width and usually less:
@@ -668,25 +723,29 @@ data class PrintGrid(
     fun rowsFor(cellCount: Int): Int = (cellCount + columns - 1) / columns
 
     /**
-     * What a block of [cellCount] cells takes out of a folio: its own heading, and the rows under it.
+     * What a block of [cellCount] cells takes out of a folio: [heading], and the rows under it.
      *
      * The one place that answer is given, because the packer and the block have to agree on it
      * forever: the packer subtracts this from what is left of a folio *before* anything is drawn, and
      * the block is drawn to it (#232). Two spellings of the same sum would be two page counts.
+     *
+     * The band comes in rather than being read off the geometry (#480): it is the plate's own the first
+     * time it is printed and the thin one on every page it continues onto, which is a fact about the
+     * *block* and not about the paper. Whoever asks has to say which turn of the plate this is.
      */
-    fun blockHeightMm(cellCount: Int): Float =
-        geometry.headingMm + heightOfMm(rowsFor(cellCount))
+    fun blockHeightMm(cellCount: Int, heading: PrintHeading): Float =
+        heading.millimetres + heightOfMm(rowsFor(cellCount))
 
     /**
-     * How many rows of this plate fit in [availableMm] of a folio, its own heading included.
+     * How many rows of this plate fit in [availableMm] of a folio, [heading] included.
      *
      * **Zero is a real answer here**, and it is what [rows] can never be: a plate given the folio to
      * itself always gets at least one row, however tall its coins, because the alternative is a page
      * count of zero. A plate offered the tail of a folio somebody else started may simply not fit,
      * and then it opens the next one (#232).
      */
-    fun rowsIn(availableMm: Float): Int {
-        val forCells = availableMm - geometry.headingMm
+    fun rowsIn(availableMm: Float, heading: PrintHeading): Int {
+        val forCells = availableMm - heading.millimetres
         if (forCells < cellHeightMm) return 0
         return fitCount(forCells, cellHeightMm, geometry.gutterMm)
     }
@@ -697,23 +756,33 @@ fun printGrid(diameterMm: Float?, geometry: PrintGeometry): PrintGrid {
     val diameter = diameterMm
         ?.takeIf { it > 0f }
         ?: geometry.fallbackDiameterMm
+    val cellHeightMm = geometry.cellHeightMm(diameter)
     return PrintGrid(
         geometry = geometry,
         diameterMm = diameter,
         columns = fitCount(geometry.gridWidthMm, geometry.cellWidthMm(diameter), geometry.gutterMm),
-        rows = fitCount(geometry.gridHeightMm, geometry.cellHeightMm(diameter), geometry.gutterMm),
+        rows = fitCount(geometry.gridHeightMm, cellHeightMm, geometry.gutterMm),
+        continuationRows = fitCount(geometry.continuationGridHeightMm, cellHeightMm, geometry.gutterMm),
     )
 }
 
 /**
  * How many pages a plate of [cellCount] cells takes on this grid.
  *
+ * **Two capacities and no longer one** (#480): the first page pays for the band that says everything
+ * and the ones after it pay for the thin one, so this is not a division — it is the first page and then
+ * as many continuations as the rest of the cells need. A plate of ounces that used to be four pages of
+ * twelve is twelve and then three sixteens.
+ *
  * Never zero: a collection with nothing in it is still a page saying so, and a page count of zero
  * would drop the plate out of the notebook without telling anyone.
  */
 fun pageCount(cellCount: Int, grid: PrintGrid): Int {
-    val perPage = grid.cellsPerPage.coerceAtLeast(1)
-    return ((cellCount + perPage - 1) / perPage).coerceAtLeast(1)
+    val onFirst = grid.cellsPerPage.coerceAtLeast(1)
+    if (cellCount <= onFirst) return 1
+    val perContinuation = grid.continuationCellsPerPage.coerceAtLeast(1)
+    val left = cellCount - onFirst
+    return 1 + (left + perContinuation - 1) / perContinuation
 }
 
 /** How many cells of [cellSizeMm] fit in [availableMm], gutters between them and not around. */
