@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.shelf
 
+import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,14 +27,101 @@ class ShelfLabelsTest {
         assertEquals("Filtros y orden", coinsShelfSummary(CoinsShelf()))
     }
 
+    /**
+     * Counted **and named** (#414): «1 filtro» sent the collector to open the shelf and scan a wall
+     * of chips for the green one, which on the year facet is a calendar of them.
+     */
     @Test
-    fun `a filter that is on is counted out loud`() {
-        assertEquals("1 filtro", indexShelfSummary(IndexShelf(issuer = "Venezuela")))
+    fun `a filter that is on is counted out loud and said out loud`() {
+        assertEquals("1 filtro · Venezuela", indexShelfSummary(IndexShelf(issuer = "Venezuela")))
         assertEquals(
-            "2 filtros",
+            "1 filtro · Año 1960",
+            coinsShelfSummary(CoinsShelf(year = YearFilter.Of(1960))),
+        )
+        assertEquals(
+            "1 filtro · Sin colección",
+            coinsShelfSummary(CoinsShelf(membership = Membership.InNone)),
+        )
+    }
+
+    /** In the order the shelf paints the rows, so the line and the open shelf read downwards alike. */
+    @Test
+    fun `every filter that is on is named, in the order of the chip rows`() {
+        assertEquals(
+            "2 filtros · Venezuela · Serie Cerrada",
             indexShelfSummary(IndexShelf(issuer = "Venezuela", series = SeriesStatus.Closed)),
         )
-        assertEquals("1 filtro", coinsShelfSummary(CoinsShelf(membership = Membership.InNone)))
+        assertEquals(
+            "2 filtros · Peso 10 – 25 g · Clase Monedas",
+            coinsShelfSummary(
+                CoinsShelf(weight = GramBand.TenToTwentyFive, objectClass = ObjectClass.Coin),
+            ),
+        )
+    }
+
+    /**
+     * The two chips that cannot be read away from their eyebrow, for opposite reasons: «Cerrada» is
+     * an adjective on its own, and «Monedas» is the name of the screen it would be printed on.
+     */
+    @Test
+    fun `a chip that would be read as something else keeps its facet`() {
+        assertEquals(
+            "1 filtro · Serie Abierta",
+            indexShelfSummary(IndexShelf(series = SeriesStatus.Open)),
+        )
+        assertEquals(
+            "1 filtro · Clase Medallas y fichas",
+            coinsShelfSummary(CoinsShelf(objectClass = ObjectClass.Exonumia)),
+        )
+    }
+
+    /**
+     * Named while open too, which is where the axis stays quiet (atlas-315).
+     *
+     * The axis is one chip in the first row of an opened shelf, so opening it is enough to see it.
+     * A chosen year is eight rows down behind a calendar of chips — the walk #414 is about — so the
+     * line keeps saying which one it is for as long as it is on.
+     */
+    @Test
+    fun `the filters are named whether the shelf is open or folded`() {
+        assertEquals(
+            "1 filtro · Año 1960",
+            coinsShelfSummary(CoinsShelf(year = YearFilter.Of(1960)), expanded = true),
+        )
+    }
+
+    /**
+     * A chip borrows its facet's noun only when it does not name itself (#414).
+     *
+     * Chip labels are written to be read under their facet's eyebrow: «1960» and «10 – 25 g» say
+     * what they are only because «Año» and «Peso» are printed above them, and out on the folded line
+     * there is no eyebrow. «Sin colección» and «Antes de 1950» carry their own noun already, and
+     * «Colección Sin colección» would be the same mistake in the other direction.
+     */
+    @Test
+    fun `a chip that names itself is not made to say its facet twice`() {
+        assertEquals(
+            "1 filtro · Antes de 1950",
+            indexShelfSummary(IndexShelf(startsIn = StartBand.BeforeFifty)),
+        )
+        assertEquals(
+            "1 filtro · Empieza en 1950 – 1999",
+            indexShelfSummary(IndexShelf(startsIn = StartBand.FiftyToNinetyNine)),
+        )
+        assertEquals(
+            "1 filtro · Conjunto o caja",
+            indexShelfSummary(IndexShelf(weight = OunceBand.Spanning)),
+        )
+        assertEquals("1 filtro · Sin peso", coinsShelfSummary(CoinsShelf(weight = GramBand.Unweighed)))
+        assertEquals("1 filtro · Sin año", coinsShelfSummary(CoinsShelf(year = YearFilter.Undated)))
+        assertEquals(
+            "1 filtro · Sin lámina",
+            indexShelfSummary(IndexShelf(status = PlateStatus.NoPlate)),
+        )
+        assertEquals(
+            "1 filtro · A medias",
+            indexShelfSummary(IndexShelf(status = PlateStatus.PartlyDone)),
+        )
     }
 
     @Test
@@ -43,7 +131,7 @@ class ShelfLabelsTest {
             coinsShelfSummary(CoinsShelf(sort = CoinSort.Heaviest)),
         )
         assertEquals(
-            "1 filtro · orden alfabético",
+            "1 filtro · Sin colección · orden alfabético",
             coinsShelfSummary(
                 CoinsShelf(sort = CoinSort.Alphabetical, membership = Membership.InNone),
             ),
@@ -58,7 +146,7 @@ class ShelfLabelsTest {
             indexShelfSummary(IndexShelf(sort = IndexSort.RecentlyAdded)),
         )
         assertEquals(
-            "1 filtro · orden alfabético",
+            "1 filtro · Venezuela · orden alfabético",
             indexShelfSummary(IndexShelf(issuer = "Venezuela", sort = IndexSort.Alphabetical)),
         )
         // ADR 0021 §6's own comparator: choosing it on purpose is not a deviation to announce.
@@ -70,7 +158,7 @@ class ShelfLabelsTest {
         assertEquals("Eje País", indexShelfSummary(IndexShelf(axis = NotebookAxis.ByCountry)))
         assertEquals("Eje Año", indexShelfSummary(IndexShelf(axis = NotebookAxis.ByYear)))
         assertEquals(
-            "1 filtro · Eje País",
+            "1 filtro · Italia · Eje País",
             indexShelfSummary(IndexShelf(axis = NotebookAxis.ByCountry, issuer = "Italia")),
         )
         // Open: the chip is in view, so the line stays quiet about the axis (atlas-315).

@@ -35,7 +35,7 @@ data class CoinsShelf(
      * How the list is ordered on the axis of the notebook (ADR 0026 §8–§9).
      *
      * Same facet the index carries: the two hierarchies with a list both gain it. It is not a
-     * filter, so it is not counted in [active].
+     * filter, so it is not counted in [active] nor named among them on the folded line.
      */
     val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,

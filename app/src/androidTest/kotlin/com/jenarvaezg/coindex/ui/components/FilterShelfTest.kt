@@ -134,6 +134,26 @@ class FilterShelfTest {
     }
 
     /**
+     * The line of #414 fits whole: «1 filtro · Año 1960 · Eje Año» beside its count.
+     *
+     * Naming the chosen chip is worth nothing if the name is the part that gets ellipsised, and the
+     * summary is by design the one that gives way to the tally. This is the case the issue asked
+     * for — one filter, on the year axis of Monedas — measured on the shelf and not in a string.
+     */
+    @Test
+    fun theNamedFilterOfOneChosenChipFitsBesideTheCount() {
+        shelfWithAction(summary = "1 filtro · Año 1960 · Eje Año", tally = "6 de 191 tipos")
+
+        val laid = textLayoutOf("▸ 1 filtro · Año 1960 · Eje Año")
+
+        assertEquals(1, laid.lineCount)
+        assertTrue(
+            "El resumen no cabe: caja=${laid.size.width}, texto=${laid.multiParagraph.maxIntrinsicWidth}",
+            laid.size.width >= laid.multiParagraph.maxIntrinsicWidth,
+        )
+    }
+
+    /**
      * And it survives a collector who reads the phone at twice the type size (#416).
      *
      * Android's largest real setting, and the count still lands on one line: doubled it takes 160

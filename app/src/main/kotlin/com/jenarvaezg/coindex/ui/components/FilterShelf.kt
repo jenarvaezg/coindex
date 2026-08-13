@@ -23,18 +23,25 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.jenarvaezg.coindex.ui.shelf.SEARCH_CLEAR_LABEL
 import com.jenarvaezg.coindex.ui.shelf.SEARCH_PLACEHOLDER
 import com.jenarvaezg.coindex.ui.shelf.shelfDisclosure
 import com.jenarvaezg.coindex.ui.theme.Paper
+
+/** How tall the search box is, shared with the aspa that clears it and with the test of the pair. */
+val SEARCH_FIELD_HEIGHT = 40.dp
 
 /**
  * The search box of a hierarchy: always visible, never persisted (ADR 0021 §1).
@@ -59,17 +66,20 @@ fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         modifier = modifier
             .fillMaxWidth()
-            .height(40.dp)
+            .height(SEARCH_FIELD_HEIGHT)
             .background(Paper.card),
         decorationBox = { field ->
+            val clearable = value.isNotEmpty()
             Row(
-                modifier = Modifier.padding(horizontal = 10.dp),
+                // The end padding is the aspa's when there is one: the button carries its own air
+                // inside its square, and 10 dp more would push its ink off the field's margin.
+                modifier = Modifier.padding(start = 10.dp, end = if (clearable) 0.dp else 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 SearchGlyph()
                 Spacer(Modifier.width(10.dp))
                 Box(modifier = Modifier.weight(1f)) {
-                    if (value.isEmpty()) {
+                    if (!clearable) {
                         Text(
                             SEARCH_PLACEHOLDER,
                             style = MaterialTheme.typography.bodyLarge,
@@ -78,9 +88,36 @@ fun SearchField(
                     }
                     field()
                 }
+                if (clearable) {
+                    ClearGlyph(onClick = { onValueChange("") })
+                }
             }
         },
     )
+}
+
+/**
+ * The aspa that empties the box, offered only while there is something to empty (#414).
+ *
+ * Its ink is [SEARCH_FIELD_HEIGHT] square because the field is that tall, and the drawn cross is
+ * 16 dp of that — so the tap does not have to find the stroke. Android's 48 dp it buys the way the
+ * year tag does ([RecessedYearTag]), with [minimumInteractiveComponentSize]: the target grows past
+ * the field without the field growing with it, which is the whole reason that modifier exists.
+ */
+@Composable
+private fun ClearGlyph(onClick: () -> Unit) {
+    Canvas(
+        Modifier
+            .minimumInteractiveComponentSize()
+            .size(SEARCH_FIELD_HEIGHT)
+            .semantics { contentDescription = SEARCH_CLEAR_LABEL }
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(12.dp),
+    ) {
+        val stroke = 1.5.dp.toPx()
+        drawLine(Paper.muted, Offset(0f, 0f), Offset(size.width, size.height), stroke)
+        drawLine(Paper.muted, Offset(size.width, 0f), Offset(0f, size.height), stroke)
+    }
 }
 
 @Composable
