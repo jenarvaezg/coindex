@@ -1,8 +1,20 @@
 package com.jenarvaezg.coindex.ui.shelf
 
+import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.plural
+import com.jenarvaezg.coindex.ui.seriesLabel
 
 const val SEARCH_PLACEHOLDER: String = "Buscar"
+
+/**
+ * The way out of a typed search, which until #414 was the backspace key held down.
+ *
+ * The query is the one narrowing that does **not** survive a launch (ADR 0021 §1), but it does
+ * survive walking into a collection and back, so «The» typed once keeps hiding the rest of the
+ * shelf for as long as the collector stays on the screen. The aspa is what the shelf's own
+ * [CLEAR_FILTERS_ACTION] is for the chips: one tap back to everything.
+ */
+const val SEARCH_CLEAR_LABEL: String = "Borrar la búsqueda"
 
 /**
  * The chip that means «no filter on this facet», in one word across the ten of them (ADR 0026 §5).
@@ -96,10 +108,12 @@ fun shelfDisclosure(expanded: Boolean): String = if (expanded) "▾ " else "▸ 
  *
  * The axis is named the same way — only when it is not «por lámina» — and **only while the shelf is
  * folded** (ADR 0026 §9 / atlas-315): open, the chip is in view, so the line stays quiet about it.
+ * The filters are not: the axis is one chip in the first row of an opened shelf, and a chosen year
+ * is eight rows down behind a calendar of them, which is the walk #414 is about.
  */
 fun indexShelfSummary(shelf: IndexShelf, expanded: Boolean = false): String =
     shelfSummary(
-        active = shelf.active,
+        filters = shelf.namedFilters(),
         sort = shelf.sort.label.takeIf { shelf.sort != IndexSort.MostComplete },
         axis = shelf.axis.summaryName().takeIf { !expanded },
     )
@@ -107,10 +121,51 @@ fun indexShelfSummary(shelf: IndexShelf, expanded: Boolean = false): String =
 /** The same line on the other side, which carries a sort of its own (ADR 0021 §1). */
 fun coinsShelfSummary(shelf: CoinsShelf, expanded: Boolean = false): String =
     shelfSummary(
-        active = shelf.active,
+        filters = shelf.namedFilters(),
         sort = shelf.sort.label.takeIf { shelf.sort != CoinSort.ByCountry },
         axis = shelf.axis.summaryName().takeIf { !expanded },
     )
+
+/**
+ * Which chips are chosen, in the order the shelf paints their rows (#414).
+ *
+ * The count alone — «1 filtro» — said that something was narrowing and left the collector to open
+ * the shelf and hunt the green chip through every row, which on Monedas is a calendar of years. The
+ * order is the rows' own so that the line and the open shelf are read downwards alike.
+ */
+private fun IndexShelf.namedFilters(): List<String> = listOfNotNull(
+    issuer?.let { named(COUNTRY_FACET, it) },
+    weight?.let { named(WEIGHT_FACET, it.label) },
+    startsIn?.let { named(STARTS_IN_FACET, it.label) },
+    status?.let { named(STATUS_FACET, it.label) },
+    // «Cerrada» is an adjective and nothing else: it means nothing away from the eyebrow it was
+    // written under, so it takes its facet's noun however it begins.
+    series?.let { "$SERIES_FACET ${seriesLabel(it)}" },
+)
+
+/** The same on the other side, whose five rows are the ones of [CoinsFacet]. */
+private fun CoinsShelf.namedFilters(): List<String> = listOfNotNull(
+    issuer?.let { named(COUNTRY_FACET, it) },
+    weight?.let { named(WEIGHT_FACET, it.label) },
+    year?.let { named(YEAR_FACET, it.label) },
+    // The other one that cannot stand alone, and for the opposite reason: «Monedas» is a word this
+    // screen is already called, so on its own line it reads as the screen and not as a filter.
+    objectClass?.let { "$CLASS_FACET ${objectClassChip(it)}" },
+    membership?.let { named(MEMBERSHIP_FACET, it.label) },
+)
+
+/**
+ * One chosen chip as the folded line has to carry it: «Año 1960», «Venezuela», «Sin peso».
+ *
+ * A chip label is written to be read **under its facet's eyebrow**, and out here there is no
+ * eyebrow. The ones that need the facet's name are the ones that do not begin with a word of their
+ * own — «1960», «1950 – 1999», «½ – 1 oz» — while «Sin colección», «Antes de 1950» and «A medias»
+ * say which facet they answer already, and «Colección Sin colección» would be the same mistake
+ * facing the other way. Serie and Clase are the two the rule cannot reach, and they say so where
+ * they are named.
+ */
+private fun named(facet: String, label: String): String =
+    if (label.firstOrNull()?.isLetter() == true) label else "$facet $label"
 
 /** Folded name of a non-default axis: «Eje País», never «eje por país». */
 private fun NotebookAxis.summaryName(): String? = when (this) {
@@ -124,13 +179,17 @@ private fun NotebookAxis.summaryName(): String? = when (this) {
  *
  * The sort and the axis are named only when they are not the default: choosing the order the screen
  * would have used anyway is not a deviation to announce.
+ *
+ * The count leads and the names follow it, which is the order of sacrifice: the line is one line
+ * and truncates from the right (see [FilterShelf]), so what a shelf narrowed five ways loses first
+ * is the sort and the axis at the tail, then the last chips named — never «5 filtros».
  */
-private fun shelfSummary(active: Int, sort: String?, axis: String? = null): String {
-    val filters = active.takeIf { it > 0 }?.let { plural(it, "filtro", "filtros") }
+private fun shelfSummary(filters: List<String>, sort: String?, axis: String? = null): String {
+    val counted = filters.takeIf { it.isNotEmpty() }?.let { plural(it.size, "filtro", "filtros") }
     val order = sort?.let { "orden ${it.lowercase()}" }
     val namedAxis = axis?.let { "Eje $it" }
-    return listOfNotNull(filters, order, namedAxis).takeIf { it.isNotEmpty() }?.joinToString(" · ")
-        ?: "Filtros y orden"
+    val parts = listOfNotNull(counted) + filters + listOfNotNull(order, namedAxis)
+    return parts.takeIf { it.isNotEmpty() }?.joinToString(" · ") ?: "Filtros y orden"
 }
 
 /**

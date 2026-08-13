@@ -72,8 +72,8 @@ data class IndexShelf(
     /**
      * How the sheet is ordered (ADR 0026 §9): by plate, by country or by year.
      *
-     * A facet and not a filter — it does not narrow — so it is not counted in [active]. The default
-     * is today's Collections; the folded summary names it only when it is not that one.
+     * A facet and not a filter — it does not narrow — so the folded line does not count it among
+     * them. The default is today's Collections; the summary names it only when it is not that one.
      */
     val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,
@@ -82,9 +82,6 @@ data class IndexShelf(
     val status: PlateStatus? = null,
     val series: SeriesStatus? = null,
 ) {
-    val active: Int
-        get() = listOfNotNull(issuer, weight, startsIn, status, series).size
-
     internal fun matches(subject: ShelfSubject, except: IndexFacet? = null): Boolean =
         (except == IndexFacet.Issuer || issuer == null || issuer in subject.countries) &&
             (except == IndexFacet.Weight || weight == null || subject.weight == weight) &&
