@@ -46,11 +46,12 @@ android {
         // band on every page after it, which is 207 folios of the father's notebook against 188 —
         // the specification under the rule was costing a row of coins to say nothing new (#480).
         //
-        // The phones are on **1.2.11**, `versionCode` 53 — which is what the latest release's
-        // `update.json` says, not what anybody remembers — so 1.2.12, 1.2.13 and 1.2.14 were merged
-        // unpublished and reach a phone with this one. This line kept claiming 1.2.10 for four merges
-        // after 1.2.11 was out, which is what it is for: `scripts/release.sh` reads the published
-        // manifest and refuses a `versionCode` that does not beat it, and this says who is waiting.
+        // The phones are on **1.2.19**, `versionCode` 61 — which is what the latest release's
+        // `update.json` says, not what anybody remembers — so nothing is waiting: this one is
+        // published, and 1.2.17 and 1.2.18 reached a phone inside it. That is what the line is for
+        // and why it is worth correcting after every release: it kept claiming 1.2.11 while 1.2.15
+        // and 1.2.16 were already out, and `scripts/release.sh` reads the published manifest and
+        // refuses a `versionCode` that does not beat it — this only says who is waiting.
         versionName = "1.2.19"
     }
 
