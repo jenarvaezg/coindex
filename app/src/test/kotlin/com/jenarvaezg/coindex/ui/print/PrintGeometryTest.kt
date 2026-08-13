@@ -39,14 +39,78 @@ class PrintGeometryTest {
 
         // El folio entero da las mismas tres filas que la rejilla, que es lo que la hace la misma
         // aritmética: una lámina sola cortada por el empaquetador se corta como siempre se cortó.
-        assertEquals(ounce.rows, ounce.rowsIn(paper.contentHeightMm))
+        assertEquals(ounce.rows, ounce.rowsIn(paper.contentHeightMm, paper.heading))
         // La cabecera sale de lo que queda, así que 40 mm de banda y 56,9 de fila son 96,9.
-        assertEquals(0, ounce.rowsIn(96f))
-        assertEquals(1, ounce.rowsIn(97f))
-        assertEquals(2, ounce.rowsIn(156.8f))
+        assertEquals(0, ounce.rowsIn(96f, paper.heading))
+        assertEquals(1, ounce.rowsIn(97f, paper.heading))
+        assertEquals(2, ounce.rowsIn(156.8f, paper.heading))
         // Y una cola en la que no cabe ni la cabecera no vale para nada.
-        assertEquals(0, ounce.rowsIn(20f))
-        assertEquals(0, ounce.rowsIn(0f))
+        assertEquals(0, ounce.rowsIn(20f, paper.heading))
+        assertEquals(0, ounce.rowsIn(0f, paper.heading))
+        // Qué banda se resta lo dice quien pregunta y no el papel (#480): con la fina, veintiséis
+        // milímetros menos que restar son una fila más en el mismo hueco.
+        assertEquals(0, ounce.rowsIn(70f, paper.continuationHeading))
+        assertEquals(1, ounce.rowsIn(71f, paper.continuationHeading))
+        assertEquals(2, ounce.rowsIn(131f, paper.continuationHeading))
+        assertEquals(1, ounce.rowsIn(131f, paper.heading))
+        assertEquals(3, ounce.rowsIn(191f, paper.continuationHeading))
+        assertEquals(2, ounce.rowsIn(191f, paper.heading))
+    }
+
+    /**
+     * La página que continúa una lámina se lleva la fila que la especificación repetida costaba (#480).
+     *
+     * Es la banda fina del #232 puesta a un segundo trabajo: en la página 2 el bloque de fichas no dice
+     * nada que la página 1 no acabe de decir, y son veintiséis milímetros —los 40 del masthead menos los
+     * 14 del nombre— que en una lámina de onzas valen exactamente una fila de cuatro monedas.
+     *
+     * La rejilla lleva las dos cuentas porque las dos existen en el mismo cuaderno, y la primera nunca
+     * es mayor que la segunda: catorce milímetros es la más corta de las tres bandas.
+     */
+    @Test
+    fun `a page that continues a plate is measured against the thin band`() {
+        assertEquals(PrintHeading.Slim, paper.continuationHeading)
+        assertEquals(213f, paper.gridHeightMm)
+        assertEquals(239f, paper.continuationGridHeightMm)
+
+        // La onza: tres filas en su primera página y cuatro en cada una de las que la continúan.
+        val ounce = grid(40.9f)
+        assertEquals(3, ounce.rows)
+        assertEquals(4, ounce.continuationRows)
+        assertEquals(12, ounce.cellsPerPage)
+        assertEquals(16, ounce.continuationCellsPerPage)
+
+        // Y ninguna lámina puede perder filas al continuar, sea cual sea su moneda.
+        listOf(14.5f, 16f, 22f, 33f, 38.61f, 40.9f, 45.6f).forEach { diameter ->
+            val grid = grid(diameter)
+            assertTrue(
+                grid.continuationRows >= grid.rows,
+                "$diameter mm pierde filas al continuar: ${grid.rows} → ${grid.continuationRows}",
+            )
+            // Y la rejilla de continuación cabe en el folio que se midió contra ella.
+            assertTrue(
+                grid.heightOfMm(grid.continuationRows) <= paper.continuationGridHeightMm,
+                "$diameter mm se sale del folio que continúa",
+            )
+        }
+    }
+
+    /**
+     * Compartir folio no se mueve ni un milímetro (#232, #480).
+     *
+     * La banda que una continuación se lleva **es** la que ese interruptor ya imprime en todas las
+     * páginas, así que allí no hay nada que ahorrar y no hay nada que cambiar: las dos cuentas de la
+     * rejilla son la misma cuenta, y el cuaderno compartido sale cortado como el #232 lo dejó.
+     */
+    @Test
+    fun `on shared folios the thin band was already every page's`() {
+        val shared = printGeometry(NotebookOptions(sharePage = true))
+
+        assertEquals(shared.heading, shared.continuationHeading)
+        assertEquals(shared.gridHeightMm, shared.continuationGridHeightMm)
+        val ounce = printGrid(40.9f, shared)
+        assertEquals(ounce.rows, ounce.continuationRows)
+        assertEquals(ounce.cellsPerPage, ounce.continuationCellsPerPage)
     }
 
     /** Y la altura de un bloque es la de sus filas y las calles entre ellas, nunca alrededor. */
@@ -157,13 +221,21 @@ class PrintGeometryTest {
         assertEquals(177f, roubles.blockWidthMm, 0.01f)
     }
 
+    /**
+     * Y lo que cuesta es la primera página y después las continuaciones, no una división (#480).
+     *
+     * El Kookaburra son 37 emisiones: doce bajo el masthead y las veinticinco restantes a dieciséis por
+     * folio, que son tres páginas donde antes eran cuatro.
+     */
     @Test
     fun `a plate that does not fit continues on the next page`() {
         val ounce = grid(40.9f)
-        // El Kookaburra: 37 emisiones a doce por página.
-        assertEquals(4, pageCount(37, ounce))
+
+        assertEquals(3, pageCount(37, ounce))
         assertEquals(1, pageCount(12, ounce))
         assertEquals(2, pageCount(13, ounce))
+        assertEquals(2, pageCount(28, ounce))
+        assertEquals(3, pageCount(29, ounce))
         // Una lámina de una sola casilla sigue siendo una página, no cero.
         assertEquals(1, pageCount(1, ounce))
         assertEquals(1, pageCount(0, ounce))

@@ -214,9 +214,9 @@ fun NotebookPageSheet(
 }
 
 /**
- * One plate's heading, repeated on every folio it spills onto.
+ * One plate's heading, and the thin band of its name on every folio it spills onto.
  *
- * Its height is fixed by [PrintGeometry.headingMm] and its overflow is clipped, which is what
+ * Its height is fixed by [PrintHeading.millimetres] and its overflow is clipped, which is what
  * keeps the arithmetic of the page count and the drawing of the page in step: a heading that grew
  * with a catalog's specification would push cells off a page the exporter had already counted.
  *
@@ -224,11 +224,15 @@ fun NotebookPageSheet(
  * millimetres of masthead, twenty-eight of a name with no specification (#231) or fourteen of a name
  * band when the folio is shared — and the height and the contents come from the same value precisely
  * so that a subtitle cannot be drawn into millimetres nobody reserved.
+ *
+ * Which of the three is asked of the **block** and no longer of the geometry (#480): a page that
+ * continues a plate gets the thin band, because the specification under the rule has nothing to add
+ * that the page before it did not already say and it costs a row of coins to repeat.
  */
 @Composable
 private fun PlateHeading(block: PrintBlock) {
     val section = block.section
-    val heading = block.geometry.heading
+    val heading = block.heading
     Column(
         modifier = Modifier
             .fillMaxWidth()

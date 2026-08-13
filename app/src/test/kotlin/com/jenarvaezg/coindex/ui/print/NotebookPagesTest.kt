@@ -145,17 +145,21 @@ class NotebookPagesTest {
         )
 
         // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
-        // sólo la última de cada lámina puede ir corta.
+        // sólo la última de cada lámina puede ir corta. La primera cabe lo que el masthead le deja y
+        // las que la continúan lo que la banda fina les deja, que es más (#480).
         sections.forEach { plate ->
             val ofPlate = pages.flatMap { it.blocks }.filter { it.section === plate }
             assertEquals(plate.cells, ofPlate.flatMap { it.cells }, "corte roto: ${plate.title}")
-            val perPage = ofPlate.first().grid.cellsPerPage
+            val grid = ofPlate.first().grid
+            val holds = { block: PrintBlock ->
+                if (block.numberInSection == 1) grid.cellsPerPage else grid.continuationCellsPerPage
+            }
             assertTrue(
-                ofPlate.dropLast(1).all { it.cells.size == perPage },
+                ofPlate.dropLast(1).all { it.cells.size == holds(it) },
                 "una página intermedia va corta en ${plate.title}",
             )
             assertTrue(
-                ofPlate.last().cells.size <= perPage,
+                ofPlate.last().cells.size <= holds(ofPlate.last()),
                 "una página va sobrecargada en ${plate.title}",
             )
         }
@@ -845,6 +849,7 @@ class NotebookPagesTest {
         val kookaburra = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
         val pages = pagesFor(kookaburra)
         val blocks = pages.flatMap { it.blocks }
+        val grid = kookaburra.grid(paper)
 
         assertTrue(pages.size > 1, "la onza australiana ya no se derrama en varias páginas")
         assertEquals(pages.indices.map { it + 1 }, blocks.map { it.numberInSection })
@@ -853,8 +858,110 @@ class NotebookPagesTest {
         assertTrue(blocks.all { it.section.title == kookaburra.title })
         // And no cell is lost or repeated across the break.
         assertEquals(kookaburra.cells, pages.flatMap { it.cells })
-        assertEquals(12, pages.first().cells.size)
-        assertTrue(pages.last().cells.size <= 12, "la última página va sobrecargada")
+        assertEquals(grid.cellsPerPage, pages.first().cells.size)
+        assertTrue(
+            pages.last().cells.size <= grid.continuationCellsPerPage,
+            "la última página va sobrecargada",
+        )
+    }
+
+    /**
+     * The masthead is printed **once** and the name band on every page after it (#480).
+     *
+     * The band the collector's own notebook repeated was forty millimetres of eyebrow, two-line title,
+     * subtitle and the whole specification block — and on page two that specification says nothing page
+     * one has not just said, at the price of a row of coins. What repeats instead is the thin band #232
+     * designed for shared folios, so the page still says which collection it belongs to: what is dropped
+     * is the summary and the second line of the title, never the identity of the page.
+     *
+     * The row that buys is the point: the Kookaburra's first folio holds twelve ounces and each of the
+     * ones that continue it holds sixteen.
+     */
+    @Test
+    fun `a spilled plate prints its masthead once and its name on every page after`() {
+        val kookaburra = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
+
+        val blocks = pagesFor(kookaburra).flatMap { it.blocks }
+
+        assertTrue(blocks.size > 1, "la onza australiana ya no se derrama")
+        assertEquals(PrintHeading.Masthead, blocks.first().heading)
+        assertTrue(
+            blocks.drop(1).all { it.heading == PrintHeading.Slim },
+            "una página de continuación sigue repitiendo el masthead",
+        )
+        // La banda fina sigue nombrando la lámina: es la especificación la que se cae, no la página.
+        assertTrue(blocks.all { it.section.title == kookaburra.title })
+        assertTrue(blocks.drop(1).none { it.heading.facts })
+        assertTrue(blocks.drop(1).all { it.heading.titleLines >= 1 })
+        // Y la fila que eso paga: doce onzas en la primera y dieciséis en cada continuación.
+        assertEquals(12, blocks.first().cells.size)
+        assertTrue(
+            blocks.drop(1).dropLast(1).all { it.cells.size == 16 },
+            "una continuación no se ha llevado la fila que la banda fina le deja",
+        )
+        // Y el empaquetador y `pageCount` siguen contando lo mismo, que es lo que la hoja recuenta.
+        assertEquals(kookaburra.pagesAlone(paper), blocks.size)
+    }
+
+    /**
+     * What the thin band on continuation pages is worth on the collector's own notebook (#480).
+     *
+     * His switches are the photographs, both faces, real size and the code, and one plate to a folio —
+     * so the length of the notebook is the sum of the plates' own lengths, and the notebook before this
+     * ticket is exactly that sum computed with one band for every page. That is the «before» measured
+     * here rather than a number written down: the shelf grows every week.
+     *
+     * On the seventy-five shipped catalogs it was 207 folios and it is 187.
+     */
+    @Test
+    fun `the thin band on continuation pages takes folios off and loses no cell`() {
+        val his = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
+        val sections = catalogs.map { section(it, faces = 2) }
+
+        val pages = printPages(sections, his)
+
+        // Lo que costaba con una sola banda para todas las páginas de una lámina.
+        val before = sections.sumOf { plate ->
+            val perPage = plate.grid(his).cellsPerPage.coerceAtLeast(1)
+            ((plate.cells.size + perPage - 1) / perPage).coerceAtLeast(1)
+        }
+        assertTrue(
+            pages.size < before * 0.95,
+            "la banda fina al continuar no ha ahorrado nada: ${pages.size} de $before",
+        )
+        // Una lámina por folio, como sus opciones piden, y ni una casilla perdida ni repetida.
+        assertTrue(pages.all { it.blocks.size == 1 }, "una página lleva dos láminas sin pedirlo")
+        assertEquals(
+            sections.flatMap { it.cells },
+            pages.flatMap { it.blocks }.flatMap { it.cells },
+        )
+        // Y ningún folio se sale del papel, sumado como lo sumaría una regla sobre la hoja impresa.
+        pages.forEach { page ->
+            assertTrue(
+                page.blocks.sumOf { it.heightMm.toDouble() }.toFloat() <= his.contentHeightMm + 0.01f,
+                "un folio se sale del papel: ${page.blocks.map { it.heightMm }}",
+            )
+        }
+    }
+
+    /**
+     * «Compartir página» sale cortado como el #232 lo dejó, y no es una coincidencia (#480).
+     *
+     * La banda que una continuación se lleva **es** la que ese interruptor ya imprime en todas las
+     * páginas de todo, así que allí no había una fila que ahorrar: el ahorro de este ticket es entero
+     * del cuaderno de «una lámina, un folio».
+     */
+    @Test
+    fun `sharing a folio already printed the thin band on every page`() {
+        val sections = catalogs.map(::section)
+
+        val blocks = printPages(sections, shared).flatMap { it.blocks }
+
+        assertTrue(
+            blocks.all { it.heading == PrintHeading.Slim },
+            "una lámina de un folio compartido ha cambiado de banda",
+        )
+        assertTrue(blocks.any { it.numberInSection > 1 }, "ninguna lámina se derrama")
     }
 
     /**

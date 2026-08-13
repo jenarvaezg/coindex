@@ -123,11 +123,15 @@ fun PrintSection.pagesAlone(geometry: PrintGeometry): Int = pageCount(cells.size
 /**
  * One plate's turn on a folio: a slice of its cells, under its own heading.
  *
- * A section that does not fit continues on the next folio **with its heading repeated**, which is
+ * A section that does not fit continues on the next folio **with its name repeated**, which is
  * why the heading is carried by the block and not by the section: on paper there is no scrolling
  * back to find out which collection you are looking at. Since #232 a folio can hold more than one of
  * these, and the heading is then also what tells the collector where one plate stops and the next
  * begins — so what repeats when the page turns is every heading on it, and not one.
+ *
+ * What repeats is the **thin** band and no longer the whole masthead (#480), and this is where that is
+ * decided rather than in the geometry: a block already knows whether it is the plate's first turn or a
+ * continuation of it, and the band follows from that one fact.
  */
 data class PrintBlock(
     val section: PrintSection,
@@ -140,6 +144,15 @@ data class PrintBlock(
 ) {
     /** The millimetres this block is drawn with, which is what its configuration declared (#228). */
     val geometry: PrintGeometry get() = grid.geometry
+
+    /**
+     * The band over this turn of the plate: the plate's own the first time, the thin one after (#480).
+     *
+     * Read off [numberInSection], which is the only place the notebook knows a page continues another —
+     * the packer counts the slices and the renderer draws what they say. The alternative was a field the
+     * packer sets, and a field can disagree with the number printed in the eyebrow beside it.
+     */
+    val heading: PrintHeading get() = geometry.headingFor(continuation = numberInSection > 1)
 
     /**
      * The photographs this block will ask for, which is what the export waits on before capturing.
@@ -157,7 +170,7 @@ data class PrintBlock(
     val cellsHeightMm: Float get() = grid.heightOfMm(rows)
 
     /** What this block takes out of a folio: its own band, and the rows under it. */
-    val heightMm: Float get() = grid.blockHeightMm(cells.size)
+    val heightMm: Float get() = grid.blockHeightMm(cells.size, heading)
 
     /**
      * Columns this block is laid out on, which is the grid's except on a plate of one short row.
@@ -236,9 +249,9 @@ data class PrintPage(val blocks: List<PrintBlock>) {
  * a folio and seeing what came off the bottom.
  *
  * It is **one packer and not two paths**. «No compartir» is not a different algorithm — it is the
- * same one under a rule that every plate opens a folio of its own, which reproduces the `chunked` it
- * replaced cut for cut: a fresh folio always offers the whole of [PrintGrid.rows], so the slices are
- * the same slices. That is what keeps the notebook of today intact behind the switch.
+ * same one under a rule that every plate opens a folio of its own: a fresh folio always offers the
+ * whole of the grid, [PrintGrid.rows] of it under the plate's own band and [PrintGrid.continuationRows]
+ * under the thin one a continuation gets (#480).
  *
  * Greedy and in the index's order, and deliberately not a bin-packer: the notebook is what the index
  * is showing, in the index's own order (ADR 0021 §6), so a folio takes the next plate or the next
@@ -259,12 +272,12 @@ fun printPages(
     // Zero rows is a real answer and not «it does not fit»: a collection with nothing in it is its
     // heading and nothing else, and an emptied box (ADR 0021 §11) does not deserve a folio to itself
     // for the fourteen millimetres that say so.
-    fun roomOnOpenFolio(grid: PrintGrid, cellsLeft: Int): Int? {
+    fun roomOnOpenFolio(grid: PrintGrid, heading: PrintHeading, cellsLeft: Int): Int? {
         if (folios.isEmpty() || !geometry.sharesPage) return null
         val freeForBlock = freeMm - geometry.blockGapMm
-        val rows = grid.rowsIn(freeForBlock)
+        val rows = grid.rowsIn(freeForBlock, heading)
         if (rows > 0) return rows
-        return if (cellsLeft == 0 && freeForBlock >= geometry.headingMm) 0 else null
+        return if (cellsLeft == 0 && freeForBlock >= heading.millimetres) 0 else null
     }
 
     sections.forEachIndexed { order, section ->
@@ -275,19 +288,25 @@ fun printPages(
         // the honest page, not a section silently dropped. Hence «not placed yet» and not «cells
         // left» as the condition to keep going.
         while (!placed || rest.isNotEmpty()) {
-            val room = roomOnOpenFolio(grid, rest.size)
+            // The band this turn pays for: the plate's own the first time it is printed, and the thin
+            // name band on every page it continues onto (#480). «Already placed» is the whole of the
+            // question, and it is the same one [PrintBlock.heading] asks of `numberInSection`.
+            val heading = geometry.headingFor(continuation = placed)
+            val room = roomOnOpenFolio(grid, heading, rest.size)
             if (room == null) {
                 folios += mutableListOf<Placement>()
                 freeMm = geometry.contentHeightMm
             }
             // A folio nobody has written on gives the plate its whole grid, even where a single row
             // of it would overflow the paper: a plate that opens a folio gets one page at least,
-            // which is the floor `pageCount` has always had, and the overflow is clipped.
-            val rows = room ?: grid.rows
+            // which is the floor `pageCount` has always had, and the overflow is clipped. Which grid
+            // that is depends on the band: a continuation opens a folio with the thin one over it and
+            // gets the row of coins the repeated specification was costing.
+            val rows = room ?: if (placed) grid.continuationRows else grid.rows
             val slice = rest.take(rows * grid.columns)
             // The seam is only paid for by a plate landing under another one.
             val gapMm = if (room == null) 0f else geometry.blockGapMm
-            freeMm -= gapMm + grid.blockHeightMm(slice.size)
+            freeMm -= gapMm + grid.blockHeightMm(slice.size, heading)
             folios.last() += Placement(order, section, grid, slice)
             rest = rest.drop(slice.size)
             placed = true

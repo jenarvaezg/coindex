@@ -24,7 +24,9 @@ package com.jenarvaezg.coindex.ui.print
  * it was counted on rather than growing a folio nobody measured.
  */
 fun PrintGeometry.trimmedToContent(section: PrintSection): PrintGeometry {
-    val needed = section.grid(this).blockHeightMm(section.cells.size)
+    // The band of a plate's **first** turn, which is the only turn a trimmed folio has: what reaches
+    // here is one section the panel already measured into one page (#480).
+    val needed = section.grid(this).blockHeightMm(section.cells.size, heading)
     val folio = marginMm * 2 + footMm + needed
     return if (folio >= heightMm) this else copy(heightMm = folio)
 }
