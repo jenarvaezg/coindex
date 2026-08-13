@@ -219,6 +219,70 @@ class ValuationTest {
             ),
         )
     }
+
+    /**
+     * What was paid against what those same pieces are worth today, over the rows that declare a price.
+     *
+     * `price` is what was paid **for the row** — the six Venezuelan bulks carry one figure for 102
+     * pieces — so it is totalled as it comes, while the value today is per piece and multiplies back up.
+     */
+    @Test
+    fun `the paid comparison totals the row's price against what its pieces are worth today`() {
+        val comparison = paidComparison(
+            listOf(
+                item(id = 1, grade = "unc", price = 30.0),
+                item(id = 2, grade = "unc", price = 12.0, quantity = 3),
+                // No price declared: outside the comparison entirely, on both sides of it.
+                item(id = 3, grade = "unc", price = null),
+            ),
+            mapOf(1 to meta(weightGrams = null, fineness = null)),
+            SPOT,
+            priceOf(mapOf("unc" to 40.0)),
+        )
+
+        assertEquals(42.0, comparison?.paid)
+        assertEquals(160.0, comparison?.today)
+        assertEquals(4, comparison?.pieces)
+    }
+
+    /**
+     * A collection that declares no price has no comparison, rather than «pagaste 0 €».
+     *
+     * What has no price is not a gap in the data: it is what the collector did not buy — gifts and
+     * inheritance — and a zero would make a sentence out of that (#491).
+     */
+    @Test
+    fun `nothing declared is no comparison at all`() {
+        assertNull(
+            paidComparison(
+                listOf(item(id = 1, grade = "unc"), item(id = 2, price = 0.0)),
+                mapOf(1 to meta(weightGrams = 25.0, fineness = 0.835)),
+                SPOT,
+                priceOf(mapOf("unc" to 40.0)),
+            ),
+        )
+    }
+
+    /**
+     * The comparison can never show a loss, and that is the maximum's doing and not a bug.
+     *
+     * What a piece is worth is the greatest of the three, and what was paid is one of the three, so
+     * today is at worst what it cost. The page states that criterion right above the sentence
+     * («el mayor de tres precios»), and valuing this one line by a second rule would put two values
+     * for the same coins on one screen.
+     */
+    @Test
+    fun `a piece nobody prices is worth what it cost, and never less`() {
+        val comparison = paidComparison(
+            listOf(item(id = 1, price = 500.0)),
+            mapOf(1 to meta(weightGrams = 25.0, fineness = 0.835)),
+            SPOT,
+            priceOf(emptyMap()),
+        )
+
+        assertEquals(500.0, comparison?.paid)
+        assertEquals(500.0, comparison?.today)
+    }
 }
 
 private fun meta(weightGrams: Double?, fineness: Double?) = TypeMeta(

@@ -9,11 +9,13 @@ import com.jenarvaezg.coindex.domain.Ladder
 import com.jenarvaezg.coindex.domain.LadderKind
 import com.jenarvaezg.coindex.domain.LadderPlacement
 import com.jenarvaezg.coindex.domain.Ladders
+import com.jenarvaezg.coindex.domain.PaidComparison
 import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.collectionFigures
 import com.jenarvaezg.coindex.domain.collectionValue
 import com.jenarvaezg.coindex.domain.fineSilverGrams
+import com.jenarvaezg.coindex.domain.paidComparison
 import com.jenarvaezg.coindex.domain.pieceValue
 import com.jenarvaezg.coindex.domain.place
 import com.jenarvaezg.coindex.domain.saturatingAdd
@@ -50,8 +52,19 @@ data class CountryPortrait(
     val valueShare: Double?,
 )
 
-/** The amount, where it came from, and the day the silver behind it was read. */
-data class MoneyReading(val value: CollectionValue, val spot: SilverSpot)
+/**
+ * The amount, where it came from, and the day the silver behind it was read.
+ *
+ * @param paid what he paid for the pieces he wrote a price for, against what those same pieces are
+ *   worth today. It hangs here and not off [FiguresSubject] because two amounts in euros are money as
+ *   much as the total is: inside the reading there is no branch that could let it out with the export's
+ *   switch off. Null when no row declares a price.
+ */
+data class MoneyReading(
+    val value: CollectionValue,
+    val spot: SilverSpot,
+    val paid: PaidComparison?,
+)
 
 /**
  * Everything «Las cifras» draws, assembled once.
@@ -92,6 +105,7 @@ fun figuresSubject(
         MoneyReading(
             collectionValue(state.items, state.typeMeta, spot, prices),
             spot,
+            paidComparison(state.items, state.typeMeta, spot, prices),
         )
     }
     return FiguresSubject(

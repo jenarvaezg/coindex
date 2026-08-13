@@ -143,6 +143,53 @@ private fun marketValue(item: CollectedItem, prices: (Int, Int, String) -> Doubl
 }
 
 /**
+ * What the collector paid for the pieces whose price he wrote down, and what those same pieces are
+ * worth today.
+ *
+ * **Only what is declared, and its own denominator with it.** `price` covers 84 of his 229 rows —
+ * which are 91 of his 572 pieces, because what has no price is the Venezuelan bulks
+ * (`docs/ux/cifras-316.md`). The complement is not a hole in the data: it is what he did not buy,
+ * gifts and inheritance. But in the first 140 rows he was not writing prices down yet, so purchases
+ * he never noted are mixed in with the presents, and the figure therefore says how many pieces
+ * declared a price and **never** what share of the collection they are (#491).
+ *
+ * @param paid totalled as `price` comes, which is per **row**: the bulks he bought as lots carry one
+ *   figure for 102 pieces.
+ * @param today the same pieces under the page's one rule, the maximum of the three sources. Since
+ *   what was paid is one of those three, this can never come out under [paid] — see
+ *   `ValuationTest`, where that is pinned as a consequence rather than found as a surprise.
+ */
+data class PaidComparison(val paid: Double, val today: Double, val pieces: Int)
+
+/**
+ * The comparison over the rows that declare a price, or null when none does.
+ *
+ * Null and not zero: «pagaste 0 €» is a sentence about a collection nobody bought, and what it would
+ * really be reporting is that the collector does not use the field.
+ */
+fun paidComparison(
+    items: List<CollectedItem>,
+    typeMeta: TypeMetaIndex,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): PaidComparison? {
+    var paid = 0.0
+    var today = 0.0
+    var pieces = 0
+    for (item in items) {
+        val price = item.price?.takeIf { it > 0.0 } ?: continue
+        // Unreachable while `price` is one of the three sources, and kept anyway: the two sides of a
+        // comparison have to be totalled over the same pieces or the sentence lies by subtraction.
+        val value = pieceValue(item, typeMeta[item.typeId], spot, prices) ?: continue
+        val quantity = item.quantity.coerceAtLeast(1)
+        paid += price
+        today += value.eur * quantity
+        pieces = saturatingAdd(pieces, quantity)
+    }
+    return if (pieces == 0) null else PaidComparison(paid, today, pieces)
+}
+
+/**
  * What the whole collection is worth, and over how many of its pieces.
  *
  * @param pieces every piece the collection holds, quantities included.

@@ -77,6 +77,31 @@ class FiguresSubjectTest {
     }
 
     /**
+     * What was paid rides **inside** the money, which is what stops it leaking with the switch off.
+     *
+     * Two amounts in euros are money as much as the total is, and the export's switch withdraws every
+     * figure derived from one. Hanging the comparison off `MoneyReading` rather than off the subject
+     * means there is no branch that could forget it.
+     */
+    @Test
+    fun `what was paid arrives with the money and cannot leave without it`() {
+        val bought = state(items = listOf(item(id = 1, typeId = 2, grade = "unc", price = 30.0)))
+
+        val paid = figuresSubject(bought, SPOT, priced, settled = true).money?.paid
+
+        assertEquals(30.0, paid?.paid)
+        assertEquals(40.0, paid?.today)
+        assertEquals(1, paid?.pieces)
+        assertNull(figuresSubject(bought, SPOT, priced, settled = true, moneyAllowed = false).money)
+    }
+
+    /** A collection that declares no price says nothing about what it cost. */
+    @Test
+    fun `nothing declared leaves the comparison unsaid`() {
+        assertNull(figuresSubject(state(), SPOT, priced, settled = true).money?.paid)
+    }
+
+    /**
      * The portrait is the country with the most pieces, with its share of the four things.
      *
      * «Venezuela es el 62 % de sus piezas, el 33 % de su peso y el 33 % de su plata»: the three together say

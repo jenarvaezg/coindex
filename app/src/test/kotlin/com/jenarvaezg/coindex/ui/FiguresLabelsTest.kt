@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.domain.Ladder
 import com.jenarvaezg.coindex.domain.LadderUnit
 import com.jenarvaezg.coindex.domain.Ladders
 import com.jenarvaezg.coindex.domain.MarginFigure
+import com.jenarvaezg.coindex.domain.PaidComparison
 import com.jenarvaezg.coindex.domain.Referent
 import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
@@ -355,6 +356,44 @@ class FiguresLabelsTest {
         assertEquals(
             "0 % ya no son dinero en ninguna parte",
             demonetizedSentence(MarginFigure(pieces = 0, outOf = 0)),
+        )
+    }
+
+    /**
+     * The fifth sentence at the margin: how the collection is kept, said as a share of its pieces.
+     *
+     * «o casi» is not a hedge, it is the second grade: `au` is *about* uncirculated, and a line that
+     * called it «sin circular» would file 66 of his pieces under a word their ficha does not use.
+     */
+    @Test
+    fun `the margin says how much of the collection has not circulated`() {
+        assertEquals(
+            "40 % están sin circular o casi",
+            uncirculatedSentence(MarginFigure(pieces = 227, outOf = 572)),
+        )
+    }
+
+    /**
+     * What was paid against what those pieces are worth today, with **its own denominator in front**.
+     *
+     * It says how many pieces declared a price and never what share of the collection they are: the
+     * complement is not missing data but what he did not buy, and «el 84 % no las compraste» would turn
+     * a 2019 habit of not writing prices down into a claim about his life (#491).
+     */
+    @Test
+    fun `what was paid says over how many pieces it was declared`() {
+        assertEquals(
+            "De las 91 piezas cuyo precio anotaste, pagaste 1.234 €. Hoy valen 2.345 €.",
+            paidAgainstTodayLabel(PaidComparison(paid = 1_234.0, today = 2_345.0, pieces = 91)),
+        )
+    }
+
+    /** One declared price is «la única pieza», because «De la 1 pieza» is not Spanish. */
+    @Test
+    fun `a single declared price is said in the singular`() {
+        assertEquals(
+            "De la única pieza cuyo precio anotaste, pagaste 30 €. Hoy vale 40 €.",
+            paidAgainstTodayLabel(PaidComparison(paid = 30.0, today = 40.0, pieces = 1)),
         )
     }
 }
