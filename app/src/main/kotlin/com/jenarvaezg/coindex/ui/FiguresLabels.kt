@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.domain.LadderKind
 import com.jenarvaezg.coindex.domain.LadderUnit
 import com.jenarvaezg.coindex.domain.MarginFigure
+import com.jenarvaezg.coindex.domain.PaidComparison
 import com.jenarvaezg.coindex.domain.Referent
 import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
@@ -255,6 +256,29 @@ fun coverageLabel(valued: Int, pieces: Int): String? =
     if (valued >= pieces) null else "el valor de $valued de tus $pieces piezas"
 
 /**
+ * What he paid against what those same pieces are worth today, **with its own denominator in front**.
+ *
+ * The one money question the page did not answer, and it costs nothing: `price` is already on the phone
+ * and the value is the total's own rule read over a subset (#491).
+ *
+ * What it says is «de las 91 piezas cuyo precio anotaste» and never «el 84 % de tus monedas no las
+ * compraste». The complement is not missing data — it is what he did not buy, gifts and inheritance —
+ * but in the first 140 rows he was not writing prices down yet, so purchases he never noted are mixed
+ * in with the presents. Said as a percentage of the collection it would turn a 2019 habit into a claim
+ * about his life, and he has no way to check it. Only what is declared is counted.
+ */
+fun paidAgainstTodayLabel(comparison: PaidComparison): String {
+    val declared = if (comparison.pieces == 1) {
+        "De la única pieza cuyo precio anotaste"
+    } else {
+        "De las ${comparison.pieces} piezas cuyo precio anotaste"
+    }
+    val worth = if (comparison.pieces == 1) "Hoy vale" else "Hoy valen"
+    return "$declared, pagaste ${eurosLabel(comparison.paid)}. " +
+        "$worth ${eurosLabel(comparison.today)}."
+}
+
+/**
  * The stamp under the amount: **which** silver price bought the metal floor, and when it was read.
  *
  * It is what stops the total reading as a quotation (ADR 0028 §5), and until #398 it could not do that
@@ -346,6 +370,22 @@ fun mintSentence(figure: MarginFigure, distinctMints: Int): String =
 
 fun commonestYearSentence(figure: MarginFigure): String =
     "${figure.pieces} llevan la fecha de ${figure.subject.orEmpty()}"
+
+/**
+ * The fifth sentence at the margin: how the collection is kept, and the only one that is his own typing.
+ *
+ * **A sentence and not a histogram.** Seven grades in bars are the dashboard `spec.md §0.4` refuses;
+ * one line is what the four figures beside it already are.
+ *
+ * **«o casi» is the second grade and not a hedge.** `au` is *about* uncirculated, and calling it «sin
+ * circular» would file 66 of his pieces under a word their own ficha does not use.
+ *
+ * As a share of **pieces**, like everything else on the page. By row it would read 78 % — the «3 de
+ * cada 4» of #491 — and by piece it reads 40 %, because his seven Venezuelan bulks are 298 pieces
+ * graded `f`. Both are true; two denominators on one page is a figure nobody can check.
+ */
+fun uncirculatedSentence(figure: MarginFigure): String =
+    "${percentLabel(figure.shareOfPieces())} están sin circular o casi"
 
 /**
  * The share the demonetized figure is a share **of**, which is the whole collection.

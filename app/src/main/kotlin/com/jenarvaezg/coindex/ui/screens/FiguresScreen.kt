@@ -51,12 +51,14 @@ import com.jenarvaezg.coindex.ui.kilogramsLabel
 import com.jenarvaezg.coindex.ui.matterCensusLabel
 import com.jenarvaezg.coindex.ui.metalLabel
 import com.jenarvaezg.coindex.ui.mintSentence
+import com.jenarvaezg.coindex.ui.paidAgainstTodayLabel
 import com.jenarvaezg.coindex.ui.percentLabel
 import com.jenarvaezg.coindex.ui.portraitSharesLabel
 import com.jenarvaezg.coindex.ui.sameHandSentence
 import com.jenarvaezg.coindex.ui.screenDiameterLabel
 import com.jenarvaezg.coindex.ui.spotStampLabel
 import com.jenarvaezg.coindex.ui.squareMetresLabel
+import com.jenarvaezg.coindex.ui.uncirculatedSentence
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
@@ -128,6 +130,16 @@ fun FiguresScreen(
                                 coverage,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Paper.muted,
+                            )
+                        }
+                        // Between the coverage and the method, which is where it belongs: it is a
+                        // figure and not a footnote —hence the ink— but the criterion still closes
+                        // the block, because it governs the total and this comparison alike.
+                        money.paid?.let { paid ->
+                            Text(
+                                paidAgainstTodayLabel(paid),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Paper.ink,
                             )
                         }
                         Text(
@@ -225,6 +237,9 @@ fun FiguresScreen(
                 Block(FiguresLabels.MARGIN_HEADING) {
                     val margins = subject.figures.margins
                     MarginLine(demonetizedSentence(margins.demonetized))
+                    // Second and not last: this and the demonetized line say what these coins **are**,
+                    // and the three below say where they came from.
+                    margins.uncirculated?.let { MarginLine(uncirculatedSentence(it)) }
                     margins.sameHand?.let { MarginLine(sameHandSentence(it)) }
                     margins.mostMinted?.let { MarginLine(mintSentence(it, margins.distinctMints)) }
                     margins.commonestYear?.let { year ->

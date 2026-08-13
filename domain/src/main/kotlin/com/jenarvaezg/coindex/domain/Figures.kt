@@ -177,6 +177,10 @@ data class MarginFigure(val pieces: Int, val outOf: Int, val subject: String? = 
  * @param distinctMints how many mints the collection has come out of, which is what makes the mint
  *   figure say something: 296 from Paris **of 51 mints**.
  * @param commonestYear the year the most pieces carry.
+ * @param uncirculated pieces the collector graded `unc` or `au` — the only figure of the page that
+ *   comes out of his own typing rather than out of a ficha. Null where none does, because a collection
+ *   with nothing uncirculated says nothing rather than saying it has none; and a piece he never graded
+ *   is not «circulated», so it counts in the denominator and nowhere else.
  */
 data class MarginFigures(
     val demonetized: MarginFigure,
@@ -184,17 +188,32 @@ data class MarginFigures(
     val mostMinted: MarginFigure?,
     val distinctMints: Int,
     val commonestYear: MarginFigure?,
+    val uncirculated: MarginFigure?,
 )
+
+/**
+ * The grades of a piece that has not been in a pocket: «sin circular» and «casi».
+ *
+ * Two and not one, and the second is what makes the figure worth a line: `au` is *about*
+ * uncirculated, and the collector uses both — 121 rows `unc` and 57 `au` of his 229 (#491).
+ */
+private val UNCIRCULATED_GRADES = setOf(UNCIRCULATED, "au")
 
 fun marginFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MarginFigures {
     var pieces = 0
     var demonetized = 0
+    var uncirculated = 0
     val hands = mutableMapOf<String, Int>()
     val mints = mutableMapOf<String, Int>()
     val years = mutableMapOf<Int, Int>()
     for (item in items) {
         val quantity = item.quantity.coerceAtLeast(1)
         pieces = saturatingAdd(pieces, quantity)
+        // Before the ficha and not after it: the grade is the collector's own, so a type Numista has
+        // never answered for still counts here.
+        if (item.grade?.lowercase() in UNCIRCULATED_GRADES) {
+            uncirculated = saturatingAdd(uncirculated, quantity)
+        }
         val meta = typeMeta[item.typeId] ?: continue
         if (meta.demonetized == true) demonetized = saturatingAdd(demonetized, quantity)
         // Distinct within the type: a hand credited on both faces is one hand, and the same mint
@@ -210,6 +229,7 @@ fun marginFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MarginFi
         distinctMints = mints.size,
         commonestYear = years.commonest()
             ?.let { (year, count) -> MarginFigure(count, pieces, year.toString()) },
+        uncirculated = MarginFigure(uncirculated, pieces).takeIf { uncirculated > 0 },
     )
 }
 

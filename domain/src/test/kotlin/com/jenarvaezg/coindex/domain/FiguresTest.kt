@@ -182,6 +182,48 @@ class FiguresTest {
     }
 
     /**
+     * The grade counts **pieces**, like every other figure of the page, and that is what inverts it.
+     *
+     * By row the collector's collection is 178 of 229 uncirculated or near — the «3 de cada 4» of #491
+     * — and by piece it is 227 of 572, because his seven Venezuelan bulks are 298 pieces graded `f`
+     * (`.local/padre`, measured 14 August 2026). The page counts pieces everywhere else, and two
+     * denominators on one page is a figure nobody can check.
+     */
+    @Test
+    fun `the uncirculated figure counts pieces and holds both grades`() {
+        val margins = marginFigures(
+            listOf(
+                item(id = 1, typeId = 1).copy(grade = "unc"),
+                item(id = 2, typeId = 1).copy(grade = "AU"),
+                // A bulk of worn pieces is 102 pieces and not one row, which is the whole inversion.
+                item(id = 3, typeId = 1, quantity = 102).copy(grade = "f"),
+                // No grade is not «circulated»: it counts in the denominator and in nothing else.
+                item(id = 4, typeId = 1),
+            ),
+            mapOf(1 to meta()),
+        )
+
+        assertEquals(MarginFigure(2, 105), margins.uncirculated)
+    }
+
+    /**
+     * A collection with nothing uncirculated says nothing, rather than saying it has none.
+     *
+     * The same silence as the fine ounces under the metal bar: the four figures at the margin that can
+     * come out empty are absent, and only the demonetized one — whose zero is a real reading of a real
+     * ficha — is written as 0 %.
+     */
+    @Test
+    fun `no uncirculated piece is silence and not a zero`() {
+        val margins = marginFigures(
+            listOf(item(id = 1, typeId = 1).copy(grade = "f"), item(id = 2, typeId = 1)),
+            mapOf(1 to meta()),
+        )
+
+        assertNull(margins.uncirculated)
+    }
+
+    /**
      * The stack is the one figure the app gives extrapolated, and it says so with «unos».
      *
      * `thickness` is missing in a third of the types, so it is measured over the 449 of his 572 pieces
