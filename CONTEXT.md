@@ -353,4 +353,13 @@ The order a hierarchy with a list is read in — by plate (the default), by coun
 the folded shelf beside the filters and the sort. The country stain and the timeline are axes and not
 screens, because they are made of the same slots.
 _Avoid_: View, map screen, timeline screen
+
+**Annex**:
+A screen that fails the test of the **Grain of a cell** and is not an **Axis of the shelf** either,
+because its population is not the collection at all: «Explorar» is made of what the collector does not
+have. It hangs off exactly one hierarchy, is entered through the last row of that hierarchy's list —
+a door that names what is behind it with its count, and is not printed when that count is zero — and
+carries no cell and no bar. With a list it opens with its shelf folded, and its chips are whatever its
+population earns.
+_Avoid_: Tab, sub-screen, modal, section of the index
 _Avoid_: Collection proposal, inventory

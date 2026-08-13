@@ -6,7 +6,7 @@
   amended by #370 (the ficha sheet is the landing of the second journey) and again by #381 (a
   destination paints its own paper, and only the leaf on top is animated); §4 amended by #371 (the
   stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
-  name goes under it)
+  name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -444,6 +444,39 @@ linking back to its collections, medals as a filter and not a section) follow fr
 Coins existing, not from their being exactly two; the **home screen that asks where you want to go
 stays rejected**, and with three cells the argument is stronger, not weaker; and **§2 is untouched** —
 there is still one species of collection. This amendment is about the bar, not the index.
+
+> **Amended on 2026-08-13 (§8, [#281](https://github.com/jenarvaezg/coindex/issues/281)). What fails
+> the test may still earn a screen, as an annex.** The test stands whole and its verdict is unchanged
+> for every candidate it has judged. What it lacked is an exit: it was read as having two outcomes —
+> a cell, or an **Axis of the shelf** — and «Explorar» is neither. Its grain is borrowed (plates, the
+> same as the shelf's; a wish is a slot), so it is not a cell; but its **population is not the
+> collection at all** — it is made of what the collector does **not** have — so there is no order of
+> the sheet that could hold it. That third outcome is an **annex**, and it is ruled here rather than
+> per screen:
+>
+> 1. An annex **hangs off the hierarchy that gives it its door**, and off exactly one. Two doors into
+>    one annex would need two names for it, which is the first symptom of the test firing again.
+> 2. It carries **no cell and no bar**. It is entered from that hierarchy and left with «Volver»: the
+>    bar is drawn on the roots only, and a bar offering to jump hierarchies from inside an annex would
+>    be a second «Volver» that does something else. The price is written and accepted — from
+>    «Explorar» there is no crossing to Coins or to «Las cifras» without going back.
+> 3. Its door is the **last row of that hierarchy's list**, deeper paper, and it **names what is
+>    behind it with its count**. The door is written twice, because a zero is not printed: «Y otras 20
+>    láminas que no coleccionas →» while nothing is marked, «Lo que busco · 7, y otras 20 láminas →»
+>    once something is. Same rule as the sewn edge, which stays silent while it reads (#418), and as
+>    the threshold of ADR 0028 §1: a number that says nothing is not shown.
+> 4. **The shelf invariant follows having a list, not being a hierarchy.** Point 4 above narrowed it
+>    to «the hierarchies with a list»; what it was really tracking is the list. An annex with a list
+>    opens with its shelf folded — search and sort — and carries the chips its population earns, which
+>    in «Explorar» is none: its twenty plates are all at 0/N, and twelve countries with nine of them
+>    holding a single plate do not buy a facet
+>    ([#279](https://github.com/jenarvaezg/coindex/issues/279),
+>    [#282](https://github.com/jenarvaezg/coindex/issues/282)). «Las cifras» is unaffected: it has no
+>    list, which is why it has no shelf.
+>
+> What this does **not** open: an annex is not a cheaper way into the bar. It fails the test and stays
+> failed — no cell, no count in the bar, and the app still **opens in Collections**. The top level
+> remains **three**.
 
 ### 9. The country map and the timeline are two axes of the notebook, not two screens
 
