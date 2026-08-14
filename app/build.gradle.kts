@@ -48,6 +48,8 @@ android {
         // («Tasar esta lámina · N consultas», the first amendment ADR 0028 §3 has ever taken), a
         // figure that never expires and travels with its date, and a second room inside the annex:
         // «Lo que busco» moves one door in (#498, ADR 0030). Nothing is added to the schema.
+        // It also carries the seven Portuguese 1000 escudos whose seeded weight Numista corrected
+        // to 27 g (#392): a data fix inside a version no phone has installed, so it rides 65.
         //
         // The phones are on **1.4.0**, `versionCode` 65 — what the latest release's `update.json`
         // says, not what anybody remembers — so **nothing is waiting**: this one is published.
