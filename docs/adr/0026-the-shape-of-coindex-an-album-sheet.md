@@ -8,7 +8,9 @@
   stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
   name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex);
   §4 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (the wish mark travels
-  to paper, and it gets an output of its own)
+  to paper, and it gets an output of its own); §8 clause 4 amended by
+  [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (the annex's list arrives, and the
+  shelf is of the plates where something is missing)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -496,6 +498,25 @@ there is still one species of collection. This amendment is about the bar, not t
 > What this does **not** open: an annex is not a cheaper way into the bar. It fails the test and stays
 > failed — no cell, no count in the bar, and the app still **opens in Collections**. The top level
 > remains **three**.
+
+> **Amended on 2026-08-14 (§8 clause 4,
+> [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). The annex's list arrives, and its
+> population is one plate wider than clause 4 assumed.** Clause 4 was written about the twenty plates of
+> the shelf window, and it arrives as written: the shelf opens folded, with **search and sort and no
+> chips**, because twenty plates at 0/N and twelve countries buy no facet.
+>
+> What it did not foresee is that «Explorar» would be built **after** the annex already held «Lo que
+> busco». The shelf is therefore of **the plates where something is missing**: the twenty, and the
+> collector's own plates holding a marked casilla. A plate of theirs is then drawn in two lists — its
+> card in the index, its tile here — which is a second **order** and not a second species of collection
+> (ADR 0021 §2 stands): a shelf is explicitly not a hierarchy, and there is no second card with a name
+> of its own. And «Lo que busco» keeps a screen of its own behind a door at the head of the shelf,
+> because what it is *for* is `Exportar la lista` and a tile saying «2 lo busco» cannot be taken to a
+> fair.
+>
+> **The two forms of the door in clause 3 are untouched, and the count stays the twenty**: what is
+> behind that door which the index does not already hold is the shelf window. A door counting the
+> collector's own plates as well would be claiming they live somewhere else.
 
 ### 9. The country map and the timeline are two axes of the notebook, not two screens
 
