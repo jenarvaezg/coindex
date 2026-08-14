@@ -46,12 +46,12 @@ android {
         // what closing it would cost — each with its own provenance, and every empty casilla whose
         // price is on the phone carries that price inside the hole (#493).
         //
-        // The phones are on **1.2.19**, `versionCode` 61 — which is what the latest release's
-        // `update.json` says, not what anybody remembers — so 1.2.20 is waiting with this one. That
-        // is what the line is for and why it is worth correcting after every release: it kept
-        // claiming 1.2.11 while 1.2.15 and 1.2.16 were already out, and `scripts/release.sh` reads
-        // the published manifest and refuses a `versionCode` that does not beat it — this only says
-        // who is waiting.
+        // The phones are on **1.2.21**, `versionCode` 63 — which is what the latest release's
+        // `update.json` says, not what anybody remembers — so nothing is waiting: this one is
+        // published, and 1.2.20 reached a phone inside it. That is what the line is for and why it is
+        // worth correcting after every release: it kept claiming 1.2.11 while 1.2.15 and 1.2.16 were
+        // already out, and `scripts/release.sh` reads the published manifest and refuses a
+        // `versionCode` that does not beat it — this only says who is waiting.
         versionName = "1.2.21"
     }
 
