@@ -99,13 +99,7 @@ fun pieceValue(
 ): PieceValue? {
     val candidates = mutableListOf<PieceValue>()
     marketValue(item, prices)?.let(candidates::add)
-    if (spot != null) {
-        fineSilverGrams(meta)?.let { grams ->
-            candidates.add(
-                PieceValue(gramsToOunces(grams) * spot.eurPerTroyOunce, ValueSource.Silver),
-            )
-        }
-    }
+    silverFloor(meta, spot)?.let(candidates::add)
     // Divided by the quantity, because `price` is what was paid for the row: the six bolívares rows
     // the father bought as lots carry one figure for 102 pieces, and a value per piece is what the
     // maximum compares and what the total multiplies back up.
@@ -141,14 +135,20 @@ fun holeValue(
     issueId
         ?.let { prices(typeId, it, UNCIRCULATED) }
         ?.let { candidates.add(PieceValue(it, ValueSource.Market, UNCIRCULATED)) }
-    if (spot != null) {
-        fineSilverGrams(meta)?.let { grams ->
-            candidates.add(
-                PieceValue(gramsToOunces(grams) * spot.eurPerTroyOunce, ValueSource.Silver),
-            )
-        }
-    }
+    silverFloor(meta, spot)?.let(candidates::add)
     return candidates.maxByOrNull { it.eur }
+}
+
+/**
+ * What the metal of one piece is worth, or null where the ficha or the spot does not support it.
+ *
+ * The one of the sources that is arithmetic rather than a quotation, and the only one a coin that is
+ * not on the phone can still have — which is why it is read here and not twice (see [holeValue]).
+ */
+private fun silverFloor(meta: TypeMeta?, spot: SilverSpot?): PieceValue? {
+    if (spot == null) return null
+    val grams = fineSilverGrams(meta) ?: return null
+    return PieceValue(gramsToOunces(grams) * spot.eurPerTroyOunce, ValueSource.Silver)
 }
 
 /**

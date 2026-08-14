@@ -94,7 +94,7 @@ private fun plateSection(
     // hole are **not on paper at all**: the printed money is the sixth switch of the export (ADR 0021
     // §13) and what it does with two more figures is a decision of its own ticket, not a side effect
     // of this one.
-    val money = plateValue(resolved)
+    val amount = plateValue(resolved)
     val plate = plateSubject(resolved)
     return PrintSection(
         // The same claim the exported sheet makes, and for the same reason: the paper outlives the
@@ -105,7 +105,7 @@ private fun plateSection(
         // The value joins the specification rather than the heading, because the printed page has no
         // header to raise a figure into — which is the same reason the ratio reaches paper as a row
         // (`plateEntriesBesideRatio` is deliberately not called here).
-        facts = plate.entries + listOfNotNull(money?.let { VALUE_LABEL to plateAmountLabel(it) }),
+        facts = plate.entries + listOfNotNull(amount?.let { VALUE_LABEL to plateAmountLabel(it) }),
         source = plate.source,
         // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371), together with
         // the exact ratio the subject already measured. The paper must not reconstruct it from cells.

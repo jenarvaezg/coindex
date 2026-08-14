@@ -280,17 +280,13 @@ private fun PlateHeading(
 /**
  * The two figures of money a plate can carry, in two lines of the same weight (#493).
  *
- * **The hierarchy is not in the type size, it is in the words.** In a plate one casilla from closing
- * the two amounts are of the same order — the father's 20 escudos has the one inside at 1,4× the one
- * to close — so no size could tell them apart, and in The Queen's Beasts closing costs 1,75× what is
- * in it, which would have put the larger figure in the smaller type. What distinguishes them is that
- * each is named and carries its own provenance, which is not the same provenance: what is here is at
- * the maximum of three prices and what is missing is priced in `unc` out of two (ADR 0028 §8).
+ * **The hierarchy is not in the type size, it is in the words** — the proportions that decided it are
+ * in `FiguresLabels.PLATE_VALUE_LABEL`, where the words themselves are. What this composable owes them
+ * is the one thing a label cannot say: that neither line is drawn smaller than the other.
  *
  * The second line is **absent** on a closed plate rather than zero, and absent over the threshold of
- * ADR 0028 §1 where those prices were never asked for. What the collector then reads is one named
- * line, which is the case in 22 of the father's 49 reachable plates and reads as well alone as in
- * company — the whole reason the prototype's short «dentro» was dropped for «Valor actual».
+ * ADR 0028 §1 where those prices were never asked for. What is left then is one named line, and it
+ * reads as well alone as in company.
  *
  * Four dp between them and not the ten the header spaces everything else by: the two lines are one
  * statement about money, and at ten they read as two blocks that happen to be adjacent.

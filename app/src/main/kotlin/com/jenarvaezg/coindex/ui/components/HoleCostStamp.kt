@@ -26,6 +26,11 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  *
  * It cannot collide with the completion stamp — that one falls on the ratio over the title, in the
  * other corner (ADR 0026 §3) — and it never lands on a full casilla, which has no cost at all.
+ *
+ * **The one thing still to be drawn next to it is the wish of #497**, which had decided nothing when
+ * this shipped: a wish is *a marked casilla*, so its mark and this chip want the same centimetre of the
+ * same 104 dp hole. Whoever draws that one draws the two together, here, rather than adding a second
+ * thing over the same coin.
  */
 @Composable
 fun HoleCostStamp(cost: String, modifier: Modifier = Modifier) {

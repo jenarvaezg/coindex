@@ -73,6 +73,12 @@ object FiguresLabels {
      * (ADR 0028 §8) — «sin circular», the same words [uncirculatedSentence] uses of a piece. So the
      * criterion travels with its own amount, which is what #408 asked for and what the plate's first
      * figure has done since.
+     *
+     * It names the grade the **catalogue** half is asked in, the way [MONEY_CRITERION] names a method
+     * rather than the source of any single euro: the second of the two prices is the coin's own metal,
+     * which has no grade to be quoted in. If that ever reads as a claim about where the amount came
+     * from, the honest line is «el mayor de dos precios, en sin circular» — longer, and it was not what
+     * was chosen with the drawing in front of it.
      */
     const val HOLE_CRITERION: String = "en sin circular"
 

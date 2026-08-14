@@ -2,8 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.prices.IssueListings
-import com.jenarvaezg.coindex.data.prices.holesAreWithinReach
-import com.jenarvaezg.coindex.data.prices.issueOf
+import com.jenarvaezg.coindex.data.prices.holesWithinReach
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.CollectionFigures
@@ -294,8 +293,8 @@ fun plateMoney(
 /**
  * What each empty casilla of a plate costs, or nothing at all when the plate is out of reach.
  *
- * The threshold is asked of [holesAreWithinReach] and not counted here, so the holes the header adds
- * up are exactly the holes the pass spent its calls on (ADR 0028 §1).
+ * Which holes count is [holesWithinReach]'s answer and not counted again here, so the holes the header
+ * adds up are exactly the holes the pass spent its calls on (ADR 0028 §1).
  *
  * A casilla with no price is **absent** rather than zero: without a price on the phone there is no
  * stamp to draw and nothing to add, and neither the amount nor the casilla invents a «—».
@@ -306,10 +305,8 @@ private fun holeCosts(
     listings: IssueListings,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
-): Map<String, Double> {
-    val holes = album.members.filter { it.status is CollectionCatalogMemberStatus.Missing }
-    if (!holesAreWithinReach(holes.size)) return emptyMap()
-    return holes.mapNotNull { hole ->
+): Map<String, Double> =
+    holesWithinReach(album).mapNotNull { hole ->
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
         val cost = holeValue(
             typeId = typeId,
@@ -320,7 +317,6 @@ private fun holeCosts(
         ) ?: return@mapNotNull null
         hole.member.id to cost.eur
     }.toMap()
-}
 
 /**
  * The value of what a plate holds, which is the other place the grain rule allows a total.
