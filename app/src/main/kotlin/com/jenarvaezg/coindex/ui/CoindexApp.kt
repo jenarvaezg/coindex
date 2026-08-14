@@ -148,8 +148,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // is only ever painted on an empty casilla, so the album is what says whether it shows (ADR 0029
     // §2) — and a plate whose coin was sold shows the mark again without the table being written to.
     val wishedKeys = remember(state.wishes) { state.wishes.mapTo(mutableSetOf()) { it.key } }
-    // What the marks cost a month, counted once for the two surfaces that print it: the annex, where
-    // the amount can stand alone, and Ajustes, where it needs its subject (ADR 0029 §5).
+    // What the marks cost a month, for the one screen that prints it: Ajustes, where the budget already
+    // lives (ADR 0029 §5). The other place the figure is said is the gesture, and that one is a constant
+    // sentence — «+2 consultas al mes» per casilla — because it is a promise and not a total.
     val wishCalls = remember(wishes) { wishCallsPerMonth(wishes) }
     // The plate asks for three readings at once and gets them or gets none of them (#493): the value
     // of what is in it, the cost of closing it and the price inside each hole are one walk of the same
@@ -487,7 +488,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         ExploreScreen(
                             // Worded once per crossing of the table and the collection, and not once
                             // per recomposition: the prices land while the screen is open.
-                            subject = remember(wishes, wishCalls, state.prices, state.valuation.settled) {
+                            subject = remember(wishes, state.prices, state.valuation.settled) {
                                 wishSubject(
                                     slots = wishes,
                                     // The same gate as every other amount in the app: while the market
@@ -503,7 +504,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                             state.prices::of,
                                         )
                                     },
-                                    callsPerMonth = wishCalls,
                                 )
                             },
                             images = state.collection.images,

@@ -144,6 +144,11 @@ names its issue costs one — and where the budget is already shown, Ajustes gai
 mes». **No automatic cap**, which #282 discarded as a second invisible budget to explain on top of
 the one that already exists.
 
+**Two places and not three**: the annex does **not** print the figure. It was drawn there first and
+taken back out — a list is used at a fair rather than budgeted, and the same number over it is the
+third printing of one fact (ADR 0026 §5). Where it belongs is the gesture, which is where the spending
+is decided, and the card that already speaks about the pass.
+
 **One chip in the hole and not two things over the same coin.** #493 left the instruction and it is
 followed: the mark and the price want the same centimetre of the same 104 dp hole, so
 `HoleStamp` says both — the word, the amount, or the word over the amount. It covers the ghost,
@@ -213,6 +218,11 @@ nothing rewritten.
 **cannot be wished for**: «searching Numista» stays *Out of scope* of #15, so there is no search of
 our own, no unseeded type and no call per wish to fetch a ficha the phone has never had. And the
 **shelf window itself is not in this delivery** — the annex arrives holding one section, so the door
-is short, the screen is named after the only thing in it, and the shelf ADR 0026 §8 gives an annex
-with a list arrives with the twenty plates that have an order to choose. Seven rows have one order:
-the slot marked most recently, first.
+is short and the screen is named after the only thing in it.
+
+That leaves **one clause of ADR 0026 §8 knowingly unimplemented**: clause 4, «an annex with a list
+opens with its shelf folded — search and sort». It arrives with the twenty plates, which are what has
+an order to choose: seven rows have one order — the slot marked most recently, first — so a sort
+selector would offer to change nothing and a search box would filter a list that fits on one screen.
+It is deferred and not refused: the clause is about an annex with a list, and this annex will have a
+longer one.

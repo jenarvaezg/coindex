@@ -172,6 +172,11 @@ class CoindexViewModel(
      * the loop would start a pass on its own — but not always: a mark on a casilla that is already full
      * moves nothing, and the loop remembers the plan it covered. A pass over an unchanged plan asks for
      * whatever the phone does not already hold, which in that case is nothing at all (ADR 0028 §1).
+     *
+     * **And the first emission of a launch cannot get ahead of the collection.** This flow may well emit
+     * before the snapshot has been read, and then the plan is empty — `ValuationLoop.start` returns on
+     * `plan.isEmpty` before it launches anything, so nothing is started and nothing is recorded as
+     * covered. What arrives second is the collection, with the plan the pass is actually for.
      */
     private fun watchWishes() {
         viewModelScope.launch {

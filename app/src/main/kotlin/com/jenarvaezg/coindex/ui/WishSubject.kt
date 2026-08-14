@@ -10,6 +10,12 @@ import com.jenarvaezg.coindex.domain.WishedSlot
  * The parallel of [PlateSubject] and [PiecesSubject], and for the same reason (#218): a drawer that
  * received the resolved slots would have to ask the catalogue again for every name, every face and
  * every price — three times over, once per drawer, with three chances to ask differently.
+ *
+ * **What the marks cost a month is deliberately not here.** ADR 0029 §5 names two places for that
+ * figure and the annex is neither: it is said **in the gesture**, where the collector is deciding to
+ * spend it, and **in Ajustes**, where the budget already lives. On this screen it was a third printing
+ * of the same number over a list that is being used rather than budgeted — the frequency rule of
+ * ADR 0026 §5 — and a decision the ticket asked to be written and not re-taken.
  */
 data class WishSubject(
     val rows: List<DrawnWish>,
@@ -22,8 +28,6 @@ data class WishSubject(
      * same fact twice, which is what the frequency rule of ADR 0026 §5 prices.
      */
     val census: String?,
-    /** What the marks cost a month, or null with nothing marked: a zero is not printed. */
-    val spend: String?,
 )
 
 /**
@@ -75,7 +79,6 @@ val DrawnWish.printedName: String?
 fun wishSubject(
     slots: List<WishedSlot>,
     costs: Map<WishKey, Double> = emptyMap(),
-    callsPerMonth: Int = 0,
 ): WishSubject = WishSubject(
     rows = slots.map { slot ->
         DrawnWish(
@@ -94,5 +97,4 @@ fun wishSubject(
         ?.let { marked ->
             wishCensusLabel(slots = marked.size, plates = marked.distinctBy { it.catalog.id }.size)
         },
-    spend = wishSpendLabel(callsPerMonth),
 )

@@ -112,15 +112,6 @@ fun ExploreScreen(
                             color = Paper.rust,
                         )
                     }
-                    // What the marks cost every month, where the collector can see it without going
-                    // into Ajustes: it is the first spend of the app that they decide (ADR 0029 §5).
-                    subject.spend?.let { spend ->
-                        Text(
-                            spend,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Paper.muted,
-                        )
-                    }
                     if (subject.rows.isEmpty()) {
                         FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                             Text(

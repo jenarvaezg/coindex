@@ -25,11 +25,7 @@ class WishSubjectTest {
         val run = dateRun("kooka", 2_010..2_011, typeId = 30)
         val slots = run.members.map { slot(run, it.id) }
 
-        val subject = wishSubject(
-            slots = slots,
-            costs = mapOf(slots.first().key to 41.5),
-            callsPerMonth = 4,
-        )
+        val subject = wishSubject(slots = slots, costs = mapOf(slots.first().key to 41.5))
 
         assertEquals(listOf("2010", "2011"), subject.rows.map { it.label })
         assertEquals(listOf("kooka", "kooka"), subject.rows.map { it.plate })
@@ -37,7 +33,6 @@ class WishSubjectTest {
         // The amount alone inside the hole, as on a plate: the criterion was said in the header.
         assertEquals(listOf("42 €", null), subject.rows.map { it.cost })
         assertEquals("2 casillas en 1 lámina", subject.census)
-        assertEquals("+4 consultas al mes", subject.spend)
     }
 
     /**
@@ -78,23 +73,22 @@ class WishSubjectTest {
     }
 
     /**
-     * With no price on the phone no row invents one, and with nothing marked there is no spend to say.
+     * With no price on the phone no row invents one, and an empty list says no census.
      *
      * Absence and not zero, which is the rule every amount in the app follows (ADR 0028 §7): a phone
-     * whose pass has not landed shows the same silence a plate over the threshold does.
+     * whose pass has not landed shows the same silence a plate over the threshold does. And what the
+     * marks cost a month is **not here at all** — ADR 0029 §5 names the gesture and Ajustes, and a
+     * third printing over a list that is being used rather than budgeted is what ADR 0026 §5 prices.
      */
     @Test
-    fun `an unpriced list says no amount and an empty one says no spend`() {
+    fun `an unpriced list says no amount and an empty one says no census`() {
         val run = dateRun("kooka", 2_010..2_010, typeId = 30)
 
-        val unpriced = wishSubject(listOf(slot(run, "kooka-2010")), callsPerMonth = 2)
+        val unpriced = wishSubject(listOf(slot(run, "kooka-2010")))
         assertNull(unpriced.rows.single().cost)
 
-        // And an empty list says neither: «0 casillas en 0 láminas» over «no queda ninguna casilla
-        // marcada» is the same fact twice, and a number that says nothing is not shown.
-        val empty = wishSubject(emptyList(), callsPerMonth = 0)
-        assertNull(empty.spend)
-        assertNull(empty.census)
+        // «0 casillas en 0 láminas» over «no queda ninguna casilla marcada» is the same fact twice.
+        assertNull(wishSubject(emptyList()).census)
     }
 }
 

@@ -96,28 +96,23 @@ fun wishCensusLabel(slots: Int, plates: Int): String =
     "${plural(slots, "casilla", "casillas")} en ${plural(plates, "lámina", "láminas")}"
 
 /**
- * What the marks cost every month, under the census of the annex (ADR 0029 §5).
+ * What the marks cost every month, in Ajustes, **with its subject** (ADR 0029 §5).
  *
  * The first elastic spend of the app, and the reason it is printed at all: the monthly pass used to be
- * a fixed number nobody had to be told. It is the ceiling of a cold month — see `wishCallsPerMonth` —
- * and it is **absent rather than zero** where nothing is marked, which is the one place the rule about
- * a zero lives for both readings of this figure.
+ * a fixed number nobody had to be told. It is the ceiling of a cold month — see `wishCallsPerMonth`.
  *
- * It says «+» and the unit in full because it is what the gesture promised: [WishLabels.MARK_HINT]
- * says «+2 consultas al mes» per casilla, and the total has to be read in the same unit or it sounds
- * like the whole of the pass rather than what the marks add to it.
- */
-fun wishSpendLabel(callsPerMonth: Int): String? =
-    "+$callsPerMonth consultas al mes".takeIf { callsPerMonth > 0 }
-
-/**
- * The same figure **with its subject**, for Ajustes, where nothing else on the card is about the marks.
+ * **Named, because on that card nothing else is about the marks.** ADR 0029 §5 asks for «lo que busco ·
+ * N al mes» where the budget is already shown, and an amount on its own would sit under a sentence
+ * about the pass: a number nobody can attribute. One word wider than the ADR's literal, and
+ * deliberately — «· 2 al mes» leaves the reader to guess the unit, and what this counts is consultas.
  *
- * ADR 0029 §5 asks for «lo que busco · N al mes» where the budget is already shown, and this is that
- * line: in the annex the subject is the screen and the amount can stand alone, but on the valuation's
- * card it would be an amount under a sentence about the pass — a number nobody can attribute. One word
- * wider than the ADR's literal, and deliberately: «· 2 al mes» leaves the reader to guess the unit,
- * and what this counts is consultas.
+ * It says «+» and the unit in full because it is what the gesture promised: [WishLabels.MARK_HINT] says
+ * «+2 consultas al mes» per casilla, and the total has to be read in the same unit or it sounds like
+ * the whole of the pass rather than what the marks add to it.
+ *
+ * **Absent rather than zero** with nothing marked: then the pass is the fixed thing it always was, and
+ * a «+0» would be a line about a decision nobody made. There is **one** reading of this figure and not
+ * two: the annex deliberately does not print it — see [WishSubject].
  */
 fun wishBudgetLabel(callsPerMonth: Int): String? =
-    wishSpendLabel(callsPerMonth)?.let { spend -> "${WishLabels.DESTINATION} · $spend" }
+    "${WishLabels.DESTINATION} · +$callsPerMonth consultas al mes".takeIf { callsPerMonth > 0 }

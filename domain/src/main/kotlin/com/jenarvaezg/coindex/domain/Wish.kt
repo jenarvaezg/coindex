@@ -79,7 +79,18 @@ fun CollectionCatalogMember.wishKey(): WishKey? {
  * declaring an issue it did not declare before is a different [WishKey], so the old mark stops
  * matching. It is the same silence and it is accepted for the same reason — the file is what names a
  * casilla — and it is one more thing the curator does at app-update time and can see, unlike the sync,
- * which happens every month and must never move a mark.
+ * which happens every month and must never move a mark. **The symptom, so nobody debugs it as data
+ * loss**: the door's count drops by one and the row leaves the annex, on the update that edited the
+ * file; the cure is one tap on the plate.
+ *
+ * **Falling back to `(typeId, year)` when it is unique was looked at and not taken.** It would rescue
+ * the case above — a casilla that gained an issue is still one casilla — and it would abstain in the
+ * case it must, an issue run splitting one year into varieties, where that pair is not unique. What
+ * makes it the wrong trade today is the other end: the row would still be **stored** under the old key,
+ * so the plate's own gesture — which addresses the casilla it is drawn from — would insert a second row
+ * instead of undoing the first, unless the stored key were threaded through the plate as well. Two
+ * meanings for one key, to save a tap on an event that has never happened: there is not a single mark
+ * in existence yet.
  *
  * The first catalog that claims the slot wins, which is the same tie ADR 0021 §10 leaves everywhere
  * else: curated multiple membership has no home and no extra view, and the coin is the same coin
