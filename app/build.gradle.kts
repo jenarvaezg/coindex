@@ -41,21 +41,19 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 64
-        // **Minor and not patch**: a destination is new. «Lo que busco» is a screen the app did not
-        // have — the annex of ADR 0026 §8, entered from the last row of Colecciones — with a gesture,
-        // a table of its own (schema v10) and a printed output of its own, and it turns the monthly
-        // valuation pass into a figure the collector decides (#497, ADR 0029). The precedent is
-        // v1.2.0, «Las cifras», which is the last time a destination arrived; every patch since has
-        // been a change *inside* one.
+        versionCode = 65
+        // **Minor again, and for the same clause**: the twenty plates of «Explorar» are catalogs the
+        // app **could not open at all** — ADR 0021 §7 kept them shut and ADR 0030 §1 opens them — so
+        // this is new capability and not a change inside one. It brings a gesture that spends
+        // («Tasar esta lámina · N consultas», the first amendment ADR 0028 §3 has ever taken), a
+        // figure that never expires and travels with its date, and a second room inside the annex:
+        // «Lo que busco» moves one door in (#498, ADR 0030). Nothing is added to the schema.
         //
-        // The phones are on **1.3.0**, `versionCode` 64 — which is what the latest release's
-        // `update.json` says, not what anybody remembers — so nothing is waiting: this one is
-        // published. That is what the line is for and why it is worth correcting after every release:
-        // it kept claiming 1.2.11 while 1.2.15 and 1.2.16 were already out, and `scripts/release.sh`
-        // reads the published manifest and refuses a `versionCode` that does not beat it — this only
-        // says who is waiting.
-        versionName = "1.3.0"
+        // The phones are on **1.3.0**, `versionCode` 64 — what the latest release's `update.json`
+        // says, not what anybody remembers — so **1.4.0 is waiting**. `scripts/release.sh` reads that
+        // manifest and refuses a `versionCode` that does not beat it; this line only says who is
+        // waiting, which is why it is worth correcting after every release.
+        versionName = "1.4.0"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

@@ -10,6 +10,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishedSlot
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 
@@ -154,6 +155,57 @@ fun wishCallsPerMonth(wishes: List<WishedSlot>): Int = valuationCallCount(
     plan = ValuationPlan(owned = emptyList(), holes = wishHoles(wishes)),
     reads = emptyList(),
     nowMillis = 0L,
+)
+
+/**
+ * Everything one plate of the shelf window would be asked about, and nothing else (ADR 0030 §3).
+ *
+ * The plan of a **gesture** and not of a pass: it holds no owned issue — the collector owns nothing of
+ * this catalog, which is what put it in the window — and it holds **every** empty casilla rather than
+ * the ones within reach, because the threshold of ADR 0028 §1 is the rule of the reproach and a plate
+ * that is not yours reproaches nothing (ADR 0030 §7).
+ *
+ * It is fed to the same [ValuationPass] the launch pass uses, which is what keeps there from being a
+ * second writer, a second table or a second price: the rows land in `issue_prices` and
+ * `issue_price_reads`, and a marked casilla of this plate is refreshed by the monthly pass afterwards
+ * exactly as ADR 0029 §4 requires.
+ */
+fun showcaseValuationPlan(plate: ShowcasePlate): ValuationPlan = ValuationPlan(
+    owned = emptyList(),
+    holes = plate.album.members
+        .filter { it.status is CollectionCatalogMemberStatus.Missing }
+        .mapNotNull { hole ->
+            val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
+            PlateHole(plate.catalog.id, typeId, hole.member.year, hole.member.numistaIssueIds)
+        }
+        .distinct(),
+)
+
+/**
+ * What tasar this plate would spend right now, which is what the gesture prints (ADR 0030 §3).
+ *
+ * **The pass's own arithmetic and not a second one**: [valuationCallCount] is what a settings line
+ * already says about the month, and a gesture that counted its calls its own way would promise a number
+ * the pass then did not spend. What it takes is the reads a **screen** holds — `PriceBook.readAt`, which
+ * is the same `issue_price_reads` the pass queries — because this is asked while the collector is
+ * looking at the plate and must not open the database to say a word.
+ *
+ * `hasPrices` is filled with `true` and never read: what decides whether an issue is asked about again
+ * is its date alone (see [freshIssues]), and an issue Numista answered with no price is as much on the
+ * phone as a priced one (ADR 0028 §4).
+ */
+fun showcaseCallCount(
+    plate: ShowcasePlate,
+    priceReadAt: Map<Pair<Int, Int>, Long>,
+    nowMillis: Long,
+    listings: IssueListings = IssueListings.EMPTY,
+): Int = valuationCallCount(
+    plan = showcaseValuationPlan(plate),
+    reads = priceReadAt.map { (issue, readAt) ->
+        IssuePriceReadEntity(issue.first, issue.second, readAt, hasPrices = true)
+    },
+    nowMillis = nowMillis,
+    listings = listings,
 )
 
 /**

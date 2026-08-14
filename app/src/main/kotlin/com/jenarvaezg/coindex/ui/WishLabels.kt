@@ -16,9 +16,10 @@ object WishLabels {
      * «Avisos y licencias»: a door that opened a screen called something else would read as two
      * features.
      *
-     * The annex of ADR 0026 §8 is «Explorar» and this is only its first section — but while the shelf
-     * window does not exist it is **everything behind that door**, so naming the screen after the
-     * twenty plates it does not have yet would be furniture pointing at nothing (#497).
+     * The annex of ADR 0026 §8 is «Explorar» — `ShowcaseLabels.DESTINATION` — and this names the room
+     * inside it that holds the marked casillas (ADR 0030 §8). For one version it was everything behind
+     * that door and the screen was called this; since the shelf window arrived the door of the index
+     * names both populations and this string names the list, its own door and its masthead.
      */
     const val DESTINATION: String = "Lo que busco"
 
@@ -74,17 +75,50 @@ object WishLabels {
 }
 
 /**
- * The door at the foot of the Colecciones list, naming what is behind it with its count (ADR 0026 §8).
+ * «Lo que busco» with its count, on the door that opens it (ADR 0026 §8, ADR 0030 §8).
  *
  * **The count is not optional and the zero is not printed**: the door itself is absent while nothing
  * is marked, which is why this takes a live count and never a nullable one — the same clause the sewn
  * edge keeps while it reads (#418).
  *
- * Its short form, because the shelf window does not exist yet: §8 wrote «Lo que busco · 7, y otras 20
- * láminas →» for the day it does, and the second half cannot be printed about twenty plates the app
- * cannot open. The arrow is drawn and not typed — neither Bitter nor Barlow has that glyph (#298).
+ * **Two doors hang this label now** (ADR 0030 §8). Inside «Explorar» it is the whole of the row, in the
+ * short form §8 wrote — the shelf is what the collector is already looking at, so what this door adds is
+ * the list. At the foot of the index it is the first half of [annexDoorLabel], which names the twenty
+ * beside it. The arrow is drawn and not typed — neither Bitter nor Barlow has that glyph (#298).
  */
 fun wishDoorLabel(count: Int): String = "${WishLabels.DESTINATION} · $count"
+
+/**
+ * The door of the index, in the two forms ADR 0026 §8 clause 3 wrote for it.
+ *
+ * «Y otras 20 láminas que no coleccionas →» while nothing is marked, «Lo que busco · 7, y otras 20
+ * láminas →» once something is, and **null** when there is neither — which is the zero that is not
+ * printed, the same clause the sewn edge keeps while it reads (#418).
+ *
+ * The count is the **twenty and not the twenty-three** (ADR 0030 §8 clause 5): what is behind this door
+ * that the list above it does not already hold is the shelf window, and counting the collector's own
+ * plates here would claim they live somewhere else.
+ *
+ * With the window empty and marks in hand it falls back to the short form, which is what the annex was
+ * called for one version: a collection that has reached every curated catalog has a list behind this
+ * door and nothing else. Unreachable today, and it is one `takeIf` rather than a screen nobody can open.
+ */
+fun annexDoorLabel(wishes: Int, plates: Int): String? = when {
+    wishes > 0 && plates > 0 -> "${wishDoorLabel(wishes)}, y ${otherPlates(plates)}"
+    wishes > 0 -> wishDoorLabel(wishes)
+    plates > 0 -> "Y ${otherPlates(plates)} que no coleccionas"
+    else -> null
+}
+
+/**
+ * «otras 20 láminas», and «otra lámina» when there is one.
+ *
+ * The count goes with the plural and **not** with the singular: «otra 1 lámina» is what a `plural`
+ * helper produces on its own, and it is the one place in this door where the number has to disappear
+ * for the sentence to be Spanish.
+ */
+private fun otherPlates(plates: Int): String =
+    if (plates == 1) "otra lámina" else "otras $plates láminas"
 
 /**
  * What the list holds, under its heading: **«7 casillas en 5 láminas»**.

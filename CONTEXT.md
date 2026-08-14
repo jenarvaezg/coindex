@@ -361,8 +361,28 @@ because its population is not the collection at all: «Explorar» is made of wha
 have. It hangs off exactly one hierarchy, is entered through the last row of that hierarchy's list —
 a door that names what is behind it with its count, and is not printed when that count is zero — and
 carries no cell and no bar. With a list it opens with its shelf folded, and its chips are whatever its
-population earns.
+population earns, which in «Explorar» is none. It holds **two rooms** (ADR 0030 §8): the **Shelf
+window** and, one door further in, «Lo que busco».
 _Avoid_: Tab, sub-screen, modal, section of the index
+
+**Shelf window**:
+The curated catalogs the collector owns nothing of and that are **under twenty measurable casillas**,
+opened as plates they can walk into — twenty of the father's twenty-six (ADR 0030 §1). Browsing them
+costs nothing: their types are in the seeded ficha cache. A plate of the window is **open and not
+theirs**: no «Exportar», one figure of money instead of two — the **Cost of entering** — and a gesture
+that spends where the export was. The shelf that holds them is of «lo que te falta», so their own plates
+holding a marked casilla are on it too, which is a second **order** over one plate and not a second
+species of collection.
+_Avoid_: Escaparate as a word on screen, catalog browser, wishlist, a fourth cell
+
+**Cost of entering**:
+What buying every casilla of a **Shelf window** plate would cost, in `unc` and shown **with the date it
+was brought** — a hand-asked price never expires, because no pass will ever refresh it (ADR 0030 §4).
+Never «Coste de cerrar»: closing is buying the last of something you collect, entering is buying the
+first of something you do not. A plate nobody has valued says **nothing**, even though its silver floor
+costs no API call: a floor shown alone reads as the price. A total whose parts were read on different
+days carries the **oldest** of them.
+_Avoid_: Coste de cerrar on a plate that is not yours, «desde N €», a floor with no date
 
 **Wish**:
 An empty slot the collector marked on this phone, held in a table of its own and keyed by the slot's

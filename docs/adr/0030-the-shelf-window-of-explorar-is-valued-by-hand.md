@@ -137,6 +137,19 @@ holes is a sheet of somebody else's collection, and the plate that has nothing o
 export. The marking mode stays — that is the whole point of the twenty being in reach — and so does
 the link to Numista.
 
+**A plate that has never been valued says no amount at all**, and that is a decision rather than a
+consequence: the silver floor costs no API call — the spot is two keyless calls (§9) and the weight is in
+every seeded ficha — so a figure *could* be shown over all twenty without anybody pressing anything. It
+is not, for the reason §1 gives for the plates over its threshold: «entrar cuesta al menos esto» is not a
+sentence the collector can tell from the price. The gate is whether **this phone asked about the issue**,
+which is the same row that makes the date sayable.
+
+**The ratio stays on the header and never on the tile.** `0/2` beside a title the collector is reading
+says how many casillas the plate has; twenty of them down a shelf would be a column of noughts, which is
+the reproach ADR 0026 §10 avoids. So a tile says «2 casillas» until it is valued and its amount
+afterwards — and the completion stamp of ADR 0026 §3 can never fire on one of these, which is why its ink
+is not even read.
+
 ### 7. The threshold of ten casillas does not apply to a plate that is not yours
 
 `HOLE_THRESHOLD_SLOTS` is the rule of the reproach: *«a plate with 51 holes does not have a cost of

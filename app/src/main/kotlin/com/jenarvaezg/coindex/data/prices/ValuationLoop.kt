@@ -81,6 +81,36 @@ class ValuationLoop(
     }
 
     /**
+     * Runs one pass **now**, for the gesture that values a plate of the shelf window (ADR 0030 §3).
+     *
+     * Three things it does not do, and each is the difference between a gesture and the loop above:
+     *
+     * - **No delay.** The three seconds exist so a cold start is not spent on the network; here the
+     *   collector has pressed a button and is watching it.
+     * - **No `covered` memory.** That field talks the *next launch* out of a pass it has already made,
+     *   and this plan is not the collection's: recording it would strand the launch pass, and comparing
+     *   against it would refuse a plate the collector asked for twice for two different reasons.
+     * - **It waits for the background pass rather than skipping.** `start` returns when a job is alive,
+     *   because a second automatic pass buys nothing; a gesture cannot return silently — what the
+     *   collector would see is a button that did nothing. So the pass in flight is given up first, the
+     *   same way a sync takes the budget off it, and it is the launch pass that comes back later.
+     *
+     * The refusal it returns is the gesture's to say. A tasación held by a sync, a dead network or an
+     * exhausted budget writes nothing at all (ADR 0028 §4), and the plate is exactly as it was.
+     *
+     * **What comes back is never published to [status]**, and that is not tidiness: this plan owns no
+     * issue, so its status is `wanted = 0, missing = 0`, which reads as `settled` — the gate the money
+     * section of «Las cifras» opens on (ADR 0028 §7). Pushing it into the shared flow would announce
+     * that the market had landed because a plate of somebody else's had been priced.
+     */
+    suspend fun valueNow(plan: ValuationPlan): ValuationStatus {
+        if (plan.isEmpty) return _status.value
+        yieldNetwork()
+        val held = if (syncing()) ValuationRefusal.Syncing else null
+        return pass.run(plan, held)
+    }
+
+    /**
      * Gives the network up without waiting, for an export that is about to take all four slots.
      *
      * Not joined, unlike [yieldNetwork]: the export does not spend API budget, so a pass unwinding

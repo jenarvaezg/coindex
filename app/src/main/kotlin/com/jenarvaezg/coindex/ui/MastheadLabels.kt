@@ -80,10 +80,12 @@ private const val STRAPLINE = "Inventario de campo · plata bullion"
 fun screenTitle(route: String?, subjectName: String? = null): String = when {
     route == Routes.SETTINGS -> SETTINGS_LABEL
     route == Routes.NOTICES -> NOTICES_LABEL
-    // The annex names itself with the same string its door prints (ADR 0029 §6): a door that opened a
-    // screen called something else would read as two features, which is the pairing
-    // `PrunedVocabularyTest` already holds for «Avisos y licencias».
-    route == Routes.EXPLORE -> WishLabels.DESTINATION
+    // Each of the annex's two rooms names itself with the string its own door prints (ADR 0029 §6,
+    // ADR 0030 §8): a door that opened a screen called something else would read as two features,
+    // which is the pairing `PrunedVocabularyTest` already holds for «Avisos y licencias». The shelf's
+    // door is the index's last row and says what is behind it with its count, which is §8's clause 3.
+    route == Routes.EXPLORE -> ShowcaseLabels.DESTINATION
+    route == Routes.WISHES -> WishLabels.DESTINATION
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
     // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
     // «Tu agrupación» was the last place in the app that ranked a box below the rest.

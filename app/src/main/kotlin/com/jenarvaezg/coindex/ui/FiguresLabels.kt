@@ -67,6 +67,19 @@ object FiguresLabels {
     const val PLATE_COST_LABEL: String = "Coste de cerrar"
 
     /**
+     * The one figure of a plate that is not the collector's (ADR 0030 §6).
+     *
+     * **«Entrar» and not «cerrar»**, and the difference is not decoration: closing a plate is buying the
+     * last of something you collect, and this is buying the first of something you do not. Naming it
+     * «Coste de cerrar» would say the collector is 0/12 of the way through a collection they never
+     * started, which is the reproach ADR 0026 §10 exists to avoid.
+     *
+     * It lives beside the other two rather than in `ShowcaseLabels` because these three words are one
+     * decision: what a figure of money on a plate's header is allowed to be called.
+     */
+    const val SHOWCASE_ENTRY_LABEL: String = "Coste de entrar"
+
+    /**
      * Where the cost of closing comes from, which is **not** where the value comes from.
      *
      * A hole has no «lo que pagaste», so its prices are two and not three, and it is priced in `unc`

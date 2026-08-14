@@ -55,6 +55,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.prices.showcaseCallCount
 import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.wishedSlots
@@ -68,6 +69,7 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.ExploreScreen
+import com.jenarvaezg.coindex.ui.screens.WishesScreen
 import com.jenarvaezg.coindex.ui.screens.FiguresScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
@@ -76,6 +78,7 @@ import com.jenarvaezg.coindex.ui.screens.NoticesScreen
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateMarking
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
+import com.jenarvaezg.coindex.ui.screens.PlateValuation
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
@@ -152,14 +155,32 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // lives (ADR 0029 §5). The other place the figure is said is the gesture, and that one is a constant
     // sentence — «+2 consultas al mes» per casilla — because it is a promise and not a total.
     val wishCalls = remember(wishes) { wishCallsPerMonth(wishes) }
+    // Now, read once per arrival of a price rather than per recomposition: what it dates is a figure
+    // that never expires (ADR 0030 §4), so what it must not do is change under the collector's eyes
+    // while they read it.
+    val nowMillis = remember(state.prices) { System.currentTimeMillis() }
+    // The shelf window itself, crossed once (ADR 0030 §1): the same reading the shelf draws and the
+    // plate resolves itself by, so a tile and its plate cannot disagree about which régime it is under.
+    val showcase = remember(state.collection) { viewModel.showcase() }
     // The plate asks for three readings at once and gets them or gets none of them (#493): the value
     // of what is in it, the cost of closing it and the price inside each hole are one walk of the same
     // album, and while the market is still arriving the empty value is what withdraws all three.
     val plateMoney: (PlateResult.Available) -> PlateMoney = { resolved ->
-        if (!state.valuation.settled) {
-            PlateMoney()
-        } else {
-            plateMoney(
+        val window = showcase.firstOrNull { it.catalog.id == resolved.catalog.id }
+        when {
+            // A plate of the shelf window is **not** gated on the collection's pass (ADR 0030 §3):
+            // its prices arrive by a gesture of their own, so waiting for the market of a collection
+            // it has no coin in would leave the amount off a plate that has just been valued.
+            window != null -> showcaseMoney(
+                window,
+                state.collection,
+                state.prices.listings,
+                state.prices.spot,
+                state.prices::of,
+                state.prices::readAt,
+            )
+            !state.valuation.settled -> PlateMoney()
+            else -> plateMoney(
                 resolved.album,
                 state.collection,
                 state.prices.listings,
@@ -168,6 +189,29 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 wishedKeys,
             )
         }
+    }
+
+    // What tasar the plate on screen would cost and what pressing it does (ADR 0030 §3). A function of
+    // the resolution like the money is: the album the count walks is on the other side of it.
+    val plateValuation: (PlateResult.Available) -> PlateValuation = { resolved ->
+        val plate = showcase.firstOrNull { it.catalog.id == resolved.catalog.id }
+        val calls = plate?.let {
+            showcaseCallCount(it, state.prices.readAt, nowMillis, state.prices.listings)
+        } ?: 0
+        PlateValuation(
+            calls = calls,
+            running = state.valuingPlate == resolved.catalog.id,
+            // Nothing to ask is answered here and not by a pass that would ask for nothing: the
+            // gesture never buys the same answer twice (ADR 0028 §5), and a press that did nothing
+            // silently is a button the collector reads as broken.
+            onValue = {
+                if (calls > 0) {
+                    viewModel.valuePlate(resolved.catalog.id)
+                } else {
+                    viewModel.showMessage(UiNotice(ShowcaseLabels.ALREADY_FRESH))
+                }
+            },
+        )
     }
 
     // Built here, once, for the two surfaces that show a piece of a type (#185): both read the same
@@ -356,6 +400,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 },
                                 sewnEdge = sewnEdge,
                                 wishes = wishes.size,
+                                showcase = showcase.size,
                                 onOpenWishes = { navController.navigate(Routes.EXPLORE) },
                                 onSettings = { navController.navigate(Routes.SETTINGS) },
                                 notebookOptions = state.notebookOptions,
@@ -483,9 +528,37 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     }
                     // The annex (ADR 0026 §8): no cell, no bar, and «Volver» is the way out. It is
                     // reached from the last row of the Colecciones list and from nowhere else, which is
-                    // the clause that keeps it hanging off exactly one hierarchy.
+                    // the clause that keeps it hanging off exactly one hierarchy. Two rooms since the
+                    // shelf window arrived (ADR 0030 §8): the shelf here, the list one door further in.
                     page(Routes.EXPLORE) {
                         ExploreScreen(
+                            // Worded once per crossing of the four things a tile is made of — the
+                            // curated files, the inventory, the marks and the price table — and not
+                            // once per recomposition: the prices land while the shelf is open.
+                            tiles = remember(showcase, state.collection, wishes, state.prices) {
+                                showcaseTiles(
+                                    window = showcase,
+                                    cards = state.collection.index,
+                                    wishes = wishes,
+                                    state = state.collection,
+                                    listings = state.prices.listings,
+                                    spot = state.prices.spot,
+                                    prices = state.prices::of,
+                                    readAt = state.prices::readAt,
+                                    nowMillis = nowMillis,
+                                )
+                            },
+                            wishes = wishes.size,
+                            images = state.collection.images,
+                            onOpenPlate = { catalogId ->
+                                navController.navigate(Routes.plate(catalogId))
+                            },
+                            onOpenWishes = { navController.navigate(Routes.WISHES) },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    page(Routes.WISHES) {
+                        WishesScreen(
                             // Worded once per crossing of the table and the collection, and not once
                             // per recomposition: the prices land while the screen is open.
                             subject = remember(wishes, state.prices, state.valuation.settled) {
@@ -568,6 +641,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 marking = remember(wishedKeys) {
                                     PlateMarking(wishedKeys, viewModel::toggleWish)
                                 },
+                                valuation = plateValuation,
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebookPages = { options ->
@@ -576,6 +650,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 onExporting = viewModel::notebookExporting,
                                 onOpenSource = openUrl,
                                 onMessage = viewModel::showMessage,
+                                nowMillis = nowMillis,
                                 modifier = Modifier.fillMaxSize(),
                             )
                         }

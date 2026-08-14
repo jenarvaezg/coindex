@@ -13,6 +13,7 @@ import com.jenarvaezg.coindex.domain.LadderKind
 import com.jenarvaezg.coindex.domain.LadderPlacement
 import com.jenarvaezg.coindex.domain.Ladders
 import com.jenarvaezg.coindex.domain.PaidComparison
+import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.WishKey
@@ -265,6 +266,15 @@ data class PlateCost(val eur: Double, val holes: Int)
 data class PlateMoney(
     val value: PlateValue? = null,
     val cost: PlateCost? = null,
+    /**
+     * What entering costs, on a plate that is not the collector's (ADR 0030 §6).
+     *
+     * The third figure and never a second reading of the second: this one is a **whole** plate priced
+     * because no casilla of it reproaches anything (§7), and it carries the date the amount was brought
+     * because nothing will ever refresh it (§4). A plate of the collector's leaves it null, and one of
+     * the shelf window leaves [value] and [cost] null: they are two régimes and not two styles.
+     */
+    val entry: ShowcaseCost? = null,
     val holeCosts: Map<String, Double> = emptyMap(),
 )
 
@@ -361,6 +371,76 @@ private fun holesToPrice(
             candidate.member.id !in counted &&
             candidate.member.wishKey() in wished
     }
+}
+
+/**
+ * What entering one plate of the shelf window costs, and when its price was brought (ADR 0030 §6).
+ *
+ * @param holes how many casillas the amount covers, which is not [slots]: a hole Numista had no price
+ *   for adds its silver floor, and one whose issue nobody can name adds nothing. The figure is a floor,
+ *   like the plate's own cost of closing.
+ * @param readAt the **oldest** of the reads the amount is made of, which is how a total whose parts
+ *   arrived on different days is dated ([#494](https://github.com/jenarvaezg/coindex/issues/494)). A
+ *   date over a total is a promise about all of it.
+ */
+data class ShowcaseCost(
+    val eur: Double,
+    val holes: Int,
+    val slots: Int,
+    val readAt: Long,
+)
+
+/**
+ * The money of a plate the collector owns nothing of: one figure, and the price inside each hole.
+ *
+ * **A plate that has never been valued says nothing**, and that is a decision rather than a
+ * consequence: the silver floor costs no API call at all — the spot is two keyless calls (ADR 0028 §9)
+ * and the weight is in every seeded ficha — so an amount *could* be shown over the twenty without
+ * anybody pressing anything. It is not, for the reason ADR 0028 §1 gives for the plates over its
+ * threshold: what a floor-only figure would say is «entrar cuesta al menos esto», and the collector
+ * cannot tell it apart from the real price. So the gate is exactly whether **this phone asked about the
+ * issue** — `readAt` — which is the same row that makes the date sayable.
+ *
+ * @param readAt when each issue's price landed, from [com.jenarvaezg.coindex.data.prices.PriceBook].
+ */
+fun showcaseMoney(
+    plate: ShowcasePlate,
+    state: CollectionState,
+    listings: IssueListings,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+    readAt: (Int, Int) -> Long?,
+): PlateMoney {
+    var total = 0.0
+    var oldest = Long.MAX_VALUE
+    val holeCosts = buildMap {
+        for (hole in plate.album.members) {
+            if (hole.status !is CollectionCatalogMemberStatus.Missing) continue
+            val typeId = hole.member.numistaTypeId ?: continue
+            val issueId = listings.issueOf(hole.member) ?: continue
+            // Asked about, and therefore sayable. An issue this phone has never priced has no date to
+            // show and no figure to show either, whatever its metal is worth.
+            val read = readAt(typeId, issueId) ?: continue
+            val cost = holeValue(
+                typeId = typeId,
+                issueId = issueId,
+                meta = state.typeMeta[typeId],
+                spot = spot,
+                prices = prices,
+            ) ?: continue
+            put(hole.member.id, cost.eur)
+            total += cost.eur
+            oldest = minOf(oldest, read)
+        }
+    }
+    return PlateMoney(
+        // No «Valor actual»: a plate holding nothing has no pieces to total, and that is absence and
+        // not a zero (ADR 0030 §6).
+        entry = holeCosts
+            .takeIf { it.isNotEmpty() }
+            ?.let { ShowcaseCost(total, it.size, plate.slots, oldest) },
+        holeCosts = holeCosts,
+    )
 }
 
 /**

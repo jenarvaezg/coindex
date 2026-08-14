@@ -28,11 +28,21 @@ class WishLabelsTest {
         assertFalse('→' in wishDoorLabel(7), "la flecha se dibuja, no se teclea")
     }
 
-    /** The door and the screen it opens share a name, or they read as two features. */
+    /**
+     * The door and the screen it opens share a name, or they read as two features.
+     *
+     * The pair moved one room in when the shelf window arrived (ADR 0030 §8): «Lo que busco» is now
+     * entered from inside «Explorar», so it is that door — the one this label draws — that has to match
+     * the screen it opens, and it does. The **index's** door is a different clause and deliberately not
+     * this one: ADR 0026 §8 clause 3 has it name what is *behind* it with its count, which is two
+     * populations and never a screen title.
+     */
     @Test
     fun `the door and the annex it opens share a name`() {
-        assertEquals(WishLabels.DESTINATION, screenTitle(Routes.EXPLORE))
+        assertEquals(WishLabels.DESTINATION, screenTitle(Routes.WISHES))
         assertTrue(WishLabels.DESTINATION in wishDoorLabel(7))
+        // And the shelf is named by its own word, which is what its masthead prints.
+        assertEquals(ShowcaseLabels.DESTINATION, screenTitle(Routes.EXPLORE))
     }
 
     /** Two units, because the list is what crosses plates; casillas first, which is what was marked. */
