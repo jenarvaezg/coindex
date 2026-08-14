@@ -6,7 +6,8 @@
   amended by #370 (the ficha sheet is the landing of the second journey) and again by #381 (a
   destination paints its own paper, and only the leaf on top is animated); §4 amended by #371 (the
   stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
-  name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex)
+  name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex);
+  §10 amended by #491 (one aggregate premium is admitted — the one that cannot reproach)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -555,6 +556,30 @@ The page's form ([#326](https://github.com/jenarvaezg/coindex/issues/326), `docs
 Money at export is **the sixth switch** of the configurable export (#228, ADR 0021 §13). Turning it
 off is **not** hiding the amount section: there are derived figures that are also money — «Venezuela ·
 30 % of the value» leaked through with money off.
+
+> **Amended on 2026-08-14 (§10, [#491](https://github.com/jenarvaezg/coindex/issues/491)). One
+> aggregate premium is admitted, and the veto above stands for every other.**
+>
+> The rule quoted here — «summed, it is a portfolio's return» — reads on «De las 91 piezas cuyo precio
+> anotaste, pagaste X. Hoy valen Y», and it has to be said out loud rather than walked around: the
+> sentence *is* a premium totalled over more than one piece. The exception is written down because
+> three things make it not the wealth management this section keeps outside, and a figure that lost any
+> of the three would fall back under the veto:
+>
+> - **It cannot reproach.** What a piece is worth is the maximum of the three sources and what was paid
+>   is one of them, so today is at worst what it cost. The figure has one direction: it can say the
+>   collection did well and it is arithmetically incapable of saying he overpaid. That is *revela, no
+>   reprocha* (#304) holding by construction and not by wording — and it is also the honest limit of
+>   the sentence, which is why `ValuationTest` pins it as a consequence.
+> - **It is not the shelf.** The denominator is what he declared a price for — 91 of his 572 pieces —
+>   and it is said in front of the figure. The complement is never interpreted: «el 84 % de tus monedas
+>   no las compraste» would turn a 2019 habit of not writing prices down into a claim about his life.
+> - **It is a moment and not a series.** ADR 0028's «no aggregate of return» sits inside its sentence
+>   about **history**, and that clause is untouched: no spot series, no evolution of the total, nothing
+>   stored. Two numbers read today, and read again from scratch tomorrow.
+>
+> What stays refused is unchanged and is the larger half: the cost of closing the shelf, the premium
+> per piece ranked, and any of it over time. «A una casilla» still does not live here.
 
 ### 11. Prices arrive in one pass, and the total is never shown half-done
 

@@ -55,15 +55,15 @@ data class CountryPortrait(
 /**
  * The amount, where it came from, and the day the silver behind it was read.
  *
- * @param paid what he paid for the pieces he wrote a price for, against what those same pieces are
- *   worth today. It hangs here and not off [FiguresSubject] because two amounts in euros are money as
- *   much as the total is: inside the reading there is no branch that could let it out with the export's
- *   switch off. Null when no row declares a price.
+ * @param purchases what he paid for the pieces he wrote a price for, against what those same pieces
+ *   are worth today. It hangs here and not off [FiguresSubject] because two amounts in euros are money
+ *   as much as the total is: inside the reading there is no branch that could let it out with the
+ *   export's switch off. Null when no row declares a price.
  */
 data class MoneyReading(
     val value: CollectionValue,
     val spot: SilverSpot,
-    val paid: PaidComparison?,
+    val purchases: PaidComparison?,
 )
 
 /**

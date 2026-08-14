@@ -23,7 +23,7 @@ Una hoja de **1,9 pantallas** con seis bloques y sin estante, en este orden:
 | **el metal** | una barra por masa, no por moneda |
 | **el arco** | la más vieja y la más nueva, unidas por los años que las separan |
 | **el tamaño** | la más pequeña y la más grande, dibujadas a la misma escala |
-| **al margen** | cuatro cifras que la colección no sabe que tiene |
+| **al margen** | cuatro cifras que la colección no sabe que tiene (cinco desde el #491) |
 
 ## La escalera: una cifra física no significa nada sola
 
@@ -87,7 +87,7 @@ es plata**, porque una moneda de plata .835 es un 16,5 % de cobre. Ninguna de la
 oro hoy, así que la barra es plata contra cobre — y crece sola el día que entre otro metal, que era
 exactamente lo que se pedía de ella.
 
-## Las cuatro cifras «al margen»
+## Las cifras «al margen»
 
 ![El segundo pliegue: el tamaño y las notas](cifras-326/e-escalera-abajo.jpg)
 
@@ -100,6 +100,14 @@ APK. Las cuatro están medidas sobre las 574 monedas del padre.
 | **246 las grabó la misma mano: Désiré-Albert Barre** | `engravers` y `designers` de las dos caras; el 43 % de la colección, todas venezolanas (1 Bolívar, 50 Céntimos, 5 Bolívares) |
 | **296 salieron de París, de 51 cecas distintas** | `mints`; 292 de esas 296 son bolívares — Venezuela acuñaba en Francia |
 | **210 llevan la fecha de 1960** | un solo año es el 37 % de todo |
+
+> **Ampliado el 14 de agosto de 2026 ([#491](https://github.com/jenarvaezg/coindex/issues/491)): son
+> cinco, y la quinta es de otra clase.** «40 % están sin circular o casi» sale de `grade`, que está en
+> el 100 % de sus filas — y es la única de las cinco que **no** sale de la ficha de Numista sino de su
+> propia mecanografía: la colección sí sabe que la tiene. Se cuenta por piezas como las otras cuatro, y
+> eso la invierte: por filas son 178 de 229 (78 %) y por piezas 227 de 572 (40 %), porque sus siete
+> bultos venezolanos son 298 piezas en `f`. Las dos son ciertas y sólo una comparte denominador con el
+> resto de la página.
 
 Y **el tamaño**, que es un dibujo y no una cifra: la más pequeña y la más grande **a la misma escala**,
 un ½ dirham de 14,5 mm de 1899 contra un tálero de María Teresa de 42 mm de 1780. Es lo que hace una

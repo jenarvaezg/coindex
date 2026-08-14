@@ -87,7 +87,7 @@ class FiguresSubjectTest {
     fun `what was paid arrives with the money and cannot leave without it`() {
         val bought = state(items = listOf(item(id = 1, typeId = 2, grade = "unc", price = 30.0)))
 
-        val paid = figuresSubject(bought, SPOT, priced, settled = true).money?.paid
+        val paid = figuresSubject(bought, SPOT, priced, settled = true).money?.purchases
 
         assertEquals(30.0, paid?.paid)
         assertEquals(40.0, paid?.today)
@@ -98,7 +98,7 @@ class FiguresSubjectTest {
     /** A collection that declares no price says nothing about what it cost. */
     @Test
     fun `nothing declared leaves the comparison unsaid`() {
-        assertNull(figuresSubject(state(), SPOT, priced, settled = true).money?.paid)
+        assertNull(figuresSubject(state(), SPOT, priced, settled = true).money?.purchases)
     }
 
     /**

@@ -173,20 +173,19 @@ fun paidComparison(
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
 ): PaidComparison? {
-    var paid = 0.0
-    var today = 0.0
-    var pieces = 0
-    for (item in items) {
-        val price = item.price?.takeIf { it > 0.0 } ?: continue
-        // Unreachable while `price` is one of the three sources, and kept anyway: the two sides of a
-        // comparison have to be totalled over the same pieces or the sentence lies by subtraction.
-        val value = pieceValue(item, typeMeta[item.typeId], spot, prices) ?: continue
-        val quantity = item.quantity.coerceAtLeast(1)
-        paid += price
-        today += value.eur * quantity
-        pieces = saturatingAdd(pieces, quantity)
-    }
-    return if (pieces == 0) null else PaidComparison(paid, today, pieces)
+    val bought = items.filter { item -> (item.price ?: 0.0) > 0.0 }
+    if (bought.isEmpty()) return null
+    // The page's own total read over the subset, rather than a second loop that sums the same three
+    // sources by hand: one of the two would drift, and the one that drifted would be this one.
+    val today = collectionValue(bought, typeMeta, spot, prices)
+    return PaidComparison(
+        paid = bought.sumOf { item -> item.price ?: 0.0 },
+        today = today.eur,
+        // The pieces a source covered and not every piece of the rows: the two sides of a comparison
+        // have to be totalled over the same pieces or the sentence lies by subtraction. They are the
+        // same number while `price` is one of the three sources, which is what makes it safe to say.
+        pieces = today.valued,
+    )
 }
 
 /**

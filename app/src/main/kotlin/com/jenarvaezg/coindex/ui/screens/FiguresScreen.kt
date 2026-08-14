@@ -135,7 +135,7 @@ fun FiguresScreen(
                         // Between the coverage and the method, which is where it belongs: it is a
                         // figure and not a footnote —hence the ink— but the criterion still closes
                         // the block, because it governs the total and this comparison alike.
-                        money.paid?.let { paid ->
+                        money.purchases?.let { paid ->
                             Text(
                                 paidAgainstTodayLabel(paid),
                                 style = MaterialTheme.typography.bodyMedium,

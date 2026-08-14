@@ -197,7 +197,9 @@ data class MarginFigures(
  * Two and not one, and the second is what makes the figure worth a line: `au` is *about*
  * uncirculated, and the collector uses both — 121 rows `unc` and 57 `au` of his 229 (#491).
  */
-private val UNCIRCULATED_GRADES = setOf(UNCIRCULATED, "au")
+private const val ABOUT_UNCIRCULATED = "au"
+
+private val UNCIRCULATED_GRADES = setOf(UNCIRCULATED, ABOUT_UNCIRCULATED)
 
 fun marginFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MarginFigures {
     var pieces = 0
