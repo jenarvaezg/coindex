@@ -291,8 +291,11 @@ fun plateMoney(
      */
     wished: Set<WishKey> = emptySet(),
 ): PlateMoney {
-    val withinReach = holesWithinReach(album).mapTo(mutableSetOf()) { it.member.id }
-    val holeCosts = holeCosts(album, state, listings, spot, prices, wished)
+    // The one walk of the album's holes, handed on rather than repeated: the header's second figure and
+    // the chips inside the casillas have to be about the same holes (ADR 0028 §1).
+    val withinReach = holesWithinReach(album)
+    val closing = withinReach.mapTo(mutableSetOf()) { it.member.id }
+    val holeCosts = holeCosts(album, state, listings, spot, prices, wished, withinReach)
     return PlateMoney(
         value = plateValue(album, state, spot, prices),
         // **Only the holes within reach**, and a marked one past the threshold is deliberately not
@@ -300,7 +303,7 @@ fun plateMoney(
         // «Coste de cerrar» over a number that closes nothing (ADR 0029 §4). Null and not zero, like
         // every other amount on the page: «0 €» would say closing costs nothing.
         cost = holeCosts
-            .filterKeys { it in withinReach }
+            .filterKeys { it in closing }
             .values
             .takeIf { it.isNotEmpty() }
             ?.let { PlateCost(it.sum(), it.size) },
@@ -325,8 +328,9 @@ private fun holeCosts(
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
     wished: Set<WishKey>,
+    withinReach: List<CollectionCatalogAlbumMember>,
 ): Map<String, Double> =
-    holesToPrice(album, wished).mapNotNull { hole ->
+    holesToPrice(album, wished, withinReach).mapNotNull { hole ->
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
         val cost = holeValue(
             typeId = typeId,
@@ -348,8 +352,8 @@ private fun holeCosts(
 private fun holesToPrice(
     album: CollectionCatalogAlbum,
     wished: Set<WishKey>,
+    withinReach: List<CollectionCatalogAlbumMember>,
 ): List<CollectionCatalogAlbumMember> {
-    val withinReach = holesWithinReach(album)
     if (wished.isEmpty()) return withinReach
     val counted = withinReach.mapTo(mutableSetOf()) { it.member.id }
     return withinReach + album.members.filter { candidate ->

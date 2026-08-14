@@ -163,6 +163,13 @@ private val WISH_MARGIN = 20.dp
  * same two words seven times to distinguish nothing. On a plate the chip is the whole point, because
  * there it tells one hole from its fifty neighbours. What the chip still says here is the **price**,
  * which does differ per row.
+ *
+ * **«Quitar» *is* per row, and that is not the control ADR 0029 §5 refused.** What it refused was a
+ * toggle on each of a plate's fifty-one casillas, where the mode's cost line would have been printed
+ * fifty-one times over coins the collector was only browsing. Here the population is the marks
+ * themselves — seven of them — undoing one is the only upkeep the screen has, and it is the shape a
+ * box's upkeep already has beside each of its pieces (ADR 0021 §9). A mode would charge two taps to
+ * undo one mistake on a list that exists to be pruned.
  */
 @Composable
 private fun WishCell(

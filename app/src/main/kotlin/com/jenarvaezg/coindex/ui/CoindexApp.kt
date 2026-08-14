@@ -136,9 +136,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             coinValue(typeId, state.collection, state.prices.spot, state.prices::of)
         }
     }
-    // The casillas the collector marked, crossed with the collection **once** (ADR 0029 §3): the table
-    // and the inventory change at different times, and this is the one place the two meet — the annex
-    // draws these, the plan prices them and the door counts them.
+    // The casillas the collector marked, crossed with the collection for **the screens** (ADR 0029 §3):
+    // the annex draws these, the door counts them and Ajustes prices their month. The plan asks the
+    // ViewModel's `livingWishes()` for the same crossing, and the two cannot disagree because it is one
+    // pure function of the same two fields — which is also why neither of them is kept in the state:
+    // a stored third reading is the one that could.
     val wishes = remember(state.wishes, state.collection.items, viewModel.catalogs) {
         wishedSlots(state.wishes, viewModel.catalogs, state.collection.items)
     }
@@ -146,6 +148,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // is only ever painted on an empty casilla, so the album is what says whether it shows (ADR 0029
     // §2) — and a plate whose coin was sold shows the mark again without the table being written to.
     val wishedKeys = remember(state.wishes) { state.wishes.mapTo(mutableSetOf()) { it.key } }
+    // What the marks cost a month, counted once for the two surfaces that print it: the annex, where
+    // the amount can stand alone, and Ajustes, where it needs its subject (ADR 0029 §5).
+    val wishCalls = remember(wishes) { wishCallsPerMonth(wishes) }
     // The plate asks for three readings at once and gets them or gets none of them (#493): the value
     // of what is in it, the cost of closing it and the price inside each hole are one walk of the same
     // album, and while the market is still arriving the empty value is what withdraws all three.
@@ -482,7 +487,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         ExploreScreen(
                             // Worded once per crossing of the table and the collection, and not once
                             // per recomposition: the prices land while the screen is open.
-                            subject = remember(wishes, state.prices, state.valuation.settled) {
+                            subject = remember(wishes, wishCalls, state.prices, state.valuation.settled) {
                                 wishSubject(
                                     slots = wishes,
                                     // The same gate as every other amount in the app: while the market
@@ -498,7 +503,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                             state.prices::of,
                                         )
                                     },
-                                    callsPerMonth = wishCallsPerMonth(wishes),
+                                    callsPerMonth = wishCalls,
                                 )
                             },
                             images = state.collection.images,
@@ -521,12 +526,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             values = values,
                             photoCache = state.photoCache,
                             valuation = state.valuation,
-                            // Where the budget is already spoken (ADR 0029 §5), and absent rather than
-                            // zero: with nothing marked the pass is the fixed thing it always was, and
-                            // a «+0 consultas al mes» would be a line about a decision nobody made.
-                            wishSpend = wishCallsPerMonth(wishes)
-                                .takeIf { it > 0 }
-                                ?.let(::wishSpendLabel),
+                            // Where the budget is already spoken (ADR 0029 §5), named: on this card
+                            // nothing else is about the marks, so an amount on its own would be a
+                            // number nobody can attribute. Absent rather than zero — with nothing
+                            // marked the pass is the fixed thing it always was.
+                            wishSpend = wishBudgetLabel(wishCalls),
                             syncing = state.syncing,
                             validation = state.validation,
                             onSave = { apiKey, userId ->

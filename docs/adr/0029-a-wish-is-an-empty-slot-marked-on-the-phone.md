@@ -68,7 +68,8 @@ that ages*: see §2.
 
 ### 2. The grain is the slot, and a wish dies measured
 
-A wish is a `typeId`. «This plate interests me» is **derived** — the plate holds at least one wish.
+A wish is **one empty slot** — the three facts of §1 and nothing wider. «This plate interests me» is
+**derived**: the plate holds at least one wish.
 
 The argument is §7's own, applied: *«"Lo colecciono" is an intention that ages; `4 de 12` is a
 measured fact.»*
@@ -179,8 +180,16 @@ But §4 alone leaves a gap: the plate of «Explorar» has no «Exportar» — «
 place (#282, decision 8) — so the wished holes of your **own** plates would print and the 157 slots
 of the shelf window **never** would. Hence the output of its own: **«la lista de lo que busco»**,
 exported from the annex, crossing both populations. It is one more `PrintSection` and not a second
-printer: same eyebrow, same cells, same five switches, and the notebook keeps having no second
+printer: same cells, same grid, same five switches, and the notebook keeps having no second
 architecture of information.
+
+**Its eyebrow is its own, and that is not an exception to the sentence above.** The notebook already
+has two — «COINDEX · CATÁLOGO CURADO» over a plate and «COINDEX · COLECCIÓN» over pieces — plus the
+one #275 added for the coins no collection claims, and this page is none of the three: the casillas on
+it come from as many catalogs as they come from, and it must not say «COLECCIÓN» over coins nobody
+owns. The paper outlives the app, so a sheet that claimed a dealer's tray was a collection would be a
+false claim in somebody else's hands. The **shape** of the eyebrow is the one the notebook has always
+had, which is what «not a second printer» is about.
 
 The printed notebook of the index is **untouched**: the list is exported from the annex, and the
 annex is not a card of the index.

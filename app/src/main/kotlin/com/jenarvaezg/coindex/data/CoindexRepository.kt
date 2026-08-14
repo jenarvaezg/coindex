@@ -157,8 +157,7 @@ class CoindexRepository(
     }
 
     suspend fun unmarkWish(key: WishKey) {
-        val row = Wish(key, markedAt = 0L).toEntity()
-        wishDao.unmark(row.typeId, row.year, row.issueId)
+        wishDao.unmark(key.typeId, key.year, key.storedIssueId())
     }
 
     fun observeState(): Flow<CollectionState> = combine(

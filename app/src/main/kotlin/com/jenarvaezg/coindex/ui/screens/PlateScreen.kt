@@ -126,8 +126,11 @@ fun PlateScreen(
 /**
  * The wish gesture as a plate receives it: what is marked, and what toggling one mark does.
  *
- * A value rather than two parameters, for the reason [PlateMoney] is one: the set and the gesture are
- * the two halves of one subject, and a screen handed them apart could draw marks it cannot toggle.
+ * One parameter rather than two because the two are halves of one subject, and a screen handed them
+ * apart could draw marks it cannot toggle. **Not a `data class` and not compared**, which is where it
+ * differs from [PlateMoney]: it holds a lambda, so equality would be about the lambda's identity, and
+ * what the plate keys its subject on is [wished] — the set — and never the holder.
+ *
  * **Whether the mode is open is not in here** — that is the screen's own state, like the export panel's
  * (ADR 0029 §5): nothing outside this plate needs to know the collector is marking, and a mode kept in
  * the ViewModel would still be open on the next plate they walk into.

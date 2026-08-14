@@ -200,9 +200,18 @@ fun WishEntity.toDomain(): Wish = Wish(
 fun Wish.toEntity(): WishEntity = WishEntity(
     typeId = key.typeId,
     year = key.year,
-    issueId = key.issueId ?: NO_ISSUE,
+    issueId = key.storedIssueId(),
     markedAt = markedAt,
 )
+
+/**
+ * The issue this key is stored under, sentinel included.
+ *
+ * Public because deleting a mark needs the three columns and **not a `Wish`**: a wish carries the day
+ * it was made, and inventing one with a throwaway clock just to spread its key into three parameters
+ * would be a row that never existed being built to be taken apart.
+ */
+fun WishKey.storedIssueId(): Int = issueId ?: NO_ISSUE
 
 /** «The curated file declares no issue for this casilla», in the one column that cannot say null. */
 private const val NO_ISSUE = 0

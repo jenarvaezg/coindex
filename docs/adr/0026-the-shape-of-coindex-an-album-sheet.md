@@ -271,8 +271,10 @@ it.
 > «Exportar» (#282, decision 8), so the wished holes of the collector's own plates would print and the
 > 157 slots of the shelf window never would. Hence a second product on paper, **«la lista de lo que
 > busco»**, exported from the annex of §8 and crossing both — one more `PrintSection` under the same
-> five switches, and not a second printer. The printed notebook of the index is untouched: the list is
-> not a card of the index.
+> five switches, and not a second printer. It carries an **eyebrow of its own**, as the coins no
+> collection claims already do (#275): a page of coins nobody owns may not say «COLECCIÓN» over them,
+> and the paper outlives the app. The printed notebook of the index is untouched: the list is not a card
+> of the index.
 
 **The gloss belongs to the coin, not to the hole** — the second amendment to #303. Every coin
 photograph glosses, die-cut or loose: on the plate, in the index, in «Las cifras», in `PieceCard` and

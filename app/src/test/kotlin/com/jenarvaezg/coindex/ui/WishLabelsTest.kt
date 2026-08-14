@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -52,6 +53,23 @@ class WishLabelsTest {
     fun `the spend is said as what it adds to the month`() {
         assertEquals("+14 consultas al mes", wishSpendLabel(14))
         assertTrue("+2 consultas al mes" in WishLabels.MARK_HINT)
+        // Absent and not «+0»: with nothing marked the pass is the fixed thing it always was, and the
+        // rule about the zero is written once, where the amount is worded.
+        assertNull(wishSpendLabel(0))
+        assertNull(wishBudgetLabel(0))
+    }
+
+    /**
+     * In Ajustes the same figure carries its subject, which is what ADR 0029 §5 asked for.
+     *
+     * On the annex the screen is the subject and the amount can stand alone. On the valuation's card
+     * nothing else is about the marks, so «+2 consultas al mes» under a sentence about the pass is a
+     * number nobody can attribute — and the two readings are one string wide apart, not two wordings.
+     */
+    @Test
+    fun `in Ajustes the spend is named`() {
+        assertEquals("Lo que busco · +2 consultas al mes", wishBudgetLabel(2))
+        assertTrue(requireNotNull(wishSpendLabel(2)) in requireNotNull(wishBudgetLabel(2)))
     }
 
     /**

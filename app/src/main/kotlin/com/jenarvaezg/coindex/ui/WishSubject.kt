@@ -94,5 +94,5 @@ fun wishSubject(
         ?.let { marked ->
             wishCensusLabel(slots = marked.size, plates = marked.distinctBy { it.catalog.id }.size)
         },
-    spend = callsPerMonth.takeIf { it > 0 }?.let(::wishSpendLabel),
+    spend = wishSpendLabel(callsPerMonth),
 )

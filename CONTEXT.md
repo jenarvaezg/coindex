@@ -310,6 +310,7 @@ _Avoid_: Unobserved, unknown
 **Album**:
 A collector-specific view of curated series coverage, distinguishing owned, Missing, and
 not-yet-issued members. A collection with no issue list is not an Album.
+_Avoid_: Collection proposal, inventory
 
 **Die-cut hole**:
 The unit of the album sheet, and since ADR 0026 the shape of both a collection in the index and a
@@ -374,4 +375,3 @@ plate is derived from it and never the other way round: a mark on a plate cannot
 to the fair. Marked slots are read in the **Annex**, «Lo que busco», and each one is priced whatever
 its plate's shape.
 _Avoid_: Wishlist as a collection, followed plate, «lo colecciono», favourite
-_Avoid_: Collection proposal, inventory
