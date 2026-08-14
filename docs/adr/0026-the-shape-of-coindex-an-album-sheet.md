@@ -6,7 +6,9 @@
   amended by #370 (the ficha sheet is the landing of the second journey) and again by #381 (a
   destination paints its own paper, and only the leaf on top is animated); §4 amended by #371 (the
   stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
-  name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex)
+  name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex);
+  §4 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (the wish mark travels
+  to paper, and it gets an output of its own)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -256,6 +258,23 @@ it.
 > heading — not by reusing `StampedRatio`, which is sized in dp and lands on the ratio — and a
 > shared folio (#232) stamps every complete plate on the page, each in its band. The slim heading
 > gets a smaller frame so the ink still fits fourteen millimetres.
+
+> **Amended on 2026-08-14 (§4, [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md)). The
+> wish mark travels, and it needs an output of its own.** The rule above already decided the first
+> half and it does not say what it appears to: «alive» here is *anything that follows the finger, the
+> sensor or the navigation*, and a wish mark is a **state at rest**, like the rubber stamp of a
+> complete plate. So it reaches the PNG and the PDF with no exception written, as the slot's `state` —
+> the line a printed cell has always reserved and never used, so the mark costs no millimetre and
+> moves no page count.
+>
+> What the rule alone could not give is the other population: the plate of «Explorar» has no
+> «Exportar» (#282, decision 8), so the wished holes of the collector's own plates would print and the
+> 157 slots of the shelf window never would. Hence a second product on paper, **«la lista de lo que
+> busco»**, exported from the annex of §8 and crossing both — one more `PrintSection` under the same
+> five switches, and not a second printer. It carries an **eyebrow of its own**, as the coins no
+> collection claims already do (#275): a page of coins nobody owns may not say «COLECCIÓN» over them,
+> and the paper outlives the app. The printed notebook of the index is untouched: the list is not a card
+> of the index.
 
 **The gloss belongs to the coin, not to the hole** — the second amendment to #303. Every coin
 photograph glosses, die-cut or loose: on the plate, in the index, in «Las cifras», in `PieceCard` and

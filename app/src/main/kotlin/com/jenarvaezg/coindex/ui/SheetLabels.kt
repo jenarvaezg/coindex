@@ -14,6 +14,11 @@ import android.net.Uri
  * is what the two hand-written sentences did until #219. It does **not** make the agreement safe by
  * construction: a masculine entry added here would read «Cuaderno completa exportada», and the
  * guard against that is this note plus the notebook already having a sentence of its own.
+ *
+ * The third arrived with the annex (ADR 0029 §7) and it is feminine too, which is what let it in
+ * without touching a sentence: «la lista de lo que busco» is what the collector takes to the fair,
+ * and it is a product of its own because the plate of «Explorar» has no «Exportar» to carry the 157
+ * slots of the shelf window.
  */
 enum class SharedSheet(
     /** Feminine and lower case: it is read behind an article, «No se pudo exportar la lámina». */
@@ -21,6 +26,7 @@ enum class SharedSheet(
 ) {
     PLATE("lámina"),
     PIECES("hoja"),
+    LIST("lista"),
 }
 
 /**

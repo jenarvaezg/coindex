@@ -60,6 +60,14 @@ fun SettingsScreen(
     photoCache: PhotoCacheStatus,
     /** How far the valuation pass has got, and why it is held if it is (ADR 0028 §6). */
     valuation: ValuationStatus,
+    /**
+     * What the marked casillas add to the month, or null while nothing is marked (ADR 0029 §5).
+     *
+     * It rides on the valuation's card because it is the same subject: that card is where the app says
+     * what the pass costs, and a mark is the first thing that makes the figure the collector's own
+     * decision. Absent and not zero — a phone with nothing marked has the fixed pass it always had.
+     */
+    wishSpend: String?,
     syncing: Boolean,
     validation: String?,
     onSave: (apiKey: String, userId: String) -> Unit,
@@ -156,6 +164,16 @@ fun SettingsScreen(
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 4.dp),
             )
+            // The elastic half of the same budget (ADR 0029 §5): the line above says what the pass is
+            // doing, and this one says what the collector's own marks add to it every month.
+            wishSpend?.let { spend ->
+                Text(
+                    spend,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Paper.rust,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
         }
 
         FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {

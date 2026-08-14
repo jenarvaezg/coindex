@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401, #434 and #431, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401, #434 and #431, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md), §7 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (one declarative comes back, and it is not the one §7 killed)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -265,6 +265,20 @@ the gesture and the name.
 - **What the plate demands of the inventory does not change.** `NotACollection` stays: with no
   pieces of the variant there is no card and no plate. Cutting the toll does **not** open the 51
   catalogs to navigation — that would be new capability against ADR 0007, and is not decided here.
+
+> **Amended on 2026-08-14 (§7, [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md)). One
+> declarative comes back, and it is not the one this section killed.** «No declarative comes back»
+> stands as written **about a plate**: nothing is stored per card, `Followed` is not resurrected, and
+> the plate condition is still a current collection plus evidence by type. What comes back is a mark
+> over **an empty slot** — a wish — and the distinction is §7's own sentence read closely: «lo
+> colecciono» is an intention that ages, and this one **dies measured**, when the sync brings that type
+> and the slot fills itself. §7 measured `Followed` and found information zero (all ~58 rows over
+> plates that already had evidence); it could not measure this, because the gesture did not exist.
+>
+> It inherits **§11's key and not §8's table**: a wish is keyed by `typeId`, like
+> `own_grouping_members`, because row ids come from Numista and are replaced wholesale on every sync.
+> And it is a **table of its own**, so «a wish is not a piece» is an invariant by construction rather
+> than a filter anybody has to remember.
 
 ### 8. «Proposal» stops being the word
 

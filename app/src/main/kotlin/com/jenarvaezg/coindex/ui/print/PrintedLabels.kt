@@ -62,6 +62,30 @@ const val UNCLAIMED_SECTION_EYEBROW: String = "COINDEX · SIN COLECCIÓN"
 const val UNCLAIMED_SECTION_TITLE: String = "Sin colección"
 
 /**
+ * The page of what the collector is looking for (ADR 0029 §7).
+ *
+ * Its own eyebrow because it is neither of the two the notebook had: it is not a curated catalog — the
+ * casillas on it come from as many as they come from — and it is emphatically not a collection, which
+ * is the one thing a page of coins nobody owns must not claim. The paper outlives the app, and a sheet
+ * that said «COLECCIÓN» over seven coins in a dealer's tray would be a false claim in somebody else's
+ * hands.
+ *
+ * The title is the destination's own string, so the screen, the door and the paper cannot drift.
+ */
+const val WISH_SECTION_EYEBROW: String = "COINDEX · LO QUE BUSCO"
+
+/** What the census row is called on paper, in the label of its own row. */
+const val WISH_SECTION_COUNT_LABEL: String = "Casillas"
+
+/**
+ * Where the coins of this list are named from, which is not anybody's inventory.
+ *
+ * «tu colección en Numista» is what every other page says and it would be a lie here — none of these
+ * coins is in it. What names them is the curated shelf that travels in the APK.
+ */
+const val WISH_SECTION_SOURCE: String = "los catálogos curados de Coindex"
+
+/**
  * Which sheet of a section this folio is, printed only where there is a break to explain.
  *
  * «PÁGINA 1 DE 1» is noise on paper, so the caller asks for this only when the section spans more

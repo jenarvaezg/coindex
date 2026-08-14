@@ -144,6 +144,35 @@ data class OwnGroupingMemberEntity(
     val typeId: Int,
 )
 
+/**
+ * One empty casilla the collector marked: «lo busco» (ADR 0029).
+ *
+ * The sibling of [OwnGroupingMemberEntity] and it inherits its bargain: it is the collector's own
+ * declaration over the catalogue and not a claim about it, so it lives only on this device and never
+ * travels with the app — and **not one of its columns is a Numista collection row id**, which is what
+ * makes it survive the sync that replaces `collected_items` wholesale every month.
+ *
+ * A **table of its own** and not a column of the inventory, which is the invariant of ADR 0029 §3: a
+ * wish is not a piece, and with the row outside `collected_items` nothing that counts pieces, grams,
+ * euros or coverage can see it — by construction rather than by a filter anybody has to remember.
+ *
+ * The key is the casilla's, in three columns rather than one type: a date run repeats one type across
+ * its years and an issue run across its issues, so a mark keyed on the type alone would cover a whole
+ * plate (`WishKey`). [issueId] is **zero where the curated file declares no issue**, because SQLite
+ * cannot hold a null in a primary key — the sentinel is read back as «none» by `toDomain` and lives
+ * nowhere else.
+ *
+ * Nothing here is a clock: a wish has no lifetime and expires never. [markedAt] is the one order the
+ * list has, newest first, and «alive» is derived from the inventory on read (ADR 0029 §2).
+ */
+@Entity(tableName = "wishes", primaryKeys = ["typeId", "year", "issueId"])
+data class WishEntity(
+    val typeId: Int,
+    val year: Int,
+    val issueId: Int,
+    val markedAt: Long,
+)
+
 /** One row per Numista API request actually sent. The basis of the monthly budget counter. */
 @Entity(tableName = "api_call_log")
 data class ApiCallEntity(

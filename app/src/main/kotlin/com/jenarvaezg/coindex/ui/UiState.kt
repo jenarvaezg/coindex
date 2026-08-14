@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.domain.Wish
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
@@ -83,6 +84,14 @@ data class UiState(
      * that can disagree about the same coin.
      */
     val prices: PriceBook = PriceBook(),
+    /**
+     * The casillas the collector marked, as the table holds them (ADR 0029).
+     *
+     * The **rows** and not the resolved slots, which is the seam ADR 0029 §3 asks for: nothing that
+     * reads inventory joins this table, so the crossing happens once, where a screen asks for it —
+     * `wishedSlots` — and never inside the assembly of the collection.
+     */
+    val wishes: List<Wish> = emptyList(),
     /**
      * How far the valuation pass has got, which is what decides whether the money section exists at all.
      *

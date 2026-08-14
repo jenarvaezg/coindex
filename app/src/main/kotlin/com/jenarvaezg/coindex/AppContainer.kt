@@ -88,6 +88,7 @@ class AppContainer(context: Context) {
             typeMetaDao = database.typeMeta(),
             ownGroupingDao = database.ownGroupings(),
             priceDao = database.prices(),
+            wishDao = database.wishes(),
             curation = Curation(
                 catalogs = catalogs,
                 groupings = groupings,

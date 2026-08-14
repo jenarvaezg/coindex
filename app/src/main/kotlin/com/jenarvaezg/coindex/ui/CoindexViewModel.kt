@@ -22,12 +22,16 @@ import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.WishKey
+import com.jenarvaezg.coindex.domain.WishedSlot
+import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.print.forSheetExport
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
+import com.jenarvaezg.coindex.ui.print.wishSections
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.ShelfStore
@@ -130,6 +134,7 @@ class CoindexViewModel(
         watchPhotoCache()
         watchValuation()
         watchPrices()
+        watchWishes()
         checkForUpdate(force = true)
         pollForUpdates()
     }
@@ -154,6 +159,66 @@ class CoindexViewModel(
             repository.observePrices().collect { book -> _state.update { it.copy(prices = book) } }
         }
     }
+
+    /**
+     * The casillas the collector marked (ADR 0029), observed like the prices and never joined to the
+     * collection.
+     *
+     * A mark is also the app's first **elastic** spend, so a new one starts a pass: what the collector
+     * asked for by marking is exactly that price, and waiting for the next launch to fetch it would
+     * make the gesture's «+2 consultas al mes» a promise about some other day.
+     *
+     * **Forced, and it costs nothing when there is nothing new.** A mark usually does move the plan, so
+     * the loop would start a pass on its own — but not always: a mark on a casilla that is already full
+     * moves nothing, and the loop remembers the plan it covered. A pass over an unchanged plan asks for
+     * whatever the phone does not already hold, which in that case is nothing at all (ADR 0028 §1).
+     *
+     * **And the first emission of a launch cannot get ahead of the collection.** This flow may well emit
+     * before the snapshot has been read, and then the plan is empty — `ValuationLoop.start` returns on
+     * `plan.isEmpty` before it launches anything, so nothing is started and nothing is recorded as
+     * covered. What arrives second is the collection, with the plan the pass is actually for.
+     */
+    private fun watchWishes() {
+        viewModelScope.launch {
+            repository.observeWishes().collect { wishes ->
+                _state.update { it.copy(wishes = wishes) }
+                valuePrices(force = true)
+            }
+        }
+    }
+
+    /**
+     * Marks an empty casilla, or takes the mark off it (ADR 0029 §5).
+     *
+     * One gesture for both directions, because that is what the casilla is: a press on a hole that is
+     * already marked unmarks it, and the state it is toggling is the one on screen. Silent — no
+     * snackbar — because the mark itself is the answer, and a notice per press on a plate of ten holes
+     * would be ten notices.
+     */
+    fun toggleWish(key: WishKey) {
+        val marked = _state.value.wishes.any { it.key == key }
+        viewModelScope.launch {
+            if (marked) repository.unmarkWish(key) else repository.markWish(key)
+        }
+    }
+
+    /** Takes one mark off, from the annex, where the casilla is not there to be pressed again. */
+    fun removeWish(key: WishKey) {
+        viewModelScope.launch { repository.unmarkWish(key) }
+    }
+
+    /**
+     * The marked casillas that are still alive, resolved against the curated shelf (ADR 0029 §2).
+     *
+     * Read from the state on demand rather than kept in it: it is a crossing of two things that change
+     * at different times — the table and the inventory — and holding the result would be a third thing
+     * that can disagree with both. The screens that draw it wrap it in a `remember` of their own.
+     */
+    fun livingWishes(): List<WishedSlot> = wishedSlots(
+        wishes = _state.value.wishes,
+        catalogs = curation.catalogs,
+        items = _state.value.collection.items,
+    )
 
     /**
      * Mirrors what the phone holds of the photographs into the state (#191).
@@ -223,7 +288,14 @@ class CoindexViewModel(
         val state = _state.value.collection
         valuation.start(
             scope = viewModelScope,
-            plan = valuationPlan(state.items, curation, state.evidencedCatalogIds),
+            plan = valuationPlan(
+                items = state.items,
+                curation = curation,
+                evidencedCatalogIds = state.evidencedCatalogIds,
+                // A marked casilla is priced whatever its plate's shape (ADR 0029 §4), which is what
+                // makes the month's spend a function of what the collector marked.
+                wishes = livingWishes(),
+            ),
             force = force,
         )
     }
@@ -524,9 +596,30 @@ class CoindexViewModel(
                     )
                 }
             },
+            // Not behind a switch: a wish mark is a state at rest and travels by ADR 0026 §4, and what
+            // the money switch withholds is an amount. The keys are the table's own and not the living
+            // slots, because what decides whether a casilla prints its mark is the casilla being empty
+            // — which is the album's answer, and the album is what the printer is walking.
+            wished = _state.value.wishes.mapTo(mutableSetOf()) { it.key },
         ),
         geometry = printGeometry(options),
     )
+
+    /**
+     * «La lista de lo que busco» as printable pages (ADR 0029 §7).
+     *
+     * Its own door into the printer, because it is the one lámina that is not a card of the index: the
+     * notebook prints what the index is showing, and none of these coins is in it. Everything under it
+     * is shared — the same `printPages`, the same geometry, the same five switches — so the list comes
+     * out of the same machine as every other page and not out of a second printer.
+     */
+    fun notebookPagesForWishes(options: NotebookOptions): List<PrintPage> {
+        val chosen = options.forSheetExport()
+        return printPages(
+            sections = wishSections(_state.value.collection, livingWishes(), chosen),
+            geometry = printGeometry(chosen),
+        )
+    }
 
     /**
      * One curated plate as printable pages, under the configuration the collector chose for this

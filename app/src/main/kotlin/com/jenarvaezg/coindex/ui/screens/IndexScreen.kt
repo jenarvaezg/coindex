@@ -1,10 +1,12 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -58,6 +60,7 @@ import com.jenarvaezg.coindex.ui.components.Facet
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
+import com.jenarvaezg.coindex.ui.components.ForwardGlyph
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.countryAxisItems
 import com.jenarvaezg.coindex.ui.components.travellingCoin
@@ -107,6 +110,7 @@ import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.shelf.yearAxis
 import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
+import com.jenarvaezg.coindex.ui.wishDoorLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one round coin and two short lines under it. */
@@ -157,6 +161,16 @@ fun IndexScreen(
     onOpenCoins: (CoinsShelf) -> Unit,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
     sewnEdge: SewnEdgeCounts?,
+    /**
+     * How many casillas the collector is looking for, which is what the annex's door names (ADR 0029 §6).
+     *
+     * A count and not the list: what this screen owes the annex is its door, and the door says how many
+     * things are behind it. Zero means there is no door at all — it is counted above this screen, over
+     * the whole collection and never over the narrowing, because a filter on the shelf is about the
+     * cards of the index and these coins are not in it.
+     */
+    wishes: Int,
+    onOpenWishes: () -> Unit,
     onSettings: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).
@@ -538,6 +552,14 @@ fun IndexScreen(
                     )
                 }
             }
+
+            // The door of the annex, and the last row of this list whatever axis it is read on
+            // (ADR 0026 §8, ADR 0029 §6). **Not printed at zero**: with nothing marked there is
+            // nothing behind it, and a row that named an empty screen would be the furniture §5
+            // prices — which is also why it takes a live count and not a nullable one.
+            if (wishes > 0) {
+                fullWidth { AnnexDoor(label = wishDoorLabel(wishes), onOpen = onOpenWishes) }
+            }
         }
 
         // Outside the grid on purpose: a lazy item is disposed the moment it scrolls off, and the
@@ -554,6 +576,34 @@ fun IndexScreen(
                 },
             )
         }
+    }
+}
+
+/**
+ * The door at the foot of the list: deeper paper, its name with its count, and the way on.
+ *
+ * **A row of the sheet and not a card**, which is the whole of ADR 0026 §8 clause 3: an annex is not a
+ * fourth cell of the bar and not a collection of the index, so its entrance is the last thing on the
+ * page — after the cards, on paper a shade deeper, the way the sewn edge is deeper than the leaf.
+ *
+ * The arrow is drawn rather than typed, because neither of the album's two typefaces has that glyph
+ * (#298), and it is the same chevron «Volver» uses, mirrored: the two halves of one journey.
+ */
+@Composable
+private fun AnnexDoor(label: String, onOpen: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .background(Paper.paperDeep)
+            .semantics(mergeDescendants = true) {}
+            .clickable(role = Role.Button, onClick = onOpen)
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(label, style = MaterialTheme.typography.labelLarge, color = Paper.ink)
+        ForwardGlyph()
     }
 }
 

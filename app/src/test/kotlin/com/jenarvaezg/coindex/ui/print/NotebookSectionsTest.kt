@@ -20,6 +20,7 @@ import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.WishKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -259,6 +260,33 @@ class NotebookSectionsTest {
     }
 
     /**
+     * The mark travels to the paper, and it travels as the casilla's state (ADR 0026 §4, ADR 0029 §7).
+     *
+     * «Alive» in §4 is what follows the finger, the sensor or the navigation; a wish mark is a state at
+     * rest, like the rubber stamp of a complete plate, so it needs no exception written. It lands in the
+     * line a printed caption has always reserved and never used, so it costs no millimetre and moves no
+     * page count — and it is **not** behind the money switch, because what that one withholds is an
+     * amount.
+     */
+    @Test
+    fun `a marked casilla prints its mark and an owned one prints nothing`() {
+        val section = dateRunSection(ownedYears = listOf(1879), wishedYears = listOf(1886))
+
+        assertEquals(listOf(null, "lo busco"), section.cells.map { it.state })
+        // With the money off the mark is still there: it is not a figure.
+        assertEquals(
+            listOf(null, "lo busco"),
+            dateRunSection(
+                ownedYears = listOf(1879),
+                options = NotebookOptions(money = false),
+                wishedYears = listOf(1886),
+            ).cells.map { it.state },
+        )
+        // And with nothing marked the page is the page it always was.
+        assertEquals(listOf(null, null), dateRunSection(ownedYears = listOf(1879)).cells.map { it.state })
+    }
+
+    /**
      * A two-year date run resolved the way `resolvePlate` resolves production plates: the card
      * names the catalog, the state carries the evidence, and `notebookSections` is what reads
      * completeness off the subject.
@@ -267,6 +295,7 @@ class NotebookSectionsTest {
         ownedYears: List<Int>,
         options: NotebookOptions = NotebookOptions(),
         plateValue: (PlateResult.Available) -> PlateValue? = { null },
+        wishedYears: List<Int> = emptyList(),
     ): PrintSection {
         val typeId = 10_340
         val catalog = CollectionCatalog(
@@ -321,6 +350,9 @@ class NotebookSectionsTest {
             Curation(listOf(catalog)),
             options,
             plateValue,
+            wished = wishedYears.mapTo(mutableSetOf()) { year ->
+                WishKey(typeId = typeId, year = year, issueId = null)
+            },
         ).single()
     }
 }

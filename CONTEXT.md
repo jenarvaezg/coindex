@@ -310,6 +310,7 @@ _Avoid_: Unobserved, unknown
 **Album**:
 A collector-specific view of curated series coverage, distinguishing owned, Missing, and
 not-yet-issued members. A collection with no issue list is not an Album.
+_Avoid_: Collection proposal, inventory
 
 **Die-cut hole**:
 The unit of the album sheet, and since ADR 0026 the shape of both a collection in the index and a
@@ -362,4 +363,15 @@ a door that names what is behind it with its count, and is not printed when that
 carries no cell and no bar. With a list it opens with its shelf folded, and its chips are whatever its
 population earns.
 _Avoid_: Tab, sub-screen, modal, section of the index
-_Avoid_: Collection proposal, inventory
+
+**Wish**:
+An empty slot the collector marked on this phone, held in a table of its own and keyed by the slot's
+own catalogue facts — type, year and Numista issue where the file names one — never by anything
+Numista hands back (ADR 0029). It is **not a piece**: it never enters the inventory, so nothing that
+counts pieces, grams, euros or coverage can see it. It is **alive** while its slot is empty by the
+same rule the plate fills a casilla by, and it **dies measured** when a sync brings the coin —
+nothing is written and nothing is announced. Its
+plate is derived from it and never the other way round: a mark on a plate cannot say which coin goes
+to the fair. Marked slots are read in the **Annex**, «Lo que busco», and each one is priced whatever
+its plate's shape.
+_Avoid_: Wishlist as a collection, followed plate, «lo colecciono», favourite

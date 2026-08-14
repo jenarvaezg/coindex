@@ -207,6 +207,24 @@ fun BackGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * The way on, which is [BackGlyph] the other way round: the door of an annex (ADR 0026 §8).
+ *
+ * Drawn and not typed, for the reason the external link's arrow is drawn: neither Bitter nor Barlow has
+ * an arrow glyph (#298), so a «→» in a string would come out in whatever the system substitutes — and
+ * this one is printed at the foot of the index, next to the album's own type.
+ */
+@Composable
+fun ForwardGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.size(width = 13.dp, height = 10.dp)) {
+        val stroke = size.minDimension * 0.14f
+        val right = Offset(size.width * 0.90f, size.height * 0.50f)
+        drawLine(color, right, Offset(size.width * 0.58f, size.height * 0.12f), strokeWidth = stroke)
+        drawLine(color, right, Offset(size.width * 0.58f, size.height * 0.88f), strokeWidth = stroke)
+        drawLine(color, right, Offset(size.width * 0.08f, size.height * 0.50f), strokeWidth = stroke)
+    }
+}
+
 @Composable
 private fun ExternalLinkGlyph(color: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {

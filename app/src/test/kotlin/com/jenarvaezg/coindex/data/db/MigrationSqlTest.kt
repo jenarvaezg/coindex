@@ -339,4 +339,54 @@ class MigrationSqlTest {
             )
         }
     }
+
+    /**
+     * La versión 10 le da su tabla a las casillas marcadas (ADR 0029, #497).
+     *
+     * Es la primera fila declarativa del esquema desde que la 5 tiró las disposiciones, y a propósito no
+     * es aquella tabla volviendo: la clave es la casilla —tipo, año y emisión— y no la variante, así que
+     * un `typeId` suelto no puede marcar una lámina entera.
+     */
+    @Test
+    fun `version 10 creates the wishes table exactly as Room declares it`() {
+        val exported = exportedCreateSql(10)
+        val added = exported.keys - exportedCreateSql(9).keys
+
+        assertEquals(setOf("wishes"), added)
+        assertEquals(added.map(exported::getValue), CoindexDatabase.VERSION_10_TABLES)
+        // Las tres columnas de la clave son `NOT NULL` porque SQLite no admite un nulo en una primary
+        // key: por eso «esta casilla no declara emisión» viaja como el cero de `Mappers`.
+        assertEquals(
+            mapOf(
+                "typeId" to "INTEGER",
+                "year" to "INTEGER",
+                "issueId" to "INTEGER",
+                "markedAt" to "INTEGER",
+            ),
+            exportedColumns(10, "wishes"),
+        )
+        listOf("typeId", "year", "issueId").forEach { column ->
+            assertTrue(
+                "NOT NULL" in exportedDeclaration(10, "wishes", column),
+                "la columna $column de la clave admite nulos",
+            )
+        }
+    }
+
+    /**
+     * Y no toca nada más — ni una columna.
+     *
+     * Lo que hay al otro lado costó presupuesto de API: la colección sincronizada, la caché de fichas,
+     * los precios de la 7 y los listados de la 8. Una tabla nueva no es motivo para reescribir ninguno.
+     */
+    @Test
+    fun `version 10 adds one table and touches nothing else`() {
+        exportedCreateSql(9).keys.forEach { table ->
+            assertEquals(
+                exportedColumns(9, table),
+                exportedColumns(10, table),
+                "la versión 10 ha tocado $table",
+            )
+        }
+    }
 }

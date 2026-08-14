@@ -28,8 +28,9 @@ internal data class PreservedKey(
         MetalSpotEntity::class,
         TypeIssueReadEntity::class,
         TypeIssueEntity::class,
+        WishEntity::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = true,
 )
 abstract class CoindexDatabase : RoomDatabase() {
@@ -38,6 +39,7 @@ abstract class CoindexDatabase : RoomDatabase() {
     abstract fun ownGroupings(): OwnGroupingDao
     abstract fun apiCalls(): ApiCallDao
     abstract fun prices(): PriceDao
+    abstract fun wishes(): WishDao
 
     companion object {
         /**
@@ -345,6 +347,31 @@ abstract class CoindexDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 10 gives the marked casillas a table of their own (ADR 0029, #497).
+         *
+         * One table, additive like the eight before it, and it is the **first declarative row this
+         * schema has held since version 5 dropped the dispositions** — deliberately not that table
+         * coming back: it is keyed by the casilla and not by a variant, it says «lo busco» about a
+         * slot that is empty instead of «lo colecciono» about a plate, and it dies measured, so
+         * nothing here is a bit anybody has to maintain.
+         *
+         * Kept as data for the reason [VERSION_2_TABLES] is: a keyword of drift between this and what
+         * Room derives from the entity is a crash at open time on the collector's phone.
+         */
+        internal val VERSION_10_TABLES: List<String> = listOf(
+            "CREATE TABLE IF NOT EXISTS `wishes` " +
+                "(`typeId` INTEGER NOT NULL, `year` INTEGER NOT NULL, " +
+                "`issueId` INTEGER NOT NULL, `markedAt` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`typeId`, `year`, `issueId`))",
+        )
+
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(connection: SQLiteConnection) {
+                VERSION_10_TABLES.forEach(connection::execSQL)
+            }
+        }
+
         fun open(context: Context): CoindexDatabase =
             Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
                 .addMigrations(
@@ -356,6 +383,7 @@ abstract class CoindexDatabase : RoomDatabase() {
                     MIGRATION_6_7,
                     MIGRATION_7_8,
                     MIGRATION_8_9,
+                    MIGRATION_9_10,
                 )
                 .build()
     }
