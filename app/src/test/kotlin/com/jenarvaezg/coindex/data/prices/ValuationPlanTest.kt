@@ -480,6 +480,33 @@ class ValuationPlanTest {
     }
 }
 
+/**
+ * A listing older than ninety days is **not** a listing the gesture may discount (ADR 0030 §3).
+ *
+ * The screen's own reading of the listings ignores expiry on purpose (#493): it has nothing to spend, and
+ * ADR 0028 §5 keeps showing an expired row. A gesture that names its calls cannot use that reading — the
+ * pass will spend the `/types/{id}/issues` again — and rounding a spend **down** is the one direction that
+ * sentence must never err in.
+ */
+class ShowcaseSpendTest {
+    @Test
+    fun `a listing past its ninety days is counted as a lookup the pass will pay for`() {
+        val dates = dateRun("dates", years = 1_900..1_902, typeId = 20)
+        val reads = listOf(TypeIssueReadEntity(20, NOW - LISTING_LIFETIME_MILLIS - 1))
+        val issues = (1_900..1_902).mapIndexed { at, year ->
+            TypeIssueEntity(20, 900 + at, at, year, year)
+        }
+
+        val held = IssueListings.held(reads, issues)
+        val fresh = IssueListings.of(reads, issues, NOW)
+
+        // Held: the type counts as listed, so only the three prices are counted — and the pass would
+        // spend a fourth call on the listing.
+        assertEquals(3, showcaseCallCount(showcase(dates), emptyMap(), NOW, held))
+        assertEquals(4, showcaseCallCount(showcase(dates), emptyMap(), NOW, fresh))
+    }
+}
+
 /** The catalog as the shelf window holds it: nothing owned, so every casilla is a hole. */
 private fun showcase(catalog: CollectionCatalog): ShowcasePlate =
     requireNotNull(showcasePlate(catalog, emptyList(), emptySet()))

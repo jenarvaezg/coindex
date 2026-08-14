@@ -196,7 +196,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val plateValuation: (PlateResult.Available) -> PlateValuation = { resolved ->
         val plate = showcase.firstOrNull { it.catalog.id == resolved.catalog.id }
         val calls = plate?.let {
-            showcaseCallCount(it, state.prices.readAt, nowMillis, state.prices.listings)
+            // **The listings the pass would honour**, not every one the phone holds: a type listed four
+            // months ago is listed for the screen and not for the spend, and counting it as listed would
+            // print a ceiling under what the pass then spends (ADR 0030 §3).
+            showcaseCallCount(it, state.prices.readAt, nowMillis, state.prices.freshListings(nowMillis))
         } ?: 0
         PlateValuation(
             calls = calls,

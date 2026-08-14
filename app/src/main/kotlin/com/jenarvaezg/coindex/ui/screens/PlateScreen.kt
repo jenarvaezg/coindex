@@ -302,7 +302,11 @@ private fun PlateGrid(
                         complete = plate.complete,
                         ink = ink,
                     )
-                    PlateMoneyLines(value = plate.value, cost = plate.cost, entry = plate.entry)
+                    PlateMoneyLines(
+                        value = plate.value,
+                        cost = plate.cost,
+                        entry = plate.entry ?: plate.entryNote,
+                    )
                     SpecificationCard(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
@@ -325,8 +329,9 @@ private fun PlateGrid(
                         PrimaryAction(
                             text = showcaseValueAction(
                                 calls = gesture.calls,
-                                // The figure the header is showing, and never a second reading of it.
-                                valued = plate.entry != null,
+                                // Asked and not priced: a plate Numista has no price for has been
+                                // valued, and offering to «tasar» it again would buy the same silence.
+                                valued = plate.entryValued,
                                 valuing = gesture.running,
                             ),
                             onClick = gesture.onValue,

@@ -95,6 +95,14 @@ data class PlateSubject(
      */
     val entry: String? = null,
     /**
+     * What a plate of the shelf window says when it was valued and Numista had **no price** (ADR 0028 §4).
+     *
+     * The third state of that section, about a whole plate rather than one issue: it is a datum and not a
+     * failure, so it is said. Without it a plate that has been asked about looks exactly like one nobody
+     * has touched, and the gesture goes on offering to buy an answer it already has.
+     */
+    val entryNote: String? = null,
+    /**
      * Whether this plate is the collector's own (ADR 0030 §1).
      *
      * What hangs off it is what the plate **offers**: a plate of the shelf window has «Tasar esta
@@ -103,6 +111,8 @@ data class PlateSubject(
      * mode, the link to Numista, the casillas themselves — is the same on both.
      */
     val mine: Boolean = true,
+    /** Whether this plate has been valued at all, priced or not — what the gesture's word reads. */
+    val entryValued: Boolean = false,
 )
 
 /**
@@ -242,6 +252,10 @@ fun plateSubject(
         value = money.value?.let(::plateValueLabel),
         cost = money.cost?.let(::plateCostLabel),
         entry = money.entry?.let { showcaseEntryLabel(it, nowMillis) },
+        entryNote = ShowcaseLabels.NOTHING_PRICED.takeIf { money.entryAsked && money.entry == null },
+        // Asked is what turns «Tasar esta lámina» into «Volver a tasar», and not merely priced: a plate
+        // Numista has no price for has been valued all the same.
+        entryValued = money.entryAsked,
         mine = plate.mine,
     )
 }

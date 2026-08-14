@@ -147,7 +147,7 @@ class CoindexRepository(
     ) { prices, spot, reads, issues, priceReads ->
         // Held and not fresh (#493): what a screen does with a listing is address a price it already
         // has, and ADR 0028 §5 keeps showing an expired row rather than emptying the page.
-        priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues), priceReads)
+        priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues), priceReads, reads)
     }
     /**
      * The casillas the collector marked, as the domain reads them (ADR 0029).

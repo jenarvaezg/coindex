@@ -22,6 +22,7 @@ import com.jenarvaezg.coindex.domain.showcasePlate
 import com.jenarvaezg.coindex.domain.wishKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -111,6 +112,39 @@ class ShowcaseSubjectTest {
         // And the figure is a **floor**: what the plate is made of is three casillas, and the amount
         // covers the two it could address a price to. The same shape `PlateCost` has on your own plate.
         assertEquals(3, money.entry?.slots)
+    }
+
+    /**
+     * Valued is a state of its own, and it is **asked** and not **priced** (ADR 0028 §4).
+     *
+     * «Numista has no price for this» is a datum rather than a failure, so a plate that was asked about is
+     * not a plate nobody has touched — its gesture says «Volver a tasar» instead of offering to buy the
+     * same silence again. Two things follow, and the second one is the interesting one:
+     *
+     * - Numista having no catalogue price does **not** leave the plate without a figure: the silver floor
+     *   is sayable precisely because the phone did ask (§4's third state, and `holeValue`'s two prices).
+     * - The figure is absent only where there is neither — a type with no metal to weigh — and that is the
+     *   one case «Numista no da precio de ninguna de estas casillas» is for.
+     */
+    @Test
+    fun `a plate is valued once it has been asked about, priced or not`() {
+        val plate = showcase(dateRun("libertad", 1_990..1_992))
+
+        // Asked, with no catalogue price: the metal still answers, because asking is what made it sayable.
+        val silverOnly = showcaseMoney(plate, state(), listings(), SPOT, { _, _, _ -> null }) { _, _ -> NOW }
+        assertTrue(silverOnly.entryAsked)
+        assertEquals(3, requireNotNull(silverOnly.entry).holes)
+
+        // Asked, and nothing at all to say: no catalogue price and no metal on the ficha.
+        val nothing =
+            showcaseMoney(plate, metalless(), listings(), SPOT, { _, _, _ -> null }) { _, _ -> NOW }
+        assertTrue(nothing.entryAsked)
+        assertNull(nothing.entry)
+
+        // And never asked at all, which is what the two above are told apart from.
+        val untouched = showcaseMoney(plate, state(), listings(), SPOT, priced) { _, _ -> null }
+        assertFalse(untouched.entryAsked)
+        assertNull(untouched.entry)
     }
 
     /**
@@ -282,6 +316,13 @@ private fun wish(catalog: CollectionCatalog): WishedSlot {
         member = member,
     )
 }
+
+/** The same collection with no metal on the ficha: nothing left for a hole to be valued by. */
+private fun metalless(): CollectionState = CollectionState(
+    collection = AssembledCollection(
+        typeMeta = mapOf(PRICED_TYPE to TypeMeta(id = PRICED_TYPE, issuerCode = "mexique")),
+    ),
+)
 
 private fun state(items: List<CollectedItem> = emptyList()): CollectionState = CollectionState(
     collection = AssembledCollection(

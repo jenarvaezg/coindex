@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 private val MADRID = ZoneId.of("Europe/Madrid")
 
-/** 14 de agosto de 2026, 12:00 en Madrid. */
+/** 11 de agosto de 2026, 12:00 en Madrid. */
 private const val NOW = 1_786_442_400_000L
 private const val DAY = 24L * 60 * 60 * 1_000
 
@@ -89,6 +89,30 @@ class ShowcaseLabelsTest {
     }
 
     /**
+     * What the amount covers, whenever it is not the whole plate (ADR 0028 §4, §7).
+     *
+     * A plate of twelve casillas where four were priced — Numista had no price for the rest, or the budget
+     * ran out halfway and the pass is resumable, so it wrote what it had asked — says so. «412 €» over
+     * that plate is not an incomplete total, it is a false one.
+     */
+    @Test
+    fun `the figure says what part of the plate it covers, and stays quiet when it covers all of it`() {
+        val partial = showcaseEntryLabel(
+            ShowcaseCost(eur = 150.0, holes = 4, slots = 12, readAt = NOW),
+            nowMillis = NOW,
+            zone = MADRID,
+        )
+        val whole = showcaseEntryLabel(
+            ShowcaseCost(eur = 412.0, holes = 8, slots = 8, readAt = NOW),
+            nowMillis = NOW,
+            zone = MADRID,
+        )
+
+        assertEquals("Coste de entrar: 150 € · en sin circular · 4 de 12 casillas · tasada hoy", partial)
+        assertFalse("casillas" in whole)
+    }
+
+    /**
      * How old a price is, in calendar days and in the coarsest unit that is still true.
      *
      * The ficha's own wording applied to a price, because it is the same fact about the same phone: what
@@ -100,8 +124,10 @@ class ShowcaseLabelsTest {
         assertEquals("tasada hoy", valuedAgeLabel(NOW, NOW, MADRID))
         assertEquals("tasada ayer", valuedAgeLabel(NOW - DAY, NOW, MADRID))
         assertEquals("tasada hace 6 días", valuedAgeLabel(NOW - 6 * DAY, NOW, MADRID))
-        assertEquals("tasada hace 1 mes", valuedAgeLabel(NOW - 40 * DAY, NOW, MADRID))
-        assertEquals("tasada hace 1 año", valuedAgeLabel(NOW - 400 * DAY, NOW, MADRID))
+        // Past a month it says the **day**: nothing will ever refresh this price, so «hace 8 meses» is
+        // the date ADR 0030 §4 asks for, rounded away.
+        assertEquals("tasada el 2 jul 2026", valuedAgeLabel(NOW - 40 * DAY, NOW, MADRID))
+        assertEquals("tasada el 7 jul 2025", valuedAgeLabel(NOW - 400 * DAY, NOW, MADRID))
         // A clock that has gone backwards is not a price from the future: it is today's.
         assertEquals("tasada hoy", valuedAgeLabel(NOW + 5 * DAY, NOW, MADRID))
     }

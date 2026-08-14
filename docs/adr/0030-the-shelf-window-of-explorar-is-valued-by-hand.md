@@ -51,6 +51,11 @@ slots a plate of zeros stops being a shelf window and becomes a catalogue nobody
 same reading as the threshold of ADR 0028 §1 — a number that says nothing is not shown — applied to
 the plate rather than to its cost.
 
+**And a third condition that is not a cut but a floor: a catalog with no measurable casilla at all is not
+a shelf window either.** A file of nothing but announcements has no plate to open — its divisor is zero,
+which is the same reason the ratio of ADR 0021 §3 is absent rather than `0/0` — so it is not «a very small
+window», it is none.
+
 The population is derived and never stored, like every other list in this app: a catalog that gains
 evidence leaves the window the moment the sync brings the coin, and it does so by the same rule that
 opens its plate.
@@ -104,9 +109,18 @@ shown, with the date it was brought»* — with the deletion clause removed for 
 nothing would ever bring a newer one. The date is not decoration; it is what makes the amount
 readable months later, and it is the rule #316 signed for the spot.
 
-**The refusal is the gesture's, not the plate's.** A tasación stopped by the budget, a dead network or
-a sync in flight writes nothing (ADR 0028 §4) and says so where the gesture was pressed. The plate is
-then exactly as it was: browsable, at zero calls, with «Tasar esta lámina» still on it.
+**The refusal is the gesture's, not the plate's.** A tasación **refused before it flies** — a sync in
+flight, no key, a budget already gone — writes nothing at all and says so where the gesture was pressed:
+the plate is exactly as it was, browsable, at zero calls, with «Tasar esta lámina» still on it.
+
+**A tasación cut short halfway is a different thing, and it leaves rows.** The pass is resumable on
+purpose — one issue, one row, one transaction (ADR 0028) — so a budget that runs out mid-plate leaves what
+it had already asked for. That is not a half-done total of §7: it is a **floor over the casillas it
+covers**, and it is only honest if the figure says so. So the amount prints what it covers whenever that
+is not the whole plate — «4 de 12 casillas» — and «Volver a tasar» is right there to finish the rest. The
+same clause covers the plate Numista simply has no prices for: **valued is asked and not priced**, so the
+word on the gesture changes the moment the phone has asked, and a plate with neither a catalogue price nor
+a metal to weigh says so instead of showing an empty header.
 
 ### 5. A total whose parts were read on different days is dated by its oldest (#494)
 

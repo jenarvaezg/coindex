@@ -2,9 +2,10 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.prices.ValuationRefusal
 import java.time.Instant
-import java.time.Period
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 /**
  * Every string «Explorar» prints (ADR 0030, ADR 0026 §6).
@@ -147,8 +148,21 @@ fun showcaseEntryLabel(
     cost: ShowcaseCost,
     nowMillis: Long,
     zone: ZoneId = ZoneId.systemDefault(),
-): String = "${FiguresLabels.SHOWCASE_ENTRY_LABEL}: ${eurosLabel(cost.eur)} · " +
-    "${FiguresLabels.HOLE_CRITERION} · ${valuedAgeLabel(cost.readAt, nowMillis, zone)}"
+): String = listOfNotNull(
+    "${FiguresLabels.SHOWCASE_ENTRY_LABEL}: ${eurosLabel(cost.eur)}",
+    FiguresLabels.HOLE_CRITERION,
+    // **What the amount covers, whenever it is not the whole plate.** The figure is a floor — a casilla
+    // Numista had no price for adds nothing, and a pass cut short by the budget leaves the rest unasked
+    // (ADR 0028 §4) — and «412 €» over a plate of twelve where four were priced is the kind of total
+    // that is not incomplete but false (§7). Silent when it covers every casilla, because then the
+    // fraction says what the plate already said.
+    coverageLabel(cost),
+    valuedAgeLabel(cost.readAt, nowMillis, zone),
+).joinToString(" · ")
+
+/** «4 de 12 casillas», or null where the amount covers the whole plate. */
+private fun coverageLabel(cost: ShowcaseCost): String? =
+    "${cost.holes} de ${showcaseSlotsLabel(cost.slots)}".takeIf { cost.holes < cost.slots }
 
 /**
  * How old a hand-asked price is, in the coarsest unit that is still true.
@@ -166,15 +180,20 @@ fun valuedAgeLabel(
     val today = Instant.ofEpochMilli(nowMillis).atZone(zone).toLocalDate()
     // A clock that has gone backwards is not a price from the future: it is today's.
     val days = ChronoUnit.DAYS.between(read, today).coerceAtLeast(0)
-    val elapsed = Period.between(read, today)
     return "tasada " + when {
         days == 0L -> "hoy"
         days == 1L -> "ayer"
         days < 30L -> "hace ${plural(days.toInt(), "día", "días")}"
-        elapsed.years >= 1 -> "hace ${plural(elapsed.years, "año", "años")}"
-        else -> "hace ${plural(elapsed.months.coerceAtLeast(1), "mes", "meses")}"
+        // **Past a month it says the day and not the age**, which is where this parts company with
+        // `fichaAgeLabel`: a ficha can always be brought again, and this price cannot — nothing will ever
+        // refresh it (ADR 0030 §4). «hace 8 meses» over an amount that is going to sit there for years is
+        // the date §4 asks for, rounded away.
+        else -> "el ${read.format(DAY_AND_MONTH)}"
     }
 }
+
+/** «13 ago 2026»: the day of a price that is not coming back, in the album's own abbreviations. */
+private val DAY_AND_MONTH = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.forLanguageTag("es-ES"))
 
 /**
  * How many casillas a plate of the shelf window has, under its tile (ADR 0030 §8).

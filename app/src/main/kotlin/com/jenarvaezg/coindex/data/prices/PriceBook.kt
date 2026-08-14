@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.data.prices
 
 import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.domain.SilverSpot
 
 /** One price's address: an issue in a grade. */
@@ -33,6 +34,17 @@ data class PriceBook(
      * derived — the same row that decides expiry for the collection's own prices.
      */
     val readAt: Map<Pair<Int, Int>, Long> = emptyMap(),
+    /**
+     * When each type's issue listing was read, by `typeId` — the other half of what a **spend** has to be
+     * counted against (ADR 0030 §3).
+     *
+     * [listings] deliberately ignores expiry, because a screen has nothing to spend and ADR 0028 §5 keeps
+     * showing an expired row (#493). A gesture that *names its calls* cannot use that reading: a type
+     * listed four months ago counts as listed there, and the pass would spend the
+     * `/types/{id}/issues` anyway. So the dates travel too, and [freshListings] is what the figure on the
+     * button is counted from.
+     */
+    val listingReadAt: Map<Int, Long> = emptyMap(),
 ) {
     /** The price of one issue in one grade, in the shape the domain's valuation asks for. */
     fun of(typeId: Int, issueId: Int, grade: String): Double? =
@@ -40,6 +52,20 @@ data class PriceBook(
 
     /** When this issue was priced, or null if this phone has never asked about it. */
     fun readAt(typeId: Int, issueId: Int): Long? = readAt[typeId to issueId]
+
+    /**
+     * The listings the **pass** would honour right now, which is what a spend is counted against.
+     *
+     * Same rows as [listings] with the ninety days of `LISTING_LIFETIME_MILLIS` applied, so the ceiling a
+     * gesture prints is the ceiling the pass then spends. Rounding a spend **down** is the one direction
+     * that sentence must never err in (ADR 0030 §3).
+     */
+    fun freshListings(nowMillis: Long): IssueListings = IssueListings(
+        listedTypeIds = listings.listedTypeIds.filterTo(mutableSetOf()) { typeId ->
+            listingReadAt[typeId]?.let { nowMillis - it < LISTING_LIFETIME_MILLIS } == true
+        },
+        issueIdByTypeAndYear = listings.issueIdByTypeAndYear,
+    )
 }
 
 fun priceBook(
@@ -47,9 +73,11 @@ fun priceBook(
     spot: SilverSpot?,
     listings: IssueListings = IssueListings.EMPTY,
     reads: List<IssuePriceReadEntity> = emptyList(),
+    listingReads: List<TypeIssueReadEntity> = emptyList(),
 ): PriceBook = PriceBook(
     prices = rows.associate { PriceKey(it.typeId, it.issueId, it.grade) to it.eur },
     spot = spot,
     listings = listings,
     readAt = reads.associate { (it.typeId to it.issueId) to it.readAt },
+    listingReadAt = listingReads.associate { it.typeId to it.readAt },
 )

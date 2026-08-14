@@ -275,6 +275,15 @@ data class PlateMoney(
      * the shelf window leaves [value] and [cost] null: they are two régimes and not two styles.
      */
     val entry: ShowcaseCost? = null,
+    /**
+     * Whether this phone has asked Numista about this plate at all (ADR 0028 §4, ADR 0030 §4).
+     *
+     * The third state of §4 said about a whole plate: «Numista has no price for this» is a **datum** and
+     * not a failure, so a plate that was valued and came back with nothing is not a plate nobody valued.
+     * Without this the two look identical — no figure, and a gesture still offering to «tasar» what it
+     * has already asked for.
+     */
+    val entryAsked: Boolean = false,
     val holeCosts: Map<String, Double> = emptyMap(),
 )
 
@@ -413,6 +422,7 @@ fun showcaseMoney(
 ): PlateMoney {
     var total = 0.0
     var oldest = Long.MAX_VALUE
+    var asked = false
     val holeCosts = buildMap {
         for (hole in plate.album.members) {
             if (hole.status !is CollectionCatalogMemberStatus.Missing) continue
@@ -421,6 +431,9 @@ fun showcaseMoney(
             // Asked about, and therefore sayable. An issue this phone has never priced has no date to
             // show and no figure to show either, whatever its metal is worth.
             val read = readAt(typeId, issueId) ?: continue
+            // Asked, whatever came back: an issue Numista answered with no price is on the phone as much
+            // as a priced one, and the plate has to be able to say so (ADR 0028 §4).
+            asked = true
             val cost = holeValue(
                 typeId = typeId,
                 issueId = issueId,
@@ -439,6 +452,7 @@ fun showcaseMoney(
         entry = holeCosts
             .takeIf { it.isNotEmpty() }
             ?.let { ShowcaseCost(total, it.size, plate.slots, oldest) },
+        entryAsked = asked,
         holeCosts = holeCosts,
     )
 }

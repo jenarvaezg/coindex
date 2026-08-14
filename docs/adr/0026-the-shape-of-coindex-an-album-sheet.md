@@ -502,8 +502,11 @@ there is still one species of collection. This amendment is about the bar, not t
 > **Amended on 2026-08-14 (§8 clause 4,
 > [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). The annex's list arrives, and its
 > population is one plate wider than clause 4 assumed.** Clause 4 was written about the twenty plates of
-> the shelf window, and it arrives as written: the shelf opens folded, with **search and sort and no
-> chips**, because twenty plates at 0/N and twelve countries buy no facet.
+> the shelf window, and it arrives with one word of it spent: **search and sort and no chips**, because
+> twenty plates at 0/N and twelve countries buy no facet. And **with no chips there is nothing to fold** —
+> the disclosure of `FilterShelf` is what keeps five facets out of the way, so a fold over one row holding
+> two words would be the furniture §5 prices. «Opens folded» is this clause's answer for a shelf that
+> *has* chips; this one wears its search box and its order in the open.
 >
 > What it did not foresee is that «Explorar» would be built **after** the annex already held «Lo que
 > busco». The shelf is therefore of **the plates where something is missing**: the twenty, and the
