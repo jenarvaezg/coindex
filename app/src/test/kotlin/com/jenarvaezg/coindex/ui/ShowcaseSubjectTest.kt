@@ -48,7 +48,8 @@ class ShowcaseSubjectTest {
     fun `a plate nobody has valued has no figure, even where its metal could be priced`() {
         val plate = showcase(dateRun("libertad", 1_990..1_992))
 
-        val money = showcaseMoney(plate, state(), IssueListings.EMPTY, SPOT, priced, readAt = { _, _ -> null })
+        val money =
+            showcaseMoney(plate, state(), IssueListings.EMPTY, SPOT, priced, readAt = { _, _ -> null })
 
         assertNull(money.entry)
         assertEquals(emptyMap(), money.holeCosts)
@@ -160,8 +161,9 @@ class ShowcaseSubjectTest {
     fun `the cost order puts the valued plates first, dearest first, and the rest behind`() {
         val dear = showcase(dateRun("panda", 2_000..2_010))
         val cheap = showcase(dateRun("libertad", 1_990..1_992))
+        // 2020 y 2021, cuyos issues de la ficha son el 100 y el 101: los únicos que este `readAt`
+        // deja sin leer, y por tanto la única lámina de las tres que nadie ha tasado.
         val unvalued = showcase(dateRun("kooka", 2_020..2_021))
-        val valued = setOf(dear.catalog.id, cheap.catalog.id)
 
         val tiles = showcaseTiles(
             window = listOf(cheap, dear, unvalued),
@@ -171,11 +173,14 @@ class ShowcaseSubjectTest {
             listings = listings(),
             spot = SPOT,
             prices = priced,
-            // Only the two valued plates have a read, which is what tells them from the third.
-            readAt = { typeId, _ -> NOW.takeIf { typeId == PRICED_TYPE && valued.isNotEmpty() } },
+            // Only the two valued plates have a read, which is what tells them from the third: without
+            // this the fixture priced all three and the order below passed for the wrong reason.
+            readAt = { _, issueId -> NOW.takeIf { issueId < KOOKA_FIRST_ISSUE } },
             nowMillis = NOW,
         )
 
+        // The unvalued one has no amount at all, which is what puts it behind both of them.
+        assertNull(tiles.first { it.catalogId == "kooka" }.entryEur)
         val order = showcaseShelf(tiles, ShowcaseSort.ByEntryCost, query = "").map { it.catalogId }
         assertEquals(listOf("panda", "libertad", "kooka"), order)
     }
@@ -202,6 +207,9 @@ class ShowcaseSubjectTest {
 }
 
 private const val PRICED_TYPE = 2
+
+/** The issue the 2020 of the fixture's listing is, which is where «nobody valued this» starts. */
+private const val KOOKA_FIRST_ISSUE = 100
 
 /** Issue 70+ of the priced type is worth 40 € in `unc`; nothing else is priced at all. */
 private val priced: (Int, Int, String) -> Double? = { typeId, issueId, grade ->

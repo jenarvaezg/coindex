@@ -80,7 +80,7 @@ fun showcaseTiles(
                 marks = showcaseWishedLabel(marks),
             )
         }
-    val window = window.map { plate ->
+    val fromWindow = window.map { plate ->
         val money = showcaseMoney(plate, state, listings, spot, prices, readAt)
         val cover = plate.album.members.firstOrNull { it.member.numistaTypeId != null }?.member
         ShowcaseTile(
@@ -100,7 +100,7 @@ fun showcaseTiles(
             slots = plate.slots,
         )
     }
-    return mine + window
+    return mine + fromWindow
 }
 
 /**
