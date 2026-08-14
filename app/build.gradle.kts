@@ -49,12 +49,12 @@ android {
         // v1.2.0, «Las cifras», which is the last time a destination arrived; every patch since has
         // been a change *inside* one.
         //
-        // The phones are on **1.2.21**, `versionCode` 63 — which is what the latest release's
-        // `update.json` says, not what anybody remembers — so nothing is waiting: that one is
-        // published, and 1.2.20 reached a phone inside it. That is what the line is for and why it is
-        // worth correcting after every release: it kept claiming 1.2.11 while 1.2.15 and 1.2.16 were
-        // already out, and `scripts/release.sh` reads the published manifest and refuses a
-        // `versionCode` that does not beat it — this only says who is waiting.
+        // The phones are on **1.3.0**, `versionCode` 64 — which is what the latest release's
+        // `update.json` says, not what anybody remembers — so nothing is waiting: this one is
+        // published. That is what the line is for and why it is worth correcting after every release:
+        // it kept claiming 1.2.11 while 1.2.15 and 1.2.16 were already out, and `scripts/release.sh`
+        // reads the published manifest and refuses a `versionCode` that does not beat it — this only
+        // says who is waiting.
         versionName = "1.3.0"
     }
 
