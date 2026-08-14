@@ -9,11 +9,15 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
+import com.jenarvaezg.coindex.domain.WishKey
+import com.jenarvaezg.coindex.domain.WishedSlot
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.PlateValue
+import com.jenarvaezg.coindex.ui.WishLabels
+import com.jenarvaezg.coindex.ui.wishCensusLabel
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
@@ -65,10 +69,19 @@ fun notebookSections(
      * promise about it.
      */
     plateValue: (PlateResult.Available) -> PlateValue? = { null },
+    /**
+     * The casillas the collector marked, so the marks reach the paper (ADR 0026 §4, ADR 0029 §7).
+     *
+     * A wish mark is a **state at rest** and travels with no exception written, and it travels as the
+     * cell's `state` — the line a printed caption has always reserved and never used — so the mark
+     * costs no millimetre and moves no page count. It is **not** behind the money switch: what is
+     * switchable is the amount, and «lo busco» is not an amount.
+     */
+    wished: Set<WishKey> = emptySet(),
 ): List<PrintSection> = cards.map { card ->
     when (val destination = destinationOf(card)) {
         is CardDestination.Plate ->
-            plateSection(state, curation, destination.catalogId, options, plateValue)
+            plateSection(state, curation, destination.catalogId, options, plateValue, wished)
             // A plate that will not resolve is not a reason to skip the card: its pieces are still
             // a collection, and the same fallback the screens have is the one the paper gets.
             ?: piecesSection(state, card, options)
@@ -82,6 +95,7 @@ private fun plateSection(
     catalogId: String,
     options: NotebookOptions,
     plateValue: (PlateResult.Available) -> PlateValue?,
+    wished: Set<WishKey>,
 ): PrintSection? {
     val resolved = resolvePlate(state, curation, catalogId) as? PlateResult.Available
         ?: return null
@@ -95,7 +109,7 @@ private fun plateSection(
     // §13) and what it does with two more figures is a decision of its own ticket, not a side effect
     // of this one.
     val amount = plateValue(resolved)
-    val plate = plateSubject(resolved)
+    val plate = plateSubject(resolved, wished = wished)
     return PrintSection(
         // The same claim the exported sheet makes, and for the same reason: the paper outlives the
         // app, and a page that says «curado» about a list nobody curated cannot be taken back.
@@ -114,7 +128,11 @@ private fun plateSection(
         cells = plate.cells.map { cell ->
             PrintCell(
                 curatedLabel = cell.label,
-                state = null,
+                // The one thing a printed casilla has ever put in this line: «lo busco», on the holes
+                // the collector marked (ADR 0029 §7). Null on every other cell, which is why the page
+                // is not suddenly a page of states — «TENGO» under every coin was measured and refused
+                // long before this.
+                state = WishLabels.MARK_WORD.takeIf { cell.wished },
                 footnote = cell.footnote,
                 // A hole keeps **its own** real diameter: the type of a member the collector is
                 // missing is in the seeded cache like any other, so the empty mount is the size of
@@ -221,6 +239,71 @@ private fun unclaimedSection(
                 // Never a hole: every one of these is a coin the collector owns.
                 filled = true,
                 numistaUrl = state.qrUrlOf(item.typeId, options),
+            )
+        },
+    )
+}
+
+/**
+ * «La lista de lo que busco» on paper: the marked casillas of every plate, in one lámina (ADR 0029 §7).
+ *
+ * **A lámina and not a page of its own kind**, exactly as the coins no collection claims are: same
+ * eyebrow shape, same cells with their ghost and their real diameter, and the same five switches. What
+ * it is not is a card of the index — the index prints what the index is showing, and these coins are
+ * not in it — so it is exported from the annex and reached through this function alone.
+ *
+ * **It exists because ADR 0026 §4 alone was not enough.** The mark travels to the paper of any plate the
+ * collector can open; the plate of «Explorar» has no «Exportar» at all (#282, decision 8), so without
+ * this list the 157 slots of the shelf window could never be printed. It is also the thing that is
+ * actually taken to a fair: the notebook is the collection, and this is the hunt.
+ *
+ * **No mark inside these cells**, and it is the frequency rule of ADR 0026 §5 rather than an omission:
+ * every casilla on this sheet is marked, so «lo busco» under each of them would say the same two words
+ * seven times to distinguish nothing. On a plate the same word is the whole point.
+ *
+ * Null on an empty list, so no folio is ever spent on a heading with nothing under it.
+ */
+fun wishSections(
+    state: CollectionState,
+    slots: List<WishedSlot>,
+    options: NotebookOptions,
+): List<PrintSection> = listOfNotNull(wishSection(state, slots, options))
+
+private fun wishSection(
+    state: CollectionState,
+    slots: List<WishedSlot>,
+    options: NotebookOptions,
+): PrintSection? {
+    if (slots.isEmpty()) return null
+    return PrintSection(
+        eyebrow = WISH_SECTION_EYEBROW,
+        title = WishLabels.DESTINATION,
+        subtitle = null,
+        // The same census the screen prints, out of the same function: a list that counted its
+        // casillas one way on the phone and another on paper would be two lists.
+        facts = listOf(
+            WISH_SECTION_COUNT_LABEL to wishCensusLabel(
+                slots = slots.size,
+                plates = slots.distinctBy { it.catalog.id }.size,
+            ),
+        ),
+        // Where these coins are named, which is the curated shelf and not the collection: they are the
+        // one thing on paper that came from nobody's inventory.
+        source = WISH_SECTION_SOURCE,
+        cells = slots.map { slot ->
+            PrintCell(
+                curatedLabel = slot.member.label,
+                // Which lámina the casilla is a slot of, in the line the plate uses for the year: on
+                // its own plate that is what tells two casillas apart, and here it is what tells two
+                // hunts apart — the year is already in the label of nearly every date run.
+                state = null,
+                footnote = slot.catalog.shortName,
+                diameterMm = state.diameterOf(slot.typeId),
+                faces = state.facesOf(slot.typeId, options, slot.catalog.printedSide),
+                // Never filled: this whole lámina is what the collector does not have, which is what
+                // makes every cell of it a ghost inside a die-cut rule.
+                filled = false,
+                numistaUrl = state.qrUrlOf(slot.typeId, options),
             )
         },
     )

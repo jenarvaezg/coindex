@@ -208,6 +208,32 @@ interface OwnGroupingDao {
     suspend fun touch(id: Long, updatedAt: Long)
 }
 
+/**
+ * The casillas the collector marked (ADR 0029).
+ *
+ * Three writes and one read, and there is deliberately no fourth: nothing deletes a wish because its
+ * coin arrived. «Alive» is derived on read from the inventory (ADR 0029 §2), so the sync gains no
+ * writer here and there is no stored state machine that could fall out of step with the album.
+ */
+@Dao
+interface WishDao {
+    // Newest first, which is the order the list is read in: the last casilla marked is the one being
+    // hunted. Said here as well as in `wishedSlots` so that a caller reading the table raw — a test,
+    // a later report — gets the same order the screen shows.
+    @Query("SELECT * FROM wishes ORDER BY markedAt DESC")
+    fun observeAll(): Flow<List<WishEntity>>
+
+    // Ignored on conflict: marking a casilla that is already marked is not an event, and REPLACE
+    // would move its `markedAt` and reshuffle the list under the collector's thumb.
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun mark(wish: WishEntity)
+
+    @Query(
+        "DELETE FROM wishes WHERE typeId = :typeId AND year = :year AND issueId = :issueId",
+    )
+    suspend fun unmark(typeId: Int, year: Int, issueId: Int)
+}
+
 @Dao
 interface ApiCallDao {
     @Insert

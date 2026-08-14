@@ -28,6 +28,15 @@ object Routes {
      * opens in Collections. It carries no shelf: its order is chosen by the figure you touch.
      */
     const val FIGURES = "figures"
+    /**
+     * The **annex** of ADR 0026 §8, entered from the last row of the Colecciones list (ADR 0029 §6).
+     *
+     * Not a root and never a cell: it hangs off exactly one hierarchy, it is left with «Volver», and the
+     * bar is not drawn on it. Its name is `explore` and not `wishes` because «Explorar» is what the
+     * annex is — «Lo que busco» is its first section, and the shelf window of twenty plates is the
+     * second, which is not in this delivery.
+     */
+    const val EXPLORE = "explore"
     const val SETTINGS = "settings"
     const val NOTICES = "notices"
     const val PLATE = "plate/{catalogId}"

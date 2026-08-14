@@ -10,6 +10,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.domain.WishedSlot
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 
 /**
@@ -95,13 +96,64 @@ fun valuationPlan(
     items: List<CollectedItem>,
     curation: Curation,
     evidencedCatalogIds: Set<String>,
+    /**
+     * The casillas the collector marked, which enter the plan **whatever their plate's shape**
+     * (ADR 0029 §4).
+     *
+     * A mark lifts both filters above, and each for its own reason. The threshold of §1 is a rule
+     * about whether a number deserves to be shown, and a mark answers exactly that question — of the
+     * 51 holes, this one — so a marked slot of a plate past the threshold is priced and the plate's
+     * own «Coste de cerrar» still is not. And the evidence filter goes too, which is #282's decision
+     * 1 narrowed by name: what the collector marks gets priced, wherever it comes from, so the father
+     * never has to work out which régime his coin is under.
+     */
+    wishes: List<WishedSlot> = emptyList(),
 ): ValuationPlan = ValuationPlan(
     owned = items
         .mapNotNull { item -> item.issueId?.let { OwnedIssue(item.typeId, it) } }
         .distinct(),
-    holes = curation.catalogs
-        .filter { it.id in evidencedCatalogIds }
-        .flatMap { catalog -> plateHoles(catalog, items) },
+    // Distinct because the two halves overlap on purpose: marking a hole of a plate already within
+    // reach must not ask for its price twice, and it is the same hole either way.
+    holes = (
+        curation.catalogs
+            .filter { it.id in evidencedCatalogIds }
+            .flatMap { catalog -> plateHoles(catalog, items) } + wishHoles(wishes)
+        ).distinct(),
+)
+
+/**
+ * The marked casillas as holes of the plan (ADR 0029 §4).
+ *
+ * Built off the resolved slot and not off the wish row, so the issues it addresses a price to are the
+ * curated file's — the same ones the plate's own holes carry, which is what keeps a marked hole of a
+ * plate within reach from being asked about twice.
+ */
+fun wishHoles(wishes: List<WishedSlot>): List<PlateHole> = wishes.map { slot ->
+    PlateHole(
+        catalogId = slot.catalog.id,
+        typeId = slot.typeId,
+        year = slot.member.year,
+        issueIds = slot.member.numistaIssueIds,
+    )
+}
+
+/**
+ * What the marked casillas cost a month, which is the figure Ajustes prints beside the budget.
+ *
+ * **The ceiling of a cold month and not an average**, and it is measured with the same arithmetic the
+ * pass itself uses — an empty phone, nothing read yet — rather than with a second formula: one
+ * `/prices` per marked hole, plus one `/types/{id}/issues` per type whose curated file names no issue.
+ * That is the «1-2 llamadas por deseo» of ADR 0029 §5 read exactly, and it is where the gesture's «+2
+ * consultas al mes» comes from.
+ *
+ * It really is monthly for the prices, which expire in thirty days (ADR 0028 §5), and generous for the
+ * listings, which last ninety: a marked slot that needed a lookup costs it once a quarter and is
+ * counted here every month. Rounding a spend **up** is the direction this number has to err in.
+ */
+fun wishCallsPerMonth(wishes: List<WishedSlot>): Int = valuationCallCount(
+    plan = ValuationPlan(owned = emptyList(), holes = wishHoles(wishes)),
+    reads = emptyList(),
+    nowMillis = 0L,
 )
 
 /**

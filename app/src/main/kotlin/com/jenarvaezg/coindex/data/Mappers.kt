@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.data.db.WishEntity
 import com.jenarvaezg.coindex.data.ficha.FICHA_READING
 import com.jenarvaezg.coindex.data.ficha.FichaReading
 import com.jenarvaezg.coindex.data.ficha.readFichaBody
@@ -15,6 +16,8 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.Wish
+import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.inferFinish
 import com.jenarvaezg.coindex.domain.inferMetal
@@ -181,6 +184,28 @@ fun OwnGroupingEntity.toDomain(members: List<OwnGroupingMemberEntity>): OwnGroup
     name = name,
     typeIds = members.filter { it.groupingId == id }.map { it.typeId },
 )
+
+/**
+ * One marked casilla, with the sentinel read back as the absence it stands for (ADR 0029 §1).
+ *
+ * The zero lives in the table and nowhere else: SQLite cannot hold a null in a primary key, and a
+ * `WishKey` that carried a zero would have to be compared against a curated member that carries a
+ * null. Both directions are here, together, so the two halves of the sentinel cannot drift.
+ */
+fun WishEntity.toDomain(): Wish = Wish(
+    key = WishKey(typeId = typeId, year = year, issueId = issueId.takeIf { it != NO_ISSUE }),
+    markedAt = markedAt,
+)
+
+fun Wish.toEntity(): WishEntity = WishEntity(
+    typeId = key.typeId,
+    year = key.year,
+    issueId = key.issueId ?: NO_ISSUE,
+    markedAt = markedAt,
+)
+
+/** «The curated file declares no issue for this casilla», in the one column that cannot say null. */
+private const val NO_ISSUE = 0
 
 /** Missing quantities default to one piece; an id-less or type-less item cannot be stored. */
 fun CollectedItemDto.toEntity(raw: String, syncedAt: Long): CollectedItemEntity? {

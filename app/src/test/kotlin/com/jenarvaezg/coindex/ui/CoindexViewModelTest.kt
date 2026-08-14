@@ -15,6 +15,7 @@ import com.jenarvaezg.coindex.data.FakeShelfStore
 import com.jenarvaezg.coindex.data.FakeSyncLog
 import com.jenarvaezg.coindex.data.FakeTypeMetaDao
 import com.jenarvaezg.coindex.data.FakeValuationPass
+import com.jenarvaezg.coindex.data.FakeWishDao
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
@@ -27,12 +28,18 @@ import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.photos.PrefetchConditions
 import com.jenarvaezg.coindex.data.prices.OwnedIssue
+import com.jenarvaezg.coindex.data.prices.PlateHole
 import com.jenarvaezg.coindex.data.prices.ValuationLoop
 import com.jenarvaezg.coindex.data.update.FakeUpdateInstaller
 import com.jenarvaezg.coindex.data.update.UpdateChecker
 import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.Curation
+import com.jenarvaezg.coindex.domain.Metal
+import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.wishKey
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexSort
@@ -78,6 +85,35 @@ private val RECORD = SyncRecord(
     callsSpent = 2,
 )
 
+/**
+ * A two-year date run of the type the collection carries, so a casilla can be marked (ADR 0029).
+ *
+ * Two members and not one, because the sharp questions are about telling them apart: a mark is keyed on
+ * the year as well as the type, and a mark whose coin arrives has to die without taking its sibling's
+ * hole with it.
+ */
+private val WISHED_CATALOG = CollectionCatalog(
+    schemaVersion = 2,
+    id = "venezuela-fuertes-test",
+    name = "Fuertes de Venezuela",
+    shortName = "Fuertes",
+    family = "Fuertes de Venezuela",
+    issuerCode = "venezuela",
+    weightMillioz = 804,
+    metal = Metal.Silver,
+    seriesStatus = SeriesStatus.Closed,
+    source = "https://en.numista.com/catalogue/pieces10340.html",
+    updatedAt = "2026-08-14",
+    members = listOf(1_929, 1_930).map { year ->
+        CollectionCatalogMember(
+            id = "fuertes-$year",
+            label = year.toString(),
+            year = year,
+            numistaTypeId = LOOSE_TYPE,
+        )
+    },
+)
+
 private const val ONE_ITEM = """
 {
   "item_count": 1,
@@ -111,6 +147,7 @@ class CoindexViewModelTest {
     private val syncLog = FakeSyncLog()
     private val prefetch = FakePhotoPrefetch(PhotoCacheStatus(wanted = 2, missing = 1))
     private val prices = FakePriceDao()
+    private val wishes = FakeWishDao()
     private val valuationPass = FakeValuationPass()
 
     /** Held outside the ViewModel, exactly as `AppContainer` holds it. */
@@ -188,13 +225,15 @@ class CoindexViewModelTest {
     private fun viewModel(
         client: () -> NumistaClient? = { numistaClient() },
         warmUp: suspend () -> Unit = { warmedUp += 1 },
+        catalogs: List<CollectionCatalog> = emptyList(),
     ): CoindexViewModel {
         val repository = CoindexRepository(
             collectedItemDao = items,
             typeMetaDao = types,
             ownGroupingDao = ownGroupings,
             priceDao = prices,
-            curation = Curation(catalogs = emptyList()),
+            wishDao = wishes,
+            curation = Curation(catalogs = catalogs),
         )
         val ledger = ApiCallLedger(apiCalls) { NOW }
         return CoindexViewModel(
@@ -229,11 +268,14 @@ class CoindexViewModelTest {
     private fun onViewModel(
         client: () -> NumistaClient? = { numistaClient() },
         warmUp: suspend () -> Unit = { warmedUp += 1 },
+        // The curated shelf, empty unless a test needs a casilla to mark: what a wish resolves against
+        // is the file, so there is no marked slot at all without a catalog that names it (ADR 0029 §2).
+        catalogs: List<CollectionCatalog> = emptyList(),
         given: () -> Unit = {},
         body: suspend TestScope.(CoindexViewModel) -> Unit,
     ) = runTest(dispatcher) {
         given()
-        val viewModel = viewModel(client, warmUp)
+        val viewModel = viewModel(client, warmUp, catalogs)
         try {
             body(viewModel)
         } finally {
@@ -561,6 +603,78 @@ class CoindexViewModelTest {
             valuationPass.passes.single().plan.owned,
         )
         assertEquals(0, viewModel.state.value.valuation.missing)
+    }
+
+    /**
+     * One gesture in both directions, because that is what a casilla is (ADR 0029 §5).
+     *
+     * A press on a hole marks it and a second press takes the mark off, and the state it is toggling is
+     * the one on screen. Marking twice is not an event either: the row keeps the date of the first
+     * mark, which is what stops the list of the annex reshuffling itself under the collector's thumb.
+     */
+    @Test
+    fun `marking a casilla twice is a mark and then no mark`() = onViewModel(
+        catalogs = listOf(WISHED_CATALOG),
+    ) { viewModel ->
+        runCurrent()
+        val key = requireNotNull(WISHED_CATALOG.members.first().wishKey())
+
+        viewModel.toggleWish(key)
+        runCurrent()
+        assertEquals(listOf(key), viewModel.state.value.wishes.map { it.key })
+
+        viewModel.toggleWish(key)
+        runCurrent()
+        assertTrue(viewModel.state.value.wishes.isEmpty())
+    }
+
+    /**
+     * A new mark starts a pass, and the marked casilla is in its plan (ADR 0029 §4).
+     *
+     * The plate has **no evidence at all** here — the collection is empty — so this is the filter #282
+     * closed and ADR 0029 reopens for the marked slot alone: what the collector marks gets priced,
+     * wherever it comes from. And it is asked for now rather than on the next launch, because the
+     * gesture's «+2 consultas al mes» is a promise about the month it was made in.
+     */
+    @Test
+    fun `a marked casilla reaches the plan of its own pass`() = onViewModel(
+        catalogs = listOf(WISHED_CATALOG),
+    ) { viewModel ->
+        runCurrent()
+        advanceTimeBy(4_000)
+        val before = valuationPass.passes.size
+
+        viewModel.toggleWish(requireNotNull(WISHED_CATALOG.members.first().wishKey()))
+        runCurrent()
+        advanceTimeBy(4_000)
+
+        val plan = valuationPass.passes.last().plan
+        assertTrue(valuationPass.passes.size > before, "marcar no ha lanzado ningún pase")
+        assertEquals(
+            listOf(PlateHole(catalogId = WISHED_CATALOG.id, typeId = LOOSE_TYPE, year = 1_929)),
+            plan.holes,
+        )
+    }
+
+    /** And a mark whose coin is already in the collection is not in the plan: it is dead (ADR 0029 §2). */
+    @Test
+    fun `a mark whose casilla is full is not priced`() = onViewModel(
+        catalogs = listOf(WISHED_CATALOG),
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+        },
+    ) { viewModel ->
+        runCurrent()
+        advanceTimeBy(4_000)
+
+        viewModel.toggleWish(requireNotNull(WISHED_CATALOG.members.first().wishKey()))
+        runCurrent()
+        advanceTimeBy(4_000)
+
+        // The mark is dead and gone from the plan; the plate's **other** hole is still there, because
+        // that one is the cost of closing it and has nothing to do with the mark.
+        assertEquals(listOf(1_930), valuationPass.passes.last().plan.holes.map { it.year })
     }
 
     /**

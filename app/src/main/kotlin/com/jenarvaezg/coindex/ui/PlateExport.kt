@@ -259,6 +259,16 @@ fun piecesFileName(title: String): String {
 }
 
 /**
+ * The same, for «la lista de lo que busco», which has no subject to be named after (ADR 0029 §7).
+ *
+ * A constant and not the destination's own words flattened: it is the one export whose name is not
+ * derived from anything the collector typed or the curator wrote, so putting it through
+ * [piecesFileName] would only be a slug factory pretending to have an input. The date is added by
+ * [datedExportFileName] as it is for every other export.
+ */
+fun wishListFileName(): String = "coindex-lo-que-busco"
+
+/**
  * The name that lands in Descargas: the base plus the moment of the tap (#285).
  *
  * Exporting the same lámina twice is the normal case — a coin was just added — and without the

@@ -41,18 +41,21 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 63
-        // Patch on top of 1.2.20: a plate says **both** of its figures of money — what is in it and
-        // what closing it would cost — each with its own provenance, and every empty casilla whose
-        // price is on the phone carries that price inside the hole (#493).
+        versionCode = 64
+        // **Minor and not patch**: a destination is new. «Lo que busco» is a screen the app did not
+        // have — the annex of ADR 0026 §8, entered from the last row of Colecciones — with a gesture,
+        // a table of its own (schema v10) and a printed output of its own, and it turns the monthly
+        // valuation pass into a figure the collector decides (#497, ADR 0029). The precedent is
+        // v1.2.0, «Las cifras», which is the last time a destination arrived; every patch since has
+        // been a change *inside* one.
         //
         // The phones are on **1.2.21**, `versionCode` 63 — which is what the latest release's
-        // `update.json` says, not what anybody remembers — so nothing is waiting: this one is
+        // `update.json` says, not what anybody remembers — so nothing is waiting: that one is
         // published, and 1.2.20 reached a phone inside it. That is what the line is for and why it is
         // worth correcting after every release: it kept claiming 1.2.11 while 1.2.15 and 1.2.16 were
         // already out, and `scripts/release.sh` reads the published manifest and refuses a
         // `versionCode` that does not beat it — this only says who is waiting.
-        versionName = "1.2.21"
+        versionName = "1.3.0"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

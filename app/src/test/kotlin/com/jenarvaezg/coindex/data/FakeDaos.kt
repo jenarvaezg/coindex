@@ -16,6 +16,8 @@ import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
+import com.jenarvaezg.coindex.data.db.WishDao
+import com.jenarvaezg.coindex.data.db.WishEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -147,6 +149,30 @@ class FakeOwnGroupingDao : OwnGroupingDao {
     override suspend fun touch(id: Long, updatedAt: Long) {
         groupings.value = groupings.value.map { grouping ->
             if (grouping.id == id) grouping.copy(updatedAt = updatedAt) else grouping
+        }
+    }
+}
+
+/**
+ * The casillas the collector marked, in memory (ADR 0029).
+ *
+ * The `IGNORE` of the real DAO is reimplemented here because it is the rule and not an optimization:
+ * marking a casilla twice keeps the date of the first mark, which is what stops the list reshuffling
+ * itself under the collector's thumb.
+ */
+class FakeWishDao : WishDao {
+    val rows = MutableStateFlow<List<WishEntity>>(emptyList())
+
+    override fun observeAll(): Flow<List<WishEntity>> = rows
+    override suspend fun mark(wish: WishEntity) {
+        val already = rows.value.any {
+            it.typeId == wish.typeId && it.year == wish.year && it.issueId == wish.issueId
+        }
+        if (!already) rows.value = rows.value + wish
+    }
+    override suspend fun unmark(typeId: Int, year: Int, issueId: Int) {
+        rows.value = rows.value.filterNot {
+            it.typeId == typeId && it.year == year && it.issueId == issueId
         }
     }
 }

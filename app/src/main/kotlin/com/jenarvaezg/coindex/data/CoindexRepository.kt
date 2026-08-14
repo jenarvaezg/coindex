@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.db.OwnGroupingDao
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
+import com.jenarvaezg.coindex.data.db.WishDao
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.data.prices.IssueListings
 import com.jenarvaezg.coindex.data.prices.PriceBook
@@ -24,10 +25,13 @@ import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.VariantKey
+import com.jenarvaezg.coindex.domain.Wish
+import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.programmeStandings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 /**
  * Everything the screens need, derived from the local snapshot alone.
@@ -108,6 +112,7 @@ class CoindexRepository(
     private val typeMetaDao: TypeMetaDao,
     private val ownGroupingDao: OwnGroupingDao,
     private val priceDao: PriceDao,
+    private val wishDao: WishDao,
     /** The curated files, tied once, and the only door into the domain (#217). */
     val curation: Curation,
 ) {
@@ -129,6 +134,33 @@ class CoindexRepository(
         // has, and ADR 0028 §5 keeps showing an expired row rather than emptying the page.
         priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues))
     }
+    /**
+     * The casillas the collector marked, as the domain reads them (ADR 0029).
+     *
+     * Apart from [observeState] for the same reason the prices are: **nothing that reads inventory
+     * joins this table** (ADR 0029 §3), and folding it in would rebuild the whole index — sixteen
+     * hundred fichas through the domain — every time a mark is toggled. What crosses the two is the
+     * one reading that has to, `wishedSlots`, and it happens where a screen asks for it.
+     */
+    fun observeWishes(): Flow<List<Wish>> =
+        wishDao.observeAll().map { rows -> rows.map { it.toDomain() } }
+
+    /**
+     * Marks one empty casilla, or leaves the mark it already had (ADR 0029 §5).
+     *
+     * The clock is the repository's, like a box's `createdAt`: [Wish.markedAt] is the one order the
+     * list has, and an insert that is ignored keeps the date of the first mark — marking twice is not
+     * an event, and it must not reshuffle the list under the collector's thumb.
+     */
+    suspend fun markWish(key: WishKey) {
+        wishDao.mark(Wish(key, System.currentTimeMillis()).toEntity())
+    }
+
+    suspend fun unmarkWish(key: WishKey) {
+        val row = Wish(key, markedAt = 0L).toEntity()
+        wishDao.unmark(row.typeId, row.year, row.issueId)
+    }
+
     fun observeState(): Flow<CollectionState> = combine(
         collectedItemDao.observeAll(),
         typeMetaDao.observeAll(),

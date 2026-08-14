@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,9 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -32,6 +37,7 @@ import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.PlateUnavailable
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
+import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
@@ -40,10 +46,12 @@ import com.jenarvaezg.coindex.ui.PlateMoney
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
+import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
-import com.jenarvaezg.coindex.ui.components.HoleCostStamp
+import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
@@ -86,6 +94,8 @@ fun PlateScreen(
      * three readings walk only exists on the other side of `result`.
      */
     money: (PlateResult.Available) -> PlateMoney,
+    /** The marks on this plate's casillas, and the gesture that toggles one (ADR 0029 §5). */
+    marking: PlateMarking,
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
@@ -97,7 +107,10 @@ fun PlateScreen(
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
         is PlateResult.Available -> AvailablePlate(
-            plate = remember(result, money) { plateSubject(result, money(result)) },
+            plate = remember(result, money, marking.wished) {
+                plateSubject(result, money(result), marking.wished)
+            },
+            marking = marking,
             images = images,
             notebookOptions = notebookOptions,
             onNotebookPrinted = onNotebookPrinted,
@@ -110,9 +123,24 @@ fun PlateScreen(
     }
 }
 
+/**
+ * The wish gesture as a plate receives it: what is marked, and what toggling one mark does.
+ *
+ * A value rather than two parameters, for the reason [PlateMoney] is one: the set and the gesture are
+ * the two halves of one subject, and a screen handed them apart could draw marks it cannot toggle.
+ * **Whether the mode is open is not in here** — that is the screen's own state, like the export panel's
+ * (ADR 0029 §5): nothing outside this plate needs to know the collector is marking, and a mode kept in
+ * the ViewModel would still be open on the next plate they walk into.
+ */
+class PlateMarking(
+    val wished: Set<WishKey>,
+    val onToggle: (WishKey) -> Unit,
+)
+
 @Composable
 private fun AvailablePlate(
     plate: PlateSubject,
+    marking: PlateMarking,
     images: Map<Int, TypeImages>,
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
@@ -142,6 +170,7 @@ private fun AvailablePlate(
     ) { export ->
         PlateGrid(
             plate = plate,
+            marking = marking,
             images = images,
             ink = ink,
             export = export,
@@ -153,11 +182,16 @@ private fun AvailablePlate(
 @Composable
 private fun PlateGrid(
     plate: PlateSubject,
+    marking: PlateMarking,
     images: Map<Int, TypeImages>,
     ink: State<Float>,
     export: SheetExportSurface,
     onOpenSource: (String) -> Unit,
 ) {
+    // Whether the collector is marking right now, which is this screen's own state and nothing else's
+    // (ADR 0029 §5). It survives a scroll because it is held outside the lazy grid, and it does not
+    // survive leaving the plate: the mode is the gesture, not a setting.
+    var picking by remember { mutableStateOf(false) }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         // Which casilla the sheet opens on depends on how many of them share a row, and the grid
         // will not say it until it measures, so the same arithmetic it uses is read off the width
@@ -203,6 +237,26 @@ private fun PlateGrid(
                     )
                     export.options?.invoke()
                     export.progress?.invoke()
+                    // The door into the marking mode, last thing before the casillas it is about
+                    // (ADR 0029 §5). Absent on a plate with nothing left to look for: a closed plate
+                    // has no empty casilla, and a word offering to mark nothing is furniture.
+                    if (plate.cells.any { it.missing && it.wishKey != null }) {
+                        CardAction(
+                            text = if (picking) {
+                                WishLabels.MARK_DONE_ACTION
+                            } else {
+                                WishLabels.MARK_ACTION
+                            },
+                            onClick = { picking = !picking },
+                        )
+                        if (picking) {
+                            Text(
+                                WishLabels.MARK_HINT,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Paper.muted,
+                            )
+                        }
+                    }
                     ExternalLink(
                         text = NUMISTA_SOURCE_LINK,
                         onClick = { onOpenSource(plate.source) },
@@ -220,6 +274,9 @@ private fun PlateGrid(
                     // journey promised — «es la misma moneda» (ADR 0026 §3).
                     travellingFrom = plate.catalogId.takeIf { index == plate.landingCell },
                     onOpenSource = onOpenSource,
+                    // Only while the mode is open, which is what turns the body of an empty hole
+                    // from «turn the coin over» into «lo busco» and back (ADR 0029 §5).
+                    onMark = if (picking) marking.onToggle else null,
                 )
             }
         }
@@ -357,10 +414,24 @@ internal fun PlateCell(
     /** The catalog whose card this casilla receives the coin from, and null for every other one. */
     travellingFrom: String?,
     onOpenSource: (String) -> Unit,
+    /**
+     * What toggling this casilla's mark does, while the marking mode is open (ADR 0029 §5).
+     *
+     * Null everywhere else, and that is the whole of the mode inside a cell: the body of a hole has
+     * **one** target at a time, so while the collector is marking it marks, and the rest of the time it
+     * turns the coin over as it always did. Two gestures on one 104 dp hole would be a long press
+     * nobody announced.
+     */
+    onMark: ((WishKey) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     // An announced member has no Numista page to open: the coin is not in the catalogue.
     val open = cell.numistaTypeId?.let { typeId -> { onOpenSource(numistaTypeUrl(typeId)) } }
+    // Only an empty casilla the app can name: a full one is not something you are looking for, and an
+    // announced design has no coin to look for (ADR 0029 §1).
+    val mark = cell.wishKey
+        ?.takeIf { cell.missing }
+        ?.let { key -> onMark?.let { toggle -> { toggle(key) } } }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth(),
@@ -368,18 +439,30 @@ internal fun PlateCell(
         // The hole and what is laid inside it. The chip is drawn here and not by `AlbumHole`,
         // which the axes and the loose coins share: what a casilla costs is the plate's business,
         // and the hole is the same hole it was (#493).
-        Box(contentAlignment = Alignment.Center) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = mark?.let { toggle ->
+                Modifier.clickable(
+                    role = Role.Checkbox,
+                    onClickLabel = WishLabels.MARK_ACTION,
+                    onClick = toggle,
+                )
+            } ?: Modifier,
+        ) {
             AlbumHole(
                 photo = images?.printedPhoto(printedSide),
                 missing = cell.missing,
                 // Two targets on a casilla and not one (#302): the body of the hole turns the coin
-                // over, and the year under it goes out to Numista.
-                otherSide = images?.printedPhoto(printedSide.other),
+                // over, and the year under it goes out to Numista. **Unless it is being marked**, and
+                // then the far face is withheld rather than the tap overridden: `AlbumHole` takes its
+                // tap from having a second face, so this is what hands the body over to the mark
+                // without giving the hole a second rule about which of two things a press means.
+                otherSide = if (mark == null) images?.printedPhoto(printedSide.other) else null,
                 modifier = Modifier
                     .size(104.dp)
                     .travellingCoin(travellingFrom),
             )
-            cell.cost?.let { cost -> HoleCostStamp(cost) }
+            HoleStamp(cost = cell.cost, wished = cell.wished)
         }
         // The tag's own target, reserved whether or not there is a tag to put in it: an announced
         // member has no year, and one that has a year but no Numista page does not buy the 48 dp

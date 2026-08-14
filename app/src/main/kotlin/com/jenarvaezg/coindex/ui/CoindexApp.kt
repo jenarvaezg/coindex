@@ -55,7 +55,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
 import com.jenarvaezg.coindex.data.update.UpdateStatus
+import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.components.BackGlyph
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -65,12 +67,14 @@ import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
+import com.jenarvaezg.coindex.ui.screens.ExploreScreen
 import com.jenarvaezg.coindex.ui.screens.FiguresScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
 import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.MissingSubject
 import com.jenarvaezg.coindex.ui.screens.NoticesScreen
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
+import com.jenarvaezg.coindex.ui.screens.PlateMarking
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
@@ -132,6 +136,16 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             coinValue(typeId, state.collection, state.prices.spot, state.prices::of)
         }
     }
+    // The casillas the collector marked, crossed with the collection **once** (ADR 0029 §3): the table
+    // and the inventory change at different times, and this is the one place the two meet — the annex
+    // draws these, the plan prices them and the door counts them.
+    val wishes = remember(state.wishes, state.collection.items, viewModel.catalogs) {
+        wishedSlots(state.wishes, viewModel.catalogs, state.collection.items)
+    }
+    // The keys as the table holds them, dead marks included, which is what a plate draws with: a mark
+    // is only ever painted on an empty casilla, so the album is what says whether it shows (ADR 0029
+    // §2) — and a plate whose coin was sold shows the mark again without the table being written to.
+    val wishedKeys = remember(state.wishes) { state.wishes.mapTo(mutableSetOf()) { it.key } }
     // The plate asks for three readings at once and gets them or gets none of them (#493): the value
     // of what is in it, the cost of closing it and the price inside each hole are one walk of the same
     // album, and while the market is still arriving the empty value is what withdraws all three.
@@ -145,6 +159,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 state.prices.listings,
                 state.prices.spot,
                 state.prices::of,
+                wishedKeys,
             )
         }
     }
@@ -334,6 +349,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     crossToCoins(navController, viewModel, coinsShelf)
                                 },
                                 sewnEdge = sewnEdge,
+                                wishes = wishes.size,
+                                onOpenWishes = { navController.navigate(Routes.EXPLORE) },
                                 onSettings = { navController.navigate(Routes.SETTINGS) },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
@@ -458,6 +475,43 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             )
                         }
                     }
+                    // The annex (ADR 0026 §8): no cell, no bar, and «Volver» is the way out. It is
+                    // reached from the last row of the Colecciones list and from nowhere else, which is
+                    // the clause that keeps it hanging off exactly one hierarchy.
+                    page(Routes.EXPLORE) {
+                        ExploreScreen(
+                            // Worded once per crossing of the table and the collection, and not once
+                            // per recomposition: the prices land while the screen is open.
+                            subject = remember(wishes, state.prices, state.valuation.settled) {
+                                wishSubject(
+                                    slots = wishes,
+                                    // The same gate as every other amount in the app: while the market
+                                    // has not landed there is no price to say (ADR 0028 §7).
+                                    costs = if (!state.valuation.settled) {
+                                        emptyMap()
+                                    } else {
+                                        wishCosts(
+                                            wishes,
+                                            state.collection,
+                                            state.prices.listings,
+                                            state.prices.spot,
+                                            state.prices::of,
+                                        )
+                                    },
+                                    callsPerMonth = wishCallsPerMonth(wishes),
+                                )
+                            },
+                            images = state.collection.images,
+                            notebookOptions = state.notebookOptions,
+                            onNotebookPrinted = viewModel::notebookPrinted,
+                            notebookPages = viewModel::notebookPagesForWishes,
+                            onExporting = viewModel::notebookExporting,
+                            onOpenSource = openUrl,
+                            onRemove = viewModel::removeWish,
+                            onMessage = viewModel::showMessage,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                     page(Routes.SETTINGS) {
                         // Read once per visit: the form owns its own edits from then on, and it
                         // opens on a clean slate rather than on the last visit's complaint.
@@ -467,6 +521,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             values = values,
                             photoCache = state.photoCache,
                             valuation = state.valuation,
+                            // Where the budget is already spoken (ADR 0029 §5), and absent rather than
+                            // zero: with nothing marked the pass is the fixed thing it always was, and
+                            // a «+0 consultas al mes» would be a line about a decision nobody made.
+                            wishSpend = wishCallsPerMonth(wishes)
+                                .takeIf { it > 0 }
+                                ?.let(::wishSpendLabel),
                             syncing = state.syncing,
                             validation = state.validation,
                             onSave = { apiKey, userId ->
@@ -501,6 +561,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 },
                                 images = state.collection.images,
                                 money = plateMoney,
+                                marking = remember(wishedKeys) {
+                                    PlateMarking(wishedKeys, viewModel::toggleWish)
+                                },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebookPages = { options ->

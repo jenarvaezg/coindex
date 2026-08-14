@@ -9,8 +9,10 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.ProgrammeStanding
+import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.coverage
 import com.jenarvaezg.coindex.domain.firstOwnedIndex
+import com.jenarvaezg.coindex.domain.wishKey
 
 /**
  * What the three drawers of a plate are looking at: the screen, the exported sheet, the notebook.
@@ -118,9 +120,21 @@ data class DrawnCell(
      *
      * Only ever a hole: a full casilla has no cost — it has a value, and that one is the header's. And
      * only ever a hole whose price is on the phone, which is why the plates over the threshold of ADR
-     * 0028 §1 carry no stamps at all: nobody asked for those prices, so there is no «—» to draw.
+     * 0028 §1 carry no stamps at all: nobody asked for those prices, so there is no «—» to draw. A
+     * **marked** hole is the exception the mark buys, and it is one chip either way — see
+     * [com.jenarvaezg.coindex.ui.components.HoleStamp].
      */
     val cost: String? = null,
+    /**
+     * The key this casilla is marked by, or null where it cannot be marked at all (ADR 0029).
+     *
+     * Null for an announced or unlisted member: a coin the app cannot name cannot be looked for, which
+     * is the recorte ADR 0029 accepts. It is here and not derived by the screen because the mark and
+     * the price have to address **the same casilla**: both are read off the member, once.
+     */
+    val wishKey: WishKey? = null,
+    /** Whether the collector marked this casilla: «lo busco» (ADR 0029 §2). */
+    val wished: Boolean = false,
 )
 
 /**
@@ -132,7 +146,17 @@ data class DrawnCell(
  * that is not there, and what the casilla does not use falls into the gap between two rows.
  */
 val DrawnCell.printedName: String?
-    get() = label.takeIf { it != year }
+    get() = printedNameOf(label, year)
+
+/**
+ * The rule itself, shared by the two surfaces that draw a casilla under a year.
+ *
+ * The plate is one and the annex of ADR 0029 is the other, and the annex is where it was measured
+ * again: a date run labels its casillas with their year, so «1886» came out on the tag and again
+ * underneath it. One function rather than the same `takeIf` twice — a rule about what not to print
+ * twice, written twice, is the joke telling itself.
+ */
+internal fun printedNameOf(label: String, year: String?): String? = label.takeIf { it != year }
 
 /** The one catalog photograph a resting plate shows and exports. */
 fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
@@ -146,7 +170,12 @@ fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
  * Takes the resolution and not its pieces so that the pieces cannot arrive apart: an album belongs
  * to the catalog it was built from, and the programmes to both.
  */
-fun plateSubject(plate: PlateResult.Available, money: PlateMoney = PlateMoney()): PlateSubject {
+fun plateSubject(
+    plate: PlateResult.Available,
+    money: PlateMoney = PlateMoney(),
+    /** The casillas of this plate the collector marked, by key (ADR 0029). */
+    wished: Set<WishKey> = emptySet(),
+): PlateSubject {
     val catalog = plate.catalog
     // Off the album and not off the catalog, so the heading is lifted out of the very cells the
     // plate is about to draw: the album is the plate as this collector has it.
@@ -155,6 +184,7 @@ fun plateSubject(plate: PlateResult.Available, money: PlateMoney = PlateMoney())
     // prints over the title, and what the stamp is read from are one measurement.
     val coverage = plate.album.coverage()
     val cells = plate.album.members.map { albumMember ->
+        val wishKey = albumMember.member.wishKey()
         DrawnCell(
             id = albumMember.member.id,
             label = albumMember.member.label,
@@ -164,6 +194,13 @@ fun plateSubject(plate: PlateResult.Available, money: PlateMoney = PlateMoney())
             owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
             missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
             cost = money.holeCosts[albumMember.member.id]?.let(::holeCostLabel),
+            wishKey = wishKey,
+            // Only where the casilla is empty, and it is not a filter over the table: a wish whose
+            // coin arrived is dead by ADR 0029 §2, and the album is where that is measured. So the
+            // mark disappears with the hole it was made in, and the row stays for the day the coin
+            // leaves again.
+            wished = albumMember.status is CollectionCatalogMemberStatus.Missing &&
+                wishKey != null && wishKey in wished,
         )
     }
     return PlateSubject(

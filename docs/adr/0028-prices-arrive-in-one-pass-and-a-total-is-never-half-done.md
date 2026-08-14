@@ -1,6 +1,7 @@
 # ADR 0028: Prices arrive in one pass, and a total is never shown half-done
 
-- Status: accepted
+- Status: accepted, §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
+  marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number)
 - Date: 2026-08-10
 - Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
   left to its own document
@@ -58,6 +59,19 @@ And it falls clean: what stays outside are the bullion runs where he owns **a si
 Kookaburra 36/37, Libertad 43/44, Capitales de provincia 51/52 — which is exactly where a cost of
 completion would be the reproach. What comes inside runs from the single hole of the silver 20
 escudos to the ten of the Canadian dollar.
+
+> **Amended on 2026-08-14 (§1, [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md)). A
+> marked slot lifts both filters, and 487 stops being a number.** The threshold above is a rule about
+> **whether a number deserves to be shown**, and a wish answers exactly that question: of the 51 holes,
+> this one. So a marked slot is priced whatever its plate's shape — past the threshold, and with no
+> evidence at all, which is #282's decision 1 narrowed by name to the marked slot. The **plate's**
+> second figure is untouched and still governed by `holesAreWithinReach`: a plate of 51 holes with one
+> marked has a price inside that hole and no «Coste de cerrar», because one hole is not the cost of
+> closing it.
+>
+> The consequence is the one worth writing down: **«no laziness per plate, and no gesture to press»
+> gains a gesture that spends, and the month stops being fixed.** 1-2 calls per wish, for ever, said in
+> the gesture and totalled where the budget is already shown. No automatic cap.
 
 ### 2. Each phone pays with its own budget, and the seed is not the way out
 

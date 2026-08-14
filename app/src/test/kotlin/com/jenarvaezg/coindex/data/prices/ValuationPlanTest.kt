@@ -8,6 +8,9 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.Wish
+import com.jenarvaezg.coindex.domain.WishedSlot
+import com.jenarvaezg.coindex.domain.wishKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -347,6 +350,86 @@ class ValuationPlanTest {
         // An announced casilla has no type at all, so there is nothing to address a price to.
         assertNull(listings.issueOf(member.copy(numistaTypeId = null)))
     }
+
+    /**
+     * A marked casilla is priced past the threshold **and** with no evidence at all (ADR 0029 §4).
+     *
+     * The two filters go for two different reasons. The threshold is a rule about whether a number
+     * deserves to be shown, and a mark answers it — of the 51, this one. The evidence filter is #282's
+     * decision 1, narrowed by name to the marked slot so that the father never has to work out which
+     * régime his coin is under. Measured: 419 holes in 17 plates were past the threshold and 157 slots
+     * of the shelf window had no evidence, and neither had a gesture that could ask.
+     */
+    @Test
+    fun `a marked casilla enters the plan past the threshold and with no evidence`() {
+        val tooFar = dateRun("far", years = 1_900..1_950, typeId = 20)
+        val unowned = dateRun("window", years = 1_990..1_991, typeId = 30)
+
+        val plan = valuationPlan(
+            items = listOf(item(id = 1, typeId = 20, issueId = 200, year = 1_900)),
+            curation = Curation(catalogs = listOf(tooFar, unowned)),
+            evidencedCatalogIds = setOf("far"),
+            wishes = listOf(
+                wish(tooFar, "far-1905"),
+                wish(unowned, "window-1990"),
+            ),
+        )
+
+        assertEquals(
+            listOf(PlateHole("far", 20, 1_905), PlateHole("window", 30, 1_990)),
+            plan.holes,
+        )
+    }
+
+    /** And it is one hole and not two where the plate was already within reach. */
+    @Test
+    fun `a marked casilla of a plate within reach is not asked about twice`() {
+        val withinReach = dateRun("reach", years = 1_960..1_962, typeId = 10)
+
+        val plan = valuationPlan(
+            items = listOf(item(id = 1, typeId = 10, issueId = 100, year = 1_960)),
+            curation = Curation(catalogs = listOf(withinReach)),
+            evidencedCatalogIds = setOf("reach"),
+            wishes = listOf(wish(withinReach, "reach-1961")),
+        )
+
+        assertEquals(listOf(1_961, 1_962), plan.holes.mapNotNull { it.year })
+    }
+
+    /**
+     * What a mark costs a month: **two calls, or one where the file names the issue** (ADR 0029 §5).
+     *
+     * The ceiling of a cold month and the same arithmetic the pass uses, which is what the gesture's
+     * «+2 consultas al mes» is quoting. It is generous about the listing on purpose — that one lasts
+     * ninety days — because rounding a spend down is the direction this figure must never err in.
+     */
+    @Test
+    fun `a mark costs two calls a month, or one when its file names the issue`() {
+        val dates = dateRun("dates", years = 1_900..1_902, typeId = 20)
+        val declared = dates.copy(
+            id = "declared",
+            members = dates.members.map { it.copy(numistaIssueIds = listOf(900)) },
+        )
+
+        assertEquals(2, wishCallsPerMonth(listOf(wish(dates, "dates-1900"))))
+        assertEquals(1, wishCallsPerMonth(listOf(wish(declared, "dates-1900"))))
+        // Two years of one type share the listing, so three marks of it are four calls and not six.
+        assertEquals(
+            3,
+            wishCallsPerMonth(listOf(wish(dates, "dates-1900"), wish(dates, "dates-1901"))),
+        )
+        assertEquals(0, wishCallsPerMonth(emptyList()))
+    }
+}
+
+/** One marked casilla of a curated catalog, resolved as the annex resolves it. */
+private fun wish(catalog: CollectionCatalog, memberId: String): WishedSlot {
+    val member = catalog.members.first { it.id == memberId }
+    return WishedSlot(
+        wish = Wish(key = requireNotNull(member.wishKey()), markedAt = NOW),
+        catalog = catalog,
+        member = member,
+    )
 }
 
 private fun read(typeId: Int, issueId: Int, readAt: Long, hasPrices: Boolean) =

@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.prices.IssueListings
 import com.jenarvaezg.coindex.data.prices.holesWithinReach
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
+import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.CollectionFigures
 import com.jenarvaezg.coindex.domain.CollectionValue
@@ -14,6 +15,9 @@ import com.jenarvaezg.coindex.domain.Ladders
 import com.jenarvaezg.coindex.domain.PaidComparison
 import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
+import com.jenarvaezg.coindex.domain.WishKey
+import com.jenarvaezg.coindex.domain.WishedSlot
+import com.jenarvaezg.coindex.domain.wishKey
 import com.jenarvaezg.coindex.domain.collectionFigures
 import com.jenarvaezg.coindex.domain.collectionValue
 import com.jenarvaezg.coindex.domain.fineSilverGrams
@@ -277,13 +281,27 @@ fun plateMoney(
     listings: IssueListings,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
+    /**
+     * The casillas of this album the collector marked, which carry a price whatever the plate's shape
+     * (ADR 0029 §4).
+     *
+     * The pass asked for them, so they are on the phone, so the stamp is drawn — that is the rule #493
+     * wrote for every hole and it does not change here. What does **not** change either is the second
+     * figure of the header: see [PlateCost].
+     */
+    wished: Set<WishKey> = emptySet(),
 ): PlateMoney {
-    val holeCosts = holeCosts(album, state, listings, spot, prices)
+    val withinReach = holesWithinReach(album).mapTo(mutableSetOf()) { it.member.id }
+    val holeCosts = holeCosts(album, state, listings, spot, prices, wished)
     return PlateMoney(
         value = plateValue(album, state, spot, prices),
-        // Null and not zero, like every other amount on the page: a plate whose holes are all
-        // unpriceable has nothing to say about closing, and «0 €» would say it costs nothing.
-        cost = holeCosts.values
+        // **Only the holes within reach**, and a marked one past the threshold is deliberately not
+        // added: one hole is not the cost of closing a plate of fifty-one, and adding it would print
+        // «Coste de cerrar» over a number that closes nothing (ADR 0029 §4). Null and not zero, like
+        // every other amount on the page: «0 €» would say closing costs nothing.
+        cost = holeCosts
+            .filterKeys { it in withinReach }
+            .values
             .takeIf { it.isNotEmpty() }
             ?.let { PlateCost(it.sum(), it.size) },
         holeCosts = holeCosts,
@@ -293,8 +311,9 @@ fun plateMoney(
 /**
  * What each empty casilla of a plate costs, or nothing at all when the plate is out of reach.
  *
- * Which holes count is [holesWithinReach]'s answer and not counted again here, so the holes the header
- * adds up are exactly the holes the pass spent its calls on (ADR 0028 §1).
+ * Which holes count is [holesWithinReach]'s answer plus whatever the collector marked, and neither is
+ * counted again here: what the header adds up and what the pass spent its calls on are the same holes
+ * (ADR 0028 §1, ADR 0029 §4).
  *
  * A casilla with no price is **absent** rather than zero: without a price on the phone there is no
  * stamp to draw and nothing to add, and neither the amount nor the casilla invents a «—».
@@ -305,8 +324,9 @@ private fun holeCosts(
     listings: IssueListings,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
+    wished: Set<WishKey>,
 ): Map<String, Double> =
-    holesWithinReach(album).mapNotNull { hole ->
+    holesToPrice(album, wished).mapNotNull { hole ->
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
         val cost = holeValue(
             typeId = typeId,
@@ -317,6 +337,52 @@ private fun holeCosts(
         ) ?: return@mapNotNull null
         hole.member.id to cost.eur
     }.toMap()
+
+/**
+ * The empty casillas of a plate that have a price to say: the ones within reach, and the marked ones.
+ *
+ * On a plate within reach the second half adds nothing — a marked hole is already one of them — so the
+ * union is only ever wider on the plates ADR 0028 §1 leaves outside, which is exactly what a mark is
+ * for: of the 51, this one.
+ */
+private fun holesToPrice(
+    album: CollectionCatalogAlbum,
+    wished: Set<WishKey>,
+): List<CollectionCatalogAlbumMember> {
+    val withinReach = holesWithinReach(album)
+    if (wished.isEmpty()) return withinReach
+    val counted = withinReach.mapTo(mutableSetOf()) { it.member.id }
+    return withinReach + album.members.filter { candidate ->
+        candidate.status is CollectionCatalogMemberStatus.Missing &&
+            candidate.member.id !in counted &&
+            candidate.member.wishKey() in wished
+    }
+}
+
+/**
+ * What each marked casilla of the annex would cost, by key (ADR 0029).
+ *
+ * The list's own reading of the same rule the plate uses, and it takes the resolved slots rather than
+ * an album because the list crosses plates: what a hole costs is `holeValue` — two prices and never
+ * three, in `unc` (ADR 0028 §8) — and the issue it is addressed to is the curated file's or a stored
+ * listing's, exactly as on the plate.
+ */
+fun wishCosts(
+    slots: List<WishedSlot>,
+    state: CollectionState,
+    listings: IssueListings,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): Map<WishKey, Double> = slots.mapNotNull { slot ->
+    val cost = holeValue(
+        typeId = slot.typeId,
+        issueId = listings.issueOf(slot.member),
+        meta = state.typeMeta[slot.typeId],
+        spot = spot,
+        prices = prices,
+    ) ?: return@mapNotNull null
+    slot.key to cost.eur
+}.toMap()
 
 /**
  * The value of what a plate holds, which is the other place the grain rule allows a total.

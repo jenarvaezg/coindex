@@ -192,6 +192,7 @@ Y el mapa de dónde se decide cada parte de la forma:
 | Los dos años de una pieza, y los dos ejes del cuaderno | ADR 0026 §9 |
 | «Las cifras»: qué vale una pieza, y qué no se totaliza | ADR 0026 §10 |
 | El pase de tasación, los tres estados y las caducidades | ADR 0026 §11, ADR 0028 |
+| «Lo que busco»: la casilla marcada, el anexo y el gasto elástico | ADR 0029 |
 | El techo de movimientos, y qué debe una causa y un dato | ADR 0026 §3 |
 | La regla de exportación: lo quieto viaja al papel | ADR 0026 §4 |
 | Exportar la lámina en PNG y el cuaderno en PDF | ADR 0010 §8, ADR 0021 §13 |
