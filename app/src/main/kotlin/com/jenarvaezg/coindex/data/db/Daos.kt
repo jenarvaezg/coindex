@@ -248,6 +248,20 @@ interface PriceDao {
     @Query("SELECT * FROM type_issues ORDER BY typeId, position")
     suspend fun typeIssues(): List<TypeIssueEntity>
 
+    /**
+     * The same two readings the pass makes, observed for the screens (#493).
+     *
+     * Until the plate's header had a cost of closing in it, which issue a casilla stands for was a
+     * question only the pass ever asked, and it asked it once per pass. The header asks it of the 111
+     * holes of 121 whose curated file does not name their issue — so it has to arrive the way a price
+     * does, and change under a screen that is already open while the pass fills the table in.
+     */
+    @Query("SELECT * FROM type_issue_reads")
+    fun observeTypeIssueReads(): Flow<List<TypeIssueReadEntity>>
+
+    @Query("SELECT * FROM type_issues ORDER BY typeId, position")
+    fun observeTypeIssues(): Flow<List<TypeIssueEntity>>
+
     @Query("SELECT * FROM metal_spot WHERE symbol = :symbol")
     suspend fun spot(symbol: String): MetalSpotEntity?
 

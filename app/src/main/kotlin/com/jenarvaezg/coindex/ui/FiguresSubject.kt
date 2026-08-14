@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.prices.IssueListings
+import com.jenarvaezg.coindex.data.prices.holesWithinReach
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.CollectionFigures
@@ -15,6 +17,7 @@ import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.collectionFigures
 import com.jenarvaezg.coindex.domain.collectionValue
 import com.jenarvaezg.coindex.domain.fineSilverGrams
+import com.jenarvaezg.coindex.domain.holeValue
 import com.jenarvaezg.coindex.domain.paidComparison
 import com.jenarvaezg.coindex.domain.pieceValue
 import com.jenarvaezg.coindex.domain.place
@@ -235,15 +238,97 @@ fun coinValue(
 data class PlateValue(val eur: Double, val pieces: Int)
 
 /**
+ * What closing a plate would cost, for the second figure of the same header (#493).
+ *
+ * @param holes how many empty casillas the amount covers, which is **not** how many the plate has: a
+ *   hole whose issue nobody knows, or whose price is not on the phone, adds nothing to the total and
+ *   is not counted by it. The figure is therefore a floor, and the plate says a cost of closing built
+ *   out of the holes it can price rather than nothing at all.
+ */
+data class PlateCost(val eur: Double, val holes: Int)
+
+/**
+ * Everything a plate's header says about money, and the price inside each of its empty casillas.
+ *
+ * The three readings arrive together because they are one walk of the same album and because they are
+ * answered by one gate: while the market has not landed there is no value, no cost and no stamp
+ * either (ADR 0028 §7), and a drawer holding this empty cannot print any of the three.
+ *
+ * @param holeCosts what one empty casilla costs, keyed by member id, for the stamp drawn inside it.
+ *   Empty for a plate over the threshold of ADR 0028 §1 — the pass never asked for those prices, so
+ *   there is nothing to stamp — and empty for a plate that is closed, which has no casilla to stamp.
+ */
+data class PlateMoney(
+    val value: PlateValue? = null,
+    val cost: PlateCost? = null,
+    val holeCosts: Map<String, Double> = emptyMap(),
+)
+
+/**
+ * The plate's money, assembled once for the header and the casillas that share it.
+ *
+ * @param listings which issue each empty casilla stands for, as the pass stored it (#452). Without it
+ *   only the ten holes of a hundred and twenty-one whose curated file names its issues could be
+ *   priced at all.
+ */
+fun plateMoney(
+    album: CollectionCatalogAlbum,
+    state: CollectionState,
+    listings: IssueListings,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): PlateMoney {
+    val holeCosts = holeCosts(album, state, listings, spot, prices)
+    return PlateMoney(
+        value = plateValue(album, state, spot, prices),
+        // Null and not zero, like every other amount on the page: a plate whose holes are all
+        // unpriceable has nothing to say about closing, and «0 €» would say it costs nothing.
+        cost = holeCosts.values
+            .takeIf { it.isNotEmpty() }
+            ?.let { PlateCost(it.sum(), it.size) },
+        holeCosts = holeCosts,
+    )
+}
+
+/**
+ * What each empty casilla of a plate costs, or nothing at all when the plate is out of reach.
+ *
+ * Which holes count is [holesWithinReach]'s answer and not counted again here, so the holes the header
+ * adds up are exactly the holes the pass spent its calls on (ADR 0028 §1).
+ *
+ * A casilla with no price is **absent** rather than zero: without a price on the phone there is no
+ * stamp to draw and nothing to add, and neither the amount nor the casilla invents a «—».
+ */
+private fun holeCosts(
+    album: CollectionCatalogAlbum,
+    state: CollectionState,
+    listings: IssueListings,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): Map<String, Double> =
+    holesWithinReach(album).mapNotNull { hole ->
+        val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
+        val cost = holeValue(
+            typeId = typeId,
+            issueId = listings.issueOf(hole.member),
+            meta = state.typeMeta[typeId],
+            spot = spot,
+            prices = prices,
+        ) ?: return@mapNotNull null
+        hole.member.id to cost.eur
+    }.toMap()
+
+/**
  * The value of what a plate holds, which is the other place the grain rule allows a total.
  *
  * Only the pieces the plate's own casillas are filled with, so it is the plate's value and not the
  * value of every coin of those types: a type that fills one casilla and sits loose in three more rows is
  * one casilla here.
  *
- * **The cost of closing it is deliberately not here.** «A una casilla» is what is missing rather than
- * what is there, and its place is this same header — but it is a different figure, and totalling it for
- * the shelf is the reproach ADR 0026 §10 refused.
+ * **The cost of closing it is the other figure and not this one** (#493). They share a header and
+ * nothing else: this one is a total over what is there, at the maximum of three prices, and the cost
+ * is a total over what is not, out of two prices in `unc` — which is why each of them reaches the
+ * screen with its own provenance beside it instead of sharing one line of criterion.
  */
 fun plateValue(
     album: CollectionCatalogAlbum,

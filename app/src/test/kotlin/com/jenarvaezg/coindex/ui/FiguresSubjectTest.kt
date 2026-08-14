@@ -1,6 +1,11 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.db.TypeIssueEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
+import com.jenarvaezg.coindex.data.prices.HOLE_THRESHOLD_SLOTS
+import com.jenarvaezg.coindex.data.prices.IssueListings
+import com.jenarvaezg.coindex.data.prices.holesAreWithinReach
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
@@ -17,6 +22,7 @@ import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -218,7 +224,130 @@ class FiguresSubjectTest {
     fun `an empty plate is worth nothing that can be printed`() {
         assertNull(plateValue(CollectionCatalogAlbum(emptyList()), state(), SPOT, priced))
     }
+
+    /**
+     * The cost of closing is the price of the holes that **can** be priced, and the plate still says a
+     * figure with the rest (#493).
+     *
+     * A hole whose curated file does not declare its issue and whose type no stored listing answered
+     * for has nothing to address a price to. It adds nothing and is not counted — the alternative was
+     * saying nothing at all about a plate one of whose three holes is unknown.
+     */
+    @Test
+    fun `the cost of closing prices the holes it can and leaves the rest out`() {
+        val money = plateMoney(
+            albumWith(
+                listOf(
+                    hole(id = "b", year = 1_961),
+                    // Type 3 has neither a price nor a weight: no catalogue price and no silver floor.
+                    hole(id = "c", year = 1_962, typeId = 3, issueIds = emptyList()),
+                ),
+            ),
+            state(),
+            IssueListings.EMPTY,
+            SPOT,
+            priced,
+        )
+
+        assertEquals(80.0, money.value?.eur)
+        assertEquals(40.0, money.cost?.eur)
+        assertEquals(1, money.cost?.holes)
+        // And only the hole that has a price carries a stamp: nothing is invented, and no «—».
+        assertEquals(mapOf("b" to 40.0), money.holeCosts)
+    }
+
+    /**
+     * A hole whose issue only the **stored listing** knows is priced like any other (#452).
+     *
+     * This is 111 of the father's 121 holes: without the listing reaching the screen, the cost of
+     * closing would exist for the ten whose curated file names their issues and for nothing else.
+     */
+    @Test
+    fun `a hole the listing addresses is priced as well as one the file declares`() {
+        val listings = IssueListings.held(
+            reads = listOf(TypeIssueReadEntity(typeId = 2, readAt = 0)),
+            issues = listOf(
+                TypeIssueEntity(typeId = 2, issueId = 7, position = 0, year = 1_961, gregorianYear = null),
+            ),
+        )
+
+        val money = plateMoney(
+            albumWith(listOf(hole(id = "b", year = 1_961, issueIds = emptyList()))),
+            state(),
+            listings,
+            SPOT,
+            priced,
+        )
+
+        assertEquals(40.0, money.cost?.eur)
+        assertEquals(mapOf("b" to 40.0), money.holeCosts)
+    }
+
+    /** A closed plate has no cost and no stamps: without a hole there is no zero to word either. */
+    @Test
+    fun `a complete plate has no cost of closing and no stamps`() {
+        val money = plateMoney(albumWith(emptyList()), state(), IssueListings.EMPTY, SPOT, priced)
+
+        assertEquals(80.0, money.value?.eur)
+        assertNull(money.cost)
+        assertEquals(emptyMap(), money.holeCosts)
+    }
+
+    /**
+     * Over the threshold of ADR 0028 §1 there is no cost and no stamp, and **the threshold is read
+     * from one place**.
+     *
+     * The pass never asked for those prices, so a header that counted its own ten would print a cost
+     * of closing out of prices nobody has. The bound is `holesAreWithinReach` and it is asked here
+     * rather than repeated: the #497 lowers it, and a duplicated ten would survive that edit.
+     */
+    @Test
+    fun `over the threshold a plate has no second figure, and the bound is not duplicated`() {
+        val withinReach = (1..HOLE_THRESHOLD_SLOTS).map { hole(id = "h$it", year = 1_960 + it) }
+        val reproach = withinReach + hole(id = "over", year = 2_000)
+
+        val counted = plateMoney(albumWith(withinReach), state(), IssueListings.EMPTY, SPOT, priced)
+        val over = plateMoney(albumWith(reproach), state(), IssueListings.EMPTY, SPOT, priced)
+
+        assertEquals(HOLE_THRESHOLD_SLOTS, counted.cost?.holes)
+        assertEquals(HOLE_THRESHOLD_SLOTS, counted.holeCosts.size)
+        assertNull(over.cost)
+        assertEquals(emptyMap(), over.holeCosts)
+        // The same clause, said once and asked twice.
+        assertTrue(holesAreWithinReach(HOLE_THRESHOLD_SLOTS))
+        assertFalse(holesAreWithinReach(HOLE_THRESHOLD_SLOTS + 1))
+        assertFalse(holesAreWithinReach(0))
+    }
 }
+
+/** An album of one filled casilla and the holes a test wants, which is the shape of every plate here. */
+private fun albumWith(holes: List<CollectionCatalogMember>) = CollectionCatalogAlbum(
+    members = listOf(
+        CollectionCatalogAlbumMember(
+            member = CollectionCatalogMember(
+                id = "a",
+                label = "1960",
+                year = 1_960,
+                numistaTypeId = 2,
+            ),
+            status = CollectionCatalogMemberStatus.Owned(1, listOf(ItemRef(2, 2, 2))),
+        ),
+    ) + holes.map { CollectionCatalogAlbumMember(it, CollectionCatalogMemberStatus.Missing) },
+)
+
+/** One empty casilla, of the type the fixture prices unless a test asks for another. */
+private fun hole(
+    id: String,
+    year: Int,
+    typeId: Int = 2,
+    issueIds: List<Int> = listOf(7),
+) = CollectionCatalogMember(
+    id = id,
+    label = year.toString(),
+    year = year,
+    numistaTypeId = typeId,
+    numistaIssueIds = issueIds,
+)
 
 /** Issue 7 of type 2 is priced in `unc`; nothing else is. */
 private val priced: (Int, Int, String) -> Double? = { typeId, issueId, grade ->

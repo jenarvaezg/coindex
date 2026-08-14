@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.photos.TypeImages
+import com.jenarvaezg.coindex.data.prices.IssueListings
 import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.SILVER_SYMBOL
 import com.jenarvaezg.coindex.data.prices.priceBook
@@ -121,7 +122,13 @@ class CoindexRepository(
     fun observePrices(): Flow<PriceBook> = combine(
         priceDao.observePrices(),
         priceDao.observeSpot(SILVER_SYMBOL),
-    ) { prices, spot -> priceBook(prices, spot?.toDomain()) }
+        priceDao.observeTypeIssueReads(),
+        priceDao.observeTypeIssues(),
+    ) { prices, spot, reads, issues ->
+        // Held and not fresh (#493): what a screen does with a listing is address a price it already
+        // has, and ADR 0028 §5 keeps showing an expired row rather than emptying the page.
+        priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues))
+    }
     fun observeState(): Flow<CollectionState> = combine(
         collectedItemDao.observeAll(),
         typeMetaDao.observeAll(),

@@ -132,11 +132,20 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             coinValue(typeId, state.collection, state.prices.spot, state.prices::of)
         }
     }
-    val plateValue: (PlateResult.Available) -> PlateValue? = { resolved ->
+    // The plate asks for three readings at once and gets them or gets none of them (#493): the value
+    // of what is in it, the cost of closing it and the price inside each hole are one walk of the same
+    // album, and while the market is still arriving the empty value is what withdraws all three.
+    val plateMoney: (PlateResult.Available) -> PlateMoney = { resolved ->
         if (!state.valuation.settled) {
-            null
+            PlateMoney()
         } else {
-            plateValue(resolved.album, state.collection, state.prices.spot, state.prices::of)
+            plateMoney(
+                resolved.album,
+                state.collection,
+                state.prices.listings,
+                state.prices.spot,
+                state.prices::of,
+            )
         }
     }
 
@@ -491,7 +500,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     viewModel.plate(catalogId)
                                 },
                                 images = state.collection.images,
-                                value = plateValue,
+                                money = plateMoney,
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebookPages = { options ->

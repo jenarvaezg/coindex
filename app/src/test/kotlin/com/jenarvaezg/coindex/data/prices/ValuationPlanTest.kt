@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.data.prices
 
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -8,6 +10,7 @@ import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 private const val NOW = 1_754_600_000_000L
@@ -288,6 +291,61 @@ class ValuationPlanTest {
             listOf(OwnedIssue(20, 900)),
             resolvedHoleIssues(plan, listOf(expired), NOW, listings),
         )
+    }
+
+    /**
+     * The two readings of the same table, and why they differ (#493).
+     *
+     * The pass drops an expired listing, because it is about to be listed again in this same pass and
+     * answering a hole from the stale map would price the wrong issue and then the right one. A screen
+     * has nothing to spend and no second chance: ADR 0028 §5 keeps showing an expired row rather than
+     * emptying the page, so the header of a plate would otherwise lose a cost of closing whose price
+     * is still sitting on the phone.
+     */
+    @Test
+    fun `an expired listing leaves the pass but stays on the screen`() {
+        val reads = listOf(TypeIssueReadEntity(typeId = 20, readAt = NOW - LISTING_LIFETIME_MILLIS - 1))
+        val issues = listOf(
+            TypeIssueEntity(typeId = 20, issueId = 900, position = 0, year = 1_905, gregorianYear = null),
+        )
+
+        val forThePass = IssueListings.of(reads, issues, NOW)
+        val heldByThePhone = IssueListings.held(reads, issues)
+
+        assertEquals(IssueListings.EMPTY, forThePass)
+        assertEquals(setOf(20), heldByThePhone.listedTypeIds)
+        assertEquals(900, heldByThePhone.issueOf(PlateHole("dates", typeId = 20, year = 1_905)))
+    }
+
+    /**
+     * A casilla of an album is addressed by the same rule a [PlateHole] is: the file's declaration
+     * first, and the listing when the file declares nothing (#493).
+     *
+     * One rule and not two, because the header adds up the very prices the pass went and fetched: read
+     * differently, a plate would total prices addressed to other coins.
+     */
+    @Test
+    fun `an empty casilla is addressed by its file first and by the listing after`() {
+        val listings = IssueListings(
+            listedTypeIds = setOf(20),
+            issueIdByTypeAndYear = mapOf((20 to 1_905) to 900),
+        )
+        val member = CollectionCatalogMember(
+            id = "dates-1905",
+            label = "1905",
+            year = 1_905,
+            numistaTypeId = 20,
+        )
+
+        assertEquals(900, listings.issueOf(member))
+        // The file wins, and the first of its ids: a casilla holding two varieties of one issue is
+        // one casilla, and its cost is the cost of one of them.
+        assertEquals(
+            41,
+            listings.issueOf(member.copy(numistaIssueIds = listOf(41, 42))),
+        )
+        // An announced casilla has no type at all, so there is nothing to address a price to.
+        assertNull(listings.issueOf(member.copy(numistaTypeId = null)))
     }
 }
 

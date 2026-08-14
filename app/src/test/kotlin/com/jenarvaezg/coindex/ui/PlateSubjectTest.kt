@@ -484,4 +484,56 @@ class PlateSubjectTest {
         )
     }
 
+    /**
+     * The two figures of money reach a drawer already worded, and the stamp of a hole with them (#493).
+     *
+     * A stamp lands on the hole and never on a full casilla: a casilla that is filled has no cost, it
+     * has a value, and that one is the header's.
+     */
+    @Test
+    fun `a plate is handed both figures of money and the price inside each hole`() {
+        val plate = pricedSubject(
+            PlateMoney(
+                value = PlateValue(eur = 1_612.0, pieces = 2),
+                cost = PlateCost(eur = 84.0, holes = 1),
+                holeCosts = mapOf("1886" to 84.0),
+            ),
+        )
+
+        assertEquals("Valor actual: 1.612 € · al mayor de tres precios", plate.value)
+        assertEquals("Coste de cerrar: 84 € · en sin circular", plate.cost)
+        assertEquals(listOf(null, "84 €"), plate.cells.map { it.cost })
+    }
+
+    /**
+     * And with no money to say, no drawer can print any of it — which is the export with the switch
+     * off, the plate whose market has not landed, and every test in this file that says nothing about
+     * money at all.
+     */
+    @Test
+    fun `a plate handed no money says nothing about money anywhere`() {
+        val plate = pricedSubject(PlateMoney())
+
+        assertNull(plate.value)
+        assertNull(plate.cost)
+        assertEquals(listOf(null, null), plate.cells.map { it.cost })
+    }
+
+    /** The two-casilla date run with the first one filled, which is the plate a cost is said of. */
+    private fun pricedSubject(money: PlateMoney): PlateSubject {
+        val catalog = catalog(dateRun)
+        val album = CollectionCatalogAlbum(
+            listOf(
+                CollectionCatalogAlbumMember(
+                    dateRun[0],
+                    CollectionCatalogMemberStatus.Owned(
+                        quantity = 2,
+                        items = listOf(ItemRef(itemId = 1, typeId = 10_340, quantity = 2)),
+                    ),
+                ),
+                CollectionCatalogAlbumMember(dateRun[1], CollectionCatalogMemberStatus.Missing),
+            ),
+        )
+        return plateSubject(PlateResult.Available(catalog, album), money)
+    }
 }

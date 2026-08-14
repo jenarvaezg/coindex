@@ -283,6 +283,81 @@ class ValuationTest {
         assertEquals(500.0, comparison?.paid)
         assertEquals(500.0, comparison?.today)
     }
+
+    /**
+     * A hole is valued in `unc` and out of **two** sources, because nobody paid for a coin that is
+     * not here (ADR 0028 §8, #493).
+     */
+    @Test
+    fun `a hole is valued uncirculated, and the metal can beat the catalogue`() {
+        val catalogue = holeValue(
+            typeId = 1,
+            issueId = 7,
+            meta = meta(weightGrams = 25.0, fineness = 0.835),
+            spot = SPOT,
+            prices = priceOf(mapOf(UNCIRCULATED to 80.0)),
+        )
+
+        assertEquals(ValueSource.Market, catalogue?.source)
+        assertEquals(UNCIRCULATED, catalogue?.grade)
+        assertEquals(80.0, catalogue?.eur)
+
+        // The same hole with a cheaper catalogue price than its own silver: the floor wins, exactly
+        // as it does for a piece.
+        val floor = holeValue(
+            typeId = 1,
+            issueId = 7,
+            meta = meta(weightGrams = 25.0, fineness = 0.835),
+            spot = SPOT,
+            prices = priceOf(mapOf(UNCIRCULATED to 5.0)),
+        )
+
+        assertEquals(ValueSource.Silver, floor?.source)
+    }
+
+    /**
+     * And it does **not** fall to a neighbouring grade, unlike a piece.
+     *
+     * The header says «en sin circular» beside the amount, so an amount that came out of `xf` would
+     * make the plate name a grade its own figure did not come from.
+     */
+    @Test
+    fun `a hole takes no neighbouring grade, because its label names the grade`() {
+        val value = holeValue(
+            typeId = 1,
+            issueId = 7,
+            meta = null,
+            spot = null,
+            prices = priceOf(mapOf("xf" to 60.0, "au" to 70.0)),
+        )
+
+        assertNull(value)
+    }
+
+    /** A hole whose issue nobody knows has only its metal left, and without a spot, nothing. */
+    @Test
+    fun `a hole with no issue and no metal costs nothing that can be said`() {
+        assertNull(
+            holeValue(
+                typeId = 1,
+                issueId = null,
+                meta = meta(weightGrams = 25.0, fineness = 0.835),
+                spot = null,
+                prices = priceOf(mapOf(UNCIRCULATED to 80.0)),
+            ),
+        )
+
+        assertEquals(
+            ValueSource.Silver,
+            holeValue(
+                typeId = 1,
+                issueId = null,
+                meta = meta(weightGrams = 25.0, fineness = 0.835),
+                spot = SPOT,
+                prices = priceOf(mapOf(UNCIRCULATED to 80.0)),
+            )?.source,
+        )
+    }
 }
 
 private fun meta(weightGrams: Double?, fineness: Double?) = TypeMeta(
