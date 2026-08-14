@@ -110,7 +110,7 @@ import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.shelf.yearAxis
 import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
-import com.jenarvaezg.coindex.ui.wishDoorLabel
+import com.jenarvaezg.coindex.ui.annexDoorLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one round coin and two short lines under it. */
@@ -170,6 +170,14 @@ fun IndexScreen(
      * cards of the index and these coins are not in it.
      */
     wishes: Int,
+    /**
+     * How many curated plates the collector owns nothing of, which the same door names (ADR 0030 §8).
+     *
+     * The **twenty and not the twenty-three**: what is behind this door that this list does not already
+     * hold is the shelf window. Zero here and zero marks means no door at all, which is the same clause
+     * the count above keeps.
+     */
+    showcase: Int,
     onOpenWishes: () -> Unit,
     onSettings: () -> Unit,
     /**
@@ -554,11 +562,12 @@ fun IndexScreen(
             }
 
             // The door of the annex, and the last row of this list whatever axis it is read on
-            // (ADR 0026 §8, ADR 0029 §6). **Not printed at zero**: with nothing marked there is
-            // nothing behind it, and a row that named an empty screen would be the furniture §5
-            // prices — which is also why it takes a live count and not a nullable one.
-            if (wishes > 0) {
-                fullWidth { AnnexDoor(label = wishDoorLabel(wishes), onOpen = onOpenWishes) }
+            // (ADR 0026 §8, ADR 0029 §6). **Not printed at zero**: with nothing marked and no plate
+            // beyond the collection there is nothing behind it, and a row that named an empty screen
+            // would be the furniture §5 prices. Which of its two forms it takes is `annexDoorLabel`'s
+            // (ADR 0030 §8): it names the marks, the twenty, or both.
+            annexDoorLabel(wishes = wishes, plates = showcase)?.let { label ->
+                fullWidth { AnnexDoor(label = label, onOpen = onOpenWishes) }
             }
         }
 
@@ -588,9 +597,13 @@ fun IndexScreen(
  *
  * The arrow is drawn rather than typed, because neither of the album's two typefaces has that glyph
  * (#298), and it is the same chevron «Volver» uses, mirrored: the two halves of one journey.
+ *
+ * **One door and two places that hang it**, since the annex grew a second room (ADR 0030 §8): this list
+ * hangs it at its foot to open «Explorar», and «Explorar» hangs the same row at its head to open «Lo que
+ * busco». Two drawings of one shape is how the second one comes to be a shade off.
  */
 @Composable
-private fun AnnexDoor(label: String, onOpen: () -> Unit) {
+internal fun AnnexDoor(label: String, onOpen: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

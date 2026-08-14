@@ -85,6 +85,34 @@ data class PlateSubject(
      * were never asked for — the same clause, read from `holesAreWithinReach` and not counted twice.
      */
     val cost: String? = null,
+    /**
+     * What entering this plate costs, on a plate that is not the collector's (ADR 0030 §6).
+     *
+     * The one figure of money a plate of the shelf window can have, and it is **never** in company:
+     * with no piece inside there is no [value] to name it against, so where the collector's own plate
+     * has two lines this one has this. Null on a plate of theirs, and null on one of the twenty that
+     * has never been valued — which is absence and not a zero, like every other amount here.
+     */
+    val entry: String? = null,
+    /**
+     * What a plate of the shelf window says when it was valued and Numista had **no price** (ADR 0028 §4).
+     *
+     * The third state of that section, about a whole plate rather than one issue: it is a datum and not a
+     * failure, so it is said. Without it a plate that has been asked about looks exactly like one nobody
+     * has touched, and the gesture goes on offering to buy an answer it already has.
+     */
+    val entryNote: String? = null,
+    /**
+     * Whether this plate is the collector's own (ADR 0030 §1).
+     *
+     * What hangs off it is what the plate **offers**: a plate of the shelf window has «Tasar esta
+     * lámina» where the collector's has «Exportar la lámina», because a PNG of twelve empty holes is a
+     * picture of nobody's collection (#282, decision 8). Every other thing a plate does — the marking
+     * mode, the link to Numista, the casillas themselves — is the same on both.
+     */
+    val mine: Boolean = true,
+    /** Whether this plate has been valued at all, priced or not — what the gesture's word reads. */
+    val entryValued: Boolean = false,
 )
 
 /**
@@ -175,6 +203,14 @@ fun plateSubject(
     money: PlateMoney = PlateMoney(),
     /** The casillas of this plate the collector marked, by key (ADR 0029). */
     wished: Set<WishKey> = emptySet(),
+    /**
+     * Now, for the one amount on a plate that is shown with its age (ADR 0030 §4).
+     *
+     * A parameter and not a clock of its own, like every other date this app words: the price of a plate
+     * of the shelf window never expires, so what tells «tasada hoy» from «tasada hace un año» is read
+     * where the subject is built and can be held still by a test.
+     */
+    nowMillis: Long = System.currentTimeMillis(),
 ): PlateSubject {
     val catalog = plate.catalog
     // Off the album and not off the catalog, so the heading is lifted out of the very cells the
@@ -215,6 +251,12 @@ fun plateSubject(
         landingCell = plate.album.firstOwnedIndex(),
         value = money.value?.let(::plateValueLabel),
         cost = money.cost?.let(::plateCostLabel),
+        entry = money.entry?.let { showcaseEntryLabel(it, nowMillis) },
+        entryNote = ShowcaseLabels.NOTHING_PRICED.takeIf { money.entryAsked && money.entry == null },
+        // Asked is what turns «Tasar esta lámina» into «Volver a tasar», and not merely priced: a plate
+        // Numista has no price for has been valued all the same.
+        entryValued = money.entryAsked,
+        mine = plate.mine,
     )
 }
 

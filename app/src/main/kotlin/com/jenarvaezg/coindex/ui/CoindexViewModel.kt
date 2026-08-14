@@ -15,6 +15,7 @@ import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.prices.ValuationLoop
+import com.jenarvaezg.coindex.data.prices.showcaseValuationPlan
 import com.jenarvaezg.coindex.data.prices.valuationPlan
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
@@ -22,8 +23,11 @@ import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
+import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.WishedSlot
+import com.jenarvaezg.coindex.domain.showcasePlate
+import com.jenarvaezg.coindex.domain.showcasePlates
 import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
@@ -206,6 +210,58 @@ class CoindexViewModel(
     fun removeWish(key: WishKey) {
         viewModelScope.launch { repository.unmarkWish(key) }
     }
+
+    /**
+     * Asks Numista what entering one plate of the shelf window costs (ADR 0030 §3).
+     *
+     * The app's **only** gesture that spends the budget on purpose besides the ficha's own refresh, and
+     * the one place a plate that is not the collector's ever costs a call. What it asks for is that
+     * plate's holes and nothing else, so the spend is the number the gesture printed.
+     *
+     * **A plate whose prices are all fresh asks for nothing and says so** (ADR 0028 §5): the pass's
+     * thirty days decide whether an issue is worth a second call, and buying the same answer twice
+     * because a button was pressed is the one thing a gesture that names its spend must not do.
+     *
+     * Silent about success, like the mark: what the collector sees is the figure appearing in the header
+     * with its date. What is spoken is the two cases where **nothing** happened — a refusal, or nothing
+     * left to ask — because both leave the screen looking exactly as it did.
+     */
+    fun valuePlate(catalogId: String) {
+        val plate = showcasePlate(catalogId) ?: return
+        if (_state.value.valuingPlate != null) return
+        val plan = showcaseValuationPlan(plate)
+        if (plan.isEmpty) return
+        viewModelScope.launch {
+            _state.update { it.copy(valuingPlate = catalogId) }
+            val status = valuation.valueNow(plan)
+            _state.update { it.copy(valuingPlate = null) }
+            status.held?.let { refusal -> showMessage(UiNotice(showcaseRefusalMessage(refusal))) }
+            // The pass the gesture displaced starts again: what it had covered was forgotten when the
+            // budget was handed over, so whatever it had not asked for is asked for on this call and not
+            // on the next launch.
+            valuePrices(force = true)
+        }
+    }
+
+    /** One plate of the shelf window, resolved by id, or null if this catalog is not one (ADR 0030 §1). */
+    fun showcasePlate(catalogId: String): ShowcasePlate? {
+        val catalog = catalogs.firstOrNull { it.id == catalogId } ?: return null
+        val state = _state.value.collection
+        return showcasePlate(catalog, state.items, state.evidencedCatalogIds)
+    }
+
+    /**
+     * The shelf window itself: the twenty plates, in the order it opens (ADR 0030 §1, §8).
+     *
+     * Read on demand and not kept in the state, for the reason `livingWishes` is: it is a crossing of the
+     * curated files and the inventory, and a stored third reading is the one that could disagree with
+     * both. The screen wraps it in a `remember` of its own.
+     */
+    fun showcase(): List<ShowcasePlate> = showcasePlates(
+        catalogs = curation.catalogs,
+        items = _state.value.collection.items,
+        evidencedCatalogIds = _state.value.collection.evidencedCatalogIds,
+    )
 
     /**
      * The marked casillas that are still alive, resolved against the curated shelf (ADR 0029 §2).

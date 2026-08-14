@@ -37,6 +37,14 @@ object Routes {
      * second, which is not in this delivery.
      */
     const val EXPLORE = "explore"
+
+    /**
+     * «Lo que busco», one room further in than «Explorar» (ADR 0030 §8).
+     *
+     * Its own route and not a section of [EXPLORE], because it is its own screen with its own export:
+     * what it is for is the sheet taken to a fair, and a list folded into the shelf could not be one.
+     */
+    const val WISHES = "wishes"
     const val SETTINGS = "settings"
     const val NOTICES = "notices"
     const val PLATE = "plate/{catalogId}"

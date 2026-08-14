@@ -29,6 +29,7 @@ import com.jenarvaezg.coindex.domain.Wish
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.programmeStandings
+import com.jenarvaezg.coindex.domain.showcasePlate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -90,6 +91,16 @@ sealed interface PlateResult {
          * catalogs today, and never part of the plate's own denominator.
          */
         val programmes: List<ProgrammeStanding> = emptyList(),
+        /**
+         * Whether this plate is the collector's, or one of the twenty of the shelf window (ADR 0030).
+         *
+         * **The one bit that tells the two régimes apart**, and it is derived from the evidence on every
+         * read like everything else about a card: nothing is stored to make a plate somebody's. What
+         * hangs off it is what the plate *offers* — «Exportar la lámina» against «Tasar esta lámina» —
+         * and how many figures of money its header can have: a plate holding nothing has no «Valor
+         * actual», so its one figure is the cost of entering (§6).
+         */
+        val mine: Boolean = true,
     ) : PlateResult
 
     data class Unavailable(val reason: PlateUnavailable) : PlateResult
@@ -129,10 +140,14 @@ class CoindexRepository(
         priceDao.observeSpot(SILVER_SYMBOL),
         priceDao.observeTypeIssueReads(),
         priceDao.observeTypeIssues(),
-    ) { prices, spot, reads, issues ->
+        // When each price landed, which is what an amount that never expires is shown with
+        // (ADR 0030 §4). By the same door as the prices themselves, for the reason the listings are:
+        // a figure and its date read a moment apart is a date that belongs to another total.
+        priceDao.observeReads(),
+    ) { prices, spot, reads, issues, priceReads ->
         // Held and not fresh (#493): what a screen does with a listing is address a price it already
         // has, and ADR 0028 §5 keeps showing an expired row rather than emptying the page.
-        priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues))
+        priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues), priceReads, reads)
     }
     /**
      * The casillas the collector marked, as the domain reads them (ADR 0029).
@@ -225,6 +240,19 @@ fun resolvePlate(
 ): PlateResult {
     val catalog = curation.catalogs.firstOrNull { it.id == catalogId }
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
+    // The shelf window is asked first, and it has to be: a catalog the collector owns nothing of has no
+    // derived collection either, so both of the answers below would refuse it before the evidence was
+    // ever the question (ADR 0030 §1, ADR 0021 §7 as amended).
+    showcasePlate(catalog, state.items, state.evidencedCatalogIds)?.let { window ->
+        return PlateResult.Available(
+            catalog = catalog,
+            album = window.album,
+            // The collector's progress in the programme is theirs and not this plate's, so it is read
+            // here too: what changes on a plate of the window is what it offers, not what it knows.
+            programmes = programmeStandings(catalog, curation.programmes, state.items),
+            mine = false,
+        )
+    }
     return when {
         state.derivedCollectionFor(catalog.key()) == null ->
             PlateResult.Unavailable(PlateUnavailable.NotACollection)

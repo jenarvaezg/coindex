@@ -100,4 +100,13 @@ data class UiState(
      * incomplete, it is false.
      */
     val valuation: ValuationStatus = ValuationStatus(),
+    /**
+     * The plate of the shelf window whose price is being asked for right now, by catalog id (ADR 0030 §3).
+     *
+     * One and not a set, unlike the fichas being refreshed: the gesture lives on a plate and there is one
+     * plate on screen, and a second tasación in flight would be spending the budget on a screen the
+     * collector has already left. It is what the gesture reads to say «Preguntando a Numista…» and what
+     * stops a second press from starting a second pass.
+     */
+    val valuingPlate: String? = null,
 )

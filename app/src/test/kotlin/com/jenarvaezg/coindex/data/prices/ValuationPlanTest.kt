@@ -8,8 +8,10 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.Wish
 import com.jenarvaezg.coindex.domain.WishedSlot
+import com.jenarvaezg.coindex.domain.showcasePlate
 import com.jenarvaezg.coindex.domain.wishKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -420,7 +422,94 @@ class ValuationPlanTest {
         )
         assertEquals(0, wishCallsPerMonth(emptyList()))
     }
+
+    /**
+     * A plate of the shelf window is valued **whole**, threshold and all (ADR 0030 §3, §7).
+     *
+     * The threshold is the rule of the reproach, and a plate the collector owns nothing of reproaches
+     * nothing: every casilla of it is empty by definition, and they went there to look at what they do
+     * not have. So a twelve-slot plate — two over the cut of ADR 0028 §1 — is asked about entirely.
+     */
+    @Test
+    fun `tasar one plate of the shelf window asks about every casilla of it`() {
+        val twelve = dateRun("lunar", years = 2_012..2_023, typeId = 30)
+
+        val plan = showcaseValuationPlan(showcase(twelve))
+
+        assertTrue(plan.owned.isEmpty())
+        assertEquals(12, plan.holes.size)
+        assertEquals(setOf("lunar"), plan.holes.mapTo(mutableSetOf()) { it.catalogId })
+        // And it is not what a pass would have asked for: the pass's own plan leaves it out entirely.
+        assertTrue(valuationPlan(emptyList(), Curation(listOf(twelve)), emptySet()).holes.isEmpty())
+    }
+
+    /**
+     * The gesture prints the pass's own arithmetic and not a second one (ADR 0030 §3).
+     *
+     * One `/prices` per hole plus one `/types/{id}/issues` per type whose file names no issue — so a
+     * date run of three years costs four, and the same three casillas cost three where the curated file
+     * declares their issues. What is already on the phone and fresh is not counted, which is what makes
+     * «Volver a tasar» honest a month later and silent a week later.
+     */
+    @Test
+    fun `the gesture counts what the pass would spend, and nothing it already holds`() {
+        val dates = dateRun("dates", years = 1_900..1_902, typeId = 20)
+        val declared = dates.copy(
+            id = "declared",
+            members = dates.members.mapIndexed { at, member ->
+                member.copy(numistaIssueIds = listOf(900 + at))
+            },
+        )
+
+        assertEquals(4, showcaseCallCount(showcase(dates), emptyMap(), NOW))
+        assertEquals(3, showcaseCallCount(showcase(declared), emptyMap(), NOW))
+        // The 900 is on the phone and fresh, so two of the three are left.
+        assertEquals(
+            2,
+            showcaseCallCount(showcase(declared), mapOf((20 to 900) to NOW), NOW),
+        )
+        // A month later it has expired and is asked about again: this is what «Volver a tasar» buys.
+        assertEquals(
+            3,
+            showcaseCallCount(
+                showcase(declared),
+                mapOf((20 to 900) to NOW - PRICE_LIFETIME_MILLIS - 1),
+                NOW,
+            ),
+        )
+    }
 }
+
+/**
+ * A listing older than ninety days is **not** a listing the gesture may discount (ADR 0030 §3).
+ *
+ * The screen's own reading of the listings ignores expiry on purpose (#493): it has nothing to spend, and
+ * ADR 0028 §5 keeps showing an expired row. A gesture that names its calls cannot use that reading — the
+ * pass will spend the `/types/{id}/issues` again — and rounding a spend **down** is the one direction that
+ * sentence must never err in.
+ */
+class ShowcaseSpendTest {
+    @Test
+    fun `a listing past its ninety days is counted as a lookup the pass will pay for`() {
+        val dates = dateRun("dates", years = 1_900..1_902, typeId = 20)
+        val reads = listOf(TypeIssueReadEntity(20, NOW - LISTING_LIFETIME_MILLIS - 1))
+        val issues = (1_900..1_902).mapIndexed { at, year ->
+            TypeIssueEntity(20, 900 + at, at, year, year)
+        }
+
+        val held = IssueListings.held(reads, issues)
+        val fresh = IssueListings.of(reads, issues, NOW)
+
+        // Held: the type counts as listed, so only the three prices are counted — and the pass would
+        // spend a fourth call on the listing.
+        assertEquals(3, showcaseCallCount(showcase(dates), emptyMap(), NOW, held))
+        assertEquals(4, showcaseCallCount(showcase(dates), emptyMap(), NOW, fresh))
+    }
+}
+
+/** The catalog as the shelf window holds it: nothing owned, so every casilla is a hole. */
+private fun showcase(catalog: CollectionCatalog): ShowcasePlate =
+    requireNotNull(showcasePlate(catalog, emptyList(), emptySet()))
 
 /** One marked casilla of a curated catalog, resolved as the annex resolves it. */
 private fun wish(catalog: CollectionCatalog, memberId: String): WishedSlot {

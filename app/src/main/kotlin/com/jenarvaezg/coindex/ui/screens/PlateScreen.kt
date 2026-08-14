@@ -64,6 +64,7 @@ import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
+import com.jenarvaezg.coindex.ui.showcaseValueAction
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
@@ -96,29 +97,87 @@ fun PlateScreen(
     money: (PlateResult.Available) -> PlateMoney,
     /** The marks on this plate's casillas, and the gesture that toggles one (ADR 0029 §5). */
     marking: PlateMarking,
+    /**
+     * What tasar this plate would cost and how to start it (ADR 0030 §3).
+     *
+     * Handed to every plate and read only by the shelf window's, for the reason [money] is a function:
+     * which régime this catalog is under is decided on the other side of [result], and a screen that
+     * received the gesture only for the twenty would have to be told twice.
+     */
+    valuation: (PlateResult.Available) -> PlateValuation,
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
     onMessage: (UiNotice) -> Unit,
+    /** Now, for the age of a hand-asked price (ADR 0030 §4). Read once per opening of the plate. */
+    nowMillis: Long,
     modifier: Modifier = Modifier,
 ) {
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
-        is PlateResult.Available -> AvailablePlate(
-            plate = remember(result, money, marking.wished) {
-                plateSubject(result, money(result), marking.wished)
-            },
+        is PlateResult.Available -> {
+            val plate = remember(result, money, marking.wished, nowMillis) {
+                plateSubject(result, money(result), marking.wished, nowMillis)
+            }
+            // The one fork of this screen (ADR 0030 §6): a plate of the collector's is wrapped in the
+            // export machine, and one of the shelf window is not wrapped in it at all. It is not a
+            // disabled button — a PNG of twelve empty holes is a picture of nobody's collection, so
+            // there is nothing there to disable — and what stands in its place is the gesture that
+            // spends.
+            if (plate.mine) {
+                AvailablePlate(
+                    plate = plate,
+                    marking = marking,
+                    images = images,
+                    notebookOptions = notebookOptions,
+                    onNotebookPrinted = onNotebookPrinted,
+                    notebookPages = notebookPages,
+                    onExporting = onExporting,
+                    onOpenSource = onOpenSource,
+                    onMessage = onMessage,
+                    modifier = modifier,
+                )
+            } else {
+                ShowcasePlateSheet(
+                    plate = plate,
+                    marking = marking,
+                    valuation = valuation(result),
+                    images = images,
+                    onOpenSource = onOpenSource,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * A plate of the shelf window: the same sheet, with the gesture where the export was (ADR 0030).
+ *
+ * It shares [PlateGrid] with the collector's own plate and hands it no [SheetExportSurface], which is
+ * the whole of the difference on screen. The ink of the completion stamp is not read either: a plate at
+ * 0/N has nothing to stamp, and asking for the fall would arm a ceremony that can never fire.
+ */
+@Composable
+private fun ShowcasePlateSheet(
+    plate: PlateSubject,
+    marking: PlateMarking,
+    valuation: PlateValuation,
+    images: Map<Int, TypeImages>,
+    onOpenSource: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        PlateGrid(
+            plate = plate,
             marking = marking,
             images = images,
-            notebookOptions = notebookOptions,
-            onNotebookPrinted = onNotebookPrinted,
-            notebookPages = notebookPages,
-            onExporting = onExporting,
+            ink = remember { mutableStateOf(0f) },
+            export = null,
+            valuation = valuation,
             onOpenSource = onOpenSource,
-            onMessage = onMessage,
-            modifier = modifier,
         )
     }
 }
@@ -138,6 +197,21 @@ fun PlateScreen(
 class PlateMarking(
     val wished: Set<WishKey>,
     val onToggle: (WishKey) -> Unit,
+)
+
+/**
+ * The tasación as a plate of the shelf window receives it (ADR 0030 §3).
+ *
+ * The sibling of [PlateMarking] and the same shape: what to draw, and what pressing it does. [calls] is
+ * the ceiling the gesture prints **before** it is pressed, which is the rule #282 wrote and the one ADR
+ * 0028 §3 gained with its gesture; whether the plate already carries an amount — what turns «Tasar esta
+ * lámina» into «Volver a tasar» — is **not** in here: it is `PlateSubject.entry`, read off the same
+ * subject the header draws, so the word on the button and the figure above it cannot disagree.
+ */
+class PlateValuation(
+    val calls: Int,
+    val running: Boolean,
+    val onValue: () -> Unit,
 )
 
 @Composable
@@ -188,7 +262,10 @@ private fun PlateGrid(
     marking: PlateMarking,
     images: Map<Int, TypeImages>,
     ink: State<Float>,
-    export: SheetExportSurface,
+    /** Null on a plate of the shelf window, which has nothing of the collector's to export. */
+    export: SheetExportSurface?,
+    /** Null on a plate of the collector's, which is not priced by a gesture. */
+    valuation: PlateValuation? = null,
     onOpenSource: (String) -> Unit,
 ) {
     // Whether the collector is marking right now, which is this screen's own state and nothing else's
@@ -225,7 +302,11 @@ private fun PlateGrid(
                         complete = plate.complete,
                         ink = ink,
                     )
-                    PlateMoneyLines(value = plate.value, cost = plate.cost)
+                    PlateMoneyLines(
+                        value = plate.value,
+                        cost = plate.cost,
+                        entry = plate.entry ?: plate.entryNote,
+                    )
                     SpecificationCard(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
@@ -233,13 +314,30 @@ private fun PlateGrid(
                     // One door into «Cómo se exporta», the same shape the index has (#434): the
                     // panel owns Descargar / Compartir / Cancelar, and asking the destination
                     // twice — once on the way in and once on the way out — was the whole defect.
-                    PrimaryAction(
-                        text = export.label,
-                        onClick = export.onExport,
-                        enabled = export.enabled,
-                    )
-                    export.options?.invoke()
-                    export.progress?.invoke()
+                    export?.let { surface ->
+                        PrimaryAction(
+                            text = surface.label,
+                            onClick = surface.onExport,
+                            enabled = surface.enabled,
+                        )
+                        surface.options?.invoke()
+                        surface.progress?.invoke()
+                    }
+                    // The gesture that takes the export's place on a plate that is not yours, in the
+                    // same slot and with the same weight: it is what this screen is for (ADR 0030 §3).
+                    valuation?.let { gesture ->
+                        PrimaryAction(
+                            text = showcaseValueAction(
+                                calls = gesture.calls,
+                                // Asked and not priced: a plate Numista has no price for has been
+                                // valued, and offering to «tasar» it again would buy the same silence.
+                                valued = plate.entryValued,
+                                valuing = gesture.running,
+                            ),
+                            onClick = gesture.onValue,
+                            enabled = !gesture.running,
+                        )
+                    }
                     // The door into the marking mode, last thing before the casillas it is about
                     // (ADR 0029 §5). Absent on a plate with nothing left to look for: a closed plate
                     // has no empty casilla, and a word offering to mark nothing is furniture.
@@ -352,10 +450,13 @@ private fun PlateHeading(
  * statement about money, and at ten they read as two blocks that happen to be adjacent.
  */
 @Composable
-internal fun PlateMoneyLines(value: String?, cost: String?) {
-    if (value == null && cost == null) return
+internal fun PlateMoneyLines(value: String?, cost: String?, entry: String? = null) {
+    if (value == null && cost == null && entry == null) return
     Column(verticalArrangement = Arrangement.spacedBy(PLATE_MONEY_LINE_GAP)) {
-        listOfNotNull(value, cost).forEach { line ->
+        // Three slots and never three lines: a plate of the collector's has the first two and one of
+        // the shelf window has the third alone (ADR 0030 §6), because with no piece inside there is no
+        // «Valor actual» for a cost to be told apart from.
+        listOfNotNull(value, cost, entry).forEach { line ->
             Text(
                 line,
                 style = MaterialTheme.typography.labelLarge,

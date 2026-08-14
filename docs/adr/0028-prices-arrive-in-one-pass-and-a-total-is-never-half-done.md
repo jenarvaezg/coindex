@@ -1,7 +1,9 @@
 # ADR 0028: Prices arrive in one pass, and a total is never shown half-done
 
 - Status: accepted, §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
-  marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number)
+  marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number), §3 and
+  §5 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (one plate of the
+  shelf window is valued by a gesture, and that price never expires)
 - Date: 2026-08-10
 - Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
   left to its own document
@@ -102,6 +104,22 @@ a button and a word to a map whose whole purpose is removing prose, and leaves �
 until somebody remembers. **Valuing when «Las cifras» opens** is two minutes staring at an empty
 screen, and is exactly the automatic policy ADR 0025 forbade.
 
+> **Amended on 2026-08-14 (§3, [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)).
+> There is a gesture, it is one plate of the shelf window, and it names its spend before it is
+> pressed.** «No gesture» stands for the collection: `Tasar la colección · 487 llamadas` is still
+> refused, and the two triggers above are still how everything a collector **owns** is priced.
+>
+> What the refusal above was weighing does not exist for a plate of the shelf window. There the
+> alternative to the gesture is not «later, in the background» — it is **never**: ADR 0029 §4 lifted the
+> evidence filter for a *marked* slot alone, so an unmarked plate of the twenty has no route to a price
+> at all, and no pass will ever ask for one. So the button is not a shortcut to what a pass would do
+> anyway; it is the only door, and the spend behind it is the collector's to decide: **«Tasar esta
+> lámina · N consultas»**, per plate, never the twenty at once.
+>
+> The pass is unchanged and is the one that runs: valuing by hand is one pass over a plan holding that
+> plate's holes and nothing else, so there is no second writer and no second price — the rows land in
+> the same two tables ADR 0029 §4 already points at.
+
 ### 4. Three states, not two
 
 «Numista has no price for this» **is not a failure**, and confusing the two was the risk this
@@ -134,6 +152,23 @@ rules the mix.
 Since they are all brought on the same day by the first pass, they all expire on the same day: the
 monthly trickle really is **one batch once a month**. Spreading it out — fetching the oldest few
 each day — was discarded: it turns a minute a month into a permanent background call.
+
+> **Amended on 2026-08-14 (§5, [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). A
+> price asked for by hand does not expire, and it is always shown with its date.** The thirty days above
+> are the clock of a price **the pass will ask for again**, and that is what makes the trickle a trickle.
+> A plate of the shelf window has no pass coming for it (§3 as amended), so expiry there would mean one
+> thing only: the amount disappearing off a screen with no way to refill it.
+>
+> So the deletion clause is dropped for that one case and the rest of §5 is kept exactly: **the row is
+> never deleted, the amount is shown with the date it was brought, and «Volver a tasar» stays on the
+> plate for ever.** It is the sentence this section already signed — *«on day 31 the old price is still
+> shown, with the date it was brought»* — with nothing left to make it a day 31.
+>
+> **And a total whose components were read on different days is dated by its oldest.** That case is
+> created by the shelf window and the marks together: a plate valued by hand in August with one marked
+> casilla refreshed by September's pass is not a total half done (§7) — it is whole, with two ages. One
+> date, and the **oldest**, because a date over a total is a promise about all of it
+> ([#494](https://github.com/jenarvaezg/coindex/issues/494)).
 
 ### 6. The conditions of the pass: ADR 0024's, minus the wifi
 

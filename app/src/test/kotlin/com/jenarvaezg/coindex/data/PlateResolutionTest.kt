@@ -12,6 +12,7 @@ import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 
 /**
@@ -56,27 +57,55 @@ class PlateResolutionTest {
     }
 
     /**
-     * With no pieces of the variant there is no card and no plate. Cutting the toll does **not**
-     * open the 51 catalogs to navigation: that would be new capability against ADR 0007.
+     * With no pieces of the variant there is no card — and since ADR 0030 there **is** a plate.
+     *
+     * This is the clause §7 left open being answered: *«cutting the toll does not open the 51 catalogs
+     * to navigation … is not decided here»*. It is decided in ADR 0030 §1, and bounded — a curated
+     * catalog with no evidence and fewer than twenty measurable casillas is one of the twenty of
+     * «Explorar», and it opens **not as the collector's**: no ratio of theirs, no «Exportar», and a
+     * gesture that spends where the export was.
      */
     @Test
-    fun `a variant you own nothing of is not a collection, so it has no plate`() {
+    fun `a catalog you own nothing of opens as one of the shelf window, and not as yours`() {
         val result = resolvePlate(CollectionState(), curation, SOUTHERN_CROSS.id)
+
+        val available = assertIs<PlateResult.Available>(result)
+        assertFalse(available.mine)
+        // Every casilla a hole, which is what «you own none of it» means on the sheet.
+        assertEquals(0, available.album.ownedMembers())
+        assertEquals(2, available.album.issuedMembers())
+    }
+
+    /**
+     * The cut is what keeps this from being «the 51 catalogs open to navigation» (ADR 0030 §1).
+     *
+     * A plate of twenty casillas the collector owns nothing of is not a shelf window: it is a
+     * catalogue nobody asked for, and it stays shut with the reason it always had. `NotACollection`
+     * rather than `NoEvidence` because there is no card either — the two refusals are ordered, and
+     * only the window is asked before them.
+     */
+    @Test
+    fun `a catalog too big for the shelf window is still shut`() {
+        val result = resolvePlate(CollectionState(), Curation(listOf(LONG_RUN)), LONG_RUN.id)
 
         assertEquals(PlateResult.Unavailable(PlateUnavailable.NotACollection), result)
     }
 
     /**
-     * A card can exist without any official issue of its catalog: the piece is of the variant, but
-     * of no member the catalog names. There the plate would be all holes, so it stays shut.
+     * A card can exist without any official issue of its catalog: the piece is of the variant, but of
+     * no member the catalog names.
+     *
+     * The plate is then all holes, and since ADR 0030 that is a plate of the shelf window rather than a
+     * refusal — **and it is still not the collector's**, which is the half of this test that was always
+     * the point: a card of the index is not evidence, a matching member is.
      */
     @Test
-    fun `a card with no official issue of the catalog still has no plate`() {
+    fun `a card with no official issue of the catalog opens a plate that is not yours`() {
         val state = state(catalog = SOUTHERN_CROSS, items = listOf(item(1, typeId = 777_777)))
 
         val result = resolvePlate(state, curation, SOUTHERN_CROSS.id)
 
-        assertEquals(PlateResult.Unavailable(PlateUnavailable.NoEvidence), result)
+        assertFalse(assertIs<PlateResult.Available>(result).mine)
     }
 
     /**
@@ -93,7 +122,12 @@ class PlateResolutionTest {
 
         val result = resolvePlate(state, curation, SOUTHERN_CROSS.id)
 
-        assertEquals(PlateResult.Unavailable(PlateUnavailable.NoEvidence), result)
+        // Not the collector's, which is the whole claim: a plate lit by a design would draw a bullion
+        // casilla from a proof coin that does not exist in bullion. What it is instead is one of the
+        // twenty, with every casilla empty (ADR 0030 §1).
+        val available = assertIs<PlateResult.Available>(result)
+        assertFalse(available.mine)
+        assertEquals(0, available.album.ownedMembers())
     }
 
     private fun state(catalog: CollectionCatalog, items: List<CollectedItem>): CollectionState {
@@ -130,6 +164,30 @@ class PlateResolutionTest {
 
     private companion object {
         const val TYPE_2025 = 295_025
+
+        /** Twenty casillas, which is exactly the cut of the shelf window: a plate this long stays shut. */
+        val LONG_RUN = CollectionCatalog(
+            schemaVersion = 2,
+            id = "panda-plata-30g",
+            name = "Panda de plata 30 g",
+            shortName = "Panda",
+            issuerCode = "chine",
+            family = "Panda",
+            weightMillioz = 1_000,
+            finish = Finish.Bullion,
+            metal = Metal.Silver,
+            seriesStatus = SeriesStatus.Open,
+            source = "https://en.numista.com/catalogue/pieces100000.html",
+            updatedAt = "2026-08-14",
+            members = (2_006..2_025).map { year ->
+                CollectionCatalogMember(
+                    id = year.toString(),
+                    label = year.toString(),
+                    year = year,
+                    numistaTypeId = 100_000 + year,
+                )
+            },
+        )
 
         /** El mismo diseño en otra variante: la casilla de 2027 lo cita, nadie casa con él. */
         const val DESIGN_TYPE_2027 = 999_001

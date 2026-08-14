@@ -82,6 +82,18 @@ APK ni en el pipeline: son la maqueta, y se borran cuando dejen de hacer falta.
   enseñaría el mayor de tres precios, así que **los de verdad son más altos**. Trece de las veinte
   los tienen completos.
 
+## El umbral que esta maqueta heredaba, y que no se corrige aquí
+
+`extract.py:104` calcula el coste de entrar **sólo para las láminas de ≤10 casillas**
+—`entry=(sum(floors) if n <= 10 and all(floors) else None)`— y eso es el umbral del ADR 0028 §1, que es
+la regla del reproche de *tus* huecos: una lámina ajena no reprocha nada, así que no tenía que aplicarse.
+Por eso trece de las veinte enseñan precio aquí y siete no.
+
+Lo señaló el [#498](https://github.com/jenarvaezg/coindex/issues/498) y **se corrige donde tiene efecto**:
+en el ADR 0030 §7, en el código, y en la maqueta nueva de `docs/ux/prototipo-escaparate-498/`, que tasa la
+lámina entera. **El script de aquí se deja como está a propósito**: las capturas versionadas se hicieron
+con él, y editarlo dejaría un registro que no corresponde a lo que se enseñó el 12 de agosto.
+
 ## Lo que la maqueta no prueba
 
 La réplica de hoy da **12,2 tarjetas** en el pliegue contra las **11,04** que mide el emulador: el

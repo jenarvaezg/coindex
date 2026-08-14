@@ -56,6 +56,11 @@ fun SearchField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    /**
+     * What the empty box says. The index's own by default, because that is the box this was written
+     * for; the shelf of «Explorar» searches a different population and says so (ADR 0030 §8).
+     */
+    placeholder: String = SEARCH_PLACEHOLDER,
 ) {
     BasicTextField(
         value = value,
@@ -81,7 +86,7 @@ fun SearchField(
                 Box(modifier = Modifier.weight(1f)) {
                     if (!clearable) {
                         Text(
-                            SEARCH_PLACEHOLDER,
+                            placeholder,
                             style = MaterialTheme.typography.bodyLarge,
                             color = Paper.muted,
                         )
