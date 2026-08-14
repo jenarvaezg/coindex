@@ -20,6 +20,7 @@ import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesSubject
+import com.jenarvaezg.coindex.ui.plateAmountLabel
 import com.jenarvaezg.coindex.ui.plateSubject
 
 /**
@@ -86,7 +87,15 @@ private fun plateSection(
         ?: return null
     // The same plate the screen and the exported sheet draw (#218), so the three cannot word one
     // catalog three ways: the heading, the specification and what every cell says arrive settled.
-    val plate = plateSubject(resolved, plateValue(resolved))
+    //
+    // The money is the one thing the paper words for itself (#493): the amount is the same figure the
+    // screen adds up, and it is printed as a row of a specification — with «Valor» in the label —
+    // rather than as the named line the header carries. The cost of closing and the price inside each
+    // hole are **not on paper at all**: the printed money is the sixth switch of the export (ADR 0021
+    // §13) and what it does with two more figures is a decision of its own ticket, not a side effect
+    // of this one.
+    val money = plateValue(resolved)
+    val plate = plateSubject(resolved)
     return PrintSection(
         // The same claim the exported sheet makes, and for the same reason: the paper outlives the
         // app, and a page that says «curado» about a list nobody curated cannot be taken back.
@@ -96,7 +105,7 @@ private fun plateSection(
         // The value joins the specification rather than the heading, because the printed page has no
         // header to raise a figure into — which is the same reason the ratio reaches paper as a row
         // (`plateEntriesBesideRatio` is deliberately not called here).
-        facts = plate.entries + listOfNotNull(plate.value?.let { VALUE_LABEL to it }),
+        facts = plate.entries + listOfNotNull(money?.let { VALUE_LABEL to plateAmountLabel(it) }),
         source = plate.source,
         // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371), together with
         // the exact ratio the subject already measured. The paper must not reconstruct it from cells.

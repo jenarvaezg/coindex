@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.db.TypeIssueEntity
 import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
+import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
@@ -22,6 +23,19 @@ import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
  * are the bullion runs where he owns a single coin.
  */
 const val HOLE_THRESHOLD_SLOTS: Int = 10
+
+/**
+ * Whether a plate's holes are a cost of closing it, or the reproach of §1.
+ *
+ * The one reading of [HOLE_THRESHOLD_SLOTS], asked by the two places that must agree about it: the
+ * pass, which decides whose prices to spend calls on, and the plate's header, which decides whether
+ * it has a second figure to print (#493). Written twice they would drift, and what would be seen is a
+ * plate that says a cost of closing built out of prices nobody ever asked for.
+ *
+ * **Zero leaves with the same clause**: a plate already closed has nothing to cost, and no cost of
+ * zero to redact either.
+ */
+fun holesAreWithinReach(holes: Int): Boolean = holes in 1..HOLE_THRESHOLD_SLOTS
 
 /** A catalog price is read again after thirty days. Catalog prices move slowly (ADR 0028 §5). */
 const val PRICE_LIFETIME_MILLIS: Long = 30L * 24 * 60 * 60 * 1_000
@@ -95,9 +109,7 @@ private fun holesWithinReach(
     val missing = buildCollectionCatalogAlbum(catalog, items)
         .members
         .filter { it.status is CollectionCatalogMemberStatus.Missing }
-    // Zero is a plate that is already closed and has nothing to cost; over the threshold is the
-    // reproach. Both leave with the same clause.
-    if (missing.isEmpty() || missing.size > HOLE_THRESHOLD_SLOTS) return emptyList()
+    if (!holesAreWithinReach(missing.size)) return emptyList()
     return missing.mapNotNull { hole ->
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
         PlateHole(catalog.id, typeId, hole.member.year, hole.member.numistaIssueIds)
@@ -167,24 +179,61 @@ data class IssueListings(
             reads: Collection<TypeIssueReadEntity>,
             issues: Collection<TypeIssueEntity>,
             nowMillis: Long,
-        ): IssueListings {
-            val listed = reads
+        ): IssueListings = over(
+            listed = reads
                 .filter { nowMillis - it.readAt < LISTING_LIFETIME_MILLIS }
                 .map { it.typeId }
-                .toSet()
-            return IssueListings(
-                listedTypeIds = listed,
-                issueIdByTypeAndYear = buildMap {
-                    for (issue in issues.filter { it.typeId in listed }) {
-                        // Both readings of the year reach the same issue: a plate built on the Hijri
-                        // 1316 finds it, and one built on the 1899 beside it finds it too.
-                        issue.year?.let { putIfAbsent(issue.typeId to it, issue.issueId) }
-                        issue.gregorianYear?.let { putIfAbsent(issue.typeId to it, issue.issueId) }
-                    }
-                },
-            )
-        }
+                .toSet(),
+            issues = issues,
+        )
+
+        /**
+         * Every listing this phone holds, **expiry included**, which is what a screen reads (#493).
+         *
+         * A different question from [of], and the seam is what the answer is spent on. The pass must
+         * not price a hole off a stale listing, because that listing is about to be replaced in this
+         * same pass and the wrong issue would be paid for twice. A plate's header has nothing to
+         * spend: it either says the cost of closing out of the rows already on the phone or it says
+         * nothing at all — and ADR 0028 §5 settled which of the two an expired row gets, for the
+         * price beside it as much as for the listing that addresses it: *expired is asked again and
+         * never deleted*, and the old answer keeps being the one the page reads.
+         */
+        fun held(
+            reads: Collection<TypeIssueReadEntity>,
+            issues: Collection<TypeIssueEntity>,
+        ): IssueListings = over(reads.map { it.typeId }.toSet(), issues)
+
+        private fun over(
+            listed: Set<Int>,
+            issues: Collection<TypeIssueEntity>,
+        ): IssueListings = IssueListings(
+            listedTypeIds = listed,
+            issueIdByTypeAndYear = buildMap {
+                for (issue in issues.filter { it.typeId in listed }) {
+                    // Both readings of the year reach the same issue: a plate built on the Hijri
+                    // 1316 finds it, and one built on the 1899 beside it finds it too.
+                    issue.year?.let { putIfAbsent(issue.typeId to it, issue.issueId) }
+                    issue.gregorianYear?.let { putIfAbsent(issue.typeId to it, issue.issueId) }
+                }
+            },
+        )
     }
+}
+
+/**
+ * The issue an empty casilla of an album is priced by, which is the same two answers a [PlateHole]
+ * has (#493).
+ *
+ * Here rather than in the screen that needed it, and taking the member rather than a hole rebuilt out
+ * of one: what the pass spent its calls on and what the header adds up have to be **the same issue**,
+ * or the plate would print a cost assembled out of prices addressed to other coins.
+ */
+fun IssueListings.issueOf(member: CollectionCatalogMember): Int? {
+    val typeId = member.numistaTypeId ?: return null
+    // The file's declaration first and the first of them, which is the choice `declaredIssue` makes
+    // and the choice the casilla itself makes: a slot holding two varieties of one issue is one slot.
+    return member.numistaIssueIds.firstOrNull()
+        ?: member.year?.let { issueIdByTypeAndYear[typeId to it] }
 }
 
 /**

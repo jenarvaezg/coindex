@@ -50,6 +50,32 @@ object FiguresLabels {
      */
     const val MONEY_CRITERION: String = "al mayor de tres precios"
 
+    /**
+     * What the two figures of a plate's header are called, said whole and not abbreviated (#493).
+     *
+     * The words are the whole of what tells them apart. In a plate one casilla from closing the two
+     * amounts are of the same order — the father's 20 escudos has the one inside at 1,4× the one to
+     * close — so no type size could distinguish them, and in The Queen's Beasts closing costs 1,75×
+     * what is in it, which puts the *larger* number on the second line.
+     *
+     * «Coste de cerrar» names a purchase and not a lack, which is the sentence ADR 0026 §10 spent a
+     * document avoiding. And «Valor actual» is said in full rather than as the short «dentro» the
+     * prototype tried first: 22 of the father's 49 reachable plates have no second figure at all, and
+     * the short word survived alone on a plate with nothing left to distinguish itself from.
+     */
+    const val PLATE_VALUE_LABEL: String = "Valor actual"
+    const val PLATE_COST_LABEL: String = "Coste de cerrar"
+
+    /**
+     * Where the cost of closing comes from, which is **not** where the value comes from.
+     *
+     * A hole has no «lo que pagaste», so its prices are two and not three, and it is priced in `unc`
+     * (ADR 0028 §8) — «sin circular», the same words [uncirculatedSentence] uses of a piece. So the
+     * criterion travels with its own amount, which is what #408 asked for and what the plate's first
+     * figure has done since.
+     */
+    const val HOLE_CRITERION: String = "en sin circular"
+
     const val MATTER_HEADING: String = "La materia"
     const val METAL_HEADING: String = "El metal, por masa"
     const val PORTRAIT_HEADING: String = "El retrato"
@@ -411,13 +437,48 @@ fun coinValueLabel(value: CoinValue): String {
 }
 
 /**
- * What a plate's header says about the value of what is in it.
+ * The amount a plate holds with its provenance, and nothing to name it.
  *
  * A total over the casillas of one plate, which the grain rule allows: per plate it is a plan, and the
  * same sum over the whole shelf would be «te faltan decenas de miles de euros» (ADR 0026 §10). The
  * criterion rides with the amount — «al mayor de tres precios» — so the plate is not the only money
  * surface without a provenance tag (#408).
+ *
+ * Unnamed because the printed page names it in the label of its own row («Valor»), where a figure that
+ * carried its title inside would say the word twice. The screen has no row and no column, so it says
+ * the name itself — see [plateValueLabel].
+ */
+fun plateAmountLabel(value: PlateValue): String =
+    "${eurosLabel(value.eur)} · ${FiguresLabels.MONEY_CRITERION}"
+
+/**
+ * The first line of a plate's header: what is inside, said with its name (#493).
+ *
+ * The name is what tells this figure from the one under it, and it is dropped only where something
+ * else is already saying it — see [plateAmountLabel], which is the paper's reading of the same amount.
  */
 fun plateValueLabel(value: PlateValue): String =
-    "${eurosLabel(value.eur)} · ${FiguresLabels.MONEY_CRITERION}"
+    "${FiguresLabels.PLATE_VALUE_LABEL}: ${plateAmountLabel(value)}"
+
+/**
+ * The second line: what closing the plate costs, with **its own** provenance (#493).
+ *
+ * Not a share of the first line's criterion, and this is the correction the prototype's own variant
+ * needed: a hole has no «lo que pagaste» and is priced in `unc`, so the two figures of one header come
+ * out of two different rules and each says which (ADR 0028 §8).
+ *
+ * There is no reading of this for a closed plate. A plate with nothing missing has no cost, which is
+ * absence and not a zero: the line is not written rather than written as «0 €».
+ */
+fun plateCostLabel(cost: PlateCost): String =
+    "${FiguresLabels.PLATE_COST_LABEL}: ${eurosLabel(cost.eur)} · ${FiguresLabels.HOLE_CRITERION}"
+
+/**
+ * The price stamped inside one empty casilla: the amount alone, and nothing else (#493).
+ *
+ * The criterion is not repeated here. It was said once in the header, three lines above, and the same
+ * seven words under every hole of a plate of ten would be the frequency ADR 0026 §5 prices: what the
+ * stamp adds to the header is **which** hole costs what, and the header has already said out of what.
+ */
+fun holeCostLabel(eur: Double): String = eurosLabel(eur)
 

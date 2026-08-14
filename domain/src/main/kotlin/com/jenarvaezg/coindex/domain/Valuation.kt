@@ -116,6 +116,42 @@ fun pieceValue(
 }
 
 /**
+ * What one empty casilla would cost to fill: the greater of **two** prices and never of three (#493).
+ *
+ * The maximum is the same rule [pieceValue] reads, minus the source a hole cannot have: nobody paid
+ * for a coin that is not here, so what is left is Numista's catalogue price and the metal.
+ *
+ * And it is priced **in `unc`** (ADR 0028 §8), which is the grade the pass asked for, without falling
+ * to a neighbouring grade the way a piece does. That is not thrift either: the plate's header says «en
+ * sin circular» beside this amount, and a figure that had come out of `xf` would make it name a grade
+ * its own number did not come from.
+ *
+ * @param issueId which issue the casilla stands for — declared by the curated file (ADR 0014) or
+ *   answered by a stored listing (#452). Null is a hole with nothing to address a price to, and then
+ *   only the metal can answer for it.
+ */
+fun holeValue(
+    typeId: Int,
+    issueId: Int?,
+    meta: TypeMeta?,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): PieceValue? {
+    val candidates = mutableListOf<PieceValue>()
+    issueId
+        ?.let { prices(typeId, it, UNCIRCULATED) }
+        ?.let { candidates.add(PieceValue(it, ValueSource.Market, UNCIRCULATED)) }
+    if (spot != null) {
+        fineSilverGrams(meta)?.let { grams ->
+            candidates.add(
+                PieceValue(gramsToOunces(grams) * spot.eurPerTroyOunce, ValueSource.Silver),
+            )
+        }
+    }
+    return candidates.maxByOrNull { it.eur }
+}
+
+/**
  * Numista's price for this piece, in its grade or in the nearest one that has a price.
  *
  * The neighbour is the nearest grade in [NUMISTA_GRADES] by distance, and on a tie **the worse

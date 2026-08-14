@@ -1,7 +1,13 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
+import com.jenarvaezg.coindex.data.db.IssuePriceEntity
+import com.jenarvaezg.coindex.data.db.MetalSpotEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueEntity
+import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
+import com.jenarvaezg.coindex.data.prices.PlateHole
+import com.jenarvaezg.coindex.data.prices.SILVER_SYMBOL
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
 import com.jenarvaezg.coindex.domain.Curation
@@ -132,9 +138,48 @@ class CollectionStateTest {
         assertEquals(1, dao.members.value.size)
     }
 
+    /**
+     * The price book arrives with the listings that address its prices (#493).
+     *
+     * This is the one piece of plumbing the plate's cost of closing needed: `type_issues` was read
+     * only inside the pass, so 111 of the father's 121 holes could not tell which issue they are and
+     * therefore could not find the price already on the phone. Read together with the prices and the
+     * spot, and not a moment apart, or a plate could total a price under one issue and stamp it into a
+     * casilla the newer listing addresses to another.
+     */
+    @Test
+    fun `the price book carries the listings that say which issue a hole is`() = runTest {
+        val prices = FakePriceDao().apply {
+            this.prices.value = listOf(IssuePriceEntity(TYPE_2025, issueId = 900, grade = "unc", eur = 84.0))
+            spots.value = listOf(MetalSpotEntity(SILVER_SYMBOL, eurPerTroyOunce = 55.23, readAt = 1L))
+            typeIssueReads.value = listOf(TypeIssueReadEntity(typeId = TYPE_2025, readAt = 1L))
+            typeIssues.value = listOf(
+                TypeIssueEntity(
+                    typeId = TYPE_2025,
+                    issueId = 900,
+                    position = 0,
+                    year = 2_025,
+                    gregorianYear = null,
+                ),
+            )
+        }
+
+        val book = repository(items = emptyList(), types = emptyList(), prices = prices)
+            .observePrices()
+            .first()
+
+        assertEquals(84.0, book.of(TYPE_2025, 900, "unc"))
+        assertEquals(55.23, book.spot?.eurPerTroyOunce)
+        assertEquals(
+            900,
+            book.listings.issueOf(PlateHole("southern-cross", typeId = TYPE_2025, year = 2_025)),
+        )
+    }
+
     private fun repository(
         items: List<CollectedItemEntity>,
         types: List<TypeMetaEntity>,
+        prices: FakePriceDao = FakePriceDao(),
     ): CoindexRepository {
         val collectedItemDao = FakeCollectedItemDao().apply { rows.value = items }
         val typeMetaDao = FakeTypeMetaDao().apply { rows.value = types }
@@ -142,7 +187,7 @@ class CollectionStateTest {
             collectedItemDao = collectedItemDao,
             typeMetaDao = typeMetaDao,
             ownGroupingDao = FakeOwnGroupingDao(),
-            priceDao = FakePriceDao(),
+            priceDao = prices,
             curation = Curation(catalogs = listOf(SOUTHERN_CROSS)),
         )
     }

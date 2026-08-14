@@ -36,13 +36,14 @@ import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
+import com.jenarvaezg.coindex.ui.PlateMoney
 import com.jenarvaezg.coindex.ui.PlateSubject
-import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.HoleCostStamp
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
@@ -78,12 +79,13 @@ fun PlateScreen(
     result: PlateResult,
     images: Map<Int, TypeImages>,
     /**
-     * What the coins of this plate are worth, or null while the market has not landed (ADR 0028 §7).
+     * What this plate is worth, what closing it would cost and what each hole costs — or nothing at
+     * all while the market has not landed (ADR 0028 §7).
      *
-     * A function of the resolution and not a value, because the plate is resolved here: the album it
-     * needs to know which casillas are filled only exists on the other side of `result`.
+     * A function of the resolution and not a value, because the plate is resolved here: the album the
+     * three readings walk only exists on the other side of `result`.
      */
-    value: (PlateResult.Available) -> PlateValue?,
+    money: (PlateResult.Available) -> PlateMoney,
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
@@ -95,7 +97,7 @@ fun PlateScreen(
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
         is PlateResult.Available -> AvailablePlate(
-            plate = remember(result, value) { plateSubject(result, value(result)) },
+            plate = remember(result, money) { plateSubject(result, money(result)) },
             images = images,
             notebookOptions = notebookOptions,
             onNotebookPrinted = onNotebookPrinted,
@@ -186,16 +188,7 @@ private fun PlateGrid(
                         complete = plate.complete,
                         ink = ink,
                     )
-                    // The value of what is in these casillas, and never the cost of closing them:
-                    // per plate the first is a shopping companion and the second is a plan, and both
-                    // become wealth management the moment they are totalled (ADR 0026 §10).
-                    plate.value?.let { value ->
-                        Text(
-                            value,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Paper.rust,
-                        )
-                    }
+                    PlateMoneyLines(value = plate.value, cost = plate.cost)
                     SpecificationCard(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
@@ -284,6 +277,41 @@ private fun PlateHeading(
     }
 }
 
+/**
+ * The two figures of money a plate can carry, in two lines of the same weight (#493).
+ *
+ * **The hierarchy is not in the type size, it is in the words.** In a plate one casilla from closing
+ * the two amounts are of the same order — the father's 20 escudos has the one inside at 1,4× the one
+ * to close — so no size could tell them apart, and in The Queen's Beasts closing costs 1,75× what is
+ * in it, which would have put the larger figure in the smaller type. What distinguishes them is that
+ * each is named and carries its own provenance, which is not the same provenance: what is here is at
+ * the maximum of three prices and what is missing is priced in `unc` out of two (ADR 0028 §8).
+ *
+ * The second line is **absent** on a closed plate rather than zero, and absent over the threshold of
+ * ADR 0028 §1 where those prices were never asked for. What the collector then reads is one named
+ * line, which is the case in 22 of the father's 49 reachable plates and reads as well alone as in
+ * company — the whole reason the prototype's short «dentro» was dropped for «Valor actual».
+ *
+ * Four dp between them and not the ten the header spaces everything else by: the two lines are one
+ * statement about money, and at ten they read as two blocks that happen to be adjacent.
+ */
+@Composable
+internal fun PlateMoneyLines(value: String?, cost: String?) {
+    if (value == null && cost == null) return
+    Column(verticalArrangement = Arrangement.spacedBy(PLATE_MONEY_LINE_GAP)) {
+        listOfNotNull(value, cost).forEach { line ->
+            Text(
+                line,
+                style = MaterialTheme.typography.labelLarge,
+                color = Paper.rust,
+            )
+        }
+    }
+}
+
+/** What separates the two figures of money, which are one statement and not two blocks. */
+internal val PLATE_MONEY_LINE_GAP = 4.dp
+
 /** Whatever the grid holds ahead of the casillas: the heading, today, as one spanning item. */
 private const val PLATE_LEAD_ITEMS = 1
 
@@ -341,16 +369,22 @@ internal fun PlateCell(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth(),
     ) {
-        AlbumHole(
-            photo = images?.printedPhoto(printedSide),
-            missing = cell.missing,
-            // Two targets on a casilla and not one (#302): the body of the hole turns the coin
-            // over, and the year under it goes out to Numista.
-            otherSide = images?.printedPhoto(printedSide.other),
-            modifier = Modifier
-                .size(104.dp)
-                .travellingCoin(travellingFrom),
-        )
+        // The hole and what is laid inside it. The chip is drawn here and not by `AlbumHole`,
+        // which the axes and the loose coins share: what a casilla costs is the plate's business,
+        // and the hole is the same hole it was (#493).
+        Box(contentAlignment = Alignment.Center) {
+            AlbumHole(
+                photo = images?.printedPhoto(printedSide),
+                missing = cell.missing,
+                // Two targets on a casilla and not one (#302): the body of the hole turns the coin
+                // over, and the year under it goes out to Numista.
+                otherSide = images?.printedPhoto(printedSide.other),
+                modifier = Modifier
+                    .size(104.dp)
+                    .travellingCoin(travellingFrom),
+            )
+            cell.cost?.let { cost -> HoleCostStamp(cost) }
+        }
         // The tag's own target, reserved whether or not there is a tag to put in it: an announced
         // member has no year, and one that has a year but no Numista page does not buy the 48 dp
         // that `minimumInteractiveComponentSize` gives the rest. Either would otherwise pull its

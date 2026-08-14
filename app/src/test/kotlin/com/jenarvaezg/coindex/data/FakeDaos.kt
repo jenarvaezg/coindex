@@ -18,6 +18,7 @@ import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 /** In-memory stand-ins so the sync and budget rules can be tested without Android. */
 class FakeCollectedItemDao : CollectedItemDao {
@@ -199,6 +200,9 @@ class FakePriceDao : PriceDao {
     // Ordenado como lo ordena la consulta de verdad: la posición decide qué emisión tasa un hueco.
     override suspend fun typeIssues(): List<TypeIssueEntity> =
         typeIssues.value.sortedWith(compareBy({ it.typeId }, { it.position }))
+    override fun observeTypeIssueReads(): Flow<List<TypeIssueReadEntity>> = typeIssueReads
+    override fun observeTypeIssues(): Flow<List<TypeIssueEntity>> =
+        typeIssues.map { rows -> rows.sortedWith(compareBy({ it.typeId }, { it.position })) }
     override suspend fun deleteTypeIssues(typeId: Int) {
         typeIssues.value = typeIssues.value.filterNot { it.typeId == typeId }
     }

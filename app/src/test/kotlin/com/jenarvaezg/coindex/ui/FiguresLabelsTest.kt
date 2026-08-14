@@ -253,13 +253,45 @@ class FiguresLabelsTest {
      *
      * «4.116 €» alone was the only money surface without a provenance tag: the ficha says
      * «lo que pagaste» and Las cifras spells the method. The plate prints the same criterion once.
+     *
+     * The amount with no name is the **paper's** reading, whose row is already titled «Valor» (#493).
      */
     @Test
     fun `a plate's value line names the criterion`() {
         assertEquals(
             "4.116 € · al mayor de tres precios",
-            plateValueLabel(PlateValue(4_116.0, pieces = 12)),
+            plateAmountLabel(PlateValue(4_116.0, pieces = 12)),
         )
+    }
+
+    /**
+     * On screen the two figures are told apart by their names, and each says where it came from.
+     *
+     * The names are the whole of the hierarchy (#493): in a plate one casilla from closing the two
+     * amounts are of the same order, and in one of the father's plates the *larger* of the two is the
+     * cost of closing. No type size could have done this.
+     */
+    @Test
+    fun `the two figures of a header are named, and neither borrows the other's criterion`() {
+        val value = plateValueLabel(PlateValue(4_116.0, pieces = 12))
+        val cost = plateCostLabel(PlateCost(84.0, holes = 2))
+
+        assertEquals("Valor actual: 4.116 € · al mayor de tres precios", value)
+        assertEquals("Coste de cerrar: 84 € · en sin circular", cost)
+        // A hole has no «lo que pagaste», so its prices are two and not three (ADR 0028 §8): the
+        // criterion of the first figure may never appear on the second.
+        assertTrue(FiguresLabels.MONEY_CRITERION !in cost)
+    }
+
+    /**
+     * The stamp inside a hole is the amount and nothing else.
+     *
+     * The criterion was said in the header three lines above, and ten holes repeating seven words is
+     * the frequency ADR 0026 §5 prices.
+     */
+    @Test
+    fun `the stamp of a hole says its amount and repeats no criterion`() {
+        assertEquals("12 €", holeCostLabel(12.0))
     }
 
     /** Every referent has a name, or a rung would be a drawing with a blank under it. */

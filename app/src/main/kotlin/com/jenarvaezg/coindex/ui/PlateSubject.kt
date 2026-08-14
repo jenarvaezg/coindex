@@ -68,8 +68,21 @@ data class PlateSubject(
      * landed yet (ADR 0028 §7), the plate holds nothing, or **this drawer is the export with the money
      * switched off** (#228, ADR 0021 §13). One nullable field rather than a flag per drawer, so a drawer
      * cannot print an amount it was not given.
+     *
+     * It is the **screen's** wording, with the name of the figure inside it (#493). The printed page
+     * words the same amount as a row of its specification and takes it from `plateAmountLabel`
+     * directly: its row is already titled «Valor», and a value that carried its own title would say
+     * the word twice.
      */
     val value: String? = null,
+    /**
+     * What closing this plate would cost, or null when there is nothing to close (#493).
+     *
+     * Absent and not zero on a complete plate: without a hole there is no cost, no line and no stamp,
+     * and no zero anybody has to word. Absent too over the threshold of ADR 0028 §1, where the prices
+     * were never asked for — the same clause, read from `holesAreWithinReach` and not counted twice.
+     */
+    val cost: String? = null,
 )
 
 /**
@@ -100,6 +113,14 @@ data class DrawnCell(
     val owned: Boolean,
     /** Only an issued member absent from the collection gets the catalog-design ghost. */
     val missing: Boolean,
+    /**
+     * What this casilla costs, stamped inside the hole, or null where nothing can be said (#493).
+     *
+     * Only ever a hole: a full casilla has no cost — it has a value, and that one is the header's. And
+     * only ever a hole whose price is on the phone, which is why the plates over the threshold of ADR
+     * 0028 §1 carry no stamps at all: nobody asked for those prices, so there is no «—» to draw.
+     */
+    val cost: String? = null,
 )
 
 /**
@@ -125,7 +146,7 @@ fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
  * Takes the resolution and not its pieces so that the pieces cannot arrive apart: an album belongs
  * to the catalog it was built from, and the programmes to both.
  */
-fun plateSubject(plate: PlateResult.Available, value: PlateValue? = null): PlateSubject {
+fun plateSubject(plate: PlateResult.Available, money: PlateMoney = PlateMoney()): PlateSubject {
     val catalog = plate.catalog
     // Off the album and not off the catalog, so the heading is lifted out of the very cells the
     // plate is about to draw: the album is the plate as this collector has it.
@@ -142,6 +163,7 @@ fun plateSubject(plate: PlateResult.Available, value: PlateValue? = null): Plate
             year = albumMember.member.year?.toString(),
             owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
             missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
+            cost = money.holeCosts[albumMember.member.id]?.let(::holeCostLabel),
         )
     }
     return PlateSubject(
@@ -154,7 +176,8 @@ fun plateSubject(plate: PlateResult.Available, value: PlateValue? = null): Plate
         ratio = coverage?.let { "${it.owned}/${it.issued}" },
         complete = coverage?.nothingMissing == true,
         landingCell = plate.album.firstOwnedIndex(),
-        value = value?.let(::plateValueLabel),
+        value = money.value?.let(::plateValueLabel),
+        cost = money.cost?.let(::plateCostLabel),
     )
 }
 
