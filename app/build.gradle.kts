@@ -49,10 +49,11 @@ android {
         // figure that never expires and travels with its date, and a second room inside the annex:
         // «Lo que busco» moves one door in (#498, ADR 0030). Nothing is added to the schema.
         //
-        // The phones are on **1.3.0**, `versionCode` 64 — what the latest release's `update.json`
-        // says, not what anybody remembers — so **1.4.0 is waiting**. `scripts/release.sh` reads that
-        // manifest and refuses a `versionCode` that does not beat it; this line only says who is
-        // waiting, which is why it is worth correcting after every release.
+        // The phones are on **1.4.0**, `versionCode` 65 — what the latest release's `update.json`
+        // says, not what anybody remembers — so **nothing is waiting**: this one is published.
+        // `scripts/release.sh` reads that manifest and refuses a `versionCode` that does not beat it;
+        // this line only says who is waiting, which is why it is worth correcting after every release —
+        // it once spent three releases claiming 1.2.11 while 1.2.16 was already out.
         versionName = "1.4.0"
     }
 
