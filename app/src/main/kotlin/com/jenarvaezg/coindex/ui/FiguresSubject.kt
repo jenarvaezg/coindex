@@ -87,6 +87,15 @@ data class FiguresSubject(
     val money: MoneyReading?,
     val ladders: List<LadderReading>,
     val portrait: CountryPortrait?,
+    /**
+     * Whether the page says out loud that the money is missing, in the money's own slot (#519).
+     *
+     * Never true at the same time as [money]: it is what stands in for the section, not a note on
+     * it. And false whenever the absence is not the market's — the export with the money switched
+     * off has nothing to wait for, and neither has a pass that is about to finish on its own (see
+     * `ValuationStatus.waiting`).
+     */
+    val moneyWaiting: Boolean = false,
 )
 
 /**
@@ -98,6 +107,8 @@ data class FiguresSubject(
  *   money as much as the total is, and the prototype let it through with the money off.
  * @param settled whether the valuation pass has finished. False leaves [FiguresSubject.money] absent
  *   however many prices happen to be on the phone.
+ * @param waiting whether that absence is worth a line (#519). It is the pass's own reading and not a
+ *   second guess at [settled]: three of the five reasons a pass holds are said, and two are not.
  */
 fun figuresSubject(
     state: CollectionState,
@@ -105,6 +116,7 @@ fun figuresSubject(
     prices: (Int, Int, String) -> Double?,
     settled: Boolean,
     moneyAllowed: Boolean = true,
+    waiting: Boolean = false,
 ): FiguresSubject {
     val figures = collectionFigures(state.items, state.typeMeta)
     val money = if (!moneyAllowed || !settled || spot == null) {
@@ -131,6 +143,9 @@ fun figuresSubject(
             ),
         ),
         portrait = portrait(state, figures, money, spot, prices),
+        // The export never waits: a drawer with the money switched off is not a page missing a
+        // section, it is a page that was asked not to have one (ADR 0021 §13).
+        moneyWaiting = moneyAllowed && money == null && waiting,
     )
 }
 
@@ -285,6 +300,14 @@ data class PlateMoney(
      */
     val entryAsked: Boolean = false,
     val holeCosts: Map<String, Double> = emptyMap(),
+    /**
+     * Whether the plate says out loud that its money is still coming (#519).
+     *
+     * The three readings above leave together and this one arrives in their place, so it is never
+     * true beside any of them. A plate of the shelf window never sets it: its prices are not gated
+     * on the collection's pass at all (ADR 0030 §3), so there is nothing it is waiting for.
+     */
+    val waiting: Boolean = false,
 )
 
 /**

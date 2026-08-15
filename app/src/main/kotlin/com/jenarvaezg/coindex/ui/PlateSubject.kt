@@ -113,6 +113,15 @@ data class PlateSubject(
     val mine: Boolean = true,
     /** Whether this plate has been valued at all, priced or not — what the gesture's word reads. */
     val entryValued: Boolean = false,
+    /**
+     * Whether the header says out loud that the money is still coming (#519).
+     *
+     * The one of the three absences above that is worth a line, and the only one this flag can be:
+     * a plate that holds nothing has no market to wait for, and the export was asked for a page
+     * without money. So where [value] and [cost] are null for three different reasons, this is true
+     * for exactly one of them.
+     */
+    val moneyWaiting: Boolean = false,
 )
 
 /**
@@ -256,6 +265,7 @@ fun plateSubject(
         // Asked is what turns «Tasar esta lámina» into «Volver a tasar», and not merely priced: a plate
         // Numista has no price for has been valued all the same.
         entryValued = money.entryAsked,
+        moneyWaiting = money.waiting,
         mine = plate.mine,
     )
 }

@@ -32,6 +32,33 @@ object FiguresLabels {
     const val MONEY_HEADING: String = "El valor"
 
     /**
+     * What «Las cifras» says where the money would be, when the market has not landed (#519).
+     *
+     * The subject is not repeated: it is `MONEY_HEADING`, two lines above and in the same block, so
+     * «El valor llega cuando…» said the word twice in a row. Under the eyebrow the sentence starts
+     * at the verb.
+     *
+     * **One sentence and not five.** Settings tells «no network» from «the allowance is gone» from
+     * «no credentials», and it is the only place allowed to: ADR 0026 §5 exempts it from the pruning
+     * on the promise that none of its explanations appear on a notebook screen. What travels here is
+     * the *pattern* —the absence is said out loud rather than left as a gap— and not the wording.
+     *
+     * It says «cuando llegue el mercado» rather than «todavía no está» because a page that has just
+     * promised «lo que vale» owes the reader a *why*, and the market is the whole of it.
+     */
+    const val MONEY_WAITING: String = "Llega cuando llegue el mercado."
+
+    /**
+     * The same, in a plate's header, where [MONEY_WAITING] has no eyebrow to lean on (#519).
+     *
+     * «El dinero» and not «El valor y el coste»: which of the two figures a plate would have carried
+     * depends on whether it is closed and on the threshold of ADR 0028 §1, and naming them would
+     * promise a «Coste de cerrar» to the 22 of 49 plates that never had one. The word covers both
+     * without claiming either.
+     */
+    const val PLATE_MONEY_WAITING: String = "El dinero llega cuando llegue el mercado."
+
+    /**
      * Where the amount comes from, said under it: a number nobody can check is not a figure.
      *
      * «lo que vale su plata» and not «su plata»: the elliptical form put a coin's metal on the same

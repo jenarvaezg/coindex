@@ -42,6 +42,7 @@ import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateMoney
@@ -341,6 +342,7 @@ private fun PlateGrid(
                         value = plate.value,
                         cost = plate.cost,
                         entry = plate.entry ?: plate.entryNote,
+                        waiting = plate.moneyWaiting,
                     )
                     SpecificationCard(
                         entries = plateEntriesBesideRatio(plate.entries),
@@ -483,9 +485,28 @@ private fun PlateHeading(
  *
  * Four dp between them and not the ten the header spaces everything else by: the two lines are one
  * statement about money, and at ten they read as two blocks that happen to be adjacent.
+ *
+ * With [waiting] the slot holds one line instead of the figures, and never both: what is said there
+ * is that the market has not landed, and an amount beside it would be the half-done total ADR 0028
+ * §7 exists to forbid (#519).
  */
 @Composable
-internal fun PlateMoneyLines(value: String?, cost: String?, entry: String? = null) {
+internal fun PlateMoneyLines(
+    value: String?,
+    cost: String?,
+    entry: String? = null,
+    waiting: Boolean = false,
+) {
+    // In the slot the two figures left, and in muted rather than rust: rust is the colour of an
+    // amount on this page, and there is no amount here to wear it (#519).
+    if (waiting) {
+        Text(
+            FiguresLabels.PLATE_MONEY_WAITING,
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.muted,
+        )
+        return
+    }
     if (value == null && cost == null && entry == null) return
     Column(verticalArrangement = Arrangement.spacedBy(PLATE_MONEY_LINE_GAP)) {
         // Three slots and never three lines: a plate of the collector's has the first two and one of

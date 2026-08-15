@@ -23,6 +23,7 @@ import com.jenarvaezg.coindex.domain.gramsToOunces
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -44,6 +45,50 @@ class FiguresSubjectTest {
         // And everything else is there: the page opens whole out of the APK.
         assertEquals(3, subject.figures.pieces)
         assertEquals(3, subject.ladders.size)
+    }
+
+    /**
+     * Absent is not the same as unexplained: the slot says the market has not landed (#519).
+     *
+     * And it says it **instead of** the section and never beside it, which is the one thing that
+     * would reintroduce the half-done total ADR 0028 §7 forbids.
+     */
+    @Test
+    fun `waiting, the money's slot says the market has not landed`() {
+        val subject = figuresSubject(state(), SPOT, priced, settled = false, waiting = true)
+
+        assertNull(subject.money)
+        assertTrue(subject.moneyWaiting)
+    }
+
+    /** The two reasons that fix themselves are not said: a line that comes and goes is furniture. */
+    @Test
+    fun `a pass that is about to finish on its own says nothing`() {
+        assertFalse(figuresSubject(state(), SPOT, priced, settled = false).moneyWaiting)
+    }
+
+    /** With the market landed there is a section, so there is nothing to explain. */
+    @Test
+    fun `with the market landed nothing is said about waiting`() {
+        val subject = figuresSubject(state(), SPOT, priced, settled = true, waiting = true)
+
+        assertNotNull(subject.money)
+        assertFalse(subject.moneyWaiting)
+    }
+
+    /**
+     * The export waits for nothing: it was asked for a page without money (#228, ADR 0021 §13).
+     *
+     * Without this clause the printed page would carry a sentence about the network on a sheet the
+     * collector asked to have no money on at all.
+     */
+    @Test
+    fun `the export with the money off does not say the market is missing`() {
+        val off = figuresSubject(
+            state(), SPOT, priced, settled = false, moneyAllowed = false, waiting = true,
+        )
+
+        assertFalse(off.moneyWaiting)
     }
 
     /** With no spot there is no money either: the silver floor is what the spot buys. */
