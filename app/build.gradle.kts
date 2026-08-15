@@ -25,7 +25,6 @@ abstract class GenerateReleaseRuntimeLicenseGroups : DefaultTask() {
 }
 
 plugins {
-    // AGP 9 ships built-in Kotlin support; applying `kotlin-android` is now an error.
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
@@ -42,26 +41,11 @@ android {
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = 66
-        // **Patch, and squarely one**: the year of a casilla already opened that coin's page — it
-        // opened it in Chrome. What moves is where the same gesture lands (#508, ADR 0026 §3 amended):
-        // the sheet Monedas has carried since #370, drawn over the lámina, with the only way out to
-        // the browser behind «Ver en Numista ↗». No capability arrives, nothing is added to the
-        // schema, and the same tag in «Lo que busco» moves with it — it is the plate's own casilla.
-        //
-        // The phones are on **1.3.0**, `versionCode` 64 — what the latest release's `update.json`
-        // says, not what anybody remembers — so **1.4.1 is waiting**, and 1.4.0 waits inside it:
-        // the twenty plates of «Explorar» (#498, ADR 0030) have not been published either.
-        // `scripts/release.sh` reads that manifest and refuses a `versionCode` that does not beat it;
-        // this line only says who is waiting, which is why it is worth correcting after every release.
         versionName = "1.4.1"
     }
 
-    // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,
-    // next to the fixtures the tests read. They are packaged from there rather than copied.
     sourceSets["main"].assets.srcDirs("src/main/assets", "../data")
 
-    // Updates must be signed with the same key as the installed APK, so the keystore is a
-    // durable secret: it lives outside the repo and is referenced from keystore.properties.
     val keystoreProperties = rootProject.file("keystore.properties").takeIf { it.exists() }
         ?.let { file -> Properties().apply { file.inputStream().use(::load) } }
 
@@ -120,12 +104,6 @@ val generateReleaseRuntimeLicenseGroups =
         })
     }
 
-// The unit tests read the curated seeds and the recorded Numista responses straight from the repo
-// root —`../data` and `../fixtures`, see `Fixtures.kt`— instead of from a copy on the classpath, so
-// Gradle sees no dependency on either. A catalog or a fixture could change and the cached test
-// result still counted as valid: the suite reported BUILD SUCCESSFUL without running a single test,
-// and only `--rerun` revealed the failure. Declaring both directories as inputs is what makes a
-// data-only change invalidate that cache.
 tasks.withType<Test>().configureEach {
     dependsOn(generateReleaseRuntimeLicenseGroups)
     inputs.file(releaseRuntimeGroupsFile)
@@ -176,9 +154,6 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.okhttp)
 
-    // The QR of each coin on the printed page (#234). It goes in `:app` and not in `:domain`: the
-    // Numista page of a type is not something the domain reasons about, it is something the paper
-    // draws — and the encoder never touches Coil, so a QR cannot be a photograph that failed.
     implementation(libs.zxing.core)
 
     testImplementation(libs.junit)
