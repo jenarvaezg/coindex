@@ -153,7 +153,7 @@ def phone(plate, variant):
 
 # ── las variantes ───────────────────────────────────────────────────────────
 MARKS = [
-    ("hoy", "Hoy · v1.4.1", "el giro no declara nada: una casilla volteada y una en reposo se "
+    ("hoy", "Hoy · v1.4.3", "el giro no declara nada: una casilla volteada y una en reposo se "
                             "dibujan igual, y la única pista es haber visto el movimiento"),
     ("troquel", "A · el troquel al revés", "la pared del corte invierte su luz —clara arriba, "
                                            "oscura abajo—: la casilla está del otro lado. Cero "

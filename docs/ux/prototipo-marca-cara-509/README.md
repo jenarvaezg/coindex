@@ -32,7 +32,7 @@ hueco y gira**, que es la única manera de juzgar esto.
 
 | | tesis | qué pasa al dibujarla |
 | --- | --- | --- |
-| **Hoy** · v1.4.1 | el giro no declara nada | listón |
+| **Hoy** · v1.4.3 | el giro no declara nada | listón |
 | **A · el troquel al revés** | la pared del corte invierte su luz: la casilla está del otro lado | **se pierde a 104 dp**. Al doble se distingue; en la rejilla, no. Y toca el cartón, que el #302 dejó quieto a propósito |
 | **B · la moneda no reposa plana** | vuelta, queda recostada contra la pared del troquel y asoma su canto | legible, y es el único lenguaje puramente metálico. La primera vuelta la escorzó a 172° y **lo que se leía era «más pequeña», no «de canto»**: el escorzo se cambió por un desplazamiento de 1,5 dp |
 | **C · la letra sobre el metal** | «A» o «R» al pie del disco, como el punzón de una ceca | se lee, y **rompe una regla escrita**: `AlbumPaper.kt:222` dice que sobre la fotografía ya no se pinta nada — la sombra del troquel se fue en el #357 y el reflejo del acetato en el #338 |
