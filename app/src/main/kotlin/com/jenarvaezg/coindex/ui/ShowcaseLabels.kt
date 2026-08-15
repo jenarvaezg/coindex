@@ -3,9 +3,7 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.prices.ValuationRefusal
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
 /**
  * Every string «Explorar» prints (ADR 0030, ADR 0026 §6).
@@ -188,12 +186,9 @@ fun valuedAgeLabel(
         // `fichaAgeLabel`: a ficha can always be brought again, and this price cannot — nothing will ever
         // refresh it (ADR 0030 §4). «hace 8 meses» over an amount that is going to sit there for years is
         // the date §4 asks for, rounded away.
-        else -> "el ${read.format(DAY_AND_MONTH)}"
+        else -> "el ${dayMonthYearLabel(read)}"
     }
 }
-
-/** «13 ago 2026»: the day of a price that is not coming back, in the album's own abbreviations. */
-private val DAY_AND_MONTH = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.forLanguageTag("es-ES"))
 
 /**
  * How many casillas a plate of the shelf window has, under its tile (ADR 0030 §8).
