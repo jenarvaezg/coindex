@@ -25,8 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.WishKey
-import com.jenarvaezg.coindex.ui.CardDestination
-import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.DrawnWish
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
@@ -35,7 +33,6 @@ import com.jenarvaezg.coindex.ui.WishSubject
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
@@ -45,9 +42,9 @@ import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.printedFaces
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.wishListFileName
-import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -78,24 +75,21 @@ fun WishesScreen(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     /**
-     * The coin behind a marked casilla, and the two readings its sheet prints (#508).
+     * The sheet the year of a marked casilla opens (#508).
      *
-     * The same three the lámina receives, from the same place: the year of a row here is the year of a
-     * casilla, so pressing it opens the same sheet it opens on the plate the row came from.
+     * The lámina's own, from the same place: a row here **is** a casilla of a plate, so pressing its
+     * year opens the sheet it opens over there.
      */
-    coin: (typeId: Int) -> CoinRow?,
-    ficha: (typeId: Int) -> FichaRefresh,
-    value: (typeId: Int) -> CoinValue?,
-    /** The sheet's «Ver en Numista», under its arrow: the only way out to the browser this list has. */
-    onOpenNumista: (typeId: Int) -> Unit,
-    /** Where the collections that claim this coin are, from its sheet. */
-    onOpenClaim: (CardDestination) -> Unit,
+    sheet: CoinSheetSurface,
     onRemove: (WishKey) -> Unit,
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Which row's coin is open, this screen's own state exactly as it is the lámina's (#508).
-    var openTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
+    // Which **row** is open — not which type — because the face a casilla rests on is its own plate's
+    // declaration, and the list crosses plates: two marked casillas of one type in two catalogs can
+    // declare different sides (ADR 0020, #227). This screen's own state exactly as it is the lámina's.
+    var openRowId by rememberSaveable { mutableStateOf<String?>(null) }
+    val openRow = subject.rows.firstOrNull { it.id == openRowId }
     Box(modifier = modifier) {
         // The same machine a lámina and a hoja use (#430), with a noun of its own: what leaves here is
         // «la lista», and one page of it is a PNG exactly as one page of a plate is.
@@ -160,33 +154,23 @@ fun WishesScreen(
                     WishCell(
                         row = row,
                         images = images[row.typeId],
-                        onOpenCoin = { openTypeId = row.typeId },
+                        onOpenCoin = { openRowId = row.id },
                         onRemove = { onRemove(row.key) },
                     )
                 }
             }
         }
         CoinSheetOverlay(
-            typeId = openTypeId,
-            coin = coin,
-            // The plate's own declaration, which each row carries: the list crosses plates, so the face
-            // a row rests on is the face its lámina declares and not one this screen chooses (#227).
+            typeId = openRow?.typeId,
+            surface = sheet,
+            // The declaration of the row's own plate, read off the row that was pressed. Where the row
+            // is already gone — a sync filled its casilla while the sheet was open — the album's
+            // reverse-first rule answers instead of a plate's.
             faces = { typeId ->
-                val pictures = images[typeId]
-                val side = subject.rows.firstOrNull { it.typeId == typeId }?.printedSide
-                // Where the row is already gone — a sync filled the casilla while its sheet was
-                // open — the album's own reverse-first rule answers instead of a plate's.
-                if (side == null) {
-                    coinAlbumFaces(pictures)
-                } else {
-                    pictures?.printedPhoto(side) to pictures?.printedPhoto(side.other)
-                }
+                val side = openRow?.printedSide
+                if (side == null) coinAlbumFaces(images[typeId]) else printedFaces(images[typeId], side)
             },
-            ficha = ficha,
-            value = value,
-            onDismiss = { openTypeId = null },
-            onOpenNumista = onOpenNumista,
-            onOpenClaim = onOpenClaim,
+            onDismiss = { openRowId = null },
         )
     }
 }

@@ -41,7 +41,6 @@ import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.CardDestination
-import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
@@ -53,7 +52,6 @@ import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
-import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
@@ -72,8 +70,8 @@ import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.printedName
+import com.jenarvaezg.coindex.ui.printedFaces
 import com.jenarvaezg.coindex.ui.printedPhoto
-import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -116,19 +114,12 @@ fun PlateScreen(
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
     /**
-     * The coin behind a casilla, held or not (#508), and the two readings its sheet prints.
+     * The sheet the year of a casilla opens, over this lámina (#508).
      *
-     * They arrive from where every other reading of a type does — assembled once above the screens —
-     * so the sheet a casilla opens and the sheet Monedas opens cannot say different things about one
-     * coin. [value] is null on a hole by construction: nothing owned, nothing worth anything.
+     * Assembled once above the screens, like every other reading of a type: the sheet a casilla opens
+     * and the sheet Monedas opens cannot say different things about one coin.
      */
-    coin: (typeId: Int) -> CoinRow?,
-    ficha: (typeId: Int) -> FichaRefresh,
-    value: (typeId: Int) -> CoinValue?,
-    /** The sheet's «Ver en Numista», under its arrow: the only way out to the browser a casilla has. */
-    onOpenNumista: (typeId: Int) -> Unit,
-    /** Where the other collections that claim this coin are, from its sheet. */
-    onOpenClaim: (CardDestination) -> Unit,
+    sheet: CoinSheetSurface,
     onMessage: (UiNotice) -> Unit,
     /** Now, for the age of a hand-asked price (ADR 0030 §4). Read once per opening of the plate. */
     nowMillis: Long,
@@ -177,20 +168,11 @@ fun PlateScreen(
                 }
                 CoinSheetOverlay(
                     typeId = openTypeId,
-                    coin = coin,
+                    surface = sheet,
                     // The face the casilla was resting on, and the one behind it: the plate declares
-                    // `printed_side` and its sheet obeys the same declaration (ADR 0020, #227), or the
-                    // coin would turn over on its way into a sheet that promised it was the same one.
-                    faces = { typeId ->
-                        val pictures = images[typeId]
-                        pictures?.printedPhoto(plate.printedSide) to
-                            pictures?.printedPhoto(plate.printedSide.other)
-                    },
-                    ficha = ficha,
-                    value = value,
+                    // `printed_side` and its sheet obeys the same declaration (ADR 0020, #227).
+                    faces = { typeId -> printedFaces(images[typeId], plate.printedSide) },
                     onDismiss = { openTypeId = null },
-                    onOpenNumista = onOpenNumista,
-                    onOpenClaim = onOpenClaim,
                     // The lámina you are standing on is not a door out of its own casilla's sheet.
                     here = CardDestination.Plate(plate.catalogId),
                 )

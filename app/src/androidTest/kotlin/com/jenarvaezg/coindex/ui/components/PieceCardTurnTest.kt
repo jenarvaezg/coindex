@@ -45,7 +45,7 @@ class PieceCardTurnTest {
                     piece = piece,
                     name = CoinName(denomination = "1 Bolívar", theme = null),
                     images = images,
-                    onOpenSource = {},
+                    onOpenNumista = {},
                     ficha = FichaRefresh(fetchedAt = null, refreshing = false, onRefresh = {}),
                 )
             }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +52,32 @@ import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
+ * The one coin sheet a screen can open, as it is handed it (#508).
+ *
+ * A value rather than five parameters, for the reason [FichaRefresh] is one: it travels through three
+ * screens to reach the three surfaces that draw casillas, and handed apart they could disagree — a
+ * lámina wording a coin one way and Monedas another, or one of them leaving to a different address
+ * for the same ficha. What varies per surface is **not** in here and stays a parameter of the overlay:
+ * which face rests up, which collection the collector is already standing in, and whether the coin
+ * flies. Those are three facts about the surface, not about the coin.
+ *
+ * @param coin the row of a type, holding whatever the collector has of it — nothing, on a hole. Null
+ *   only where the collection changed under an open sheet, and then there is nothing left to draw.
+ * @param value what the coin is worth, which on a hole is null by construction: nothing owned,
+ *   nothing worth anything.
+ * @param onOpenNumista the sheet's «Ver en Numista» under its drawn arrow — the one label of any of
+ *   these screens that reaches a browser.
+ * @param onOpenClaim where the collections that claim this coin are.
+ */
+class CoinSheetSurface(
+    val coin: (typeId: Int) -> CoinRow?,
+    val ficha: (typeId: Int) -> FichaRefresh,
+    val value: (typeId: Int) -> CoinValue?,
+    val onOpenNumista: (typeId: Int) -> Unit,
+    val onOpenClaim: (CardDestination) -> Unit,
+)
+
+/**
  * The sheet of one coin, as any surface of the app can open it (#508).
  *
  * It was Monedas' own until the audit of 14 August 2026: a casilla of a lámina had two invisible
@@ -64,11 +91,9 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * `ModalBottomSheet` is a dialog window and cannot host a shared element (#370).
  *
  * @param typeId the coin that is open, or null when none is. The one input that says what to draw.
- * @param coin the row of a type, holding whatever the collector has of it — nothing, on a hole. Null
- *   only where the collection changed under an open sheet, and then there is nothing left to draw.
  * @param faces which photograph rests up and which waits behind it. A parameter and not a rule of its
- *   own: a casilla obeys its catalog's `printed_side` (ADR 0020) and an album cell obeys reverse-first,
- *   and the sheet must open on the face the surface behind it was showing.
+ *   own: a casilla obeys its catalog's `printed_side` (ADR 0020) and an album cell obeys
+ *   reverse-first, and the sheet must open on the face the surface behind it was showing.
  * @param here the collection the collector is already standing in, whose claim is therefore not drawn
  *   as a door: a link from the plate of «1 Bolívar» back to the plate of «1 Bolívar» is a door onto
  *   the sheet you are reading.
@@ -79,18 +104,15 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 @Composable
 fun CoinSheetOverlay(
     typeId: Int?,
-    coin: (Int) -> CoinRow?,
+    surface: CoinSheetSurface,
     faces: (Int) -> Pair<CoinPhoto?, CoinPhoto?>,
-    ficha: (Int) -> FichaRefresh,
-    value: (Int) -> CoinValue?,
     onDismiss: () -> Unit,
-    onOpenNumista: (Int) -> Unit,
-    onOpenClaim: (CardDestination) -> Unit,
     here: CardDestination? = null,
     travelling: Boolean = false,
 ) {
-    // Kept across the dismiss so `AnimatedVisibility` still has a coin to draw while the sheet exits.
-    var exiting by remember { mutableStateOf<Int?>(null) }
+    // Kept across the dismiss so `AnimatedVisibility` still has a coin to draw while the sheet exits,
+    // and saved with it: restored after a process death the sheet has to draw on its first frame.
+    var exiting by rememberSaveable { mutableStateOf<Int?>(null) }
     SideEffect {
         if (typeId != null) exiting = typeId
     }
@@ -103,29 +125,32 @@ fun CoinSheetOverlay(
         exit = fadeOut() + slideOutVertically { it },
     ) {
         val open = exiting ?: return@AnimatedVisibility
-        val row = coin(open) ?: return@AnimatedVisibility
+        // Read once per coin and not once per recomposition: building the row walks the inventory and
+        // the index, and the sheet recomposes for the whole of its own entrance.
+        val row = remember(open, surface) { surface.coin(open) } ?: return@AnimatedVisibility
         val (photo, otherSide) = faces(open)
         CoinSheet(
             row = row,
             photo = photo,
             otherSide = otherSide,
+            travelling = travelling,
             // The sheet yields on dismiss the same way the cell yielded on open (#370): `exiting`
             // keeps the hole composed through the exit, but ownership follows the open coin, or both
             // ends claim the photograph and the return pops.
-            ownsCoin = if (travelling) typeId == open else null,
-            ficha = ficha(open),
-            value = value(open),
+            ownsCoin = typeId == open,
+            ficha = surface.ficha(open),
+            value = surface.value(open),
             doors = row.claims.filterNot { it.destination == here },
             onDismiss = onDismiss,
             // Both ways out close the sheet first: coming back from Numista or from a collection onto
             // an overlay nobody asked to still be there is the sheet outliving the gesture.
             onOpenNumista = {
                 onDismiss()
-                onOpenNumista(open)
+                surface.onOpenNumista(open)
             },
             onOpenClaim = { destination ->
                 onDismiss()
-                onOpenClaim(destination)
+                surface.onOpenClaim(destination)
             },
         )
     }
@@ -136,7 +161,8 @@ private fun CoinSheet(
     row: CoinRow,
     photo: CoinPhoto?,
     otherSide: CoinPhoto?,
-    ownsCoin: Boolean?,
+    travelling: Boolean,
+    ownsCoin: Boolean,
     ficha: FichaRefresh,
     value: CoinValue?,
     doors: List<CoinClaim>,
@@ -172,6 +198,7 @@ private fun CoinSheet(
                 row = row,
                 photo = photo,
                 otherSide = otherSide,
+                travelling = travelling,
                 ownsCoin = ownsCoin,
                 ficha = ficha,
                 value = value,
@@ -196,7 +223,8 @@ private fun CoinFicha(
     row: CoinRow,
     photo: CoinPhoto?,
     otherSide: CoinPhoto?,
-    ownsCoin: Boolean?,
+    travelling: Boolean,
+    ownsCoin: Boolean,
     ficha: FichaRefresh,
     value: CoinValue?,
     doors: List<CoinClaim>,
@@ -216,10 +244,10 @@ private fun CoinFicha(
             missing = row.quantity == 0,
             backed = row.claims.isNotEmpty(),
             otherSide = otherSide,
-            modifier = if (ownsCoin == null) {
-                hole
-            } else {
+            modifier = if (travelling) {
                 hole.travellingTypeCoin(row.typeId, visible = ownsCoin)
+            } else {
+                hole
             },
         )
         Text(

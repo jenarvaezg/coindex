@@ -170,13 +170,15 @@ class CasillaOpensTheSheetTest {
         Box(modifier = Modifier.fillMaxSize()) {
             CoinSheetOverlay(
                 typeId = coin.typeId,
-                coin = { coin },
+                surface = CoinSheetSurface(
+                    coin = { coin },
+                    ficha = { FichaRefresh(fetchedAt = null, refreshing = false, onRefresh = {}) },
+                    value = { null },
+                    onOpenNumista = onOpenNumista,
+                    onOpenClaim = {},
+                ),
                 faces = { null to null },
-                ficha = { FichaRefresh(fetchedAt = null, refreshing = false, onRefresh = {}) },
-                value = { null },
                 onDismiss = {},
-                onOpenNumista = onOpenNumista,
-                onOpenClaim = {},
                 here = here,
             )
         }

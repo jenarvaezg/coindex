@@ -34,8 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.domain.ObjectClass
-import com.jenarvaezg.coindex.ui.CardDestination
-import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
@@ -43,7 +41,6 @@ import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Facet
-import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
@@ -99,32 +96,21 @@ fun CoinsScreen(
     /** Every curated `short_name`, so a new box cannot be baptised one of them (ADR 0021 §4). */
     curatedNames: Set<String>,
     onNarrow: (CoinsShelf) -> Unit,
-    onOpen: (CardDestination) -> Unit,
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
-    /** The one way out to the browser here, behind the sheet's «Ver en Numista» and its arrow (#508). */
-    onOpenNumista: (typeId: Int) -> Unit,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
     sewnEdge: SewnEdgeCounts?,
     onSettings: () -> Unit,
     /**
-     * What one coin is worth, or null while the market has not landed (ADR 0028 §7).
+     * The sheet a cell of this grid opens, which since #508 is the sheet three surfaces open.
      *
-     * Handed in the way [ficha] is, and built in the same place: the value of a piece also heads its
-     * plate, and two screens computing it apart is two totals that can disagree about one coin.
+     * This is where the ficha's own upkeep lives (#185, ADR 0025), and it has to: a type whose ficha
+     * looks like an unpublished draft derives no card at all (#186), and neither does one whose family
+     * is a half-typed «The» (#404), so their pieces are only ever reachable from here — which is
+     * exactly the coin that issue was opened about, N#596807. The fix is upstream, and it reaches this
+     * phone only when somebody asks for the ficha again on this very sheet.
      */
-    value: (Int) -> CoinValue?,
-    /**
-     * How old each ficha is and how to ask for it again (#185, ADR 0025).
-     *
-     * This bottom sheet is the surface that has to carry it. A type whose ficha looks like an
-     * unpublished draft derives no card at all (#186), and neither does one whose family is a
-     * half-typed «The» (#404), so their pieces are only ever reachable from here — which is
-     * exactly the coin the issue was opened about: N#596807, whose page Numista has since
-     * published with its `series` still cut after the article. The fix is upstream, and it reaches
-     * this phone only when somebody asks for the ficha again on this very sheet.
-     */
-    ficha: (typeId: Int) -> FichaRefresh,
+    sheet: CoinSheetSurface,
     modifier: Modifier = Modifier,
 ) {
     // Recomputed only when the collection changes: 192 rows joined against the type cache is work
@@ -216,13 +202,9 @@ fun CoinsScreen(
         // the second end of the journey of ADR 0026 §3: the cell yields its photograph on the way in.
         CoinSheetOverlay(
             typeId = selectedTypeId,
-            coin = { typeId -> rows.firstOrNull { it.typeId == typeId } },
+            surface = sheet,
             faces = { typeId -> coinAlbumFaces(state.images[typeId]) },
-            ficha = ficha,
-            value = value,
             onDismiss = { selectedTypeId = null },
-            onOpenNumista = onOpenNumista,
-            onOpenClaim = onOpen,
             travelling = true,
         )
     }

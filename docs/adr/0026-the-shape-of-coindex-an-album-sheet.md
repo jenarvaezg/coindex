@@ -189,7 +189,7 @@ Coindex. So the ceremony **does not congratulate — it reveals.**
 
 > **Amended on 2026-08-15 (§3, #508). The year opens the coin's sheet, and no unmarked label reaches
 > a browser.** «The hole flips, the year goes to Numista» stops being true of the second half. The two
-> targets stand and the tag is untouched — 48,3 × 28 dp, sunken in the cardboard, its 48 dp of target
+> targets stand and the tag is untouched — 48.3 × 28 dp, sunken in the cardboard, its 48 dp of target
 > bought with `minimumInteractiveComponentSize` — but what it opens is the sheet of **that coin, over
 > the lámina**: the one Monedas has carried since #370, with «Ver en Numista ↗» and «Actualizar la
 > ficha · 1 llamada» inside it. The audit of 14 August 2026 left for Chrome three times without meaning
@@ -199,6 +199,12 @@ Coindex. So the ceremony **does not congratulate — it reveals.**
 > arrow**, and the rule the audit leaves behind is the other way round — nothing without a ↗ in its
 > label opens a browser. That reaches one more surface, the annex's list of marked casillas (ADR 0029
 > §6), because it draws the plate's casillas and therefore had the same tag.
+>
+> **The sheet brings «Actualizar la ficha · 1 llamada» into the shelf window**, where ADR 0030 §1 says
+> hojear costs nothing. It does not contradict it: what that clause refuses is spending nobody asked
+> for, and this is the shape ADR 0028 §3 requires of a gesture that spends — it prints its ceiling
+> before it is pressed, one call, one coin, on the label itself. A plate of the twenty is browsed for
+> free and stays browsed for free unless the collector presses something that says what it costs.
 >
 > It is also the row #302 could not take: its table dropped «abrir una ficha del tipo» because «no hay
 > tal pantalla» — the ficha was one line inside a card — and #370 built the screen four days later.

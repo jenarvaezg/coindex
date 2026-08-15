@@ -12,8 +12,9 @@ fun coinFichaIdentity(row: CoinRow): String = listOfNotNull(
     coinYearsLabel(row.years),
     numistaCodeLabel(row.typeId),
     objectClassLabel(row.objectClass),
-    // Absent on a coin the collector holds none of, which is what a casilla of a lámina opens the
-    // sheet of half the time (#508): «×0» would be a count of nothing dressed as a count.
+    // The guard that stops «×1» is what keeps a hole quiet too, now that a casilla of a lámina opens
+    // this sheet and half of them hold nothing (#508): zero is not greater than one, so nothing is
+    // said — and «×0» would have been a count of nothing dressed as a count.
     "×${row.quantity}".takeIf { row.quantity > 1 },
 ).joinToString(" · ")
 

@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
+import com.jenarvaezg.coindex.domain.PrintedSide
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -51,5 +52,27 @@ class AlbumFacesTest {
 
         assertNull(photo)
         assertNull(other)
+    }
+
+    /**
+     * The sheet a casilla opens arrives on the face the casilla was resting on (#508).
+     *
+     * The other half of the rule: where a plate **has** declared a side, the sheet obeys the same
+     * declaration and not the album's reverse-first default (ADR 0020, #227) — or the coin turns over
+     * on its way into a sheet that promised it was the same one. Six of the 74 catalogs declare
+     * `obverse`, and this is the case that would have gone unnoticed on the other 68.
+     */
+    @Test
+    fun `a casilla opens its sheet on the face its plate declared`() {
+        val images = TypeImages(obverse = obverse, reverse = reverse)
+
+        assertEquals(obverse to reverse, printedFaces(images, PrintedSide.Obverse))
+        assertEquals(reverse to obverse, printedFaces(images, PrintedSide.Reverse))
+    }
+
+    /** A hole has no photograph and still has a casilla: the ghost is the drawing, not a face. */
+    @Test
+    fun `a type nobody photographed still answers with two absent faces`() {
+        assertEquals(null to null, printedFaces(null, PrintedSide.Reverse))
     }
 }
