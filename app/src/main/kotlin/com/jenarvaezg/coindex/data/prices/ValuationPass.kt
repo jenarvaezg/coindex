@@ -51,6 +51,26 @@ data class ValuationStatus(
      * all: there is no market coming for it, so there is nothing to wait for either.
      */
     val settled: Boolean get() = missing == 0
+
+    /**
+     * Whether the missing money is worth a line on a notebook screen (#519).
+     *
+     * The money section is absent and not zero (ADR 0028 §7), and until now that absence was
+     * *silent* everywhere but settings — which left the reader of «Las cifras» with a page that
+     * promises «lo que vale» and then has no money on it, and no explanation either.
+     *
+     * **Not every absence is worth saying**, and this is where the two are told apart. With a pass
+     * on its way or a sync in front of it the money is arriving on its own, in seconds, with nobody
+     * doing anything: a line that appears and disappears by itself is furniture. The three that
+     * are said are the ones waiting on the collector or on the calendar — no network, no
+     * credentials, the month's allowance gone.
+     *
+     * It does **not** say which of the three, and that is deliberate: those five sentences are
+     * settings' own, and ADR 0026 §5 exempts settings from the pruning precisely on the promise
+     * that none of its explanations appear on a notebook screen.
+     */
+    val waiting: Boolean
+        get() = !settled && held != null && held != ValuationRefusal.Syncing
 }
 
 /** How often the collector-visible count is updated while the pass runs. */

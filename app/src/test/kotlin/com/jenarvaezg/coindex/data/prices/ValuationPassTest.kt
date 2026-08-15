@@ -13,6 +13,7 @@ import io.ktor.http.headersOf
 import io.ktor.http.HttpHeaders
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
@@ -29,6 +30,39 @@ private const val NOW = 1_754_600_000_000L
 class ValuationPassTest {
     private val prices = FakePriceDao()
     private val asked = mutableListOf<String>()
+
+    /**
+     * Which absences the notebook screens are allowed to mention, and which stay silent (#519).
+     *
+     * The three that are said wait on the collector or on the calendar; the two that are not fix
+     * themselves in seconds while nobody does anything, and a line that appears and vanishes by
+     * itself is the furniture ADR 0026 §5 prices.
+     */
+    @Test
+    fun `only an absence nobody can wait out is worth saying`() {
+        val held = { refusal: ValuationRefusal? ->
+            ValuationStatus(wanted = 10, missing = 4, held = refusal).waiting
+        }
+
+        assertTrue(held(ValuationRefusal.Offline))
+        assertTrue(held(ValuationRefusal.BudgetExhausted))
+        assertTrue(held(ValuationRefusal.NoApiKey))
+        assertFalse(held(ValuationRefusal.Syncing))
+        assertFalse(held(null))
+    }
+
+    /** With nothing left to ask there is a money section, so there is no absence to explain. */
+    @Test
+    fun `a settled pass is never waiting, whatever is holding it`() {
+        val settled = ValuationStatus(
+            wanted = 10,
+            missing = 0,
+            held = ValuationRefusal.Offline,
+        )
+
+        assertTrue(settled.settled)
+        assertFalse(settled.waiting)
+    }
 
     /** Numista answering with prices: the row and its grades are stored. */
     @Test

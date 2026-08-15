@@ -193,7 +193,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 state.prices::of,
                 state.prices::readAt,
             )
-            !state.valuation.settled -> PlateMoney()
+            !state.valuation.settled -> PlateMoney(waiting = state.valuation.waiting)
             else -> plateMoney(
                 resolved.album,
                 state.collection,
@@ -294,12 +294,21 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     // Assembled once per collection and per price book, and never per recomposition: it walks the whole
     // inventory, and the bottom bar reads its weight on every screen the bar is drawn on.
-    val figures = remember(state.collection, state.prices, state.valuation.settled) {
+    // Keyed on the two readings it uses and never on the whole status: that carries the pass's
+    // running count, which moves every twenty-five issues (`VALUATION_PROGRESS_EVERY`), and this
+    // walks the entire inventory.
+    val figures = remember(
+        state.collection,
+        state.prices,
+        state.valuation.settled,
+        state.valuation.waiting,
+    ) {
         figuresSubject(
             state = state.collection,
             spot = state.prices.spot,
             prices = state.prices::of,
             settled = state.valuation.settled,
+            waiting = state.valuation.waiting,
         )
     }
     // One census for the sewn edge of every root (#400): collections from the index, pieces and

@@ -516,6 +516,23 @@ class PlateSubjectTest {
 
         assertNull(plate.value)
         assertNull(plate.cost)
+        assertFalse(plate.moneyWaiting)
+        assertEquals(listOf(null, null), plate.cells.map { it.cost })
+    }
+
+    /**
+     * And when the reason is the market, the header says so instead of the two figures (#519).
+     *
+     * The line stands **in the figures' slot**, so it can never be true beside one of them: what a
+     * plate says of its money is either the amounts or that they have not arrived.
+     */
+    @Test
+    fun `a plate whose market has not landed says it, and says no amount`() {
+        val plate = pricedSubject(PlateMoney(waiting = true))
+
+        assertTrue(plate.moneyWaiting)
+        assertNull(plate.value)
+        assertNull(plate.cost)
         assertEquals(listOf(null, null), plate.cells.map { it.cost })
     }
 

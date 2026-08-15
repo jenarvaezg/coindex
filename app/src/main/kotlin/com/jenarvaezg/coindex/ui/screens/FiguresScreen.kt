@@ -74,7 +74,9 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * they are silent rather than tappable-and-inert.
  *
  * **The money is absent, not zero, until the market has landed** (ADR 0028 §7). Everything else on the
- * page comes out of the APK, so a freshly installed phone with no network opens it whole.
+ * page comes out of the APK, so a freshly installed phone with no network opens it whole. Absent is
+ * not the same as unexplained, though: where the section would be, one line says the market has not
+ * arrived — without a figure, and without settings' five reasons (#519).
  *
  * @param onOpenCountry the pieces of a country, which is the shelf of Coins narrowed the way the year
  *   axis already narrows it (#386).
@@ -144,6 +146,19 @@ fun FiguresScreen(
                         }
                         Text(
                             FiguresLabels.MONEY_ORIGIN,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Paper.muted,
+                        )
+                    }
+                }
+            }
+            // Where the section would have been, and only there: said anywhere else it would be a
+            // notice about the app rather than the page's own missing figure (#519).
+            if (subject.moneyWaiting) {
+                item("money-waiting") {
+                    Block(FiguresLabels.MONEY_HEADING) {
+                        Text(
+                            FiguresLabels.MONEY_WAITING,
                             style = MaterialTheme.typography.bodyMedium,
                             color = Paper.muted,
                         )
