@@ -350,7 +350,9 @@ private fun plateEntries(
     addAll(variantEntries(catalog.weightMillioz, catalog.finish))
     common.numistaTypeId?.let { typeId -> add("Tipo" to "Numista $typeId") }
     common.year?.let { year -> add("Año" to year.toString()) }
-    add("Actualizado" to catalog.updatedAt)
+    // The editorial version of the curated file, and not how old anything is (#518): «Actualizado»
+    // read as «comprobado por última vez», which is the one thing this date cannot mean.
+    add("Catálogo" to catalogDateLabel(catalog.updatedAt))
 }
 
 /**

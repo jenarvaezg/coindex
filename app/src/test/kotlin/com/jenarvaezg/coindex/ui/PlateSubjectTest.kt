@@ -230,7 +230,7 @@ class PlateSubjectTest {
                 "Progreso" to "1 / 2 emisiones",
                 "Peso" to "0,804 oz",
                 "Tipo" to "Numista 10340",
-                "Actualizado" to "2026-08-01",
+                "Catálogo" to "1 ago 2026",
             ),
             plate.entries,
         )
@@ -251,7 +251,7 @@ class PlateSubjectTest {
                 "Peso" to "0,804 oz",
                 "Acabado" to "Proof",
                 "Tipo" to "Numista 10340",
-                "Actualizado" to "2026-08-01",
+                "Catálogo" to "1 ago 2026",
             ),
             plate.entries,
         )
@@ -296,7 +296,7 @@ class PlateSubjectTest {
                 "Programa" to "Serie Alexandre Herculano 1977 · 1 de 3",
                 "Peso" to "0,804 oz",
                 "Tipo" to "Numista 10340",
-                "Actualizado" to "2026-08-01",
+                "Catálogo" to "1 ago 2026",
             ),
             plate.entries,
         )
@@ -313,7 +313,7 @@ class PlateSubjectTest {
             listOf(
                 "Progreso" to "2 / 2 emisiones",
                 "Peso" to "0,804 oz",
-                "Actualizado" to "2026-08-01",
+                "Catálogo" to "1 ago 2026",
             ),
             plate.entries,
         )

@@ -6,12 +6,6 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-/** Short month names written out, so the line reads the same on every JDK and locale. */
-private val MONTHS = listOf(
-    "ene", "feb", "mar", "abr", "may", "jun",
-    "jul", "ago", "sep", "oct", "nov", "dic",
-)
-
 /** What one run did, for the snackbar that announces it the moment it ends. */
 fun syncReportLabel(record: SyncRecord): String = buildString {
     append(plural(record.collectionItems, "pieza", "piezas"))
@@ -52,7 +46,7 @@ fun lastSyncLabel(
     val day = when (at.toLocalDate()) {
         today -> "hoy"
         today.minusDays(1) -> "ayer"
-        else -> "${at.dayOfMonth} ${MONTHS[at.monthValue - 1]}"
+        else -> dayAndMonthLabel(at.toLocalDate())
     }
     val clock = "%02d:%02d".format(at.hour, at.minute)
     return buildString {
