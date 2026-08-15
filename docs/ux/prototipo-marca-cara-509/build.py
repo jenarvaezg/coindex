@@ -170,6 +170,15 @@ MARKS = [
     ("carton", "E · la letra en el cartón", "la misma letra que la C, pero en la hoja y no sobre "
                                             "el metal: al lado de la chapa quedan 32 dp de "
                                             "cartón libre, y la fotografía no se toca"),
+    # La segunda vuelta, del 15 de agosto: Jose elige la A y da la D por buena. Las dos se
+    # perdían a 104 dp en la primera tanda, así que aquí se les da su mejor versión —el mismo
+    # gesto con más luz— y se miden otra vez antes de darlas por legibles.
+    ("troquel2", "A+ · el troquel al revés, con luz",
+     "el mismo giro de la pared del corte, pero con el barrido más marcado mientras la casilla "
+     "está vuelta: sigue sin poner tinta y sin costar un dp"),
+    ("ambas", "A+D · el troquel y la chapa",
+     "las dos que no ponen tinta, a la vez: el aro invertido arriba y el rebaje de la chapa "
+     "invertido abajo. Dos pistas del mismo hecho, y ninguna es una letra"),
 ]
 
 ANSWERS = [
@@ -311,7 +320,25 @@ body {{ background: #3a3a36; color: {PAPER}; font-family: Barlow, sans-serif;
               rgba(255,255,255,0) 58%, rgba(255,255,255,.55) 100%); }}
 
 /* ── A · el troquel al revés ───────────────────────────────────────────────── */
-.phone[data-v="troquel"] .hole.turned .wall {{ transform: rotate(180deg); }}
+.phone[data-v="troquel"] .hole.turned .wall,
+.phone[data-v="troquel2"] .hole.turned .wall,
+.phone[data-v="ambas"] .hole.turned .wall {{ transform: rotate(180deg); }}
+
+/* ── A+ · el mismo giro, con el barrido más marcado ────────────────────────── */
+/* La pared de reposo va a .85 de blanco y .22 de tinta. Vuelta, la A+ la lleva a 1 y .42, que
+   es el mismo dibujo con la luz subida y no un dibujo nuevo: si a 104 dp no se lee ni así, el
+   troquel no puede declarar esto. */
+.phone[data-v="troquel2"] .hole.turned .wall,
+.phone[data-v="ambas"] .hole.turned .wall {{
+  background: conic-gradient(from 90deg,
+    rgba(255,255,255,0) 0deg, rgba(255,255,255,1) 90deg, rgba(255,255,255,0) 176.4deg,
+    rgba(45,48,41,0) 183.6deg, rgba(45,48,41,.42) 270deg, rgba(45,48,41,0) 356.4deg,
+    rgba(255,255,255,0) 360deg); }}
+
+/* ── A+D · el aro y la chapa, las dos sin tinta ────────────────────────────── */
+.phone[data-v="ambas"] .cell.turned .tag {{ background: rgba(221,211,187,.62);
+        border-top: 1px solid rgba(255,255,255,.55);
+        border-bottom: 2px solid rgba(45,48,41,.34); }}
 
 /* ── B · la moneda descansa sobre su canto ─────────────────────────────────── */
 /* Vuelta, la moneda queda recostada 1,5 dp contra la pared del troquel y por el otro lado

@@ -66,6 +66,45 @@ class DieCutWallTest {
     }
 
     @Test
+    fun `a turned casilla is lit from the other side`() {
+        // The whole of #509 in two assertions: what was the lit edge at 6 o'clock is now in shadow,
+        // and what was in shadow at 12 o'clock is now the lit one. Nothing moves — the sweep is
+        // cross-faded against this profile — so the cardboard ADR 0026 §3 keeps still stays still.
+        val turned = wall.turnedStops()
+
+        assertEquals(Paper.ink, colorAt(0.25f, turned))
+        assertEquals(Color.White, colorAt(0.75f, turned))
+        assertEquals(wall.turnedShadowAlpha, alphaAt(0.25f, turned), TOLERANCE)
+        assertEquals(wall.turnedSheenAlpha, alphaAt(0.75f, turned), TOLERANCE)
+    }
+
+    @Test
+    fun `the turned wall is brighter than the one at rest, and still closes`() {
+        // Turned, the wall competes with a photograph that has just changed, so swapping sides is
+        // not enough on its own: the prototype measured the swap at 38 % of the ring's pixels
+        // moving and the swap with this extra light at 39.5 %, with nearly a third more mean delta.
+        val turned = wall.turnedStops()
+
+        assertTrue(wall.turnedSheenAlpha > wall.sheenAlpha)
+        assertTrue(wall.turnedShadowAlpha > wall.shadowAlpha)
+        assertEquals(0f, alphaAt(0f, turned), TOLERANCE)
+        assertEquals(0f, alphaAt(0.5f, turned), TOLERANCE)
+        assertEquals(0f, alphaAt(1f, turned), TOLERANCE)
+    }
+
+    @Test
+    fun `the turned wall has no step anywhere along the sweep either`() {
+        val turned = wall.turnedStops()
+
+        val steepest = (0..720)
+            .map { alphaAt(it / 720f, turned) }
+            .zipWithNext { before, after -> abs(after - before) }
+            .max()
+
+        assertTrue(steepest < 0.008f, "the turned sweep jumps $steepest of alpha in half a degree")
+    }
+
+    @Test
     fun `the bench moves both halves of the wall independently`() {
         val calibrated = DieCutWall(sheenAlpha = 0.3f, shadowAlpha = 0.1f)
 
@@ -85,8 +124,8 @@ class DieCutWallTest {
     }
 
     /** The tint of the half a fraction falls in, with its alpha set aside. */
-    private fun colorAt(fraction: Float): Color =
-        stops.first { (stop, _) -> stop >= fraction }.second.copy(alpha = 1f)
+    private fun colorAt(fraction: Float, sweep: Array<Pair<Float, Color>> = stops): Color =
+        sweep.first { (stop, _) -> stop >= fraction }.second.copy(alpha = 1f)
 
     private companion object {
         /** `Color` keeps sRGB channels in 8 bits, so an alpha never comes back exactly as asked. */
