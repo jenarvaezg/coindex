@@ -41,19 +41,19 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 65
-        // **Minor again, and for the same clause**: the twenty plates of «Explorar» are catalogs the
-        // app **could not open at all** — ADR 0021 §7 kept them shut and ADR 0030 §1 opens them — so
-        // this is new capability and not a change inside one. It brings a gesture that spends
-        // («Tasar esta lámina · N consultas», the first amendment ADR 0028 §3 has ever taken), a
-        // figure that never expires and travels with its date, and a second room inside the annex:
-        // «Lo que busco» moves one door in (#498, ADR 0030). Nothing is added to the schema.
+        versionCode = 66
+        // **Patch, and squarely one**: the year of a casilla already opened that coin's page — it
+        // opened it in Chrome. What moves is where the same gesture lands (#508, ADR 0026 §3 amended):
+        // the sheet Monedas has carried since #370, drawn over the lámina, with the only way out to
+        // the browser behind «Ver en Numista ↗». No capability arrives, nothing is added to the
+        // schema, and the same tag in «Lo que busco» moves with it — it is the plate's own casilla.
         //
         // The phones are on **1.3.0**, `versionCode` 64 — what the latest release's `update.json`
-        // says, not what anybody remembers — so **1.4.0 is waiting**. `scripts/release.sh` reads that
-        // manifest and refuses a `versionCode` that does not beat it; this line only says who is
-        // waiting, which is why it is worth correcting after every release.
-        versionName = "1.4.0"
+        // says, not what anybody remembers — so **1.4.1 is waiting**, and 1.4.0 waits inside it:
+        // the twenty plates of «Explorar» (#498, ADR 0030) have not been published either.
+        // `scripts/release.sh` reads that manifest and refuses a `versionCode` that does not beat it;
+        // this line only says who is waiting, which is why it is worth correcting after every release.
+        versionName = "1.4.1"
     }
 
     // The curated catalogs and the type-metadata snapshot live in `data/` at the repo root,

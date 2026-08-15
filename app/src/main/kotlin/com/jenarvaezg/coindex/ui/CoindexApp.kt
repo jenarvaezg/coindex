@@ -80,7 +80,9 @@ import com.jenarvaezg.coindex.ui.screens.PlateMarking
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.PlateValuation
 import com.jenarvaezg.coindex.ui.screens.SettingsScreen
+import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
+import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -126,6 +128,21 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     val openUrl: (String) -> Unit = { url ->
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    }
+
+    // The ficha of one coin on Numista, for the three surfaces whose sheet offers «Ver en Numista»
+    // under its drawn arrow (#508). One rule and not three: the URL Numista itself handed over, in
+    // the language the ficha was asked in (`TypeMeta.numistaUrl`), and the type's own address where
+    // this phone holds no ficha at all.
+    val openTypeOnNumista: (Int) -> Unit = { typeId ->
+        openUrl(state.collection.typeMeta[typeId]?.numistaUrl ?: numistaTypeUrl(typeId))
+    }
+    // The coin behind a casilla and behind a cell of Monedas, read once for the three surfaces that
+    // open its sheet (#508). A row and not a subject of its own: what the sheet says about a coin is
+    // what Monedas has always said about it, so a hole is the same reading with nothing in it — see
+    // [coinRowOf], which walks the inventory and is therefore held still per collection.
+    val sheetCoin: (Int) -> CoinRow = remember(state.collection) {
+        { typeId -> coinRowOf(state.collection, typeId) }
     }
 
     // Built here, once, for the three surfaces that print money — the ficha of a coin, the header of
@@ -425,7 +442,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             },
                             onCreateBox = viewModel::createOwnGrouping,
                             onAddToBox = viewModel::addToOwnGrouping,
-                            onOpenSource = openUrl,
+                            onOpenNumista = openTypeOnNumista,
                             sewnEdge = sewnEdge,
                             onSettings = { navController.navigate(Routes.SETTINGS) },
                             ficha = ficha,
@@ -587,7 +604,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onNotebookPrinted = viewModel::notebookPrinted,
                             notebookPages = viewModel::notebookPagesForWishes,
                             onExporting = viewModel::notebookExporting,
-                            onOpenSource = openUrl,
+                            coin = sheetCoin,
+                            ficha = ficha,
+                            value = coinValue,
+                            onOpenNumista = openTypeOnNumista,
+                            onOpenClaim = { destination ->
+                                navController.navigate(routeOf(destination))
+                            },
                             onRemove = viewModel::removeWish,
                             onMessage = viewModel::showMessage,
                             modifier = Modifier.fillMaxSize(),
@@ -652,6 +675,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 },
                                 onExporting = viewModel::notebookExporting,
                                 onOpenSource = openUrl,
+                                coin = sheetCoin,
+                                ficha = ficha,
+                                value = coinValue,
+                                onOpenNumista = openTypeOnNumista,
+                                onOpenClaim = { destination ->
+                                    navController.navigate(routeOf(destination))
+                                },
                                 onMessage = viewModel::showMessage,
                                 nowMillis = nowMillis,
                                 modifier = Modifier.fillMaxSize(),

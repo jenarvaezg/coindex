@@ -1,15 +1,7 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -25,11 +16,9 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +26,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -48,30 +36,21 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinValue
-import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
-import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
-import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
-import com.jenarvaezg.coindex.ui.coinFichaIdentity
-import com.jenarvaezg.coindex.ui.coinValueLabel
 import com.jenarvaezg.coindex.ui.components.AlbumCartouche
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
-import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Facet
-import com.jenarvaezg.coindex.ui.components.FichaBrought
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
-import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.SelectionControls
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
-import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
 import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
@@ -123,7 +102,8 @@ fun CoinsScreen(
     onOpen: (CardDestination) -> Unit,
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
-    onOpenSource: (url: String) -> Unit,
+    /** The one way out to the browser here, behind the sheet's «Ver en Numista» and its arrow (#508). */
+    onOpenNumista: (typeId: Int) -> Unit,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
     sewnEdge: SewnEdgeCounts?,
     onSettings: () -> Unit,
@@ -163,15 +143,6 @@ fun CoinsScreen(
     val taken = remember(curatedNames, state.ownGroupings) {
         curatedNames + state.ownGroupings.map { it.name }
     }
-    val selected = rows.firstOrNull { it.typeId == selectedTypeId }
-    // Kept across dismiss so AnimatedVisibility still has a row to draw while the sheet exits.
-    var exitRow by remember { mutableStateOf<CoinRow?>(null) }
-    SideEffect {
-        if (selected != null) exitRow = selected
-    }
-
-    BackHandler(enabled = selected != null) { selectedTypeId = null }
-
     Box(modifier = modifier.fillMaxSize()) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val columns = indexColumns(maxWidth)
@@ -241,88 +212,19 @@ fun CoinsScreen(
             }
         }
 
-        // Compose sheet and not ModalBottomSheet: a dialog window cannot host a shared element
-        // (Compose animation docs), and the ficha is the second end of the journey in ADR 0026 §3.
-        AnimatedVisibility(
-            visible = selected != null,
-            enter = fadeIn() + slideInVertically { it },
-            exit = fadeOut() + slideOutVertically { it },
-        ) {
-            val row = exitRow ?: return@AnimatedVisibility
-            val (photo, otherSide) = coinAlbumFaces(state.images[row.typeId])
-            CoinFichaSheet(
-                row = row,
-                photo = photo,
-                otherSide = otherSide,
-                // The sheet yields on dismiss the same way the cell yielded on open (#370):
-                // `exitRow` keeps the hole composed through the exit, but ownership follows
-                // `selectedTypeId`, or both ends claim the photograph and the return pops.
-                ownsCoin = selectedTypeId == row.typeId,
-                ficha = ficha(row.typeId),
-                value = value(row.typeId),
-                onDismiss = { selectedTypeId = null },
-                onOpenSource = {
-                    selectedTypeId = null
-                    onOpenSource(
-                        state.typeMeta[row.typeId]?.numistaUrl ?: numistaTypeUrl(row.typeId),
-                    )
-                },
-                onOpen = { destination ->
-                    selectedTypeId = null
-                    onOpen(destination)
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun CoinFichaSheet(
-    row: CoinRow,
-    photo: CoinPhoto?,
-    otherSide: CoinPhoto?,
-    ownsCoin: Boolean,
-    ficha: FichaRefresh,
-    value: CoinValue?,
-    onDismiss: () -> Unit,
-    onOpenSource: () -> Unit,
-    onOpen: (CardDestination) -> Unit,
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.32f))
-                .clickable(
-                    role = Role.Button,
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = onDismiss,
-                ),
+        // The one sheet of a coin, which every surface of the app now opens (#508). Here it is also
+        // the second end of the journey of ADR 0026 §3: the cell yields its photograph on the way in.
+        CoinSheetOverlay(
+            typeId = selectedTypeId,
+            coin = { typeId -> rows.firstOrNull { it.typeId == typeId } },
+            faces = { typeId -> coinAlbumFaces(state.images[typeId]) },
+            ficha = ficha,
+            value = value,
+            onDismiss = { selectedTypeId = null },
+            onOpenNumista = onOpenNumista,
+            onOpenClaim = onOpen,
+            travelling = true,
         )
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Paper.paper, RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .navigationBarsPadding()
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = {},
-                ),
-        ) {
-            CoinFicha(
-                row = row,
-                photo = photo,
-                otherSide = otherSide,
-                ownsCoin = ownsCoin,
-                ficha = ficha,
-                value = value,
-                onOpenSource = onOpenSource,
-                onOpen = onOpen,
-            )
-        }
     }
 }
 
@@ -480,88 +382,6 @@ private fun CoinAlbumCell(
             maxLines = 1,
             modifier = Modifier.padding(top = 3.dp),
         )
-    }
-}
-
-/**
- * Exact identity and upkeep live inside the coin instead of being repeated under every hole.
- *
- * The die-cut at the top is the landing of ADR 0026 §3's second journey (#370): same 104 dp hole as
- * the cell it left, cardboard only when a collection claims the type — the form «En ninguna
- * colección» already used in the grid.
- */
-@Composable
-private fun CoinFicha(
-    row: CoinRow,
-    photo: CoinPhoto?,
-    otherSide: CoinPhoto?,
-    ownsCoin: Boolean,
-    ficha: FichaRefresh,
-    value: CoinValue?,
-    onOpenSource: () -> Unit,
-    onOpen: (CardDestination) -> Unit,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
-    ) {
-        AlbumHole(
-            photo = photo,
-            backed = row.claims.isNotEmpty(),
-            otherSide = otherSide,
-            modifier = Modifier
-                .padding(top = 20.dp, bottom = 12.dp)
-                .size(104.dp)
-                .travellingTypeCoin(row.typeId, visible = ownsCoin),
-        )
-        Text(
-            row.rawTitle,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Text(
-            coinFichaIdentity(row),
-            style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        // The value with its origin said, because a number with no provenance in an app with two
-        // users is a number nobody can check (#316).
-        value?.let { reading ->
-            Text(
-                coinValueLabel(reading),
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.rust,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 6.dp).fillMaxWidth(),
-            )
-        }
-        FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp).fillMaxWidth())
-        ExternalLink(
-            text = COIN_VIEW_ON_NUMISTA,
-            onClick = onOpenSource,
-            modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
-        )
-        if (row.claims.isNotEmpty()) {
-            Text(
-                if (row.claims.size == 1) COIN_IN_ONE_COLLECTION else COIN_IN_SEVERAL_COLLECTIONS,
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.muted,
-                modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
-            )
-            row.claims.forEach { claim ->
-                LinkText(
-                    text = claim.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    onClick = { onOpen(claim.destination) },
-                    maxLines = 1,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
     }
 }
 

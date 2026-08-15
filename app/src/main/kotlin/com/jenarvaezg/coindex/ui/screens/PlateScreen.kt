@@ -24,6 +24,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,8 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
+import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
@@ -50,6 +53,7 @@ import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
+import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
@@ -59,7 +63,6 @@ import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.travellingCoin
-import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.plateSheetTally
@@ -70,6 +73,7 @@ import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.printedPhoto
+import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
@@ -77,7 +81,8 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
  * The plate of a followed collection against its curated catalog.
  *
  * Owned members are shown at full colour; missing ones keep their catalog design as a 14% ghost
- * inside a dotted die-cut rule. Every issued member links to its Numista page.
+ * inside a dotted die-cut rule. The year of every issued casilla opens that coin's sheet, over the
+ * lámina and inside the app (#508); leaving for Numista is that sheet's own labelled link.
  *
  * The plate is worded once, here, and the grid and the exported sheet are handed the same
  * [PlateSubject] (#218): the specification used to be rebuilt in the body of the lazy grid on every
@@ -110,6 +115,20 @@ fun PlateScreen(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
+    /**
+     * The coin behind a casilla, held or not (#508), and the two readings its sheet prints.
+     *
+     * They arrive from where every other reading of a type does — assembled once above the screens —
+     * so the sheet a casilla opens and the sheet Monedas opens cannot say different things about one
+     * coin. [value] is null on a hole by construction: nothing owned, nothing worth anything.
+     */
+    coin: (typeId: Int) -> CoinRow?,
+    ficha: (typeId: Int) -> FichaRefresh,
+    value: (typeId: Int) -> CoinValue?,
+    /** The sheet's «Ver en Numista», under its arrow: the only way out to the browser a casilla has. */
+    onOpenNumista: (typeId: Int) -> Unit,
+    /** Where the other collections that claim this coin are, from its sheet. */
+    onOpenClaim: (CardDestination) -> Unit,
     onMessage: (UiNotice) -> Unit,
     /** Now, for the age of a hand-asked price (ADR 0030 §4). Read once per opening of the plate. */
     nowMillis: Long,
@@ -121,32 +140,59 @@ fun PlateScreen(
             val plate = remember(result, money, marking.wished, nowMillis) {
                 plateSubject(result, money(result), marking.wished, nowMillis)
             }
-            // The one fork of this screen (ADR 0030 §6): a plate of the collector's is wrapped in the
-            // export machine, and one of the shelf window is not wrapped in it at all. It is not a
-            // disabled button — a PNG of twelve empty holes is a picture of nobody's collection, so
-            // there is nothing there to disable — and what stands in its place is the gesture that
-            // spends.
-            if (plate.mine) {
-                AvailablePlate(
-                    plate = plate,
-                    marking = marking,
-                    images = images,
-                    notebookOptions = notebookOptions,
-                    onNotebookPrinted = onNotebookPrinted,
-                    notebookPages = notebookPages,
-                    onExporting = onExporting,
-                    onOpenSource = onOpenSource,
-                    onMessage = onMessage,
-                    modifier = modifier,
-                )
-            } else {
-                ShowcasePlateSheet(
-                    plate = plate,
-                    marking = marking,
-                    valuation = valuation(result),
-                    images = images,
-                    onOpenSource = onOpenSource,
-                    modifier = modifier,
+            // Which casilla's coin is open, which is this screen's own state like the marking mode
+            // (ADR 0029 §5): a sheet is not a destination, and one left open would be waiting on the
+            // next lámina the collector walks into.
+            var openTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
+            Box(modifier = modifier) {
+                // The one fork of this screen (ADR 0030 §6): a plate of the collector's is wrapped in
+                // the export machine, and one of the shelf window is not wrapped in it at all. It is
+                // not a disabled button — a PNG of twelve empty holes is a picture of nobody's
+                // collection, so there is nothing there to disable — and what stands in its place is
+                // the gesture that spends.
+                if (plate.mine) {
+                    AvailablePlate(
+                        plate = plate,
+                        marking = marking,
+                        images = images,
+                        notebookOptions = notebookOptions,
+                        onNotebookPrinted = onNotebookPrinted,
+                        notebookPages = notebookPages,
+                        onExporting = onExporting,
+                        onOpenSource = onOpenSource,
+                        onOpenCoin = { typeId -> openTypeId = typeId },
+                        onMessage = onMessage,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else {
+                    ShowcasePlateSheet(
+                        plate = plate,
+                        marking = marking,
+                        valuation = valuation(result),
+                        images = images,
+                        onOpenSource = onOpenSource,
+                        onOpenCoin = { typeId -> openTypeId = typeId },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                CoinSheetOverlay(
+                    typeId = openTypeId,
+                    coin = coin,
+                    // The face the casilla was resting on, and the one behind it: the plate declares
+                    // `printed_side` and its sheet obeys the same declaration (ADR 0020, #227), or the
+                    // coin would turn over on its way into a sheet that promised it was the same one.
+                    faces = { typeId ->
+                        val pictures = images[typeId]
+                        pictures?.printedPhoto(plate.printedSide) to
+                            pictures?.printedPhoto(plate.printedSide.other)
+                    },
+                    ficha = ficha,
+                    value = value,
+                    onDismiss = { openTypeId = null },
+                    onOpenNumista = onOpenNumista,
+                    onOpenClaim = onOpenClaim,
+                    // The lámina you are standing on is not a door out of its own casilla's sheet.
+                    here = CardDestination.Plate(plate.catalogId),
                 )
             }
         }
@@ -167,6 +213,7 @@ private fun ShowcasePlateSheet(
     valuation: PlateValuation,
     images: Map<Int, TypeImages>,
     onOpenSource: (String) -> Unit,
+    onOpenCoin: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -178,6 +225,7 @@ private fun ShowcasePlateSheet(
             export = null,
             valuation = valuation,
             onOpenSource = onOpenSource,
+            onOpenCoin = onOpenCoin,
         )
     }
 }
@@ -224,6 +272,7 @@ private fun AvailablePlate(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
+    onOpenCoin: (Int) -> Unit,
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -252,6 +301,7 @@ private fun AvailablePlate(
             ink = ink,
             export = export,
             onOpenSource = onOpenSource,
+            onOpenCoin = onOpenCoin,
         )
     }
 }
@@ -266,7 +316,10 @@ private fun PlateGrid(
     export: SheetExportSurface?,
     /** Null on a plate of the collector's, which is not priced by a gesture. */
     valuation: PlateValuation? = null,
+    /** The plate's own «Fuente en Numista», the one label of this screen that leaves the app. */
     onOpenSource: (String) -> Unit,
+    /** What the year of a casilla opens: the coin's sheet, inside the app (#508). */
+    onOpenCoin: (Int) -> Unit,
 ) {
     // Whether the collector is marking right now, which is this screen's own state and nothing else's
     // (ADR 0029 §5). It survives a scroll because it is held outside the lazy grid, and it does not
@@ -374,7 +427,7 @@ private fun PlateGrid(
                     // same casilla the plate is scrolled to, so the landing is the one thing the
                     // journey promised — «es la misma moneda» (ADR 0026 §3).
                     travellingFrom = plate.catalogId.takeIf { index == plate.landingCell },
-                    onOpenSource = onOpenSource,
+                    onOpenCoin = onOpenCoin,
                     // Only while the mode is open, which is what turns the body of an empty hole
                     // from «turn the coin over» into «lo busco» and back (ADR 0029 §5).
                     onMark = if (picking) marking.onToggle else null,
@@ -517,7 +570,14 @@ internal fun PlateCell(
     printedSide: PrintedSide,
     /** The catalog whose card this casilla receives the coin from, and null for every other one. */
     travellingFrom: String?,
-    onOpenSource: (String) -> Unit,
+    /**
+     * What the year's sunken tag opens: this coin's sheet, over the lámina (#508).
+     *
+     * It used to hand the type's URL to a browser, which is what the audit of 14 August 2026 caught:
+     * of the two targets of a casilla (ADR 0026 §3) one turned the coin over and the other left the
+     * app, and nothing on the tag said which was which — no arrow fits on it (#298, #302).
+     */
+    onOpenCoin: (Int) -> Unit,
     /**
      * What toggling this casilla's mark does, while the marking mode is open (ADR 0029 §5).
      *
@@ -529,8 +589,9 @@ internal fun PlateCell(
     onMark: ((WishKey) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
-    // An announced member has no Numista page to open: the coin is not in the catalogue.
-    val open = cell.numistaTypeId?.let { typeId -> { onOpenSource(numistaTypeUrl(typeId)) } }
+    // An announced member has no ficha to open: the coin is not in the catalogue at all, so its tag
+    // stays a label and takes no tap — which is what it did before and for the same reason.
+    val open = cell.numistaTypeId?.let { typeId -> { onOpenCoin(typeId) } }
     // Only an empty casilla the app can name: a full one is not something you are looking for, and an
     // announced design has no coin to look for (ADR 0029 §1).
     val mark = cell.wishKey

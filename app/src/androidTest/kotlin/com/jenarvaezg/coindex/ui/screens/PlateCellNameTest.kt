@@ -215,7 +215,7 @@ class PlateCellNameTest {
             images = null,
             printedSide = PrintedSide.Obverse,
             travellingFrom = null,
-            onOpenSource = {},
+            onOpenCoin = {},
             // Keyed by the year, which is what the tag under the hole prints and what the
             // measurements below look the casilla up by.
             modifier = Modifier.width(CELL_WIDTH).testTag("cell-${year ?: name}"),

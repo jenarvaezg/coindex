@@ -338,6 +338,74 @@ class CoinRowTest {
         assertTrue(ShelfFixtures.ONZA_MEXICANA.toString() !in coinAlbumFootnote(britannia))
     }
 
+    /**
+     * The sheet a casilla opens says what Monedas says, because it is the same reading (#508).
+     *
+     * The strongest form the assertion has: not «they agree on the title» but «they are the same row».
+     * A second construction for the sheet is what would let a coin be one thing on a lámina and
+     * another in the grid.
+     */
+    @Test
+    fun `the row of a coin the collector holds is the row the grid draws`() {
+        assertEquals(
+            rows.single { it.typeId == ShelfFixtures.FUERTE },
+            coinRowOf(ShelfFixtures.state, ShelfFixtures.FUERTE),
+        )
+    }
+
+    /**
+     * A hole is a coin like any other, with nothing of it in the collection.
+     *
+     * Half the casillas of a lámina are holes and every one of them now opens this sheet, so the row
+     * has to survive having no piece behind it: no count, no collection, and a «×0» nowhere in sight.
+     */
+    @Test
+    fun `a type no piece of which is held reads as a coin with nothing in it`() {
+        val state = stateOf(
+            meta = TypeMeta(
+                id = 10,
+                title = "1 Bolívar",
+                issuerName = "Venezuela",
+                minYear = 1_886,
+                category = "coin",
+            ),
+            items = emptyList(),
+        )
+
+        val row = coinRowOf(state, 10)
+
+        assertEquals("1 Bolívar", row.rawTitle)
+        assertEquals(0, row.quantity)
+        assertEquals(emptyList(), row.claims)
+        assertEquals("Venezuela · 1886 · N# 10", coinFichaIdentity(row))
+    }
+
+    /**
+     * With no piece to be dated by, the type's own arc is what is true — both ends of it.
+     *
+     * The other half of #448: the year a type *opens* is the year of a coin only where the type has
+     * one year, and a date run whose sheet said «1879» over the casilla of 1886 would be giving a
+     * wrong answer where it has a truthful one.
+     */
+    @Test
+    fun `a type held by nobody is dated by the arc the type covers`() {
+        val state = stateOf(
+            meta = TypeMeta(id = 10, title = "5 Bolívares", minYear = 1_879, maxYear = 1_936),
+            items = emptyList(),
+        )
+
+        assertEquals(listOf(1_879, 1_936), coinRowOf(state, 10).years)
+    }
+
+    /** No ficha on the phone and no piece: the Numista number is the only name such a coin has. */
+    @Test
+    fun `a type with no ficha at all is named by its Numista number`() {
+        val row = coinRowOf(stateOf(meta = null, items = emptyList()), 596_807)
+
+        assertEquals("N# 596807", row.rawTitle)
+        assertEquals("Sin año · N# 596807", coinFichaIdentity(row))
+    }
+
     private fun piece(id: Long, typeId: Int, year: Int?) =
         CollectedItem(id = id, quantity = 1, typeId = typeId, issueYear = year)
 
