@@ -152,10 +152,23 @@ fun AlbumHole(
             Canvas(Modifier.fillMaxSize()) {
                 drawCircle(Paper.card.copy(alpha = tone.cardAlpha))
                 val wallWidth = ringDp.dp.toPx()
+                val wallRadius = size.minDimension / 2f - wallWidth / 2f
+                // The hole declares which face it is showing with its own cardboard (#509): as the
+                // coin comes round, the light of the cut crosses to the other side and turns up.
+                // The two profiles are cross-faded on the turn's own progress, so the wall arrives
+                // exactly when the face does and nothing about the board moves.
+                val overTurn = turn / HALF_TURN
                 drawCircle(
                     brush = Brush.sweepGradient(*tone.dieWall.stops(), center = center),
-                    radius = size.minDimension / 2f - wallWidth / 2f,
+                    radius = wallRadius,
                     style = Stroke(width = wallWidth),
+                    alpha = 1f - overTurn,
+                )
+                drawCircle(
+                    brush = Brush.sweepGradient(*tone.dieWall.turnedStops(), center = center),
+                    radius = wallRadius,
+                    style = Stroke(width = wallWidth),
+                    alpha = overTurn,
                 )
                 // A different job from the wall: this is the rule that separates cardboard from
                 // paper, and 1 dp of it at 3:1 is what #349 won. The wall does not have to be dark
@@ -178,6 +191,13 @@ fun AlbumHole(
         ) {
             if (!painted) {
                 Silhouette(Modifier.fillMaxSize())
+            }
+            // A face that came round and never arrived says so, instead of leaving the mute disc
+            // the audit of 14 August 2026 found (#509). It waits for the turn to finish — mid-turn
+            // the photograph is simply still loading — and it is only ever the far face: the one at
+            // rest has the die-cut and the ghost to say what it is.
+            if (!showsFront && turn >= HALF_TURN && (candidates.isEmpty() || (settled && !painted))) {
+                FaceNotDownloaded(Modifier.fillMaxSize())
             }
             if (url != null) {
                 AsyncImage(

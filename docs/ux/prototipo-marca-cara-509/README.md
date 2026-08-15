@@ -24,7 +24,36 @@ hueco y gira**, que es la única manera de juzgar esto.
 
 ## Lo elegido
 
-**Pendiente de Jose.** Esto es el material para decidir, no la decisión.
+**La A+ sola — el troquel al revés, con luz — y el hueco sin la foto voltea y lo dice.** Elegido por
+Jose el 15 de agosto de 2026 con la maqueta delante: «la que más me gusta es la A, el resto no me
+gustan demasiado; la D también está OK». Se descarta sumarle la D: el aro habla solo.
+
+Y con ello el segundo eje se resuelve por construcción: la A **no puede** estar puesta en reposo,
+porque en reposo es el dibujo de hoy. La lámina en reposo queda idéntica, la marca es la excepción,
+y lo que el título del issue pedía —saber *qué cara* miras— se queda fuera a sabiendas: lo que la
+casilla declara es que está vuelta.
+
+### Lo que sólo se supo en el emulador
+
+![La lámina de Paquillos en el AVD: la primera y la tercera vueltas, la del centro en reposo](avd-elegida.jpg)
+
+**De la inversión se ve la mitad, y es la sombra.** Sobre el AVD, la misma fila con dos casillas
+vueltas y una en reposo:
+
+| arco del aro | vuelta | reposo | vuelta − reposo |
+| --- | ---: | ---: | ---: |
+| **abajo** | **172,2** | **185,2** | **−13,0** |
+| arriba | 226,4 | 225,4 | +1,0 |
+
+Las dos casillas vueltas dan **el mismo 172,2**, así que los 13 niveles son el dibujo y no el ruido
+de dos fotografías distintas. Arriba no pasa nada, y no es un fallo del valor: subiendo
+`turnedShadowAlpha` a 1 la parte de abajo cae 59 niveles y **la de arriba sigue moviéndose cero**.
+Es el techo que `sheenAlpha` ya tenía escrito desde el #357 — el cartón está a 243 de 255 y al
+blanco le quedan 12 niveles de recorrido. De modo que lo que una casilla vuelta dice, dicho con
+precisión, es que **la sombra del corte ha cambiado de lado**.
+
+Eso es también la respuesta al «de un vistazo» del ticket: la marca es discreta —que es lo que el
+ticket pedía— y se lee **contra la casilla de al lado**, que en una lámina siempre está ahí.
 
 ## Las cinco marcas
 
@@ -93,8 +122,12 @@ Y sobre los catálogos de hoy:
    tipos distintos pasa lo contrario y es peor: como cada casilla es otra moneda, una vuelta no
    desentona con nada.
 3. **La marca discreta y la marca legible son la misma decisión que el tamaño.** Las dos variantes
-   que no ponen tinta —el troquel de la A y la chapa de la D— se leen al doble y se pierden a
-   tamaño real. Es un resultado limpio: **a 104 dp, o hay tinta o no hay marca**.
+   que no ponen tinta —el troquel de la A y la chapa de la D— se leen al doble y a tamaño real hay
+   que buscarlas. *Corregido con la medida delante*: la primera vuelta de este README dijo que se
+   perdían, y era un juicio sobre una captura. Aislando la marca —la misma fotografía en las dos
+   caras, para que lo único que cambie sea el aro— la A mueve el **38 %** de los píxeles del aro
+   con un Δ medio de 9,0, contra el **5,8 %** y Δ 1,1 que ese mismo aro mueve hoy. No es
+   invisible: es que **compite con el disco**, que ya cambia el 51 % por el propio giro.
 4. **La C está prohibida por el código y no por el gusto.** `AlbumPaper.kt:222` no es un comentario
    suelto: es el resumen de dos tickets que quitaron cosas de encima de la moneda. Una letra sobre
    el metal las reabre.
@@ -104,9 +137,13 @@ Y sobre los catálogos de hoy:
 
 ## Lo que la maqueta no prueba
 
-- **Nada de esto se ha visto en un teléfono** (`medir-en-el-movil-no-en-el-asset`): el navegador
-  elige, el emulador confirma. El brillo del metal, el rebaje de la chapa y el filo del canto de la
-  B se leen distinto a 420 dpi, y la A y la D pueden ganar o perder ahí lo poco que tienen.
+- **De las seis, sólo la elegida se ha visto en un teléfono** (`medir-en-el-movil-no-en-el-asset`):
+  el navegador eligió y el emulador confirmó la A, con lo medido más arriba. La B, la C, la D y la
+  E siguen siendo dibujos de navegador, así que sus números de aquí valen para comparar entre ellas
+  y no para prometer cómo se leen a 420 dpi.
+- **Y lo que el emulador enseñó no estaba en la maqueta**: en HTML las dos mitades de la inversión
+  se ven, y en el teléfono la de arriba no existe. Un navegador sobre un fondo `#EEE8D7` tiene
+  recorrido para subir el blanco; el papel de la app, a 243 de 255, no.
 - **El giro del navegador no es el de Compose.** La perspectiva se traduce del `cameraDistance` por
   el mismo cociente, pero la curva de la animación y el filtrado de la textura no son los mismos.
 - **Las tres respuestas al hueco sin foto son dos movimientos y un rótulo**, y dos de las tres no
@@ -132,11 +169,19 @@ Lo que **no** se versiona es la maqueta: son 2 MB con 68 fotografías de Numista
 `extract.py` y `build.py` son del prototipo y se borran cuando el ticket se cierre. Lo que sobrevive
 es este README.
 
-## Lo que hay que decidir antes de implementar
+## Lo que quedó implementado
 
-1. **Qué marca** — la E es la única que se lee a 104 dp sin romper una regla escrita; la B es la
-   única que no usa letras. Las dos son compatibles.
-2. **Cuándo** — siempre, y entonces la hoja en reposo cambia; o sólo al voltear, y entonces el
-   título del issue se queda a medias.
-3. **Qué hace el hueco sin la foto bajada** — y con ello, si la casilla pasa a conocer un estado
-   que hoy no tiene («la tengo, pero no ha bajado»), que es trabajo de datos y no de dibujo.
+- `DieCutWall.turnedStops()` y sus dos alphas, con lo medido en el AVD escrito al lado del valor.
+- `AlbumPaper` cruza los dos perfiles sobre el propio progreso del giro, así que la pared llega
+  exactamente cuando llega la cara y **nada del cartón se mueve** (ADR 0026 §3).
+- `FaceNotDownloaded`, la única copia que cae dentro de un hueco, y se la gana por ser la
+  alternativa al disco mudo.
+
+## Lo que queda abierto
+
+- **La casilla sigue sin conocer el estado «la tengo, pero su otra cara no ha bajado».** El aviso lo
+  deduce de que la carga se dé por vencida, que es lo que hay: sin red, Coil falla en cuanto no hay
+  socket que abrir, y con red lenta la fotografía acaba llegando y el aviso no aparece. Lo que no
+  cubre es la red lenta de verdad — unos segundos de disco vacío antes de decir nada.
+- **El #517 viste este reparto de gestos**, y ahora tiene una pieza más de la que tirar: si un modo
+  puede cambiar el aire de la rejilla entera, la pared del troquel ya sabe hablar.

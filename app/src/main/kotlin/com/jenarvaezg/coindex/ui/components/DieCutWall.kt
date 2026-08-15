@@ -45,6 +45,26 @@ data class DieCutWall(
      * cut edge 12 levels up, while the ink has 196 to spend going down. Measured in the AVD.
      */
     val sheenAlpha: Float = 0.85f,
+    /**
+     * What the same two alphas become while the coin is resting on its other face (#509).
+     *
+     * The light does not merely swap sides: it is also turned up, because at rest the wall is
+     * competing with nothing and turned it is competing with a photograph that has just changed.
+     * The HTML prototype measured the swap alone at 38 % of the ring's pixels moving against the
+     * 5.8 % that the same ring moves today, and with these two values at 39.5 %.
+     *
+     * **On the AVD only half of the swap is visible, and it is the shadow.** The same casilla
+     * photographed at rest and turned moves the bottom of its ring down 28 of 255 luminance levels
+     * with [turnedShadowAlpha] at 0.42 — and 59 with it at 1, which is how the value was checked to
+     * be doing the work — while the top of the ring moves **exactly zero**, whatever
+     * [turnedSheenAlpha] says. That is the ceiling [sheenAlpha] already documents: the cardboard is
+     * at 243 of 255 and white has nowhere to go. So what a turned casilla actually says is that
+     * *the shadow of the cut has changed sides*, and 0.42 is the shadow that says it without
+     * reading as dirt on the paper. The sheen stays in the profile because the sweep needs both
+     * halves to close, not because a screen can show it.
+     */
+    val turnedShadowAlpha: Float = 0.42f,
+    val turnedSheenAlpha: Float = 1f,
 ) {
     /**
      * The sweep's colour stops, clockwise from 3 o'clock.
@@ -65,6 +85,26 @@ data class DieCutWall(
         0.75f to Paper.ink.copy(alpha = shadowAlpha),
         0.99f to TRANSPARENT_SHADOW,
         1f to TRANSPARENT_SHEEN,
+    )
+
+    /**
+     * The same sweep with the light on the other side, for a hole whose coin is showing its other
+     * face (#509).
+     *
+     * A cut wall is lit by where the light is, so the honest way for a casilla to say it is turned
+     * is that its own cardboard is lit from the other side — no ink, no letter, and not a single dp
+     * of the cell. The two profiles are cross-faded rather than rotated: rotating the sweep would
+     * turn the cardboard, and the cardboard is precisely what ADR 0026 §3 keeps still while the
+     * coin comes round.
+     */
+    fun turnedStops(): Array<Pair<Float, Color>> = arrayOf(
+        0f to TRANSPARENT_SHADOW,
+        0.25f to Paper.ink.copy(alpha = turnedShadowAlpha),
+        0.49f to TRANSPARENT_SHADOW,
+        0.51f to TRANSPARENT_SHEEN,
+        0.75f to Color.White.copy(alpha = turnedSheenAlpha),
+        0.99f to TRANSPARENT_SHEEN,
+        1f to TRANSPARENT_SHADOW,
     )
 
     private companion object {

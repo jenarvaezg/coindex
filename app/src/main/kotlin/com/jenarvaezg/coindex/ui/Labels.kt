@@ -181,6 +181,21 @@ fun pieceLine(piece: DrawnPiece): String {
 const val TURN_THE_COIN_OVER: String = "Dar la vuelta a la moneda"
 
 /**
+ * What a turned hole says when the face that came round has no photograph on this phone (#509).
+ *
+ * It is the only copy that ever falls inside a hole, and it earns the exception by being the
+ * alternative to a mute disc: the audit of 14 August 2026 turned coins over on a phone with the
+ * prefetch still pending and got a blank circle that reads as a broken image. **The photograph is
+ * never missing from the catalogue** — all 848 types across the 75 catalogs carry both faces — so
+ * what this sentence reports is always the same fact and always temporary: ADR 0024 only prefetches
+ * on an unmetered network, and this face has not arrived yet.
+ *
+ * Four words because the hole is 104 dp wide and the sentence has to fit inside the metal without
+ * being a paragraph; «todavía» is what keeps it from reading as a permanent absence.
+ */
+const val FACE_NOT_DOWNLOADED: String = "Esta cara no ha bajado todavía"
+
+/**
  * The one word the completion stamp says (ADR 0026 §3).
  *
  * **One word and not two, open series included.** The #304 prototype drew «al día» for a plate whose
