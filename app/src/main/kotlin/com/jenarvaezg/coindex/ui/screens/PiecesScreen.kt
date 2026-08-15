@@ -66,7 +66,8 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 fun PiecesScreen(
     state: CollectionState,
     subject: PiecesSubject?,
-    onOpenSource: (url: String) -> Unit,
+    /** The card's «Ver en Numista», the one label of this screen that leaves the app (#508). */
+    onOpenNumista: (typeId: Int) -> Unit,
     onMessage: (UiNotice) -> Unit,
     /**
      * How old each piece's ficha is and how to ask Numista again for it (#185). One type per tap:
@@ -164,7 +165,7 @@ fun PiecesScreen(
                     piece = piece,
                     name = pieceName(state, piece.item),
                     images = state.images[piece.item.typeId],
-                    onOpenSource = onOpenSource,
+                    onOpenNumista = onOpenNumista,
                     ficha = ficha(piece.item.typeId),
                 ) {
                     // Dropping a type does not touch the piece (ADR 0013, §10): it stays in the

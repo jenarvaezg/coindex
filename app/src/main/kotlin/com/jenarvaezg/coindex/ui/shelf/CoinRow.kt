@@ -10,8 +10,10 @@ import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.UNKNOWN_YEAR_LABEL
+import com.jenarvaezg.coindex.ui.coinName
 import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.fold
+import com.jenarvaezg.coindex.ui.numistaCodeLabel
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.pieceRawTitle
 import java.text.Collator
@@ -22,6 +24,11 @@ data class CoinClaim(val name: String, val destination: CardDestination)
 
 /**
  * One coin of Coins: a Numista **type** and every piece of it the collector owns.
+ *
+ * Since #508 it is also the reading of a coin the collector owns **none** of, because a casilla of a
+ * lámina opens the same sheet and half of them are holes — see [coinRowOf], which is the only door
+ * such a row comes through. It is one shape and not two on purpose: the sheet says the same sentences
+ * about a coin whichever surface opened it.
  *
  * **By type and not by row**, for the same reason a box stores type ids: two rows of the same type
  * are the same coin twice, and the gesture born here (#173) picks coins. It is also what makes the
@@ -123,24 +130,78 @@ fun coinRows(state: CollectionState): List<CoinRow> {
     for (item in state.items) {
         byType.getOrPut(item.typeId) { mutableListOf() }.add(item)
     }
-    return byType.map { (typeId, pieces) ->
-        val meta = state.typeMeta[typeId]
-        CoinRow(
-            typeId = typeId,
-            name = pieceName(state, pieces.first()),
-            rawTitle = pieceRawTitle(state, pieces.first()),
-            issuer = meta?.country,
-            years = yearsOf(pieces, meta),
-            objectClass = objectClassOf(meta?.category),
-            weightOz = meta?.weightOz,
-            quantity = pieces.fold(0) { total, piece ->
-                saturatingAdd(total, piece.quantity.coerceAtLeast(1))
-            },
-            claims = claimed.byType[typeId].orEmpty(),
-            unclaimedPieces = pieces.count { it.id !in claimed.rowIds },
-        )
-    }.sortedWith(coinReadingOrder())
+    return byType
+        .map { (typeId, pieces) -> coinRow(state, typeId, pieces, claimed) }
+        .sortedWith(coinReadingOrder())
 }
+
+/**
+ * The row of one type read on its own, **whether or not a piece of it is in the collection** (#508).
+ *
+ * The casilla of a lámina opens the coin's sheet inside the app now, and half of the casillas are
+ * holes: the type is real, its ficha is on the phone — the packaged cache holds one for every one of
+ * the 1.172 curated members — and the collector owns nothing of it. Such a row is **not** part of
+ * [coinRows] and never reaches the shelf: it is one coin read for its own sheet, and `quantity` 0 with
+ * an empty `claims` says exactly what it is, no piece and no collection.
+ *
+ * It goes through the same [coinRow] as the rows of the grid, which is the whole point of extracting
+ * it: the sheet of a coin the collector holds must not word one thing when it is opened from Monedas
+ * and another when it is opened from a casilla.
+ */
+fun coinRowOf(state: CollectionState, typeId: Int): CoinRow = coinRow(
+    state = state,
+    typeId = typeId,
+    pieces = state.items.filter { it.typeId == typeId },
+    claimed = claimsOf(state),
+)
+
+private fun coinRow(
+    state: CollectionState,
+    typeId: Int,
+    pieces: List<CollectedItem>,
+    claimed: Claims,
+): CoinRow {
+    val meta = state.typeMeta[typeId]
+    val held = pieces.firstOrNull()
+    return CoinRow(
+        typeId = typeId,
+        name = held?.let { pieceName(state, it) } ?: coinName(typeTitle(meta, typeId)),
+        rawTitle = held?.let { pieceRawTitle(state, it) } ?: typeTitle(meta, typeId),
+        issuer = meta?.country,
+        // A row with no piece has no coin to be dated by, so it says what the **type** says and both
+        // ends of it: see [typeYears]. Nothing changes for a row that does hold pieces.
+        years = if (pieces.isEmpty()) typeYears(meta) else yearsOf(pieces, meta),
+        objectClass = objectClassOf(meta?.category),
+        weightOz = meta?.weightOz,
+        quantity = pieces.fold(0) { total, piece ->
+            saturatingAdd(total, piece.quantity.coerceAtLeast(1))
+        },
+        claims = claimed.byType[typeId].orEmpty(),
+        unclaimedPieces = pieces.count { it.id !in claimed.rowIds },
+    )
+}
+
+/**
+ * What a type is called when no piece of it names it: the ficha's title, and its Numista number when
+ * the phone has no ficha either.
+ *
+ * The number is the last resort and not an apology: every curated member has a ficha in the packaged
+ * cache, so this reaches the screen only on a type nobody has ever read — and «N# 10338» is still the
+ * one name such a coin has.
+ */
+private fun typeTitle(meta: TypeMeta?, typeId: Int): String =
+    meta?.title ?: meta?.displayTitle ?: numistaCodeLabel(typeId)
+
+/**
+ * The years the **type** covers, for a row the collector holds no piece of (#508).
+ *
+ * Both ends and not `minYear` alone, which is the very reading #448 took out of the cards of Monedas:
+ * the year a type opens is the year of a coin only where the type has one year. With no piece there is
+ * no coin's own year to prefer, and a date run's sheet saying «1879 – 1936» is true of the type where
+ * «1879» would be a wrong answer about the casilla the collector just pressed.
+ */
+private fun typeYears(meta: TypeMeta?): List<Int> =
+    listOfNotNull(meta?.minYear, meta?.maxYear).filter { it > 0 }.distinct().sorted()
 
 /**
  * The years of a coin, as the card says them (#448).

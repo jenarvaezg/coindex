@@ -15,6 +15,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +30,7 @@ import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.WishSubject
+import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FieldCard
@@ -33,11 +38,11 @@ import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
-import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.printedFaces
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.wishListFileName
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -69,79 +74,104 @@ fun WishesScreen(
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
-    onOpenSource: (String) -> Unit,
+    /**
+     * The sheet the year of a marked casilla opens (#508).
+     *
+     * The lámina's own, from the same place: a row here **is** a casilla of a plate, so pressing its
+     * year opens the sheet it opens over there.
+     */
+    sheet: CoinSheetSurface,
     onRemove: (WishKey) -> Unit,
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // The same machine a lámina and a hoja use (#430), with a noun of its own: what leaves here is
-    // «la lista», and one page of it is a PNG exactly as one page of a plate is.
-    SheetExportFlow(
-        sheet = SharedSheet.LIST,
-        key = WishLabels.DESTINATION,
-        fileName = wishListFileName(),
-        notebookOptions = notebookOptions,
-        onNotebookPrinted = onNotebookPrinted,
-        notebookPages = notebookPages,
-        onExporting = onExporting,
-        onMessage = onMessage,
-        tally = plateSheetTally(subject.rows.size),
-        modifier = modifier,
-    ) { export ->
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(104.dp),
+    // Which **row** is open — not which type — because the face a casilla rests on is its own plate's
+    // declaration, and the list crosses plates: two marked casillas of one type in two catalogs can
+    // declare different sides (ADR 0020, #227). This screen's own state exactly as it is the lámina's.
+    var openRowId by rememberSaveable { mutableStateOf<String?>(null) }
+    val openRow = subject.rows.firstOrNull { it.id == openRowId }
+    Box(modifier = modifier) {
+        // The same machine a lámina and a hoja use (#430), with a noun of its own: what leaves here is
+        // «la lista», and one page of it is a PNG exactly as one page of a plate is.
+        SheetExportFlow(
+            sheet = SharedSheet.LIST,
+            key = WishLabels.DESTINATION,
+            fileName = wishListFileName(),
+            notebookOptions = notebookOptions,
+            onNotebookPrinted = onNotebookPrinted,
+            notebookPages = notebookPages,
+            onExporting = onExporting,
+            onMessage = onMessage,
+            tally = plateSheetTally(subject.rows.size),
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = WISH_MARGIN, vertical = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-            // The plate's own row gap, because these are the plate's own casillas: what separates two
-            // rows of holes is the sheet's proximity and not its air (see [PlateSpacing]).
-            verticalArrangement = Arrangement.spacedBy(PlateSpacing.rowGap),
-        ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    // No eyebrow and no title: the masthead of this screen already says «Lo que
-                    // busco», and printing it again one line below is the furniture ADR 0026 §5
-                    // prices.
-                    Text(
-                        WishLabels.SENTENCE,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Paper.muted,
-                    )
-                    subject.census?.let { census ->
+        ) { export ->
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(104.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = WISH_MARGIN, vertical = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
+                // The plate's own row gap, because these are the plate's own casillas: what separates two
+                // rows of holes is the sheet's proximity and not its air (see [PlateSpacing]).
+                verticalArrangement = Arrangement.spacedBy(PlateSpacing.rowGap),
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        // No eyebrow and no title: the masthead of this screen already says «Lo que
+                        // busco», and printing it again one line below is the furniture ADR 0026 §5
+                        // prices.
                         Text(
-                            census,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Paper.rust,
+                            WishLabels.SENTENCE,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Paper.muted,
                         )
-                    }
-                    if (subject.rows.isEmpty()) {
-                        FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
+                        subject.census?.let { census ->
                             Text(
-                                WishLabels.EMPTY_EXPLANATION,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Paper.muted,
+                                census,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = Paper.rust,
                             )
                         }
-                    } else {
-                        PrimaryAction(
-                            text = export.label,
-                            onClick = export.onExport,
-                            enabled = export.enabled,
-                        )
-                        export.options?.invoke()
-                        export.progress?.invoke()
+                        if (subject.rows.isEmpty()) {
+                            FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    WishLabels.EMPTY_EXPLANATION,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Paper.muted,
+                                )
+                            }
+                        } else {
+                            PrimaryAction(
+                                text = export.label,
+                                onClick = export.onExport,
+                                enabled = export.enabled,
+                            )
+                            export.options?.invoke()
+                            export.progress?.invoke()
+                        }
                     }
                 }
-            }
-            items(subject.rows, key = DrawnWish::id) { row ->
-                WishCell(
-                    row = row,
-                    images = images[row.typeId],
-                    onOpenSource = onOpenSource,
-                    onRemove = { onRemove(row.key) },
-                )
+                items(subject.rows, key = DrawnWish::id) { row ->
+                    WishCell(
+                        row = row,
+                        images = images[row.typeId],
+                        onOpenCoin = { openRowId = row.id },
+                        onRemove = { onRemove(row.key) },
+                    )
+                }
             }
         }
+        CoinSheetOverlay(
+            typeId = openRow?.typeId,
+            surface = sheet,
+            // The declaration of the row's own plate, read off the row that was pressed. Where the row
+            // is already gone — a sync filled its casilla while the sheet was open — the album's
+            // reverse-first rule answers instead of a plate's.
+            faces = { typeId ->
+                val side = openRow?.printedSide
+                if (side == null) coinAlbumFaces(images[typeId]) else printedFaces(images[typeId], side)
+            },
+            onDismiss = { openRowId = null },
+        )
     }
 }
 
@@ -168,7 +198,7 @@ private val WISH_MARGIN = 20.dp
 private fun WishCell(
     row: DrawnWish,
     images: TypeImages?,
-    onOpenSource: (String) -> Unit,
+    onOpenCoin: () -> Unit,
     onRemove: () -> Unit,
 ) {
     Column(
@@ -194,10 +224,7 @@ private fun WishCell(
             contentAlignment = Alignment.Center,
         ) {
             row.year?.let { year ->
-                RecessedYearTag(
-                    year = year,
-                    onOpen = { onOpenSource(numistaTypeUrl(row.typeId)) },
-                )
+                RecessedYearTag(year = year, onOpen = onOpenCoin)
             }
         }
         row.printedName?.let { name -> PlateCellName(name = name) }

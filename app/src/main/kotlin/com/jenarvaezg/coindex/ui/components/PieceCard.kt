@@ -20,7 +20,6 @@ import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
-import com.jenarvaezg.coindex.ui.numistaTypeUrl
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -50,7 +49,8 @@ fun PieceCard(
     piece: DrawnPiece,
     name: CoinName,
     images: TypeImages?,
-    onOpenSource: (String) -> Unit,
+    /** The one rule the app has for «the page of this type on Numista» (#508). */
+    onOpenNumista: (typeId: Int) -> Unit,
     ficha: FichaRefresh,
     modifier: Modifier = Modifier,
     extra: @Composable ColumnScope.() -> Unit = {},
@@ -94,7 +94,7 @@ fun PieceCard(
                 extra()
                 ExternalLink(
                     text = COIN_VIEW_ON_NUMISTA,
-                    onClick = { onOpenSource(numistaTypeUrl(piece.item.typeId)) },
+                    onClick = { onOpenNumista(piece.item.typeId) },
                 )
                 // Under the link out on purpose: seeing the page is how the collector finds out that
                 // Numista already says something else, and this is what brings that here.

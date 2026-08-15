@@ -8,7 +8,8 @@
   stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
   name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex);
   §4 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (the wish mark travels
-  to paper, and it gets an output of its own); §8 clause 4 amended by
+  to paper, and it gets an output of its own); §3 amended by #508 (the year of a casilla opens the
+  coin's sheet inside the app, and no label without an arrow reaches a browser); §8 clause 4 amended by
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (the annex's list arrives, and the
   shelf is of the plates where something is missing)
 - Date: 2026-08-08
@@ -185,6 +186,32 @@ Coindex. So the ceremony **does not congratulate — it reveals.**
 > reopened it every time. Now what a name does not use falls at the foot of the casilla, where it is
 > added to the separation between rows instead of taken from it, and nothing inside a casilla is
 > measured in the collector's own type. The numbers are in `docs/ux/implementacion-473/`.
+
+> **Amended on 2026-08-15 (§3, #508). The year opens the coin's sheet, and no unmarked label reaches
+> a browser.** «The hole flips, the year goes to Numista» stops being true of the second half. The two
+> targets stand and the tag is untouched — 48.3 × 28 dp, sunken in the cardboard, its 48 dp of target
+> bought with `minimumInteractiveComponentSize` — but what it opens is the sheet of **that coin, over
+> the lámina**: the one Monedas has carried since #370, with «Ver en Numista ↗» and «Actualizar la
+> ficha · 1 llamada» inside it. The audit of 14 August 2026 left for Chrome three times without meaning
+> to, and a wrong tap here does not cost a wrong screen: Numista is behind Cloudflare and the way back
+> is a challenge. What the paragraph above books as a debt — «today's convention falls to the ↗:
+> neither face carries it» — is paid by not owing it: **a door that does not leave the app owes no
+> arrow**, and the rule the audit leaves behind is the other way round — nothing without a ↗ in its
+> label opens a browser. That reaches one more surface, the annex's list of marked casillas (ADR 0029
+> §6), because it draws the plate's casillas and therefore had the same tag.
+>
+> **The sheet brings «Actualizar la ficha · 1 llamada» into the shelf window**, where ADR 0030 §1 says
+> hojear costs nothing. It does not contradict it: what that clause refuses is spending nobody asked
+> for, and this is the shape ADR 0028 §3 requires of a gesture that spends — it prints its ceiling
+> before it is pressed, one call, one coin, on the label itself. A plate of the twenty is browsed for
+> free and stays browsed for free unless the collector presses something that says what it costs.
+>
+> It is also the row #302 could not take: its table dropped «abrir una ficha del tipo» because «no hay
+> tal pantalla» — the ficha was one line inside a card — and #370 built the screen four days later.
+> **The coin does not fly into it**, which is the one thing Monedas' sheet does and this one does not:
+> the hole of a casilla is already one end of the journey of this section, a photograph cannot be two
+> shared elements at once, and what the flight would say — «es la misma moneda» — the casilla said on
+> the way in.
 
 > **Amended on 2026-08-09 (§3, #339). The bit is withdrawn: the sheet stamps every time it is
 > opened.** #304 had costed the ceremony at «one bit per catalog in `NamedValues`» — *ya te lo

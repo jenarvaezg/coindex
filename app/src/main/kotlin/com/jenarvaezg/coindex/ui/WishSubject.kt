@@ -43,7 +43,7 @@ data class DrawnWish(
     val key: WishKey,
     val typeId: Int,
     val label: String,
-    /** The year on the recessed tag, which is also what opens Numista — as on a plate (#302). */
+    /** The year on the recessed tag, which is also what opens the coin's sheet — as on a plate (#508). */
     val year: String?,
     /**
      * Which plate this casilla is a slot of, in the card-sized name (#22).

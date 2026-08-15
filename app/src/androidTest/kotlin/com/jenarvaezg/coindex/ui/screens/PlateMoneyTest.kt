@@ -134,7 +134,7 @@ class PlateMoneyTest {
             images = null,
             printedSide = PrintedSide.Obverse,
             travellingFrom = null,
-            onOpenSource = {},
+            onOpenCoin = {},
             modifier = Modifier.width(CELL_WIDTH).testTag("cell-$year"),
         )
     }

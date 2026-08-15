@@ -67,6 +67,7 @@ import com.jenarvaezg.coindex.ui.components.LocalNavAnimation
 import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
+import com.jenarvaezg.coindex.ui.screens.CoinSheetSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.ExploreScreen
 import com.jenarvaezg.coindex.ui.screens.WishesScreen
@@ -83,6 +84,7 @@ import com.jenarvaezg.coindex.ui.screens.SettingsScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
+import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 @Composable
@@ -126,6 +128,18 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     val openUrl: (String) -> Unit = { url ->
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    }
+
+    // The ficha of one coin on Numista, for **every** label of the app that leaves for it (#508).
+    // One rule and not four: the URL Numista itself handed over, in the language the ficha was asked
+    // in (`TypeMeta.numistaUrl`), and the type's own address where this phone holds no ficha at all.
+    val openTypeOnNumista: (Int) -> Unit = { typeId ->
+        openUrl(state.collection.typeMeta[typeId]?.numistaUrl ?: numistaTypeUrl(typeId))
+    }
+    // The one door of the index, which four places used to open by hand: a card of any species knows
+    // its own destination (ADR 0021 §9), and a claim on a coin's sheet is that same door.
+    val openCard: (CardDestination) -> Unit = { destination ->
+        navController.navigate(routeOf(destination))
     }
 
     // Built here, once, for the three surfaces that print money — the ficha of a coin, the header of
@@ -225,6 +239,28 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             fetchedAt = state.collection.fichaFetchedAt[typeId],
             refreshing = typeId in state.refreshingFichas,
             onRefresh = { viewModel.refreshFicha(typeId) },
+        )
+    }
+
+    // The coin sheet the three surfaces that draw casillas open, assembled once (#508). `coinRowOf`
+    // walks the inventory and the index, so it is **the overlay** that holds one coin's reading still
+    // while its sheet is open; what this keeps still is the lambda, so that remembering can work at
+    // all — a fresh lambda per recomposition would rebuild the row on every frame of the entrance.
+    //
+    // The keys are exactly what the five lambdas read, and they have to be: a surface held past a
+    // change would answer with the collection, the market or the in-flight fichas of a moment ago.
+    val coinSheet = remember(
+        state.collection,
+        state.prices,
+        state.valuation,
+        state.refreshingFichas,
+    ) {
+        CoinSheetSurface(
+            coin = { typeId -> coinRowOf(state.collection, typeId) },
+            ficha = ficha,
+            value = coinValue,
+            onOpenNumista = openTypeOnNumista,
+            onOpenClaim = openCard,
         )
     }
 
@@ -395,9 +431,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 shelf = state.indexShelf,
                                 catalogs = viewModel.catalogs,
                                 onNarrow = viewModel::narrowIndex,
-                                onOpen = { destination ->
-                                    navController.navigate(routeOf(destination))
-                                },
+                                onOpen = openCard,
                                 onOpenCoins = { coinsShelf ->
                                     crossToCoins(navController, viewModel, coinsShelf)
                                 },
@@ -420,16 +454,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             shelf = state.coinsShelf,
                             curatedNames = viewModel.curatedNames,
                             onNarrow = viewModel::narrowCoins,
-                            onOpen = { destination ->
-                                navController.navigate(routeOf(destination))
-                            },
                             onCreateBox = viewModel::createOwnGrouping,
                             onAddToBox = viewModel::addToOwnGrouping,
-                            onOpenSource = openUrl,
                             sewnEdge = sewnEdge,
                             onSettings = { navController.navigate(Routes.SETTINGS) },
-                            ficha = ficha,
-                            value = coinValue,
+                            sheet = coinSheet,
                         )
                     }
                     page(Routes.FIGURES) {
@@ -466,7 +495,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         PiecesScreen(
                             state = state.collection,
                             subject = card?.let { piecesSubject(state.collection, it) },
-                            onOpenSource = openUrl,
+                            onOpenNumista = openTypeOnNumista,
                             onMessage = viewModel::showMessage,
                             ficha = ficha,
                             notebookOptions = state.notebookOptions,
@@ -516,7 +545,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             PiecesScreen(
                                 state = state.collection,
                                 subject = card?.let { piecesSubject(state.collection, it) },
-                                onOpenSource = openUrl,
+                                onOpenNumista = openTypeOnNumista,
                                 onMessage = viewModel::showMessage,
                                 ficha = ficha,
                                 notebookOptions = state.notebookOptions,
@@ -587,7 +616,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onNotebookPrinted = viewModel::notebookPrinted,
                             notebookPages = viewModel::notebookPagesForWishes,
                             onExporting = viewModel::notebookExporting,
-                            onOpenSource = openUrl,
+                            sheet = coinSheet,
                             onRemove = viewModel::removeWish,
                             onMessage = viewModel::showMessage,
                             modifier = Modifier.fillMaxSize(),
@@ -652,6 +681,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 },
                                 onExporting = viewModel::notebookExporting,
                                 onOpenSource = openUrl,
+                                sheet = coinSheet,
                                 onMessage = viewModel::showMessage,
                                 nowMillis = nowMillis,
                                 modifier = Modifier.fillMaxSize(),
