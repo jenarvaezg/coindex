@@ -2,6 +2,8 @@ package com.jenarvaezg.coindex.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -46,6 +48,7 @@ import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FichaBrought
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.LinkText
+import com.jenarvaezg.coindex.ui.components.LocalMotion
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
 import com.jenarvaezg.coindex.ui.shelf.CoinClaim
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
@@ -119,10 +122,11 @@ fun CoinSheetOverlay(
 
     BackHandler(enabled = typeId != null, onBack = onDismiss)
 
+    val moving = LocalMotion.current
     AnimatedVisibility(
         visible = typeId != null,
-        enter = fadeIn() + slideInVertically { it },
-        exit = fadeOut() + slideOutVertically { it },
+        enter = sheetEnter(moving),
+        exit = sheetExit(moving),
     ) {
         val open = exiting ?: return@AnimatedVisibility
         // Read once per coin and not once per recomposition: building the row walks the inventory and
@@ -155,6 +159,18 @@ fun CoinSheetOverlay(
         )
     }
 }
+
+/**
+ * The sheet coming up from the foot of the screen, and none at all where the system asked for quiet.
+ *
+ * [LocalMotion] and not a duration of its own: at zero the app does not animate faster, it does not
+ * animate (#514). Named so the pair can be read — and defended — without an emulator between them.
+ */
+internal fun sheetEnter(moving: Boolean): EnterTransition =
+    if (moving) fadeIn() + slideInVertically { it } else EnterTransition.None
+
+internal fun sheetExit(moving: Boolean): ExitTransition =
+    if (moving) fadeOut() + slideOutVertically { it } else ExitTransition.None
 
 @Composable
 private fun CoinSheet(

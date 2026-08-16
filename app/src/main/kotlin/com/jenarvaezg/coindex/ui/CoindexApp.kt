@@ -421,6 +421,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             // snap of #370 arriving from the other side, and it is why the return — and only the
             // return — is given a fade out. Short: the index is uncovered early and the coin lands
             // on a sheet that has been settled for most of its flight.
+            //
+            // This one is left to Compose where the system asks for quiet (#514) and is not given
+            // an `ExitTransition.None` of its own: at scale zero the tween is over on the frame it
+            // starts, and the single frame it can leak is the plate still covering the index —
+            // which is what «not gone yet» looks like anyway. A shared element leaks a frame of a
+            // photograph in mid-air, which looks like nothing at all, and that is the difference.
             else -> TravelLayout(modifier = content) {
                 NavHost(
                     navController = navController,
