@@ -12,6 +12,7 @@ import com.jenarvaezg.coindex.ui.ExportDestination
 import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
+import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
@@ -47,24 +48,65 @@ sealed class SheetExportJob {
 }
 
 /**
- * The one export door a screen draws, and the two cards it opens.
+ * The button into «Cómo se exporta»: what it says, whether it can be pressed, and the tap.
  *
- * A screen is handed this instead of four pieces of state, which is the whole point: [label] and
- * [enabled] already know whether an export is in flight, and [options] and [progress] are null
- * exactly when there is nothing to draw in their slot. Where they go is still the screen's business
- * — the plate hangs them off its heading item, the hoja gives them rows of their own.
+ * It is a thing of its own because it is **absent** for a whole state of the flow, and a label with
+ * nothing to label is how the panel came to be opened by a grey button that stayed on screen (#512).
  */
-class SheetExportSurface(
+class SheetExportDoor(
     /** «Exportar lámina» / «Exportar hoja», or «Preparando la lámina…» while one is on its way. */
     val label: String,
-    /** False while the panel is open or an export is running: one conversation at a time. */
+    /** False while an export is running: one conversation at a time. */
     val enabled: Boolean,
     val onExport: () -> Unit,
+)
+
+/**
+ * The one export door a screen draws, and the two cards it opens.
+ *
+ * A screen is handed this instead of four pieces of state, which is the whole point: [door] already
+ * knows whether an export is in flight, and the three slots are null exactly when there is nothing
+ * to draw in them. Where they go is still the screen's business — the plate hangs them off its
+ * heading item, the hoja gives them rows of their own.
+ *
+ * **[door] and [options] are never both there** (#512): the panel does not appear beside the button
+ * that opened it, it takes its place. A disabled button repeating a question already on screen is
+ * read as broken, and the way back to it is «Cancelar», which the panel owns.
+ */
+class SheetExportSurface(
+    /** The way in, or null while the panel is standing in its place. */
+    val door: SheetExportDoor?,
     /** «Cómo se exporta», while the collector is answering it. */
     val options: (@Composable () -> Unit)?,
     /** Where the PDF has got to, and the way out of it. A one-page PNG has nothing to report. */
     val progress: (@Composable () -> Unit)?,
 )
+
+/**
+ * The door drawn as a button, and nothing at all while the panel has taken its place (#512).
+ *
+ * The `null` lives here and not in three screens: what each of them owns is **where** the button
+ * goes, which is the modifier, and — for the hoja — a condition of its own. Unpacking the label,
+ * the tap and the enabling three times over is how the two twin export machines of #430 started.
+ *
+ * @param enabled a second condition the screen adds to the flow's: a collection with no piece in it
+ *   has no sheet to export, whatever the machine says about being free.
+ */
+@Composable
+fun SheetExportDoorButton(
+    door: SheetExportDoor?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    door?.let { open ->
+        PrimaryAction(
+            text = open.label,
+            onClick = open.onExport,
+            enabled = open.enabled && enabled,
+            modifier = modifier,
+        )
+    }
+}
 
 /**
  * Exporting a single lámina or hoja: the whole machine, owned once (#430).
@@ -136,11 +178,17 @@ fun SheetExportFlow(
     }
 
     val surface = SheetExportSurface(
-        label = sheetExportLabel(sheet, exporting = job != null),
-        enabled = !configuring && job == null,
-        onExport = {
-            if (!configuring) draft = notebookOptions
-            configuring = true
+        door = if (configuring) {
+            null
+        } else {
+            SheetExportDoor(
+                label = sheetExportLabel(sheet, exporting = job != null),
+                enabled = job == null,
+                onExport = {
+                    draft = notebookOptions
+                    configuring = true
+                },
+            )
         },
         options = pages?.let { measured ->
             {
