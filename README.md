@@ -142,6 +142,23 @@ un canvas software si contiene alguno.
 Si al terminar falta alguna foto, el aviso lo dice y cuántas: la hoja se comparte tal cual, así
 que llamarla «completa» sin serlo era mentir sobre el producto (ADR 0017).
 
+## Exportar datos
+
+«Exportar datos», en Ajustes, comparte una copia de `coindex.db` por el share sheet: la
+colección, las fichas, los precios y las marcas en un solo fichero. Antes de copiarlo se pliega
+el diario (`PRAGMA wal_checkpoint(TRUNCATE)`), porque Room escribe en modo WAL y un fichero
+suelto sin ese paso es la base sin las últimas transacciones.
+
+**La API key no viaja**: se cifra contra la Keystore del dispositivo y no está en ninguna tabla,
+así que un volcado no le gasta cuota a nadie. El alta en el emulador sigue siendo a mano, y no
+toca la red.
+
+El fichero se llama `coindex-<versión>-<fecha>.db`, y ese nombre es la regla: **el APK que lo
+carga tiene que ser de versión igual o posterior a la del que lo exportó**, porque las
+migraciones de Room sólo van hacia delante. Para cargarlo en el emulador se copia al vault de
+`scripts/avd-db.sh` como `coindex.db` y se restaura como cualquier otro volcado. No hay import
+dentro de la app: el destino es un Mac y un AVD, no otro móvil.
+
 ## Fotos del catálogo
 
 Las fotos son de Numista y se piden con el `ImageLoader` que arma `data/photos/`: se pide la

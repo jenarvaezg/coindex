@@ -41,7 +41,34 @@ abstract class CoindexDatabase : RoomDatabase() {
     abstract fun prices(): PriceDao
     abstract fun wishes(): WishDao
 
+    /**
+     * Folds the write-ahead log back into [DATABASE_NAME], so one file holds every transaction (#548).
+     *
+     * Room opens in WAL mode, which is why `scripts/avd-db.sh` carries three files and not one. A
+     * dump that crosses the share sheet is a single file by design, so the log has to be spent before
+     * it is copied — `TRUNCATE` and not `PASSIVE`, because a passive checkpoint gives up whenever a
+     * reader is in the way and says nothing about having done so.
+     *
+     * **And the answer is read, not just the query run.** `PRAGMA wal_checkpoint` reports
+     * `(busy, log, checkpointed)` and never throws: a reader or a writer in the way — a sync in
+     * flight, the ledger stamping a call, the prefetch touching a table — comes back as `busy = 1`
+     * with the log where it was. Dropping that row is how an export taken during a sync becomes a
+     * dump missing exactly the coins that were just added, which is the one failure this whole
+     * gesture exists to avoid. So it is loud, and the collector taps again.
+     */
+    fun checkpoint() {
+        openHelper.writableDatabase.query("PRAGMA wal_checkpoint(TRUNCATE)").use { row ->
+            check(row.moveToFirst()) { "SQLite no contestó al plegar el diario" }
+            // Read by the collector, at the end of «No se pudieron exportar los datos: …», so it
+            // says what to do about it and not which pragma answered what.
+            check(row.getInt(0) == 0) { "la base estaba en uso, inténtalo otra vez" }
+        }
+    }
+
     companion object {
+        /** The one file the collection lives in, on the phone and in the vault of `avd-db.sh`. */
+        const val DATABASE_NAME: String = "coindex.db"
+
         /**
          * Version 2 adds the collector's own groupings (ADR 0013) and touches nothing else.
          *
@@ -373,7 +400,7 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         fun open(context: Context): CoindexDatabase =
-            Room.databaseBuilder(context, CoindexDatabase::class.java, "coindex.db")
+            Room.databaseBuilder(context, CoindexDatabase::class.java, DATABASE_NAME)
                 .addMigrations(
                     MIGRATION_1_2,
                     MIGRATION_2_3,

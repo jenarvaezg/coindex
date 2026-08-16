@@ -14,6 +14,13 @@
 #     scripts/avd-db.sh save        # una vez, con el AVD ya poblado
 #     scripts/avd-db.sh restore     # en cada sesión, después de `adb install -r`
 #
+# El volcado no tiene que salir de un AVD. «Exportar datos», en Ajustes, comparte la base del
+# móvil ya con el diario plegado dentro (#548): se copia al vault como `coindex.db`, sin `-wal`
+# ni `-shm`, y `restore` la carga igual. Es el único canal que hay contra un APK de release, y
+# la única forma de medir la colección del padre sin gastar cuota. La regla al cargarla es la
+# que lleva el nombre del fichero: el APK del emulador tiene que ser de versión igual o
+# posterior a la del que exportó, porque las migraciones de Room sólo van hacia delante.
+#
 # El alta sigue haciendo falta, porque la clave se cifra contra la Keystore del dispositivo y
 # no viaja en la base de datos. No cuesta nada: el formulario valida el formato y guarda, sin
 # tocar la red. Lo que cuesta es pulsar «Sincronizar», y con la base restaurada no hace falta.

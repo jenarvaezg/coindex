@@ -21,6 +21,7 @@ import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
+import com.jenarvaezg.coindex.data.db.DatabaseExport
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -48,6 +49,8 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import java.io.File
+import java.nio.file.Files
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -226,6 +229,7 @@ class CoindexViewModelTest {
         client: () -> NumistaClient? = { numistaClient() },
         warmUp: suspend () -> Unit = { warmedUp += 1 },
         catalogs: List<CollectionCatalog> = emptyList(),
+        dataExport: DatabaseExport = dataExport(),
     ): CoindexViewModel {
         val repository = CoindexRepository(
             collectedItemDao = items,
@@ -251,8 +255,29 @@ class CoindexViewModelTest {
             valuation = valuation,
             client = client,
             warmUpFichaCache = warmUp,
+            dataExport = dataExport,
             installedVersionName = "0.15.0",
         )
+    }
+
+    /**
+     * A dump over real files in a temporary directory (#548).
+     *
+     * Nothing is mocked because there is nothing to mock: [DatabaseExport] is four values and a
+     * lambda, and what this class needs to know about it is what the ViewModel does with the file
+     * it returns and with the failure it throws.
+     */
+    private fun dataExport(
+        base: File = File(exportRoot, "coindex.db").apply { writeText("la colección") },
+    ): DatabaseExport = DatabaseExport(
+        source = base,
+        directory = File(exportRoot, "salida"),
+        versionName = { "0.15.0" },
+        checkpoint = {},
+    )
+
+    private val exportRoot: File by lazy {
+        Files.createTempDirectory("coindex-viewmodel-export").toFile()
     }
 
     /**
@@ -271,11 +296,12 @@ class CoindexViewModelTest {
         // The curated shelf, empty unless a test needs a casilla to mark: what a wish resolves against
         // is the file, so there is no marked slot at all without a catalog that names it (ADR 0029 §2).
         catalogs: List<CollectionCatalog> = emptyList(),
+        dataExport: DatabaseExport = dataExport(),
         given: () -> Unit = {},
         body: suspend TestScope.(CoindexViewModel) -> Unit,
     ) = runTest(dispatcher) {
         given()
-        val viewModel = viewModel(client, warmUp, catalogs)
+        val viewModel = viewModel(client, warmUp, catalogs, dataExport)
         try {
             body(viewModel)
         } finally {
@@ -737,5 +763,44 @@ class CoindexViewModelTest {
         assertEquals(1, second.state.value.photoCache.missing)
         assertEquals(2, second.state.value.photoCache.wanted)
         second.viewModelScope.cancel()
+    }
+
+    /**
+     * The dump is handed back rather than sent: the chooser is an `Intent` and belongs to the screen
+     * (#548).
+     */
+    @Test
+    fun `exporting the data returns the written file`() = onViewModel { viewModel ->
+        val dump = viewModel.exportData()
+
+        // The day itself is `DatabaseExportTest`'s to pin, with a clock it can hold still; what this
+        // one is about is that the file the ViewModel hands over is the one that was written.
+        assertTrue(dump?.name.orEmpty().startsWith("coindex-0.15.0-"))
+        assertEquals("la colección", dump?.readText())
+        assertNull(viewModel.state.value.message)
+    }
+
+    /**
+     * A base that cannot be copied is a message, not a crash: there is nothing on the other side of
+     * this gesture worth taking the app down for.
+     */
+    @Test
+    fun `an export that fails says so and hands back nothing`() = onViewModel(
+        dataExport = dataExport(base = File(exportRoot, "no-existe.db")),
+    ) { viewModel ->
+        val dump = viewModel.exportData()
+
+        assertNull(dump)
+        assertTrue("No se pudieron exportar los datos" in viewModel.state.value.message?.text.orEmpty())
+    }
+
+    /** And the flag it raises comes back down, whichever of the two ways it ended. */
+    @Test
+    fun `the button is free again once the copy is written`() = onViewModel { viewModel ->
+        assertFalse(viewModel.state.value.exportingData)
+
+        viewModel.exportData()
+
+        assertFalse(viewModel.state.value.exportingData)
     }
 }

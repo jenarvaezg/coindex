@@ -25,6 +25,7 @@ import com.jenarvaezg.coindex.data.photos.PhotoCacheStatus
 import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.ui.API_KEY_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.CREDENTIALS_EXPLANATION
+import com.jenarvaezg.coindex.ui.DATA_EXPORT_EXPLANATION
 import com.jenarvaezg.coindex.ui.NOTICES_LABEL
 import com.jenarvaezg.coindex.ui.PHOTO_CACHE_HEADING
 import com.jenarvaezg.coindex.ui.SETTINGS_CREDENTIALS_HEADING
@@ -35,6 +36,7 @@ import com.jenarvaezg.coindex.ui.SettingsValues
 import com.jenarvaezg.coindex.ui.USER_ID_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.VALUATION_HEADING
 import com.jenarvaezg.coindex.ui.apiKeyRevealLabel
+import com.jenarvaezg.coindex.ui.dataExportLabel
 import com.jenarvaezg.coindex.ui.photoCacheLabel
 import com.jenarvaezg.coindex.ui.valuationLabel
 import com.jenarvaezg.coindex.ui.syncActionLabel
@@ -69,10 +71,13 @@ fun SettingsScreen(
      */
     wishSpend: String?,
     syncing: Boolean,
+    /** Whether the raw dump of #548 is being written; two taps would open two choosers. */
+    exporting: Boolean,
     validation: String?,
     onSave: (apiKey: String, userId: String) -> Unit,
     onSignOut: () -> Unit,
     onSync: () -> Unit,
+    onExportData: () -> Unit,
     onOpenNotices: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -174,6 +179,22 @@ fun SettingsScreen(
                     modifier = Modifier.padding(top = 4.dp),
                 )
             }
+        }
+
+        // Before «Cerrar sesión» and not after: both are maintenance, and one of the two is the
+        // gesture that empties the phone. No title — the word is the button (§5).
+        FieldCard(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                DATA_EXPORT_EXPLANATION,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Paper.muted,
+                modifier = Modifier.padding(bottom = 10.dp),
+            )
+            CardAction(
+                text = dataExportLabel(exporting),
+                onClick = onExportData,
+                enabled = !exporting,
+            )
         }
 
         FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
