@@ -126,7 +126,7 @@ a metal to weigh says so instead of showing an empty header.
 
 The case is created by this block and the one before it together: a plate of the shelf window with a
 **marked** casilla has that price from this month's pass and the rest from the day it was valued by
-hand. Neither ADR 0028 §11 nor the provenance rule of #316 covers it — the total is not half done, it
+hand. Neither ADR 0028 §7 nor the provenance rule of #316 covers it — the total is not half done, it
 is whole with two ages.
 
 > **The date of a total is the date of its oldest component.** One date and never two, and never the
