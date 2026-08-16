@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.plaqueOf
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -202,15 +203,20 @@ class PlateCellNameTest {
 
     @Composable
     private fun Cell(name: String?, year: String?, typeId: Int? = A_TYPE) {
+        val label = name ?: year.orEmpty()
         PlateCell(
             cell = DrawnCell(
-                id = name ?: year.orEmpty(),
-                label = name ?: year.orEmpty(),
+                id = label,
+                label = label,
                 numistaTypeId = typeId,
                 footnote = null,
                 year = year,
                 owned = true,
                 missing = false,
+                // What the tag says is the subject's rule and no longer the `year` field (#511):
+                // a casilla built without a plaque wears nothing sunk into its cardboard, which is
+                // not the casilla any of these measurements is about.
+                plaque = plaqueOf(label = label, year = year, yearIsCommon = false),
             ),
             images = null,
             printedSide = PrintedSide.Obverse,

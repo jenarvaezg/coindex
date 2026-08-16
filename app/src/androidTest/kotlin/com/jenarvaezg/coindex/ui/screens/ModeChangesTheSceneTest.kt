@@ -25,6 +25,7 @@ import com.jenarvaezg.coindex.ui.components.SelectionBand
 import com.jenarvaezg.coindex.ui.components.SelectionDoor
 import com.jenarvaezg.coindex.ui.groupPiecesLabel
 import com.jenarvaezg.coindex.ui.namePickedBoxLabel
+import com.jenarvaezg.coindex.ui.plaqueOf
 import com.jenarvaezg.coindex.ui.selectionHintLabel
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertEquals
@@ -193,6 +194,9 @@ class ModeChangesTheSceneTest {
                 owned = !missing,
                 missing = missing,
                 wishKey = A_KEY,
+                // What the tag says is the subject's rule and no longer the `year` field (#511):
+                // a casilla built without a plaque has no year for the mode to take away.
+                plaque = plaqueOf(label = "Bolívar", year = A_YEAR, yearIsCommon = false),
             ),
             images = null,
             printedSide = PrintedSide.Reverse,
