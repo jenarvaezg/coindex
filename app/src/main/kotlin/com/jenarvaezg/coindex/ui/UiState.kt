@@ -49,6 +49,13 @@ data class UiState(
     val fatalError: String? = null,
     val update: UpdateStatus = UpdateStatus.UpToDate,
     val updating: Boolean = false,
+    /**
+     * Whether the raw dump of #548 is being written, read only by the settings screen.
+     *
+     * A flag and not a set, unlike [refreshingFichas]: there is one base and one button, and the
+     * whole of what it protects is a second tap opening a second chooser over a second copy.
+     */
+    val exportingData: Boolean = false,
     val versionName: String = "",
     /**
      * What the collector is looking through, on each of the two hierarchies (ADR 0021 §1).

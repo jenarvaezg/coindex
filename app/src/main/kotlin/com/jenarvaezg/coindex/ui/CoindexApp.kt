@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.db.DATABASE_MIME_TYPE
 import com.jenarvaezg.coindex.data.prices.showcaseCallCount
 import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
 import com.jenarvaezg.coindex.data.update.UpdateStatus
@@ -86,6 +88,7 @@ import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 import com.jenarvaezg.coindex.ui.theme.Paper
+import kotlinx.coroutines.launch
 
 @Composable
 fun CoindexApp(viewModel: CoindexViewModel) {
@@ -93,6 +96,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val navController = rememberNavController()
     val snackbarHost = remember { SnackbarHostState() }
     val context = LocalContext.current
+    // Tied to the composition and not to the ViewModel: what runs on it ends in a chooser, and a
+    // chooser opened after the screen is gone is a chooser for nobody.
+    val scope = rememberCoroutineScope()
     val backStackEntry by navController.currentBackStackEntryAsState()
 
     // Al volver a primer plano se recomprueba, con el suelo de tiempo de shouldCheckForUpdate.
@@ -623,6 +629,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             // marked the pass is the fixed thing it always was.
                             wishSpend = wishBudgetLabel(wishCalls),
                             syncing = state.syncing,
+                            exporting = state.exportingData,
                             validation = state.validation,
                             onSave = { apiKey, userId ->
                                 if (viewModel.saveSettings(apiKey, userId)) {
@@ -638,6 +645,24 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 viewModel.signOut()
                             },
                             onSync = viewModel::sync,
+                            // Written by the ViewModel and sent from here, like every other export:
+                            // the chooser is an Intent and the Intent belongs to the screen (#548).
+                            onExportData = {
+                                scope.launch {
+                                    viewModel.exportData()?.let { dump ->
+                                        runCatching {
+                                            handToShareSheet(
+                                                context = context,
+                                                file = dump,
+                                                mimeType = DATABASE_MIME_TYPE,
+                                                title = DATA_EXPORT_CHOOSER_TITLE,
+                                            )
+                                        }.onFailure { failure ->
+                                            viewModel.showMessage(dataExportFailure(failure.message))
+                                        }
+                                    }
+                                }
+                            },
                             onOpenNotices = { navController.navigate(Routes.NOTICES) },
                         )
                     }

@@ -74,6 +74,40 @@ const val SIGN_OUT_EXPLANATION: String =
         "sincronizadas se quedan donde están."
 
 /**
+ * The raw base leaving the phone, which is a card with one line and one button (#548).
+ *
+ * The one word it has to say is **what the file is for**, because «Exportar datos» next to «Exportar
+ * lámina» reads as the same gesture with a wider subject, and it is not: a lámina is made for a
+ * person to look at and this is the base itself, made for a machine to load. The line names the two
+ * things that make it safe to send — everything the phone holds, and not the API key.
+ */
+const val DATA_EXPORT_ACTION: String = "Exportar datos"
+const val DATA_EXPORT_EXPLANATION: String =
+    "Comparte una copia de la base de datos de este teléfono: la colección, las fichas y los " +
+        "precios, en un solo fichero para cargar en otro sitio. La API key no va dentro."
+
+/**
+ * The same button while the copy is being written.
+ *
+ * The base is a few megabytes and the copy is quick, but nothing appears on screen until the chooser
+ * opens, so the gap is long enough for a second tap — and two taps are two choosers. The button says
+ * what it is doing rather than going quietly grey.
+ */
+fun dataExportLabel(exporting: Boolean): String =
+    if (exporting) "Exportando…" else DATA_EXPORT_ACTION
+
+/** The chooser's own title, which is the only word Android puts over the list of destinations. */
+const val DATA_EXPORT_CHOOSER_TITLE: String = "Compartir los datos"
+
+/** Said when the copy could not be written, with whatever the failure had to say for itself. */
+fun dataExportFailure(cause: String?): String =
+    if (cause.isNullOrBlank()) {
+        "No se pudieron exportar los datos."
+    } else {
+        "No se pudieron exportar los datos: $cause"
+    }
+
+/**
  * The way into the notices, and the name of the screen it opens.
  *
  * One string for the row in Ajustes and for the masthead of what it opens (ADR 0026 §14: three

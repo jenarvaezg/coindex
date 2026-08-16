@@ -16,6 +16,8 @@ import com.jenarvaezg.coindex.data.SyncLog
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
+import com.jenarvaezg.coindex.data.db.DATABASE_EXPORT_DIR
+import com.jenarvaezg.coindex.data.db.DatabaseExport
 import com.jenarvaezg.coindex.data.ficha.FichaBackfill
 import com.jenarvaezg.coindex.data.photos.CoilPhotoPrefetch
 import com.jenarvaezg.coindex.data.photos.DevicePrefetchConditions
@@ -45,6 +47,7 @@ import com.jenarvaezg.coindex.ui.shelf.ShelfStore
 import com.jenarvaezg.coindex.ui.shelf.StoredShelves
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
+import java.io.File
 
 /**
  * Manual dependency wiring. The app is small and single-user; a DI framework would add more
@@ -73,6 +76,22 @@ class AppContainer(context: Context) {
 
     /** How the collector printed their notebook last time: the five switches of #228. */
     val notebook: NotebookStore by lazy { StoredNotebook(applicationContext) }
+
+    /**
+     * A checkpointed copy of the base, for the share sheet (#548).
+     *
+     * Built here rather than in the ViewModel because it is the one place the database is reachable,
+     * and it leaves as a collaborator with one verb — the rule of this file holds: what a screen is
+     * given is the thing that answers its question, never the tables behind it (#220).
+     */
+    val dataExport: DatabaseExport by lazy {
+        DatabaseExport(
+            source = applicationContext.getDatabasePath(CoindexDatabase.DATABASE_NAME),
+            directory = File(applicationContext.cacheDir, DATABASE_EXPORT_DIR),
+            versionName = ::installedVersionName,
+            checkpoint = database::checkpoint,
+        )
+    }
 
     /** What is left of this month's API allowance, and the only reader of `api_call_log`. */
     val calls: ApiCallLedger by lazy { ApiCallLedger(database.apiCalls()) }

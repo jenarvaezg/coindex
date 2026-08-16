@@ -40,8 +40,8 @@ android {
         minSdk = 29
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 73
-        versionName = "1.4.8"
+        versionCode = 74
+        versionName = "1.5.0"
     }
 
     sourceSets["main"].assets.srcDirs("src/main/assets", "../data")

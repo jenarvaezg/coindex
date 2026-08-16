@@ -11,6 +11,7 @@ import com.jenarvaezg.coindex.data.NotebookStore
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.SyncOutcome
 import com.jenarvaezg.coindex.data.TypeRefresh
+import com.jenarvaezg.coindex.data.db.DatabaseExport
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
@@ -39,6 +40,7 @@ import com.jenarvaezg.coindex.ui.print.wishSections
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.ShelfStore
+import java.io.File
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -85,6 +87,8 @@ class CoindexViewModel(
      * the plate with holes in it of #67.
      */
     private val warmUpFichaCache: suspend () -> Unit,
+    /** A checkpointed copy of the base, for whatever the share sheet hands it to (#548). */
+    private val dataExport: DatabaseExport,
     private val installedVersionName: String,
 ) : ViewModel() {
     private val repository by lazy(repository)
@@ -445,6 +449,26 @@ class CoindexViewModel(
         _state.update { it.copy(onboarded = false, validation = null) }
     }
 
+    /**
+     * Writes the raw base out and hands back the file for the share sheet (#548).
+     *
+     * Returns the file rather than sending it: the chooser is an `Intent` and belongs to the screen,
+     * as every other export in the app does. A failure is a message and null — nothing here is worth
+     * taking the app down for, and the collector who reads «no se pudieron exportar los datos» knows
+     * as much as a stack trace would tell them.
+     */
+    suspend fun exportData(): File? {
+        if (_state.value.exportingData) return null
+        _state.update { it.copy(exportingData = true) }
+        return try {
+            runCatching { dataExport.write() }
+                .onFailure { failure -> showMessage(dataExportFailure(failure.message)) }
+                .getOrNull()
+        } finally {
+            _state.update { it.copy(exportingData = false) }
+        }
+    }
+
     /** Drops a stale form error so a screen is never entered with the last visit's complaint. */
     fun clearValidation() {
         _state.update { it.copy(validation = null) }
@@ -748,6 +772,7 @@ class CoindexViewModel(
                     valuation = container.valuation,
                     client = container::numistaClient,
                     warmUpFichaCache = container::warmUpFichaCache,
+                    dataExport = container.dataExport,
                     installedVersionName = container.installedVersionName(),
                 ) as T
             }
