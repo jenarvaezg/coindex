@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.components.LocalCoinGloss
+import com.jenarvaezg.coindex.ui.components.LocalPhotoNotices
 import com.jenarvaezg.coindex.ui.components.LocalStamping
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
@@ -76,6 +77,11 @@ fun OffScreenSheet(density: Density, content: @Composable () -> Unit) {
             // state and travels, the **stamping** is alive and does not. A sheet composed off
             // screen finds the ink already dry rather than watching it fall into a picture.
             LocalStamping provides null,
+            // The same rule for a notice and not for a movement (#510): the mark of a photograph
+            // that has not arrived asks **this** phone to find a wifi, and the PNG is what the
+            // father sends to somebody else. On paper the hole keeps the stand-in disc it has
+            // always had, which is a picture of an album and not of a download.
+            LocalPhotoNotices provides false,
             content = content,
         )
     }
