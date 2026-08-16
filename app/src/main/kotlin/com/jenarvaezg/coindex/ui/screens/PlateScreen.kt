@@ -55,12 +55,15 @@ import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.HoleStamp
+import com.jenarvaezg.coindex.ui.components.ModeBand
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
+import com.jenarvaezg.coindex.ui.components.outsideTheMode
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
+import com.jenarvaezg.coindex.ui.components.sheetUnderMode
 import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
@@ -289,6 +292,18 @@ private fun AvailablePlate(
     }
 }
 
+/**
+ * The sheet, and under it the band of the mode it is being read in (#517).
+ *
+ * Whether the collector is marking is this screen's own state and nothing else's (ADR 0029 §5). It
+ * survives a scroll because it is held outside the lazy grid, and it does not survive leaving the
+ * plate: the mode is the gesture, not a setting.
+ *
+ * The band is a **row of this column** and not a bar floating over the casillas: it takes its height
+ * off the grid, so the last row of holes is never underneath it and there is no inset to keep in step
+ * with it. What it holds is what the header used to hold and scroll away with — the sentence that
+ * names the spend, and the way out.
+ */
 @Composable
 private fun PlateGrid(
     plate: PlateSubject,
@@ -304,11 +319,48 @@ private fun PlateGrid(
     /** What the year of a casilla opens: the coin's sheet, inside the app (#508). */
     onOpenCoin: (Int) -> Unit,
 ) {
-    // Whether the collector is marking right now, which is this screen's own state and nothing else's
-    // (ADR 0029 §5). It survives a scroll because it is held outside the lazy grid, and it does not
-    // survive leaving the plate: the mode is the gesture, not a setting.
     var picking by remember { mutableStateOf(false) }
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        PlateSheet(
+            plate = plate,
+            marking = marking,
+            images = images,
+            ink = ink,
+            export = export,
+            valuation = valuation,
+            onOpenSource = onOpenSource,
+            onOpenCoin = onOpenCoin,
+            picking = picking,
+            onPicking = { picking = it },
+            modifier = Modifier.weight(1f),
+        )
+        if (picking) {
+            ModeBand(sentence = WishLabels.MARK_HINT) {
+                CardAction(
+                    text = WishLabels.MARK_DONE_ACTION,
+                    onClick = { picking = false },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlateSheet(
+    plate: PlateSubject,
+    marking: PlateMarking,
+    images: Map<Int, TypeImages>,
+    ink: State<Float>,
+    export: SheetExportSurface?,
+    valuation: PlateValuation?,
+    onOpenSource: (String) -> Unit,
+    onOpenCoin: (Int) -> Unit,
+    /** Whether the marking mode is open, which is what this whole sheet is drawn in (#517). */
+    picking: Boolean,
+    onPicking: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(modifier = modifier.sheetUnderMode(picking)) {
         // Which casilla the sheet opens on depends on how many of them share a row, and the grid
         // will not say it until it measures, so the same arithmetic it uses is read off the width
         // here. Nothing about the name is decided from it any more: see [PlateCell] (#473).
@@ -378,22 +430,17 @@ private fun PlateGrid(
                     // The door into the marking mode, last thing before the casillas it is about
                     // (ADR 0029 §5). Absent on a plate with nothing left to look for: a closed plate
                     // has no empty casilla, and a word offering to mark nothing is furniture.
-                    if (plate.cells.any { it.missing && it.wishKey != null }) {
+                    //
+                    // **Only the door.** Once the mode is open the header has nothing left to say
+                    // about it: the sentence and the way out live in the band at the foot, where
+                    // they are still there two screens further down (#517). A door printed here as
+                    // well would be the same gesture in two places, one of which is usually off
+                    // screen.
+                    if (!picking && plate.cells.any { it.missing && it.wishKey != null }) {
                         CardAction(
-                            text = if (picking) {
-                                WishLabels.MARK_DONE_ACTION
-                            } else {
-                                WishLabels.MARK_ACTION
-                            },
-                            onClick = { picking = !picking },
+                            text = WishLabels.MARK_ACTION,
+                            onClick = { onPicking(true) },
                         )
-                        if (picking) {
-                            Text(
-                                WishLabels.MARK_HINT,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Paper.muted,
-                            )
-                        }
                     }
                     ExternalLink(
                         text = NUMISTA_SOURCE_LINK,
@@ -415,6 +462,7 @@ private fun PlateGrid(
                     // Only while the mode is open, which is what turns the body of an empty hole
                     // from «turn the coin over» into «lo busco» and back (ADR 0029 §5).
                     onMark = if (picking) marking.onToggle else null,
+                    picking = picking,
                 )
             }
         }
@@ -590,19 +638,33 @@ internal fun PlateCell(
      * nobody announced.
      */
     onMark: ((WishKey) -> Unit)? = null,
+    /**
+     * Whether the marking mode is open on this plate, which is not the same as this casilla being
+     * markable (#517).
+     *
+     * A full casilla is told too, because what it has to do while the mode is open is **step back**:
+     * the sheet means one thing at a time, so its year stops opening a sheet, its coin stops turning
+     * over, and it is drawn faint — the three halves of one statement, «the mode is not about me».
+     * Without it the grid looked identical inside the mode and outside it, and a casilla that was
+     * not marking anything still answered two other gestures.
+     */
+    picking: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    // An announced member has no ficha to open: the coin is not in the catalogue at all, so its tag
-    // stays a label and takes no tap — which is what it did before and for the same reason.
-    val open = cell.numistaTypeId?.let { typeId -> { onOpenCoin(typeId) } }
     // Only an empty casilla the app can name: a full one is not something you are looking for, and an
     // announced design has no coin to look for (ADR 0029 §1).
     val mark = cell.wishKey
         ?.takeIf { cell.missing }
         ?.let { key -> onMark?.let { toggle -> { toggle(key) } } }
+    // An announced member has no ficha to open: the coin is not in the catalogue at all, so its tag
+    // stays a label and takes no tap — which is what it did before and for the same reason. And
+    // while a mode is open nobody's tag opens anything: the plate is being marked, not read.
+    val open = cell.numistaTypeId
+        ?.takeUnless { picking }
+        ?.let { typeId -> { onOpenCoin(typeId) } }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().outsideTheMode(picking && mark == null),
     ) {
         // The hole and what is laid inside it. The chip is drawn here and not by `AlbumHole`,
         // which the axes and the loose coins share: what a casilla costs is the plate's business,
@@ -621,16 +683,21 @@ internal fun PlateCell(
                 photo = images?.printedPhoto(printedSide),
                 missing = cell.missing,
                 // Two targets on a casilla and not one (#302): the body of the hole turns the coin
-                // over, and the year under it goes out to Numista. **Unless it is being marked**, and
+                // over, and the year under it goes out to Numista. **Unless a mode is open**, and
                 // then the far face is withheld rather than the tap overridden: `AlbumHole` takes its
                 // tap from having a second face, so this is what hands the body over to the mark
-                // without giving the hole a second rule about which of two things a press means.
-                otherSide = if (mark == null) images?.printedPhoto(printedSide.other) else null,
+                // without giving the hole a second rule about which of two things a press means. It
+                // is withheld on every casilla and not only on the markable ones (#517): with the
+                // mode open a full hole that still turned over would be the second meaning of a tap
+                // that the mode exists to take away.
+                otherSide = if (!picking) images?.printedPhoto(printedSide.other) else null,
                 modifier = Modifier
                     .size(104.dp)
                     .travellingCoin(travellingFrom),
             )
-            HoleStamp(cost = cell.cost, wished = cell.wished)
+            // The chip says the mark before it exists while the mode is open (#517): a hole that
+            // answers the tap wears the word as a ghost, and a full one wears nothing at all.
+            HoleStamp(cost = cell.cost, wished = cell.wished, markable = mark != null)
         }
         // The tag's own target, reserved whether or not there is a tag to put in it: an announced
         // member has no year, and one that has a year but no Numista page does not buy the 48 dp

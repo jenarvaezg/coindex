@@ -45,8 +45,10 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.SearchField
-import com.jenarvaezg.coindex.ui.components.SelectionControls
+import com.jenarvaezg.coindex.ui.components.SelectionBand
+import com.jenarvaezg.coindex.ui.components.SelectionDoor
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
+import com.jenarvaezg.coindex.ui.components.sheetUnderMode
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
 import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
@@ -130,72 +132,82 @@ fun CoinsScreen(
         curatedNames + state.ownGroupings.map { it.name }
     }
     Box(modifier = modifier.fillMaxSize()) {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val columns = indexColumns(maxWidth)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(columns),
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                // The two-range cartouche itself pays the measured height cost. Reusing the album's
-                // 6 dp row seam keeps that cost from being paid a second time as empty cardboard.
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                coinFullWidth {
-                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        AlbumChrome(
-                            counts = sewnEdge,
-                            onSettings = onSettings,
-                        )
-                        SearchField(value = query, onValueChange = { query = it })
-                        FilterShelf(
-                            summary = coinsShelfSummary(shelf, expanded = open),
-                            tally = coinsTally(shown.size, rows.size),
-                            expanded = open,
-                            onToggle = { open = !open },
-                        ) {
-                            CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
+        // The album, and under it the band of the mode it is being read in (#517). The band is a row
+        // of this column rather than a bar over the cards: it takes its height off the grid, so the
+        // last row of coins is never underneath it.
+        Column(modifier = Modifier.fillMaxSize()) {
+            BoxWithConstraints(modifier = Modifier.weight(1f).sheetUnderMode(selection.active)) {
+                val columns = indexColumns(maxWidth)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(columns),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    // The two-range cartouche itself pays the measured height cost. Reusing the album's
+                    // 6 dp row seam keeps that cost from being paid a second time as empty cardboard.
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    coinFullWidth {
+                        Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                            AlbumChrome(
+                                counts = sewnEdge,
+                                onSettings = onSettings,
+                            )
+                            SearchField(value = query, onValueChange = { query = it })
+                            FilterShelf(
+                                summary = coinsShelfSummary(shelf, expanded = open),
+                                tally = coinsTally(shown.size, rows.size),
+                                expanded = open,
+                                onToggle = { open = !open },
+                            ) {
+                                CoinsFacets(rows = rows, shelf = shelf, query = query, onNarrow = onNarrow)
+                            }
+                            if (rows.isNotEmpty()) {
+                                SelectionDoor(
+                                    selection = selection,
+                                    shown = shown.map { it.typeId },
+                                    seeded = seeded,
+                                )
+                            }
                         }
-                        if (rows.isNotEmpty()) {
-                            SelectionControls(
-                                selection = selection,
-                                existing = state.ownGroupings,
-                                taken = taken,
-                                shown = shown.map { it.typeId },
-                                seeded = seeded,
-                                onCreate = onCreateBox,
-                                onAddTo = onAddToBox,
+                    }
+
+                    if (shown.isEmpty()) {
+                        coinFullWidth {
+                            EmptyCoins(
+                                everything = rows.isEmpty(),
+                                onClear = { onNarrow(CoinsShelf()); query = "" },
                             )
                         }
                     }
-                }
 
-                if (shown.isEmpty()) {
-                    coinFullWidth {
-                        EmptyCoins(
-                            everything = rows.isEmpty(),
-                            onClear = { onNarrow(CoinsShelf()); query = "" },
+                    items(shown, key = { it.typeId }) { row ->
+                        val (photo, _) = coinAlbumFaces(state.images[row.typeId])
+                        CoinAlbumCell(
+                            row = row,
+                            photo = photo,
+                            // The cell yields the coin while its ficha is open, so the shared element
+                            // has one owner at a time (#370).
+                            travelling = selectedTypeId != row.typeId,
+                            picking = selection.active,
+                            picked = selection.isPicked(row.typeId),
+                            onTap = {
+                                if (selection.active) selection.toggle(row.typeId)
+                                else selectedTypeId = row.typeId
+                            },
                         )
                     }
                 }
-
-                items(shown, key = { it.typeId }) { row ->
-                    val (photo, _) = coinAlbumFaces(state.images[row.typeId])
-                    CoinAlbumCell(
-                        row = row,
-                        photo = photo,
-                        // The cell yields the coin while its ficha is open, so the shared element
-                        // has one owner at a time (#370).
-                        travelling = selectedTypeId != row.typeId,
-                        picking = selection.active,
-                        picked = selection.isPicked(row.typeId),
-                        onTap = {
-                            if (selection.active) selection.toggle(row.typeId)
-                            else selectedTypeId = row.typeId
-                        },
-                    )
-                }
             }
+            SelectionBand(
+                selection = selection,
+                existing = state.ownGroupings,
+                taken = taken,
+                shown = shown.map { it.typeId },
+                seeded = seeded,
+                onCreate = onCreateBox,
+                onAddTo = onAddToBox,
+            )
         }
 
         // The one sheet of a coin, which every surface of the app now opens (#508). Here it is also
@@ -342,7 +354,12 @@ private fun CoinAlbumCell(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .then(if (picked) Modifier.border(2.dp, Paper.rust) else Modifier)
+            // The border a picked card wears, and — while the mode is open — the ghost of that same
+            // border on the ones that are not picked yet (#517). It is what says which things on the
+            // screen the band's sentence is talking about: every card wears the frame it is about to
+            // get, and the chrome above them wears nothing. One rule in two strengths, which is the
+            // same device the empty casilla's chip uses on the plate.
+            .then(pickingBorder(picking = picking, picked = picked))
             .semantics(mergeDescendants = true) { selected = picking && picked }
             .clickable(role = Role.Button, onClick = onTap)
             .padding(bottom = 4.dp),
@@ -366,6 +383,24 @@ private fun CoinAlbumCell(
         )
     }
 }
+
+/**
+ * The frame of a card in the grouping mode: solid once it is picked, a ghost until then (#517).
+ *
+ * Outside the mode there is no frame at all — a card that is not being put anywhere is a card, and
+ * an album page ruled into boxes for no reason is the noise this avoids.
+ */
+private fun pickingBorder(picking: Boolean, picked: Boolean): Modifier = when {
+    picked -> Modifier.border(PICK_RULE, Paper.rust)
+    picking -> Modifier.border(PICK_RULE, Paper.rust.copy(alpha = GHOST_PICK_OPACITY))
+    else -> Modifier
+}
+
+/** The frame is the one the picked card always had; the ghost only changes its ink. */
+private val PICK_RULE = 2.dp
+
+/** Faint enough to read as an empty box, dark enough to survive the paper's own grain. */
+private const val GHOST_PICK_OPACITY = 0.3f
 
 /**
  * Nothing to show, and which of the two reasons it is.
