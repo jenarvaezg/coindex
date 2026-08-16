@@ -59,13 +59,21 @@ data class PriceBook(
      * Same rows as [listings] with the ninety days of `LISTING_LIFETIME_MILLIS` applied, so the ceiling a
      * gesture prints is the ceiling the pass then spends. Rounding a spend **down** is the one direction
      * that sentence must never err in (ADR 0030 §3).
+     *
+     * The cut is `IssueListings.of`'s, the pass's own, and it takes the year map with it: an expired
+     * type's years must not resolve here, or the gesture counts a price per hole **and** the lookup —
+     * seven calls where the pass spends four.
      */
-    fun freshListings(nowMillis: Long): IssueListings = IssueListings(
-        listedTypeIds = listings.listedTypeIds.filterTo(mutableSetOf()) { typeId ->
+    fun freshListings(nowMillis: Long): IssueListings {
+        val listed = listings.listedTypeIds.filterTo(mutableSetOf()) { typeId ->
             listingReadAt[typeId]?.let { nowMillis - it < LISTING_LIFETIME_MILLIS } == true
-        },
-        issueIdByTypeAndYear = listings.issueIdByTypeAndYear,
-    )
+        }
+        return IssueListings(
+            listedTypeIds = listed,
+            issueIdByTypeAndYear = listings.issueIdByTypeAndYear
+                .filterKeys { (typeId, _) -> typeId in listed },
+        )
+    }
 }
 
 fun priceBook(

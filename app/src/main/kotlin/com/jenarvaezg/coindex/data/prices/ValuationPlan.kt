@@ -186,9 +186,12 @@ fun showcaseValuationPlan(plate: ShowcasePlate): ValuationPlan = ValuationPlan(
  *
  * **The pass's own arithmetic and not a second one**: [valuationCallCount] is what a settings line
  * already says about the month, and a gesture that counted its calls its own way would promise a number
- * the pass then did not spend. What it takes is the reads a **screen** holds — `PriceBook.readAt`, which
- * is the same `issue_price_reads` the pass queries — because this is asked while the collector is
- * looking at the plate and must not open the database to say a word.
+ * the pass then did not spend. What it takes is the book a **screen** holds — [PriceBook.readAt] is the
+ * same `issue_price_reads` the pass queries — because this is asked while the collector is looking at
+ * the plate and must not open the database to say a word. And the listings it discounts are
+ * [PriceBook.freshListings]'s, the ones the pass would honour: a type listed four months ago is listed
+ * for the screen and not for the spend, and counting it would print a ceiling under what the pass then
+ * spends (ADR 0030 §3).
  *
  * `hasPrices` is filled with `true` and never read: what decides whether an issue is asked about again
  * is its date alone (see [freshIssues]), and an issue Numista answered with no price is as much on the
@@ -196,16 +199,15 @@ fun showcaseValuationPlan(plate: ShowcasePlate): ValuationPlan = ValuationPlan(
  */
 fun showcaseCallCount(
     plate: ShowcasePlate,
-    priceReadAt: Map<Pair<Int, Int>, Long>,
+    book: PriceBook,
     nowMillis: Long,
-    listings: IssueListings = IssueListings.EMPTY,
 ): Int = valuationCallCount(
     plan = showcaseValuationPlan(plate),
-    reads = priceReadAt.map { (issue, readAt) ->
+    reads = book.readAt.map { (issue, readAt) ->
         IssuePriceReadEntity(issue.first, issue.second, readAt, hasPrices = true)
     },
     nowMillis = nowMillis,
-    listings = listings,
+    listings = book.freshListings(nowMillis),
 )
 
 /**

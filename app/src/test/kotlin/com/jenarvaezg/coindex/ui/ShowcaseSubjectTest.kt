@@ -2,6 +2,8 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.prices.IssueListings
+import com.jenarvaezg.coindex.data.prices.PriceBook
+import com.jenarvaezg.coindex.data.prices.PriceKey
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
@@ -49,8 +51,7 @@ class ShowcaseSubjectTest {
     fun `a plate nobody has valued has no figure, even where its metal could be priced`() {
         val plate = showcase(dateRun("libertad", 1_990..1_992))
 
-        val money =
-            showcaseMoney(plate, state(), IssueListings.EMPTY, SPOT, priced, readAt = { _, _ -> null })
+        val money = showcaseMoney(plate, state(), book())
 
         assertNull(money.entry)
         assertEquals(emptyMap(), money.holeCosts)
@@ -64,7 +65,7 @@ class ShowcaseSubjectTest {
     fun `once valued the plate says what entering costs and how many casillas that covers`() {
         val plate = showcase(dateRun("libertad", 1_990..1_992))
 
-        val money = showcaseMoney(plate, state(), listings(), SPOT, priced, readAt = { _, _ -> NOW })
+        val money = showcaseMoney(plate, state(), book(listings = listings(), readAt = readAll(NOW)))
 
         val entry = requireNotNull(money.entry)
         // Three casillas of type 2, priced at 40 in `unc` — the floor of this fixture's silver is lower.
@@ -86,10 +87,10 @@ class ShowcaseSubjectTest {
         val plate = showcase(dateRun("libertad", 1_990..1_992))
         val august = NOW - 30 * DAY
 
-        val money = showcaseMoney(plate, state(), listings(), SPOT, priced) { _, issueId ->
-            // The 1991 is the marked one, refreshed today; the other two are August's.
-            if (issueId == 71) NOW else august
-        }
+        // The 1991 is the marked one, refreshed today; the other two are August's.
+        val reads = readAll(august) + ((PRICED_TYPE to 71) to NOW)
+
+        val money = showcaseMoney(plate, state(), book(listings = listings(), readAt = reads))
 
         assertEquals(august, requireNotNull(money.entry).readAt)
     }
@@ -106,7 +107,7 @@ class ShowcaseSubjectTest {
         )
         val plate = showcase(catalog("mixed", members))
 
-        val money = showcaseMoney(plate, state(), listings(), SPOT, priced, readAt = { _, _ -> NOW })
+        val money = showcaseMoney(plate, state(), book(listings = listings(), readAt = readAll(NOW)))
 
         assertEquals(2, requireNotNull(money.entry).holes)
         // And the figure is a **floor**: what the plate is made of is three casillas, and the amount
@@ -130,19 +131,20 @@ class ShowcaseSubjectTest {
     fun `a plate is valued once it has been asked about, priced or not`() {
         val plate = showcase(dateRun("libertad", 1_990..1_992))
 
+        val unpriced = book(listings = listings(), prices = emptyMap(), readAt = readAll(NOW))
+
         // Asked, with no catalogue price: the metal still answers, because asking is what made it sayable.
-        val silverOnly = showcaseMoney(plate, state(), listings(), SPOT, { _, _, _ -> null }) { _, _ -> NOW }
+        val silverOnly = showcaseMoney(plate, state(), unpriced)
         assertTrue(silverOnly.entryAsked)
         assertEquals(3, requireNotNull(silverOnly.entry).holes)
 
         // Asked, and nothing at all to say: no catalogue price and no metal on the ficha.
-        val nothing =
-            showcaseMoney(plate, metalless(), listings(), SPOT, { _, _, _ -> null }) { _, _ -> NOW }
+        val nothing = showcaseMoney(plate, metalless(), unpriced)
         assertTrue(nothing.entryAsked)
         assertNull(nothing.entry)
 
         // And never asked at all, which is what the two above are told apart from.
-        val untouched = showcaseMoney(plate, state(), listings(), SPOT, priced) { _, _ -> null }
+        val untouched = showcaseMoney(plate, state(), book(listings = listings()))
         assertFalse(untouched.entryAsked)
         assertNull(untouched.entry)
     }
@@ -164,10 +166,7 @@ class ShowcaseSubjectTest {
             cards = listOf(card("britannia", owned = 3, issued = 42)),
             wishes = listOf(wish(marked.catalog), wish(britannia)),
             state = state(),
-            listings = IssueListings.EMPTY,
-            spot = SPOT,
-            prices = priced,
-            readAt = { _, _ -> null },
+            book = book(),
             nowMillis = NOW,
         )
 
@@ -204,12 +203,13 @@ class ShowcaseSubjectTest {
             cards = emptyList(),
             wishes = emptyList(),
             state = state(),
-            listings = listings(),
-            spot = SPOT,
-            prices = priced,
-            // Only the two valued plates have a read, which is what tells them from the third: without
-            // this the fixture priced all three and the order below passed for the wrong reason.
-            readAt = { _, issueId -> NOW.takeIf { issueId < KOOKA_FIRST_ISSUE } },
+            book = book(
+                listings = listings(),
+                // Only the two valued plates have a read, which is what tells them from the third:
+                // without this the fixture priced all three and the order below passed for the wrong
+                // reason.
+                readAt = readAll(NOW).filterKeys { (_, issueId) -> issueId < KOOKA_FIRST_ISSUE },
+            ),
             nowMillis = NOW,
         )
 
@@ -227,10 +227,7 @@ class ShowcaseSubjectTest {
             cards = emptyList(),
             wishes = emptyList(),
             state = state(),
-            listings = IssueListings.EMPTY,
-            spot = SPOT,
-            prices = priced,
-            readAt = { _, _ -> null },
+            book = book(),
             nowMillis = NOW,
         )
 
@@ -245,12 +242,22 @@ private const val PRICED_TYPE = 2
 /** The issue the 2020 of the fixture's listing is, which is where «nobody valued this» starts. */
 private const val KOOKA_FIRST_ISSUE = 100
 
-/** Issue 70+ of the priced type is worth 40 € in `unc`; nothing else is priced at all. */
-private val priced: (Int, Int, String) -> Double? = { typeId, issueId, grade ->
-    if (typeId == PRICED_TYPE && issueId >= 70 && grade == "unc") 40.0 else null
-}
+/** Every issue the fixture's listing names is worth 40 € in `unc`; nothing else is priced at all. */
+private val PRICED: Map<PriceKey, Double> =
+    listings().issueIdByTypeAndYear.values.associate { PriceKey(PRICED_TYPE, it, "unc") to 40.0 }
 
 private val SPOT = SilverSpot(eurPerTroyOunce = 30.0, readAtMillis = NOW)
+
+/** The book as a test wants it: the fixture's prices and spot, plus what was asked about and when. */
+private fun book(
+    listings: IssueListings = IssueListings.EMPTY,
+    prices: Map<PriceKey, Double> = PRICED,
+    readAt: Map<Pair<Int, Int>, Long> = emptyMap(),
+) = PriceBook(prices = prices, spot = SPOT, listings = listings, readAt = readAt)
+
+/** Every issue the fixture's listing names, read at [at]: a plate the gesture valued that day. */
+private fun readAll(at: Long): Map<Pair<Int, Int>, Long> =
+    listings().issueIdByTypeAndYear.values.associate { (PRICED_TYPE to it) to at }
 
 /** Each year of the fixture's type addressed to an issue, which is what a stored listing answers. */
 private fun listings(): IssueListings = IssueListings(

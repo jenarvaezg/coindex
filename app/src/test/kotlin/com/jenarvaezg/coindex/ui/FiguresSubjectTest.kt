@@ -5,6 +5,8 @@ import com.jenarvaezg.coindex.data.db.TypeIssueEntity
 import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
 import com.jenarvaezg.coindex.data.prices.HOLE_THRESHOLD_SLOTS
 import com.jenarvaezg.coindex.data.prices.IssueListings
+import com.jenarvaezg.coindex.data.prices.PriceBook
+import com.jenarvaezg.coindex.data.prices.PriceKey
 import com.jenarvaezg.coindex.data.prices.holesAreWithinReach
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
@@ -39,7 +41,7 @@ class FiguresSubjectTest {
     /** While the pass has not finished, there is no money section at all. Not a zero, not a strikethrough. */
     @Test
     fun `the money is absent while the market is still arriving`() {
-        val subject = figuresSubject(state(), SPOT, priced, settled = false)
+        val subject = figuresSubject(state(), BOOK, settled = false)
 
         assertNull(subject.money)
         // And everything else is there: the page opens whole out of the APK.
@@ -55,7 +57,7 @@ class FiguresSubjectTest {
      */
     @Test
     fun `waiting, the money's slot says the market has not landed`() {
-        val subject = figuresSubject(state(), SPOT, priced, settled = false, waiting = true)
+        val subject = figuresSubject(state(), BOOK, settled = false, waiting = true)
 
         assertNull(subject.money)
         assertTrue(subject.moneyWaiting)
@@ -64,13 +66,13 @@ class FiguresSubjectTest {
     /** The two reasons that fix themselves are not said: a line that comes and goes is furniture. */
     @Test
     fun `a pass that is about to finish on its own says nothing`() {
-        assertFalse(figuresSubject(state(), SPOT, priced, settled = false).moneyWaiting)
+        assertFalse(figuresSubject(state(), BOOK, settled = false).moneyWaiting)
     }
 
     /** With the market landed there is a section, so there is nothing to explain. */
     @Test
     fun `with the market landed nothing is said about waiting`() {
-        val subject = figuresSubject(state(), SPOT, priced, settled = true, waiting = true)
+        val subject = figuresSubject(state(), BOOK, settled = true, waiting = true)
 
         assertNotNull(subject.money)
         assertFalse(subject.moneyWaiting)
@@ -85,7 +87,7 @@ class FiguresSubjectTest {
     @Test
     fun `the export with the money off does not say the market is missing`() {
         val off = figuresSubject(
-            state(), SPOT, priced, settled = false, moneyAllowed = false, waiting = true,
+            state(), BOOK, settled = false, moneyAllowed = false, waiting = true,
         )
 
         assertFalse(off.moneyWaiting)
@@ -94,13 +96,13 @@ class FiguresSubjectTest {
     /** With no spot there is no money either: the silver floor is what the spot buys. */
     @Test
     fun `with no spot on the phone there is no money section`() {
-        assertNull(figuresSubject(state(), spot = null, prices = priced, settled = true).money)
+        assertNull(figuresSubject(state(), BOOK.copy(spot = null), settled = true).money)
     }
 
     /** Settled, the amount arrives with the day its silver was read. */
     @Test
     fun `settled, the money says its total and the day of its silver`() {
-        val subject = figuresSubject(state(), SPOT, priced, settled = true)
+        val subject = figuresSubject(state(), BOOK, settled = true)
 
         assertEquals(SPOT, subject.money?.spot)
         assertEquals(3, subject.money?.value?.pieces)
@@ -116,14 +118,14 @@ class FiguresSubjectTest {
      */
     @Test
     fun `money off takes the amount and every figure derived from one`() {
-        val off = figuresSubject(state(), SPOT, priced, settled = true, moneyAllowed = false)
+        val off = figuresSubject(state(), BOOK, settled = true, moneyAllowed = false)
 
         assertNull(off.money)
         assertNull(off.portrait?.valueShare, "una cifra derivada del dinero se ha colado")
         assertTrue((off.portrait?.pieceShare ?: 0.0) > 0.0)
         assertTrue((off.portrait?.silverShare ?: 0.0) > 0.0)
 
-        val on = figuresSubject(state(), SPOT, priced, settled = true)
+        val on = figuresSubject(state(), BOOK, settled = true)
         assertTrue((on.portrait?.valueShare ?: 0.0) > 0.0)
     }
 
@@ -138,18 +140,18 @@ class FiguresSubjectTest {
     fun `what was paid arrives with the money and cannot leave without it`() {
         val bought = state(items = listOf(item(id = 1, typeId = 2, grade = "unc", price = 30.0)))
 
-        val paid = figuresSubject(bought, SPOT, priced, settled = true).money?.paid
+        val paid = figuresSubject(bought, BOOK, settled = true).money?.paid
 
         assertEquals(30.0, paid?.paid)
         assertEquals(40.0, paid?.today)
         assertEquals(1, paid?.pieces)
-        assertNull(figuresSubject(bought, SPOT, priced, settled = true, moneyAllowed = false).money)
+        assertNull(figuresSubject(bought, BOOK, settled = true, moneyAllowed = false).money)
     }
 
     /** A collection that declares no price says nothing about what it cost. */
     @Test
     fun `nothing declared leaves the comparison unsaid`() {
-        assertNull(figuresSubject(state(), SPOT, priced, settled = true).money?.paid)
+        assertNull(figuresSubject(state(), BOOK, settled = true).money?.paid)
     }
 
     /**
@@ -160,7 +162,7 @@ class FiguresSubjectTest {
      */
     @Test
     fun `the portrait is the country with the most pieces`() {
-        val portrait = figuresSubject(state(), SPOT, priced, settled = true).portrait
+        val portrait = figuresSubject(state(), BOOK, settled = true).portrait
 
         assertEquals("Venezuela", portrait?.country)
         assertEquals(2, portrait?.pieces)
@@ -172,7 +174,7 @@ class FiguresSubjectTest {
     /** An empty collection has no portrait rather than a country called nothing. */
     @Test
     fun `an empty collection has no portrait`() {
-        val subject = figuresSubject(CollectionState(), SPOT, priced, settled = true)
+        val subject = figuresSubject(CollectionState(), BOOK, settled = true)
 
         assertNull(subject.portrait)
         assertNull(subject.figures.arc)
@@ -187,7 +189,7 @@ class FiguresSubjectTest {
      */
     @Test
     fun `the ladders read in their own units and only the stack is approximate`() {
-        val subject = figuresSubject(state(), SPOT, priced, settled = true)
+        val subject = figuresSubject(state(), BOOK, settled = true)
 
         assertEquals(
             listOf(LadderKind.Weight, LadderKind.Row, LadderKind.Stack),
@@ -207,7 +209,7 @@ class FiguresSubjectTest {
      */
     @Test
     fun `a coin is worth what its pieces are worth, with the origin said`() {
-        val value = coinValue(2, state(), SPOT, priced)
+        val value = coinValue(2, state(), BOOK)
 
         assertEquals(2, value?.pieces)
         assertEquals(80.0, value?.eur)
@@ -225,7 +227,7 @@ class FiguresSubjectTest {
             ),
         )
 
-        val value = coinValue(2, disagreeing, SPOT, priced)
+        val value = coinValue(2, disagreeing, BOOK)
 
         assertEquals(540.0, value?.eur)
         assertNull(value?.source)
@@ -234,7 +236,7 @@ class FiguresSubjectTest {
     /** A coin no source covers is worth nothing that can be said, and prints nothing. */
     @Test
     fun `a coin no source covers has no value`() {
-        assertNull(coinValue(3, state(), spot = null, prices = { _, _, _ -> null }))
+        assertNull(coinValue(3, state(), PriceBook()))
     }
 
     /**
@@ -258,7 +260,7 @@ class FiguresSubjectTest {
             ),
         )
 
-        val value = plateValue(album, state(), SPOT, priced)
+        val value = plateValue(album, state(), BOOK)
 
         assertEquals(2, value?.pieces)
         assertEquals(80.0, value?.eur)
@@ -267,7 +269,7 @@ class FiguresSubjectTest {
     /** A plate with nothing in it has no value, rather than a value of zero. */
     @Test
     fun `an empty plate is worth nothing that can be printed`() {
-        assertNull(plateValue(CollectionCatalogAlbum(emptyList()), state(), SPOT, priced))
+        assertNull(plateValue(CollectionCatalogAlbum(emptyList()), state(), BOOK))
     }
 
     /**
@@ -289,9 +291,7 @@ class FiguresSubjectTest {
                 ),
             ),
             state(),
-            IssueListings.EMPTY,
-            SPOT,
-            priced,
+            BOOK,
         )
 
         assertEquals(80.0, money.value?.eur)
@@ -319,9 +319,7 @@ class FiguresSubjectTest {
         val money = plateMoney(
             albumWith(listOf(hole(id = "b", year = 1_961, issueIds = emptyList()))),
             state(),
-            listings,
-            SPOT,
-            priced,
+            BOOK.copy(listings = listings),
         )
 
         assertEquals(40.0, money.cost?.eur)
@@ -331,7 +329,7 @@ class FiguresSubjectTest {
     /** A closed plate has no cost and no stamps: without a hole there is no zero to word either. */
     @Test
     fun `a complete plate has no cost of closing and no stamps`() {
-        val money = plateMoney(albumWith(emptyList()), state(), IssueListings.EMPTY, SPOT, priced)
+        val money = plateMoney(albumWith(emptyList()), state(), BOOK)
 
         assertEquals(80.0, money.value?.eur)
         assertNull(money.cost)
@@ -351,8 +349,8 @@ class FiguresSubjectTest {
         val withinReach = (1..HOLE_THRESHOLD_SLOTS).map { hole(id = "h$it", year = 1_960 + it) }
         val reproach = withinReach + hole(id = "over", year = 2_000)
 
-        val counted = plateMoney(albumWith(withinReach), state(), IssueListings.EMPTY, SPOT, priced)
-        val over = plateMoney(albumWith(reproach), state(), IssueListings.EMPTY, SPOT, priced)
+        val counted = plateMoney(albumWith(withinReach), state(), BOOK)
+        val over = plateMoney(albumWith(reproach), state(), BOOK)
 
         assertEquals(HOLE_THRESHOLD_SLOTS, counted.cost?.holes)
         assertEquals(HOLE_THRESHOLD_SLOTS, counted.holeCosts.size)
@@ -395,9 +393,10 @@ private fun hole(
 )
 
 /** Issue 7 of type 2 is priced in `unc`; nothing else is. */
-private val priced: (Int, Int, String) -> Double? = { typeId, issueId, grade ->
-    if (typeId == 2 && issueId == 7 && grade == "unc") 40.0 else null
-}
+private val BOOK = PriceBook(
+    prices = mapOf(PriceKey(typeId = 2, issueId = 7, grade = "unc") to 40.0),
+    spot = SPOT,
+)
 
 private fun item(
     id: Long,

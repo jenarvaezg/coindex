@@ -1,7 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.data.prices.IssueListings
+import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.holesWithinReach
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbumMember
@@ -112,20 +112,20 @@ data class FiguresSubject(
  */
 fun figuresSubject(
     state: CollectionState,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
     settled: Boolean,
     moneyAllowed: Boolean = true,
     waiting: Boolean = false,
 ): FiguresSubject {
     val figures = collectionFigures(state.items, state.typeMeta)
+    val spot = book.spot
     val money = if (!moneyAllowed || !settled || spot == null) {
         null
     } else {
         MoneyReading(
-            collectionValue(state.items, state.typeMeta, spot, prices),
+            collectionValue(state.items, state.typeMeta, spot, book::of),
             spot,
-            paidComparison(state.items, state.typeMeta, spot, prices),
+            paidComparison(state.items, state.typeMeta, spot, book::of),
         )
     }
     return FiguresSubject(
@@ -142,7 +142,7 @@ fun figuresSubject(
                 approximate = !figures.stack.complete,
             ),
         ),
-        portrait = portrait(state, figures, money, spot, prices),
+        portrait = portrait(state, figures, money, book),
         // The export never waits: a drawer with the money switched off is not a page missing a
         // section, it is a page that was asked not to have one (ADR 0021 §13).
         moneyWaiting = moneyAllowed && money == null && waiting,
@@ -170,8 +170,7 @@ private fun portrait(
     state: CollectionState,
     figures: CollectionFigures,
     money: MoneyReading?,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
 ): CountryPortrait? {
     if (figures.pieces <= 0) return null
     val byCountry = mutableMapOf<String, MutableCountry>()
@@ -184,7 +183,7 @@ private fun portrait(
         meta.weightGrams?.let { tally.grams += it * quantity }
         fineSilverGrams(meta)?.let { tally.silver += it * quantity }
         if (money != null) {
-            pieceValue(item, meta, spot, prices)?.let { tally.value += it.eur * quantity }
+            pieceValue(item, meta, book.spot, book::of)?.let { tally.value += it.eur * quantity }
         }
     }
     val (country, tally) = byCountry.entries
@@ -234,14 +233,13 @@ data class CoinValue(
 fun coinValue(
     typeId: Int,
     state: CollectionState,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
 ): CoinValue? {
     val meta = state.typeMeta[typeId]
     val valued = state.items
         .filter { it.typeId == typeId }
         .mapNotNull { item ->
-            pieceValue(item, meta, spot, prices)?.let { it to item.quantity.coerceAtLeast(1) }
+            pieceValue(item, meta, book.spot, book::of)?.let { it to item.quantity.coerceAtLeast(1) }
         }
     if (valued.isEmpty()) return null
     val sources = valued.map { (value, _) -> value.source to value.grade }.distinct()
@@ -313,16 +311,15 @@ data class PlateMoney(
 /**
  * The plate's money, assembled once for the header and the casillas that share it.
  *
- * @param listings which issue each empty casilla stands for, as the pass stored it (#452). Without it
- *   only the ten holes of a hundred and twenty-one whose curated file names its issues could be
- *   priced at all.
+ * @param book the whole book and not its readings, so the header and the casillas cannot disagree
+ *   about *when* (ADR 0028). Which issue each empty casilla stands for is its stored listings' answer
+ *   (#452): without them only the ten holes of a hundred and twenty-one whose curated file names its
+ *   issues could be priced at all.
  */
 fun plateMoney(
     album: CollectionCatalogAlbum,
     state: CollectionState,
-    listings: IssueListings,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
     /**
      * The casillas of this album the collector marked, which carry a price whatever the plate's shape
      * (ADR 0029 §4).
@@ -337,9 +334,9 @@ fun plateMoney(
     // the chips inside the casillas have to be about the same holes (ADR 0028 §1).
     val withinReach = holesWithinReach(album)
     val closing = withinReach.mapTo(mutableSetOf()) { it.member.id }
-    val holeCosts = holeCosts(album, state, listings, spot, prices, wished, withinReach)
+    val holeCosts = holeCosts(album, state, book, wished, withinReach)
     return PlateMoney(
-        value = plateValue(album, state, spot, prices),
+        value = plateValue(album, state, book),
         // **Only the holes within reach**, and a marked one past the threshold is deliberately not
         // added: one hole is not the cost of closing a plate of fifty-one, and adding it would print
         // «Coste de cerrar» over a number that closes nothing (ADR 0029 §4). Null and not zero, like
@@ -366,9 +363,7 @@ fun plateMoney(
 private fun holeCosts(
     album: CollectionCatalogAlbum,
     state: CollectionState,
-    listings: IssueListings,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
     wished: Set<WishKey>,
     withinReach: List<CollectionCatalogAlbumMember>,
 ): Map<String, Double> =
@@ -376,10 +371,10 @@ private fun holeCosts(
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
         val cost = holeValue(
             typeId = typeId,
-            issueId = listings.issueOf(hole.member),
+            issueId = book.listings.issueOf(hole.member),
             meta = state.typeMeta[typeId],
-            spot = spot,
-            prices = prices,
+            spot = book.spot,
+            prices = book::of,
         ) ?: return@mapNotNull null
         hole.member.id to cost.eur
     }.toMap()
@@ -431,17 +426,12 @@ data class ShowcaseCost(
  * anybody pressing anything. It is not, for the reason ADR 0028 §1 gives for the plates over its
  * threshold: what a floor-only figure would say is «entrar cuesta al menos esto», and the collector
  * cannot tell it apart from the real price. So the gate is exactly whether **this phone asked about the
- * issue** — `readAt` — which is the same row that makes the date sayable.
- *
- * @param readAt when each issue's price landed, from [com.jenarvaezg.coindex.data.prices.PriceBook].
+ * issue** — [PriceBook.readAt], which is the same row that makes the date sayable.
  */
 fun showcaseMoney(
     plate: ShowcasePlate,
     state: CollectionState,
-    listings: IssueListings,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
-    readAt: (Int, Int) -> Long?,
+    book: PriceBook,
 ): PlateMoney {
     var total = 0.0
     var oldest = Long.MAX_VALUE
@@ -450,10 +440,10 @@ fun showcaseMoney(
         for (hole in plate.album.members) {
             if (hole.status !is CollectionCatalogMemberStatus.Missing) continue
             val typeId = hole.member.numistaTypeId ?: continue
-            val issueId = listings.issueOf(hole.member) ?: continue
+            val issueId = book.listings.issueOf(hole.member) ?: continue
             // Asked about, and therefore sayable. An issue this phone has never priced has no date to
             // show and no figure to show either, whatever its metal is worth.
-            val read = readAt(typeId, issueId) ?: continue
+            val read = book.readAt(typeId, issueId) ?: continue
             // Asked, whatever came back: an issue Numista answered with no price is on the phone as much
             // as a priced one, and the plate has to be able to say so (ADR 0028 §4).
             asked = true
@@ -461,8 +451,8 @@ fun showcaseMoney(
                 typeId = typeId,
                 issueId = issueId,
                 meta = state.typeMeta[typeId],
-                spot = spot,
-                prices = prices,
+                spot = book.spot,
+                prices = book::of,
             ) ?: continue
             put(hole.member.id, cost.eur)
             total += cost.eur
@@ -491,16 +481,14 @@ fun showcaseMoney(
 fun wishCosts(
     slots: List<WishedSlot>,
     state: CollectionState,
-    listings: IssueListings,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
 ): Map<WishKey, Double> = slots.mapNotNull { slot ->
     val cost = holeValue(
         typeId = slot.typeId,
-        issueId = listings.issueOf(slot.member),
+        issueId = book.listings.issueOf(slot.member),
         meta = state.typeMeta[slot.typeId],
-        spot = spot,
-        prices = prices,
+        spot = book.spot,
+        prices = book::of,
     ) ?: return@mapNotNull null
     slot.key to cost.eur
 }.toMap()
@@ -520,8 +508,7 @@ fun wishCosts(
 fun plateValue(
     album: CollectionCatalogAlbum,
     state: CollectionState,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
+    book: PriceBook,
 ): PlateValue? {
     val filled = album.members
         .mapNotNull { it.status as? CollectionCatalogMemberStatus.Owned }
@@ -532,7 +519,7 @@ fun plateValue(
     var total = 0.0
     var pieces = 0
     for (item in state.items.filter { it.id in filled }) {
-        val value = pieceValue(item, state.typeMeta[item.typeId], spot, prices) ?: continue
+        val value = pieceValue(item, state.typeMeta[item.typeId], book.spot, book::of) ?: continue
         val quantity = item.quantity.coerceAtLeast(1)
         total += value.eur * quantity
         pieces = saturatingAdd(pieces, quantity)

@@ -461,19 +461,19 @@ class ValuationPlanTest {
             },
         )
 
-        assertEquals(4, showcaseCallCount(showcase(dates), emptyMap(), NOW))
-        assertEquals(3, showcaseCallCount(showcase(declared), emptyMap(), NOW))
+        assertEquals(4, showcaseCallCount(showcase(dates), PriceBook(), NOW))
+        assertEquals(3, showcaseCallCount(showcase(declared), PriceBook(), NOW))
         // The 900 is on the phone and fresh, so two of the three are left.
         assertEquals(
             2,
-            showcaseCallCount(showcase(declared), mapOf((20 to 900) to NOW), NOW),
+            showcaseCallCount(showcase(declared), PriceBook(readAt = mapOf((20 to 900) to NOW)), NOW),
         )
         // A month later it has expired and is asked about again: this is what «Volver a tasar» buys.
         assertEquals(
             3,
             showcaseCallCount(
                 showcase(declared),
-                mapOf((20 to 900) to NOW - PRICE_LIFETIME_MILLIS - 1),
+                PriceBook(readAt = mapOf((20 to 900) to NOW - PRICE_LIFETIME_MILLIS - 1)),
                 NOW,
             ),
         )
@@ -486,24 +486,31 @@ class ValuationPlanTest {
  * The screen's own reading of the listings ignores expiry on purpose (#493): it has nothing to spend, and
  * ADR 0028 §5 keeps showing an expired row. A gesture that names its calls cannot use that reading — the
  * pass will spend the `/types/{id}/issues` again — and rounding a spend **down** is the one direction that
- * sentence must never err in.
+ * sentence must never err in. The distinction lives inside the book (`freshListings`), so the gesture
+ * cannot be handed the wrong reading by a caller.
  */
 class ShowcaseSpendTest {
     @Test
     fun `a listing past its ninety days is counted as a lookup the pass will pay for`() {
         val dates = dateRun("dates", years = 1_900..1_902, typeId = 20)
-        val reads = listOf(TypeIssueReadEntity(20, NOW - LISTING_LIFETIME_MILLIS - 1))
         val issues = (1_900..1_902).mapIndexed { at, year ->
             TypeIssueEntity(20, 900 + at, at, year, year)
         }
+        fun bookAt(readAt: Long): PriceBook {
+            val reads = listOf(TypeIssueReadEntity(20, readAt))
+            return priceBook(
+                rows = emptyList(),
+                spot = null,
+                listings = IssueListings.held(reads, issues),
+                listingReads = reads,
+            )
+        }
 
-        val held = IssueListings.held(reads, issues)
-        val fresh = IssueListings.of(reads, issues, NOW)
-
-        // Held: the type counts as listed, so only the three prices are counted — and the pass would
-        // spend a fourth call on the listing.
-        assertEquals(3, showcaseCallCount(showcase(dates), emptyMap(), NOW, held))
-        assertEquals(4, showcaseCallCount(showcase(dates), emptyMap(), NOW, fresh))
+        // Fresh, the type counts as listed and only the three prices are counted.
+        assertEquals(3, showcaseCallCount(showcase(dates), bookAt(NOW), NOW))
+        // Expired, the screen's held reading still lists the type — and the gesture still counts the
+        // fourth call, because the pass would spend it on the listing.
+        assertEquals(4, showcaseCallCount(showcase(dates), bookAt(NOW - LISTING_LIFETIME_MILLIS - 1), NOW))
     }
 }
 
