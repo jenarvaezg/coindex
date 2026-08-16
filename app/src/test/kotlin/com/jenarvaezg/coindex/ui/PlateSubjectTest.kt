@@ -228,7 +228,7 @@ class PlateSubjectTest {
         assertEquals(
             listOf(
                 "Progreso" to "1 / 2 emisiones",
-                "Peso" to "0,804 oz",
+                "Variante" to "0,804 oz",
                 "Tipo" to "Numista 10340",
                 "Catálogo" to "1 ago 2026",
             ),
@@ -248,7 +248,7 @@ class PlateSubjectTest {
         assertEquals(
             listOf(
                 "Progreso" to "1 / 2 emisiones",
-                "Peso" to "0,804 oz",
+                "Variante" to "0,804 oz",
                 "Acabado" to "Proof",
                 "Tipo" to "Numista 10340",
                 "Catálogo" to "1 ago 2026",
@@ -294,7 +294,7 @@ class PlateSubjectTest {
             listOf(
                 "Progreso" to "1 / 2 emisiones",
                 "Programa" to "Serie Alexandre Herculano 1977 · 1 de 3",
-                "Peso" to "0,804 oz",
+                "Variante" to "0,804 oz",
                 "Tipo" to "Numista 10340",
                 "Catálogo" to "1 ago 2026",
             ),
@@ -312,7 +312,7 @@ class PlateSubjectTest {
         assertEquals(
             listOf(
                 "Progreso" to "2 / 2 emisiones",
-                "Peso" to "0,804 oz",
+                "Variante" to "0,804 oz",
                 "Catálogo" to "1 ago 2026",
             ),
             plate.entries,
@@ -534,6 +534,71 @@ class PlateSubjectTest {
         assertNull(plate.value)
         assertNull(plate.cost)
         assertEquals(listOf(null, null), plate.cells.map { it.cost })
+    }
+
+    /**
+     * La lámina de un solo año no repite el año en cada casilla: lo repetía cinco veces en Paquillos
+     * mientras «Estrella 66…70», que es lo único que las distingue, iba debajo en texto plano (#511).
+     */
+    @Test
+    fun `una lamina de un solo ano pone en la chapa lo que distingue`() {
+        val plate = subject(issueRun)
+
+        assertEquals(
+            listOf(CellPlaque.Name("Estrella 66"), CellPlaque.Name("Estrella 67")),
+            plate.cells.map { it.plaque },
+        )
+        // Y no lo dice dos veces: lo que sube a la chapa deja de escribirse al pie de la casilla.
+        assertEquals(listOf(null, null), plate.cells.map { it.printedName })
+        // El año sigue dicho una vez, donde vive un hecho de toda la lámina.
+        assertTrue(plate.entries.contains("Año" to "1966"))
+    }
+
+    /** Donde el año sí distingue, la chapa es la de siempre y el nombre no se duplica. */
+    @Test
+    fun `una date run mantiene el ano en la chapa`() {
+        val plate = subject(dateRun)
+
+        assertEquals(
+            listOf(CellPlaque.Year("1879"), CellPlaque.Year("1886")),
+            plate.cells.map { it.plaque },
+        )
+        assertEquals(listOf(null, null), plate.cells.map { it.printedName })
+    }
+
+    /**
+     * Una casilla titulada con su propio año en una lámina de un solo año se queda con el año: no hay
+     * otra distinción que levantar, y una chapa que repitiese el título sería la misma duplicación
+     * del revés.
+     */
+    @Test
+    fun `una casilla titulada con su ano no cambia de chapa`() {
+        assertEquals(CellPlaque.Year("1966"), plaqueOf("1966", "1966", yearIsCommon = true))
+        assertEquals(CellPlaque.Name("Estrella 66"), plaqueOf("Estrella 66", "1966", yearIsCommon = true))
+        assertEquals(CellPlaque.Year("1966"), plaqueOf("Estrella 66", "1966", yearIsCommon = false))
+    }
+
+    /** Una anunciada no tiene año, y sin año no hay chapa que colgar del hueco. */
+    @Test
+    fun `una casilla sin ano no tiene chapa`() {
+        assertNull(plaqueOf("Year of the Goat", null, yearIsCommon = false))
+    }
+
+    /** El nombre que va a la chapa llega soldado, como el que va al pie (#511). */
+    @Test
+    fun `la chapa suelda la cifra con su unidad`() {
+        val members = listOf(
+            member("25-bolivares", "25 bolívares · jaguar · 28,28 g", 1975, 37_246),
+            member("50-bolivares", "50 bolívares · cachicamo gigante · 35 g", 1975, 37_247),
+        )
+
+        assertEquals(
+            listOf(
+                CellPlaque.Name("25 bolívares · jaguar · 28,28 g"),
+                CellPlaque.Name("50 bolívares · cachicamo gigante · 35 g"),
+            ),
+            subject(members).cells.map { it.plaque },
+        )
     }
 
     /** The two-casilla date run with the first one filled, which is the plate a cost is said of. */

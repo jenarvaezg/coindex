@@ -2,7 +2,10 @@ package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -11,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -62,6 +67,60 @@ fun RecessedYearTag(
         )
     }
 }
+
+/**
+ * The same piece of cardboard, on a casilla whose year tells it from nothing (#511).
+ *
+ * Four plates of the seventy-five give every casilla the same year — Paquillos struck its five stars
+ * in 1966 — so the tag was drawn five times identical while the difference sat underneath in plain
+ * ink. What goes into the recess is what distinguishes the casilla, and the plate's specification
+ * keeps saying the year once, where a fact of the whole plate belongs.
+ *
+ * **It spans the casilla and grows downwards**, because a name is not a year: 48,3 dp holds «1966»
+ * and nothing else, and `height(28.dp)` would not have grown — «25 bolívares · jaguar · 28,28 g»
+ * simply fell out of the box. Three lines is the same cut the name at the foot of a casilla takes
+ * (#412), so nothing the screen prints whole becomes an ellipsis on paper.
+ *
+ * The letter is **the tag's own** and not the name's: this is the piece the collector presses, and
+ * dressing it in Bitter would have made two different objects out of one. The plate that draws a
+ * year and the plate that draws a star press the same thing.
+ */
+@Composable
+fun RecessedNameTag(
+    name: String,
+    onOpen: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .then(
+                if (onOpen != null) {
+                    Modifier
+                        .minimumInteractiveComponentSize()
+                        .clickable(role = Role.Button, onClick = onOpen)
+                } else {
+                    Modifier
+                },
+            )
+            .heightIn(min = YearTagMetrics.height)
+            .recessedInBoard(),
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.labelLarge,
+            color = Paper.ink,
+            textAlign = TextAlign.Center,
+            maxLines = NAME_TAG_MAX_LINES,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp),
+        )
+    }
+}
+
+/** The cut the name at the foot of a casilla already takes, and the notebook with it (#412). */
+private const val NAME_TAG_MAX_LINES = 3
 
 /**
  * The drawing of the tag, and the blank its target leaves around it.

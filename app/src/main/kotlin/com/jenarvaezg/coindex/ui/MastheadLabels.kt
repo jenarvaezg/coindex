@@ -77,7 +77,12 @@ fun sewnEdgeLabel(counts: SewnEdgeCounts?): String =
  */
 private const val STRAPLINE = "Inventario de campo · plata bullion"
 
-fun screenTitle(route: String?, subjectName: String? = null): String = when {
+fun screenTitle(route: String?, subjectName: String? = null): String = screenTitleOf(
+    route = route,
+    subjectName = subjectName?.weldUnits(),
+)
+
+private fun screenTitleOf(route: String?, subjectName: String?): String = when {
     route == Routes.SETTINGS -> SETTINGS_LABEL
     route == Routes.NOTICES -> NOTICES_LABEL
     // Each of the annex's two rooms names itself with the string its own door prints (ADR 0029 §6,
@@ -86,6 +91,11 @@ fun screenTitle(route: String?, subjectName: String? = null): String = when {
     // door is the index's last row and says what is behind it with its count, which is §8's clause 3.
     route == Routes.EXPLORE -> ShowcaseLabels.DESTINATION
     route == Routes.WISHES -> WishLabels.DESTINATION
+    // The **card-sized** name and not the editorial one (`CoindexViewModel.catalogName`): the plate
+    // prints `name` whole two lines under this bar, and printing it here as well was one sentence
+    // said twice on one screen (#511). Silence was the other candidate and it costs more than it
+    // saves — this bar does not scroll, so on a plate of 22 casillas it is the only thing left
+    // saying which lámina you are in.
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
     // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
     // «Tu agrupación» was the last place in the app that ranked a box below the rest.
