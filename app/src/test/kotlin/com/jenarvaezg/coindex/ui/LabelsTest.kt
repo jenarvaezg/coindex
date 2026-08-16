@@ -23,7 +23,7 @@ class LabelsTest {
     fun `an undeclared finish says nothing at all`() {
         assertEquals("0,804 oz", variantLabel(804, null, Metal.Silver))
         // Sin acabado no hay fila que rellenar, y el peso se queda solo.
-        assertEquals(listOf("Peso" to "0,804 oz"), variantEntries(804, null))
+        assertEquals(listOf("Variante" to "0,804 oz"), variantEntries(804, null))
     }
 
     /** Los seis acabados declarados son justo donde la palabra se gana el sitio. */
@@ -32,7 +32,7 @@ class LabelsTest {
         assertEquals("Bullion", finishLabel(Finish.Bullion))
         assertEquals("1 oz · Proof coloreado", variantLabel(1_000, Finish.ProofColoured, Metal.Silver))
         assertEquals(
-            listOf("Peso" to "1 oz", "Acabado" to "Envejecido"),
+            listOf("Variante" to "1 oz", "Acabado" to "Envejecido"),
             variantEntries(1_000, Finish.Antiqued),
         )
     }

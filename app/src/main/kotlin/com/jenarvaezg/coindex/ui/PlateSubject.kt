@@ -172,18 +172,53 @@ data class DrawnCell(
     val wishKey: WishKey? = null,
     /** Whether the collector marked this casilla: «lo busco» (ADR 0029 §2). */
     val wished: Boolean = false,
+    /** What the piece sunk into the cardboard says, and what it therefore leaves to [printedName]. */
+    val plaque: CellPlaque? = null,
 )
 
 /**
- * The name a casilla prints under its year, or null where its label is already that year.
+ * What the piece sunk into the cardboard says: the casilla's year, or what tells it from its sisters.
+ *
+ * One or the other and never both, because the sunken piece is **the identity of a casilla inside its
+ * plate** and its door to the ficha (#302, #508). On a date run that is the year. On the four plates
+ * whose casillas all share one — Paquillos and its three — the year identifies nothing: it was drawn
+ * five times identical while «Estrella 66…70», which is the whole difference, sat underneath in plain
+ * ink (#511). The year is not lost by moving over: it is a fact of the whole plate and the
+ * specification already prints it once, which is exactly why repeating it N more times bought nothing.
+ */
+sealed interface CellPlaque {
+    /** The year of a casilla that has one of its own. */
+    data class Year(val year: String) : CellPlaque
+
+    /** What distinguishes a casilla whose year does not. */
+    data class Name(val name: String) : CellPlaque
+}
+
+/**
+ * The rule, written once for the subject and its tests.
+ *
+ * A casilla labelled with its own year keeps the year even when the plate shares it: there is no other
+ * distinction to raise, and a plaque repeating what the label says would be the same duplication
+ * turned around.
+ */
+internal fun plaqueOf(label: String, year: String?, yearIsCommon: Boolean): CellPlaque? = when {
+    yearIsCommon && label != year -> CellPlaque.Name(label)
+    year != null -> CellPlaque.Year(year)
+    else -> null
+}
+
+/**
+ * The name a casilla prints under its plaque, or null where the plaque already says it.
  *
  * A casilla titled with its own year would otherwise print it twice, once on the tag sunk into the
  * cardboard and once as a gloss underneath. Null and not the empty string, because since #473 the
  * difference is whether the casilla prints a third thing at all: nothing is reserved for a name
  * that is not there, and what the casilla does not use falls into the gap between two rows.
+ *
+ * Silent too when the plaque **is** the name (#511), and by the same rule rather than a second one.
  */
 val DrawnCell.printedName: String?
-    get() = printedNameOf(label, year)
+    get() = if (plaque is CellPlaque.Name) null else printedNameOf(label, year)
 
 /**
  * The rule itself, shared by the two surfaces that draw a casilla under a year.
@@ -230,12 +265,16 @@ fun plateSubject(
     val coverage = plate.album.coverage()
     val cells = plate.album.members.map { albumMember ->
         val wishKey = albumMember.member.wishKey()
+        // Welded once and used twice: the label goes to the foot of the casilla or into its plaque,
+        // and a figure parted from its unit is the same defect in either place (#511).
+        val label = albumMember.member.label.weldUnits()
+        val year = albumMember.member.year?.toString()
         DrawnCell(
             id = albumMember.member.id,
-            label = albumMember.member.label,
+            label = label,
             numistaTypeId = albumMember.member.numistaTypeId,
             footnote = plateCellFootnote(albumMember.member, common),
-            year = albumMember.member.year?.toString(),
+            year = year,
             owned = albumMember.status is CollectionCatalogMemberStatus.Owned,
             missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
             cost = money.holeCosts[albumMember.member.id]?.let(::holeCostLabel),
@@ -246,11 +285,18 @@ fun plateSubject(
             // leaves again.
             wished = albumMember.status is CollectionCatalogMemberStatus.Missing &&
                 wishKey != null && wishKey in wished,
+            plaque = plaqueOf(
+                label = label,
+                year = year,
+                // The same reading `plateCellFootnote` makes: a year every casilla shares was lifted
+                // onto the specification, and what is lifted is not said again in each cell.
+                yearIsCommon = common.year != null,
+            ),
         )
     }
     return PlateSubject(
         catalogId = catalog.id,
-        title = catalog.name,
+        title = catalog.name.weldUnits(),
         source = catalog.source,
         printedSide = catalog.printedSide,
         entries = plateEntries(catalog, plate.album, common, plate.programmes),

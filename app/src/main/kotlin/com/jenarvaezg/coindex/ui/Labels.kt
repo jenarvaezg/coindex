@@ -103,16 +103,27 @@ fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
  * The acabado row is one of the two and not always: with no finish declared there is no row, for the
  * reasons [finishLabel] states. The weight always has one — every coin weighs something, and a
  * catalog that reached this branch has the figure.
+ *
+ * **The weight row is titled «Variante» and not «Peso» (#511).** The figure is the variant key of
+ * ADR 0018 in troy ounces, and calling it the coin's weight put «0,804 oz» under a heading that says
+ * «plata 25 g» — two units for one mass, on one screen, with nothing saying which of them rules.
+ * The rule the app already follows is written where the facets are (`Bands.kt`): *grams because this
+ * facet is about a piece and not about a variant… «una onza» is the answer the ounce bands of the
+ * index already give*. So Monedas weighs the coin in the hand in grams, the index groups variants in
+ * ounces, and this row is the second of those — the name is what says so.
+ *
+ * The alternative measured and refused was printing both units here, derived from the key. It cannot
+ * be done honestly: a millioz is 0,031 g, so converting back and rounding to the one decimal that
+ * precision allows prints «13,9 g» over a title that says 13,88 g, and it contradicts the curator on
+ * four of the fourteen plates whose name states its grams. The set keeps the same word it always
+ * had, which is what made «Variante» the row's name in the first place.
  */
 fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, String>> =
-    if (weightMillioz == null) {
-        listOf("Variante" to weightLabel(null))
-    } else {
-        listOfNotNull(
-            "Peso" to weightLabel(weightMillioz),
-            finish?.let { declared -> "Acabado" to finishLabel(declared) },
-        )
-    }
+    listOfNotNull(
+        "Variante" to weightLabel(weightMillioz),
+        // A set declares no finish (ADR 0012), and it did not print one before this either.
+        finish?.takeIf { weightMillioz != null }?.let { declared -> "Acabado" to finishLabel(declared) },
+    )
 
 /** «1 pieza» / «22 piezas». Spanish counts nothing in the singular, so zero takes the plural. */
 fun plural(count: Int, singular: String, plural: String): String =

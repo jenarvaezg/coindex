@@ -121,8 +121,17 @@ class CoindexViewModel(
     val curatedNames: Set<String> get() = curation.titles.curatedNames()
 
     /** The name of one curated catalog, for the masthead of its plate. */
+    /**
+     * The **card-sized** name, which is what the masthead of a plate can say without repeating it.
+     *
+     * `name` is the editorial scope and runs to 200 characters; the plate prints it whole two lines
+     * below, so a masthead carrying it too said the same sentence twice on one screen (#511). What
+     * `shortName` buys is that the bar still answers «which plate is this» once the heading has
+     * scrolled away — the masthead does not move — and it is the name Explorar and «Lo que busco»
+     * already call a lámina by.
+     */
     fun catalogName(catalogId: String?): String? =
-        catalogs.firstOrNull { it.id == catalogId }?.name
+        catalogs.firstOrNull { it.id == catalogId }?.shortName
 
     init {
         _state.update {

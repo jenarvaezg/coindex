@@ -85,9 +85,9 @@ fun wishSubject(
             id = "${slot.catalog.id}/${slot.member.id}",
             key = slot.key,
             typeId = slot.typeId,
-            label = slot.member.label,
+            label = slot.member.label.weldUnits(),
             year = slot.member.year?.toString(),
-            plate = slot.catalog.shortName,
+            plate = slot.catalog.shortName.weldUnits(),
             printedSide = slot.catalog.printedSide,
             cost = costs[slot.key]?.let(::holeCostLabel),
         )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -41,6 +42,7 @@ import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.CellPlaque
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
@@ -57,6 +59,7 @@ import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.ModeBand
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
+import com.jenarvaezg.coindex.ui.components.RecessedNameTag
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
@@ -705,10 +708,18 @@ internal fun PlateCell(
         // name up against the hole while its neighbours' stayed down. It is a constant and it is
         // not measured — which is the whole point of this order.
         Box(
-            modifier = Modifier.height(YearTagMetrics.target),
+            // A minimum and no longer an exact height (#511): the piece of a casilla whose year
+            // distinguishes nothing carries its name instead, and a name is as tall as it needs.
+            // What every casilla still shares is the blank the target leaves above the ink, which is
+            // what makes a row line up without measuring anything.
+            modifier = Modifier.heightIn(min = YearTagMetrics.target),
             contentAlignment = Alignment.Center,
         ) {
-            cell.year?.let { year -> RecessedYearTag(year = year, onOpen = open) }
+            when (val plaque = cell.plaque) {
+                is CellPlaque.Year -> RecessedYearTag(year = plaque.year, onOpen = open)
+                is CellPlaque.Name -> RecessedNameTag(name = plaque.name, onOpen = open)
+                null -> Unit
+            }
         }
         cell.printedName?.let { name -> PlateCellName(name = name) }
     }

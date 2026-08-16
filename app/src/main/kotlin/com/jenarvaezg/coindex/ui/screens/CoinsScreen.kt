@@ -143,9 +143,10 @@ fun CoinsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    // The two-range cartouche itself pays the measured height cost. Reusing the album's
-                    // 6 dp row seam keeps that cost from being paid a second time as empty cardboard.
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    // Proximity, and it is arithmetic rather than a screenshot: see [CoinsSpacing].
+                    // The album's 6 dp seam was inherited from a card that ended at its cartouche, and
+                    // the year has hung underneath it since #337.
+                    verticalArrangement = Arrangement.spacedBy(CoinsSpacing.rowSeam),
                 ) {
                     coinFullWidth {
                         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -362,7 +363,7 @@ private fun CoinAlbumCell(
             .then(pickingBorder(picking = picking, picked = picked))
             .semantics(mergeDescendants = true) { selected = picking && picked }
             .clickable(role = Role.Button, onClick = onTap)
-            .padding(bottom = 4.dp),
+            .padding(bottom = CoinsSpacing.cardFoot),
     ) {
         AlbumHole(
             photo = photo,
@@ -372,14 +373,15 @@ private fun CoinAlbumCell(
                 .travellingTypeCoin(row.typeId, visible = travelling),
         )
         AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))
-        // The year stays outside this cartouche; #337 owns its separate rendering change.
+        // The year stays outside this cartouche; #337 owns its separate rendering change. What keeps
+        // it reading as *this* card's year is [CoinsSpacing], and not this blank on its own.
         Text(
             coinAlbumFootnote(row),
             style = MaterialTheme.typography.labelMedium,
             color = Paper.muted,
             textAlign = TextAlign.Center,
             maxLines = 1,
-            modifier = Modifier.padding(top = 3.dp),
+            modifier = Modifier.padding(top = CoinsSpacing.underTheCartouche),
         )
     }
 }

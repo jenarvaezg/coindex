@@ -17,6 +17,7 @@ import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.WishLabels
+import com.jenarvaezg.coindex.ui.weldUnits
 import com.jenarvaezg.coindex.ui.wishCensusLabel
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.countSentence
@@ -292,12 +293,12 @@ private fun wishSection(
         source = WISH_SECTION_SOURCE,
         cells = slots.map { slot ->
             PrintCell(
-                curatedLabel = slot.member.label,
+                curatedLabel = slot.member.label.weldUnits(),
                 // Which lámina the casilla is a slot of, in the line the plate uses for the year: on
                 // its own plate that is what tells two casillas apart, and here it is what tells two
                 // hunts apart — the year is already in the label of nearly every date run.
                 state = null,
-                footnote = slot.catalog.shortName,
+                footnote = slot.catalog.shortName.weldUnits(),
                 diameterMm = state.diameterOf(slot.typeId),
                 faces = state.facesOf(slot.typeId, options, slot.catalog.printedSide),
                 // Never filled: this whole lámina is what the collector does not have, which is what
