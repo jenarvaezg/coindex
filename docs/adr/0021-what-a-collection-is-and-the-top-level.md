@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401, #434 and #431, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md), §7 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (one declarative comes back, and it is not the one §7 killed) and by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (twenty catalogs open without evidence)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401, #434, #431 and #512, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md), §7 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (one declarative comes back, and it is not the one §7 killed) and by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (twenty catalogs open without evidence)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 
@@ -64,6 +64,17 @@
 > «Exportar hoja» — and the destination chosen where it is answered. Nothing about the panel or the
 > measure changes; what goes is the duplicate way in, and with it the twin export machines each
 > screen was carrying (#430).
+
+> **Amended on 2026-08-16 (§13, #512).** On a lámina, a hoja and «Lo que busco», the one door in is
+> **gone while the panel is open**, and not greyed. A button that cannot be pressed and repeats a
+> question already being answered two fingers below reads as broken, so the panel does not appear
+> beside it: it takes its place, and «Cancelar» — which the panel already owned — is what puts it
+> back. It still greys while an export is running, where it names the state («Preparando la lámina…»)
+> instead of repeating the question. The index keeps its own door on screen: it lives in the filter
+> shelf rather than in the panel's slot, it never greys, and taking it out of the shelf while the
+> card is open would move the shelf itself. What changes everywhere, index included, is the mark: the
+> panel's switches stop being Material's and become a ruled square ticked by hand, with the whole
+> line — 48 dp of it — as the target.
 
 > **Amended on 2026-08-06 (§13, #227).** «If one face must be chosen it is the **reverse**» was two
 > claims wearing one sentence, and only the first was ever measured. That one face goes on paper at

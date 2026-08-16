@@ -406,12 +406,9 @@ private fun PlateSheet(
                     // One door into «Cómo se exporta», the same shape the index has (#434): the
                     // panel owns Descargar / Compartir / Cancelar, and asking the destination
                     // twice — once on the way in and once on the way out — was the whole defect.
+                    // It is gone while the panel it opened is here, in its slot (#512).
                     export?.let { surface ->
-                        PrimaryAction(
-                            text = surface.label,
-                            onClick = surface.onExport,
-                            enabled = surface.enabled,
-                        )
+                        SheetExportDoorButton(surface.door)
                         surface.options?.invoke()
                         surface.progress?.invoke()
                     }

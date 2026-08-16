@@ -119,10 +119,9 @@ fun PiecesScreen(
                 PiecesHeading(
                     subject = subject,
                     upkeep = upkeep,
-                    export = export,
-                    // A collection with no piece in it has no sheet to export, whatever the
-                    // machine says about being free.
-                    exportEnabled = export.enabled && subject.pieces.isNotEmpty(),
+                    // Absent while «Cómo se exporta» is open in the row below, which is its own
+                    // slot and not a second one (#512).
+                    door = export.door,
                     renaming = renaming,
                     onToggleRename = { renaming = !renaming },
                 )
@@ -202,8 +201,7 @@ fun PiecesScreen(
 private fun PiecesHeading(
     subject: PiecesSubject,
     upkeep: BoxUpkeep?,
-    export: SheetExportSurface,
-    exportEnabled: Boolean,
+    door: SheetExportDoor?,
     renaming: Boolean,
     onToggleRename: () -> Unit,
 ) {
@@ -221,11 +219,12 @@ private fun PiecesHeading(
         // One door into «Cómo se exporta», the same shape the index has (#434): the panel owns
         // Descargar / Compartir / Cancelar, and asking the destination on the way in as well was
         // the whole defect.
-        PrimaryAction(
-            text = export.label,
-            onClick = export.onExport,
-            enabled = exportEnabled,
+        SheetExportDoorButton(
+            door = door,
             modifier = Modifier.padding(top = 12.dp),
+            // A collection with no piece in it has no sheet to export, whatever the machine says
+            // about being free.
+            enabled = subject.pieces.isNotEmpty(),
         )
         if (upkeep != null) {
             FlowRow(

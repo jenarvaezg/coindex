@@ -18,6 +18,7 @@ import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
+import com.jenarvaezg.coindex.ui.plaqueOf
 import com.jenarvaezg.coindex.ui.shelf.CoinClaim
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
@@ -143,15 +144,20 @@ class CasillaOpensTheSheetTest {
 
     @Composable
     private fun Casilla(numistaTypeId: Int?, onOpenCoin: (Int) -> Unit) {
+        val year = if (numistaTypeId == null) "2027" else "1886"
         PlateCell(
             cell = DrawnCell(
                 id = "casilla",
                 label = "Bolívar",
                 numistaTypeId = numistaTypeId,
                 footnote = null,
-                year = if (numistaTypeId == null) "2027" else "1886",
+                year = year,
                 owned = false,
                 missing = numistaTypeId != null,
+                // What the tag says is the subject's rule and no longer the `year` field (#511):
+                // a casilla built without a plaque has no year to press, which is the very gesture
+                // under test.
+                plaque = plaqueOf(label = "Bolívar", year = year, yearIsCommon = false),
             ),
             images = null,
             printedSide = PrintedSide.Reverse,

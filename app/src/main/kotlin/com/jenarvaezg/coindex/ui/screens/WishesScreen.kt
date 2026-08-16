@@ -35,7 +35,6 @@ import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleStamp
-import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
 import com.jenarvaezg.coindex.ui.printedName
@@ -140,11 +139,8 @@ fun WishesScreen(
                                 )
                             }
                         } else {
-                            PrimaryAction(
-                                text = export.label,
-                                onClick = export.onExport,
-                                enabled = export.enabled,
-                            )
+                            // Gone while the panel it opened is in its slot (#512).
+                            SheetExportDoorButton(export.door)
                             export.options?.invoke()
                             export.progress?.invoke()
                         }
