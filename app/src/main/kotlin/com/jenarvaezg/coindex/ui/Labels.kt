@@ -196,6 +196,17 @@ const val TURN_THE_COIN_OVER: String = "Dar la vuelta a la moneda"
 const val FACE_NOT_DOWNLOADED: String = "Esta cara no ha bajado todavía"
 
 /**
+ * What the mark of a photograph that has not arrived is called, for whoever is not looking (#510).
+ *
+ * It is a `contentDescription` and never ink: the mark itself is an arrow onto a shelf, because it
+ * falls on every hole of a plate at once and thirty sentences are a wall of prose. Screen readers
+ * get the sentence anyway — «no ha bajado» is exactly as temporary here as it is on the far face —
+ * and a hole reads it out only when there is something to explain, which is not the same as a hole
+ * whose type simply has no picture in Numista.
+ */
+const val PHOTO_NOT_DOWNLOADED: String = "La foto no ha bajado todavía"
+
+/**
  * The one word the completion stamp says (ADR 0026 §3).
  *
  * **One word and not two, open series included.** The #304 prototype drew «al día» for a plate whose
