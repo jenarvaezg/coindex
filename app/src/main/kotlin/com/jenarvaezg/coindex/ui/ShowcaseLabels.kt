@@ -93,6 +93,41 @@ object ShowcaseLabels {
 
     /** What a plate says when Numista had no price for a single one of its casillas. */
     const val NOTHING_PRICED: String = "Numista no da precio de ninguna de estas casillas."
+
+    /**
+     * The shelf ordered by money with no money anywhere on it (#513).
+     *
+     * It counts nothing, unlike [showcaseOrderNote]'s other form: with every plate at the end there is
+     * no «las tasadas» to compare the figure against, and «20 láminas sin tasar, al final» describes an
+     * order that placed none of them as though it had placed some. What the collector is looking at is
+     * the default shelf under another name, and the line says exactly that.
+     */
+    const val NOTHING_VALUED: String =
+        "Todavía no hay ninguna lámina tasada, así que este orden no cambia nada."
+}
+
+/**
+ * What «por coste de entrar» could not place, under the two orders (#513).
+ *
+ * An order that sorts by an amount can only sort what has one, and ADR 0030 §8 clause 3 leaves the rest
+ * behind it — which on a shelf that is born with no amount at all is a control that changes the screen
+ * invisibly or not at all. This is the transparency Ajustes already prints under the pass (ADR 0028 §6):
+ * one line, in the place the collector is looking, saying what the app did with what it had.
+ *
+ * Null in the default order, because «por casillas» needs no datum that could be missing, and null when
+ * there is nothing to warn about — every plate valued, or an empty shelf, which already says why it is
+ * empty. It reads the shelf **as shown**: a search narrowed to three unvalued plates is three, not the
+ * twenty behind the box.
+ */
+fun showcaseOrderNote(sort: ShowcaseSort, shelf: List<ShowcaseTile>): String? {
+    if (sort != ShowcaseSort.ByEntryCost || shelf.isEmpty()) return null
+    val unvalued = shelf.count { it.entryEur == null }
+    return when {
+        unvalued == 0 -> null
+        unvalued == shelf.size -> ShowcaseLabels.NOTHING_VALUED
+        else -> "${plural(unvalued, "lámina", "láminas")} sin tasar, al final: " +
+            "este orden sólo coloca las tasadas."
+    }
 }
 
 /**
