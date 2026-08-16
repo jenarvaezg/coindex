@@ -215,9 +215,10 @@ private fun ShelfOrder(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        // A FlowRow and not a Row: the two labels fit a 360 dp phone side by side and stop fitting at
-        // the larger type sizes, where a Row would truncate «Por coste de entrar» into an order nobody
-        // can read. Wrapping costs a line and keeps both words.
+        // A FlowRow and not a Row: the two chips fit a 360 dp phone side by side and stop fitting at
+        // the larger type sizes, where a Row would squeeze them against each other and each would
+        // ellipse its own label ([FilterChip] is one line). Wrapping spends a line and lets each chip
+        // ask for the width its words need.
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),

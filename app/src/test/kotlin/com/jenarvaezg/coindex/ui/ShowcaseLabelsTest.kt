@@ -195,14 +195,16 @@ class ShowcaseLabelsTest {
     }
 
     /**
-     * With nothing valued at all the line stops counting and says the order does nothing (#513).
+     * With nothing valued at all the line stops counting and says the order has nothing to sort (#513).
      *
      * «4 láminas sin tasar, al final» over a shelf where *everything* is at the end describes an order
-     * that placed nothing as though it had placed something: the shelf the collector is looking at is
-     * the default one, in a different name.
+     * that placed nothing as though it had placed something. And what it says instead is about the
+     * **prices** and not about the screen: with a marked casilla anywhere, the grid does move — the
+     * collector's own plates lead the default order and not this one — so «este orden no cambia nada»
+     * would be a sentence the shelf contradicts on the spot.
      */
     @Test
-    fun `an unvalued shelf is told the cost order changes nothing at all`() {
+    fun `an unvalued shelf is told the cost order has no prices to sort by`() {
         val note = showcaseOrderNote(
             ShowcaseSort.ByEntryCost,
             listOf(shelfTile("kooka"), shelfTile("libertad")),
@@ -211,7 +213,35 @@ class ShowcaseLabelsTest {
         assertEquals(ShowcaseLabels.NOTHING_VALUED, note)
         // No count in it: there is nothing to compare the number against.
         assertFalse("2" in note.orEmpty())
-        assertTrue(ShowcaseLabels.NOTHING_VALUED.startsWith("Todavía no hay ninguna lámina tasada"))
+        assertFalse("no cambia nada" in note.orEmpty())
+    }
+
+    /**
+     * A plate of the collector's is never counted among the ones left to value (#513).
+     *
+     * It carries no `entryEur` and never will: entering a plate you already collect is not a thing that
+     * costs, so it has neither «Coste de entrar» nor the gesture that asks for one (ADR 0030 §3, §6).
+     * Counted as «sin tasar» it would send the collector into their own plate looking for a button that
+     * is not there — and a shelf whose window is valued would print a line about a debt nobody owes.
+     */
+    @Test
+    fun `the collector's own plates are not counted among the ones left to value`() {
+        val valued = shelfTile("panda", entryEur = 412.0)
+        val mine = shelfTile("britannia", mine = true)
+
+        assertNull(showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(valued, mine)))
+        assertEquals(
+            "1 lámina sin tasar, al final: este orden sólo coloca las tasadas.",
+            showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(valued, mine, shelfTile("kooka"))),
+        )
+        // Nothing of the window valued: the line is the one about prices, and the count stays out of it.
+        assertEquals(
+            ShowcaseLabels.NOTHING_VALUED,
+            showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(mine, shelfTile("kooka"))),
+        )
+        // A shelf of nothing but the collector's own plates owes no line at all: there is nothing on it
+        // that could be valued, so there is nothing the order failed to place.
+        assertNull(showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(mine)))
     }
 
     /** What put one of the collector's own plates on this shelf, in the words the hole's chip uses. */
@@ -272,12 +302,16 @@ class ShowcaseLabelsTest {
  * The assembled ones live in `ShowcaseSubjectTest`, where the catalogs and the price table decide what
  * a tile says; this line is about a list of tiles and nothing else touches them.
  */
-private fun shelfTile(catalogId: String, entryEur: Double? = null) = ShowcaseTile(
+private fun shelfTile(
+    catalogId: String,
+    entryEur: Double? = null,
+    mine: Boolean = false,
+) = ShowcaseTile(
     catalogId = catalogId,
     name = catalogId,
     typeId = null,
     printedSide = PrintedSide.Reverse,
-    mine = false,
+    mine = mine,
     footnote = showcaseSlotsLabel(3),
     entryEur = entryEur,
     slots = 3,

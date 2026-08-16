@@ -200,6 +200,12 @@ Explorar carries»* in its order and widens its population:
 4. **Search and sort, and no chips**, which is clause 4 of ADR 0026 §8 arriving as it was written. The
    twenty are all at 0/N so no facet earns its place: twelve countries with nine holding a single
    plate was measured in #279 and has not changed.
+
+   *Nota de forma, #513: «no chips» es sobre **facetas**, que es de lo que habla la cláusula — este
+   estante no filtra por nada. El par de órdenes del punto 3 sí se dibuja con `FilterChip`, que es el
+   único dibujo de «elegido» que tiene el álbum: pintado como texto suelto frente a un botón
+   enmarcado, el criterio en vigor se leía como rótulo del alternativo. Ni la población del estante ni
+   el recuento de facetas cambian; lo que cambia es qué forma viste el estado «éste es el orden».*
 5. **The door of the index keeps the two forms §8 wrote** — «Y otras 20 láminas que no coleccionas →»
    with nothing marked, «Lo que busco · 7, y otras 20 láminas →» once something is — and it now opens
    the shelf, with the list one row further in. The count of the plates is the twenty and not the

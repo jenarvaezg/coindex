@@ -269,7 +269,8 @@ fun Facet(title: String, content: @Composable FlowRowScope.() -> Unit) {
  * **This is the album's one drawing of «elegido»**, which is why the pair of orders of «Explorar»
  * wears it too (#513) although that shelf has no facets at all (ADR 0030 §8 clause 4): a second
  * shape for the same state is a second thing to learn. Filled in moss with the paper's own ink on
- * it when it is the one in force, plain card when it is the one on offer.
+ * it when it is the one in force, plain card when it is the one on offer. There a null [count] is
+ * not the «all» chip of anything — an order narrows nothing, so there is no remainder to print.
  *
  * `selectable` and not `clickable`: the fill is what the eye reads, and the state it stands for is
  * what a screen reader has to hear — one of a set, and this one is on. It is also what lets a test
