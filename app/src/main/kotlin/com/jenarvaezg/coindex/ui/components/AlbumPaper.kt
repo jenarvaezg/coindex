@@ -101,6 +101,9 @@ fun AlbumHole(
     // goes back to `printed_side` on its own the moment the cell leaves the lazy grid, which is
     // what keeps the sheet of mixed states from becoming a state the album has to remember.
     var turned by remember(photo, otherSide) { mutableStateOf(false) }
+    // Scaled by the system and not by us (#514, #337): at `animator_duration_scale 0` this tween is
+    // over on the frame it starts, so the coin is simply on its other face — and the one frame it
+    // can leak is the face that was already up, which is «not turned yet» and not a coin nowhere.
     val turn by animateFloatAsState(
         targetValue = if (turned) HALF_TURN else 0f,
         animationSpec = tween(durationMillis = COIN_TURN_MILLIS),

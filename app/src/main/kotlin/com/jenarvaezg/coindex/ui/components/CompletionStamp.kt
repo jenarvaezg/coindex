@@ -67,7 +67,10 @@ val LocalStamping = staticCompositionLocalOf<Stamping?> { Stamping.Default }
  */
 @Composable
 fun rememberInkFall(complete: Boolean): State<Float> {
-    val stamping = LocalStamping.current
+    // A system asking for quiet finds the ink dry for the same reason an export does (#514): what
+    // is being refused is not the stamp but the stamping, and this composable already knows how to
+    // be handed a sheet where nothing falls.
+    val stamping = LocalStamping.current.takeIf { LocalMotion.current }
     val landed = if (complete) 1f else 0f
     val ink = remember(stamping) { Animatable(if (stamping == null) landed else 0f) }
     LaunchedEffect(stamping, landed) {

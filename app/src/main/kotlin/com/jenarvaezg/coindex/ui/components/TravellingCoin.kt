@@ -50,11 +50,15 @@ fun travellingTypeKey(typeId: Int): String = "type-$typeId"
  *
  * The overlay is clipped to a circle: without it the shared element's rectangular bounds flash a
  * square halo as the coin lands, which is the pop between the mid-flight and the settled casilla.
+ *
+ * A system asking for quiet is the fourth reason not to fly, and the only one that is not about
+ * this coin: see [LocalMotion].
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.travellingCoin(catalogId: String?): Modifier {
     if (catalogId == null) return this
+    if (!LocalMotion.current) return this
     val layout = LocalSharedTransition.current ?: return this
     val destination = LocalNavAnimation.current ?: return this
     return with(layout) {
@@ -73,10 +77,16 @@ fun Modifier.travellingCoin(catalogId: String?): Modifier {
  * `ModalBottomSheet` cannot host a shared element (it is a dialog window). Visibility is therefore
  * caller-managed: the cell yields the coin when the sheet opens, and the sheet yields it back when
  * the sheet closes. [visible] is true on the end that currently owns the photograph.
+ *
+ * With [LocalMotion] false neither end yields: both draw their own photograph, which is what a
+ * still album looks like anyway — the cell keeps its coin because nothing took it away, and the
+ * grid behind the scrim is a picture and not a gap. The yield only ever meant «this one is in the
+ * air», and there is nothing in the air (#514).
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.travellingTypeCoin(typeId: Int, visible: Boolean): Modifier {
+    if (!LocalMotion.current) return this
     val layout = LocalSharedTransition.current ?: return this
     return with(layout) {
         this@travellingTypeCoin.sharedElementWithCallerManagedVisibility(
