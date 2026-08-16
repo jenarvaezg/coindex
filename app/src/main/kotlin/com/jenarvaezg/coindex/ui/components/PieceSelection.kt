@@ -44,6 +44,17 @@ class PieceSelection {
     var active by mutableStateOf(false)
         private set
 
+    /**
+     * Whether the baptism is open over the mode (#517).
+     *
+     * It used to be the `remember` of the control that drew both the button and the dialog. It moved
+     * in here when the mode's controls moved to the band at the foot of the screen: the door in the
+     * header and the band are two composables now, and the one thing they both have to agree about
+     * is this. Anything else would be the dialog reopening itself the moment the door recomposed.
+     */
+    var naming by mutableStateOf(false)
+        private set
+
     private val picked = mutableStateListOf<Int>()
 
     val typeIds: List<Int> get() = picked.toList()
@@ -66,7 +77,17 @@ class PieceSelection {
 
     fun cancel() {
         active = false
+        naming = false
         picked.clear()
+    }
+
+    fun name() {
+        naming = true
+    }
+
+    /** The way back out of the baptism and **not** out of the mode: what was picked is still picked. */
+    fun stopNaming() {
+        naming = false
     }
 
     fun toggle(typeId: Int) {
@@ -80,7 +101,7 @@ class PieceSelection {
 fun rememberPieceSelection(): PieceSelection = remember { PieceSelection() }
 
 /**
- * The whole box-making gesture in one control, born in Coins (ADR 0021 §11).
+ * The door into the box-making mode, on the header of Coins (ADR 0021 §11).
  *
  * **The button seeds only when the filter has already narrowed something.** With a filter or a search
  * on it says «Agrupar estas N» and enters with those N marked; with nothing on it says «Agrupar
@@ -92,11 +113,47 @@ fun rememberPieceSelection(): PieceSelection = remember { PieceSelection() }
  * premarked the work inverts, and what the collector needs to see is that the filter wants narrowing
  * first.
  *
+ * **It is the door and nothing else** (#517). While the mode is open this prints nothing: the work of
+ * the mode — what to touch, what it will be called, and the way out — is on [SelectionBand], at the
+ * foot of the screen, where it is still there after the header has scrolled away.
+ *
  * @param shown the type ids the list is showing right now — the seed
  * @param seeded whether anything is narrowing that list, which is what decides the two forms
  */
 @Composable
-fun SelectionControls(
+fun SelectionDoor(
+    selection: PieceSelection,
+    shown: List<Int>,
+    seeded: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (selection.active) return
+    Column(modifier = modifier) {
+        if (seeded) {
+            CardAction(
+                text = groupPiecesLabel(seeded = true, shown = shown.size),
+                onClick = { selection.start(shown) },
+                enabled = shown.isNotEmpty(),
+            )
+        } else {
+            CardAction(
+                text = groupPiecesLabel(seeded = false, shown = shown.size),
+                onClick = { selection.start() },
+            )
+        }
+    }
+}
+
+/**
+ * The mode itself while it is open: the band at the foot of Coins, and the baptism it opens (#517).
+ *
+ * Which side the work starts from is said once and only here — with a seed there is something to
+ * remove, and without one there is nothing yet to remove from — and it is said in **every frame** of
+ * the screen now, which is what the mode was missing: the sentence used to sit in the header, two
+ * rows of coins above wherever the collector was actually tapping.
+ */
+@Composable
+fun SelectionBand(
     selection: PieceSelection,
     existing: List<OwnGroupingView>,
     taken: Collection<String>,
@@ -106,62 +163,29 @@ fun SelectionControls(
     onAddTo: (boxId: Long, typeIds: List<Int>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var naming by remember { mutableStateOf(false) }
-
-    Column(modifier = modifier) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (selection.active) {
-                PrimaryAction(
-                    text = namePickedBoxLabel(selection.count),
-                    onClick = { naming = true },
-                    enabled = selection.count > 0,
-                )
-                CardAction(text = CANCEL_ACTION, onClick = selection::cancel)
-            } else if (seeded) {
-                CardAction(
-                    text = groupPiecesLabel(seeded = true, shown = shown.size),
-                    onClick = { selection.start(shown) },
-                    enabled = shown.isNotEmpty(),
-                )
-            } else {
-                CardAction(
-                    text = groupPiecesLabel(seeded = false, shown = shown.size),
-                    onClick = { selection.start() },
-                )
-            }
-        }
-        // Which side the work starts from, said once and only while the mode is open: with a seed
-        // there is something to remove, and without one there is nothing yet to remove from.
-        if (selection.active) {
-            Text(
-                selectionHintLabel(seeded, shown.size),
-                style = MaterialTheme.typography.labelLarge,
-                color = Paper.muted,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        }
+    if (!selection.active) return
+    ModeBand(sentence = selectionHintLabel(seeded, shown.size), modifier = modifier) {
+        PrimaryAction(
+            text = namePickedBoxLabel(selection.count),
+            onClick = selection::name,
+            enabled = selection.count > 0,
+        )
+        CardAction(text = CANCEL_ACTION, onClick = selection::cancel)
     }
 
-    if (naming) {
-        val close = {
-            naming = false
-            selection.cancel()
-        }
+    if (selection.naming) {
         BoxDialog(
             count = selection.count,
             existing = existing,
             taken = taken,
-            onDismiss = { naming = false },
+            onDismiss = selection::stopNaming,
             onCreate = { name ->
                 onCreate(name, selection.typeIds)
-                close()
+                selection.cancel()
             },
             onAddTo = { groupingId ->
                 onAddTo(groupingId, selection.typeIds)
-                close()
+                selection.cancel()
             },
         )
     }
