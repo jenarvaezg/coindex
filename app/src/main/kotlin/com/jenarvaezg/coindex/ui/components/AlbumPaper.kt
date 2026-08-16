@@ -192,6 +192,7 @@ fun AlbumHole(
                 .clip(CircleShape)
                 .background(Paper.paperDeep),
         ) {
+            val silence = holeSilence(candidates.size, settled = settled, painted = painted)
             if (!painted) {
                 Silhouette(Modifier.fillMaxSize())
             }
@@ -199,8 +200,18 @@ fun AlbumHole(
             // the audit of 14 August 2026 found (#509). It waits for the turn to finish — mid-turn
             // the photograph is simply still loading — and it is only ever the far face: the one at
             // rest has the die-cut and the ghost to say what it is.
-            if (!showsFront && turn >= HALF_TURN && (candidates.isEmpty() || (settled && !painted))) {
+            val turnedToNothing = !showsFront && turn >= HALF_TURN &&
+                (silence == HoleSilence.NoPhotograph || silence == HoleSilence.NotOnThisPhone)
+            if (turnedToNothing) {
                 FaceNotDownloaded(Modifier.fillMaxSize())
+            }
+            // And a face at rest that was asked for and did not come says it too, in a mark rather
+            // than in a sentence (#510). Only [HoleSilence.NotOnThisPhone]: the disc on its own
+            // goes on meaning «still coming» and «Numista has no picture of this», which are the
+            // two silences that need nothing from the collector.
+            val saysItIsNotHere = silence == HoleSilence.NotOnThisPhone && !turnedToNothing
+            if (saysItIsNotHere && LocalPhotoNotices.current) {
+                PhotoNotDownloaded(Modifier.fillMaxSize())
             }
             if (url != null) {
                 AsyncImage(
