@@ -9,7 +9,8 @@
   name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex);
   §4 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (the wish mark travels
   to paper, and it gets an output of its own); §3 amended by #508 (the year of a casilla opens the
-  coin's sheet inside the app, and no label without an arrow reaches a browser); §8 clause 4 amended by
+  coin's sheet inside the app, and no label without an arrow reaches a browser); §3 and §4 amended by
+  #514 (a system asking for quiet does not shorten the ceremonies, it keeps them from starting); §8 clause 4 amended by
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (the annex's list arrives, and the
   shelf is of the plates where something is missing)
 - Date: 2026-08-08
@@ -212,6 +213,38 @@ Coindex. So the ceremony **does not congratulate — it reveals.**
 > the hole of a casilla is already one end of the journey of this section, a photograph cannot be two
 > shared elements at once, and what the flight would say — «es la misma moneda» — the casilla said on
 > the way in.
+
+> **Amended on 2026-08-16 (§3 and §4, #514). A system asking for quiet does not shorten the
+> ceremonies: it keeps them from starting.** Everything this section approves gains one precondition,
+> and it is not the app's to argue with — `Settings.Global.ANIMATOR_DURATION_SCALE` at zero is
+> «quita las animaciones» in accessibility, or whoever gets dizzy. Compose already divides by that
+> scale every duration it governs, so the finding of the audit of 14 August 2026 was not a scale
+> being ignored: a **shared element** places its photograph where it took off before it places it
+> where it lands, because its place comes from a lookahead pass that arrives a frame later, and a
+> frame is not a duration — no factor divides it away. That frame is the capture with the coin over
+> «Ver en Numista» and the sheet's hole empty. So at zero the journeys of this section do not happen
+> at all, the sheet is given no entrance, and neither end yields its photograph: the casilla keeps
+> its coin, because the yield only ever meant «this one is in the air».
+>
+> §4's export rule gains its second reader by the same stroke. What a still device refuses is not the
+> stamp but the **stamping**, which is the distinction the export already draws, so
+> `rememberInkFall` finds the ink dry for the reason `OffScreenSheet` did.
+>
+> **And the gloss rests.** It is the movement no scale can reach — it follows the sensor and has no
+> duration for a factor to divide — so it is the one this section has to answer for by itself, and it
+> is also the one «quien se marea» is likeliest to have meant: metal that moves under the hand.
+> Where quiet was asked for the sensor is not registered at all, and `CoinTilt.Still` is the phone
+> on the table, which #303 already defined as a pose and not as an effect switched off halfway.
+>
+> **The rule is throw every switch you own**, and the app owns four: a modifier not applied, a
+> transition object not built, a `Stamping` not provided, a sensor not registered. None of them costs
+> anything, and together they make quiet a guarantee instead of an accident of frame timing. Two
+> movements have no switch short of inventing one — the flip of a casilla (#337) and the fade of the
+> return (#381) — and they are left to Compose, which is safe for a second reason: what their leaked
+> frame draws is the face that was already up and the plate still covering the index, «not turned
+> yet» and «not gone yet». That is the test the shared element failed, and it is why the flight is
+> the one that had to be switched off rather than trusted. Measured, frame by frame, in
+> `docs/ux/implementacion-514/`.
 
 > **Amended on 2026-08-09 (§3, #339). The bit is withdrawn: the sheet stamps every time it is
 > opened.** #304 had costed the ceremony at «one bit per catalog in `NamedValues`» — *ya te lo
