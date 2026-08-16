@@ -209,8 +209,12 @@ fun AlbumHole(
             // than in a sentence (#510). Only [HoleSilence.NotOnThisPhone]: the disc on its own
             // goes on meaning «still coming» and «Numista has no picture of this», which are the
             // two silences that need nothing from the collector.
-            val saysItIsNotHere = silence == HoleSilence.NotOnThisPhone && !turnedToNothing
-            if (saysItIsNotHere && LocalPhotoNotices.current) {
+            //
+            // «At rest» is the same guard the sentence keeps, and for the same reason: the mark is
+            // flat and does not turn, so mid-turn it would be a drawing pasted over a coin coming
+            // round. A face that arrives at nothing gets it once the turn is over.
+            val turnIsOver = turn <= 0f || turn >= HALF_TURN
+            if (silence == HoleSilence.NotOnThisPhone && turnIsOver && !turnedToNothing) {
                 PhotoNotDownloaded(Modifier.fillMaxSize())
             }
             if (url != null) {
@@ -249,7 +253,15 @@ fun AlbumHole(
                             cameraDistance = COIN_CAMERA_DISTANCE * density.density
                         }
                         .alpha(if (missing) 0.14f else 1f)
-                        .coinGloss(isCoin = !missing),
+                        // `painted` is the other half of a rule `coinGloss` already states —
+                        // «empty cardboard never glosses, for the direct reason that there is no
+                        // coin there» — and it was the whole of #510's title: the band blends
+                        // against whatever is under it, so on a hole whose photograph never came
+                        // it was lighting the stand-in disc and following the accelerometer while
+                        // it did. A brilliant disc that moves is the one thing «cargando» and «no
+                        // ha bajado» must not have in common (and the sensor, unregistered, is a
+                        // battery the empty hole was spending too).
+                        .coinGloss(isCoin = !missing && painted),
                 )
             }
 
