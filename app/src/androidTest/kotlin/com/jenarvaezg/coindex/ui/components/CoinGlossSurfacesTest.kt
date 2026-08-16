@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.ui.components
 
+import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -7,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.screens.OffScreenSheet
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
@@ -16,6 +20,7 @@ import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 
 private val OBVERSE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg", picture = null)
 private val REVERSE = CoinPhoto(thumbnail = "https://example.invalid/b-180.jpg", picture = null)
@@ -39,10 +44,14 @@ private class CountingTilt : CoinTilt {
 /**
  * Where the gloss goes, said as what asks the accelerometer for a reading.
  *
- * The photographs never arrive — the URLs are unreachable on purpose — because none of this is about
- * the picture. What is being defended is the rule of #303: **every coin photograph glosses and empty
- * cardboard never does**, and the export rule of ADR 0026 §4, which is one line in `OffScreenSheet`
- * and this test.
+ * What is being defended is the rule of #303: **every coin photograph glosses and empty cardboard
+ * never does**, and the export rule of ADR 0026 §4, which is one line in `OffScreenSheet` and this
+ * test.
+ *
+ * The coins that must gloss are drawn from a file this test writes, and that is the point rather
+ * than a convenience: since #510 a hole glosses the photograph it **painted**, not the one it was
+ * given. An unreachable URL used to light the stand-in disc and follow the accelerometer while it
+ * did, which is the brilliant disc of that ticket's own title.
  */
 @RunWith(AndroidJUnit4::class)
 class CoinGlossSurfacesTest {
@@ -60,14 +69,30 @@ class CoinGlossSurfacesTest {
         return tilt
     }
 
+    /** Waits for the picture to be on the hole, which is what the sensor now waits for too. */
+    private fun awaitGloss(tilt: CountingTilt) =
+        compose.waitUntil(PAINTS_MILLIS) { tilt.coins > 0 }
+
     @Test
     // D8 forbids spaces in method names below DEX 040, so instrumented tests cannot use backticks.
     fun aCoinInItsHoleGlosses() {
         val tilt = tiltOf {
-            AlbumHole(photo = OBVERSE, otherSide = REVERSE, modifier = Modifier.size(104.dp))
+            AlbumHole(photo = onDisk(), otherSide = REVERSE, modifier = Modifier.size(104.dp))
         }
+        awaitGloss(tilt)
 
         assertEquals(1, tilt.coins)
+    }
+
+    /** The disc of a photograph that never came is not metal, and #510 is that it looked like it. */
+    @Test
+    fun aPhotographThatNeverArrivedDoesNotGloss() {
+        val tilt = tiltOf {
+            AlbumHole(photo = OBVERSE, modifier = Modifier.size(104.dp))
+        }
+        compose.waitForIdle()
+
+        assertEquals(0, tilt.coins)
     }
 
     @Test
@@ -98,12 +123,13 @@ class CoinGlossSurfacesTest {
     fun aLoosePieceGlossesWithoutItsCardboard() {
         val tilt = tiltOf {
             AlbumHole(
-                photo = OBVERSE,
+                photo = onDisk(),
                 otherSide = REVERSE,
                 backed = false,
                 modifier = Modifier.size(104.dp),
             )
         }
+        awaitGloss(tilt)
 
         assertEquals(1, tilt.coins)
     }
@@ -127,5 +153,28 @@ class CoinGlossSurfacesTest {
         assertNull(gloss)
         // And nothing on a sheet that is being photographed wakes the sensor either.
         assertEquals(0, tilt.coins)
+    }
+
+    /**
+     * A photograph that actually paints, written once into the test's own cache directory.
+     *
+     * Not a fixture and not a network: Coil takes a `file://` like any other model, and what these
+     * tests need is a hole that reaches [AsyncImagePainter.State.Success] — the state the gloss
+     * hangs off since #510.
+     */
+    private fun onDisk(): CoinPhoto {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val file = File(context.cacheDir, "gloss-coin.png")
+        if (!file.exists()) {
+            val bitmap = createBitmap(8, 8)
+            bitmap.eraseColor(Color.GRAY)
+            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        }
+        return CoinPhoto(thumbnail = file.toURI().toString(), picture = null)
+    }
+
+    private companion object {
+        /** Room for a decode on an emulator, not a budget the app is held to. */
+        const val PAINTS_MILLIS = 10_000L
     }
 }

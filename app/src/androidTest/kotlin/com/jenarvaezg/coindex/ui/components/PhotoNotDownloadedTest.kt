@@ -1,16 +1,17 @@
 package com.jenarvaezg.coindex.ui.components
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.PHOTO_NOT_DOWNLOADED
+import com.jenarvaezg.coindex.ui.screens.OffScreenSheet
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Rule
 import org.junit.Test
@@ -62,18 +63,20 @@ class PhotoNotDownloadedTest {
     }
 
     @Test
-    fun theMarkDoesNotTravelToPaper() {
-        // ADR 0026 §4 read for a notice: an exported PNG cannot ask its reader's phone for a wifi.
+    fun theMarkTravelsToPaper() {
+        // ADR 0026 §4 as ADR 0029 §7 reads it: what is still travels, and «alive» is what follows
+        // the finger, the sensor or the navigation. The mark is a state and does none of the three
+        // — and a plate exported with no pictures says why it is empty instead of eleven mute discs.
         compose.setContent {
             CoindexTheme {
-                CompositionLocalProvider(LocalPhotoNotices provides false) {
+                OffScreenSheet(Density(1f)) {
                     AlbumHole(photo = UNREACHABLE, modifier = Modifier.size(HOLE))
                 }
             }
         }
 
-        compose.waitForIdle()
-        compose.onNodeWithContentDescription(PHOTO_NOT_DOWNLOADED).assertDoesNotExist()
+        awaitMark()
+        compose.onNodeWithContentDescription(PHOTO_NOT_DOWNLOADED).assertExists()
     }
 
     /**

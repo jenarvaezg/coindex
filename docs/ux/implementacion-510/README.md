@@ -10,13 +10,14 @@ estaba haciendo dos trabajos a la vez, y son trabajos opuestos:
 
 | lo que pasa | lo que se veía | lo que dura |
 | --- | --- | --- |
-| la foto viene de camino | el disco | segundos |
-| la foto se pidió y no llegó | **el disco** | hasta que haya wifi |
+| la foto viene de camino | el disco, con el brillo del metal encima | segundos |
+| la foto se pidió y no llegó | **el disco, con el mismo brillo** | hasta que haya wifi |
 | Numista no tiene foto de este tipo | el disco | siempre |
 | la moneda no está en la colección | el punteado, encima de lo anterior | — |
 
 El punteado no es de esta familia y no se toca: dice algo de la colección y se dibuja sobre lo que
-la fotografía haya resultado ser. Lo que había que partir eran las dos primeras filas.
+la fotografía haya resultado ser. Lo que había que partir eran las dos primeras filas — y el brillo
+que las dos llevaban encima resultó ser el «disco de gradiente brillante» del título.
 
 ## Lo que cambia
 
@@ -39,22 +40,49 @@ la celda de 34. Los lectores de pantalla sí reciben la frase, como `contentDesc
 **Y está quieta**, que es lo que el primer criterio del ticket pedía. Un latido aquí sería
 exactamente el shimmer que se rechaza: lo que este estado significa es que no está pasando nada.
 
-**No viaja al papel.** `LocalPhotoNotices` es la regla de exportación de ADR 0026 §4 leída para un
-aviso en vez de para un movimiento, y `OffScreenSheet` la apaga junto al brillo y al estampado: un
-PNG que el padre manda a otra persona no puede pedirle **a su** teléfono que busque un wifi. En el
-papel el hueco se queda con el disco de siempre.
+**Y viaja al papel**, que es lo que ADR 0026 §4 decide tal y como lo lee ADR 0029 §7: «vivo» es lo
+que sigue al dedo, al sensor o a la navegación, y una marca quieta no es ninguna de las tres —igual
+que la marca de deseo, que también viaja—. Una lámina exportada sin sus fotos dice por qué está
+vacía en vez de enseñar once discos mudos. La primera versión de este cambio la apagaba con un
+`CompositionLocal`; se retiró en la revisión, porque la excepción no estaba en ningún ADR y el
+argumento a favor no se sostenía.
+
+## El disco brillante del título era el brillo del metal
+
+Y no el placeholder. `coinGloss` es la banda de luz de #303 y se mezcla en `Softlight` **contra lo
+que tenga debajo**, así que en un hueco cuya fotografía nunca llegó estaba iluminando el disco de
+espera —y siguiéndole el acelerómetro—. De ahí «el disco de gradiente brillante» del ticket, y de
+ahí que el criterio hable de un *shimmer*: se movía de verdad.
+
+La regla que lo apaga estaba escrita desde el #303, en el KDoc del propio `coinGloss`: «*empty
+cardboard never glosses, for the direct reason that there is no coin there*». Lo que faltaba era la
+otra mitad de «no hay moneda»: un hueco con una foto **prometida** y no pintada tampoco tiene
+metal. `isCoin = !missing && painted`, y con ello el hueco vacío deja además de registrar el
+sensor, que es batería que se estaba gastando en una casilla sin moneda.
 
 ## Lo medido
 
 `coindex-ux` (pixel_7), colección restaurada con `scripts/avd-db.sh restore`, caché de fotos
 borrada y **modo avión**, que es el caso del ticket llevado al extremo.
 
-| antes | después |
-| --- | --- |
-| ![antes](antes.png) | ![después](despues.png) |
+| antes | después · cargando | después · no ha bajado |
+| --- | --- | --- |
+| ![antes](antes.png) | ![cargando](cargando.png) | ![después](despues.png) |
 
-**Cuánto dura el disco.** Capturas seguidas desde el arranque, contando píxeles de tinta dentro de
-la casilla de Paquillos:
+Tres columnas y no dos, porque el estado del medio es el que no existía: antes, esas cinco casillas
+eran el mismo dibujo estuvieran cargando o llevaran así media hora.
+
+**El disco ya no es un degradado.** Dentro del hueco de Paquillos, contando niveles de gris:
+
+| | recorrido del disco | tonos |
+| --- | ---: | ---: |
+| antes | **33 niveles** | 34 |
+| después | **0** | **1** |
+
+Ése era el «disco de gradiente brillante» del título, medido: un degradado de 33 niveles que además
+se desplazaba con el acelerómetro. Ahora el hueco vacío es un tono plano y quieto.
+
+**Cuánto dura.** Capturas seguidas desde el arranque, contando píxeles de tinta en la misma casilla:
 
 | t | qué hay en el hueco |
 | ---: | --- |
@@ -70,17 +98,11 @@ ticket.
 
 | | contraste |
 | --- | ---: |
-| la marca sobre el disco | **3,8:1** |
+| la marca sobre el disco | **3,6:1** |
 | el aro del troquel sobre el disco | 2,4:1 |
 
 Por encima del 3:1 que el #349 fijó para la línea que separa cartón de papel, y mejor que el propio
 aro del hueco.
-
-![Los dos estados a la vez](dos-estados.png)
-
-Ésta es la captura que lo dice todo: el mismo segundo, la misma rejilla, y las tres primeras
-láminas ya declarando que su foto no está mientras las dos de abajo siguen cargando. Antes las
-cinco eran el mismo disco.
 
 ## Las tres rejillas
 
@@ -95,7 +117,18 @@ distintos y ninguno estaba de más.
 
 ## Lo que se queda fuera a sabiendas
 
-Una foto que Numista contesta con `404` cae también en «no ha bajado», porque desde la casilla no se
-distingue de una que no llegó por falta de red. `GonePhotographs` sí lo sabe, y llevarlo hasta el
-hueco sería cablear el estado del prefetch a cada celda para arreglar un caso que el catálogo ya
-considera un error a corregir aguas arriba: los 848 tipos llevan sus dos caras.
+**Un `404` de Numista cae también en «no ha bajado»**, porque desde la casilla no se distingue de
+una foto que no llegó por falta de red. `GonePhotographs` sí lo sabe, y llevarlo hasta el hueco
+sería cablear el estado del prefetch a cada celda para arreglar un caso que el catálogo ya considera
+un error a corregir aguas arriba: los 848 tipos llevan sus dos caras.
+
+**Con datos móviles no hay marca, y es correcto.** El prefetch es lo que la tarifa detiene (ADR
+0024); la casilla que el coleccionista está mirando pide su foto igual y la trae. Lo que este cambio
+nombra es la casilla que preguntó y volvió con las manos vacías, que es «sin cobertura» —el caso del
+ticket— y no «sin wifi».
+
+**Cuando vuelva el wifi, la marca no se cae sola.** `painted` y `settled` se recuerdan por juego de
+candidatos, así que una casilla marcada sigue marcada hasta que salga de la composición y vuelva —
+que es lo que pasa al hojear. Es el mismo comportamiento que la frase del #509 y no se toca aquí:
+hacer que una casilla reintente por su cuenta es volver a poner la red dentro del hueco, que es
+justamente lo que `holeSilence` no hace.
