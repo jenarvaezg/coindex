@@ -1,11 +1,10 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.data.prices.IssueListings
+import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.ShowcasePlate
-import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.WishedSlot
 
 /**
@@ -52,10 +51,7 @@ fun showcaseTiles(
     cards: List<IndexCard>,
     wishes: List<WishedSlot>,
     state: CollectionState,
-    listings: IssueListings,
-    spot: SilverSpot?,
-    prices: (Int, Int, String) -> Double?,
-    readAt: (Int, Int) -> Long?,
+    book: PriceBook,
     nowMillis: Long,
 ): List<ShowcaseTile> {
     val marksByCatalog = wishes.groupingBy { it.catalog.id }.eachCount()
@@ -81,7 +77,7 @@ fun showcaseTiles(
             )
         }
     val fromWindow = window.map { plate ->
-        val money = showcaseMoney(plate, state, listings, spot, prices, readAt)
+        val money = showcaseMoney(plate, state, book)
         val cover = plate.album.members.firstOrNull { it.member.numistaTypeId != null }?.member
         ShowcaseTile(
             catalogId = plate.catalog.id,

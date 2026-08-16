@@ -653,12 +653,7 @@ class CoindexViewModel(
                 if (!options.money || !_state.value.valuation.settled) {
                     null
                 } else {
-                    plateValue(
-                        resolved.album,
-                        _state.value.collection,
-                        _state.value.prices.spot,
-                        _state.value.prices::of,
-                    )
+                    plateValue(resolved.album, _state.value.collection, _state.value.prices)
                 }
             },
             // Not behind a switch: a wish mark is a state at rest and travels by ADR 0026 §4, and what

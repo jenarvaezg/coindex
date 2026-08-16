@@ -150,7 +150,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         if (!state.valuation.settled) {
             null
         } else {
-            coinValue(typeId, state.collection, state.prices.spot, state.prices::of)
+            coinValue(typeId, state.collection, state.prices)
         }
     }
     // The casillas the collector marked, crossed with the collection for **the screens** (ADR 0029 §3):
@@ -185,23 +185,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             // A plate of the shelf window is **not** gated on the collection's pass (ADR 0030 §3):
             // its prices arrive by a gesture of their own, so waiting for the market of a collection
             // it has no coin in would leave the amount off a plate that has just been valued.
-            window != null -> showcaseMoney(
-                window,
-                state.collection,
-                state.prices.listings,
-                state.prices.spot,
-                state.prices::of,
-                state.prices::readAt,
-            )
+            window != null -> showcaseMoney(window, state.collection, state.prices)
             !state.valuation.settled -> PlateMoney(waiting = state.valuation.waiting)
-            else -> plateMoney(
-                resolved.album,
-                state.collection,
-                state.prices.listings,
-                state.prices.spot,
-                state.prices::of,
-                wishedKeys,
-            )
+            else -> plateMoney(resolved.album, state.collection, state.prices, wishedKeys)
         }
     }
 
@@ -209,12 +195,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // the resolution like the money is: the album the count walks is on the other side of it.
     val plateValuation: (PlateResult.Available) -> PlateValuation = { resolved ->
         val plate = showcase.firstOrNull { it.catalog.id == resolved.catalog.id }
-        val calls = plate?.let {
-            // **The listings the pass would honour**, not every one the phone holds: a type listed four
-            // months ago is listed for the screen and not for the spend, and counting it as listed would
-            // print a ceiling under what the pass then spends (ADR 0030 §3).
-            showcaseCallCount(it, state.prices.readAt, nowMillis, state.prices.freshListings(nowMillis))
-        } ?: 0
+        val calls = plate?.let { showcaseCallCount(it, state.prices, nowMillis) } ?: 0
         PlateValuation(
             calls = calls,
             running = state.valuingPlate == resolved.catalog.id,
@@ -305,8 +286,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     ) {
         figuresSubject(
             state = state.collection,
-            spot = state.prices.spot,
-            prices = state.prices::of,
+            book = state.prices,
             settled = state.valuation.settled,
             waiting = state.valuation.waiting,
         )
@@ -588,10 +568,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     cards = state.collection.index,
                                     wishes = wishes,
                                     state = state.collection,
-                                    listings = state.prices.listings,
-                                    spot = state.prices.spot,
-                                    prices = state.prices::of,
-                                    readAt = state.prices::readAt,
+                                    book = state.prices,
                                     nowMillis = nowMillis,
                                 )
                             },
@@ -616,13 +593,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     costs = if (!state.valuation.settled) {
                                         emptyMap()
                                     } else {
-                                        wishCosts(
-                                            wishes,
-                                            state.collection,
-                                            state.prices.listings,
-                                            state.prices.spot,
-                                            state.prices::of,
-                                        )
+                                        wishCosts(wishes, state.collection, state.prices)
                                     },
                                 )
                             },
