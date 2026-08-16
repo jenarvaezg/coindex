@@ -2,7 +2,7 @@ package com.jenarvaezg.coindex.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,10 +31,11 @@ import com.jenarvaezg.coindex.ui.ShowcaseLabels
 import com.jenarvaezg.coindex.ui.ShowcaseSort
 import com.jenarvaezg.coindex.ui.ShowcaseTile
 import com.jenarvaezg.coindex.ui.components.AlbumHole
-import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.printedPhoto
+import com.jenarvaezg.coindex.ui.showcaseOrderNote
 import com.jenarvaezg.coindex.ui.showcaseShelf
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.wishDoorLabel
@@ -103,7 +105,9 @@ fun ExploreScreen(
                     onValueChange = { query = it },
                     placeholder = ShowcaseLabels.SEARCH_PLACEHOLDER,
                 )
-                ShelfOrder(sort = sort, onSort = { sort = it })
+                // The shelf **as shown**: the note under the orders counts what the collector is
+                // looking at, so a search narrowed to three unvalued plates says three.
+                ShelfOrder(sort = sort, shelf = shown, onSort = { sort = it })
             }
         }
         if (shown.isEmpty()) {
@@ -185,33 +189,68 @@ private fun ShelfTile(
 }
 
 /**
- * The two orders of the shelf: the one it is read in, and the other one offered beside it.
+ * The two orders of the shelf, both on the paper, and what the one in force could not place.
  *
  * `FilterShelf` is what a hierarchy with facets opens; this shelf has none — twenty plates at 0/N and
  * twelve countries buy no chip (ADR 0026 §8 clause 4) — so a disclosure that folded one row with two
  * words in it would be a fold with nothing folded.
  *
- * **The line says which order is on and the action says where it goes.** Drawn as the action alone it
- * read as a label of the current order — measured on the AVD, where «Por coste de entrar» sat over a
- * shelf sorted by casillas — and that is the one thing a control of this shape must not do.
+ * **Both orders are drawn, and the one in force is the filled one** (#513). It was a muted line beside
+ * a framed `CardAction`, which is this album's convention upside down: the enclosed thing reads as the
+ * chosen thing, so the shelf sorted by casillas announced itself as «Por coste de entrar» inside a
+ * border. What it wears now is [FilterChip], the one drawing of «elegido» the album has — it says which
+ * of a set is on without a sentence explaining it, and it says the same to a screen reader.
+ *
+ * The line under them is [showcaseOrderNote]: «por coste de entrar» sorts only what carries an amount
+ * (ADR 0030 §8 clause 3), and a shelf where nothing has been valued does not visibly move when it is
+ * pressed. Silence there is the one reading that leaves the collector believing the control is broken.
  */
 @Composable
-private fun ShelfOrder(sort: ShowcaseSort, onSort: (ShowcaseSort) -> Unit) {
-    val other = when (sort) {
-        ShowcaseSort.ByCasillas -> ShowcaseSort.ByEntryCost
-        ShowcaseSort.ByEntryCost -> ShowcaseSort.ByCasillas
-    }
-    Row(
+private fun ShelfOrder(
+    sort: ShowcaseSort,
+    shelf: List<ShowcaseTile>,
+    onSort: (ShowcaseSort) -> Unit,
+) {
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
-            sort.label,
-            style = MaterialTheme.typography.labelLarge,
-            color = Paper.muted,
-        )
-        CardAction(text = other.label, onClick = { onSort(other) })
+        // A FlowRow and not a Row: the two chips fit a 360 dp phone side by side and stop fitting at
+        // the larger type sizes, where a Row would squeeze them against each other and each would
+        // ellipse its own label ([FilterChip] is one line). Wrapping spends a line and lets each chip
+        // ask for the width its words need.
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            ShowcaseSort.entries.forEach { order ->
+                FilterChip(
+                    label = order.label,
+                    // No tally: what a filter chip counts is what it would leave, and an order leaves
+                    // the whole shelf. The number beside it would be the same number twice.
+                    count = null,
+                    selected = order == sort,
+                    onClick = { onSort(order) },
+                    // The 30 dp of ink a chip is, and 48 dp of finger around it. Android's minimum
+                    // bought the way the aspa of the search box and the year tag buy it — the target
+                    // grows without the chip growing with it — because this row is one of the two
+                    // controls of the whole screen and it is read with a thumb.
+                    modifier = Modifier.minimumInteractiveComponentSize(),
+                )
+            }
+        }
+        showcaseOrderNote(sort, shelf)?.let { note ->
+            Text(
+                note,
+                // The type of the line Ajustes prints under the pass and not the album's small caps:
+                // this is a sentence explaining what the app did, and the versalitas of `labelMedium`
+                // read as a rubric of the control above them — which is the register this line is
+                // least able to afford.
+                style = MaterialTheme.typography.bodyMedium,
+                color = Paper.muted,
+            )
+        }
     }
 }
 

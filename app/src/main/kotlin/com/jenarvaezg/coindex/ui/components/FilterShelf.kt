@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -264,6 +265,16 @@ fun Facet(title: String, content: @Composable FlowRowScope.() -> Unit) {
  * same number the tally already prints two lines up. Callers omit chips whose count is zero
  * ([FacetCounts.populated] / [FacetCounts.populatedIn]): offering a dead end costs a tap into an
  * empty list, and the other filters already condition the counts.
+ *
+ * **This is the album's one drawing of «elegido»**, which is why the pair of orders of «Explorar»
+ * wears it too (#513) although that shelf has no facets at all (ADR 0030 §8 clause 4): a second
+ * shape for the same state is a second thing to learn. Filled in moss with the paper's own ink on
+ * it when it is the one in force, plain card when it is the one on offer. There a null [count] is
+ * not the «all» chip of anything — an order narrows nothing, so there is no remainder to print.
+ *
+ * `selectable` and not `clickable`: the fill is what the eye reads, and the state it stands for is
+ * what a screen reader has to hear — one of a set, and this one is on. It is also what lets a test
+ * assert the state rather than the paint.
  */
 @Composable
 fun FilterChip(
@@ -284,7 +295,7 @@ fun FilterChip(
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .background(if (selected) Paper.moss else Paper.card)
-            .clickable(role = Role.RadioButton, onClick = onClick)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp),
     )
 }

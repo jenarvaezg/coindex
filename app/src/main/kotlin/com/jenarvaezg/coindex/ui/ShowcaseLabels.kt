@@ -93,6 +93,52 @@ object ShowcaseLabels {
 
     /** What a plate says when Numista had no price for a single one of its casillas. */
     const val NOTHING_PRICED: String = "Numista no da precio de ninguna de estas casillas."
+
+    /**
+     * The shelf ordered by money with no money anywhere on it (#513).
+     *
+     * It counts nothing, unlike [showcaseOrderNote]'s other form: with every plate at the end there is
+     * no «las tasadas» to compare the figure against, and «20 láminas sin tasar, al final» describes an
+     * order that placed none of them as though it had placed some.
+     *
+     * **And it says what the order has, not what the screen does.** «Este orden no cambia nada» was
+     * written first and is false wherever the collector has marked a casilla: the default order leads
+     * with the marked plates (`showcaseShelf`) and this one does not, so the grid moves — by dropping
+     * their own plates to the end — while nothing on it has a price. What is always true is the thing
+     * the collector needs: there is no amount for this order to sort by.
+     */
+    const val NOTHING_VALUED: String =
+        "Todavía no hay ninguna lámina tasada: este orden no tiene precios con los que ordenar."
+}
+
+/**
+ * What «por coste de entrar» could not place, under the two orders (#513).
+ *
+ * An order that sorts by an amount can only sort what has one, and ADR 0030 §8 clause 3 leaves the rest
+ * behind it — which on a shelf that is born with no amount at all is a control that changes the screen
+ * invisibly or not at all. This is the transparency Ajustes already prints under the pass (ADR 0028 §6):
+ * one line, in the place the collector is looking, saying what the app did with what it had.
+ *
+ * **It counts the plates of the window and never the collector's own.** A plate of theirs carries no
+ * `entryEur` and never will — entering a plate you already collect is not a thing that costs, so it has
+ * no «Coste de entrar» and no gesture to ask for one (ADR 0030 §3, §6) — so counting it among «las que
+ * faltan por tasar» would send the collector looking for a button that is not there.
+ *
+ * Null in the default order, because «por casillas» needs no datum that could be missing, and null when
+ * there is nothing to warn about — every plate of the window valued, or a shelf with none on it at all.
+ * It reads the shelf **as shown**: a search narrowed to three unvalued plates is three, not the twenty
+ * behind the box.
+ */
+fun showcaseOrderNote(sort: ShowcaseSort, shelf: List<ShowcaseTile>): String? {
+    if (sort != ShowcaseSort.ByEntryCost) return null
+    val valued = shelf.count { it.entryEur != null }
+    val unvalued = shelf.count { !it.mine && it.entryEur == null }
+    return when {
+        unvalued == 0 -> null
+        valued == 0 -> ShowcaseLabels.NOTHING_VALUED
+        else -> "${plural(unvalued, "lámina", "láminas")} sin tasar, al final: " +
+            "este orden sólo coloca las tasadas."
+    }
 }
 
 /**
@@ -227,6 +273,9 @@ fun showcaseWishedLabel(marks: Int): String = "$marks ${WishLabels.MARK_WORD}"
  * Two and no more. «Por casillas» is the default and says nothing in the folded line — the same rule
  * `indexShelfSummary` follows for the sort the index would have used anyway — and «por coste de entrar»
  * is the one #282 chose, which can only sort what has been valued and leaves the rest behind it.
+ *
+ * **The order they are declared in is the order they are drawn in** (#513): `ExploreScreen` walks
+ * `entries` rather than naming the two, so moving a constant here moves the chips on the screen.
  */
 enum class ShowcaseSort(val label: String) {
     ByCasillas("Por casillas"),
