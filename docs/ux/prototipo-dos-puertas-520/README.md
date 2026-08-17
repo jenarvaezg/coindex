@@ -120,7 +120,7 @@ Pero conviene decir en el ticket que esa rama **no sube la visibilidad**: parte 
 la app enseña y no lo que `data/` dice (`medir-en-el-movil-no-en-el-asset`): 69 tarjetas, 580 piezas,
 198 tipos, 20 láminas en la ventana del estante y las dos casillas marcadas de verdad. Las
 fracciones salen de `memberMatches`, la ventana de `showcasePlate`, el orden de `indexOrder` y la
-cara de cada casilla de `printed_side`. `build.py` escribe un HTML autocontenido con las 40 pantallas
+cara de cada casilla de `printed_side`; el recuento se cotejó con `FieldReportTest` (más abajo). `build.py` escribe un HTML autocontenido con las 40 pantallas
 dentro y dos ruedas que eligen cuál se ve; las 71 fotos van una vez cada una como clase CSS.
 
 - **411 × 914 dp**, 1 px CSS = 1 dp, el Pixel 7 de las capturas del #296.
@@ -131,10 +131,18 @@ dentro y dos ruedas que eligen cuál se ve; las 71 fotos van una vez cada una co
 
 ## Lo que la maqueta no prueba
 
-- **Las 69 tarjetas son un suelo.** La derivación de las que no tienen catálogo se reproduce con la
-  regla gruesa —familia sembrada y peso, sin las familias técnicas de ADR 0012— así que el índice
-  real es igual o más largo, y la fila del pie está igual o **más** lejos. El sesgo va a favor de lo
-  que propongo, y por eso queda dicho.
+- **Las 69 tarjetas están contrastadas, no supuestas.** La derivación de las que no tienen catálogo
+  se reproduce aquí con la regla gruesa —familia sembrada y peso, sin las familias técnicas de
+  ADR 0012— así que se cotejó contra el dominio de verdad:
+
+      COINDEX_FIELD_SNAPSHOT=/Users/jose/jenarvaezg/coindex/.local/padre \
+        ./gradlew :app:testDebugUnitTest --tests '*FieldReportTest*' --rerun
+
+  `FieldReportTest` da **67 tarjetas** —49 con fracción y 18 sin lista de emisiones— sobre la captura
+  de Numista del 3 de agosto (229 filas, 572 piezas). La maqueta lee la db del móvil, que va ocho
+  piezas y siete tipos por delante (237 filas, 580 piezas), y añade exactamente dos tarjetas: la caja
+  **Cofre Chino**, que la captura de Numista no contiene, y un bulto más. 67 y 69 son la misma cuenta
+  con dos semanas de diferencia, y **el arrastre de 4,2 pliegues no depende de esa horquilla**.
 - **El estado «feria» inventa siete marcas** sobre las dos que hay, y su tira de monedas enseña las
   dos reales con un «y 5 más».
 - **Nada de esto se ha visto en un teléfono.** El navegador elige, el emulador confirma
