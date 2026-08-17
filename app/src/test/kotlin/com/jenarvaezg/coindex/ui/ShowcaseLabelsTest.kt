@@ -272,6 +272,27 @@ class ShowcaseLabelsTest {
     }
 
     /**
+     * The door declares that the box above it does not reach it (#515).
+     *
+     * Its count is of another population — plates the collector owns nothing of, casillas rather than
+     * cards — so a search cutting the index to two leaves it at twenty, and «Y otras 20 láminas» over
+     * two cards read as a number that had not been recomputed.
+     *
+     * Only for the query: the filters persist across launches (ADR 0021 §1), and a line printed on
+     * every screen of every session is the frequency ADR 0026 §5 prices.
+     */
+    @Test
+    fun `the index door says a search does not reach it`() {
+        assertEquals(
+            "Lo que escribes arriba no llega hasta aquí.",
+            annexDoorNote(searching = true),
+        )
+        assertNull(annexDoorNote(searching = false))
+        // «Lo que busco» is a room one door in: a line about searching must not read as being about it.
+        assertFalse(WishLabels.DESTINATION in annexDoorNote(searching = true).orEmpty())
+    }
+
+    /**
      * A refusal is the answer to a press and says nothing was spent.
      *
      * Its own sentence and not the settings line's: that one is about prices arriving on their own.

@@ -111,6 +111,26 @@ fun annexDoorLabel(wishes: Int, plates: Int): String? = when {
 }
 
 /**
+ * What the door owes a collector who is typing in the box above it (#515).
+ *
+ * The count behind this door is measured over the whole collection and never over the narrowing —
+ * which is right, because what is behind it is not in the list above: the shelf window is made of
+ * plates the collector owns nothing of, and the marks are casillas rather than cards. But «Y otras
+ * 55 láminas» under an index the search had cut to two read as a count that had simply not been
+ * updated, which is the one thing a door that names what is behind it cannot afford.
+ *
+ * So it says so, and only while something is typed: **the filters are not named here**. They persist
+ * across launches (ADR 0021 §1), so a collector who left the país chip on would read this line on
+ * every screen of every session — which is the frequency ADR 0026 §5 prices — while the query is
+ * what is being done right now, in a box in view, over a list that may have gone empty under it.
+ *
+ * «Lo que escribes» and not «tu búsqueda»: one door down, `WishLabels.DESTINATION` is «Lo que
+ * busco», and a line about searching beside a room called that would be read as being about the room.
+ */
+fun annexDoorNote(searching: Boolean): String? =
+    "Lo que escribes arriba no llega hasta aquí.".takeIf { searching }
+
+/**
  * «otras 20 láminas», and «otra lámina» when there is one.
  *
  * The count goes with the plural and **not** with the singular: «otra 1 lámina» is what a `plural`

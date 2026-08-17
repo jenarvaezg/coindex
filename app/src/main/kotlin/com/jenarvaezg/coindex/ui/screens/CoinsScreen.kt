@@ -54,7 +54,7 @@ import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
 import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
 import com.jenarvaezg.coindex.ui.shelf.CLASS_FACET
-import com.jenarvaezg.coindex.ui.shelf.CLEAR_FILTERS_ACTION
+import com.jenarvaezg.coindex.ui.shelf.COINS_SEARCH_PLACEHOLDER
 import com.jenarvaezg.coindex.ui.shelf.COUNTRY_FACET
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.shelf.CoinSort
@@ -64,9 +64,11 @@ import com.jenarvaezg.coindex.ui.shelf.MEMBERSHIP_FACET
 import com.jenarvaezg.coindex.ui.shelf.Membership
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.SORT_FACET
+import com.jenarvaezg.coindex.ui.shelf.ShelfNarrowing
 import com.jenarvaezg.coindex.ui.shelf.WEIGHT_FACET
 import com.jenarvaezg.coindex.ui.shelf.YEAR_FACET
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
+import com.jenarvaezg.coindex.ui.shelf.clearNarrowingAction
 import com.jenarvaezg.coindex.ui.shelf.coinAlbumFootnote
 import com.jenarvaezg.coindex.ui.shelf.coinRows
 import com.jenarvaezg.coindex.ui.shelf.coinsEmptyLabel
@@ -75,6 +77,7 @@ import com.jenarvaezg.coindex.ui.shelf.coinsShelfSummary
 import com.jenarvaezg.coindex.ui.shelf.coinsTally
 import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
+import com.jenarvaezg.coindex.ui.shelf.shelfNarrowing
 import com.jenarvaezg.coindex.ui.shelf.years
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -128,6 +131,8 @@ fun CoinsScreen(
     // The seed exists only while something is narrowing the list: without a filter «Agrupar estas
     // 192» would offer the whole collection, and the two-coin box would be made by unticking 190.
     val seeded = shelf.active > 0 || query.isNotBlank()
+    // What is narrowing right now, which is what the empty card answers and undoes (#515).
+    val narrowing = shelfNarrowing(filters = shelf.active, query = query)
     val taken = remember(curatedNames, state.ownGroupings) {
         curatedNames + state.ownGroupings.map { it.name }
     }
@@ -154,7 +159,11 @@ fun CoinsScreen(
                                 counts = sewnEdge,
                                 onSettings = onSettings,
                             )
-                            SearchField(value = query, onValueChange = { query = it })
+                            SearchField(
+                                value = query,
+                                onValueChange = { query = it },
+                                placeholder = COINS_SEARCH_PLACEHOLDER,
+                            )
                             FilterShelf(
                                 summary = coinsShelfSummary(shelf, expanded = open),
                                 tally = coinsTally(shown.size, rows.size),
@@ -177,7 +186,15 @@ fun CoinsScreen(
                         coinFullWidth {
                             EmptyCoins(
                                 everything = rows.isEmpty(),
-                                onClear = { onNarrow(CoinsShelf()); query = "" },
+                                narrowing = narrowing,
+                                // Exactly what is narrowing and nothing else (#515): the chips go
+                                // without the axis and the sort, the box only where it has a word.
+                                onClear = {
+                                    if (narrowing != ShelfNarrowing.Search) {
+                                        onNarrow(shelf.withoutFilters())
+                                    }
+                                    if (narrowing != ShelfNarrowing.Filters) query = ""
+                                },
                             )
                         }
                     }
@@ -405,22 +422,24 @@ private val PICK_RULE = 2.dp
 private const val GHOST_PICK_OPACITY = 0.3f
 
 /**
- * Nothing to show, and which of the two reasons it is.
+ * Nothing to show, and which of the reasons it is.
  *
- * A filter that hides everything must offer the way out on the spot: the shelf enters folded, so the
- * chip responsible may be two taps away, and «0 de 191» with no action is where an app looks broken.
+ * A narrowing that hides everything must offer the way out on the spot: the shelf enters folded, so
+ * the chip responsible may be two taps away, and «0 de 191» with no action is where an app looks
+ * broken. What the way out is called and what it undoes are the narrowing's own (#515) — a screen
+ * emptied by a typed word used to be offered «Quitar los filtros», which then emptied the box.
  */
 @Composable
-private fun EmptyCoins(everything: Boolean, onClear: () -> Unit) {
+private fun EmptyCoins(everything: Boolean, narrowing: ShelfNarrowing, onClear: () -> Unit) {
     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
         Text(
-            coinsEmptyLabel(anyCoins = !everything),
+            coinsEmptyLabel(anyCoins = !everything, narrowing = narrowing),
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
         )
-        if (!everything) {
+        clearNarrowingAction(narrowing).takeIf { !everything }?.let { action ->
             CardAction(
-                text = CLEAR_FILTERS_ACTION,
+                text = action,
                 onClick = onClear,
                 modifier = Modifier.padding(top = 10.dp),
             )

@@ -235,6 +235,30 @@ class ShowcaseSubjectTest {
         assertEquals(1, showcaseShelf(tiles, ShowcaseSort.ByCasillas, "LIBERTAD").size)
         assertTrue(showcaseShelf(tiles, ShowcaseSort.ByCasillas, "panda").isEmpty())
     }
+
+    /**
+     * This box matches the way the other two do, because it is the same box (#515).
+     *
+     * It was a bare `contains`: accent-sensitive, and blind to two words in any order. The album's
+     * names are written in Spanish by rule (ADR 0021 §4) and typed on a phone keyboard, so «aguila»
+     * has to find «Águila» — which is the whole argument `fold` was written under.
+     */
+    @Test
+    fun `the shelf window folds accents and takes the words in any order`() {
+        val tiles = showcaseTiles(
+            window = listOf(showcase(dateRun("Águila de plata", 1_990..1_992))),
+            cards = emptyList(),
+            wishes = emptyList(),
+            state = state(),
+            book = book(),
+            nowMillis = NOW,
+        )
+
+        assertEquals(1, showcaseShelf(tiles, ShowcaseSort.ByCasillas, "aguila").size)
+        assertEquals(1, showcaseShelf(tiles, ShowcaseSort.ByCasillas, "plata aguila").size)
+        assertEquals(1, showcaseShelf(tiles, ShowcaseSort.ByCasillas, "  ").size)
+        assertTrue(showcaseShelf(tiles, ShowcaseSort.ByCasillas, "aguila oro").isEmpty())
+    }
 }
 
 private const val PRICED_TYPE = 2
