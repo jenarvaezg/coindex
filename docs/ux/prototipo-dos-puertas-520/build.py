@@ -99,11 +99,17 @@ def composed_label(wishes, plates):
 
 
 # ── piezas de cromo ─────────────────────────────────────────────────────────
-def hole(tid, size=HOLE, missing=False):
-    """El hueco troquelado de `AlbumPaper.kt`: cartón, pared del corte, filete y la foto dentro."""
+def hole(tid, size=HOLE, missing=False, lit=False):
+    """El hueco troquelado de `AlbumPaper.kt`: cartón, pared del corte, filete y la foto dentro.
+
+    `lit` es la enmienda de Jose del 17 de agosto de 2026 al elegir la E: una casilla que **buscas**
+    no es una que te falta de una lámina que sigues, así que la moneda se ve entera y lo que dice que
+    no es tuya es el filete de puntos. El idioma completo se decide en el #556.
+    """
     ring = max(2, round(RING * size / HOLE))
     inner = f'<i class="p{tid}" style="inset:{ring}px"></i>' if tid in PHOTOS else ""
-    return (f'<div class="hole{" miss" if missing else ""}" '
+    marks = (" miss" if missing else "") + (" lit" if lit else "")
+    return (f'<div class="hole{marks}" '
             f'style="width:{size}px;height:{size}px">{inner}</div>')
 
 
@@ -147,7 +153,7 @@ def door(label, note=None, extra="", mark=False, sole=True):
 def marks_strip(wishes):
     """Las casillas marcadas como monedas, con el resto dicho en palabras."""
     shown = MARKS[:3]
-    strip = "".join(hole(m["tid"], size=40, missing=True) for m in shown)
+    strip = "".join(hole(m["tid"], size=40, missing=True, lit=True) for m in shown)
     rest = wishes - len(shown)
     tail = f'<em>y {rest} más</em>' if rest > 0 else ""
     return f'<div class="strip">{strip}{tail}</div>'
@@ -340,6 +346,10 @@ button.on{{background:{PAPER};color:{INK};border-color:{PAPER}}}
 .hole.miss i{{opacity:.14;filter:grayscale(.2)}}
 .hole.miss:before{{content:'';position:absolute;inset:4px;border-radius:50%;
   border:1px dashed rgba(45,48,41,.48)}}
+/* La casilla que buscas, a plena luz: la moneda entera y el filete de puntos como única marca. */
+.hole.miss.lit i{{opacity:1;filter:none}}
+.hole.miss.lit i:after{{content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(118deg,rgba(255,255,255,.34) 0 18%,rgba(255,255,255,0) 42%)}}
 
 /* ── la tarjeta del índice (IndexScreen.kt) ── */
 .grid{{display:grid;grid-template-columns:repeat(3,{HOLE}px);gap:{PITCH}px {GUTTER}px;
@@ -382,9 +392,11 @@ CAPS = {
          "lo pone. Dos filas, dos sitios, un nombre cada una.",
     "D": "<b>Tesis: la fila de arriba le debe su censo al lector.</b> Como la C, más «2 casillas en "
          "1 lámina» debajo: qué hay detrás, antes de tocar.",
-    "E": "<b>Tesis: lo que engancha son las monedas, no el recuento.</b> Como la C, con las "
-         "casillas marcadas dibujadas en la fila. Es lo más cerca de la «sección fija» que el "
-         "ticket descartó, con una fila en vez de una sección.",
+    "E": "<b>Elegida el 17 de agosto de 2026.</b> Tesis: lo que engancha son las monedas, no el "
+         "recuento. Como la C, con las casillas marcadas dibujadas en la fila — y <b>a plena luz</b>, "
+         "que es la enmienda de la misma decisión: una casilla que buscas no es una que te falta de "
+         "una lámina que sigues, así que la moneda se ve entera y lo que dice que no es tuya es el "
+         "filete de puntos. El idioma completo de los fantasmas se decide en el #556.",
     "G": "<b>Tesis: entre el buscador y la lista es el peor sitio para un recuento que el "
          "buscador no mueve.</b> La misma fila de la C, pero <b>encima</b> del buscador, pegada al "
          "canto: primero lo que hay, después la herramienta de mirar. Pon el estado «buscando» y "

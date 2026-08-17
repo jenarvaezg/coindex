@@ -20,6 +20,35 @@ Barra `sticky` arriba con los dos ejes, y también por URL: `#C-buscando`. Flech
 forma, ↑↓ de estado. Bajo el teléfono, la maqueta dice en cada combinación cuántas tarjetas entran
 en el pliegue y cuánto hay que arrastrar para ver «Lo que busco».
 
+## Lo elegido
+
+**La E: «Lo que busco · N» arriba, bajo el estante, con las casillas marcadas dibujadas en la fila —
+y a plena luz.** Elegido por Jose el 17 de agosto de 2026 con la maqueta delante (`vE-monedas.jpg`).
+
+    COINDEX   69 colecciones · 580 piezas · 198 tipos
+    ┌ Buscar entre tus colecciones ─────────────┐
+    ▸ Filtros y orden        69 colecciones  [Exportar láminas]
+    ┌───────────────────────────────────────────┐
+    │ LO QUE BUSCO · 7                        › │
+    │ (○) (○) (○)  y 4 más                      │
+    └───────────────────────────────────────────┘
+     ● Plata a valor facial   ● Fuertes   ● 1000 escudos…
+
+- **La fila sube a la primera vista** y cuesta 1,76 tarjetas del pliegue (11,36 → 9,60). Al cero no
+  se imprime, así que quien no marca nada no paga nada.
+- **«Y otras 20 láminas que no coleccionas →» se queda al pie**, donde ADR 0026 §8 la pone, con su
+  nombre estable y su único destino. La puerta compuesta desaparece.
+- **Las marcas van a plena luz, no en fantasma** — enmienda de la misma decisión: *«sólo tiene
+  sentido fantasma cuando no la tienes en una colección que sigues»*. A 40 dp el fantasma de alfa
+  0,14 son dos discos grises (`vE-fantasma.jpg` conserva la prueba); a plena luz se ven las monedas y
+  lo que dice que no son tuyas es el filete de puntos. **El idioma completo de los fantasmas —las
+  seis superficies donde se dibujan— se decide en el
+  [#556](https://github.com/jenarvaezg/coindex/issues/556)**, y esta fila hereda lo que salga de ahí.
+- Lo que queda por calibrar al implementar: **el diámetro de la tira** (40 dp aquí, sin pasar por el
+  banco de ADR 0026 §15) y cuántas casillas se dibujan antes del «y N más» (tres aquí).
+- Enmiendas que pide: ADR 0026 §8 cláusula 3 —dos sitios para un anexo, y la puerta deja de ser
+  siempre la última fila— y ADR 0030 §8 —el anexo pierde una habitación y gana un hermano—.
+
 ## Lo medido, sobre el dibujo
 
 Con las **dos marcas que el padre tiene de verdad** y las 20 láminas de la ventana del estante.
@@ -33,7 +62,7 @@ Con las **dos marcas que el padre tiene de verdad** y las 20 láminas de la vent
 | **B** · un canto, dos renglones | al pie | 11,36 | +49 | 3417 dp · 4,2 pliegues |
 | **C** · arriba, bajo el estante | bajo los filtros | 10,37 | +56 | 0 · a 166 dp del borde |
 | **D** · arriba, con su censo | bajo los filtros | 10,10 | +71 | 0 · a 166 dp del borde |
-| **E** · arriba, con las monedas | bajo los filtros | 9,60 | +99 | 0 · a 166 dp del borde |
+| **E** · arriba, con las monedas · **elegida** | bajo los filtros | 9,60 | +99 | 0 · a 166 dp del borde |
 | **F** · el canto cosido lo dice | en el canto | 11,36 | +0 | 0 · pero sin destino |
 | **G** · arriba del buscador | colgando del canto | 10,37 | +56 | **0 · a 70 dp del borde** |
 
@@ -57,9 +86,9 @@ Tres cosas que sólo dice esa tabla:
 | **B** · un canto con dos renglones | dos renglones de un objeto, no dos objetos | lo mismo, 7 dp más barato |
 | **C** · arriba, bajo el estante | la primera vista es arriba o no es | queda **dentro** de la zona de buscar |
 | **D** · arriba, con su censo | la fila le debe su censo al lector | hoy dice el mismo número dos veces |
-| **E** · arriba, con las monedas | lo que engancha es la moneda | las marcas son huecos vacíos: no hay moneda |
+| **E** · arriba, con las monedas | lo que engancha es la moneda | **elegida**, con las marcas a plena luz |
 | **F** · el canto cosido | la primera vista ya existe | un recuento que no se puede tocar |
-| **G** · arriba del buscador | primero lo que hay, después la herramienta | **la que propongo** |
+| **G** · arriba del buscador | primero lo que hay, después la herramienta | la que propuse; descartada |
 
 ## Lo que sólo se vio al dibujarlo
 
@@ -76,11 +105,17 @@ Tres cosas que sólo dice esa tabla:
    —«Lo que escribes arriba no llega hasta aquí»— y ahí está la trampa: con **dos** filas, las dos
    cuentan poblaciones que el buscador no toca, así que la nota tendría que imprimirse **dos veces**,
    que es el mueble que ADR 0026 §5 tasa. La G lo esquiva sin nota ninguna: encima del buscador, la
-   fila no está en la conversación de buscar.
-3. **Las casillas marcadas no enseñan monedas.** La E dibuja las marcas a 40 dp con el fantasma real
-   de una casilla vacía (alfa 0,14 y su círculo de puntos): lo que sale son dos discos grises
-   (`vE-monedas.jpg`). Lo que engancha no puede ser precisamente lo que falta, así que la tesis de la
-   E se cae por su propio dibujo — y no por el ADR que ya descartó la sección fija.
+   fila no está en la conversación de buscar. **Con la E elegida esto queda como fleco de
+   implementación**: la fila cae bajo el buscador, así que hay que decidir qué dice —o si calla— la
+   fila de arriba mientras se escribe, sin imprimir la nota del #515 dos veces.
+3. **Las casillas marcadas no enseñaban monedas, y eso no hundió la tesis: hundió el fantasma.** La
+   primera vuelta de la E dibujó las marcas a 40 dp con el fantasma real de una casilla vacía (alfa
+   0,14 y su círculo de puntos) y salieron **dos discos grises** (`vE-fantasma.jpg`). La lectura de
+   Jose con la maqueta delante fue la contraria a la mía: el dibujo no sobra, sobra la penumbra —
+   *«sólo tiene sentido fantasma cuando no la tienes en una colección que sigues»*—. A plena luz la
+   misma fila enseña monedas (`vE-monedas.jpg`), y el idioma de los fantasmas en las **seis**
+   superficies donde se dibujan se abre como ticket propio, el
+   [#556](https://github.com/jenarvaezg/coindex/issues/556).
 4. **El censo de la D es hoy una redundancia.** Con las dos marcas de verdad dice «Lo que busco · 2»
    y debajo «2 casillas en 1 lámina»: el mismo número dos veces. Sólo aporta cuando las marcas
    cruzan láminas, y ése es un estado que el padre no tiene todavía.
@@ -94,25 +129,20 @@ Tres cosas que sólo dice esa tabla:
    puerta compuesta sólo está en la primera vista cuando el índice está recortado**, que es
    exactamente cuando su recuento no habla de lo que se está mirando.
 
-## Lo que propongo
+## Lo que propuse, y por qué no fue
 
-**La G: la fila de «Lo que busco · 2» colgando del canto cosido, encima del buscador, y «Y otras 20
-láminas que no coleccionas →» al pie, donde ya está.** No es la C con la fila movida 96 dp: es la
-única de las ocho que pone el recuento en la primera vista sin meterlo en la zona de buscar, y la
-que dibuja lo que el grillado dijo con palabras —«anexo **hermano** colgando de Colecciones»— porque
-literalmente cuelga del canto de Colecciones, en su papel profundo, antes de cualquier herramienta.
+Propuse **la G** —la misma fila, pero colgando del canto cosido, **encima** del buscador— por un
+argumento que sigue en pie: es la única de las ocho que pone el recuento en la primera vista sin
+meterlo en la zona de buscar, y ahorra la nota del #515 arriba. Jose eligió la E, que dibuja las
+monedas, y las dos decisiones no se contradicen: **la tira de casillas es una razón para la fila que
+la G no tiene**, porque encima del buscador esa tira empujaría el buscador y el estante hacia abajo
+sin que nada más arriba explique de qué son esas monedas. Lo que la G aporta se rescata como fleco:
+qué dice la fila mientras se escribe.
 
-- Cuesta **una tarjeta** de la primera vista, y sólo cuando hay algo marcado.
-- No necesita la nota del #515 arriba, así que la app no imprime la misma frase dos veces.
-- Deja la fila del estante intacta al pie: misma jerarquía, mismo nombre, la cláusula 1 del anexo
-  sigue sin dispararse.
-- Enmienda que pide: ADR 0026 §8 cláusula 3 pasa a tener **dos sitios** para un anexo —el pie para
-  el que se pasea, el canto para el que se usa— y el criterio para elegir es si el recuento es una
-  lista de la compra o un escaparate.
-
-Si la elección es no enmendar la cláusula del pie, entonces **la B** antes que la A: el mismo coste
-menos 7 dp, y un canto con dos renglones dice que son el borde del álbum y no dos tarjetas nuevas.
-Pero conviene decir en el ticket que esa rama **no sube la visibilidad**: parte el rótulo y nada más.
+La rama que no se tomó, escrita para que nadie la reabra sin verla: **B antes que A** si algún día se
+decide no enmendar la cláusula del pie —el mismo coste menos 7 dp, y un canto con dos renglones dice
+que son el borde del álbum y no dos tarjetas nuevas—. Pero esa rama **no sube la visibilidad**: parte
+el rótulo y nada más.
 
 ## Cómo está hecha
 
