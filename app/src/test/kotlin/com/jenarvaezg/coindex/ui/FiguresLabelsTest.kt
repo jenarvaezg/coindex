@@ -184,7 +184,7 @@ class FiguresLabelsTest {
         assertTrue(valuationLabel(falling).endsWith("Se traen solos con la app abierta."))
         assertTrue(
             valuationLabel(falling.copy(held = ValuationRefusal.BudgetExhausted))
-                .contains("presupuesto de llamadas"),
+                .contains("presupuesto de consultas"),
         )
         assertTrue(
             valuationLabel(falling.copy(held = ValuationRefusal.Syncing))

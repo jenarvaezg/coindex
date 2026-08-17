@@ -199,7 +199,7 @@ fun valuationLabel(status: ValuationStatus): String {
         null -> "Se traen solos con la app abierta."
         ValuationRefusal.Syncing -> "Esperan a que termine el sincronizado."
         ValuationRefusal.BudgetExhausted ->
-            "Se acabó el presupuesto de llamadas de este mes: seguirán el mes que viene."
+            "Se acabó el presupuesto de consultas de este mes: seguirán el mes que viene."
         ValuationRefusal.Offline -> "Esperan a que haya red."
         ValuationRefusal.NoApiKey -> "Faltan las credenciales de Numista."
     }

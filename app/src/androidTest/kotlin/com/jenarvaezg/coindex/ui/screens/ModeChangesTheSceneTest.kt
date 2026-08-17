@@ -23,7 +23,7 @@ import com.jenarvaezg.coindex.ui.components.ModeBand
 import com.jenarvaezg.coindex.ui.components.PieceSelection
 import com.jenarvaezg.coindex.ui.components.SelectionBand
 import com.jenarvaezg.coindex.ui.components.SelectionDoor
-import com.jenarvaezg.coindex.ui.groupPiecesLabel
+import com.jenarvaezg.coindex.ui.boxDoorLabel
 import com.jenarvaezg.coindex.ui.namePickedBoxLabel
 import com.jenarvaezg.coindex.ui.plaqueOf
 import com.jenarvaezg.coindex.ui.selectionHintLabel
@@ -50,7 +50,7 @@ private val SHOWN = listOf(A_TYPE, 4_242)
 /**
  * A mode changes the scene and not only the gesture (#517).
  *
- * «Marcar lo que busco» and «Agrupar piezas» used to be a line of small print in a header that
+ * «Marcar lo que busco» and «Hacer una colección» used to be a line of small print in a header that
  * scrolls away: two taps down the plate no frame of that screen could tell you which of two apps you
  * were in, and a full casilla went on turning its coin over as if nothing had been opened.
  *
@@ -163,7 +163,7 @@ class ModeChangesTheSceneTest {
             }
         }
 
-        val door = groupPiecesLabel(seeded = false, shown = SHOWN.size)
+        val door = boxDoorLabel(seeded = false, shown = SHOWN.size)
         compose.onNodeWithText(door).performClick()
 
         compose.onNodeWithText(door).assertDoesNotExist()

@@ -151,7 +151,7 @@ fun showcaseOrderNote(sort: ShowcaseSort, shelf: List<ShowcaseTile>): String? {
  */
 fun showcaseRefusalMessage(refusal: ValuationRefusal): String = "No se ha podido tasar: " + when (refusal) {
     ValuationRefusal.Syncing -> "espera a que termine el sincronizado."
-    ValuationRefusal.BudgetExhausted -> "se acabó el presupuesto de llamadas de este mes."
+    ValuationRefusal.BudgetExhausted -> "se acabó el presupuesto de consultas de este mes."
     ValuationRefusal.Offline -> "no hay red."
     ValuationRefusal.NoApiKey -> "faltan las credenciales de Numista."
 }
@@ -159,10 +159,10 @@ fun showcaseRefusalMessage(refusal: ValuationRefusal): String = "No se ha podido
 /**
  * The gesture and its spend: «Tasar esta lámina · 34 consultas» (ADR 0030 §3).
  *
- * The unit is **consultas** and not «llamadas», which is the word the marking mode already uses for the
- * same thing on the same subject (`WishLabels.MARK_HINT`): what the collector is told about is what the
- * app is going to ask Numista, and two words for one spend on two surfaces of one feature is the
- * vocabulary rule of ADR 0026 §6.
+ * The unit is [queriesLabel]'s and this file no longer owns a copy of it (#516): the figure here and
+ * the «1 consulta» of a ficha are the same budget of the same key, and while there were two functions
+ * there were two words — this one said consultas and that one said llamadas, on two screens one tap
+ * apart.
  *
  * **No figure at all when there is nothing left to ask**, which is a plate whose prices are all fresh:
  * «· 0 consultas» reads as a gesture that is broken rather than as one that has nothing to do, and what
@@ -175,9 +175,6 @@ fun showcaseValueAction(calls: Int, valued: Boolean, valuing: Boolean): String =
         if (calls > 0) "$head · ${queriesLabel(calls)}" else head
     }
 }
-
-/** The spend of the shelf window, in the unit the marking mode already spends in. */
-fun queriesLabel(calls: Int): String = plural(calls, "consulta", "consultas")
 
 /**
  * The one figure of a plate that is not yours: what entering costs, and when it was read.

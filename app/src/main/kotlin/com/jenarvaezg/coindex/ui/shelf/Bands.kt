@@ -88,12 +88,17 @@ sealed interface YearFilter {
  * variants on purpose (ADR 0012, ADR 0021 §11), so they have one weight less than the others rather
  * than one weight missing. Giving them a chip of their own is what keeps them reachable from a shelf
  * that would otherwise only ever answer about ounces.
+ *
+ * Its label says **«Varias onzas»** and not «Conjunto o caja» (#516). Two reasons, and the second is
+ * the one that would have made the rename necessary anyway: «caja» was a word of provenance the app
+ * says nowhere else (ADR 0021 §2), and the old label answered *which kind of card* while the three
+ * beside it answer *how much it weighs* — a chip row where one of the four changes the question.
  */
 enum class OunceBand(val label: String) {
     UnderHalf("Menos de ½ oz"),
     HalfToOne("½ – 1 oz"),
     OverOne("Más de 1 oz"),
-    Spanning("Conjunto o caja"),
+    Spanning("Varias onzas"),
     ;
 
     companion object {

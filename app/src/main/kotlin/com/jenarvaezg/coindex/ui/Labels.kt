@@ -129,8 +129,17 @@ fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, Stri
 fun plural(count: Int, singular: String, plural: String): String =
     if (count == 1) "$count $singular" else "$count $plural"
 
-/** A count of API calls, used in sync and refresh outcomes. */
-fun callsLabel(count: Int): String = plural(count, "llamada", "llamadas")
+/**
+ * What the app spends at Numista, in the one unit it is spent in: **consultas** (#516).
+ *
+ * Owned here and not by any of the four surfaces that print it — the sync report, the durable line
+ * under the sync button, the ficha's own refresh and the tasación of a lámina — because they spend
+ * the same monthly budget of the same key, and the shelf window had grown a second word for it.
+ * «Llamada» is the loser of the two: it is what the code does, while what the collector is told about
+ * is what the app is going to **ask** Numista, which is the promise the marking mode makes a month at
+ * a time («+2 consultas al mes» per casilla, `WishLabels.MARK_HINT`).
+ */
+fun queriesLabel(count: Int): String = plural(count, "consulta", "consultas")
 
 /**
  * What a collection with no issue list counts: **«5 monedas · 5 tipos»** (ADR 0021 §3).

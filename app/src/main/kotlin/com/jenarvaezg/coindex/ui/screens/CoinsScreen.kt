@@ -128,8 +128,9 @@ fun CoinsScreen(
     var selectedTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
     val shown = remember(rows, shelf, query) { shelf.narrow(rows, query) }
     val selection = rememberPieceSelection()
-    // The seed exists only while something is narrowing the list: without a filter «Agrupar estas
-    // 192» would offer the whole collection, and the two-coin box would be made by unticking 190.
+    // The seed exists only while something is narrowing the list: without a filter «Hacer una
+    // colección con estas 192» would offer the whole collection, and the two-coin box would be made
+    // by unticking 190.
     val seeded = shelf.active > 0 || query.isNotBlank()
     // What is narrowing right now, which is what the empty card answers and undoes (#515).
     val narrowing = shelfNarrowing(filters = shelf.active, query = query)

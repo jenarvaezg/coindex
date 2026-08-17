@@ -71,7 +71,7 @@ fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
                 // place that read it that way, and the same coin weighed one thing here and
                 // another in its card's key; since #288 there is one reading. Null where the ficha
                 // declares none, which keeps it out of every weight filter instead of parking it
-                // under «Conjunto o caja».
+                // under «Varias onzas».
                 weight = meta?.weightOz
                     ?.let { ounces -> normalizeWeightMillioz(ounces) }
                     ?.let { millioz -> OunceBand.of(millioz) },

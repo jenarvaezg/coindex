@@ -144,8 +144,12 @@ _Avoid_: Followed disposition, progress bar, completeness claim
 A collection whose members the collector enumerated by hand on the phone (`own_groupings`), born
 from a filter in Coins that seeds the selection. It is indistinguishable from any other card in the
 index, but it is a different act: it only ever holds pieces you own, so it **can never contain a
-gap**, and its only product is a sheet. A collection pursues; a box shows.
-_Avoid_: Own grouping, curated grouping, unclassified bucket, subordinate collection
+gap**, and its only product is a sheet. A collection pursues; a box shows. «Box» is a word of this
+document and of the code, and **the interface never says it**: on the phone the gesture that makes one
+says «Hacer una colección», it is filled into «la colección» and named «Tu colección» (#516), because a
+word of provenance on screen is what ADR 0021 §2 removed.
+_Avoid_: Own grouping, curated grouping, unclassified bucket, subordinate collection, «caja» or
+«agrupación» on screen
 
 **Coins**:
 The sibling hierarchy of Collections at the top level, reached through the bottom bar, where a piece
@@ -247,9 +251,17 @@ from, and the day it was **brought** — which is what the card says, «ficha tr
 because for a ficha that arrived in the APK's snapshot the content may be older than the day it
 landed. No sync and no seed ever asks for a ficha twice; the collector can, one type at a time, on
 the coin where the wrong datum is on screen, and that gesture is the only thing that overwrites one
-(ADR 0025). It costs one call, it says so before spending it, and failing it leaves the ficha that
-was already there — including the 404 that means a referee deleted the page.
+(ADR 0025). It costs one **consulta**, it says so before spending it, and failing it leaves the ficha
+that was already there — including the 404 that means a referee deleted the page.
 _Avoid_: Type metadata, permanent cache, refrescar la colección, ficha fresca
+
+**Consulta**:
+The unit the monthly budget of a Numista key is spent and quoted in, and the only word the interface has
+for it (#516): the sync's report, the durable line under the sync button, a ficha's refresh, a lámina's
+tasación, the two sentences about an exhausted month and the 429 all count in it. It is what the app is
+going to **ask** Numista, which is why it beat «llamada» — that is what the code does — and it is the
+unit the marking mode promises a month at a time, «+2 consultas al mes» per casilla (ADR 0029 §5).
+_Avoid_: Llamada, petición, API call on screen, request
 
 **Collection catalog plate**:
 The per-collector comparison between a collection that exists today and its matching collection
@@ -344,10 +356,12 @@ _Avoid_: Copy (which is every string, furniture or not), chrome, boilerplate
 
 **Grain of a cell**:
 What a top-level destination is made of, and the test for whether it deserves a cell at all: cards for
-Collections, types for Coins, grams for «Las cifras». A cell prints its grain as its count. If what is
+Collections, types for Coins, grams for «Las cifras». A cell prints its grain as its count, **and names
+it**: the middle cell says «Tipos · 15» since #516, because it always counted types and «Monedas · 15»
+over a collection of 72 coins put the bar's one permanent number under the wrong word. If what is
 inside is what is outside with a different order applied, its grain is borrowed and it is an **Axis of
 the shelf**, not a destination.
-_Avoid_: Tab, section, count of what is inside
+_Avoid_: Tab, section, count of what is inside, a cell that names one grain and counts another
 
 **Axis of the shelf**:
 The order a hierarchy with a list is read in — by plate (the default), by country, by year — chosen in

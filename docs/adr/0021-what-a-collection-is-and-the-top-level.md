@@ -391,6 +391,25 @@ authority there is. **Collision with a later file is not policed**: uniqueness i
 and there it ends; two homonymous cards in the index are the signal that curation has covered what he
 noted down by hand, and the box is undone with one tap.
 
+*Nota de forma, #516: el botón ya no dice «Agrupar estas 6» sino «Hacer una colección con estas 6», y
+sin filtro «Hacer una colección». La cláusula no cambia —la puerta siembra sólo si algo estrecha, y el
+recuento sigue en el rótulo—, cambia la palabra: este gesto tenía tres nombres para una cosa, porque la
+puerta agrupaba, el modo llenaba «la caja» («Nombrar la caja · 2», «meter en la caja», el rótulo «Tu
+caja» del bautizo) y el snackbar anunciaba «Colección «…» creada». El verbo era el único de los tres sin
+dueño —nada más en la app agrupa nada— y «caja» era justamente la palabra de procedencia que el §2
+retiró, dicha en el gesto que hace una. Sobrevive el nombre del §2: en la interfaz esto es una
+colección. `own_groupings` y `OwnGrouping` se quedan como están; lo que el §2 prohíbe es un rótulo, y
+renombrar una tabla no le enseña nada al coleccionista. El rótulo del diálogo pasa a ser «Tu colección»
+y su titular, el recuento a secas —«2 monedas elegidas»—, porque la palabra de especie una línea más
+abajo sería la misma dos veces en una tarjeta de tres líneas (ADR 0026 §5).*
+
+*La cuarta superficie que decía «caja» estaba tres pantallas más allá y no en este gesto: el chip de
+onzas del índice, `OunceBand.Spanning`, «Conjunto o caja». Dice «Varias onzas». Ahí la palabra hacía algo
+peor que ranciar el vocabulario: cambiaba la pregunta de la faceta. Los otros tres chips contestan cuánto
+pesa la tarjeta y ése contestaba de qué clase era, así que la etiqueta nueva no es una traducción del
+rótulo viejo —es la respuesta que la faceta pide, y sigue siendo cierta para las dos clases que caen ahí
+(el conjunto del ADR 0012 y la caja del §11), porque las dos abarcan varias onzas a propósito.*
+
 ### 12. The app is not an audit surface; disagreement is reported outside it
 
 The matching is audited, but **outside the app and by the curator**; the collector's channel for

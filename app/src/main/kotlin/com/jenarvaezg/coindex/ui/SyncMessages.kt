@@ -12,7 +12,7 @@ fun syncReportLabel(record: SyncRecord): String = buildString {
     append(" · ")
     append(plural(record.typesFetched, "ficha nueva", "fichas nuevas"))
     append(" · ")
-    append(callsLabel(record.callsSpent))
+    append(queriesLabel(record.callsSpent))
     record.partialFailure?.let { append(" · incompleto") }
 }
 
@@ -53,7 +53,7 @@ fun lastSyncLabel(
         append("Última sincronización: $day $clock · ")
         append(plural(record.collectionItems, "pieza", "piezas"))
         append(" · ")
-        append(callsLabel(record.callsSpent))
+        append(queriesLabel(record.callsSpent))
     }
 }
 
@@ -74,7 +74,9 @@ fun syncErrorLabel(error: Throwable): String = when (error) {
     is NumistaException.Api -> when (error.status) {
         401, 403 -> "Numista rechazó tu API key. Revísala en Ajustes."
         404 -> "Numista no encuentra ese identificador de usuario. Revísalo en Ajustes."
-        429 -> "Numista está limitando las peticiones. Vuelve a intentarlo dentro de un rato."
+        // «Consultas» and not «peticiones» (#516): Numista throttling is the same object the monthly
+        // budget counts, and a third word for it would only be readable as a third thing.
+        429 -> "Numista está limitando las consultas. Vuelve a intentarlo dentro de un rato."
         in 500..599 -> "Numista está caído ahora mismo. Tu colección local sigue disponible."
         else -> "Numista devolvió un error (${error.status}). Vuelve a intentarlo más tarde."
     }

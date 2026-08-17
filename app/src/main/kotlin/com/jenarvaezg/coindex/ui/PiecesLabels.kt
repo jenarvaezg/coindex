@@ -75,28 +75,46 @@ fun renameToggleLabel(renaming: Boolean): String =
  *
  * Said the same way in the baptism and in the rename, because it is the same field with the same
  * limit and the same counter (ADR 0021 §4): a rename cannot produce a name the card could not hold.
+ *
+ * The eyebrow says **colección** and not «tu caja» (#516). It is the species word of ADR 0021 §2 and
+ * the one the snackbar under this dialog already answers with, and «caja» was the word of provenance
+ * §2 removed — said, of all places, on the gesture that makes one.
  */
 const val BOX_NAME_FIELD_LABEL: String = "Cómo se llama"
 const val BOX_NAME_SAVE_ACTION: String = "Guardar el nombre"
-const val BOX_EYEBROW: String = "Tu caja"
+const val BOX_EYEBROW: String = "Tu colección"
 const val BOX_CREATE_ACTION: String = "Crear"
 
 /** Stays, because from Coins it is the only way to grow a box (ADR 0021 §11). */
 const val BOX_ADD_TO_EXISTING: String = "O añádelas a una que ya tienes:"
 
-fun boxDialogHeading(count: Int): String = "Agrupar ${plural(count, "moneda", "monedas")}"
+/**
+ * The heading of the baptism, which is the count and **not the species word again**.
+ *
+ * [BOX_EYEBROW] is one line above it, so «Una colección de 2 monedas» underneath would be the same
+ * word twice on a card three lines tall — the frequency rule of ADR 0026 §5. What the heading owes
+ * the collector is the size of what they are about to name, in the verb the refusal under the field
+ * already uses («elige al menos una moneda»).
+ */
+fun boxDialogHeading(count: Int): String = plural(count, "moneda elegida", "monedas elegidas")
 
-fun namePickedBoxLabel(count: Int): String = "Nombrar la caja · $count"
+fun namePickedBoxLabel(count: Int): String = "Nombrar la colección · $count"
 
 /**
- * The two forms of the grouping button (ADR 0021 §11).
+ * The two forms of the button that makes one (ADR 0021 §11).
  *
  * The count rides in the label so **the cost is written on it before it is pressed**: seeding
- * unconditionally offered «Agrupar estas 191» — the whole collection — and what the collector needs
- * to see is that the filter wants narrowing first.
+ * unconditionally offered the whole collection — 191 coins — and what the collector needs to see is
+ * that the filter wants narrowing first.
+ *
+ * It says **colección** and not «Agrupar» (#516). ADR 0021 §11 wrote the button as «Agrupar estas
+ * 6», and that verb was the last of the three words this one feature used for one thing: the door
+ * grouped, the mode filled a caja, and the snackbar announced a colección. The verb is the one that
+ * had no owner — nothing else in the app agrupa anything — and the noun it leaves behind is the one
+ * §2 already made the only species there is.
  */
-fun groupPiecesLabel(seeded: Boolean, shown: Int): String =
-    if (seeded) "Agrupar estas $shown" else "Agrupar piezas"
+fun boxDoorLabel(seeded: Boolean, shown: Int): String =
+    if (seeded) "Hacer una colección con estas $shown" else "Hacer una colección"
 
 /**
  * Which side the work starts from, said once and only while the mode is open.
@@ -108,5 +126,5 @@ fun selectionHintLabel(seeded: Boolean, shown: Int): String =
     if (seeded) {
         "Vienen elegidas las $shown que enseñaba el filtro. Quita las que no."
     } else {
-        "Toca cada moneda que quieras meter en la caja."
+        "Toca cada moneda que quieras meter en la colección."
     }

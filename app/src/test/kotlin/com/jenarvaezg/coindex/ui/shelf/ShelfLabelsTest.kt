@@ -111,7 +111,7 @@ class ShelfLabelsTest {
             indexShelfSummary(IndexShelf(startsIn = StartBand.FiftyToNinetyNine)),
         )
         assertEquals(
-            "1 filtro · Conjunto o caja",
+            "1 filtro · Varias onzas",
             indexShelfSummary(IndexShelf(weight = OunceBand.Spanning)),
         )
         assertEquals("1 filtro · Sin peso", coinsShelfSummary(CoinsShelf(weight = GramBand.Unweighed)))

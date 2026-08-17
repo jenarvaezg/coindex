@@ -54,7 +54,7 @@ enum class PlateStatus(val label: String) {
  * issuer keeps a single-element set; none means the subject has no country to filter by.
  *
  * [weight] is the one that is nullable here and not on a card. A card with no single weight is a
- * box or a set — [OunceBand.Spanning], «Conjunto o caja» — and a loose coin whose ficha declares no
+ * box or a set — [OunceBand.Spanning], «Varias onzas» — and a loose coin whose ficha declares no
  * weight is neither: it has **no answer**, so it falls out of any weight filter rather than
  * disguising itself as a box.
  */
