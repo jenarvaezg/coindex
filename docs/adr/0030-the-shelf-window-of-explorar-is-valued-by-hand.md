@@ -225,6 +225,28 @@ Explorar carries»* in its order and widens its population:
    55 láminas» sobre un índice que la búsqueda dejó en cero se leía como un número sin recalcular. No
    se nombran los filtros, que sobreviven a un lanzamiento: esa línea se imprimiría en cada sesión.*
 
+> **Enmienda del 17 de agosto de 2026 (§8 cláusula 5,
+> [#520](https://github.com/jenarvaezg/coindex/issues/520)). El anexo pierde una habitación y gana un
+> hermano.** La cláusula 5 conservaba las dos formas de la puerta del índice y ponía «Lo que busco» *una
+> fila más adentro*, detrás de «Explorar». Las dos formas se retiran: el índice cuelga **dos filas**, cada
+> una con un nombre estable y un solo destino —«Lo que busco · 7» en la cabecera de la hoja, «Y otras 20
+> láminas que no coleccionas →» al pie— y la lista deja de ser una habitación de «Explorar» para ser
+> **anexo hermano**, colgado de Colecciones como lo está el estante.
+>
+> Lo que **no** cambia:
+>
+> - **El recuento sigue siendo el de la cláusula**: los veinte y no los veintitrés, medido sobre la
+>   colección entera y nunca sobre el estrechamiento.
+> - **La puerta interna sobrevive**: «Explorar» sigue colgando «Lo que busco · 7» en la cabeza de su
+>   estante. Dos puertas y **un solo nombre**, las dos dentro de Colecciones, así que la cláusula 1 de
+>   ADR 0026 §8 —un anexo cuelga de exactamente una jerarquía— no se dispara.
+> - **La población del estante es la misma** (punto 1) y su orden también (punto 3).
+>
+> Lo que cambia además: la nota de la caja de búsqueda pasa a la fila de la cabecera y se imprime **una
+> vez** (ADR 0026 §8 clause 3 as amended), y las casillas de esa fila se dibujan **a plena luz** — el
+> fantasma dice «te falta», y esto es lo que buscas (ADR 0026 §15 as amended, y
+> [#556](https://github.com/jenarvaezg/coindex/issues/556) para el resto de la app).
+
 ## Consequences
 
 **The seed becomes load-bearing.** §2 is a promise about the APK: a catalog curated and not seeded

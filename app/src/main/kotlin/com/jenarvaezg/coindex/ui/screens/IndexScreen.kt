@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
@@ -61,6 +64,7 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.FilterShelf
 import com.jenarvaezg.coindex.ui.components.ForwardGlyph
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.components.countryAxisItems
 import com.jenarvaezg.coindex.ui.components.travellingCoin
@@ -113,8 +117,12 @@ import com.jenarvaezg.coindex.ui.shelf.shelfNarrowing
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.shelf.yearAxis
 import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
-import com.jenarvaezg.coindex.ui.annexDoorLabel
-import com.jenarvaezg.coindex.ui.annexDoorNote
+import com.jenarvaezg.coindex.ui.DrawnWish
+import com.jenarvaezg.coindex.ui.printedPhoto
+import com.jenarvaezg.coindex.ui.showcaseDoorLabel
+import com.jenarvaezg.coindex.ui.wishDoorLabel
+import com.jenarvaezg.coindex.ui.wishDoorMoreLabel
+import com.jenarvaezg.coindex.ui.wishDoorNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one round coin and two short lines under it. */
@@ -166,23 +174,28 @@ fun IndexScreen(
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
     sewnEdge: SewnEdgeCounts?,
     /**
-     * How many casillas the collector is looking for, which is what the annex's door names (ADR 0029 §6).
+     * The casillas the collector is looking for, which the row at the head of the sheet names and draws
+     * (ADR 0029 §6, #520).
      *
-     * A count and not the list: what this screen owes the annex is its door, and the door says how many
-     * things are behind it. Zero means there is no door at all — it is counted above this screen, over
-     * the whole collection and never over the narrowing, because a filter on the shelf is about the
-     * cards of the index and these coins are not in it.
+     * **The rows and not a count**, since #520: the row draws the first few of them as coins, so it needs
+     * the type and the face each casilla rests on. Empty means there is no row at all — they are crossed
+     * with the collection above this screen, over the whole of it and never over the narrowing, because a
+     * filter on the shelf is about the cards of the index and these coins are not in it.
+     *
+     * In the list's own order, the last marked first: what the row shows is what was just marked.
      */
-    wishes: Int,
+    wishes: List<DrawnWish>,
     /**
-     * How many curated plates the collector owns nothing of, which the same door names (ADR 0030 §8).
+     * How many curated plates the collector owns nothing of, which the row at the foot names (ADR 0030 §8).
      *
-     * The **twenty and not the twenty-three**: what is behind this door that this list does not already
-     * hold is the shelf window. Zero here and zero marks means no door at all, which is the same clause
-     * the count above keeps.
+     * The **twenty and not the twenty-three**: what is behind that row which this list does not already
+     * hold is the shelf window. Zero means no row, which is the same clause the marks above keep.
      */
     showcase: Int,
+    /** Into «Lo que busco», from the row at the head: the annex's sibling room (ADR 0030 §8, #520). */
     onOpenWishes: () -> Unit,
+    /** Into «Explorar», from the row at the foot. Two rows, two destinations, one name each. */
+    onOpenShowcase: () -> Unit,
     onSettings: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).
@@ -391,6 +404,31 @@ fun IndexScreen(
                 }
             }
 
+            // «Lo que busco», at the **head** of the sheet and with its casillas drawn (#520).
+            //
+            // The one row of this screen that is not about what the collector has, and the reason it
+            // is up here rather than at the foot with the shelf's: a list for a fair is the most
+            // actionable thing the app holds, and the foot of sixty-nine cards is four folds away.
+            // ADR 0026 §8 clause 3 is amended for it — an annex has two possible places now, and
+            // which one it takes is whether its population is a shopping list or a window.
+            //
+            // **Not printed at zero**, the clause the sewn edge keeps while it reads (#418): with
+            // nothing marked the first view is exactly the one it was before this ticket.
+            if (wishes.isNotEmpty()) {
+                fullWidth {
+                    AnnexDoor(
+                        label = wishDoorLabel(wishes.size),
+                        // Its count is of another population, so a search running above it leaves it
+                        // where it was — and the row says that rather than looking stale (#515). It
+                        // is said **here and not at the foot**: two rows, one sentence.
+                        note = wishDoorNote(searching = query.isNotBlank()),
+                        onOpen = onOpenWishes,
+                    ) {
+                        WishedCoins(wishes = wishes, images = state.images)
+                    }
+                }
+            }
+
             // The six switches and what they cost, before a single page is drawn (#228). In the
             // same slot the progress card takes, because it is the same conversation: what is
             // about to come out of the printer.
@@ -587,20 +625,14 @@ fun IndexScreen(
                 }
             }
 
-            // The door of the annex, and the last row of this list whatever axis it is read on
-            // (ADR 0026 §8, ADR 0029 §6). **Not printed at zero**: with nothing marked and no plate
-            // beyond the collection there is nothing behind it, and a row that named an empty screen
-            // would be the furniture §5 prices. Which of its two forms it takes is `annexDoorLabel`'s
-            // (ADR 0030 §8): it names the marks, the twenty, or both.
-            annexDoorLabel(wishes = wishes, plates = showcase)?.let { label ->
+            // The door of «Explorar», and the last row of this list whatever axis it is read on
+            // (ADR 0026 §8 clause 3). **One name and one destination** since #520: it used to carry a
+            // composed label that named the marks too and opened only this, which is a row promising
+            // two rooms from one tap. **Not printed at zero**, and it carries no note: the sentence
+            // about the search box lives on the row at the head, once.
+            showcaseDoorLabel(plates = showcase)?.let { label ->
                 fullWidth {
-                    AnnexDoor(
-                        label = label,
-                        // Its count is of another population, so a search running above it leaves it
-                        // where it was — and the door says that rather than looking stale (#515).
-                        note = annexDoorNote(searching = query.isNotBlank()),
-                        onOpen = onOpenWishes,
-                    )
+                    AnnexDoor(label = label, onOpen = onOpenShowcase)
                 }
             }
         }
@@ -623,21 +655,31 @@ fun IndexScreen(
 }
 
 /**
- * The door at the foot of the list: deeper paper, its name with its count, and the way on.
+ * A door of the annex: deeper paper, its name with its count, and the way on.
  *
  * **A row of the sheet and not a card**, which is the whole of ADR 0026 §8 clause 3: an annex is not a
- * fourth cell of the bar and not a collection of the index, so its entrance is the last thing on the
- * page — after the cards, on paper a shade deeper, the way the sewn edge is deeper than the leaf.
+ * fourth cell of the bar and not a collection of the index, so its entrance is a row on paper a shade
+ * deeper, the way the sewn edge is deeper than the leaf.
+ *
+ * **Where that row goes is no longer «the last thing on the page»** (§8 clause 3 as amended by #520). The
+ * index hangs two of them: the marks at the head, because a list for a fair is what the collector came to
+ * act on, and the shelf window at the foot, because browsing what you do not own is where a page ends.
+ * «Explorar» hangs a third at its own head, into «Lo que busco». **One drawing for the three** — two
+ * drawings of one shape is how the second one comes to be a shade off.
  *
  * The arrow is drawn rather than typed, because neither of the album's two typefaces has that glyph
  * (#298), and it is the same chevron «Volver» uses, mirrored: the two halves of one journey.
  *
- * **One door and two places that hang it**, since the annex grew a second room (ADR 0030 §8): this list
- * hangs it at its foot to open «Explorar», and «Explorar» hangs the same row at its head to open «Lo que
- * busco». Two drawings of one shape is how the second one comes to be a shade off.
+ * [content] is what a row draws under its name — the marked casillas, on the index's own row — and it is
+ * inside the target, because it is part of what the row is about rather than a second thing to press.
  */
 @Composable
-internal fun AnnexDoor(label: String, onOpen: () -> Unit, note: String? = null) {
+internal fun AnnexDoor(
+    label: String,
+    onOpen: () -> Unit,
+    note: String? = null,
+    content: (@Composable () -> Unit)? = null,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -664,8 +706,57 @@ internal fun AnnexDoor(label: String, onOpen: () -> Unit, note: String? = null) 
                     modifier = Modifier.padding(top = 4.dp),
                 )
             }
+            content?.let {
+                Spacer(Modifier.height(8.dp))
+                it()
+            }
         }
         ForwardGlyph()
+    }
+}
+
+/** How many marked casillas the index's row draws before it starts counting them instead (#520). */
+private const val WISHED_COINS_DRAWN = 3
+
+/** The diameter of a coin on that row: a quarter of the album's, and not a target of its own. */
+private val WISHED_COIN = 40.dp
+
+/**
+ * The marked casillas as coins, on the row that opens «Lo que busco» (#520).
+ *
+ * **The first three and then a count**, because what the drawing is for is recognising a coin: seven of
+ * them across 411 dp would be 32 dp each with nothing left for the cardboard, and a coin nobody can
+ * recognise is furniture ADR 0026 §5 would price. The order is the list's own — the last marked first —
+ * so the row shows what the collector just marked rather than a fixed three.
+ *
+ * **Whole and not in penumbra** ([HoleAbsence.Wanted]): these are casillas he is hunting, not casillas
+ * missing from a plate he is filling. On the prototype the 14 % ghost at this size measured as two grey
+ * discs, which is what #520 changed and what #556 will decide for the rest of the app.
+ *
+ * No year, no name and no price under them: the row is a door, and what is behind it is the list where
+ * each casilla carries all three.
+ */
+@Composable
+private fun WishedCoins(wishes: List<DrawnWish>, images: Map<Int, TypeImages>) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        wishes.take(WISHED_COINS_DRAWN).forEach { wish ->
+            AlbumHole(
+                photo = images[wish.typeId]?.printedPhoto(wish.printedSide),
+                absence = HoleAbsence.Wanted,
+                modifier = Modifier.size(WISHED_COIN),
+            )
+        }
+        wishDoorMoreLabel(rest = wishes.size - WISHED_COINS_DRAWN)?.let { more ->
+            Text(
+                more,
+                style = MaterialTheme.typography.labelMedium,
+                color = Paper.muted,
+                modifier = Modifier.padding(start = 4.dp),
+            )
+        }
     }
 }
 

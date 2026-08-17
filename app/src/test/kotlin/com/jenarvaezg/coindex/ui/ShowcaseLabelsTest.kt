@@ -252,44 +252,25 @@ class ShowcaseLabelsTest {
     }
 
     /**
-     * The door of the index, in the two forms ADR 0026 §8 clause 3 wrote, and the zero that is not
-     * printed.
+     * The row of the index that opens the shelf: one name, one destination, and the zero not printed.
      *
-     * The count is the **twenty and not the twenty-three**: what is behind that door which the index does
+     * It used to be a composed label —«Lo que busco · 7, y otras 20 láminas»— that named two rooms and
+     * opened one of them (#520). The marks took a row of their own at the head of the sheet, and this one
+     * kept the foot, where ADR 0026 §8 clause 3 puts the door of an annex.
+     *
+     * The count is the **twenty and not the twenty-three**: what is behind this row which the index does
      * not already hold is the shelf window (ADR 0030 §8).
      */
     @Test
-    fun `the index door names the marks, the plates, or both, and is absent at zero`() {
-        assertEquals("Lo que busco · 7, y otras 20 láminas", annexDoorLabel(wishes = 7, plates = 20))
-        assertEquals("Y otras 20 láminas que no coleccionas", annexDoorLabel(wishes = 0, plates = 20))
+    fun `the shelf row names the plates the collector does not collect, and is absent at zero`() {
+        assertEquals("Y otras 20 láminas que no coleccionas", showcaseDoorLabel(plates = 20))
         // The number disappears in the singular: «otra 1 lámina» is not Spanish.
-        assertEquals("Y otra lámina que no coleccionas", annexDoorLabel(wishes = 0, plates = 1))
-        assertEquals("Lo que busco · 1, y otra lámina", annexDoorLabel(wishes = 1, plates = 1))
-        assertEquals("Lo que busco · 7", annexDoorLabel(wishes = 7, plates = 0))
-        assertNull(annexDoorLabel(wishes = 0, plates = 0))
-        // The arrow is drawn and not typed, on this door as on the one it replaced (#298).
-        assertFalse('→' in annexDoorLabel(7, 20).orEmpty())
-    }
-
-    /**
-     * The door declares that the box above it does not reach it (#515).
-     *
-     * Its count is of another population — plates the collector owns nothing of, casillas rather than
-     * cards — so a search cutting the index to two leaves it at twenty, and «Y otras 20 láminas» over
-     * two cards read as a number that had not been recomputed.
-     *
-     * Only for the query: the filters persist across launches (ADR 0021 §1), and a line printed on
-     * every screen of every session is the frequency ADR 0026 §5 prices.
-     */
-    @Test
-    fun `the index door says a search does not reach it`() {
-        assertEquals(
-            "Lo que escribes arriba no llega hasta aquí.",
-            annexDoorNote(searching = true),
-        )
-        assertNull(annexDoorNote(searching = false))
-        // «Lo que busco» is a room one door in: a line about searching must not read as being about it.
-        assertFalse(WishLabels.DESTINATION in annexDoorNote(searching = true).orEmpty())
+        assertEquals("Y otra lámina que no coleccionas", showcaseDoorLabel(plates = 1))
+        assertNull(showcaseDoorLabel(plates = 0))
+        // Nothing of the marks in it any more: that row is `wishDoorLabel`'s, one destination each.
+        assertFalse(WishLabels.DESTINATION in showcaseDoorLabel(plates = 20).orEmpty())
+        // The arrow is drawn and not typed, on this row as on the one it replaced (#298).
+        assertFalse('→' in showcaseDoorLabel(20).orEmpty())
     }
 
     /**

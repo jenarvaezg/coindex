@@ -44,6 +44,7 @@ import com.jenarvaezg.coindex.ui.CoinValue
 import com.jenarvaezg.coindex.ui.coinFichaIdentity
 import com.jenarvaezg.coindex.ui.coinValueLabel
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FichaBrought
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
@@ -257,7 +258,7 @@ private fun CoinFicha(
             photo = photo,
             // A coin no piece of which is in the collection is drawn as what it is: a hole with the
             // catalog design behind it, exactly as the casilla the sheet was opened from.
-            missing = row.quantity == 0,
+            absence = if (row.quantity == 0) HoleAbsence.Missing else HoleAbsence.Filled,
             backed = row.claims.isNotEmpty(),
             otherSide = otherSide,
             modifier = if (travelling) {
