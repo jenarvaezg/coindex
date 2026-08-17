@@ -424,7 +424,7 @@ class CoindexViewModelTest {
             // Token, collection and the one ficha nobody had: three calls, and the report says so.
             assertEquals(3, state.lastSync?.callsSpent)
             assertEquals(NOW, state.lastSync?.atMillis)
-            assertEquals("1 pieza · 1 ficha nueva · 3 llamadas", state.message?.text)
+            assertEquals("1 pieza · 1 ficha nueva · 3 consultas", state.message?.text)
             // Written down before it was announced: the snackbar is the copy.
             assertEquals(state.lastSync, syncLog.last)
         }

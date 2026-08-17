@@ -60,7 +60,7 @@ class UnclaimedRowsTest {
      * La suelta cuya ficha aún no ha llegado dice lo que sabe y no inventa lo demás.
      *
      * Y lo que no sabe la deja fuera de los filtros que preguntan por ello, en vez de colarla bajo
-     * una etiqueta falsa: `OunceBand.of(null)` es «Conjunto o caja» para una tarjeta que abarca
+     * una etiqueta falsa: `OunceBand.of(null)` es «Varias onzas» para una tarjeta que abarca
      * varios pesos, y una moneda suelta no es una caja.
      */
     @Test

@@ -357,8 +357,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     route = route,
                     collections = sewnEdge?.collections,
                     // Same type count the sewn edge prints, and the same distinct set [coinRows]
-                    // draws — including a hostile zero coerced to one piece (#426).
-                    coins = sewnEdge?.types,
+                    // draws — including a hostile zero coerced to one piece (#426). The cell names
+                    // this magnitude since #516: it never counted coins.
+                    types = sewnEdge?.types,
                     // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
                     // Null with the sewn edge (#418): «0,00 kg» while reading is a false empty collection.
                     grams = sewnEdge?.let { figures.figures.weight.value },
@@ -780,9 +781,11 @@ private fun NavGraphBuilder.page(
  * time — and with three cells that argument is stronger, not weaker.
  *
  * **Each cell names its grain with its count**, and the count is what the destination is *made of*
- * rather than how many things are inside it: cards, Numista types owned, and grams. «Las cifras» counts
- * weight and **never money** — an amount in a permanent bar is a pocket ticker that changes on its own
- * and puts the collector's estate in front of anyone glancing at the phone (#316).
+ * rather than how many things are inside it: cards, Numista types owned, and grams. The middle cell is
+ * the grain and not the old «Monedas» since #516 — it always counted types, and the word is what was
+ * wrong. «Las cifras» counts weight and **never money** — an amount in a permanent bar is a pocket
+ * ticker that changes on its own and puts the collector's estate in front of anyone glancing at the
+ * phone (#316).
  *
  * Drawn as three parts of a rule rather than as Material's `NavigationBar`, which brings its own
  * elevation, ripple and icon slot into a notebook that has none of the three.
@@ -791,7 +794,7 @@ private fun NavGraphBuilder.page(
 private fun HierarchyBar(
     route: String?,
     collections: Int?,
-    coins: Int?,
+    types: Int?,
     grams: Double?,
     onCross: (String) -> Unit,
 ) {
@@ -805,7 +808,7 @@ private fun HierarchyBar(
                 modifier = Modifier.weight(1f),
             )
             HierarchyCell(
-                label = coinsCellLabel(coins),
+                label = typesCellLabel(types),
                 selected = route == Routes.COINS,
                 onClick = { onCross(Routes.COINS) },
                 modifier = Modifier.weight(1f),

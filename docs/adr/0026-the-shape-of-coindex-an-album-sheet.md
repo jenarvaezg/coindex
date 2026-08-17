@@ -513,6 +513,15 @@ What changes in §1:
 3. **Each cell names its grain with its count** — `Colecciones · 69` (cards), `Monedas · 192` (types),
    `Las cifras · 6,91 kg` (grams). The cell does **not** promise how many things are inside: it says
    what the destination is made of. «Las cifras» counts weight and **never money**.
+
+   *Nota de forma, #516: la celda del medio dice `Tipos · 192`. La cláusula se cumple ahora y antes no:
+   el número era el recuento de tipos —el mismo que imprime el canto cosido y el mismo conjunto que
+   dibuja `coinRows`— bajo la palabra «Monedas», y sobre una colección de 72 monedas en 15 tipos el
+   único número permanente de la app estaba mal rotulado. Cambia el rótulo y no el número, porque el
+   número es lo que el destino está hecho de: una tarjeta por tipo, que es también lo que cuenta el
+   recuento del estante de esa pantalla («15 tipos»). Contar piezas fue el otro candidato y cuesta más:
+   «Monedas · 72» sobre un canto que lee «72 piezas» es un número bajo dos palabras, que es el choque
+   del #400 reconstruido.*
 4. The shelf invariant — filters, sort and live search, folded on entry — narrows to the hierarchies
    **with a list**, which are two of three. «Las cifras» carries no shelf: its order is chosen by the
    figure you touch.

@@ -28,7 +28,7 @@ import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.boxDialogHeading
 import com.jenarvaezg.coindex.ui.boxName
-import com.jenarvaezg.coindex.ui.groupPiecesLabel
+import com.jenarvaezg.coindex.ui.boxDoorLabel
 import com.jenarvaezg.coindex.ui.namePickedBoxLabel
 import com.jenarvaezg.coindex.ui.selectionHintLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -104,9 +104,9 @@ fun rememberPieceSelection(): PieceSelection = remember { PieceSelection() }
  * The door into the box-making mode, on the header of Coins (ADR 0021 §11).
  *
  * **The button seeds only when the filter has already narrowed something.** With a filter or a search
- * on it says «Agrupar estas N» and enters with those N marked; with nothing on it says «Agrupar
- * piezas» and enters empty. Measured, not assumed: seeding unconditionally offered «Agrupar estas
- * 191» — the whole collection — and an arbitrary two-coin box, which is the shape of the real BCV
+ * on it says «Hacer una colección con estas N» and enters with those N marked; with nothing on it says
+ * «Hacer una colección» and enters empty. Measured, not assumed: seeding unconditionally offered the
+ * whole collection — 191 coins — and an arbitrary two-coin box, which is the shape of the real BCV
  * case, would have been made by unticking 189.
  *
  * The count rides in the button so **the cost is written on it before it is pressed**: with 59
@@ -131,13 +131,13 @@ fun SelectionDoor(
     Column(modifier = modifier) {
         if (seeded) {
             CardAction(
-                text = groupPiecesLabel(seeded = true, shown = shown.size),
+                text = boxDoorLabel(seeded = true, shown = shown.size),
                 onClick = { selection.start(shown) },
                 enabled = shown.isNotEmpty(),
             )
         } else {
             CardAction(
-                text = groupPiecesLabel(seeded = false, shown = shown.size),
+                text = boxDoorLabel(seeded = false, shown = shown.size),
                 onClick = { selection.start() },
             )
         }

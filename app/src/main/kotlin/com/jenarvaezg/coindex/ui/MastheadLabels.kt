@@ -13,12 +13,19 @@ const val BACK_LABEL: String = "Volver"
  * Numista types owned, and grams. «Las cifras» counts weight and never money — an amount in a
  * permanent bar is a pocket ticker that puts the collector's estate in front of anyone glancing at
  * the phone (#316).
+ *
+ * The middle cell says **«Tipos»** and not «Monedas» (#516). It always counted types, and over a
+ * collection of 72 coins in 15 types the bar's one permanent number was under the wrong word. The
+ * count is the one to keep — it is what that destination draws, one card per type, and what the
+ * screen's own filter shelf tallies two rows below it — so the label is what moved. Counting pieces
+ * instead was the other candidate and costs more: «Monedas · 72» over a sewn edge that reads
+ * «72 piezas» is one number under two words, which is the clash of #400 rebuilt.
  */
 fun collectionsCellLabel(collections: Int?): String =
     "Colecciones · ${collections?.toString() ?: UNKNOWN_COUNT}"
 
-fun coinsCellLabel(coins: Int?): String =
-    "Monedas · ${coins?.toString() ?: UNKNOWN_COUNT}"
+fun typesCellLabel(types: Int?): String =
+    "Tipos · ${types?.toString() ?: UNKNOWN_COUNT}"
 
 fun figuresCellLabel(count: String): String = "${FiguresLabels.DESTINATION} · $count"
 
@@ -51,11 +58,11 @@ const val UNKNOWN_COUNT: String = "—"
 /**
  * The complete sewn-edge line, owned here so the album chrome carries no copy of its own.
  *
- * The middle count is **pieces** (quantities ×N), never «monedas»: that word already names the
- * sibling hierarchy and its type count in the bar, and using it here made Las cifras print the
- * type count twice under two names (#400). All three words are written in full — abbreviating
- * only «col» left the line half-spoken. The wall-clock minute is gone (#419): the system clock is
- * five millimetres away, and the line never meant «last sync».
+ * The middle count is **pieces** (quantities ×N), never «monedas»: using that word here made Las
+ * cifras print the type count twice under two names (#400), and the word has no owner left to borrow
+ * it from since the bar stopped spending it on a count of types (#516). All three words are written
+ * in full — abbreviating only «col» left the line half-spoken. The wall-clock minute is gone (#419):
+ * the system clock is five millimetres away, and the line never meant «last sync».
  *
  * While [counts] is null the line is just «—»: inventing «0 colecciones · 0 piezas · 0 tipos»
  * would contradict the placeholder that is still reading (#418).
@@ -98,7 +105,9 @@ private fun screenTitleOf(route: String?, subjectName: String?): String = when {
     // saying which lámina you are in.
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
     // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
-    // «Tu agrupación» was the last place in the app that ranked a box below the rest.
+    // «Tu agrupación» was where this screen ranked a box below the rest — not the last such place in
+    // the app, which is what this comment claimed until #516 found four more: the door of the mode,
+    // its band, the eyebrow of the baptism and the índice's ounce chip.
     Routes.isPieces(route) -> subjectName?.let { "Colección · $it" } ?: "Colección"
     // The two roots, and anything unrecognised: never a blank masthead.
     else -> STRAPLINE

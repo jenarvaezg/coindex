@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit
  *
  * A constant rather than a measurement: `/types/{id}` needs no OAuth token, so the gesture is
  * exactly one reserved call. Counting the month's log before and after would have read a concurrent
- * sync's calls into this one tap and announced «has gastado 37 llamadas».
+ * sync's calls into this one tap and announced «has gastado 37 consultas».
  */
 const val FICHA_REFRESH_CALLS: Int = 1
 
@@ -52,7 +52,7 @@ fun fichaAgeLabel(
  */
 fun fichaRefreshLabel(refreshing: Boolean): String = when {
     refreshing -> "Preguntando a Numista…"
-    else -> "Actualizar la ficha · ${callsLabel(FICHA_REFRESH_CALLS)}"
+    else -> "Actualizar la ficha · ${queriesLabel(FICHA_REFRESH_CALLS)}"
 }
 
 /**
@@ -65,7 +65,7 @@ fun fichaRefreshMessage(report: TypeRefreshReport): String = if (report.changed)
     "Ficha de Numista ${report.typeId} actualizada: el dato había cambiado."
 } else {
     "La ficha de Numista ${report.typeId} sigue igual. " +
-        "Has gastado ${callsLabel(FICHA_REFRESH_CALLS)}."
+        "Has gastado ${queriesLabel(FICHA_REFRESH_CALLS)}."
 }
 
 /**

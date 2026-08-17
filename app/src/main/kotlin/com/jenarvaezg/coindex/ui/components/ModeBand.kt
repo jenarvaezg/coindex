@@ -19,7 +19,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 /**
  * A mode, said by the sheet itself: the band at the foot, and the paper it stands on (#517).
  *
- * «Marcar lo que busco» and «Agrupar piezas» change what touching a casilla or a card *means*, and
+ * «Marcar lo que busco» and «Hacer una colección» change what touching a casilla or a card *means*, and
  * until this existed the scene barely said so — one small line of instruction in a header that
  * scrolls away, and a grid that looked exactly like the grid outside the mode. Two taps down the
  * plate there was no frame of that screen that could tell you which of two apps you were in.

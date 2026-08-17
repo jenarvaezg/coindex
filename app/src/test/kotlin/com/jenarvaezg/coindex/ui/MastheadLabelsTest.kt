@@ -31,7 +31,7 @@ class MastheadLabelsTest {
     fun `while the snapshot is unread the chrome stays silent about counts`() {
         assertEquals("—", sewnEdgeLabel(null))
         assertEquals("Colecciones · —", collectionsCellLabel(null))
-        assertEquals("Monedas · —", coinsCellLabel(null))
+        assertEquals("Tipos · —", typesCellLabel(null))
         assertEquals("Las cifras · —", figuresCellLabel(figuresCellCount(null)))
     }
 
@@ -99,11 +99,14 @@ class MastheadLabelsTest {
      * Numista types owned, and grams. «Las cifras» counts weight and never money — an amount in a
      * permanent bar is a pocket ticker that puts the estate in front of anyone glancing at the phone
      * (#316) — so this label is handed a count and has no way to be given an amount.
+     *
+     * The middle cell names the grain and no longer calls it «Monedas» (#516): the number under that
+     * word was the type count all along.
      */
     @Test
     fun `the three cells count what their destination is made of`() {
         assertEquals("Colecciones · 58", collectionsCellLabel(58))
-        assertEquals("Monedas · 191", coinsCellLabel(191))
+        assertEquals("Tipos · 191", typesCellLabel(191))
         assertEquals("Las cifras · 4,2 kg", figuresCellLabel("4,2 kg"))
     }
 

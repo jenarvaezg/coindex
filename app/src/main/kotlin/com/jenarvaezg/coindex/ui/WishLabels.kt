@@ -41,8 +41,8 @@ object WishLabels {
      * The door into the marking mode, on a plate's own header (ADR 0029 §5).
      *
      * A mode and not a control per casilla: fifty-one holes with a toggle each would print the cost
-     * line fifty-one times, which is the frequency ADR 0026 §5 prices. It is the same shape «Agrupar
-     * piezas» already has in Monedas.
+     * line fifty-one times, which is the frequency ADR 0026 §5 prices. It is the same shape «Hacer una
+     * colección» already has in Monedas.
      */
     const val MARK_ACTION: String = "Marcar lo que busco"
 

@@ -62,7 +62,7 @@ class FichaRefreshLabelTest {
     @Test
     fun `the action says what it costs before it is spent`() {
         assertEquals(
-            "Actualizar la ficha · 1 llamada",
+            "Actualizar la ficha · 1 consulta",
             fichaRefreshLabel(refreshing = false),
         )
     }
@@ -88,7 +88,7 @@ class FichaRefreshOutcomeTest {
     @Test
     fun `no change still says the call was spent`() {
         assertEquals(
-            "La ficha de Numista 596807 sigue igual. Has gastado 1 llamada.",
+            "La ficha de Numista 596807 sigue igual. Has gastado 1 consulta.",
             fichaRefreshMessage(TypeRefreshReport(596_807, changed = false)),
         )
     }

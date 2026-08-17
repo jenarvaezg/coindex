@@ -36,7 +36,7 @@ class LastSyncLabelTest {
             nowMillis = at(2026, 7, 30, 19, 0),
             zone = MADRID,
         )
-        assertEquals("Última sincronización: hoy 15:30 · 22 piezas · 5 llamadas", label)
+        assertEquals("Última sincronización: hoy 15:30 · 22 piezas · 5 consultas", label)
     }
 
     @Test
@@ -46,7 +46,7 @@ class LastSyncLabelTest {
             nowMillis = at(2026, 7, 30, 0, 40),
             zone = MADRID,
         )
-        assertEquals("Última sincronización: ayer 09:05 · 22 piezas · 5 llamadas", label)
+        assertEquals("Última sincronización: ayer 09:05 · 22 piezas · 5 consultas", label)
     }
 
     @Test
@@ -56,7 +56,7 @@ class LastSyncLabelTest {
             nowMillis = at(2026, 7, 30, 12, 0),
             zone = MADRID,
         )
-        assertEquals("Última sincronización: 8 mar 23:59 · 22 piezas · 5 llamadas", label)
+        assertEquals("Última sincronización: 8 mar 23:59 · 22 piezas · 5 consultas", label)
     }
 
     @Test
@@ -66,7 +66,7 @@ class LastSyncLabelTest {
             nowMillis = at(2026, 7, 30, 8, 1),
             zone = MADRID,
         )
-        assertEquals("Última sincronización: hoy 08:00 · 1 pieza · 1 llamada", label)
+        assertEquals("Última sincronización: hoy 08:00 · 1 pieza · 1 consulta", label)
     }
 
     @Test
@@ -91,7 +91,7 @@ class SyncReportLabelTest {
     @Test
     fun `a complete run reports its three counters`() {
         assertEquals(
-            "22 piezas · 3 fichas nuevas · 5 llamadas",
+            "22 piezas · 3 fichas nuevas · 5 consultas",
             syncReportLabel(record(at(2026, 7, 30, 15, 30))),
         )
     }
@@ -101,7 +101,7 @@ class SyncReportLabelTest {
         val label = syncReportLabel(
             record(at(2026, 7, 30, 15, 30), partialFailure = "HTTP 500 en /types/404044"),
         )
-        assertEquals("22 piezas · 3 fichas nuevas · 5 llamadas · incompleto", label)
+        assertEquals("22 piezas · 3 fichas nuevas · 5 consultas · incompleto", label)
     }
 }
 
@@ -137,6 +137,11 @@ class SyncErrorLabelTest {
         assertFalse(label.contains("Ajustes"), label)
         assertFalse(label.contains("Presupuesto"), label)
         assertFalse(label.contains("1500"), label)
+        // What ran out is said in the app's one unit (#516). Asserted here as well as in
+        // `PrunedVocabularyTest` because this file owns the string, and while it only checked the
+        // three absences above, «Llamadas a la API agotadas» was green for a whole issue.
+        assertTrue(label.contains("Consultas"), label)
+        assertFalse(label.contains("llamada", ignoreCase = true), label)
     }
 
     @Test

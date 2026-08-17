@@ -87,7 +87,7 @@ class CoinSheetSurface(
  * targets, and the year's sunken tag **left the app** — no arrow on it, Numista behind Cloudflare,
  * and three unintended trips to Chrome in one session. The tag now opens this, which is the same
  * sheet with the same «Ver en Numista» under its drawn arrow and the same «Actualizar la ficha ·
- * 1 llamada»: leaving is still one tap away, and it is behind a label that says so (ADR 0026 §3,
+ * 1 consulta»: leaving is still one tap away, and it is behind a label that says so (ADR 0026 §3,
  * amended).
  *
  * Placed **last inside a Box that fills the screen**: it is an overlay and not a destination, because
