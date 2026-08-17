@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.ui.shelf.SEARCH_CLEAR_LABEL
-import com.jenarvaezg.coindex.ui.shelf.SEARCH_PLACEHOLDER
+import com.jenarvaezg.coindex.ui.shelf.INDEX_SEARCH_PLACEHOLDER
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -38,7 +38,11 @@ class SearchFieldTest {
         compose.setContent {
             var query by remember { mutableStateOf(text) }
             CoindexTheme {
-                SearchField(value = query, onValueChange = { query = it })
+                SearchField(
+                    value = query,
+                    onValueChange = { query = it },
+                    placeholder = INDEX_SEARCH_PLACEHOLDER,
+                )
             }
         }
     }
@@ -60,7 +64,7 @@ class SearchFieldTest {
         compose.onNodeWithText("The").assertExists()
         clearButton().performClick()
 
-        compose.onNodeWithText(SEARCH_PLACEHOLDER).assertExists()
+        compose.onNodeWithText(INDEX_SEARCH_PLACEHOLDER).assertExists()
         clearButton().assertDoesNotExist()
     }
 

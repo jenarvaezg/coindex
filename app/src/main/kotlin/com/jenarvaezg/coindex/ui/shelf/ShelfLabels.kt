@@ -4,7 +4,24 @@ import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.plural
 import com.jenarvaezg.coindex.ui.seriesLabel
 
-const val SEARCH_PLACEHOLDER: String = "Buscar"
+/**
+ * What each search box says it is searching, because the three of them are one drawing (#515).
+ *
+ * A box with a lupa and the word «Buscar» is the same object on Colecciones, on Monedas and on
+ * «Explorar», and the three answer with different populations: cards of the index, types of the
+ * inventory, and the curated plates the collector owns nothing of. Nothing but the placeholder can
+ * carry that, so nothing else has to — and the placeholder is free, because an empty box is exactly
+ * where a collector is deciding what to type.
+ *
+ * **The possessive is the whole of the distinction.** «tus colecciones» and «tus monedas» are what
+ * the collector has; `ShowcaseLabels.SEARCH_PLACEHOLDER` says «las láminas» with no possessive at
+ * all, because that shelf is made of what they do not have (ADR 0030 §1). One word says which side
+ * of the album a box is on.
+ */
+const val INDEX_SEARCH_PLACEHOLDER: String = "Buscar entre tus colecciones"
+
+/** The same on the other hierarchy, whose grain is the coin and not the card (ADR 0021 §1). */
+const val COINS_SEARCH_PLACEHOLDER: String = "Buscar entre tus monedas"
 
 /**
  * The way out of a typed search, which until #414 was the backspace key held down.
@@ -13,6 +30,9 @@ const val SEARCH_PLACEHOLDER: String = "Buscar"
  * survive walking into a collection and back, so «The» typed once keeps hiding the rest of the
  * shelf for as long as the collector stays on the screen. The aspa is what the shelf's own
  * [CLEAR_FILTERS_ACTION] is for the chips: one tap back to everything.
+ *
+ * It is also the **name of the act**, so an empty screen hidden by typing alone offers it by this
+ * name rather than inventing a second one ([clearNarrowingAction]).
  */
 const val SEARCH_CLEAR_LABEL: String = "Borrar la búsqueda"
 
@@ -49,42 +69,94 @@ const val SERIES_FACET: String = "Serie"
 const val CLASS_FACET: String = "Clase"
 const val MEMBERSHIP_FACET: String = "Colección"
 
-/** The way out of a shelf that has hidden everything, offered on the spot on both sides. */
+/** The way out of a shelf the chips have emptied, offered on the spot on both sides. */
 const val CLEAR_FILTERS_ACTION: String = "Quitar los filtros"
 
+/** The way out of a shelf both narrowings emptied between them, which undoes both (#515). */
+const val CLEAR_EVERYTHING_ACTION: String = "Quitar los filtros y la búsqueda"
+
 /**
- * Why nothing is showing, which is three questions and not one.
+ * What is narrowing a shelf right now, which is what an empty screen has to answer and undo (#515).
+ *
+ * The two narrowings are not one thing: the chips survive a launch and hide behind a folded shelf,
+ * the query is typed in a box that is always on screen and gone next launch (ADR 0021 §1). An empty
+ * screen that answered «lo que has puesto» to a collector who had only typed offered to remove
+ * filters nobody had chosen, and the button did clear the box — under a name that said it would not.
+ */
+enum class ShelfNarrowing { None, Filters, Search, Both }
+
+/** Read off the shelf and the box, so no screen has to work out the four cases for itself. */
+fun shelfNarrowing(filters: Int, query: String): ShelfNarrowing = when {
+    filters > 0 && query.isNotBlank() -> ShelfNarrowing.Both
+    filters > 0 -> ShelfNarrowing.Filters
+    query.isNotBlank() -> ShelfNarrowing.Search
+    else -> ShelfNarrowing.None
+}
+
+/**
+ * Why nothing is showing, which is a question about the database and then one about the narrowing.
  *
  * Reading the collection off the database takes a frame or two, and «todavía no hay colecciones» in
- * that gap is a lie about a collection that is on the device already. A shelf that hides everything
- * is the third case, and it owes the way out on the spot ([CLEAR_FILTERS_ACTION]).
+ * that gap is a lie about a collection that is on the device already.
  */
-fun indexEmptyLabel(loading: Boolean, anyCollections: Boolean): String =
+fun indexEmptyLabel(loading: Boolean, anyCollections: Boolean, narrowing: ShelfNarrowing): String =
     if (loading) {
         "Leyendo tu colección…"
     } else {
-        emptyShelfLabel("colección", "colecciones", narrowed = anyCollections)
+        emptyShelfLabel("colección", "colecciones", anyCollections, narrowing)
     }
 
 /** The same on the other side, where there is nothing to read off the database first. */
-fun coinsEmptyLabel(anyCoins: Boolean): String =
-    emptyShelfLabel("moneda", "monedas", narrowed = anyCoins)
+fun coinsEmptyLabel(anyCoins: Boolean, narrowing: ShelfNarrowing): String =
+    emptyShelfLabel("moneda", "monedas", anyCoins, narrowing)
 
 /**
- * One pair of sentences for both shelves, which only Spanish makes possible.
+ * One set of sentences for both shelves, which only Spanish makes possible.
  *
  * «Ninguna colección» and «Ninguna moneda» are both feminine singular, and «colecciones» and
  * «monedas» both feminine plural, so the two nouns drop into one shape — the same accident of gender
  * that lets [SharedSheet] carry one export sentence for the plate and the hoja. It is a fact about
  * Spanish and not a guarantee: a masculine grain added here would read «Ninguna tipo», and what
  * guards against that is this note.
+ *
+ * **«Lo que has puesto» survives only where it was true**: with both narrowings on, it is the one
+ * phrase that covers a chip and a word at once, and the button under it names them both. Alone, each
+ * says which one it was — and the verb changes with it, because a chip is something a card passes
+ * through and a typed word is something it answers to.
+ *
+ * The fourth case is not a narrowing at all: the country and year axes can come out empty with a
+ * bare shelf, and that screen used to blame filters nobody had chosen and offer to remove them.
  */
-private fun emptyShelfLabel(singular: String, plural: String, narrowed: Boolean): String =
-    if (narrowed) {
-        "Ninguna $singular pasa por lo que has puesto."
-    } else {
-        "Todavía no hay $plural. Sincroniza para traer tu colección de Numista."
+private fun emptyShelfLabel(
+    singular: String,
+    plural: String,
+    any: Boolean,
+    narrowing: ShelfNarrowing,
+): String = if (!any) {
+    "Todavía no hay $plural. Sincroniza para traer tu colección de Numista."
+} else {
+    when (narrowing) {
+        ShelfNarrowing.Filters -> "Ninguna $singular pasa por los filtros."
+        ShelfNarrowing.Search -> "Ninguna $singular responde a lo que has escrito."
+        ShelfNarrowing.Both -> "Ninguna $singular pasa por lo que has puesto."
+        ShelfNarrowing.None -> "Ninguna $singular aparece en este eje."
     }
+}
+
+/**
+ * The way back out, which undoes **exactly** what is narrowing and nothing else (#515).
+ *
+ * Null where there is nothing to undo: a button that removes filters nobody chose is furniture that
+ * lies. The typed case is offered by the name the aspa already has ([SEARCH_CLEAR_LABEL]) rather
+ * than a second name for one act, and it is offered at all — even with the box in view — because
+ * this card is where the collector is reading that nothing came back.
+ */
+fun clearNarrowingAction(narrowing: ShelfNarrowing): String? = when (narrowing) {
+    ShelfNarrowing.None -> null
+    ShelfNarrowing.Filters -> CLEAR_FILTERS_ACTION
+    ShelfNarrowing.Search -> SEARCH_CLEAR_LABEL
+    ShelfNarrowing.Both -> CLEAR_EVERYTHING_ACTION
+}
 
 /**
  * Why «recién añadidas» is not «recién compradas».

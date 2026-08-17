@@ -80,9 +80,9 @@ import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.seriesLabel
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
 import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
-import com.jenarvaezg.coindex.ui.shelf.CLEAR_FILTERS_ACTION
 import com.jenarvaezg.coindex.ui.shelf.COUNTRY_FACET
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
+import com.jenarvaezg.coindex.ui.shelf.INDEX_SEARCH_PLACEHOLDER
 import com.jenarvaezg.coindex.ui.shelf.IndexFacts
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexSort
@@ -94,9 +94,11 @@ import com.jenarvaezg.coindex.ui.shelf.SERIES_FACET
 import com.jenarvaezg.coindex.ui.shelf.SORT_FACET
 import com.jenarvaezg.coindex.ui.shelf.STARTS_IN_FACET
 import com.jenarvaezg.coindex.ui.shelf.STATUS_FACET
+import com.jenarvaezg.coindex.ui.shelf.ShelfNarrowing
 import com.jenarvaezg.coindex.ui.shelf.StartBand
 import com.jenarvaezg.coindex.ui.shelf.WEIGHT_FACET
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
+import com.jenarvaezg.coindex.ui.shelf.clearNarrowingAction
 import com.jenarvaezg.coindex.ui.shelf.countryAxis
 import com.jenarvaezg.coindex.ui.shelf.countryAxisTally
 import com.jenarvaezg.coindex.ui.shelf.indexEmptyLabel
@@ -107,10 +109,12 @@ import com.jenarvaezg.coindex.ui.shelf.indexTally
 import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
+import com.jenarvaezg.coindex.ui.shelf.shelfNarrowing
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.shelf.yearAxis
 import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
 import com.jenarvaezg.coindex.ui.annexDoorLabel
+import com.jenarvaezg.coindex.ui.annexDoorNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one round coin and two short lines under it. */
@@ -247,6 +251,9 @@ fun IndexScreen(
     // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
     // the notebook needs no mechanism of its own to choose pages.
     val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
+    // What is narrowing right now, which the empty card answers and the door of the annex declares
+    // itself outside of (#515).
+    val narrowing = shelfNarrowing(filters = shelf.active, query = query)
     // The coins no collection claims, measured against the **whole** index and then narrowed by the
     // same shelf (#275): having a collection is a fact about the coin, so a filter cannot orphan one
     // that lives in a box — but a filtered notebook still takes only the loose coins it is about.
@@ -353,7 +360,11 @@ fun IndexScreen(
 
             fullWidth {
                 Column {
-                    SearchField(value = query, onValueChange = { query = it })
+                    SearchField(
+                        value = query,
+                        onValueChange = { query = it },
+                        placeholder = INDEX_SEARCH_PLACEHOLDER,
+                    )
                     FilterShelf(
                         summary = indexShelfSummary(shelf, expanded = open),
                         tally = axisTally,
@@ -482,14 +493,29 @@ fun IndexScreen(
                 fullWidth {
                     FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            indexEmptyLabel(loading, anyCollections = state.index.isNotEmpty()),
+                            indexEmptyLabel(
+                                loading,
+                                anyCollections = state.index.isNotEmpty(),
+                                narrowing = narrowing,
+                            ),
                             style = MaterialTheme.typography.bodyLarge,
                             color = Paper.muted,
                         )
-                        if (!loading && state.index.isNotEmpty()) {
+                        // Exactly what is narrowing, undone by the name it is offered under (#515):
+                        // the chips go without taking the axis and the sort with them, and the box
+                        // is emptied only where something was typed into it.
+                        val undo = clearNarrowingAction(narrowing).takeIf {
+                            !loading && state.index.isNotEmpty()
+                        }
+                        undo?.let { action ->
                             CardAction(
-                                text = CLEAR_FILTERS_ACTION,
-                                onClick = { onNarrow(IndexShelf()); query = "" },
+                                text = action,
+                                onClick = {
+                                    if (narrowing != ShelfNarrowing.Search) {
+                                        onNarrow(shelf.withoutFilters())
+                                    }
+                                    if (narrowing != ShelfNarrowing.Filters) query = ""
+                                },
                                 modifier = Modifier.padding(top = 10.dp),
                             )
                         }
@@ -567,7 +593,15 @@ fun IndexScreen(
             // would be the furniture §5 prices. Which of its two forms it takes is `annexDoorLabel`'s
             // (ADR 0030 §8): it names the marks, the twenty, or both.
             annexDoorLabel(wishes = wishes, plates = showcase)?.let { label ->
-                fullWidth { AnnexDoor(label = label, onOpen = onOpenWishes) }
+                fullWidth {
+                    AnnexDoor(
+                        label = label,
+                        // Its count is of another population, so a search running above it leaves it
+                        // where it was — and the door says that rather than looking stale (#515).
+                        note = annexDoorNote(searching = query.isNotBlank()),
+                        onOpen = onOpenWishes,
+                    )
+                }
             }
         }
 
@@ -603,7 +637,7 @@ fun IndexScreen(
  * busco». Two drawings of one shape is how the second one comes to be a shade off.
  */
 @Composable
-internal fun AnnexDoor(label: String, onOpen: () -> Unit) {
+internal fun AnnexDoor(label: String, onOpen: () -> Unit, note: String? = null) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -615,7 +649,22 @@ internal fun AnnexDoor(label: String, onOpen: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, style = MaterialTheme.typography.labelLarge, color = Paper.ink)
+        // The note is under the name and inside the target, so it reads as this row saying something
+        // about itself. Body and not the album's versalitas — it is a sentence about what the app did
+        // with a word, which is the shape #513 gave the line under the shelf's orders — but the small
+        // body and not #513's: there the line answered the control above it, and here it sits under
+        // the name of the door, which has to stay the loudest thing in the row.
+        Column(modifier = Modifier.weight(1f, fill = false)) {
+            Text(label, style = MaterialTheme.typography.labelLarge, color = Paper.ink)
+            note?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Paper.muted,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
         ForwardGlyph()
     }
 }

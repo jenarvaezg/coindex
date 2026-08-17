@@ -47,6 +47,10 @@ data class CoinsShelf(
     val active: Int
         get() = listOfNotNull(issuer, weight, year, objectClass, membership).size
 
+    /** The chips dropped and the axis and sort kept, as on the other shelf (#515). */
+    fun withoutFilters(): CoinsShelf =
+        copy(issuer = null, weight = null, year = null, objectClass = null, membership = null)
+
     internal fun matches(row: CoinRow, except: CoinsFacet? = null): Boolean =
         (except == CoinsFacet.Issuer || issuer == null || row.issuer == issuer) &&
             (except == CoinsFacet.Weight || weight == null || GramBand.of(row.weightOz) == weight) &&

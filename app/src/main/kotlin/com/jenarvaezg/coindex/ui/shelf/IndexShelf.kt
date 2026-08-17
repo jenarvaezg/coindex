@@ -82,6 +82,20 @@ data class IndexShelf(
     val status: PlateStatus? = null,
     val series: SeriesStatus? = null,
 ) {
+    /** How many chips are chosen, which is what tells a narrowed shelf from a bare one (#515). */
+    val active: Int
+        get() = listOfNotNull(issuer, weight, startsIn, status, series).size
+
+    /**
+     * The chips dropped and **nothing else**, which is what «Quitar los filtros» promises (#515).
+     *
+     * `IndexShelf()` would take the axis and the sort with them, and neither narrows: a collector
+     * reading the sheet by country and clearing a filter would find themselves back on the plate
+     * axis, having pressed a button about filters.
+     */
+    fun withoutFilters(): IndexShelf =
+        copy(issuer = null, weight = null, startsIn = null, status = null, series = null)
+
     internal fun matches(subject: ShelfSubject, except: IndexFacet? = null): Boolean =
         (except == IndexFacet.Issuer || issuer == null || issuer in subject.countries) &&
             (except == IndexFacet.Weight || weight == null || subject.weight == weight) &&

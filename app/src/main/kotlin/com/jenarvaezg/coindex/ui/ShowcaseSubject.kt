@@ -106,6 +106,11 @@ fun showcaseTiles(
  * place — twelve countries with nine of them holding a single plate — and there is nothing else on a
  * tile to match against.
  *
+ * **It matches the way the other two boxes do** (#515): the same [fold] and [matchesQuery] the index
+ * and Monedas run on, so «britannia» finds «Britannia» and «panda plata» finds «Panda de plata». The
+ * three boxes are one drawing, and this one used to be a bare `contains` — accent-sensitive, and
+ * blind to two words in any order — which is a difference nothing on screen could have declared.
+ *
  * **The marked plates lead only in the default order.** «Por coste de entrar» is #282's order and it
  * sorts what has been valued, dearest first, leaving everything with no amount behind it by casillas:
  * asked for that order, a collector is asking about money, and answering with the plates that have none
@@ -116,9 +121,7 @@ fun showcaseShelf(
     sort: ShowcaseSort,
     query: String,
 ): List<ShowcaseTile> {
-    val narrowed = query.trim().takeIf { it.isNotEmpty() }?.let { needle ->
-        tiles.filter { it.name.contains(needle, ignoreCase = true) }
-    } ?: tiles
+    val narrowed = tiles.filter { matchesQuery(fold(it.name), query) }
     return when (sort) {
         ShowcaseSort.ByCasillas -> narrowed.sortedWith(
             compareByDescending<ShowcaseTile> { it.marks != null }

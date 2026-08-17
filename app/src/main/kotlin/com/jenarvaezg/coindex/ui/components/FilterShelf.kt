@@ -37,7 +37,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.shelf.SEARCH_CLEAR_LABEL
-import com.jenarvaezg.coindex.ui.shelf.SEARCH_PLACEHOLDER
 import com.jenarvaezg.coindex.ui.shelf.shelfDisclosure
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -56,12 +55,17 @@ val SEARCH_FIELD_HEIGHT = 40.dp
 fun SearchField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
     /**
-     * What the empty box says. The index's own by default, because that is the box this was written
-     * for; the shelf of «Explorar» searches a different population and says so (ADR 0030 §8).
+     * What the empty box says, and **there is no default** (#515).
+     *
+     * Three screens draw this same box over three populations — the cards of the index, the types of
+     * the inventory, the curated plates the collector owns nothing of — and the placeholder is the
+     * only thing that can tell them apart. A default was what let two of the three say «Buscar» and
+     * leave the collector to find out by typing; required, it makes declaring the scope the price of
+     * drawing the box.
      */
-    placeholder: String = SEARCH_PLACEHOLDER,
+    placeholder: String,
+    modifier: Modifier = Modifier,
 ) {
     BasicTextField(
         value = value,

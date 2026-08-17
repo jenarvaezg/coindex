@@ -2,8 +2,10 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.ui.ShowcaseLabels
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -239,25 +241,32 @@ class ShelfLabelsTest {
     fun `an empty index says which of the three cases it is`() {
         assertEquals(
             "Leyendo tu colección…",
-            indexEmptyLabel(loading = true, anyCollections = false),
+            indexEmptyLabel(loading = true, anyCollections = false, narrowing = ShelfNarrowing.Both),
         )
         assertEquals(
             "Ninguna colección pasa por lo que has puesto.",
-            indexEmptyLabel(loading = false, anyCollections = true),
+            indexEmptyLabel(loading = false, anyCollections = true, narrowing = ShelfNarrowing.Both),
         )
         assertEquals(
             "Todavía no hay colecciones. Sincroniza para traer tu colección de Numista.",
-            indexEmptyLabel(loading = false, anyCollections = false),
+            indexEmptyLabel(
+                loading = false,
+                anyCollections = false,
+                narrowing = ShelfNarrowing.None,
+            ),
         )
     }
 
     /** The other side has nothing to read off the database first, so it has two cases and not three. */
     @Test
     fun `an empty Coins tells a filter from an empty collection`() {
-        assertEquals("Ninguna moneda pasa por lo que has puesto.", coinsEmptyLabel(anyCoins = true))
+        assertEquals(
+            "Ninguna moneda pasa por lo que has puesto.",
+            coinsEmptyLabel(anyCoins = true, narrowing = ShelfNarrowing.Both),
+        )
         assertEquals(
             "Todavía no hay monedas. Sincroniza para traer tu colección de Numista.",
-            coinsEmptyLabel(anyCoins = false),
+            coinsEmptyLabel(anyCoins = false, narrowing = ShelfNarrowing.None),
         )
     }
 
@@ -265,8 +274,91 @@ class ShelfLabelsTest {
     @Test
     fun `the loading gap is never reported as a filter`() {
         assertEquals(
-            indexEmptyLabel(loading = true, anyCollections = false),
-            indexEmptyLabel(loading = true, anyCollections = true),
+            indexEmptyLabel(loading = true, anyCollections = false, narrowing = ShelfNarrowing.Both),
+            indexEmptyLabel(loading = true, anyCollections = true, narrowing = ShelfNarrowing.Both),
         )
+    }
+
+    /**
+     * What is narrowing is read off the two controls, and they are not one control (#515).
+     *
+     * The chips survive a launch behind a folded shelf; the query is typed in a box in view and is
+     * gone next launch (ADR 0021 §1). Blank is not typed: a box holding a space narrows nothing, so
+     * it cannot be what an empty screen blames.
+     */
+    @Test
+    fun `the narrowing is the chips, the word, both or neither`() {
+        assertEquals(ShelfNarrowing.None, shelfNarrowing(filters = 0, query = ""))
+        assertEquals(ShelfNarrowing.None, shelfNarrowing(filters = 0, query = "   "))
+        assertEquals(ShelfNarrowing.Filters, shelfNarrowing(filters = 2, query = ""))
+        assertEquals(ShelfNarrowing.Search, shelfNarrowing(filters = 0, query = "panda"))
+        assertEquals(ShelfNarrowing.Both, shelfNarrowing(filters = 1, query = "panda"))
+    }
+
+    /**
+     * An empty screen answers what was actually put on it (#515).
+     *
+     * «Lo que has puesto» was said to a collector who had only typed, over a button offering to
+     * remove filters nobody had chosen — and the button did empty the box, under a name that said it
+     * would not. Each narrowing now has its own sentence, and the verb goes with it: a card passes
+     * through a chip and answers to a word.
+     */
+    @Test
+    fun `an empty shelf names the narrowing that emptied it`() {
+        assertEquals(
+            "Ninguna colección pasa por los filtros.",
+            indexEmptyLabel(false, anyCollections = true, narrowing = ShelfNarrowing.Filters),
+        )
+        assertEquals(
+            "Ninguna colección responde a lo que has escrito.",
+            indexEmptyLabel(false, anyCollections = true, narrowing = ShelfNarrowing.Search),
+        )
+        assertEquals(
+            "Ninguna moneda responde a lo que has escrito.",
+            coinsEmptyLabel(anyCoins = true, narrowing = ShelfNarrowing.Search),
+        )
+    }
+
+    /**
+     * The country and year axes can come out empty with a bare shelf, and that is not a narrowing.
+     *
+     * It used to read «pasa por lo que has puesto» over a button offering to remove nothing at all.
+     */
+    @Test
+    fun `an axis with nothing on it blames no filter and offers no way out`() {
+        assertEquals(
+            "Ninguna colección aparece en este eje.",
+            indexEmptyLabel(false, anyCollections = true, narrowing = ShelfNarrowing.None),
+        )
+        assertNull(clearNarrowingAction(ShelfNarrowing.None))
+    }
+
+    /** The way out undoes exactly what is narrowing, under the name that act already has. */
+    @Test
+    fun `the way out is named after what it undoes`() {
+        assertEquals("Quitar los filtros", clearNarrowingAction(ShelfNarrowing.Filters))
+        assertEquals(SEARCH_CLEAR_LABEL, clearNarrowingAction(ShelfNarrowing.Search))
+        assertEquals("Quitar los filtros y la búsqueda", clearNarrowingAction(ShelfNarrowing.Both))
+    }
+
+    /**
+     * Each of the three boxes says which population it is searching (#515).
+     *
+     * They are one drawing over three populations, and the possessive is the whole of the
+     * distinction: «tus» is what the collector has, and the shelf window of «Explorar» — made of what
+     * they do not — takes no possessive at all.
+     */
+    @Test
+    fun `every search box says what it searches`() {
+        assertEquals("Buscar entre tus colecciones", INDEX_SEARCH_PLACEHOLDER)
+        assertEquals("Buscar entre tus monedas", COINS_SEARCH_PLACEHOLDER)
+        assertEquals("Buscar entre las láminas", ShowcaseLabels.SEARCH_PLACEHOLDER)
+        for (placeholder in listOf(
+            INDEX_SEARCH_PLACEHOLDER,
+            COINS_SEARCH_PLACEHOLDER,
+            ShowcaseLabels.SEARCH_PLACEHOLDER,
+        )) {
+            assertTrue(placeholder.startsWith("Buscar entre "), placeholder)
+        }
     }
 }

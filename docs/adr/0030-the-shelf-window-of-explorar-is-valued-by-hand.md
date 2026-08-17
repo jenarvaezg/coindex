@@ -206,11 +206,24 @@ Explorar carries»* in its order and widens its population:
    único dibujo de «elegido» que tiene el álbum: pintado como texto suelto frente a un botón
    enmarcado, el criterio en vigor se leía como rótulo del alternativo. Ni la población del estante ni
    el recuento de facetas cambian; lo que cambia es qué forma viste el estado «éste es el orden».*
+
+   *Nota de forma, #515: la caja compara ahora con `fold` y `matchesQuery`, como las de las dos
+   jerarquías. Era un `contains` pelado —sensible a acentos y ciego a dos palabras en cualquier
+   orden— y la cláusula nunca pidió eso: pedía una caja de búsqueda, y en este álbum una caja de
+   búsqueda encuentra «Águila» escribiendo «aguila». Su rótulo, «Buscar entre las láminas», sigue
+   siendo el único de los tres sin posesivo, que es lo que dice que este estante no es tuyo.*
 5. **The door of the index keeps the two forms §8 wrote** — «Y otras 20 láminas que no coleccionas →»
    with nothing marked, «Lo que busco · 7, y otras 20 láminas →» once something is — and it now opens
    the shelf, with the list one row further in. The count of the plates is the twenty and not the
    twenty-three: what is behind the door that the index does not already hold is the shelf window, and
    a door that counted your own plates twice would be claiming they are somewhere else.
+
+   *Nota de forma, #515: mientras hay algo escrito en la caja del índice, la puerta añade una segunda
+   línea —«Lo que escribes arriba no llega hasta aquí.»— en `bodySmall` bajo su nombre. El recuento
+   sigue siendo el de la cláusula, medido sobre la colección entera y no sobre el estrechamiento, que
+   es lo correcto porque lo de detrás no está en la lista de arriba; lo que se arregla es que «Y otras
+   55 láminas» sobre un índice que la búsqueda dejó en cero se leía como un número sin recalcular. No
+   se nombran los filtros, que sobreviven a un lanzamiento: esa línea se imprimiría en cada sesión.*
 
 ## Consequences
 
