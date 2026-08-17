@@ -77,7 +77,7 @@ funciones —`callsLabel` en `Labels.kt` y `queriesLabel` en `ShowcaseLabels.kt`
 nadie podía comparar porque nunca se ven juntas. Es también la unidad en la que el modo de marcar
 promete el mes entero: «+2 consultas al mes» por casilla (ADR 0029 §5).
 
-Cambian con ella las cuatro superficies que la imprimen y las tres frases que la nombran:
+Cambian con ella las cuatro superficies que la imprimen y las cuatro frases que la nombran:
 
 | | antes | después |
 | --- | --- | --- |
@@ -85,12 +85,20 @@ Cambian con ella las cuatro superficies que la imprimen y las tres frases que la
 | línea bajo «Sincronizar» | `Última sincronización: hoy 15:30 · 22 piezas · 5 llamadas` | `… · 5 consultas` |
 | la ficha | `Actualizar la ficha · 1 llamada` | `Actualizar la ficha · 1 consulta` |
 | sin cambios, tras gastarla | `Has gastado 1 llamada.` | `Has gastado 1 consulta.` |
-| presupuesto agotado (Las cifras) | `Se acabó el presupuesto de llamadas de este mes…` | `… de consultas …` |
-| presupuesto agotado (tasar) | `…se acabó el presupuesto de llamadas de este mes.` | `… de consultas …` |
+| mes agotado (Las cifras) | `Se acabó el presupuesto de llamadas de este mes…` | `… de consultas …` |
+| mes agotado (tasar) | `…se acabó el presupuesto de llamadas de este mes.` | `… de consultas …` |
+| mes agotado (sincronizar) | `Llamadas a la API agotadas este mes…` | `Consultas a la API agotadas…` |
 | HTTP 429 | `Numista está limitando las peticiones.` | `… las consultas.` |
 
 El 429 entra porque «peticiones» era una tercera palabra para el objeto que cuenta el presupuesto: que
 Numista frene no lo convierte en otra cosa.
+
+**La tercera fila del mes agotado se escapó de la primera pasada, y la cazó la revisión.** Abría con la
+palabra en mayúscula y el barrido de literales distinguía mayúsculas, así que le pasó por encima a la
+única de las tres frases que anuncia el mes agotado sin que nadie haya pulsado nada — y a nueve líneas
+del 429 que sí se había cambiado, en el mismo `when`. El barrido se repitió sin distinguir mayúsculas y
+no queda nada más; la comprobación de `PrunedVocabularyTest` lee ahora `ignoreCase` y nombra las tres
+frases en vez de dos.
 
 ### 3. La pestaña central cuenta lo que dice
 

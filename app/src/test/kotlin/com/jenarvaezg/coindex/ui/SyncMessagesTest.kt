@@ -137,6 +137,11 @@ class SyncErrorLabelTest {
         assertFalse(label.contains("Ajustes"), label)
         assertFalse(label.contains("Presupuesto"), label)
         assertFalse(label.contains("1500"), label)
+        // What ran out is said in the app's one unit (#516). Asserted here as well as in
+        // `PrunedVocabularyTest` because this file owns the string, and while it only checked the
+        // three absences above, «Llamadas a la API agotadas» was green for a whole issue.
+        assertTrue(label.contains("Consultas"), label)
+        assertFalse(label.contains("llamada", ignoreCase = true), label)
     }
 
     @Test

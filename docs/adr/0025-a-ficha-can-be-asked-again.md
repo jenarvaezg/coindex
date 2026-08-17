@@ -41,13 +41,20 @@ The collector asks; nothing asks on their behalf. The card carries what it costs
 exhausted month on a free key is an expected outcome and not an error to discover by pressing.
 
 *Nota de forma, #516: el rótulo dice `Actualizar la ficha · 1 consulta`, y con él el informe del
-sincronizado, la línea durable bajo el botón de sincronizar y las dos frases del presupuesto agotado. La
-unidad no la elige esta cláusula: la eligió el ADR 0030 §3 al escribir «Tasar esta lámina · 34
+sincronizado, la línea durable bajo el botón de sincronizar y las **tres** frases del mes agotado —el
+estado de Ajustes, la respuesta a pulsar «Tasar» y el snackbar del sincronizado. La unidad no la elige
+esta cláusula: la eligió el ADR 0030 §3 al escribir «Tasar esta lámina · 34
 consultas» sobre el mismo presupuesto de la misma clave, y mientras hubo dos funciones —`callsLabel` y
 `queriesLabel`— hubo dos palabras a un toque de distancia. Gana «consulta» porque «llamada» es lo que
 hace el código, mientras que lo que se le promete al coleccionista es un mes entero de ellas («+2
 consultas al mes» por casilla, ADR 0029 §5). El 429 entra en el mismo diccionario: «peticiones» era una
 tercera palabra para el objeto que cuenta el presupuesto.*
+
+*La tercera frase del mes agotado se quedó fuera de la primera pasada y la cazó la revisión: el snackbar
+del sincronizado abría con la palabra en mayúscula —«Llamadas a la API agotadas este mes»— y el barrido
+de los ficheros de copia distinguía mayúsculas, así que le pasó por encima a la única frase que anuncia
+el mes agotado sin que nadie haya pulsado nada. La comprobación de `PrunedVocabularyTest` lee ahora
+`ignoreCase` y nombra las tres frases, por eso y por nada más.*
 
 It lives on **both** surfaces where a piece of a type is visible: the piece inside a collection, and
 the row of Coins. The second is not a convenience. A type whose ficha looks like an unpublished

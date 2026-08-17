@@ -105,7 +105,9 @@ private fun screenTitleOf(route: String?, subjectName: String?): String = when {
     // saying which lámina you are in.
     Routes.isPlate(route) -> subjectName?.let { "Lámina · $it" } ?: "Lámina"
     // Both pieces routes say the same word: there is one species of collection (ADR 0021 §2), and
-    // «Tu agrupación» was the last place in the app that ranked a box below the rest.
+    // «Tu agrupación» was where this screen ranked a box below the rest — not the last such place in
+    // the app, which is what this comment claimed until #516 found four more: the door of the mode,
+    // its band, the eyebrow of the baptism and the índice's ounce chip.
     Routes.isPieces(route) -> subjectName?.let { "Colección · $it" } ?: "Colección"
     // The two roots, and anything unrecognised: never a blank masthead.
     else -> STRAPLINE

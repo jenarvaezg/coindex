@@ -1,7 +1,9 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.PlateUnavailable
+import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.TypeRefreshReport
+import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.prices.ValuationRefusal
 import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
@@ -154,8 +156,11 @@ class PrunedVocabularyTest {
             boxDialogHeading(2),
             boxCreatedMessage("Las francesas"),
         ).plus(OunceBand.entries.map { band -> band.label }).forEach { said ->
-            listOf("caja", "grupa", "Agrupa").forEach { stray ->
-                assertTrue(stray !in said, "«$stray» sigue en la interfaz: $said")
+            listOf("caja", "grupa").forEach { stray ->
+                assertTrue(
+                    !said.contains(stray, ignoreCase = true),
+                    "«$stray» sigue en la interfaz: $said",
+                )
             }
         }
     }
@@ -171,6 +176,13 @@ class PrunedVocabularyTest {
      *
      * The 429 is here too: «peticiones» was a third word, and Numista throttling the same thing the
      * budget counts is not a different object.
+     *
+     * **There are three exhausted-month sentences and not two**, which is what the first pass of this
+     * test got wrong: `valuationLabel`'s state in Ajustes, `showcaseRefusalMessage`'s answer to a
+     * press, and `syncErrorLabel`'s snackbar. The third was missed because it opens with the word
+     * capitalised — «Llamadas a la API agotadas este mes» — and a case-sensitive sweep of the copy
+     * files walked straight past it. Every check here reads `ignoreCase`, for that reason and no
+     * other.
      */
     @Test
     fun `the api spend is counted in consultas wherever it is named`() {
@@ -184,11 +196,17 @@ class PrunedVocabularyTest {
             valuationLabel(
                 ValuationStatus(wanted = 223, missing = 83, held = ValuationRefusal.BudgetExhausted),
             ),
+            syncErrorLabel(NumistaException.BudgetExhausted(1_500, 1_500)),
+            syncErrorLabel(NumistaException.Api("/types/1", 429, "")),
+            syncReportLabel(SyncRecord(0L, 22, 3, 5, null)),
             WishLabels.MARK_HINT,
         ).forEach { said ->
-            assertTrue("consulta" in said, "no dice la unidad: $said")
+            assertTrue(said.contains("consulta", ignoreCase = true), "no dice la unidad: $said")
             listOf("llamada", "petici").forEach { stray ->
-                assertTrue(stray !in said, "«$stray» sigue siendo una segunda unidad: $said")
+                assertTrue(
+                    !said.contains(stray, ignoreCase = true),
+                    "«$stray» sigue siendo una segunda unidad: $said",
+                )
             }
         }
     }

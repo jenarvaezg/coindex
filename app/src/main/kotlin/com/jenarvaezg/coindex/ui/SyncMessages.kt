@@ -68,7 +68,7 @@ fun syncErrorLabel(error: Throwable): String = when (error) {
     is NumistaException.EmptyApiKey ->
         "Falta la API key de Numista. Añádela en Ajustes."
     is NumistaException.BudgetExhausted ->
-        "Llamadas a la API agotadas este mes. Espera al día 1 para volver a intentarlo."
+        "Consultas a la API agotadas este mes. Espera al día 1 para volver a intentarlo."
     is NumistaException.Transport ->
         "Sin conexión con Numista. Tu colección local sigue disponible."
     is NumistaException.Api -> when (error.status) {
