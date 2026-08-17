@@ -171,6 +171,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // is only ever painted on an empty casilla, so the album is what says whether it shows (ADR 0029
     // §2) — and a plate whose coin was sold shows the mark again without the table being written to.
     val wishedKeys = remember(state.wishes) { state.wishes.mapTo(mutableSetOf()) { it.key } }
+    // The same marks as rows, for the door of the index (#520): it draws the first few of them, so it
+    // needs the type and the face each casilla rests on. Built off `wishes` and not off the table, so
+    // the row and the list it opens cannot disagree about what is marked — and with no prices, which
+    // are the one thing a door has no room for.
+    val wishedRows = remember(wishes) { wishSubject(wishes).rows }
     // What the marks cost a month, for the one screen that prints it: Ajustes, where the budget already
     // lives (ADR 0029 §5). The other place the figure is said is the gesture, and that one is a constant
     // sentence — «+2 consultas al mes» per casilla — because it is a promise and not a total.
@@ -438,9 +443,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     crossToCoins(navController, viewModel, coinsShelf)
                                 },
                                 sewnEdge = sewnEdge,
-                                wishes = wishes.size,
+                                // The rows and not the count: the row at the head of the sheet draws
+                                // the first few casillas as coins (#520). No costs — a door does not
+                                // price what is behind it, and the list one tap in does.
+                                wishes = wishedRows,
                                 showcase = showcase.size,
-                                onOpenWishes = { navController.navigate(Routes.EXPLORE) },
+                                onOpenWishes = { navController.navigate(Routes.WISHES) },
+                                onOpenShowcase = { navController.navigate(Routes.EXPLORE) },
                                 onSettings = { navController.navigate(Routes.SETTINGS) },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,

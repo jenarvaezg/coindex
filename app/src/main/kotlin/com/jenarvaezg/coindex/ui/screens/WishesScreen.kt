@@ -32,6 +32,7 @@ import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.WishSubject
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleStamp
@@ -204,9 +205,12 @@ private fun WishCell(
         Box(contentAlignment = Alignment.Center) {
             AlbumHole(
                 photo = images?.printedPhoto(row.printedSide),
-                // Always a hole: what is on this sheet is by definition what the collector does not
-                // have, so the ghost of the design is what every one of them shows.
-                missing = true,
+                // Always an empty casilla — what is on this sheet is by definition what the
+                // collector does not have — and **whole rather than in penumbra** (#520): the penumbra
+                // says «te falta» on a plate you are filling, and this is a list for a fair, where the
+                // drawing has to let a coin be recognised across a table. The dotted rule is what says
+                // it is not yours.
+                absence = HoleAbsence.Wanted,
                 otherSide = images?.printedPhoto(row.printedSide.other),
                 modifier = Modifier.size(104.dp),
             )

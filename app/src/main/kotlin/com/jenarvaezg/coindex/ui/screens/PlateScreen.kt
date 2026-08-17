@@ -53,6 +53,7 @@ import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
@@ -681,7 +682,7 @@ internal fun PlateCell(
         ) {
             AlbumHole(
                 photo = images?.printedPhoto(printedSide),
-                missing = cell.missing,
+                absence = if (cell.missing) HoleAbsence.Missing else HoleAbsence.Filled,
                 // Two targets on a casilla and not one (#302): the body of the hole turns the coin
                 // over, and the year under it goes out to Numista. **Unless a mode is open**, and
                 // then the far face is withheld rather than the tap overridden: `AlbumHole` takes its

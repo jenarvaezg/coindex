@@ -106,7 +106,32 @@ class CoinGlossSurfacesTest {
     @Test
     fun aMissingCasillaDoesNotGloss() {
         val tilt = tiltOf {
-            AlbumHole(photo = OBVERSE, missing = true, modifier = Modifier.size(104.dp))
+            AlbumHole(
+                photo = OBVERSE,
+                absence = HoleAbsence.Missing,
+                modifier = Modifier.size(104.dp),
+            )
+        }
+
+        assertEquals(0, tilt.coins)
+    }
+
+    /**
+     * And neither does a casilla the collector marked, drawn whole though it is (#520).
+     *
+     * `HoleAbsence.Wanted` takes the penumbra off the coin so it can be recognised at a fair, and that is
+     * the **only** thing it takes off: the hole is still empty, and the gloss is the metal's own light.
+     * The rule `coinGloss` states — «empty cardboard never glosses, for the direct reason that there is no
+     * coin there» — is about the coin being there and not about how brightly its design is printed.
+     */
+    @Test
+    fun aWantedCasillaDoesNotGlossEither() {
+        val tilt = tiltOf {
+            AlbumHole(
+                photo = OBVERSE,
+                absence = HoleAbsence.Wanted,
+                modifier = Modifier.size(104.dp),
+            )
         }
 
         assertEquals(0, tilt.coins)

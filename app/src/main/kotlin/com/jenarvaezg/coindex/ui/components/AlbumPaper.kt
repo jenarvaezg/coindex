@@ -57,12 +57,41 @@ private const val HALF_TURN = 180f
 /** Shallow enough that the near edge of the coin grows as it swings, as a real one does. */
 private const val COIN_CAMERA_DISTANCE = 12f
 
+/**
+ * What a hole says about the coin that is not in it (ADR 0026 §15, #520).
+ *
+ * Two absences and not one, because they were never the same sentence. **[Missing]** is «te falta»: the
+ * casilla belongs to a plate the collector is filling, and the design sunk to 14 % is the empty pocket
+ * of an album — you see there is something to buy, not what it is. **[Wanted]** is «esto lo buscas»: the
+ * casilla is on a list for a fair, and there the drawing has one job, which is letting a coin be
+ * recognised across a table. So the coin is drawn whole and what says it is not yours is the dotted
+ * rule, which both absences keep.
+ *
+ * The die-cut never glosses in either: the gloss is the metal's own light and there is no metal in the
+ * hole, which is the rule `coinGloss` already states.
+ *
+ * **The rest of the app still says «te falta» with the penumbra**, and whether it should is
+ * [#556](https://github.com/jenarvaezg/coindex/issues/556): six surfaces draw this same 14 % to mean six
+ * different things. This enum is where that decision lands, and the value itself belongs to the
+ * calibration bench of ADR 0026 §15 rather than to the caller.
+ */
+enum class HoleAbsence {
+    /** The coin is in the collection: full colour, and the metal's own light over it. */
+    Filled,
+
+    /** An empty casilla of a plate being filled: the catalog design at 14 % under a dotted rule. */
+    Missing,
+
+    /** An empty casilla the collector marked: the coin whole, and the dotted rule to say it is not theirs. */
+    Wanted,
+}
+
 /** One catalog face sunk into cardboard, with the metal's own light over it. */
 @Composable
 fun AlbumHole(
     photo: CoinPhoto?,
     modifier: Modifier = Modifier,
-    missing: Boolean = false,
+    absence: HoleAbsence = HoleAbsence.Filled,
     /** False for a loose coin: the photograph remains, but there is no album board around it. */
     backed: Boolean = true,
     otherSide: CoinPhoto? = null,
@@ -71,7 +100,7 @@ fun AlbumHole(
     AlbumHole(
         photo = photo,
         modifier = modifier,
-        missing = missing,
+        absence = absence,
         backed = backed,
         otherSide = otherSide,
         tone = AlbumToneConfig.Default,
@@ -84,7 +113,7 @@ fun AlbumHole(
 fun AlbumHole(
     photo: CoinPhoto?,
     modifier: Modifier = Modifier,
-    missing: Boolean = false,
+    absence: HoleAbsence = HoleAbsence.Filled,
     /** False for a loose coin: the photograph remains, but there is no album board around it. */
     backed: Boolean = true,
     /**
@@ -97,6 +126,10 @@ fun AlbumHole(
     tone: AlbumToneConfig,
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
 ) {
+    // The hole is empty in both absences — the dotted rule and the dead gloss follow this — and only
+    // [HoleAbsence.Missing] sinks the design behind it.
+    val empty = absence != HoleAbsence.Filled
+    val dimmed = absence == HoleAbsence.Missing
     // Which face is up is the hole's own business and it is deliberately not hoisted: the plate
     // goes back to `printed_side` on its own the moment the cell leaves the lazy grid, which is
     // what keeps the sheet of mixed states from becoming a state the album has to remember.
@@ -252,7 +285,7 @@ fun AlbumHole(
                             rotationY = faceTurn
                             cameraDistance = COIN_CAMERA_DISTANCE * density.density
                         }
-                        .alpha(if (missing) 0.14f else 1f)
+                        .alpha(if (dimmed) 0.14f else 1f)
                         // `painted` is the other half of a rule `coinGloss` already states —
                         // «empty cardboard never glosses, for the direct reason that there is no
                         // coin there» — and it was the whole of #510's title: the band blends
@@ -261,7 +294,7 @@ fun AlbumHole(
                         // it did. A brilliant disc that moves is the one thing «cargando» and «no
                         // ha bajado» must not have in common (and the sensor, unregistered, is a
                         // battery the empty hole was spending too).
-                        .coinGloss(isCoin = !missing && painted),
+                        .coinGloss(isCoin = !empty && painted),
                 )
             }
 
@@ -271,7 +304,7 @@ fun AlbumHole(
             // #303's discarded variant D, two layers for the result of one. The wall of the cut
             // lives on the cardboard, where the shadow of a cut wall belongs, and what is over the
             // metal is the metal's own light.
-            if (missing) {
+            if (empty) {
                 Canvas(Modifier.fillMaxSize()) {
                     val holeDp = size.minDimension / density.density
                     val dashInset = (6f * holeDp / DESIGN_HOLE_DP).coerceAtLeast(1.5f).dp.toPx()

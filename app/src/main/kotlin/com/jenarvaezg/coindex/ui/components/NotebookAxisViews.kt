@@ -237,7 +237,7 @@ private fun AxisHole(cell: CountryAxisCell, images: Map<Int, TypeImages>) {
     when (cell) {
         is CountryAxisCell.Slot -> AlbumHole(
             photo = photo,
-            missing = !cell.owned,
+            absence = if (cell.owned) HoleAbsence.Filled else HoleAbsence.Missing,
             modifier = Modifier.size(AXIS_HOLE),
         )
         is CountryAxisCell.Loose -> AlbumHole(
@@ -360,7 +360,7 @@ fun YearAxisDecadeRow(
                         }
                         YearCellState.Ghost -> AlbumHole(
                             photo = null,
-                            missing = true,
+                            absence = HoleAbsence.Missing,
                             modifier = Modifier.fillMaxSize(),
                         )
                         YearCellState.Bare, null -> BareYearDot()

@@ -81,64 +81,50 @@ object WishLabels {
  * is marked, which is why this takes a live count and never a nullable one — the same clause the sewn
  * edge keeps while it reads (#418).
  *
- * **Two doors hang this label now** (ADR 0030 §8). Inside «Explorar» it is the whole of the row, in the
- * short form §8 wrote — the shelf is what the collector is already looking at, so what this door adds is
- * the list. At the foot of the index it is the first half of [annexDoorLabel], which names the twenty
- * beside it. The arrow is drawn and not typed — neither Bitter nor Barlow has that glyph (#298).
+ * **Two doors hang this label** (ADR 0030 §8, amended by #520). Inside «Explorar» it is the whole of the
+ * row, in the short form §8 wrote — the shelf is what the collector is already looking at, so what that
+ * door adds is the list. In the index it is the whole of the row too, at the **head** of the sheet: since
+ * #520 the marks and the shelf window are two rows with one destination each, and the composed label
+ * that promised both from one tap is gone. The arrow is drawn and not typed — neither Bitter nor Barlow
+ * has that glyph (#298).
  */
 fun wishDoorLabel(count: Int): String = "${WishLabels.DESTINATION} · $count"
 
 /**
- * The door of the index, in the two forms ADR 0026 §8 clause 3 wrote for it.
+ * The marks the row has no room to draw, said in words: **«y 5 más»** (#520).
  *
- * «Y otras 20 láminas que no coleccionas →» while nothing is marked, «Lo que busco · 7, y otras 20
- * láminas →» once something is, and **null** when there is neither — which is the zero that is not
- * printed, the same clause the sewn edge keeps while it reads (#418).
+ * The row draws the first few casillas as coins and counts the rest, rather than shrinking the lot to
+ * fit: what the drawing is for is recognising a coin, and a fourth of a hole recognises nothing. Absent
+ * rather than «y 0 más» — the same zero the whole feature keeps unprinted.
  *
- * The count is the **twenty and not the twenty-three** (ADR 0030 §8 clause 5): what is behind this door
- * that the list above it does not already hold is the shelf window, and counting the collector's own
- * plates here would claim they live somewhere else.
- *
- * With the window empty and marks in hand it falls back to the short form, which is what the annex was
- * called for one version: a collection that has reached every curated catalog has a list behind this
- * door and nothing else. Unreachable today, and it is one `takeIf` rather than a screen nobody can open.
+ * Lower case and no unit: it continues the tira it sits beside, where the unit is the coins themselves.
  */
-fun annexDoorLabel(wishes: Int, plates: Int): String? = when {
-    wishes > 0 && plates > 0 -> "${wishDoorLabel(wishes)}, y ${otherPlates(plates)}"
-    wishes > 0 -> wishDoorLabel(wishes)
-    plates > 0 -> "Y ${otherPlates(plates)} que no coleccionas"
-    else -> null
-}
+fun wishDoorMoreLabel(rest: Int): String? = "y $rest más".takeIf { rest > 0 }
 
 /**
- * What the door owes a collector who is typing in the box above it (#515).
+ * What the row owes a collector who is typing in the box above it (#515, moved here by #520).
  *
- * The count behind this door is measured over the whole collection and never over the narrowing —
- * which is right, because what is behind it is not in the list above: the shelf window is made of
- * plates the collector owns nothing of, and the marks are casillas rather than cards. But «Y otras
- * 55 láminas» under an index the search had cut to two read as a count that had simply not been
- * updated, which is the one thing a door that names what is behind it cannot afford.
+ * The count beside «Lo que busco» is measured over the whole collection and never over the narrowing —
+ * which is right, because what is behind this door is not in the list under it: the marks are casillas
+ * rather than cards. But a count that does not move while the index goes from sixty-nine cards to three
+ * reads as a number that had simply not been recomputed, which is the one thing a door that names what
+ * is behind it cannot afford.
  *
- * So it says so, and only while something is typed: **the filters are not named here**. They persist
- * across launches (ADR 0021 §1), so a collector who left the país chip on would read this line on
- * every screen of every session — which is the frequency ADR 0026 §5 prices — while the query is
- * what is being done right now, in a box in view, over a list that may have gone empty under it.
+ * **One note and not two.** Since #520 the index hangs two annex rows, and both count populations the
+ * box does not reach; printing this under each of them would be the same sentence twice on one screen,
+ * which is the furniture ADR 0026 §5 prices. It goes on the row the eye crosses right after typing —
+ * the one at the head of the sheet — and the shelf's row at the foot carries nothing.
  *
- * «Lo que escribes» and not «tu búsqueda»: one door down, `WishLabels.DESTINATION` is «Lo que
- * busco», and a line about searching beside a room called that would be read as being about the room.
+ * Only while something is typed: **the filters are not named here**. They persist across launches
+ * (ADR 0021 §1), so a collector who left the país chip on would read this line on every screen of every
+ * session, while the query is what is being done right now, in a box in view, over a list that may have
+ * gone empty under it.
+ *
+ * «Lo que escribes» and not «tu búsqueda»: the row this hangs from is called «Lo que busco», and two
+ * sentences about looking, one over the other, would read as being about the same thing.
  */
-fun annexDoorNote(searching: Boolean): String? =
+fun wishDoorNote(searching: Boolean): String? =
     "Lo que escribes arriba no llega hasta aquí.".takeIf { searching }
-
-/**
- * «otras 20 láminas», and «otra lámina» when there is one.
- *
- * The count goes with the plural and **not** with the singular: «otra 1 lámina» is what a `plural`
- * helper produces on its own, and it is the one place in this door where the number has to disappear
- * for the sentence to be Spanish.
- */
-private fun otherPlates(plates: Int): String =
-    if (plates == 1) "otra lámina" else "otras $plates láminas"
 
 /**
  * What the list holds, under its heading: **«7 casillas en 5 láminas»**.

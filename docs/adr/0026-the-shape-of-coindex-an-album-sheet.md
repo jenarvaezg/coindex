@@ -590,6 +590,36 @@ there is still one species of collection. This amendment is about the bar, not t
 > behind that door which the index does not already hold is the shelf window. A door counting the
 > collector's own plates as well would be claiming they live somewhere else.
 
+> **Amended on 2026-08-17 (§8 clause 3, [#520](https://github.com/jenarvaezg/coindex/issues/520)). One
+> row, one name, one destination — and the row is no longer always the last one.** Clause 3 wrote the
+> door of an annex in two forms, and the composed one —«Lo que busco · 7, y otras 20 láminas →»— named
+> two rooms and opened one of them. It is withdrawn. The index hangs **two** rows, each with a stable
+> name and a single destination:
+>
+> 1. **«Lo que busco · 7» at the head of the sheet**, under the shelf and before the first card, opening
+>    the list. Its casillas are **drawn** beside the count — the first three as coins, the rest counted in
+>    words — which is what makes it a row about coins rather than a label with a number.
+> 2. **«Y otras 20 láminas que no coleccionas →» at the foot**, opening «Explorar», where clause 3 already
+>    put it.
+>
+> So **«the last row of that hierarchy's list» becomes one of two places**, and the criterion is what the
+> population is for: a **shopping list** goes to the head, because it is what the collector came to act on
+> and the foot of sixty-nine cards is four folds and 3417 dp away (measured, `docs/ux/prototipo-dos-puertas-520/`);
+> a **window to browse** stays at the foot, because browsing what you do not own is where a page ends.
+> Everything else in clause 3 holds: deeper paper, the count with the name, the zero not printed, and the
+> arrow drawn rather than typed.
+>
+> Two consequences that are the clause's and not the screen's. **The note of #515 is printed once**: both
+> rows count populations the search box does not reach, so «Lo que escribes arriba no llega hasta aquí»
+> hangs on the row at the head — the one the eye crosses right after typing — and the row at the foot
+> carries nothing. And **the price of the head row is paid only when it exists**: with nothing marked it is
+> not printed, so the first view is exactly the one it was before this ticket; with marks it costs 1,76 of
+> the 11,36 cards the fold held.
+>
+> What this does **not** open: still no cell, still no count in the bar, and the marks are still not a
+> collection of the index (ADR 0021 §2). A row at the head of the sheet is not a section — there is one
+> list and one order under it, unchanged.
+
 ### 9. The country map and the timeline are two axes of the notebook, not two screens
 
 The stain and the axis are made of **slots**, so by the test of §8 they are orders of the same sheet,
@@ -834,6 +864,23 @@ written**.
 > of one. Moving it out to the cardboard was weighed and dropped: the ring is 5 dp wide and already
 > carries #357's die-cut wall. The numbers, including a drawing cost measured only on the emulator,
 > are in `docs/ux/implementacion-338/`.
+
+> **Amended on 2026-08-17 (§15, [#520](https://github.com/jenarvaezg/coindex/issues/520)). The ghost is
+> two absences, and only one of them is a penumbra.** The bench's row said «the ghost | design at 14 % with
+> a dotted rule» as if an empty casilla were one thing. It is two sentences: **«te falta»**, on a plate the
+> collector is filling, where the sunk design says there is something to buy without saying what it is; and
+> **«esto lo buscas»**, on the list for a fair, where the drawing has one job — letting a coin be
+> recognised across a table. Drawn at 40 dp on the row of #520 the 14 % measured as two grey discs, which
+> is what the owner rejected with the prototype in front of him: *«sólo tiene sentido fantasma cuando no la
+> tienes en una colección que sigues»*. So the marked casilla is drawn **whole**, and what says it is not
+> yours is the dotted rule, which both absences keep. Neither glosses: the gloss is the metal's own light
+> and there is no metal in the hole.
+>
+> The value stays the bench's — 14 % is calibrated and unchanged for «te falta» — and what moved is **which
+> absence a surface is drawing**, which is form and therefore the map's. `HoleAbsence` is where that lands.
+> **Six surfaces draw this same penumbra to mean six different things** — the plate, the list, the shelf
+> window, a coin's own sheet, the notebook's two axes and the printed page — and whether the other four
+> should keep it is [#556](https://github.com/jenarvaezg/coindex/issues/556), not this amendment.
 
 ### 16. The order, the cost, and three PRs per screen
 

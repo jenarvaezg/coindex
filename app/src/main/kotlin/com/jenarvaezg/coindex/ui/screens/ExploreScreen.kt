@@ -31,6 +31,7 @@ import com.jenarvaezg.coindex.ui.ShowcaseLabels
 import com.jenarvaezg.coindex.ui.ShowcaseSort
 import com.jenarvaezg.coindex.ui.ShowcaseTile
 import com.jenarvaezg.coindex.ui.components.AlbumHole
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
 import com.jenarvaezg.coindex.ui.components.SearchField
@@ -161,7 +162,7 @@ private fun ShelfTile(
             photo = images?.printedPhoto(tile.printedSide),
             // A plate of the window is a plate with nothing in it, so every one of its tiles wears the
             // ghost; a plate of the collector's shows its cover coin as its own card does.
-            missing = !tile.mine,
+            absence = if (tile.mine) HoleAbsence.Filled else HoleAbsence.Missing,
             // **No `otherSide`**, exactly as `CollectionCard` passes none: the coin of a *casilla* turns
             // over, and a tile is not a casilla — handed the other face, the hole takes the tap to turn
             // it and the plate behind the tile never opens. Measured on the AVD, where the whole shelf

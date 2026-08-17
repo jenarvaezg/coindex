@@ -256,6 +256,33 @@ fun showcaseTileCostLabel(
 ): String = "${eurosLabel(cost.eur)} · ${valuedAgeLabel(cost.readAt, nowMillis, zone)}"
 
 /**
+ * The row of the index that opens the shelf: **«Y otras 20 láminas que no coleccionas»** (#520).
+ *
+ * One destination and one stable name, which is the whole of what #520 changed: the row used to carry a
+ * composed label —«Lo que busco · 7, y otras 20 láminas»— that named two rooms and opened one of them.
+ * The marks got a row of their own at the head of the sheet and this one kept the foot, where ADR 0026 §8
+ * clause 3 puts the door of an annex.
+ *
+ * **Null at zero**, the same clause the sewn edge keeps while it reads (#418): a collection that has
+ * reached every curated catalog has nothing behind this row, and a row naming an empty screen is the
+ * furniture ADR 0026 §5 prices. Unreachable today — the father is 20 plates from it — and it is one
+ * `takeIf` rather than a screen nobody can open.
+ *
+ * The count is the **twenty and not the twenty-three** (ADR 0030 §8 clause 5): what is behind this row
+ * that the list above it does not already hold is the shelf window, and counting the collector's own
+ * plates here would claim they live somewhere else. The arrow is drawn and not typed (#298).
+ *
+ * «Y» in the lead because it is read after the cards it follows, and it is the one place in this row
+ * where the number has to disappear for the sentence to be Spanish: «otra 1 lámina» is what a `plural`
+ * helper produces on its own.
+ */
+fun showcaseDoorLabel(plates: Int): String? = when {
+    plates <= 0 -> null
+    plates == 1 -> "Y otra lámina que no coleccionas"
+    else -> "Y otras $plates láminas que no coleccionas"
+}
+
+/**
  * How many casillas of a plate of the collector's they are looking for, under its tile.
  *
  * The tile of one of *their* plates in this shelf, which is what makes the shelf «lo que te falta» and

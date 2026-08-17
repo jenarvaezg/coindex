@@ -45,6 +45,44 @@ class WishLabelsTest {
         assertEquals(ShowcaseLabels.DESTINATION, screenTitle(Routes.EXPLORE))
     }
 
+    /**
+     * The row draws the first few casillas and counts the rest, and says nothing when it drew them all.
+     *
+     * The zero is not printed here either (#418's clause): «y 0 más» beside three coins would be a line
+     * about the absence of a fourth.
+     */
+    @Test
+    fun `the row counts the marks it had no room to draw`() {
+        assertEquals("y 4 más", wishDoorMoreLabel(rest = 4))
+        assertEquals("y 1 más", wishDoorMoreLabel(rest = 1))
+        assertNull(wishDoorMoreLabel(rest = 0))
+        assertNull(wishDoorMoreLabel(rest = -2), "tres dibujadas de dos marcadas no es «y -1 más»")
+    }
+
+    /**
+     * The row declares that the box above it does not reach it (#515, moved to this row by #520).
+     *
+     * Its count is of another population — casillas rather than cards — so a search cutting the index to
+     * three leaves it where it was, and a number that does not move reads as one that had not been
+     * recomputed.
+     *
+     * **One note and not two**: since #520 the index hangs two annex rows and both count populations the
+     * search does not reach, so the sentence is printed on the row at the head — the one the eye crosses
+     * right after typing — and `showcaseDoorLabel`'s row at the foot carries nothing. Only while
+     * something is typed: the filters persist across launches (ADR 0021 §1), and a line printed on every
+     * screen of every session is the frequency ADR 0026 §5 prices.
+     */
+    @Test
+    fun `the row says a search does not reach it`() {
+        assertEquals(
+            "Lo que escribes arriba no llega hasta aquí.",
+            wishDoorNote(searching = true),
+        )
+        assertNull(wishDoorNote(searching = false))
+        // Two sentences about looking, one over the other, would read as being about the same thing.
+        assertFalse(WishLabels.DESTINATION in wishDoorNote(searching = true).orEmpty())
+    }
+
     /** Two units, because the list is what crosses plates; casillas first, which is what was marked. */
     @Test
     fun `the census counts casillas and the plates they came from`() {
