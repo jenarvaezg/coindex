@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.AssembledCollection
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -19,6 +20,24 @@ import kotlin.test.assertTrue
 class CountryAxisTest {
     @Test
     fun `Italia 2-2 opens before a larger unfinished country`() {
+        val catalogs = listOf(
+            catalog(
+                id = "italia",
+                issuer = "italia",
+                members = listOf(
+                    member("a", ITALIA_A, 2000),
+                    member("b", ITALIA_B, 2001),
+                ),
+            ),
+            catalog(
+                id = "rusia",
+                issuer = "russie",
+                members = listOf(
+                    member("a", RUSIA_A, 2020),
+                    member("b", RUSIA_B, 2021),
+                ),
+            ),
+        )
         val model = countryAxis(
             state = state(
                 items = listOf(
@@ -33,25 +52,9 @@ class CountryAxisTest {
                     RUSIA_B to meta(RUSIA_B, "russie", "Rusia"),
                 ),
                 evidenced = setOf("italia", "rusia"),
+                catalogs = catalogs,
             ),
-            catalogs = listOf(
-                catalog(
-                    id = "italia",
-                    issuer = "italia",
-                    members = listOf(
-                        member("a", ITALIA_A, 2000),
-                        member("b", ITALIA_B, 2001),
-                    ),
-                ),
-                catalog(
-                    id = "rusia",
-                    issuer = "russie",
-                    members = listOf(
-                        member("a", RUSIA_A, 2020),
-                        member("b", RUSIA_B, 2021),
-                    ),
-                ),
-            ),
+            catalogs = catalogs,
         )
 
         assertEquals(listOf("Italia", "Rusia"), model.blocks.map { it.country })
@@ -62,6 +65,16 @@ class CountryAxisTest {
     @Test
     fun `a slot lives in the member country, not the catalog header`() {
         // Historia del real: catalog issuer méxico, members from new_south_wales (#170).
+        val catalogs = listOf(
+            catalog(
+                id = "historia",
+                issuer = "mexique",
+                members = listOf(
+                    member("a", NSW_A, 1813, issuerCode = "new_south_wales"),
+                    member("b", NSW_B, 1813, issuerCode = "new_south_wales"),
+                ),
+            ),
+        )
         val model = countryAxis(
             state = state(
                 items = emptyList(),
@@ -70,17 +83,9 @@ class CountryAxisTest {
                     NSW_B to meta(NSW_B, "new_south_wales", "New South Wales"),
                 ),
                 evidenced = setOf("historia"),
+                catalogs = catalogs,
             ),
-            catalogs = listOf(
-                catalog(
-                    id = "historia",
-                    issuer = "mexique",
-                    members = listOf(
-                        member("a", NSW_A, 1813, issuerCode = "new_south_wales"),
-                        member("b", NSW_B, 1813, issuerCode = "new_south_wales"),
-                    ),
-                ),
-            ),
+            catalogs = catalogs,
         )
 
         assertEquals(listOf("Nueva Gales del Sur"), model.blocks.map { it.country })
@@ -90,6 +95,17 @@ class CountryAxisTest {
     @Test
     fun `Tokelau appears when Equilibrium members override the catalog issuer`() {
         val tokelauTypes = (0..5).map { TOKELAU + it }
+        val catalogs = listOf(
+            catalog(
+                id = "equilibrium",
+                issuer = "tokelau",
+                members = listOf(
+                    member("niue", NIUE, 2024, issuerCode = "niue"),
+                ) + tokelauTypes.mapIndexed { index, typeId ->
+                    member("t$index", typeId, 2020 + index)
+                },
+            ),
+        )
         val model = countryAxis(
             state = state(
                 items = listOf(item(1, NIUE, year = 2024)),
@@ -98,18 +114,9 @@ class CountryAxisTest {
                     tokelauTypes.forEach { id -> put(id, meta(id, "tokelau", "Tokelau")) }
                 },
                 evidenced = setOf("equilibrium"),
+                catalogs = catalogs,
             ),
-            catalogs = listOf(
-                catalog(
-                    id = "equilibrium",
-                    issuer = "tokelau",
-                    members = listOf(
-                        member("niue", NIUE, 2024, issuerCode = "niue"),
-                    ) + tokelauTypes.mapIndexed { index, typeId ->
-                        member("t$index", typeId, 2020 + index)
-                    },
-                ),
-            ),
+            catalogs = catalogs,
         )
 
         assertEquals(setOf("Niue", "Tokelau"), model.blocks.map { it.country }.toSet())
@@ -163,6 +170,16 @@ class CountryAxisTest {
 
     @Test
     fun `a país chip keeps only that country's cells on a spanning plate`() {
+        val catalogs = listOf(
+            catalog(
+                id = "historia",
+                issuer = "mexique",
+                members = listOf(
+                    member("thaler", THALER, 1780, issuerCode = "autriche-habsbourg"),
+                    member("real", REAL, 1791),
+                ),
+            ),
+        )
         val model = countryAxis(
             state = state(
                 items = listOf(item(1, THALER, year = 1780)),
@@ -171,17 +188,9 @@ class CountryAxisTest {
                     REAL to meta(REAL, "mexique", "México"),
                 ),
                 evidenced = setOf("historia"),
+                catalogs = catalogs,
             ),
-            catalogs = listOf(
-                catalog(
-                    id = "historia",
-                    issuer = "mexique",
-                    members = listOf(
-                        member("thaler", THALER, 1780, issuerCode = "autriche-habsbourg"),
-                        member("real", REAL, 1791),
-                    ),
-                ),
-            ),
+            catalogs = catalogs,
             keptCountry = "Imperio austríaco",
         )
 
@@ -193,10 +202,14 @@ class CountryAxisTest {
         items: List<CollectedItem>,
         typeMeta: Map<Int, TypeMeta>,
         evidenced: Set<String>,
+        catalogs: List<CollectionCatalog> = emptyList(),
     ) = CollectionState(
         AssembledCollection(
             items = items,
             typeMeta = typeMeta,
+            // The albums the assembly carries (#537): a slot of this axis is a casilla of the plate
+            // the card opens, and both read the same album.
+            albums = CatalogAlbums.over(catalogs, items),
             evidencedCatalogIds = evidenced,
         ),
     )

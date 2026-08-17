@@ -45,11 +45,16 @@ data class ShowcasePlate(
  */
 fun showcasePlate(
     catalog: CollectionCatalog,
-    items: List<CollectedItem>,
+    /**
+     * The album the assembly built for this catalog (#537), which is the one the plate will draw.
+     *
+     * Taken instead of the inventory because a window's tile and the plate it opens said «doce
+     * casillas» out of two separate builds, and the tile is the promise the plate has to keep.
+     */
+    album: CollectionCatalogAlbum,
     evidencedCatalogIds: Set<String>,
 ): ShowcasePlate? {
     if (catalog.id in evidencedCatalogIds) return null
-    val album = buildCollectionCatalogAlbum(catalog, items)
     val slots = album.issuedMembers()
     // Zero is not a small window, it is no window: a file of announcements has no plate to open.
     if (slots == 0 || slots >= SHOWCASE_MAX_SLOTS) return null
@@ -67,8 +72,10 @@ fun showcasePlate(
  */
 fun showcasePlates(
     catalogs: List<CollectionCatalog>,
-    items: List<CollectedItem>,
+    albums: CatalogAlbums,
     evidencedCatalogIds: Set<String>,
 ): List<ShowcasePlate> = catalogs
-    .mapNotNull { catalog -> showcasePlate(catalog, items, evidencedCatalogIds) }
+    .mapNotNull { catalog ->
+        albums[catalog]?.let { album -> showcasePlate(catalog, album, evidencedCatalogIds) }
+    }
     .sortedWith(compareBy({ it.slots }, { it.catalog.id }))

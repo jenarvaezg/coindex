@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.data.prices
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.TypeIssueEntity
 import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
@@ -12,7 +13,6 @@ import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishedSlot
-import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 
 /**
  * How many slots from closing a plate has to be for its holes to be worth valuing (ADR 0028 §1).
@@ -96,6 +96,11 @@ data class ValuationPlan(val owned: List<OwnedIssue>, val holes: List<PlateHole>
 fun valuationPlan(
     items: List<CollectedItem>,
     curation: Curation,
+    /**
+     * The assembly's albums (#537): the pass walks the holes the collector's own cards are divided
+     * by, and it never rebuilds them to find out what is missing.
+     */
+    albums: CatalogAlbums,
     evidencedCatalogIds: Set<String>,
     /**
      * The casillas the collector marked, which enter the plan **whatever their plate's shape**
@@ -118,7 +123,7 @@ fun valuationPlan(
     holes = (
         curation.catalogs
             .filter { it.id in evidencedCatalogIds }
-            .flatMap { catalog -> plateHoles(catalog, items) } + wishHoles(wishes)
+            .flatMap { catalog -> plateHoles(catalog, albums[catalog]) } + wishHoles(wishes)
         ).distinct(),
 )
 
@@ -225,8 +230,8 @@ fun holesWithinReach(album: CollectionCatalogAlbum): List<CollectionCatalogAlbum
 
 private fun plateHoles(
     catalog: CollectionCatalog,
-    items: List<CollectedItem>,
-): List<PlateHole> = holesWithinReach(buildCollectionCatalogAlbum(catalog, items))
+    album: CollectionCatalogAlbum?,
+): List<PlateHole> = holesWithinReach(album ?: return emptyList())
     .mapNotNull { hole ->
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
         PlateHole(catalog.id, typeId, hole.member.year, hole.member.numistaIssueIds)

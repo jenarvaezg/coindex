@@ -35,6 +35,7 @@ class CollectionIndexTest {
                 piecesByKey = mapOf(bolivar.key() to items),
             ),
             boxes = emptyList(),
+            albums = albums(listOf(bolivar), items),
             snapshot = CollectionSnapshot(items = items),
         ).single()
 
@@ -68,6 +69,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(catalogs.map { it.key() } + fileless, items),
             boxes = listOf(box(7, "Bandeja del abuelo", items.take(2))),
+            albums = albums(catalogs, items),
             snapshot = CollectionSnapshot(items = items),
         )
 
@@ -102,6 +104,7 @@ class CollectionIndexTest {
             derivation = derivation(listOf(southernCross.key()), items),
             // Una caja vacía sobrevive con su cero y su sitio, sin nivel extra en el comparador.
             boxes = listOf(box(1, "Zeta de dos monedas", items), box(2, "Álbum vacío", emptyList())),
+            albums = albums(catalogs, items),
             snapshot = CollectionSnapshot(items = items),
         )
 
@@ -139,6 +142,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(listOf(announced.key()), items),
             boxes = emptyList(),
+            albums = albums(catalogs, items),
             snapshot = CollectionSnapshot(items = items),
         )
 
@@ -163,6 +167,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(listOf(owned.key(), unowned.key()), items),
             boxes = emptyList(),
+            albums = albums(catalogs, items),
             snapshot = CollectionSnapshot(items = items),
         )
         val byName = cards.filterIsInstance<IndexCard.Derived>().associateBy { it.name }
@@ -207,6 +212,7 @@ class CollectionIndexTest {
                 ),
             ),
             boxes = emptyList(),
+            albums = albums(catalogs, items),
             snapshot = CollectionSnapshot(items = items, typeMeta = typeMeta),
         )
         val byName = cards.associate { it.name to it.issuer }
@@ -250,6 +256,7 @@ class CollectionIndexTest {
                 ),
             ),
             boxes = emptyList(),
+            albums = albums(catalogs, items),
             snapshot = CollectionSnapshot(items = items, typeMeta = typeMeta),
         )
         val byName = cards.associate { it.name to it.issuer }
@@ -280,6 +287,7 @@ class CollectionIndexTest {
         val cards = index.build(
             derivation = derivation(listOf(alemanas), items),
             boxes = emptyList(),
+            albums = albums(emptyList(), items),
             snapshot = CollectionSnapshot(items = items, typeMeta = typeMeta),
         )
 
@@ -313,6 +321,7 @@ class CollectionIndexTest {
                 // Una caja vaciada no tiene piezas que digan el país, así que va desnuda.
                 box(3, "Vaciada", emptyList()),
             ),
+            albums = albums(catalogs, francesas + revueltas),
             snapshot = CollectionSnapshot(items = francesas + revueltas, typeMeta = typeMeta),
         )
         val byName = cards.associate { it.name to it.issuer }
@@ -362,6 +371,15 @@ private fun announcedMember(label: String) = CollectionCatalogMember(
     source = "https://www.royalmint.com/",
     sourceNote = "Anunciada por la casa de la moneda y todavía sin acuñar.",
 )
+
+/**
+ * The albums the assembly carries, which is what `Curation.assemble` hands the index (#537).
+ *
+ * Built with the same call production uses rather than per card, because the point of the parameter
+ * is that the card and its plate divide by one instance and not by two agreeing rules.
+ */
+private fun albums(catalogs: List<CollectionCatalog>, items: List<CollectedItem>): CatalogAlbums =
+    CatalogAlbums.over(catalogs, items)
 
 /** One piece per member, for the first [count] members of [catalog]. */
 private fun ownedTypes(catalog: CollectionCatalog, count: Int): List<CollectedItem> =

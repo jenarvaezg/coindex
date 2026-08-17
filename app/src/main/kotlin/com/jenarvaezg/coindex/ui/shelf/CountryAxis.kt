@@ -5,7 +5,6 @@ import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.TypeMeta
-import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.cardCountry
 import java.text.Collator
 import java.util.Locale
@@ -148,7 +147,9 @@ fun countryAxis(
     }
 
     for (catalog in catalogsToDraw) {
-        val album = buildCollectionCatalogAlbum(catalog, state.items)
+        // The assembly's album (#537): a slot of this axis is a casilla of the same plate the card
+        // opens, so it is the same album that says whether the collector has it.
+        val album = state.albums[catalog] ?: continue
         for (albumMember in album.members) {
             val status = albumMember.status
             val owned = status is CollectionCatalogMemberStatus.Owned

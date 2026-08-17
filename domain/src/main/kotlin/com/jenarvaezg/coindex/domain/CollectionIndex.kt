@@ -167,13 +167,21 @@ class CollectionIndex(
         snapshot: CollectionSnapshot,
         derivation: CollectionDerivation,
         boxes: List<OwnGroupingView>,
+        /**
+         * The assembly's albums, which is where a card's ratio comes from (#537).
+         *
+         * Handed in rather than built here, because the plate one tap away divides by this same
+         * album: the index used to build its own, and «the card and the plate agree» was a sentence
+         * in a comment above two separate calls.
+         */
+        albums: CatalogAlbums,
     ): List<IndexCard> {
         val items = snapshot.items
         val issuers = Issuers(snapshot.typeMeta)
         val cards = derivation.derivedCollections.map { collection ->
             val key = collection.key()
             val catalog = catalogsByKey[key]
-            val album = catalog?.let { buildCollectionCatalogAlbum(it, items) }
+            val album = catalog?.let { albums[it] }
             IndexCard.Derived(
                 name = titles.of(key),
                 coverage = album?.coverage(),

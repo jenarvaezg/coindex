@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.prices.IssueListings
 import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.PriceKey
 import com.jenarvaezg.coindex.domain.AssembledCollection
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -289,8 +290,13 @@ private fun listings(): IssueListings = IssueListings(
     issueIdByTypeAndYear = (1_990..2_030).associate { year -> (PRICED_TYPE to year) to 70 + year - 1_990 },
 )
 
-private fun showcase(catalog: CollectionCatalog): ShowcasePlate =
-    requireNotNull(showcasePlate(catalog, emptyList(), emptySet()))
+private fun showcase(catalog: CollectionCatalog): ShowcasePlate = requireNotNull(
+    showcasePlate(
+        catalog,
+        requireNotNull(CatalogAlbums.over(listOf(catalog), emptyList())[catalog]),
+        emptySet(),
+    ),
+)
 
 private fun dateRunMembers(id: String, years: IntRange): List<CollectionCatalogMember> =
     years.map { year ->

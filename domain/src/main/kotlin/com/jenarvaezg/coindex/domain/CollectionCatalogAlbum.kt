@@ -43,6 +43,9 @@ data class CollectionCatalogAlbumMember(
  * four counters; counting the catalog's own member flags a second time in the UI made two rules for
  * one number that agreed only as long as nobody touched [buildCollectionCatalogAlbum].
  *
+ * Since #537 they read the same **instance** and not merely the same rule: [CatalogAlbums] builds one
+ * album per catalog per assembly and hands it to the index, the shelf window and the plate alike.
+ *
  * It carries neither the catalog's id nor its name: it travels next to the catalog that produced it
  * — inside `PlateResult.Available`, into `PlateSubject` — and a second copy of a name is a second
  * thing to keep in step.
@@ -102,9 +105,39 @@ fun CollectionCatalogAlbum.coverage(): CoverageRatio? {
 fun CollectionCatalogAlbum.firstOwnedIndex(): Int? =
     members.indexOfFirst { it.status is CollectionCatalogMemberStatus.Owned }.takeIf { it >= 0 }
 
+/**
+ * The collector's pieces keyed by the Numista type they are of.
+ *
+ * The index every album is built against, and the reason building one is not a walk of the whole
+ * inventory: a member is filled by a piece **of its own type** and by no other, so the rows worth
+ * asking about are the handful under one key rather than the 229 of the phone.
+ */
+typealias PiecesByType = Map<Int, List<CollectedItem>>
+
+/**
+ * The pieces of one inventory as the index an album reads.
+ *
+ * `groupBy` keeps the order the rows arrived in, which is what keeps an album built through the index
+ * identical to one built by walking the list: the first owned piece of a member is the same row, so
+ * the coin a card shows and the casilla it flies to do not move.
+ */
+fun piecesByType(items: List<CollectedItem>): PiecesByType = items.groupBy { it.typeId }
+
+/**
+ * One album, built against the whole inventory.
+ *
+ * The door for a caller holding one catalog and one list — a test, a curator's script — where
+ * indexing 229 rows to read three of them is not worth the line. Everything the app draws comes out
+ * of [CatalogAlbums] instead, which indexes once for every catalog it holds.
+ */
 fun buildCollectionCatalogAlbum(
     catalog: CollectionCatalog,
     items: List<CollectedItem>,
+): CollectionCatalogAlbum = buildCollectionCatalogAlbum(catalog, piecesByType(items))
+
+internal fun buildCollectionCatalogAlbum(
+    catalog: CollectionCatalog,
+    pieces: PiecesByType,
 ): CollectionCatalogAlbum = CollectionCatalogAlbum(
     members = catalog.members.map { member ->
         val status = when {
@@ -113,7 +146,9 @@ fun buildCollectionCatalogAlbum(
             // Never `Missing`, by contract: an unstruck slot is not a hole in the collection.
             member.isAnnounced -> CollectionCatalogMemberStatus.NotYetIssued
             else -> {
-                val ownedItems = items
+                val ownedItems = member.numistaTypeId
+                    ?.let { typeId -> pieces[typeId] }
+                    .orEmpty()
                     .filter { item -> catalog.memberMatches(member, item) }
                     .map { item -> ItemRef(item.id, item.typeId, item.quantity) }
                 if (ownedItems.isEmpty()) {

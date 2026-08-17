@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogSeeds
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -339,6 +340,8 @@ class NotebookSectionsTest {
                 items = items,
                 index = listOf(card),
                 derivedCollections = listOf(card.collection),
+                // The album the assembly carries (#537), which is the one the plate draws.
+                albums = CatalogAlbums.over(listOf(catalog), items),
                 evidencedCatalogIds = setOf(catalog.id),
                 itemsByKey = mapOf(key to items),
             ),

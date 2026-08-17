@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.data.prices
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.TypeIssueEntity
 import com.jenarvaezg.coindex.data.db.TypeIssueReadEntity
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
@@ -30,7 +31,7 @@ class ValuationPlanTest {
     /** Every piece that carries an issue, once, however many rows share it. */
     @Test
     fun `the owned half is every distinct issue of the collection`() {
-        val plan = valuationPlan(
+        val plan = plan(
             listOf(
                 item(id = 1, typeId = 10, issueId = 100),
                 item(id = 2, typeId = 10, issueId = 100),
@@ -58,7 +59,7 @@ class ValuationPlanTest {
         val withinReach = dateRun("reach", years = 1_960..1_965, typeId = 10)
         val tooFar = dateRun("far", years = 1_900..1_950, typeId = 20)
 
-        val plan = valuationPlan(
+        val plan = plan(
             listOf(item(id = 1, typeId = 10, issueId = 100, year = 1_960)) +
                 item(id = 2, typeId = 20, issueId = 200, year = 1_900),
             Curation(catalogs = listOf(withinReach, tooFar)),
@@ -74,7 +75,7 @@ class ValuationPlanTest {
     fun `a closed plate contributes no holes`() {
         val closed = dateRun("closed", years = 1_960..1_961, typeId = 10)
 
-        val plan = valuationPlan(
+        val plan = plan(
             listOf(
                 item(id = 1, typeId = 10, issueId = 100, year = 1_960),
                 item(id = 2, typeId = 10, issueId = 101, year = 1_961),
@@ -94,7 +95,7 @@ class ValuationPlanTest {
      */
     @Test
     fun `a catalog with no evidence is not walked at all`() {
-        val plan = valuationPlan(
+        val plan = plan(
             listOf(item(id = 1, typeId = 10, issueId = 100, year = 1_960)),
             Curation(catalogs = listOf(dateRun("reach", 1_960..1_962, typeId = 10))),
             evidencedCatalogIds = emptySet(),
@@ -367,7 +368,7 @@ class ValuationPlanTest {
         val tooFar = dateRun("far", years = 1_900..1_950, typeId = 20)
         val unowned = dateRun("window", years = 1_990..1_991, typeId = 30)
 
-        val plan = valuationPlan(
+        val plan = plan(
             items = listOf(item(id = 1, typeId = 20, issueId = 200, year = 1_900)),
             curation = Curation(catalogs = listOf(tooFar, unowned)),
             evidencedCatalogIds = setOf("far"),
@@ -388,7 +389,7 @@ class ValuationPlanTest {
     fun `a marked casilla of a plate within reach is not asked about twice`() {
         val withinReach = dateRun("reach", years = 1_960..1_962, typeId = 10)
 
-        val plan = valuationPlan(
+        val plan = plan(
             items = listOf(item(id = 1, typeId = 10, issueId = 100, year = 1_960)),
             curation = Curation(catalogs = listOf(withinReach)),
             evidencedCatalogIds = setOf("reach"),
@@ -440,7 +441,7 @@ class ValuationPlanTest {
         assertEquals(12, plan.holes.size)
         assertEquals(setOf("lunar"), plan.holes.mapTo(mutableSetOf()) { it.catalogId })
         // And it is not what a pass would have asked for: the pass's own plan leaves it out entirely.
-        assertTrue(valuationPlan(emptyList(), Curation(listOf(twelve)), emptySet()).holes.isEmpty())
+        assertTrue(plan(emptyList(), Curation(listOf(twelve)), emptySet()).holes.isEmpty())
     }
 
     /**
@@ -514,9 +515,34 @@ class ShowcaseSpendTest {
     }
 }
 
+/**
+ * The pass's plan over one inventory, with the albums the assembly would carry (#537).
+ *
+ * The albums are built here with the same call `Curation.assemble` uses, because the plan walks the
+ * holes of the collector's own plates: a pass that indexed the inventory itself would be asking about
+ * casillas nobody's card is divided by.
+ */
+private fun plan(
+    items: List<CollectedItem>,
+    curation: Curation,
+    evidencedCatalogIds: Set<String>,
+    wishes: List<WishedSlot> = emptyList(),
+): ValuationPlan = valuationPlan(
+    items = items,
+    curation = curation,
+    albums = CatalogAlbums.over(curation.catalogs, items),
+    evidencedCatalogIds = evidencedCatalogIds,
+    wishes = wishes,
+)
+
 /** The catalog as the shelf window holds it: nothing owned, so every casilla is a hole. */
-private fun showcase(catalog: CollectionCatalog): ShowcasePlate =
-    requireNotNull(showcasePlate(catalog, emptyList(), emptySet()))
+private fun showcase(catalog: CollectionCatalog): ShowcasePlate = requireNotNull(
+    showcasePlate(
+        catalog,
+        requireNotNull(CatalogAlbums.over(listOf(catalog), emptyList())[catalog]),
+        emptySet(),
+    ),
+)
 
 /** One marked casilla of a curated catalog, resolved as the annex resolves it. */
 private fun wish(catalog: CollectionCatalog, memberId: String): WishedSlot {

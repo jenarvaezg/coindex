@@ -1,19 +1,26 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.domain.AssembledCollection
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.CollectionSnapshot
+import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.DerivedCollection
 import com.jenarvaezg.coindex.domain.Finish
+import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.MemberStatus
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.coverage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertSame
 
 /**
  * What a plate demands of the inventory, now that it demands nothing of the collector (ADR 0021 §7).
@@ -67,7 +74,7 @@ class PlateResolutionTest {
      */
     @Test
     fun `a catalog you own nothing of opens as one of the shelf window, and not as yours`() {
-        val result = resolvePlate(CollectionState(), curation, SOUTHERN_CROSS.id)
+        val result = resolvePlate(stateWithoutCards(SOUTHERN_CROSS), curation, SOUTHERN_CROSS.id)
 
         val available = assertIs<PlateResult.Available>(result)
         assertFalse(available.mine)
@@ -86,7 +93,7 @@ class PlateResolutionTest {
      */
     @Test
     fun `a catalog too big for the shelf window is still shut`() {
-        val result = resolvePlate(CollectionState(), Curation(listOf(LONG_RUN)), LONG_RUN.id)
+        val result = resolvePlate(stateWithoutCards(LONG_RUN), Curation(listOf(LONG_RUN)), LONG_RUN.id)
 
         assertEquals(PlateResult.Unavailable(PlateUnavailable.NotACollection), result)
     }
@@ -130,11 +137,63 @@ class PlateResolutionTest {
         assertEquals(0, available.album.ownedMembers())
     }
 
+    /**
+     * **La tarjeta y su lámina no son dos lecturas que coinciden: son el mismo álbum** (#537).
+     *
+     * El invariante del #218 estaba argumentado en prosa y garantizado por nadie: el índice construía
+     * un álbum para dividir su tarjeta y la resolución de la lámina construía un segundo contra su
+     * propio comentario. Aquí se afirman las dos mitades — el numerador y el denominador salen iguales,
+     * y salen iguales porque es el mismo objeto, así que no hay dos reglas que puedan separarse.
+     */
+    @Test
+    fun `the card's ratio and its plate's ratio come out of one album`() {
+        val items = listOf(item(1, 2025))
+        val assembled = curation.assemble(
+            CollectionSnapshot(
+                items = items,
+                // La ficha en caché, que es lo que hace de la pieza una tarjeta y no un residuo sin
+                // clasificar: la clave la declara el catálogo que reclama el tipo (ADR 0016).
+                typeMeta = mapOf(
+                    TYPE_2025 to TypeMeta(
+                        id = TYPE_2025,
+                        issuerCode = "niue",
+                        issuerName = "Niue",
+                        weightOz = 1.0,
+                        metal = Metal.Silver,
+                        category = "coin",
+                    ),
+                ),
+            ),
+        )
+        val card = assembled.index.filterIsInstance<IndexCard.Derived>().single()
+
+        val available = assertIs<PlateResult.Available>(
+            resolvePlate(CollectionState(assembled), curation, SOUTHERN_CROSS.id),
+        )
+
+        assertEquals(CoverageRatio(owned = 1, issued = 2), card.coverage)
+        assertEquals(card.coverage, available.album.coverage())
+        assertSame(assembled.albums[SOUTHERN_CROSS], available.album)
+    }
+
+    /**
+     * An assembly with no card at all, carrying the albums the curation would carry anyway (#537).
+     *
+     * The two are separate facts and this test file needs them apart: a catalog the collector owns
+     * nothing of has no derived collection, and its album is still the one the shelf window draws.
+     */
+    private fun stateWithoutCards(catalog: CollectionCatalog) = CollectionState(
+        AssembledCollection(albums = CatalogAlbums.over(listOf(catalog), emptyList())),
+    )
+
     private fun state(catalog: CollectionCatalog, items: List<CollectedItem>): CollectionState {
         val key = catalog.key()
         return CollectionState(
             AssembledCollection(
                 items = items,
+                // The albums the assembly carries (#537): the plate reads the one its card divided by,
+                // so a state fabricated by hand carries them exactly as `Curation.assemble` would.
+                albums = CatalogAlbums.over(listOf(catalog), items),
                 derivedCollections = listOf(
                     DerivedCollection(
                         family = key.family,
