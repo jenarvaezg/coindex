@@ -3,7 +3,6 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
-import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.cardCountry
 import com.jenarvaezg.coindex.domain.placementYear
 
@@ -136,7 +135,9 @@ fun yearAxis(
     for (catalog in catalogs) {
         if (catalog.id !in state.evidencedCatalogIds) continue
         if (keptCatalogIds != null && catalog.id !in keptCatalogIds) continue
-        val album = buildCollectionCatalogAlbum(catalog, state.items)
+        // The assembly's album (#537), for the reason the country axis reads it: the year a slot
+        // paints is the year of a casilla, and the casilla is the plate's.
+        val album = state.albums[catalog] ?: continue
         for (albumMember in album.members) {
             val status = albumMember.status
             if (

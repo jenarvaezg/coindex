@@ -13,6 +13,7 @@ import com.jenarvaezg.coindex.data.prices.SILVER_SYMBOL
 import com.jenarvaezg.coindex.data.prices.priceBook
 import com.jenarvaezg.coindex.data.prices.toDomain
 import com.jenarvaezg.coindex.domain.AssembledCollection
+import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
@@ -27,7 +28,6 @@ import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.Wish
 import com.jenarvaezg.coindex.domain.WishKey
-import com.jenarvaezg.coindex.domain.buildCollectionCatalogAlbum
 import com.jenarvaezg.coindex.domain.programmeStandings
 import com.jenarvaezg.coindex.domain.showcasePlate
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +59,7 @@ data class CollectionState(
     val derivedCollections: List<DerivedCollection> get() = collection.derivedCollections
     val unclassified: List<UnclassifiedItem> get() = collection.unclassified
     val typeMeta: TypeMetaIndex get() = collection.typeMeta
+    val albums: CatalogAlbums get() = collection.albums
     val evidencedCatalogIds: Set<String> get() = collection.evidencedCatalogIds
     val itemsByKey: Map<VariantKey, List<CollectedItem>> get() = collection.itemsByKey
     val ownGroupings: List<OwnGroupingView> get() = collection.ownGroupings
@@ -240,10 +241,16 @@ fun resolvePlate(
 ): PlateResult {
     val catalog = curation.catalogs.firstOrNull { it.id == catalogId }
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
+    // The album the assembly built for this catalog, and never a second one (#537): the card the
+    // collector tapped divided by this instance, so the plate cannot count its casillas its own way.
+    // Absent means this collection was assembled by another curation, which is a wiring mistake and
+    // not a state of the world — it is said as plainly as an id nobody shipped.
+    val album = state.albums[catalog]
+        ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
     // The shelf window is asked first, and it has to be: a catalog the collector owns nothing of has no
     // derived collection either, so both of the answers below would refuse it before the evidence was
     // ever the question (ADR 0030 §1, ADR 0021 §7 as amended).
-    showcasePlate(catalog, state.items, state.evidencedCatalogIds)?.let { window ->
+    showcasePlate(catalog, album, state.evidencedCatalogIds)?.let { window ->
         return PlateResult.Available(
             catalog = catalog,
             album = window.album,
@@ -260,7 +267,7 @@ fun resolvePlate(
             PlateResult.Unavailable(PlateUnavailable.NoEvidence)
         else -> PlateResult.Available(
             catalog,
-            buildCollectionCatalogAlbum(catalog, state.items),
+            album,
             programmeStandings(catalog, curation.programmes, state.items),
         )
     }

@@ -32,6 +32,14 @@ data class AssembledCollection(
     val derivedCollections: List<DerivedCollection> = emptyList(),
     val unclassified: List<UnclassifiedItem> = emptyList(),
     val typeMeta: TypeMetaIndex = emptyMap(),
+    /**
+     * The album of every curated catalog, built once against this inventory (#537).
+     *
+     * It travels with the assembly for the reason [items] does, and one step further: a card's ratio,
+     * the casillas of its plate and the tile of the shelf window are not three readings that have to
+     * agree about one collection, they are one album read three times.
+     */
+    val albums: CatalogAlbums = CatalogAlbums(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
     /** The pieces behind each derived collection, for the screen that opens one. */
@@ -82,9 +90,13 @@ class Curation(
         val typeMeta = snapshot.typeMeta
         val derivation = deriveCollection(items, typeMeta, catalogs, groupings)
         val boxes = buildOwnGroupingViews(snapshot.ownGroupings, items)
+        // Every catalog and not only the ones with a card: the shelf window is made of the catalogs
+        // this collector owns nothing of, and it reads its albums from here like everyone else.
+        val albums = CatalogAlbums.over(catalogs, items)
         return AssembledCollection(
             items = items,
-            index = index.build(snapshot, derivation, boxes),
+            index = index.build(snapshot, derivation, boxes, albums),
+            albums = albums,
             derivedCollections = derivation.derivedCollections,
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,

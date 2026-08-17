@@ -21,8 +21,8 @@ class ShowcaseTest {
         val nineteen = dateRun("britannia", 2_000..2_018)
         val twenty = dateRun("panda", 2_000..2_019)
 
-        assertEquals(19, showcasePlate(nineteen, emptyList(), emptySet())?.slots)
-        assertNull(showcasePlate(twenty, emptyList(), emptySet()))
+        assertEquals(19, showcasePlate(nineteen, albumOf(nineteen), emptySet())?.slots)
+        assertNull(showcasePlate(twenty, albumOf(twenty), emptySet()))
     }
 
     /**
@@ -36,9 +36,9 @@ class ShowcaseTest {
         val run = dateRun("kooka", 2_010..2_012)
         val owned = listOf(CollectedItem(id = 1, quantity = 1, typeId = TYPE_ID, issueYear = 2_010))
 
-        assertNull(showcasePlate(run, owned, setOf("kooka")))
+        assertNull(showcasePlate(run, albumOf(run, owned), setOf("kooka")))
         // And with the evidence gone it comes back: nothing is stored about the window.
-        assertNotNull(showcasePlate(run, emptyList(), emptySet()))
+        assertNotNull(showcasePlate(run, albumOf(run), emptySet()))
     }
 
     /**
@@ -57,7 +57,9 @@ class ShowcaseTest {
             unlisted("beasts-1998", 1_998),
         )
 
-        val plate = showcasePlate(catalog("beasts", members), emptyList(), emptySet())
+        val beasts = catalog("beasts", members)
+
+        val plate = showcasePlate(beasts, albumOf(beasts), emptySet())
 
         assertEquals(19, plate?.slots)
         assertEquals(22, plate?.album?.members?.size)
@@ -66,9 +68,9 @@ class ShowcaseTest {
     /** Every casilla of a plate in the window is empty, which is what «you own none of it» means. */
     @Test
     fun `every casilla of a plate in the window is a hole`() {
-        val plate = assertNotNull(
-            showcasePlate(dateRun("kooka", 2_010..2_012), emptyList(), emptySet()),
-        )
+        val kooka = dateRun("kooka", 2_010..2_012)
+
+        val plate = assertNotNull(showcasePlate(kooka, albumOf(kooka), emptySet()))
 
         assertTrue(plate.album.members.all { it.status is CollectionCatalogMemberStatus.Missing })
         assertEquals(0, plate.album.ownedMembers())
@@ -89,7 +91,7 @@ class ShowcaseTest {
             dateRun("libertad", 2_000..2_007),
         )
 
-        val window = showcasePlates(catalogs, emptyList(), emptySet())
+        val window = showcasePlates(catalogs, CatalogAlbums.over(catalogs, emptyList()), emptySet())
 
         assertEquals(listOf("kooka", "libertad", "britannia"), window.map { it.catalog.id })
         assertEquals(listOf(3, 8, 15), window.map { it.slots })
@@ -100,11 +102,22 @@ class ShowcaseTest {
     fun `a catalog with no measurable casilla is not in the window`() {
         val onlyAnnounced = catalog("soon", listOf(announced("soon-2027", 2_027)))
 
-        assertNull(showcasePlate(onlyAnnounced, emptyList(), emptySet()))
+        assertNull(showcasePlate(onlyAnnounced, albumOf(onlyAnnounced), emptySet()))
     }
 }
 
 private const val TYPE_ID = 30
+
+/**
+ * The album the assembly would carry for this catalog (#537).
+ *
+ * Through [CatalogAlbums] and not straight to the builder, because that is the door the window reads
+ * its albums by: a test that built one of its own would be the seventh place they are built.
+ */
+private fun albumOf(
+    catalog: CollectionCatalog,
+    items: List<CollectedItem> = emptyList(),
+): CollectionCatalogAlbum = requireNotNull(CatalogAlbums.over(listOf(catalog), items)[catalog])
 
 private fun dateRunMembers(id: String, years: IntRange): List<CollectionCatalogMember> =
     years.map { year ->

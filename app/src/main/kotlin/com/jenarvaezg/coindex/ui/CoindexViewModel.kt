@@ -260,7 +260,8 @@ class CoindexViewModel(
     fun showcasePlate(catalogId: String): ShowcasePlate? {
         val catalog = catalogs.firstOrNull { it.id == catalogId } ?: return null
         val state = _state.value.collection
-        return showcasePlate(catalog, state.items, state.evidencedCatalogIds)
+        val album = state.albums[catalog] ?: return null
+        return showcasePlate(catalog, album, state.evidencedCatalogIds)
     }
 
     /**
@@ -272,7 +273,7 @@ class CoindexViewModel(
      */
     fun showcase(): List<ShowcasePlate> = showcasePlates(
         catalogs = curation.catalogs,
-        items = _state.value.collection.items,
+        albums = _state.value.collection.albums,
         evidencedCatalogIds = _state.value.collection.evidencedCatalogIds,
     )
 
@@ -360,6 +361,7 @@ class CoindexViewModel(
             plan = valuationPlan(
                 items = state.items,
                 curation = curation,
+                albums = state.albums,
                 evidencedCatalogIds = state.evidencedCatalogIds,
                 // A marked casilla is priced whatever its plate's shape (ADR 0029 §4), which is what
                 // makes the month's spend a function of what the collector marked.
