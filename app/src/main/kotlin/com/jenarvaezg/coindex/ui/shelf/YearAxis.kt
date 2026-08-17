@@ -2,7 +2,6 @@ package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
 import com.jenarvaezg.coindex.domain.cardCountry
 import com.jenarvaezg.coindex.domain.placementYear
 
@@ -131,25 +130,10 @@ fun yearAxis(
         )
     }
 
-    val slotYears = linkedSetOf<Int>()
-    for (catalog in catalogs) {
-        if (catalog.id !in state.evidencedCatalogIds) continue
-        if (keptCatalogIds != null && catalog.id !in keptCatalogIds) continue
-        // The assembly's album (#537), for the reason the country axis reads it: the year a slot
-        // paints is the year of a casilla, and the casilla is the plate's.
-        val album = state.albums[catalog] ?: continue
-        for (albumMember in album.members) {
-            val status = albumMember.status
-            if (
-                status !is CollectionCatalogMemberStatus.Owned &&
-                status !is CollectionCatalogMemberStatus.Missing
-            ) {
-                continue
-            }
-            val year = axisSlotYear(catalog, albumMember.member.year, state) ?: continue
-            if (year > 0) slotYears.add(year)
-        }
-    }
+    // The same walk the shelf of Monedas answers with (#550): the ghost this paints and the coin
+    // that ghost opens come from one reading, so a seat cannot lead to a page that knows nothing
+    // about the plate that drew it. It reads the assembly's albums (#537) like everyone else.
+    val slotYears = slotYears(state, catalogs, keptCatalogIds).years
 
     val rangeYears = (datedYears + slotYears).ifEmpty {
         // Only inherited years and no slots: the calendar is those years (no island needed).
@@ -209,27 +193,6 @@ fun yearAxis(
         totalYears = cells.size,
         islands = islands,
     )
-}
-
-/**
- * The year a missing or owned slot paints on the axis.
- *
- * Date-run members carry the year of the casilla. When the collector owns the piece, that year
- * must agree with [placementYear] so a filled Hijri casilla does not leave a ghost beside its
- * Gregorian twin — ownership already covers the year through the inventory walk above, and the
- * slot year here is what paints the ghost for holes. Catalog years in curated files are Gregorian
- * in practice; engraved Hijri years arrive on loose pieces, not on members.
- */
-private fun axisSlotYear(
-    catalog: CollectionCatalog,
-    memberYear: Int?,
-    state: CollectionState,
-): Int? {
-    if (memberYear != null) return memberYear
-    // A one-type plate with no year on the member still spans the type's known range when the
-    // ficha is here: otherwise undated members would leave no ghost at all.
-    val typeId = catalog.members.mapNotNull { it.numistaTypeId }.singleOrNull() ?: return null
-    return state.typeMeta[typeId]?.minYear
 }
 
 /**

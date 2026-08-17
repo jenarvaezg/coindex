@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.objectClassOf
+import com.jenarvaezg.coindex.domain.placementYear
 import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
@@ -86,6 +87,25 @@ data class CoinRow(
      * the one place ADR 0021 §12 leaves for it, which is the whole job of the «Sin colección» chip.
      */
     val unclaimedPieces: Int,
+    /**
+     * The years of the axis that lead here without being printed on the cartouche (#550).
+     *
+     * Two readings, and both are seats the collector can press on the year axis:
+     *
+     * - **Where the axis places its pieces.** The axis places by `placementYear` — Gregorian first —
+     *   and the card is dated by the engraved year (ADR 0016), so the 100 pesetas «*67» is painted on
+     *   1967 and says 1966. Measured on the father's collection, nine pieces differ that way and four
+     *   years painted a coin whose own seat opened an empty page.
+     * - **The years of the casillas of its evidenced plates.** A hole of a date run is a year the
+     *   collector owns nothing of, so nothing but this makes the ghost of 1901 open the 2 bolívares
+     *   the collector does hold.
+     *
+     * What is deliberately **not** here is the ficha's `minYear`–`maxYear` run: the Maria Theresa
+     * Thaler is a posthumous restrike filed 1780–2024, and answering to its 245 years would put it
+     * under almost every seat of the axis. What answers is the curated knowledge, not Numista's
+     * min/max.
+     */
+    val axisYears: List<Int> = emptyList(),
 ) {
     val title: String get() = name.text
 
@@ -96,19 +116,27 @@ data class CoinRow(
     val oldestYear: Int? get() = years.firstOrNull()
     val newestYear: Int? get() = years.lastOrNull()
 
-    /** Which year chips this row answers to: one per year it holds, or «Sin año» (#448). */
-    val yearFilters: List<YearFilter> = YearFilter.of(years)
+    /**
+     * Which year chips this row answers to: one per year it holds, or «Sin año» (#448), plus every
+     * [axisYears] seat that leads here (#550).
+     *
+     * The axis years **join** «Sin año» rather than replacing it: a piece with no date is still a
+     * piece with no date, whichever seat of the calendar its plate puts it on.
+     */
+    val yearFilters: List<YearFilter> = YearFilter.of(years) + axisYears.map(YearFilter::Of)
 
     /**
      * What the search box compares against: everything printed on the row, folded once.
      *
      * **Every** year and not just the printed arc: a row that spans 1879 to 1936 is found by typing
-     * 1904, the same as tapping the 1904 chip finds it.
+     * 1904, the same as tapping the 1904 chip finds it — [axisYears] included, because the promise
+     * is parity with the chips and the chips come from [yearFilters].
      */
     val haystack: String = fold(
         listOf(rawTitle)
             .plus(listOfNotNull(issuer))
             .plus(years.map(Int::toString))
+            .plus(axisYears.map(Int::toString))
             .plus(typeId.toString())
             .plus(claims.map { it.name })
             .joinToString(" "),
@@ -122,7 +150,7 @@ data class CoinRow(
  * hierarchy (ADR 0021 §1), not a second store — no table was added for it, and a coin appears here
  * whether or not any collection claims it.
  */
-fun coinRows(state: CollectionState): List<CoinRow> {
+fun coinRows(state: CollectionState, slots: SlotYears = SlotYears.none): List<CoinRow> {
     val claimed = claimsOf(state)
     val byType = LinkedHashMap<Int, MutableList<CollectedItem>>()
     // Same coerce as [collectionFigures]: a hostile zero is still one piece, so the bottom bar's
@@ -131,7 +159,7 @@ fun coinRows(state: CollectionState): List<CoinRow> {
         byType.getOrPut(item.typeId) { mutableListOf() }.add(item)
     }
     return byType
-        .map { (typeId, pieces) -> coinRow(state, typeId, pieces, claimed) }
+        .map { (typeId, pieces) -> coinRow(state, typeId, pieces, claimed, slots) }
         .sortedWith(coinReadingOrder())
 }
 
@@ -153,6 +181,9 @@ fun coinRowOf(state: CollectionState, typeId: Int): CoinRow = coinRow(
     typeId = typeId,
     pieces = state.items.filter { it.typeId == typeId },
     claimed = claimsOf(state),
+    // A sheet has no year chips to answer: [CoinRow.axisYears] exists for the shelf, and the sheet
+    // opened from a casilla is one coin already found.
+    slots = SlotYears.none,
 )
 
 private fun coinRow(
@@ -160,9 +191,11 @@ private fun coinRow(
     typeId: Int,
     pieces: List<CollectedItem>,
     claimed: Claims,
+    slots: SlotYears,
 ): CoinRow {
     val meta = state.typeMeta[typeId]
     val held = pieces.firstOrNull()
+    val years = if (pieces.isEmpty()) typeYears(meta) else yearsOf(pieces, meta)
     return CoinRow(
         typeId = typeId,
         name = held?.let { pieceName(state, it) } ?: coinName(typeTitle(meta, typeId)),
@@ -170,7 +203,7 @@ private fun coinRow(
         issuer = meta?.country,
         // A row with no piece has no coin to be dated by, so it says what the **type** says and both
         // ends of it: see [typeYears]. Nothing changes for a row that does hold pieces.
-        years = if (pieces.isEmpty()) typeYears(meta) else yearsOf(pieces, meta),
+        years = years,
         objectClass = objectClassOf(meta?.category),
         weightOz = meta?.weightOz,
         quantity = pieces.fold(0) { total, piece ->
@@ -178,8 +211,27 @@ private fun coinRow(
         },
         claims = claimed.byType[typeId].orEmpty(),
         unclaimedPieces = pieces.count { it.id !in claimed.rowIds },
+        axisYears = axisYearsOf(pieces, meta, slots.of(typeId), printed = years),
     )
 }
+
+/**
+ * The seats of the axis that lead to this coin without being printed on it — see [CoinRow.axisYears].
+ *
+ * The years already on the cartouche are dropped rather than repeated: they are the same chip, and a
+ * row answering twice to 1936 would count itself twice on the facet that promises its number is what
+ * the tap gives.
+ */
+private fun axisYearsOf(
+    pieces: List<CollectedItem>,
+    meta: TypeMeta?,
+    slotYears: Set<Int>,
+    printed: List<Int>,
+): List<Int> = pieces.mapNotNull { placementYear(it, meta) }
+    .plus(slotYears)
+    .filter { it > 0 && it !in printed }
+    .distinct()
+    .sorted()
 
 /**
  * What a type is called when no piece of it names it: the ficha's title, and its Numista number when
