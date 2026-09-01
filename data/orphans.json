@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-11",
+  "updated_at": "2026-09-01",
   "orphans": [
     {
       "numista_type_id": 1933,
@@ -29,10 +29,6 @@
     {
       "numista_type_id": 10613,
       "reason": "½ Rupia de Jorge VI (1942-1945, 5,84 g de plata .500): el tipo abarca cuatro años y el padre tiene el 1942, así que el date run existiría —cuatro casillas— y lo que falta es que alguien lo persiga. Moneda de circulación de la India Británica, sin serie en su ficha. Palabras del padre el 6 de agosto de 2026, preguntado si estas piezas antiguas de circulación eran recuerdos sueltos o secuencias que persigue: «las demás las compré por baratas, podría venderlas»."
-    },
-    {
-      "numista_type_id": 11440,
-      "reason": "5 Euros del 800 aniversario del nacimiento del Papa Juan XXI (2005, 14 g de plata .500): la colección del padre tiene una sola moneda de este patrón y ninguno de los siete catálogos portugueses ya versionados la reclama —comprobado con `scripts/type-claims.py --all`—, porque el de 8 euros de plata .500 es otro patrón físico, 21,1 g contra 14. Portugal acuñó más 5 euros de plata de esta ley, así que la secuencia probablemente existe; no se enumeró, y lo que cierra el veredicto es la intención. Palabras del padre el 6 de agosto de 2026, preguntado si alguna de las once conmemorativas de un país cada una pertenecía a un tema que siguiera: «hubo un tiempo que pensé si, en el tema de animales, pero es que me cansé de Catawiki, prefiero comprar onzas molonas y seguir las colecciones \"viables\": san Jorge, equilibrium, los koalas, quizás kookaburras». El tema que podría haber unido a varias está abandonado por quien lo tuvo, y las cuatro colecciones que nombra ya están versionadas."
     },
     {
       "numista_type_id": 12454,

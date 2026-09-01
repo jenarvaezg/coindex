@@ -3657,6 +3657,228 @@
   },
   "weight": 18
  },
+ "11431": {
+  "id": 11431,
+  "url": "https://es.numista.com/11431",
+  "title": "5 Euros (Scouting)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "João Calviño"
+   ],
+   "description": "Armas de Portugal, emblema del escultismo mundial",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n5 €\r\n·1907-2007·CENTENÁRIO DO ESCUTISMO MUNDIAL·",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/65971dbd6bdb00.63953415-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/65971dbd6bdb00.63953415-180.jpg",
+   "picture_copyright": "tolnomur",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "João Calviño"
+   ],
+   "description": "Retrato lineal de Lord Robert Baden-Powell",
+   "lettering": "UM MUNDO UMA PROMESA\r\nBADEN-POWELL\r\n1857-1941\r\nINCM-JOÃO CALVIÑO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/65971dbe218c33.32587310-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/65971dbe218c33.32587310-180.jpg",
+   "picture_copyright": "tolnomur",
+   "picture_license_name": "CC BY-NC-SA",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
+  },
+  "commemorated_topic": "Centenario del Escultismo Mundial",
+  "related_types": [
+   {
+    "id": 17642,
+    "title": "5 Euros (Scouting; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "770"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "11432": {
+  "id": 11432,
+  "url": "https://es.numista.com/11432",
+  "title": "5 Euros (World Heritage - Laurisilva of Macaronesia)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ricardo Veloza"
+   ],
+   "description": "Escudo de armas de Portugal en el centro, encima el nombre del Estado y el año de emisión.\r\nDebajo, el valor facial, el nombre del grabador y la ceca.",
+   "lettering": "· REPÚBLICA PORTUGUESA ·\r\n2007\r\n5\r\nINCM · EURO · RICARDO VELOZA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63bac47a692962.22430424-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63bac47a692962.22430424-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Ricardo Veloza"
+   ],
+   "description": "Una amplia gama de variedades vegetales.",
+   "lettering": "FLORESTA LAURISSILVA DA MADEIRA\r\nPATRIMÓNIO MUNDIAL\r\nUNESCO\r\nPATRIMÓNIO MUNDIAL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63bac47aeb9fa0.92622937-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63bac47aeb9fa0.92622937-180.jpg",
+   "picture_copyright": "NumisCorner",
+   "picture_copyright_url": "https://www.numiscorner.com/"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Bosques Laurisilva de Madeira",
+  "related_types": [
+   {
+    "id": 16926,
+    "title": "5 Euros (World Heritage - Laurissilva of Macaronesia; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   }
+  ],
+  "tags": [
+   "UNESCO",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "782"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
  "11440": {
   "category": "coin",
   "commemorated_topic": "800 aniversario del nacimiento del Papa Juan XXI",
@@ -3785,6 +4007,123 @@
    "text": "5 euros"
   },
   "weight": 14
+ },
+ "11441": {
+  "id": 11441,
+  "url": "https://es.numista.com/11441",
+  "title": "5 Euros (Angra do Heroísmo)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2005,
+  "max_year": 2005,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Álvaro Raposo de França"
+   ],
+   "description": "Armas nacionales dentro de un círculo",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad6f6b0f5da1.28608686-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad6f6b0f5da1.28608686-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Álvaro Raposo de França"
+   ],
+   "description": "Angra do Heroismo - Azores Terceira, emblema arriba",
+   "lettering": "CENTRO HISTÓRICO DE ANGRA DO HEROÍSMO\r\nPATRIMONIO MUNDIAL\r\nUNESCO\r\nINCM\r\n2005",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad6f6b782ae7.28034538-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad6f6b782ae7.28034538-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Zona Central de la Ciudad de Angra do Heroísmo",
+  "related_types": [
+   {
+    "id": 17649,
+    "title": "5 Euros (World Heritage - Angra do Heroísmo; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   }
+  ],
+  "tags": [
+   "Montaña",
+   "Mar",
+   "UNESCO",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "760"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "11552": {
   "category": "coin",
@@ -5504,6 +5843,123 @@
   ],
   "category": "coin",
   "type": "Monedas no circulantes"
+ },
+ "12021": {
+  "id": 12021,
+  "url": "https://es.numista.com/12021",
+  "title": "5 Euros (World Heritage - Sintra)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2006,
+  "max_year": 2006,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Eloísa Byrne"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "REPÚBLICA PORTUGUESA INCM\r\n2006\r\n5 euro\r\nE BYRNE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c29f16c0d793.47665419-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c29f16c0d793.47665419-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Eloísa Byrne"
+   ],
+   "description": "Paisaje, con las murallas del castillo de Sintra a lo lejos.",
+   "lettering": "PAISAGEM CULTURAL DE SINTRA\r\nPATRIMÓNIO MUNDIAL\r\nPATRIMÓNIO MUNDIAL\r\nUNESCO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c29f17261802.43223491-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c29f17261802.43223491-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Paisaje cultural de Sintra",
+  "related_types": [
+   {
+    "id": 18224,
+    "title": "5 Euros (World Heritage - Sintra; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "tags": [
+   "Otra construcción",
+   "UNESCO",
+   "Ciudad"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "769"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "123775": {
   "id": 123775,
@@ -9675,6 +10131,576 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "13274": {
+  "id": 13274,
+  "url": "https://es.numista.com/13274",
+  "title": "5 Euros (World Heritage - Monastery of Alcobaça)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2006,
+  "max_year": 2006,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.6,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Fernando Conduto"
+   ],
+   "description": "Escudo de Portugal, año de emisión \"2006\" y valor facial \"5 EURO\".",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n2006\r\n5 EURO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad70a49cfa94.52801710-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad70a49cfa94.52801710-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Fernando Conduto"
+   ],
+   "description": "Representación de la fachada barroca de la iglesia abacial.",
+   "lettering": "MOSTEIRO DE ALCOBAÇA\r\nUNESCO\r\nINCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad70a5289bb1.00717363-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad70a5289bb1.00717363-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Monasterio de Alcobaça",
+  "related_types": [
+   {
+    "id": 18225,
+    "title": "5 Euros (World Heritage - Alcobaça Monastery; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   }
+  ],
+  "tags": [
+   "Construcción religiosa",
+   "UNESCO",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "779"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "13275": {
+  "id": 13275,
+  "url": "https://es.numista.com/13275",
+  "title": "5 Euros (Equal Opportunity)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alípio Pinto"
+   ],
+   "description": "Escudo de armas de Portugal.",
+   "lettering": "República Portuguesa\r\n5 Euro\r\n2007",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/682f491b8ebf11.57441511-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/682f491b8ebf11.57441511-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Alípio Pinto"
+   ],
+   "description": "Las doce estrellas de la Unión Europea en la parte inferior. Tres personas estilizadas en el centro.",
+   "lettering": "Ano Europeu da Igualdade de Oportunidades para Todos\r\nALÍPIO PINTO INCM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/682f491bd93f48.81626314-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/682f491bd93f48.81626314-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "commemorated_topic": "Año Europeo de la Igualdad de Oportunidades",
+  "related_types": [
+   {
+    "id": 17062,
+    "title": "5 Euros (Equal Opportunity; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "781"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "13276": {
+  "id": 13276,
+  "url": "https://es.numista.com/13276",
+  "title": "5 Euros (World Heritage - Monastery of Batalha)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2005,
+  "max_year": 2005,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Antonio Marinho"
+   ],
+   "description": "Bóveda del monasterio de Batalha y escudo de armas de Portugal.",
+   "lettering": "REPÚBLICA PORTUGUESA A.MARINHO INCM\r\n5\r\nEURO\r\n·2005",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/682f487c82ea36.26564631-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/682f487c82ea36.26564631-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Antonio Marinho"
+   ],
+   "description": "Vista general del monasterio.",
+   "lettering": "UNESCO\r\nPATRIMÓNIO MUNDIAL\r\nMOSTEIRO DA BATALHA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/682f487cc0dec6.91964040-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/682f487cc0dec6.91964040-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Monasterio de Batalha",
+  "related_types": [
+   {
+    "id": 17046,
+    "title": "5 Euros (World Heritage - Batalha Monestary; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   }
+  ],
+  "tags": [
+   "Construcción religiosa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "761"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "13277": {
+  "id": 13277,
+  "url": "https://es.numista.com/13277",
+  "title": "5 Euros (World Heritage - Convent of Christ)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "José Cândido"
+   ],
+   "description": "Escudo de Portugal, con la cruz templaria a la izquierda y la cruz portuguesa a la derecha.",
+   "lettering": "5 EURO\r\nREPÚBLICA PORTUGUESA · 2004",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/653c737e040153.70431131-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/653c737e040153.70431131-180.jpg",
+   "picture_copyright": "INCM",
+   "picture_copyright_url": "http://www.incm.pt"
+  },
+  "reverse": {
+   "engravers": [
+    "José Cândido"
+   ],
+   "description": "Ventana de estilo manuelino que domina la nave de la iglesia del Convento de Cristo vista desde el claustro de Santa Bárbara.",
+   "lettering": "PARTIMÓNIO MUNDIAL\r\nUNESCO\r\nCONVENTO DE CRISTO\r\nINCM JOSÉ CÂNDIDO",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/653c737eb01184.44695800-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/653c737eb01184.44695800-180.jpg",
+   "picture_copyright": "INCM",
+   "picture_copyright_url": "http://www.incm.pt"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Convento de Cristo en Tomar",
+  "related_types": [
+   {
+    "id": 17651,
+    "title": "5 Euros (World Heritage - Convent of Christ; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   }
+  ],
+  "tags": [
+   "Construcción religiosa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "754"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
+ },
+ "13278": {
+  "id": 13278,
+  "url": "https://es.numista.com/13278",
+  "title": "5 Euros (World Heritage - Évora)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Eloísa Byrne"
+   ],
+   "description": "Mapa del centro histórico de Évora, el escudo de Portugal y las inscripciones \"REPUBLICA PORTUGUESA\" el país emisor, \"5 euros\" el valor facial, \"INCM\" la marca de ceca, \"E. BYRNE\" es la firma de la coleccionista Eloisa Byrne y \"2004\" es el año de emisión.",
+   "lettering": "REPÚBLICA PORTUGUESA\r\n5 euro\r\nINCM 2004 E.BYRNE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad6c80b06879.87163073-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad6c80b06879.87163073-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Eloísa Byrne"
+   ],
+   "description": "Representación de la Catedral de Nuestra Señora de la Asunción de Évora, la mayor catedral de Portugal. Se terminó de construir en 1250. El centro histórico de Évora fue declarado Patrimonio de la Humanidad por la UNESCO en 1986.",
+   "lettering": "UNESCO PATRIMONIO MUNDIAL\r\nPATRIMONIO MUNDIAL\r\nCENTRO HISTORICO\r\nÉVORA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/64ad6c810d8680.68684316-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/64ad6c810d8680.68684316-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "series": "Patrimonio Mundial de la Unesco",
+  "commemorated_topic": "Centro histórico de Évora",
+  "related_types": [
+   {
+    "id": 18239,
+    "title": "5 Euros (World Heritage - Évora; Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   }
+  ],
+  "tags": [
+   "Castillo o fortificación",
+   "Mapa",
+   "UNESCO"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "755"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Ranuras finas."
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "13286": {
   "id": 13286,
@@ -14451,6 +15477,132 @@
    "text": "10 bolívares"
   },
   "weight": 30
+ },
+ "14635": {
+  "id": 14635,
+  "url": "https://es.numista.com/14635",
+  "title": "5 Euros (First Portuguese Stamp)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
+  "issuer": {
+   "code": "portugal",
+   "name": "Portugal"
+  },
+  "min_year": 2003,
+  "max_year": 2003,
+  "ruler": [
+   {
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
+   }
+  ],
+  "value": {
+   "text": "5 euros",
+   "numeric_value": 5,
+   "currency": {
+    "id": 9013,
+    "name": "Euro",
+    "full_name": "Euro (2002-presente)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 30,
+  "thickness": 2.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Vítor Manuel Fernandes dos Santos"
+   ],
+   "description": "Emblema de Portugal.",
+   "lettering": "5 EURO\r\nESC, VÍTOR SANTOS   INCM\r\nREPÚBLICA PORTUGUESA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c29e4f1b03c9.71953544-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c29e4f1b03c9.71953544-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Vítor Manuel Fernandes dos Santos"
+   ],
+   "description": "Victor Manuel Fernandes dos Santos después de Francisco de Borja Freire.",
+   "lettering": "2003\r\nCORREIO\r\n150 ANOS DO PRIMEIRO SELO PORTUGUÊS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/portugal/63c29e4f6d43c5.64884131-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/63c29e4f6d43c5.64884131-180.jpg",
+   "picture_copyright": "Katz Coins Notes & Supplies Corp.",
+   "picture_copyright_url": "https://www.katzauction.com"
+  },
+  "commemorated_topic": "150 aniversario del primer sello de correos portugués",
+  "related_types": [
+   {
+    "id": 17422,
+    "title": "5 Euros (First Portuguese Stamp; .925 Silver)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   },
+   {
+    "id": 17652,
+    "title": "5 Euros (First Portuguese Stamp; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2003,
+    "maxYear": 2003
+   }
+  ],
+  "tags": [
+   "Representación de un sello",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "749"
+   }
+  ],
+  "weight": 14,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "14673": {
   "category": "coin",
