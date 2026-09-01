@@ -47,6 +47,7 @@ class ValuationPassTest {
         assertTrue(held(ValuationRefusal.Offline))
         assertTrue(held(ValuationRefusal.BudgetExhausted))
         assertTrue(held(ValuationRefusal.NoApiKey))
+        assertTrue(held(ValuationRefusal.Rejected))
         assertFalse(held(ValuationRefusal.Syncing))
         assertFalse(held(null))
     }
@@ -138,6 +139,97 @@ class ValuationPassTest {
         assertTrue(prices.reads.value.isEmpty())
         assertEquals(ValuationRefusal.BudgetExhausted, status.held)
         assertTrue(asked.isEmpty(), "el presupuesto se reserva antes de la llamada, así que no sale ninguna")
+    }
+
+    /**
+     * The `429` stops the pass on its first answer, and that is the whole of #560.
+     *
+     * Nine passes of the same plan on 11 August 2026 spent 1.484 calls of the father's key and wrote
+     * **zero** rows: every one of those answers was read as «this issue has no price, carry on», so the
+     * month's allowance went against a wall one call at a time. A throttled key answers the second call
+     * exactly as it answered the first, which is the reading the budget has always had.
+     */
+    @Test
+    fun `a throttled key costs one call and not the plan`() = runTest {
+        val pass = pass(handler = { respond("", HttpStatusCode.TooManyRequests, JSON) })
+
+        val status = pass.run(plan(*(1..20).map { OwnedIssue(30, it) }.toTypedArray()), held = null)
+
+        assertEquals(1, asked.size, "una consulta, no las veinte del plan")
+        assertEquals(ValuationRefusal.Rejected, status.held)
+        assertTrue(prices.reads.value.isEmpty())
+    }
+
+    /**
+     * And so does the `403`, which is the shape the real exhausted quota arrives in.
+     *
+     * Numista's own month is 2.000 calls and the local gate of ADR 0003 is 1.500, so the gate cannot
+     * see a key spent on another phone: `Quota exceeded` comes back as a `403` with budget to spare.
+     */
+    @Test
+    fun `a key Numista refuses stops the pass too`() = runTest {
+        val pass = pass(handler = { respond("Quota exceeded", HttpStatusCode.Forbidden, JSON) })
+
+        val status = pass.run(plan(OwnedIssue(30, 297), OwnedIssue(30, 298)), held = null)
+
+        assertEquals(1, asked.size)
+        assertEquals(ValuationRefusal.Rejected, status.held)
+    }
+
+    /**
+     * A `404` on every issue is not a wall: each one leaves a row, so the pass asks the plan out.
+     *
+     * The other half of #560 and the reason the streak counts rows and not statuses — a collection
+     * whose issues Numista simply has no prices for must still cost one call each, once.
+     */
+    @Test
+    fun `a 404 on every issue is a datum and never stops the pass`() = runTest {
+        val pass = pass(handler = { respond("no", HttpStatusCode.NotFound, JSON) })
+        val owned = (1..BARREN_STREAK_LIMIT + 2).map { OwnedIssue(30, it) }
+
+        val status = pass.run(plan(*owned.toTypedArray()), held = null)
+
+        assertEquals(owned.size, asked.size)
+        assertNull(status.held)
+        assertEquals(owned.size, prices.reads.value.size)
+    }
+
+    /**
+     * Whatever the status, a run of answers that leave no row is Numista refusing and not bad luck.
+     *
+     * The `5xx` is nobody's `429`, and one of them is one issue's problem; five in a row is a wall,
+     * and the pass has 442 calls to spend against it.
+     */
+    @Test
+    fun `a streak of answers that leave no row stops the pass`() = runTest {
+        val pass = pass(handler = { respond("boom", HttpStatusCode.InternalServerError, JSON) })
+
+        val status = pass.run(plan(*(1..20).map { OwnedIssue(30, it) }.toTypedArray()), held = null)
+
+        assertEquals(BARREN_STREAK_LIMIT, asked.size)
+        assertEquals(ValuationRefusal.Rejected, status.held)
+        assertTrue(prices.reads.value.isEmpty())
+    }
+
+    /** One bad answer among good ones is still one issue's bad luck: the row breaks the streak. */
+    @Test
+    fun `a failure between answers that do land does not stop the pass`() = runTest {
+        var answered = 0
+        val pass = pass(
+            handler = {
+                if (answered++ % 2 == 0) {
+                    respond("boom", HttpStatusCode.InternalServerError, JSON)
+                } else {
+                    respond(PRICED_BODY, HttpStatusCode.OK, JSON)
+                }
+            },
+        )
+        val owned = (1..2 * BARREN_STREAK_LIMIT).map { OwnedIssue(30, it) }
+
+        val status = pass.run(plan(*owned.toTypedArray()), held = null)
+
+        assertEquals(owned.size, asked.size)
+        assertNull(status.held)
     }
 
     /** Held by a sync, the pass asks Numista for nothing at all. */

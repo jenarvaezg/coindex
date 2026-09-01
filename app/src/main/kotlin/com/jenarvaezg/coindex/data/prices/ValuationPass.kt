@@ -25,6 +25,16 @@ enum class ValuationRefusal {
 
     /** Numista could not be reached. The next pass retries; nothing was written (ADR 0025). */
     Offline,
+
+    /**
+     * Numista is turning the calls away, and the pass stopped instead of spending the month at it (#560).
+     *
+     * Three answers arrive here. A `429` is Numista throttling the key; a `403` is the quota **it**
+     * counts — 2.000 a month against the 1.500 of the local gate (ADR 0003), which cannot see what
+     * another phone spent of the same key. And a run of answers that leave no row, whatever their
+     * status, because a pass that writes nothing five times running is not meeting bad luck.
+     */
+    Rejected,
 }
 
 /**
@@ -136,8 +146,9 @@ class NumistaValuationPass(
             resolvedHoleIssues(plan, reads, now, listings)
         var asked = 0
         var stopped: ValuationRefusal? = null
+        val streak = BarrenStreak()
         for (issue in issues) {
-            stopped = askOne(numista, issue.typeId, issue.issueId)
+            stopped = askOne(numista, issue.typeId, issue.issueId, streak)
             if (stopped != null) break
             asked++
             if (asked % VALUATION_PROGRESS_EVERY == 0) {
@@ -150,6 +161,7 @@ class NumistaValuationPass(
                 numista,
                 holeIssuesToAsk(plan, reads, now, listings),
                 freshIssues(reads, now),
+                streak,
             )
         }
         // Counted from the table again rather than from what landed: an issue that failed is still
@@ -176,6 +188,7 @@ class NumistaValuationPass(
         numista: NumistaClient,
         lookups: Map<Int, List<PlateHole>>,
         fresh: Set<Pair<Int, Int>>,
+        streak: BarrenStreak,
     ): ValuationRefusal? {
         for ((typeId, holes) in lookups) {
             val listing = try {
@@ -185,9 +198,12 @@ class NumistaValuationPass(
                 // which issue a hole is priced by, and pay for both.
                 numista.fetchIssues(typeId).value.filter { it.id != null }
             } catch (error: NumistaException) {
-                return refusalFor(error) ?: continue
+                // The listing is a call like any other, so it counts towards the streak: a type that
+                // could not be listed wrote no row either.
+                return refusalFor(error) ?: streak.barren() ?: continue
             }
             storeListing(typeId, listing)
+            streak.stored()
             for (hole in holes) {
                 val issueId = listing
                     .firstOrNull { issue ->
@@ -197,7 +213,7 @@ class NumistaValuationPass(
                     ?.id
                     ?: continue
                 if ((typeId to issueId) in fresh) continue
-                askOne(numista, typeId, issueId)?.let { return it }
+                askOne(numista, typeId, issueId, streak)?.let { return it }
             }
         }
         return null
@@ -208,24 +224,28 @@ class NumistaValuationPass(
      *
      * A `404` is **not** a stop and not a failure: it is Numista saying it has no prices for this
      * issue, which is a datum and is stored as one — the same reading ADR 0024 gives a photograph's
-     * `404`. Anything else that is not about the budget or the network is skipped without a row, and
-     * the next pass tries again.
+     * `404`. Anything else that is not about the budget, the network or a refusal is skipped without a
+     * row, and the next pass tries again — unless [BarrenStreak] has seen enough of them in a row to
+     * call it a wall.
      */
     private suspend fun askOne(
         numista: NumistaClient,
         typeId: Int,
         issueId: Int,
+        streak: BarrenStreak,
     ): ValuationRefusal? {
         val answer = try {
             numista.fetchIssuePrices(typeId, issueId).value
         } catch (error: NumistaException) {
             if (error is NumistaException.Api && error.status == HTTP_NOT_FOUND) {
                 store(typeId, issueId, IssuePricesResponse())
+                streak.stored()
                 return null
             }
-            return refusalFor(error)
+            return refusalFor(error) ?: streak.barren()
         }
         store(typeId, issueId, answer)
+        streak.stored()
         return null
     }
 
@@ -279,16 +299,64 @@ class NumistaValuationPass(
 }
 
 private const val HTTP_NOT_FOUND = 404
+private const val HTTP_FORBIDDEN = 403
+private const val HTTP_TOO_MANY_REQUESTS = 429
+
+/**
+ * How many answers in a row may leave no row before the pass reads them as a wall (#560).
+ *
+ * **Five**, and the number is a floor and a ceiling at once. Below it a plan of 442 calls would stop
+ * on a run of bad luck that is real — a body Numista serialised wrong, one `500` while a shard of
+ * theirs restarts — and stopping there costs the collector a month of prices for nothing, because
+ * nothing on the phone will retry until the next launch. Above it the wall is charged for: every
+ * answer past the fifth is a call of the month's allowance spent to learn what the fifth already
+ * said. Five is 1 % of a cold plan of 442, which is the most a wrong guess in either direction can
+ * cost: five calls thrown at a wall, or one healthy pass cut short and resumed at the next launch.
+ *
+ * The streak counts **rows written and not statuses**, which is what keeps a `404` out of it: an issue
+ * Numista has no price for is answered, stored and forgotten (ADR 0028 §4), so a collection of nothing
+ * but those still costs one call each, once, and never trips this.
+ */
+internal const val BARREN_STREAK_LIMIT: Int = 5
+
+/**
+ * The run of answers that left no row, which is how the pass tells one absence from a refusal.
+ *
+ * One per pass and never a field of the pass itself: a streak that survived from one pass to the next
+ * would stop a healthy one on its first stumble.
+ */
+private class BarrenStreak {
+    private var run = 0
+
+    /** An answer that landed — a price, an empty price, a listing. The run is over. */
+    fun stored() {
+        run = 0
+    }
+
+    /** An answer that wrote nothing: null to carry on, or the refusal that stops the pass. */
+    fun barren(): ValuationRefusal? {
+        run++
+        return if (run >= BARREN_STREAK_LIMIT) ValuationRefusal.Rejected else null
+    }
+}
 
 /**
  * Which refusals stop a whole pass, and which are one issue's bad luck.
  *
  * The budget stops it because every further call would throw the same way, and the network stops it
- * because four hundred timeouts in a row is two minutes of a dead radio. A malformed body or an
- * unexpected status is this issue's problem alone: null means «skip it and carry on».
+ * because four hundred timeouts in a row is two minutes of a dead radio. **The `429` and the `403`
+ * stop it for the first of those reasons and not for a new one** (#560): a throttled key is throttled
+ * for the next call too, and a `403` is either the key being refused or Numista's own quota gone —
+ * neither of which the next issue is going to fix. A malformed body or an unexpected status is this
+ * issue's problem alone: null means «skip it and carry on», and it is [BarrenStreak] that decides how
+ * many of those in a row stop being one issue's problem.
  */
 private fun refusalFor(error: NumistaException): ValuationRefusal? = when (error) {
     is NumistaException.BudgetExhausted -> ValuationRefusal.BudgetExhausted
     is NumistaException.Transport -> ValuationRefusal.Offline
+    is NumistaException.Api -> when (error.status) {
+        HTTP_TOO_MANY_REQUESTS, HTTP_FORBIDDEN -> ValuationRefusal.Rejected
+        else -> null
+    }
     else -> null
 }

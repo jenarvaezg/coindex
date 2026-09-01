@@ -154,6 +154,7 @@ fun showcaseRefusalMessage(refusal: ValuationRefusal): String = "No se ha podido
     ValuationRefusal.BudgetExhausted -> "se acabó el presupuesto de consultas de este mes."
     ValuationRefusal.Offline -> "no hay red."
     ValuationRefusal.NoApiKey -> "faltan las credenciales de Numista."
+    ValuationRefusal.Rejected -> "Numista está rechazando las consultas."
 }
 
 /**

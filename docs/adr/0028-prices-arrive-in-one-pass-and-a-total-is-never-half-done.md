@@ -130,6 +130,20 @@ document exists to remove. The shape was already settled in ADR 0024 for the `40
 | Numista gives a price | it is stored |
 | **Numista answers with no prices** | **stored as a datum** — 19 of the 223 issues; 91 % do carry a price. Without storing it they would be asked for again on every pass, for ever |
 | dead network, 5xx, budget exhausted | **no row is written**; the next pass retries. ADR 0025: *«a refresh that fails is never worse than not having asked»* |
+| **Numista refusing — `429`, `403`, or five answers in a row that leave no row** | **the pass stops** and says so; what it had already written stands |
+
+> **Amended on 2026-09-01 (#560).** The last row is new, and the bug it closes is what happens without
+> it: only the budget and the network stopped a pass, so every other status was read as «this issue has
+> no price, carry on». On 11 August 2026 the father's phone spent **1.484 calls in nine passes of the
+> same plan** — the same issue asked for nine times — and wrote **zero** rows, because his key was
+> answering `Quota exceeded`: Numista's own month is 2.000 calls and the local gate of ADR 0003 is
+> 1.500, so a key spent from another phone is refused with budget still on the counter.
+>
+> The `429` and the `403` are read as the budget always was: the next call would be refused the same
+> way. The streak is the general case of the same claim — the pass has 442 calls to spend against a wall
+> and no way to name every shape one can take — and it counts **rows written, not statuses**, which is
+> what keeps the `404` of row two out of it: an issue Numista has no price for is answered, stored and
+> never asked again, so a collection made entirely of those still costs one call each, once.
 
 ### 5. Expired is not deleted
 

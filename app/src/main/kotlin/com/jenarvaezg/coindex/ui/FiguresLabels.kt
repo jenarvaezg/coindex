@@ -202,6 +202,11 @@ fun valuationLabel(status: ValuationStatus): String {
             "Se acabó el presupuesto de consultas de este mes: seguirán el mes que viene."
         ValuationRefusal.Offline -> "Esperan a que haya red."
         ValuationRefusal.NoApiKey -> "Faltan las credenciales de Numista."
+        // Its own sentence and not the budget's (#560): the month's allowance of ADR 0003 may have
+        // plenty left — what is gone is the quota Numista counts, or the patience it has with this
+        // key. «Vuelve a intentarlo dentro de un rato» would be the sync's snackbar answering a
+        // press; this line is a state, and the pass retries it on its own at the next launch.
+        ValuationRefusal.Rejected -> "Numista está rechazando las consultas."
     }
 }
 
