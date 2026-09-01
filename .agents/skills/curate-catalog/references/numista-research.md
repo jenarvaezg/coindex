@@ -14,6 +14,20 @@ Once the challenge is passed, `fetch('/catalogue/pieces<id>.html')` **from insid
 
 `browser_evaluate` duplicates backslashes on the way in, so regular expressions arrive corrupted. Use plain string operations.
 
+## Route 0: the siblings already in the cache
+
+Before opening anything, read `related_types` off `data/numista-type-cache.json` (or the `raw` of a
+`type_meta` row in an export). Numista lists there the types that share a design or a family, and for
+a series with one motif per year that is most of the enumeration — free, offline, and it tells you
+which series id to walk next.
+
+Measured on 1 September 2026 curating the Portuguese 5 euros: `related_types` of the father's three
+UK silver-proof pounds named five siblings and split them across two series ids, `Royal Diadem` and
+`Heraldic Emblems`, which is the boundary question the whole curation turned on — before a single
+browser call. It is not the enumeration: it under-counts (the field is a curator's cross-reference,
+not the series), and it is `null` on plenty of types, N#15486 among them. Use it to aim, then walk
+the series to close the denominator.
+
 ## Route 1: walk the series
 
 ```
