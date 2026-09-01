@@ -160,8 +160,9 @@ fun IndexScreen(
     lastSync: SyncRecord?,
     shelf: IndexShelf,
     /**
-     * The curated catalogs, so the country and year axes can walk every evidenced plate
-     * (ADR 0026 §9). The index of cards is not enough: a member's country is not the card's.
+     * The curated catalogs, for the país chip of the shelf: a card spans every country its plate
+     * names, and a member's country is not the card's (#170). The axes no longer need them — their
+     * casillas arrive resolved on the assembly (#538).
      */
     catalogs: List<CollectionCatalog>,
     onNarrow: (IndexShelf) -> Unit,
@@ -279,20 +280,19 @@ fun IndexScreen(
         shown.mapNotNull { card -> (card as? IndexCard.Derived)?.plateCatalogId }.toSet()
     }
     val keptLooseIds = remember(looseShown) { looseShown.map { it.id }.toSet() }
-    val countryModel = remember(state, catalogs, keptCatalogIds, keptLooseIds, shelf.axis, shelf.issuer) {
+    val countryModel = remember(state, keptCatalogIds, keptLooseIds, shelf.axis, shelf.issuer) {
         if (shelf.axis != NotebookAxis.ByCountry) {
             null
         } else {
             countryAxis(
                 state = state,
-                catalogs = catalogs,
                 keptCatalogIds = keptCatalogIds,
                 keptLooseIds = keptLooseIds,
                 keptCountry = shelf.issuer,
             )
         }
     }
-    val yearModel = remember(state, catalogs, keptCatalogIds, shelf.axis) {
+    val yearModel = remember(state, keptCatalogIds, shelf.axis) {
         if (shelf.axis != NotebookAxis.ByYear) {
             null
         } else {
@@ -311,7 +311,6 @@ fun IndexScreen(
             }
             yearAxis(
                 state = state,
-                catalogs = catalogs,
                 keptCatalogIds = keptCatalogIds,
                 keptItemIds = keptItemIds,
             )

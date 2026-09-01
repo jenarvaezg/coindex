@@ -467,7 +467,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         CoinsScreen(
                             state = state.collection,
                             shelf = state.coinsShelf,
-                            catalogs = viewModel.catalogs,
                             curatedNames = viewModel.curatedNames,
                             onNarrow = viewModel::narrowCoins,
                             onCreateBox = viewModel::createOwnGrouping,

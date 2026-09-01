@@ -1,11 +1,6 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
-import com.jenarvaezg.coindex.domain.TypeMeta
-import com.jenarvaezg.coindex.domain.cardCountry
 import java.text.Collator
 import java.util.Locale
 
@@ -115,14 +110,16 @@ fun CountryAxisBlock.fold(columns: Int, expanded: Boolean = false): CountryAxisF
 /**
  * The country axis of the notebook (ADR 0026 §9 / atlas-315).
  *
- * Each measurable member of every evidenced catalog becomes a cell in **the member's** country
- * (#170), not the catalog header's. Loose pieces join their country's block with no «sueltas»
- * band. Order is [countryAxisOrder] — the same spirit as `indexOrder()`: reveals, does not
- * reproach.
+ * Each measurable casilla the assembly resolved becomes a cell in **the member's** country (#170),
+ * not the catalog header's. Loose pieces join their country's block with no «sueltas» band. Order is
+ * [countryAxisOrder] — the same spirit as `indexOrder()`: reveals, does not reproach.
+ *
+ * **It groups; it does not decide** (#538). Which plates count, which casillas are measurable, what
+ * fills one and what country it falls in are all read off `state.slots`, so this axis and the plate
+ * of the same collection cannot come to disagree about a hole.
  */
 fun countryAxis(
     state: CollectionState,
-    catalogs: List<CollectionCatalog>,
     claimedRowIds: Set<Long> = claimsOf(state).rowIds,
     /**
      * Catalog ids that survive the shelf's filters, or null to keep every evidenced catalog.
@@ -141,37 +138,22 @@ fun countryAxis(
     keptCountry: String? = null,
 ): CountryAxisModel {
     val byCountry = linkedMapOf<String, MutableList<CountryAxisCell>>()
-    val catalogsToDraw = catalogs.filter { catalog ->
-        catalog.id in state.evidencedCatalogIds &&
-            (keptCatalogIds == null || catalog.id in keptCatalogIds)
-    }
 
-    for (catalog in catalogsToDraw) {
-        // The assembly's album (#537): a slot of this axis is a casilla of the same plate the card
-        // opens, so it is the same album that says whether the collector has it.
-        val album = state.albums[catalog] ?: continue
-        for (albumMember in album.members) {
-            val status = albumMember.status
-            val owned = status is CollectionCatalogMemberStatus.Owned
-            val missing = status is CollectionCatalogMemberStatus.Missing
-            if (!owned && !missing) continue
-            val member = albumMember.member
-            val country = memberCountry(catalog, member, state.typeMeta) ?: continue
-            if (keptCountry != null && country != keptCountry) continue
-            val quantity = (status as? CollectionCatalogMemberStatus.Owned)
-                ?.items
-                ?.sumOf { it.quantity }
-                ?: 0
-            byCountry.getOrPut(country) { mutableListOf() }.add(
-                CountryAxisCell.Slot(
-                    catalogId = catalog.id,
-                    memberId = member.id,
-                    typeId = member.numistaTypeId,
-                    owned = owned,
-                    quantity = quantity.coerceAtLeast(if (owned) 1 else 0),
-                ),
-            )
-        }
+    for (slot in state.slots) {
+        if (keptCatalogIds != null && slot.catalogId !in keptCatalogIds) continue
+        // A casilla whose country neither the file nor the ficha names paints nowhere: the axis is
+        // made of blocks, and a block with no name is not one the collector could read.
+        val country = slot.country ?: continue
+        if (keptCountry != null && country != keptCountry) continue
+        byCountry.getOrPut(country) { mutableListOf() }.add(
+            CountryAxisCell.Slot(
+                catalogId = slot.catalogId,
+                memberId = slot.memberId,
+                typeId = slot.typeId,
+                owned = slot.owned,
+                quantity = slot.quantity,
+            ),
+        )
     }
 
     for (piece in state.items) {
@@ -212,20 +194,6 @@ fun countryAxis(
         ownedSlots = blocks.sumOf { block -> block.cells.filterIsInstance<CountryAxisCell.Slot>().count { it.owned } },
         totalSlots = blocks.sumOf { block -> block.issued ?: 0 },
     )
-}
-
-/** Member country: the override on the member, else the catalog's, cured (ADR 0023, #170). */
-internal fun memberCountry(
-    catalog: CollectionCatalog,
-    member: com.jenarvaezg.coindex.domain.CollectionCatalogMember,
-    typeMeta: Map<Int, TypeMeta>,
-): String? {
-    val code = catalog.issuerCodeOf(member)
-    // The member's own ficha first; any sibling of the same issuer next — a hole whose type has
-    // not reached the phone still paints when another coin of that country already did.
-    val numistaName = member.numistaTypeId?.let { typeMeta[it]?.issuerName }
-        ?: typeMeta.values.firstOrNull { it.issuerCode == code }?.issuerName
-    return cardCountry(code, numistaName)
 }
 
 /**

@@ -1,13 +1,9 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.AlbumSlot
 import com.jenarvaezg.coindex.domain.AssembledCollection
-import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionCatalogMember
-import com.jenarvaezg.coindex.domain.Metal
-import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,7 +41,7 @@ class YearAxisAnswersTest {
             typeMeta = mapOf(PESETAS to TypeMeta(id = PESETAS, title = "100 Pesetas", minYear = 1_966)),
         )
 
-        val row = coinRows(state, slotYears(state, emptyList())).single()
+        val row = coinRows(state, slotYears(state)).single()
 
         assertEquals(listOf(1_966), row.years, "the cartouche says what the coin says")
         assertTrue(YearFilter.Of(1_966) in row.yearFilters)
@@ -61,15 +57,13 @@ class YearAxisAnswersTest {
      */
     @Test
     fun `a hole of an evidenced plate answers with the type it is a hole of`() {
-        val catalogs = listOf(dateRun(id = RUN, typeId = BOLIVARES, years = listOf(1_879, 1_900, 1_901)))
         val state = state(
             items = listOf(piece(id = 1, typeId = BOLIVARES, year = 1_879)),
             typeMeta = mapOf(BOLIVARES to TypeMeta(id = BOLIVARES, title = "2 Bolívares", minYear = 1_879)),
-            evidenced = setOf(RUN),
-            catalogs = catalogs,
+            slots = dateRun(RUN, BOLIVARES, listOf(1_879, 1_900, 1_901), owned = setOf(1_879)),
         )
 
-        val row = coinRows(state, slotYears(state, catalogs)).single()
+        val row = coinRows(state, slotYears(state)).single()
 
         assertTrue(matchesYear(row, 1_900))
         assertTrue(matchesYear(row, 1_901))
@@ -79,15 +73,13 @@ class YearAxisAnswersTest {
     /** Chips and predicate come from the same list, so the ghost's year is a chip that counts one. */
     @Test
     fun `the year of a hole is a chip of its own`() {
-        val catalogs = listOf(dateRun(id = RUN, typeId = BOLIVARES, years = listOf(1_879, 1_900)))
         val state = state(
             items = listOf(piece(id = 1, typeId = BOLIVARES, year = 1_879)),
             typeMeta = mapOf(BOLIVARES to TypeMeta(id = BOLIVARES, minYear = 1_879)),
-            evidenced = setOf(RUN),
-            catalogs = catalogs,
+            slots = dateRun(RUN, BOLIVARES, listOf(1_879, 1_900), owned = setOf(1_879)),
         )
 
-        val rows = coinRows(state, slotYears(state, catalogs))
+        val rows = coinRows(state, slotYears(state))
         val counts = coinsFacetCounts(rows, CoinsShelf(), query = "").year
 
         assertEquals(1, counts.populated().single { it.first == YearFilter.Of(1_900) }.second)
@@ -103,17 +95,15 @@ class YearAxisAnswersTest {
      */
     @Test
     fun `a type whose ficha spans centuries does not answer to the years in between`() {
-        val catalogs = listOf(dateRun(id = RESTRIKE, typeId = THALER, years = listOf(1_780)))
         val state = state(
             items = listOf(piece(id = 1, typeId = THALER, year = 1_780)),
             typeMeta = mapOf(
                 THALER to TypeMeta(id = THALER, title = "1 Thaler", minYear = 1_780, maxYear = 2_024),
             ),
-            evidenced = setOf(RESTRIKE),
-            catalogs = catalogs,
+            slots = dateRun(RESTRIKE, THALER, listOf(1_780), owned = setOf(1_780)),
         )
 
-        val row = coinRows(state, slotYears(state, catalogs)).single()
+        val row = coinRows(state, slotYears(state)).single()
 
         assertTrue(matchesYear(row, 1_780))
         assertFalse(matchesYear(row, 1_900))
@@ -129,7 +119,7 @@ class YearAxisAnswersTest {
             typeMeta = emptyMap(),
         )
 
-        val row = coinRows(state, slotYears(state, emptyList())).single()
+        val row = coinRows(state, slotYears(state)).single()
 
         assertEquals(listOf(YearFilter.Undated), row.yearFilters)
     }
@@ -142,18 +132,14 @@ class YearAxisAnswersTest {
      */
     @Test
     fun `every ghost of the axis is answered by the coin whose hole it is`() {
-        val catalogs = listOf(
-            dateRun(id = RUN, typeId = BOLIVARES, years = listOf(1_879, 1_900, 1_901)),
-        )
         val state = state(
             items = listOf(piece(id = 1, typeId = BOLIVARES, year = 1_879)),
             typeMeta = mapOf(BOLIVARES to TypeMeta(id = BOLIVARES, minYear = 1_879)),
-            evidenced = setOf(RUN),
-            catalogs = catalogs,
+            slots = dateRun(RUN, BOLIVARES, listOf(1_879, 1_900, 1_901), owned = setOf(1_879)),
         )
-        val rows = coinRows(state, slotYears(state, catalogs))
+        val rows = coinRows(state, slotYears(state))
 
-        val ghosts = yearAxis(state, catalogs).cells
+        val ghosts = yearAxis(state).cells
             .filter { it.state == YearCellState.Ghost }
             .map { it.year }
 
@@ -175,44 +161,32 @@ class YearAxisAnswersTest {
     private fun state(
         items: List<CollectedItem>,
         typeMeta: Map<Int, TypeMeta>,
-        evidenced: Set<String> = emptySet(),
-        catalogs: List<CollectionCatalog> = emptyList(),
+        slots: List<AlbumSlot> = emptyList(),
     ) = CollectionState(
-        AssembledCollection(
-            items = items,
-            typeMeta = typeMeta,
-            // The albums the assembly carries (#537): the casilla this walk reads is the one the
-            // plate draws.
-            albums = CatalogAlbums.over(catalogs, items),
-            evidencedCatalogIds = evidenced,
-        ),
+        // The casillas the assembly carries (#538): what this walk indexes is what the plate draws.
+        AssembledCollection(items = items, typeMeta = typeMeta, slots = slots),
     )
 
     private fun piece(id: Long, typeId: Int, year: Int?) =
         CollectedItem(id = id, quantity = 1, typeId = typeId, issueYear = year)
 
-    private fun dateRun(id: String, typeId: Int, years: List<Int>) = CollectionCatalog(
-        schemaVersion = 2,
-        id = id,
-        name = id,
-        shortName = id,
-        family = id,
-        weightMillioz = 804,
-        finish = null,
-        metal = Metal.Silver,
-        issuerCode = "venezuela",
-        seriesStatus = SeriesStatus.Closed,
-        source = "test",
-        updatedAt = "2026-08-17",
-        members = years.map { year ->
-            CollectionCatalogMember(
-                id = "$year",
-                label = "$year",
-                year = year,
-                numistaTypeId = typeId,
-            )
-        },
-    )
+    /** The casillas of a date run as the assembly hands them over (#538). */
+    private fun dateRun(
+        catalogId: String,
+        typeId: Int,
+        years: List<Int>,
+        owned: Set<Int> = emptySet(),
+    ) = years.map { year ->
+        AlbumSlot(
+            catalogId = catalogId,
+            memberId = "$year",
+            typeId = typeId,
+            owned = year in owned,
+            quantity = if (year in owned) 1 else 0,
+            country = "Venezuela",
+            year = year,
+        )
+    }
 
     companion object {
         private const val PESETAS = 10

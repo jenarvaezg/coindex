@@ -42,6 +42,15 @@ data class AssembledCollection(
     val albums: CatalogAlbums = CatalogAlbums(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
+    /**
+     * Every measurable casilla of every evidenced plate, resolved once (#538).
+     *
+     * The same bargain [albums] made one ticket earlier, one step further out: the country axis and
+     * the year axis are orders over the casillas the plates already have (ADR 0026 §9), so they are
+     * handed the casillas instead of walking the curated files to rebuild them. What an axis knows
+     * after this is how to group and how to sort.
+     */
+    val slots: List<AlbumSlot> = emptyList(),
     /** The pieces behind each derived collection, for the screen that opens one. */
     val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
     /**
@@ -93,6 +102,9 @@ class Curation(
         // Every catalog and not only the ones with a card: the shelf window is made of the catalogs
         // this collector owns nothing of, and it reads its albums from here like everyone else.
         val albums = CatalogAlbums.over(catalogs, items)
+        val evidencedCatalogIds = catalogs
+            .filter { catalog -> catalog.isEvidencedBy(items) }
+            .mapTo(mutableSetOf()) { it.id }
         return AssembledCollection(
             items = items,
             index = index.build(snapshot, derivation, boxes, albums),
@@ -100,9 +112,8 @@ class Curation(
             derivedCollections = derivation.derivedCollections,
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,
-            evidencedCatalogIds = catalogs
-                .filter { catalog -> catalog.isEvidencedBy(items) }
-                .mapTo(mutableSetOf()) { it.id },
+            evidencedCatalogIds = evidencedCatalogIds,
+            slots = albumSlots(catalogs, albums, typeMeta, evidencedCatalogIds),
             itemsByKey = derivation.itemsByKey,
             ownGroupings = boxes,
             emissionLabels = emissionLabelsOf(items),
