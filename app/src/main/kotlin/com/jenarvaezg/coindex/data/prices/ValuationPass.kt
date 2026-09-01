@@ -25,6 +25,22 @@ enum class ValuationRefusal {
 
     /** Numista could not be reached. The next pass retries; nothing was written (ADR 0025). */
     Offline,
+
+    /**
+     * Numista is turning the calls away, and the pass stopped instead of spending the month at it (#560).
+     *
+     * Three answers arrive here. A `429` is Numista throttling the key; a `403` is the quota **it**
+     * counts — 2.000 a month against the 1.500 of the local gate (ADR 0003), which cannot see what
+     * another phone spent of the same key. And a run of answers that leave no row, whatever their
+     * status, because a pass that writes nothing five times running is not meeting bad luck.
+     *
+     * **The `403` has another reading, and it is not this class's to give.** `syncErrorLabel` splits it
+     * from the `429` and sends the collector to Ajustes to check the key, which it can do because it is
+     * answering a press. This one is a state that appeared on its own over prices nobody asked for, and
+     * it says only what is true of all three: Numista is refusing. Whether the key is wrong is a
+     * question the next sync answers, in the sentence that already owns it.
+     */
+    Rejected,
 }
 
 /**
@@ -61,11 +77,12 @@ data class ValuationStatus(
      *
      * **Not every absence is worth saying**, and this is where the two are told apart. With a pass
      * on its way or a sync in front of it the money is arriving on its own, in seconds, with nobody
-     * doing anything: a line that appears and disappears by itself is furniture. The three that
+     * doing anything: a line that appears and disappears by itself is furniture. The four that
      * are said are the ones waiting on the collector or on the calendar — no network, no
-     * credentials, the month's allowance gone.
+     * credentials, the month's allowance gone, and Numista refusing the calls (#560), which waits on
+     * a quota that turns over on the 1st or on a key the collector has to look at.
      *
-     * It does **not** say which of the three, and that is deliberate: those five sentences are
+     * It does **not** say which of the four, and that is deliberate: those six sentences are
      * settings' own, and ADR 0026 §5 exempts settings from the pruning precisely on the promise
      * that none of its explanations appear on a notebook screen.
      */
@@ -136,8 +153,9 @@ class NumistaValuationPass(
             resolvedHoleIssues(plan, reads, now, listings)
         var asked = 0
         var stopped: ValuationRefusal? = null
+        val streak = BarrenStreak()
         for (issue in issues) {
-            stopped = askOne(numista, issue.typeId, issue.issueId)
+            stopped = askOne(numista, issue.typeId, issue.issueId, streak)
             if (stopped != null) break
             asked++
             if (asked % VALUATION_PROGRESS_EVERY == 0) {
@@ -150,6 +168,7 @@ class NumistaValuationPass(
                 numista,
                 holeIssuesToAsk(plan, reads, now, listings),
                 freshIssues(reads, now),
+                streak,
             )
         }
         // Counted from the table again rather than from what landed: an issue that failed is still
@@ -176,6 +195,7 @@ class NumistaValuationPass(
         numista: NumistaClient,
         lookups: Map<Int, List<PlateHole>>,
         fresh: Set<Pair<Int, Int>>,
+        streak: BarrenStreak,
     ): ValuationRefusal? {
         for ((typeId, holes) in lookups) {
             val listing = try {
@@ -185,8 +205,18 @@ class NumistaValuationPass(
                 // which issue a hole is priced by, and pay for both.
                 numista.fetchIssues(typeId).value.filter { it.id != null }
             } catch (error: NumistaException) {
-                return refusalFor(error) ?: continue
+                // A type Numista does not have is not a wall: it is the same `404` a price gets, read
+                // over a listing, and it costs this type its lookup and nothing else.
+                if (error is NumistaException.Api && error.status == HTTP_NOT_FOUND) continue
+                val stop = refusalFor(error) ?: streak.noteBarren()
+                if (stop != null) return stop
+                continue
             }
+            // **The listing does not break the streak, and this is the asymmetry of [BarrenStreak].**
+            // A wall can stand in front of `/prices` alone — every listing answering 200 while every
+            // price answers 500 — and a listing that resets the count would leave the pass alternating
+            // stored/barren down the whole plan, which is the bill #560 exists to stop. It does not
+            // feed the streak either: it did write a row, and a run of them is a pass working.
             storeListing(typeId, listing)
             for (hole in holes) {
                 val issueId = listing
@@ -197,7 +227,7 @@ class NumistaValuationPass(
                     ?.id
                     ?: continue
                 if ((typeId to issueId) in fresh) continue
-                askOne(numista, typeId, issueId)?.let { return it }
+                askOne(numista, typeId, issueId, streak)?.let { return it }
             }
         }
         return null
@@ -208,24 +238,28 @@ class NumistaValuationPass(
      *
      * A `404` is **not** a stop and not a failure: it is Numista saying it has no prices for this
      * issue, which is a datum and is stored as one — the same reading ADR 0024 gives a photograph's
-     * `404`. Anything else that is not about the budget or the network is skipped without a row, and
-     * the next pass tries again.
+     * `404`. Anything else that is not about the budget, the network or a refusal is skipped without a
+     * row, and the next pass tries again — unless [BarrenStreak] has seen enough of them in a row to
+     * call it a wall.
      */
     private suspend fun askOne(
         numista: NumistaClient,
         typeId: Int,
         issueId: Int,
+        streak: BarrenStreak,
     ): ValuationRefusal? {
         val answer = try {
             numista.fetchIssuePrices(typeId, issueId).value
         } catch (error: NumistaException) {
             if (error is NumistaException.Api && error.status == HTTP_NOT_FOUND) {
                 store(typeId, issueId, IssuePricesResponse())
+                streak.noteStored()
                 return null
             }
-            return refusalFor(error)
+            return refusalFor(error) ?: streak.noteBarren()
         }
         store(typeId, issueId, answer)
+        streak.noteStored()
         return null
     }
 
@@ -279,16 +313,68 @@ class NumistaValuationPass(
 }
 
 private const val HTTP_NOT_FOUND = 404
+private const val HTTP_UNAUTHORIZED = 401
+private const val HTTP_FORBIDDEN = 403
+private const val HTTP_TOO_MANY_REQUESTS = 429
+
+/**
+ * How many answers in a row may leave no row before the pass reads them as a wall (#560).
+ *
+ * **Five**, and the number is a floor and a ceiling at once. Below it a whole month's plan would stop
+ * on a run of bad luck that is real — a body Numista serialised wrong, one `500` while a shard of
+ * theirs restarts — and stopping there costs the collector a month of prices for nothing, because
+ * nothing on the phone will retry until the next launch. Above it the wall is charged for: every
+ * answer past the fifth is a call of the month's allowance spent to learn what the fifth already
+ * said. Five is 1 % of the ~487 calls a cold month costs (ADR 0028 §1), and that 1 % is the most a
+ * wrong guess in either direction can cost: five calls thrown at a wall, or one healthy pass cut short
+ * and resumed at the next launch.
+ *
+ * The streak counts **rows written and not statuses**, which is what keeps a `404` out of it: an issue
+ * Numista has no price for is answered, stored and forgotten (ADR 0028 §4), so a collection of nothing
+ * but those still costs one call each, once, and never trips this.
+ */
+internal const val BARREN_STREAK_LIMIT: Int = 5
+
+/**
+ * The run of answers that left no row, which is how the pass tells one absence from a refusal.
+ *
+ * One per pass and never a field of the pass itself: a streak that survived from one pass to the next
+ * would stop a healthy one on its first stumble.
+ */
+private class BarrenStreak {
+    private var run = 0
+
+    /** Notes an answer that landed — a price, an empty price, a listing. The run is over. */
+    fun noteStored() {
+        run = 0
+    }
+
+    /** Notes an answer that wrote nothing: null to carry on, or the refusal that stops the pass. */
+    fun noteBarren(): ValuationRefusal? {
+        run++
+        return if (run >= BARREN_STREAK_LIMIT) ValuationRefusal.Rejected else null
+    }
+}
 
 /**
  * Which refusals stop a whole pass, and which are one issue's bad luck.
  *
  * The budget stops it because every further call would throw the same way, and the network stops it
- * because four hundred timeouts in a row is two minutes of a dead radio. A malformed body or an
- * unexpected status is this issue's problem alone: null means «skip it and carry on».
+ * because four hundred timeouts in a row is two minutes of a dead radio. **The `429` and the `403`
+ * stop it for the first of those reasons and not for a new one** (#560): a throttled key is throttled
+ * for the next call too, and a `403` is either the key being refused or Numista's own quota gone —
+ * neither of which the next issue is going to fix. The `401` rides with the `403` because
+ * `syncErrorLabel` already reads them as one thing, and because a token the pass could not get is not
+ * a token the next of 442 calls gets either. A malformed body or an unexpected status is this
+ * issue's problem alone: null means «skip it and carry on», and it is [BarrenStreak] that decides how
+ * many of those in a row stop being one issue's problem.
  */
 private fun refusalFor(error: NumistaException): ValuationRefusal? = when (error) {
     is NumistaException.BudgetExhausted -> ValuationRefusal.BudgetExhausted
     is NumistaException.Transport -> ValuationRefusal.Offline
+    is NumistaException.Api -> when (error.status) {
+        HTTP_TOO_MANY_REQUESTS, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> ValuationRefusal.Rejected
+        else -> null
+    }
     else -> null
 }

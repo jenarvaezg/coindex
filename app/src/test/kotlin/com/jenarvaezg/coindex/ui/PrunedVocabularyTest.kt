@@ -212,6 +212,30 @@ class PrunedVocabularyTest {
     }
 
     /**
+     * Numista refusing is **one** string, said identically on the two surfaces that say it (#560).
+     *
+     * The exception to the rule the rest of `showcaseRefusalMessage` follows, and the reason it is
+     * pinned here rather than left to chance: everywhere else the settings line and the snackbar are
+     * reworded per register, so a reviewer reading a diff expects two wordings and would write the
+     * second one without noticing. There is no second wording of this one that is still true — it is
+     * not the month's allowance, and it is not a promise that waiting fixes it — so both surfaces name
+     * the same constant, and this is what goes red if one of them stops.
+     */
+    @Test
+    fun `Numista refusing is said the same way on both surfaces`() {
+        assertEquals("Numista está rechazando las consultas.", NUMISTA_IS_REFUSING)
+        assertEquals(
+            NUMISTA_IS_REFUSING,
+            showcaseRefusalMessage(ValuationRefusal.Rejected).removePrefix("No se ha podido tasar: "),
+        )
+        assertTrue(
+            NUMISTA_IS_REFUSING in valuationLabel(
+                ValuationStatus(wanted = 223, missing = 83, held = ValuationRefusal.Rejected),
+            ),
+        )
+    }
+
+    /**
      * The middle cell of the hierarchy bar names the grain it counts (#516).
      *
      * It said «Monedas · 15» over a count of Numista types, on a phone holding 72 coins, so the one

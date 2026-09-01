@@ -3,7 +3,9 @@
 - Status: accepted, §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
   marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number), §3 and
   §5 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (one plate of the
-  shelf window is valued by a gesture, and that price never expires)
+  shelf window is valued by a gesture, and that price never expires), §4 amended by
+  [#560](https://github.com/jenarvaezg/coindex/issues/560) (Numista refusing stops the pass, and a run
+  of answers that leave no row is one of the shapes that counts as refusing)
 - Date: 2026-08-10
 - Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
   left to its own document
@@ -130,6 +132,23 @@ document exists to remove. The shape was already settled in ADR 0024 for the `40
 | Numista gives a price | it is stored |
 | **Numista answers with no prices** | **stored as a datum** — 19 of the 223 issues; 91 % do carry a price. Without storing it they would be asked for again on every pass, for ever |
 | dead network, 5xx, budget exhausted | **no row is written**; the next pass retries. ADR 0025: *«a refresh that fails is never worse than not having asked»* |
+| **Numista refusing — `401`, `403`, `429`, or five answers in a row that leave no row** | **the pass stops** and says so; what it had already written stands |
+
+> **Amended on 2026-09-01 (#560).** The last row is new, and the bug it closes is what happens without
+> it: only the budget and the network stopped a pass, so every other status was read as «this issue has
+> no price, carry on». On 11 August 2026 the father's phone spent **1.484 calls in nine passes of the
+> same plan** — the same issue asked for nine times — and wrote **zero** rows, because his key was
+> answering `Quota exceeded`: Numista's own month is 2.000 calls and the local gate of ADR 0003 is
+> 1.500, so a key spent from another phone is refused with budget still on the counter.
+>
+> The `401`, the `429` and the `403` are read as the budget always was: the next call would be refused
+> the same way. The streak is the general case of the same claim — the pass has a month's plan to spend
+> against a wall and no way to name every shape one can take — and it counts **rows written, not
+> statuses**, which is what keeps the `404` of row two out of it: an issue Numista has no price for is
+> answered, stored and never asked again, so a collection made entirely of those still costs one call
+> each, once. A **listing** neither feeds the streak nor breaks it: a wall can stand in front of
+> `/prices` alone, and a listing that reset the count would leave the pass alternating down the whole
+> plan.
 
 ### 5. Expired is not deleted
 
