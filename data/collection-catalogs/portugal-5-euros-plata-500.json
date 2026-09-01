@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "portugal-5-euros-plata-500",
+  "name": "5 euros de plata .500 · Portugal 2003-2007 · conmemorativos circulantes",
+  "short_name": "5 euros de plata .500",
+  "issuer_code": "portugal",
+  "family": "5 euros conmemorativos de plata .500 de Portugal",
+  "weight_millioz": 450,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "La Laurisilva de 2007 es la última de plata .500. Cierra el mismo hecho que cerró las 8 euros: el Decreto-Lei n.º 246/2007, de 26 de junio (Diário da República, 1.ª série, n.º 121), que revocó el Decreto-Lei n.º 318/2002, de 28 de diciembre —el régimen bajo el que se emitieron las once—, recoge la Recomendación de la Comisión Europea de 29 de septiembre de 2003 que «limitou a um único valor facial a emissão de moedas comemorativas destinadas à circulação», y define la emisión conmemorativa de moeda corrente como «uma variação do desenho da face nacional das moedas» (art. 2.º, n.º 4). https://files.diariodarepublica.pt/1s/2007/06/12100/40564059.pdf — Medido además sobre el catálogo completo del emisor: después de 2007 Portugal no ha vuelto a acuñar ningún 5 euros en plata .500. La denominación sí sobrevive, pero con otra variante: cuproníquel desde el Justo de D. João II de 2010 (N#12019) y plata .925 desde la Leonor de Portugal de 2014 (N#65473). Honestidad sobre el hecho: Numista sigue fichando esas dos posteriores en la categoría de conmemorativas circulantes (`st=2`), lo que no cuadra del todo con la lectura estricta del decreto; lo que el decreto sostenga o no sobre la denominación no cambia esta lámina, porque lo que cierra la variante —cinco euros, plata .500, 14 g— es la enumeración completa del emisor.",
+  "source": "https://en.numista.com/catalogue/pieces11440.html",
+  "source_note": "Ninguna serie de Numista propone esta lista. «UNESCO World Heritage» etiqueta siete de los once tipos (N#13277, 13278, 11441, 13276, 12021, 13274 y 11432) y es un programa de varios emisores, no portugués, así que propone y no delimita (#43); los otros cuatro —el sello de 2003, el Papa Juan XXI de 2005, el escultismo y la igualdad de oportunidades de 2007— no llevan serie ninguna. El límite se midió dos veces sobre el catálogo del emisor y las dos dan las mismas once: por peso (`index.php?cat=y&st=all&e=portugal&w=13.5-14.5`, 190 resultados) y por texto libre (`&st=all&r=5+euros`, 352 resultados, 179 tipos distintos). Los demás portugueses de plata .500 en esa banda son la denominación de 7½ euros desde 2016, y cada una de las once tiene su gemela en plata .925 titulada «Proof issue» o «.925 Silver», que es otra variante. Las once fichas se abrieron una a una y están publicadas. Cara impresa: el reverso, medido en las once —el anverso es el escudo de Portugal en todas y el reverso es el motivo (el monumento, el retrato, las plantas), que es la moneda que el coleccionista reconoce.",
+  "updated_at": "2026-09-01",
+  "members": [
+    {
+      "id": "2003-primer-sello-portugues",
+      "label": "Primer sello portugués",
+      "year": 2003,
+      "numista_type_id": 14635
+    },
+    {
+      "id": "2004-convento-de-cristo-de-tomar",
+      "label": "Convento de Cristo de Tomar",
+      "year": 2004,
+      "numista_type_id": 13277
+    },
+    {
+      "id": "2004-centro-historico-de-evora",
+      "label": "Centro histórico de Évora",
+      "year": 2004,
+      "numista_type_id": 13278
+    },
+    {
+      "id": "2005-angra-do-heroismo",
+      "label": "Angra do Heroísmo",
+      "year": 2005,
+      "numista_type_id": 11441
+    },
+    {
+      "id": "2005-monasterio-de-batalha",
+      "label": "Monasterio de Batalha",
+      "year": 2005,
+      "numista_type_id": 13276
+    },
+    {
+      "id": "2005-papa-juan-xxi",
+      "label": "Papa Juan XXI",
+      "year": 2005,
+      "numista_type_id": 11440
+    },
+    {
+      "id": "2006-paisaje-cultural-de-sintra",
+      "label": "Paisaje cultural de Sintra",
+      "year": 2006,
+      "numista_type_id": 12021
+    },
+    {
+      "id": "2006-monasterio-de-alcobaca",
+      "label": "Monasterio de Alcobaça",
+      "year": 2006,
+      "numista_type_id": 13274
+    },
+    {
+      "id": "2007-centenario-del-escultismo",
+      "label": "Centenario del escultismo",
+      "year": 2007,
+      "numista_type_id": 11431
+    },
+    {
+      "id": "2007-ano-europeo-de-la-igualdad-de-oportunidades",
+      "label": "Año Europeo de la Igualdad de Oportunidades",
+      "year": 2007,
+      "numista_type_id": 13275
+    },
+    {
+      "id": "2007-laurisilva-de-madeira",
+      "label": "Laurisilva de Madeira",
+      "year": 2007,
+      "numista_type_id": 11432
+    }
+  ]
+}
