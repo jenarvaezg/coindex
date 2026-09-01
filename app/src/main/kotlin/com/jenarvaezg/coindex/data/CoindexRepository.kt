@@ -16,6 +16,7 @@ import com.jenarvaezg.coindex.domain.AlbumSlot
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CatalogProgrammes
+import com.jenarvaezg.coindex.domain.CoinClaims
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
@@ -67,6 +68,7 @@ data class CollectionState(
     val itemsByKey: Map<VariantKey, List<CollectedItem>> get() = collection.itemsByKey
     val ownGroupings: List<OwnGroupingView> get() = collection.ownGroupings
     val emissionLabels: Map<Long, String> get() = collection.emissionLabels
+    val claims: CoinClaims get() = collection.claims
 
     fun derivedCollectionFor(key: VariantKey): DerivedCollection? =
         collection.derivedCollectionFor(key)

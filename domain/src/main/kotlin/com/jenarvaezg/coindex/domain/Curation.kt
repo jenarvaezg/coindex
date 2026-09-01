@@ -75,6 +75,24 @@ data class AssembledCollection(
     /** The collector's own boxes, which hold only pieces they own (ADR 0021 §11). */
     val ownGroupings: List<OwnGroupingView> = emptyList(),
 ) {
+    /**
+     * Which collections claim which coin, resolved once per assembly (#540).
+     *
+     * It travels with the assembly for the reason [emissionLabels] does — whoever draws a coin is
+     * handed what claims it instead of having to walk the index for itself — and it is **derived
+     * from this value rather than passed into it**, which is the one place the two differ. An
+     * emission label needs the curation, an input the assembly does not carry, so it can only be
+     * resolved on the way in; a claim needs [index] and [itemsByKey], which are both right here. A
+     * constructor field would therefore admit an assembly whose claims contradict its own index —
+     * two truths again, one of them handed in by a caller — and every hand-built assembly in the
+     * suite would quietly answer «no collection claims this» while its index said otherwise.
+     *
+     * Lazy and not a `get()`, because it is asked four times per read of Coins and the walk is over
+     * the whole inventory: once per assembly is the promise, and the assembly is the thing that gets
+     * rebuilt when the collection changes.
+     */
+    val claims: CoinClaims by lazy { coinClaimsOf(index, itemsByKey) }
+
     fun derivedCollectionFor(key: VariantKey): DerivedCollection? =
         derivedCollections.firstOrNull { it.key() == key }
 }

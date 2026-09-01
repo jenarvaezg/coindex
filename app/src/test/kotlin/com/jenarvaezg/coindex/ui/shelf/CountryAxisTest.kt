@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.AlbumSlot
 import com.jenarvaezg.coindex.domain.AssembledCollection
+import com.jenarvaezg.coindex.domain.CoinClaims
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
@@ -75,7 +76,7 @@ class CountryAxisTest {
                     FRANCE_C to meta(FRANCE_C, "france", "Francia"),
                 ),
             ),
-            claimedRowIds = emptySet(),
+            claims = CoinClaims(),
         )
 
         val francia = model.blocks.single()
@@ -93,7 +94,7 @@ class CountryAxisTest {
                 items = listOf(item(1, FRANCE_A, year = 1960)),
                 typeMeta = mapOf(FRANCE_A to meta(FRANCE_A, "france", "Francia")),
             ),
-            claimedRowIds = emptySet(),
+            claims = CoinClaims(),
         )
 
         assertEquals(listOf("Francia"), model.tail.map { it.country })

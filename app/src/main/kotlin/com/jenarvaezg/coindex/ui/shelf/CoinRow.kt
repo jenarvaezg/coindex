@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CoinClaims
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.ObjectClass
@@ -20,8 +21,18 @@ import com.jenarvaezg.coindex.ui.pieceRawTitle
 import java.text.Collator
 import java.util.Locale
 
-/** One collection that claims a coin, as the link back to it (ADR 0021 §1). */
+/**
+ * One collection that claims a coin, as the door back to it (ADR 0021 §1).
+ *
+ * The claim itself is the domain's — [CoinClaims] resolves who claims what once per assembly — and
+ * what is left here is the half that is navigation: turning the card into the destination a tap
+ * lands on (ADR 0021 §9). It is drawn and not asked, which is why it carries the two words the
+ * sheet paints and not the card behind them.
+ */
 data class CoinClaim(val name: String, val destination: CardDestination)
+
+/** The door a card of the index opens, which is the only reading of a claim the screen needs. */
+private fun doorTo(card: IndexCard) = CoinClaim(card.name, destinationOf(card))
 
 /**
  * One coin of Coins: a Numista **type** and every piece of it the collector owns.
@@ -151,7 +162,7 @@ data class CoinRow(
  * whether or not any collection claims it.
  */
 fun coinRows(state: CollectionState, slots: SlotYears = SlotYears.none): List<CoinRow> {
-    val claimed = claimsOf(state)
+    val claimed = state.claims
     val byType = LinkedHashMap<Int, MutableList<CollectedItem>>()
     // Same coerce as [collectionFigures]: a hostile zero is still one piece, so the bottom bar's
     // type count and the rows Coins draws cannot drift (#426).
@@ -180,7 +191,7 @@ fun coinRowOf(state: CollectionState, typeId: Int): CoinRow = coinRow(
     state = state,
     typeId = typeId,
     pieces = state.items.filter { it.typeId == typeId },
-    claimed = claimsOf(state),
+    claimed = state.claims,
     // A sheet has no year chips to answer: [CoinRow.axisYears] exists for the shelf, and the sheet
     // opened from a casilla is one coin already found.
     slots = SlotYears.none,
@@ -190,7 +201,7 @@ private fun coinRow(
     state: CollectionState,
     typeId: Int,
     pieces: List<CollectedItem>,
-    claimed: Claims,
+    claimed: CoinClaims,
     slots: SlotYears,
 ): CoinRow {
     val meta = state.typeMeta[typeId]
@@ -209,8 +220,8 @@ private fun coinRow(
         quantity = pieces.fold(0) { total, piece ->
             saturatingAdd(total, piece.quantity.coerceAtLeast(1))
         },
-        claims = claimed.byType[typeId].orEmpty(),
-        unclaimedPieces = pieces.count { it.id !in claimed.rowIds },
+        claims = claimed.of(typeId).map(::doorTo),
+        unclaimedPieces = claimed.unclaimedPieces(pieces),
         axisYears = axisYearsOf(pieces, meta, slots.of(typeId), printed = years),
     )
 }
@@ -291,40 +302,6 @@ fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
     coinYearsLabel(row.years),
     "×${row.quantity}".takeIf { row.quantity > 1 },
 ).joinToString(" · ")
-
-/**
- * Who claims what, read once off the index.
- *
- * Two answers and not one, because they are asked at different grains: [byType] is what a coin links
- * back to, and a type may be claimed by more than one collection (ADR 0021 §10). [rowIds] is which
- * **pieces** were actually placed, which is finer — an issue-qualified catalog can claim one row of a
- * type and leave its sibling in the residue (ADR 0019).
- */
-internal class Claims(
-    val byType: Map<Int, List<CoinClaim>>,
-    val rowIds: Set<Long>,
-)
-
-/**
- * Built by walking the index rather than the catalogs, so the links arrive already in the one order
- * of the first level and a card the inventory no longer derives cannot be linked to.
- */
-internal fun claimsOf(state: CollectionState): Claims {
-    val byType = LinkedHashMap<Int, MutableList<CoinClaim>>()
-    val rowIds = mutableSetOf<Long>()
-    for (card in state.index) {
-        val pieces = when (card) {
-            is IndexCard.Derived -> state.itemsByKey[card.key].orEmpty()
-            is IndexCard.Box -> card.box.items
-        }
-        val claim = CoinClaim(card.name, destinationOf(card))
-        pieces.forEach { piece -> rowIds += piece.id }
-        for (typeId in pieces.mapTo(LinkedHashSet()) { it.typeId }) {
-            byType.getOrPut(typeId) { mutableListOf() }.add(claim)
-        }
-    }
-    return Claims(byType, rowIds)
-}
 
 /**
  * The order coins are read in: country, then year, then title.

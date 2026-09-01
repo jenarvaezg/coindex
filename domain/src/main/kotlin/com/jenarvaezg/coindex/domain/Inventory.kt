@@ -123,6 +123,22 @@ data class TypeMeta(
     val weightGrams: Double? get() = weightOz?.let { ounces -> ounces * GRAMS_PER_TROY_OUNCE }
 
     /**
+     * The weight this type is keyed by when no curated file weighs it: Numista's own grams, snapped
+     * to the common bullion weights and to nothing a catalog declares (ADR 0018, #288).
+     *
+     * It is the reading of a **loose** coin, and that is the whole of its authority: a catalog is
+     * authoritative over its own members' variant (ADR 0016), and a member never comes through here
+     * — its key comes from the file. Null where the ficha declares no weight, which keeps such a
+     * piece out of every weight band instead of parking it under a figure nobody measured.
+     *
+     * A property of the type and not a call each caller makes, because the two callers are the
+     * variant key of the derivation and the loose row the shelf draws, and the same coin weighing
+     * one thing in its card's key and another in the «Sin colección» list is precisely the
+     * disagreement #288 closed (#540).
+     */
+    val weightMillioz: Int? get() = weightOz?.let(::normalizeWeightMillioz)
+
+    /**
      * The country this type is from, which is what a card and a coin row paint (ADR 0023).
      *
      * [issuerName] stays Numista's own prose and this is the reading of it, so the pair never has to

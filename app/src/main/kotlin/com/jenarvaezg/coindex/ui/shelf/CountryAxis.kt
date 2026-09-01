@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CoinClaims
 import java.text.Collator
 import java.util.Locale
 
@@ -120,7 +121,15 @@ fun CountryAxisBlock.fold(columns: Int, expanded: Boolean = false): CountryAxisF
  */
 fun countryAxis(
     state: CollectionState,
-    claimedRowIds: Set<Long> = claimsOf(state).rowIds,
+    /**
+     * Who claims what, which is what tells a loose piece from one already in a plate.
+     *
+     * The assembly's answer by default (#540): the axis, the grid of Coins and the last lámina of
+     * the notebook divide by one reading of the index, so a coin cannot be loose on one sheet and
+     * placed on the next. A test hands in an empty [CoinClaims] to draw an axis of nothing but
+     * loose metal.
+     */
+    claims: CoinClaims = state.claims,
     /**
      * Catalog ids that survive the shelf's filters, or null to keep every evidenced catalog.
      *
@@ -157,7 +166,7 @@ fun countryAxis(
     }
 
     for (piece in state.items) {
-        if (piece.quantity <= 0 || piece.id in claimedRowIds) continue
+        if (piece.quantity <= 0 || claims.claimed(piece)) continue
         if (keptLooseIds != null && piece.id !in keptLooseIds) continue
         val meta = state.typeMeta[piece.typeId]
         val country = meta?.country ?: continue

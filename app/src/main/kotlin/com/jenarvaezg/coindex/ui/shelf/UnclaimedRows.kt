@@ -1,9 +1,9 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.CoinClaims
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.SeriesStatus
-import com.jenarvaezg.coindex.domain.normalizeWeightMillioz
 import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.matchesQuery
 import com.jenarvaezg.coindex.ui.pieceTitle
@@ -43,9 +43,10 @@ data class UnclaimedFacts(
  * Every row of the inventory that no card of the index claims, in reading order.
  *
  * **Measured against the whole index and never against one export** (#275). Having a collection is a
- * fact about the coin, not about the paper, so this is the same [claimsOf] the «Sin colección» chip
- * of Coins is counted with (ADR 0021 §12) — the app and the notebook cannot disagree about which
- * coins are loose, and a filter the collector put on today cannot orphan a coin that lives in a box.
+ * fact about the coin, not about the paper, so this reads the same [CoinClaims] of the assembly the
+ * «Sin colección» chip of Coins is counted with (ADR 0021 §12) — the app and the notebook cannot
+ * disagree about which coins are loose, and a filter the collector put on today cannot orphan a coin
+ * that lives in a box.
  *
  * It is **not** the domain's `unclassified` residue, and the two differ exactly at the collector's
  * own boxes: a box claims rows by type, so a piece the derivation left over may already be printed
@@ -53,9 +54,9 @@ data class UnclaimedFacts(
  * show? — and the answer is the complement of what gets printed, with nothing repeated.
  */
 fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
-    val claimed = claimsOf(state).rowIds
+    val claims = state.claims
     return state.items
-        .filter { piece -> piece.quantity > 0 && piece.id !in claimed }
+        .filter { piece -> piece.quantity > 0 && !claims.claimed(piece) }
         .map { piece ->
             val meta = state.typeMeta[piece.typeId]
             val title = pieceTitle(state, piece)
@@ -69,12 +70,11 @@ fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
                 // Numista's own grams, snapped to the common bullion weights: a loose coin is by
                 // definition one no curated file has a weight for. This row used to be the only
                 // place that read it that way, and the same coin weighed one thing here and
-                // another in its card's key; since #288 there is one reading. Null where the ficha
-                // declares none, which keeps it out of every weight filter instead of parking it
-                // under «Varias onzas».
-                weight = meta?.weightOz
-                    ?.let { ounces -> normalizeWeightMillioz(ounces) }
-                    ?.let { millioz -> OunceBand.of(millioz) },
+                // another in its card's key; since #288 there is one reading, and since #540 it is
+                // one property of the type rather than the same call made twice. Null where the
+                // ficha declares none, which keeps it out of every weight filter instead of parking
+                // it under «Varias onzas».
+                weight = meta?.weightMillioz?.let { millioz -> OunceBand.of(millioz) },
                 startsIn = StartBand.of(year),
                 year = year,
                 title = title,
