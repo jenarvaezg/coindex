@@ -36,3 +36,18 @@ fun normalizeWeightMillioz(weightOz: Double): Int? {
         .minWithOrNull(compareBy({ target -> Math.abs(measured - target) }, { target -> target }))
         ?: measured
 }
+
+/**
+ * A variant weight written out in troy ounces: `1000` reads «1 oz», `386` reads «0,386 oz».
+ *
+ * It lives here and not in `Labels.kt` because it is arithmetic and not copy — the variant key of
+ * ADR 0018 said in its own unit — and because two owners of that arithmetic is how «0,386 oz» on a
+ * card and «0,39 oz» in a name begin to disagree about one coin. `weightLabel` is the
+ * collector-facing reading built on top of it and keeps the one sentence there is to word: the set
+ * that spans denominations and has no single weight to show (ADR 0012).
+ */
+fun ounceLabel(weightMillioz: Int): String {
+    val whole = weightMillioz / 1_000
+    val fraction = (weightMillioz % 1_000).toString().padStart(3, '0').trimEnd('0')
+    return if (fraction.isEmpty()) "$whole oz" else "$whole,$fraction oz"
+}
