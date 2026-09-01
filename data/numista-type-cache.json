@@ -2731,6 +2731,378 @@
   },
   "weight": 31.1035
  },
+ "108773": {
+  "id": 108773,
+  "url": "https://es.numista.com/108773",
+  "title": "1 Pound - Elizabeth II (Cardiff; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2011\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62a7977565f2f9.32952453-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62a7977565f2f9.32952453-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Stuart Devlin"
+   ],
+   "description": "Las insignias oficiales de las capitales del Reino Unido, con la insignia de Cardiff como principal protagonista.",
+   "lettering": "ONE POUND\r\nCARDIFF",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62a797763789e9.42516210-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62a797763789e9.42516210-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "UK Cities",
+  "commemorated_topic": "Gales",
+  "comments": "El cuarto y último diseño de Stuart Devlin Capital City, los otros son Belfast, Edimburgo y Londres. Emitida como parte de la serie anual de monedas de plata (1.011 ventas) y de la serie conmemorativa de plata (653 ventas) de 2011, así como individualmente (5.553 ventas), este diseño también se acuñó en cobre-níquel, plata piedfort y oro proof. Límite de emisión: 20.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ee13c4969455.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee13c4969455.jpg\" alt=\"\" width=\"200\" height=\"214\" /></a> <a href=\"https://en.numista.com/catalogue/images/5ee13c306aee7.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee13c306aee7.jpg\" alt=\"\" width=\"182\" height=\"250\" /></a>",
+  "related_types": [
+   {
+    "id": 18522,
+    "title": "1 Pound - Elizabeth II (London; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 18523,
+    "title": "1 Pound - Elizabeth II (Belfast; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 108787,
+    "title": "1 Pound - Elizabeth II (Edinburgh; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 17096,
+    "title": "1 Pound - Elizabeth II (4th portrait; Cardiff)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 222696,
+    "title": "1 Pound - Elizabeth II (Cardiff; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 222692,
+    "title": "1 Pound - Elizabeth II (Cardiff; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J31"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1198a"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "Y DDRAIG GOCH DDYRY CYCHWYN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "108787": {
+  "id": 108787,
+  "url": "https://es.numista.com/108787",
+  "title": "1 Pound - Elizabeth II (Edinburgh; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2011\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62a795f1ede751.53727729-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62a795f1ede751.53727729-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Stuart Devlin"
+   ],
+   "description": "Las insignias oficiales de las capitales del Reino Unido, con la insignia de Edimburgo como principal protagonista.",
+   "lettering": "ONE POUND\r\nEDINBURGH",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62a795f2a64810.40588554-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62a795f2a64810.40588554-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "UK Cities",
+  "commemorated_topic": "Escocia",
+  "comments": "La tercera de las cuatro capitales diseñadas por Stuart Devlin, las otras son Belfast, Cardiff y Londres. Emitida como parte de la serie anual de monedas de plata (1.011 ventas) y de la serie conmemorativa de plata (653 ventas) de 2011, así como individualmente (4.973 ventas). También acuñadas en cobre-níquel, plata proof y oro proof. Límite de emisión: 20.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ee13d4a7e3a3.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee13d4a7e3a3.jpg\" alt=\"\" width=\"200\" height=\"214\" /></a> <a href=\"https://en.numista.com/catalogue/images/5ee13d60dbd57.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee13d60dbd57.jpg\" alt=\"\" width=\"195\" height=\"250\" /></a>",
+  "related_types": [
+   {
+    "id": 18522,
+    "title": "1 Pound - Elizabeth II (London; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 18523,
+    "title": "1 Pound - Elizabeth II (Belfast; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 17097,
+    "title": "1 Pound - Elizabeth II (4th portrait; Edinburgh)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 222700,
+    "title": "1 Pound - Elizabeth II (Edinburgh; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 222701,
+    "title": "1 Pound - Elizabeth II (Edinburgh; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 108773,
+    "title": "1 Pound - Elizabeth II (Cardiff; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J30"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1197a"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "NISI DOMINUS FRUSTRA",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "10919": {
   "category": "coin",
   "composition": {
@@ -17411,6 +17783,165 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "155240": {
+  "id": 155240,
+  "url": "https://es.numista.com/155240",
+  "title": "1 Pound - Elizabeth II (Gateshead Millennium Bridge; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2007,
+  "max_year": 2007,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2007\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60528732bffa93.60494970-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60528732bffa93.60494970-180.jpg",
+   "picture_copyright": "The Royal Mint, 2007"
+  },
+  "reverse": {
+   "engravers": [
+    "Edwina Ellis"
+   ],
+   "description": "El Puente del Milenio de Gateshead con un borde de puntales, denominación debajo.",
+   "lettering": "ONE POUND\r\nEE",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/605287335e7023.46213231-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/605287335e7023.46213231-180.jpg",
+   "picture_copyright": "The Royal Mint, 2007"
+  },
+  "series": "Regional Bridge series",
+  "commemorated_topic": "Inglaterra",
+  "comments": "El cuarto y último diseño del puente Edwina Ellis, que representa a Inglaterra, el Puente del Milenio de Gateshead es un puente peatonal y ciclista basculante que atraviesa el río Tyne, en Inglaterra, entre el barrio artístico de Quays de Gateshead, en la orilla sur, y el Quayside de Newcastle upon Tyne, en la orilla norte. Abierta al público en 2001, la galardonada estructura fue concebida y diseñada por el arquitecto Wilkinson Eyre y el ingeniero estructural Gifford.<br /><br />\r\nEmitida en la serie anual de plata, así como individualmente, la moneda también se acuñó en latón-níquel, plata piedfort y oro proof.Límite de emisión: 20.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6052870af1fac.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6052870af1fac.jpg\" alt=\"\" width=\"200\" height=\"238\" /></a><a href=\"https://en.numista.com/catalogue/images/6052871834a60.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6052871834a60.jpg\" alt=\"\" width=\"200\" height=\"186\" /></a><br />\r\n© The Royal Mint, 2007<br /><br />\r\nEn 2008 se emitió una segunda edición en plata con baño de oro selectivo para celebrar los 25 años de la moneda de libra.",
+  "related_types": [
+   {
+    "id": 6260,
+    "title": "1 Pound - Elizabeth II (4th portrait; Gateshead Millennium Bridge)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   },
+   {
+    "id": 280471,
+    "title": "1 Pound - Elizabeth II (Gateshead Millennium Bridge; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2007,
+    "maxYear": 2007
+   },
+   {
+    "id": 278057,
+    "title": "1 Pound - Elizabeth II (Gateshead Millennium Bridge; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2007,
+    "maxYear": 2008
+   },
+   {
+    "id": 213767,
+    "title": "1 Pound - Elizabeth II (Gateshead Millennium Bridge; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Puente"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1074a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J21"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con un motivo decorativo que simboliza puentes y caminos"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "15566": {
   "category": "coin",
   "commemorated_topic": "João de Castro",
@@ -19689,6 +20220,315 @@
    "text": "3 Roubles"
   },
   "weight": 33.94
+ },
+ "168225": {
+  "id": 168225,
+  "url": "https://es.numista.com/168225",
+  "title": "1 Pound - Elizabeth II (Egyptian Arch Bridge; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2006,
+  "max_year": 2006,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2006\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/10333-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/10333-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "reverse": {
+   "engravers": [
+    "Edwina Ellis"
+   ],
+   "description": "Representación del puente ferroviario Egyptian Arch de Newry, en Irlanda del Norte, dentro de una cenefa de marquesinas de estación.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/10334-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/10334-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "series": "Regional Bridge series",
+  "commemorated_topic": "Irlanda del Norte",
+  "comments": "El tercero de los cuatro puentes diseñados por Edwina Ellis, que representa a Irlanda del Norte, el Egyptian Arch Bridge es un puente ferroviario en Newry, Irlanda del Norte. Conocido localmente como el Arco Egipcio, el puente ferroviario pasa por encima de la carretera Newry-Camlough, en la mitad de Newry correspondiente al condado de Armagh. El Arco Egipcio debe su nombre a su parecido con el tocado nemes que llevaban los faraones del Antiguo Egipto.<br /><br />\r\nSe emitió en la colección del 80 aniversario de la Reina de 2006; límite de emisión: 8.000 unidades, así como en la serie de 2007 - 4 puentes (Forth Rail Bridge, Menai Straits Bridge, Egyptian Bridge y Gateshead Millennium Bridge); límite de emisión: 20.000 unidades.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb2f7f0f2168.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb2f7f0f2168.jpg\" alt=\"\" width=\"200\" height=\"181\" /></a><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb2f809ebd7f.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb2f809ebd7f.jpg\" alt=\"\" width=\"200\" height=\"211\" /></a><br /><br />\r\nEn 2008 se emitió una segunda edición en plata con baño de oro selectivo para celebrar los 25 años de la moneda de libra.",
+  "related_types": [
+   {
+    "id": 3807,
+    "title": "1 Pound - Elizabeth II (4th portrait; Egyptian Arch Bridge)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   },
+   {
+    "id": 282695,
+    "title": "1 Pound - Elizabeth II (Egyptian Arch Bridge; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2006
+   },
+   {
+    "id": 114975,
+    "title": "1 Pound - Elizabeth II (Egyptian Arch Bridge; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2006,
+    "maxYear": 2008
+   },
+   {
+    "id": 68357,
+    "title": "1 Pound - Elizabeth II (Egyptian Arch Bridge; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Puente"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1059a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J20"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con un motivo decorativo que simboliza puentes y caminos"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "168227": {
+  "id": 168227,
+  "url": "https://es.numista.com/168227",
+  "title": "1 Pound - Elizabeth II (Menai Bridge; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2005,
+  "max_year": 2005,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2005\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/10335-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/10335-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "reverse": {
+   "engravers": [
+    "Edwina Ellis"
+   ],
+   "description": "Representación del puente de Menai dentro de una cenefa de barandillas y montantes.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/10336-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/10336-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "series": "Regional Bridge series",
+  "commemorated_topic": "Gales",
+  "comments": "El segundo de los cuatro diseños de puentes de Edwina Ellis, que representan a Gales, el puente colgante de Menai (galés: Pont Grog y Borth) es un puente colgante que transporta el tráfico rodado entre la isla de Anglesey y la parte continental de Gales. El puente se inauguró el 30 de enero de 1826 y el 28 de febrero de 2005 fue promovido ante la UNESCO como candidato a Patrimonio de la Humanidad.<br /><br />\r\nLa moneda se emitió individualmente y, posteriormente, en serie de 4 monedas, y también se acuñó en latón-níquel, plata piedfort y oro proof. Límite de emisión: 15.000<br /><br />\r\nEn 2008 se emitió una segunda edición en plata con baño de oro selectivo para celebrar los 25 años de la moneda de libra.",
+  "related_types": [
+   {
+    "id": 2763,
+    "title": "1 Pound - Elizabeth II (4th portrait; Menai Bridge)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   },
+   {
+    "id": 283966,
+    "title": "1 Pound - Elizabeth II (Menai Bridge; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2005,
+    "maxYear": 2005
+   },
+   {
+    "id": 14702,
+    "title": "1 Pound - Elizabeth II (Menai Bridge; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2005,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Puente"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1051a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J19"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con un motivo decorativo que simboliza puentes y caminos"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "168992": {
   "category": "coin",
@@ -25000,6 +25840,330 @@
   "category": "exonumia",
   "type": "Monedas de fantasía"
  },
+ "18522": {
+  "id": 18522,
+  "url": "https://es.numista.com/18522",
+  "title": "1 Pound - Elizabeth II (London; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2010\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1a8dad1b429.91195138-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1a8dad1b429.91195138-180.jpg"
+  },
+  "reverse": {
+   "engravers": [
+    "Stuart Devlin"
+   ],
+   "description": "Las insignias oficiales de las capitales del Reino Unido, con la insignia de Londres como principal protagonista.",
+   "lettering": "ONE POUND\r\nLONDON",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1bd7a12e942.41639856-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1bd7a12e942.41639856-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "UK Cities",
+  "commemorated_topic": "Inglaterra",
+  "comments": "La primera de las cuatro capitales diseñadas por Stuart Devlin, las otras son Belfast, Cardiff y Edimburgo. Emitidas como parte de las series anuales de monedas de plata de 2010, así como individualmente. El diseño también se produjo en cobre-níquel, oro proof y plata piedfort proof.<br />\r\nLímite de emisión: 20.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ee79ed514c14.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee79ed514c14.jpg\" alt=\"\" width=\"200\" height=\"242\" /></a>",
+  "related_types": [
+   {
+    "id": 16547,
+    "title": "1 Pound - Elizabeth II (4th portrait; London)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 18523,
+    "title": "1 Pound - Elizabeth II (Belfast; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 108787,
+    "title": "1 Pound - Elizabeth II (Edinburgh; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 108773,
+    "title": "1 Pound - Elizabeth II (Cardiff; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J28"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1158a"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DOMINE DIRIGE NOS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "18523": {
+  "id": 18523,
+  "url": "https://es.numista.com/18523",
+  "title": "1 Pound - Elizabeth II (Belfast; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2010\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ee79e9be4dcf4.37097750-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ee79e9be4dcf4.37097750-180.jpg",
+   "picture_copyright": "The Royal Mint, 2010"
+  },
+  "reverse": {
+   "engravers": [
+    "Stuart Devlin"
+   ],
+   "description": "Las insignias oficiales de las capitales del Reino Unido, con la insignia de Belfast como principal protagonista.",
+   "lettering": "ONE POUND\r\nBELFAST",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ee79e9c527d41.76422734-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ee79e9c527d41.76422734-180.jpg",
+   "picture_copyright": "The Royal Mint, 2010"
+  },
+  "series": "UK Cities",
+  "commemorated_topic": "Irlanda del Norte",
+  "comments": "La segunda de las cuatro capitales diseñadas por Stuart Devlin, las otras son Cardiff, Edimburgo y Londres. Se emitió como parte de las series anuales de monedas de plata de 2010, así como individualmente. El diseño también se produjo en cobre-níquel, oro proof y plata piedfort proof.<br />\r\nLímite de emisión: 20.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ee79e7126989.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee79e7126989.jpg\" alt=\"\" width=\"200\" height=\"242\" /></a>",
+  "related_types": [
+   {
+    "id": 18522,
+    "title": "1 Pound - Elizabeth II (London; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 16548,
+    "title": "1 Pound - Elizabeth II (4th portrait; Belfast)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2010,
+    "maxYear": 2010
+   },
+   {
+    "id": 108787,
+    "title": "1 Pound - Elizabeth II (Edinburgh; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   },
+   {
+    "id": 108773,
+    "title": "1 Pound - Elizabeth II (Cardiff; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2011,
+    "maxYear": 2011
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J29"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1159a"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "PRO TANTO QUID RETRIBUAMUS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "18524": {
   "id": 18524,
   "url": "https://es.numista.com/18524",
@@ -28291,6 +29455,167 @@
    {
     "id": 5169,
     "name": "Pressburg Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "19420": {
+  "id": 19420,
+  "url": "https://es.numista.com/19420",
+  "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2000,
+  "max_year": 2000,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2000\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60760002caaa88.35983989-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60760002caaa88.35983989-180.jpg",
+   "picture_copyright": "The Royal Mint, 2000"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Un dragón galés pasante sobre la denominación.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6076000367c733.67907646-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6076000367c733.67907646-180.jpg",
+   "picture_copyright": "The Royal Mint, 2000"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Gales",
+  "comments": "El emblema heráldico de Norman Sillman del reverso \"Dragón de Gales\" se introdujo originalmente en 1995 con el tercer retrato de Maklouf en el anverso.<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#J15</span> <span style=\"font-style:italic;\">Prueba regular:</span> Emitida como parte de la colección de 13 monedas Millennium Silver Proof y también disponible individualmente. Límite de emisión: 40.000.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6075c9facfb75.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6075c9facfb75.jpg\" alt=\"\" width=\"200\" height=\"232\" /></a><a href=\"https://en.numista.com/catalogue/images/5f0629011f924.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f0629011f924.jpg\" alt=\"\" width=\"200\" height=\"191\" /></a><br /><br />\r\n<span style=\"font-weight:bold;\">Sp#J15A</span> Prueba <span style=\"font-style:italic;\">esmerilada en el reverso:</span> Emitida como parte de una serie de 2 monedas que incluía el León escocés de 1999. Límite de emisión: 2.000 (tomado de la acuñación de la prueba normal anterior).<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6075ca21740a5.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6075ca21740a5.jpg\" alt=\"\" width=\"200\" height=\"199\" /></a><a href=\"https://en.numista.com/catalogue/images/6075ca7c5c36b.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6075ca7c5c36b.jpg\" alt=\"\" width=\"200\" height=\"198\" /></a><a href=\"https://en.numista.com/catalogue/images/5f0ac51934524.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f0ac51934524.jpg\" alt=\"\" width=\"200\" height=\"228\" /></a><br /><br />\r\nEl diseño también se acuñó en níquel-latón y plata piedfort.",
+  "related_types": [
+   {
+    "id": 26098,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1995,
+    "maxYear": 1995
+   },
+   {
+    "id": 1396,
+    "title": "1 Pound - Elizabeth II (4th portrait; Welsh Dragon)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   },
+   {
+    "id": 108717,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   }
+  ],
+  "tags": [
+   "Animal fantástico"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1005a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J15"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J15A"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "PLEIDIOL WYF I'M GWLAD",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
    }
   ],
   "category": "coin",
@@ -33632,6 +34957,185 @@
   },
   "weight": 21
  },
+ "222176": {
+  "id": 222176,
+  "url": "https://es.numista.com/222176",
+  "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2013\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ee759c8a03545.87813958-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ee759c8a03545.87813958-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Derek Gorringe"
+   ],
+   "description": "Escudo real coronado sobre la denominación.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5ee75aace00546.06058213-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5ee75aace00546.06058213-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "commemorated_topic": "30 aniversario de la moneda de libra",
+  "comments": "<p>Introducido originalmente en 1988 y emparejado con el tercer retrato del anverso de Maklouf, el diseño del reverso de Derek Gorringe \"Armas Reales Coronadas\" se ha utilizado un total de tres veces en pruebas de plata. La segunda edición se emitió en 2008 para conmemorar el 25 aniversario de la moneda de libra y se le aplicó un baño de oro selectivo en el reverso. Esta emisión se lanzó para conmemorar el 30 aniversario de la introducción de la moneda de la libra en un juego de 3 monedas, que se emitió junto con el diseño de las Armas Reales de Eric Sewell y el diseño del Escudo Real de Matthew Dent. También se emitió en prueba de oro. Límite de emisión: 3.500.</p><p><br><a href=\"https://en.numista.com/catalogue/images/5ee7598ce2df1.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee7598ce2df1.jpg\" alt=\"\"></a></p>",
+  "related_types": [
+   {
+    "id": 43388,
+    "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1988,
+    "maxYear": 1988
+   },
+   {
+    "id": 45979,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2013
+   },
+   {
+    "id": 213699,
+    "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   },
+   {
+    "id": 247100,
+    "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2013
+   },
+   {
+    "id": 86010,
+    "title": "1 Pound - Elizabeth II (4th portrait; Royal Shield, Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Gato o felino",
+   "Corona",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1245"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J26"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "22294": {
   "category": "coin",
   "commemorated_topic": "500 aniversario del Tratado de Tordesilhas",
@@ -35837,6 +37341,461 @@
    {
     "id": 19,
     "name": "Royal Canadian Mint of Ottawa"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "233633": {
+  "id": 233633,
+  "url": "https://es.numista.com/233633",
+  "title": "1 Pound - Elizabeth II (Flax and Shamrock; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2014,
+  "max_year": 2014,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2014\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff022775ed5.86947751-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff022775ed5.86947751-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "reverse": {
+   "engravers": [
+    "Timothy Noad"
+   ],
+   "description": "Emblemas florales de Irlanda del Norte, un lino y un trébol, denominación debajo.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff00611edd0.13075855-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff00611edd0.13075855-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "series": "Floral Emblems",
+  "commemorated_topic": "Irlanda del Norte",
+  "comments": "Es el tercero de los cuatro emblemas florales de Timothy Noad, los otros son el roble y la rosa para Inglaterra, el puerro y el narciso para Gales y el cardo y el campanilla para Escocia.<br /><br />\r\nLa moneda también se acuñó en níquel-latón, plata piedfort y oro proof.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f9b1acacb469.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f9b1acacb469.jpg\" alt=\"\" width=\"200\" height=\"176\" /></a><br />\r\n© The Royal Mint, 2014",
+  "related_types": [
+   {
+    "id": 53080,
+    "title": "1 Pound - Elizabeth II (4th portrait; Flax and Shamrock)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   },
+   {
+    "id": 242436,
+    "title": "1 Pound - Elizabeth II (Flax and Shamrock; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   },
+   {
+    "id": 242437,
+    "title": "1 Pound - Elizabeth II (Flax and Shamrock; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1284a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J34"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "233647": {
+  "id": 233647,
+  "url": "https://es.numista.com/233647",
+  "title": "1 Pound - Elizabeth II (Thistle and Bluebell; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2014,
+  "max_year": 2014,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2014\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff1a7782213.85151593-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff1a7782213.85151593-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "reverse": {
+   "engravers": [
+    "Timothy Noad"
+   ],
+   "description": "Emblemas florales de Escocia, un cardo y una campanilla juntos, denominación debajo.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff1a7bc7ab8.23298148-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f3ff1a7bc7ab8.23298148-180.jpg",
+   "picture_copyright": "germalor"
+  },
+  "series": "Floral Emblems",
+  "commemorated_topic": "Escocia",
+  "comments": "El cuarto y último emblema floral de Timothy Noad, los otros son el roble y la rosa para Inglaterra, el lino y el trébol para Irlanda del Norte y el cardo y el campanilla para Escocia.<br /><br />\r\nLanzada como parte de las series anuales de plata, así como individualmente (1.540 ventas), la moneda también se acuñó en níquel-latón, plata piedfort y oro proof.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f9b1018d1bfe.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f9b1018d1bfe.jpg\" alt=\"\" width=\"200\" height=\"176\" /></a><a href=\"https://en.numista.com/catalogue/images/5f9b10249d6de.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f9b10249d6de.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2014",
+  "related_types": [
+   {
+    "id": 53081,
+    "title": "1 Pound - Elizabeth II (4th portrait; Thistle and Bluebell)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   },
+   {
+    "id": 242433,
+    "title": "1 Pound - Elizabeth II (Thistle and Bluebell; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   },
+   {
+    "id": 242434,
+    "title": "1 Pound - Elizabeth II (Thistle and Bluebell; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2014,
+    "maxYear": 2014
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J35"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "NEMO ME IMPUNE LACESSIT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "233652": {
+  "id": 233652,
+  "url": "https://es.numista.com/233652",
+  "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2015,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Jody Clark"
+   ],
+   "description": "Quinto retrato coronado de la Reina Isabel II a la derecha, portando la Diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II·DEI·GRA·REG·FID·DEF·2015·\r\nJ.C",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf44a9572b4.06314556-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf44a9572b4.06314556-180.jpg",
+   "picture_copyright": "The Royal Mint, 2015"
+  },
+  "reverse": {
+   "engravers": [
+    "Timothy Noad"
+   ],
+   "description": "Una reelaboración de las Armas Reales con un escudo coronado y cuartelado en el centro. El escudo está sostenido por un león inglés coronado a la izquierda y un unicornio escocés a la derecha. Debajo figuran la rosa, el cardo, el trébol y el puerro.",
+   "lettering": "HONI SOIT QUI MAL Y PENSE\r\nDIEU ET MON DROIT\r\nONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf44b3d4ad8.01760375-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf44b3d4ad8.01760375-180.jpg",
+   "picture_copyright": "The Royal Mint, 2015"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "REINO UNIDO",
+  "comments": "El reverso de Timothy Noad es una reelaboración contemporánea del diseño tradicional de las Armas Reales, que se vio por última vez en su versión anterior en las monedas de 1 £ acuñadas en metal común en 1983, 1993, 1998, 2003, 2008 y 2013, cuyo reverso fue diseñado por Eric Sewell. La moneda también se acuñó en níquel-latón, plata piedfort y oro proof. Límite de emisión: 3.500 unidades.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f88c2504badd.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f88c2504badd.jpg\" alt=\"\" width=\"191\" height=\"250\" /></a><br />\r\n© The Royal Mint, 2015",
+  "related_types": [
+   {
+    "id": 71494,
+    "title": "1 Pound - Elizabeth II (5th portrait; Royal Arms)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 240701,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   },
+   {
+    "id": 240698,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2015,
+    "maxYear": 2015
+   }
+  ],
+  "tags": [
+   "Gato o felino",
+   "Animal fantástico",
+   "Corona",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1341a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J37"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
    }
   ],
   "category": "coin",
@@ -38290,6 +40249,196 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "26098": {
+  "id": 26098,
+  "url": "https://es.numista.com/26098",
+  "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1995,
+  "max_year": 1995,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II   D·G·REG·F·D·1995 \r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf9e615ede3.79595386-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf9e615ede3.79595386-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Un dragón galés pasante sobre la denominación",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f04f8e03800b6.77315240-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f04f8e03800b6.77315240-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Gales",
+  "comments": "El segundo de los cuatro emblemas heráldicos de Norman Sillman, emitidos individualmente y como parte de la serie Anual de Plata, y más tarde como serie de 4 monedas. La moneda también se acuñó en níquel-latón y plata piedfort. Límite de emisión: 40.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/607de58f87086.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/607de58f87086.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><br /><br />\r\nEmitida como parte de la colección de una libra 1994 - 1997<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb17f4e5839f.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb17f4e5839f.jpg\" alt=\"\" width=\"200\" height=\"209\" /></a><br /><br />\r\nEn 2000 se emitió una segunda edición de esta moneda con el cuarto retrato de Rank-Broadley en el anverso.",
+  "related_types": [
+   {
+    "id": 61620,
+    "title": "1 Pound - Elizabeth II (Scottish Lion; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   },
+   {
+    "id": 2577,
+    "title": "1 Pound - Elizabeth II (3rd portrait; Welsh Dragon)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1995,
+    "maxYear": 1995
+   },
+   {
+    "id": 100860,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1995,
+    "maxYear": 1995
+   },
+   {
+    "id": 43941,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1996,
+    "maxYear": 1996
+   },
+   {
+    "id": 62663,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1997,
+    "maxYear": 1997
+   },
+   {
+    "id": 19420,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   }
+  ],
+  "tags": [
+   "Animal fantástico"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "969a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J10"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "PLEIDIOL WYF I'M GWLAD",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "26190": {
   "category": "coin",
@@ -53352,6 +55501,357 @@
    "text": "2 Roubles"
   },
   "weight": 17
+ },
+ "30967": {
+  "id": 30967,
+  "url": "https://es.numista.com/30967",
+  "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2001,
+  "max_year": 2001,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2001\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5e9027d732cb49.60080758-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5e9027d732cb49.60080758-180.jpg",
+   "picture_copyright": "M J Hughes Coins",
+   "picture_copyright_url": "https://mjhughescoins.com/"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Una cruz celta cargada en el centro con un Anulet en el que hay una flor Pimpinela y en el conjunto un antiguo Torque, denominación debajo.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5e9027d7ada488.27560160-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5e9027d7ada488.27560160-180.jpg",
+   "picture_copyright": "M J Hughes Coins",
+   "picture_copyright_url": "https://mjhughescoins.com/"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Irlanda del Norte",
+  "comments": "El emblema heráldico de Norman Sillman del reverso \"Cruz celta\" se introdujo originalmente en 1996 con el tercer retrato de Maklouf en el anverso.<br /><br />\r\nLa moneda se emitió individualmente (límite global de emisión: 25.000 unidades), mientras que el diseño también se acuñó en latón niquelado y plata proof piedfort. También se emitió una prueba de plata esmerilada en el reverso.<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#16</span> <span style=\"font-style:italic;\">Regular Proof:</span> Emitida individualmente con un límite de 23.000 ejemplares.<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#16A</span> Prueba esmerilada inversa <span style=\"font-style:italic;\">:</span> Tirada individual limitada a 2.000 ejemplares.<br /><br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb44932ec3cc.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb44932ec3cc.jpg\" alt=\"\" width=\"200\" height=\"199\" /></a> <a href=\"https://en.numista.com/catalogue/images/5eb44918ea6ce.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb44918ea6ce.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/6075ae493fe39.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6075ae493fe39.jpg\" alt=\"\" width=\"128\" height=\"250\" /></a><br /><br />\r\nEn 2008 se emitió una tercera edición con baño de oro selectivo para celebrar los 25 años de la moneda de libra.",
+  "related_types": [
+   {
+    "id": 43941,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1996,
+    "maxYear": 1996
+   },
+   {
+    "id": 1395,
+    "title": "1 Pound - Elizabeth II (4th portrait; Celtic Cross)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 108771,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 68356,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Flor",
+   "Cruz"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1013a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J16"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J16A"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "30968": {
+  "id": 30968,
+  "url": "https://es.numista.com/30968",
+  "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2002,
+  "max_year": 2002,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2002\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb44fb932d514.85959837-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb44fb932d514.85959837-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Tres leones pasantes en guardia sobre la denominación.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb44fb99e1376.78725063-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb44fb99e1376.78725063-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Inglaterra",
+  "comments": "El emblema heráldico de Norman Sillman de los \"Leones ingleses\" en el reverso se introdujo originalmente en 1996 con el tercer retrato de Maklouf en el anverso. La moneda se emitió individualmente (límite global de emisión: 25.000), mientras que el diseño también se acuñó en níquel bronce, plata proof piedfort y oro proof. También se emitió una prueba de plata esmerilada en el reverso.<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#J17</span> <span style=\"font-style:italic;\">Prueba regular:</span> Lanzada individualmente con un límite de emisión de 23.000 ejemplares.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60759473ec10d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60759473ec10d.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><br /><br />\r\n<span style=\"font-weight:bold;\">Sp#17A</span> Prueba esmerilada inversa <span style=\"font-style:italic;\">:</span> Tirada individual limitada a 2.000 ejemplares.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb44f8b9e898.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb44f8b9e898.jpg\" alt=\"\" width=\"200\" height=\"197\" /></a> <a href=\"https://en.numista.com/catalogue/images/5eb44f7ec9648.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb44f7ec9648.jpg\" alt=\"\" width=\"200\" height=\"197\" /></a><a href=\"https://en.numista.com/catalogue/images/60759525d77b4.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60759525d77b4.jpg\" alt=\"\" width=\"171\" height=\"250\" /></a><br /><br />\r\nEn 2008 se emitió una tercera edición con baño de oro selectivo para celebrar los 25 años de la moneda de una libra.",
+  "related_types": [
+   {
+    "id": 62663,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1997,
+    "maxYear": 1997
+   },
+   {
+    "id": 1394,
+    "title": "1 Pound - Elizabeth II (4th portrait; English Lions)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2002,
+    "maxYear": 2002
+   },
+   {
+    "id": 108772,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2002,
+    "maxYear": 2002
+   },
+   {
+    "id": 213747,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1030a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J17"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J17A"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "311723": {
   "id": 311723,
@@ -73612,6 +76112,165 @@
   },
   "weight": 62.42
  },
+ "43388": {
+  "id": 43388,
+  "url": "https://es.numista.com/43388",
+  "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1988,
+  "max_year": 1988,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II   D·G·REG·F·D·1988\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1b24be99511.31262918-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1b24be99511.31262918-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Derek Gorringe"
+   ],
+   "description": "Escudo real coronado sobre la denominación",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1b24c53dbf6.03745903-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb1b24c53dbf6.03745903-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "REINO UNIDO",
+  "comments": "Emitidos individualmente, aunque también acuñados en latón niquelado y piedfort plateado. Límite de emisión: 50.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/609469351377d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/609469351377d.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a>",
+  "related_types": [
+   {
+    "id": 7405,
+    "title": "1 Pound - Elizabeth II (3rd portrait; Crowned Royal Shield)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1988,
+    "maxYear": 1988
+   },
+   {
+    "id": 56362,
+    "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1988,
+    "maxYear": 1988
+   },
+   {
+    "id": 213699,
+    "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Gato o felino",
+   "Corona",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "954a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J6"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "434772": {
   "id": 434772,
   "url": "https://es.numista.com/434772",
@@ -74489,6 +77148,205 @@
    {
     "id": 24,
     "name": "Real Casa de la Moneda de Madrid"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "43941": {
+  "id": 43941,
+  "url": "https://es.numista.com/43941",
+  "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1996,
+  "max_year": 1996,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II   D·G·REG·F·D·1996\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/607a1377d8a2e4.33654980-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/607a1377d8a2e4.33654980-180.jpg",
+   "picture_copyright": "The Royal Mint, 1996"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Una cruz celta cargada en el centro con un anuleto en el que hay una flor de Pimpinela y, en su conjunto, un antiguo torque, denominación debajo.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/607a13787f84b1.03595872-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/607a13787f84b1.03595872-180.jpg",
+   "picture_copyright": "The Royal Mint, 1996"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Irlanda del Norte",
+  "comments": "El tercero de los cuatro emblemas heráldicos de Norman Sillman, emitidos individualmente, así como en la serie de plata de 1996 y más tarde como serie de 4 monedas, la moneda también fue acuñada en níquel-latón y plata piedfort. Límite de emisión: 40.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/607a1339e120e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/607a1339e120e.jpg\" alt=\"\" width=\"200\" height=\"238\" /></a><br />\r\n© The Royal Mint, 1996<br /><br />\r\nEn 2001 se emitió una segunda edición de esta moneda con el cuarto retrato de Rank-Broadley en el anverso. Mientras que una tercera edición con baño de oro selectivo se emitió en 2008 para celebrar los 25 años de la moneda de libra.<br /><br />\r\nEmitida como parte de la Colección de una libra 1994 - 1997<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb170647dfee.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb170647dfee.jpg\" alt=\"\" width=\"200\" height=\"209\" /></a><br /><br />\r\nEmitida como parte de la colección de las bodas de plata de 1996, que celebraba los 25 años de la decimalización con un límite de emisión de: 15,000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb171a7d9c09.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb171a7d9c09.jpg\" alt=\"\" width=\"200\" height=\"223\" /></a>",
+  "related_types": [
+   {
+    "id": 61620,
+    "title": "1 Pound - Elizabeth II (Scottish Lion; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   },
+   {
+    "id": 26098,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1995,
+    "maxYear": 1995
+   },
+   {
+    "id": 1390,
+    "title": "1 Pound - Elizabeth II (3rd portrait; Celtic Cross)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1996,
+    "maxYear": 1996
+   },
+   {
+    "id": 100861,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1996,
+    "maxYear": 1996
+   },
+   {
+    "id": 62663,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1997,
+    "maxYear": 1997
+   },
+   {
+    "id": 30967,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 68356,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Flor",
+   "Cruz"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "972a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J11"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
    }
   ],
   "category": "coin",
@@ -77521,6 +80379,178 @@
   ],
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
+ },
+ "45414": {
+  "id": 45414,
+  "url": "https://es.numista.com/45414",
+  "title": "1 Pound - Elizabeth II (Scottish Lion; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1999,
+  "max_year": 1999,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·1999\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf974351fc9.22375327-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf974351fc9.22375327-180.jpg",
+   "picture_copyright": "The Royal Mint, 1999"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Un león rampante dentro de una contra-floria de doble tesela sobre la denominación.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf974ce7f20.06101639-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf974ce7f20.06101639-180.jpg",
+   "picture_copyright": "The Royal Mint, 1999"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Escocia",
+  "comments": "El emblema heráldico de Norman Sillman del reverso \"León escocés\" se introdujo originalmente en 1994 con el tercer retrato de Maklouf en el anverso. Emitida individualmente, también se emitió una prueba de plata esmerilada en el reverso. Este diseño también se acuñó en latón niquelado y plata piedfort.<br /><br />\r\n<span style=\"font-weight:bold;\">Sp#J14</span> <span style=\"font-style:italic;\">Prueba normal:</span> Emitida individualmente con un límite de 23.000 ejemplares.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6075eb0b2d2e3.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6075eb0b2d2e3.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><br />\r\n<span style=\"font-weight:bold;\">Sp#J14A</span> Prueba <span style=\"font-style:italic;\">esmerilada inversa:</span> Emitida como parte de un juego de 2 monedas que incluía la prueba de plata esmerilada en reverso del Dragón de Gales de 2000. Límite de emisión: 2.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb4563ad19fb.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb4563ad19fb.jpg\" alt=\"\" width=\"200\" height=\"228\" /></a> <a href=\"https://en.numista.com/catalogue/images/5eb456832782b.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb456832782b.jpg\" alt=\"\" width=\"200\" height=\"201\" /></a> <a href=\"https://en.numista.com/catalogue/images/5eb456758678d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb456758678d.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br /><br />\r\nEn 2008 se emitió una tercera edición con baño de oro selectivo para celebrar los 25 años de la moneda de libra.",
+  "related_types": [
+   {
+    "id": 61620,
+    "title": "1 Pound - Elizabeth II (Scottish Lion; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   },
+   {
+    "id": 10609,
+    "title": "1 Pound - Elizabeth II (4th portrait; Scottish Lion)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1999,
+    "maxYear": 1999
+   },
+   {
+    "id": 108716,
+    "title": "1 Pound - Elizabeth II (Scottish Lion; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1999,
+    "maxYear": 1999
+   },
+   {
+    "id": 19420,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2000,
+    "maxYear": 2000
+   }
+  ],
+  "tags": [
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "998a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J14"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J14A"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "NEMO ME IMPUNE LACESSITT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "45416": {
   "id": 45416,
@@ -83782,6 +86812,213 @@
   },
   "weight": 31.107
  },
+ "45979": {
+  "id": 45979,
+  "url": "https://es.numista.com/45979",
+  "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1998,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·1998\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5efb792d988a04.69064861-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5efb792d988a04.69064861-180.jpg",
+   "picture_copyright": "The Royal Mint, 1998"
+  },
+  "reverse": {
+   "engravers": [
+    "Eric Sewell"
+   ],
+   "description": "Armas Reales con partidarios encima de la denominación.",
+   "lettering": "HONI SOIT QUI MAL Y PENSE\r\nDIEU ET MON DROIT\r\nONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5efb792e4b4da1.99280939-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5efb792e4b4da1.99280939-180.jpg",
+   "picture_copyright": "The Royal Mint, 1998"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "REINO UNIDO",
+  "comments": "Esta es la tercera vez que el diseño del reverso de las \"Armas Reales\" de Eric Sewell aparece en la moneda de 1 libra. Se utilizó originalmente en la primera ronda de la libra, emitida en 1983, junto con el segundo retrato de S.M. la Reina, obra de Arnold Machin, y luego apareció en la emisión de 1993, junto con el tercer retrato de S.M. la Reina, obra de Raphael Maklouf.<br /><br />\r\nLa de 1998 se emitió individualmente, aunque también se acuñó en níquel-latón y plata piedfort.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/607732d4e8961.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/607732d4e8961.jpg\" alt=\"\" width=\"200\" height=\"212\" /></a><br />\r\n© The Royal Mint, 1998<br /><br />\r\nLa acuñación de 2003 se emitió individualmente, a pesar de que era el vigésimo aniversario de la moneda de 1 libra esterlina y no se lanzó ninguna emisión especial; el diseño también se acuñó en níquel-latón y plata piedfort.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6077335bd421b.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6077335bd421b.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><br />\r\n© The Royal Mint, 2003<br /><br />\r\nLa acuñación de 2008 se emitió para conmemorar el cambio al nuevo diseño del escudo real, que se emitió tanto individualmente como en el juego emblemas de Gran Bretaña, mientras que la prueba de plata con realce dorado selectivo se acuñó para conmemorar el 25 aniversario de la moneda de 1 £. El diseño también se acuñó en pruebas de oro y pruebas de platino.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60773787b55d6.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60773787b55d6.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><a href=\"https://en.numista.com/catalogue/images/5efb77387cbc5.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5efb77387cbc5.jpg\" alt=\"\" width=\"200\" height=\"235\" /></a><br /><br />\r\nLa acuñación de 2013 se realizó en un juego de tres monedas para conmemorar el 30º aniversario de la moneda de 1 £, junto con el diseño del Escudo Real Coronado de Derek Gorringe y el diseño del Escudo Real de Matthew Dent. También se acuñó en oro proof.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5ee75ce3ee1e3.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5ee75ce3ee1e3.jpg\" alt=\"\" width=\"200\" height=\"238\" /></a><br />\r\nLímite de emisión 2003: 25.000<br />\r\nLímite de emisión en 2008: 30.000<br />\r\nLímite de emisión en 2013: 3.500",
+  "related_types": [
+   {
+    "id": 56275,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   },
+   {
+    "id": 62662,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1993,
+    "maxYear": 1993
+   },
+   {
+    "id": 79144,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2003
+   },
+   {
+    "id": 7385,
+    "title": "1 Pound - Elizabeth II (4th portrait; Royal Arms)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2008
+   },
+   {
+    "id": 278185,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Platinum Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   },
+   {
+    "id": 195851,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   },
+   {
+    "id": 86010,
+    "title": "1 Pound - Elizabeth II (4th portrait; Royal Shield, Silver)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2015
+   },
+   {
+    "id": 222176,
+    "title": "1 Pound - Elizabeth II (Crowned Royal Shield; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "993a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J13"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "460404": {
   "id": 460404,
   "url": "https://es.numista.com/460404",
@@ -89310,6 +92547,170 @@
   ],
   "category": "exonumia",
   "type": "Monedas de colección"
+ },
+ "48576": {
+  "id": 48576,
+  "url": "https://es.numista.com/48576",
+  "title": "1 Pound - Elizabeth II (Oak and Rose; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2013\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf6765d38b2.41142285-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf6765d38b2.41142285-180.jpg",
+   "picture_copyright": "The London Coin Company",
+   "picture_copyright_url": "https://thelondoncoincompany.com"
+  },
+  "reverse": {
+   "engravers": [
+    "Timothy Noad"
+   ],
+   "description": "Emblemas florales de Inglaterra, una rama de roble bajo una rosa de inspiración Tudor",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf676bb29c4.85473575-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf676bb29c4.85473575-180.jpg",
+   "picture_copyright": "The London Coin Company",
+   "picture_copyright_url": "https://thelondoncoincompany.com"
+  },
+  "series": "Floral Emblems",
+  "commemorated_topic": "Inglaterra",
+  "comments": "El primero de los cuatro emblemas florales de Timothy Noad, los otros son el puerro y el narciso para Gales, el lino y el trébol para Irlanda del Norte y el cardo y el campanilla para Escocia.<br /><br />\r\nSe lanzó como parte de las series anuales de pruebas de plata (985 ventas), además de individualmente (1.858 ventas), así como en una serie de 2 monedas con el emblema floral de Gales (1.476 ventas), y también se acuñó en níquel-latón, plata piedfort y oro proof.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/624f28b019000.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/624f28b019000.jpg\" alt=\"\" width=\"200\" height=\"238\" /></a>",
+  "related_types": [
+   {
+    "id": 41303,
+    "title": "1 Pound - Elizabeth II (4th portrait; Oak and Rose)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 153929,
+    "title": "1 Pound - Elizabeth II (Oak and Rose; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 56037,
+    "title": "1 Pound - Elizabeth II (Leek and Daffodil; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 247095,
+    "title": "1 Pound - Elizabeth II (Oak and Rose; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1237a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J32"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "48672": {
   "category": "coin",
@@ -95637,6 +99038,324 @@
   },
   "weight": 26.73
  },
+ "56037": {
+  "id": 56037,
+  "url": "https://es.numista.com/56037",
+  "title": "1 Pound - Elizabeth II (Leek and Daffodil; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor.",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2013\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf56e177830.06649785-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf56e177830.06649785-180.jpg",
+   "picture_copyright": "The Royal Mint, 2013"
+  },
+  "reverse": {
+   "engravers": [
+    "Timothy Noad"
+   ],
+   "description": "Emblemas florales de Gales, un puerro y un narciso entrelazados, denominación debajo.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/62baf56ea946b0.21129514-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/62baf56ea946b0.21129514-180.jpg",
+   "picture_copyright": "The Royal Mint, 2013"
+  },
+  "series": "Floral Emblems",
+  "commemorated_topic": "Gales",
+  "comments": "El segundo de los cuatro emblemas florales de Timothy Noad, los otros son el Roble y la Rosa para Inglaterra, el Lino y el Trébol para Irlanda del Norte y el Cardo y el Campanilla para Escocia.<br /><br />\r\nSe lanzó como parte de las series anuales de pruebas de plata (985 ventas), además de individualmente (1.618 ventas), así como en una serie de 2 monedas con el emblema floral de Inglaterra (1.476 ventas), y también se acuñó en níquel-latón, plata piedfort y oro proof.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/624f288967e85.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/624f288967e85.jpg\" alt=\"\" width=\"200\" height=\"238\" /></a><a href=\"https://en.numista.com/catalogue/images/5fb59d6e0bcab.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5fb59d6e0bcab.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2013",
+  "related_types": [
+   {
+    "id": 48576,
+    "title": "1 Pound - Elizabeth II (Oak and Rose; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 41305,
+    "title": "1 Pound - Elizabeth II (4th portrait; Leek and Daffodil)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 246030,
+    "title": "1 Pound - Elizabeth II (Leek and Daffodil; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   },
+   {
+    "id": 246031,
+    "title": "1 Pound - Elizabeth II (Leek and Daffodil; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2013,
+    "maxYear": 2013
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1238a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J33"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "PLEIDIOL WYF I'M GWLAD",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "56275": {
+  "id": 56275,
+  "url": "https://es.numista.com/56275",
+  "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1983,
+  "max_year": 1983,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Arnold Machin"
+   ],
+   "description": "Segundo retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor",
+   "lettering": "ELIZABETH·II  D·G·REG·F·D·1983",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/609826cb4eacc4.17461033-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/609826cb4eacc4.17461033-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Eric Sewell"
+   ],
+   "description": "Armas Reales con partidarios, denominación debajo",
+   "lettering": "HONI SOIT QUI MAL Y PENSE\r\nDIEU ET MON DROIT\r\nONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/609826cc178352.12720503-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/609826cc178352.12720503-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "REINO UNIDO",
+  "comments": "La primera moneda redonda de una libra que sustituyó al antiguo billete de una libra. Emitida individualmente, aunque también se acuñó en níquel-latón y plata piedfort.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/609826c22057d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/609826c22057d.jpg\" alt=\"\" width=\"127\" height=\"250\" /></a><br /><br />\r\nEl diseño del reverso con las \"Armas Reales\" de Eric Sewell se utilizó cinco veces más en años posteriores: 1993, 1998, 2003, 2008 y 2013.",
+  "related_types": [
+   {
+    "id": 1389,
+    "title": "1 Pound - Elizabeth II (2nd portrait; Royal Arms)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   },
+   {
+    "id": 62662,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1993,
+    "maxYear": 1993
+   },
+   {
+    "id": 45979,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2013
+   }
+  ],
+  "tags": [
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "933a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J1"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "56316": {
   "id": 56316,
   "url": "https://es.numista.com/56316",
@@ -96489,6 +100208,546 @@
    {
     "id": 295,
     "name": "Empresa Cubana de Acuñaciones"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "56359": {
+  "id": 56359,
+  "url": "https://es.numista.com/56359",
+  "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1989,
+  "max_year": 1989,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II D·G·REG·F·D·1989\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60946547ba3887.30060975-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60946547ba3887.30060975-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Leslie Durbin"
+   ],
+   "description": "Cardo escocés rodeado por la Diadema Real sobre la denominación",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60946548578396.52040627-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60946548578396.52040627-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Royal Diadem series",
+  "commemorated_topic": "Escocia",
+  "comments": "Segunda edición de la primera moneda de una libra de la serie \"Royal Diadem\". Este diseño del reverso de Leslie Durbin se lanzó originalmente en 1984 con el anterior segundo retrato de Machin en el anverso. Emitida individualmente, aunque también se acuñó en níquel-latón y plata piedfort. Límite de emisión: 25.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60946528863df.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60946528863df.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a>",
+  "related_types": [
+   {
+    "id": 56382,
+    "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1984,
+    "maxYear": 1984
+   },
+   {
+    "id": 1388,
+    "title": "1 Pound - Elizabeth II (3rd portrait; Scottish Thistle)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1989,
+    "maxYear": 1989
+   },
+   {
+    "id": 34252,
+    "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1989,
+    "maxYear": 1989
+   },
+   {
+    "id": 213719,
+    "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "959a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J7"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "NEMO ME IMPUNE LACESSIT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "56382": {
+  "id": 56382,
+  "url": "https://es.numista.com/56382",
+  "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1984,
+  "max_year": 1984,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Arnold Machin"
+   ],
+   "description": "Segundo retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor",
+   "lettering": "ELIZABETH·II  D·G·REG·F·D·1984",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb196381367a7.50867963-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb196381367a7.50867963-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Leslie Durbin"
+   ],
+   "description": "Cardo escocés rodeado por una diadema real, denominación debajo",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5eb19638b2a887.43077660-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5eb19638b2a887.43077660-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Royal Diadem series",
+  "commemorated_topic": "Escocia",
+  "comments": "Primera moneda de una libra de la serie de la \"Diadema Real\". Emitida individualmente y posteriormente incluida en un juego de cuatro monedas, también se acuñó en níquel-latón y plata piedfort.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/609820d64b26d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/609820d64b26d.jpg\" alt=\"\" width=\"171\" height=\"250\" /></a><a href=\"https://en.numista.com/catalogue/images/5eb1961f0c734.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb1961f0c734.jpg\" alt=\"\" width=\"200\" height=\"223\" /></a><br /><br />\r\nEste diseño del reverso de Leslie Durbin se reeditó posteriormente en 1989 con el tercer retrato de Maklouf en el anverso. Límite de emisión: 50.000",
+  "related_types": [
+   {
+    "id": 1393,
+    "title": "1 Pound - Elizabeth II (2nd portrait; Scottish Thistle)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1984,
+    "maxYear": 1984
+   },
+   {
+    "id": 56388,
+    "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1984,
+    "maxYear": 1984
+   },
+   {
+    "id": 56384,
+    "title": "1 Pound - Elizabeth II (Welsh Leek; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1985,
+    "maxYear": 1990
+   },
+   {
+    "id": 56386,
+    "title": "1 Pound - Elizabeth II (Northern Irish Flax; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1986,
+    "maxYear": 1991
+   },
+   {
+    "id": 56383,
+    "title": "1 Pound - Elizabeth II (English Oak; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1987,
+    "maxYear": 1992
+   },
+   {
+    "id": 213719,
+    "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "934a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J2"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "NEMO ME IMPUNE LACESSIT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "56383": {
+  "id": 56383,
+  "url": "https://es.numista.com/56383",
+  "title": "1 Pound - Elizabeth II (English Oak; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1987,
+  "max_year": 1992,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II   D·G·REG·F·D·1992\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60809a6999f816.73852935-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60809a6999f816.73852935-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Leslie Durbin"
+   ],
+   "description": "Un roble enmarcando una representación de la Diadema Real sobre la denominación.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60809a6a3a1aa5.95905908-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60809a6a3a1aa5.95905908-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Royal Diadem series",
+  "commemorated_topic": "Inglaterra",
+  "comments": "En 1987, la Royal Mint acuñó la cuarta y última moneda de una libra de la serie \"Royal Diadem\". Emitida individualmente y como parte de la colección de una libra de 1984-1987, este diseño de 1987 también se acuñó en níquel-latón y plata piedfort. Límite de emisión: 50.000 unidades.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60809a1d81f82.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60809a1d81f82.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><a href=\"https://en.numista.com/catalogue/images/5eb19ab81d408.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb19ab81d408.jpg\" alt=\"\" width=\"200\" height=\"223\" /></a><br /><br />\r\nEste diseño del reverso de Leslie Durbin se repitió una vez más en una segunda edición en 1992 y se emitió individualmente, aunque también se acuñó en níquel-latón. Límite de emisión: 25.000 ejemplares.<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60809a2e51a61.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60809a2e51a61.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a><br />\r\n© The Royal Mint, 1987",
+  "related_types": [
+   {
+    "id": 56382,
+    "title": "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1984,
+    "maxYear": 1984
+   },
+   {
+    "id": 56384,
+    "title": "1 Pound - Elizabeth II (Welsh Leek; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1985,
+    "maxYear": 1990
+   },
+   {
+    "id": 56386,
+    "title": "1 Pound - Elizabeth II (Northern Irish Flax; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1986,
+    "maxYear": 1991
+   },
+   {
+    "id": 55944,
+    "title": "1 Pound - Elizabeth II (English Oak; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1987,
+    "maxYear": 1987
+   },
+   {
+    "id": 1392,
+    "title": "1 Pound - Elizabeth II (3rd portrait; English Oak)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1987,
+    "maxYear": 1992
+   },
+   {
+    "id": 213735,
+    "title": "1 Pound - Elizabeth II (English Oak; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Árbol"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "948a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J5"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
    }
   ],
   "category": "coin",
@@ -103204,6 +107463,538 @@
    "text": "2 Roubles"
   },
   "weight": 17
+ },
+ "62630": {
+  "id": 62630,
+  "url": "https://es.numista.com/62630",
+  "title": "1 Pound - Elizabeth II (Forth Bridge; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2004,
+  "max_year": 2004,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Ian Rank-Broadley"
+   ],
+   "description": "Cuarto retrato coronado de la reina Isabel II a la derecha, con la tiara de las Niñas de Gran Bretaña e Irlanda, leyenda alrededor",
+   "lettering": "ELIZABETH·II·D·G REG·F·D·2004\r\nIRB",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6070809160fb56.85754785-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6070809160fb56.85754785-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Edwina Ellis"
+   ],
+   "description": "Representación del puente del ferrocarril de Forth dentro de un borde de vías férreas.",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60708092234dc0.25491598-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60708092234dc0.25491598-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Regional Bridge series",
+  "commemorated_topic": "Escocia",
+  "comments": "(en) <p>The first of four Edwina Ellis bridge designs, the Forth Railway Bridge is a cantilever railway bridge over the Firth of Forth in the east of Scotland, 9 miles (14 km) west of Edinburgh city centre. It is considered an iconic structure and a symbol of Scotland (having been voted Scotland's greatest man-made wonder in 2016) and is a UNESCO World Heritage Site.<br><br>The coin was issued individually as well as in the 2004 family silver set and later as part of 4-coin bridge set, the coin was also struck in brass-nickel, silver piedfort and gold proof. Issue Limit: 25,000<br><a href=\"https://en.numista.com/catalogue/images/6070805e5e5e0.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6070805e5e5e0.jpg\" alt=\"\"></a><a href=\"https://en.numista.com/catalogue/images/6a03e44506ef0.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6a03e44506ef0.jpg\"></a><br><br>A second silver edition with selective gold plating was issued in 2008 to celebrate 25 years of the pound coin.</p>",
+  "related_types": [
+   {
+    "id": 881,
+    "title": "1 Pound - Elizabeth II (4th portrait; Forth Bridge)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   },
+   {
+    "id": 284534,
+    "title": "1 Pound - Elizabeth II (Forth Bridge; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2004,
+    "maxYear": 2004
+   },
+   {
+    "id": 216158,
+    "title": "1 Pound - Elizabeth II (Forth Bridge; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2004,
+    "maxYear": 2008
+   },
+   {
+    "id": 213752,
+    "title": "1 Pound - Elizabeth II (Forth Bridge; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Puente"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1048a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J18"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con un motivo decorativo que simboliza puentes y caminos"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "62662": {
+  "id": 62662,
+  "url": "https://es.numista.com/62662",
+  "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1993,
+  "max_year": 1993,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II   D·G·REG·F·D·1993\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/608093110a3be4.07450261-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/608093110a3be4.07450261-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "reverse": {
+   "engravers": [
+    "Eric Sewell"
+   ],
+   "description": "Escudo de Armas Reales sobre la denominación.",
+   "lettering": "HONI SOIT QUI MAL Y PENSE\r\nDIEU ET MON DROIT\r\nONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/60809311a94560.70108367-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/60809311a94560.70108367-180.jpg",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "REINO UNIDO",
+  "comments": "Emitida individualmente, esta fue la segunda vez que se utilizó el diseño del reverso de las \"Armas Reales\" de Eric Sewell, que también apareció en 1983, 1998, 2003, 2008 y 2013. Este diseño también se acuñó en níquel-latón y plata piedfort. Límite de emisión: 25.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/60809309ae4bd.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/60809309ae4bd.jpg\" alt=\"\" width=\"188\" height=\"250\" /></a>",
+  "related_types": [
+   {
+    "id": 56275,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1983,
+    "maxYear": 1983
+   },
+   {
+    "id": 1384,
+    "title": "1 Pound - Elizabeth II (3rd portrait; Royal Arms)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1993,
+    "maxYear": 1993
+   },
+   {
+    "id": 100722,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1993,
+    "maxYear": 1993
+   },
+   {
+    "id": 45979,
+    "title": "1 Pound - Elizabeth II (Royal Arms; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1998,
+    "maxYear": 2013
+   }
+  ],
+  "tags": [
+   "Gato o felino",
+   "Animal fantástico",
+   "Corona",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "964a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J8"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "62663": {
+  "id": 62663,
+  "url": "https://es.numista.com/62663",
+  "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 1997,
+  "max_year": 1997,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "thickness": 3.15,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Raphael David Maklouf"
+   ],
+   "description": "Tercer retrato coronado de la reina Isabel II a la derecha, con la diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II   D·G·REG·F·D·1997\r\nRDM",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6078af868ee848.17435868-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6078af868ee848.17435868-180.jpg",
+   "picture_copyright": "The Royal Mint, 1997"
+  },
+  "reverse": {
+   "engravers": [
+    "Norman Sillman"
+   ],
+   "description": "Tres leones pasantes en guardia sobre la denominación",
+   "lettering": "ONE POUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6078af872ca6c8.30279721-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6078af872ca6c8.30279721-180.jpg",
+   "picture_copyright": "The Royal Mint, 1997"
+  },
+  "series": "Heraldic Emblems series",
+  "commemorated_topic": "Inglaterra",
+  "comments": "La moneda, cuarto y último emblema heráldico de Norman Sillman, se emitió individualmente y en la serie Annual Silver Proof. Límite de emisión: 30.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/6078af4e891fc.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6078af4e891fc.jpg\" alt=\"\" width=\"200\" height=\"220\" /></a><a href=\"https://en.numista.com/catalogue/images/6078af58ab757.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6078af58ab757.jpg\" alt=\"\" width=\"177\" height=\"250\" /></a><br />\r\n© The Royal Mint, 1997<br /><br />\r\nEn 2002 se emitió una segunda edición de esta moneda con el cuarto retrato de Rank-Broadley en el anverso. En 2008 se emitió una tercera edición con baño de oro selectivo para celebrar los 25 años de la moneda de libra.<br /><br />\r\nEmitida como parte de la Colección de una libra 1994 - 1997<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5eb18ec5d9d5a.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5eb18ec5d9d5a.jpg\" alt=\"\" width=\"200\" height=\"209\" /></a>",
+  "related_types": [
+   {
+    "id": 61620,
+    "title": "1 Pound - Elizabeth II (Scottish Lion; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1994,
+    "maxYear": 1994
+   },
+   {
+    "id": 26098,
+    "title": "1 Pound - Elizabeth II (Welsh Dragon; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1995,
+    "maxYear": 1995
+   },
+   {
+    "id": 43941,
+    "title": "1 Pound - Elizabeth II (Celtic Cross; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1996,
+    "maxYear": 1996
+   },
+   {
+    "id": 1397,
+    "title": "1 Pound - Elizabeth II (3rd portrait; English Lions)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1997,
+    "maxYear": 1997
+   },
+   {
+    "id": 77546,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 1997,
+    "maxYear": 1997
+   },
+   {
+    "id": 30968,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2002,
+    "maxYear": 2002
+   },
+   {
+    "id": 213747,
+    "title": "1 Pound - Elizabeth II (English Lions; Silver Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2008,
+    "maxYear": 2008
+   }
+  ],
+  "tags": [
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "975a"
+   },
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J12"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "62888": {
   "id": 62888,
@@ -133045,6 +137836,161 @@
    "text": "30 euros"
   },
   "weight": 18
+ },
+ "87321": {
+  "id": 87321,
+  "url": "https://es.numista.com/87321",
+  "title": "1 Pound - Elizabeth II (Last Round Pound; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2016,
+  "max_year": 2016,
+  "ruler": [
+   {
+    "id": 275,
+    "name": "Isabel II",
+    "wikidata_id": "Q9682",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 libra",
+   "numeric_value": 1,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true,
+   "demonetization_date": "2017-10-15"
+  },
+  "size": 22.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Jody Clark"
+   ],
+   "description": "Quinto retrato coronado de la Reina Isabel II a la derecha, portando la Diadema de Estado de Jorge IV, leyenda alrededor.",
+   "lettering": "ELIZABETH II·DEI·GRA·REG·FID·DEF·2016·\r\nJ.C",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Elizabeth II Dei Gratia Regina Fidei Defensatrix",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f70cffda846a4.06612951-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f70cffda846a4.06612951-180.jpg",
+   "picture_copyright": "The Royal Mint, 2016"
+  },
+  "reverse": {
+   "engravers": [
+    "Gregory Cameron"
+   ],
+   "description": "Una corona en el centro de cuatro cuarteles que contienen un León, un Dragón, un Ciervo y un Unicornio, que representan las cuatro bestias heráldicas de los países constituyentes del Reino Unido.",
+   "lettering": "ONE\r\nGKC\r\nPOUND",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/5f70cffe462a82.17919172-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/5f70cffe462a82.17919172-180.jpg",
+   "picture_copyright": "The Royal Mint, 2016"
+  },
+  "commemorated_topic": "Última edición de la moneda redonda de una libra",
+  "comments": "En 2017 se lanzó una edición conmemorativa de la última moneda redonda de 1 libra esterlina antes de su sustitución por una de 12 caras. El diseñador, Gregory Cameron, es obispo de la Iglesia Anglicana de Gales. Se emitió una edición limitada de la moneda con un límite de 7.500 unidades.<br /><br />\r\nEmitida como parte de las series anuales de monedas de plata de 2016, así como individualmente (7 491 ventas), el diseño también se emitió en cobre-níquel, plata piedfort y oro proof. Límite de emisión: 11.000<br />\r\n<a href=\"https://en.numista.com/catalogue/images/5f70ccf58d904.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f70ccf58d904.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><a href=\"https://en.numista.com/catalogue/images/5f70cce1461f9.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5f70cce1461f9.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\n© The Royal Mint, 2016",
+  "related_types": [
+   {
+    "id": 79032,
+    "title": "1 Pound - Elizabeth II (5th portrait; Last Round Pound)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 87441,
+    "title": "1 Pound - Elizabeth II (Last Round Pound; Gold Proof)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   },
+   {
+    "id": 87361,
+    "title": "1 Pound - Elizabeth II (Last Round Pound; Silver Piedfort)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2016,
+    "maxYear": 2016
+   }
+  ],
+  "tags": [
+   "Gato o felino",
+   "Ciervo o cérvido",
+   "Animal fantástico"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 13,
+     "code": "Sp"
+    },
+    "number": "J38"
+   },
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "1377a"
+   }
+  ],
+  "weight": 9.5,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado con letras incusas",
+   "lettering": "DECUS ET TUTAMEN",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "88644": {
   "category": "coin",
