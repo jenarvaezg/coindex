@@ -12,6 +12,7 @@ import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.SILVER_SYMBOL
 import com.jenarvaezg.coindex.data.prices.priceBook
 import com.jenarvaezg.coindex.data.prices.toDomain
+import com.jenarvaezg.coindex.domain.AlbumSlot
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CatalogProgrammes
@@ -62,6 +63,7 @@ data class CollectionState(
     val albums: CatalogAlbums get() = collection.albums
     val programmeStandings: CatalogProgrammes get() = collection.programmeStandings
     val evidencedCatalogIds: Set<String> get() = collection.evidencedCatalogIds
+    val slots: List<AlbumSlot> get() = collection.slots
     val itemsByKey: Map<VariantKey, List<CollectedItem>> get() = collection.itemsByKey
     val ownGroupings: List<OwnGroupingView> get() = collection.ownGroupings
     val emissionLabels: Map<Long, String> get() = collection.emissionLabels

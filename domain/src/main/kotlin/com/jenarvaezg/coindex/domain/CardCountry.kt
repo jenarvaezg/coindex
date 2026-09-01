@@ -70,6 +70,28 @@ fun cardCountry(issuerCode: String?, numistaName: String?): String? =
     issuerCode?.let { code -> curedCountries[code] } ?: numistaName
 
 /**
+ * The country **a member** was struck for, which is not always its catalog's (#170).
+ *
+ * The member's own issuer code where the file declares one, and the catalog's otherwise — then the
+ * name: the member's own ficha first, and any sibling of the same issuer next, so a hole whose type
+ * has not reached the phone still paints under its country when another coin of that country already
+ * did. Both readings go through [cardCountry], so a card, a slot of the country axis and the país
+ * chip cannot disagree about how a country is spelled.
+ *
+ * It lives in the domain and not beside the axis that first needed it (#538): «what country is this
+ * casilla in» is a fact about the coin, and the shelf, the axis and the assembly all ask it.
+ */
+fun CollectionCatalog.countryOf(
+    member: CollectionCatalogMember,
+    typeMeta: TypeMetaIndex,
+): String? {
+    val code = issuerCodeOf(member)
+    val numistaName = member.numistaTypeId?.let { typeMeta[it]?.issuerName }
+        ?: typeMeta.values.firstOrNull { it.issuerCode == code }?.issuerName
+    return cardCountry(code, numistaName)
+}
+
+/**
  * Whether a label reads as the name of a country rather than as one of Numista's issuing entities.
  *
  * The two vices of that prose are the **period of validity** —«Haití (1804-presente)»— and the

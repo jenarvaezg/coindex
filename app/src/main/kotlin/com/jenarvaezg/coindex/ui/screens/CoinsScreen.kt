@@ -33,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
-import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
@@ -100,13 +99,6 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 fun CoinsScreen(
     state: CollectionState,
     shelf: CoinsShelf,
-    /**
-     * The curated plates, read here for the years of their casillas (#550).
-     *
-     * Coins is still built from [CollectionState] alone — no row is born of a catalog — but a year
-     * chip has to answer for the ghost the axis paints, and that ghost is curated knowledge.
-     */
-    catalogs: List<CollectionCatalog>,
     /** Every curated `short_name`, so a new box cannot be baptised one of them (ADR 0021 §4). */
     curatedNames: Set<String>,
     onNarrow: (CoinsShelf) -> Unit,
@@ -128,9 +120,9 @@ fun CoinsScreen(
     modifier: Modifier = Modifier,
 ) {
     // Recomputed only when the collection changes: 192 rows joined against the type cache is work
-    // the screen does not owe on every keystroke. The plates are walked in the same memo and for the
-    // same reason — the years of their casillas are part of what a row answers to (#550).
-    val rows = remember(state, catalogs) { coinRows(state, slotYears(state, catalogs)) }
+    // the screen does not owe on every keystroke. The casillas the assembly resolved are indexed in
+    // the same memo — the years of a plate are part of what a row answers to (#550).
+    val rows = remember(state) { coinRows(state, slotYears(state)) }
     // Saved across a rotation and never persisted (ADR 0021 §1): reopening the app with a stale
     // word here and half the collection hidden reads as an app that has lost something.
     var query by rememberSaveable { mutableStateOf("") }

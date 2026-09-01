@@ -1,14 +1,9 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.domain.AlbumSlot
 import com.jenarvaezg.coindex.domain.AssembledCollection
-import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.CollectionCatalog
-import com.jenarvaezg.coindex.domain.CollectionCatalogMember
-import com.jenarvaezg.coindex.domain.Finish
-import com.jenarvaezg.coindex.domain.Metal
-import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.TypeMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,6 +12,10 @@ import kotlin.test.assertTrue
 
 /**
  * The year axis: three states, Gregorian placement, no Hijri stretch (ADR 0026 §9).
+ *
+ * The ghosts come from the casillas the assembly resolved (#538): which plate has evidence and what
+ * year one of its casillas stands on is asserted in `AlbumSlotsTest`, and what is left here is the
+ * arc — what is a coin, what is a ghost and what is bare cardboard between the two ends.
  */
 class YearAxisTest {
     @Test
@@ -45,9 +44,7 @@ class YearAxisTest {
                     QIRSH to meta(QIRSH, 1956),
                     MODERN to meta(MODERN, 1960),
                 ),
-                evidenced = emptySet(),
             ),
-            catalogs = emptyList(),
         )
 
         assertEquals(1899, model.cells.first().year)
@@ -59,22 +56,12 @@ class YearAxisTest {
 
     @Test
     fun `a year the plate names and the collector lacks is a ghost, an unnamed gap is bare cardboard`() {
-        val catalogs = listOf(
-            dateRun(
-                id = "fuertes",
-                issuer = "venezuela",
-                typeId = TYPE_A,
-                years = 1876..1878,
-            ),
-        )
         val model = yearAxis(
             state = state(
                 items = listOf(item(1, TYPE_A, year = 1876)),
                 typeMeta = mapOf(TYPE_A to meta(TYPE_A, 1876), TYPE_B to meta(TYPE_B, 1878)),
-                evidenced = setOf("fuertes"),
-                catalogs = catalogs,
+                slots = dateRun("fuertes", TYPE_A, 1876..1878, owned = setOf(1876)),
             ),
-            catalogs = catalogs,
         )
 
         assertEquals(1876, model.cells.first().year)
@@ -93,9 +80,7 @@ class YearAxisTest {
                     item(2, TYPE_B, year = 1876),
                 ),
                 typeMeta = mapOf(TYPE_A to meta(TYPE_A, 1813), TYPE_B to meta(TYPE_B, 1876)),
-                evidenced = emptySet(),
             ),
-            catalogs = emptyList(),
         )
 
         assertEquals(1813, model.cells.first().year)
@@ -114,9 +99,7 @@ class YearAxisTest {
                     CollectedItem(id = 1, quantity = 1, typeId = TYPE_A, issueYear = null),
                 ),
                 typeMeta = mapOf(TYPE_A to meta(TYPE_A, 1929)),
-                evidenced = emptySet(),
             ),
-            catalogs = emptyList(),
         )
 
         assertEquals(1, model.ownedYears)
@@ -129,9 +112,6 @@ class YearAxisTest {
         // The denarius inherits year 270; the sheet's calendar stays the dated Thaler at 1780 and
         // the plate at 1876-1878. The Roman coin opens a front island under its country, not 1,700
         // years of bare cardboard before the first modern cell.
-        val catalogs = listOf(
-            dateRun(id = "later", issuer = "france", typeId = TYPE_B, years = 1876..1878),
-        )
         val model = yearAxis(
             state = state(
                 items = listOf(
@@ -147,10 +127,8 @@ class YearAxisTest {
                     ),
                     TYPE_B to meta(TYPE_B, 1780),
                 ),
-                evidenced = setOf("later"),
-                catalogs = catalogs,
+                slots = dateRun("later", TYPE_B, 1876..1878),
             ),
-            catalogs = catalogs,
         )
 
         assertEquals(1780, model.cells.first().year)
@@ -174,9 +152,7 @@ class YearAxisTest {
                     TYPE_A to meta(TYPE_A, 1813),
                     TYPE_B to meta(TYPE_B, 1780),
                 ),
-                evidenced = emptySet(),
             ),
-            catalogs = emptyList(),
         )
 
         assertTrue(model.islands.isEmpty())
@@ -187,17 +163,12 @@ class YearAxisTest {
     fun `a year the collector owns is never painted empty even when no plate names it`() {
         // The prototype bug: eleven owned years painted as empty because placement read the
         // wrong year. Here an owned year with no slot must still be Coin, not Bare.
-        val catalogs = listOf(
-            dateRun(id = "later", issuer = "france", typeId = TYPE_B, years = 1876..1878),
-        )
         val model = yearAxis(
             state = state(
                 items = listOf(item(1, TYPE_A, year = 1790)),
                 typeMeta = mapOf(TYPE_A to meta(TYPE_A, 1790)),
-                evidenced = setOf("later"),
-                catalogs = catalogs,
+                slots = dateRun("later", TYPE_B, 1876..1878),
             ),
-            catalogs = catalogs,
         )
 
         // 1790 is owned and outside the plate; it opens the arc and must be Coin.
@@ -240,26 +211,36 @@ class YearAxisTest {
         state = state(
             items = listOf(item(1, TYPE_A, year = 1898), item(2, TYPE_B, year = 2002)),
             typeMeta = mapOf(TYPE_A to meta(TYPE_A, 1898), TYPE_B to meta(TYPE_B, 2002)),
-            evidenced = emptySet(),
         ),
-        catalogs = emptyList(),
     )
 
     private fun state(
         items: List<CollectedItem>,
         typeMeta: Map<Int, TypeMeta>,
-        evidenced: Set<String>,
-        catalogs: List<CollectionCatalog> = emptyList(),
+        slots: List<AlbumSlot> = emptyList(),
     ) = CollectionState(
-        AssembledCollection(
-            items = items,
-            typeMeta = typeMeta,
-            // The albums the assembly carries (#537): a slot of this axis is a casilla of the plate
-            // the card opens, and both read the same album.
-            albums = CatalogAlbums.over(catalogs, items),
-            evidencedCatalogIds = evidenced,
-        ),
+        // The casillas the assembly carries (#538): a ghost of this axis is a casilla of the plate
+        // the card opens, and both read the same one.
+        AssembledCollection(items = items, typeMeta = typeMeta, slots = slots),
     )
+
+    /** The casillas of a date run as the assembly hands them over: one per year, of one type. */
+    private fun dateRun(
+        catalogId: String,
+        typeId: Int,
+        years: IntRange,
+        owned: Set<Int> = emptySet(),
+    ) = years.map { year ->
+        AlbumSlot(
+            catalogId = catalogId,
+            memberId = "$year",
+            typeId = typeId,
+            owned = year in owned,
+            quantity = if (year in owned) 1 else 0,
+            country = "Venezuela",
+            year = year,
+        )
+    }
 
     private fun item(id: Long, typeId: Int, year: Int) = CollectedItem(
         id = id,
@@ -269,34 +250,6 @@ class YearAxisTest {
     )
 
     private fun meta(id: Int, minYear: Int) = TypeMeta(id = id, minYear = minYear)
-
-    private fun dateRun(
-        id: String,
-        issuer: String,
-        typeId: Int,
-        years: IntRange,
-    ) = CollectionCatalog(
-        schemaVersion = 2,
-        id = id,
-        name = id,
-        shortName = id,
-        family = id,
-        weightMillioz = 804,
-        finish = null,
-        metal = Metal.Silver,
-        issuerCode = issuer,
-        seriesStatus = SeriesStatus.Closed,
-        source = "test",
-        updatedAt = "2026-08-10",
-        members = years.map { year ->
-            CollectionCatalogMember(
-                id = "$year",
-                label = "$year",
-                year = year,
-                numistaTypeId = typeId,
-            )
-        },
-    )
 
     companion object {
         private const val DIRHAM = 1

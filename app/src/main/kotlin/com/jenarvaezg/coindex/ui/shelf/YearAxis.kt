@@ -1,7 +1,6 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.cardCountry
 import com.jenarvaezg.coindex.domain.placementYear
 
@@ -93,7 +92,6 @@ data class YearAxisModel(
  */
 fun yearAxis(
     state: CollectionState,
-    catalogs: List<CollectionCatalog>,
     /** Catalog ids that survive the shelf, or null for every evidenced catalog. */
     keptCatalogIds: Set<String>? = null,
     /** Owned pieces that survive the shelf (by row id), or null for every piece. */
@@ -132,8 +130,8 @@ fun yearAxis(
 
     // The same walk the shelf of Monedas answers with (#550): the ghost this paints and the coin
     // that ghost opens come from one reading, so a seat cannot lead to a page that knows nothing
-    // about the plate that drew it. It reads the assembly's albums (#537) like everyone else.
-    val slotYears = slotYears(state, catalogs, keptCatalogIds).years
+    // about the plate that drew it. It reads the casillas of the assembly (#538) like everyone else.
+    val slotYears = slotYears(state, keptCatalogIds).years
 
     val rangeYears = (datedYears + slotYears).ifEmpty {
         // Only inherited years and no slots: the calendar is those years (no island needed).

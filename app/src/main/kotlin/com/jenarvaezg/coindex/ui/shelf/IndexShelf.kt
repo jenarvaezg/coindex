@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.TypeMeta
+import com.jenarvaezg.coindex.domain.countryOf
 import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.matchesQuery
 import com.jenarvaezg.coindex.ui.variantLabel
@@ -187,7 +188,7 @@ internal fun countriesOf(
     val catalog = (card as? IndexCard.Derived)?.plateCatalogId?.let { catalogsById[it] }
     if (catalog != null) {
         val fromMembers = catalog.members.mapNotNull { member ->
-            memberCountry(catalog, member, typeMeta)
+            catalog.countryOf(member, typeMeta)
         }.toSet()
         if (fromMembers.isNotEmpty()) return fromMembers
     }
