@@ -40,6 +40,16 @@ data class AssembledCollection(
      * agree about one collection, they are one album read three times.
      */
     val albums: CatalogAlbums = CatalogAlbums(),
+    /**
+     * The commemorative programmes each catalog touches, with the collector's progress (#539).
+     *
+     * Here for the reason [albums] is, and it is the same sentence one reading further on: a plate
+     * used to resolve its programmes on every read, which meant the notebook re-derived thirteen
+     * programmes against the whole inventory once per printed card. Nothing it is made of changes
+     * between two reads of one snapshot — the programme files are constant for the life of the
+     * process (ADR 0022) — so the reading belongs to the assembly and not to whoever opens a plate.
+     */
+    val programmeStandings: CatalogProgrammes = CatalogProgrammes(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
     /** The pieces behind each derived collection, for the screen that opens one. */
@@ -97,6 +107,10 @@ class Curation(
             items = items,
             index = index.build(snapshot, derivation, boxes, albums),
             albums = albums,
+            // Every catalog again, and for a second reason on top of the shelf window's: a plate of
+            // the twenty carries the collector's standing in a programme too, because their progress
+            // in it is theirs and not that plate's (ADR 0030, ADR 0022).
+            programmeStandings = CatalogProgrammes.over(catalogs, programmes, items),
             derivedCollections = derivation.derivedCollections,
             unclassified = derivation.unclassified,
             typeMeta = typeMeta,

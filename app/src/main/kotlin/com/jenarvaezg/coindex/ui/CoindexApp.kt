@@ -69,6 +69,7 @@ import com.jenarvaezg.coindex.ui.components.LocalNavAnimation
 import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
+import com.jenarvaezg.coindex.ui.print.NotebookSubject
 import com.jenarvaezg.coindex.ui.screens.CoinSheetSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.ExploreScreen
@@ -457,7 +458,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 onOpenPhone = { navController.navigate(Routes.PHONE) },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
-                                notebook = viewModel::notebookPages,
+                                notebook = { cards, unclaimed, options ->
+                                    viewModel.notebookPages(
+                                        NotebookSubject.Index(cards, unclaimed),
+                                        options,
+                                    )
+                                },
                                 onMessage = viewModel::showMessage,
                                 onExporting = viewModel::notebookExporting,
                             )
@@ -517,8 +523,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             notebookOptions = state.notebookOptions,
                             onNotebookPrinted = viewModel::notebookPrinted,
                             notebookPages = { options ->
-                                card?.let { viewModel.notebookPagesForCard(it, options) }
-                                    ?: emptyList()
+                                card?.let {
+                                    viewModel.notebookPages(NotebookSubject.Sheet(it), options)
+                                } ?: emptyList()
                             },
                             onExporting = viewModel::notebookExporting,
                             upkeep = card?.let { box ->
@@ -567,8 +574,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebookPages = { options ->
-                                    card?.let { viewModel.notebookPagesForCard(it, options) }
-                                        ?: emptyList()
+                                    card?.let {
+                                        viewModel.notebookPages(NotebookSubject.Sheet(it), options)
+                                    } ?: emptyList()
                                 },
                                 onExporting = viewModel::notebookExporting,
                             )
@@ -621,7 +629,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             images = state.collection.images,
                             notebookOptions = state.notebookOptions,
                             onNotebookPrinted = viewModel::notebookPrinted,
-                            notebookPages = viewModel::notebookPagesForWishes,
+                            notebookPages = { options ->
+                                viewModel.notebookPages(NotebookSubject.Wishes, options)
+                            },
                             onExporting = viewModel::notebookExporting,
                             sheet = coinSheet,
                             onRemove = viewModel::removeWish,
@@ -710,7 +720,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebookPages = { options ->
-                                    viewModel.notebookPagesForPlate(catalogId, options)
+                                    viewModel.notebookPages(
+                                        NotebookSubject.Plate(catalogId),
+                                        options,
+                                    )
                                 },
                                 onExporting = viewModel::notebookExporting,
                                 onOpenSource = openUrl,

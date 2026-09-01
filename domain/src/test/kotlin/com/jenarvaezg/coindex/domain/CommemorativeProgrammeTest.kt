@@ -33,6 +33,13 @@ class CommemorativeProgrammeTest {
         members = members,
     )
 
+    /** The standings of one catalog, read the way the assembly builds them for all of them (#539). */
+    private fun standingsOf(
+        catalog: CollectionCatalog,
+        items: List<CollectedItem> = emptyList(),
+    ): List<ProgrammeStanding> =
+        CatalogProgrammes.over(listOf(catalog), listOf(programme()), items)[catalog]
+
     private fun item(typeId: Int, quantity: Int = 1) = CollectedItem(
         id = typeId.toLong(),
         quantity = quantity,
@@ -54,7 +61,7 @@ class CommemorativeProgrammeTest {
     @Test
     fun `the denominator is the programme and not what the catalogs hold`() {
         val catalog = catalogOf("portugal-2-50-escudos-cuproniquel", listOf(6_071, 9_828, 9_829))
-        val standings = programmeStandings(catalog, listOf(programme()), listOf(item(6_071)))
+        val standings = standingsOf(catalog, listOf(item(6_071)))
         assertEquals(1, standings.size)
         assertEquals(3, standings.single().progress.total)
         assertEquals(1, standings.single().progress.owned)
@@ -68,7 +75,47 @@ class CommemorativeProgrammeTest {
     @Test
     fun `a catalog that shares no type with the programme gets no standing`() {
         val catalog = catalogOf("portugal-50-escudos-plata-650", listOf(4_930, 13_026))
-        assertEquals(emptyList(), programmeStandings(catalog, listOf(programme()), emptyList()))
+        assertEquals(emptyList(), standingsOf(catalog))
+    }
+
+    /**
+     * One walk of the files answers for every catalog at once (#539), and it answers the same thing.
+     *
+     * What the assembly saves is the walk of the inventory and of the programme list, never the rule:
+     * the standings of a catalog that touches nothing are absent rather than empty, so the map is two
+     * entries and not forty-nine — and a catalog nobody keyed reads as «ningún programa», which is
+     * what a second reading beside a plate is when there is none (ADR 0022).
+     */
+    @Test
+    fun `the standings of every catalog come out of one walk, in file order`() {
+        val herculano = programme()
+        val fao = programme(
+            id = "portugal-1983-dia-mundial-alimentacion",
+            shortName = "Serie FAO 1983",
+            members = listOf(
+                CommemorativeProgrammeMember("2,50 escudos", 6_071),
+                CommemorativeProgrammeMember("25 escudos", 9_831),
+            ),
+        )
+        val touching = catalogOf("portugal-2-50-escudos-cuproniquel", listOf(6_071, 9_828))
+        val untouched = catalogOf("portugal-50-escudos-plata-650", listOf(4_930, 13_026))
+
+        val standings = CatalogProgrammes.over(
+            catalogs = listOf(touching, untouched),
+            programmes = listOf(herculano, fao),
+            items = listOf(item(6_071)),
+        )
+
+        // El orden es el de los ficheros y no el del tipo que los emparejó: los dos programas nombran
+        // la misma moneda, así que agrupar por tipo los habría podido intercambiar entre dos lecturas.
+        assertEquals(
+            listOf("Serie Alexandre Herculano 1977", "Serie FAO 1983"),
+            standings[touching].map { it.programme.shortName },
+        )
+        // Y el progreso sigue siendo sobre el programa: una pieza de tres y una de dos.
+        assertEquals(listOf(1, 1), standings[touching].map { it.progress.owned })
+        assertEquals(listOf(3, 2), standings[touching].map { it.progress.total })
+        assertEquals(emptyList(), standings[untouched])
     }
 
     @Test

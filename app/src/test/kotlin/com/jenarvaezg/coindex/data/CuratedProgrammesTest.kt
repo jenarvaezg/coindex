@@ -1,9 +1,11 @@
 package com.jenarvaezg.coindex.data
 
+import com.jenarvaezg.coindex.domain.CatalogProgrammes
 import com.jenarvaezg.coindex.domain.CatalogSeeds
+import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CommemorativeProgramme
 import com.jenarvaezg.coindex.domain.ProgrammeSeeds
-import com.jenarvaezg.coindex.domain.programmeStandings
+import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -19,6 +21,13 @@ import kotlin.test.assertTrue
 class CuratedProgrammesTest {
     private val programmes: List<CommemorativeProgramme> =
         ProgrammeSeeds.parseAll(ProgrammeFiles.all())
+
+    /** The standings of one catalog, read the way the assembly builds them for all of them (#539). */
+    private fun standingsOf(
+        catalog: CollectionCatalog,
+        programmes: List<CommemorativeProgramme>,
+    ): List<ProgrammeStanding> =
+        CatalogProgrammes.over(listOf(catalog), programmes, emptyList())[catalog]
 
     private fun find(id: String) = programmes.first { it.id == id }
 
@@ -74,7 +83,7 @@ class CuratedProgrammesTest {
     fun `a cupronickel catalog carries its programme, counted over the whole programme`() {
         val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
         val dosCincuenta = catalogs.first { it.id == "portugal-2-50-escudos-cuproniquel" }
-        val standings = programmeStandings(dosCincuenta, programmes, emptyList())
+        val standings = standingsOf(dosCincuenta, programmes)
         assertEquals(
             listOf("Serie Alexandre Herculano 1977", "Serie FAO 1983"),
             standings.map { it.programme.shortName },
@@ -83,7 +92,7 @@ class CuratedProgrammesTest {
 
         // Y una lámina de plata no arrastra ningún programa: no comparte ningún tipo con ellos.
         val cincuenta = catalogs.first { it.id == "portugal-50-escudos-plata-650" }
-        assertEquals(emptyList(), programmeStandings(cincuenta, programmes, emptyList()))
+        assertEquals(emptyList(), standingsOf(cincuenta, programmes))
     }
 
     /**
@@ -121,7 +130,7 @@ class CuratedProgrammesTest {
         // un tipo con el programa: la casilla de 1992 del Encontro de Dois Mundos.
         val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
         val touched = catalogs.filter { catalog ->
-            programmeStandings(catalog, listOf(serie), emptyList()).isNotEmpty()
+            standingsOf(catalog, listOf(serie)).isNotEmpty()
         }
         assertEquals(listOf("portugal-1000-escudos-plata-500"), touched.map { it.id })
     }
@@ -169,7 +178,7 @@ class CuratedProgrammesTest {
                 "Serie Iberoamericana III",
                 "Serie Iberoamericana IV",
             ),
-            programmeStandings(plata500, programmes, emptyList())
+            standingsOf(plata500, programmes)
                 .map { it.programme.shortName }
                 .sorted(),
         )
