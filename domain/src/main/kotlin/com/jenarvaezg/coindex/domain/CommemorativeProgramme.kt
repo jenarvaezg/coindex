@@ -45,16 +45,29 @@ data class CommemorativeProgramme(
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CommemorativeProgrammeMember>,
 ) {
-    /** How many of [members] the collector owns, over how many the programme has. */
-    fun progress(items: List<CollectedItem>): ProgrammeProgress {
-        val owned = items.filter { it.quantity > 0 }.map { it.typeId }.toSet()
-        return ProgrammeProgress(
-            owned = members.count { it.numistaTypeId in owned },
-            total = members.size,
-        )
-    }
+    /**
+     * The Numista types this programme names, which is the shape every membership test wants.
+     *
+     * Held rather than rebuilt per question because the assembly asks it once per curated catalog
+     * (#539): «does this file touch this programme» used to be `members × members` for each of the
+     * forty-nine files, and it is a set lookup now. Outside the constructor, so it is not a field of
+     * the serialized form and a curated file cannot declare it.
+     */
+    val typeIds: Set<Int> by lazy { members.mapTo(mutableSetOf()) { it.numistaTypeId } }
 
-    fun claims(typeId: Int): Boolean = members.any { it.numistaTypeId == typeId }
+    /** How many of [members] the collector owns, over how many the programme has. */
+    fun progress(items: List<CollectedItem>): ProgrammeProgress = progressOver(ownedTypeIds(items))
+
+    /**
+     * The same count against a set of owned types gathered once, which is what a whole assembly needs.
+     *
+     * The one arithmetic of the progress, so [progress] and [CatalogProgrammes] cannot drift: what a
+     * caller holding the whole inventory saves is the walk of it, never the rule.
+     */
+    fun progressOver(owned: Set<Int>): ProgrammeProgress = ProgrammeProgress(
+        owned = members.count { it.numistaTypeId in owned },
+        total = members.size,
+    )
 
     fun validate(): CommemorativeProgrammeValidationError? {
         if (schemaVersion != 1) {
@@ -121,22 +134,14 @@ data class ProgrammeStanding(
 )
 
 /**
- * The programmes that name any type of [catalog], in file order, each with its own progress.
+ * The types the collector owns at least one piece of, which is what a progress counts against.
  *
- * The progress is over the **programme**, not over the catalog: that is the whole reading the
- * collector asked for, and it is why the 25 escudos of both Portuguese programmes count in the
- * denominator even though no catalog claims them.
+ * Its own function because two readings need the very same set — one programme's progress and the
+ * standings of every catalog at once (#539) — and a quantity of zero is a piece the collector no
+ * longer has, which is the one subtlety in it worth writing down once.
  */
-fun programmeStandings(
-    catalog: CollectionCatalog,
-    programmes: List<CommemorativeProgramme>,
-    items: List<CollectedItem>,
-): List<ProgrammeStanding> {
-    val types = catalog.members.mapNotNull { it.numistaTypeId }.toSet()
-    return programmes
-        .filter { programme -> types.any(programme::claims) }
-        .map { programme -> ProgrammeStanding(programme, programme.progress(items)) }
-}
+fun ownedTypeIds(items: List<CollectedItem>): Set<Int> =
+    items.filter { it.quantity > 0 }.mapTo(mutableSetOf()) { it.typeId }
 
 private fun isProgrammeSource(value: String): Boolean =
     value.startsWith("https://") && value.length > "https://".length && value.none { it == ' ' }

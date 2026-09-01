@@ -42,6 +42,8 @@ import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.wishKey
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
+import com.jenarvaezg.coindex.ui.print.NotebookSubject
+import com.jenarvaezg.coindex.ui.print.forSheetExport
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexSort
 import io.ktor.client.HttpClient
@@ -524,6 +526,88 @@ class CoindexViewModelTest {
         // There is no «way out» of a root destination to save it on (ADR 0021 §1).
         assertEquals(IndexSort.Alphabetical, shelves.index.sort)
         assertEquals(IndexSort.Alphabetical, viewModel.state.value.indexShelf.sort)
+    }
+
+    /**
+     * The four doors of the notebook are one printer (#539).
+     *
+     * A plate and the card behind it print **the same paper**: the plate screen hands over a catalog id
+     * and the pieces screen hands over a card, and both end in the one card `destinationOf` sends to
+     * its plate (ADR 0021 §9). Before this they were two methods, and nothing said they had to agree —
+     * the day one of them stopped clearing a switch, only a collector holding both printouts would
+     * have known.
+     */
+    @Test
+    fun `a plate and its card print the same pages`() = onViewModel(
+        catalogs = listOf(WISHED_CATALOG),
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+        },
+    ) { viewModel ->
+        runCurrent()
+        val card = viewModel.state.value.collection.index.single()
+        val options = NotebookOptions(photographs = false)
+
+        val sheet = viewModel.notebookPages(NotebookSubject.Sheet(card), options)
+        assertTrue(sheet.isNotEmpty(), "la lámina no ha impreso nada que comparar")
+        assertEquals(sheet, viewModel.notebookPages(NotebookSubject.Plate(WISHED_CATALOG.id), options))
+    }
+
+    /**
+     * Exporting one lámina clears the two switches that only mean something with neighbours (#401).
+     *
+     * Packing a folio and the lámina of the coins no collection claims are both about a notebook, and
+     * a sheet of one collection has none of it. What this pins is that the clause is read **once**, off
+     * the subject: the same cards printed as the index and as a sheet differ by exactly
+     * [forSheetExport] and by nothing else.
+     */
+    @Test
+    fun `one lamina is printed with the notebook switches cleared`() = onViewModel(
+        catalogs = listOf(WISHED_CATALOG),
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+        },
+    ) { viewModel ->
+        runCurrent()
+        val card = viewModel.state.value.collection.index.single()
+        val options = NotebookOptions(sharePage = true, unclaimed = true, photographs = false)
+
+        val asIndex = viewModel.notebookPages(
+            NotebookSubject.Index(listOf(card), emptyList()),
+            options.forSheetExport(),
+        )
+        assertTrue(asIndex.isNotEmpty(), "la tarjeta no ha impreso nada que comparar")
+        assertEquals(asIndex, viewModel.notebookPages(NotebookSubject.Sheet(card), options))
+    }
+
+    /**
+     * «La lista de lo que busco» comes out of that same printer and not a second one (ADR 0029 §7).
+     *
+     * It is the one subject whose coins are in no card of the index, which is why it used to reach
+     * `printPages` through a call of its own — and why the four doors are a value now: the geometry and
+     * the switches it prints under are the notebook's, whoever asks.
+     */
+    @Test
+    fun `the wish list is one more subject of the same printer`() = onViewModel(
+        catalogs = listOf(WISHED_CATALOG),
+    ) { viewModel ->
+        runCurrent()
+        assertTrue(
+            viewModel.notebookPages(NotebookSubject.Wishes, NotebookOptions()).isEmpty(),
+            "sin ninguna casilla marcada no hay folio que gastar",
+        )
+
+        viewModel.toggleWish(requireNotNull(WISHED_CATALOG.members.first().wishKey()))
+        runCurrent()
+
+        val pages = viewModel.notebookPages(
+            NotebookSubject.Wishes,
+            NotebookOptions(photographs = false),
+        )
+        assertEquals(1, pages.size)
+        assertEquals(1, pages.single().cells.size)
     }
 
     @Test

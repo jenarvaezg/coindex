@@ -22,7 +22,6 @@ import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
-import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishKey
@@ -31,7 +30,9 @@ import com.jenarvaezg.coindex.domain.showcasePlate
 import com.jenarvaezg.coindex.domain.showcasePlates
 import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
+import com.jenarvaezg.coindex.ui.print.NotebookSubject
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.print.PrintSection
 import com.jenarvaezg.coindex.ui.print.forSheetExport
 import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.printGeometry
@@ -641,92 +642,93 @@ class CoindexViewModel(
     }
 
     /**
-     * The given cards as printable pages, on the configuration the collector chose (#169, #228).
+     * The one door into the printer: whatever [subject] is, on the configuration the collector chose
+     * (#169, #228, #539).
      *
-     * Built on demand and never observed: [cards] is what the index was showing when the button was
-     * pressed, which is exactly what the collector chose to print. There is no `Notebook` behind it
-     * — no table, no name, no second order (ADR 0021 §1).
+     * Built on demand and never observed. What is printed is what was on screen when the button was
+     * pressed — the index hands over its own cards, a plate hands over its id — so a sync landing
+     * mid-export cannot change the paper. There is no `Notebook` behind it: no table, no name, no
+     * second order (ADR 0021 §1).
+     *
+     * **One producer and not four** (#539). The wish list used to reach `printPages` through a second
+     * call of its own, and the plate and the loose card each spelled `forSheetExport()` again; the
+     * three switches that make the paper what it is — the geometry, the money and the marks — were
+     * therefore threaded twice and could have drifted without a test noticing. Now [subject] says
+     * which sections, [NotebookSubject.asSheet] says which configuration, and everything after that
+     * is the same machine for all four doors.
      *
      * [options] comes in rather than being read off the state, because the export sheet recounts on
      * every tap and what it is counting is the configuration **under the collector's thumb** — which
      * is only stored once they press «Exportar».
-     *
-     * [unclaimed] arrives the same way and for the same reason (#275): the coins no collection claims
-     * are measured against the whole index and then narrowed by the shelf on screen, and both of
-     * those are the index's answers. What this adds is nothing — [notebookSections] decides whether
-     * the lámina is drawn, from the switch.
      */
     fun notebookPages(
-        cards: List<IndexCard>,
-        unclaimed: List<CollectedItem>,
+        subject: NotebookSubject,
         options: NotebookOptions,
-    ): List<PrintPage> = printPages(
-        sections = notebookSections(
-            state = _state.value.collection,
+    ): List<PrintPage> {
+        val chosen = if (subject.asSheet) options.forSheetExport() else options
+        return printPages(
+            sections = sectionsOf(subject, chosen),
+            geometry = printGeometry(chosen),
+        )
+    }
+
+    /**
+     * The sections of one subject, which is the only thing the four doors disagree about.
+     *
+     * Named apart from `notebookSections` rather than overloading it, because a member shadowing the
+     * printer's own function would be told apart by argument count alone. It returns sections and not
+     * pages, so exactly one place turns a section into a folio: this decides *what is on the paper*
+     * and `printPages` decides how much of it fits.
+     */
+    private fun sectionsOf(
+        subject: NotebookSubject,
+        options: NotebookOptions,
+    ): List<PrintSection> {
+        val state = _state.value
+        // The card of a plate is looked up here and not by the screen: the index is what draws cards,
+        // and `página(tarjeta) = su destino` has to go through a card to hold (ADR 0021 §9). Nothing
+        // to print if the plate has no card, which is the same silence the screen shows.
+        val cards: List<IndexCard> = when (subject) {
+            is NotebookSubject.Index -> subject.cards
+            is NotebookSubject.Sheet -> listOf(subject.card)
+            is NotebookSubject.Plate -> listOfNotNull(
+                state.collection.index
+                    .filterIsInstance<IndexCard.Derived>()
+                    .firstOrNull { it.plateCatalogId == subject.catalogId },
+            )
+            NotebookSubject.Wishes -> return wishSections(
+                state.collection,
+                livingWishes(),
+                options,
+            )
+        }
+        return notebookSections(
+            state = state.collection,
             cards = cards,
-            unclaimed = unclaimed,
+            // Only the whole notebook has coins outside its cards (#275): the lámina of the
+            // unclaimed is measured against the whole index and narrowed by the shelf on screen,
+            // and a sheet of one collection has no such neighbours — `forSheetExport` has already
+            // cleared the switch that would draw it.
+            unclaimed = (subject as? NotebookSubject.Index)?.unclaimed.orEmpty(),
             curation = curation,
             options = options,
             // The money switch is answered once, here, by handing the printer either a value or
             // nothing (#228, ADR 0021 §13). And nothing is also what it gets while the market has
             // not landed: a total at 60 % is false on paper too, and paper cannot be taken back.
             plateValue = { resolved ->
-                if (!options.money || !_state.value.valuation.settled) {
+                if (!options.money || !state.valuation.settled) {
                     null
                 } else {
-                    plateValue(resolved.album, _state.value.collection, _state.value.prices)
+                    plateValue(resolved.album, state.collection, state.prices)
                 }
             },
             // Not behind a switch: a wish mark is a state at rest and travels by ADR 0026 §4, and what
             // the money switch withholds is an amount. The keys are the table's own and not the living
             // slots, because what decides whether a casilla prints its mark is the casilla being empty
             // — which is the album's answer, and the album is what the printer is walking.
-            wished = _state.value.wishes.mapTo(mutableSetOf()) { it.key },
-        ),
-        geometry = printGeometry(options),
-    )
-
-    /**
-     * «La lista de lo que busco» as printable pages (ADR 0029 §7).
-     *
-     * Its own door into the printer, because it is the one lámina that is not a card of the index: the
-     * notebook prints what the index is showing, and none of these coins is in it. Everything under it
-     * is shared — the same `printPages`, the same geometry, the same five switches — so the list comes
-     * out of the same machine as every other page and not out of a second printer.
-     */
-    fun notebookPagesForWishes(options: NotebookOptions): List<PrintPage> {
-        val chosen = options.forSheetExport()
-        return printPages(
-            sections = wishSections(_state.value.collection, livingWishes(), chosen),
-            geometry = printGeometry(chosen),
+            wished = state.wishes.mapTo(mutableSetOf()) { it.key },
         )
     }
-
-    /**
-     * One curated plate as printable pages, under the configuration the collector chose for this
-     * lámina (#401).
-     *
-     * The card is looked up by [catalogId] rather than passed in, because the plate screen already
-     * resolved the album and does not hold the [IndexCard] the index drew — and `página(tarjeta) =
-     * su destino` still has to go through [notebookSections].
-     */
-    fun notebookPagesForPlate(catalogId: String, options: NotebookOptions): List<PrintPage> {
-        val card = _state.value.collection.index
-            .filterIsInstance<IndexCard.Derived>()
-            .firstOrNull { it.plateCatalogId == catalogId }
-            ?: return emptyList()
-        return notebookPages(listOf(card), emptyList(), options.forSheetExport())
-    }
-
-    /**
-     * One collection without a plate, or a box, as printable pages (#401).
-     *
-     * Same door as the index: [destinationOf] decides the pieces section, and packing / the loose
-     * plate are cleared by [forSheetExport] so a leftover switch from the notebook cannot thin a
-     * heading that has nothing to share a folio with.
-     */
-    fun notebookPagesForCard(card: IndexCard, options: NotebookOptions): List<PrintPage> =
-        notebookPages(listOf(card), emptyList(), options.forSheetExport())
 
     /**
      * Remembers how the notebook was printed, so the next export opens where this one left off.

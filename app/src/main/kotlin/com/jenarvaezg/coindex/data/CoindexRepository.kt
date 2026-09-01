@@ -14,6 +14,7 @@ import com.jenarvaezg.coindex.data.prices.priceBook
 import com.jenarvaezg.coindex.data.prices.toDomain
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CatalogAlbums
+import com.jenarvaezg.coindex.domain.CatalogProgrammes
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
@@ -28,7 +29,6 @@ import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.Wish
 import com.jenarvaezg.coindex.domain.WishKey
-import com.jenarvaezg.coindex.domain.programmeStandings
 import com.jenarvaezg.coindex.domain.showcasePlate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -60,6 +60,7 @@ data class CollectionState(
     val unclassified: List<UnclassifiedItem> get() = collection.unclassified
     val typeMeta: TypeMetaIndex get() = collection.typeMeta
     val albums: CatalogAlbums get() = collection.albums
+    val programmeStandings: CatalogProgrammes get() = collection.programmeStandings
     val evidencedCatalogIds: Set<String> get() = collection.evidencedCatalogIds
     val itemsByKey: Map<VariantKey, List<CollectedItem>> get() = collection.itemsByKey
     val ownGroupings: List<OwnGroupingView> get() = collection.ownGroupings
@@ -230,9 +231,15 @@ class CoindexRepository(
  *
  * Evidence is by type even for date runs, so a plate stays open while years are still missing.
  *
- * Takes the whole [Curation] rather than a catalog list and a programme list threaded separately:
- * both come from the same files, and passing them apart is how a caller ends up handing the
- * repository two things the repository already had (#217).
+ * **It resolves nothing and reads everything** (#539). The album is the assembly's (#537) and so are
+ * the programme standings, so what is left here is the three questions of ADR 0021 §7 asked of maps
+ * that are already built. That is what makes it safe to call once per printed card: the notebook
+ * walks sixty-seven of them, and a function that re-derived a reading on each would be re-deriving
+ * the same answer sixty-seven times.
+ *
+ * Takes the whole [Curation] rather than the catalog list alone: it is the same object the assembly
+ * was made with, and passing a slice of it is how a caller ends up resolving a plate of one curation
+ * against the albums of another — the mistake the null below is there to name.
  */
 fun resolvePlate(
     state: CollectionState,
@@ -247,6 +254,11 @@ fun resolvePlate(
     // not a state of the world — it is said as plainly as an id nobody shipped.
     val album = state.albums[catalog]
         ?: return PlateResult.Unavailable(PlateUnavailable.UnknownCatalog)
+    // The standings the assembly resolved for this catalog (#539), never a second reading of the
+    // programme files. This function is called once per printed card, and re-deriving thirteen
+    // programmes against the whole inventory sixty-seven times answered the same thing every time:
+    // what a standing is made of is the snapshot, and the snapshot is what was assembled.
+    val programmes = state.programmeStandings[catalog]
     // The shelf window is asked first, and it has to be: a catalog the collector owns nothing of has no
     // derived collection either, so both of the answers below would refuse it before the evidence was
     // ever the question (ADR 0030 §1, ADR 0021 §7 as amended).
@@ -254,9 +266,9 @@ fun resolvePlate(
         return PlateResult.Available(
             catalog = catalog,
             album = window.album,
-            // The collector's progress in the programme is theirs and not this plate's, so it is read
-            // here too: what changes on a plate of the window is what it offers, not what it knows.
-            programmes = programmeStandings(catalog, curation.programmes, state.items),
+            // The collector's progress in the programme is theirs and not this plate's, so a plate of
+            // the window carries it too: what changes there is what it offers, not what it knows.
+            programmes = programmes,
             mine = false,
         )
     }
@@ -265,10 +277,6 @@ fun resolvePlate(
             PlateResult.Unavailable(PlateUnavailable.NotACollection)
         catalog.id !in state.evidencedCatalogIds ->
             PlateResult.Unavailable(PlateUnavailable.NoEvidence)
-        else -> PlateResult.Available(
-            catalog,
-            album,
-            programmeStandings(catalog, curation.programmes, state.items),
-        )
+        else -> PlateResult.Available(catalog, album, programmes)
     }
 }

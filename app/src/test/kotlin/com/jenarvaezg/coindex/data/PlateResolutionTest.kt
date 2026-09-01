@@ -5,6 +5,8 @@ import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.CommemorativeProgramme
+import com.jenarvaezg.coindex.domain.CommemorativeProgrammeMember
 import com.jenarvaezg.coindex.domain.CollectionSnapshot
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Curation
@@ -174,6 +176,59 @@ class PlateResolutionTest {
         assertEquals(CoverageRatio(owned = 1, issued = 2), card.coverage)
         assertEquals(card.coverage, available.album.coverage())
         assertSame(assembled.albums[SOUTHERN_CROSS], available.album)
+    }
+
+    /**
+     * **La lámina no resuelve sus programas: los lee** (#539).
+     *
+     * Una tarjeta impresa entra por aquí, y el cuaderno del padre imprime sesenta y siete: derivar
+     * trece programas contra el inventario entero una vez por tarjeta contestaba lo mismo las sesenta
+     * y siete veces, porque de lo único que depende una posición es de la instantánea — y la
+     * instantánea es lo que se ensambló. Lo que se afirma aquí es la mitad fuerte: es **el mismo
+     * objeto** que porta el ensamblaje, así que no hay dos lecturas que puedan separarse, igual que
+     * el álbum del #537.
+     */
+    @Test
+    fun `a plate reads the programme standings the assembly carried`() {
+        val programme = CommemorativeProgramme(
+            schemaVersion = 1,
+            id = "cruz-del-sur",
+            name = "Cruz del Sur · prueba",
+            shortName = "Cruz del Sur",
+            issuerCode = "niue",
+            year = 2_025,
+            source = "https://example.org/cruz-del-sur",
+            sourceNote = "Dos denominaciones para la prueba.",
+            updatedAt = "2026-09-01",
+            members = listOf(
+                CommemorativeProgrammeMember("1 oz", TYPE_2025),
+                CommemorativeProgrammeMember("2 oz", 295_026),
+            ),
+        )
+        val withProgramme = Curation(listOf(SOUTHERN_CROSS), programmes = listOf(programme))
+        val assembled = withProgramme.assemble(
+            CollectionSnapshot(
+                items = listOf(item(1, 2025)),
+                // La ficha en caché es lo que hace de la pieza una tarjeta y no un residuo.
+                typeMeta = mapOf(
+                    TYPE_2025 to TypeMeta(
+                        id = TYPE_2025,
+                        issuerCode = "niue",
+                        issuerName = "Niue",
+                        weightOz = 1.0,
+                        metal = Metal.Silver,
+                        category = "coin",
+                    ),
+                ),
+            ),
+        )
+
+        val available = assertIs<PlateResult.Available>(
+            resolvePlate(CollectionState(assembled), withProgramme, SOUTHERN_CROSS.id),
+        )
+
+        assertSame(assembled.programmeStandings[SOUTHERN_CROSS], available.programmes)
+        assertEquals(listOf("Cruz del Sur"), available.programmes.map { it.programme.shortName })
     }
 
     /**
