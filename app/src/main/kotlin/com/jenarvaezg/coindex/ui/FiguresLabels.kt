@@ -187,6 +187,22 @@ fun figuresCellCount(grams: Double?): String =
  * Settled ignores `held`: a spent budget (or sync, or offline) is only news while something is still
  * missing — otherwise «faltan 0… seguirán el mes que viene» contradicts itself (#421).
  */
+/**
+ * Numista turning the calls away, said once for the two surfaces that say it (#560).
+ *
+ * The **one** pair of these two functions that is not reworded per register, and deliberately so.
+ * Everywhere else the settings line is a state and the snackbar is an answer to a press — «Esperan a
+ * que haya red» against «no hay red» — but there is no second way to say this one that is still true:
+ * it is not the month's allowance of ADR 0003, which may have plenty left, and it is not a promise
+ * that waiting fixes it, because a `403` can be the key itself being refused. Two wordings would have
+ * been two claims, and one of them would have been the wrong one on the screen that got it. So it is
+ * one string with one owner (ADR 0026 §5), and `PrunedVocabularyTest` holds them equal.
+ *
+ * What it does **not** say is what to do about it, and that is the same refusal `syncErrorLabel` makes
+ * for a press it did not get: this line appears on its own, over prices nobody asked for.
+ */
+const val NUMISTA_IS_REFUSING: String = "Numista está rechazando las consultas."
+
 fun valuationLabel(status: ValuationStatus): String {
     if (status.wanted == 0) {
         return "Todavía no hay emisiones que tasar en este teléfono."
@@ -202,11 +218,7 @@ fun valuationLabel(status: ValuationStatus): String {
             "Se acabó el presupuesto de consultas de este mes: seguirán el mes que viene."
         ValuationRefusal.Offline -> "Esperan a que haya red."
         ValuationRefusal.NoApiKey -> "Faltan las credenciales de Numista."
-        // Its own sentence and not the budget's (#560): the month's allowance of ADR 0003 may have
-        // plenty left — what is gone is the quota Numista counts, or the patience it has with this
-        // key. «Vuelve a intentarlo dentro de un rato» would be the sync's snackbar answering a
-        // press; this line is a state, and the pass retries it on its own at the next launch.
-        ValuationRefusal.Rejected -> "Numista está rechazando las consultas."
+        ValuationRefusal.Rejected -> NUMISTA_IS_REFUSING
     }
 }
 

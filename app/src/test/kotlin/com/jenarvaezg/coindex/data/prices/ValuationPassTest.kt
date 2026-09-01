@@ -176,6 +176,17 @@ class ValuationPassTest {
         assertEquals(ValuationRefusal.Rejected, status.held)
     }
 
+    /** And the `401`, which is the token the pass could not get and will not get on the next call. */
+    @Test
+    fun `an unauthorised call stops the pass on the spot`() = runTest {
+        val pass = pass(handler = { respond("", HttpStatusCode.Unauthorized, JSON) })
+
+        val status = pass.run(plan(OwnedIssue(30, 297), OwnedIssue(30, 298)), held = null)
+
+        assertEquals(1, asked.size)
+        assertEquals(ValuationRefusal.Rejected, status.held)
+    }
+
     /**
      * A `404` on every issue is not a wall: each one leaves a row, so the pass asks the plan out.
      *
@@ -230,6 +241,81 @@ class ValuationPassTest {
 
         assertEquals(owned.size, asked.size)
         assertNull(status.held)
+    }
+
+    /**
+     * A pass that hits the wall keeps everything it wrote before it (ADR 0028 §4).
+     *
+     * Which is the half of #560 that is not about spending: the father's nine passes wrote nothing
+     * because nothing landed, not because a stop rolled anything back — and a stop that did roll back
+     * would make the pass unresumable, so the next launch would pay for these three all over again.
+     */
+    @Test
+    fun `what landed before the wall is still there after it`() = runTest {
+        var answered = 0
+        val pass = pass(
+            handler = {
+                if (answered++ < 3) {
+                    respond(PRICED_BODY, HttpStatusCode.OK, JSON)
+                } else {
+                    respond("", HttpStatusCode.TooManyRequests, JSON)
+                }
+            },
+        )
+        val owned = (1..10).map { OwnedIssue(30, it) }
+
+        val status = pass.run(plan(*owned.toTypedArray()), held = null)
+
+        assertEquals(ValuationRefusal.Rejected, status.held)
+        assertEquals(3, prices.reads.value.size, "las tres emisiones contestadas siguen escritas")
+        assertEquals(owned.size - 3, status.missing)
+    }
+
+    /**
+     * A wall in front of `/prices` alone still stops the pass, and the listings do not hide it.
+     *
+     * The trap the streak was one line away from falling into: a listing that answers 200 while every
+     * price answers 500 would reset the count on every type, and a plan of holes would alternate
+     * stored/barren to the last of its calls — the exact bill of #560, paid in the half of the plan
+     * made of holes rather than of owned issues.
+     */
+    @Test
+    fun `a wall in front of the prices alone is not hidden by the listings`() = runTest {
+        val holes = (1..10).map { PlateHole("dates", typeId = it, year = 1_987) }
+        val pass = pass(
+            handler = { request ->
+                if (request.url.encodedPath.endsWith("/issues")) {
+                    respond(ISSUES, HttpStatusCode.OK, JSON)
+                } else {
+                    respond("boom", HttpStatusCode.InternalServerError, JSON)
+                }
+            },
+        )
+
+        val status = pass.run(ValuationPlan(owned = emptyList(), holes = holes), held = null)
+
+        assertEquals(ValuationRefusal.Rejected, status.held)
+        assertTrue(
+            asked.count { it.endsWith("/prices") } == BARREN_STREAK_LIMIT,
+            "el listado de cada tipo no borra la racha de precios: ${asked.count { it.endsWith("/prices") }}",
+        )
+    }
+
+    /**
+     * A type Numista does not list is the `404` of a price read over a listing, and never a wall.
+     *
+     * Without this the streak would read a run of types the catalogue has dropped as a refusal, which
+     * is the one reading ADR 0028 §4 spends its whole table forbidding.
+     */
+    @Test
+    fun `a listing Numista answers with a 404 does not stop the pass`() = runTest {
+        val holes = (1..BARREN_STREAK_LIMIT + 2).map { PlateHole("dates", typeId = it, year = 1_987) }
+        val pass = pass(handler = { respond("no", HttpStatusCode.NotFound, JSON) })
+
+        val status = pass.run(ValuationPlan(owned = emptyList(), holes = holes), held = null)
+
+        assertNull(status.held)
+        assertEquals(holes.size, asked.size, "cada tipo cuesta su listado, y ninguno para el pase")
     }
 
     /** Held by a sync, the pass asks Numista for nothing at all. */
