@@ -45,7 +45,23 @@ object Routes {
      * what it is for is the sheet taken to a fair, and a list folded into the shelf could not be one.
      */
     const val WISHES = "wishes"
-    const val SETTINGS = "settings"
+    /**
+     * What the sewn edge's glyph opens: the maintenance of the inventory (#521).
+     *
+     * It was `settings`, and it was named after the two fields at the top of it rather than after the
+     * trip: 87 of its 165 words were `Sincronizar`, the two queues and the export, and its one filled
+     * action was the sync. The credentials it used to lead with hang off its foot now, in the shape
+     * ADR 0026 §14 wrote for the licence notices.
+     */
+    const val PHONE = "phone"
+
+    /**
+     * The two fields, one screen down (ADR 0026 §14).
+     *
+     * Reached from the foot of [PHONE] and from the two valuation states that blame it — a cure two
+     * taps away with no door from the symptom is the dead end Ajustes was invented to end.
+     */
+    const val CREDENTIALS = "credentials"
     const val NOTICES = "notices"
     const val PLATE = "plate/{catalogId}"
     const val DERIVED_COLLECTION =
@@ -77,7 +93,7 @@ object Routes {
      * The three destinations of the bottom bar, which are the three hierarchies and nothing else.
      *
      * Everything else in the app is reached *through* one of them, so this is also the answer to
-     * «does the masthead offer Ajustes or «Volver»?»: a root has nothing underneath to pop.
+     * «does the masthead offer «Este teléfono» or «Volver»?»: a root has nothing underneath to pop.
      */
     fun isRoot(route: String?): Boolean = route == INDEX || route == COINS || route == FIGURES
 
@@ -85,7 +101,7 @@ object Routes {
      * The roots that draw their own album chrome instead of the generic masthead.
      *
      * All three of them now: the sewn edge is their shared masthead, and keeping the generic one above
-     * any of them would print COINDEX and Ajustes twice (ADR 0026 §1).
+     * any of them would print COINDEX and the way into «Este teléfono» twice (ADR 0026 §1).
      */
     fun ownsChrome(route: String?): Boolean = isRoot(route)
 

@@ -196,7 +196,7 @@ fun IndexScreen(
     onOpenWishes: () -> Unit,
     /** Into «Explorar», from the row at the foot. Two rows, two destinations, one name each. */
     onOpenShowcase: () -> Unit,
-    onSettings: () -> Unit,
+    onOpenPhone: () -> Unit,
     /**
      * How the notebook is printed, as it was left last time (#228).
      *
@@ -367,7 +367,7 @@ fun IndexScreen(
             fullWidth {
                 AlbumChrome(
                     counts = sewnEdge,
-                    onSettings = onSettings,
+                    onOpenPhone = onOpenPhone,
                 )
             }
 

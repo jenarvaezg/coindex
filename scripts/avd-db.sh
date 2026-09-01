@@ -14,7 +14,7 @@
 #     scripts/avd-db.sh save        # una vez, con el AVD ya poblado
 #     scripts/avd-db.sh restore     # en cada sesión, después de `adb install -r`
 #
-# El volcado no tiene que salir de un AVD. «Exportar datos», en Ajustes, comparte la base del
+# El volcado no tiene que salir de un AVD. «Exportar datos», en «Este teléfono», comparte la base del
 # móvil ya con el diario plegado dentro (#548): se copia al vault como `coindex.db`, sin `-wal`
 # ni `-shm`, y `restore` la carga igual. Es el único canal que hay contra un APK de release, y
 # la única forma de medir la colección del padre sin gastar cuota. La regla al cargarla es la

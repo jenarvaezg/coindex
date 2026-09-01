@@ -72,7 +72,7 @@ class DatabaseCheckpointTest {
      *
      * `PRAGMA wal_checkpoint` does not throw: it answers `busy = 1` and leaves the log where it was.
      * A write in flight is exactly what a sync, the call ledger or the prefetch look like from here,
-     * and all three run while the collector is sitting on Ajustes — so the base that reached the
+     * and all three run while the collector is sitting on «Este teléfono» — so the base that reached the
      * share sheet would be the collection as of some earlier moment, with no sign of it anywhere.
      *
      * The other connection holds a **write** and not a read: an Android cursor fills its window and

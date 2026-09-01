@@ -11,8 +11,8 @@ import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 
-/** What the settings screen edits, read from the credential store when it opens. */
-data class SettingsValues(val apiKey: String, val userId: String)
+/** What «Credenciales» edits, read from the credential store when it opens. */
+data class CredentialsValues(val apiKey: String, val userId: String)
 
 /**
  * A one-off snackbar notice.
@@ -50,7 +50,7 @@ data class UiState(
     val update: UpdateStatus = UpdateStatus.UpToDate,
     val updating: Boolean = false,
     /**
-     * Whether the raw dump of #548 is being written, read only by the settings screen.
+     * Whether the raw dump of #548 is being written, read only by «Este teléfono».
      *
      * A flag and not a set, unlike [refreshingFichas]: there is one base and one button, and the
      * whole of what it protects is a second tap opening a second chooser over a second copy.
@@ -81,7 +81,7 @@ data class UiState(
      * on screen to report one call.
      */
     val refreshingFichas: Set<Int> = emptySet(),
-    /** What the phone holds of the catalog's photographs (#191). Read only in the settings screen. */
+    /** What the phone holds of the catalog's photographs (#191). Read only on «Este teléfono». */
     val photoCache: PhotoCacheStatus = PhotoCacheStatus(),
     /**
      * Every catalog price and the last spot (ADR 0028).

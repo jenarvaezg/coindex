@@ -20,7 +20,7 @@ enum class ValuationRefusal {
     /** The freshly installed app before onboarding, which is not an error to discover. */
     NoApiKey,
 
-    /** The month's allowance is gone. The pass writes nothing and settings says why. */
+    /** The month's allowance is gone. The pass writes nothing and «Este teléfono» says why. */
     BudgetExhausted,
 
     /** Numista could not be reached. The next pass retries; nothing was written (ADR 0025). */

@@ -107,9 +107,11 @@ class SyncReportLabelTest {
 
 class SyncErrorLabelTest {
     @Test
-    fun `a rejected key points at the settings screen instead of at the endpoint`() {
+    fun `a rejected key points at the credentials instead of at the endpoint`() {
         val label = syncErrorLabel(NumistaException.Api("/oauth_token", 401, ""))
-        assertEquals("Numista rechazó tu API key. Revísala en Ajustes.", label)
+        // The screen's own name, interpolated rather than spelled again (#521): these three refusals
+        // are the only place in the app that sends the collector somewhere by name.
+        assertEquals("Numista rechazó tu API key. Revísala en Credenciales.", label)
         assertTrue(!label.contains("401") && !label.contains("oauth"), label)
     }
 
@@ -134,7 +136,7 @@ class SyncErrorLabelTest {
     fun `an exhausted month only says to wait until day one`() {
         val label = syncErrorLabel(NumistaException.BudgetExhausted(1500, 1500))
         assertTrue(label.contains("espera al día 1", ignoreCase = true), label)
-        assertFalse(label.contains("Ajustes"), label)
+        assertFalse(label.contains("Credenciales"), label)
         assertFalse(label.contains("Presupuesto"), label)
         assertFalse(label.contains("1500"), label)
         // What ran out is said in the app's one unit (#516). Asserted here as well as in

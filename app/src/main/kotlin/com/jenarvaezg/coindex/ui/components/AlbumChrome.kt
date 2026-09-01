@@ -21,16 +21,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.APP_NAME
-import com.jenarvaezg.coindex.ui.SETTINGS_LABEL
+import com.jenarvaezg.coindex.ui.PHONE_LABEL
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.sewnEdgeLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
-/** The sewn album edge: three counts and the way into Ajustes. */
+/** The sewn album edge: three counts and the way into «Este teléfono». */
 @Composable
 fun AlbumChrome(
     counts: SewnEdgeCounts?,
-    onSettings: () -> Unit,
+    onOpenPhone: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -50,16 +50,16 @@ fun AlbumChrome(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
-        SettingsGlyph(onClick = onSettings)
+        PhoneGlyph(onClick = onOpenPhone)
     }
 }
 
 @Composable
-private fun SettingsGlyph(onClick: () -> Unit) {
+private fun PhoneGlyph(onClick: () -> Unit) {
     Canvas(
         Modifier
             .size(48.dp)
-            .semantics { contentDescription = SETTINGS_LABEL }
+            .semantics { contentDescription = PHONE_LABEL }
             .clickable(role = Role.Button, onClick = onClick)
             .padding(13.dp),
     ) {

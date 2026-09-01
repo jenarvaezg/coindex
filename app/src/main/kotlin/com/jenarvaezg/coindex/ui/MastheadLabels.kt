@@ -1,9 +1,26 @@
 package com.jenarvaezg.coindex.ui
 
 const val APP_NAME: String = "COINDEX"
-const val SETTINGS_LABEL: String = "Ajustes"
 
-/** The way back, which is the masthead's other half: a screen has either this or the way into Ajustes. */
+/**
+ * What the sewn edge's glyph opens, named after the trip and not after its top two fields (#521).
+ *
+ * It was «Ajustes» while the screen led with the API key, and the audit of 14 August 2026 measured
+ * what that word was covering: 87 of the 165 words on it — `Sincronizar`, the two queues and the
+ * export — are the **maintenance of the inventory**, and the one filled action on the screen was the
+ * sync. «Datos» was the audit's own candidate and it is not this: `Exportar datos` is a button on the
+ * screen, and a page named after one of its buttons reads as that button's room.
+ *
+ * «Este teléfono» is the subject every line on it already had — the photographs «en este teléfono»,
+ * the base «de este teléfono», the key stored «en este teléfono» — so the name is the notebook's own
+ * words rather than a category borrowed from an operating system.
+ */
+const val PHONE_LABEL: String = "Este teléfono"
+
+/**
+ * The way back, which is the masthead's other half: a screen has either this or the way into «Este
+ * teléfono».
+ */
 const val BACK_LABEL: String = "Volver"
 
 /**
@@ -90,8 +107,11 @@ fun screenTitle(route: String?, subjectName: String? = null): String = screenTit
 )
 
 private fun screenTitleOf(route: String?, subjectName: String?): String = when {
-    route == Routes.SETTINGS -> SETTINGS_LABEL
+    route == Routes.PHONE -> PHONE_LABEL
     route == Routes.NOTICES -> NOTICES_LABEL
+    // The same pairing the notices have kept since §14: the row that opens it and the masthead of
+    // what opens are one string, so a foot that led somewhere called something else cannot happen.
+    route == Routes.CREDENTIALS -> CREDENTIALS_LABEL
     // Each of the annex's two rooms names itself with the string its own door prints (ADR 0029 §6,
     // ADR 0030 §8): a door that opened a screen called something else would read as two features,
     // which is the pairing `PrunedVocabularyTest` already holds for «Avisos y licencias». The shelf's
