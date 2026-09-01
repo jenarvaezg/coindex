@@ -200,7 +200,9 @@ class NumistaValuationPass(
             } catch (error: NumistaException) {
                 // The listing is a call like any other, so it counts towards the streak: a type that
                 // could not be listed wrote no row either.
-                return refusalFor(error) ?: streak.barren() ?: continue
+                val stop = refusalFor(error) ?: streak.barren()
+                if (stop != null) return stop
+                continue
             }
             storeListing(typeId, listing)
             streak.stored()
