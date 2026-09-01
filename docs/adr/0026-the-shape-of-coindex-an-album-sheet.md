@@ -817,7 +817,7 @@ written**.
 | flip duration | 420 ms | the bench |
 | stamping duration | 300 ms | the bench |
 | depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp) |
-| the ghost | design at 14 % with a dotted rule | the bench |
+| the ghost | design at 14 % with a dotted rule, **and never under 72 dp of hole** (#556) | the bench |
 | the wall of the die-cut | one 5 dp sweep on the cardboard: ink at 22 % at the top, white at 85 % at the bottom, nothing at the horizontals (#357) | the bench |
 | **the gesture, the place, the drawing** | — | **the map**: an implementation session never changes form without coming back |
 
@@ -881,6 +881,31 @@ written**.
 > **Six surfaces draw this same penumbra to mean six different things** — the plate, the list, the shelf
 > window, a coin's own sheet, the notebook's two axes and the printed page — and whether the other four
 > should keep it is [#556](https://github.com/jenarvaezg/coindex/issues/556), not this amendment.
+
+> **Amended on 2026-09-01 (§15, [#556](https://github.com/jenarvaezg/coindex/issues/556)). The penumbra
+> needs a diameter to be a sentence, and two of the six surfaces were never speaking.** The census the
+> #520 amendment left open came back smaller than the list. The **year axis** draws its ghost with
+> `photo = null`: there has never been a design behind it to sink, so `HoleAbsence.Missing` leaves the
+> dashed hole and nothing else. The **printed page** does not dim at all — `paperCoinFilter` desaturates
+> (`GRAYSCALE_ON_PAPER`), which is a different language wearing the same name, and #509's ceiling of 243
+> is why: on paper there is no light left to take away. Neither is a decision pending; one is a branch
+> with no effect and the other is not the ghost.
+>
+> What was left was **one language spoken at two sizes**, and only one of them had ever been calibrated:
+> 104 dp on the plate, a coin's sheet and the shelf window, against 34 dp on the country axis — smaller
+> than the 40 dp that measured as two grey discs on the row of #520. So the ghost gains a floor,
+> **`GHOST_MIN_DP = 72 dp`**, and it lives in `AlbumPaper` — the one place the ghost is drawn — rather
+> than in the six callers: a hole under the floor says the absence the way that row already does, with
+> the coin whole under the dotted rule that both absences keep. One rule, not a list of exceptions per
+> screen.
+>
+> **The bench chose the number and gained the control to do it**: its ghost slot had an opacity and no
+> diameter, so it could only ever show the size at which the penumbra was never in doubt. With
+> «FANTASMA · Diámetro» (24–104 dp) the 1 Bolívar reads as a borrón at 40 dp, as a profile you cannot
+> name at 56, and as a bust with its ring of legend at 72. The floor is where the drawing **reads**, not
+> where it stops reading altogether. The captures are in `docs/ux/implementacion-556/`.
+>
+> The 14 % is untouched: what moved is the smallest hole allowed to use it.
 
 ### 16. The order, the cost, and three PRs per screen
 

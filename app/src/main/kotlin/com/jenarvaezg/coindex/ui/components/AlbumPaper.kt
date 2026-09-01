@@ -58,6 +58,20 @@ private const val HALF_TURN = 180f
 private const val COIN_CAMERA_DISTANCE = 12f
 
 /**
+ * The smallest hole that can say «te falta» with a sunk design (#556).
+ *
+ * Not a size of anything: the floor under which the penumbra stops being a sentence. The ghost is a
+ * drawing at 14 %, and a drawing needs room — at 40 dp on the row of #520 it measured as two grey discs
+ * and the owner rejected it with the prototype in front of him. Above the floor the album has two
+ * things to say about an empty casilla («te falta» and «esto lo buscas») and below it only one, so the
+ * penumbra gives way to the coin whole under its dotted rule.
+ *
+ * Calibrated at the bench of ADR 0026 §15, whose ghost slot gained a diameter control for it; the
+ * captures are in `docs/ux/implementacion-556/`.
+ */
+const val GHOST_MIN_DP = 72f
+
+/**
  * What a hole says about the coin that is not in it (ADR 0026 §15, #520).
  *
  * Two absences and not one, because they were never the same sentence. **[Missing]** is «te falta»: the
@@ -70,10 +84,14 @@ private const val COIN_CAMERA_DISTANCE = 12f
  * The die-cut never glosses in either: the gloss is the metal's own light and there is no metal in the
  * hole, which is the rule `coinGloss` already states.
  *
- * **The rest of the app still says «te falta» with the penumbra**, and whether it should is
- * [#556](https://github.com/jenarvaezg/coindex/issues/556): six surfaces draw this same 14 % to mean six
- * different things. This enum is where that decision lands, and the value itself belongs to the
- * calibration bench of ADR 0026 §15 rather than to the caller.
+ * **And the penumbra needs a diameter to be a sentence** (#556). The census of the six surfaces the
+ * #520 amendment named came back smaller than it looked: the year axis draws its «ghost» with no
+ * photograph at all, so there is nothing to sink, and the printed page desaturates instead of dimming.
+ * What was left was one language spoken at two sizes — 104 dp, where the sunk design reads, and 34 dp on
+ * the country axis, which is smaller than the 40 dp measured as two grey discs on the row of #520. So
+ * [Missing] carries a floor, [GHOST_MIN_DP], and under it the hole says the absence the way that row
+ * already does: the coin whole and the dotted rule. It is one rule in the one place the ghost is drawn,
+ * not a list of exceptions per screen. The value belongs to the calibration bench of ADR 0026 §15.
  */
 enum class HoleAbsence {
     /** The coin is in the collection: full colour, and the metal's own light over it. */
@@ -127,9 +145,9 @@ fun AlbumHole(
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
 ) {
     // The hole is empty in both absences — the dotted rule and the dead gloss follow this — and only
-    // [HoleAbsence.Missing] sinks the design behind it.
+    // [HoleAbsence.Missing] sinks the design behind it, and only above [GHOST_MIN_DP] (`dimmed`, below,
+    // where the hole knows its own diameter).
     val empty = absence != HoleAbsence.Filled
-    val dimmed = absence == HoleAbsence.Missing
     // Which face is up is the hole's own business and it is deliberately not hoisted: the plate
     // goes back to `printed_side` on its own the moment the cell leaves the lazy grid, which is
     // what keeps the sheet of mixed states from becoming a state the album has to remember.
@@ -164,6 +182,15 @@ fun AlbumHole(
         val holeDp = sidePx / density.density
         holeCardPaddingDp(holeDp) * (tone.dieWall.widthDp / HOLE_CARD_PADDING_DP)
     }
+    // «Te falta» is a drawing seen at 14 %, so it is only a sentence where the drawing reads (#556).
+    // Below the floor the penumbra is withdrawn and what says the casilla is empty is the dotted rule,
+    // which is what the row of #520 chose at 40 dp with the prototype in front of the owner.
+    //
+    // The reserve is `ringDp`'s and for the same reason: on the first frame the hole has not been
+    // measured yet. It opens as the penumbra rather than as the coin because a casilla that flashed its
+    // metal before sinking would be announcing a coin the collector does not have.
+    val dimmed = absence == HoleAbsence.Missing &&
+        (sidePx == 0 || sidePx / density.density >= GHOST_MIN_DP)
 
     Box(
         modifier = modifier

@@ -235,6 +235,10 @@ private fun AxisHole(cell: CountryAxisCell, images: Map<Int, TypeImages>) {
     val typeId = cell.typeId
     val photo = typeId?.let { images[it]?.printedPhoto(PrintedSide.Reverse) }
     when (cell) {
+        // A seat of this axis is a casilla of the plate the card opens, so the absence it carries is
+        // the plate's: «te falta». At [AXIS_HOLE] it is said without the penumbra — 34 dp is under
+        // [GHOST_MIN_DP], which is the floor the sunk design needs to be read at all (#556) — so what
+        // the collector sees here is the coin whole under its dotted rule.
         is CountryAxisCell.Slot -> AlbumHole(
             photo = photo,
             absence = if (cell.owned) HoleAbsence.Filled else HoleAbsence.Missing,
@@ -358,6 +362,12 @@ fun YearAxisDecadeRow(
                                 YearAxisQuantityMark(state.quantity)
                             }
                         }
+                        // **No photograph, on purpose**: the atlas's ghost year is a seat of the
+                        // collection with nothing of the collection in it, and the decade reads as ten
+                        // seats rather than as ten coins. So there has never been a design to sink here
+                        // — [HoleAbsence.Missing] leaves the dashed hole and nothing else — and #556's
+                        // floor finds nothing to withdraw. It is named as the absence it is even so:
+                        // what the hole does with it is the hole's business.
                         YearCellState.Ghost -> AlbumHole(
                             photo = null,
                             absence = HoleAbsence.Missing,

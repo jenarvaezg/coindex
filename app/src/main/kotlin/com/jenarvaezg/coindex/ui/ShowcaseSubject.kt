@@ -22,6 +22,12 @@ import com.jenarvaezg.coindex.domain.WishedSlot
  *   plate of the window, where every casilla is empty and the mark is not what put it on the shelf.
  * @param entryEur what entering costs, for the order that sorts by it — and null on a plate nobody has
  *   valued, which is what makes «por coste de entrar» an order that cannot be the default (§8).
+ * @param coverOwned whether the coin in the tile's hole is one the collector has, which is what the hole
+ *   is drawn from (#556). It is the fact the screen used to get by asking [mine], and asking was the one
+ *   thing this file says a tile must not do: with the ghost on every window tile the grid read as sorted
+ *   by ownership, which is what §8 clause 1 mixed the two populations to avoid. A plate of the window
+ *   owns nothing by §1, so its cover is a catalog member; a plate of the collector's covers itself with
+ *   an [IndexCover], which is an owned coin by construction.
  */
 data class ShowcaseTile(
     val catalogId: String,
@@ -33,6 +39,7 @@ data class ShowcaseTile(
     val marks: String? = null,
     val entryEur: Double? = null,
     val slots: Int = 0,
+    val coverOwned: Boolean = false,
 )
 
 /**
@@ -67,6 +74,10 @@ fun showcaseTiles(
                 typeId = card.cover?.typeId,
                 printedSide = card.cover?.printedSide ?: PrintedSide.Reverse,
                 mine = true,
+                // `IndexCover` is «the owned coin shown inside one index card's die-cut hole»: this
+                // tile covers itself with the same coin its card does, and that coin is in the
+                // collection.
+                coverOwned = true,
                 // The fraction its own card prints, and the same one: this tile is that plate in a
                 // second order, so a second measurement of it is a second thing to keep in step.
                 footnote = coverage?.let { "${it.owned}/${it.issued}" } ?: countLabel(
@@ -85,6 +96,9 @@ fun showcaseTiles(
             typeId = cover?.numistaTypeId,
             printedSide = plate.catalog.printedSide,
             mine = false,
+            // The window is curated and unowned (§1), so its cover is a member of the catalog and not
+            // a piece: the hole holds no coin of the collector's, whatever the plate holds.
+            coverOwned = false,
             // How many casillas it is until it has been valued, and what it costs afterwards. Never
             // `0/12`: a fraction of a plate you are not collecting reads as a reproach for not having
             // started (ADR 0030 §6).

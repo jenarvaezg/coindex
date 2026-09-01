@@ -247,6 +247,33 @@ Explorar carries»* in its order and widens its population:
 > fantasma dice «te falta», y esto es lo que buscas (ADR 0026 §15 as amended, y
 > [#556](https://github.com/jenarvaezg/coindex/issues/556) para el resto de la app).
 
+> **Enmienda del 1 de septiembre de 2026 (§8 punto 1,
+> [#556](https://github.com/jenarvaezg/coindex/issues/556)). El estante deja de preguntar de quién es la
+> lámina.** El punto 1 mezcla las dos poblaciones en una rejilla para **no ordenar por propiedad**, «que
+> es lo único en lo que el coleccionista no está pensando cuando abre esto», y `ShowcaseTile` lo dice del
+> dibujo: una ficha se dibuja de lo que *tiene* —una fracción, un importe, un recuento de marcas— y nunca
+> ramificando por qué especie es. El hueco era la excepción: `absence = if (tile.mine) Filled else
+> Missing` ponía el fantasma en las 59 láminas de la ventana y la plena luz en las del coleccionista, que
+> es ordenar por propiedad en la única propiedad ruidosa que tiene una ficha.
+>
+> Y decía además lo que no es: el fantasma es «te falta», y en un estante de láminas que no coleccionas no
+> falta nada — la moneda no es tuya y nunca lo ha sido, que es la lectura que el #279 ya escribió y
+> resolvió al contrario. Se resuelve ahora con el idioma que el #520 eligió para exactamente esta frase:
+> **la moneda entera, y el filete de puntos para decir que no es tuya**. La ficha gana el hecho que el
+> hueco necesita, `coverOwned`, que es real en los dos regímenes y no un alias de `mine`: la lámina del
+> coleccionista se cubre con un `IndexCover`, que es una moneda suya por construcción, y la ventana es
+> curada y no poseída por §1.
+>
+> **Lo que retira de este documento**: el «la tarjeta, el fantasma y la pantalla se eligieron en el #279»
+> del contexto vale para la tarjeta y la pantalla; el fantasma del hueco lo elige el #556. Lo que **no**
+> cambia: la población del estante, su orden, sus recuentos y el color de su pie, que sigue distinguiendo
+> una fracción de un coste porque son dos cosas distintas y no dos especies.
+>
+> Medido: el filete conserva su contraste sobre la fotografía a plena luz —14,0 % contra el 14,3 % que
+> tenía sobre el fantasma, sobre un canto liso— así que la marca no se pierde al encender la moneda.
+> Sobre monedas con denticulado no se distingue del canto, y ésa sigue siendo la pregunta abierta del
+> #556: si el filete basta como idioma de «no es tuya» a plena luz. `docs/ux/implementacion-556/`.
+
 ## Consequences
 
 **The seed becomes load-bearing.** §2 is a promise about the APK: a catalog curated and not seeded

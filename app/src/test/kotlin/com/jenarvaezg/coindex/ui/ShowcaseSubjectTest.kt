@@ -185,6 +185,31 @@ class ShowcaseSubjectTest {
     }
 
     /**
+     * What each tile's hole holds, which is what the shelf draws it from (#556).
+     *
+     * The screen used to ask `mine` for this, and the tile is the one place that says a tile is drawn
+     * from what it *has* and never from a branch on which species it is. The fact is real in both
+     * régimes and not a rename of `mine`: a plate of the collector's covers itself with an `IndexCover`,
+     * which is an owned coin by construction, and the window is unowned by ADR 0030 §1, so its cover is
+     * a member of the catalog and the hole holds nothing of the collector's.
+     */
+    @Test
+    fun `the collector's tile holds an owned coin and one of the window holds none`() {
+        val britannia = dateRun("britannia", 1_987..1_990)
+        val tiles = showcaseTiles(
+            window = listOf(showcase(dateRun("libertad", 1_990..1_992))),
+            cards = listOf(card("britannia", owned = 3, issued = 42)),
+            wishes = listOf(wish(britannia)),
+            state = state(),
+            book = book(),
+            nowMillis = NOW,
+        )
+
+        assertTrue(tiles.first { it.catalogId == "britannia" }.coverOwned)
+        assertFalse(tiles.first { it.catalogId == "libertad" }.coverOwned)
+    }
+
+    /**
      * «Por coste de entrar» sorts what has been valued and leaves the rest behind it.
      *
      * Asked for that order the collector is asking about money, and answering with the plates that have
