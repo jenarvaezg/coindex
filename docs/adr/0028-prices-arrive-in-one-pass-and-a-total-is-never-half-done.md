@@ -5,7 +5,10 @@
   §5 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (one plate of the
   shelf window is valued by a gesture, and that price never expires), §4 amended by
   [#560](https://github.com/jenarvaezg/coindex/issues/560) (Numista refusing stops the pass, and a run
-  of answers that leave no row is one of the shapes that counts as refusing)
+  of answers that leave no row is one of the shapes that counts as refusing), §6 and §7 amended by
+  [#521](https://github.com/jenarvaezg/coindex/issues/521) (the line lives on «Este teléfono», the
+  screen the sewn edge opens, and two of its six states carry a door into `Credenciales` — the pass
+  itself stays without a handle)
 - Date: 2026-08-10
 - Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
   left to its own document
@@ -198,11 +201,29 @@ each day — was discarded: it turns a minute a month into a permanent backgroun
 | a sync cancels it | yes | **yes, and more gravely** | both spend the **same** budget: a pass in flight can eat the calls the sync needs and make it fail with `BudgetExhausted` |
 | an export stands it down | yes | **yes** | it takes the network from something the collector is waiting for |
 | ceiling per pass | no | **no** | 487 of 1.500 is not a burst worth staging, and staging it is four launches before there is any money |
-| silent | yes | **yes**, with the settings line that already exists |
+| silent | yes | **yes**, with the line that already exists on «Este teléfono» (§6.1) |
 | with no API key | — | **does not run** | that is the freshly installed app before onboarding, not an error to discover |
 
 With the budget exhausted the pass stops and writes nothing: the money section does not appear and
-settings says why.
+«Este teléfono» says why.
+
+**§6.1, added by [#521](https://github.com/jenarvaezg/coindex/issues/521): the line is read, and the
+pass has no handle.** The screen it lives on stopped being called «Ajustes» when the audit of 14
+August found that «Sincronizar» — maintenance of the inventory, not configuration — was sitting
+between the API key and `Cerrar sesión`. Two things were asked of that line there and are answered
+here:
+
+1. **It does not become a button.** Of the six states this section produces, **none** is something the
+   collector can push: four are «wait» — for the network, for the sync, for the 1st — and the pass is
+   already idempotent on every launch, so a handle would only add a way to spend the budget twice.
+   That budget is **the key's and not the phone's** (#562), and August 2026 went on nine passes that
+   saved nothing (#560). A silent pass with no handle is the decision, restated because it was
+   questioned.
+2. **Two of the six states do open a door**, and it goes to `Credenciales`, not to a queue:
+   `NoApiKey` and `Rejected` are the only two whose cause the collector can act on, and the field
+   that fixes them is now one screen down (ADR 0026 §14). The door is a row and not a tappable
+   paragraph — the app has no tappable paragraph anywhere — and it is printed **only** in those two
+   states, so it is not furniture on the four where nothing can be done.
 
 ### 7. The total is never shown half-done
 
@@ -218,8 +239,8 @@ incomplete, it is **false**, and it corrects itself upwards while you look at it
    three ladders of referents, the arc of years, the emitters and the size all come whole out of the
    APK. The local-first promise of ADR 0024 extends to this page.
 2. **While the pass runs, the money section is not there.** No struck-through number, no provisional
-   total. It is the same silence as ADR 0024, and settings is already the place where one line tells
-   «they are missing and falling» from «they are missing because there is no network».
+   total. It is the same silence as ADR 0024, and «Este teléfono» is already the place where one line
+   tells «they are missing and falling» from «they are missing because there is no network».
 3. **Complete, the total says its coverage and not its progress.** «Llevo 140 de 223» is a progress
    and is not said; «el valor de N de tus 574 piezas» is a coverage and is. Today that sentence has
    no subtraction to make — the maximum of the three sources covers 100 % of the 574 (#326) — but the

@@ -406,7 +406,7 @@ class CoindexViewModelTest {
 
         assertFalse(viewModel.state.value.syncing)
         assertEquals(
-            "Falta la API key de Numista. Añádela en Ajustes.",
+            "Falta la API key de Numista. Añádela en Credenciales.",
             viewModel.state.value.message?.text,
         )
         assertTrue(requested.isEmpty())
@@ -474,23 +474,23 @@ class CoindexViewModelTest {
     }
 
     @Test
-    fun `saving the settings stores the credentials and says so`() = onViewModel { viewModel ->
+    fun `saving the credentials stores them and says so`() = onViewModel { viewModel ->
         runCurrent()
 
-        val saved = viewModel.saveSettings(apiKey = " otra ", userId = "3105")
+        val saved = viewModel.saveCredentials(apiKey = " otra ", userId = "3105")
         runCurrent()
 
         assertTrue(saved)
         assertEquals(Credentials("otra", 3105), credentials.credentials())
-        assertEquals("Ajustes guardados.", viewModel.state.value.message?.text)
+        assertEquals("Credenciales guardadas.", viewModel.state.value.message?.text)
         assertNull(viewModel.state.value.validation)
     }
 
     @Test
-    fun `a settings form that is refused stores nothing at all`() = onViewModel { viewModel ->
+    fun `a credentials form that is refused stores nothing at all`() = onViewModel { viewModel ->
         runCurrent()
 
-        val saved = viewModel.saveSettings(apiKey = "otra", userId = "perfil")
+        val saved = viewModel.saveCredentials(apiKey = "otra", userId = "perfil")
         runCurrent()
 
         assertFalse(saved)

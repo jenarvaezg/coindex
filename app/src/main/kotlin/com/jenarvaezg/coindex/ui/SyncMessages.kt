@@ -61,19 +61,24 @@ fun lastSyncLabel(
  * A failed sync translated into what the collector can do about it.
  *
  * «Numista devolvió HTTP 401 en /oauth_token» is true and useless: the collector's problem is a
- * key that no longer works, and the way out is the settings screen. Anything genuinely
+ * key that no longer works, and the way out is «Credenciales». Anything genuinely
  * unexpected keeps its original text rather than being flattened into a friendly nothing.
+ *
+ * The three refusals that name that screen **interpolate its label** (#521): they said «en Ajustes»
+ * while the fields lived at the top of it, and a message pointing at a screen that no longer holds
+ * what it promises is worse than a message pointing at nothing. One string owns the name; these
+ * three borrow it, so the next move cannot leave them behind.
  */
 fun syncErrorLabel(error: Throwable): String = when (error) {
     is NumistaException.EmptyApiKey ->
-        "Falta la API key de Numista. Añádela en Ajustes."
+        "Falta la API key de Numista. Añádela en $CREDENTIALS_LABEL."
     is NumistaException.BudgetExhausted ->
         "Consultas a la API agotadas este mes. Espera al día 1 para volver a intentarlo."
     is NumistaException.Transport ->
         "Sin conexión con Numista. Tu colección local sigue disponible."
     is NumistaException.Api -> when (error.status) {
-        401, 403 -> "Numista rechazó tu API key. Revísala en Ajustes."
-        404 -> "Numista no encuentra ese identificador de usuario. Revísalo en Ajustes."
+        401, 403 -> "Numista rechazó tu API key. Revísala en $CREDENTIALS_LABEL."
+        404 -> "Numista no encuentra ese identificador de usuario. Revísalo en $CREDENTIALS_LABEL."
         // «Consultas» and not «peticiones» (#516): Numista throttling is the same object the monthly
         // budget counts, and a third word for it would only be readable as a third thing.
         429 -> "Numista está limitando las consultas. Vuelve a intentarlo dentro de un rato."

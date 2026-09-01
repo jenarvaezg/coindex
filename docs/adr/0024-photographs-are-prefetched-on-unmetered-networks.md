@@ -1,6 +1,9 @@
 # ADR 0024: The photographs arrive before they are asked for, and only on wifi
 
-- Status: accepted
+- Status: accepted, the silent line relocated by
+  [#521](https://github.com/jenarvaezg/coindex/issues/521) (it is read on «Este teléfono», the screen
+  the sewn edge opens, and it stays a line and not a button: mobile data is the one refusal with
+  anything to push, and pushing it is what the wifi condition exists to prevent)
 - Date: 2026-08-05
 
 ## Context
@@ -69,7 +72,7 @@ fetch the tail, evict the head, and buy the same photographs again on the collec
 keeps the directory name Coil would have chosen, so nothing already downloaded is abandoned.
 
 **It is silent.** No snackbar, no banner, nothing to dismiss — an optimization that announces
-itself becomes a chore to supervise. It says one line, in the settings screen, and only because
+itself becomes a chore to supervise. It says one line, on «Este teléfono», and only because
 «faltan 320 y están cayendo» and «faltan 320 porque estás con datos móviles» look identical from
 the outside and need different things from the collector.
 
@@ -81,7 +84,7 @@ Measured on a device (`coindex-ux`, wifi, cache emptied between runs):
 | --- | --- |
 | Cold cache, wifi | 1.658 photographs, 29,8 MB, in a little over two minutes |
 | Second launch | **not one request**: only the cache's own journal was touched |
-| On mobile data | **not one photograph**, and settings says so rather than staying silent |
+| On mobile data | **not one photograph**, and «Este teléfono» says so rather than staying silent |
 | A `404` injected into the type cache | remembered once; the next launch asked for nothing and the count dropped to 1.657, permanently |
 
 The export of #190 stays exactly as it is. It is what makes the export **reliable** — each

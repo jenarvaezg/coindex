@@ -82,7 +82,8 @@ import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateMarking
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
 import com.jenarvaezg.coindex.ui.screens.PlateValuation
-import com.jenarvaezg.coindex.ui.screens.SettingsScreen
+import com.jenarvaezg.coindex.ui.screens.CredentialsScreen
+import com.jenarvaezg.coindex.ui.screens.PhoneScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
@@ -160,7 +161,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         }
     }
     // The casillas the collector marked, crossed with the collection for **the screens** (ADR 0029 §3):
-    // the annex draws these, the door counts them and Ajustes prices their month. The plan asks the
+    // the annex draws these, the door counts them and «Este teléfono» prices their month. The plan asks the
     // ViewModel's `livingWishes()` for the same crossing, and the two cannot disagree because it is one
     // pure function of the same two fields — which is also why neither of them is kept in the state:
     // a stored third reading is the one that could.
@@ -176,7 +177,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // the row and the list it opens cannot disagree about what is marked — and with no prices, which
     // are the one thing a door has no room for.
     val wishedRows = remember(wishes) { wishSubject(wishes).rows }
-    // What the marks cost a month, for the one screen that prints it: Ajustes, where the budget already
+    // What the marks cost a month, for the one screen that prints it: «Este teléfono», where the budget already
     // lives (ADR 0029 §5). The other place the figure is said is the gesture, and that one is a constant
     // sentence — «+2 consultas al mes» per casilla — because it is a promise and not a total.
     val wishCalls = remember(wishes) { wishCallsPerMonth(wishes) }
@@ -323,9 +324,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         } else {
             null
         }
-    val onOpenSettings: (() -> Unit)? =
+    val onOpenPhone: (() -> Unit)? =
         if (atRoot) {
-            { navController.navigate(Routes.SETTINGS) }
+            { navController.navigate(Routes.PHONE) }
         } else {
             null
         }
@@ -339,7 +340,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         topBar = {
             TopChrome {
                 // Both album roots own their chrome: the sewn edge is their shared masthead.
-                // Keeping the generic one above either would print COINDEX and Settings twice and
+                // Keeping the generic one above either would print COINDEX and the way into
+                // «Este teléfono» twice and
                 // spend the space their die-cut grids just recovered (ADR 0026 §1, §13).
                 if (!Routes.ownsChrome(route)) {
                     Masthead(
@@ -347,7 +349,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         // every interior masthead was permanent furniture the collector does not need.
                         subtitle = screenTitle(route, subjectName),
                         onBack = onBack,
-                        onOpenSettings = onOpenSettings,
+                        onOpenPhone = onOpenPhone,
                     )
                 }
                 (state.update as? UpdateStatus.Available)?.let { available ->
@@ -388,7 +390,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             state.fatalError != null -> FatalError(state.fatalError!!, content)
             !state.onboarded -> OnboardingScreen(
                 validation = state.validation,
-                onSave = viewModel::saveCredentials,
+                onSave = viewModel::completeOnboarding,
                 modifier = content,
             )
             // The journey of ADR 0026 §3 needs one layout over both ends of it, and the NavHost is
@@ -452,7 +454,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 showcase = showcase.size,
                                 onOpenWishes = { navController.navigate(Routes.WISHES) },
                                 onOpenShowcase = { navController.navigate(Routes.EXPLORE) },
-                                onSettings = { navController.navigate(Routes.SETTINGS) },
+                                onOpenPhone = { navController.navigate(Routes.PHONE) },
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebook = viewModel::notebookPages,
@@ -471,7 +473,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onCreateBox = viewModel::createOwnGrouping,
                             onAddToBox = viewModel::addToOwnGrouping,
                             sewnEdge = sewnEdge,
-                            onSettings = { navController.navigate(Routes.SETTINGS) },
+                            onOpenPhone = { navController.navigate(Routes.PHONE) },
                             sheet = coinSheet,
                         )
                     }
@@ -500,7 +502,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     ),
                                 )
                             },
-                            onSettings = { navController.navigate(Routes.SETTINGS) },
+                            onOpenPhone = { navController.navigate(Routes.PHONE) },
                         )
                     }
                     page(Routes.OWN_GROUPING) { entry ->
@@ -627,13 +629,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             modifier = Modifier.fillMaxSize(),
                         )
                     }
-                    page(Routes.SETTINGS) {
-                        // Read once per visit: the form owns its own edits from then on, and it
-                        // opens on a clean slate rather than on the last visit's complaint.
-                        val values = remember { viewModel.currentSettings() }
-                        LaunchedEffect(Unit) { viewModel.clearValidation() }
-                        SettingsScreen(
-                            values = values,
+                    page(Routes.PHONE) {
+                        PhoneScreen(
                             photoCache = state.photoCache,
                             valuation = state.valuation,
                             // Where the budget is already spoken (ADR 0029 §5), named: on this card
@@ -643,20 +640,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             wishSpend = wishBudgetLabel(wishCalls),
                             syncing = state.syncing,
                             exporting = state.exportingData,
-                            validation = state.validation,
-                            onSave = { apiKey, userId ->
-                                if (viewModel.saveSettings(apiKey, userId)) {
-                                    navController.popBackStack()
-                                }
-                            },
-                            // Popped before the state flips: the NavHost leaves composition on
-                            // sign-out, but the controller outlives it, and a surviving «settings»
-                            // entry would make the masthead say «Ajustes» over the onboarding form
-                            // and drop the collector back into settings once they sign in again.
-                            onSignOut = {
-                                navController.popBackStack(Routes.INDEX, inclusive = false)
-                                viewModel.signOut()
-                            },
                             onSync = viewModel::sync,
                             // Written by the ViewModel and sent from here, like every other export:
                             // the chooser is an Intent and the Intent belongs to the screen (#548).
@@ -676,7 +659,33 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     }
                                 }
                             },
+                            onOpenCredentials = { navController.navigate(Routes.CREDENTIALS) },
                             onOpenNotices = { navController.navigate(Routes.NOTICES) },
+                        )
+                    }
+                    page(Routes.CREDENTIALS) {
+                        // Read once per visit: the form owns its own edits from then on, and it
+                        // opens on a clean slate rather than on the last visit's complaint.
+                        val values = remember { viewModel.currentCredentials() }
+                        LaunchedEffect(Unit) { viewModel.clearValidation() }
+                        CredentialsScreen(
+                            values = values,
+                            validation = state.validation,
+                            // Back to «Este teléfono», which is where the sync that sent the
+                            // collector here lives.
+                            onSave = { apiKey, userId ->
+                                if (viewModel.saveCredentials(apiKey, userId)) {
+                                    navController.popBackStack()
+                                }
+                            },
+                            // Popped before the state flips: the NavHost leaves composition on
+                            // sign-out, but the controller outlives it, and a surviving entry
+                            // would make the masthead say «Credenciales» over the onboarding form
+                            // and drop the collector back into it once they sign in again.
+                            onSignOut = {
+                                navController.popBackStack(Routes.INDEX, inclusive = false)
+                                viewModel.signOut()
+                            },
                         )
                     }
                     page(Routes.NOTICES) {
@@ -964,13 +973,14 @@ internal fun TopChrome(content: @Composable ColumnScope.() -> Unit) {
  * of the top bar and only one of them may pay the strip.
  *
  * The right-hand slot holds at most one action, and only when it does something: [onBack] away
- * from the start destination, [onOpenSettings] on it.
+ * from the start destination, [onOpenPhone] on it — the same destination the sewn edge's glyph opens
+ * on the three roots that draw their own chrome.
  */
 @Composable
 private fun Masthead(
     subtitle: String,
     onBack: (() -> Unit)?,
-    onOpenSettings: (() -> Unit)?,
+    onOpenPhone: (() -> Unit)?,
 ) {
     Column {
         Row(
@@ -987,8 +997,8 @@ private fun Masthead(
                     onClick = onBack,
                     icon = { BackGlyph() },
                 )
-                onOpenSettings != null ->
-                    CardAction(text = SETTINGS_LABEL, onClick = onOpenSettings)
+                onOpenPhone != null ->
+                    CardAction(text = PHONE_LABEL, onClick = onOpenPhone)
             }
         }
         Text(

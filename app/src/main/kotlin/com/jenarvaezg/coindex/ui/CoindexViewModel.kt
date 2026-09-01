@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
  *
  * What is left here is **[UiState] and nothing else**: every gesture below either writes a field or
  * hands the work to the module whose subject it is — [CollectionSync] for a sync, [PhotoPrefetchLoop]
- * for the photographs, [UpdateFlow] for the APK, [settingsEntry] and [boxToCreate] for what was
+ * for the photographs, [UpdateFlow] for the APK, [credentialsEntry] and [boxToCreate] for what was
  * typed into a form. There is no clock in this file, and that is the measure of it: the three
  * `System.currentTimeMillis()` that used to be read in place now belong to the three modules that
  * stamp with them, each with a clock of its own that a test can hold still (#220).
@@ -397,39 +397,40 @@ class CoindexViewModel(
         prefetchPhotographs(force = true)
     }
 
-    fun saveCredentials(apiKey: String, userId: String) {
+    /** The sign-up form, which has nowhere to go back to and so reports only through the state. */
+    fun completeOnboarding(apiKey: String, userId: String) {
         when (val entry = onboardingEntry(apiKey, userId)) {
-            is SettingsEntry.Refused -> _state.update { it.copy(validation = entry.problem) }
-            is SettingsEntry.Accepted -> {
+            is CredentialsEntry.Refused -> _state.update { it.copy(validation = entry.problem) }
+            is CredentialsEntry.Accepted -> {
                 credentials.save(entry.credentials.apiKey, entry.credentials.userId)
                 _state.update { it.copy(onboarded = true, validation = null) }
             }
         }
     }
 
-    /** The stored credentials, so the settings screen opens on what is in effect. */
-    fun currentSettings(): SettingsValues {
+    /** The stored credentials, so «Credenciales» opens on what is in effect. */
+    fun currentCredentials(): CredentialsValues {
         val stored = credentials.credentials()
-        return SettingsValues(
+        return CredentialsValues(
             apiKey = stored?.apiKey.orEmpty(),
             userId = stored?.userId?.toString().orEmpty(),
         )
     }
 
     /**
-     * Saves the settings form as one unit, reporting inline whether it took.
+     * Saves the «Credenciales» form as one unit, reporting inline whether it took.
      *
      * @return true when everything was stored, so the caller can leave the screen.
      */
-    fun saveSettings(apiKey: String, userId: String): Boolean =
-        when (val entry = settingsEntry(apiKey, userId)) {
-            is SettingsEntry.Refused -> {
+    fun saveCredentials(apiKey: String, userId: String): Boolean =
+        when (val entry = credentialsEntry(apiKey, userId)) {
+            is CredentialsEntry.Refused -> {
                 _state.update { it.copy(validation = entry.problem) }
                 false
             }
-            is SettingsEntry.Accepted -> {
+            is CredentialsEntry.Accepted -> {
                 credentials.save(entry.credentials.apiKey, entry.credentials.userId)
-                _state.update { it.copy(validation = null, message = UiNotice(SETTINGS_SAVED_MESSAGE)) }
+                _state.update { it.copy(validation = null, message = UiNotice(CREDENTIALS_SAVED_MESSAGE)) }
                 true
             }
         }

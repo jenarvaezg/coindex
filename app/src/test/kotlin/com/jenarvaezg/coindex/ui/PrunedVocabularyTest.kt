@@ -116,10 +116,50 @@ class PrunedVocabularyTest {
         assertEquals("Coindex", installedVersionLabel(""))
     }
 
-    /** Ajustes is named once, by the masthead, and the screen no longer repeats it. */
+    /**
+     * The screen the sewn edge opens is named once, by the masthead, and it does not repeat it.
+     *
+     * The word itself changed with #521: «Ajustes» named the two fields the screen used to lead with,
+     * and 87 of its 165 words were the maintenance of the inventory. What it opens is «Este teléfono».
+     */
     @Test
-    fun `Ajustes is the masthead's word`() {
-        assertEquals(SETTINGS_LABEL, screenTitle(Routes.SETTINGS))
+    fun `the phone's own screen is named by the masthead`() {
+        assertEquals("Este teléfono", PHONE_LABEL)
+        assertEquals(PHONE_LABEL, screenTitle(Routes.PHONE))
+    }
+
+    /**
+     * The credentials keep the pairing of §14, in three doors instead of one (#521).
+     *
+     * The row at the foot of «Este teléfono», the row the valuation card grows when it blames the key,
+     * and the three sync refusals that send the collector there all print the same string as the
+     * masthead of what they open — so «Credenciales» cannot become a screen reached by four names.
+     */
+    @Test
+    fun `the credentials entry, the doors that blame it and the screen share a name`() {
+        assertEquals("Credenciales", CREDENTIALS_LABEL)
+        assertEquals(CREDENTIALS_LABEL, screenTitle(Routes.CREDENTIALS))
+        assertTrue(CREDENTIALS_LABEL in syncErrorLabel(NumistaException.EmptyApiKey()))
+        assertTrue(
+            CREDENTIALS_LABEL in syncErrorLabel(NumistaException.Api("/oauth_token", 401, "")),
+        )
+        assertTrue(
+            CREDENTIALS_LABEL in
+                syncErrorLabel(NumistaException.Api("/users/1/collected_items", 404, "")),
+        )
+    }
+
+    /**
+     * The save button says one word, because the screen above it says the other (§5).
+     *
+     * It was «Guardar ajustes» on a screen called Ajustes; it is «Guardar» on one called
+     * «Credenciales», and the snackbar names what was saved because it is read after leaving.
+     */
+    @Test
+    fun `the save button does not repeat the screen it is on`() {
+        assertEquals("Guardar", CREDENTIALS_SAVE_ACTION)
+        assertTrue(CREDENTIALS_LABEL !in CREDENTIALS_SAVE_ACTION)
+        assertEquals("Credenciales guardadas.", CREDENTIALS_SAVED_MESSAGE)
     }
 
     /**

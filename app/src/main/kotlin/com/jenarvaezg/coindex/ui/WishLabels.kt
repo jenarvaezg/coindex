@@ -136,7 +136,7 @@ fun wishCensusLabel(slots: Int, plates: Int): String =
     "${plural(slots, "casilla", "casillas")} en ${plural(plates, "lámina", "láminas")}"
 
 /**
- * What the marks cost every month, in Ajustes, **with its subject** (ADR 0029 §5).
+ * What the marks cost every month, on «Este teléfono», **with its subject** (ADR 0029 §5).
  *
  * The first elastic spend of the app, and the reason it is printed at all: the monthly pass used to be
  * a fixed number nobody had to be told. It is the ceiling of a cold month — see `wishCallsPerMonth`.

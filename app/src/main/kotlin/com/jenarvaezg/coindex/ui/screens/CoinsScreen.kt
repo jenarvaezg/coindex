@@ -114,7 +114,7 @@ fun CoinsScreen(
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
     /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
     sewnEdge: SewnEdgeCounts?,
-    onSettings: () -> Unit,
+    onOpenPhone: () -> Unit,
     /**
      * The sheet a cell of this grid opens, which since #508 is the sheet three surfaces open.
      *
@@ -168,7 +168,7 @@ fun CoinsScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                             AlbumChrome(
                                 counts = sewnEdge,
-                                onSettings = onSettings,
+                                onOpenPhone = onOpenPhone,
                             )
                             SearchField(
                                 value = query,

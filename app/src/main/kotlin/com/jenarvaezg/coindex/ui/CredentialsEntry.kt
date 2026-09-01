@@ -9,42 +9,42 @@ import com.jenarvaezg.coindex.data.Credentials
  * about text, and text is the one thing a test can hold. What used to be here — the same rules
  * interleaved with a keystore write and a snackbar — could only be read by running the app.
  */
-sealed interface SettingsEntry {
+sealed interface CredentialsEntry {
     /** Everything the form asked for, parsed. */
-    data class Accepted(val credentials: Credentials) : SettingsEntry
+    data class Accepted(val credentials: Credentials) : CredentialsEntry
 
     /** What is wrong, in the collector's words, next to the field that caused it. */
-    data class Refused(val problem: String) : SettingsEntry
+    data class Refused(val problem: String) : CredentialsEntry
 }
 
 /**
  * The onboarding form: an API key and the number in the collector's Numista profile URL.
  *
- * One sentence for both fields, unlike [settingsEntry] below, and that is deliberate: on the first
+ * One sentence for both fields, unlike [credentialsEntry] below, and that is deliberate: on the first
  * screen of the app neither field has been filled in before, so naming one of the two would be
  * guessing which of them the collector got wrong.
  */
-fun onboardingEntry(apiKey: String, userId: String): SettingsEntry {
+fun onboardingEntry(apiKey: String, userId: String): CredentialsEntry {
     val credentials = typedCredentials(apiKey, userId)
-        ?: return SettingsEntry.Refused(
+        ?: return CredentialsEntry.Refused(
             "Introduce una API key y un identificador de usuario válidos.",
         )
-    return SettingsEntry.Accepted(credentials)
+    return CredentialsEntry.Accepted(credentials)
 }
 
 /**
- * The settings form, which has the same two fields as onboarding.
+ * The «Credenciales» form, which has the same two fields as onboarding.
  *
  * Here each field is named, because this screen is visited to change **one** of the two and a
  * complaint that does not say which one is a complaint about the wrong field.
  */
-fun settingsEntry(apiKey: String, userId: String): SettingsEntry {
-    if (apiKey.isBlank()) return SettingsEntry.Refused("La API key no puede estar vacía.")
+fun credentialsEntry(apiKey: String, userId: String): CredentialsEntry {
+    if (apiKey.isBlank()) return CredentialsEntry.Refused("La API key no puede estar vacía.")
     val credentials = typedCredentials(apiKey, userId)
-        ?: return SettingsEntry.Refused(
+        ?: return CredentialsEntry.Refused(
             "El identificador de usuario es el número de la URL de tu perfil de Numista.",
         )
-    return SettingsEntry.Accepted(credentials)
+    return CredentialsEntry.Accepted(credentials)
 }
 
 /**

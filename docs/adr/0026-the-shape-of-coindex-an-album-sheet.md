@@ -12,7 +12,10 @@
   coin's sheet inside the app, and no label without an arrow reaches a browser); §3 and §4 amended by
   #514 (a system asking for quiet does not shorten the ceremonies, it keeps them from starting); §8 clause 4 amended by
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (the annex's list arrives, and the
-  shelf is of the plates where something is missing)
+  shelf is of the plates where something is missing); §5 clause 3 and §14 amended by
+  [#521](https://github.com/jenarvaezg/coindex/issues/521) (the screen the sewn edge opens is «Este
+  teléfono» and it is maintenance, not settings; the credentials nest inside it in §14's shape, and
+  the frequency rule stops naming screens)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
   being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
@@ -91,7 +94,10 @@ index goes from **2.07 to 11.04 collections per screen** and shows coins for the
   written in full; and the three numbers are assembled once above the roots so the tabs cannot
   invent three censuses. Amended by [#419](https://github.com/jenarvaezg/coindex/issues/419):
   the wall-clock minute is gone — the system clock is five millimetres away, and the line never
-  meant «last sync».)
+  meant «last sync». Amended by [#521](https://github.com/jenarvaezg/coindex/issues/521): the icon
+  opens **«Este teléfono»** and says so. «Ajustes» named a screen where more than half the words —
+  87 of 165 — were the maintenance of the inventory, and whose only filled action was «Sincronizar»;
+  the credentials it did name are visited once, and hang off its foot.)
 
 ### 2. Paper at any hour: there is no dark theme, and the promise is declared
 
@@ -359,8 +365,13 @@ The bar is three clauses and not one figure:
 2. **No furniture string is printed per row, per slot or per card.** This is the clause that protects
    the result: the 19 convertible copy entries were expensive because they printed 192 times, not
    because they were long.
-3. **Ajustes and onboarding are exempt by the frequency rule**, and in exchange are watched the other
-   way round: none of their explanations may appear on a notebook screen.
+3. **A screen visited once is exempt by the frequency rule**, and in exchange is watched the other
+   way round: none of its explanations may appear on a notebook screen. Today those screens are
+   «Este teléfono», «Credenciales», onboarding and «Avisos y licencias» — named as a **consequence**
+   of the rule and not as the list the rule is applied from
+   ([#521](https://github.com/jenarvaezg/coindex/issues/521): the clause said «Ajustes and
+   onboarding», so a screen splitting in two had to amend the rule to keep an exemption it already
+   earned by frequency).
 
 > **The frequency rule.** A word costs what it costs **multiplied by the number of times it is
 > printed**. Where a screen is visited once, a paragraph costs once, and avoiding a phone call pays
@@ -775,7 +786,7 @@ a «by country» sort order would have been inventing a place to put a line that
 **giving an inside to a screen that has none**, and without it the toll has nowhere to move — either
 it stays on 192 rows, or a capability the father uses is lost.
 
-### 14. Licence notices: three words in Ajustes, one screen with everything inside
+### 14. Licence notices: three words at the foot, one screen with everything inside
 
 Three subjects and not two ([#323](https://github.com/jenarvaezg/coindex/issues/323)): **Numista**
 (the 916-ficha, 3.1 MB seeded cache plus the downloaded photographs), **software** — the real release
@@ -787,8 +798,9 @@ The full texts ship **inside the APK** by obligation (Apache 2.0 §4(a) and OFL 
 Coindex is a sideloaded APK that self-updates against releases (ADR 0011), a `LICENSES.txt` in the
 repository does not travel with it. They live **as assets and not as literals**, which is what keeps
 them out of `CopyLivesInOnePlaceTest` (§6). The entry is `Avisos y licencias`, three words at the foot
-of Ajustes, in the hole left by the `Coindex v0.16.0` the pruning killed as a duplicate — **no
-subtitle**, because the entry pays the frequency rule while the screen it opens is exempt. Maintained
+of the screen the sewn edge opens, in the hole left by the `Coindex v0.16.0` the pruning killed as a
+duplicate — **no subtitle**, because the entry pays the frequency rule while the screen it opens is
+exempt. Maintained
 by hand, by family and without versions, plus a Gradle task and a test that goes red when a group
 appears with no notice — because what sneaks in does not pass through `libs.versions.toml`.
 
@@ -797,6 +809,23 @@ User can readily identify the source» (this screen), and **preserve third-party
 are met by the first two. The third is **knowingly not met**: photograph credit was closed `wontfix`
 on 8 August 2026 by the owner's decision (two collections on two phones, no public surface). It is a
 conscious breach recorded as such, not a loose end.
+
+**Amended by [#521](https://github.com/jenarvaezg/coindex/issues/521): three words at the foot is a
+shape, and it has a second user.** `Credenciales` — the two fields, their promise and `Cerrar sesión`
+— goes down into it. The trip into that foot is the trip of a screen visited **once**: onboarding
+fills the two fields, and the only reason to come back is a key Numista has started refusing. What
+stays at the top is what the trip is actually for — `Sincronizar`, the two queues and the export —
+which is why the screen is «Este teléfono» and not «Ajustes».
+
+Two rules come out of it, and they are the price of the nesting:
+
+1. **What blames the credentials must open them.** The valuation line says «Faltan las credenciales de
+   Numista» and «Numista está rechazando las consultas»; in those two states, and only those two, the
+   card carries a row into `Credenciales`. Nesting the cure two taps away without a door from the
+   symptom is the dead end §14's own screen was invented to avoid.
+2. **A message that names a place names this one.** The three sync refusals that said «Añádela en
+   Ajustes» say `Credenciales`, because that is now where the field is. A message pointing at a
+   screen that no longer holds what it promises is worse than a message pointing at nothing.
 
 ### 15. What «approved» means, and what an implementation session may change
 

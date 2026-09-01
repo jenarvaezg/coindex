@@ -162,7 +162,7 @@ mapas de `docs/ux/` lo citan como el veto que aplican:
   donde falta la pieza. Papel de fibra fina, sin sombra de hoja; el único brillo fijo es el
   reflejo del acetato.
 - **Papel a cualquier hora** (ADR 0026 §2): la app no sigue el tema oscuro del sistema, no hay
-  interruptor en Ajustes, y `android:forceDarkAllowed` está a `false` en `Theme.Coindex`. La noche
+  interruptor en «Este teléfono», y `android:forceDarkAllowed` está a `false` en `Theme.Coindex`. La noche
   la pone el sistema atenuando el panel. Lo fija `SinglePaletteTest`, que además guarda los dos
   suelos de contraste de la paleta sobre el papel: `muted` ≥ 4,50 (texto) y `hairline` ≥ 3,00 (no
   textual).

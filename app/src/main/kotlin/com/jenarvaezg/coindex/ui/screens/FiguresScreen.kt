@@ -90,13 +90,13 @@ fun FiguresScreen(
     nowMillis: Long,
     onOpenCountry: (String) -> Unit,
     onOpenYear: (Int) -> Unit,
-    onSettings: () -> Unit,
+    onOpenPhone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         AlbumChrome(
             counts = sewnEdge,
-            onSettings = onSettings,
+            onOpenPhone = onOpenPhone,
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
