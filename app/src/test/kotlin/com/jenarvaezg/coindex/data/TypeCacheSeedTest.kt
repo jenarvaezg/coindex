@@ -4,12 +4,16 @@ import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.domain.CatalogSeeds
+import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.GroupingSeeds
 import com.jenarvaezg.coindex.domain.ProgrammeSeeds
+import com.jenarvaezg.coindex.domain.inferFinish
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -142,5 +146,52 @@ class TypeCacheSeedTest {
             }
         }
         assertEquals(emptyList(), broken)
+    }
+
+    /**
+     * El vocabulario del chapado, fijado contra las fichas que de verdad se publican (#573).
+     *
+     * `inferFinish` lee el dorado de `composition.text` porque es el único campo que separa las
+     * quince libras redondas doradas de las treinta y dos que no lo son —los títulos dicen «Silver
+     * Proof» en las cuarenta y siete—, y una regla de agujas literales se pudre en silencio si
+     * Numista cambia la redacción: se convertiría en un no-op y nadie se enteraría, que es la misma
+     * lección que obligó a fijar aparte el vocabulario de `objectClassDeviations`.
+     *
+     * Así que la premisa se mide aquí: de las 1.089 fichas sembradas, cuatro nombran el oro en la
+     * composición y cada una cae del lado que le toca. Un quinto tipo con oro que llegue con la
+     * próxima siembra pone esto en rojo, y eso es lo que se quiere — que alguien mire si es una
+     * moneda de oro o una dorada.
+     */
+    @Test
+    fun `every seeded composition that names gold is read as the alloy or the coating it is`() {
+        val goldWords = listOf("oro", "gold")
+        val byFinish = snapshot.entries
+            .mapNotNull { (id, ficha) ->
+                val body = ficha.jsonObject
+                val composition = body["composition"]?.jsonObject?.get("text")
+                    ?.jsonPrimitive?.contentOrNull
+                    ?: return@mapNotNull null
+                if (goldWords.none { composition.lowercase().contains(it) }) return@mapNotNull null
+                val finish = inferFinish(
+                    body["title"]?.jsonPrimitive?.contentOrNull,
+                    body["series"]?.jsonPrimitive?.contentOrNull,
+                    composition,
+                )
+                id.toInt() to finish
+            }
+            .sortedBy { it.first }
+
+        assertEquals(
+            listOf(
+                // La onza de koala con el detalle resaltado en oro de 24 quilates.
+                42_672 to Finish.Gilded,
+                // El Bitcoin de 2025 chapado, cuya casilla ya decía en prosa que el título calla.
+                440_309 to Finish.Gilded,
+                // Y las dos que están **hechas** de oro, que no son un acabado de nadie.
+                304_649 to null,
+                448_512 to null,
+            ).sortedBy { it.first },
+            byFinish,
+        )
     }
 }

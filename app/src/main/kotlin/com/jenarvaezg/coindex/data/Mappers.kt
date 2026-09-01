@@ -90,7 +90,7 @@ fun TypeMetaEntity.toDomain(): TypeMeta = TypeMeta(
     minYear = minYear ?: issuedYear,
     maxYear = maxYear ?: issuedYear,
     weightOz = weightGrams?.let(::gramsToOunces),
-    finish = inferFinish(title, family),
+    finish = inferFinish(title, family, composition),
     metal = inferMetal(composition),
     // The third rule read off the composition prose, beside the metal and for the same reason: the
     // silver floor of a piece is its *fine* silver, and a .835 coin is 16,5 % copper (ADR 0028 §8).
