@@ -169,9 +169,10 @@ fun deriveCollection(
             continue
         }
         // Numista's own grams, snapped to the common bullion weights and to nothing a catalog
-        // declares: past this point the type is one no curated file has a weight for (#288), and
-        // `UnclaimedRows` already weighs that same loose coin exactly this way.
-        val weightMillioz = metadata.weightOz?.let(::normalizeWeightMillioz)
+        // declares: past this point the type is one no curated file has a weight for (#288). The
+        // shelf's loose row weighs that same coin by the very same property and no longer by a
+        // second call of its own (#540).
+        val weightMillioz = metadata.weightMillioz
         if (weightMillioz == null) {
             unclassifiedGrouped.record(item, UnclassifiedReason.UnknownWeight(family))
             continue
