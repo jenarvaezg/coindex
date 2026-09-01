@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "id": "uk-1-libra-plata-proof",
+  "name": "1 libra de plata proof · Reino Unido 1983-2016 · la libra redonda",
+  "short_name": "1 libra de plata proof",
+  "issuer_code": "royaume-uni",
+  "family": "1 libra de plata proof del Reino Unido",
+  "weight_millioz": 305,
+  "finish": "Proof",
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "La última libra redonda es la de 2016 (N#87321), y lo que la cierra es que la moneda dejó de existir: la libra redonda perdió su curso legal a medianoche del domingo 15 de octubre de 2017, sustituida por la bimetálica de doce caras que entró en circulación el 28 de marzo de 2017. «From midnight on Sunday, the round pound will lose its legal tender status and no longer be accepted in shops and restaurants», HM Treasury, 9 de octubre de 2017: https://www.gov.uk/government/news/goodbye-round-pound-use-by-october-15 — Sin moneda no hay acuñación de plata proof de esa moneda, así que la serie no puede continuar por definición y no hace falta buscar una decisión de la ceca.",
+  "source": "https://en.numista.com/catalogue/pieces87321.html",
+  "source_note": "Ninguna serie de Numista propone esta lista, y ahí está el hallazgo: la libra redonda de plata proof está repartida en **ocho** series de Numista —Royal Diadem (5965), Heraldic Emblems (3956), Regional Bridge, UK Cities, Floral Emblems, «25th anniversary of the pound coin», «30th anniversary of the pound coin» y «Final edition of the round pound coin»—, ninguna de las cuales cubre la secuencia ni tiene denominador. Las dos primeras cortan por el retrato de la reina, que no es lo que se compra. El límite se midió por peso sobre el catálogo del emisor, no por serie: `index.php?cat=y&st=all&e=royaume-uni&w=9.3-9.7&q=200`, agotado por páginas —97 tipos únicos en la p1, 12 nuevos en la p2 y **cero** en la p3—, 109 tipos en total, de los que 47 son 1 libra de plata .925 a 9,5 g. Las 47 fichas se abrieron una a una y están publicadas. De esas 47 se van 15 por acabado, que es la clave de variante y no un juicio: las 14 del estuche del 25.º aniversario de 2008 llevan «selected gold plating to the reverse» (dicho igual en los comentarios de las catorce, y son 2.005 juegos vendidos), y la del Jubileo de Diamante de 2012 (N#206741) declara el dorado en la propia descripción del reverso, «Gold-plated Royal Shield of Arms». Son `Gilded`, no `Proof`. Aviso para quien lo relea: el dorado se declara en sitios distintos según la ficha —en los comentarios en las de 2008, en el reverso en la de 2012—, y además diez de las 32 que sí entran *mencionan* la edición dorada de 2008 en sus comentarios sin ser doradas, así que buscar «gold plat» en el comentario da diez falsos positivos. Se lee el campo, no la prosa sobre otra moneda. Quedan dentro las dos de estuche sin dorar: la del 30.º aniversario de 2013 (N#222176) y las que se vendieron sueltas. Cuatro tipos cubren más de un año porque el reverso se repitió —N#56384 (1985 y 1990), N#56386 (1986 y 1991), N#56383 (1987 y 1992) y N#45979 (1998-2013)—; la casilla lleva el año del estreno del diseño, que es lo que la lámina ordena. Hueco declarado: la lista de diseños de la propia Royal Mint no se pudo leer el 1 de septiembre de 2026 porque royalmint.com estaba detrás de una cola de ventas (302 a `royalmint.queue-it.net`), así que la frontera descansa en la enumeración por peso de Numista, agotada, y no en la fuente de la ceca. Conviene contrastarla cuando el sitio vuelva. Cara impresa: el reverso, medido en las 32 —el anverso es el retrato de la reina en todas y el reverso es el emblema, el puente, la ciudad o la flor, que es la moneda que el coleccionista reconoce.",
+  "updated_at": "2026-09-01",
+  "members": [
+    {
+      "id": "1983-armas-reales",
+      "label": "Armas reales",
+      "year": 1983,
+      "numista_type_id": 56275
+    },
+    {
+      "id": "1984-cardo-escoces",
+      "label": "Cardo escocés",
+      "year": 1984,
+      "numista_type_id": 56382
+    },
+    {
+      "id": "1985-puerro-gales",
+      "label": "Puerro galés",
+      "year": 1985,
+      "numista_type_id": 56384
+    },
+    {
+      "id": "1986-lino-norirlandes",
+      "label": "Lino norirlandés",
+      "year": 1986,
+      "numista_type_id": 56386
+    },
+    {
+      "id": "1987-roble-ingles",
+      "label": "Roble inglés",
+      "year": 1987,
+      "numista_type_id": 56383
+    },
+    {
+      "id": "1988-escudo-real-coronado",
+      "label": "Escudo real coronado",
+      "year": 1988,
+      "numista_type_id": 43388
+    },
+    {
+      "id": "1989-cardo-escoces",
+      "label": "Cardo escocés",
+      "year": 1989,
+      "numista_type_id": 56359
+    },
+    {
+      "id": "1993-armas-reales",
+      "label": "Armas reales",
+      "year": 1993,
+      "numista_type_id": 62662
+    },
+    {
+      "id": "1994-leon-rampante-de-escocia",
+      "label": "León rampante de Escocia",
+      "year": 1994,
+      "numista_type_id": 61620
+    },
+    {
+      "id": "1995-dragon-de-gales",
+      "label": "Dragón de Gales",
+      "year": 1995,
+      "numista_type_id": 26098
+    },
+    {
+      "id": "1996-cruz-celta",
+      "label": "Cruz celta",
+      "year": 1996,
+      "numista_type_id": 43941
+    },
+    {
+      "id": "1997-tres-leones-de-inglaterra",
+      "label": "Tres leones de Inglaterra",
+      "year": 1997,
+      "numista_type_id": 62663
+    },
+    {
+      "id": "1998-armas-reales",
+      "label": "Armas reales",
+      "year": 1998,
+      "numista_type_id": 45979
+    },
+    {
+      "id": "1999-leon-rampante-de-escocia",
+      "label": "León rampante de Escocia",
+      "year": 1999,
+      "numista_type_id": 45414
+    },
+    {
+      "id": "2000-dragon-de-gales",
+      "label": "Dragón de Gales",
+      "year": 2000,
+      "numista_type_id": 19420
+    },
+    {
+      "id": "2001-cruz-celta",
+      "label": "Cruz celta",
+      "year": 2001,
+      "numista_type_id": 30967
+    },
+    {
+      "id": "2002-tres-leones-de-inglaterra",
+      "label": "Tres leones de Inglaterra",
+      "year": 2002,
+      "numista_type_id": 30968
+    },
+    {
+      "id": "2004-puente-de-forth",
+      "label": "Puente de Forth",
+      "year": 2004,
+      "numista_type_id": 62630
+    },
+    {
+      "id": "2005-puente-de-menai",
+      "label": "Puente de Menai",
+      "year": 2005,
+      "numista_type_id": 168227
+    },
+    {
+      "id": "2006-arco-egipcio",
+      "label": "Arco Egipcio",
+      "year": 2006,
+      "numista_type_id": 168225
+    },
+    {
+      "id": "2007-puente-del-milenio-de-gateshead",
+      "label": "Puente del Milenio de Gateshead",
+      "year": 2007,
+      "numista_type_id": 155240
+    },
+    {
+      "id": "2010-londres",
+      "label": "Londres",
+      "year": 2010,
+      "numista_type_id": 18522
+    },
+    {
+      "id": "2010-belfast",
+      "label": "Belfast",
+      "year": 2010,
+      "numista_type_id": 18523
+    },
+    {
+      "id": "2011-cardiff",
+      "label": "Cardiff",
+      "year": 2011,
+      "numista_type_id": 108773
+    },
+    {
+      "id": "2011-edimburgo",
+      "label": "Edimburgo",
+      "year": 2011,
+      "numista_type_id": 108787
+    },
+    {
+      "id": "2013-roble-y-rosa-de-inglaterra",
+      "label": "Roble y rosa de Inglaterra",
+      "year": 2013,
+      "numista_type_id": 48576
+    },
+    {
+      "id": "2013-puerro-y-narciso-de-gales",
+      "label": "Puerro y narciso de Gales",
+      "year": 2013,
+      "numista_type_id": 56037
+    },
+    {
+      "id": "2013-escudo-real-coronado-del-30-o-aniversario",
+      "label": "Escudo real coronado del 30.º aniversario",
+      "year": 2013,
+      "numista_type_id": 222176
+    },
+    {
+      "id": "2014-lino-y-trebol-de-irlanda-del-norte",
+      "label": "Lino y trébol de Irlanda del Norte",
+      "year": 2014,
+      "numista_type_id": 233633
+    },
+    {
+      "id": "2014-cardo-y-campanilla-de-escocia",
+      "label": "Cardo y campanilla de Escocia",
+      "year": 2014,
+      "numista_type_id": 233647
+    },
+    {
+      "id": "2015-armas-reales",
+      "label": "Armas reales",
+      "year": 2015,
+      "numista_type_id": 233652
+    },
+    {
+      "id": "2016-ultima-libra-redonda",
+      "label": "Última libra redonda",
+      "year": 2016,
+      "numista_type_id": 87321
+    }
+  ]
+}
