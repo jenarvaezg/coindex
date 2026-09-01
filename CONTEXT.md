@@ -120,7 +120,10 @@ _Avoid_: Provenance label, curated flag, coverage claim
 The card-sized name of a collection: `short_name` in the curated file — required, unique across the
 index and a prefix of `name` — Numista's raw family verbatim where no file exists, and the single
 40-character name a collector types when creating a box (where `name == short_name`). It is written
-by the curator, never renamed by the collector, and there are no display aliases in code.
+by the curator, never renamed by the collector, and there are no display aliases in code. Two cards
+of one index can never read alike: where they would — one Numista series over two physical patterns,
+or one grouping over two variant keys — each says the weight that splits it, «5 francs Semeuse ·
+0,386 oz» (#565). That is the whole of it; nothing else is ever appended.
 _Avoid_: Family, name, family display alias, editorial scope
 
 **Card country**:

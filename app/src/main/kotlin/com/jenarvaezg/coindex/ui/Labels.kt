@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.domain.ounceLabel
 import com.jenarvaezg.coindex.domain.SeriesStatus
 
 const val UNKNOWN_YEAR_LABEL: String = "Sin año"
@@ -12,12 +13,14 @@ const val UNKNOWN_YEAR_LABEL: String = "Sin año"
 /**
  * `1000` reads as "1 oz", `250` as "0,25 oz", `804` as "0,804 oz". An absent weight is a set
  * issued as a set, which has no single weight to show (ADR 0012).
+ *
+ * The figure itself is [ounceLabel], in the domain, because a card is no longer the only place a
+ * variant weight is written: since #565 a name disambiguates itself with the same string, and a
+ * second implementation of it would be two readings of one key.
  */
 fun weightLabel(weightMillioz: Int?): String {
     if (weightMillioz == null) return "Conjunto de varias denominaciones"
-    val whole = weightMillioz / 1_000
-    val fraction = (weightMillioz % 1_000).toString().padStart(3, '0').trimEnd('0')
-    return if (fraction.isEmpty()) "$whole oz" else "$whole,$fraction oz"
+    return ounceLabel(weightMillioz)
 }
 
 /**

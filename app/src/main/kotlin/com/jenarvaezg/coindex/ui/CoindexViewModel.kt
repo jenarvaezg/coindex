@@ -113,12 +113,6 @@ class CoindexViewModel(
     val catalogs get() = curation.catalogs
 
     /**
-     * The card-sized name of every curated collection (#22). The plate keeps the long [name] —
-     * defining the editorial scope is its job — so this is the index's, and the ficha's.
-     */
-    val titles get() = curation.titles
-
-    /**
      * Every name a curated file claims, so the one name a collector types cannot repeat one
      * (ADR 0021 §4). Constant for the process lifetime, like the seeds it comes from.
      */

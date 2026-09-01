@@ -178,12 +178,14 @@ class CollectionIndex(
     ): List<IndexCard> {
         val items = snapshot.items
         val issuers = Issuers(snapshot.typeMeta)
+        // Every name at once, because two cards reading alike is a fact about the pair (#565).
+        val names = titles.of(derivation.derivedCollections.map { it.key() })
         val cards = derivation.derivedCollections.map { collection ->
             val key = collection.key()
             val catalog = catalogsByKey[key]
             val album = catalog?.let { albums[it] }
             IndexCard.Derived(
-                name = titles.of(key),
+                name = names.getValue(key),
                 coverage = album?.coverage(),
                 issuer = issuers.of(
                     declaredCode = declaredIssuerCode(key),

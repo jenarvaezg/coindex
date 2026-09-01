@@ -11,6 +11,10 @@ import kotlin.test.assertTrue
  * The rule that does the work is uniqueness: cutting `name` at its first `·` would have been
  * free, and it collapsed twelve curated files into five names — three Britannias reading the
  * same thing on three cards, with the weight and finish that tell them apart nowhere in sight.
+ *
+ * That rule covers the files. What it cannot cover is the cards no file names, and the cards a
+ * grouping names two of: those collide only against the inventory of the day, so the index
+ * resolves its names together (#565).
  */
 class CollectionTitlesTest {
     @Test
@@ -139,7 +143,62 @@ class CollectionTitlesTest {
 
         assertTrue(error.message!!.contains("Dólar de plata clásico"), error.message!!)
     }
+
+    /**
+     * The defect of #565, with the two cards that produced it.
+     *
+     * Numista's series «5 francs Semeuse» spans two physical patterns the collector owns: the
+     * 12 g circulation coin of 1963 in silver .835 (N#679) and the 22,8 g essai piéfort of 1960
+     * in .950 (N#448144). The variant key does its job and splits them; the name did not, and the
+     * card has nothing else to say since ADR 0026 §12. Neither can be curated out of the collision
+     * — both are signed huérfanas — so the name is where it is answered.
+     */
+    @Test
+    fun `two cards of one Numista family say which weight they are`() {
+        val titles = CollectionTitles(emptyList(), emptyList())
+        val circulation = VariantKey("5 francs Semeuse", 386, null, Metal.Silver)
+        val piefort = VariantKey("5 francs Semeuse", 733, null, Metal.Silver)
+        val hercules = VariantKey("Hercules type", 965, null, Metal.Silver)
+
+        val names = titles.of(listOf(circulation, piefort, hercules))
+
+        assertEquals("5 francs Semeuse · 0,386 oz", names.getValue(circulation))
+        assertEquals("5 francs Semeuse · 0,733 oz", names.getValue(piefort))
+        // A card with no twin says nothing it did not say before: the variant line died with
+        // ADR 0026 §12 and only comes back where it is the difference.
+        assertEquals("Hercules type", names.getValue(hercules))
+    }
+
+    /**
+     * A grouping is the one curated species that can name two cards, because it claims a family
+     * and a family holds as many keys as Numista has patterns for it (ADR 0013).
+     */
+    @Test
+    fun `a curated grouping that names two cards disambiguates them too`() {
+        val grouping = CuratedGrouping(
+            schemaVersion = 1,
+            id = "alemanas-plata-de-ley",
+            name = "Alemanas de plata de ley · Alemania",
+            shortName = "Alemanas de plata de ley",
+            family = "Alemanas de plata de ley",
+            issuerCode = "allemagne",
+            source = "https://en.numista.com/catalogue/pieces13203.html",
+            updatedAt = "2026-09-01",
+            typeIds = listOf(13203, 13204),
+        )
+        val titles = CollectionTitles(emptyList(), listOf(grouping))
+        val ten = VariantKey(grouping.family, 579, null, Metal.Silver)
+        val twenty = VariantKey(grouping.family, 1_000, null, Metal.Silver)
+
+        val names = titles.of(listOf(ten, twenty))
+
+        assertEquals("Alemanas de plata de ley · 0,579 oz", names.getValue(ten))
+        assertEquals("Alemanas de plata de ley · 1 oz", names.getValue(twenty))
+    }
 }
+
+/** One name at a time, which is all a test about a single file is asking about. */
+private fun CollectionTitles.of(key: VariantKey): String = of(listOf(key)).getValue(key)
 
 private fun catalogJson(
     id: String,

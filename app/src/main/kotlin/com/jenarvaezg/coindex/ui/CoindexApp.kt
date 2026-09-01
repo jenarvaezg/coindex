@@ -263,13 +263,15 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         Routes.isPlate(route) ->
             viewModel.catalogName(backStackEntry?.arguments?.getString("catalogId"))
         // The whole key, not just the family: three Britannias share one and only the key
-        // tells them apart (#22).
+        // tells them apart (#22). And the name is read off the card the route opened rather than
+        // resolved a second time, because since #565 a name knows about its neighbours: asking the
+        // titles alone would put «5 francs Semeuse» over a screen whose card said «· 0,733 oz».
         Routes.isDerivedCollection(route) -> variantKeyFromRoute(
             family = backStackEntry?.arguments?.getString("family"),
             weight = backStackEntry?.arguments?.getString("weight"),
             finish = backStackEntry?.arguments?.getString("finish"),
             metal = backStackEntry?.arguments?.getString("metal"),
-        )?.let(viewModel.titles::of)
+        )?.let { key -> state.collection.piecesCardFor(key)?.name }
         Routes.isOwnGrouping(route) -> backStackEntry
             ?.arguments
             ?.getString("groupingId")
