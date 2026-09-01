@@ -292,7 +292,7 @@ private fun CoinRecess(
                 .background(Paper.paperDeep),
         )
         if (state.showGhost) {
-            GhostCoin(state.ghostOpacity)
+            GhostCoin(opacity = state.ghostOpacity, diameterDp = state.ghostDiameterDp)
         } else {
             FlippingCoin(state, tilt)
         }
@@ -303,11 +303,20 @@ private fun CoinRecess(
     }
 }
 
+/**
+ * The empty casilla, at the opacity and the **diameter** it is being read at (#556).
+ *
+ * The slot the bench paints is 121 dp of coin in a 133 dp recess, which is the plate's own casilla and
+ * therefore the one size at which the penumbra was never in doubt. A ghost that could only be seen there
+ * could not answer the question #556 asks — whether the sunk design is still a sentence at the 34 dp of
+ * the country axis — so the drawing shrinks inside the recess while the cardboard around it stays put:
+ * what is being judged is the design, not the hole.
+ */
 @Composable
-private fun GhostCoin(opacity: Float) {
+private fun GhostCoin(opacity: Float, diameterDp: Float) {
     Box(
         modifier = Modifier
-            .size(121.dp)
+            .size(diameterDp.dp)
             .clip(CircleShape)
             .background(Paper.paperDeep),
     ) {
@@ -562,6 +571,13 @@ private fun CalibrationControls(
             value = state.ghostOpacity,
             control = CalibrationControl.GHOST_OPACITY,
             display = percent(state.ghostOpacity),
+            onChange = onChange,
+        )
+        ControlSlider(
+            label = "Diámetro",
+            value = state.ghostDiameterDp,
+            control = CalibrationControl.GHOST_DIAMETER_DP,
+            display = decimal(state.ghostDiameterDp, " dp"),
             onChange = onChange,
         )
     }

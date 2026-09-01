@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.jenarvaezg.coindex.ui.components.AlbumToneConfig
 import com.jenarvaezg.coindex.ui.components.CoinGloss
 import com.jenarvaezg.coindex.ui.components.DieCutWall
+import com.jenarvaezg.coindex.ui.components.GHOST_MIN_DP
 import com.jenarvaezg.coindex.ui.components.GRAIN_OPACITY
 import com.jenarvaezg.coindex.ui.components.HOLE_CARD_PADDING_DP
 import kotlin.math.roundToInt
@@ -27,6 +28,16 @@ enum class CalibrationControl(
     STAMPING_DURATION_MILLIS(100f..700f),
     RECESS_DEPTH_DP(0f..8f),
     GHOST_OPACITY(0f..0.3f),
+
+    /**
+     * The diameter the ghost is being read at, which is what #556 came to the bench to calibrate.
+     *
+     * The album draws its holes at two sizes and the penumbra was written for one of them: 104 dp on
+     * the plate, the sheet and the shelf, and 34 dp on the country axis. The range covers both ends and
+     * the 40 dp of #520's row in between — the size at which the sunk design measured as two grey discs
+     * — so the floor can be found by walking it rather than argued.
+     */
+    GHOST_DIAMETER_DP(24f..104f),
     CARTOUCHE_ALPHA(0f..1f),
     CARD_ALPHA(0f..1f),
     HAIRLINE_TONE(32f..223f),
@@ -57,6 +68,10 @@ data class CalibrationState(
     val stampingDurationMillis: Int = 300,
     val recessDepthDp: Float = 3f,
     val ghostOpacity: Float = 0.14f,
+    // The ghost slot opens at the diameter production says is the floor, the way the gloss and the tone
+    // open where production stands: a bench showing a size the app does not draw cannot tell you
+    // whether what you are looking at is the defect (#357).
+    val ghostDiameterDp: Float = GHOST_MIN_DP,
     val showGhost: Boolean = false,
     val selectedTab: CalibrationTab = CalibrationTab.EFFECTS,
     // The tone tab opens where production stands, the way the grain slider already does. It used
@@ -89,6 +104,7 @@ data class CalibrationState(
                 copy(stampingDurationMillis = value.roundToInt())
             CalibrationControl.RECESS_DEPTH_DP -> copy(recessDepthDp = value)
             CalibrationControl.GHOST_OPACITY -> copy(ghostOpacity = value)
+            CalibrationControl.GHOST_DIAMETER_DP -> copy(ghostDiameterDp = value)
             CalibrationControl.CARTOUCHE_ALPHA -> copy(cartoucheAlpha = value)
             CalibrationControl.CARD_ALPHA -> copy(cardAlpha = value)
             CalibrationControl.HAIRLINE_TONE -> copy(hairlineTone = value.roundToInt())

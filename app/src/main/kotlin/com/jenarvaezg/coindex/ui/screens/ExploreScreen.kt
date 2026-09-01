@@ -160,9 +160,15 @@ private fun ShelfTile(
     ) {
         AlbumHole(
             photo = images?.printedPhoto(tile.printedSide),
-            // A plate of the window is a plate with nothing in it, so every one of its tiles wears the
-            // ghost; a plate of the collector's shows its cover coin as its own card does.
-            absence = if (tile.mine) HoleAbsence.Filled else HoleAbsence.Missing,
+            // What the hole holds, and not which species of plate this is (#556). Every window tile
+            // used to wear the ghost, which is «te falta» — and on a shelf of plates the collector does
+            // not collect nothing is missing: the coin is not theirs and never was. Worse for a screen
+            // that mixes the two populations on purpose (ADR 0030 §8 clause 1, so as not to sort by
+            // ownership), the penumbra sorted them by ownership in the only loud property a tile has,
+            // and `ShowcaseTile` is explicit that a tile is drawn from what it *has* and never from a
+            // branch on which kind it is. So the shelf draws its coins whole and the dotted rule says
+            // they are not yours, which is the language #520 chose for exactly this sentence.
+            absence = if (tile.coverOwned) HoleAbsence.Filled else HoleAbsence.Wanted,
             // **No `otherSide`**, exactly as `CollectionCard` passes none: the coin of a *casilla* turns
             // over, and a tile is not a casilla — handed the other face, the hole takes the tap to turn
             // it and the plate behind the tile never opens. Measured on the AVD, where the whole shelf
