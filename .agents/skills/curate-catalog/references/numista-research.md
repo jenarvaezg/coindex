@@ -23,7 +23,14 @@ catalogue/index.php?se=<series_id>&p=1&q=200
 The ficha of any owned type links its `series.php?id=N`. Two things that URL does not promise:
 
 - **It may be a technical family, not a series.** The 500 escudos cite `series.php?id=6598`, which is «System 1981-2001» with 141 coins inside (#27).
-- **The API has no series operation** (#43), so this route is browser-only. That is also why the annual pass cannot be automated: in 23 of 28 open catalogs the new year arrives as a *new type*, and only a handful have a single trunk where `/types/{id}/issues` would answer cheaply (#94).
+- **The API has no series operation** (#43), so this route is browser-only.
+- **One plate can be spread over eight series, and walking them will not find the ones you do not
+  know exist.** The UK round pound in silver proof sits in *Heraldic Emblems*, *Royal Diadem*,
+  *Regional Bridge*, *UK Cities*, *Floral Emblems*, two anniversary series and *Final edition of the
+  round pound coin*. Curating from the two series the owned coins cited gave 18 casillas; enumerating
+  the **physical variant** by weight gave 47 types and 32 casillas — and the one the series route
+  never reached was the 2016 final edition, the coin that closes the plate. When the sequence is a
+  denomination in one metal, Route 2 is the route and a series is only a label on a row (#567). That is also why the annual pass cannot be automated: in 23 of 28 open catalogs the new year arrives as a *new type*, and only a handful have a single trunk where `/types/{id}/issues` would answer cheaply (#94).
 
 ## Route 2: walk by weight
 
@@ -92,6 +99,13 @@ Three things that route does not tell you:
 
 ## Reading a ficha
 
+- **A finish is declared wherever the contributor felt like it, and the prose lies about it.** The
+  14 gold-plated UK pounds of the 2008 anniversary set say «selected gold plating to the reverse»
+  only in `Comments`; the 2012 Diamond Jubilee one says it only in its reverse description. Worse,
+  ten plain silver proofs *mention* the 2008 gilded edition in their own comments, so grepping the
+  comment field for «gold plat» returned ten false positives and one false negative (#567). Read the
+  field that holds the fact, never the sentence about another coin — and remember `inferFinish` only
+  reads the title (#62), where all fifteen of those say «Silver Proof» like the rest.
 - **The metal is the only physical property worth cross-checking.** Numista's grams do not agree with themselves — and for Portugal's 1000 escudos .500 neither does the law: thirteen decretos say 27 g and six say 28 g (#287) — and its finish field does not exist, so `inferFinish` only reads the title (#62).
 - **A weight that matches no law is not proof of an intruder.** Of the three off-standard grams in the 104 3-rouble Architectural Monuments, two were a bailed digit in Numista (39,94 for 33,94) and the third, 35,66 g, is the mint's own figure for a coin carrying a 1,55 g gold inlay — same 31,10 g of fine silver, same plate. Read the *fine* content off the ficha's own edge lettering and off the mint, then decide; the gross gram alone separates nothing (#160).
 
