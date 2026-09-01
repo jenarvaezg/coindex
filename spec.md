@@ -110,7 +110,13 @@
   - Acabado (`Finish`): inferido del título del tipo con reglas auditables
     (`proof`+colour → ProofColoured; `proof`; colour/`coloriz`/colores lunares; `gild`/
     `dorad`; `antiqu`; `bullion` o series Lunar III / Tudor Beasts → Bullion; si no →
-    desconocido). Numista no expone un campo de acabado estable.
+    desconocido). Numista no expone un campo de acabado estable. La excepción es el
+    dorado, que se lee de `composition.text` **antes** que nada del título (#573): las 15
+    libras redondas doradas se titulan «Silver Proof» palabra por palabra como las 32 que
+    no lo son, y lo único que las parte es «(with selective gold plating)» en la
+    composición. Una moneda **de** oro no cuenta, y el guardarraíl es el metal dominante:
+    la cabeza de esa frase dice de qué está hecha y lo que sigue al paréntesis, cómo está
+    acabada.
 - **Colecciones derivadas**: agrupan solo piezas actuales del usuario por clave de
   variante exacta. Sin familias difusas, sin mezclar pesos ni acabados. Cantidades: tipos
   distintos + piezas. Desde el ADR 0021 §8 no se llaman «propuestas»: la palabra murió con

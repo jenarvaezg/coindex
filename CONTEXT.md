@@ -34,7 +34,9 @@ no metal field. Billon counts as silver. A composition with no dominant metal at
 bimetallic piece, a clad core — is **other**, which is a claim; a composition nobody recorded,
 or one the rules do not recognise, is simply unknown. A collection catalog **declares** its
 own, as it declares weight and finish, and that declaration is about the variant the catalog
-covers rather than about each of its members (ADR 0016, ADR 0018).
+covers rather than about each of its members (ADR 0016, ADR 0018). Two rules read this one
+string and each takes a different half: the metal is the head, and a gold **coating** is what
+follows it — «Plata 925 (with selective gold plating)» is a silver coin with a gilded finish.
 _Avoid_: Alloy, fineness, composition
 
 **Composite finish**:

@@ -11,46 +11,135 @@ class FinishInferenceTest {
     fun `proof coloured is one distinct finish resolved before either single finish`() {
         assertEquals(
             Finish.ProofColoured,
-            inferFinish("1 Dollar - Coloured Proof Dragon", "Lunar Series III"),
+            inferFinish("1 Dollar - Coloured Proof Dragon", "Lunar Series III", null),
         )
-        assertEquals(Finish.Proof, inferFinish("2 Pounds - Proof Yale of Beaufort", null))
-        assertEquals(Finish.Coloured, inferFinish("1 Dollar - Colorized Tiger", null))
+        assertEquals(Finish.Proof, inferFinish("2 Pounds - Proof Yale of Beaufort", null, null))
+        assertEquals(Finish.Coloured, inferFinish("1 Dollar - Colorized Tiger", null, null))
     }
 
     @Test
     fun `spanish and english wording reach the same finish`() {
-        assertEquals(Finish.Gilded, inferFinish("1 Onza dorada", null))
-        assertEquals(Finish.Gilded, inferFinish("1 Dollar gilded edition", null))
-        assertEquals(Finish.Gilded, inferFinish("10 Euros chapado en oro", null))
-        assertEquals(Finish.Antiqued, inferFinish("2 Pounds antiqued finish", null))
-        assertEquals(Finish.Antiqued, inferFinish("2 Libras con acabado antiguo", null))
-        assertEquals(Finish.Coloured, inferFinish("1 Dólar coloreado", null))
+        assertEquals(Finish.Gilded, inferFinish("1 Onza dorada", null, null))
+        assertEquals(Finish.Gilded, inferFinish("1 Dollar gilded edition", null, null))
+        assertEquals(Finish.Gilded, inferFinish("10 Euros chapado en oro", null, null))
+        assertEquals(Finish.Antiqued, inferFinish("2 Pounds antiqued finish", null, null))
+        assertEquals(Finish.Antiqued, inferFinish("2 Libras con acabado antiguo", null, null))
+        assertEquals(Finish.Coloured, inferFinish("1 Dólar coloreado", null, null))
     }
 
     @Test
     fun `the two bullion series are bullion even when the title never says so`() {
-        assertEquals(Finish.Bullion, inferFinish("1 Dollar - Year of the Dragon", "Lunar Series III"))
         assertEquals(
             Finish.Bullion,
-            inferFinish("5 Pounds - Seymour Panther", "The Royal Tudor Beasts"),
+            inferFinish("1 Dollar - Year of the Dragon", "Lunar Series III", null),
         )
-        assertEquals(Finish.Bullion, inferFinish("1 Dollar bullion", null))
+        assertEquals(
+            Finish.Bullion,
+            inferFinish("5 Pounds - Seymour Panther", "The Royal Tudor Beasts", null),
+        )
+        assertEquals(Finish.Bullion, inferFinish("1 Dollar bullion", null, null))
     }
 
     @Test
     fun `lunar colour variants are coloured even without a colour word`() {
         assertEquals(
             Finish.Coloured,
-            inferFinish("1 Dollar - Year of the Blue Dragon", "Lunar Series III"),
+            inferFinish("1 Dollar - Year of the Blue Dragon", "Lunar Series III", null),
         )
         // The same wording outside Lunar Series III stays unknown: it is not a finish claim.
-        assertNull(inferFinish("1 Dollar - Year of the Blue Dragon", "Some Other Series"))
+        assertNull(inferFinish("1 Dollar - Year of the Blue Dragon", "Some Other Series", null))
     }
 
     @Test
     fun `an ordinary title leaves the finish unconfirmed`() {
-        assertNull(inferFinish("5 Bolívares", "5 Bolívares de Venezuela"))
-        assertNull(inferFinish(null, "Lunar Series III"))
+        assertNull(inferFinish("5 Bolívares", "5 Bolívares de Venezuela", null))
+        assertNull(inferFinish(null, "Lunar Series III", null))
+    }
+
+    /**
+     * Las once fichas doradas de la libra redonda, medidas una a una el 1 de septiembre de 2026
+     * contra `en.numista.com` (#573): las diez del estuche del 25.º aniversario de 2008 que se
+     * pudieron enumerar y la del Jubileo de Diamante de 2012, todas con la misma composición.
+     *
+     * El título dice «Silver Proof» en las quince y también en las treinta y dos que sí son proof,
+     * así que el título no las parte y la composición sí — y el acabado que gana es el dorado,
+     * porque es el que el catálogo de la libra declaró suyo: «Son `Gilded`, no `Proof`».
+     */
+    @Test
+    fun `a gold plating the title never mentions outranks the proof the title does`() {
+        assertEquals(
+            Finish.Gilded,
+            inferFinish(
+                "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+                null,
+                "Plata 925 (with selective gold plating)",
+            ),
+        )
+        // La misma moneda sin dorar, que es la casilla de la lámina, se queda en proof.
+        assertEquals(
+            Finish.Proof,
+            inferFinish(
+                "1 Pound - Elizabeth II (Scottish Thistle; Silver Proof)",
+                null,
+                "Plata 925",
+            ),
+        )
+    }
+
+    /**
+     * Las tres formas que las fichas sembradas usan para decir lo mismo, y la que no lo dice.
+     *
+     * Numista se pide en español y aun así el paréntesis llega en inglés, que es la trampa que
+     * [inferMetal] documenta desde el otro lado: la cabeza dice de qué está hecha y el paréntesis
+     * cómo está acabada.
+     */
+    @Test
+    fun `every wording a seeded composition uses for a gold coating is read`() {
+        assertEquals(
+            Finish.Gilded,
+            inferFinish("2 Dollars - Charles III (Bitcoin)", null, "Plata 999,9 chapado en oro"),
+        )
+        assertEquals(
+            Finish.Gilded,
+            inferFinish(
+                "1 Dollar - Elizabeth II (4th Portrait - Koala - Silver Bullion Coin)",
+                "Australian Koala",
+                "Plata 999 (highlighted in 24-carat gold)",
+            ),
+        )
+        assertEquals(Finish.Gilded, inferFinish("1 Dollar", null, "Silver .925, gilded"))
+    }
+
+    /**
+     * Una moneda **de** oro no está dorada, y ninguna regla de acabado puede leerla como tal.
+     *
+     * El guardarraíl es el metal dominante y no una lista de excepciones: lo que separa el baño
+     * de la aleación es que el oro venga después de otro metal, así que la pregunta la contesta
+     * [inferMetal], que es quien ya sabe leer la cabeza de esa misma frase.
+     */
+    @Test
+    fun `a coin made of gold is not a gilded one`() {
+        assertNull(inferFinish("100 Dollars - Elizabeth II (Bitcoin)", null, "Oro 999,9"))
+        assertEquals(
+            Finish.Proof,
+            inferFinish("1 Pound - Elizabeth II (Royal Arms; Gold Proof)", null, "Oro 999,9"),
+        )
+        // Y una de oro chapada en otra cosa tampoco: el baño que se lee es el de oro.
+        assertNull(inferFinish("1 Onza", null, "Oro 999,9 chapado en rodio"))
+        // Al revés, el metal se lee antes del baño y no en toda la frase: `inferMetal` resuelve
+        // «oro» antes que «cobre», así que preguntándole la frase entera ésta sería de oro.
+        assertEquals(Finish.Gilded, inferFinish("1 Onza", null, "Cobre chapado en oro"))
+    }
+
+    @Test
+    fun `a composition that says nothing about a coating leaves the title in charge`() {
+        assertNull(inferFinish("5 Bolívares", "5 Bolívares de Venezuela", "Plata 900"))
+        assertEquals(Finish.Proof, inferFinish("2 Pounds - Proof", null, "Plata 999"))
+        // Y al revés: el dorado es lo único que un tipo sin título llega a decir de su acabado.
+        assertEquals(
+            Finish.Gilded,
+            inferFinish(null, null, "Plata 925 (with selective gold plating)"),
+        )
     }
 }
 
