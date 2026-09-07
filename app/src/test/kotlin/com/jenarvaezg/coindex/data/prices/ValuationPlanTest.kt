@@ -124,17 +124,46 @@ class ValuationPlanTest {
         assertEquals(listOf(OwnedIssue(10, 102)), ownedIssuesToAsk(plan, reads, NOW))
     }
 
-    /** Thirty days later it is asked again — and the row it replaces was still being shown until now. */
+    /** Ninety days later it is asked again — and the row it replaces was still being shown until now. */
     @Test
-    fun `a price older than thirty days is asked again`() {
+    fun `a price older than ninety days is asked again`() {
         val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
-        val month = read(10, 100, NOW - PRICE_LIFETIME_MILLIS - 1, hasPrices = true)
+        val quarter = read(10, 100, NOW - PRICE_LIFETIME_MILLIS - 1, hasPrices = true)
 
-        assertEquals(listOf(OwnedIssue(10, 100)), ownedIssuesToAsk(plan, listOf(month), NOW))
+        assertEquals(listOf(OwnedIssue(10, 100)), ownedIssuesToAsk(plan, listOf(quarter), NOW))
         assertTrue(
-            ownedIssuesToAsk(plan, listOf(month.copy(readAt = NOW - 1)), NOW).isEmpty(),
+            ownedIssuesToAsk(plan, listOf(quarter.copy(readAt = NOW - 1)), NOW).isEmpty(),
             "un precio de hoy no se vuelve a pedir",
         )
+    }
+
+    /**
+     * The life itself, in days, because it is the whole of #561 and a symbol cannot pin it.
+     *
+     * Every other test here reads [PRICE_LIFETIME_MILLIS] and would go on passing at any value at all.
+     * What the issue decided is the **number**: a catalog price lives as long as the listing that
+     * addresses it, so the cold pass of the father's collection lands once a quarter instead of once a
+     * month, and the month it lands in is no longer the month the listings land in too.
+     */
+    @Test
+    fun `a catalog price lives the ninety days of the listing that addresses it`() {
+        assertEquals(90L * 24 * 60 * 60 * 1_000, PRICE_LIFETIME_MILLIS)
+        assertEquals(LISTING_LIFETIME_MILLIS, PRICE_LIFETIME_MILLIS)
+    }
+
+    /**
+     * The month that used to be a wall: a price of thirty-one days is kept, not bought again.
+     *
+     * The 442 calls of a cold pass came due every month at the old life, all on the same day because
+     * they were all brought on the same day (ADR 0028 §5). This is that day not happening.
+     */
+    @Test
+    fun `a price of a month and a day is no longer asked again`() {
+        val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
+        val month = read(10, 100, NOW - 31L * 24 * 60 * 60 * 1_000, hasPrices = true)
+
+        assertTrue(ownedIssuesToAsk(plan, listOf(month), NOW).isEmpty())
+        assertEquals(0, valuationCallCount(plan, listOf(month), NOW))
     }
 
     /**
@@ -277,8 +306,9 @@ class ValuationPlanTest {
     /**
      * An expired price is asked again without listing the type a second time.
      *
-     * The two clocks are different on purpose: a price is the market and expires in thirty days, and
-     * «which issue is the 1905 of this type» is the catalogue and does not.
+     * The two clocks run at the same rate since #561 and are still asked apart: a price expired here and
+     * the listing that addresses it did not, because «which issue is the 1905 of this type» was read on
+     * a different day. Nothing makes them expire together, so the pass buys the one it needs.
      */
     @Test
     fun `an expired hole price is re-asked but the listing is not`() {
@@ -403,8 +433,9 @@ class ValuationPlanTest {
      * What a mark costs a month: **two calls, or one where the file names the issue** (ADR 0029 §5).
      *
      * The ceiling of a cold month and the same arithmetic the pass uses, which is what the gesture's
-     * «+2 consultas al mes» is quoting. It is generous about the listing on purpose — that one lasts
-     * ninety days — because rounding a spend down is the direction this figure must never err in.
+     * «+2 consultas al mes» is quoting. It is generous about **both** calls on purpose since #561 —
+     * price and listing each last ninety days, so the real cost falls once a quarter — because rounding
+     * a spend down is the direction this figure must never err in.
      */
     @Test
     fun `a mark costs two calls a month, or one when its file names the issue`() {

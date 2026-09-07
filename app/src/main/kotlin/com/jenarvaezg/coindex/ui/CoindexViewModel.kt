@@ -273,7 +273,7 @@ class CoindexViewModel(
      * plate's holes and nothing else, so the spend is the number the gesture printed.
      *
      * **A plate whose prices are all fresh asks for nothing and says so** (ADR 0028 §5): the pass's
-     * thirty days decide whether an issue is worth a second call, and buying the same answer twice
+     * ninety days decide whether an issue is worth a second call, and buying the same answer twice
      * because a button was pressed is the one thing a gesture that names its spend must not do.
      *
      * Silent about success, like the mark: what the collector sees is the figure appearing in the header

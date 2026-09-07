@@ -84,12 +84,18 @@ object ShowcaseLabels {
     /**
      * What a tasación that asked for nothing says, and why (ADR 0028 §5).
      *
-     * A plate valued last week has every price it can have: the pass's own thirty days are what decide
+     * A plate valued last month has every price it can have: the pass's own ninety days are what decide
      * whether an issue is asked about again, and the gesture obeys them rather than buying the same
      * answer twice. Said in a snackbar because it is the answer to a press, not a state of the plate.
+     *
+     * **The sentence quotes the life and has to move with it** (#561): at thirty days «menos de un mes»
+     * was the true reading of `PRICE_LIFETIME_MILLIS`, and left there it would tell the collector a
+     * two-month-old price is from last week. The plate itself says the exact date — `valuedAgeLabel`
+     * prints «el 12 de junio de 2026» past a month — so this line is the *rule* and the header is the
+     * *age*, and neither has to round the other.
      */
     const val ALREADY_FRESH: String =
-        "Esta lámina ya está tasada: sus precios son de hace menos de un mes."
+        "Esta lámina ya está tasada: sus precios son de hace menos de tres meses."
 
     /** What a plate says when Numista had no price for a single one of its casillas. */
     const val NOTHING_PRICED: String = "Numista no da precio de ninguna de estas casillas."

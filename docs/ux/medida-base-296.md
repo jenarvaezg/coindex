@@ -323,7 +323,7 @@ alta sigue haciendo falta —la clave se cifra contra la Keystore del dispositiv
 base de datos— pero es gratis: el formulario valida el formato y guarda, sin tocar la red. Lo que
 cuesta es «Sincronizar», y con la base restaurada no hay nada que sincronizar.
 
-Dos cosas que vigilar. Los precios caducan a los treinta días y los listados a los noventa: pasado
+Dos cosas que vigilar. Los precios y los listados caducan a los noventa días (#561): pasado
 ese plazo la pasada vuelve a pedirlos, así que un volcado viejo hay que refrescarlo a propósito y
 con una clave elegida a conciencia, no de rebote en una sesión de capturas. Y si el AVD se resiembra
 desde cero, el volcado es lo primero que se restaura, antes de que a nadie se le ocurra sincronizar.
