@@ -152,9 +152,10 @@ the domain already answers it (`CommemorativeProgramme.claims`).
 
 ### A programme's `short_name` stays out of the cross-species name check
 
-`validateShortNamesAcross` exists because the index draws catalogs and groupings side by side and
+The cross-species name check exists because the index draws catalogs and groupings side by side and
 indistinguishably (#22). A programme is not a card, so it never sits beside them and cannot be
-confused with one there. Uniqueness among programmes is enough, and that is checked.
+confused with one there. Uniqueness among programmes is enough, and that is checked. Since #545 the
+check runs when a `Curation` is constructed, and a programme stays out of it there.
 
 ## Consequences
 

@@ -136,9 +136,10 @@ class CollectionTitlesTest {
         )
 
         // Neither species can see the collision on its own; the index that draws them side by
-        // side can, and so can the place where both are loaded.
+        // side can, and so does the curation that holds both — there is no way to hold them
+        // together without the check (#545).
         val error = assertFailsWith<CatalogSeedException> {
-            validateShortNamesAcross(listOf(catalog), listOf(grouping))
+            Curation(catalogs = listOf(catalog), groupings = listOf(grouping))
         }
 
         assertTrue(error.message!!.contains("Dólar de plata clásico"), error.message!!)

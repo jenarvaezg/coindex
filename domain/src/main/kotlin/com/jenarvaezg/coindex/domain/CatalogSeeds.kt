@@ -147,9 +147,9 @@ object GroupingSeeds {
  * Parses and validates the commemorative programme seeds (ADR 0022), under the same rules as the
  * catalogs: unknown fields are rejected and a bad file stops the app instead of degrading.
  *
- * A programme's `short_name` deliberately stays **out** of [validateShortNamesAcross]: a
- * programme is not a card, so it never sits beside a catalog in the index and cannot be confused
- * with one there. Uniqueness among programmes is enough.
+ * A programme's `short_name` deliberately stays **out** of the cross-species check [Curation]
+ * makes on construction: a programme is not a card, so it never sits beside a catalog in the index
+ * and cannot be confused with one there. Uniqueness among programmes is enough.
  */
 object ProgrammeSeeds {
     fun parse(fileName: String, contents: String): CommemorativeProgramme {
@@ -197,27 +197,6 @@ object ProgrammeSeeds {
             }
             programme
         }
-    }
-}
-
-/**
- * Rejects a `short_name` shared by a catalog and a curated grouping (#22).
- *
- * Each species validates its own names while parsing, but the index draws them side by side and
- * indistinguishably (#12), so uniqueness only means anything across both. Called where both are
- * loaded, which is the only place that can see it.
- */
-fun validateShortNamesAcross(
-    catalogs: List<CollectionCatalog>,
-    groupings: List<CuratedGrouping>,
-) {
-    val catalogNames = catalogs.associateBy { it.shortName }
-    for (grouping in groupings) {
-        val catalog = catalogNames[grouping.shortName] ?: continue
-        throw CatalogSeedException(
-            "`short_name` `${grouping.shortName}` is claimed by both catalog `${catalog.id}` " +
-                "and grouping `${grouping.id}`",
-        )
     }
 }
 

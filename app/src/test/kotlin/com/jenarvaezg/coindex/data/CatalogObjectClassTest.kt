@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.data
 
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.objectClassDeviations
@@ -29,7 +28,7 @@ import kotlinx.serialization.json.jsonPrimitive
 class CatalogObjectClassTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
+    private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
     /** La clase de objeto por tipo, leída del mismo sitio del que la lee la app: la ficha entera. */
     private val objectClasses: Map<Int, String?> =

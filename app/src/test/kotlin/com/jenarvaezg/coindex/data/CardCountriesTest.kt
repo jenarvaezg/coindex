@@ -1,8 +1,5 @@
 package com.jenarvaezg.coindex.data
 
-import com.jenarvaezg.coindex.domain.CatalogSeeds
-import com.jenarvaezg.coindex.domain.GroupingSeeds
-import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.cardCountry
 import com.jenarvaezg.coindex.domain.curedIssuerCodes
 import com.jenarvaezg.coindex.domain.readsAsACountry
@@ -82,9 +79,9 @@ class CardCountriesTest {
             code?.let { name?.let { code to name } }
         }.toMap()
         val declared = buildSet {
-            CatalogSeeds.parseAll(CatalogFiles.all()).forEach { addAll(it.issuerCodes()) }
-            GroupingSeeds.parseAll(GroupingFiles.all()).forEach { add(it.issuerCode) }
-            ProgrammeSeeds.parseAll(ProgrammeFiles.all()).forEach { add(it.issuerCode) }
+            SHIPPED_CURATION.catalogs.forEach { addAll(it.issuerCodes()) }
+            SHIPPED_CURATION.groupings.forEach { add(it.issuerCode) }
+            SHIPPED_CURATION.programmes.forEach { add(it.issuerCode) }
         }
 
         val unlabelled = declared.filterNot { code ->

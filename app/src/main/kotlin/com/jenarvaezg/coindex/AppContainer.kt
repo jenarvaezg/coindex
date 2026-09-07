@@ -31,11 +31,8 @@ import com.jenarvaezg.coindex.data.prices.SpotStore
 import com.jenarvaezg.coindex.data.prices.ValuationLoop
 import com.jenarvaezg.coindex.data.prices.ValuationPass
 import com.jenarvaezg.coindex.domain.Curation
-import com.jenarvaezg.coindex.domain.validateShortNamesAcross
 import com.jenarvaezg.coindex.data.numista.NumistaClient
-import com.jenarvaezg.coindex.data.seed.CatalogAssets
-import com.jenarvaezg.coindex.data.seed.GroupingAssets
-import com.jenarvaezg.coindex.data.seed.ProgrammeAssets
+import com.jenarvaezg.coindex.data.seed.AssetCuratedFiles
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.data.seed.TypeThumbnailBackfill
 import com.jenarvaezg.coindex.data.update.SystemUpdateInstaller
@@ -53,8 +50,9 @@ import java.io.File
  * Manual dependency wiring. The app is small and single-user; a DI framework would add more
  * indirection than it removes.
  *
- * The curated catalogs are parsed and validated here, on the first access, and a failure is
- * allowed to propagate: shipping a broken catalog must be loud.
+ * The curated files are parsed and validated on the first access, and a failure is allowed to
+ * propagate: shipping a broken catalog must be loud. Where that happens is [Curation.load], which
+ * the suite loads through as well — this file hands it the assets and nothing else.
  *
  * Most of what is built here is **private**: the database above all, whose DAOs used to be reachable
  * from the UI by walking `container.database.apiCalls()` (#220). What a screen is given is the thing
@@ -97,24 +95,16 @@ class AppContainer(context: Context) {
     val calls: ApiCallLedger by lazy { ApiCallLedger(database.apiCalls()) }
 
     val repository: CoindexRepository by lazy {
-        val catalogs = CatalogAssets.load(applicationContext.assets)
-        val groupings = GroupingAssets.load(applicationContext.assets)
-        // The index draws both species side by side and indistinguishably (#12), so a card name
-        // repeated across them is only visible here, where both are loaded (#22).
-        validateShortNamesAcross(catalogs, groupings)
         CoindexRepository(
             collectedItemDao = database.collectedItems(),
             typeMetaDao = database.typeMeta(),
             ownGroupingDao = database.ownGroupings(),
             priceDao = database.prices(),
             wishDao = database.wishes(),
-            curation = Curation(
-                catalogs = catalogs,
-                groupings = groupings,
-                // A programme reaches no card, so it takes no part in the name check above
-                // (ADR 0022).
-                programmes = ProgrammeAssets.load(applicationContext.assets),
-            ),
+            // One door for the three species, and the invariants come with it (#545): what used to
+            // be assembled here — three loaders and a name check the container had to remember —
+            // is now a curation that cannot exist invalid.
+            curation = Curation.load(AssetCuratedFiles(applicationContext.assets)),
         )
     }
 

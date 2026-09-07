@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.data
 
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMemberStatus
@@ -27,7 +26,7 @@ import kotlin.test.assertTrue
  * here instead of producing a wrong "me falta" on someone's phone.
  */
 class CuratedCatalogsTest {
-    private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
+    private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
     private fun find(id: String) = catalogs.first { it.id == id }
 

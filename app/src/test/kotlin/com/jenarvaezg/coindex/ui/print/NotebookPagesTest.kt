@@ -1,14 +1,13 @@
 package com.jenarvaezg.coindex.ui.print
 
-import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CollectionState
+import com.jenarvaezg.coindex.data.SHIPPED_CURATION
 import com.jenarvaezg.coindex.data.TypeCacheFile
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.data.typeMetaEntity
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionSnapshot
@@ -48,7 +47,7 @@ class NotebookPagesTest {
      */
     private val paper = printGeometry(NotebookOptions())
 
-    private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
+    private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
     private val typeMeta: TypeMetaIndex = json
         .parseToJsonElement(TypeCacheFile.read())

@@ -184,7 +184,11 @@ All the curated files that travel with the app taken together — collection cat
 groupings and commemorative programmes — bound once and treated as one thing. It is what the
 snapshot is read **against**: the card names, the index order and the plates all come from it, and
 the assembly that turns a snapshot into what the screens show is the single entry to the domain
-(#217). Constant for the lifetime of the process, because the files ship inside the APK.
+(#217). Constant for the lifetime of the process, because the files ship inside the APK. **Valid by
+construction** (#545): a rule that only holds across two species — a card name shared by a catalog
+and a grouping — is checked where both are held, so a curation that exists has passed it. Files
+reach one **loading door**, and each side of the seam brings its own reader: the APK's assets on a
+phone, `data/` in the suite.
 _Avoid_: Seeds, catalogs, curated data
 
 **Snapshot**:

@@ -1,9 +1,7 @@
 package com.jenarvaezg.coindex
 
-import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CollectionState
-import com.jenarvaezg.coindex.data.GroupingFiles
-import com.jenarvaezg.coindex.data.ProgrammeFiles
+import com.jenarvaezg.coindex.data.SHIPPED_CURATION
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
@@ -12,13 +10,10 @@ import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.data.toEntity
 import com.jenarvaezg.coindex.data.toImages
 import com.jenarvaezg.coindex.domain.AssembledCollection
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionSnapshot
 import com.jenarvaezg.coindex.domain.Curation
-import com.jenarvaezg.coindex.domain.GroupingSeeds
 import com.jenarvaezg.coindex.domain.IndexCard
-import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.TypeMetaIndex
 import com.jenarvaezg.coindex.domain.UnclassifiedItem
 import com.jenarvaezg.coindex.domain.UnclassifiedReason
@@ -85,11 +80,7 @@ class FieldReportTest {
         val items = readItems(File(directory, "collected_items.json"))
         val types = readTypeEntities(System.getenv(TYPES_VARIABLE))
         val typeMeta = types.associate { it.typeId to it.toDomain() }
-        val curation = Curation(
-            catalogs = CatalogSeeds.parseAll(CatalogFiles.all()),
-            groupings = GroupingSeeds.parseAll(GroupingFiles.all()),
-            programmes = ProgrammeSeeds.parseAll(ProgrammeFiles.all()),
-        )
+        val curation = SHIPPED_CURATION
 
         // Sin base de datos no hay cajas propias: lo que el informe ordena es lo que sale de los
         // ficheros y del inventario, que es la mitad medible desde una captura. Lo demás es el
