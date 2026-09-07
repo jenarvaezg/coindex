@@ -129,7 +129,14 @@ class CollectionDerivationTest {
     fun `a raw family prints verbatim and technical systems group as the weakest family`() {
         // The six editorial aliases died with #22: what a curated file names, it names in its
         // own `short_name`, and what no file claims reads as Numista wrote it — abbreviation,
-        // language and all. Only a generated monetary system is still formatted (ADR 0012).
+        // language and all. A generated monetary system is formatted (ADR 0012), and the eight
+        // series of the cured table are corrected (ADR 0031); everything else is verbatim, and
+        // that includes the two range names the table deliberately leaves in English.
+        //
+        // `Charlemagme` is the stale spelling one phone still holds: numista.com fixed the typo
+        // and the table is keyed on the corrected string, so the misspelled label keeps printing
+        // as it came until somebody asks that ficha again (ADR 0025). A cured label is not a
+        // rewrite rule over anything that looks like it.
         val labels = listOf(
             "SML" to "SML",
             "Red Data Book" to "Red Data Book",
@@ -137,7 +144,14 @@ class CollectionDerivationTest {
                 "Serie de monedas de plata obtenidas a valor facial",
             "Lunar ounce" to "Lunar ounce",
             "Nautical Ounce" to "Nautical Ounce",
+            "Gothic Horror" to "Gothic Horror",
+            "DC Comics" to "DC Comics",
             "Charlemagme - Mounted Knight" to "Charlemagme - Mounted Knight",
+            "Charlemagne - Mounted Knight" to "Carlomagno · el caballero",
+            "Hercules type" to "Tipo Hércules",
+            "French regions" to "Euros de las regiones francesas",
+            "1190e anniversaire du couronnement de Charlemagne (800-1990)." to "Carlomagno",
+            "Millennium" to "Milenio",
             "System 1981-2001" to "Sistema monetario 1981-2001",
             "System 2025" to "Sistema monetario 2025",
         )

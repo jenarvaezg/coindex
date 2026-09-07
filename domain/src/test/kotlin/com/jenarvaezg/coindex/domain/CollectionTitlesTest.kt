@@ -166,8 +166,9 @@ class CollectionTitlesTest {
         assertEquals("5 francs Semeuse · 0,386 oz", names.getValue(circulation))
         assertEquals("5 francs Semeuse · 0,733 oz", names.getValue(piefort))
         // A card with no twin says nothing it did not say before: the variant line died with
-        // ADR 0026 §12 and only comes back where it is the difference.
-        assertEquals("Hercules type", names.getValue(hercules))
+        // ADR 0026 §12 and only comes back where it is the difference. What it does say is the
+        // cured label of ADR 0031, because the cure happens where the name is resolved.
+        assertEquals("Tipo Hércules", names.getValue(hercules))
     }
 
     /**
