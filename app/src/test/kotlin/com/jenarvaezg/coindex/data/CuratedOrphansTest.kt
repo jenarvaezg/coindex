@@ -1,7 +1,6 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.domain.CatalogSeedException
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.OrphanSeeds
 import com.jenarvaezg.coindex.domain.orphanCatalogCollisions
 import kotlin.test.Test
@@ -19,7 +18,7 @@ import kotlin.test.assertTrue
  */
 class CuratedOrphansTest {
     private val orphans = OrphanSeeds.parse("orphans.json", OrphanFile.read())
-    private val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
+    private val catalogs = SHIPPED_CURATION.catalogs
 
     @Test
     fun `the shipped orphans register parses and validates`() {

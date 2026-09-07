@@ -1,10 +1,9 @@
 package com.jenarvaezg.coindex.ui.print
 
-import com.jenarvaezg.coindex.data.CatalogFiles
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.SHIPPED_CURATION
 import com.jenarvaezg.coindex.domain.AssembledCollection
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
@@ -38,7 +37,7 @@ import kotlin.test.assertTrue
  * `emissionLabelFor`, which was right and green the whole time.
  */
 class NotebookSectionsTest {
-    private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
+    private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
     /** The five stars, plus a coin no curated catalog claims, in a box the collector typed. */
     private val stars = listOf(

@@ -1,5 +1,8 @@
 package com.jenarvaezg.coindex.data
 
+import com.jenarvaezg.coindex.domain.CuratedFiles
+import com.jenarvaezg.coindex.domain.CuratedSpecies
+import com.jenarvaezg.coindex.domain.Curation
 import java.io.File
 
 /**
@@ -22,30 +25,33 @@ object Fixtures {
     fun type(typeId: Int): String = read("type_${typeId}_es.json")
 }
 
-/** The curated seeds as they ship: read straight from `data/`, not from a copy. */
-private fun seedFiles(directory: String): List<Pair<String, String>> =
-    File("../data/$directory").listFiles()
-        .orEmpty()
-        .filter { it.name.endsWith(".json") }
-        .sortedBy { it.name }
-        .map { it.name to it.readText() }
-
-object CatalogFiles {
-    fun all(): List<Pair<String, String>> = seedFiles("collection-catalogs")
+/**
+ * The curated seeds as they ship: read straight from `data/`, not from a copy.
+ *
+ * The suite's side of the loading seam of #545 — the phone's is `AssetCuratedFiles`, over the very
+ * same directories, because `data/` is an asset source directory of the APK.
+ */
+object RepoCuratedFiles : CuratedFiles {
+    override fun read(species: CuratedSpecies): List<Pair<String, String>> =
+        File("../data/${species.directory}").listFiles()
+            .orEmpty()
+            .filter { it.name.endsWith(".json") }
+            .map { it.name to it.readText() }
 }
+
+/**
+ * The shipped curation, through the app's own door and therefore under its own invariants.
+ *
+ * One curation for the whole suite, and one parse: reading every curated file once per test class
+ * was the same bytes decoded twenty times over. Whatever a test asks of it — the catalogs, the
+ * groupings, the programmes — it asks of a curation that could not have been built at all if a
+ * catalog and a grouping read the same on two cards.
+ */
+val SHIPPED_CURATION: Curation by lazy { Curation.load(RepoCuratedFiles) }
 
 /** The seeded type cache as it ships, read from `data/` like the curated seeds. */
 object TypeCacheFile {
     fun read(): String = File("../data/numista-type-cache.json").readText()
-}
-
-object GroupingFiles {
-    fun all(): List<Pair<String, String>> = seedFiles("groupings")
-}
-
-/** The curated commemorative programmes (ADR 0022), read from `data/` like the other seeds. */
-object ProgrammeFiles {
-    fun all(): List<Pair<String, String>> = seedFiles("programmes")
 }
 
 /** The curated orphans register (#133), editorial and not loaded at app startup. */

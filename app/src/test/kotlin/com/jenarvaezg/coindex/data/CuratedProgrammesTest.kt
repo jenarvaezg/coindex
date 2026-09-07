@@ -1,10 +1,8 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.domain.CatalogProgrammes
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CommemorativeProgramme
-import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.ProgrammeStanding
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,7 +18,7 @@ import kotlin.test.assertTrue
  */
 class CuratedProgrammesTest {
     private val programmes: List<CommemorativeProgramme> =
-        ProgrammeSeeds.parseAll(ProgrammeFiles.all())
+        SHIPPED_CURATION.programmes
 
     /** The standings of one catalog, read the way the assembly builds them for all of them (#539). */
     private fun standingsOf(
@@ -67,7 +65,7 @@ class CuratedProgrammesTest {
 
         // El 25 escudos de cada programa no lo reclama ningún catálogo: nadie tiene uno, así que
         // curar los diez 25 escudos de cuproníquel habría sido un fichero sin tarjeta ni lámina.
-        val catalogued = CatalogSeeds.parseAll(CatalogFiles.all())
+        val catalogued = SHIPPED_CURATION.catalogs
             .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } }
             .toSet()
         assertTrue(7_338 !in catalogued)
@@ -81,7 +79,7 @@ class CuratedProgrammesTest {
      */
     @Test
     fun `a cupronickel catalog carries its programme, counted over the whole programme`() {
-        val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
+        val catalogs = SHIPPED_CURATION.catalogs
         val dosCincuenta = catalogs.first { it.id == "portugal-2-50-escudos-cuproniquel" }
         val standings = standingsOf(dosCincuenta, programmes)
         assertEquals(
@@ -128,7 +126,7 @@ class CuratedProgrammesTest {
 
         // La lectura sale en la lámina de los 1000 escudos, que es el único catálogo que comparte
         // un tipo con el programa: la casilla de 1992 del Encontro de Dois Mundos.
-        val catalogs = CatalogSeeds.parseAll(CatalogFiles.all())
+        val catalogs = SHIPPED_CURATION.catalogs
         val touched = catalogs.filter { catalog ->
             standingsOf(catalog, listOf(serie)).isNotEmpty()
         }
@@ -169,7 +167,7 @@ class CuratedProgrammesTest {
 
         // Sólo las cuatro primeras tocan una lámina, porque la moneda portuguesa de esas series es
         // un 1000 escudos de plata .500 y las de la V en adelante son euros que no cura nadie.
-        val plata500 = CatalogSeeds.parseAll(CatalogFiles.all())
+        val plata500 = SHIPPED_CURATION.catalogs
             .first { it.id == "portugal-1000-escudos-plata-500" }
         assertEquals(
             listOf(

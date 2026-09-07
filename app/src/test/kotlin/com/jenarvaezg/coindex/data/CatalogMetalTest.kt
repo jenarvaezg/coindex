@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.data
 
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.metalDeviations
@@ -25,7 +24,7 @@ import kotlinx.serialization.json.jsonPrimitive
 class CatalogMetalTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    private val catalogs: List<CollectionCatalog> = CatalogSeeds.parseAll(CatalogFiles.all())
+    private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
     /** `composition.text` por tipo, leído del mismo sitio del que lo lee la app: la ficha entera. */
     private val compositions: Map<Int, String?> =

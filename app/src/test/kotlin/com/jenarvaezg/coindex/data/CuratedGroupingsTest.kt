@@ -1,7 +1,6 @@
 package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.domain.CatalogSeedException
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.CuratedGrouping
 import com.jenarvaezg.coindex.domain.GroupingSeeds
 import com.jenarvaezg.coindex.domain.normalizeFamily
@@ -18,7 +17,7 @@ import kotlin.test.assertTrue
  * their type ids were verified against numista.com one by one just like the catalogs'.
  */
 class CuratedGroupingsTest {
-    private val groupings: List<CuratedGrouping> = GroupingSeeds.parseAll(GroupingFiles.all())
+    private val groupings: List<CuratedGrouping> = SHIPPED_CURATION.groupings
 
     private fun find(id: String) = groupings.first { it.id == id }
 
@@ -102,7 +101,7 @@ class CuratedGroupingsTest {
      */
     @Test
     fun `no grouping claims a type that a catalog already names`() {
-        val catalogTypes = CatalogSeeds.parseAll(CatalogFiles.all())
+        val catalogTypes = SHIPPED_CURATION.catalogs
             .flatMap { catalog -> catalog.members.map { it.numistaTypeId } }
             .toSet()
         val claimed = groupings.flatMap { it.typeIds }.filter { it in catalogTypes }

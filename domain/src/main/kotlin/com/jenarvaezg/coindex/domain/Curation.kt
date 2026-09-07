@@ -105,6 +105,12 @@ data class AssembledCollection(
  * re-derived per read. What varies is the collector's snapshot, and [assemble] is the one door it
  * comes through: the app's repository and the field report of #21 read the same assembly, so a
  * count can no longer have two definitions depending on who asked.
+ *
+ * A curation that exists is a valid one (#545). What only holds across two species is checked
+ * where both are together, which is here and nowhere else — it used to be a free function the
+ * container remembered to call, so every curation the suite built went without it, the one over
+ * the real curated files included. Files come in through [load], the one loading door, and each
+ * side of the seam brings its own [CuratedFiles].
  */
 class Curation(
     val catalogs: List<CollectionCatalog>,
@@ -112,6 +118,10 @@ class Curation(
     /** Commemorative programmes (ADR 0022): a second reading, never a card and never a family. */
     val programmes: List<CommemorativeProgramme> = emptyList(),
 ) {
+    init {
+        requireDistinctShortNames(catalogs, groupings)
+    }
+
     /** What each collection is called on a card (#22). */
     val titles: CollectionTitles = CollectionTitles(catalogs, groupings)
 
@@ -190,5 +200,59 @@ class Curation(
         programmes.forEach { programme ->
             programme.members.forEach { member -> add(member.numistaTypeId) }
         }
+    }
+
+    companion object {
+        /**
+         * The one door curated files come through: parse each species, then hold the whole (#545).
+         *
+         * Loudly and never degrading, as it always was — a seeded file that cannot be trusted stops
+         * the app at startup and the suite at its first assertion, because a silently dropped
+         * catalog reads on the phone as «me falta».
+         */
+        fun load(files: CuratedFiles): Curation = Curation(
+            catalogs = CatalogSeeds.parseAll(files.readAll(CuratedSpecies.Catalogs)),
+            groupings = GroupingSeeds.parseAll(files.readAll(CuratedSpecies.Groupings)),
+            programmes = ProgrammeSeeds.parseAll(files.readAll(CuratedSpecies.Programmes)),
+        )
+
+        /**
+         * One species, in one order, and never zero files of it.
+         *
+         * The order is settled here so that neither side of the seam has to settle it: a curated
+         * file is read by name and nothing about a phone's asset listing has to agree with a
+         * directory listing for the two to load the same curation.
+         *
+         * A species that brings nothing is a build that lost a directory, not a collector with no
+         * programmes: both sides ship all three, so an empty read is the shape of the failure it
+         * used to be on the phone alone — a `data/` gone missing left the suite green.
+         */
+        private fun CuratedFiles.readAll(
+            species: CuratedSpecies,
+        ): List<Pair<String, String>> = read(species).sortedBy { (fileName, _) -> fileName }.ifEmpty {
+            throw CatalogSeedException("no hay ficheros curados en `${species.directory}`")
+        }
+    }
+}
+
+/**
+ * Rejects a `short_name` shared by a catalog and a curated grouping (#22).
+ *
+ * Each species checks its own names while parsing, but the index draws the two side by side and
+ * indistinguishably (#12), so uniqueness only means anything across both. A programme stays out on
+ * purpose: it is not a card, so it never sits beside them and cannot be confused with one there
+ * (ADR 0022).
+ */
+private fun requireDistinctShortNames(
+    catalogs: List<CollectionCatalog>,
+    groupings: List<CuratedGrouping>,
+) {
+    val catalogNames = catalogs.associateBy { it.shortName }
+    for (grouping in groupings) {
+        val catalog = catalogNames[grouping.shortName] ?: continue
+        throw CatalogSeedException(
+            "`short_name` `${grouping.shortName}` is claimed by both catalog `${catalog.id}` " +
+                "and grouping `${grouping.id}`",
+        )
     }
 }

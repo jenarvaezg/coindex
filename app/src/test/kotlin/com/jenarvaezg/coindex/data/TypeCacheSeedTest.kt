@@ -3,10 +3,7 @@ package com.jenarvaezg.coindex.data
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
-import com.jenarvaezg.coindex.domain.CatalogSeeds
 import com.jenarvaezg.coindex.domain.Finish
-import com.jenarvaezg.coindex.domain.GroupingSeeds
-import com.jenarvaezg.coindex.domain.ProgrammeSeeds
 import com.jenarvaezg.coindex.domain.inferFinish
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -94,7 +91,7 @@ class TypeCacheSeedTest {
     }
 
     private val escudosTypeIds: List<Int> =
-        CatalogSeeds.parseAll(CatalogFiles.all())
+        SHIPPED_CURATION.catalogs
             .first { it.id == "portugal-1000-escudos-plata-500" }
             .members.mapNotNull { it.numistaTypeId }
 
@@ -113,10 +110,10 @@ class TypeCacheSeedTest {
      * 1977 and 1983 are in no catalog and are exactly the coins «1 de 3» says are missing.
      */
     private val curatedTypeIds: List<Int> =
-        CatalogSeeds.parseAll(CatalogFiles.all())
+        SHIPPED_CURATION.catalogs
             .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } } +
-            GroupingSeeds.parseAll(GroupingFiles.all()).flatMap { it.typeIds } +
-            ProgrammeSeeds.parseAll(ProgrammeFiles.all())
+            SHIPPED_CURATION.groupings.flatMap { it.typeIds } +
+            SHIPPED_CURATION.programmes
                 .flatMap { programme -> programme.members.map { it.numistaTypeId } }
 
     @Test
