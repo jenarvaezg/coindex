@@ -56,9 +56,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.db.DATABASE_MIME_TYPE
-import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
 import com.jenarvaezg.coindex.data.update.UpdateStatus
-import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.components.BackGlyph
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -85,7 +83,6 @@ import com.jenarvaezg.coindex.ui.screens.PhoneScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
-import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlinx.coroutines.launch
 
@@ -131,83 +128,33 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         }
     }
 
+    // Everything this composition draws that nobody stores, crossed once (#542): the shelf window, the
+    // living marks and what they cost, «Las cifras», the sewn edge, the value of a coin, the address of
+    // its ficha. **The same object comes back while none of the readings behind it has moved**, which
+    // is what the `remember`s below key on — a screen no longer has to be handed the four fields of the
+    // state its subject happens to be made of, and the root derives nothing of its own.
+    val reading = viewModel.reading(state)
+
     val openUrl: (String) -> Unit = { url ->
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
-    // The ficha of one coin on Numista, for **every** label of the app that leaves for it (#508).
-    // One rule and not four: the URL Numista itself handed over, in the language the ficha was asked
-    // in (`TypeMeta.numistaUrl`), and the type's own address where this phone holds no ficha at all.
-    val openTypeOnNumista: (Int) -> Unit = { typeId ->
-        openUrl(state.collection.typeMeta[typeId]?.numistaUrl ?: numistaTypeUrl(typeId))
-    }
+    val openTypeOnNumista: (Int) -> Unit = { typeId -> openUrl(reading.numistaUrl(typeId)) }
     // The one door of the index, which four places used to open by hand: a card of any species knows
     // its own destination (ADR 0021 §9), and a claim on a coin's sheet is that same door.
     val openCard: (CardDestination) -> Unit = { destination ->
         navController.navigate(routeOf(destination))
     }
 
-    // Built here, once, for the three surfaces that print money — the ficha of a coin, the header of
-    // its plate and «Las cifras» — so none of them can disagree with another about one coin. The
-    // market has to have landed: while it has not, `settled` is false and there is no amount to give
-    // anybody (ADR 0028 §7).
-    val coinValue: (Int) -> CoinValue? = { typeId ->
-        if (!state.valuation.settled) {
-            null
-        } else {
-            coinValue(typeId, state.collection, state.prices)
-        }
-    }
-    // The casillas the collector marked, crossed with the collection for **the screens** (ADR 0029 §3):
-    // the annex draws these, the door counts them and «Este teléfono» prices their month. The plan asks the
-    // ViewModel's `livingWishes()` for the same crossing, and the two cannot disagree because it is one
-    // pure function of the same two fields — which is also why neither of them is kept in the state:
-    // a stored third reading is the one that could.
-    val wishes = remember(state.wishes, state.collection.items, viewModel.catalogs) {
-        wishedSlots(state.wishes, viewModel.catalogs, state.collection.items)
-    }
-    // The keys as the table holds them, dead marks included, which is what a plate draws with: a mark
-    // is only ever painted on an empty casilla, so the album is what says whether it shows (ADR 0029
-    // §2) — and a plate whose coin was sold shows the mark again without the table being written to.
-    val wishedKeys = remember(state.wishes) { state.wishes.mapTo(mutableSetOf()) { it.key } }
-    // The same marks as rows, for the door of the index (#520): it draws the first few of them, so it
-    // needs the type and the face each casilla rests on. Built off `wishes` and not off the table, so
-    // the row and the list it opens cannot disagree about what is marked — and with no prices, which
-    // are the one thing a door has no room for.
-    val wishedRows = remember(wishes) { wishSubject(wishes).rows }
-    // What the marks cost a month, for the one screen that prints it: «Este teléfono», where the budget already
-    // lives (ADR 0029 §5). The other place the figure is said is the gesture, and that one is a constant
-    // sentence — «+2 consultas al mes» per casilla — because it is a promise and not a total.
-    val wishCalls = remember(wishes) { wishCallsPerMonth(wishes) }
-    // Now, read once per arrival of a price rather than per recomposition: what it dates is a figure
-    // that never expires (ADR 0030 §4), so what it must not do is change under the collector's eyes
-    // while they read it.
-    val nowMillis = remember(state.prices) { System.currentTimeMillis() }
-    // The shelf window itself, crossed once (ADR 0030 §1): the same reading the shelf draws and the
-    // plate resolves itself by, so a tile and its plate cannot disagree about which régime it is under.
-    val showcase = remember(state.collection) { viewModel.showcase() }
     // Everything a plate says about money and what tasar it would spend, in one object the plate keys
-    // its subject on (#541). The three régimes and the gesture's ceiling are `PlateFinance`'s and not
-    // written here: what is here is *when* the reading changes, which is every reading behind it.
+    // its subject on (#541). The three régimes and the gesture's ceiling are `PlateFinance`'s: what is
+    // decided here is only who answers a press, which is the half of it the reading cannot know.
     //
-    // Remembered, and that is the point of the object: the two lambdas this replaced were rebuilt on
-    // every recomposition, so the plate's own `remember` never hit and the album was walked again on
-    // every frame of the entrance — the very defect the coin sheet below was already fixed for.
-    //
-    // Four keys and not six: `showcase` and `nowMillis` are themselves remembered on the collection and
-    // on the book, so neither can move without one of these moving first. And what is in flight is not
-    // a key at all — `state.valuingPlate` flips twice per press and no amount here reads it.
-    val plateFinance = remember(state.collection, state.prices, state.valuation, wishedKeys) {
-        PlateFinance(
-            showcase = showcase,
-            state = state.collection,
-            book = state.prices,
-            pass = state.valuation,
-            wished = wishedKeys,
-            nowMillis = nowMillis,
-            onValue = viewModel::valuePlate,
-            onMessage = viewModel::showMessage,
-        )
+    // One key, because the reading is the key: what the object is made of are readings of it, so it
+    // cannot move without the reading moving first. And what is in flight is not a key at all —
+    // `state.valuingPlate` flips twice per press and no amount in here reads it.
+    val plateFinance = remember(reading) {
+        reading.plateFinance(onValue = viewModel::valuePlate, onMessage = viewModel::showMessage)
     }
 
     // Built here, once, for the two surfaces that show a piece of a type (#185): both read the same
@@ -215,7 +162,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // ficha is or whether it is already being refreshed.
     val ficha: (Int) -> FichaRefresh = { typeId ->
         FichaRefresh(
-            fetchedAt = state.collection.fichaFetchedAt[typeId],
+            fetchedAt = reading.fichaFetchedAt(typeId),
             refreshing = typeId in state.refreshingFichas,
             onRefresh = { viewModel.refreshFicha(typeId) },
         )
@@ -226,18 +173,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // while its sheet is open; what this keeps still is the lambda, so that remembering can work at
     // all — a fresh lambda per recomposition would rebuild the row on every frame of the entrance.
     //
-    // The keys are exactly what the five lambdas read, and they have to be: a surface held past a
-    // change would answer with the collection, the market or the in-flight fichas of a moment ago.
-    val coinSheet = remember(
-        state.collection,
-        state.prices,
-        state.valuation,
-        state.refreshingFichas,
-    ) {
+    // Two keys and neither of them kept by hand: the reading covers the collection, the market and the
+    // pass at once (#542), and what is left beside it is the one thing that is in flight rather than
+    // derived. A surface held past either would answer with the fichas or the inventory of a moment ago.
+    val coinSheet = remember(reading, state.refreshingFichas) {
         CoinSheetSurface(
-            coin = { typeId -> coinRowOf(state.collection, typeId) },
+            coin = reading::coin,
             ficha = ficha,
-            value = coinValue,
+            value = reading::coinValue,
             onOpenNumista = openTypeOnNumista,
             onOpenClaim = openCard,
         )
@@ -248,7 +191,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val route = backStackEntry?.destination?.route
     val subjectName = when {
         Routes.isPlate(route) ->
-            viewModel.catalogName(backStackEntry?.arguments?.getString("catalogId"))
+            reading.catalogName(backStackEntry?.arguments?.getString("catalogId"))
         // The whole key, not just the family: three Britannias share one and only the key
         // tells them apart (#22). And the name is read off the card the route opened rather than
         // resolved a second time, because since #565 a name knows about its neighbours: asking the
@@ -258,12 +201,12 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             weight = backStackEntry?.arguments?.getString("weight"),
             finish = backStackEntry?.arguments?.getString("finish"),
             metal = backStackEntry?.arguments?.getString("metal"),
-        )?.let { key -> state.collection.piecesCardFor(key)?.name }
+        )?.let(reading::derivedName)
         Routes.isOwnGrouping(route) -> backStackEntry
             ?.arguments
             ?.getString("groupingId")
             ?.toLongOrNull()
-            ?.let { id -> state.collection.ownGroupings.firstOrNull { it.id == id }?.name }
+            ?.let(reading::boxName)
         else -> null
     }
 
@@ -273,37 +216,6 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // Onboarding has no masthead actions at all.
     val atRoot = state.onboarded && Routes.isRoot(route)
 
-    // Assembled once per collection and per price book, and never per recomposition: it walks the whole
-    // inventory, and the bottom bar reads its weight on every screen the bar is drawn on.
-    // Keyed on the two readings it uses and never on the whole status: that carries the pass's
-    // running count, which moves every twenty-five issues (`VALUATION_PROGRESS_EVERY`), and this
-    // walks the entire inventory.
-    val figures = remember(
-        state.collection,
-        state.prices,
-        state.valuation.settled,
-        state.valuation.waiting,
-    ) {
-        figuresSubject(
-            state = state.collection,
-            book = state.prices,
-            settled = state.valuation.settled,
-            waiting = state.valuation.waiting,
-        )
-    }
-    // One census for the sewn edge of every root (#400): collections from the index, pieces and
-    // types from the same figures walk «La materia» already uses — so the three tabs cannot invent
-    // three totals, and the HierarchyBar's type count is the same number. Absent while still
-    // reading (#418): zeros here would claim the collection is empty before the snapshot lands.
-    val sewnEdge = if (state.loading) {
-        null
-    } else {
-        SewnEdgeCounts(
-            collections = state.collection.index.size,
-            pieces = figures.figures.pieces,
-            types = figures.figures.types,
-        )
-    }
     val onBack: (() -> Unit)? =
         if (state.onboarded && route != null && !Routes.isRoot(route)) {
             { navController.popBackStack() }
@@ -350,14 +262,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             if (atRoot) {
                 HierarchyBar(
                     route = route,
-                    collections = sewnEdge?.collections,
+                    collections = reading.sewnEdge?.collections,
                     // Same type count the sewn edge prints, and the same distinct set [coinRows]
                     // draws — including a hostile zero coerced to one piece (#426). The cell names
                     // this magnitude since #516: it never counted coins.
-                    types = sewnEdge?.types,
+                    types = reading.sewnEdge?.types,
                     // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
                     // Null with the sewn edge (#418): «0,00 kg» while reading is a false empty collection.
-                    grams = sewnEdge?.let { figures.figures.weight.value },
+                    grams = reading.sewnEdge?.let { reading.figures.figures.weight.value },
                     onCross = { destination ->
                         navController.navigate(destination) {
                             // The two roots are siblings, not a stack: crossing over and back must
@@ -426,18 +338,18 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 loading = state.loading,
                                 lastSync = state.lastSync,
                                 shelf = state.indexShelf,
-                                catalogs = viewModel.catalogs,
+                                catalogs = reading.catalogs,
                                 onNarrow = viewModel::narrowIndex,
                                 onOpen = openCard,
                                 onOpenCoins = { coinsShelf ->
                                     crossToCoins(navController, viewModel, coinsShelf)
                                 },
-                                sewnEdge = sewnEdge,
+                                sewnEdge = reading.sewnEdge,
                                 // The rows and not the count: the row at the head of the sheet draws
                                 // the first few casillas as coins (#520). No costs — a door does not
                                 // price what is behind it, and the list one tap in does.
-                                wishes = wishedRows,
-                                showcase = showcase.size,
+                                wishes = reading.wishedRows,
+                                showcase = reading.showcase.size,
                                 onOpenWishes = { navController.navigate(Routes.WISHES) },
                                 onOpenShowcase = { navController.navigate(Routes.EXPLORE) },
                                 onOpenPhone = { navController.navigate(Routes.PHONE) },
@@ -458,23 +370,23 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         CoinsScreen(
                             state = state.collection,
                             shelf = state.coinsShelf,
-                            curatedNames = viewModel.curatedNames,
+                            curatedNames = reading.curatedNames,
                             onNarrow = viewModel::narrowCoins,
                             onCreateBox = viewModel::createOwnGrouping,
                             onAddToBox = viewModel::addToOwnGrouping,
-                            sewnEdge = sewnEdge,
+                            sewnEdge = reading.sewnEdge,
                             onOpenPhone = { navController.navigate(Routes.PHONE) },
                             sheet = coinSheet,
                         )
                     }
                     page(Routes.FIGURES) {
                         FiguresScreen(
-                            subject = figures,
-                            sewnEdge = sewnEdge,
-                            // Read once per composition of the page: what it dates is the spot, and a
-                            // clock that ticked would make «plata de hoy» a thing that changes while
-                            // you look at it, which is the pocket ticker #316 refused.
-                            nowMillis = remember(state.prices.spot) { System.currentTimeMillis() },
+                            subject = reading.figures,
+                            sewnEdge = reading.sewnEdge,
+                            // The arrival of the book this page is drawn from, which is what dates the
+                            // spot: a clock that ticked would make «plata de hoy» a thing that changes
+                            // while you look at it, which is the pocket ticker #316 refused.
+                            nowMillis = reading.pricesArrivedAt,
                             onOpenCountry = { country ->
                                 crossToCoins(
                                     navController,
@@ -497,10 +409,10 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     }
                     page(Routes.OWN_GROUPING) { entry ->
                         val boxId = entry.arguments?.getString("groupingId")?.toLongOrNull()
-                        val card = boxId?.let(state.collection::piecesCardForBox)
+                        val card = boxId?.let(reading::boxCard)
                         PiecesScreen(
                             state = state.collection,
-                            subject = card?.let { piecesSubject(state.collection, it) },
+                            subject = card?.let(reading::pieces),
                             onOpenNumista = openTypeOnNumista,
                             onMessage = viewModel::showMessage,
                             ficha = ficha,
@@ -545,13 +457,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 Modifier.fillMaxSize().padding(20.dp),
                             )
                         } else {
-                            val card = state.collection.piecesCardFor(key)
+                            val card = reading.derivedCard(key)
                             // No upkeep: a derived collection is not something anyone typed. What
                             // it says when it is gone is `PiecesScreen`'s own default, which is the
                             // one wording of that event (ADR 0026 §5).
                             PiecesScreen(
                                 state = state.collection,
-                                subject = card?.let { piecesSubject(state.collection, it) },
+                                subject = card?.let(reading::pieces),
                                 onOpenNumista = openTypeOnNumista,
                                 onMessage = viewModel::showMessage,
                                 ficha = ficha,
@@ -572,20 +484,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     // shelf window arrived (ADR 0030 §8): the shelf here, the list one door further in.
                     page(Routes.EXPLORE) {
                         ExploreScreen(
-                            // Worded once per crossing of the four things a tile is made of — the
-                            // curated files, the inventory, the marks and the price table — and not
-                            // once per recomposition: the prices land while the shelf is open.
-                            tiles = remember(showcase, state.collection, wishes, state.prices) {
-                                showcaseTiles(
-                                    window = showcase,
-                                    cards = state.collection.index,
-                                    wishes = wishes,
-                                    state = state.collection,
-                                    book = state.prices,
-                                    nowMillis = nowMillis,
-                                )
-                            },
-                            wishes = wishes.size,
+                            tiles = reading.tiles,
+                            wishes = reading.livingWishes.size,
                             images = state.collection.images,
                             onOpenPlate = { catalogId ->
                                 navController.navigate(Routes.plate(catalogId))
@@ -596,20 +496,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     }
                     page(Routes.WISHES) {
                         WishesScreen(
-                            // Worded once per crossing of the table and the collection, and not once
-                            // per recomposition: the prices land while the screen is open.
-                            subject = remember(wishes, state.prices, state.valuation.settled) {
-                                wishSubject(
-                                    slots = wishes,
-                                    // The same gate as every other amount in the app: while the market
-                                    // has not landed there is no price to say (ADR 0028 §7).
-                                    costs = if (!state.valuation.settled) {
-                                        emptyMap()
-                                    } else {
-                                        wishCosts(wishes, state.collection, state.prices)
-                                    },
-                                )
-                            },
+                            subject = reading.wishAnnex,
                             images = state.collection.images,
                             notebookOptions = state.notebookOptions,
                             onNotebookPrinted = viewModel::notebookPrinted,
@@ -631,7 +518,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             // nothing else is about the marks, so an amount on its own would be a
                             // number nobody can attribute. Absent rather than zero — with nothing
                             // marked the pass is the fixed thing it always was.
-                            wishSpend = wishBudgetLabel(wishCalls),
+                            wishSpend = wishBudgetLabel(reading.wishCalls),
                             syncing = state.syncing,
                             exporting = state.exportingData,
                             onSync = viewModel::sync,
@@ -692,13 +579,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 // Resolved once per collection and not once per recomposition (#218):
                                 // building the album walks the whole inventory, and the screen recomposes
                                 // for reasons — a scroll, an export in flight — that leave it unchanged.
-                                result = remember(state.collection, catalogId) {
-                                    viewModel.plate(catalogId)
-                                },
+                                result = remember(reading, catalogId) { reading.plate(catalogId) },
                                 images = state.collection.images,
                                 finance = plateFinance,
-                                marking = remember(wishedKeys) {
-                                    PlateMarking(wishedKeys, viewModel::toggleWish)
+                                marking = remember(reading) {
+                                    PlateMarking(reading.wishedKeys, viewModel::toggleWish)
                                 },
                                 valuing = state.valuingPlate == catalogId,
                                 notebookOptions = state.notebookOptions,
@@ -713,7 +598,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 onOpenSource = openUrl,
                                 sheet = coinSheet,
                                 onMessage = viewModel::showMessage,
-                                nowMillis = nowMillis,
+                                nowMillis = reading.pricesArrivedAt,
                                 modifier = Modifier.fillMaxSize(),
                             )
                         }

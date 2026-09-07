@@ -22,6 +22,7 @@ import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.DatabaseExport
+import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -59,6 +60,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -227,6 +229,11 @@ class CoindexViewModelTest {
         apiBaseUrl = "https://api.example",
     )
 
+    /**
+     * The one clock the ViewModel reads for itself, movable so a stamp can be seen to move (#220).
+     */
+    private var clock = NOW
+
     private fun viewModel(
         client: () -> NumistaClient? = { numistaClient() },
         warmUp: suspend () -> Unit = { warmedUp += 1 },
@@ -259,6 +266,7 @@ class CoindexViewModelTest {
             warmUpFichaCache = warmUp,
             dataExport = dataExport,
             installedVersionName = "0.15.0",
+            now = { clock },
         )
     }
 
@@ -876,6 +884,86 @@ class CoindexViewModelTest {
 
         assertNull(dump)
         assertTrue("No se pudieron exportar los datos" in viewModel.state.value.message?.text.orEmpty())
+    }
+
+    /**
+     * The same reading comes back until something it is made of moves (#542).
+     *
+     * This is what the screens key their `remember` on, so it is the whole of the memoisation: the
+     * fields of a [ScreenReading] are `by lazy` and therefore belong to an instance, and a new
+     * instance per emission would walk the inventory again for «Las cifras», the shelf window and the
+     * marks — the defect the root composable had been carrying its keys by hand to avoid.
+     */
+    @Test
+    fun `the reading is the same object until the collection under it moves`() = onViewModel(
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+        },
+    ) { viewModel ->
+        runCurrent()
+        val reading = viewModel.reading()
+
+        assertSame(reading, viewModel.reading())
+
+        // A ficha being asked for is in flight and derives nothing: the reading does not move for it.
+        viewModel.refreshFicha(LOOSE_TYPE)
+        assertSame(reading, viewModel.reading())
+
+        // A second piece is another collection, and everything hanging off it has to be read again.
+        items.rows.value = listOf(collected(), collected().copy(id = 2))
+        runCurrent()
+        assertTrue(reading !== viewModel.reading())
+    }
+
+    /**
+     * The arrival of a price book is stamped, and a book that has not changed is not re-stamped.
+     *
+     * What the stamp dates is a figure that never expires (ADR 0030 §4) — the cost of entering a plate
+     * of the shelf window, the day the silver was read — so a clock read per emission would move every
+     * age on screen while the collector is looking at it.
+     */
+    @Test
+    fun `a price book that lands is stamped, and the empty one it replaces was stamped at launch`() =
+        onViewModel { viewModel ->
+            runCurrent()
+            // Never 1970: an age read before the first book has to be measured against something.
+            assertEquals(NOW, viewModel.state.value.pricesArrivedAt)
+
+            clock = NOW + 60_000
+            prices.prices.value = listOf(
+                IssuePriceEntity(typeId = LOOSE_TYPE, issueId = 8_508, grade = "unc", eur = 40.0),
+            )
+            runCurrent()
+
+            assertEquals(NOW + 60_000, viewModel.state.value.pricesArrivedAt)
+        }
+
+    /**
+     * A price landing does not move the collection's half of the reading (#218).
+     *
+     * The seam the reading is split on: a pass writes its rows one by one, so a single memo would
+     * rebuild the shelf window and re-resolve whatever plate is open once per row — for a reading
+     * none of them is made of.
+     */
+    @Test
+    fun `a price that lands leaves the collection's own reading where it was`() = onViewModel(
+        given = {
+            types.rows.value = listOf(ficha())
+            items.rows.value = listOf(collected())
+        },
+    ) { viewModel ->
+        runCurrent()
+        val before = viewModel.reading()
+
+        prices.prices.value = listOf(
+            IssuePriceEntity(typeId = LOOSE_TYPE, issueId = 8_508, grade = "unc", eur = 40.0),
+        )
+        runCurrent()
+        val after = viewModel.reading()
+
+        assertTrue(before !== after)
+        assertSame(before.of, after.of)
     }
 
     /** And the flag it raises comes back down, whichever of the two ways it ended. */
