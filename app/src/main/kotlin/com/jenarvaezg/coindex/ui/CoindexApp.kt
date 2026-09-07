@@ -55,9 +55,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.db.DATABASE_MIME_TYPE
-import com.jenarvaezg.coindex.data.prices.showcaseCallCount
 import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.wishedSlots
@@ -82,7 +80,6 @@ import com.jenarvaezg.coindex.ui.screens.NoticesScreen
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateMarking
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
-import com.jenarvaezg.coindex.ui.screens.PlateValuation
 import com.jenarvaezg.coindex.ui.screens.CredentialsScreen
 import com.jenarvaezg.coindex.ui.screens.PhoneScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
@@ -189,39 +186,27 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // The shelf window itself, crossed once (ADR 0030 §1): the same reading the shelf draws and the
     // plate resolves itself by, so a tile and its plate cannot disagree about which régime it is under.
     val showcase = remember(state.collection) { viewModel.showcase() }
-    // The plate asks for three readings at once and gets them or gets none of them (#493): the value
-    // of what is in it, the cost of closing it and the price inside each hole are one walk of the same
-    // album, and while the market is still arriving the empty value is what withdraws all three.
-    val plateMoney: (PlateResult.Available) -> PlateMoney = { resolved ->
-        val window = showcase.firstOrNull { it.catalog.id == resolved.catalog.id }
-        when {
-            // A plate of the shelf window is **not** gated on the collection's pass (ADR 0030 §3):
-            // its prices arrive by a gesture of their own, so waiting for the market of a collection
-            // it has no coin in would leave the amount off a plate that has just been valued.
-            window != null -> showcaseMoney(window, state.collection, state.prices)
-            !state.valuation.settled -> PlateMoney(waiting = state.valuation.waiting)
-            else -> plateMoney(resolved.album, state.collection, state.prices, wishedKeys)
-        }
-    }
-
-    // What tasar the plate on screen would cost and what pressing it does (ADR 0030 §3). A function of
-    // the resolution like the money is: the album the count walks is on the other side of it.
-    val plateValuation: (PlateResult.Available) -> PlateValuation = { resolved ->
-        val plate = showcase.firstOrNull { it.catalog.id == resolved.catalog.id }
-        val calls = plate?.let { showcaseCallCount(it, state.prices, nowMillis) } ?: 0
-        PlateValuation(
-            calls = calls,
-            running = state.valuingPlate == resolved.catalog.id,
-            // Nothing to ask is answered here and not by a pass that would ask for nothing: the
-            // gesture never buys the same answer twice (ADR 0028 §5), and a press that did nothing
-            // silently is a button the collector reads as broken.
-            onValue = {
-                if (calls > 0) {
-                    viewModel.valuePlate(resolved.catalog.id)
-                } else {
-                    viewModel.showMessage(UiNotice(ShowcaseLabels.ALREADY_FRESH))
-                }
-            },
+    // Everything a plate says about money and what tasar it would spend, in one object the plate keys
+    // its subject on (#541). The three régimes and the gesture's ceiling are `PlateFinance`'s and not
+    // written here: what is here is *when* the reading changes, which is every reading behind it.
+    //
+    // Remembered, and that is the point of the object: the two lambdas this replaced were rebuilt on
+    // every recomposition, so the plate's own `remember` never hit and the album was walked again on
+    // every frame of the entrance — the very defect the coin sheet below was already fixed for.
+    //
+    // Four keys and not six: `showcase` and `nowMillis` are themselves remembered on the collection and
+    // on the book, so neither can move without one of these moving first. And what is in flight is not
+    // a key at all — `state.valuingPlate` flips twice per press and no amount here reads it.
+    val plateFinance = remember(state.collection, state.prices, state.valuation, wishedKeys) {
+        PlateFinance(
+            showcase = showcase,
+            state = state.collection,
+            book = state.prices,
+            pass = state.valuation,
+            wished = wishedKeys,
+            nowMillis = nowMillis,
+            onValue = viewModel::valuePlate,
+            onMessage = viewModel::showMessage,
         )
     }
 
@@ -711,11 +696,11 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     viewModel.plate(catalogId)
                                 },
                                 images = state.collection.images,
-                                money = plateMoney,
+                                finance = plateFinance,
                                 marking = remember(wishedKeys) {
                                     PlateMarking(wishedKeys, viewModel::toggleWish)
                                 },
-                                valuation = plateValuation,
+                                valuing = state.valuingPlate == catalogId,
                                 notebookOptions = state.notebookOptions,
                                 onNotebookPrinted = viewModel::notebookPrinted,
                                 notebookPages = { options ->
