@@ -156,9 +156,6 @@ const val DOWNLOAD_ACTION: String = "Descargar"
 fun sheetExportLabel(sheet: SharedSheet, exporting: Boolean): String =
     if (exporting) "Preparando la ${sheet.noun}…" else "Exportar ${sheet.noun}"
 
-/** Where the coins on an exported sheet came from, which the PNG has to carry to be checkable. */
-fun sheetSourceLabel(source: String): String = "Fuente: $source"
-
 /** The way out of the album and into the catalog the plate was curated from. */
 const val NUMISTA_SOURCE_LINK: String = "Fuente en Numista"
 
@@ -166,19 +163,6 @@ const val NUMISTA_SOURCE_LINK: String = "Fuente en Numista"
 const val CURATED_CATALOG_EYEBROW: String = "Catálogo curado"
 
 const val PLATE_UNAVAILABLE_EYEBROW: String = "Lámina no disponible"
-
-/** What a sheet of pieces has instead of a curated catalog to name. */
-const val PIECES_SHEET_SOURCE: String = "tu colección en Numista"
-
-/**
- * The two mastheads a shared PNG carries.
- *
- * They say which of the two hierarchies the sheet came out of, because a PNG arrives in a chat with
- * no app around it: «catálogo curado» is somebody else's list the collector is filling, and
- * «colección» is the collector's own pieces (ADR 0021 §1).
- */
-const val PLATE_SHEET_MASTHEAD: String = "COINDEX · CATÁLOGO CURADO"
-const val PIECES_SHEET_MASTHEAD: String = "COINDEX · COLECCIÓN"
 
 /**
  * Where a download landed, said on the snackbar (#403).

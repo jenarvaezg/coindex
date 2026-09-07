@@ -156,24 +156,8 @@ class SheetLabelsTest {
         assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
     }
 
-    /** Where a sheet came from, said the same way whether the source is a catalog or the collection. */
-    @Test
-    fun `an exported sheet names its source`() {
-        assertEquals("Fuente: Numista", sheetSourceLabel("Numista"))
-        assertEquals("Fuente: tu colección en Numista", sheetSourceLabel(PIECES_SHEET_SOURCE))
-    }
-
-    /**
-     * The one claim a sheet of pieces must not make.
-     *
-     * Nobody curated a sequence there, and the PNG outlives the app to say otherwise: the masthead is
-     * «COLECCIÓN» where a plate's is «CATÁLOGO CURADO» (ADR 0021 §1).
-     */
-    @Test
-    fun `a sheet of pieces never calls itself a curated catalog`() {
-        assertEquals("COINDEX · CATÁLOGO CURADO", PLATE_SHEET_MASTHEAD)
-        assertEquals("COINDEX · COLECCIÓN", PIECES_SHEET_MASTHEAD)
-    }
+    // Where a sheet came from and which of the two hierarchies it is are printed words since #431:
+    // both are pinned by `PrintedLabelsTest`, where the strings live (#543).
 
     /**
      * Each sheet exports under its own noun, and the pair of sentences is written once.

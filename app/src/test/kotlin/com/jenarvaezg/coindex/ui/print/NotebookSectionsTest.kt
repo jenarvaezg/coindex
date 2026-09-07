@@ -25,6 +25,7 @@ import com.jenarvaezg.coindex.domain.WishKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -146,6 +147,38 @@ class NotebookSectionsTest {
             listOf("País" to "Francia", "Piezas" to "0 de 12 · te faltan 12"),
             section.facts,
         )
+    }
+
+    /**
+     * What nothing can name goes unsaid rather than printed blank.
+     *
+     * The promise was the shared sheet's until the PNG became a printed page (#431), and this is where
+     * it lives now (#543): the country is silent when the pieces disagree about it, and a box states
+     * no variant at all — it spans whatever the collector put in it. An empty row on a folio reads as
+     * something lost, and there is no app around the folio to say otherwise.
+     */
+    @Test
+    fun `a page of pieces leaves unsaid what nothing can name`() {
+        val item = CollectedItem(id = 1, quantity = 1, typeId = 100, issueYear = 2024)
+        val card = IndexCard.Box(
+            name = "Lo que fue cayendo",
+            issuer = null,
+            box = OwnGroupingView(
+                OwnGrouping(1, "Lo que fue cayendo", typeIds = listOf(100)),
+                listOf(item),
+            ),
+        )
+
+        val section = notebookSections(
+            CollectionState(AssembledCollection()),
+            listOf(card),
+            emptyList(),
+            Curation(emptyList()),
+            NotebookOptions(),
+        ).single()
+
+        assertEquals(listOf("Piezas" to "1 moneda · 1 tipo"), section.facts)
+        assertNull(section.subtitle)
     }
 
     @Test

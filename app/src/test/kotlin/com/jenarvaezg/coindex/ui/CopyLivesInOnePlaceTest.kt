@@ -14,6 +14,12 @@ import kotlin.test.assertTrue
  * cannot be argued with — a literal containing prose may not reach a visible slot anywhere under
  * `ui/`.
  *
+ * **Visible is not the same as on screen** (#543). Since the notebook, the app has a second surface
+ * that reads words out of `ui/` — the paper, whose slots are the fields of a `PrintSection` and not
+ * the arguments of a `Text(` — and until this test learned them the exporter was the unwatched half:
+ * two of its four sections wrote their furniture out by hand. What outlives the app is the folio, so
+ * this is the surface where a wording nobody reviewed cannot be corrected later.
+ *
  * **There are no exemptions, and deliberately no list of files.** Not symbols, not Ajustes, not
  * onboarding, not interpolations. A whitelist with a reason *is* the back door: nobody rejects a
  * pull request that adds one line with its comment, and in six months the list is the map of
@@ -36,7 +42,7 @@ class CopyLivesInOnePlaceTest {
      * wraps `Text` in a composable of its own moved the slot, not the copy. Naming them is not an
      * exemption: the list only ever grows, and what §6 forbids is taking something off it.
      */
-    private val slots = listOf(
+    private val screenSlots = listOf(
         "Text(",
         "text =",
         "label =",
@@ -47,6 +53,55 @@ class CopyLivesInOnePlaceTest {
         "Eyebrow(",
         "Facet(",
     )
+
+    /**
+     * The paper's own slots, which are a second surface and not a second rule (#543).
+     *
+     * A section of the notebook is a value and not a composable, so **not one of its words goes
+     * through a `Text(`**: the eyebrow, the heading, the rows of the specification, the strip at the
+     * foot and every line of a cell are fields of [com.jenarvaezg.coindex.ui.print.PrintSection] and
+     * [com.jenarvaezg.coindex.ui.print.PrintCell], and a scan that only knew about Compose watched
+     * half the app. It showed: two of the four sections asked the printed labels for their furniture
+     * and the other two wrote it out, so «tu colección en Numista» was in the copy file *and* twice
+     * in the exporter, and the paper drifted against itself.
+     *
+     * `title =` is on the list above already, and it is the same slot on both surfaces. A cell's label
+     * is watched from both of its sides — `curatedLabel` and `name` are mutually exclusive by
+     * construction — and the second side is watched **at the value and not at the field**:
+     * `CoinName(` and `coinName(` earn their place the way `Eyebrow(` did in the amendment of #342,
+     * because their parameters are strings that get printed. `name =` was tried and is not here: it
+     * matches `val name = …` as well, and one local of a copy file dragged that file's own prose into
+     * a slot nothing had ever printed from — a scanner that cries wolf is how a whitelist gets
+     * written.
+     *
+     * `PrintSection(` and `PrintCell(` close the positional way in, which on paper has no `Text(`
+     * underneath to catch it: a section written by position hands its eyebrow — or a cell its label —
+     * to an argument with no name on it. Both are what #342 called moving the slot rather than the
+     * copy, and both read their first argument, which is the one that carries the wording.
+     *
+     * `state =` is the widest slot on either list, because a screen calls plenty of things `state`.
+     * It is here because the mark of a wished casilla travels in that field and nowhere else, and if
+     * it ever goes red over something that is not visible copy, the answer is a narrower slot — never
+     * an exemption, which is the one thing §6 forbids.
+     *
+     * A page outlives the app, which makes this the half where a wording that got away cannot be
+     * taken back by an update.
+     */
+    private val paperSlots = listOf(
+        "PrintSection(",
+        "PrintCell(",
+        "eyebrow =",
+        "subtitle =",
+        "facts =",
+        "source =",
+        "curatedLabel =",
+        "CoinName(",
+        "coinName(",
+        "footnote =",
+        "state =",
+    )
+
+    private val slots = screenSlots + paperSlots
 
     @Test
     fun `no visible slot under ui is handed a literal containing prose`() {
@@ -60,7 +115,11 @@ class CopyLivesInOnePlaceTest {
         val offenders = screens
             .flatMap { file -> prosaicSlots(file).map { "${file.name}:${it.line} ${it.literal}" } }
 
-        assertEquals(emptyList(), offenders, "copy belongs in a copy file, not in a screen")
+        assertEquals(
+            emptyList(),
+            offenders,
+            "copy belongs in a copy file, not in a screen and not on a folio",
+        )
     }
 
     @Test
@@ -90,6 +149,28 @@ class CopyLivesInOnePlaceTest {
             """// Text("un comentario")""" to emptyList(),
             """/** Text("un KDoc") */""" to emptyList(),
             """Modifier.testTag("no es una ranura")""" to emptyList(),
+            // And the paper's slots, which carry the same prose without a composable in sight.
+            """PrintSection(eyebrow = "COINDEX · COLECCIÓN", facts = listOf("Piezas" to count))""" to
+                listOf("\"COINDEX · COLECCIÓN\"", "\"Piezas\""),
+            """PrintCell(curatedLabel = "1 onza", footnote = "1977")""" to listOf("\"1 onza\""),
+            // The other half of a cell's label, which is two strings inside a value: the whole
+            // argument is read, so the theme is seen as well as the denomination.
+            """PrintCell(name = CoinName("5 Pounds", "Red Dragon"))""" to
+                listOf("\"5 Pounds\"", "\"Red Dragon\""),
+            // A section written by position says the same thing with no name on the argument.
+            """PrintSection("COINDEX · COLECCIÓN", subject.title, null)""" to
+                listOf("\"COINDEX · COLECCIÓN\""),
+            """PrintCell("1 onza", state = null)""" to listOf("\"1 onza\""),
+            // And what the field would have cost: a declaration is not a slot, and the prose after
+            // one belongs to the copy file it was written in.
+            """fun f() { val name = referent(r); return if (x) "una ${'$'}name" else "un ${'$'}name" }""" to
+                emptyList(),
+            """source = INVENTORY_SECTION_SOURCE""" to emptyList(),
+            """state = WishLabels.MARK_WORD.takeIf { cell.wished }""" to emptyList(),
+            // The geometry says whether a masthead has these, which is a shape and not a word.
+            """Masthead(subtitle = true, facts = true)""" to emptyList(),
+            // A ratio is figures and a slash: no wording to diverge, exactly as on screen.
+            """footnote = coverage?.let { "${'$'}{it.owned}/${'$'}{it.issued}" }""" to emptyList(),
         )
 
         cases.forEach { (source, expected) ->
