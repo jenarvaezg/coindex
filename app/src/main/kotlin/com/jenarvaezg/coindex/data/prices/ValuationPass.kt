@@ -47,7 +47,7 @@ enum class ValuationRefusal {
  * What this phone holds of the collection's prices.
  *
  * @param wanted how many issues the collection has to be valued by.
- * @param missing how many of those have never been answered for, or were answered more than thirty
+ * @param missing how many of those have never been answered for, or were answered more than ninety
  *   days ago. **This is the gate on the money section**: while it is not zero the total would be
  *   `max(silver, paid)`, which is 60 % of the real figure and therefore false rather than incomplete
  *   (ADR 0028 §7).

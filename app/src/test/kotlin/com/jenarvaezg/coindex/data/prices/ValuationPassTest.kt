@@ -19,6 +19,7 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
 private const val NOW = 1_754_600_000_000L
+private const val DAY = 24L * 60 * 60 * 1_000
 
 /**
  * The pass itself: **three states and not two**, and a failure that writes nothing (ADR 0028 §4).
@@ -488,22 +489,42 @@ class ValuationPassTest {
     }
 
     /**
-     * A month later the issue is read again, and the grades of the first read are **replaced**.
+     * A quarter later the issue is read again, and the grades of the first read are **replaced**.
      *
      * Merged over, a grade Numista has stopped pricing would survive for ever under a fresh date, which is
      * a price with a date that is not its own. And the two halves of this test are the two halves of
      * «caducar no es borrar»: until the second read lands, the first one is still what the page shows.
+     *
+     * The age is read off [PRICE_LIFETIME_MILLIS] and not written in days, because the life is what
+     * #561 moved: at forty days this same pass now asks for nothing at all.
      */
     @Test
-    fun `a month later the issue is read again and its grades are replaced`() = runTest {
-        val month = 40L * 24 * 60 * 60 * 1_000
-        pass(PRICED, now = NOW - month).run(plan(OwnedIssue(30, 297)), held = null)
+    fun `a quarter later the issue is read again and its grades are replaced`() = runTest {
+        val expired = PRICE_LIFETIME_MILLIS + 1
+        pass(PRICED, now = NOW - expired).run(plan(OwnedIssue(30, 297)), held = null)
         assertEquals(2, prices.prices.value.size, "el precio viejo sigue en el teléfono")
 
         pass(EMPTY_PRICES).run(plan(OwnedIssue(30, 297)), held = null)
 
         assertTrue(prices.prices.value.isEmpty())
         assertEquals(1, prices.reads.value.size)
+    }
+
+    /**
+     * And a month later it is **not**: the peak that used to fall every month is what #561 removed.
+     *
+     * The pass asks Numista for nothing, so the row of the first read is still the one the phone holds
+     * — the same two grades, under the same date.
+     */
+    @Test
+    fun `a month later the issue is not read again`() = runTest {
+        pass(PRICED, now = NOW - 40 * DAY).run(plan(OwnedIssue(30, 297)), held = null)
+        asked.clear()
+
+        pass(EMPTY_PRICES).run(plan(OwnedIssue(30, 297)), held = null)
+
+        assertTrue(asked.isEmpty())
+        assertEquals(2, prices.prices.value.size)
     }
 
     /** A stored spot from yesterday is not read again today unless the day has turned. */
@@ -522,7 +543,7 @@ class ValuationPassTest {
     /** A spot the reader cannot bring leaves the stored one alone, whatever its age. */
     @Test
     fun `a spot that cannot be read leaves the old one, expired and all`() = runTest {
-        prices.putSpot(MetalSpotEntity(SILVER_SYMBOL, 50.0, NOW - 40L * 24 * 60 * 60 * 1_000))
+        prices.putSpot(MetalSpotEntity(SILVER_SYMBOL, 50.0, NOW - 40 * DAY))
         val pass = pass(PRICED, spot = { null })
 
         val status = pass.run(plan(OwnedIssue(30, 297)), held = null)

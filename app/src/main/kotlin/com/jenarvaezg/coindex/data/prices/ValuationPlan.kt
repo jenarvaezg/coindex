@@ -41,8 +41,29 @@ const val HOLE_THRESHOLD_SLOTS: Int = 10
  */
 fun holesAreWithinReach(holes: Int): Boolean = holes in 1..HOLE_THRESHOLD_SLOTS
 
-/** A catalog price is read again after thirty days. Catalog prices move slowly (ADR 0028 §5). */
-const val PRICE_LIFETIME_MILLIS: Long = 30L * 24 * 60 * 60 * 1_000
+/**
+ * A catalog price is read again after ninety days (#561).
+ *
+ * The same life as [LISTING_LIFETIME_MILLIS] and for the same reason: **a catalog price is the
+ * catalogue and not the market.** Numista publishes an estimate per issue and per grade, and that
+ * estimate moves at the speed of the catalogue that carries it — it is the silver spot, which expires
+ * daily, that follows the market here (ADR 0028 §9).
+ *
+ * Thirty days did not buy freshness, it bought a **peak**: every price of the collection is read on
+ * the same day by the same pass, so they expire in one block and the first launch afterwards costs the
+ * whole plan. Measured on the father's collection that is 442 calls — 231 owned issues, 115 holes
+ * within reach, 96 listings — against the 2.000 Numista allows in a month, and at thirty days it came
+ * due every month, on one day, sharing that month with the listings whenever the two fell together. At
+ * ninety it comes due once a quarter and never shares the bill: the two clocks now tick as one.
+ *
+ * **What keeps the older figure honest is the stamp and not the expiry** (ADR 0028 §5): expired is
+ * asked again and never deleted, and the amount is shown with the date it was brought. Which is true
+ * of the two amounts of the shelf window and of no other — «Las cifras» and a plate's own header stamp
+ * the silver spot, which is read daily, and say nothing about the age of the catalog price underneath.
+ * That gap was measured while this life was tripled and is [#594] — the stamp matters more at three
+ * months, not less, and it is not this constant that can say so.
+ */
+const val PRICE_LIFETIME_MILLIS: Long = 90L * 24 * 60 * 60 * 1_000
 
 /**
  * A type's issue listing is read again after ninety days (#452).
@@ -152,9 +173,10 @@ fun wishHoles(wishes: List<WishedSlot>): List<PlateHole> = wishes.map { slot ->
  * That is the «1-2 llamadas por deseo» of ADR 0029 §5 read exactly, and it is where the gesture's «+2
  * consultas al mes» comes from.
  *
- * It really is monthly for the prices, which expire in thirty days (ADR 0028 §5), and generous for the
- * listings, which last ninety: a marked slot that needed a lookup costs it once a quarter and is
- * counted here every month. Rounding a spend **up** is the direction this number has to err in.
+ * It is generous on both counts since #561: a price and a listing both last ninety days (ADR 0028 §5),
+ * so a marked slot really costs its one or two calls **once a quarter** and is counted here every
+ * month. Rounding a spend **up** is the direction this number has to err in, and the promise the
+ * collector reads — «+2 consultas al mes» — is now a ceiling three times over rather than one.
  */
 fun wishCallsPerMonth(wishes: List<WishedSlot>): Int = valuationCallCount(
     plan = ValuationPlan(owned = emptyList(), holes = wishHoles(wishes)),
@@ -238,7 +260,7 @@ private fun plateHoles(
     }
 
 /**
- * The issues of the plan that are missing from the phone or older than thirty days.
+ * The issues of the plan that are missing from the phone or older than ninety days.
  *
  * **Expired is asked again but never deleted** (ADR 0028 §5): this decides what to *ask for*, and the
  * row it leaves behind keeps being the one the page reads until a newer answer replaces it.

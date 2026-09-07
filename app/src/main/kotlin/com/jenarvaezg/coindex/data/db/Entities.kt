@@ -190,7 +190,7 @@ data class ApiCallEntity(
  * for again on every pass, for ever. A pass that **failed** writes neither, so «not asked yet» and
  * «asked and empty» stay different questions.
  *
- * [readAt] is also the only clock: a price expires 30 days after the issue was read, not per grade,
+ * [readAt] is also the only clock: a price expires 90 days after the issue was read, not per grade,
  * because one call brought every grade at the same instant. And **expiry is not deletion** — the row
  * stays and is shown with this date until a newer read replaces it.
  */
@@ -219,12 +219,12 @@ data class IssuePriceEntity(
  * «nobody has asked yet», and the lookup is spent again on every pass, for ever. A listing that
  * **failed** writes neither this nor [TypeIssueEntity], so the next pass retries it.
  *
- * [readAt] is a clock, but a **much slower one than a price's**: `PRICE_LIFETIME_MILLIS` is thirty
- * days because the market moves, and `LISTING_LIFETIME_MILLIS` is ninety because the catalogue barely
- * does. It cannot be «never», tempting as that is at 102 lookups a pass: an open date run grows a
- * slot every January, and a listing that never expired would leave that new hole unpriceable for the
- * life of the phone, silently — `ValuationStatus.missing` counts owned issues and would not say a
- * word. Ninety days amortises to about one lookup a day over his collection.
+ * [readAt] is a clock, and since #561 it ticks at **exactly a price's** rate: `PRICE_LIFETIME_MILLIS`
+ * and `LISTING_LIFETIME_MILLIS` are both ninety days, because a catalog price is as much the catalogue
+ * as the listing that addresses it. It cannot be «never», tempting as that is at 102 lookups a pass:
+ * an open date run grows a slot every January, and a listing that never expired would leave that new
+ * hole unpriceable for the life of the phone, silently — `ValuationStatus.missing` counts owned issues
+ * and would not say a word. Ninety days amortises to about one lookup a day over his collection.
  */
 @Entity(tableName = "type_issue_reads")
 data class TypeIssueReadEntity(

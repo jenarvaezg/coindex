@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.data.prices.PRICE_LIFETIME_MILLIS
 import com.jenarvaezg.coindex.data.prices.ValuationRefusal
 import com.jenarvaezg.coindex.domain.PrintedSide
 import java.time.ZoneId
@@ -59,6 +60,28 @@ class ShowcaseLabelsTest {
         assertEquals(ShowcaseLabels.REVALUE_ACTION, label)
         assertFalse("0" in label)
         assertTrue(ShowcaseLabels.ALREADY_FRESH.startsWith("Esta lámina ya está tasada"))
+    }
+
+    /**
+     * The snackbar quotes the life of a price, so it has to survive the oldest one it can be said over
+     * (#561).
+     *
+     * «Menos de un mes» was true while `PRICE_LIFETIME_MILLIS` was thirty days and became a lie the
+     * moment it was ninety: the press answers this over a price of eighty-nine days too. And the age
+     * itself is not rounded away beside it — past a month the plate says **the day** that price was
+     * brought and not how old it is, which is what stops a figure from May reading as a quotation
+     * (ADR 0028 §5). The day itself is pinned by the tests above; what is read off the life here is
+     * that the oldest price the pass leaves alone is still on the far side of that rule.
+     */
+    @Test
+    fun `the snackbar holds over the oldest price the pass will not re-ask`() {
+        val oldest = NOW - (PRICE_LIFETIME_MILLIS - DAY)
+
+        assertTrue("menos de tres meses" in ShowcaseLabels.ALREADY_FRESH)
+        assertTrue(
+            valuedAgeLabel(oldest, NOW, MADRID).startsWith("tasada el "),
+            "el precio más viejo que la pasada no vuelve a pedir se dice con su día, no con su edad",
+        )
     }
 
     /** While the calls are in flight the gesture says so, in the ficha's own words. */

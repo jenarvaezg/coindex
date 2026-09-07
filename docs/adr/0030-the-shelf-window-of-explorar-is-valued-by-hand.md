@@ -96,16 +96,17 @@ requires of the marked slot.
 
 ### 4. Amendment to ADR 0028 §5: a price asked for by hand does not expire, and it carries its date
 
-ADR 0028 §5 gave a catalog price thirty days, and it did so for a price **the pass will ask for
-again**: expiry there is what makes the monthly trickle a trickle. A plate of the shelf window has no
-pass coming for it, so thirty days would mean one thing only — the amount vanishing off a screen that
-has no way to refill it.
+ADR 0028 §5 gives a catalog price a life — thirty days when this was written, ninety since
+[#561](https://github.com/jenarvaezg/coindex/issues/561) — and it does so for a price **the pass will
+ask for again**: expiry there is what makes the trickle a trickle. A plate of the shelf window has no
+pass coming for it, so any expiry at all would mean one thing only — the amount vanishing off a screen
+that has no way to refill it.
 
 > **A hand-asked price never expires. It is shown with the date it was brought, and «Volver a tasar»
 > is on the plate for ever.**
 
-This is not new licence: it is the sentence §5 already signed — *«on day 31 the old price is still
-shown, with the date it was brought»* — with the deletion clause removed for the one case where
+This is not new licence: it is the sentence §5 already signed — *«on the day after, the old price is
+still shown, with the date it was brought»* — with the deletion clause removed for the one case where
 nothing would ever bring a newer one. The date is not decoration; it is what makes the amount
 readable months later, and it is the rule #316 signed for the spot.
 
