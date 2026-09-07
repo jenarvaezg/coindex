@@ -65,9 +65,10 @@ ISSUE_TITLE = "Desviaciones de peso entre la ficha y el catálogo"
 ISSUE_MARKER = "<!-- weight-deviations-report -->"
 NUMISTA_TYPE_URL = "https://en.numista.com/catalogue/pieces{type_id}.html"
 
-# Espejo de domain/…/Weight.kt. Si allí cambian la tolerancia o los pesos comunes, el
-# informe deja de medir lo que la app hace: es la única duplicación que este script tiene
-# y la única que hay que mirar cuando el imán cambie.
+# Espejo de domain/…/Weight.kt, y lo que lo sujeta es `fixtures/matching-digest.json`: el
+# digest lo emite la suite Kotlin y `test_matching_digest.py` afirma estas tres constantes
+# contra él, así que mover la tolerancia o los pesos comunes sólo allí rompe CI en vez de
+# dejar el informe midiendo otra cosa que la app.
 GRAMS_PER_TROY_OUNCE = 31.1034768
 COMMON_WEIGHTS_MILLIOZ = (250, 500, 1_000, 2_000, 5_000, 10_000)
 SNAP_TOLERANCE_MILLIOZ = 10
@@ -83,6 +84,9 @@ def normalize_weight_millioz(weight_oz: float) -> int | None:
 
     Lo que declara un catálogo dejó de ser objetivo en el #288: manda sobre sus miembros
     (ADR 0016) y sobre nadie más, y sus miembros ni siquiera pasan por aquí.
+
+    Los gramos de `normalized_weights` del digest —las onzas exactas y los dos bordes de la
+    tolerancia— son los vectores que atan este espejo al original.
     """
     if not math.isfinite(weight_oz) or weight_oz <= 0.0:
         return None
@@ -102,7 +106,10 @@ def normalize_weight_millioz(weight_oz: float) -> int | None:
 
 
 def normalize_family(family: str | None) -> str | None:
-    """Espejo de `normalizeFamily`: colapsa espacios y trata el vacío como ausencia."""
+    """Espejo de `normalizeFamily`: colapsa espacios y trata el vacío como ausencia.
+
+    Atada vector a vector por `families` del digest.
+    """
     if family is None:
         return None
     collapsed = " ".join(family.split())
@@ -110,7 +117,11 @@ def normalize_family(family: str | None) -> str | None:
 
 
 def is_technical_family(family: str) -> bool:
-    """Espejo de `isTechnicalFamily`: `System YYYY[-YYYY]` es sistema monetario, no serie."""
+    """Espejo de `isTechnicalFamily`: `System YYYY[-YYYY]` es sistema monetario, no serie.
+
+    Atada por `families` del digest, que la lee sobre la familia tal como está escrita:
+    `System 1999 ` con un espacio detrás y `System １９９９` con dígitos anchos no lo son.
+    """
     period = family.removeprefix("System ")
     if period == family or not period:
         return False
@@ -341,8 +352,9 @@ def load_catalogs(directory: pathlib.Path = CATALOGS) -> list[Catalog]:
                 name=payload.get("short_name") or payload.get("name", payload["id"]),
                 weight_millioz=payload.get("weight_millioz"),
                 members=members,
-                # Espejo de `CollectionCatalog.isSet`: el conjunto es la unidad y no
-                # declara variante física de ninguna clase (ADR 0012).
+                # Espejo de `CollectionCatalog.isSet`, atado por `catalog_species` del
+                # digest: el conjunto es la unidad y no declara variante física de
+                # ninguna clase (ADR 0012).
                 is_set=payload.get("schema_version") == 3,
                 source_note=payload.get("source_note"),
             )

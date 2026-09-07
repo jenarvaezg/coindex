@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import importlib.util
 import pathlib
 import sys
 import tempfile
@@ -11,21 +10,11 @@ import unittest
 from datetime import date
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SCRIPT = ROOT / "scripts" / "weight-deviations.py"
+sys.path.insert(0, str(ROOT / "scripts"))
 
+from script_loader import load_script  # noqa: E402
 
-def load_weights():
-    # El guion del nombre impide importarlo, y `repo_issue` vive al lado.
-    sys.path.insert(0, str(ROOT / "scripts"))
-    spec = importlib.util.spec_from_file_location("weight_deviations", SCRIPT)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-weights = load_weights()
+weights = load_script("weight_deviations", "weight-deviations.py")
 
 GRAMS_PER_TROY_OUNCE = weights.GRAMS_PER_TROY_OUNCE
 

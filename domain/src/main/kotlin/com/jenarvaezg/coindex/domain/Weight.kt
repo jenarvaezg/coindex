@@ -5,10 +5,15 @@ const val GRAMS_PER_TROY_OUNCE: Double = 31.1034768
 
 fun gramsToOunces(grams: Double): Double = grams / GRAMS_PER_TROY_OUNCE
 
-private val COMMON_WEIGHTS_MILLIOZ = intArrayOf(250, 500, 1_000, 2_000, 5_000, 10_000)
+/**
+ * The weights the magnet pulls to. `internal` and not private because `MatchingDigestTest`
+ * publishes them in the matching digest: `scripts/weight-deviations.py` keeps a copy of them, and
+ * a copy nothing compares is a copy that drifts.
+ */
+internal val COMMON_WEIGHTS_MILLIOZ = intArrayOf(250, 500, 1_000, 2_000, 5_000, 10_000)
 
 /** How far a measured weight may sit from a snapping target and still be it. */
-private const val SNAP_TOLERANCE_MILLIOZ = 10
+internal const val SNAP_TOLERANCE_MILLIOZ = 10
 
 /**
  * Normalizes a weight in ounces to milli-ounces, snapping to the common bullion weights

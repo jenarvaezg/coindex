@@ -1,0 +1,402 @@
+{
+  "digest_version": 1,
+  "about": "Las reglas de emparejamiento que `scripts/` copia a mano, emitidas por `MatchingDigestTest` de `:domain` y afirmadas por `scripts/test_matching_digest.py`. No se edita a mano y nada de producción lo lee: la app es la compuerta de runtime y la fuente única.",
+  "snapping": {
+    "grams_per_troy_ounce": 31.1034768,
+    "common_weights_millioz": [
+      250,
+      500,
+      1000,
+      2000,
+      5000,
+      10000
+    ],
+    "snap_tolerance_millioz": 10
+  },
+  "normalized_weights": [
+    {
+      "grams": 0.0,
+      "millioz": null
+    },
+    {
+      "grams": -1.0,
+      "millioz": null
+    },
+    {
+      "grams": 1.5552,
+      "millioz": 50
+    },
+    {
+      "grams": 7.7758692,
+      "millioz": 250
+    },
+    {
+      "grams": 7.9,
+      "millioz": 250
+    },
+    {
+      "grams": 15.5517384,
+      "millioz": 500
+    },
+    {
+      "grams": 26.73,
+      "millioz": 859
+    },
+    {
+      "grams": 30.0,
+      "millioz": 965
+    },
+    {
+      "grams": 30.75,
+      "millioz": 989
+    },
+    {
+      "grams": 30.78,
+      "millioz": 1000
+    },
+    {
+      "grams": 31.1,
+      "millioz": 1000
+    },
+    {
+      "grams": 31.1034768,
+      "millioz": 1000
+    },
+    {
+      "grams": 31.4,
+      "millioz": 1000
+    },
+    {
+      "grams": 31.45,
+      "millioz": 1011
+    },
+    {
+      "grams": 62.2069536,
+      "millioz": 2000
+    },
+    {
+      "grams": 155.517384,
+      "millioz": 5000
+    },
+    {
+      "grams": 311.034768,
+      "millioz": 10000
+    }
+  ],
+  "families": [
+    {
+      "family": "",
+      "normalized": null,
+      "technical": false
+    },
+    {
+      "family": "   ",
+      "normalized": null,
+      "technical": false
+    },
+    {
+      "family": " Lunar   ounce ",
+      "normalized": "Lunar ounce",
+      "technical": false
+    },
+    {
+      "family": "\tBritannia\n",
+      "normalized": "Britannia",
+      "technical": false
+    },
+    {
+      "family": "Lunar ounce",
+      "normalized": "Lunar ounce",
+      "technical": false
+    },
+    {
+      "family": "System",
+      "normalized": "System",
+      "technical": false
+    },
+    {
+      "family": "System ",
+      "normalized": "System",
+      "technical": false
+    },
+    {
+      "family": "System 1999",
+      "normalized": "System 1999",
+      "technical": true
+    },
+    {
+      "family": "System 1999 ",
+      "normalized": "System 1999",
+      "technical": false
+    },
+    {
+      "family": "System 1971-2001",
+      "normalized": "System 1971-2001",
+      "technical": true
+    },
+    {
+      "family": "System 19-2001",
+      "normalized": "System 19-2001",
+      "technical": false
+    },
+    {
+      "family": "System of a Down",
+      "normalized": "System of a Down",
+      "technical": false
+    },
+    {
+      "family": "System １９９９",
+      "normalized": "System １９９９",
+      "technical": false
+    },
+    {
+      "family": "system 1999",
+      "normalized": "system 1999",
+      "technical": false
+    }
+  ],
+  "catalog_species": [
+    {
+      "schema_version": 0,
+      "species": "unsupported"
+    },
+    {
+      "schema_version": 1,
+      "species": "simple"
+    },
+    {
+      "schema_version": 2,
+      "species": "date_run"
+    },
+    {
+      "schema_version": 3,
+      "species": "set"
+    },
+    {
+      "schema_version": 4,
+      "species": "unsupported"
+    },
+    {
+      "schema_version": 5,
+      "species": "issue_run"
+    },
+    {
+      "schema_version": 6,
+      "species": "unsupported"
+    }
+  ],
+  "cross_claims": [
+    {
+      "case": "one_catalog",
+      "reads": "one catalog names the type, with nothing to break a tie",
+      "rejected": false,
+      "catalogs": [
+        {
+          "id": "solo",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "same_catalog_twice",
+      "reads": "one date run repeats the type across two years",
+      "rejected": false,
+      "catalogs": [
+        {
+          "id": "run",
+          "schema_version": 2,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            },
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "two_bare_catalogs",
+      "reads": "two catalogs name the type and neither is issue-qualified",
+      "rejected": true,
+      "catalogs": [
+        {
+          "id": "bullion",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        },
+        {
+          "id": "proof",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "one_bare_one_qualified",
+      "reads": "two catalogs name the type and only one breaks the tie by issue",
+      "rejected": true,
+      "catalogs": [
+        {
+          "id": "bullion",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        },
+        {
+          "id": "proof",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": [
+                582778
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "qualified_and_disjoint",
+      "reads": "two catalogs break the tie by issue and their issues are disjoint",
+      "rejected": false,
+      "catalogs": [
+        {
+          "id": "bullion",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": [
+                582780
+              ]
+            }
+          ]
+        },
+        {
+          "id": "proof",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": [
+                582778,
+                585569
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "qualified_and_overlapping",
+      "reads": "two catalogs break the tie by issue and both claim one of them",
+      "rejected": true,
+      "catalogs": [
+        {
+          "id": "bullion",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": [
+                582780
+              ]
+            }
+          ]
+        },
+        {
+          "id": "proof",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": [
+                582780,
+                585569
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "set_beside_catalog",
+      "reads": "a set and a catalog of the denomination name the type",
+      "rejected": false,
+      "catalogs": [
+        {
+          "id": "estuche",
+          "schema_version": 3,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        },
+        {
+          "id": "denominacion",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "announced_beside_catalog",
+      "reads": "an announced member holds no type, so it claims nothing beside a catalog",
+      "rejected": false,
+      "catalogs": [
+        {
+          "id": "anunciado",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": null,
+              "numista_issue_ids": []
+            }
+          ]
+        },
+        {
+          "id": "bullion",
+          "schema_version": 1,
+          "members": [
+            {
+              "numista_type_id": 485082,
+              "numista_issue_ids": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

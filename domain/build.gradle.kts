@@ -24,4 +24,8 @@ tasks.withType<Test>().configureEach {
             .withPropertyName(tree.replace('/', '-'))
             .withPathSensitivity(PathSensitivity.RELATIVE)
     }
+
+    inputs.file(rootProject.layout.projectDirectory.file("fixtures/matching-digest.json"))
+        .withPropertyName("matchingDigest")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }
