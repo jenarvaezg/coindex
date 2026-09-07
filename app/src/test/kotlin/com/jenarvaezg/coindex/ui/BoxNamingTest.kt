@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 class BoxNamingTest {
     private val taken = listOf(
         // A curated `short_name` from `data/`, and a box the collector already typed.
-        "French regions",
+        "Onza Libertad",
         "Bolívar de Venezuela",
         "Las que cambié",
     )
@@ -36,11 +36,11 @@ class BoxNamingTest {
 
     @Test
     fun `a name that is taken says which one, and cannot create`() {
-        val name = boxName("French regions", taken)
+        val name = boxName("Onza Libertad", taken)
 
         assertFalse(name.canSave)
         assertEquals(
-            "Ya hay una colección que se llama «French regions». Ponle otro nombre.",
+            "Ya hay una colección que se llama «Onza Libertad». Ponle otro nombre.",
             name.problem,
         )
     }
@@ -54,7 +54,7 @@ class BoxNamingTest {
     @Test
     fun `accents and case are not a distinction`() {
         // The same shelf in anybody's head, and two cards a letter apart would be a filing mistake.
-        assertFalse(boxName("french REGIONS", taken).canSave)
+        assertFalse(boxName("onza LIBERTAD", taken).canSave)
         assertFalse(boxName("bolivar de venezuela", taken).canSave)
         assertFalse(boxName("Las que cambie", taken).canSave)
         // And the clash names the existing one as it is actually written.

@@ -71,20 +71,79 @@ fun isPlaceholderFamily(family: String): Boolean {
 }
 
 /**
+ * The eight Numista series whose label is not the name of a collection in Spanish, and what a card
+ * says instead (ADR 0031).
+ *
+ * It is [curedCountries] applied to the other field of the card that Numista writes, for the same
+ * reason and with the same bargain: **six of these are in English**, which ADR 0021 §4 does not
+ * want on a card, and the correction is a string the curator wrote rather than a mechanism that
+ * guesses at a third party's prose. Measured over the collector's seeded cache on 7 September 2026:
+ * 13 of his 198 types carry a real Numista family that no curated file claims, and they fall into
+ * these ten series.
+ *
+ * **A table of corrections and not a catalogue of series.** The cache serves 64 distinct families
+ * and most of them are already the name a collector would use — «The Queen's Beasts», «Vienna
+ * Philharmonic», «Capitales de provincia y ciudades autónomas» — so what lives here is the
+ * exception and the ficha is the default.
+ *
+ * **Two of the ten stay as Numista wrote them, and that is the measure of what this table is.**
+ * `DC Comics` is a proper name, and `Gothic Horror` is the name of a Royal Mint range: the curated
+ * files already keep a mint's own product name in its own language —«The Royal Tudor Beasts», «St
+ * George and the Dragon», «Silver Britannia», «Equilibrium», «Nautical Ounce»— and a family that is
+ * a range name is nothing else. What gets Spanish is the prose Numista wrote *about* a programme,
+ * not the programme's name. The table cures case by case; it does not translate.
+ *
+ * **It cures the text and not the scope.** `Austria and its People` is Numista's umbrella over 18
+ * types of three separate Münze Österreich programmes — castles, abbeys, and the legends where the
+ * collector's «Charlemagne in the Untersberg» belongs (series 1582, read 7 September 2026) — so it
+ * takes the translation of what Numista said and not «Leyendas de Austria», which would be a lie the
+ * day a castle lands on the same card. The same restraint names the French series 10784 «Carlomagno»
+ * rather than «100 francos Carlomagno»: it holds seven types and two of them are 500 francs. And the
+ * anniversary framing of that label goes, because a scope definition does not belong on a line of
+ * identity (ADR 0021 §4).
+ *
+ * `Millennium` spans four issuers —España, Gibraltar, Jamaica and Nueva Zelanda— which is why it is
+ * «Milenio» and nothing more specific. `Hercules type` is the one name the source corroborates
+ * itself: Numista's own page for series 9240 is written in Spanish and calls it «el tipo Hércules».
+ */
+private val curedFamilies: Map<String, String> = mapOf(
+    "100 francs Egalité - La Fayette" to "100 francos La Fayette",
+    "1190e anniversaire du couronnement de Charlemagne (800-1990)." to "Carlomagno",
+    "Austria and its People" to "Austria y su pueblo",
+    "Charlemagne - Mounted Knight" to "Carlomagno · el caballero",
+    "Contemporary Urban Art" to "Arte urbano contemporáneo",
+    "French regions" to "Euros de las regiones francesas",
+    "Hercules type" to "Tipo Hércules",
+    "Millennium" to "Milenio",
+)
+
+/**
  * What a family reads as when no curated file names the collection.
  *
  * The six editorial aliases this used to hold died with #22: five belonged to families with a
  * catalog, and their text now lives in that file's `short_name`; the sixth, `SML`, was
  * unreachable — its six types all sit inside the maple leaf catalog, which declares another
  * family, and by ADR 0016 the catalog rules. What remains is not an alias but the formatting of
- * a generated string: a technical monetary system reaches the collector only this way (ADR 0012).
+ * a generated string: a technical monetary system reaches the collector only this way (ADR 0012),
+ * and the corrections of [curedFamilies], which are not aliases either — nothing curated names
+ * these eight series, and a card with no file behind it is the only thing that reads them.
  *
  * Everything else is printed verbatim, in whatever language Numista wrote it. An ugly card name
  * is the visible debt of a collection nobody has curated yet, and hiding it behind a prettier
  * string in code would hide the work instead of doing it.
+ *
+ * A cured family is read through a function and never stored, which is the bargain [cardCountry],
+ * the metal and the finish already take: `TypeMeta.family` stays what Numista said, the variant key
+ * is keyed on that raw string, and so curing a label renames a card without moving a single coin
+ * between cards.
  */
 fun familyLabel(family: String): String = when {
+    curedFamilies.containsKey(family) -> curedFamilies.getValue(family)
     isTechnicalFamily(family) ->
         "Sistema monetario ${family.removePrefix("System ")}"
     else -> family
 }
+
+/** The corrected families, for the net that checks them against the cache that ships (ADR 0031). */
+@SuiteOnly
+fun curedFamilyLabels(): Map<String, String> = curedFamilies

@@ -1,6 +1,6 @@
 # ADR 0021: What a collection is, and what lives at the top level
 
-- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §13 amended by #228, #227, #354, #285, #401, #434, #431 and #512, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md), §7 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (one declarative comes back, and it is not the one §7 killed) and by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (twenty catalogs open without evidence)
+- Status: accepted, §4 and §9 amended by [ADR 0023](0023-country-names-are-cured-not-derived-from-numista-labels.md), §4 amended again by [ADR 0031](0031-family-labels-are-cured-like-country-names.md) (the labelling rules in code become three), §13 amended by #228, #227, #354, #285, #401, #434, #431 and #512, §1 and §9 amended by [ADR 0026](0026-the-shape-of-coindex-an-album-sheet.md), §7 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (one declarative comes back, and it is not the one §7 killed) and by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (twenty catalogs open without evidence)
 - Date: 2026-08-04
 - Supersedes ADR 0008. Amends ADR 0010 §2, §3 and §8, and ADR 0013.
 

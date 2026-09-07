@@ -3,6 +3,8 @@
 - Status: accepted
 - Date: 2026-08-05
 - Amends ADR 0021 §4 and §9.
+- Extended by [ADR 0031](0031-family-labels-are-cured-like-country-names.md) to the family label,
+  which is the other line on the card Numista writes and has the same vice in a larger proportion.
 
 > **Amended on 2026-08-06 (#257).** The decision stands whole and the table grows by one, for a
 > reason the nine did not have: **the language**. `new_south_wales` — the issuer of the holey dollar

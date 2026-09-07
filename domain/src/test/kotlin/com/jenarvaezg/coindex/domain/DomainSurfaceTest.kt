@@ -101,14 +101,17 @@ class DomainSurfaceTest {
 
     /**
      * The exemptions, written out. Marking a symbol `@SuiteOnly` is what quiets the first test, so
-     * it cannot also be the only record that it was quieted: a seventh has to be read here too.
-     * These are the disagreement reports of ADR 0021 §12 and the vocabularies they are pinned by.
+     * it cannot also be the only record that it was quieted: an eighth has to be read here too.
+     * These are the disagreement reports of ADR 0021 §12 and the vocabularies they are pinned by,
+     * plus the two curated tables of corrections netted against the cache that ships (ADR 0023,
+     * ADR 0031).
      */
     @Test
     fun `the exemptions are the reports that live in the suite on purpose`() {
         assertEquals(
             listOf(
                 "OrphanSeeds",
+                "curedFamilyLabels",
                 "curedIssuerCodes",
                 "metalDeviations",
                 "objectClassDeviations",
