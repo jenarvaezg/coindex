@@ -222,10 +222,9 @@ data class IssuePriceEntity(
  * [readAt] is a clock, and since #561 it ticks at **exactly a price's** rate: `PRICE_LIFETIME_MILLIS`
  * and `LISTING_LIFETIME_MILLIS` are both ninety days, because a catalog price is as much the catalogue
  * as the listing that addresses it. It cannot be «never», tempting as that is at 102 lookups a pass:
- * an open date run grows a
- * slot every January, and a listing that never expired would leave that new hole unpriceable for the
- * life of the phone, silently — `ValuationStatus.missing` counts owned issues and would not say a
- * word. Ninety days amortises to about one lookup a day over his collection.
+ * an open date run grows a slot every January, and a listing that never expired would leave that new
+ * hole unpriceable for the life of the phone, silently — `ValuationStatus.missing` counts owned issues
+ * and would not say a word. Ninety days amortises to about one lookup a day over his collection.
  */
 @Entity(tableName = "type_issue_reads")
 data class TypeIssueReadEntity(

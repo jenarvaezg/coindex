@@ -90,9 +90,10 @@ object ShowcaseLabels {
      *
      * **The sentence quotes the life and has to move with it** (#561): at thirty days «menos de un mes»
      * was the true reading of `PRICE_LIFETIME_MILLIS`, and left there it would tell the collector a
-     * two-month-old price is from last week. The plate itself says the exact date — `valuedAgeLabel`
-     * prints «el 12 de junio de 2026» past a month — so this line is the *rule* and the header is the
-     * *age*, and neither has to round the other.
+     * two-month-old price is from last week. This plate says the exact date — `valuedAgeLabel` prints
+     * «el 12 jun 2026» past a month — so this line is the *rule* and the header is the *age*, and
+     * neither has to round the other. It is the plate of the shelf window that can be read that way:
+     * every figure the pass itself feeds is undated (#594).
      */
     const val ALREADY_FRESH: String =
         "Esta lámina ya está tasada: sus precios son de hace menos de tres meses."

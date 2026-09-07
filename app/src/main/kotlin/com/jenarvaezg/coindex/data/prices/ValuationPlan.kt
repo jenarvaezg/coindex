@@ -57,8 +57,11 @@ fun holesAreWithinReach(holes: Int): Boolean = holes in 1..HOLE_THRESHOLD_SLOTS
  * ninety it comes due once a quarter and never shares the bill: the two clocks now tick as one.
  *
  * **What keeps the older figure honest is the stamp and not the expiry** (ADR 0028 §5): expired is
- * asked again and never deleted, and the amount is always shown with the date it was brought. At three
- * months that date matters more, not less.
+ * asked again and never deleted, and the amount is shown with the date it was brought. Which is true
+ * of the two amounts of the shelf window and of no other — «Las cifras» and a plate's own header stamp
+ * the silver spot, which is read daily, and say nothing about the age of the catalog price underneath.
+ * That gap was measured while this life was tripled and is [#594] — the stamp matters more at three
+ * months, not less, and it is not this constant that can say so.
  */
 const val PRICE_LIFETIME_MILLIS: Long = 90L * 24 * 60 * 60 * 1_000
 

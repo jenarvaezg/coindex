@@ -9,8 +9,9 @@
   [#521](https://github.com/jenarvaezg/coindex/issues/521) (the line lives on «Este teléfono», the
   screen the sewn edge opens, and two of its six states carry a door into `Credenciales` — the pass
   itself stays without a handle), §5 amended by
-  [#561](https://github.com/jenarvaezg/coindex/issues/561) (a catalog price lives ninety days, the same
-  life as the listing that addresses it, and the batch is not staggered)
+  [#561](https://github.com/jenarvaezg/coindex/issues/561) (a catalog price — and a «Numista has no
+  price» with it — lives ninety days, the same life as the listing that addresses it, and the batch is
+  not staggered)
 - Date: 2026-08-10
 - Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
   left to its own document
@@ -162,11 +163,11 @@ Three clocks, different on purpose:
 | what | expires after |
 | --- | --- |
 | a catalog price | **90 days** (30 until [#561](https://github.com/jenarvaezg/coindex/issues/561)) |
-| a «Numista has no price» | **90 days** — it is a datum, and if it never expired, an issue Numista prices tomorrow would never find out |
+| a «Numista has no price» | **90 days** (30 until [#561](https://github.com/jenarvaezg/coindex/issues/561): it is the same row and the same clock) — it is a datum, and if it never expired, an issue Numista prices tomorrow would never find out |
 | the silver spot | **the day** (two keyless calls, outside the budget) |
 | a failure | nothing is written |
 
-**And on day 31 the old price is still shown, with the date it was brought.** It is the rule #316
+**And on the day after, the old price is still shown, with the date it was brought.** It is the rule #316
 already signed for spot — *«se enseña siempre con la fecha de su última lectura»* — and the same
 sentence of ADR 0025 read the right way round: deleting on expiry **is** worse than not having
 asked. A phone with no network for months says a total with an old date instead of emptying itself,
@@ -174,7 +175,8 @@ and that lies very little: a 3 % swing in silver moves the total by 1,9 %, becau
 rules the mix.
 
 Since they are all brought on the same day by the first pass, they all expire on the same day: the
-monthly trickle really is **one batch once a month**. Spreading it out — fetching the oldest few
+trickle really is **one batch per life** — once a month as this was written, once a quarter since
+[#561](https://github.com/jenarvaezg/coindex/issues/561). Spreading it out — fetching the oldest few
 each day — was discarded: it turns a minute a month into a permanent background call.
 
 > **Amended on 2026-09-07 ([#561](https://github.com/jenarvaezg/coindex/issues/561)). A catalog price
@@ -214,17 +216,28 @@ each day — was discarded: it turns a minute a month into a permanent backgroun
 > named — a permanent background call, every day, for ever. A cold pass is 442 of 2.000 and it does not
 > run into the wall; and it is not the *pass* that has to be smoothed but the wall itself, which is the
 > shared key of §4 as amended by [#560](https://github.com/jenarvaezg/coindex/issues/560). No stagger.
+>
+> **And the stamp this section leans on turns out not to be drawn where it is now needed most.** The
+> life was tripled on the promise that the date travels with the amount, so it was checked: the two
+> figures of the shelf window carry it (`showcaseEntryLabel`, `showcaseTileCostLabel`), and **no other
+> figure in the app does**. «Las cifras» and a plate's own header stamp the *silver spot*, which is read
+> daily and therefore always says today, over a total whose catalog prices may now be three months old.
+> Every figure the pass feeds is undated, which is exactly the set this amendment ages. Left as it
+> stands and filed as [#594](https://github.com/jenarvaezg/coindex/issues/594), because what it needs is
+> a wording and a rule for a total with two clocks in it — the *«dated by its oldest»* of #494 read over
+> the spot as well — and not a line squeezed into this one.
 
 > **Amended on 2026-08-14 (§5, [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). A
-> price asked for by hand does not expire, and it is always shown with its date.** The thirty days above
-> are the clock of a price **the pass will ask for again**, and that is what makes the trickle a trickle.
-> A plate of the shelf window has no pass coming for it (§3 as amended), so expiry there would mean one
-> thing only: the amount disappearing off a screen with no way to refill it.
+> price asked for by hand does not expire, and it is always shown with its date.** The life in the table
+> above — thirty days when this was written, ninety since #561 — is the clock of a price **the pass will
+> ask for again**, and that is what makes the trickle a trickle. A plate of the shelf window has no pass
+> coming for it (§3 as amended), so expiry there would mean one thing only: the amount disappearing off
+> a screen with no way to refill it.
 >
 > So the deletion clause is dropped for that one case and the rest of §5 is kept exactly: **the row is
 > never deleted, the amount is shown with the date it was brought, and «Volver a tasar» stays on the
-> plate for ever.** It is the sentence this section already signed — *«on day 31 the old price is still
-> shown, with the date it was brought»* — with nothing left to make it a day 31.
+> plate for ever.** It is the sentence this section already signed — *«on the day after, the old price
+> is still shown, with the date it was brought»* — with nothing left to make it that day.
 >
 > **And a total whose components were read on different days is dated by its oldest.** That case is
 > created by the shelf window and the marks together: a plate valued by hand in August with one marked

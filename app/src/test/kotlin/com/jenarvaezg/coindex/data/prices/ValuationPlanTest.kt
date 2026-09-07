@@ -20,6 +20,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 private const val NOW = 1_754_600_000_000L
+private const val DAY = 24L * 60 * 60 * 1_000
 
 /**
  * Which issues a pass may ask Numista about (ADR 0028 §1).
@@ -147,7 +148,7 @@ class ValuationPlanTest {
      */
     @Test
     fun `a catalog price lives the ninety days of the listing that addresses it`() {
-        assertEquals(90L * 24 * 60 * 60 * 1_000, PRICE_LIFETIME_MILLIS)
+        assertEquals(90 * DAY, PRICE_LIFETIME_MILLIS)
         assertEquals(LISTING_LIFETIME_MILLIS, PRICE_LIFETIME_MILLIS)
     }
 
@@ -160,7 +161,7 @@ class ValuationPlanTest {
     @Test
     fun `a price of a month and a day is no longer asked again`() {
         val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
-        val month = read(10, 100, NOW - 31L * 24 * 60 * 60 * 1_000, hasPrices = true)
+        val month = read(10, 100, NOW - 31 * DAY, hasPrices = true)
 
         assertTrue(ownedIssuesToAsk(plan, listOf(month), NOW).isEmpty())
         assertEquals(0, valuationCallCount(plan, listOf(month), NOW))

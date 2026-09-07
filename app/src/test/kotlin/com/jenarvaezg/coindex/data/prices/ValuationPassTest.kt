@@ -19,6 +19,7 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
 private const val NOW = 1_754_600_000_000L
+private const val DAY = 24L * 60 * 60 * 1_000
 
 /**
  * The pass itself: **three states and not two**, and a failure that writes nothing (ADR 0028 §4).
@@ -517,8 +518,7 @@ class ValuationPassTest {
      */
     @Test
     fun `a month later the issue is not read again`() = runTest {
-        val month = 40L * 24 * 60 * 60 * 1_000
-        pass(PRICED, now = NOW - month).run(plan(OwnedIssue(30, 297)), held = null)
+        pass(PRICED, now = NOW - 40 * DAY).run(plan(OwnedIssue(30, 297)), held = null)
         asked.clear()
 
         pass(EMPTY_PRICES).run(plan(OwnedIssue(30, 297)), held = null)
@@ -543,7 +543,7 @@ class ValuationPassTest {
     /** A spot the reader cannot bring leaves the stored one alone, whatever its age. */
     @Test
     fun `a spot that cannot be read leaves the old one, expired and all`() = runTest {
-        prices.putSpot(MetalSpotEntity(SILVER_SYMBOL, 50.0, NOW - 40L * 24 * 60 * 60 * 1_000))
+        prices.putSpot(MetalSpotEntity(SILVER_SYMBOL, 50.0, NOW - 40 * DAY))
         val pass = pass(PRICED, spot = { null })
 
         val status = pass.run(plan(OwnedIssue(30, 297)), held = null)

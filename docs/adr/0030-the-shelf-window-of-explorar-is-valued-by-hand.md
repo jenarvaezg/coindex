@@ -105,8 +105,8 @@ that has no way to refill it.
 > **A hand-asked price never expires. It is shown with the date it was brought, and «Volver a tasar»
 > is on the plate for ever.**
 
-This is not new licence: it is the sentence §5 already signed — *«on day 31 the old price is still
-shown, with the date it was brought»* — with the deletion clause removed for the one case where
+This is not new licence: it is the sentence §5 already signed — *«on the day after, the old price is
+still shown, with the date it was brought»* — with the deletion clause removed for the one case where
 nothing would ever bring a newer one. The date is not decoration; it is what makes the amount
 readable months later, and it is the rule #316 signed for the spot.
 

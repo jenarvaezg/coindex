@@ -68,17 +68,19 @@ class ShowcaseLabelsTest {
      *
      * «Menos de un mes» was true while `PRICE_LIFETIME_MILLIS` was thirty days and became a lie the
      * moment it was ninety: the press answers this over a price of eighty-nine days too. And the age
-     * itself is not rounded away anywhere — the plate's own line says the day that price was brought,
-     * which is what stops a figure from June reading as a quotation (ADR 0028 §5).
+     * itself is not rounded away beside it — past a month the plate says **the day** that price was
+     * brought and not how old it is, which is what stops a figure from May reading as a quotation
+     * (ADR 0028 §5). The day itself is pinned by the tests above; what is read off the life here is
+     * that the oldest price the pass leaves alone is still on the far side of that rule.
      */
     @Test
     fun `the snackbar holds over the oldest price the pass will not re-ask`() {
         val oldest = NOW - (PRICE_LIFETIME_MILLIS - DAY)
 
         assertTrue("menos de tres meses" in ShowcaseLabels.ALREADY_FRESH)
-        assertEquals(
-            "tasada el 14 may 2026",
-            valuedAgeLabel(oldest, NOW, MADRID),
+        assertTrue(
+            valuedAgeLabel(oldest, NOW, MADRID).startsWith("tasada el "),
+            "el precio más viejo que la pasada no vuelve a pedir se dice con su día, no con su edad",
         )
     }
 
