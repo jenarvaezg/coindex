@@ -32,7 +32,7 @@ sealed interface SyncOutcome {
  */
 class CollectionSync(
     private val syncService: SyncService,
-    private val syncLog: SyncLog,
+    private val syncLog: StoredSyncLog,
     private val nowMillis: () -> Long = System::currentTimeMillis,
 ) {
     /** The last sync there was, so a launch opens on it instead of on a blank line. */

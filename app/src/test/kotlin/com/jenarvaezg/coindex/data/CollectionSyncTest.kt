@@ -38,7 +38,7 @@ class CollectionSyncTest {
     private val items = FakeCollectedItemDao()
     private val types = FakeTypeMetaDao()
     private val calls = FakeApiCallDao()
-    private val log = FakeSyncLog()
+    private val log = StoredSyncLog(FakeNamedValues())
     private val service = SyncService(items, types, ApiCallLedger(calls) { 1_000L }) { 1_000L }
     private val sync = CollectionSync(service, log) { STAMPED_AT }
 

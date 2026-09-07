@@ -3,19 +3,20 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.ApiCallLedger
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
+import com.jenarvaezg.coindex.data.credentialsOnJvm
 import com.jenarvaezg.coindex.data.Credentials
 import com.jenarvaezg.coindex.data.FakeApiCallDao
 import com.jenarvaezg.coindex.data.FakeCollectedItemDao
-import com.jenarvaezg.coindex.data.FakeCredentialStore
-import com.jenarvaezg.coindex.data.FakeNotebookStore
+import com.jenarvaezg.coindex.data.FakeNamedValues
 import com.jenarvaezg.coindex.data.FakeOwnGroupingDao
 import com.jenarvaezg.coindex.data.FakePhotoPrefetch
 import com.jenarvaezg.coindex.data.FakePriceDao
 import com.jenarvaezg.coindex.data.FakeShelfStore
-import com.jenarvaezg.coindex.data.FakeSyncLog
 import com.jenarvaezg.coindex.data.FakeTypeMetaDao
 import com.jenarvaezg.coindex.data.FakeValuationPass
 import com.jenarvaezg.coindex.data.FakeWishDao
+import com.jenarvaezg.coindex.data.StoredNotebook
+import com.jenarvaezg.coindex.data.StoredSyncLog
 import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
@@ -148,10 +149,11 @@ class CoindexViewModelTest {
     private val types = FakeTypeMetaDao()
     private val ownGroupings = FakeOwnGroupingDao()
     private val apiCalls = FakeApiCallDao()
-    private val credentials = FakeCredentialStore(Credentials("key", 2104))
+    /** The real store over a fake file, with a key the JVM can make (#546). */
+    private val credentials = credentialsOnJvm().apply { save(apiKey = "key", userId = 2104) }
     private val shelves = FakeShelfStore()
-    private val notebook = FakeNotebookStore()
-    private val syncLog = FakeSyncLog()
+    private val notebook = StoredNotebook(FakeNamedValues())
+    private val syncLog = StoredSyncLog(FakeNamedValues())
     private val prefetch = FakePhotoPrefetch(PhotoCacheStatus(wanted = 2, missing = 1))
     private val prices = FakePriceDao()
     private val wishes = FakeWishDao()
