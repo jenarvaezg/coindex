@@ -47,7 +47,7 @@ import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
-import com.jenarvaezg.coindex.ui.PlateMoney
+import com.jenarvaezg.coindex.ui.PlateFinance
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
@@ -99,23 +99,29 @@ fun PlateScreen(
     result: PlateResult,
     images: Map<Int, TypeImages>,
     /**
-     * What this plate is worth, what closing it would cost and what each hole costs — or nothing at
-     * all while the market has not landed (ADR 0028 §7).
+     * What this plate is worth, what closing it would cost, what each hole costs and what tasar it
+     * would spend — or nothing at all while the market has not landed (ADR 0028 §7).
      *
-     * A function of the resolution and not a value, because the plate is resolved here: the album the
-     * three readings walk only exists on the other side of `result`.
+     * Asked of the resolution rather than received as a value, because the plate is resolved here: the
+     * album those readings walk only exists on the other side of [result], and which régime this
+     * catalog is under is decided there too — a screen handed the gesture only for the twenty would
+     * have to be told twice.
+     *
+     * **One object and not two lambdas**, which is the whole of why it is a [PlateFinance]: the subject
+     * below is keyed on it, and a lambda literal is a new object per recomposition — a plate that
+     * re-walks its album on every frame of the entrance (#541).
      */
-    money: (PlateResult.Available) -> PlateMoney,
+    finance: PlateFinance,
     /** The marks on this plate's casillas, and the gesture that toggles one (ADR 0029 §5). */
     marking: PlateMarking,
     /**
-     * What tasar this plate would cost and how to start it (ADR 0030 §3).
+     * Whether **this** plate's tasación is in flight (ADR 0030 §3).
      *
-     * Handed to every plate and read only by the shelf window's, for the reason [money] is a function:
-     * which régime this catalog is under is decided on the other side of [result], and a screen that
-     * received the gesture only for the twenty would have to be told twice.
+     * Handed apart from [finance] and not inside it: it is the one thing on this screen that changes
+     * without a single amount changing, so an object holding it would be rebuilt twice per press — and
+     * the album walk the plate remembers on that object with it (#541).
      */
-    valuation: (PlateResult.Available) -> PlateValuation,
+    valuing: Boolean,
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
@@ -136,8 +142,10 @@ fun PlateScreen(
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
         is PlateResult.Available -> {
-            val plate = remember(result, money, marking.wished, nowMillis) {
-                plateSubject(result, money(result), marking.wished, nowMillis)
+            // Keyed on the resolution and on the reading, and on nothing else: the marks and the now
+            // are what [finance] was built out of, so its identity already carries both of them.
+            val plate = remember(result, finance) {
+                plateSubject(result, finance.money(result), marking.wished, nowMillis)
             }
             // Which casilla's coin is open, which is this screen's own state like the marking mode
             // (ADR 0029 §5): a sheet is not a destination, and one left open would be waiting on the
@@ -167,7 +175,12 @@ fun PlateScreen(
                     ShowcasePlateSheet(
                         plate = plate,
                         marking = marking,
-                        valuation = valuation(result),
+                        valuation = PlateValuation(
+                            // The one reading here that walks the album, so the one that is held still.
+                            calls = remember(result, finance) { finance.calls(result) },
+                            running = valuing,
+                            onValue = { finance.press(result) },
+                        ),
                         images = images,
                         onOpenSource = onOpenSource,
                         onOpenCoin = { typeId -> openTypeId = typeId },
@@ -225,8 +238,9 @@ private fun ShowcasePlateSheet(
  *
  * One parameter rather than two because the two are halves of one subject, and a screen handed them
  * apart could draw marks it cannot toggle. **Not a `data class` and not compared**, which is where it
- * differs from [PlateMoney]: it holds a lambda, so equality would be about the lambda's identity, and
- * what the plate keys its subject on is [wished] — the set — and never the holder.
+ * differs from [com.jenarvaezg.coindex.ui.PlateMoney]: it holds a lambda, so equality would be about
+ * the lambda's identity, and what the plate keys its subject on is [wished] — the set — and never the
+ * holder.
  *
  * **Whether the mode is open is not in here** — that is the screen's own state, like the export panel's
  * (ADR 0029 §5): nothing outside this plate needs to know the collector is marking, and a mode kept in
@@ -245,6 +259,10 @@ class PlateMarking(
  * 0028 §3 gained with its gesture; whether the plate already carries an amount — what turns «Tasar esta
  * lámina» into «Volver a tasar» — is **not** in here: it is `PlateSubject.entry`, read off the same
  * subject the header draws, so the word on the button and the figure above it cannot disagree.
+ *
+ * Assembled by the screen out of [PlateFinance] and [PlateScreen]'s own `valuing`, because its three
+ * fields are not held still by the same thing: the ceiling is an album walk and is remembered, and the
+ * spinner flips twice per press and must never be.
  */
 class PlateValuation(
     val calls: Int,
