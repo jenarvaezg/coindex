@@ -10,9 +10,12 @@ import com.jenarvaezg.coindex.data.DEFAULT_MONTHLY_BUDGET
 import com.jenarvaezg.coindex.data.keystoreSecret
 import com.jenarvaezg.coindex.data.NamedValues
 import com.jenarvaezg.coindex.data.NOTEBOOK_PREFERENCES
+import com.jenarvaezg.coindex.data.REJECTION_WALL_PREFERENCES
+import com.jenarvaezg.coindex.data.RejectionWall
 import com.jenarvaezg.coindex.data.SharedPreferenceValues
 import com.jenarvaezg.coindex.data.StoredCredentials
 import com.jenarvaezg.coindex.data.StoredNotebook
+import com.jenarvaezg.coindex.data.StoredRejectionWall
 import com.jenarvaezg.coindex.data.StoredSyncLog
 import com.jenarvaezg.coindex.data.SYNC_LOG_PREFERENCES
 import com.jenarvaezg.coindex.data.SyncService
@@ -75,9 +78,20 @@ class AppContainer(context: Context) {
     private fun valuesIn(name: String): NamedValues =
         SharedPreferenceValues(applicationContext, name)
 
+    /**
+     * The wall the valuation pass stopped against, remembered across launches (#579).
+     *
+     * Held here and not inside the pass because both ends need it: the pass raises it, and the
+     * credential store takes it down when the collector writes a key — which is the only thing that
+     * ends the `401` wall, since that one has no clock.
+     */
+    private val rejectionWall: RejectionWall by lazy {
+        StoredRejectionWall(valuesIn(REJECTION_WALL_PREFERENCES))
+    }
+
     /** The collector's own Numista credentials, with the keystore key they are sealed with. */
     val credentials: StoredCredentials by lazy {
-        StoredCredentials(valuesIn(CREDENTIAL_PREFERENCES), ::keystoreSecret)
+        StoredCredentials(valuesIn(CREDENTIAL_PREFERENCES), rejectionWall, ::keystoreSecret)
     }
 
     private val syncLog: StoredSyncLog by lazy { StoredSyncLog(valuesIn(SYNC_LOG_PREFERENCES)) }
@@ -208,7 +222,7 @@ class AppContainer(context: Context) {
     }
 
     private val valuationPass: ValuationPass by lazy {
-        NumistaValuationPass(database.prices(), ::numistaClient, spot)
+        NumistaValuationPass(database.prices(), ::numistaClient, spot, rejectionWall)
     }
 
     /**

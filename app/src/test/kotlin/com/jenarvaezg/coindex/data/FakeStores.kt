@@ -45,9 +45,12 @@ class FakeNamedValues(initial: Map<String, Stored> = emptyMap()) : NamedValues {
  * One key per store and read through a lambda, exactly as the app reads the keystore's: a fresh key
  * on every call would encrypt what it could no longer decrypt.
  */
-fun credentialsOnJvm(values: NamedValues = FakeNamedValues()): StoredCredentials {
+fun credentialsOnJvm(
+    values: NamedValues = FakeNamedValues(),
+    wall: RejectionWall = StoredRejectionWall(FakeNamedValues()),
+): StoredCredentials {
     val secret = KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
-    return StoredCredentials(values) { secret }
+    return StoredCredentials(values, wall) { secret }
 }
 
 class FakeShelfStore(

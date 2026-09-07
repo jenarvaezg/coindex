@@ -156,6 +156,41 @@ document exists to remove. The shape was already settled in ADR 0024 for the `40
 > `/prices` alone, and a listing that reset the count would leave the pass alternating down the whole
 > plan.
 
+> **Amended on 2026-09-07 ([#579](https://github.com/jenarvaezg/coindex/issues/579)). Stopping is half
+> of it: the wall is remembered, so it stops costing a call to find.** The amendment above taught the
+> pass to stop; it did not teach it to *remember having stopped*, so nothing of the refusal survived the
+> pass and the next one rediscovered it by paying for it. And the next one is never far: the triggers
+> are the launch, every end of sync, every marked casilla, every notebook export and the «Tasar esta
+> lámina» gesture — the last four with `force = true`, which skips the `covered` memory of
+> `ValuationLoop`, and `covered` itself is lost on every cold start.
+>
+> | what came back | per pass | a day of his (~8 launches) | a month |
+> | --- | ---: | ---: | ---: |
+> | `403` / `429` / `401` | 1 call | 8 | ~240 |
+> | a run of five | 5 calls | 40 | ~1.200 |
+>
+> Against the 1.500 of ADR 0003 the bottom row eats the month on its own — and every one of those calls
+> is recorded by `CallBudgetGate.reserve()` **before** it is sent, so a `403` over a quota that is gone
+> keeps eating the budget that is not.
+>
+> **The wall is one named value pair that survives a launch** (`RejectionWall`), and it is
+> `PhotoRetryPolicy.isGone` read over a pass instead of a photograph: some refusals are worth another
+> try in a moment, and some are worth writing down. **The wait goes by cause**, because the four do not
+> wait on the same thing:
+>
+> | what Numista answered | until when | why |
+> | --- | --- | --- |
+> | `403` | the 1st of the next month | it is the quota **Numista** counts, and their month is the same calendar month `startOfMonthMillis` draws for the gate |
+> | `401` | until the key changes | waiting does not fix a credential. `StoredCredentials.save` takes it down, which is the gesture that means «prueba otra vez» — and the door to «Credenciales» is already printed in this state by §6.1 |
+> | `429` | 6 hours | the throttle says «ahora no», not «este mes no» |
+> | a run of five | 6 hours | nobody knows what it is, so it is believed for the shortest of the three lives |
+>
+> Nothing the collector reads changes: the pass still returns `Rejected` and «Este teléfono» still says
+> the one sentence that is true of all four (§6.1). What changes is what it costs to say it — one call
+> per **wall** instead of one per pass. A pass that reaches Numista takes the wall down, and an expired
+> wall does not stand in front of the pass that follows it: forgetting matters as much as remembering,
+> and a wall that never fell would switch the prices off on this phone permanently and invisibly.
+
 ### 5. Expired is not deleted
 
 Three clocks, different on purpose:

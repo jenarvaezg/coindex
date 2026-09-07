@@ -1,6 +1,11 @@
 package com.jenarvaezg.coindex.data.prices
 
+import com.jenarvaezg.coindex.data.FakeNamedValues
 import com.jenarvaezg.coindex.data.FakePriceDao
+import com.jenarvaezg.coindex.data.RejectionCause
+import com.jenarvaezg.coindex.data.RejectionWall
+import com.jenarvaezg.coindex.data.startOfMonthMillis
+import com.jenarvaezg.coindex.data.StoredRejectionWall
 import com.jenarvaezg.coindex.data.db.MetalSpotEntity
 import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
@@ -20,6 +25,7 @@ import kotlinx.coroutines.test.runTest
 
 private const val NOW = 1_754_600_000_000L
 private const val DAY = 24L * 60 * 60 * 1_000
+private const val HOUR = 60L * 60 * 1_000
 
 /**
  * The pass itself: **three states and not two**, and a failure that writes nothing (ADR 0028 §4).
@@ -189,6 +195,75 @@ class ValuationPassTest {
     }
 
     /**
+     * The wall is **remembered**, which is the whole of #579: two passes against a `403` cost one call.
+     *
+     * Without it the second pass rediscovers the wall by paying for it, and so does every pass after
+     * that — the launch, each end of sync, each marked casilla, each notebook export. Eight of those a
+     * day is some 240 calls a month of an allowance of 1.500, spent on an answer the phone already had.
+     * And the assertion is on the **budget** and not on the mock engine, because
+     * [com.jenarvaezg.coindex.data.CallBudgetGate] records a call *before* sending it: a `403` over a
+     * quota that is gone would keep eating the local budget that is not.
+     */
+    @Test
+    fun `two passes against a refused key cost one call between them`() = runTest {
+        val reserved = mutableListOf<String>()
+        val wall = StoredRejectionWall(FakeNamedValues()) { NOW }
+        val refused: io.ktor.client.engine.mock.MockRequestHandler =
+            { respond("Quota exceeded", HttpStatusCode.Forbidden, JSON) }
+
+        pass(refused, budget = { reserved += it }, wall = wall)
+            .run(plan(OwnedIssue(30, 297)), held = null)
+        val second = pass(refused, budget = { reserved += it }, wall = wall)
+            .run(plan(OwnedIssue(30, 297)), held = null)
+
+        assertEquals(1, reserved.size, "el segundo pase lee la pared en vez de comprarla")
+        assertEquals(ValuationRefusal.Rejected, second.held, "y dice lo mismo que diría pagando")
+        assertEquals(RejectionCause.Quota, wall.standing())
+    }
+
+    /**
+     * And on the 1st it asks again, because the quota it ran into is Numista's own calendar month.
+     *
+     * The forgetting matters as much as the remembering, and here it is the difference between a wall
+     * that costs one call a month and one that switches the prices off on this phone for ever.
+     */
+    @Test
+    fun `the first of the next month buys another call`() = runTest {
+        var clock = NOW
+        val wall = StoredRejectionWall(FakeNamedValues()) { clock }
+        val refused: io.ktor.client.engine.mock.MockRequestHandler =
+            { respond("Quota exceeded", HttpStatusCode.Forbidden, JSON) }
+        pass(refused, now = clock, wall = wall).run(plan(OwnedIssue(30, 297)), held = null)
+
+        clock = startOfMonthMillis(NOW + 40 * DAY)
+        pass(PRICED, now = clock, wall = wall).run(plan(OwnedIssue(30, 297)), held = null)
+
+        assertEquals(2, asked.size, "la pared del 403 cae con el mes, no con un plazo de horas")
+        assertEquals(listOf("vf" to 25.1, "unc" to 39.6), prices.prices.value.map { it.grade to it.eur })
+    }
+
+    /**
+     * A pass that reaches Numista takes down whatever was left standing.
+     *
+     * Not tidiness: a stale row in that file is a claim about a wall nobody has met, and the next
+     * version of this app that changes a life would start believing it. Reaching Numista is the proof
+     * that there is nothing in the way, so the file goes back to empty.
+     */
+    @Test
+    fun `a pass that goes through leaves no wall behind`() = runTest {
+        var clock = NOW
+        val values = FakeNamedValues()
+        val wall = StoredRejectionWall(values) { clock }
+        wall.raise(RejectionCause.Throttled)
+
+        clock = NOW + 7 * HOUR
+        pass(PRICED, now = clock, wall = wall).run(plan(OwnedIssue(30, 297)), held = null)
+
+        assertNull(wall.standing())
+        assertTrue(values.entries.isEmpty(), "la pared caducada no se queda en el fichero: ${values.entries}")
+    }
+
+    /**
      * A `404` on every issue is not a wall: each one leaves a row, so the pass asks the plan out.
      *
      * The other half of #560 and the reason the streak counts rows and not statuses — a collection
@@ -350,7 +425,8 @@ class ValuationPassTest {
     /** With no API key there is no pass: that is the app before onboarding, not an error to discover. */
     @Test
     fun `with no API key the pass does not run`() = runTest {
-        val pass = NumistaValuationPass(prices, { null }, spotStore(read = { 56.9 })) { NOW }
+        val wall = StoredRejectionWall(FakeNamedValues()) { NOW }
+        val pass = NumistaValuationPass(prices, { null }, spotStore(read = { 56.9 }), wall) { NOW }
 
         val status = pass.run(plan(OwnedIssue(30, 297)), held = null)
 
@@ -569,6 +645,7 @@ class ValuationPassTest {
         budget: suspend (String) -> Unit = {},
         spot: suspend () -> Double? = { 56.9 },
         now: Long = NOW,
+        wall: RejectionWall = StoredRejectionWall(FakeNamedValues()) { now },
     ): ValuationPass {
         val engine = MockEngine { request ->
             asked += request.url.encodedPath
@@ -581,7 +658,7 @@ class ValuationPassTest {
                 override suspend fun reserve(endpoint: String) = budget(endpoint)
             },
         )
-        return NumistaValuationPass(prices, { client }, spotStore(spot, now)) { now }
+        return NumistaValuationPass(prices, { client }, spotStore(spot, now), wall) { now }
     }
 
     private fun spotStore(read: suspend () -> Double?, now: Long = NOW) = SpotStore(
