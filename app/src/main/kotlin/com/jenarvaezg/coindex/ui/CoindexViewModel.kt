@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
-import com.jenarvaezg.coindex.data.CredentialStore
-import com.jenarvaezg.coindex.data.NotebookStore
+import com.jenarvaezg.coindex.data.StoredCredentials
+import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.SyncOutcome
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.DatabaseExport
@@ -68,9 +68,9 @@ class CoindexViewModel(
      * [UiState.fatalError] — which is inside [start]'s `try` — instead of as a crash at launch.
      */
     repository: () -> CoindexRepository,
-    private val credentials: CredentialStore,
+    private val credentials: StoredCredentials,
     private val shelves: ShelfStore,
-    private val notebook: NotebookStore,
+    private val notebook: StoredNotebook,
     private val collectionSync: CollectionSync,
     private val typeRefresh: TypeRefresh,
     private val updates: UpdateFlow,

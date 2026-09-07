@@ -8,42 +8,52 @@ import com.jenarvaezg.coindex.data.prices.ValuationPass
 import com.jenarvaezg.coindex.data.prices.ValuationPlan
 import com.jenarvaezg.coindex.data.prices.ValuationRefusal
 import com.jenarvaezg.coindex.data.prices.ValuationStatus
-import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 import com.jenarvaezg.coindex.ui.shelf.ShelfStore
+import javax.crypto.KeyGenerator
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 
 /**
- * In-memory stand-ins for the four stores and the prefetch that need a device (#220).
+ * In-memory stand-ins for what needs a device: the preferences file, the shelf store and the two
+ * passes (#220).
  *
- * Each of them is one property or a keystore away from being untestable, and behind each sat a rule
- * that is not about storage at all: when a shelf is written, what a sync leaves behind, whether a
- * pass of photographs is worth starting.
+ * There used to be one per store, and behind each sat a rule that is not about storage at all: when
+ * a shelf is written, what a sync leaves behind, whether a pass of photographs is worth starting.
+ * Three of those stores were a seam apiece over the same preferences file, so what stands in for
+ * them now is [FakeNamedValues] and the stores themselves are the real ones (#546).
  */
-class FakeSyncLog(override var last: SyncRecord? = null) : SyncLog
+class FakeNamedValues(initial: Map<String, Stored> = emptyMap()) : NamedValues {
+    private val stored = initial.toMutableMap()
 
-class FakeCredentialStore(
-    private var stored: Credentials? = null,
-) : CredentialStore {
-    override fun credentials(): Credentials? = stored
+    /** Everything that is in the file, so a test can check the shape a value went in as. */
+    val entries: Map<String, Stored> get() = stored.toMap()
 
-    override fun save(apiKey: String, userId: Long) {
-        stored = Credentials(apiKey, userId)
+    override fun read(key: String): Stored? = stored[key]
+
+    override fun write(values: Map<String, Stored?>) {
+        values.forEach { (key, value) ->
+            if (value == null) stored -= key else stored[key] = value
+        }
     }
+}
 
-    override fun clear() {
-        stored = null
-    }
+/**
+ * The credential store with a key the JVM can make instead of the device's (#546).
+ *
+ * One key per store and read through a lambda, exactly as the app reads the keystore's: a fresh key
+ * on every call would encrypt what it could no longer decrypt.
+ */
+fun credentialsOnJvm(values: NamedValues = FakeNamedValues()): StoredCredentials {
+    val secret = KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
+    return StoredCredentials(values) { secret }
 }
 
 class FakeShelfStore(
     override var index: IndexShelf = IndexShelf(),
     override var coins: CoinsShelf = CoinsShelf(),
 ) : ShelfStore
-
-class FakeNotebookStore(override var options: NotebookOptions = NotebookOptions()) : NotebookStore
 
 /**
  * A prefetch that fetches nothing and remembers being asked.

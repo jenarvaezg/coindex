@@ -5,14 +5,16 @@ import com.jenarvaezg.coindex.data.ApiCallLedger
 import com.jenarvaezg.coindex.data.CallBudgetGate
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
-import com.jenarvaezg.coindex.data.CredentialStore
+import com.jenarvaezg.coindex.data.CREDENTIAL_PREFERENCES
 import com.jenarvaezg.coindex.data.DEFAULT_MONTHLY_BUDGET
-import com.jenarvaezg.coindex.data.KeystoreCredentialStore
-import com.jenarvaezg.coindex.data.NotebookStore
+import com.jenarvaezg.coindex.data.keystoreSecret
+import com.jenarvaezg.coindex.data.NamedValues
+import com.jenarvaezg.coindex.data.NOTEBOOK_PREFERENCES
 import com.jenarvaezg.coindex.data.SharedPreferenceValues
+import com.jenarvaezg.coindex.data.StoredCredentials
 import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.StoredSyncLog
-import com.jenarvaezg.coindex.data.SyncLog
+import com.jenarvaezg.coindex.data.SYNC_LOG_PREFERENCES
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.CoindexDatabase
@@ -63,17 +65,28 @@ class AppContainer(context: Context) {
 
     private val database: CoindexDatabase by lazy { CoindexDatabase.open(applicationContext) }
 
-    val credentials: CredentialStore by lazy { KeystoreCredentialStore(applicationContext) }
+    /**
+     * One preferences file per subject, each behind the same seam (#546).
+     *
+     * The four stores below are plain classes over [NamedValues], so the file each of them lives in
+     * is decided here — where every other name of every other thing on this device is decided — and
+     * not inside the store, where it used to be a private constant nobody could see.
+     */
+    private fun valuesIn(name: String): NamedValues =
+        SharedPreferenceValues(applicationContext, name)
 
-    private val syncLog: SyncLog by lazy { StoredSyncLog(applicationContext) }
-
-    /** What the collector was looking through last time (ADR 0021 §1), on both hierarchies. */
-    val shelves: ShelfStore by lazy {
-        StoredShelves(SharedPreferenceValues(applicationContext, SHELF_PREFERENCES))
+    /** The collector's own Numista credentials, with the keystore key they are sealed with. */
+    val credentials: StoredCredentials by lazy {
+        StoredCredentials(valuesIn(CREDENTIAL_PREFERENCES), ::keystoreSecret)
     }
 
-    /** How the collector printed their notebook last time: the five switches of #228. */
-    val notebook: NotebookStore by lazy { StoredNotebook(applicationContext) }
+    private val syncLog: StoredSyncLog by lazy { StoredSyncLog(valuesIn(SYNC_LOG_PREFERENCES)) }
+
+    /** What the collector was looking through last time (ADR 0021 §1), on both hierarchies. */
+    val shelves: ShelfStore by lazy { StoredShelves(valuesIn(SHELF_PREFERENCES)) }
+
+    /** How the collector printed their notebook last time: the switches of #228. */
+    val notebook: StoredNotebook by lazy { StoredNotebook(valuesIn(NOTEBOOK_PREFERENCES)) }
 
     /**
      * A checkpointed copy of the base, for the share sheet (#548).
