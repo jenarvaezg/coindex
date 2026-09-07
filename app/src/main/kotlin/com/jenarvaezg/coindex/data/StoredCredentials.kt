@@ -35,9 +35,16 @@ data class Credentials(val apiKey: String, val userId: Long)
  * and the settings form were readable enough behind a fake store — it was the keystore, and a fake
  * store answered by never encrypting anything. With the key handed in, a JVM test runs the round
  * trip whole, which is the half of this class that had no test at all.
+ *
+ * It also takes down [RejectionWall], and that collaborator is here rather than in the settings
+ * screen for the reason the wall exists at all: a `401` has no clock (#579), so the *only* thing
+ * that can end it is a key being written — and this is the one place a key is ever written. A screen
+ * that had to remember to clear it would be a screen that forgets, and a phone stuck on prices for
+ * ever with the right key in the field.
  */
 class StoredCredentials(
     private val values: NamedValues,
+    private val wall: RejectionWall,
     private val secret: () -> SecretKey,
 ) {
     fun credentials(): Credentials? {
@@ -46,12 +53,23 @@ class StoredCredentials(
         return Credentials(apiKey, userId)
     }
 
-    fun save(apiKey: String, userId: Long) = values.write(
-        mapOf(
-            KEY_API_KEY to Stored.Text(encrypt(apiKey)),
-            KEY_USER_ID to Stored.Int64(userId),
-        ),
-    )
+    /**
+     * Writes the credentials down and gives Numista another chance.
+     *
+     * The wall falls **whatever its cause** and not only for the `401` that names it: saving this
+     * form is the collector saying «prueba otra vez», and the `403` of a quota shared with another
+     * phone (#562) is undone by a second key exactly as the `401` is by a corrected one. It costs at
+     * most one call to find out the wall was right.
+     */
+    fun save(apiKey: String, userId: Long) {
+        values.write(
+            mapOf(
+                KEY_API_KEY to Stored.Text(encrypt(apiKey)),
+                KEY_USER_ID to Stored.Int64(userId),
+            ),
+        )
+        wall.clear()
+    }
 
     fun clear() = values.write(mapOf(KEY_API_KEY to null, KEY_USER_ID to null))
 

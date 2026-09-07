@@ -1,5 +1,7 @@
 package com.jenarvaezg.coindex.data.prices
 
+import com.jenarvaezg.coindex.data.RejectionCause
+import com.jenarvaezg.coindex.data.RejectionWall
 import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
@@ -39,6 +41,10 @@ enum class ValuationRefusal {
      * answering a press. This one is a state that appeared on its own over prices nobody asked for, and
      * it says only what is true of all three: Numista is refusing. Whether the key is wrong is a
      * question the next sync answers, in the sentence that already owns it.
+     *
+     * **And it is remembered** (#579). Stopping is half of it; the other half is not paying again to
+     * find out the same thing on the next launch. Which of the four causes it was picks how long
+     * that memory lasts, and nothing else: see [RejectionCause].
      */
     Rejected,
 }
@@ -132,6 +138,7 @@ class NumistaValuationPass(
     private val prices: PriceDao,
     private val client: () -> NumistaClient?,
     private val spot: SpotStore,
+    private val wall: RejectionWall,
     private val nowMillis: () -> Long = System::currentTimeMillis,
 ) : ValuationPass {
     override suspend fun run(
@@ -145,6 +152,11 @@ class NumistaValuationPass(
         val numista = client()
         if (held != null || plan.isEmpty) return@withContext status
         if (numista == null) return@withContext status.copy(held = ValuationRefusal.NoApiKey)
+        // Before the first call and after the spot, which is keyless and outside the budget (ADR
+        // 0028 §9): the wall is about what `api.numista.com` will do, and the silver is not its to
+        // hold back. What the collector is told is `Rejected` either way — that this pass reached
+        // the answer by reading a file instead of paying for it is not a state of its own.
+        if (wall.standing() != null) return@withContext status.copy(held = ValuationRefusal.Rejected)
 
         val now = nowMillis()
         val reads = prices.reads()
@@ -152,7 +164,7 @@ class NumistaValuationPass(
         val issues = ownedIssuesToAsk(plan, reads, now) +
             resolvedHoleIssues(plan, reads, now, listings)
         var asked = 0
-        var stopped: ValuationRefusal? = null
+        var stopped: Stop? = null
         val streak = BarrenStreak()
         for (issue in issues) {
             stopped = askOne(numista, issue.typeId, issue.issueId, streak)
@@ -171,9 +183,14 @@ class NumistaValuationPass(
                 streak,
             )
         }
+        // The wall is written **after** the pass and not where the answer arrived, so what is stored
+        // is why the pass stopped rather than every rebuff it walked past. And a pass that got this
+        // far without one takes down whatever was standing: reaching Numista is the proof.
+        val cause = stopped?.cause
+        if (cause != null) wall.raise(cause) else wall.clear()
         // Counted from the table again rather than from what landed: an issue that failed is still
         // missing, and one that answered with no prices has stopped being missing without a price.
-        status(plan, spot.stored()?.readAtMillis, stopped)
+        status(plan, spot.stored()?.readAtMillis, stopped?.refusal)
     }
 
     /**
@@ -196,7 +213,7 @@ class NumistaValuationPass(
         lookups: Map<Int, List<PlateHole>>,
         fresh: Set<Pair<Int, Int>>,
         streak: BarrenStreak,
-    ): ValuationRefusal? {
+    ): Stop? {
         for ((typeId, holes) in lookups) {
             val listing = try {
                 // Only the issues that can be addressed: an entry Numista lists with no id of its own
@@ -208,7 +225,7 @@ class NumistaValuationPass(
                 // A type Numista does not have is not a wall: it is the same `404` a price gets, read
                 // over a listing, and it costs this type its lookup and nothing else.
                 if (error is NumistaException.Api && error.status == HTTP_NOT_FOUND) continue
-                val stop = refusalFor(error) ?: streak.noteBarren()
+                val stop = stopFor(error) ?: streak.noteBarren()
                 if (stop != null) return stop
                 continue
             }
@@ -247,7 +264,7 @@ class NumistaValuationPass(
         typeId: Int,
         issueId: Int,
         streak: BarrenStreak,
-    ): ValuationRefusal? {
+    ): Stop? {
         val answer = try {
             numista.fetchIssuePrices(typeId, issueId).value
         } catch (error: NumistaException) {
@@ -256,7 +273,7 @@ class NumistaValuationPass(
                 streak.noteStored()
                 return null
             }
-            return refusalFor(error) ?: streak.noteBarren()
+            return stopFor(error) ?: streak.noteBarren()
         }
         store(typeId, issueId, answer)
         streak.noteStored()
@@ -350,9 +367,13 @@ private class BarrenStreak {
     }
 
     /** Notes an answer that wrote nothing: null to carry on, or the refusal that stops the pass. */
-    fun noteBarren(): ValuationRefusal? {
+    fun noteBarren(): Stop? {
         run++
-        return if (run >= BARREN_STREAK_LIMIT) ValuationRefusal.Rejected else null
+        return if (run >= BARREN_STREAK_LIMIT) {
+            Stop(ValuationRefusal.Rejected, RejectionCause.Unreadable)
+        } else {
+            null
+        }
     }
 }
 
@@ -369,12 +390,24 @@ private class BarrenStreak {
  * issue's problem alone: null means «skip it and carry on», and it is [BarrenStreak] that decides how
  * many of those in a row stop being one issue's problem.
  */
-private fun refusalFor(error: NumistaException): ValuationRefusal? = when (error) {
-    is NumistaException.BudgetExhausted -> ValuationRefusal.BudgetExhausted
-    is NumistaException.Transport -> ValuationRefusal.Offline
+private fun stopFor(error: NumistaException): Stop? = when (error) {
+    is NumistaException.BudgetExhausted -> Stop(ValuationRefusal.BudgetExhausted)
+    is NumistaException.Transport -> Stop(ValuationRefusal.Offline)
     is NumistaException.Api -> when (error.status) {
-        HTTP_TOO_MANY_REQUESTS, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> ValuationRefusal.Rejected
+        HTTP_TOO_MANY_REQUESTS -> Stop(ValuationRefusal.Rejected, RejectionCause.Throttled)
+        HTTP_UNAUTHORIZED -> Stop(ValuationRefusal.Rejected, RejectionCause.Credentials)
+        HTTP_FORBIDDEN -> Stop(ValuationRefusal.Rejected, RejectionCause.Quota)
         else -> null
     }
     else -> null
 }
+
+/**
+ * Why a pass stopped, and — when it was Numista refusing — what to write on the wall.
+ *
+ * The two travel together because they are read at the same instant and nowhere else: the status
+ * carries the [refusal] to the settings line, and the [cause] carries the *clock* to the wall. Only
+ * `Rejected` has one; a dead network and an exhausted budget are refusals nobody has to remember,
+ * because the next launch can tell for itself and it costs no call to find out.
+ */
+private data class Stop(val refusal: ValuationRefusal, val cause: RejectionCause? = null)
