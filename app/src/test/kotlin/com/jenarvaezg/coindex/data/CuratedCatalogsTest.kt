@@ -401,8 +401,11 @@ class CuratedCatalogsTest {
      * The variant closes in 2024 while the series stays open, like the .500 Canadian dollar
      * (#52): gold.de gives the antiqued 1 oz as struck 2020-2024 at 1,000 a year and «nicht
      * geprägt» before 2020, and AgAuNEWS enumerates the whole 2025 and 2026 ranges without it.
-     * 2020 is `unlisted`: the coin exists and Numista carries one undifferentiated row for the
-     * year, so the slot cites the dealer table and anchors its picture on N#220874.
+     * 2020 was `unlisted` until a referee split the year: N#220874 now carries «2020 – Antique
+     * Finish» at 1,000 pieces, so the slot names the type like its sisters and the antiqued
+     * emission 1116210 is what qualifies it. Jose owns that piece, and while the slot had no type
+     * it filled nothing at all — not the bullion plate, whose 2020 qualifies 545873, and not this
+     * one, because a member without a type never matches (#596).
      *
      * Emission ids from `/types/{id}/issues` over the ten types, ten calls.
      */
@@ -422,19 +425,21 @@ class CuratedCatalogsTest {
         assertTrue(antiqued.closedNote!!.contains("2020 a 2024"))
         assertEquals((2020..2024).toList(), antiqued.members.map { it.year })
 
-        // 2020 is the only slot without a type, and the only one that may not name emissions.
-        val mayflower = antiqued.members.single { it.year == 2020 }
-        assertTrue(mayflower.isUnlisted)
-        assertNull(mayflower.numistaTypeId)
-        assertTrue(mayflower.numistaIssueIds.isEmpty())
-        assertEquals(220_874, mayflower.designTypeId)
-        assertNotNull(mayflower.source)
-        assertNotNull(mayflower.sourceNote)
-
+        // Every slot names its type since the 2020 split, and every one qualifies an emission.
         val issued = antiqued.members.filter { it.isIssued }
-        assertEquals(listOf(301_537, 362_115, 415_674, 442_604), issued.map { it.numistaTypeId })
+        assertEquals(antiqued.members, issued)
         assertEquals(
-            listOf(listOf(796_570), listOf(796_577), listOf(864_080), listOf(908_445)),
+            listOf(220_874, 301_537, 362_115, 415_674, 442_604),
+            issued.map { it.numistaTypeId },
+        )
+        assertEquals(
+            listOf(
+                listOf(1_116_210),
+                listOf(796_570),
+                listOf(796_577),
+                listOf(864_080),
+                listOf(908_445),
+            ),
             issued.map { it.numistaIssueIds },
         )
 
@@ -466,6 +471,16 @@ class CuratedCatalogsTest {
         )
         assertTrue(antiqued.members.none { antiqued.memberMatches(it, proof2022) })
         assertTrue(bullion.members.none { bullion.memberMatches(it, proof2022) })
+        // The 2020 Mayflower Jose owns: antiqued row of a year Numista used to keep in one line.
+        val antiqued2020 = CollectedItem(
+            id = 3,
+            quantity = 1,
+            typeId = 220_874,
+            issueYear = 2020,
+            issueId = 1_116_210,
+        )
+        assertTrue(antiqued.memberMatches(antiqued.members.single { it.year == 2020 }, antiqued2020))
+        assertTrue(bullion.members.none { bullion.memberMatches(it, antiqued2020) })
     }
 
     /**

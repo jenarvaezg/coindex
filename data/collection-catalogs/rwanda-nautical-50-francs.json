@@ -10,8 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5228",
-  "source_note": "Cada casilla cualifica la emisión corriente de su tipo porque el alto relieve antiguo de 2020-2024 es otra lámina (ADR 0019): sin la lista, la proof de 2017, 2018, 2021, 2022 y 2023 y la antigua de 2021-2024 llenarían la casilla de su año, y una sola pieza completaría las dos láminas. Las proof se quedan fuera de ambas a propósito, porque nadie las cataloga todavía. Numista lleva un solo renglón en 2019 y en 2020, los dos con tirada de 1.000 aunque allí no esté separada ni la proof ni la antigua de esos años, así que esas dos casillas cualifican lo único publicado y habrá que revisarlas cuando un árbitro desglose el año.",
-  "updated_at": "2026-08-05",
+  "source_note": "Cada casilla cualifica la emisión corriente de su tipo porque el alto relieve antiguo de 2020-2024 es otra lámina (ADR 0019): sin la lista, la proof de 2017, 2018, 2021, 2022 y 2023 y la antigua de 2021-2024 llenarían la casilla de su año, y una sola pieza completaría las dos láminas. Las proof se quedan fuera de ambas a propósito, porque nadie las cataloga todavía. Los años 2019 y 2020 llevaron un solo renglón hasta que un árbitro desglosó los dos: la ficha de 2019 añadió la proof 1116211 y la de 2020 la antigua 1116210 y la proof 1116212, dejando 448244 y 545873 como el renglón corriente de su año, que es justo lo que estas dos casillas cualifican.",
+  "updated_at": "2026-09-07",
   "members": [
     {
       "id": "2017-santa-maria",

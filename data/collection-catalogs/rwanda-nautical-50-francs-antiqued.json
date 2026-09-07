@@ -11,17 +11,17 @@
   "series_status": "closed",
   "closed_note": "La Nautical Ounce sigue emitiéndose —el Kruzenshtern es de 2026— y lo que cierra aquí es la variante, no el programa: el alto relieve de 6 mm con acabado antiguo se acuñó de 2020 a 2024, mil piezas por año en la onza y quinientas en las tres onzas. La gama de 2025 y la de 2026 están enumeradas al completo por AgAuNEWS —10 francos de plata, 50 francos de plata sin circular, 50 francos de plata proof con tirada de 1.000 y las dos de oro— y en ninguna de las dos aparece el acabado antiguo: «the gorgeous antique-finished variants seem to have sunk without trace». https://agaunews.com/what-poor-sap-has-to-wash-the-sails/",
   "source": "https://en.numista.com/catalogue/series.php?id=5228",
-  "source_note": "El arranque en 2020 está afirmado, no supuesto, y por tres fuentes: la tabla de tiradas de GOLD.DE dice que la serie «wird ab dem Jahrgang 2020 - Mayflower auch in High Relief Antik Finish in der Stückelung 1 oz und 3 oz verausgabt» y marca 2017, 2018 y 2019 con «— = nicht geprägt»; el catálogo de la serie de Münzenlager, 34 artículos con nomenclatura uniforme, lleva «Silber BU» y «Silber PP» de 2017 a 2024 y «High Relief Silber» sólo de 2020 a 2024; y los distribuidores de la Mayflower la anuncian como la primera del programa con ese acabado. La serie 5228 de Numista no separa acabados: sus 21 tipos mezclan esta onza, el doceavo de onza de plata, la onza de oro y las tres onzas antiguas, así que cada casilla de aquí cualifica la emisión antigua dentro del tipo que comparte con la lámina sin circular (ADR 0019). https://www.muenzenlager.de/Nautical-Ounce-Serie y https://www.gold.de/kaufen/silbermuenzen/nautical-ounce/",
-  "updated_at": "2026-08-05",
+  "source_note": "El arranque en 2020 está afirmado, no supuesto, y por tres fuentes: la tabla de tiradas de GOLD.DE dice que la serie «wird ab dem Jahrgang 2020 - Mayflower auch in High Relief Antik Finish in der Stückelung 1 oz und 3 oz verausgabt» y marca 2017, 2018 y 2019 con «— = nicht geprägt»; el catálogo de la serie de Münzenlager, 34 artículos con nomenclatura uniforme, lleva «Silber BU» y «Silber PP» de 2017 a 2024 y «High Relief Silber» sólo de 2020 a 2024; y los distribuidores de la Mayflower la anuncian como la primera del programa con ese acabado. La serie 5228 de Numista no separa acabados: sus 21 tipos mezclan esta onza, el doceavo de onza de plata, la onza de oro y las tres onzas antiguas, así que cada casilla de aquí cualifica la emisión antigua dentro del tipo que comparte con la lámina sin circular (ADR 0019). https://www.muenzenlager.de/Nautical-Ounce-Serie y https://www.gold.de/kaufen/silbermuenzen/nautical-ounce/. La casilla de 2020 nació sin tipo porque N#220874 llevaba un solo renglón del año; el árbitro publicó el desglose y la ficha lleva ahora «2020 – Antique Finish» con tirada de 1.000, que es la emisión 1116210 y la que cualifica aquí, mientras el renglón corriente 545873 se queda en la lámina sin circular",
+  "updated_at": "2026-09-07",
   "members": [
     {
       "id": "2020-mayflower",
       "label": "Mayflower",
       "year": 2020,
-      "status": "unlisted",
-      "source": "https://www.gold.de/kaufen/silbermuenzen/nautical-ounce/",
-      "source_note": "La onza antigua de 2020 se acuñó con tirada de 1.000: así la da la tabla de tiradas de GOLD.DE y así la venden los distribuidores, como «2020 1 oz Antique Silver Mayflower Nautical Ounce». Numista lleva un solo renglón de 2020 en N#220874 y no separa el acabado, de modo que la casilla se queda sin tipo hasta que un árbitro publique la propuesta de edición presentada.",
-      "design_type_id": 220874
+      "numista_type_id": 220874,
+      "numista_issue_ids": [
+        1116210
+      ]
     },
     {
       "id": "2021-sedov",
