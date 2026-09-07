@@ -32,7 +32,8 @@ CATALOGS = DATA / "collection-catalogs"
 GROUPINGS = DATA / "groupings"
 PROGRAMMES = DATA / "programmes"
 
-#: Un catálogo de conjunto es `schema_version: 3` (ADR 0012).
+#: Un catálogo de conjunto es `schema_version: 3` (ADR 0012). Espejo de
+#: `CollectionCatalog.isSet`, atado por `catalog_species` de `fixtures/matching-digest.json`.
 SET_SCHEMA_VERSION = 3
 
 
@@ -124,6 +125,12 @@ def judge(type_id: int, claims: list[Claim]) -> Verdict:
 
     Vive aquí y en `CatalogSeeds.validateCrossCatalogClaims`, que es lo que la
     hace fatal. Esto no la sustituye: la aplica a ids que todavía no son fichero.
+
+    El contrato entre las dos es `cross_claims` de `fixtures/matching-digest.json`, que dice
+    por cada reparto de reclamaciones si la app se niega a arrancar. Lo que exige es una
+    dirección: donde la app se niega, esto para. Puede parar además donde la app arranca —el
+    conjunto, que `parseAll` deja fuera del cruce— y esa severidad de más va declarada en
+    `test_matching_digest.py`.
     """
     files = {(claim.species, claim.file_id, claim.is_set) for claim in claims}
     if len(files) < 2:

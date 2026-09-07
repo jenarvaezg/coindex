@@ -170,6 +170,15 @@ screen: red when the finding is rare, a report when it is routine (ADR 0021 §12
 `scripts/weight-deviations.py`; the year-blind rows need the inventory and belong to the field report.
 _Avoid_: Manual override, unclassified reason, in-app audit
 
+**Matching digest**:
+What holds the Python ports of the matching to the domain that owns it:
+`fixtures/matching-digest.json`, emitted by the Kotlin suite with the snapping constants and the
+vectors that pin them — grams to normalized milli-ounces, families to technical or not, schema
+version to catalog species, a claim layout to whether the app refuses to start — and asserted by
+the Python suite. It is not shared code and it travels one way only: the app is the runtime gate
+and the single source, so a disagreement is the port's to fix. Nothing in production reads it.
+_Avoid_: Shared matching rules, matching config, mirror config
+
 **Curation**:
 All the curated files that travel with the app taken together — collection catalogs, curated
 groupings and commemorative programmes — bound once and treated as one thing. It is what the
