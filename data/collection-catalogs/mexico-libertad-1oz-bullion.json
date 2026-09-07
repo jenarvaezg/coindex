@@ -10,7 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/pieces14465.html",
-  "updated_at": "2026-08-02",
+  "source_note": "Un año entra cuando la ficha de N#13855 le da renglón, que es donde Numista lista las emisiones de este tipo único. La 2026 está anunciada por el canal y todavía no acuñada: un distribuidor publicó el 3 de septiembre de 2026 el calendario que recibió —Kilo BU a principios de septiembre con 300 piezas en el mundo, y la de una onza BU a finales de mes—, pero un aviso de distribuidor no es el emisor nombrando la moneda, que es lo que un miembro `announced` necesita (ADR 0020). Se espera renglón en la ficha, no casilla en blanco.",
+  "updated_at": "2026-09-07",
   "members": [
     {
       "id": "1982-libertad",

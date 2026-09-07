@@ -10,8 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=3245",
-  "source_note": "Pressburg Mint acuña la serie alternando emisor: Tokelau de 2018 a 2022 y en 2024 (5 dólares, Elizabeth II y luego Carlos III), Niue en 2023 y 2025 (2 dólares, Carlos III). La propia serie 3245 de Numista se encabeza «Emisores: Niue, Tokelau», y sus 18 tipos son tres hebras de variante: estas 8 de 1 oz, más las de 10 y 100 dólares. Los ocho años 2018-2025 están cubiertos sin huecos ni duplicados.",
-  "updated_at": "2026-08-05",
+  "source_note": "Pressburg Mint acuña la serie alternando emisor: Tokelau de 2018 a 2022 y en 2024 (5 dólares, Elizabeth II y luego Carlos III), Niue en 2023 y 2025 (2 dólares, Carlos III). La propia serie 3245 de Numista se encabeza «Emisores: Niue, Tokelau», y sus 18 tipos son tres hebras de variante: estas 8 de 1 oz, más las de 10 y 100 dólares. Los ocho años 2018-2025 están cubiertos sin huecos ni duplicados. El programa de 2026 lo publica la propia casa —el calendario oficial de lanzamientos y sus tiradas, https://pressburgmint.com/release-calendar/— y trae dos series y ninguna más: Pax 2026, presentada como la nueva insignia, y Chronos 2026. Equilibrium no tiene línea de 2026, y tampoco la tienen las otras cinco anuales de 2025 (Terra, Vivat Humanitas, AI Coin, ICON, King of the Jungle); la tienda tampoco ofrece ninguna. Eso es una ausencia, no una declaración de cierre, así que la serie sigue abierta (ADR 0020: cerrar es la afirmación que cuesta prueba), y 2026 no cabe en `no_issue_years`, que el validador exige dentro del tramo de los miembros. Quien consiga que la casa lo diga por escrito tiene el `closed_note`.",
+  "updated_at": "2026-09-07",
   "members": [
     {
       "id": "2018-equilibrium-tokelau",
