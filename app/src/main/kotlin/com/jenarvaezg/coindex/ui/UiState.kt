@@ -92,6 +92,21 @@ data class UiState(
      */
     val prices: PriceBook = PriceBook(),
     /**
+     * When [prices] reached this phone, which is the «now» every age on screen is measured against.
+     *
+     * **Not `PriceBook.readAt`**, which is when one issue was asked about: this is when the book the
+     * screen is drawn from arrived, and it is what an age is measured *from* rather than one of the
+     * dates being aged.
+     *
+     * Stamped on the arrival of a book and not on every emission, so it is exactly as still as the
+     * figures it dates: what it ages is an amount that never expires (ADR 0030 §4), and a clock that
+     * ticked would make «hace ocho días» a thing that changes while the collector reads it. It is
+     * here rather than in the screens because it is a fact about the state — the two places that used
+     * to read `System.currentTimeMillis()` in a composable body did it once each, with a different
+     * key, and could therefore date the same book two ways.
+     */
+    val pricesArrivedAt: Long = 0L,
+    /**
      * The casillas the collector marked, as the table holds them (ADR 0029).
      *
      * The **rows** and not the resolved slots, which is the seam ADR 0029 §3 asks for: nothing that

@@ -8,7 +8,6 @@ import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CredentialStore
 import com.jenarvaezg.coindex.data.NotebookStore
-import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.SyncOutcome
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.DatabaseExport
@@ -18,17 +17,11 @@ import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop
 import com.jenarvaezg.coindex.data.prices.ValuationLoop
 import com.jenarvaezg.coindex.data.prices.showcaseValuationPlan
 import com.jenarvaezg.coindex.data.prices.valuationPlan
-import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.data.update.UPDATE_CHECK_INTERVAL_MILLIS
 import com.jenarvaezg.coindex.data.update.UpdateFlow
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.domain.IndexCard
-import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishKey
-import com.jenarvaezg.coindex.domain.WishedSlot
-import com.jenarvaezg.coindex.domain.showcasePlate
-import com.jenarvaezg.coindex.domain.showcasePlates
-import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.NotebookSubject
 import com.jenarvaezg.coindex.ui.print.PrintPage
@@ -55,9 +48,14 @@ import kotlinx.coroutines.launch
  * What is left here is **[UiState] and nothing else**: every gesture below either writes a field or
  * hands the work to the module whose subject it is — [CollectionSync] for a sync, [PhotoPrefetchLoop]
  * for the photographs, [UpdateFlow] for the APK, [credentialsEntry] and [boxToCreate] for what was
- * typed into a form. There is no clock in this file, and that is the measure of it: the three
- * `System.currentTimeMillis()` that used to be read in place now belong to the three modules that
- * stamp with them, each with a clock of its own that a test can hold still (#220).
+ * typed into a form. And what is **read** off that state is [reading]'s and not this class's (#542):
+ * the shelf window and the living marks used to be computed here and again in the root composable,
+ * with a comment on each side promising the two agreed.
+ *
+ * There is one clock in this file and it stamps one field — the arrival of a price book, which is the
+ * «now» every age on screen is measured against. The three `System.currentTimeMillis()` that used to
+ * be read in place still belong to the modules that stamp with them, and this one arrives the same
+ * way: as a parameter a test can hold still (#220).
  *
  * The collaborators arrive one by one rather than as an `AppContainer`, which is what makes any of
  * this readable: a container is not something a test can substitute, and «no hay nada que sustituir»
@@ -91,6 +89,12 @@ class CoindexViewModel(
     /** A checkpointed copy of the base, for whatever the share sheet hands it to (#548). */
     private val dataExport: DatabaseExport,
     private val installedVersionName: String,
+    /**
+     * The one clock this class reads for itself, and it reads it for one thing: stamping the arrival
+     * of a price book (see [UiState.pricesArrivedAt]). Every other clock in the app belongs to the
+     * collaborator that needs it, and a test can hold each of them still (#220).
+     */
+    private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val repository by lazy(repository)
 
@@ -106,36 +110,68 @@ class CoindexViewModel(
     private val curation get() = repository.curation
 
     /**
-     * The curated catalogs the country and year axes walk (ADR 0026 §9).
+     * The last reading handed out, kept so the next caller gets **the same object** (#542).
      *
-     * The index of cards is not enough: a member's country is not the card's (#170), and the year
-     * axis needs every measurable slot, not only the ones that opened a plate today.
+     * A [ScreenReading] is eight references and builds nothing, so this is not about the cost of
+     * making one: it is about the walks hanging off it, which are `by lazy` and therefore belong to
+     * an instance. Held here and not in the composition because the ViewModel reads the same
+     * derivations the screens do — the pass's plan and the notebook's pages are made of the wishes
+     * the annex draws — and two instances is exactly the arrangement this ticket removed.
+     *
+     * **One slot, and nothing depends on it holding.** A miss costs the walks again and never a wrong
+     * answer, because what comes back is built from the state that was asked about; the composition
+     * and this class's own commands both read it on the main thread, which is where `viewModelScope`
+     * runs.
      */
-    val catalogs get() = curation.catalogs
+    private var lastReading: ScreenReading? = null
 
     /**
-     * Every name a curated file claims, so the one name a collector types cannot repeat one
-     * (ADR 0021 §4). Constant for the process lifetime, like the seeds it comes from.
-     */
-    val curatedNames: Set<String> get() = curation.titles.curatedNames()
-
-    /** The name of one curated catalog, for the masthead of its plate. */
-    /**
-     * The **card-sized** name, which is what the masthead of a plate can say without repeating it.
+     * And the collection's own half of it, kept apart because it moves far less often (#218).
      *
-     * `name` is the editorial scope and runs to 200 characters; the plate prints it whole two lines
-     * below, so a masthead carrying it too said the same sentence twice on one screen (#511). What
-     * `shortName` buys is that the bar still answers «which plate is this» once the heading has
-     * scrolled away — the masthead does not move — and it is the name Explorar and «Lo que busco»
-     * already call a lámina by.
+     * A price lands row by row while a pass runs, so a single memo would rebuild the shelf window and
+     * re-resolve every open plate once per row — for a reading none of them is made of.
      */
-    fun catalogName(catalogId: String?): String? =
-        catalogs.firstOrNull { it.id == catalogId }?.shortName
+    private var lastCollectionReading: CollectionReading? = null
+
+    /**
+     * Everything the screens read, derived from one state and the curated files.
+     *
+     * The state comes in rather than being taken off [_state], so the reading a composition draws is
+     * the reading **of the state it is drawing**: a root that asked for the current one could paint a
+     * frame of two moments. The ViewModel's own callers pass nothing and get the state of right now,
+     * which is what a command acts on.
+     *
+     * **The same instance comes back while nothing it is made of has moved.** That is the whole of
+     * the memoisation: `equals` over the slices in [ScreenReading]'s constructor is what decides,
+     * and a screen keys its `remember` on the value instead of listing the fields of the state that
+     * feed it.
+     *
+     * With the curated files unreadable there are none, and the reading says so rather than raising
+     * the same fatal error a second time: what is on screen then is [UiState.fatalError] itself, and
+     * the masthead and the sewn edge above it still have to draw.
+     */
+    fun reading(state: UiState = _state.value): ScreenReading {
+        val next = state.reading(collectionReading(state))
+        return lastReading?.takeIf { it == next } ?: next.also { lastReading = it }
+    }
+
+    /** The same trade one level in, over the half of a reading a price cannot move. */
+    private fun collectionReading(state: UiState): CollectionReading {
+        val next = CollectionReading(
+            curation = if (state.fatalError == null) curation else NO_CURATION,
+            collection = state.collection,
+        )
+        return lastCollectionReading?.takeIf { it == next }
+            ?: next.also { lastCollectionReading = it }
+    }
 
     init {
         _state.update {
             it.copy(
                 versionName = installedVersionName,
+                // Launch, so that an age is never measured against 1970 on the frames before the
+                // first book lands. What it dates then is an empty book, which fetches nothing.
+                pricesArrivedAt = now(),
                 lastSync = collectionSync.last,
                 indexShelf = shelves.index,
                 coinsShelf = shelves.coins,
@@ -165,10 +201,20 @@ class CoindexViewModel(
         }
     }
 
-    /** The prices themselves, which change while a pass runs and never rebuild the index. */
+    /**
+     * The prices themselves, which change while a pass runs and never rebuild the index.
+     *
+     * The arrival is stamped here, and only when the book is actually a different one: what the stamp
+     * dates is a figure that never expires (ADR 0030 §4), so re-reading the clock for a book that has
+     * not changed would move every age on screen for nothing.
+     */
     private fun watchPrices() {
         viewModelScope.launch {
-            repository.observePrices().collect { book -> _state.update { it.copy(prices = book) } }
+            repository.observePrices().collect { book ->
+                _state.update { state ->
+                    if (state.prices == book) state else state.copy(prices = book, pricesArrivedAt = now())
+                }
+            }
         }
     }
 
@@ -235,7 +281,7 @@ class CoindexViewModel(
      * left to ask — because both leave the screen looking exactly as it did.
      */
     fun valuePlate(catalogId: String) {
-        val plate = showcasePlate(catalogId) ?: return
+        val plate = reading().showcasePlateOf(catalogId) ?: return
         if (_state.value.valuingPlate != null) return
         val plan = showcaseValuationPlan(plate)
         if (plan.isEmpty) return
@@ -250,40 +296,6 @@ class CoindexViewModel(
             valuePrices(force = true)
         }
     }
-
-    /** One plate of the shelf window, resolved by id, or null if this catalog is not one (ADR 0030 §1). */
-    fun showcasePlate(catalogId: String): ShowcasePlate? {
-        val catalog = catalogs.firstOrNull { it.id == catalogId } ?: return null
-        val state = _state.value.collection
-        val album = state.albums[catalog] ?: return null
-        return showcasePlate(catalog, album, state.evidencedCatalogIds)
-    }
-
-    /**
-     * The shelf window itself: the twenty plates, in the order it opens (ADR 0030 §1, §8).
-     *
-     * Read on demand and not kept in the state, for the reason `livingWishes` is: it is a crossing of the
-     * curated files and the inventory, and a stored third reading is the one that could disagree with
-     * both. The screen wraps it in a `remember` of its own.
-     */
-    fun showcase(): List<ShowcasePlate> = showcasePlates(
-        catalogs = curation.catalogs,
-        albums = _state.value.collection.albums,
-        evidencedCatalogIds = _state.value.collection.evidencedCatalogIds,
-    )
-
-    /**
-     * The marked casillas that are still alive, resolved against the curated shelf (ADR 0029 §2).
-     *
-     * Read from the state on demand rather than kept in it: it is a crossing of two things that change
-     * at different times — the table and the inventory — and holding the result would be a third thing
-     * that can disagree with both. The screens that draw it wrap it in a `remember` of their own.
-     */
-    fun livingWishes(): List<WishedSlot> = wishedSlots(
-        wishes = _state.value.wishes,
-        catalogs = curation.catalogs,
-        items = _state.value.collection.items,
-    )
 
     /**
      * Mirrors what the phone holds of the photographs into the state (#191).
@@ -360,7 +372,7 @@ class CoindexViewModel(
                 evidencedCatalogIds = state.evidencedCatalogIds,
                 // A marked casilla is priced whatever its plate's shape (ADR 0029 §4), which is what
                 // makes the month's spend a function of what the collector marked.
-                wishes = livingWishes(),
+                wishes = reading().livingWishes,
             ),
             force = force,
         )
@@ -698,7 +710,7 @@ class CoindexViewModel(
             )
             NotebookSubject.Wishes -> return wishSections(
                 state.collection,
-                livingWishes(),
+                reading(state).livingWishes,
                 options,
             )
         }
@@ -716,11 +728,7 @@ class CoindexViewModel(
             // nothing (#228, ADR 0021 §13). And nothing is also what it gets while the market has
             // not landed: a total at 60 % is false on paper too, and paper cannot be taken back.
             plateValue = { resolved ->
-                if (!options.money || !state.valuation.settled) {
-                    null
-                } else {
-                    plateValue(resolved.album, state.collection, state.prices)
-                }
+                if (options.money) reading(state).plateValue(resolved.album) else null
             },
             // Not behind a switch: a wish mark is a state at rest and travels by ADR 0026 §4, and what
             // the money switch withholds is an amount. The keys are the table's own and not the living
@@ -740,9 +748,6 @@ class CoindexViewModel(
         notebook.options = options
         _state.update { it.copy(notebookOptions = options) }
     }
-
-    fun plate(catalogId: String): PlateResult =
-        resolvePlate(_state.value.collection, curation, catalogId)
 
     // The pair that used to answer «is there a catalog for this key, and would its plate open?»
     // left with the screen that asked: a card with a reachable plate now *is* the plate (ADR 0021

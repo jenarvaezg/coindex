@@ -184,6 +184,17 @@ inventory as it was last synced, the fichas cached for it, and the boxes the col
 Everything else is derived from it and nothing about it is stored per card (ADR 0021 §7).
 _Avoid_: State, local data, cache
 
+**Reading**:
+Everything a screen shows that nobody stores: the snapshot crossed with the curation, and with the
+prices and the marks that arrive by their own doors. A reading is a **value** and never a field of
+the state — the shelf window, the living marks, «Las cifras», the sewn edge, what a coin is worth —
+so a stored one would be a third truth able to disagree with both the table and the inventory. It is
+one object rather than a field per derivation, and the object is the memo: the same one comes back
+until a reading behind it moves, which is what a screen keys its `remember` on (#542). It has two
+halves because they move at different speeds — what only the snapshot and the curation decide (the
+shelf window, a plate, the name of a card) survives the price that lands mid-pass.
+_Avoid_: Derived state, ui state, cache
+
 **Collection catalog**:
 A curated, sourced reference list of official members for one exact variant key.
 It remains separate from curated series, and it is what gives a collection its issue list.

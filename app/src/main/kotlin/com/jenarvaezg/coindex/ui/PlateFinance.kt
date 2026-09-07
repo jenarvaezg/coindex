@@ -3,7 +3,6 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.prices.PriceBook
-import com.jenarvaezg.coindex.data.prices.ValuationStatus
 import com.jenarvaezg.coindex.data.prices.showcaseCallCount
 import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishKey
@@ -35,9 +34,13 @@ import com.jenarvaezg.coindex.domain.WishKey
  * @param state the inventory and the fichas, for the weight and the pieces an amount is made of.
  * @param book the whole price book and not its readings, so the header and the casillas cannot
  *   disagree about *when* (ADR 0028, #536).
- * @param pass how far the collection's valuation has got, which gates the collector's own plate and
+ * @param settled whether the market has finished arriving, which gates the collector's own plate and
  *   never the window's: those prices arrive by a gesture of their own, so waiting for the market of a
  *   collection this plate has no coin in would leave the amount off a plate that was just valued.
+ * @param waiting whether that absence is worth saying on the plate (#519). The two answers of the pass
+ *   and not the pass itself, which is what keeps this object still while one runs: `ValuationStatus`
+ *   carries a count that moves every twenty-five issues, and rebuilding the reading on it would rebuild
+ *   the very object the album walk is remembered on.
  * @param wished the casillas the collector marked, which carry a price whatever the plate's shape
  *   (ADR 0029 §4).
  * @param nowMillis now, for the age of a hand-asked price (ADR 0030 §4) and for the calls the gesture
@@ -49,7 +52,8 @@ class PlateFinance(
     private val showcase: List<ShowcasePlate>,
     private val state: CollectionState,
     private val book: PriceBook,
-    private val pass: ValuationStatus,
+    private val settled: Boolean,
+    private val waiting: Boolean,
     private val wished: Set<WishKey>,
     private val nowMillis: Long,
     private val onValue: (catalogId: String) -> Unit,
@@ -65,7 +69,7 @@ class PlateFinance(
         val window = window(resolved)
         return when {
             window != null -> showcaseMoney(window, state, book)
-            !pass.settled -> PlateMoney(waiting = pass.waiting)
+            !settled -> PlateMoney(waiting = waiting)
             else -> plateMoney(resolved.album, state, book, wished)
         }
     }

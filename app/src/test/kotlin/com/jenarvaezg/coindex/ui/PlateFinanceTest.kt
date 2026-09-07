@@ -273,6 +273,8 @@ private fun finance(
     showcase: List<ShowcasePlate> = emptyList(),
     state: CollectionState = state(),
     book: PriceBook = freshBook(),
+    // The pass whole, taken apart here exactly as `ScreenReading` takes it apart: what the class holds
+    // is its two answers, so that a running count cannot rebuild the object the album walk hangs on.
     pass: ValuationStatus = ValuationStatus(),
     wished: Set<WishKey> = emptySet(),
     onValue: (String) -> Unit = {},
@@ -281,7 +283,8 @@ private fun finance(
     showcase = showcase,
     state = state,
     book = book,
-    pass = pass,
+    settled = pass.settled,
+    waiting = pass.waiting,
     wished = wished,
     nowMillis = NOW,
     onValue = onValue,
