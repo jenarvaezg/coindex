@@ -37,21 +37,45 @@ fun printedDiameterLabel(millimetres: Float?): String? {
 }
 
 /**
- * Where what is printed on this folio came from, which is a line the paper has to carry.
+ * The two mastheads of the notebook, which say which of the two hierarchies a page came out of.
  *
- * The strip at the foot is **once per folio** and the heading is once per plate, so since #232 the
- * source can be a plural: two plates sharing a page can come from two different catalogs, and a page
- * that names only the first one would attribute the second to it.
+ * They were the mastheads of the shared PNG first, and they are the same words for the same reason: a
+ * page arrives in somebody's hands with no app around it, so «catálogo curado» is somebody else's list
+ * the collector is filling and «colección» is the collector's own pieces (ADR 0021 §1). Since #431 the
+ * PNG **is** a printed page, so the two strings have one home and this is it.
  *
- * **Named once each, and that is this function's job and not its caller's**: a folio of five plates
- * of one catalog says it once, in the order they are printed. Deduplicating here rather than in
- * [PrintPage.sources] is what makes «Fuentes» honest wherever the line is assembled — a caller that
- * handed over the same catalog twice would otherwise print it twice under a word promising it had
- * not.
- *
- * It outlives the app, which is why it is on the paper at all: a list that does not say where it came
- * from cannot be checked later either.
+ * A page that said «curado» about a list nobody curated could not be taken back: paper outlives the
+ * app, which is why the claim is made in the copy file and not at the printer.
  */
+const val PLATE_SECTION_EYEBROW: String = "COINDEX · CATÁLOGO CURADO"
+const val PIECES_SECTION_EYEBROW: String = "COINDEX · COLECCIÓN"
+
+/**
+ * Where the coins of a page of owned pieces are named from, which is nobody's catalog.
+ *
+ * Said by the two pages that print what is in the house — a collection with no issue list, and the
+ * coins no collection claims — because both are read off the same inventory. The hunt says
+ * [WISH_SECTION_SOURCE] instead, and a plate names the catalog it was curated from.
+ */
+const val INVENTORY_SECTION_SOURCE: String = "tu colección en Numista"
+
+/**
+ * The rows of a printed specification, in the label each one carries.
+ *
+ * «País» and «Piezas» are the heading of a page of owned pieces — where the coins are from, when they
+ * agree on it, and how many there are. Only the labels are here: the sentence in the second row is the
+ * subject's own `countSentence`, which is what keeps the folio counting what the screen counts (#226).
+ *
+ * «Valor» is **not** «Valor actual» (#493). The screen says the name of the figure in full because it
+ * has neither row nor column to be read against; on paper the row is already titled, so an amount
+ * carrying its own title would say the word twice — which is why `plateAmountLabel` arrives here
+ * unnamed. The census row of the hunt is [WISH_SECTION_COUNT_LABEL], which counts casillas and not
+ * pieces.
+ */
+const val COUNTRY_FACT_LABEL: String = "País"
+const val PIECES_FACT_LABEL: String = "Piezas"
+const val VALUE_FACT_LABEL: String = "Valor"
+
 /**
  * The page of the coins that are in no collection.
  *
@@ -103,6 +127,22 @@ fun printedPageOfSection(number: Int, pagesInSection: Int): String =
  */
 fun printedRulerLabel(millimetres: Int): String = "$millimetres MM · ESCALA 1:1"
 
+/**
+ * Where what is printed on this folio came from, which is a line the paper has to carry.
+ *
+ * The strip at the foot is **once per folio** and the heading is once per plate, so since #232 the
+ * source can be a plural: two plates sharing a page can come from two different catalogs, and a page
+ * that names only the first one would attribute the second to it.
+ *
+ * **Named once each, and that is this function's job and not its caller's**: a folio of five plates
+ * of one catalog says it once, in the order they are printed. Deduplicating here rather than in
+ * [PrintPage.sources] is what makes «Fuentes» honest wherever the line is assembled — a caller that
+ * handed over the same catalog twice would otherwise print it twice under a word promising it had
+ * not.
+ *
+ * It outlives the app, which is why it is on the paper at all: a list that does not say where it came
+ * from cannot be checked later either.
+ */
 fun notebookSourceLabel(sources: List<String>): String {
     val named = sources.distinct()
     return when (named.size) {

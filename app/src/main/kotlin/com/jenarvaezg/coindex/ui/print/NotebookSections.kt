@@ -114,13 +114,13 @@ private fun plateSection(
     return PrintSection(
         // The same claim the exported sheet makes, and for the same reason: the paper outlives the
         // app, and a page that says «curado» about a list nobody curated cannot be taken back.
-        eyebrow = "COINDEX · CATÁLOGO CURADO",
+        eyebrow = PLATE_SECTION_EYEBROW,
         title = plate.title,
         subtitle = null,
         // The value joins the specification rather than the heading, because the printed page has no
         // header to raise a figure into — which is the same reason the ratio reaches paper as a row
         // (`plateEntriesBesideRatio` is deliberately not called here).
-        facts = plate.entries + listOfNotNull(amount?.let { VALUE_LABEL to plateAmountLabel(it) }),
+        facts = plate.entries + listOfNotNull(amount?.let { VALUE_FACT_LABEL to plateAmountLabel(it) }),
         source = plate.source,
         // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371), together with
         // the exact ratio the subject already measured. The paper must not reconstruct it from cells.
@@ -155,14 +155,14 @@ private fun piecesSection(
 ): PrintSection {
     val subject: PiecesSubject = piecesSubject(state, card)
     return PrintSection(
-        eyebrow = "COINDEX · COLECCIÓN",
+        eyebrow = PIECES_SECTION_EYEBROW,
         title = subject.title,
         subtitle = subject.variant,
         facts = buildList {
-            subject.issuer?.let { issuer -> add("País" to issuer) }
-            add("Piezas" to subject.countSentence)
+            subject.issuer?.let { issuer -> add(COUNTRY_FACT_LABEL to issuer) }
+            add(PIECES_FACT_LABEL to subject.countSentence)
         },
-        source = "tu colección en Numista",
+        source = INVENTORY_SECTION_SOURCE,
         cells = subject.pieces.map { piece ->
             val item = piece.item
             val name = pieceName(state, item)
@@ -218,12 +218,12 @@ private fun unclaimedSection(
         // have no issue list and therefore no ratio, so this is exactly what `countSentence` reduces
         // to for them — the same function, reached without inventing a subject to hang it on.
         facts = listOf(
-            "Piezas" to countLabel(
+            PIECES_FACT_LABEL to countLabel(
                 distinctTypes = unclaimed.distinctBy { it.typeId }.size,
                 quantity = unclaimed.fold(0) { total, it -> saturatingAdd(total, it.quantity) },
             ),
         ),
-        source = "tu colección en Numista",
+        source = INVENTORY_SECTION_SOURCE,
         cells = unclaimed.map { item ->
             val name = pieceName(state, item)
             PrintCell(
@@ -368,6 +368,3 @@ private fun CollectionState.facesOf(
  */
 private fun CollectionState.qrUrlOf(typeId: Int?, options: NotebookOptions): String? =
     typeId?.takeIf { options.numistaQr }?.let { typeMeta[it]?.numistaUrl }
-
-/** What the value row is called on paper. Same word the screen uses over the plate. */
-private const val VALUE_LABEL = "Valor"

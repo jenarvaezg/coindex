@@ -55,35 +55,9 @@ class PiecesLabelsTest {
         )
     }
 
-    /**
-     * The sheet's masthead is the subject's own sentence. It used to spell out `countLabel`, so the
-     * PNG that had just been shared said «3 tipos distintos · 4 piezas» about a collection the
-     * screen behind it was calling «0 de 12 · te faltan 12» (#226).
-     */
-    @Test
-    fun `the shared sheet counts what the screen that shared it counts`() {
-        val piezas = subject(coverage = CoverageRatio(0, 12), distinctTypes = 3, quantity = 4)
-        assertEquals(
-            listOf(
-                "País" to "Francia",
-                "Variante" to "Plata · 1 oz",
-                "Piezas" to "0 de 12 · te faltan 12",
-            ),
-            piecesSheetFacts(piezas),
-        )
-    }
-
-    /**
-     * A country the pieces disagree about, and the variant a box does not have, go unsaid rather
-     * than printed empty: the sheet outlives the app, and a blank field reads as something lost.
-     */
-    @Test
-    fun `what nothing can name goes unprinted`() {
-        assertEquals(
-            listOf("Piezas" to "10 monedas · 4 tipos"),
-            piecesSheetFacts(subject(issuer = null, variant = null)),
-        )
-    }
+    // The heading this sentence goes into is the printed one since #431, so what the specification
+    // of a page of pieces says — and what it leaves unsaid — is pinned by `NotebookSectionsTest`
+    // (#543). What stays here is the sentence itself, which is what all four surfaces read.
 
     /**
      * The button carries the cost before it is pressed (ADR 0021 §11).

@@ -27,6 +27,54 @@ class PrintedLabelsTest {
     }
 
     /**
+     * The furniture of the four sections, which is where the notebook says what kind of page this is.
+     *
+     * Every one of these was a literal in the exporter or a twin in a copy file nobody read (#543):
+     * the eyebrow of a curated catalog, the source of the two pages of owned pieces, and the labels of
+     * the specification rows. What is pinned here is the wording, because the folio outlives the app
+     * and a page that called a derived collection «CATÁLOGO CURADO» could not be corrected by an
+     * update.
+     *
+     * The two eyebrows say which of the two hierarchies the page came out of (ADR 0021 §1), and the
+     * two pages that are neither say so with their own: what no collection claims, and what the
+     * collector does not own yet.
+     */
+    @Test
+    fun `each kind of page says what it is and where its coins came from`() {
+        val eyebrows = listOf(
+            PLATE_SECTION_EYEBROW,
+            PIECES_SECTION_EYEBROW,
+            UNCLAIMED_SECTION_EYEBROW,
+            WISH_SECTION_EYEBROW,
+        )
+        assertEquals(
+            listOf(
+                "COINDEX · CATÁLOGO CURADO",
+                "COINDEX · COLECCIÓN",
+                "COINDEX · SIN COLECCIÓN",
+                "COINDEX · LO QUE BUSCO",
+            ),
+            eyebrows,
+        )
+        // Y son cuatro y no tres: dos páginas diciéndose lo mismo serían una sola clase de página.
+        assertEquals(eyebrows.size, eyebrows.distinct().size)
+
+        // Los tres orígenes: lo que hay en casa, lo que nadie tiene todavía, y el catálogo de cada
+        // lámina, que es el único que no es una constante porque lo pone el curador.
+        assertEquals("tu colección en Numista", INVENTORY_SECTION_SOURCE)
+        assertEquals("los catálogos curados de Coindex", WISH_SECTION_SOURCE)
+    }
+
+    /** Las filas de una especificación impresa, que son etiquetas y no frases. */
+    @Test
+    fun `the rows of a printed specification are named once each`() {
+        assertEquals("País", COUNTRY_FACT_LABEL)
+        assertEquals("Piezas", PIECES_FACT_LABEL)
+        assertEquals("Valor", VALUE_FACT_LABEL)
+        assertEquals("Casillas", WISH_SECTION_COUNT_LABEL)
+    }
+
+    /**
      * Where the folio says its coins came from, which is a plural since a folio can hold two plates.
      *
      * The strip at the foot is one per page and the heading is one per plate (#232), so a page that
