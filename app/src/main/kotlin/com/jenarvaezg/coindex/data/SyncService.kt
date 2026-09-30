@@ -34,7 +34,13 @@ class SyncService(
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun run(client: NumistaClient, userId: Long): SyncReport {
+    /**
+     * @param maxFichas how many missing fichas this run may buy. Unlimited for a press, and capped
+     *   for the automatic refresh of #605: whoever asked for it is not watching, so a cache emptied
+     *   by a reinstall must not turn one launch into two hundred consultas. What is left over is
+     *   still counted in [SyncReport.typesStillMissing] and is bought by the next run.
+     */
+    suspend fun run(client: NumistaClient, userId: Long, maxFichas: Int = Int.MAX_VALUE): SyncReport {
         val callsBefore = recordedCalls()
         val response = client.fetchCollectedItems(userId)
         val items = response.value.items
@@ -62,7 +68,7 @@ class SyncService(
         val missing = entities.map { it.typeId }.distinct().sorted().filterNot { it in cached }
         var fetched = 0
         var failure: String? = null
-        for (typeId in missing) {
+        for (typeId in missing.take(maxFichas)) {
             try {
                 val type = client.fetchType(typeId)
                 typeMeta.insertIfAbsent(

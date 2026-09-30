@@ -182,9 +182,11 @@ class FiguresLabelsTest {
         val falling = ValuationStatus(wanted = 223, missing = 83)
 
         assertTrue(valuationLabel(falling).endsWith("Se traen solos con la app abierta."))
+        // The pass's own allowance and not the phone's (#605): it stops 300 consultas short of the
+        // cap so the inventory always has its two, so the line cannot claim the month is gone.
         assertTrue(
             valuationLabel(falling.copy(held = ValuationRefusal.BudgetExhausted))
-                .contains("presupuesto de consultas"),
+                .contains("consultas que los precios tienen"),
         )
         assertTrue(
             valuationLabel(falling.copy(held = ValuationRefusal.Syncing))
