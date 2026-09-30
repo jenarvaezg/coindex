@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.data
 
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
+import com.jenarvaezg.coindex.data.seed.SeedReport
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.inferFinish
@@ -27,7 +28,14 @@ import kotlin.test.assertTrue
 class TypeCacheSeedTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    private fun seed(dao: FakeTypeMetaDao) = TypeCacheSeed(dao) { TypeCacheFile.read() }
+    /** The `versionCode` of the APK under test; any number does, as long as a bump is a bump. */
+    private val version = 78
+
+    private fun seed(
+        dao: FakeTypeMetaDao,
+        values: NamedValues = FakeNamedValues(),
+        versionCode: Int = version,
+    ) = TypeCacheSeed(dao, values, versionCode) { TypeCacheFile.read() }
 
     /**
      * The snapshot used to be a **first-install** gift: it was only written into an empty cache,
@@ -44,7 +52,7 @@ class TypeCacheSeedTest {
         val stale = dao.rows.value.filterNot { it.typeId in escudosTypeIds }
         dao.rows.value = stale
 
-        val added = seed(dao).topUp(curatedTypeIds.toSet())
+        val added = seed(dao).topUp(curatedTypeIds.toSet()).added
 
         assertTrue(added > 0, "no se ha añadido ninguna ficha")
         assertTrue(
@@ -53,42 +61,92 @@ class TypeCacheSeedTest {
         )
     }
 
+    /**
+     * The second launch of the same APK reads two cheap things and returns.
+     *
+     * The snapshot is 2,4 MB of JSON and it is parsed on the starts that have something to do. With
+     * every curated type cached **and** this version's snapshot already written down, there is
+     * nothing: the `cachedTypeIds` column and one integer out of a preferences file settle it.
+     */
     @Test
     fun `a cache that already has every curated type is left alone and never parses the asset`() =
         runTest {
             val dao = FakeTypeMetaDao()
-            seed(dao).topUp(curatedTypeIds.toSet())
+            val values = FakeNamedValues()
+            seed(dao, values).topUp(curatedTypeIds.toSet())
             val before = dao.rows.value
 
-            val untouched = TypeCacheSeed(dao) { error("no debería leerse el snapshot") }
+            val untouched = TypeCacheSeed(dao, values, version) { error("no debería leerse el snapshot") }
 
-            assertEquals(0, untouched.topUp(curatedTypeIds.toSet()))
+            assertEquals(SeedReport(added = 0, overwritten = 0), untouched.topUp(curatedTypeIds.toSet()))
             assertEquals(before, dao.rows.value)
         }
 
-    /** A ficha the collector paid API budget to sync outranks the one that ships in the APK. */
+    /**
+     * A new APK writes its snapshot over the ficha that was there, which is the whole of #606.
+     *
+     * Until this, a corrected ficha had no route to the two phones that exist: the curator re-seeds
+     * it, the asset travels in the APK, and `insertIfAbsent` ignored the conflict. The nine Peruvian
+     * fichas of #603 would have needed nine gestures on a card nobody had reason to press.
+     */
     @Test
-    fun `topping up never overwrites a type that is already cached`() = runTest {
+    fun `a new version writes its snapshot over the ficha that was cached`() = runTest {
         val dao = FakeTypeMetaDao()
-        val synced = TypeMetaEntity(
-            typeId = escudosTypeIds.first(),
-            title = "sincronizado",
-            family = null,
-            issuerCode = null,
-            minYear = null,
-            maxYear = null,
-            weightGrams = null,
-            obverseUrl = null,
-            reverseUrl = null,
-            raw = "{}",
-            fetchedAt = 1,
-        )
-        dao.insertIfAbsent(synced)
+        val values = FakeNamedValues()
+        seed(dao, values).topUp(curatedTypeIds.toSet())
+        val typeId = escudosTypeIds.first()
+        dao.overwrite(stale(typeId))
 
-        seed(dao).topUp(curatedTypeIds.toSet())
+        val report = seed(dao, values, versionCode = version + 1).topUp(curatedTypeIds.toSet())
 
-        assertEquals(synced, dao.rows.value.first { it.typeId == synced.typeId })
+        val written = dao.rows.value.first { it.typeId == typeId }
+        assertEquals(snapshot[typeId.toString()]?.get("title")?.jsonPrimitive?.contentOrNull, written.title)
+        assertTrue(report.overwritten > 0, "la siembra nueva no ha pisado nada")
+        assertEquals(0, report.added, "y no ha añadido nada, porque no faltaba nada")
     }
+
+    /**
+     * And a ficha the collector refreshed **after** the update stays his until the next one.
+     *
+     * The gesture of ADR 0025 is one type, one consulta, over a card where he has already seen the
+     * error; a seed that undid it on the next launch would make it pointless. The version is what
+     * protects it: this snapshot has been applied here, and it is not applied twice.
+     */
+    @Test
+    fun `a ficha refreshed after the update survives until the next one`() = runTest {
+        val dao = FakeTypeMetaDao()
+        val values = FakeNamedValues()
+        seed(dao, values).topUp(curatedTypeIds.toSet())
+        val refreshed = stale(escudosTypeIds.first())
+        dao.overwrite(refreshed)
+
+        seed(dao, values).topUp(curatedTypeIds.toSet())
+
+        assertEquals(refreshed, dao.rows.value.first { it.typeId == refreshed.typeId })
+    }
+
+    /** A first install has nothing to overwrite, and says so rather than claiming 1.089 writes. */
+    @Test
+    fun `the first install only adds`() = runTest {
+        val report = seed(FakeTypeMetaDao()).topUp(curatedTypeIds.toSet())
+
+        assertTrue(report.added > 0)
+        assertEquals(0, report.overwritten)
+    }
+
+    private fun stale(typeId: Int) = TypeMetaEntity(
+        typeId = typeId,
+        title = "lo que decía la ficha vieja",
+        family = null,
+        issuerCode = null,
+        minYear = null,
+        maxYear = null,
+        weightGrams = null,
+        obverseUrl = null,
+        reverseUrl = null,
+        raw = "{}",
+        fetchedAt = 1,
+    )
 
     private val escudosTypeIds: List<Int> =
         SHIPPED_CURATION.catalogs
