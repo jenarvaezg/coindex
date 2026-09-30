@@ -170,7 +170,7 @@ class AppContainer(context: Context) {
     }
 
     /** One explicit sync, stamped and written down (#220). */
-    val collectionSync: CollectionSync by lazy { CollectionSync(syncService, syncLog) }
+    val collectionSync: CollectionSync by lazy { CollectionSync(syncService, syncLog, rejectionWall) }
 
     /** One type's ficha, asked again on purpose (#185, ADR 0025). */
     val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }

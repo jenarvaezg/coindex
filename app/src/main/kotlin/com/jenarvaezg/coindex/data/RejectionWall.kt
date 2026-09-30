@@ -24,25 +24,49 @@ private const val THROTTLE_WALL_MILLIS = 6L * 60 * 60 * 1_000
  */
 enum class RejectionCause {
     /**
-     * `403` — the quota **Numista** counts, which is not the one [CallBudgetGate] counts.
+     * `429` with the quota named in its body — the allowance **Numista** counts, which is not the one
+     * [CallBudgetGate] counts.
      *
      * Theirs is 2.000 a month against the 1.500 of ADR 0003, over a key that a second phone spends
      * too (#562), so this arrives with budget still on the local counter. Their month is the
      * calendar month, the same one [startOfMonthMillis] draws for the gate, so the wall falls on the
      * 1st — the very sentence «Este teléfono» already says of the local budget.
+     *
+     * **It shares its status with [Throttled], and the body is the only thing that tells the two
+     * apart** (#600). The OpenAPI 3.36 declares the `429` as «too many simultaneous requests **or**
+     * you reached the limit of your monthly quota» on all five routes the app asks for, and documents
+     * no body at all — so what [rejectionCauseFor] reads is the one answer that was ever measured:
+     * `scripts/seed-type-cache.py --refresh` got `HTTP 429 «Quota exceeded»` out of `/types/{id}` with
+     * Jose's key on 14 August 2026. A body that stops saying it falls back to the six hours below,
+     * which is the reading that costs a day of prices instead of a month of them.
      */
     Quota,
 
     /**
-     * `401` — the key is being refused, and no amount of waiting is going to fix a credential.
+     * `401`, and the `403` with it — the key is being refused, and no amount of waiting is going to
+     * fix a credential.
      *
      * The only wall with no clock at all. It falls when the collector saves the field in
      * «Credenciales», which is the gesture that means «prueba otra vez» — and it is the door ADR 0028
      * §6.1 already prints in this state, so the way out is on the screen that reports it.
+     *
+     * **The `403` was read as the quota until #600, and the published contract says otherwise.** The
+     * OpenAPI 3.36 declares it on **two** routes and only two — `/types/{type_id}/sales_records` and
+     * `/search_by_image`, both paid — with the text «Your API key is not activated for using this API
+     * endpoint». The app asks for neither, so a `403` over the five routes it does ask for is a
+     * revoked key or Cloudflare turning the phone away, and the 1st of the month fixes neither of
+     * those. It is also the reading `syncErrorLabel` has always given it, one screen away.
      */
     Credentials,
 
-    /** `429` — the throttle saying «ahora no», which is a matter of hours and never of a month. */
+    /**
+     * `429` without the quota in its body: the throttle saying «ahora no», hours and never a month.
+     *
+     * The doubt of #600 lands here on purpose. Both readings of the status are true — Numista says so
+     * in the same sentence — so the one that is believed without evidence is the short one: a throttle
+     * mistaken for the quota costs a month of prices, and the quota mistaken for a throttle costs six
+     * hours and a single call.
+     */
     Throttled,
 
     /**
@@ -52,6 +76,29 @@ enum class RejectionCause {
      * `5xx` while a shard of theirs restarts must not cost the collector a month of prices.
      */
     Unreadable,
+}
+
+/** The three statuses Numista refuses with, read here because two surfaces read them. */
+private const val HTTP_UNAUTHORIZED = 401
+private const val HTTP_FORBIDDEN = 403
+private const val HTTP_TOO_MANY_REQUESTS = 429
+
+/** What Numista wrote in the body of the one exhausted month anybody measured (#600). */
+private const val QUOTA_MARKER = "quota"
+
+/**
+ * What a refused answer means, and therefore which clock it is believed on.
+ *
+ * One function and not two branches in two files: the valuation pass reads the status to pick the
+ * wall's clock and [com.jenarvaezg.coindex.ui.syncErrorLabel] reads it to pick the sentence, and while
+ * those were separate the two disagreed about the `403` for seven weeks. Null is «this is not Numista
+ * refusing», which is one issue's bad luck to the pass and an unexpected status to the snackbar.
+ */
+fun rejectionCauseFor(status: Int, body: String): RejectionCause? = when (status) {
+    HTTP_TOO_MANY_REQUESTS ->
+        if (body.contains(QUOTA_MARKER, ignoreCase = true)) RejectionCause.Quota else RejectionCause.Throttled
+    HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> RejectionCause.Credentials
+    else -> null
 }
 
 /**

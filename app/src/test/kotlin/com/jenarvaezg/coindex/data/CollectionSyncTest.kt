@@ -40,7 +40,8 @@ class CollectionSyncTest {
     private val calls = FakeApiCallDao()
     private val log = StoredSyncLog(FakeNamedValues())
     private val service = SyncService(items, types, ApiCallLedger(calls) { 1_000L }) { 1_000L }
-    private val sync = CollectionSync(service, log) { STAMPED_AT }
+    private val wall = StoredRejectionWall(FakeNamedValues()) { STAMPED_AT }
+    private val sync = CollectionSync(service, log, wall) { STAMPED_AT }
 
     /** A client that answers out of the mock engine, recording its calls like the real gate does. */
     private fun client(collectionStatus: HttpStatusCode = HttpStatusCode.OK): NumistaClient {
