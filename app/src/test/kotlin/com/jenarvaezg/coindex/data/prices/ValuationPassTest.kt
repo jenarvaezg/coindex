@@ -168,19 +168,45 @@ class ValuationPassTest {
     }
 
     /**
-     * And so does the `403`, which is the shape the real exhausted quota arrives in.
+     * And so does the `403`, which is the key being turned away and **not** the quota (#600).
      *
-     * Numista's own month is 2.000 calls and the local gate of ADR 0003 is 1.500, so the gate cannot
-     * see a key spent on another phone: `Quota exceeded` comes back as a `403` with budget to spare.
+     * The OpenAPI 3.36 declares the `403` on two paid routes the app never asks for, with the text of
+     * a permission. Over the five it does ask for it is a revoked key or Cloudflare, so its wall is
+     * the credential's and waiting for the 1st fixes nothing.
      */
     @Test
     fun `a key Numista refuses stops the pass too`() = runTest {
-        val pass = pass(handler = { respond("Quota exceeded", HttpStatusCode.Forbidden, JSON) })
+        val wall = StoredRejectionWall(FakeNamedValues()) { NOW }
+        val pass = pass(handler = { respond("nope", HttpStatusCode.Forbidden, JSON) }, wall = wall)
 
         val status = pass.run(plan(OwnedIssue(30, 297), OwnedIssue(30, 298)), held = null)
 
         assertEquals(1, asked.size)
         assertEquals(ValuationRefusal.Rejected, status.held)
+        assertEquals(RejectionCause.Credentials, wall.standing())
+    }
+
+    /**
+     * The `429` is two answers in one status, and only the body says which (#600).
+     *
+     * Numista's own month is 2.000 calls and the local gate of ADR 0003 is 1.500, so the gate cannot
+     * see a key spent on another phone: `Quota exceeded` arrives with budget to spare, and it arrives
+     * as a `429` — measured on 14 August 2026 by `scripts/seed-type-cache.py --refresh` over
+     * `/types/{id}`, which is a route of this app. A `429` that does not say it is the throttle, and
+     * it is believed for six hours and not for a month.
+     */
+    @Test
+    fun `only the body tells the exhausted month from the throttle`() = runTest {
+        val exhausted = StoredRejectionWall(FakeNamedValues()) { NOW }
+        pass(handler = { respond("Quota exceeded", HttpStatusCode.TooManyRequests, JSON) }, wall = exhausted)
+            .run(plan(OwnedIssue(30, 297)), held = null)
+
+        val throttled = StoredRejectionWall(FakeNamedValues()) { NOW }
+        pass(handler = { respond("Too many simultaneous requests", HttpStatusCode.TooManyRequests, JSON) }, wall = throttled)
+            .run(plan(OwnedIssue(30, 297)), held = null)
+
+        assertEquals(RejectionCause.Quota, exhausted.standing(), "el mes agotado espera al día 1")
+        assertEquals(RejectionCause.Throttled, throttled.standing(), "el throttle son horas, no un mes")
     }
 
     /** And the `401`, which is the token the pass could not get and will not get on the next call. */
@@ -195,7 +221,7 @@ class ValuationPassTest {
     }
 
     /**
-     * The wall is **remembered**, which is the whole of #579: two passes against a `403` cost one call.
+     * The wall is **remembered**, which is the whole of #579: two passes against a refusal cost one call.
      *
      * Without it the second pass rediscovers the wall by paying for it, and so does every pass after
      * that — the launch, each end of sync, each marked casilla, each notebook export. Eight of those a
@@ -209,7 +235,7 @@ class ValuationPassTest {
         val reserved = mutableListOf<String>()
         val wall = StoredRejectionWall(FakeNamedValues()) { NOW }
         val refused: io.ktor.client.engine.mock.MockRequestHandler =
-            { respond("Quota exceeded", HttpStatusCode.Forbidden, JSON) }
+            { respond("Quota exceeded", HttpStatusCode.TooManyRequests, JSON) }
 
         pass(refused, budget = { reserved += it }, wall = wall)
             .run(plan(OwnedIssue(30, 297)), held = null)
@@ -232,13 +258,13 @@ class ValuationPassTest {
         var clock = NOW
         val wall = StoredRejectionWall(FakeNamedValues()) { clock }
         val refused: io.ktor.client.engine.mock.MockRequestHandler =
-            { respond("Quota exceeded", HttpStatusCode.Forbidden, JSON) }
+            { respond("Quota exceeded", HttpStatusCode.TooManyRequests, JSON) }
         pass(refused, now = clock, wall = wall).run(plan(OwnedIssue(30, 297)), held = null)
 
         clock = startOfMonthMillis(NOW + 40 * DAY)
         pass(PRICED, now = clock, wall = wall).run(plan(OwnedIssue(30, 297)), held = null)
 
-        assertEquals(2, asked.size, "la pared del 403 cae con el mes, no con un plazo de horas")
+        assertEquals(2, asked.size, "la pared de la cuota cae con el mes, no con un plazo de horas")
         assertEquals(listOf("vf" to 25.1, "unc" to 39.6), prices.prices.value.map { it.grade to it.eur })
     }
 

@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.data.prices
 
 import com.jenarvaezg.coindex.data.RejectionCause
 import com.jenarvaezg.coindex.data.RejectionWall
+import com.jenarvaezg.coindex.data.rejectionCauseFor
 import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
@@ -31,13 +32,14 @@ enum class ValuationRefusal {
     /**
      * Numista is turning the calls away, and the pass stopped instead of spending the month at it (#560).
      *
-     * Three answers arrive here. A `429` is Numista throttling the key; a `403` is the quota **it**
-     * counts — 2.000 a month against the 1.500 of the local gate (ADR 0003), which cannot see what
-     * another phone spent of the same key. And a run of answers that leave no row, whatever their
-     * status, because a pass that writes nothing five times running is not meeting bad luck.
+     * Three answers arrive here. A `429` is Numista throttling the key **or** saying the month of that
+     * key is gone — 2.000 a month against the 1.500 of the local gate (ADR 0003), which cannot see
+     * what another phone spent of the same key; a `401` or a `403` is the key itself being turned
+     * away. And a run of answers that leave no row, whatever their status, because a pass that writes
+     * nothing five times running is not meeting bad luck.
      *
-     * **The `403` has another reading, and it is not this class's to give.** `syncErrorLabel` splits it
-     * from the `429` and sends the collector to Ajustes to check the key, which it can do because it is
+     * **The key being refused has another reading, and it is not this class's to give.**
+     * `syncErrorLabel` sends the collector to Ajustes to check it, which it can do because it is
      * answering a press. This one is a state that appeared on its own over prices nobody asked for, and
      * it says only what is true of all three: Numista is refusing. Whether the key is wrong is a
      * question the next sync answers, in the sentence that already owns it.
@@ -330,9 +332,6 @@ class NumistaValuationPass(
 }
 
 private const val HTTP_NOT_FOUND = 404
-private const val HTTP_UNAUTHORIZED = 401
-private const val HTTP_FORBIDDEN = 403
-private const val HTTP_TOO_MANY_REQUESTS = 429
 
 /**
  * How many answers in a row may leave no row before the pass reads them as a wall (#560).
@@ -381,24 +380,22 @@ private class BarrenStreak {
  * Which refusals stop a whole pass, and which are one issue's bad luck.
  *
  * The budget stops it because every further call would throw the same way, and the network stops it
- * because four hundred timeouts in a row is two minutes of a dead radio. **The `429` and the `403`
- * stop it for the first of those reasons and not for a new one** (#560): a throttled key is throttled
- * for the next call too, and a `403` is either the key being refused or Numista's own quota gone —
- * neither of which the next issue is going to fix. The `401` rides with the `403` because
- * `syncErrorLabel` already reads them as one thing, and because a token the pass could not get is not
- * a token the next of 442 calls gets either. A malformed body or an unexpected status is this
- * issue's problem alone: null means «skip it and carry on», and it is [BarrenStreak] that decides how
- * many of those in a row stop being one issue's problem.
+ * because four hundred timeouts in a row is two minutes of a dead radio. **The three statuses Numista
+ * refuses with stop it for the first of those reasons and not for a new one** (#560): a throttled key
+ * is throttled for the next call too, an exhausted month is exhausted for it too, and a key being
+ * turned away is not a key the next of 442 calls gets in with. A malformed body or an unexpected
+ * status is this issue's problem alone: null means «skip it and carry on», and it is [BarrenStreak]
+ * that decides how many of those in a row stop being one issue's problem.
+ *
+ * **Which of the three it was is [rejectionCauseFor]'s to say and not this function's** (#600). What
+ * is decided here is whether the pass stops; what that decides is how long it stays stopped, and the
+ * status alone does not carry it — the `429` is both the throttle and the quota.
  */
 private fun stopFor(error: NumistaException): Stop? = when (error) {
     is NumistaException.BudgetExhausted -> Stop(ValuationRefusal.BudgetExhausted)
     is NumistaException.Transport -> Stop(ValuationRefusal.Offline)
-    is NumistaException.Api -> when (error.status) {
-        HTTP_TOO_MANY_REQUESTS -> Stop(ValuationRefusal.Rejected, RejectionCause.Throttled)
-        HTTP_UNAUTHORIZED -> Stop(ValuationRefusal.Rejected, RejectionCause.Credentials)
-        HTTP_FORBIDDEN -> Stop(ValuationRefusal.Rejected, RejectionCause.Quota)
-        else -> null
-    }
+    is NumistaException.Api ->
+        rejectionCauseFor(error.status, error.body)?.let { Stop(ValuationRefusal.Rejected, it) }
     else -> null
 }
 

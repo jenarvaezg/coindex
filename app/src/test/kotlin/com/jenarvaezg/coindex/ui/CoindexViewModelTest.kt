@@ -18,6 +18,7 @@ import com.jenarvaezg.coindex.data.FakeWishDao
 import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.StoredSyncLog
 import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.data.StoredRejectionWall
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
@@ -259,6 +260,7 @@ class CoindexViewModelTest {
             collectionSync = CollectionSync(
                 syncService = SyncService(items, types, ledger) { NOW },
                 syncLog = syncLog,
+                wall = StoredRejectionWall(FakeNamedValues()) { NOW },
             ) { NOW },
             typeRefresh = TypeRefresh(types) { NOW },
             updates = UpdateFlow(updateChecker(), installer) { NOW },

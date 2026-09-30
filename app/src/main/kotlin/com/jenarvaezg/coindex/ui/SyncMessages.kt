@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.ui
 
+import com.jenarvaezg.coindex.data.RejectionCause
 import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.data.rejectionCauseFor
 import com.jenarvaezg.coindex.data.numista.NumistaException
 import java.time.Instant
 import java.time.ZoneId
@@ -64,7 +66,7 @@ fun lastSyncLabel(
  * key that no longer works, and the way out is «Credenciales». Anything genuinely
  * unexpected keeps its original text rather than being flattened into a friendly nothing.
  *
- * The three refusals that name that screen **interpolate its label** (#521): they said «en Ajustes»
+ * The refusals that name that screen **interpolate its label** (#521): they said «en Ajustes»
  * while the fields lived at the top of it, and a message pointing at a screen that no longer holds
  * what it promises is worse than a message pointing at nothing. One string owns the name; these
  * three borrow it, so the next move cannot leave them behind.
@@ -76,13 +78,24 @@ fun syncErrorLabel(error: Throwable): String = when (error) {
         "Consultas a la API agotadas este mes. Espera al día 1 para volver a intentarlo."
     is NumistaException.Transport ->
         "Sin conexión con Numista. Tu colección local sigue disponible."
-    is NumistaException.Api -> when (error.status) {
-        401, 403 -> "Numista rechazó tu API key. Revísala en $CREDENTIALS_LABEL."
-        404 -> "Numista no encuentra ese identificador de usuario. Revísalo en $CREDENTIALS_LABEL."
+    is NumistaException.Api -> when {
+        // The three refusals are read by [rejectionCauseFor], the same function that picks the wall's
+        // clock, so the sentence and the wait can no longer disagree about what a status means (#600).
+        rejectionCauseFor(error.status, error.body) == RejectionCause.Credentials ->
+            "Numista rechazó tu API key. Revísala en $CREDENTIALS_LABEL."
+        // «Este mes» and not «dentro de un rato»: the month of the key is gone, and the wait is until
+        // the 1st. It is the allowance **Numista** counts and not the one the app does, so it does not
+        // borrow the sentence of `BudgetExhausted` — that one is true of this phone, and this one is
+        // true of the key, which a second phone spends too (#562).
+        rejectionCauseFor(error.status, error.body) == RejectionCause.Quota ->
+            "Numista ha agotado las consultas de tu clave este mes. Espera al día 1 para volver a intentarlo."
         // «Consultas» and not «peticiones» (#516): Numista throttling is the same object the monthly
         // budget counts, and a third word for it would only be readable as a third thing.
-        429 -> "Numista está limitando las consultas. Vuelve a intentarlo dentro de un rato."
-        in 500..599 -> "Numista está caído ahora mismo. Tu colección local sigue disponible."
+        rejectionCauseFor(error.status, error.body) == RejectionCause.Throttled ->
+            "Numista está limitando las consultas. Vuelve a intentarlo dentro de un rato."
+        error.status == 404 ->
+            "Numista no encuentra ese identificador de usuario. Revísalo en $CREDENTIALS_LABEL."
+        error.status in 500..599 -> "Numista está caído ahora mismo. Tu colección local sigue disponible."
         else -> "Numista devolvió un error (${error.status}). Vuelve a intentarlo más tarde."
     }
     is NumistaException.InvalidResponse ->

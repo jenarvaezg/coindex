@@ -1,6 +1,8 @@
 # ADR 0028: Prices arrive in one pass, and a total is never shown half-done
 
-- Status: accepted, §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
+- Status: accepted, §4 amended by [#600](https://github.com/jenarvaezg/coindex/issues/600) (the
+  quota is the `429` and the key being turned away is the `403`: the two clocks of the wall were
+  swapped, and the `429` needs its body read to tell the month from the throttle), §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
   marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number), §3 and
   §5 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (one plate of the
   shelf window is valued by a gesture, and that price never expires), §4 amended by
@@ -166,7 +168,7 @@ document exists to remove. The shape was already settled in ADR 0024 for the `40
 >
 > | what came back | per pass | a day of his (~8 launches) | a month |
 > | --- | ---: | ---: | ---: |
-> | `403` / `429` / `401` | 1 call | 8 | ~240 |
+> | `429` / `403` / `401` | 1 call | 8 | ~240 |
 > | a run of five | 5 calls | 40 | ~1.200 |
 >
 > Against the 1.500 of ADR 0003 the bottom row eats the month on its own — and every one of those calls
@@ -180,10 +182,26 @@ document exists to remove. The shape was already settled in ADR 0024 for the `40
 >
 > | what Numista answered | until when | why |
 > | --- | --- | --- |
-> | `403` | the 1st of the next month | it is the quota **Numista** counts, and their month is the same calendar month `startOfMonthMillis` draws for the gate |
-> | `401` | until the key changes | waiting does not fix a credential. `StoredCredentials.save` takes it down, which is the gesture that means «prueba otra vez» — and the door to «Credenciales» is already printed in this state by §6.1 |
-> | `429` | 6 hours | the throttle says «ahora no», not «este mes no» |
+> | `429` saying the quota | the 1st of the next month | it is the allowance **Numista** counts, and their month is the same calendar month `startOfMonthMillis` draws for the gate |
+> | `401` or `403` | until the key changes | waiting does not fix a credential. `StoredCredentials.save` takes it down, which is the gesture that means «prueba otra vez» — and the door to «Credenciales» is already printed in this state by §6.1. A sync that gets through takes it down too (#600) |
+> | any other `429` | 6 hours | the throttle says «ahora no», not «este mes no» |
 > | a run of five | 6 hours | nobody knows what it is, so it is believed for the shortest of the three lives |
+>
+> **Amended on 2026-09-30 ([#600](https://github.com/jenarvaezg/coindex/issues/600)): the first two
+> rows used to be the other way round, and both clocks were wrong.** The table above said `403` for the
+> quota and `429` for the throttle, and the published contract says neither. The OpenAPI 3.36 declares
+> the `429` on the five routes this app asks for as «too many simultaneous requests **or** you reached
+> the limit of your monthly quota», and the `403` on exactly two paid routes it never asks for
+> (`/types/{type_id}/sales_records`, `/search_by_image`) as «your API key is not activated for using
+> this API endpoint». The evidence agrees with the spec: on 14 August 2026 `scripts/seed-type-cache.py
+> --refresh` got `HTTP 429 «Quota exceeded»` out of `/types/{id}` with Jose's key.
+>
+> So the quota and the throttle **share a status**, and the body is the only thing that separates them.
+> `rejectionCauseFor` reads it, and a `429` that does not name the quota is the throttle: the doubt is
+> resolved towards six hours because mistaking a throttle for the quota costs a month of prices, and
+> mistaking the quota for a throttle costs six hours and one call. What the collector reads changed
+> here too, and it had to: «vuelve a intentarlo dentro de un rato» was said to an exhausted month for
+> three weeks, and it does not come back in a while — it comes back on the 1st.
 >
 > Nothing the collector reads changes: the pass still returns `Rejected` and «Este teléfono» still says
 > the one sentence that is true of all four (§6.1). What changes is what it costs to say it — one call

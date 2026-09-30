@@ -8,6 +8,7 @@ import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 private val MADRID = ZoneId.of("Europe/Madrid")
@@ -120,6 +121,43 @@ class SyncErrorLabelTest {
         assertEquals(
             syncErrorLabel(NumistaException.Api("/oauth_token", 401, "")),
             syncErrorLabel(NumistaException.Api("/users/1/collected_items", 403, "")),
+        )
+    }
+
+    /**
+     * The two readings of the `429` are two sentences, because they are two waits (#600).
+     *
+     * The collector read «vuelve a intentarlo dentro de un rato» for three weeks of an exhausted
+     * month, which is not a hedge but a falsehood: it does not come back in a while, it comes back on
+     * the 1st. And the other way costs as much — a throttle told to wait until the 1st.
+     */
+    @Test
+    fun `the exhausted month and the throttle are not told to wait the same`() {
+        val exhausted = syncErrorLabel(NumistaException.Api("/types/1", 429, "Quota exceeded"))
+        val throttled = syncErrorLabel(NumistaException.Api("/types/1", 429, "too many requests"))
+
+        assertTrue(exhausted.contains("día 1"), exhausted)
+        assertFalse(exhausted.contains("un rato"), exhausted)
+        assertTrue(throttled.contains("un rato"), throttled)
+        assertFalse(throttled.contains("día 1"), throttled)
+        // Neither of them sends the collector to Credenciales: the key is fine in both.
+        assertFalse(exhausted.contains("Credenciales"), exhausted)
+        assertFalse(throttled.contains("Credenciales"), throttled)
+    }
+
+    /**
+     * And the exhausted month of the **key** is not the exhausted month of the **phone**.
+     *
+     * `BudgetExhausted` is the local gate of ADR 0003 refusing before sending; this one is Numista
+     * refusing a key a second phone spends too (#562). Both wait for the 1st and both are said in
+     * consultas, but a collector told the app ran out when the app has 900 left would go looking in
+     * the wrong place.
+     */
+    @Test
+    fun `the month of the key and the month of the phone are different sentences`() {
+        assertNotEquals(
+            syncErrorLabel(NumistaException.BudgetExhausted(1500, 1500)),
+            syncErrorLabel(NumistaException.Api("/types/1", 429, "Quota exceeded")),
         )
     }
 
