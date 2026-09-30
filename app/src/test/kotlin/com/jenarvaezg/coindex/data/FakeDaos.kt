@@ -52,6 +52,9 @@ class FakeTypeMetaDao : TypeMetaDao {
     override suspend fun overwrite(type: TypeMetaEntity) {
         rows.value = rows.value.filterNot { it.typeId == type.typeId } + type
     }
+    override suspend fun overwrite(types: List<TypeMetaEntity>) {
+        types.forEach { overwrite(it) }
+    }
     private fun withoutThumbnails() = rows.value
         .filter { it.obverseThumbnailUrl == null && it.reverseThumbnailUrl == null }
     override suspend fun countWithoutThumbnails(): Int = withoutThumbnails().size

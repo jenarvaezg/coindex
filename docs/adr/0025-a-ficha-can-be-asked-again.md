@@ -1,6 +1,8 @@
 # ADR 0025: A ficha can be asked again
 
-- Status: accepted
+- Status: accepted, second route added by [ADR 0033](0033-a-newer-snapshot-writes-over-the-ficha-it-corrects.md)
+  (the snapshot of a newly installed version writes over the fichas already cached, once per
+  `versionCode`; the gesture below stays the only thing that asks Numista from a phone)
 - Date: 2026-08-05
 
 ## Context
