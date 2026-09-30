@@ -7,6 +7,7 @@ import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.CREDENTIAL_PREFERENCES
 import com.jenarvaezg.coindex.data.DEFAULT_MONTHLY_BUDGET
+import com.jenarvaezg.coindex.data.InventoryRefresh
 import com.jenarvaezg.coindex.data.keystoreSecret
 import com.jenarvaezg.coindex.data.NamedValues
 import com.jenarvaezg.coindex.data.NOTEBOOK_PREFERENCES
@@ -178,6 +179,9 @@ class AppContainer(context: Context) {
     /** One explicit sync, stamped and written down (#220). */
     val collectionSync: CollectionSync by lazy { CollectionSync(syncService, syncLog, rejectionWall) }
 
+    /** The inventory brought up to date because a day passed, not because anybody pressed (#605). */
+    val inventoryRefresh: InventoryRefresh by lazy { InventoryRefresh(collectionSync, rejectionWall) }
+
     /** One type's ficha, asked again on purpose (#185, ADR 0025). */
     val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }
 
@@ -246,8 +250,12 @@ class AppContainer(context: Context) {
      * Read through the sync itself rather than handed in by the ViewModel, because the pass has to be
      * able to ask **at the moment it starts its first call**: the two spend the same monthly allowance,
      * and three seconds of a cold start is long enough for the collector to have pressed «Sincronizar».
+     *
+     * The automatic refresh counts as a sync in flight from the instant it is claimed, two seconds
+     * into the launch and one before the pass asks (#605), so the pass holds instead of being
+     * cancelled halfway through a call it has already paid for.
      */
-    private fun isSyncing(): Boolean = collectionSync.inFlight
+    private fun isSyncing(): Boolean = collectionSync.inFlight || inventoryRefresh.inFlight
 
     /**
      * Self-update against the public GitHub releases. These requests go to GitHub, never to

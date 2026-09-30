@@ -214,8 +214,11 @@ fun valuationLabel(status: ValuationStatus): String {
     return head + when (status.held) {
         null -> "Se traen solos con la app abierta."
         ValuationRefusal.Syncing -> "Esperan a que termine el sincronizado."
+        // «Las que tienen» and no longer «el presupuesto de este mes» (#605): the pass stops 300
+        // consultas short of the cap so the inventory always has its two, and a phone with 300 left
+        // would have caught the old sentence out the next time «Sincronizar» worked.
         ValuationRefusal.BudgetExhausted ->
-            "Se acabó el presupuesto de consultas de este mes: seguirán el mes que viene."
+            "Se acabaron las consultas que los precios tienen este mes: seguirán el mes que viene."
         ValuationRefusal.Offline -> "Esperan a que haya red."
         ValuationRefusal.NoApiKey -> "Faltan las credenciales de Numista."
         ValuationRefusal.Rejected -> NUMISTA_IS_REFUSING

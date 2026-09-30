@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
+import com.jenarvaezg.coindex.data.InventoryRefresh
 import com.jenarvaezg.coindex.data.StoredCredentials
 import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.SyncOutcome
@@ -72,6 +73,7 @@ class CoindexViewModel(
     private val shelves: ShelfStore,
     private val notebook: StoredNotebook,
     private val collectionSync: CollectionSync,
+    private val inventoryRefresh: InventoryRefresh,
     private val typeRefresh: TypeRefresh,
     private val updates: UpdateFlow,
     private val photos: PhotoPrefetchLoop,
@@ -179,6 +181,7 @@ class CoindexViewModel(
             )
         }
         start()
+        refreshInventory()
         watchPhotoCache()
         watchValuation()
         watchPrices()
@@ -548,6 +551,42 @@ class CoindexViewModel(
         return ready
     }
 
+    /**
+     * Brings the inventory up to date on a launch, if a day has passed since the last one (#605).
+     *
+     * The quiet half of [sync], and the differences are all the same difference — **nobody asked for
+     * this one**:
+     *
+     * - **It says nothing.** No snackbar on the way out and none on the way back, neither for the
+     *   pieces it found nor for the network it could not reach. The refusals that have a sentence
+     *   keep it for the press that earns it, and a collector reading «Numista rechazó tu API key»
+     *   over an app he has just opened has been interrupted by something he did not do.
+     * - **It buys at most [com.jenarvaezg.coindex.data.AUTOMATIC_FICHA_LIMIT] fichas**, because it is
+     *   not being watched.
+     * - **It gives up in front of a standing wall**, which a press does not: the press is how the
+     *   collector finds out the key works again, and this is how the phone avoids paying twice a day
+     *   to be told what it wrote down (#579).
+     *
+     * What it does share with the press is the order of the ceremony: the network and the budget are
+     * taken off the photographs and the pass first, and the pass is forced afterwards — held or not,
+     * it has to be started again, because a pass that stood down for a sync recorded nothing as
+     * covered and would otherwise wait for the next launch.
+     */
+    private fun refreshInventory() {
+        if (_state.value.syncing || !inventoryRefresh.due()) return
+        val ready = client() ?: return
+        val userId = credentials.credentials()?.userId ?: return
+        _state.update { it.copy(syncing = true) }
+        viewModelScope.launch {
+            photos.yieldNetwork()
+            valuation.yieldNetwork()
+            inventoryRefresh.run(ready, userId)
+            _state.update { it.copy(syncing = false, lastSync = collectionSync.last) }
+            prefetchPhotographs(force = true)
+            valuePrices(force = true)
+        }
+    }
+
     fun sync() {
         if (_state.value.syncing) return
         val ready = clientOrComplain() ?: return
@@ -770,6 +809,7 @@ class CoindexViewModel(
                     shelves = container.shelves,
                     notebook = container.notebook,
                     collectionSync = container.collectionSync,
+                    inventoryRefresh = container.inventoryRefresh,
                     typeRefresh = container.typeRefresh,
                     updates = container.updates,
                     photos = container.photos,
