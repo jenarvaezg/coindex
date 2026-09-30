@@ -1,6 +1,8 @@
 # ADR 0028: Prices arrive in one pass, and a total is never shown half-done
 
-- Status: accepted, §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
+- Status: accepted, §3 and §6 amended by [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md)
+  (the launch has a fourth trigger, and the pass has a ceiling of its own 300 consultas short of the
+  cap so a sync always fits), §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
   marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number), §3 and
   §5 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (one plate of the
   shelf window is valued by a gesture, and that price never expires), §4 amended by
