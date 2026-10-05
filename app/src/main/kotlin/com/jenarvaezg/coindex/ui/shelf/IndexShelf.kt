@@ -13,12 +13,8 @@ import java.text.Collator
 import java.util.Locale
 
 /**
- * How the index is ordered, with the comparator of ADR 0021 §6 as the default.
- *
- * A selector and not a preference: §6 accepted that the one order is *not* alphabetical, and §1 is
- * where that was paid for. So «Más completas» is the order the ADR decided and every other entry is
- * the collector overriding it on purpose, which is why the default is the one with no adjective of
- * its own.
+ * How the index is ordered. «Más completas» is ADR 0021 §6's order and the default; every other
+ * entry is the collector overriding it.
  */
 enum class IndexSort(val label: String) {
     MostComplete("Más completas"),
@@ -30,11 +26,8 @@ enum class IndexSort(val label: String) {
 }
 
 /**
- * What a card can be filtered by on the «estado» row.
- *
- * The three values are the two of the ratio plus its absence, which is exactly the capability split
- * of ADR 0021 §3 — so this facet says nothing the card does not already say out loud, and no word of
- * provenance sneaks back in through a chip.
+ * The «estado» facet: complete, partly done, or no plate. It mirrors ADR 0021 §3's capability
+ * split, so it says nothing the card doesn't already show.
  */
 enum class PlateStatus(val label: String) {
     Complete("Completas"),
@@ -43,21 +36,14 @@ enum class PlateStatus(val label: String) {
 }
 
 /**
- * Whatever the five chips can be asked about: a card of the index, or one loose piece (#275).
+ * What the index's chips filter: a card, or a loose piece (#275), so the notebook's loose-coin
+ * lámina narrows like everything else. A loose piece is treated as a one-piece card with no plate.
  *
- * The shelf grew a second kind of subject when the notebook learned to print the coins no
- * collection claims: that lámina is narrowed by the same chips as everything else, so a piece is
- * measured **as if it were a card of one piece with no plate**. Three of the five it answers off
- * its own ficha; the other two it answers the way a card with no catalog already does.
+ * [countries] is the país facet: for a plate, every member's cured country (ADR 0023, #415), as the
+ * country axis paints them; empty when there is none.
  *
- * [countries] is the país facet: for a plate it is every member's cured country (ADR 0023 / #415),
- * so the chip row speaks the same names the country axis paints. A card or loose piece with one
- * issuer keeps a single-element set; none means the subject has no country to filter by.
- *
- * [weight] is the one that is nullable here and not on a card. A card with no single weight is a
- * box or a set — [OunceBand.Spanning], «Varias onzas» — and a loose coin whose ficha declares no
- * weight is neither: it has **no answer**, so it falls out of any weight filter rather than
- * disguising itself as a box.
+ * [weight] is null only for a loose coin with no recorded weight, which then matches no weight
+ * filter. A card without a single weight is [OunceBand.Spanning] instead.
  */
 interface ShelfSubject {
     val countries: Set<String>
@@ -67,14 +53,12 @@ interface ShelfSubject {
     val series: SeriesStatus?
 }
 
-/** What the shelf of the index is narrowing by, and in what order it leaves what is left. */
+/** What the index shelf narrows by, and how it sorts the result. */
 data class IndexShelf(
     val sort: IndexSort = IndexSort.MostComplete,
     /**
-     * How the sheet is ordered (ADR 0026 §9): by plate, by country or by year.
-     *
-     * A facet and not a filter — it does not narrow — so the folded line does not count it among
-     * them. The default is today's Collections; the summary names it only when it is not that one.
+     * By plate, country or year (ADR 0026 §9). Not a filter, so not counted on the folded line,
+     * which names it only when it isn't the default.
      */
     val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,
@@ -83,16 +67,13 @@ data class IndexShelf(
     val status: PlateStatus? = null,
     val series: SeriesStatus? = null,
 ) {
-    /** How many chips are chosen, which is what tells a narrowed shelf from a bare one (#515). */
+    /** Number of chosen filter chips (#515). */
     val active: Int
         get() = listOfNotNull(issuer, weight, startsIn, status, series).size
 
     /**
-     * The chips dropped and **nothing else**, which is what «Quitar los filtros» promises (#515).
-     *
-     * `IndexShelf()` would take the axis and the sort with them, and neither narrows: a collector
-     * reading the sheet by country and clearing a filter would find themselves back on the plate
-     * axis, having pressed a button about filters.
+     * Clears the filters only, which is what «Quitar los filtros» promises (#515): `IndexShelf()`
+     * would also reset the axis and sort.
      */
     fun withoutFilters(): IndexShelf =
         copy(issuer = null, weight = null, startsIn = null, status = null, series = null)
@@ -105,15 +86,12 @@ data class IndexShelf(
             (except == IndexFacet.Series || series == null || subject.series == series)
 }
 
-/** The five chip rows of the index, named so a facet can be counted with its own choice dropped. */
+/** The filter facets, named so each can be counted with its own choice dropped. */
 enum class IndexFacet { Issuer, Weight, StartsIn, Status, Series }
 
 /**
- * One card of the index reduced to what the shelf asks about.
- *
- * Precomputed once per redraw rather than read off the card each time a chip is counted: five facets
- * counted over sixty cards would otherwise walk the inventory thirty times, and the earliest year of
- * a collection is a join across `itemsByKey` and the type cache.
+ * One index card reduced to what the shelf asks about, precomputed once rather than per chip
+ * count: the start year joins `itemsByKey` with the type cache.
  */
 data class IndexFacts(
     val card: IndexCard,
@@ -123,22 +101,16 @@ data class IndexFacts(
     override val status: PlateStatus,
     override val series: SeriesStatus?,
     /**
-     * The highest Numista row id among its pieces, which is the only thing that can order by age.
-     *
-     * `collected_items` carries no date of any kind — not of purchase, not of entry — so this
-     * orders by **when Numista saw the piece**, and the screen says so wherever the order is on.
-     * Naming it after the id rather than after a date is what keeps that from being forgotten.
+     * The highest Numista row id among its pieces, the only proxy for age: `collected_items` has no
+     * dates. It orders by when Numista recorded the piece, and the screen says so.
      */
     val latestRowId: Long,
     val haystack: String,
 ) : ShelfSubject
 
 /**
- * Everything the shelf of the index needs, joined once from the state the screens already read.
- *
- * [catalogs] lets the país facet read **member** countries for evidenced plates — the same cure the
- * country axis already applies (#415 / ADR 0023) — instead of only the card eyebrow, which for a
- * spanning catalog is one header and not the issuers its casillas live in.
+ * The index shelf's facts, joined once. [catalogs] lets the país facet use member countries for
+ * plates (#415, ADR 0023) instead of the card's single eyebrow.
  */
 fun indexFacts(
     state: CollectionState,
@@ -195,19 +167,15 @@ internal fun countriesOf(
     return setOfNotNull(card.issuer)
 }
 
-/** The cards this shelf and this query leave, in the order the shelf's sort asks for. */
+/** The cards this shelf and query leave, in the shelf's sort order. */
 fun IndexShelf.narrow(facts: List<IndexFacts>, query: String): List<IndexCard> = facts
     .filter { matches(it) && matchesQuery(it.haystack, query) }
     .sortedWith(sortOrder(sort))
     .map { it.card }
 
 /**
- * Every order but the default is built on top of it, never instead of it.
- *
- * `sortedWith` is stable and the facts arrive in the order the domain comparator already put them
- * in (ADR 0021 §6), so «Más pesadas» breaks its own ties by ratio and then alphabetically without
- * restating either. That is also what keeps the selector from becoming a second definition of the
- * index's order, which §6 is explicit about being the domain's.
+ * Each order refines the default: `sortedWith` is stable and the facts arrive in the domain's order
+ * (ADR 0021 §6), so ties fall back to it without restating it.
  */
 private fun sortOrder(sort: IndexSort): Comparator<IndexFacts> {
     val collator = Collator.getInstance(Locale.forLanguageTag("es"))
@@ -216,8 +184,7 @@ private fun sortOrder(sort: IndexSort): Comparator<IndexFacts> {
         IndexSort.LeastComplete -> compareByDescending<IndexFacts> { it.card.coverage != null }
             .thenBy { it.card.coverage?.value ?: 0.0 }
         IndexSort.Alphabetical -> compareBy(collator) { it.card.name }
-        // A collection with no single weight has none to be heavy by, so it sits at the bottom
-        // rather than at zero ounces: a box is not lighter than a quarter-ounce, it is unweighed.
+        // Collections without a single weight go last rather than sorting as zero.
         IndexSort.Heaviest -> compareBy<IndexFacts> { it.weight == OunceBand.Spanning }
             .thenByDescending { (it.card as? IndexCard.Derived)?.collection?.weightMillioz ?: 0 }
         IndexSort.MostPieces -> compareByDescending { it.card.quantity }

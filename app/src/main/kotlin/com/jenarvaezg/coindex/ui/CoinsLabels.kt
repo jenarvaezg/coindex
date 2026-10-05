@@ -12,16 +12,12 @@ fun coinFichaIdentity(row: CoinRow): String = listOfNotNull(
     coinYearsLabel(row.years),
     numistaCodeLabel(row.typeId),
     objectClassLabel(row.objectClass),
-    // The guard that stops «×1» is what keeps a hole quiet too, now that a casilla of a lámina opens
-    // this sheet and half of them hold nothing (#508): zero is not greater than one, so nothing is
-    // said — and «×0» would have been a count of nothing dressed as a count.
+    // Only above one, which also keeps the sheet of an empty casilla from saying «×0» (#508).
     "×${row.quantity}".takeIf { row.quantity > 1 },
 ).joinToString(" · ")
 
 /**
- * A coin's Numista number, said the one way the app says it.
- *
- * Two readers: the identity line of a sheet, and the title of a type no ficha on this phone names —
- * where it is the only name such a coin has (see `typeTitle`).
+ * A coin's Numista number as the app writes it: on a sheet's identity line, and as the title of a
+ * type with no ficha on this phone (see `typeTitle`).
  */
 fun numistaCodeLabel(typeId: Int): String = "N# $typeId"

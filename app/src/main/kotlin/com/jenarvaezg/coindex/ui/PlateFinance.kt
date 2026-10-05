@@ -8,45 +8,31 @@ import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishKey
 
 /**
- * The money of a plate and what tasar it would cost, decided once for the screen that draws it.
+ * A plate's money and what tasar it would cost, decided once for the screen that draws it.
  *
- * **Which of the three régimes a plate is under is one decision** (ADR 0030 §3): a plate of the shelf
- * window is priced as a cost of entering, one of the collector's says what it holds and what closing
- * it would cost (ADR 0028), and while the market is still arriving neither says anything at all (ADR
- * 0028 §7). The three used to be a `when` inside two lambdas written in the body of the root
- * composable, which is where they went wrong twice over: nobody could test the choice without a
- * device, and a lambda literal is a **new object on every recomposition** — so the plate's own
- * `remember`, which keys its subject on the reading it was handed, never hit once and re-walked the
- * album on every frame of the entrance.
+ * One decision picks the régime (ADR 0030 §3): a shelf-window plate shows a cost of entering, a
+ * collector's plate its value and cost of closing (ADR 0028), and until the market lands neither
+ * shows anything (ADR 0028 §7). A class rather than lambdas in the root composable so the choice
+ * is testable on the JVM and the screen can key its `remember` on a stable instance; the root
+ * builds a new one only when its readings change.
  *
- * So this is a class and not a pair of functions: the screen keys on the instance, and the root builds
- * one instance per change of the readings behind it. Nothing here is a composable and nothing here
- * touches Android — the three branches, the gesture's ceiling and what pressing it does are all
- * answerable in a JVM test.
+ * Whether a tasación is running is not in here: it flips twice per press, and holding it would
+ * rebuild the object the album walk is remembered on. The screen gets that bit separately.
  *
- * **What is in flight is not in here**, which is the same rule read once more: whether this plate's
- * tasación is running flips twice per press and moves no amount at all, so holding it would rebuild
- * the very object the album walk is remembered on. The screen is handed that bit apart.
- *
- * @param showcase the shelf window as the root crossed it once (ADR 0030 §1), which is what says
- *   whether **this** plate is one of the twenty. The resolution's own `mine` is not asked: a plate the
- *   window does not hold has no cost of entering to print, whatever anything else says about it.
+ * @param showcase the shelf window (ADR 0030 §1), which alone decides whether this plate has a
+ *   cost of entering.
  * @param state the inventory and the fichas, for the weight and the pieces an amount is made of.
- * @param book the whole price book and not its readings, so the header and the casillas cannot
- *   disagree about *when* (ADR 0028, #536).
- * @param settled whether the market has finished arriving, which gates the collector's own plate and
- *   never the window's: those prices arrive by a gesture of their own, so waiting for the market of a
- *   collection this plate has no coin in would leave the amount off a plate that was just valued.
- * @param waiting whether that absence is worth saying on the plate (#519). The two answers of the pass
- *   and not the pass itself, which is what keeps this object still while one runs: `ValuationStatus`
- *   carries a count that moves every twenty-five issues, and rebuilding the reading on it would rebuild
- *   the very object the album walk is remembered on.
- * @param wished the casillas the collector marked, which carry a price whatever the plate's shape
+ * @param book the whole price book, so the header and the casillas agree on when (ADR 0028, #536).
+ * @param settled whether the market has finished arriving. Gates the collector's plates only: a
+ *   shelf-window plate is priced by its own gesture.
+ * @param waiting whether that absence is said on the plate (#519). A boolean rather than the
+ *   `ValuationStatus`, whose count moves during a pass and would rebuild this object.
+ * @param wished the casillas the collector marked, priced whatever the plate's shape
  *   (ADR 0029 §4).
- * @param nowMillis now, for the age of a hand-asked price (ADR 0030 §4) and for the calls the gesture
- *   would spend. Read once per arrival of a price, never per frame.
- * @param onValue starts the pass over one plate's holes, by catalog id: the unit the collector chose.
- * @param onMessage says out loud what a press bought nothing, which is [press]'s other half.
+ * @param nowMillis for the age of a hand-asked price (ADR 0030 §4) and the calls the gesture would
+ *   spend. Read once per arrival of a price, never per frame.
+ * @param onValue starts the pass over one plate's holes, by catalog id.
+ * @param onMessage reports a press that had nothing to ask (see [press]).
  */
 class PlateFinance(
     private val showcase: List<ShowcasePlate>,
@@ -60,10 +46,8 @@ class PlateFinance(
     private val onMessage: (UiNotice) -> Unit,
 ) {
     /**
-     * Everything this plate's header says about money, and the price inside each of its empty casillas.
-     *
-     * The three readings arrive together or none of them does (#493): they are one walk of the same
-     * album, and a drawer holding this empty cannot print any of the three.
+     * Everything this plate's header says about money, and the price inside each empty casilla. The
+     * readings arrive together or not at all (#493).
      */
     fun money(resolved: PlateResult.Available): PlateMoney {
         val window = window(resolved)
@@ -75,22 +59,16 @@ class PlateFinance(
     }
 
     /**
-     * What tasar this plate would spend, which is the ceiling the gesture prints **before** it is
-     * pressed (ADR 0030 §3, #282).
-     *
-     * Zero on a plate of the collector's, and that is how the screen knows it has no gesture at all: no
-     * pass would ever ask for those holes by this route. Zero too on a plate of the window whose prices
-     * are all fresh — what a press then answers is [press]'s.
+     * What tasar this plate would spend, printed on the gesture before it is pressed (ADR 0030 §3,
+     * #282). Zero on a collector's plate, which has no gesture, and on a shelf-window plate whose
+     * prices are all fresh.
      */
     fun calls(resolved: PlateResult.Available): Int =
         window(resolved)?.let { showcaseCallCount(it, book, nowMillis) } ?: 0
 
     /**
-     * What pressing «Tasar esta lámina» does: one pass over **this** plate's holes and nothing else.
-     *
-     * Nothing to ask is answered here and not by a pass that would ask for nothing: the gesture never
-     * buys the same answer twice (ADR 0028 §5), and a press that did nothing silently is a button the
-     * collector reads as broken.
+     * Pressing «Tasar esta lámina»: one pass over this plate's holes. With nothing to ask it says
+     * so instead (ADR 0028 §5), so the button never silently does nothing.
      */
     fun press(resolved: PlateResult.Available) {
         if (calls(resolved) > 0) {

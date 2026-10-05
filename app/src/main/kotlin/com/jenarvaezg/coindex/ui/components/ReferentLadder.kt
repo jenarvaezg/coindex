@@ -33,24 +33,13 @@ private const val RULE_WIDTH = 2f
 private const val MARK_WIDTH = 3f
 
 /**
- * One ladder of five referents with the collection interpolated between two of them.
+ * One ladder of five referents with the collection placed between two of them: the comparison
+ * («more than a cat, 310 g short of a bowling ball») is the figure (`docs/ux/cifras-326.md`).
  *
- * The decision that orders the whole page, and it did not come out of the drawing but out of the
- * collector: **the comparison does not decorate the figure, it is the figure**. «6,95 kg» says nothing;
- * «more than a cat and 310 g short of a bowling ball» does.
- *
- * Three things the shape obliges:
- *
- * - **The scale is ordinal, not metric.** The five figures are equally spaced and the collection is
- *   interpolated between its two neighbours. Logarithmic was tried first and piled three labels on top of
- *   the fourth — the bowling ball and the tyre overlapped and the lorry vanished under the mark. For the
- *   same reason it **carries no zoom**: zooming an ordinal scale means nothing, and making it metric
- *   brings the overlaps back.
- * - **The rule has to say what it measures.** Without «una al lado de otra llegan a» the two lower
- *   ladders are two lines with animals on them. Those five words are not furniture, they are the figure's
- *   own sentence (`docs/ux/cifras-326.md`).
- * - **The mark hangs below the rule.** Above it, it covered the label of the nearest referent exactly
- *   whenever the collection landed near one — which is precisely when the ladder is saying something.
+ * - The scale is ordinal: referents equally spaced, the collection interpolated between its
+ *   neighbours. A logarithmic scale made labels overlap; for the same reason there is no zoom.
+ * - The statement above says what the rule measures.
+ * - The mark hangs below the rule, where it can't cover the nearest referent's label.
  */
 @Composable
 fun ReferentLadder(reading: LadderReading, modifier: Modifier = Modifier) {
@@ -76,7 +65,8 @@ fun ReferentLadder(reading: LadderReading, modifier: Modifier = Modifier) {
 private fun Rungs(reading: LadderReading) {
     val rungs = reading.ladder.rungs
     Column(modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
-        // The figures stand on the rule, so they are laid out first and share its horizontal spacing.
+        // The figures stand on the rule, so they are laid out first and share its horizontal
+        // spacing.
         RungRow(
             modifier = Modifier.fillMaxWidth().height(SILHOUETTE_HEIGHT),
             count = rungs.size,
@@ -99,8 +89,7 @@ private fun Rungs(reading: LadderReading) {
                         end = Offset(size.width, 0f),
                         strokeWidth = RULE_WIDTH,
                     )
-                    // Ticks where the referents stand, so the equal spacing is visible and the mark
-                    // can be read against it rather than against the labels.
+                    // Ticks where the referents stand, to read the mark against.
                     val step = size.width / (rungs.size - 1)
                     rungs.indices.forEach { index ->
                         val x = (index * step).coerceIn(0f, size.width)
@@ -128,15 +117,9 @@ private fun Rungs(reading: LadderReading) {
 }
 
 /**
- * One referent under the rule: what it is, and **how much of it there is**.
- *
- * The magnitude is what the implementation of #326 dropped and what the prototype had — `ladrillo
- * 2,00 kg`. Without it the five names are an order the collector has to take on trust: nothing on
- * screen says why the brick comes before the cat, and the mark cannot be checked against anything but
- * the equal spacing of the ticks, which is ordinal and deliberately says nothing about distance (#398).
- *
- * It is the referent's own magnitude and never «unos»: the extrapolation belongs to the collection's
- * figure — a third of the types have no `thickness` — and a bowling ball weighs 7,26 kg exactly.
+ * One referent under the rule: its name and its magnitude («ladrillo 2,00 kg»), since the ordinal
+ * scale alone doesn't say how far apart they are (#398). Always exact: only the collection's own
+ * figure can be approximate.
  */
 @Composable
 private fun Rung(rung: DomainRung, unit: LadderUnit) {
@@ -162,11 +145,8 @@ private fun Rung(rung: DomainRung, unit: LadderUnit) {
 private val LABEL_WIDTH: Dp = 58.dp
 
 /**
- * [count] cells across the full width, the first flush left and the last flush right.
- *
- * `SpaceBetween` would do it for the labels, but the figures have different widths and the rule's ticks
- * are drawn at exact fractions: what has to line up is each cell's **centre** with its tick, and only
- * the ends are the exception — a bus centred on the last tick would hang half of itself off the sheet.
+ * [count] cells across the full width, the first flush left and the last flush right, so the end
+ * figures don't hang off the sheet as they would centred on the end ticks.
  */
 @Composable
 private fun RungRow(modifier: Modifier, count: Int, cell: @Composable (Int) -> Unit) {

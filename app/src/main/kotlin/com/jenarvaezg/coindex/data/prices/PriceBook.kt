@@ -9,40 +9,23 @@ import com.jenarvaezg.coindex.domain.SilverSpot
 data class PriceKey(val typeId: Int, val issueId: Int, val grade: String)
 
 /**
- * Every price this phone holds, the spot that buys the silver floor, and who each price is addressed
- * to.
- *
- * Read as one value and not as three queries, because a valuation is only ever right when the three
- * agree about *when*: the total is stamped with the spot's date, and a price book assembled from parts
- * read at different moments would put yesterday's silver under today's total.
- *
- * [listings] arrives by the same door and for the same reason (#493): the price of a hole is on the
- * phone under an issue id, and which issue a casilla *is* comes out of the listings the pass stored
- * (#452). Read a moment apart, a plate could add up a price under one issue and stamp it into a
- * casilla the newer listing addresses to another.
+ * Every price this phone holds, the silver spot and the issue listings that address hole prices
+ * (#452, #493), read as one value so a total, its dates and the issue each casilla resolves to all
+ * come from the same moment.
  */
 data class PriceBook(
     val prices: Map<PriceKey, Double> = emptyMap(),
     val spot: SilverSpot? = null,
     val listings: IssueListings = IssueListings.EMPTY,
     /**
-     * When each issue's price reached this phone, by `(typeId, issueId)` (ADR 0030 §4).
-     *
-     * Here because an amount that never expires has to be **shown with its date**: the shelf window's
-     * prices are asked for by a gesture and no pass ever refreshes them, so the date is the whole of
-     * what makes the figure readable months later. It is `issue_price_reads.readAt` and nothing
-     * derived — the same row that decides expiry for the collection's own prices.
+     * When each issue's price reached this phone, by `(typeId, issueId)`: `issue_price_reads.readAt`.
+     * Shown beside amounts no pass refreshes, such as the shelf window's (ADR 0030 §4).
      */
     val readAt: Map<Pair<Int, Int>, Long> = emptyMap(),
     /**
-     * When each type's issue listing was read, by `typeId` — the other half of what a **spend** has to be
-     * counted against (ADR 0030 §3).
-     *
-     * [listings] deliberately ignores expiry, because a screen has nothing to spend and ADR 0028 §5 keeps
-     * showing an expired row (#493). A gesture that *names its calls* cannot use that reading: a type
-     * listed four months ago counts as listed there, and the pass would spend the
-     * `/types/{id}/issues` anyway. So the dates travel too, and [freshListings] is what the figure on the
-     * button is counted from.
+     * When each type's listing was read, by `typeId`. [listings] ignores expiry (#493), but a gesture
+     * that announces its calls must count expired listings as calls, so [freshListings] uses these
+     * dates (ADR 0030 §3).
      */
     val listingReadAt: Map<Int, Long> = emptyMap(),
 ) {
@@ -54,15 +37,10 @@ data class PriceBook(
     fun readAt(typeId: Int, issueId: Int): Long? = readAt[typeId to issueId]
 
     /**
-     * The listings the **pass** would honour right now, which is what a spend is counted against.
-     *
-     * Same rows as [listings] with the ninety days of `LISTING_LIFETIME_MILLIS` applied, so the ceiling a
-     * gesture prints is the ceiling the pass then spends. Rounding a spend **down** is the one direction
-     * that sentence must never err in (ADR 0030 §3).
-     *
-     * The cut is `IssueListings.of`'s, the pass's own, and it takes the year map with it: an expired
-     * type's years must not resolve here, or the gesture counts a price per hole **and** the lookup —
-     * seven calls where the pass spends four.
+     * The listings the pass would honour now: [listings] with `LISTING_LIFETIME_MILLIS` applied, as
+     * `IssueListings.of` does, so the gesture never promises fewer calls than the pass spends
+     * (ADR 0030 §3). The year map is cut too, or an expired type would count both its lookup and a
+     * price per hole.
      */
     fun freshListings(nowMillis: Long): IssueListings {
         val listed = listings.listedTypeIds.filterTo(mutableSetOf()) { typeId ->

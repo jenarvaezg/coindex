@@ -6,60 +6,44 @@ import com.jenarvaezg.coindex.domain.VariantKey
 /** Every destination the notebook has. The masthead reads these to name the current screen. */
 object Routes {
     /**
-     * Shared by the pattern and the builder below, which are matched against each other by
-     * `NavHost` and would fail silently — a tap that navigates nowhere — if they ever drifted.
+     * Shared by the pattern and the builder below: if they drifted, `NavHost` would match nothing
+     * and the tap would silently go nowhere.
      */
     private const val DERIVED_COLLECTION_PATH = "derived-collection"
 
     const val INDEX = "index"
 
     /**
-     * The other hierarchy of the top level (ADR 0021 §1), not a view inside a collection.
-     *
-     * It replaces `unclassified`, which was a screen for the pieces no collection claimed: those
-     * pieces are now the «Sin colección» chip of this one, reached from where they already live.
+     * The second top-level hierarchy (ADR 0021 §1). Pieces no collection claims are its
+     * «Sin colección» chip.
      */
     const val COINS = "coins"
 
     /**
-     * The third hierarchy of the top level (ADR 0026 §8), and the only one that is not made of slots.
-     *
-     * It earns a cell because it has a grain of its own — grams — and it is last because the app still
-     * opens in Collections. It carries no shelf: its order is chosen by the figure you touch.
+     * «Las cifras», the third top-level hierarchy (ADR 0026 §8). Its grain is grams. It has no
+     * shelf: the figure touched decides where it leads.
      */
     const val FIGURES = "figures"
     /**
-     * The **annex** of ADR 0026 §8, entered from the last row of the Colecciones list (ADR 0029 §6).
-     *
-     * Not a root and never a cell: it hangs off exactly one hierarchy, it is left with «Volver», and the
-     * bar is not drawn on it. Its name is `explore` and not `wishes` because «Explorar» is what the
-     * annex is — «Lo que busco» is its first section, and the shelf window of twenty plates is the
-     * second, which is not in this delivery.
+     * «Explorar», the annex of ADR 0026 §8, entered only from the last row of the Colecciones list.
+     * Not a root: no bar, left with «Volver». It holds the shelf window and a door to [WISHES].
      */
     const val EXPLORE = "explore"
 
     /**
-     * «Lo que busco», one room further in than «Explorar» (ADR 0030 §8).
-     *
-     * Its own route and not a section of [EXPLORE], because it is its own screen with its own export:
-     * what it is for is the sheet taken to a fair, and a list folded into the shelf could not be one.
+     * «Lo que busco», a sibling annex of [EXPLORE] (#520): opened from the head of Colecciones and
+     * from «Explorar». A screen of its own because it has its own export, the sheet taken to a fair.
      */
     const val WISHES = "wishes"
     /**
-     * What the sewn edge's glyph opens: the maintenance of the inventory (#521).
-     *
-     * It was `settings`, and it was named after the two fields at the top of it rather than after the
-     * trip: 87 of its 165 words were `Sincronizar`, the two queues and the export, and its one filled
-     * action was the sync. The credentials it used to lead with hang off its foot now, in the shape
-     * ADR 0026 §14 wrote for the licence notices.
+     * «Este teléfono», opened by the sewn edge's glyph: sync, the two queues and the data export
+     * (#521). Credentials and notices hang off its foot (ADR 0026 §14).
      */
     const val PHONE = "phone"
 
     /**
-     * The two fields, one screen down (ADR 0026 §14).
-     *
-     * Reached from the foot of [PHONE] and from the two valuation states that blame it — a cure two
-     * taps away with no door from the symptom is the dead end Ajustes was invented to end.
+     * The two credential fields, one screen down (ADR 0026 §14). Reached from the foot of [PHONE]
+     * and from the two valuation states the credentials cause, so the symptom links to the cure.
      */
     const val CREDENTIALS = "credentials"
     const val NOTICES = "notices"
@@ -90,37 +74,27 @@ object Routes {
     fun isOwnGrouping(route: String?): Boolean = route == OWN_GROUPING
 
     /**
-     * The three destinations of the bottom bar, which are the three hierarchies and nothing else.
-     *
-     * Everything else in the app is reached *through* one of them, so this is also the answer to
-     * «does the masthead offer «Este teléfono» or «Volver»?»: a root has nothing underneath to pop.
+     * The three hierarchies of the bottom bar. Everything else is reached through one of them, and
+     * a root has nothing to pop, so it offers «Este teléfono» instead of «Volver».
      */
     fun isRoot(route: String?): Boolean = route == INDEX || route == COINS || route == FIGURES
 
     /**
-     * The roots that draw their own album chrome instead of the generic masthead.
-     *
-     * All three of them now: the sewn edge is their shared masthead, and keeping the generic one above
-     * any of them would print COINDEX and the way into «Este teléfono» twice (ADR 0026 §1).
+     * The roots draw the sewn edge instead of the generic masthead, which would print COINDEX and
+     * the way into «Este teléfono» twice (ADR 0026 §1).
      */
     fun ownsChrome(route: String?): Boolean = isRoot(route)
 
     /**
-     * The two routes that open `PiecesScreen`.
-     *
-     * They stay two because they address different subjects — a variant key the inventory derives,
-     * a box id the collector's own table holds — but they arrive at one screen (ADR 0021 §9), and
-     * everything that speaks about the destination rather than the subject asks this.
+     * The two routes that open `PiecesScreen` (ADR 0021 §9): one addressed by a derived variant
+     * key, the other by a box id.
      */
     fun isPieces(route: String?): Boolean = isDerivedCollection(route) || isOwnGrouping(route)
 }
 
 /**
- * The route that reaches a card's one destination.
- *
- * Untested for the same reason `Routes.derivedCollection` is: it encodes through `android.net.Uri`.
- * What is worth testing is the choice, and that is [destinationOf], which knows nothing about
- * routes.
+ * The route to a card's destination. Untested because it encodes through `android.net.Uri`; the
+ * choice itself is [destinationOf], which is.
  */
 fun routeOf(destination: CardDestination): String = when (destination) {
     is CardDestination.Plate -> Routes.plate(destination.catalogId)
@@ -129,10 +103,9 @@ fun routeOf(destination: CardDestination): String = when (destination) {
 }
 
 /**
- * The key a derived collection route carries, or null if it does not describe one.
- *
- * Rebuilt through [VariantKey.fromCanonicalParts], so a hand-typed or truncated route is
- * rejected rather than guessed at, exactly as a stored disposition would be.
+ * The key a derived collection route carries, or null if it does not describe one. Rebuilt
+ * through [VariantKey.fromCanonicalParts], so a hand-typed or truncated route is rejected rather
+ * than guessed at.
  */
 fun variantKeyFromRoute(
     family: String?,

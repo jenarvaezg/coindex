@@ -4,37 +4,24 @@ package com.jenarvaezg.coindex.ui
 const val BOX_NAME_LIMIT: Int = 40
 
 /**
- * What the naming field of a box knows about what has been typed so far.
- *
- * The collector types **one** name, and it is the `short_name`: `name == short_name`, because a box
- * enumerates by hand and has no editorial scope to define (ADR 0021 §4). One field is also what makes
- * the prefix rule of #22 hold by construction rather than by validation — there is no long name for a
- * short one to fail to be a prefix of.
+ * The state of a box's naming field. A box has one name, which is also its `short_name`
+ * (ADR 0021 §4), so the prefix rule of #22 holds by construction.
  */
 data class BoxName(
-    /** What would be stored, trimmed. Only ever passed on when [canSave]. */
+    /** Trimmed; used only when [canSave]. */
     val stored: String,
-    /** «13/40 · tiene que caber en una tarjeta»: the limit said as a fact, not as a warning. */
     val counter: String,
-    /** What is wrong, in the collector's words, or null while there is nothing to say. */
+    /** Null while there is nothing to object to, including an empty field. */
     val problem: String?,
     val canSave: Boolean,
 )
 
 /**
- * Reads a half-typed name against the names already taken.
+ * Reads a half-typed name against the names already taken, ignoring accents and case ([fold]).
  *
- * **Uniqueness is checked here and only at creation** (ADR 0021 §11). Two homonymous cards in the
- * index are the signal that curation has covered what the collector noted down by hand, and the box is
- * undone with one tap — so a later file that collides is not policed, and this never runs again after
- * the box exists.
- *
- * The comparison ignores accents and case, because «Las Francesas» and «las francesas» are the same
- * shelf in anybody's head and two cards a letter apart would be the collector's own filing mistake
- * rather than a distinction. It is the same [fold] the search box uses.
- *
- * An empty field is **not** a complaint. «Crear» is off because there is nothing to create, and
- * scolding somebody for not having typed yet is the one message a dialog can be sure is premature.
+ * Uniqueness is checked only here, at creation (ADR 0021 §11): a curated file that later takes the
+ * same name signals that curation has caught up with the box, which is then undone with one tap.
+ * An empty field gets no message; «Crear» is simply disabled.
  *
  * @param taken every curated `short_name` plus the names of the other boxes
  */
@@ -58,29 +45,20 @@ fun boxName(typed: String, taken: Collection<String>): BoxName {
 }
 
 /**
- * What is to be stored about a box, or the sentence that refuses it.
- *
- * The last line of defence rather than the first: [boxName] has already read the name as it was
- * being typed, and this is what a gesture that got past it arrives at. A refusal here is a message
- * and never a silent no-op — a heading over nothing is not something to store, and a button that
- * did nothing at all would read as a bug.
+ * What is to be stored about a box, or the message refusing it. [boxName] validates while typing;
+ * this is the last check, and a refusal is always a message so the button never silently does
+ * nothing.
  */
 sealed interface BoxEntry {
-    /**
-     * The name as it would be stored. Not the coins: the caller has them in its hand — a selection
-     * in Coins, or a box that already exists — and carrying them through the decision would only
-     * hand them back.
-     */
+    /** Only the name: the caller already holds the coins. */
     data class Accepted(val name: String) : BoxEntry
 
     data class Refused(val message: String) : BoxEntry
 }
 
 /**
- * Creating a box: a name and at least one coin (ADR 0013, ADR 0021 §11).
- *
- * It says «colección» and not «agrupación», because there is one species of collection and no word
- * of provenance telling a box from the rest (ADR 0021 §2).
+ * Creating a box needs a name and at least one coin (ADR 0013, ADR 0021 §11). The copy says
+ * «colección», never «agrupación»: boxes and curated collections share one word (ADR 0021 §2).
  */
 fun boxToCreate(typed: String, typeIds: List<Int>): BoxEntry {
     val trimmed = typed.trim()
@@ -90,12 +68,7 @@ fun boxToCreate(typed: String, typeIds: List<Int>): BoxEntry {
     return BoxEntry.Accepted(trimmed)
 }
 
-/**
- * Renaming one, where the coins are whatever they already were.
- *
- * Uniqueness is **not** checked: it is read once, at creation, and a name that collides later is
- * curation catching up with what the collector noted down by hand (ADR 0021 §11).
- */
+/** Renaming keeps the coins. Uniqueness is not checked again (ADR 0021 §11). */
 fun boxToRename(typed: String): BoxEntry {
     val trimmed = typed.trim()
     if (trimmed.isEmpty()) {
@@ -104,5 +77,4 @@ fun boxToRename(typed: String): BoxEntry {
     return BoxEntry.Accepted(trimmed)
 }
 
-/** Said once the box exists, in the collector's own name for it. */
 fun boxCreatedMessage(name: String): String = "Colección «$name» creada."

@@ -46,12 +46,7 @@ import com.jenarvaezg.coindex.ui.shelf.fold
 import com.jenarvaezg.coindex.ui.shelf.yearAxisQuantityMark
 import com.jenarvaezg.coindex.ui.theme.Paper
 
-/**
- * The measured gap of the year axis at phone size (atlas-315 / #340).
- *
- * Thirteen device pixels at 420 dpi is five density-independent pixels, and that is what keeps ten
- * year cells across a decade row without crushing the coin or opening a ditch.
- */
+/** Gap between axis cells (atlas-315, #340): fits ten year cells across a phone's decade row. */
 val AXIS_GAP = 5.dp
 
 /** Dense hole of the country and year axes — many casillas at once, not a card. */
@@ -63,38 +58,26 @@ private val COUNTRY_LABEL_WIDTH = 88.dp
 /** Between that column and the holes, and part of the width the fold counts columns in. */
 private val COUNTRY_LABEL_GAP = 8.dp
 
-/**
- * Decade label column of the year axis (atlas-315: «1870», «1960» left of the ten seats).
- *
- * Narrower than a country name: four digits of muted ink, and the ten year seats share what is
- * left so a phone still fits the calendar without scrolling sideways.
- */
+/** Decade label column of the year axis («1960»): four digits, leaving the rest to ten seats. */
 private val YEAR_DECADE_LABEL_WIDTH = 36.dp
 
 /** Pinprick of bare cardboard — the atlas's third state, not an empty Box. */
 private val BARE_DOT = 3.dp
 
-/**
- * Vertical pitch of a decade row (#406).
- *
- * Two density-independent pixels left the rust quantity mark kissing the next decade in a dense
- * siglo XX; five keeps the calendar tight without stacking counts on the row below.
- */
+/** Vertical padding of a decade row, enough that a quantity mark doesn't touch the next (#406). */
 private val YEAR_DECADE_ROW_PAD = 5.dp
 
-/** Rust quantity on a year seat — larger than [labelLarge] so ×N still reads in a dense calendar. */
+/**
+ * Rust quantity on a year seat — larger than [labelLarge] so ×N still reads in a dense calendar.
+ */
 @Composable
 private fun yearAxisQuantityStyle() =
     MaterialTheme.typography.labelLarge.copy(fontSize = 14.sp)
 
 /**
- * One country block: label and ratio on the left, wrapping holes on the right (atlas-315).
- *
- * Loose cells keep the photograph and drop the cardboard ([AlbumHole.backed] = false), which is
- * how a piece no casilla claims still reads as a coin and not as a hole to fill.
- *
- * A tap opens Monedas with that country already on the shelf — the axis shows the album; the list
- * is where those pieces are read one by one.
+ * One country block: label and ratio on the left, wrapping holes on the right (atlas-315). Loose
+ * pieces drop the cardboard (`backed = false`) so they read as coins, not holes to fill. A tap
+ * opens Monedas filtered to that country.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -106,9 +89,8 @@ fun CountryAxisRow(
     expanded: Boolean = false,
     onToggleFold: (String) -> Unit = {},
 ) {
-    // The fold needs to know how many holes fit in a row, and that is the width this block actually
-    // got — not a constant. A phone gives seven; a tablet or a fold gives more, and the sample row
-    // grows with it instead of hiding absences that had room to paint.
+    // The fold counts how many holes fit in the width this block actually got, so wider screens
+    // show more before folding.
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -130,11 +112,8 @@ fun CountryAxisRow(
                     color = Paper.rust,
                     modifier = Modifier.padding(top = 2.dp),
                 )
-                // The fold hangs from the ratio and not from the last row of holes: it is the rest
-                // of that sentence — «Venezuela 42/115 … y faltan 66» — and the column the name
-                // lives in is already tall enough to hold it. Put at the end of the holes it fell
-                // into a line of its own whenever the sample row came out full, which was a blank
-                // renglón for a mark that had a home.
+                // Under the ratio, which it continues («42/115 … y faltan 66»); after the holes it
+                // took a line of its own whenever the row was full.
                 if (fold.foldable > 0) {
                     CountryAxisFoldMark(
                         hidden = fold.foldable,
@@ -157,15 +136,10 @@ fun CountryAxisRow(
 }
 
 /**
- * The «… y faltan 66» at the end of a country's absences, and the way back (#417).
- *
- * A tap here does not open Monedas like the rest of the block: it unfolds the holes in place, which
- * is why it takes its own click and stops the one behind it. Rust and underlined so it reads as the
- * sentence the ratio started and as something that can be pressed.
- *
- * The ink is one line of [MaterialTheme.typography.labelLarge] and it buys the rest of its target
- * with [minimumInteractiveComponentSize], exactly like the year tag of a casilla (#473): a mark
- * that opens sixty-six holes cannot be harder to hit than the holes themselves.
+ * The «… y faltan 66» that unfolds a country's absences in place, and folds them back (#417). Its
+ * own click, so it doesn't open Monedas like the rest of the block; underlined so it reads as
+ * pressable. [minimumInteractiveComponentSize] gives it a full touch target, as for a casilla's
+ * year tag (#473).
  */
 @Composable
 private fun CountryAxisFoldMark(
@@ -235,10 +209,8 @@ private fun AxisHole(cell: CountryAxisCell, images: Map<Int, TypeImages>) {
     val typeId = cell.typeId
     val photo = typeId?.let { images[it]?.printedPhoto(PrintedSide.Reverse) }
     when (cell) {
-        // A seat of this axis is a casilla of the plate the card opens, so the absence it carries is
-        // the plate's: «te falta». At [AXIS_HOLE] it is said without the penumbra — 34 dp is under
-        // [GHOST_MIN_DP], which is the floor the sunk design needs to be read at all (#556) — so what
-        // the collector sees here is the coin whole under its dotted rule.
+        // A casilla of the card's plate, so «te falta». [AXIS_HOLE] is under [GHOST_MIN_DP], so it
+        // draws the whole coin under the dotted rule (#556).
         is CountryAxisCell.Slot -> AlbumHole(
             photo = photo,
             absence = if (cell.owned) HoleAbsence.Filled else HoleAbsence.Missing,
@@ -298,14 +270,10 @@ fun YearAxisDigitHeader(modifier: Modifier = Modifier) {
 }
 
 /**
- * One decade of the year axis: label + ten cells, coin / ghost / bare cardboard (ADR 0026 §9).
- *
- * Bare cardboard is a pinprick (atlas-315), not an empty seat — without it the calendar reads as
- * holes in the middle. Ghosts keep the dashed hole; coins carry a rust count when more than one
- * piece lands on the year. Cells share the width after the decade label so ten still fit a phone.
- *
- * Coin and ghost seats open Monedas on that exact year; bare cardboard stays quiet — there is
- * nothing of this collection to read there.
+ * One decade of the year axis: label and ten cells, each a coin, a ghost or bare cardboard
+ * (ADR 0026 §9). Bare cardboard is a pinprick (atlas-315), so the calendar doesn't read as holes.
+ * Coins show a count when several pieces share the year. Coin and ghost cells open Monedas on that
+ * year.
  */
 @Composable
 fun YearAxisDecadeRow(
@@ -362,12 +330,8 @@ fun YearAxisDecadeRow(
                                 YearAxisQuantityMark(state.quantity)
                             }
                         }
-                        // **No photograph, on purpose**: the atlas's ghost year is a seat of the
-                        // collection with nothing of the collection in it, and the decade reads as ten
-                        // seats rather than as ten coins. So there has never been a design to sink here
-                        // — [HoleAbsence.Missing] leaves the dashed hole and nothing else — and #556's
-                        // floor finds nothing to withdraw. It is named as the absence it is even so:
-                        // what the hole does with it is the hole's business.
+                        // No photograph on purpose: a ghost year is an empty seat, not a coin, so
+                        // only the dashed hole is drawn.
                         YearCellState.Ghost -> AlbumHole(
                             photo = null,
                             absence = HoleAbsence.Missing,
@@ -395,13 +359,9 @@ fun YearAxisCenturyHeader(century: YearAxisCentury, modifier: Modifier = Modifie
 }
 
 /**
- * Front island of the year axis: pieces whose year falls outside the dated calendar (Romans).
- *
- * Same reading as a country block of only loose coins — name, count, photographs without a slot
- * to fill — so the calendar below never opens seventeen empty centuries for two denarii.
- *
- * A tap opens Monedas on that country: the island is already titled by issuer, and that is the
- * shelf facet that reaches those pieces without inventing an era they do not sit in.
+ * Front island of the year axis: pieces outside the dated calendar (Romans), drawn like a country
+ * block of loose coins so the calendar doesn't open empty centuries for them. A tap opens Monedas
+ * on the island's issuer.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -487,11 +447,8 @@ fun LazyGridScope.countryAxisItems(
 }
 
 /**
- * Items of the year axis: islands first, then a sticky digit header and the calendar (#406).
- *
- * The «0»…«9» row used to be a single scroll item above the first century, so a dense siglo XX
- * lost the column legend. It pins under the chrome once the calendar reaches it; paper behind it
- * keeps decade holes from showing through while stuck.
+ * Items of the year axis: islands first, then a sticky «0»…«9» header and the calendar (#406). The
+ * header's paper background hides the decades scrolling under it.
  */
 fun LazyGridScope.yearAxisItems(
     model: YearAxisModel,
@@ -529,8 +486,8 @@ fun LazyGridScope.yearAxisItems(
         }
         items(
             items = century.decades,
-            // Century in the key: the grouping decides which decades a century holds (#407), and
-            // a key must stay unique across conventions, not because of the one in force today.
+            // Century in the key: the grouping convention decides which century a decade falls in
+            // (#407), and the key must stay unique under any convention.
             key = { "decade-${century.century}-${it.decade}" },
             span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) },
         ) { decade ->

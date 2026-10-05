@@ -8,24 +8,17 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 /**
- * What refreshing one ficha costs, and it is the same number every time (ADR 0025).
- *
- * A constant rather than a measurement: `/types/{id}` needs no OAuth token, so the gesture is
- * exactly one reserved call. Counting the month's log before and after would have read a concurrent
- * sync's calls into this one tap and announced «has gastado 37 consultas».
+ * Calls spent refreshing one ficha (ADR 0025): `/types/{id}` needs no OAuth token, so it is always
+ * one. A constant because diffing the month's log would also count a concurrent sync's calls.
  */
 const val FICHA_REFRESH_CALLS: Int = 1
 
 /**
- * How old the ficha on this phone is, in the coarsest unit that is still true.
+ * How long ago this phone got the ficha, in the coarsest unit that is still true.
  *
- * It says **traída** and not «es de», because that is the fact the cache actually holds: the day
- * this phone got the ficha. For a ficha the collector synced the two are the same thing; for one
- * that arrived in the APK the *content* may be older than the day it landed here (ADR 0025), and
- * that is exactly why the gesture underneath is never hidden behind a «suficientemente fresca».
- *
- * Counted in calendar days rather than in elapsed milliseconds, so a ficha fetched last night reads
- * «ayer» this morning instead of «hace 11 horas» rounded to today.
+ * «Traída», not «es de»: the cache only knows when the ficha arrived, and one shipped in the APK
+ * may be older than that (ADR 0025), so the refresh is never hidden. Counted in calendar days, so a
+ * ficha fetched last night reads «ayer».
  */
 fun fichaAgeLabel(
     fetchedAt: Long,
@@ -47,20 +40,13 @@ fun fichaAgeLabel(
     }
 }
 
-/**
- * The gesture, saying what it costs before it is spent.
- */
+/** The refresh button, with its cost. */
 fun fichaRefreshLabel(refreshing: Boolean): String = when {
     refreshing -> "Preguntando a Numista…"
     else -> "Actualizar la ficha · ${queriesLabel(FICHA_REFRESH_CALLS)}"
 }
 
-/**
- * What the refresh found, for the snackbar.
- *
- * «Sin cambios» is a result and not a failure — it is the answer «lo que tienes es lo que hay en
- * Numista» — so it says the call was spent rather than pretending the tap was free.
- */
+/** What the refresh found, for the snackbar. An unchanged ficha still says the call was spent. */
 fun fichaRefreshMessage(report: TypeRefreshReport): String = if (report.changed) {
     "Ficha de Numista ${report.typeId} actualizada: el dato había cambiado."
 } else {
@@ -69,12 +55,8 @@ fun fichaRefreshMessage(report: TypeRefreshReport): String = if (report.changed)
 }
 
 /**
- * A refresh that did not happen, in terms of what it means for this type.
- *
- * The one case the sync's own wording gets wrong is the 404: there it is a user id that does not
- * exist, and here it is a type Numista does not publish any more — a submission a referee deleted,
- * which is precisely the fate an unpublished type can have (#186). The ficha stays on the phone, and
- * the message says so: nothing about this gesture can lose data.
+ * A failed refresh. Only the 404 differs from the sync's wording: here it means Numista no longer
+ * publishes the type, such as a submission a referee deleted (#186). The ficha stays on the phone.
  */
 fun fichaRefreshErrorLabel(typeId: Int, error: Throwable): String =
     if (error is NumistaException.Api && error.status == 404) {

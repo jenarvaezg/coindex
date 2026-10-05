@@ -11,18 +11,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 
 /**
- * Which way gravity is falling, at `SENSOR_DELAY_UI`.
- *
- * **`TYPE_GRAVITY` and not `TYPE_ACCELEROMETER`** (#372). The raw accelerometer measures gravity
- * *plus whatever the hand is doing*, and the gloss was reading the hand: a tremor of 0.3 m/s² is
- * 1.75° of apparent lean, sixteen times a second, on an effect whose whole useful signal is some
- * 15°. `TYPE_GRAVITY` is the composite sensor Android already fuses — with the gyroscope where the
- * phone has one, with its own low-pass where it does not — and it is literally the question the
- * gloss asks: which way is the sheet leaning. It costs no permission and it is API 9.
- *
- * The accelerometer stays as the fallback, because a composite sensor is not guaranteed to exist.
- * A phone with neither — an emulator can be told to have none — simply never reports, and the sheet
- * stays in its resting pose.
+ * Which way gravity is falling, at `SENSOR_DELAY_UI`. `TYPE_GRAVITY` rather than the raw
+ * accelerometer (#372): the accelerometer adds the hand's tremor, which is large against a useful
+ * signal of some 15°, while `TYPE_GRAVITY` is fused by Android (with the gyroscope if there is
+ * one). The accelerometer is the fallback, since composite sensors aren't guaranteed; with neither,
+ * the sheet stays at rest.
  */
 class AccelerometerTiltSensor(context: Context) : TiltSensor, SensorEventListener {
     private val sensors = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -41,8 +34,7 @@ class AccelerometerTiltSensor(context: Context) : TiltSensor, SensorEventListene
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        // Whichever of the two answered: both report gravity in the same three axes and the same
-        // units, and which one the phone gave us is not something the gloss has any use for.
+        // Both sensors report in the same axes and units.
         if (event.values.size < 3) return
         onGravity?.invoke(event.values[0], event.values[1], event.values[2])
     }
@@ -50,12 +42,7 @@ class AccelerometerTiltSensor(context: Context) : TiltSensor, SensorEventListene
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 }
 
-/**
- * The tilt the whole app reads from, tied to the foreground.
- *
- * `LifecycleResumeEffect` is the second half of the ceiling — the first is a coin being on screen —
- * so the sensor is let go on `onPause` and picked up again on the way back.
- */
+/** The app's tilt, released on `onPause` and resumed on the way back. */
 @Composable
 fun rememberCoinTilt(): CoinTilt {
     val context = LocalContext.current.applicationContext

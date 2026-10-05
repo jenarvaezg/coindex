@@ -3,26 +3,20 @@ package com.jenarvaezg.coindex.ui
 import com.jenarvaezg.coindex.data.Credentials
 
 /**
- * What the credential form decided about what was typed into it.
- *
- * A decision and not a write: parsing «2104» into a user id and refusing a blank key are rules
- * about text, and text is the one thing a test can hold. What used to be here — the same rules
- * interleaved with a keystore write and a snackbar — could only be read by running the app.
+ * What a credential form decided about what was typed into it. Pure rules about text, kept apart
+ * from the keystore write so they can be tested.
  */
 sealed interface CredentialsEntry {
     /** Everything the form asked for, parsed. */
     data class Accepted(val credentials: Credentials) : CredentialsEntry
 
-    /** What is wrong, in the collector's words, next to the field that caused it. */
+    /** In the collector's words, shown next to the field. */
     data class Refused(val problem: String) : CredentialsEntry
 }
 
 /**
- * The onboarding form: an API key and the number in the collector's Numista profile URL.
- *
- * One sentence for both fields, unlike [credentialsEntry] below, and that is deliberate: on the first
- * screen of the app neither field has been filled in before, so naming one of the two would be
- * guessing which of them the collector got wrong.
+ * The onboarding form: an API key and the number in the collector's Numista profile URL. One
+ * message for both fields: neither has been filled in before, so naming one would be a guess.
  */
 fun onboardingEntry(apiKey: String, userId: String): CredentialsEntry {
     val credentials = typedCredentials(apiKey, userId)
@@ -33,10 +27,8 @@ fun onboardingEntry(apiKey: String, userId: String): CredentialsEntry {
 }
 
 /**
- * The «Credenciales» form, which has the same two fields as onboarding.
- *
- * Here each field is named, because this screen is visited to change **one** of the two and a
- * complaint that does not say which one is a complaint about the wrong field.
+ * The «Credenciales» form. Unlike onboarding, the message names the field, since this screen is
+ * visited to change one of the two.
  */
 fun credentialsEntry(apiKey: String, userId: String): CredentialsEntry {
     if (apiKey.isBlank()) return CredentialsEntry.Refused("La API key no puede estar vacía.")
@@ -48,10 +40,8 @@ fun credentialsEntry(apiKey: String, userId: String): CredentialsEntry {
 }
 
 /**
- * The two fields both forms share, parsed, or null when they do not make a pair.
- *
- * The user id is **the number in the profile URL** and nothing else: a collector who pastes the
- * whole URL has typed something that is not an id, and so has one who types a zero.
+ * Both fields parsed, or null when they don't make a pair. The user id is the positive number in
+ * the profile URL; a pasted URL or a zero is refused.
  */
 private fun typedCredentials(apiKey: String, userId: String): Credentials? {
     val parsedUserId = userId.trim().toLongOrNull() ?: return null

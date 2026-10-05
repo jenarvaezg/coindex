@@ -3,43 +3,34 @@ package com.jenarvaezg.coindex.domain
 private val SILVER_FINENESS = Regex("""(?:plata|silver)\s*\.?([0-9]{3}(?:[.,][0-9]+)?)""")
 
 /**
- * The millesimal fineness of a silver alloy, read from Numista's `composition.text`.
+ * The millesimal fineness of a silver alloy, read by rule from Numista's `composition.text` like
+ * [inferMetal] (ADR 0005), so an improved rule also fixes fichas already cached.
  *
- * A rule and not a column, like [inferMetal] and [inferFinish] before it (ADR 0005): Numista has no
- * fineness field either, only prose, and a rule improved tomorrow has to fix fichas cached today.
- *
- * The whole text is searched and not only the head, which is what [inferMetal] reads: «Vellón (plata
- * 400)» names its alloy in the head and its fineness inside the bracket, and it is the only shape in
- * the 916 seeded fichas where the two are apart. The **first** number wins, which is what keeps
- * «Plata 999,9 (Marked "PLATA 1000")» at 999,9.
- *
- * Returns null when the text names no fineness at all — two fichas say «Plata» and nothing else —
- * because a piece with no declared fineness has no silver floor, not a floor of one.
+ * The whole text is searched, not only the head [inferMetal] reads, because «Vellón (plata 400)»
+ * puts the fineness inside the bracket. The first number wins, which keeps «Plata 999,9 (Marked
+ * "PLATA 1000")» at 999,9. Null when the text names no fineness: such a piece has no silver floor.
  */
 fun silverFineness(composition: String?): Double? {
     if (inferMetal(composition) != Metal.Silver) return null
     val match = SILVER_FINENESS.find(composition?.lowercase() ?: return null) ?: return null
-    // The comma is the Spanish decimal separator, which is what «Plata 999,9» is written with.
+    // Spanish decimal comma, as in «Plata 999,9».
     val millesimal = match.groupValues[1].replace(',', '.').toDoubleOrNull() ?: return null
     return (millesimal / 1_000.0).takeIf { it > 0.0 && it <= 1.0 }
 }
 
 /**
- * The troy ounce of silver in euros, and the day this phone read it.
- *
- * The date travels with the number and is not derived from it, because it is the whole reason the
- * figure is not a quotation (#316, ADR 0028 §5): an expired spot keeps being shown with the date it
- * was brought rather than deleted, so «when» is as much of this value as «how much».
+ * The troy ounce of silver in euros and when this phone read it. An expired spot is still shown,
+ * with its date, so the date is part of the value (#316, ADR 0028 §5).
  */
 data class SilverSpot(val eurPerTroyOunce: Double, val readAtMillis: Long)
 
-/** The grades Numista prices, worst to best, which is also the order a neighbour is looked for in. */
+/** The grades Numista prices, worst to best. */
 val NUMISTA_GRADES: List<String> = listOf("g", "vg", "f", "vf", "xf", "au", "unc")
 
-/** What a hole is valued in, and what a piece with no grade of its own falls back to (ADR 0028 §8). */
+/** The grade holes are valued in and ungraded pieces fall back to (ADR 0028 §8). */
 const val UNCIRCULATED: String = "unc"
 
-/** Where the number a piece is worth came from. Never left to be guessed at (#316). */
+/** Where a piece's value came from, so the screen can always say it (#316). */
 enum class ValueSource {
     /** Numista's estimated price for this issue in this piece's own grade. */
     Market,
@@ -47,7 +38,7 @@ enum class ValueSource {
     /** Numista's price for the nearest grade it does publish one for. */
     NeighbouringGrade,
 
-    /** Its metal: weight times the fineness of its alloy, times the spot. */
+    /** Its fine silver weight times the spot. */
     Silver,
 
     /** What the collector recorded paying for it. */
@@ -55,18 +46,15 @@ enum class ValueSource {
 }
 
 /**
- * What one piece is worth, and out of which of the three sources.
+ * What one piece is worth, and from which source.
  *
- * @param eur the value of **one** piece and never of the row: a row of 102 bolívares is 102 pieces,
- *   and multiplying belongs to whoever is totalling.
+ * @param eur the value of one piece, never of the row; whoever totals multiplies by quantity.
  */
 data class PieceValue(val eur: Double, val source: ValueSource, val grade: String? = null)
 
 /**
- * The fine silver of one piece, in grams, or null when its ficha does not support the claim.
- *
- * Fine and not gross, which is the difference between a silver floor and a lie: a .835 coin is 16,5 %
- * copper (`docs/ux/cifras-326.md`), and spot buys the silver in it and not the coin.
+ * The fine silver of one piece in grams, or null when its ficha lacks weight or fineness. Fine, not
+ * gross: the spot buys the silver in a .835 coin, not its copper (`docs/ux/cifras-326.md`).
  */
 fun fineSilverGrams(meta: TypeMeta?): Double? {
     val grams = meta?.weightGrams ?: return null
@@ -75,21 +63,14 @@ fun fineSilverGrams(meta: TypeMeta?): Double? {
 }
 
 /**
- * What one piece is worth: **the maximum of three numbers**, piece by piece and never by family
- * (ADR 0026 §10, #316).
+ * What one piece is worth: the maximum of market, silver and paid, piece by piece and never by
+ * family (ADR 0026 §10, #316). Catalogue prices do not follow the metal, so which source wins
+ * shifts as the spot moves.
  *
- * It is not an occasional tie-break. Catalog prices do not follow the metal, so the order inverts as
- * spot rises: at today's spot the market wins on 517 of his 572 pieces and silver on 14; at 34 % more
- * spot, silver wins on 338. An app that had picked «the market price» as its single source would say
- * a silver duro is worth less than its own silver.
+ * The grade is the pricing key (#316): a piece is valued in its own grade, or the nearest one
+ * Numista prices. An ungraded piece is valued in [UNCIRCULATED], like a hole.
  *
- * The grade is the pricing key and not an analytic (#316): a piece is valued **in its own grade**,
- * with the nearest neighbour when Numista publishes none for it — 188 exact, 22 neighbouring, 19 with
- * none of his 229 rows. A piece the collector never graded is valued in [UNCIRCULATED], which is also
- * what a hole is valued in.
- *
- * Returns null when no source covers the piece at all, which is the case the coverage sentence of ADR
- * 0028 §7 exists for. Today the maximum covers 100 % of his 574.
+ * Null when no source covers the piece (the coverage sentence of ADR 0028 §7).
  */
 fun pieceValue(
     item: CollectedItem,
@@ -100,9 +81,8 @@ fun pieceValue(
     val candidates = mutableListOf<PieceValue>()
     marketValue(item, prices)?.let(candidates::add)
     silverFloor(meta, spot)?.let(candidates::add)
-    // Divided by the quantity, because `price` is what was paid for the row: the six bolívares rows
-    // the father bought as lots carry one figure for 102 pieces, and a value per piece is what the
-    // maximum compares and what the total multiplies back up.
+    // `price` is what was paid for the whole row (a lot carries one figure for many pieces), and
+    // the maximum compares per piece.
     item.price?.takeIf { it > 0.0 }?.let { paid ->
         candidates.add(PieceValue(paid / item.quantity.coerceAtLeast(1), ValueSource.Paid))
     }
@@ -110,19 +90,12 @@ fun pieceValue(
 }
 
 /**
- * What one empty casilla would cost to fill: the greater of **two** prices and never of three (#493).
+ * What one empty casilla would cost to fill: the greater of Numista's price and the metal (#493),
+ * since nobody paid for it. The price is always in `unc` (ADR 0028 §8), never a neighbouring
+ * grade, because the plate header labels this amount «en sin circular».
  *
- * The maximum is the same rule [pieceValue] reads, minus the source a hole cannot have: nobody paid
- * for a coin that is not here, so what is left is Numista's catalogue price and the metal.
- *
- * And it is priced **in `unc`** (ADR 0028 §8), which is the grade the pass asked for, without falling
- * to a neighbouring grade the way a piece does. That is not thrift either: the plate's header says «en
- * sin circular» beside this amount, and a figure that had come out of `xf` would make it name a grade
- * its own number did not come from.
- *
- * @param issueId which issue the casilla stands for — declared by the curated file (ADR 0014) or
- *   answered by a stored listing (#452). Null is a hole with nothing to address a price to, and then
- *   only the metal can answer for it.
+ * @param issueId the issue the casilla stands for, declared by the curated file (ADR 0014) or
+ *   answered by a stored listing (#452). Null leaves only the metal.
  */
 fun holeValue(
     typeId: Int,
@@ -140,10 +113,8 @@ fun holeValue(
 }
 
 /**
- * What the metal of one piece is worth, or null where the ficha or the spot does not support it.
- *
- * The one of the sources that is arithmetic rather than a quotation, and the only one a coin that is
- * not on the phone can still have — which is why it is read here and not twice (see [holeValue]).
+ * What the metal of one piece is worth, or null where the ficha or the spot cannot support it.
+ * Shared by [pieceValue] and [holeValue].
  */
 private fun silverFloor(meta: TypeMeta?, spot: SilverSpot?): PieceValue? {
     if (spot == null) return null
@@ -152,11 +123,8 @@ private fun silverFloor(meta: TypeMeta?, spot: SilverSpot?): PieceValue? {
 }
 
 /**
- * Numista's price for this piece, in its grade or in the nearest one that has a price.
- *
- * The neighbour is the nearest grade in [NUMISTA_GRADES] by distance, and on a tie **the worse
- * grade**: guessing upwards is guessing in the collector's favour, which is the direction a valuation
- * must never round in.
+ * Numista's price for this piece in its grade, or in the nearest grade of [NUMISTA_GRADES] that has
+ * one. Ties go to the worse grade, so a guess never favours the collector.
  */
 private fun marketValue(item: CollectedItem, prices: (Int, Int, String) -> Double?): PieceValue? {
     val issueId = item.issueId ?: return null
@@ -179,29 +147,22 @@ private fun marketValue(item: CollectedItem, prices: (Int, Int, String) -> Doubl
 }
 
 /**
- * What the collector paid for the pieces whose price he wrote down, and what those same pieces are
- * worth today.
+ * What the collector paid for the pieces with a recorded price, and what those pieces are worth
+ * today.
  *
- * **Only what is declared, and its own denominator with it.** `price` covers 84 of his 229 rows —
- * which are 91 of his 572 pieces, because what has no price is the Venezuelan bulks
- * (`docs/ux/cifras-316.md`). The complement is not a hole in the data: it is what he did not buy,
- * gifts and inheritance. But in the first 140 rows he was not writing prices down yet, so purchases
- * he never noted are mixed in with the presents, and the figure therefore says how many pieces
- * declared a price and **never** what share of the collection they are (#491).
+ * Only rows that declare a price count, and they are their own denominator. The unpriced rest mixes
+ * gifts with purchases recorded before prices were, so the figure never says what share of the
+ * collection was bought (#491, `docs/ux/cifras-316.md`).
  *
- * @param paid totalled as `price` comes, which is per **row**: the bulks he bought as lots carry one
- *   figure for 102 pieces.
- * @param today the same pieces under the page's one rule, the maximum of the three sources. Since
- *   what was paid is one of those three, this can never come out under [paid] — see
- *   `ValuationTest`, where that is pinned as a consequence rather than found as a surprise.
+ * @param paid summed as `price` comes, which is per row.
+ * @param today the same pieces at the maximum of the three sources. Paid is one of them, so this is
+ *   never below [paid] (pinned in `ValuationTest`).
  */
 data class PaidComparison(val paid: Double, val today: Double, val pieces: Int)
 
 /**
- * The comparison over the rows that declare a price, or null when none does.
- *
- * Null and not zero: «pagaste 0 €» is a sentence about a collection nobody bought, and what it would
- * really be reporting is that the collector does not use the field.
+ * The comparison over the rows that declare a price, or null when none does: «pagaste 0 €» would
+ * only report that the field is unused.
  */
 fun paidComparison(
     items: List<CollectedItem>,
@@ -214,8 +175,8 @@ fun paidComparison(
     var pieces = 0
     for (item in items) {
         val price = item.price?.takeIf { it > 0.0 } ?: continue
-        // Unreachable while `price` is one of the three sources, and kept anyway: the two sides of a
-        // comparison have to be totalled over the same pieces or the sentence lies by subtraction.
+        // Unreachable while `price` is one of the three sources; kept so both sides always total
+        // the same pieces.
         val value = pieceValue(item, typeMeta[item.typeId], spot, prices) ?: continue
         val quantity = item.quantity.coerceAtLeast(1)
         paid += price
@@ -229,11 +190,11 @@ fun paidComparison(
  * What the whole collection is worth, and over how many of its pieces.
  *
  * @param pieces every piece the collection holds, quantities included.
- * @param valued how many of them a source covered. The page says **coverage and never progress**
- *   (ADR 0028 §7): «el valor de N de tus 574 piezas» is said, «llevo 140 de 223» is not.
- * @param catalogReadAt the **oldest** catalogue read behind the total, which is how a total whose
- *   parts arrived on different days is dated (#494). Null where no piece of the collection was ever
- *   asked about — a total out of metal and what was paid, which has no catalogue clock to name (#594).
+ * @param valued how many of them a source covered; the page states coverage, never progress (ADR
+ *   0028 §7).
+ * @param catalogReadAt the oldest catalogue read behind the total, which dates a total whose parts
+ *   arrived on different days (#494). Null when no piece was ever asked about, so the total comes
+ *   from metal and paid prices only (#594).
  */
 data class CollectionValue(
     val eur: Double,
@@ -247,10 +208,9 @@ data class CollectionValue(
 /**
  * Totals the maximum of the three sources over every piece.
  *
- * Callers must not reach here while the market is still arriving: `max(silver, paid)` gives 10.500 €
- * of the real 16.800, which is literally the «only the silver floor» that #316 rejected, and a total
- * at 60 % is not incomplete but **false** (ADR 0028 §7). Whether the market has landed is a question
- * about the pass and not about the collection, so it is asked before this one and not inside it.
+ * Callers must not call this while market prices are still arriving: without them the total is
+ * the silver floor #316 rejected, which is false rather than incomplete (ADR 0028 §7). Whether the
+ * market has landed is a question about the pass, asked before this.
  */
 fun collectionValue(
     items: List<CollectedItem>,
@@ -258,16 +218,12 @@ fun collectionValue(
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
     /**
-     * When this phone asked Numista about an issue, for the date the total is stamped with (#594).
+     * When this phone asked Numista about an issue, to date the total (#594). A lambda beside
+     * [prices] so a total and its date come from the same reading of the catalogue.
      *
-     * A lambda beside [prices] and for the same reason: the catalogue's two halves — what it answered
-     * and when it was asked — reach the domain by one door, so a total cannot be added up out of one
-     * and dated out of a reading of the other taken a moment later.
-     *
-     * The gate is **asked** and not **priced**, which is `showcaseMoney`'s own rule (ADR 0030 §6): a
-     * piece whose silver beat its catalogue price still had that price brought on the day the row says,
-     * and a date that counted it out would promise a freshness the amount does not have. Erring older
-     * is the one direction a date may err in.
+     * Every asked issue counts, not only the priced ones, as in `showcaseMoney` (ADR 0030 §6): a
+     * piece whose silver beat its catalogue price still had that price read on that day. A date may
+     * only err older.
      */
     readAt: (Int, Int) -> Long?,
 ): CollectionValue {

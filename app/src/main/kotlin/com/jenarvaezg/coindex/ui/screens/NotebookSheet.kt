@@ -65,16 +65,13 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.BitterFamily
 
-/** The density that makes one dp a millimetre of paper: the layout is written in millimetres. */
+/** Makes one dp a millimetre of paper, so the page layout is written in millimetres. */
 val printDensity = Density(density = PrintGeometry.PX_PER_MM, fontScale = 1f)
 
-/** Millimetres, as the unit the whole printed page is laid out in. */
 private val Float.mm: Dp get() = Dp(this)
 
-// Type sized in millimetres of paper rather than in phone dp: the sheet of a single plate scales
-// the screen's typography by a factor (`scaledBy`), which works because that sheet's width is a
-// multiple of a phone's. A4 is not, and paper diverges from the screen on purpose (#169) — 3 mm of
-// serif is around 8,5 pt, which is what a printed album caption is set in.
+// Type sized in millimetres of paper, not scaled from the screen's typography as the single-plate
+// sheet does (#169): A4 isn't a multiple of a phone's width. 3 mm of serif is about 8,5 pt.
 private val PRINT_EYEBROW = TextStyle(
     fontFamily = BarlowCondensedFamily,
     fontWeight = FontWeight.SemiBold,
@@ -115,22 +112,11 @@ private val PRINT_CELL_TITLE = TextStyle(
 )
 
 /**
- * Bitter shrinks before the paper cuts, which is the ladder of #348 brought to the notebook (#412).
+ * Cell titles shrink before they ellipsize, as on screen (#348, #412). Paper can't get a third
+ * line like the screen did: [PrintGeometry.captionMm] feeds the page count.
  *
- * **The screen was given a third line and the paper cannot be**: the sixteen millimetres of
- * [PrintGeometry.captionMm] are what the page count was computed from, so a taller caption is a
- * longer notebook. What the paper has instead is resolution: 2,9 mm of serif is a comfortable
- * caption at 300 dpi and there is room underneath it, while 13 sp was already the screen's floor.
- *
- * Measured over the 1.082 named members of `data/` in the narrowest cell there is — 28 mm, the floor
- * a 2 euros of 25,75 mm falls back to, and the very coin whose names the report quoted: at the fixed
- * 2,9 mm the paper cut 57 of them, and it cut **40 that the screen prints whole**. Down to 1,8 mm it
- * cuts none of those, which is the property this exists for — no name is legible on the glass and an
- * ellipsis on the page. Only 7 names ever reach the bottom of the ladder, and the last one to give in
- * is «Saint Trinity Seraphim-Diveyevsky Monastery», whose hyphenated 19-letter word cannot break.
- *
- * The floor is small — 1,8 mm is about 5 pt — and it is only ever reached where the alternative is
- * not reading the name at all. The footnote and the state of this same caption are set at 2,3 mm.
+ * The 1,8 mm floor (about 5 pt) is the size at which no name the screen prints whole gets cut on
+ * paper in the narrowest cell (28 mm); it is only reached when the alternative is an ellipsis.
  */
 private val PRINT_CELL_TITLE_AUTO_SIZE = TextAutoSize.StepBased(
     minFontSize = 1.8f.sp,
@@ -142,8 +128,8 @@ private val PRINT_CELL_THEME = TextStyle(
     fontSize = 2.5f.sp,
     lineHeight = 2.9f.sp,
 )
-// Denomination plus the worst-case two theme lines. The rest of the 16 mm caption stays untouched,
-// so fixing alignment cannot change the page count (#350).
+// Denomination plus at most two theme lines, within the 16 mm caption, so it can't change the page
+// count (#350).
 private const val PRINT_CARTOUCHE_MM = 9.1f
 private val PRINT_FOOTNOTE = TextStyle(
     fontFamily = BarlowCondensedFamily,
@@ -151,30 +137,24 @@ private val PRINT_FOOTNOTE = TextStyle(
     fontFeatureSettings = "'tnum'",
 )
 
-/** The side of the box that gets ticked on a page with no photographs (#231). */
+/** Side of the tick box on a page without photographs (#231). */
 private const val LIST_BOX_MM = 3.4f
 
-/** Between two things on one line of the list: enough to separate, not enough to be a column rule. */
+/** Gap between items on one list line. */
 private const val LIST_GAP_MM = 1.4f
 
 /**
- * The column the state takes on a line of the list, so the names below each other line up.
- *
- * Sized for the longest thing `plateMemberStateLabel` says — «SIN EMITIR», and «TENGO · ×9» just
- * under it. A quantity in double figures ellipsizes rather than pushing the name out of line: it is
- * the one case where the count is better read in the app than in the column, and a checklist whose
- * left edge moves row by row is not read at all.
+ * Fixed width of the state column on a list line, so the names line up. Fits «SIN EMITIR» and
+ * «TENGO · ×9»; a two-digit quantity ellipsizes rather than shifting the name.
  */
 private const val LIST_STATE_MM = 17f
 
 /**
- * One page of the printed notebook, at A4 and at 1:1.
+ * One page of the printed notebook, at A4 and 1:1.
  *
- * It is **not** the exported sheet with different numbers. That sheet is a bitmap as wide as its
- * grid needs, both faces of every coin, and a density that shrinks as the catalog grows; here the
- * page is given, the coin's size is given, and what varies is how many of them fit (#169). The two
- * renderings diverge on purpose and neither one is the other's fallback: the PNG of a single plate
- * is the gesture the collector makes every day and does not change by a pixel.
+ * Not the exported single-plate sheet with other numbers: that is a bitmap as wide as its grid,
+ * both faces, with a density that shrinks as the catalog grows. Here the page and the coin size are
+ * fixed and what varies is how many fit (#169). The two diverge on purpose.
  */
 @Composable
 fun NotebookPageSheet(
@@ -182,28 +162,21 @@ fun NotebookPageSheet(
     onImageSettled: (painted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // The millimetres this page was counted with, which since #228 come from the configuration the
-    // export was started under and no longer from a constant.
+    // From the export's configuration (#228).
     val geometry = page.geometry
     Column(
-        // The paper is painted inside whatever the caller wraps the page in, or the recording
-        // comes out transparent and every viewer fills it with a colour of its own.
+        // Painted here, or the recording comes out transparent and each viewer picks a colour.
         modifier = modifier
             .size(geometry.widthMm.mm, geometry.heightMm.mm)
             .paperSurface()
-            // Nothing is drawn outside the paper, which is the guarantee the packer makes when it
-            // gives a plate a folio to itself «even where a single row would overflow»: at shipped
-            // diameters that never happens, and if it ever did what came off the bottom would be
-            // clipped rather than drawn past the edge of a page the exporter had already counted.
+            // If a plate given its own folio ever overflowed it, clip rather than draw off the
+            // page. Doesn't happen at shipped diameters.
             .clipToBounds()
-            // The margin is the page's and not each band's: inside it the plates and the strip at
-            // the foot add up to at most the printable height, which is what the packer counted
-            // against.
+            // One page margin; inside it plates and foot fit the printable height the packer used.
             .padding(geometry.marginMm.mm),
     ) {
         page.blocks.forEachIndexed { index, block ->
-            // The seam between two plates, and never above the first: what the folio has left over
-            // belongs at its foot and not between the plates on it (#232).
+            // Between plates only; the folio's leftover space goes at its foot (#232).
             if (index > 0) Spacer(modifier = Modifier.height(geometry.blockGapMm.mm))
             PlateHeading(block)
             PlateGrid(block, onImageSettled)
@@ -214,20 +187,11 @@ fun NotebookPageSheet(
 }
 
 /**
- * One plate's heading, and the thin band of its name on every folio it spills onto.
+ * A plate's heading, or the thin name band on a folio it continues onto or shares.
  *
- * Its height is fixed by [PrintHeading.millimetres] and its overflow is clipped, which is what
- * keeps the arithmetic of the page count and the drawing of the page in step: a heading that grew
- * with a catalog's specification would push cells off a page the exporter had already counted.
- *
- * **What it holds is [PrintHeading] and not this function's opinion** (#232). The band is forty
- * millimetres of masthead, twenty-eight of a name with no specification (#231) or fourteen of a name
- * band when the folio is shared — and the height and the contents come from the same value precisely
- * so that a subtitle cannot be drawn into millimetres nobody reserved.
- *
- * Which of the three is asked of the **block** and no longer of the geometry (#480): a page that
- * continues a plate gets the thin band, because the specification under the rule has nothing to add
- * that the page before it did not already say and it costs a row of coins to repeat.
+ * Its height comes from [PrintHeading] (#232), the same value the page count used, and overflow is
+ * clipped, so the drawing can't push cells off a counted page. The block decides which band (#480):
+ * a continuation page gets the thin one, since repeating the specification costs a row of coins.
  */
 @Composable
 private fun PlateHeading(block: PrintBlock) {
@@ -251,10 +215,8 @@ private fun PlateHeading(block: PrintBlock) {
                 )
             }
         }
-        // Title and stamp share the row the screen already uses: the caucho lands on this plate's
-        // own heading, so a shared folio (#232) stamps each complete plate and not the page (#371).
-        // The Progress row below stays whole; the ratio inside the ink is the celebration rather
-        // than a replacement for that labelled specification.
+        // The stamp sits on this plate's heading, so a shared folio (#232) stamps each complete
+        // plate, not the page (#371). The facts row below still prints the ratio.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
@@ -276,12 +238,8 @@ private fun PlateHeading(block: PrintBlock) {
             Text(subtitle, style = PRINT_SUBTITLE, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         HorizontalDivider(thickness = 0.5f.mm, color = Paper.ink)
-        // A band without room for the specification drops it whole rather than clipping it: the
-        // list of #231 already says «Tengo» or «Me falta» on every one of its rows, so it *is* the
-        // coverage the block would have summarised, and a shared folio spends those millimetres on
-        // the plate underneath. Half a fact under a rule is worse than none. Where it is printed it
-        // is flowed and clipped — what a plate says about itself grew with the catalogs that share
-        // a type or a year, and the band is what it is.
+        // A band without room for the facts drops them whole rather than clipping half. Where they
+        // print, they flow and are clipped to the band.
         if (heading.facts) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -300,12 +258,8 @@ private fun PlateHeading(block: PrintBlock) {
 }
 
 /**
- * The cells of one plate on one folio, on the grid its largest coin fixed.
- *
- * It is as tall as the rows it holds and no taller (#232), where before it took the whole band under
- * the heading: on a shared folio what is left over is the room the next plate is packed into, and on
- * a folio of one plate the two are the same page — the leftover simply falls above the foot, where
- * it always did.
+ * The cells of one plate on one folio, on the grid its largest coin fixes. Only as tall as its rows
+ * (#232), so a shared folio can pack the next plate below.
  */
 @Composable
 private fun PlateGrid(block: PrintBlock, onImageSettled: (painted: Boolean) -> Unit) {
@@ -317,8 +271,7 @@ private fun PlateGrid(block: PrintBlock, onImageSettled: (painted: Boolean) -> U
             .height(block.cellsHeightMm.mm)
             .clipToBounds(),
         verticalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm),
-        // The block is centred and the rows inside it are not: what the grid leaves over is
-        // margin, and margin on one side only reads as a page printed askew.
+        // Block centred, rows left-aligned inside it: one-sided margin looks askew.
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         block.cells.chunked(grid.columns).forEach { row ->
@@ -342,24 +295,15 @@ private fun PlateGrid(block: PrintBlock, onImageSettled: (painted: Boolean) -> U
 }
 
 /**
- * One coin at its real diameter, and what is written under it — or one line, with no coin at all.
+ * One coin at its diameter with its caption, or a [ListedCell] line when «fotos» is off (#231).
  *
- * The coin band is as tall as the **plate's** largest coin and the coin is drawn at **its own**
- * diameter inside it, which is how a plate whose issues changed size over the years keeps its rows
- * aligned without rescaling a single piece. A cell with no coin behind it — a hole — takes the same
- * diameter as the coin the collector does have, so an album page reads as a gap and not as a
- * shrunken coin.
+ * The coin band is as tall as the plate's largest coin and each coin is drawn at its own diameter,
+ * so rows stay aligned without rescaling. A hole takes the diameter of the coin it stands for.
+ * With «ambas caras» (#230) both faces share one band and one caption.
  *
- * With «ambas caras» on (#230) the band holds the two of them side by side, each at that same
- * diameter and separated by the gutter, under **one** caption: the cell is a coin and not two. With
- * «fotos» off (#231) there is no band and the cell is a [ListedCell]: the two shapes are decided by
- * the geometry the page count was computed from, so the brush cannot disagree with the arithmetic.
- *
- * With «tamaño real» off (#233) every diameter here is the printed one — the fraction is applied by
- * [PrintGeometry.printedDiameterMm] and by nothing in this file — so the band, the circle and the hole
- * all shrink together and a plate whose issues changed size still keeps its proportions. What does not
- * shrink is the caption, which then has to say the **real** measure in words: there is no ruler under a
- * page like this to lay a coin against.
+ * With «tamaño real» off (#233) every diameter is already scaled by
+ * [PrintGeometry.printedDiameterMm], so coins keep their proportions; the caption then states the
+ * real diameter, since there is no ruler.
  */
 @Composable
 private fun PrintedCell(
@@ -373,8 +317,7 @@ private fun PrintedCell(
         ListedCell(cell = cell, geometry = geometry, modifier = modifier)
         return
     }
-    // The real diameter is what the caption may print as a number and what the band is measured from;
-    // what the circle comes out at is that fraction of it, which is «tamaño real» (#233).
+    // Printed diameter: the real one, scaled when «tamaño real» is off (#233).
     val diameter = geometry.printedDiameterMm(cell.diameterMm ?: grid.diameterMm)
     Column(modifier = modifier.clipToBounds(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
@@ -382,8 +325,7 @@ private fun PrintedCell(
             contentAlignment = Alignment.Center,
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(geometry.gutterMm.mm)) {
-                // Keyed by nothing: the faces of a cell are a fixed pair for the whole export, so
-                // the obverse's slot is the obverse's for as long as this page exists.
+                // No key needed: a cell's faces are fixed for the whole export.
                 cell.faces.forEach { face ->
                     PrintedCoin(
                         face = face,
@@ -394,16 +336,11 @@ private fun PrintedCell(
                 }
             }
         }
-        // The code goes **beside** the caption where the cell has the width for it and under the name
-        // where it has not (#478). Which of the two is not this drawing's opinion: it is
-        // [PrintGeometry.qrBesideCaption], the same question the page count asked before any of this
-        // was composed — a cell drawn one way and counted the other is a row falling off a folio.
+        // QR beside the caption when the cell is wide enough, else under it (#478). Decided by
+        // [PrintGeometry.qrBesideCaption], as the page count was, so drawing and count agree.
         if (geometry.qrBesideCaption(cell.diameterMm ?: grid.diameterMm)) {
-            // The words and the code travel together and the pair is centred, rather than the code
-            // being pinned to the cell's edge: with «ambas caras» a cell is two coins wide and its
-            // edge is three millimetres from the **next** cell's coin, so a code anchored there ends
-            // up nearer its neighbour than its own caption. Grouped, it sits two millimetres from the
-            // name it belongs to, and the name gives up half the code's band of centring.
+            // Caption and code centred as a pair, not the code pinned to the cell edge: with
+            // «ambas caras» the edge sits nearer the next cell's coin than this caption.
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -421,15 +358,8 @@ private fun PrintedCell(
             }
         } else {
             CellCaption(cell = cell, geometry = geometry)
-            // Under the year and against it, not at the foot of the cell.
-            //
-            // Both were printed. Anchored to the foot the codes line up across a row, and every one of
-            // them sits a finger's width from the caption it belongs to — because the words take some ten
-            // of the sixteen millimetres the caption budgets for them, and the slack fell between the
-            // name and the code. Against the caption the slack falls at the bottom of the cell instead,
-            // where a gutter already is, and «bajo el nombre» is what the page actually shows. The price
-            // is that a two-line title lowers its own code by a line; the codes of one plate are not read
-            // as a row.
+            // Right under the caption, not at the cell's foot: anchored to the foot, the caption's
+            // slack fell between name and code. Codes in a row no longer line up, which is fine.
             if (geometry.qrMm > 0f) {
                 Spacer(modifier = Modifier.height(geometry.qrGapMm.mm))
                 NumistaCode(cell.numistaUrl, geometry.qrMm)
@@ -439,11 +369,8 @@ private fun PrintedCell(
 }
 
 /**
- * What is written under a coin: its state, its name, the year that tells it apart and its diameter.
- *
- * A composable of its own since #478, because the code can now sit beside it or under it and the words
- * are the same words either way — the two arrangements differ in where twelve millimetres of symbol go
- * and in nothing else.
+ * The text under a coin: state, name, distinguishing year and diameter. Shared by both QR
+ * placements (#478).
  */
 @Composable
 private fun ColumnScope.CellCaption(cell: PrintCell, geometry: PrintGeometry) {
@@ -490,7 +417,6 @@ private fun ColumnScope.CellCaption(cell: PrintCell, geometry: PrintGeometry) {
             overflow = TextOverflow.Ellipsis,
         )
     }
-    // The year remains outside the cartouche; #337 owns its separate rendering change.
     cell.footnote?.let { footnote ->
         Text(
             footnote,
@@ -501,9 +427,8 @@ private fun ColumnScope.CellCaption(cell: PrintCell, geometry: PrintGeometry) {
             overflow = TextOverflow.Ellipsis,
         )
     }
-    // And under it the diameter, on a page with no ruler to lay a coin against (#233). A line of
-    // its own and not the end of the one above: the cells of a collection with no issue list fill
-    // that one with «1977 · Numista 681», and the ellipsis ate the millimetres.
+    // The diameter when the page has no ruler (#233), on its own line: footnotes can be long
+    // enough to ellipsize it away.
     if (geometry.printsDiameterLabel) {
         printedDiameterLabel(cell.diameterMm)?.let { measure ->
             Text(
@@ -518,25 +443,12 @@ private fun ColumnScope.CellCaption(cell: PrintCell, geometry: PrintGeometry) {
 }
 
 /**
- * One member on one line: a box to tick in pencil, the state, the name, the year and the diameter.
+ * One member on one line, for the take-along list of #231: a box to tick in pencil, the state, the
+ * name, then year and diameter at the right edge.
  *
- * This is the notebook you take with you (#231). It is not the album page with its pictures turned
- * off — it is the other thing a catalog can be, and every part of it earns its place on a line eighty
- * millimetres wide:
- *
- * - **The box first, and it is what the pencil is for.** Ticked for what the collector has, empty for
- *   what they do not, and an empty one at a fair is a box you fill in before the app ever hears about
- *   it. It is the only mark on the page meant to be made by hand.
- * - **The state beside it, in a column of its own width.** It is redundant with the box for a plate
- *   —«Tengo», «Me falta»— and it is not for «Sin ficha» or «Sin emitir», which no tick can say. The
- *   column is fixed so the names line up down the page: a checklist read at a glance is a checklist
- *   whose left edge does not move.
- * - **The name takes what is left**, and the year and the diameter are pushed to the right edge,
- *   where a column of numbers is scanned. The diameter is a *number* because this page has no ruler
- *   to hold a coin against (`printedDiameterLabel`).
- *
- * The code, where «QR de Numista» is on, closes the line rather than sitting under it: the row is
- * already a left-to-right reading, and there is nothing above it to stack it beneath.
+ * The state is redundant with the box for «Tengo» and «Me falta» but not for «Sin ficha» or «Sin
+ * emitir»; its column has a fixed width so the names line up. The diameter is a number because this
+ * page has no ruler. With «QR de Numista» on, the code ends the line.
  */
 @Composable
 private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modifier = Modifier) {
@@ -550,8 +462,7 @@ private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modif
         Text(
             cell.label,
             style = PRINT_CELL_TITLE,
-            // One line and the same ladder, which on a line eighty millimetres wide reaches further
-            // than it does in a cell: the name gives up type before it gives up its tail (#412).
+            // Shrinks before ellipsizing (#412).
             autoSize = PRINT_CELL_TITLE_AUTO_SIZE,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -560,8 +471,7 @@ private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modif
         cell.footnote?.let { footnote ->
             Text(footnote, style = PRINT_FOOTNOTE, color = Paper.muted, maxLines = 1)
         }
-        // Unconditional, and it is the same rule the caption of a coin asks `printsDiameterLabel` for:
-        // a page of lines never carries a ruler, so the answer here is yes by construction.
+        // Always: a list page never has a ruler (the rule behind `printsDiameterLabel`).
         printedDiameterLabel(cell.diameterMm)?.let { diameter ->
             Text(diameter, style = PRINT_FOOTNOTE, color = Paper.muted, maxLines = 1)
         }
@@ -572,12 +482,8 @@ private fun ListedCell(cell: PrintCell, geometry: PrintGeometry, modifier: Modif
 }
 
 /**
- * What the cell says about itself — «Tengo», «Me falta», «Sin ficha» — or nothing where it says none.
- *
- * Shared by the two shapes of cell because it is the same claim about the same coin: a sheet of
- * pieces has no state at all (ADR 0021 §9), and what a plate's state is coloured by is whether the
- * collector owns it, on the page of coins and on the page of lines alike. Only where it sits differs,
- * which is what [modifier] carries.
+ * The cell's state («Tengo», «Me falta», «Sin ficha»), or nothing for a sheet of pieces
+ * (ADR 0021 §9). Coloured by ownership in both cell shapes.
  */
 @Composable
 private fun CellState(cell: PrintCell, modifier: Modifier = Modifier) {
@@ -593,11 +499,8 @@ private fun CellState(cell: PrintCell, modifier: Modifier = Modifier) {
 }
 
 /**
- * The box the collector marks: ruled empty, and ticked where the coin is already theirs.
- *
- * Drawn rather than set in a font, for the same reason the ruler and the empty mount are: it goes
- * into the PDF as commands, it is crisp at any printer's resolution, and it is a millimetre of paper
- * and not a glyph whose size depends on which font the viewer substitutes.
+ * The box the collector ticks in pencil, pre-ticked when the coin is owned. Drawn, not a glyph, so
+ * it is crisp at any resolution and doesn't depend on the viewer's font substitution.
  */
 @Composable
 private fun TickBox(ticked: Boolean, modifier: Modifier = Modifier) {
@@ -610,8 +513,7 @@ private fun TickBox(ticked: Boolean, modifier: Modifier = Modifier) {
             style = Stroke(width = stroke),
         )
         if (!ticked) return@Canvas
-        // A check and not a fill: a solid box beside «TENGO» is a blot, and the collector's own
-        // pencil marks are going to be checks too.
+        // A check, not a fill, to match pencil ticks.
         val tick = 0.45f.mm.toPx()
         drawLine(
             color = Paper.rust,
@@ -629,25 +531,18 @@ private fun TickBox(ticked: Boolean, modifier: Modifier = Modifier) {
 }
 
 /**
- * The Numista page of one coin, as modules drawn on the page (#234).
+ * A QR code for the coin's Numista page (#234), drawn as rectangles: crisp at any zoom, and it
+ * never goes through Coil, so it can't fail to load or slow the photo warm-up (#169).
  *
- * **Rectangles and not a bitmap.** The code goes into the PDF as drawing commands, so it is crisp at
- * any zoom and at any printer's resolution — and it never touches Coil, which means it is not a
- * photograph that can fail to arrive, cannot leave a hole in a page, and costs nothing in the
- * warm-up of #169. It is the one thing on a printed cell that is guaranteed to be there.
- *
- * A cell with no URL —a member no Numista type backs, an unlisted one— leaves the square blank rather
- * than drawing a code that leads nowhere. The square is reserved either way: the caption is a
- * constant of the layout, and it is what the page count was computed against.
+ * Without a URL the square is left blank; the space stays reserved because the page count assumed
+ * it.
  */
 @Composable
 internal fun NumistaCode(url: String?, sideMm: Float, modifier: Modifier = Modifier) {
-    // Encoded once per URL rather than on every recomposition: a page of twelve cells is twelve
-    // encodings, and the same type shows up on several pages of the notebook.
+    // Encoded once per URL, not per recomposition.
     val code = remember(url) { numistaQr(url) } ?: return
     Canvas(modifier = modifier.size(sideMm.mm)) {
-        // PaperGrain belongs to the sheet, never to a QR. Paint one opaque, perfectly even field
-        // behind both the light modules and the four-module quiet zone before laying down the ink.
+        // No paper grain behind a QR: an even opaque field under the light modules and quiet zone.
         drawRect(color = Paper.paper)
         val module = size.minDimension / code.qrModulesWithQuietZone
         val quiet = module * QR_QUIET_MODULES
@@ -664,18 +559,12 @@ internal fun NumistaCode(url: String?, sideMm: Float, modifier: Modifier = Modif
 }
 
 /**
- * One face of one coin, printed round.
+ * One face of one coin, printed round. Which face was decided by the plate (#227); «ambas caras»
+ * (#230) means two calls. A hole shows the catalog design faded, under a dashed circle so it reads
+ * as an empty mount rather than a bad print.
  *
- * By default it is one face and one only (#169): the album page is the side you look at, and a
- * second picture at 1:1 is paid for in width — which is what «ambas caras» decides to do (#230), not
- * something this drawing can settle on its own. Which face that one is was decided before it got
- * here too, by the plate that declared it (#227). A hole keeps the catalog design faded
- * and desaturated, exactly as the plate on screen does, and is ruled with a dashed circle so it
- * reads as an empty mount rather than as a badly printed coin.
- *
- * [filled] is the **cell's** and not the face's: a coin the collector owns whose obverse nobody
- * photographed is still owned, so that slot gets the silhouette of a coin that is there and not the
- * dashed mount of one that is missing.
+ * [filled] is the cell's, not the face's: an owned coin missing one photo still gets the owned-coin
+ * silhouette, not the empty mount.
  */
 @Composable
 private fun PrintedCoin(
@@ -689,9 +578,8 @@ private fun PrintedCoin(
     var painted by remember(candidates) { mutableStateOf(false) }
     val url = candidates.getOrNull(attempt)
     Box(modifier = modifier) {
-        // The stand-in for a coin whose picture is not cached, and only for a coin the collector
-        // has: a hole's stand-in is the dashed mount below, and a filled silhouette in a «me
-        // falta» cell would make the two indistinguishable on a page with no photographs at all.
+        // Silhouette only for owned coins; a hole has the dashed mount, and the two must stay
+        // distinguishable when no photo loads.
         if (filled && !painted) {
             Silhouette(Modifier.matchParentSize())
         }
@@ -700,9 +588,8 @@ private fun PrintedCoin(
                 model = url,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                // The thumbnail first and the original behind it, as everywhere else (#67); both
-                // outcomes report back, because the notebook has to know how many cells it froze
-                // empty before it says the export went well.
+                // Thumbnail first, then the original (#67). Both outcomes report back so the
+                // closing message can count missing photos.
                 onState = { state ->
                     when (state) {
                         is AsyncImagePainter.State.Success -> {
@@ -721,11 +608,8 @@ private fun PrintedCoin(
                 colorFilter = paperCoinFilter(missing = !filled),
                 modifier = Modifier
                     .matchParentSize()
-                    // Clipped round, which the screen's cell does not do and this page must: at
-                    // 1:1 the photograph's own background is a pale square exactly as wide as the
-                    // coin, and a square around a round coin is what gives away that a printed
-                    // plate is a screenshot. Numista crops its photographs to the coin, so the
-                    // circle takes the corners and nothing else.
+                    // Clipped round, unlike on screen: at 1:1 the photo's pale square background
+                    // shows. Numista crops photos to the coin, so only the corners go.
                     .clip(CircleShape)
                     .alpha(if (filled) 1f else 0.45f),
             )
@@ -736,13 +620,12 @@ private fun PrintedCoin(
     }
 }
 
-/** The dashed circle of a mount with nothing in it, drawn in the guide's own hand. */
+/** The dashed circle of an empty mount. */
 @Composable
 private fun EmptyMount(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
-        // Through the draw scope's own density rather than by multiplying by `PX_PER_MM`: the
-        // millimetre is the unit of the page either way, and this one stays a millimetre if the
-        // page is ever recorded at another resolution.
+        // Via the draw scope's density, not `PX_PER_MM`, so it stays a millimetre at any
+        // resolution.
         val stroke = 0.4f.mm.toPx()
         drawCircle(
             color = Paper.hairline,
@@ -758,21 +641,12 @@ private fun EmptyMount(modifier: Modifier = Modifier) {
 }
 
 /**
- * The foot: the ruler on the left, the source on the right.
+ * The page foot: ruler on the left, source on the right, one strip per folio (#232).
  *
- * The ruler is the only thing on the page that is about the page itself. A PDF viewer's «fit to
- * page» silently rescales everything, and a plate whose whole claim is that a one-ounce coin
- * measures forty millimetres has to be falsifiable with the ruler in the collector's drawer.
- *
- * On a page with no coin at 1:1 there is nothing to falsify, so the ruler goes and the strip narrows to
- * the source alone — with «fotos» off because no coin is drawn (#231), and with «tamaño real» off
- * because the one that is drawn is not the size it claims (#233). The source stays whatever the page
- * prints, because the paper outlives the app and a list that does not say where it came from cannot be
- * checked later either. What replaces the bar is every caption printing its diameter as a number.
- *
- * **One strip per folio and not per plate** (#232), which is why the source can be a plural: two
- * plates sharing a page can come from two catalogs, and one of them going unnamed would attribute
- * its coins to the other.
+ * The ruler lets the collector check that a viewer's «fit to page» didn't rescale the 1:1 coins.
+ * It is dropped when no coin is at 1:1 («fotos» off, #231; «tamaño real» off, #233), and captions
+ * print diameters instead. The source always prints, so paper can be traced back; it can be plural
+ * when two plates from different catalogs share a folio.
  */
 @Composable
 private fun PageFoot(page: PrintPage) {
@@ -806,7 +680,7 @@ private fun PageFoot(page: PrintPage) {
     }
 }
 
-/** A 50 mm bar ticked every 10 mm, drawn rather than measured from any font. */
+/** The ruler bar, divided in five, drawn rather than set in a font. */
 @Composable
 private fun Ruler(geometry: PrintGeometry) {
     Canvas(
@@ -822,7 +696,7 @@ private fun Ruler(geometry: PrintGeometry) {
             end = Offset(size.width, baseline),
             strokeWidth = stroke,
         )
-        // Six marks for five centimetres, the ends included: a bar with no ends is not a ruler.
+        // Six marks, both ends included.
         for (tick in 0..5) {
             val x = (size.width - stroke) * tick / 5f + stroke / 2f
             val long = tick % 5 == 0

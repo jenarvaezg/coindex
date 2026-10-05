@@ -34,21 +34,12 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * The way back into the credentials once onboarding is done.
+ * Edit or clear the Numista credentials after onboarding, so a wrong or expired key doesn't force
+ * clearing the app's data. Signing out keeps the collection.
  *
- * Without it a mistyped or expired API key was a dead end: every sync failed with a 401 and the
- * only cure was clearing the app's data, taking the synced collection with it. Signing out is
- * offered here too, and keeps the collection.
- *
- * One screen down from «Este teléfono» since #521, in the shape ADR 0026 §14 wrote for the licence
- * notices: three words at the foot, one screen with everything inside. What justifies the nesting is
- * frequency — onboarding fills these two fields, and the only reason to come back is a key Numista
- * has started refusing — and what pays for it is that everything which blames the key opens this
- * screen: the two valuation states of ADR 0028 §6.1 and the three sync refusals that name it.
- *
- * `Cerrar sesión` comes down with the fields, because that is what it does: it deletes these two
- * values. At the foot of a maintenance page it was a destructive button on the screen the collector
- * opens to sync.
+ * One screen below «Este teléfono» (#521, shaped like ADR 0026 §14): it is rarely needed, and every
+ * state that blames the key links here (ADR 0028 §6.1 and the sync refusals that name it).
+ * «Cerrar sesión» lives here because it deletes these two values.
  */
 @Composable
 fun CredentialsScreen(
@@ -60,8 +51,8 @@ fun CredentialsScreen(
 ) {
     var apiKey by remember(values) { mutableStateOf(values.apiKey) }
     var userId by remember(values) { mutableStateOf(values.userId) }
-    // The onboarding copy promises the key is stored encrypted, so it is masked here by
-    // default; it is also the one field a collector needs to read back to spot a typo.
+    // Masked by default (onboarding promises it is stored encrypted), but revealable to spot a
+    // typo.
     var revealKey by remember { mutableStateOf(false) }
 
     Column(
@@ -71,7 +62,7 @@ fun CredentialsScreen(
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // No heading: the masthead of this screen is the word this screen is about (§5).
+        // No heading: the top bar already names the screen (ADR 0026 §5).
         Text(
             CREDENTIALS_EXPLANATION,
             style = MaterialTheme.typography.bodyMedium,
@@ -105,16 +96,15 @@ fun CredentialsScreen(
         validation?.let { text ->
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
-        // Beside the fields it keeps. A `CardAction` and not a `PrimaryAction`: the one filled action
-        // of this journey is «Sincronizar», one screen up (docs/ux/p1-jul-2026.md §1, #422).
+        // Not a `PrimaryAction`: the one filled action of this flow is «Sincronizar», one screen up
+        // (docs/ux/p1-jul-2026.md §1, #422).
         CardAction(
             text = CREDENTIALS_SAVE_ACTION,
             onClick = { onSave(apiKey, userId) },
         )
 
         FieldCard(dashed = true, modifier = Modifier.fillMaxWidth()) {
-            // No title: the word is the button, and a card whose heading repeats its only
-            // control says it twice (§5).
+            // No title: it would repeat the card's only button (ADR 0026 §5).
             Text(
                 SIGN_OUT_EXPLANATION,
                 style = MaterialTheme.typography.bodyMedium,

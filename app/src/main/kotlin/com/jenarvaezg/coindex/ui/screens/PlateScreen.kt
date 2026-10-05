@@ -84,42 +84,34 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 /**
- * The plate of a followed collection against its curated catalog.
+ * The plate of a collection against its curated catalog.
  *
- * Owned members are shown at full colour; missing ones keep their catalog design as a 14% ghost
- * inside a dotted die-cut rule. The year of every issued casilla opens that coin's sheet, over the
- * lámina and inside the app (#508); leaving for Numista is that sheet's own labelled link.
+ * Owned members are in full colour; missing ones show the catalog design as a faint ghost inside a
+ * dotted die-cut rule. A casilla's year opens that coin's sheet in the app (#508), and the sheet
+ * links out to Numista.
  *
- * The plate is worded once, here, and the grid and the exported sheet are handed the same
- * [PlateSubject] (#218): the specification used to be rebuilt in the body of the lazy grid on every
- * recomposition, and once more, in parallel, by the sheet while the export was in flight.
+ * The plate is worded once here as a [PlateSubject] and handed to both the grid and the exported
+ * sheet (#218).
  */
 @Composable
 fun PlateScreen(
     result: PlateResult,
     images: Map<Int, TypeImages>,
     /**
-     * What this plate is worth, what closing it would cost, what each hole costs and what tasar it
-     * would spend — or nothing at all while the market has not landed (ADR 0028 §7).
+     * The plate's value, closing cost, per-hole costs and tasación cost, or nothing until market
+     * prices arrive (ADR 0028 §7). Asked with [result] because the album those readings walk lives
+     * there.
      *
-     * Asked of the resolution rather than received as a value, because the plate is resolved here: the
-     * album those readings walk only exists on the other side of [result], and which régime this
-     * catalog is under is decided there too — a screen handed the gesture only for the twenty would
-     * have to be told twice.
-     *
-     * **One object and not two lambdas**, which is the whole of why it is a [PlateFinance]: the subject
-     * below is keyed on it, and a lambda literal is a new object per recomposition — a plate that
-     * re-walks its album on every frame of the entrance (#541).
+     * One object rather than lambdas because the subject below is keyed on it: a lambda literal is
+     * new on every recomposition and would re-walk the album each frame of the entrance (#541).
      */
     finance: PlateFinance,
-    /** The marks on this plate's casillas, and the gesture that toggles one (ADR 0029 §5). */
+    /** The marks on this plate's casillas and how to toggle one (ADR 0029 §5). */
     marking: PlateMarking,
     /**
-     * Whether **this** plate's tasación is in flight (ADR 0030 §3).
-     *
-     * Handed apart from [finance] and not inside it: it is the one thing on this screen that changes
-     * without a single amount changing, so an object holding it would be rebuilt twice per press — and
-     * the album walk the plate remembers on that object with it (#541).
+     * Whether this plate's tasación is running (ADR 0030 §3). Kept out of [finance] because it
+     * flips twice per press without any amount changing, and would rebuild it and its album walk
+     * (#541).
      */
     valuing: Boolean,
     notebookOptions: NotebookOptions,
@@ -127,36 +119,26 @@ fun PlateScreen(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
-    /**
-     * The sheet the year of a casilla opens, over this lámina (#508).
-     *
-     * Assembled once above the screens, like every other reading of a type: the sheet a casilla opens
-     * and the sheet Monedas opens cannot say different things about one coin.
-     */
+    /** The coin sheet a casilla's year opens over this lámina (#508). */
     sheet: CoinSheetSurface,
     onMessage: (UiNotice) -> Unit,
-    /** Now, for the age of a hand-asked price (ADR 0030 §4). Read once per opening of the plate. */
+    /** For the age of a hand-asked price (ADR 0030 §4); read once per opening. */
     nowMillis: Long,
     modifier: Modifier = Modifier,
 ) {
     when (result) {
         is PlateResult.Unavailable -> UnavailablePlate(result.reason, modifier)
         is PlateResult.Available -> {
-            // Keyed on the resolution and on the reading, and on nothing else: the marks and the now
-            // are what [finance] was built out of, so its identity already carries both of them.
+            // [finance] is built from the marks and the clock, so its identity covers both.
             val plate = remember(result, finance) {
                 plateSubject(result, finance.money(result), marking.wished, nowMillis)
             }
-            // Which casilla's coin is open, which is this screen's own state like the marking mode
-            // (ADR 0029 §5): a sheet is not a destination, and one left open would be waiting on the
-            // next lámina the collector walks into.
+            // Screen-local, like the marking mode (ADR 0029 §5), so a sheet left open doesn't
+            // reappear on the next lámina.
             var openTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
             Box(modifier = modifier) {
-                // The one fork of this screen (ADR 0030 §6): a plate of the collector's is wrapped in
-                // the export machine, and one of the shelf window is not wrapped in it at all. It is
-                // not a disabled button — a PNG of twelve empty holes is a picture of nobody's
-                // collection, so there is nothing there to disable — and what stands in its place is
-                // the gesture that spends.
+                // ADR 0030 §6: the collector's plates get the export flow; shelf-window plates get
+                // the tasación button instead, since there is nothing of theirs to export.
                 if (plate.mine) {
                     AvailablePlate(
                         plate = plate,
@@ -176,7 +158,7 @@ fun PlateScreen(
                         plate = plate,
                         marking = marking,
                         valuation = PlateValuation(
-                            // The one reading here that walks the album, so the one that is held still.
+                            // Walks the album, so it is remembered.
                             calls = remember(result, finance) { finance.calls(result) },
                             running = valuing,
                             onValue = { finance.press(result) },
@@ -190,11 +172,10 @@ fun PlateScreen(
                 CoinSheetOverlay(
                     typeId = openTypeId,
                     surface = sheet,
-                    // The face the casilla was resting on, and the one behind it: the plate declares
-                    // `printed_side` and its sheet obeys the same declaration (ADR 0020, #227).
+                    // The plate's `printed_side` up, as on the casilla (ADR 0020, #227).
                     faces = { typeId -> printedFaces(images[typeId], plate.printedSide) },
                     onDismiss = { openTypeId = null },
-                    // The lámina you are standing on is not a door out of its own casilla's sheet.
+                    // Don't link back to this same lámina from its own casilla's sheet.
                     here = CardDestination.Plate(plate.catalogId),
                 )
             }
@@ -203,11 +184,8 @@ fun PlateScreen(
 }
 
 /**
- * A plate of the shelf window: the same sheet, with the gesture where the export was (ADR 0030).
- *
- * It shares [PlateGrid] with the collector's own plate and hands it no [SheetExportSurface], which is
- * the whole of the difference on screen. The ink of the completion stamp is not read either: a plate at
- * 0/N has nothing to stamp, and asking for the fall would arm a ceremony that can never fire.
+ * A shelf-window plate (ADR 0030): the same [PlateGrid] without a [SheetExportSurface], with the
+ * tasación button in the export's place. No completion stamp: a plate at 0/N can't complete.
  */
 @Composable
 private fun ShowcasePlateSheet(
@@ -234,17 +212,11 @@ private fun ShowcasePlateSheet(
 }
 
 /**
- * The wish gesture as a plate receives it: what is marked, and what toggling one mark does.
+ * The marked casillas and how to toggle one, together so a screen can't draw marks it can't toggle.
+ * Not a `data class`: it holds a lambda, so the plate keys on [wished], not on this holder.
  *
- * One parameter rather than two because the two are halves of one subject, and a screen handed them
- * apart could draw marks it cannot toggle. **Not a `data class` and not compared**, which is where it
- * differs from [com.jenarvaezg.coindex.ui.PlateMoney]: it holds a lambda, so equality would be about
- * the lambda's identity, and what the plate keys its subject on is [wished] — the set — and never the
- * holder.
- *
- * **Whether the mode is open is not in here** — that is the screen's own state, like the export panel's
- * (ADR 0029 §5): nothing outside this plate needs to know the collector is marking, and a mode kept in
- * the ViewModel would still be open on the next plate they walk into.
+ * Whether the marking mode is open is screen state, not here (ADR 0029 §5), so it doesn't carry
+ * over to the next plate.
  */
 class PlateMarking(
     val wished: Set<WishKey>,
@@ -252,17 +224,12 @@ class PlateMarking(
 )
 
 /**
- * The tasación as a plate of the shelf window receives it (ADR 0030 §3).
+ * The tasación button on a shelf-window plate (ADR 0030 §3). [calls] is the cost shown before
+ * pressing (#282, ADR 0028 §3). Whether the plate already has an amount («Volver a tasar») comes
+ * from `PlateSubject.entry`, the same value the header shows.
  *
- * The sibling of [PlateMarking] and the same shape: what to draw, and what pressing it does. [calls] is
- * the ceiling the gesture prints **before** it is pressed, which is the rule #282 wrote and the one ADR
- * 0028 §3 gained with its gesture; whether the plate already carries an amount — what turns «Tasar esta
- * lámina» into «Volver a tasar» — is **not** in here: it is `PlateSubject.entry`, read off the same
- * subject the header draws, so the word on the button and the figure above it cannot disagree.
- *
- * Assembled by the screen out of [PlateFinance] and [PlateScreen]'s own `valuing`, because its three
- * fields are not held still by the same thing: the ceiling is an album walk and is remembered, and the
- * spinner flips twice per press and must never be.
+ * Built by the screen from [PlateFinance] and `valuing` separately: [calls] walks the album and is
+ * remembered, [running] flips on every press and must not be.
  */
 class PlateValuation(
     val calls: Int,
@@ -284,12 +251,11 @@ private fun AvailablePlate(
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Held here and not in the header of the grid, which is an item and is disposed on the way down:
-    // the ink falls once per opening of the sheet, and scrolling back up finds it dry (ADR 0026 §3).
+    // Held outside the grid, whose header item is disposed on scroll: the stamp falls once per
+    // opening and is already there on scrolling back (ADR 0026 §3).
     val ink = rememberInkFall(plate.complete)
 
-    // The machine itself is [SheetExportFlow] and lives in one place (#430), and since #431 the
-    // drawing does too: what a plate brings is its name, its file and what it says it holds.
+    // Export flow and drawing are shared (#430, #431); this supplies the name, file and tally.
     SheetExportFlow(
         sheet = SharedSheet.PLATE,
         key = plate.catalogId,
@@ -315,16 +281,11 @@ private fun AvailablePlate(
 }
 
 /**
- * The sheet, and under it the band of the mode it is being read in (#517).
+ * The sheet with the marking-mode band under it (#517).
  *
- * Whether the collector is marking is this screen's own state and nothing else's (ADR 0029 §5). It
- * survives a scroll because it is held outside the lazy grid, and it does not survive leaving the
- * plate: the mode is the gesture, not a setting.
- *
- * The band is a **row of this column** and not a bar floating over the casillas: it takes its height
- * off the grid, so the last row of holes is never underneath it and there is no inset to keep in step
- * with it. What it holds is what the header used to hold and scroll away with — the sentence that
- * names the spend, and the way out.
+ * The mode is held here, outside the lazy grid, so it survives scrolling but not leaving the plate
+ * (ADR 0029 §5). The band is a row of this column, not an overlay, so it never covers the last row
+ * of holes; it holds the hint and the way out.
  */
 @Composable
 private fun PlateGrid(
@@ -332,13 +293,13 @@ private fun PlateGrid(
     marking: PlateMarking,
     images: Map<Int, TypeImages>,
     ink: State<Float>,
-    /** Null on a plate of the shelf window, which has nothing of the collector's to export. */
+    /** Null on a shelf-window plate. */
     export: SheetExportSurface?,
-    /** Null on a plate of the collector's, which is not priced by a gesture. */
+    /** Null on the collector's own plates. */
     valuation: PlateValuation? = null,
-    /** The plate's own «Fuente en Numista», the one label of this screen that leaves the app. */
+    /** The plate's «Fuente en Numista», the only link out of the app. */
     onOpenSource: (String) -> Unit,
-    /** What the year of a casilla opens: the coin's sheet, inside the app (#508). */
+    /** Opens the coin's sheet from a casilla's year (#508). */
     onOpenCoin: (Int) -> Unit,
 ) {
     var picking by remember { mutableStateOf(false) }
@@ -377,18 +338,16 @@ private fun PlateSheet(
     valuation: PlateValuation?,
     onOpenSource: (String) -> Unit,
     onOpenCoin: (Int) -> Unit,
-    /** Whether the marking mode is open, which is what this whole sheet is drawn in (#517). */
+    /** Whether the marking mode is open (#517). */
     picking: Boolean,
     onPicking: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.sheetUnderMode(picking)) {
-        // Which casilla the sheet opens on depends on how many of them share a row, and the grid
-        // will not say it until it measures, so the same arithmetic it uses is read off the width
-        // here. Nothing about the name is decided from it any more: see [PlateCell] (#473).
+        // The opening casilla depends on the column count, which the grid only knows after
+        // measuring; compute it the same way here.
         val columns = plateColumns(maxWidth - PLATE_MARGIN * 2)
-        // Where the sheet opens is the grid's **initial state** and not an effect that runs on it,
-        // which is the whole of #396: see [plateOpeningItem].
+        // An initial state, not a scroll effect (#396): see [plateOpeningItem].
         val grid = rememberLazyGridState(
             initialFirstVisibleItemIndex = plateOpeningItem(plate.landingCell, columns),
         )
@@ -398,11 +357,10 @@ private fun PlateSheet(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = PLATE_MARGIN, vertical = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-            // Wider than the gutter, and it is the sheet's proximity and not its air: see
-            // [PlateSpacing]. Two members side by side are never confused; two rows were.
+            // Wider than the gutter so rows don't run together: see [PlateSpacing].
             verticalArrangement = Arrangement.spacedBy(PlateSpacing.rowGap),
         ) {
-            // The one item of this grid that is not a casilla, and what [PLATE_LEAD_ITEMS] counts.
+            // The only non-casilla item, counted by [PLATE_LEAD_ITEMS].
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Eyebrow(CURATED_CATALOG_EYEBROW)
@@ -422,23 +380,20 @@ private fun PlateSheet(
                         entries = plateEntriesBesideRatio(plate.entries),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    // One door into «Cómo se exporta», the same shape the index has (#434): the
-                    // panel owns Descargar / Compartir / Cancelar, and asking the destination
-                    // twice — once on the way in and once on the way out — was the whole defect.
-                    // It is gone while the panel it opened is here, in its slot (#512).
+                    // One button into «Cómo se exporta», as in the index (#434); the panel asks
+                    // the destination. Hidden while the panel is open (#512).
                     export?.let { surface ->
                         SheetExportDoorButton(surface.door)
                         surface.options?.invoke()
                         surface.progress?.invoke()
                     }
-                    // The gesture that takes the export's place on a plate that is not yours, in the
-                    // same slot and with the same weight: it is what this screen is for (ADR 0030 §3).
+                    // In the export's slot on a shelf-window plate (ADR 0030 §3).
                     valuation?.let { gesture ->
                         PrimaryAction(
                             text = showcaseValueAction(
                                 calls = gesture.calls,
-                                // Asked and not priced: a plate Numista has no price for has been
-                                // valued, and offering to «tasar» it again would buy the same silence.
+                                // Asked, not priced: a plate Numista has no price for still counts
+                                // as valued.
                                 valued = plate.entryValued,
                                 valuing = gesture.running,
                             ),
@@ -446,15 +401,8 @@ private fun PlateSheet(
                             enabled = !gesture.running,
                         )
                     }
-                    // The door into the marking mode, last thing before the casillas it is about
-                    // (ADR 0029 §5). Absent on a plate with nothing left to look for: a closed plate
-                    // has no empty casilla, and a word offering to mark nothing is furniture.
-                    //
-                    // **Only the door.** Once the mode is open the header has nothing left to say
-                    // about it: the sentence and the way out live in the band at the foot, where
-                    // they are still there two screens further down (#517). A door printed here as
-                    // well would be the same gesture in two places, one of which is usually off
-                    // screen.
+                    // Enters the marking mode (ADR 0029 §5); only when some casilla is markable.
+                    // Once open, the hint and exit live in the band at the foot (#517).
                     if (!picking && plate.cells.any { it.missing && it.wishKey != null }) {
                         CardAction(
                             text = WishLabels.MARK_ACTION,
@@ -473,13 +421,12 @@ private fun PlateSheet(
                     cell = cell,
                     images = cell.numistaTypeId?.let { images[it] },
                     printedSide = plate.printedSide,
-                    // Where the coin of the index card is flying to, and nowhere else: it is the
-                    // same casilla the plate is scrolled to, so the landing is the one thing the
-                    // journey promised — «es la misma moneda» (ADR 0026 §3).
+                    // The index card's coin lands only on the casilla the plate opens on
+                    // (ADR 0026 §3).
                     travellingFrom = plate.catalogId.takeIf { index == plate.landingCell },
                     onOpenCoin = onOpenCoin,
-                    // Only while the mode is open, which is what turns the body of an empty hole
-                    // from «turn the coin over» into «lo busco» and back (ADR 0029 §5).
+                    // While the mode is open, tapping an empty hole marks it instead of flipping
+                    // the coin (ADR 0029 §5).
                     onMark = if (picking) marking.onToggle else null,
                     picking = picking,
                 )
@@ -488,18 +435,12 @@ private fun PlateSheet(
     }
 }
 
-/** The page margin the plate keeps on both sides, and what the columns are measured inside. */
+/** Horizontal page margin; columns are measured inside it. */
 private val PLATE_MARGIN = 20.dp
 
 /**
- * How many casillas `GridCells.Adaptive(104.dp)` will put on a row of [available] width.
- *
- * The grid keeps this to itself until it measures, and the plate has to know it one step earlier,
- * to open on the right casilla — see [plateOpeningItem]. Same arithmetic, said out loud and tested.
- *
- * It used to answer a second question, which was which casillas shared a name box (#337, #412).
- * Nobody asks that any more: since #473 the tags of a row line up because they all hang off their
- * own hole by the same [PlateSpacing.underTheHole], and geometry needs no arithmetic to agree.
+ * How many casillas `GridCells.Adaptive(104.dp)` puts on a row of [available] width, computed ahead
+ * of measurement so the plate can open on the right casilla ([plateOpeningItem]).
  */
 internal fun plateColumns(
     available: Dp,
@@ -508,13 +449,8 @@ internal fun plateColumns(
 ): Int = maxOf(1, ((available + gutter) / (minimum + gutter)).toInt())
 
 /**
- * The plate's own heading: the title, and the ratio raised out of the specification onto it.
- *
- * The figure sits at the top right because that is where the stamp lands (#304): the ceremony eats
- * the datum that was already on the sheet instead of adding a line of its own, and it fires on
- * opening — when you are at the top — so a stamp anywhere further down would be pressed off screen.
- *
- * A plate with no measurable denominator has no figure to raise, and then the title takes the width.
+ * The title and, at the top right, the ratio, which is where the completion stamp lands (#304). The
+ * stamp fires on opening, so it has to be at the top. Without a ratio the title takes the width.
  */
 @Composable
 private fun PlateHeading(
@@ -540,22 +476,12 @@ private fun PlateHeading(
 }
 
 /**
- * The two figures of money a plate can carry, in two lines of the same weight (#493).
+ * The plate's money lines, all at the same size (#493); the wording carries the hierarchy (see
+ * `FiguresLabels.PLATE_VALUE_LABEL`).
  *
- * **The hierarchy is not in the type size, it is in the words** — the proportions that decided it are
- * in `FiguresLabels.PLATE_VALUE_LABEL`, where the words themselves are. What this composable owes them
- * is the one thing a label cannot say: that neither line is drawn smaller than the other.
- *
- * The second line is **absent** on a closed plate rather than zero, and absent over the threshold of
- * ADR 0028 §1 where those prices were never asked for. What is left then is one named line, and it
- * reads as well alone as in company.
- *
- * Four dp between them and not the ten the header spaces everything else by: the two lines are one
- * statement about money, and at ten they read as two blocks that happen to be adjacent.
- *
- * With [waiting] the slot holds one line instead of the figures, and never both: what is said there
- * is that the market has not landed, and an amount beside it would be the half-done total ADR 0028
- * §7 exists to forbid (#519).
+ * The cost line is absent, not zero, on a closed plate and beyond the ADR 0028 §1 threshold. With
+ * [waiting] a single line replaces the figures, never alongside them: no half-done totals
+ * (ADR 0028 §7, #519).
  */
 @Composable
 internal fun PlateMoneyLines(
@@ -564,8 +490,7 @@ internal fun PlateMoneyLines(
     entry: String? = null,
     waiting: Boolean = false,
 ) {
-    // In the slot the two figures left, and in muted rather than rust: rust is the colour of an
-    // amount on this page, and there is no amount here to wear it (#519).
+    // Muted, not rust: rust is for amounts (#519).
     if (waiting) {
         Text(
             FiguresLabels.PLATE_MONEY_WAITING,
@@ -576,9 +501,8 @@ internal fun PlateMoneyLines(
     }
     if (value == null && cost == null && entry == null) return
     Column(verticalArrangement = Arrangement.spacedBy(PLATE_MONEY_LINE_GAP)) {
-        // Three slots and never three lines: a plate of the collector's has the first two and one of
-        // the shelf window has the third alone (ADR 0030 §6), because with no piece inside there is no
-        // «Valor actual» for a cost to be told apart from.
+        // Never all three: the collector's plates have value and cost, shelf-window plates only
+        // the entry (ADR 0030 §6).
         listOfNotNull(value, cost, entry).forEach { line ->
             Text(
                 line,
@@ -589,95 +513,62 @@ internal fun PlateMoneyLines(
     }
 }
 
-/** What separates the two figures of money, which are one statement and not two blocks. */
+/** Tighter than the header's 10 dp so the money lines read as one statement. */
 internal val PLATE_MONEY_LINE_GAP = 4.dp
 
-/** Whatever the grid holds ahead of the casillas: the heading, today, as one spanning item. */
+/** Grid items before the casillas: the heading. */
 private const val PLATE_LEAD_ITEMS = 1
 
 /**
- * The item the sheet opens on, so that the casilla the coin is flying to is there to receive it.
+ * The grid item the plate opens on, so the casilla the index card's coin flies to is on screen
+ * (#304).
  *
- * The four Bolívares the father owns are casillas 19 to 22 of 22, so a plate that always opened at
- * the top would promise «es la misma moneda» and then land it below the fold (#304).
- *
- * **This is the grid's initial state and not a scroll performed on it**, which is the whole of #396.
- * The jump used to be a `LaunchedEffect` that waited for a layout to ask what was visible, and by
- * then it was a frame late for the one thing that depended on it: on the frame Compose matches the
- * two ends of the journey the landing casilla was not composed yet, so the coin had somewhere to
- * take off from and nowhere to land, and the flight in never happened. The way home never failed,
- * because by then the sheet had been parked at the casilla for a while. Nine journeys were filmed
- * and the split was exact: the plates that had to jump were the plates whose coin did not fly.
- *
- * **Nothing moves when the landing is on the first row**, which is every complete plate: the first
- * casilla a complete sheet owns *is* its first casilla, so the ceremony falls where the eye is. The
- * test is arithmetic — [columns] is the same count the grid measures with (#337) — because a
- * question answered by measuring can only be answered a frame too late.
+ * Used as the grid's initial state, not as a scroll (#396): a scroll lands a frame late, after the
+ * shared-element transition has looked for the landing casilla and not found it. Plates whose
+ * landing is on the first row, including every complete plate, don't move. [columns] must match
+ * the grid's own count (#337).
  */
 internal fun plateOpeningItem(landingCell: Int?, columns: Int): Int =
     if (landingCell == null || landingCell < columns) 0 else PLATE_LEAD_ITEMS + landingCell
 
 /**
- * One casilla, read downwards: the hole, the year sunk into the cardboard, and the name (#473).
+ * One casilla, top to bottom: the hole, the year sunk into the cardboard, and the name (#473).
  *
- * **The tag hangs off the hole and the name hangs off the tag**, which is where an album sheet puts
- * its label and what the #411 ticket had named as the alternative it did not take. The order the
- * plate had until then put the name in between, and it cost a whole apparatus: the tags of a row
- * only lined up if every casilla on it reserved a box of one height (#337), measured per row against
- * real Bitter (#412) — and a casilla with no name reserved that box **empty**, which hung 54 dp of
- * bare cardboard between its coin and its year against the 42 dp that separate two rows. That is the
- * inversion #473 reported, and there was no width of gap that could close it: the box was measured
- * in `sp` and the gap in `dp`, so enlarging the type reopened it every time.
- *
- * This way round nobody measures anything. Every tag is [PlateSpacing.underTheHole] under its own
- * hole, so a row shares a baseline by construction; what a name does not use falls at the **foot**
- * of the casilla, where the grid adds it to the gap between rows instead of subtracting it from it.
+ * Every tag sits [PlateSpacing.underTheHole] below its hole, so a row shares a baseline without
+ * measuring anything; the name comes last, so its unused height falls at the foot of the casilla
+ * and adds to the row gap. With the name between hole and tag, rows needed per-row height
+ * reservations that broke with font scaling (#337, #412).
  */
 @Composable
 internal fun PlateCell(
     cell: DrawnCell,
     images: TypeImages?,
     printedSide: PrintedSide,
-    /** The catalog whose card this casilla receives the coin from, and null for every other one. */
+    /** The catalog whose index card flies its coin to this casilla; null for all others. */
     travellingFrom: String?,
     /**
-     * What the year's sunken tag opens: this coin's sheet, over the lámina (#508).
-     *
-     * It used to hand the type's URL to a browser, which is what the audit of 14 August 2026 caught:
-     * of the two targets of a casilla (ADR 0026 §3) one turned the coin over and the other left the
-     * app, and nothing on the tag said which was which — no arrow fits on it (#298, #302).
+     * Opens this coin's sheet from the year tag (#508). It used to open Numista directly, with
+     * nothing on the tag to say so (#298, #302).
      */
     onOpenCoin: (Int) -> Unit,
     /**
-     * What toggling this casilla's mark does, while the marking mode is open (ADR 0029 §5).
-     *
-     * Null everywhere else, and that is the whole of the mode inside a cell: the body of a hole has
-     * **one** target at a time, so while the collector is marking it marks, and the rest of the time it
-     * turns the coin over as it always did. Two gestures on one 104 dp hole would be a long press
-     * nobody announced.
+     * Toggles this casilla's mark while the marking mode is open (ADR 0029 §5); null otherwise.
+     * The hole has one tap target at a time: marking in the mode, flipping the coin outside it.
      */
     onMark: ((WishKey) -> Unit)? = null,
     /**
-     * Whether the marking mode is open on this plate, which is not the same as this casilla being
-     * markable (#517).
-     *
-     * A full casilla is told too, because what it has to do while the mode is open is **step back**:
-     * the sheet means one thing at a time, so its year stops opening a sheet, its coin stops turning
-     * over, and it is drawn faint — the three halves of one statement, «the mode is not about me».
-     * Without it the grid looked identical inside the mode and outside it, and a casilla that was
-     * not marking anything still answered two other gestures.
+     * Whether the marking mode is open, which is not the same as this casilla being markable
+     * (#517). Non-markable casillas step back while it is open: drawn faint, with their year and
+     * flip disabled.
      */
     picking: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    // Only an empty casilla the app can name: a full one is not something you are looking for, and an
-    // announced design has no coin to look for (ADR 0029 §1).
+    // Only empty casillas with a wish key: not full ones, nor announced designs (ADR 0029 §1).
     val mark = cell.wishKey
         ?.takeIf { cell.missing }
         ?.let { key -> onMark?.let { toggle -> { toggle(key) } } }
-    // An announced member has no ficha to open: the coin is not in the catalogue at all, so its tag
-    // stays a label and takes no tap — which is what it did before and for the same reason. And
-    // while a mode is open nobody's tag opens anything: the plate is being marked, not read.
+    // No tap for an announced member (no Numista type) or while the marking mode is open.
     val open = cell.numistaTypeId
         ?.takeUnless { picking }
         ?.let { typeId -> { onOpenCoin(typeId) } }
@@ -685,9 +576,7 @@ internal fun PlateCell(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth().outsideTheMode(picking && mark == null),
     ) {
-        // The hole and what is laid inside it. The chip is drawn here and not by `AlbumHole`,
-        // which the axes and the loose coins share: what a casilla costs is the plate's business,
-        // and the hole is the same hole it was (#493).
+        // The cost chip is drawn here, not in `AlbumHole`, which other surfaces share (#493).
         Box(
             contentAlignment = Alignment.Center,
             modifier = mark?.let { toggle ->
@@ -701,33 +590,21 @@ internal fun PlateCell(
             AlbumHole(
                 photo = images?.printedPhoto(printedSide),
                 absence = if (cell.missing) HoleAbsence.Missing else HoleAbsence.Filled,
-                // Two targets on a casilla and not one (#302): the body of the hole turns the coin
-                // over, and the year under it goes out to Numista. **Unless a mode is open**, and
-                // then the far face is withheld rather than the tap overridden: `AlbumHole` takes its
-                // tap from having a second face, so this is what hands the body over to the mark
-                // without giving the hole a second rule about which of two things a press means. It
-                // is withheld on every casilla and not only on the markable ones (#517): with the
-                // mode open a full hole that still turned over would be the second meaning of a tap
-                // that the mode exists to take away.
+                // The hole flips the coin and the year opens its sheet (#302, #508). `AlbumHole` is
+                // tappable only with a second face, so withholding it in the marking mode frees the
+                // tap for the mark, on every casilla (#517).
                 otherSide = if (!picking) images?.printedPhoto(printedSide.other) else null,
                 modifier = Modifier
                     .size(104.dp)
                     .travellingCoin(travellingFrom),
             )
-            // The chip says the mark before it exists while the mode is open (#517): a hole that
-            // answers the tap wears the word as a ghost, and a full one wears nothing at all.
+            // In the marking mode, markable holes show a ghost of the chip (#517).
             HoleStamp(cost = cell.cost, wished = cell.wished, markable = mark != null)
         }
-        // The tag's own target, reserved whether or not there is a tag to put in it: an announced
-        // member has no year, and one that has a year but no Numista page does not buy the 48 dp
-        // that `minimumInteractiveComponentSize` gives the rest. Either would otherwise pull its
-        // name up against the hole while its neighbours' stayed down. It is a constant and it is
-        // not measured — which is the whole point of this order.
+        // The tag's target height is reserved even without a tag or without a tap (announced
+        // members have no ficha), so names don't ride up against the hole.
         Box(
-            // A minimum and no longer an exact height (#511): the piece of a casilla whose year
-            // distinguishes nothing carries its name instead, and a name is as tall as it needs.
-            // What every casilla still shares is the blank the target leaves above the ink, which is
-            // what makes a row line up without measuring anything.
+            // A minimum, not exact (#511): a name tag replacing the year may be taller.
             modifier = Modifier.heightIn(min = YearTagMetrics.target),
             contentAlignment = Alignment.Center,
         ) {
@@ -742,26 +619,11 @@ internal fun PlateCell(
 }
 
 /**
- * The name at the foot of a casilla, under the year it glosses.
+ * The name at the foot of a casilla, below its year. It shrinks before cutting, like the index
+ * card (#348) and the Monedas cartouche (#350); being last, a tall name only lengthens its own row.
  *
- * The plate is the last of the three surfaces that print a name under a hole to get the autosize
- * ladder: the index card since #348 and the Coins cartouche since #350, while the cell of the plate
- * let the name decide its own height. It does again, and this time nobody pays for it — since #473
- * the name is the **last** thing the casilla prints, so a tall one lengthens its own row and a short
- * one leaves its blank where the gap between rows already is. The reservation that used to make the
- * tags of a row share a baseline is gone with the order that needed it: see [PlateCell].
- *
- * The label is the curator's and is never shortened here: 1.082 of the 1.184 print a name, and
- * many are legitimate descriptions of the issue. What gives is the type on screen.
- *
- * **Three lines is still the cut**, and the reason is now the paper and not the cardboard: #412 set
- * the rule that no name the screen prints whole may be an ellipsis in the notebook, and the printed
- * cartouche has 16 mm that the page count is measured from (#350). Of the 1.082 names, 18 need a
- * fourth line or a fifth, and they are cut on both surfaces alike.
- *
- * It is plain ink and no longer a link: what opens Numista is the year's recessed tag above it
- * (#302), and a title that kept its arrow would print twenty-two of them in the system typeface on a
- * sheet of paper — neither Bitter nor Barlow has that glyph (#298).
+ * The curator's label is never shortened here; only the type size gives. It is plain text, not a
+ * link: the year tag opens the coin's sheet (#302, #508).
  */
 @Composable
 internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {
@@ -777,18 +639,15 @@ internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {
 }
 
 /**
- * What a casilla prints of a name before it cuts, and what the notebook can print too (#412).
- *
- * A fourth line no longer costs the plate any cardboard — it costs the **paper**, which cannot grow
- * its cartouche without moving the page count, and parity is the rule: 18 of 1.082 names are cut,
- * and they are cut on both surfaces.
+ * Lines before a casilla's name is cut. Matches what the notebook's fixed 16 mm cartouche can hold
+ * (#350), so no name is whole on screen and cut on paper (#412).
  */
 private const val PLATE_CELL_NAME_MAX_LINES = 3
 
-/** The smallest Bitter a casilla prints before it gives up and cuts. */
+/** Smallest name size before cutting. */
 private val PLATE_CELL_NAME_MIN_SIZE = 13.sp
 
-/** Bitter shrinks before the cell cuts, the same ladder the index card walks down (#348). */
+/** Same shrink steps as the index card (#348). */
 private val PLATE_CELL_NAME_AUTO_SIZE = TextAutoSize.StepBased(
     minFontSize = PLATE_CELL_NAME_MIN_SIZE,
     maxFontSize = 17.sp,

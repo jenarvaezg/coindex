@@ -82,13 +82,9 @@ class NumistaClient(
         }
 
     /**
-     * The issues of one type, which is the only way to learn a hole's `issue_id`.
-     *
-     * A curated member stores `numista_type_id` and `year` and never the issue, so valuing a hole
-     * costs this call plus one for its prices — which is the whole reason the valuation pass stops at
-     * the plates ten slots from closing (ADR 0028 §1).
-     *
-     * The endpoint answers a bare array, not an object with a field.
+     * The issues of one type: how a hole whose curated file names no issue learns its `issue_id`.
+     * Such a hole costs this call plus one for its prices, part of why the valuation pass only
+     * covers plates close to closing (ADR 0028 §1). The endpoint answers a bare array.
      */
     suspend fun fetchIssues(typeId: Int): RawResponse<List<IssueDto>> =
         request("/types/$typeId/issues") {
@@ -97,10 +93,8 @@ class NumistaClient(
         }
 
     /**
-     * Numista's estimated prices for one issue, every grade at once, in euros.
-     *
-     * `currency` is asked for explicitly: without it Numista answers in whatever it decides, and a
-     * number whose currency was inferred is a number that cannot be added to another one.
+     * Numista's estimated prices for one issue, every grade at once, in euros. `currency` is
+     * explicit, or Numista picks one and the amounts can't be added up.
      */
     suspend fun fetchIssuePrices(typeId: Int, issueId: Int): RawResponse<IssuePricesResponse> =
         request("/types/$typeId/issues/$issueId/prices") {

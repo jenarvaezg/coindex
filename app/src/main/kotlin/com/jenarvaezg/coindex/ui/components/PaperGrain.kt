@@ -32,22 +32,18 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /**
- * The fibre of offset paper, calibrated in #351 after the measure showed the approved value was
- * invisible: 4 % of the pixels of an empty region, 12 levels of amplitude, 0.78 of standard
- * deviation. Raising it costs three things the first version did not pay, and this file pays them:
- *
- * - the mosaic no longer repeats exactly, or what a visible grain would show is the tiling;
- * - the tile and the fibre are measured in dp, or the calibrated value dies with the density;
- * - the paper is one surface, applied wherever the sheet is painted rather than on two screens.
+ * The fibre of offset paper, calibrated in #351. A visible grain requires that the mosaic doesn't
+ * repeat exactly (or the tiling shows), that tile and fibre are sized in dp (or the calibration
+ * depends on density), and that the paper is one surface wherever the sheet is painted.
  */
 
-/** Side of one mosaic tile. 97.5 dp was the accidental size of the 256 px tile at 420 dpi. */
+/** Side of one mosaic tile. */
 internal const val GRAIN_TILE_DP = 96f
 
 /** Fibres per tile. The tile is measured in dp, so this is a density per area and not per pixel. */
 internal const val GRAIN_FIBRES = 2600
 
-/** Tiles a side of the baked mosaic. Sixteen tiles that differ: the period is 384 dp, a screen. */
+/** Tiles a side of the baked mosaic: sixteen distinct tiles, repeating every 384 dp. */
 internal const val GRAIN_TILES_PER_SIDE = 4
 
 private const val GRAIN_FIBRE_WIDTH_DP = 0.5f
@@ -97,9 +93,8 @@ internal fun grainFibres(
 fun Modifier.paperSurface(opacity: Float = GRAIN_OPACITY): Modifier {
     val density = LocalDensity.current
     val atlas = remember(density.density, opacity) { grainAtlas(density, opacity) }
-    // The mosaic is anchored to the window and not to each surface, so the index, the coins and
-    // the plate are one sheet: without this every screen would start its own tiling and the seam
-    // between two of them would be a visible step in the grain.
+    // Anchored to the window rather than each surface, so adjacent surfaces show no seam in the
+    // grain.
     var origin by remember { mutableStateOf(Offset.Zero) }
     return this
         .onGloballyPositioned { origin = it.positionInWindow() }
@@ -110,9 +105,8 @@ internal class GrainAtlas(val brush: ShaderBrush, val periodPx: Int)
 
 private fun DrawScope.drawPaperGrain(atlas: GrainAtlas, origin: Offset) {
     val period = atlas.periodPx.toFloat()
-    // One rectangle with a repeating shader, and the paper's tone baked into it rather than filled
-    // underneath: an earlier attempt blitted some fifty transformed tiles per frame per surface and
-    // drew worse than the effect it replaced.
+    // One rectangle with a repeating shader, the paper's tone baked in; blitting tiles per frame
+    // was too slow.
     clipRect {
         translate(-origin.x.mod(period), -origin.y.mod(period)) {
             drawRect(
@@ -126,19 +120,14 @@ private fun DrawScope.drawPaperGrain(atlas: GrainAtlas, origin: Offset) {
 private data class GrainKey(val density: Float, val opacity: Float)
 
 /**
- * Read and written only from composition, which is the main thread. Room for more than one entry
- * because an export composes at its own density: with a single slot, every exported sheet evicted
- * the screen's mosaic and both were baked again on the way back.
+ * Accessed only from composition, on the main thread. Several entries because an export composes
+ * at its own density and would otherwise evict the screen's atlas.
  */
 private val cachedAtlases = LinkedHashMap<GrainKey, GrainAtlas>()
 
 private const val GRAIN_ATLASES_KEPT = 3
 
-/**
- * The atlas is baked once per density and opacity, and not per frame: the first version drew some
- * nine thousand soft-light lines inside an offscreen layer on every frame, which is what made
- * raising the opacity expensive rather than free (#351).
- */
+/** Baked once per density and opacity rather than drawn every frame (#351). */
 private fun grainAtlas(density: Density, opacity: Float): GrainAtlas {
     val key = GrainKey(density.density, opacity)
     cachedAtlases[key]?.let { return it }
@@ -156,8 +145,7 @@ private fun bakeGrainAtlas(density: Density, opacity: Float): GrainAtlas {
     val image = ImageBitmap(period, period)
     val size = Size(period.toFloat(), period.toFloat())
     CanvasDrawScope().draw(density, LayoutDirection.Ltr, Canvas(image), size) {
-        // The paper is baked in with the fibre: soft light needs something underneath it, and a
-        // mosaic that already carries its own tone is one opaque image instead of a blended layer.
+        // Soft light needs a backdrop; baking the paper in yields one opaque image.
         drawRect(Paper.paper)
         val fibreWidth = GRAIN_FIBRE_WIDTH_DP.dp.toPx()
         repeat(GRAIN_TILES_PER_SIDE) { tileY ->
@@ -170,8 +158,8 @@ private fun bakeGrainAtlas(density: Density, opacity: Float): GrainAtlas {
                             .copy(alpha = opacity * fibre.strength)
                         val runX = fibre.length * cos(fibre.slant)
                         val runY = fibre.length * sin(fibre.slant)
-                        // A fibre that runs past its tile is drawn again a tile back, so it comes
-                        // in on the other side and tiles meet without a bald seam between them.
+                        // A fibre running past its tile is redrawn a tile back, so tiles meet
+                        // without a bare seam.
                         val wrapX = if (fibre.x + runX > tile) -tile.toFloat() else 0f
                         val wrapY = when {
                             fibre.y + runY + fibreWidth > tile -> -tile.toFloat()

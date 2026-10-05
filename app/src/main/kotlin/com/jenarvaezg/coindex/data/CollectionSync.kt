@@ -4,12 +4,9 @@ import com.jenarvaezg.coindex.data.numista.NumistaClient
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * What one sync attempt left behind.
- *
- * A record or a throwable, and nothing said in words: the sentences the collector reads are the
- * screen's ([com.jenarvaezg.coindex.ui.syncReportLabel], [com.jenarvaezg.coindex.ui.syncErrorLabel]),
- * and a failure that arrived here already flattened into prose could no longer be told apart by the
- * one thing that matters — an exhausted budget reads differently from a dead network.
+ * What one sync attempt left behind: a record or a throwable, never prose. The screen words them
+ * ([com.jenarvaezg.coindex.ui.syncReportLabel], [com.jenarvaezg.coindex.ui.syncErrorLabel]) and
+ * needs the error's type to tell an exhausted budget from a dead network.
  */
 sealed interface SyncOutcome {
     data class Done(val record: SyncRecord) : SyncOutcome
@@ -18,28 +15,16 @@ sealed interface SyncOutcome {
 }
 
 /**
- * One explicit sync, from the collector's tap to the record it leaves behind.
- *
- * [SyncService] does the work; what lives here is the sentence around it that used to be inline in
- * the ViewModel: **stamp it, write it down, then announce it**. The stamp is the reason this is a
- * class with a clock rather than three lines at the call site — `System.currentTimeMillis()` read in
- * place is what made «la última sincronización fue ayer» impossible to test, while the label that
- * prints it has taken an injected clock since the day it was written.
- *
- * The log is written **before** the outcome is returned, and that order is the point: the snackbar
- * is the copy, not the original. An app killed in the second between them still shows the collector,
- * on the next launch, that the sync happened.
+ * One sync, from the tap to the record it leaves behind. [SyncService] does the work; this stamps
+ * the result with an injectable clock, writes it to the log and then returns it, so an app killed
+ * before the snackbar still shows the sync on the next launch.
  */
 class CollectionSync(
     private val syncService: SyncService,
     private val syncLog: StoredSyncLog,
     /**
-     * The refusal the valuation pass wrote down, taken back off on a sync that got through (#600).
-     *
-     * The pass raises the wall and the pass takes it down, and that left one gap: the collector
-     * presses «Sincronizar», Numista answers, and the pass still refuses to ask for a month because
-     * nothing told it the quota came back. A sync that reached Numista is the same proof a pass is,
-     * and it is the proof arriving on the one gesture the collector makes when something looks stuck.
+     * The valuation pass's refusal, cleared by a sync that got through (#600): reaching Numista
+     * proves the wall is gone, and syncing is what the collector does when something looks stuck.
      */
     private val wall: RejectionWall,
     private val nowMillis: () -> Long = System::currentTimeMillis,
@@ -50,11 +35,8 @@ class CollectionSync(
     private val running = AtomicBoolean(false)
 
     /**
-     * Whether a sync is running right now, asked by whoever else spends the same budget (ADR 0028 §6).
-     *
-     * Here and not in the screen's state, and atomic rather than a plain flag, because the reader is on
-     * another thread: the valuation pass asks this from `Dispatchers.IO` three seconds after a launch, and
-     * what it is deciding is whether to take calls the sync is about to need.
+     * Whether a sync is running, for whoever else spends the same budget (ADR 0028 §6). Atomic
+     * because the valuation pass reads it from `Dispatchers.IO`.
      */
     val inFlight: Boolean get() = running.get()
 
@@ -75,8 +57,7 @@ class CollectionSync(
                 syncLog.last = record
                 SyncOutcome.Done(record)
             },
-            // Nothing is written down: a sync that failed did not happen, and the record of the
-            // last one that did is exactly what the collector still needs to see.
+            // A failed sync leaves the log alone, so it keeps showing the last one that worked.
             onFailure = { error -> SyncOutcome.Failed(error) },
         )
     }

@@ -14,22 +14,9 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
  * The mark of a photograph that is not on this phone: an arrow onto a shelf, in muted ink (#510).
- *
- * **Drawn and not written**, unlike [FaceNotDownloaded], because this one falls on every hole of a
- * grid at once. A plate off wifi is thirty casillas: thirty times four words is a wall of prose
- * where the collector wanted his album, and the same wall at the 34 dp of the notebook's axes
- * would not even fit. The sentence stays where it was — the far face of a coin the collector has
- * just turned over, which is one hole and an answer to a gesture — and it reaches whoever is not
- * looking as this drawing's own `contentDescription`.
- *
- * **Still**, like everything else the album draws. A pulse here would be the very shimmer the
- * ticket refused: what this state means is precisely that nothing is happening. Being still is
- * also what sends it to paper by ADR 0026 §4, as ADR 0029 §7 reads it — «alive» is what follows
- * the finger, the sensor or the navigation — and that is right: a plate exported with no pictures
- * in it says why it is empty instead of showing eleven mute discs.
- *
- * Everything is a fraction of the diameter and never a dp, the rule [CoinGloss] already keeps: the
- * same mark is read at the 104 dp of a casilla and at the 34 dp of an axis cell.
+ * Drawn rather than written like [FaceNotDownloaded], because it can fill every hole of a grid; the
+ * sentence is its `contentDescription`. Still, so it also reaches exported sheets (ADR 0026 §4, as
+ * read by ADR 0029 §7). Sized as fractions of the diameter, to work from 34 dp to 104 dp.
  */
 @Composable
 fun PhotoNotDownloaded(modifier: Modifier = Modifier) {
@@ -51,7 +38,7 @@ fun PhotoNotDownloaded(modifier: Modifier = Modifier) {
     }
 }
 
-/** One stroke of the mark: they are all the same ink, the same weight and the same round end. */
+/** One stroke of the mark; all share ink, weight and round cap. */
 private fun DrawScope.stroke(from: Offset, to: Offset, width: Float) =
     drawLine(color = Paper.muted, start = from, end = to, strokeWidth = width, cap = StrokeCap.Round)
 

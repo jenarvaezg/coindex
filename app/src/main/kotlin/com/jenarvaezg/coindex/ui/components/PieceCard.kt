@@ -24,32 +24,21 @@ import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * One piece of the collection as the collector recorded it: the coin in its hole, its title, what
- * names it — the year on the row, or the emission where the year names nothing — and how many there
- * are.
+ * One piece of the collection as the collector recorded it: the coin in its hole, its title, the
+ * year (or the emission where the year names nothing) and the quantity. The coin is one face that
+ * turns over at a tap (#423); which face rests up comes from [coinAlbumFaces], since a box or a
+ * collection without an issue list has no `printed_side`.
  *
- * The photograph is **one face that turns over at a tap** and not the labelled pair it used to be
- * (#423). The pair was the last `CoinSides` left in the app: it printed «Anverso» and «Reverso» under
- * two squares of studio white, which is the prose the #300 pruned and the mount the #302 replaced
- * with cardboard everywhere else — and by then it was a leftover of the old exported PNG, which since
- * #431 is the printed page instead. Cardboard, because a piece on this screen is claimed by the
- * collection whose screen it is; which face rests up is [coinAlbumFaces], since neither a box nor a
- * collection without an issue list has a `printed_side` to declare one.
- *
- * This is a row of the inventory, not a catalog member: it never says «me falta», because a
- * piece that is here is a piece you own. [extra] is for whatever the screen showing it needs to
- * add — the reason it is unclassified, a selection control.
- *
- * [ficha] is how old what the card is saying actually is, and the gesture that asks Numista again
- * (#185): the title, the year and both photographs come from a ficha that was cached once and, until
- * this existed, never questioned again.
+ * An inventory row, never «me falta». [extra] holds what the hosting screen adds, such as a
+ * selection control. [ficha] shows the age of the cached data and lets the collector refetch it
+ * (#185).
  */
 @Composable
 fun PieceCard(
     piece: DrawnPiece,
     name: CoinName,
     images: TypeImages?,
-    /** The one rule the app has for «the page of this type on Numista» (#508). */
+    /** Opens this type's Numista page, by the app's single rule for it (#508). */
     onOpenNumista: (typeId: Int) -> Unit,
     ficha: FichaRefresh,
     modifier: Modifier = Modifier,
@@ -58,8 +47,7 @@ fun PieceCard(
     FieldCard(modifier = modifier.fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             val (face, otherSide) = coinAlbumFaces(images)
-            // The same 104 dp hole as the casilla it may also sit in and as the ficha of Monedas
-            // (#370): one hole, one size, wherever a coin of this album is looked at.
+            // The same 104 dp hole as a casilla and the Monedas ficha (#370).
             AlbumHole(
                 photo = face,
                 otherSide = otherSide,
@@ -96,8 +84,7 @@ fun PieceCard(
                     text = COIN_VIEW_ON_NUMISTA,
                     onClick = { onOpenNumista(piece.item.typeId) },
                 )
-                // Under the link out on purpose: seeing the page is how the collector finds out that
-                // Numista already says something else, and this is what brings that here.
+                // Under the link: the Numista page is where the collector notices it has changed.
                 FichaBrought(ficha, modifier = Modifier.padding(top = 2.dp))
             }
         }

@@ -57,13 +57,11 @@ import java.io.File
  * Manual dependency wiring. The app is small and single-user; a DI framework would add more
  * indirection than it removes.
  *
- * The curated files are parsed and validated on the first access, and a failure is allowed to
- * propagate: shipping a broken catalog must be loud. Where that happens is [Curation.load], which
- * the suite loads through as well — this file hands it the assets and nothing else.
+ * The curated files are parsed and validated by [Curation.load] on first access, and a failure
+ * propagates: shipping a broken catalog must be loud.
  *
- * Most of what is built here is **private**: the database above all, whose DAOs used to be reachable
- * from the UI by walking `container.database.apiCalls()` (#220). What a screen is given is the thing
- * that answers its question — [calls] for the month's budget — and never the table behind it.
+ * Most of what is built here is private, the database above all: a screen gets the thing that
+ * answers its question, such as [calls] for the month's budget, never the table behind it (#220).
  */
 class AppContainer(context: Context) {
     private val applicationContext = context.applicationContext
@@ -71,21 +69,16 @@ class AppContainer(context: Context) {
     private val database: CoindexDatabase by lazy { CoindexDatabase.open(applicationContext) }
 
     /**
-     * One preferences file per subject, each behind the same seam (#546).
-     *
-     * The four stores below are plain classes over [NamedValues], so the file each of them lives in
-     * is decided here — where every other name of every other thing on this device is decided — and
-     * not inside the store, where it used to be a private constant nobody could see.
+     * One preferences file per subject (#546). The stores are plain classes over [NamedValues], so
+     * which file each lives in is decided here, with every other name on the device.
      */
     private fun valuesIn(name: String): NamedValues =
         SharedPreferenceValues(applicationContext, name)
 
     /**
-     * The wall the valuation pass stopped against, remembered across launches (#579).
-     *
-     * Held here and not inside the pass because both ends need it: the pass raises it, and the
-     * credential store takes it down when the collector writes a key — which is the only thing that
-     * ends the `401` wall, since that one has no clock.
+     * The wall the valuation pass stopped against, remembered across launches (#579). Held here
+     * because the pass raises it and the credential store takes it down when the collector saves a
+     * key, the only way out of the credentials wall, which has no clock.
      */
     private val rejectionWall: RejectionWall by lazy {
         StoredRejectionWall(valuesIn(REJECTION_WALL_PREFERENCES))
@@ -105,11 +98,8 @@ class AppContainer(context: Context) {
     val notebook: StoredNotebook by lazy { StoredNotebook(valuesIn(NOTEBOOK_PREFERENCES)) }
 
     /**
-     * A checkpointed copy of the base, for the share sheet (#548).
-     *
-     * Built here rather than in the ViewModel because it is the one place the database is reachable,
-     * and it leaves as a collaborator with one verb — the rule of this file holds: what a screen is
-     * given is the thing that answers its question, never the tables behind it (#220).
+     * A checkpointed copy of the database for the share sheet (#548), built here because this is
+     * the only place the database is reachable (#220).
      */
     val dataExport: DatabaseExport by lazy {
         DatabaseExport(
@@ -120,7 +110,7 @@ class AppContainer(context: Context) {
         )
     }
 
-    /** What is left of this month's API allowance, and the only reader of `api_call_log`. */
+    /** What has been spent of this month's API allowance, and the only reader of `api_call_log`. */
     val calls: ApiCallLedger by lazy { ApiCallLedger(database.apiCalls()) }
 
     val repository: CoindexRepository by lazy {
@@ -130,9 +120,7 @@ class AppContainer(context: Context) {
             ownGroupingDao = database.ownGroupings(),
             priceDao = database.prices(),
             wishDao = database.wishes(),
-            // One door for the three species, and the invariants come with it (#545): what used to
-            // be assembled here — three loaders and a name check the container had to remember —
-            // is now a curation that cannot exist invalid.
+            // One loader for the three kinds of curated file, validated as a whole (#545).
             curation = Curation.load(AssetCuratedFiles(applicationContext.assets)),
         )
     }
@@ -153,18 +141,10 @@ class AppContainer(context: Context) {
     private val fichaBackfill: FichaBackfill by lazy { FichaBackfill(database.typeMeta()) }
 
     /**
-     * Brings the ficha cache up to what the APK ships, before the collection is read.
-     *
-     * Three steps and one moment. The seed used to be a **first-install** gift: every catalog curated
-     * afterwards shipped its fichas in the asset and none of them reached a phone that already had
-     * the app (#67). And a cache seeded before version 3 has no thumbnails, while a cached type is
-     * never fetched again — without the backfill the plate would keep asking for the heavy originals
-     * for ever on exactly those phones.
-     *
-     * The third step is the same move over the five columns of version 6 (#221): before it runs, a
-     * ficha cached by an older APK has no issuer name, no metal, no diameter and no QR, because
-     * those stopped being parsed on every read. Both backfills come **after** the seed, so the rows
-     * it has just written are already right and neither pass has anything to do on them.
+     * Brings the ficha cache up to what the APK ships, before the collection is read: the seed
+     * adds what is missing and, once per version, overwrites (#67, #606); then the backfills fill
+     * columns added after a row was cached (v3 thumbnails, v6 fields, #221), since a cached type is
+     * never fetched again. They run after the seed, so its fresh rows need nothing.
      */
     suspend fun warmUpFichaCache() {
         typeCacheSeed.topUp(repository.curation.curatedTypeIds())
@@ -176,7 +156,7 @@ class AppContainer(context: Context) {
         SyncService(database.collectedItems(), database.typeMeta(), calls)
     }
 
-    /** One explicit sync, stamped and written down (#220). */
+    /** One sync, stamped and written down (#220). */
     val collectionSync: CollectionSync by lazy { CollectionSync(syncService, syncLog, rejectionWall) }
 
     /** The inventory brought up to date because a day passed, not because anybody pressed (#605). */
@@ -186,11 +166,8 @@ class AppContainer(context: Context) {
     val typeRefresh: TypeRefresh by lazy { TypeRefresh(database.typeMeta()) }
 
     /**
-     * The photographs Numista answers `404` for, remembered across launches (#191).
-     *
-     * Held here and not inside the image loader because both ends need it: the loader's interceptor
-     * writes to it from whatever thread OkHttp is on, and the prefetch reads it before deciding
-     * what to ask for.
+     * The photographs Numista answers `404` for, remembered across launches (#191). Held here
+     * because the loader's interceptor writes it, from any OkHttp thread, and the prefetch reads it.
      */
     val gonePhotographs: GonePhotographs by lazy { StoredGonePhotographs(applicationContext) }
 
@@ -205,13 +182,9 @@ class AppContainer(context: Context) {
     }
 
     /**
-     * When a pass of the prefetch is worth starting (#191).
-     *
-     * Held here rather than inside the ViewModel because what it remembers has to outlive the screen:
-     * a collector who leaves the app and comes back gets a new ViewModel over the same process, and
-     * reopening sixteen hundred cache snapshots to find out that nothing has changed is precisely the
-     * cold start this exists to remove. The status travels with it, so the settings line is still
-     * true on that second launch.
+     * When a pass of the prefetch is worth starting (#191). Held here rather than in the ViewModel so
+     * what it remembers, status included, survives a new ViewModel in the same process instead of
+     * re-checking every cached photo.
      */
     val photos: PhotoPrefetchLoop by lazy {
         PhotoPrefetchLoop(photoPrefetch, prefetchConditions::current)
@@ -224,8 +197,8 @@ class AppContainer(context: Context) {
     }
 
     /**
-     * The silver spot, from two keyless calls that are **not** counted against the budget of ADR 0003:
-     * neither host is `api.numista.com`, the same distinction ADR 0024 draws for CDN photographs.
+     * The silver spot, from two keyless calls outside the budget of ADR 0003: neither host is
+     * `api.numista.com`, as with the CDN photographs of ADR 0024.
      */
     private val spot: SpotStore by lazy {
         SpotStore(database.prices(), HttpSpotReader(httpClient))
@@ -236,30 +209,20 @@ class AppContainer(context: Context) {
     }
 
     /**
-     * When the catalog prices are asked for (ADR 0028).
-     *
-     * Held here for the same reason [photos] is: what it remembers has to outlive the screen. With every
-     * price already on the phone, the second launch of a month must cost **zero** calls, and a loop
-     * rebuilt with each ViewModel would ask the database again on every rotation.
+     * When the catalog prices are asked for (ADR 0028). Held here like [photos], so a new ViewModel
+     * (a rotation) doesn't query the database again.
      */
     val valuation: ValuationLoop by lazy { ValuationLoop(valuationPass, { isSyncing() }) }
 
     /**
-     * Whether a sync is in flight, asked of the one thing that knows.
-     *
-     * Read through the sync itself rather than handed in by the ViewModel, because the pass has to be
-     * able to ask **at the moment it starts its first call**: the two spend the same monthly allowance,
-     * and three seconds of a cold start is long enough for the collector to have pressed «Sincronizar».
-     *
-     * The automatic refresh counts as a sync in flight from the instant it is claimed, two seconds
-     * into the launch and one before the pass asks (#605), so the pass holds instead of being
-     * cancelled halfway through a call it has already paid for.
+     * Whether a sync is in flight. Read from the syncs themselves so the pass can ask right before its
+     * first call: both spend the same monthly allowance. The automatic refresh counts from the moment
+     * it is claimed, ahead of the pass (#605), so the pass holds instead of being cancelled mid-call.
      */
     private fun isSyncing(): Boolean = collectionSync.inFlight || inventoryRefresh.inFlight
 
     /**
-     * Self-update against the public GitHub releases. These requests go to GitHub, never to
-     * Numista, so they are outside the API budget gate on purpose.
+     * Self-update against the public GitHub releases, outside the Numista budget gate.
      */
     private val updateChecker: UpdateChecker by lazy {
         UpdateChecker(httpClient, currentVersionCode = installedVersionCode())
@@ -270,10 +233,8 @@ class AppContainer(context: Context) {
     }
 
     /**
-     * Looking for a newer APK and installing it (ADR 0011).
-     *
-     * Held here for the same reason as [photos]: what it remembers is *when it last asked*, and a
-     * rotation is not a reason to ask GitHub again.
+     * Looking for a newer APK and installing it (ADR 0011). Held here like [photos]: it remembers
+     * when it last asked, and a rotation is no reason to ask GitHub again.
      */
     val updates: UpdateFlow by lazy { UpdateFlow(updateChecker, updateInstaller) }
 

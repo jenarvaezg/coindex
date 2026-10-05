@@ -1,11 +1,8 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * The fourteen things the collection is compared against, each of which is a drawing.
- *
- * An enum and not a string, so the drawing and the figure cannot drift: the silhouettes are hand-made
- * and are part of the identity — «no son un asset que se pueda descargar» (`docs/ux/cifras-326.md`) —
- * and a referent whose name was typed twice would be a ladder with a blank rung.
+ * The things the collection is compared against, each drawn by hand. An enum, so a figure and its
+ * drawing cannot drift apart; the silhouettes are part of the identity (`docs/ux/cifras-326.md`).
  */
 enum class Referent {
     Brick,
@@ -29,10 +26,8 @@ enum class Referent {
 data class Rung(val referent: Referent, val amount: Double)
 
 /**
- * Which magnitude a ladder measures, which decides the unit its rungs are written in.
- *
- * The unit is the ladder's and not the figure's: the collection's weight is accumulated in grams and
- * read in kilos, and a rung that carried its own unit would let one ladder mix the two.
+ * Which magnitude a ladder measures, and so the unit its rungs are written in. The unit belongs to
+ * the ladder, not the rung, so one ladder cannot mix grams and kilos.
  */
 enum class LadderUnit(val suffix: String) {
     Kilograms("kg"),
@@ -41,12 +36,8 @@ enum class LadderUnit(val suffix: String) {
 }
 
 /**
- * Which of the three ladders this is.
- *
- * The sentence each one is read with — «una al lado de otra llegan a» — is **copy and lives with the
- * copy** (ADR 0026 §6), so the domain names the ladder and the screen says it. It is not furniture
- * either way: without that sentence the two lower ladders are two lines with animals on them, which is
- * why those five words pass the density bar of #305 (`docs/ux/cifras-326.md`).
+ * Which of the three ladders this is. The sentence each is read with («una al lado de otra llegan
+ * a») is copy and lives with the copy (ADR 0026 §6); the domain only names the ladder.
  */
 enum class LadderKind {
     Weight,
@@ -58,18 +49,14 @@ enum class LadderKind {
 data class Ladder(val kind: LadderKind, val unit: LadderUnit, val rungs: List<Rung>)
 
 /**
- * Where the collection stands on a ladder, on an **ordinal** scale.
- *
- * The five rungs are equally spaced and the collection is interpolated between its two neighbours. A
- * logarithmic scale was tried first and piled three labels on top of the fourth — the bowling ball and
- * the tyre overlapped and the lorry disappeared under the mark — and that is also why the ladder
- * **carries no zoom**: zooming an ordinal scale means nothing, and making it metric brings the
- * overlaps back.
+ * Where the collection stands on a ladder, on an ordinal scale: the rungs are equally spaced and
+ * the collection is interpolated between its two neighbours. A logarithmic scale piled labels on
+ * top of each other; for the same reason the ladder has no zoom.
  *
  * @param fraction 0 at the first rung, 1 at the last.
- * @param justPassed the rung the collection has already gone by, or null while it is under the first.
- * @param nextUp the rung that pulls it forward, or null once it is over the last — which is the day
- *   the ladder has to grow, and it is a datum of the app and not of the collector.
+ * @param justPassed the rung the collection has already gone by, or null while it is under the
+ *   first.
+ * @param nextUp the next rung to reach, or null once past the last, when the ladder needs to grow.
  */
 data class LadderPlacement(
     val fraction: Double,
@@ -78,13 +65,9 @@ data class LadderPlacement(
 )
 
 /**
- * All three ladders: what the collection weighs, what it reaches, and what it raises.
- *
- * They are literals and not a rule, and both halves of that matter. The amounts are what a brick and a
- * bowling ball actually weigh, so nothing here is derived from the collection; and the ladder is fixed,
- * which is what buys the thing no lone number gives — **the next rung pulls forward**. As coins arrive
- * you see what has just been passed and what is within reach. It is `revela, no reproches` applied to
- * matter (#304).
+ * All three ladders: what the collection weighs, how far it reaches in a row and how high it
+ * stacks. Literal amounts (what a brick actually weighs), fixed so that as coins arrive the next
+ * rung comes within reach (#304).
  */
 object Ladders {
     val weight: Ladder = Ladder(
@@ -127,10 +110,8 @@ object Ladders {
 }
 
 /**
- * Places a value on a ladder.
- *
- * Below the first rung it sits at the bottom with nothing passed yet; over the last it sits at the top
- * with nothing left to reach, and that is the state that says the list of referents has to grow.
+ * Places a value on a ladder. Below the first rung it sits at the bottom with nothing passed; past
+ * the last it sits at the top with nothing left to reach, the sign that the ladder must grow.
  */
 fun Ladder.place(value: Double): LadderPlacement {
     val last = rungs.size - 1

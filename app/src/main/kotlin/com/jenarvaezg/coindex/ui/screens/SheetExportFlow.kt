@@ -26,16 +26,13 @@ import com.jenarvaezg.coindex.ui.sheetExportLabel
 import com.jenarvaezg.coindex.ui.sheetExportSwitchNote
 
 /**
- * What one lámina or one hoja is being exported as, once the panel has been answered.
- *
- * Measured and not chosen (#401): what fits in one page leaves as a PNG, what needs more takes the
- * PDF section of the notebook. The [destination] rides along because it was answered in the same
- * card, one question earlier.
+ * A running export of one lámina or hoja. The format is measured, not chosen (#401): one page goes
+ * out as a PNG, more as a PDF.
  */
 sealed class SheetExportJob {
     abstract val destination: ExportDestination
 
-    /** One page: the printed folio, trimmed to what it draws and recorded as a PNG (#431). */
+    /** One page: the printed folio, trimmed to its content and saved as a PNG (#431). */
     data class Bitmap(
         val page: PrintPage,
         override val destination: ExportDestination,
@@ -48,49 +45,38 @@ sealed class SheetExportJob {
 }
 
 /**
- * The button into «Cómo se exporta»: what it says, whether it can be pressed, and the tap.
- *
- * It is a thing of its own because it is **absent** for a whole state of the flow, and a label with
- * nothing to label is how the panel came to be opened by a grey button that stayed on screen (#512).
+ * The button into «Cómo se exporta». A separate type because it is absent while the panel is open
+ * (#512).
  */
 class SheetExportDoor(
-    /** «Exportar lámina» / «Exportar hoja», or «Preparando la lámina…» while one is on its way. */
+    /** «Exportar lámina» / «Exportar hoja», or «Preparando la lámina…» while exporting. */
     val label: String,
-    /** False while an export is running: one conversation at a time. */
+    /** False while an export is running. */
     val enabled: Boolean,
     val onExport: () -> Unit,
 )
 
 /**
- * The one export door a screen draws, and the two cards it opens.
+ * What a screen draws for exporting: the button and the two cards it opens, each null when there is
+ * nothing to draw. The screen decides where they go.
  *
- * A screen is handed this instead of four pieces of state, which is the whole point: [door] already
- * knows whether an export is in flight, and the three slots are null exactly when there is nothing
- * to draw in them. Where they go is still the screen's business — the plate hangs them off its
- * heading item, the hoja gives them rows of their own.
- *
- * **[door] and [options] are never both there** (#512): the panel does not appear beside the button
- * that opened it, it takes its place. A disabled button repeating a question already on screen is
- * read as broken, and the way back to it is «Cancelar», which the panel owns.
+ * [door] and [options] are never both present (#512): the panel replaces the button, and
+ * «Cancelar» in the panel brings it back.
  */
 class SheetExportSurface(
-    /** The way in, or null while the panel is standing in its place. */
+    /** Null while the panel is open. */
     val door: SheetExportDoor?,
-    /** «Cómo se exporta», while the collector is answering it. */
+    /** The «Cómo se exporta» panel, while open. */
     val options: (@Composable () -> Unit)?,
-    /** Where the PDF has got to, and the way out of it. A one-page PNG has nothing to report. */
+    /** PDF progress and cancel; null for a one-page PNG. */
     val progress: (@Composable () -> Unit)?,
 )
 
 /**
- * The door drawn as a button, and nothing at all while the panel has taken its place (#512).
+ * Draws [door] as a button, or nothing while the panel replaces it (#512).
  *
- * The `null` lives here and not in three screens: what each of them owns is **where** the button
- * goes, which is the modifier, and — for the hoja — a condition of its own. Unpacking the label,
- * the tap and the enabling three times over is how the two twin export machines of #430 started.
- *
- * @param enabled a second condition the screen adds to the flow's: a collection with no piece in it
- *   has no sheet to export, whatever the machine says about being free.
+ * @param enabled an extra condition from the screen, e.g. a collection with no pieces has nothing
+ *   to export.
  */
 @Composable
 fun SheetExportDoorButton(
@@ -109,24 +95,13 @@ fun SheetExportDoorButton(
 }
 
 /**
- * Exporting a single lámina or hoja: the whole machine, owned once (#430).
+ * The export flow for a single lámina or hoja, shared by `PlateScreen` and `PiecesScreen`
+ * (#430, #431). Both export the printed page, as a PNG when it fits one page and through
+ * [NotebookPdfExport] otherwise.
  *
- * `PlateScreen` and `PiecesScreen` each carried a copy of it — two twin sealed classes, the same
- * four pieces of state, the same `begin()` measuring pages and picking a format, the same
- * `ExportProgress` with its cancellation by step, and the same final `when` dispatching to
- * [SheetPngExport] or [NotebookPdfExport]. Twins drift: #219 had already merged the drawing half of
- * this for the same reason, and the halves that were left apart went on to grow the second entrance
- * #434 removed.
- *
- * **Nothing is left that the two screens do not share** (#431). What used to differ was the bitmap —
- * a plate drew `PlateSheet` and a leaf `PiecesSheet`, neither of which received the switches — and
- * since the PNG became the printed page there is one drawing for both, chosen by the same measure as
- * before: one page is a photo, more is the notebook's PDF.
- *
- * @param key what a fresh export is keyed on — the catalog's id, the collection's title — so that
- *   moving to another subject recounts its pages instead of showing the previous one's.
- * @param tally what the sheet says it holds, in its own words, for the closing message.
- * @param content the screen itself, handed the door and the two cards to place.
+ * @param key the subject's id (catalog id, collection title), so switching subject recounts pages.
+ * @param tally what the sheet holds, for the closing message.
+ * @param content the screen, given the [SheetExportSurface] to place.
  */
 @Composable
 fun SheetExportFlow(
@@ -143,16 +118,13 @@ fun SheetExportFlow(
     content: @Composable (SheetExportSurface) -> Unit,
 ) {
     var configuring by remember { mutableStateOf(false) }
-    // A draft, discarded on «Cancelar»: playing with the switches and backing out has not changed
-    // how this collector prints. Reset from the stored configuration each time the panel opens.
+    // Discarded on «Cancelar»; reset from the stored options each time the panel opens.
     var draft by remember { mutableStateOf(notebookOptions) }
     var job by remember { mutableStateOf<SheetExportJob?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
-    // Announced from the state and not from the tap, so cancelling and failing say it too: every
-    // way out of an export goes through `job` becoming null.
+    // Driven by the state, not the tap, so cancel and failure report it too.
     LaunchedEffect(job != null) { onExporting(job != null) }
-    // Recounted when a switch moves, and nothing is drawn to get it: the panel's cost line and the
-    // format it announces are both arithmetic over these pages.
+    // Recounted on each switch change without drawing; the cost line and format come from these.
     val pages = remember(configuring, draft, key) {
         if (!configuring) null else notebookPages(draft)
     }
@@ -167,8 +139,7 @@ fun SheetExportFlow(
             } else {
                 step = NotebookExportStep.Drawing(
                     0,
-                    // The plate at the top of the folio, which since #232 may not be the only
-                    // one on it.
+                    // The folio's first plate; it may share the folio (#232).
                     measured.first().blocks.first().section.title,
                 )
                 SheetExportJob.Pdf(measured, destination)
@@ -196,8 +167,7 @@ fun SheetExportFlow(
                     options = draft,
                     pages = measured.size,
                     cards = 1,
-                    // A single sheet never asks «Sin colección»: there is no index under it to
-                    // have loose coins in.
+                    // A single sheet never offers «Sin colección».
                     loose = 0,
                     onChange = { draft = it },
                     onDownload = { begin(ExportDestination.Download, measured) },
@@ -215,8 +185,8 @@ fun SheetExportFlow(
                 ExportProgress(
                     step = step,
                     pages = pdf.pages.size,
-                    // Every step but the write, which would close the document under the thread
-                    // serializing it.
+                    // Cancellable except while writing, which would close the document under the
+                    // thread serializing it.
                     onCancel = when (val current = step) {
                         is NotebookExportStep.Warming -> {
                             {

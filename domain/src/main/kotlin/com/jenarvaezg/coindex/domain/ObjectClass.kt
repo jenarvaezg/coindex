@@ -1,17 +1,12 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * What a struck thing is, coarsely: a coin, or something struck that is filed beside coins.
+ * What a struck thing is, coarsely: a coin, or something struck that is filed beside coins
+ * (Numista's `category`).
  *
- * This is Numista's own `category`, and it is deliberately **not** the five-class net of
- * [objectClassDeviations]. That one reads `type` — «Medallas», «Monedas de ensayo» — to warn a
- * curator that a member of a catalog may not be money at all, and it is silenced one member at a
- * time in prose.
- * This is the collector's question instead, and it is answered with a chip: 27 of the 902 seeded types
- * are exonumia, and **twenty-one of them live inside curated catalogs** — the two Mexican Onzas, two
- * Niue members and the seventeen ECU and euros of the FNMT, which Numista files as fantasy coins
- * because the ECU never was legal tender — which is exactly why ADR 0021 §1 made medals a **filter
- * and not a section**. A «Medallas» section would have had to tear all twenty-one out of their plate.
+ * Not the net of [objectClassDeviations], which reads `type` to warn a curator. This answers the
+ * collector's question with a chip: exonumia such as the FNMT's ECU pieces live inside curated
+ * catalogs, which is why ADR 0021 §1 made medals a filter and not a section.
  */
 enum class ObjectClass {
     Coin,
@@ -22,15 +17,9 @@ enum class ObjectClass {
 private const val EXONUMIA = "exonumia"
 
 /**
- * Reads Numista's `category` into the two-value split.
- *
- * A category nobody recorded is [ObjectClass.Coin], and that is a default rather than a claim: with
- * two chips there is no third place to put it, and «Medallas y fichas» would say something about the
- * coin that the ficha does not. `category` covers 100 % of the seeded cache, so the default only ever
- * catches a type between a sync landing and its ficha arriving.
- *
- * The prose is kept in [TypeMeta.category] and read here rather than stored as the enum, on the same
- * bargain as the metal and the finish — a better rule fixes rows cached long ago without an API call.
+ * Reads Numista's `category` into the two-value split. An unrecorded category defaults to
+ * [ObjectClass.Coin], which in practice only covers a type whose ficha has not arrived yet. Read
+ * from [TypeMeta.category] rather than stored, so a better rule fixes cached rows.
  */
 fun objectClassOf(numistaCategory: String?): ObjectClass =
     if (numistaCategory == EXONUMIA) ObjectClass.Exonumia else ObjectClass.Coin

@@ -12,11 +12,8 @@ const val UNKNOWN_YEAR_LABEL: String = "Sin año"
 
 /**
  * `1000` reads as "1 oz", `250` as "0,25 oz", `804` as "0,804 oz". An absent weight is a set
- * issued as a set, which has no single weight to show (ADR 0012).
- *
- * The figure itself is [ounceLabel], in the domain, because a card is no longer the only place a
- * variant weight is written: since #565 a name disambiguates itself with the same string, and a
- * second implementation of it would be two readings of one key.
+ * issued as a set, which has no single weight to show (ADR 0012). The figure is [ounceLabel],
+ * shared with the names that disambiguate by weight (#565).
  */
 fun weightLabel(weightMillioz: Int?): String {
     if (weightMillioz == null) return "Conjunto de varias denominaciones"
@@ -24,25 +21,10 @@ fun weightLabel(weightMillioz: Int?): String {
 }
 
 /**
- * The finish, said only where there is one to say (#409).
- *
- * **A declared finish only, so there is no absent case to word.** ADR 0005 files an unmarked type
- * under an *unknown* finish, and printing that reading — «Acabado: Sin confirmar», «0,611 oz ·
- * Acabado sin confirmar» — put the state of the curation datum on the collector's card: read
- * straight, it sounds like an app half filled in. It also said it almost everywhere, which is the
- * other half of why it went: 179 of the father's 191 types carry no marker in their Numista title,
- * and 42 of the 75 curated catalogs printed the row. That is three words on nine cards out of ten to
- * distinguish nothing — the same account that keeps «plata» out of [variantLabel] and «Moneda» out of
- * [objectClassLabel].
- *
- * Nothing is lost where the finish is the distinction: of the whole corpus only two pairs of plates
- * differ by it — the Nautical Ounce against its `antique`, Lunar III bullion against proof coloured —
- * and in both the declared side still prints its word while the plate's own name already says it. For
- * the curator the datum never lived here anyway: it lives in the catalog file.
- *
- * A **«normal»** was the other candidate and would have been a claim we cannot make: `inferFinish`
- * returns null for a proof whose title omits the word too, so naming the absence would turn an honest
- * silence into a wrong fact.
+ * A declared finish (#409). An unmarked type has an unknown finish (ADR 0005), and nothing is
+ * printed for it: «Sin confirmar» on most cards read as an app half filled in and distinguished
+ * nothing, while plates that differ by finish still print the declared word. Not «normal» either:
+ * `inferFinish` also returns null for a proof whose title omits the word.
  */
 fun finishLabel(finish: Finish): String = when (finish) {
     Finish.Bullion -> "Bullion"
@@ -54,10 +36,8 @@ fun finishLabel(finish: Finish): String = when (finish) {
 }
 
 /**
- * Whether a catalog's series is still being issued, as the two chips of the index's shelf.
- *
- * Only ever a filter (ADR 0021 §3): the card itself says what it does and never a word about its
- * curation, and «abierta» on sixty cards would be curator's vocabulary printed sixty times.
+ * Whether a catalog's series is still being issued, as the two chips of the index's shelf. Only a
+ * filter: cards never print it (ADR 0021 §3).
  */
 fun seriesLabel(status: SeriesStatus): String = when (status) {
     SeriesStatus.Open -> "Abierta"
@@ -83,13 +63,9 @@ fun metalLabel(metal: Metal?): String = when (metal) {
 }
 
 /**
- * The physical variant in one line. A set issued as a set has neither weight nor finish to
- * show, so it says what it is instead of showing two blanks (ADR 0012).
- *
- * The metal is named only when it is not silver (#40). Silver is what all but a handful of the cards
- * of these two collections are made of, so printing it everywhere would add a word to every line to
- * distinguish nothing, while «Oro» on the card that is gold is the whole reason the metal entered
- * the key.
+ * The physical variant in one line. A set issued as a set has neither weight nor finish, so it
+ * says what it is instead (ADR 0012). The metal is named only when it isn't silver, which nearly
+ * every card is (#40).
  */
 fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
     if (weightMillioz == null) return weightLabel(null)
@@ -101,30 +77,17 @@ fun variantLabel(weightMillioz: Int?, finish: Finish?, metal: Metal?): String {
 }
 
 /**
- * Weight and finish as specification rows, omitted entirely for a set.
+ * The variant and finish as specification rows. No «Acabado» row without a declared finish
+ * ([finishLabel]).
  *
- * The acabado row is one of the two and not always: with no finish declared there is no row, for the
- * reasons [finishLabel] states. The weight always has one — every coin weighs something, and a
- * catalog that reached this branch has the figure.
- *
- * **The weight row is titled «Variante» and not «Peso» (#511).** The figure is the variant key of
- * ADR 0018 in troy ounces, and calling it the coin's weight put «0,804 oz» under a heading that says
- * «plata 25 g» — two units for one mass, on one screen, with nothing saying which of them rules.
- * The rule the app already follows is written where the facets are (`Bands.kt`): *grams because this
- * facet is about a piece and not about a variant… «una onza» is the answer the ounce bands of the
- * index already give*. So Monedas weighs the coin in the hand in grams, the index groups variants in
- * ounces, and this row is the second of those — the name is what says so.
- *
- * The alternative measured and refused was printing both units here, derived from the key. It cannot
- * be done honestly: a millioz is 0,031 g, so converting back and rounding to the one decimal that
- * precision allows prints «13,9 g» over a title that says 13,88 g, and it contradicts the curator on
- * four of the fourteen plates whose name states its grams. The set keeps the same word it always
- * had, which is what made «Variante» the row's name in the first place.
+ * The weight row is «Variante», not «Peso» (#511): the figure is ADR 0018's variant key in troy
+ * ounces, while the coin's own weight is given in grams (see `Bands.kt`). Grams converted back from
+ * the key are too imprecise to agree with the curated names, so they aren't printed here.
  */
 fun variantEntries(weightMillioz: Int?, finish: Finish?): List<Pair<String, String>> =
     listOfNotNull(
         "Variante" to weightLabel(weightMillioz),
-        // A set declares no finish (ADR 0012), and it did not print one before this either.
+        // A set declares no finish (ADR 0012).
         finish?.takeIf { weightMillioz != null }?.let { declared -> "Acabado" to finishLabel(declared) },
     )
 
@@ -133,39 +96,26 @@ fun plural(count: Int, singular: String, plural: String): String =
     if (count == 1) "$count $singular" else "$count $plural"
 
 /**
- * What the app spends at Numista, in the one unit it is spent in: **consultas** (#516).
- *
- * Owned here and not by any of the four surfaces that print it — the sync report, the durable line
- * under the sync button, the ficha's own refresh and the tasación of a lámina — because they spend
- * the same monthly budget of the same key, and the shelf window had grown a second word for it.
- * «Llamada» is the loser of the two: it is what the code does, while what the collector is told about
- * is what the app is going to **ask** Numista, which is the promise the marking mode makes a month at
- * a time («+2 consultas al mes» per casilla, `WishLabels.MARK_HINT`).
+ * What the app spends at Numista, in its one unit: «consultas», never «llamadas» (#516). Shared by
+ * the sync report, the line under the sync button, the ficha refresh and a lámina's tasación, which
+ * all spend the same monthly budget (see also `WishLabels.MARK_HINT`).
  */
 fun queriesLabel(count: Int): String = plural(count, "consulta", "consultas")
 
 /**
- * What a collection with no issue list counts: **«5 monedas · 5 tipos»** (ADR 0021 §3).
- *
- * The coins come first because that is what the collector has in the house, and the types second
- * because that is what tells «five different coins» from «the same one five times». It used to read
- * «5 tipos distintos · 5 piezas», which put the curator's unit first and spent two words —
- * «distinto», «pieza» — on saying what «tipo» and «moneda» already say.
+ * What a collection with no issue list counts: «5 monedas · 5 tipos» (ADR 0021 §3). Coins first,
+ * as the collector has them; types second, to tell five different coins from one five times.
  */
 fun countLabel(distinctTypes: Int, quantity: Int): String =
     plural(quantity, "moneda", "monedas") + " · " + plural(distinctTypes, "tipo", "tipos")
 
 /**
- * The third line of a card that has an issue list: `4 de 12 · te faltan 8` (ADR 0021 §3).
+ * The third line of a card that has an issue list: `4 de 12 · te faltan 8` (ADR 0021 §3). The index
+ * is sorted by it (§6), so it has to be shown. A card without an issue list says [countLabel] and
+ * nothing about the absence.
  *
- * It is the same measured fact the index is sorted by (§6), which is why it has to be legible: an
- * order that moves with the ratio while every card counts pieces would look arbitrary. A card
- * without an issue list says [countLabel] instead, and there is no third phrase apologising for the
- * absence — «emisión» is curator's jargon, and the missing progress *is* the signal.
- *
- * With nothing missing the sentence stops at the count. «Completa» would claim a closure the
- * catalog does not have: by ADR 0020 an open series has no completeness to claim, and this January
- * the same 22/22 becomes 22/23.
+ * With nothing missing it stops at the count: «Completa» would claim a closure an open series
+ * doesn't have (ADR 0020), and next January 22/22 becomes 22/23.
  */
 fun coverageLabel(coverage: CoverageRatio): String {
     val counted = "${coverage.owned} de ${coverage.issued}"
@@ -180,12 +130,9 @@ fun indexCoverageLabel(coverage: CoverageRatio): String =
  * The identity line of one inventory row: what tells it apart, its Numista type and how many
  * pieces it is.
  *
- * The year goes first, because it is usually what tells two rows of the same type apart, and
- * «sin año» is a fact about the row rather than a blank: a date run can never fill a year from a
- * row that does not carry one. [DrawnPiece.emissionLabel] replaces it where the year distinguishes
- * nothing — the 100 pesetas of Franco all say 1966 and differ by the star.
- *
- * It takes a [DrawnPiece] and not a row plus an optional label, for the reason that type states.
+ * The year first, since it usually tells two rows of a type apart; «sin año» is a fact about the
+ * row. [DrawnPiece.emissionLabel] replaces it where the year distinguishes nothing, as with
+ * Franco's 100 pesetas, all dated 1966 and told apart by the star.
  */
 fun pieceLine(piece: DrawnPiece): String {
     val item = piece.item
@@ -194,74 +141,42 @@ fun pieceLine(piece: DrawnPiece): String {
     return "$head · Numista ${item.typeId}$quantity"
 }
 
-/**
- * What tapping the body of a casilla does, for the reader that cannot see it happen.
- *
- * Nothing on the sheet writes this: the gesture is announced by the coin having two sides and by
- * nothing else, which is the whole point of a hole you can press. It exists so that the one reader
- * who is told what a control does is told the truth.
- */
+/** What tapping a casilla does, for screen readers only; nothing on the sheet prints it. */
 const val TURN_THE_COIN_OVER: String = "Dar la vuelta a la moneda"
 
 /**
- * What a turned hole says when the face that came round has no photograph on this phone (#509).
- *
- * It is the only copy that ever falls inside a hole, and it earns the exception by being the
- * alternative to a mute disc: the audit of 14 August 2026 turned coins over on a phone with the
- * prefetch still pending and got a blank circle that reads as a broken image. **The photograph is
- * never missing from the catalogue** — all 848 types across the 75 catalogs carry both faces — so
- * what this sentence reports is always the same fact and always temporary: ADR 0024 only prefetches
- * on an unmetered network, and this face has not arrived yet.
- *
- * Four words because the hole is 104 dp wide and the sentence has to fit inside the metal without
- * being a paragraph; «todavía» is what keeps it from reading as a permanent absence.
+ * What a turned hole says when the face that came round has no photograph on this phone yet
+ * (#509), instead of a blank disc that reads as a broken image. The only copy inside a hole, short
+ * enough for 104 dp. Always temporary: the catalogue has both faces, and ADR 0024 only prefetches
+ * on an unmetered network.
  */
 const val FACE_NOT_DOWNLOADED: String = "Esta cara no ha bajado todavía"
 
 /**
- * What the mark of a photograph that has not arrived is called, for whoever is not looking (#510).
- *
- * It is a `contentDescription` and never ink: the mark itself is an arrow onto a shelf, because it
- * falls on every hole of a plate at once and thirty sentences are a wall of prose. Screen readers
- * get the sentence anyway — «no ha bajado» is exactly as temporary here as it is on the far face —
- * and a hole reads it out only when there is something to explain, which is not the same as a hole
- * whose type simply has no picture in Numista.
+ * The `contentDescription` of the mark on a hole whose photograph hasn't arrived (#510). The mark
+ * has no text because it falls on every hole of a plate at once. Not used for a type that simply
+ * has no picture in Numista.
  */
 const val PHOTO_NOT_DOWNLOADED: String = "La foto no ha bajado todavía"
 
 /**
- * The one word the completion stamp says (ADR 0026 §3).
- *
- * **One word and not two, open series included.** The #304 prototype drew «al día» for a plate whose
- * series is still being issued and that is the only thing the ticket never got to pronounce; it is
- * closed here by default, because the case does not exist today — none of the father's six complete
- * plates is an open series — and a second word is new vocabulary that would have to be explained on
- * the one screen ADR 0026 §5 was pruning words out of.
- *
- * Written in lower case because that is the word; the stamp prints it in capitals, which is a fact
- * about rubber and not about the copy.
+ * The completion stamp's one word (ADR 0026 §3), for open series too: a second word such as
+ * «al día» would be new vocabulary to explain (ADR 0026 §5). The stamp prints it in capitals.
  */
 const val COMPLETE_STAMP_WORD: String = "completa"
 
 /** Why a plate cannot be opened, in terms of what the collector can do about it. */
 fun plateUnavailableLabel(reason: PlateUnavailable): String = when (reason) {
     PlateUnavailable.UnknownCatalog -> "No existe ese catálogo curado."
-    // The same sentence the collection itself says when it goes: one event, one wording (§5).
+    // The same sentence the collection says when it goes (ADR 0026 §5).
     PlateUnavailable.NotACollection -> COLLECTION_NO_LONGER_EXISTS
     PlateUnavailable.NoEvidence -> "Aún no tienes ninguna emisión oficial de este catálogo."
 }
 
 /**
- * What a coin of Coins is, said only when it is not a coin.
- *
- * Exonumia is a small minority of the seeded types, so printing «Moneda» on all the others would add
- * a word to almost every row to distinguish nothing — the same reasoning that keeps «plata» off
- * [variantLabel]. What earns a line is the medal, because a struck thing filed beside coins is exactly
- * what a collector wants to know before reading the rest of the row (ADR 0021 §1).
- *
- * There is **no reason line** here and nowhere else in the app: ADR 0021 §12 moved the four reasons a
- * piece produced no collection out to the field report, where the curator already looks. «Nothing is
- * discarded silently» became «nothing is discarded» the moment a coin got a hierarchy of its own.
+ * What a coin of Coins is, said only when it isn't a coin: exonumia is a small minority, and a
+ * medal filed beside coins is worth knowing first (ADR 0021 §1). Why a piece produced no
+ * collection is never shown; that lives in the field report (ADR 0021 §12).
  */
 fun objectClassLabel(objectClass: ObjectClass): String? = when (objectClass) {
     ObjectClass.Coin -> null
@@ -277,10 +192,7 @@ fun objectClassChip(objectClass: ObjectClass): String = when (objectClass) {
 fun numistaTypeUrl(typeId: Int): String = "https://en.numista.com/catalogue/pieces$typeId.html"
 
 /**
- * Backing out of something, said in one word wherever it is offered (ADR 0026 §5).
- *
- * Four literals for this word, in three files. It is the same act every time — the export sheet, the
- * export in progress, the box being named, the selection being made — and four copies of a word are
- * four chances for one of them to become «Anular».
+ * Backing out, in one word wherever it is offered (ADR 0026 §5): the export sheet, an export in
+ * progress, naming a box, a selection.
  */
 const val CANCEL_ACTION: String = "Cancelar"

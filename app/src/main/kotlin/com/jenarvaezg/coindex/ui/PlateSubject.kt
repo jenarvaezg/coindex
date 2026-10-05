@@ -15,19 +15,12 @@ import com.jenarvaezg.coindex.domain.firstOwnedIndex
 import com.jenarvaezg.coindex.domain.wishKey
 
 /**
- * What the three drawers of a plate are looking at: the screen, the exported sheet, the notebook.
+ * What the three drawers of a plate look at: the screen, the exported sheet, the notebook. Built
+ * once from [PlateResult.Available] and consumed whole (#218), as [PiecesSubject] is for the
+ * collections without an issue list.
  *
- * **Built once from [PlateResult.Available] and consumed whole** (#218). The plate used to be taken
- * apart at the edge of the screen and its four pieces threaded by hand through four signatures of
- * six and eight parameters, which is how the same facts came to be recomputed three times over —
- * once in the body of a `LazyVerticalGrid`, with no `remember` under it — and how the exported
- * sheet ended up recomputing them again while the export was in flight. `PiecesSubject` had already answered this
- * for the collections without an issue list; this is the same answer for the ones with one.
- *
- * **Nothing here is a catalog and nothing here is an album.** What a drawer needs is prose and
- * pictures: a heading, a specification already worded, and cells that know what they say. The
- * counting and the lifting of shared facts happen once, in [plateSubject], and no drawer can do
- * either — which is what makes «Progreso» and the card's ratio one number instead of two.
+ * No catalog or album reaches a drawer, only worded prose and pictures. Counting and lifting shared
+ * facts happen once, in [plateSubject], so «Progreso» and the card's ratio are one number.
  */
 data class PlateSubject(
     /** Names the export file and keys the picture the sheet is recorded into. */
@@ -40,99 +33,61 @@ data class PlateSubject(
     val entries: List<Pair<String, String>>,
     val cells: List<DrawnCell>,
     /**
-     * The ratio the header prints, and what the stamp lands on: `22/22` (ADR 0026 §3).
-     *
-     * The short form and not «Progreso»'s sentence, because it is drawn as a figure over the title
-     * and not as a row of the specification — see [plateEntriesBesideRatio], which is what takes it out
-     * of the card so the same number is never printed twice.
+     * The ratio printed over the title, where the stamp lands: `22/22` (ADR 0026 §3). Drawers that
+     * print it drop the «Progreso» row ([plateEntriesBesideRatio]).
      */
     val ratio: String?,
     /**
-     * Every issued member owned, which is the whole of what the completion stamp is (ADR 0026 §3).
-     *
-     * **A state and not an event**: it is read from the inventory like the die-cut, so a plate that
-     * stops being complete stops showing it, and nothing anywhere remembers that it once did.
+     * Every issued member owned: the completion stamp (ADR 0026 §3). A state read from the
+     * inventory, not an event, so a plate that stops being complete stops showing it.
      */
     val complete: Boolean,
     /**
-     * The casilla the coin of the index card flies to, or null where no cell can receive it.
-     *
-     * [CollectionCatalogAlbum.firstOwnedIndex], which is **the very rule the card's photograph is
-     * chosen by**: the coin that took off is the coin that lands, and one function is what keeps the
-     * two from being picked apart. A plate the collector owns nothing of has no landing cell — and no
-     * plate either, because `resolvePlate` needs evidence to open one.
+     * The casilla the index card's coin flies to, or null. Uses
+     * [CollectionCatalogAlbum.firstOwnedIndex], the rule that picks the card's photograph, so the
+     * coin that takes off is the one that lands.
      */
     val landingCell: Int?,
     /**
-     * What the coins in these casillas are worth, or null when there is no money to say (ADR 0026 §10).
-     *
-     * Null in three different situations that all mean the same thing on the page — the market has not
-     * landed yet (ADR 0028 §7), the plate holds nothing, or **this drawer is the export with the money
-     * switched off** (#228, ADR 0021 §13). One nullable field rather than a flag per drawer, so a drawer
-     * cannot print an amount it was not given.
-     *
-     * It is the **screen's** wording, with the name of the figure inside it (#493). The printed page
-     * words the same amount as a row of its specification and takes it from `plateAmountLabel`
-     * directly: its row is already titled «Valor», and a value that carried its own title would say
-     * the word twice.
+     * The screen's wording of what the coins in these casillas are worth (#493, ADR 0026 §10).
+     * Null before the market lands (ADR 0028 §7), when the plate holds nothing, and in an export
+     * with money off (#228, ADR 0021 §13), so a drawer can't print an amount it wasn't given. The
+     * printed page uses `plateAmountLabel` under its own «Valor» row.
      */
     val value: String? = null,
     /**
-     * What closing this plate would cost, or null when there is nothing to close (#493).
-     *
-     * Absent and not zero on a complete plate: without a hole there is no cost, no line and no stamp,
-     * and no zero anybody has to word. Absent too over the threshold of ADR 0028 §1, where the prices
-     * were never asked for — the same clause, read from `holesAreWithinReach` and not counted twice.
+     * What closing this plate would cost (#493). Null on a complete plate, and past the threshold
+     * of ADR 0028 §1 (`holesAreWithinReach`), where those prices are not asked for.
      */
     val cost: String? = null,
     /**
-     * What entering this plate costs, on a plate that is not the collector's (ADR 0030 §6).
-     *
-     * The one figure of money a plate of the shelf window can have, and it is **never** in company:
-     * with no piece inside there is no [value] to name it against, so where the collector's own plate
-     * has two lines this one has this. Null on a plate of theirs, and null on one of the twenty that
-     * has never been valued — which is absence and not a zero, like every other amount here.
+     * What entering costs, on a plate that isn't the collector's (ADR 0030 §6): its only money
+     * figure. Null on the collector's plates and on a shelf-window plate never valued.
      */
     val entry: String? = null,
     /**
-     * What a plate of the shelf window says when it was valued and Numista had **no price** (ADR 0028 §4).
-     *
-     * The third state of that section, about a whole plate rather than one issue: it is a datum and not a
-     * failure, so it is said. Without it a plate that has been asked about looks exactly like one nobody
-     * has touched, and the gesture goes on offering to buy an answer it already has.
+     * What a shelf-window plate says when it was valued and Numista had no price (ADR 0028 §4), so
+     * it doesn't look untouched.
      */
     val entryNote: String? = null,
     /**
-     * Whether this plate is the collector's own (ADR 0030 §1).
-     *
-     * What hangs off it is what the plate **offers**: a plate of the shelf window has «Tasar esta
-     * lámina» where the collector's has «Exportar la lámina», because a PNG of twelve empty holes is a
-     * picture of nobody's collection (#282, decision 8). Every other thing a plate does — the marking
-     * mode, the link to Numista, the casillas themselves — is the same on both.
+     * Whether this plate is the collector's own (ADR 0030 §1). A shelf-window plate offers «Tasar
+     * esta lámina» instead of «Exportar la lámina» (#282); everything else is the same.
      */
     val mine: Boolean = true,
-    /** Whether this plate has been valued at all, priced or not — what the gesture's word reads. */
+    /** Whether this plate has been valued, priced or not; picks the gesture's word. */
     val entryValued: Boolean = false,
     /**
-     * Whether the header says out loud that the money is still coming (#519).
-     *
-     * The one of the three absences above that is worth a line, and the only one this flag can be:
-     * a plate that holds nothing has no market to wait for, and the export was asked for a page
-     * without money. So where [value] and [cost] are null for three different reasons, this is true
-     * for exactly one of them.
+     * Whether the header says the money is still coming (#519): true only when the market is the
+     * reason [value] and [cost] are null.
      */
     val moneyWaiting: Boolean = false,
 )
 
 /**
- * One casilla of a plate as it is drawn, with everything it says already resolved.
- *
- * The parallel of [DrawnPiece], and for the same reason: what a cell has left to say under its own
- * title is decided by the whole plate — see [plateCellFootnote] — so a drawer that received the raw
- * member would have to ask the plate again, three times, with three chances to ask differently.
- *
- * [id] is the member's, and it is here because a lazy grid needs a stable key: the label of a cell
- * is what the collector reads, not a promise of uniqueness.
+ * One casilla as it is drawn, with everything it says resolved. Like [DrawnPiece]: what a cell says
+ * depends on the whole plate ([plateCellFootnote]), so drawers get the answer, not the member.
+ * [id] is the member's, the lazy grid's stable key.
  */
 data class DrawnCell(
     val id: String,
@@ -141,33 +96,23 @@ data class DrawnCell(
     val numistaTypeId: Int?,
     val footnote: String?,
     /**
-     * The year on the casilla's recessed tag, which on screen is also what opens Numista (#337).
-     *
-     * Not the same thing as [footnote], which is what the *paper* has left to say under a coin and
-     * therefore goes silent when the whole plate shares one year. The tag is not a note: it is the
-     * handle, so it keeps the year in the twelve casillas of four catalogs where the footnote
-     * drops it rather than leaving them with nothing to press.
+     * The year on the casilla's recessed tag, which on screen also opens the coin's ficha (#508). Unlike
+     * [footnote], it stays when the whole plate shares one year: it is the handle.
      */
     val year: String?,
     val owned: Boolean,
     /** Only an issued member absent from the collection gets the catalog-design ghost. */
     val missing: Boolean,
     /**
-     * What this casilla costs, stamped inside the hole, or null where nothing can be said (#493).
-     *
-     * Only ever a hole: a full casilla has no cost — it has a value, and that one is the header's. And
-     * only ever a hole whose price is on the phone, which is why the plates over the threshold of ADR
-     * 0028 §1 carry no stamps at all: nobody asked for those prices, so there is no «—» to draw. A
-     * **marked** hole is the exception the mark buys, and it is one chip either way — see
-     * [com.jenarvaezg.coindex.ui.components.HoleStamp].
+     * The price stamped inside a hole whose price is on the phone, or null (#493). Past the
+     * threshold of ADR 0028 §1 only marked holes have one (see
+     * [com.jenarvaezg.coindex.ui.components.HoleStamp]).
      */
     val cost: String? = null,
     /**
-     * The key this casilla is marked by, or null where it cannot be marked at all (ADR 0029).
-     *
-     * Null for an announced or unlisted member: a coin the app cannot name cannot be looked for, which
-     * is the recorte ADR 0029 accepts. It is here and not derived by the screen because the mark and
-     * the price have to address **the same casilla**: both are read off the member, once.
+     * The key this casilla is marked by, or null for an announced or unlisted member, which can't
+     * be looked for (ADR 0029). Read off the member here so the mark and the price address the same
+     * casilla.
      */
     val wishKey: WishKey? = null,
     /** Whether the collector marked this casilla: «lo busco» (ADR 0029 §2). */
@@ -177,14 +122,10 @@ data class DrawnCell(
 )
 
 /**
- * What the piece sunk into the cardboard says: the casilla's year, or what tells it from its sisters.
- *
- * One or the other and never both, because the sunken piece is **the identity of a casilla inside its
- * plate** and its door to the ficha (#302, #508). On a date run that is the year. On the four plates
- * whose casillas all share one — Paquillos and its three — the year identifies nothing: it was drawn
- * five times identical while «Estrella 66…70», which is the whole difference, sat underneath in plain
- * ink (#511). The year is not lost by moving over: it is a fact of the whole plate and the
- * specification already prints it once, which is exactly why repeating it N more times bought nothing.
+ * What the piece sunk into the cardboard says: the casilla's identity in its plate and its door to
+ * the ficha (#302, #508). On a date run, the year; where every casilla shares the year, what tells
+ * it from its sisters, such as «Estrella 66» (#511). A shared year is printed once, in the
+ * specification.
  */
 sealed interface CellPlaque {
     /** The year of a casilla that has one of its own. */
@@ -195,11 +136,8 @@ sealed interface CellPlaque {
 }
 
 /**
- * The rule, written once for the subject and its tests.
- *
- * A casilla labelled with its own year keeps the year even when the plate shares it: there is no other
- * distinction to raise, and a plaque repeating what the label says would be the same duplication
- * turned around.
+ * The plaque rule, shared by the subject and its tests. A casilla labelled with its year keeps the
+ * year plaque even when the plate shares it: there is nothing else to show.
  */
 internal fun plaqueOf(label: String, year: String?, yearIsCommon: Boolean): CellPlaque? = when {
     yearIsCommon && label != year -> CellPlaque.Name(label)
@@ -208,26 +146,14 @@ internal fun plaqueOf(label: String, year: String?, yearIsCommon: Boolean): Cell
 }
 
 /**
- * The name a casilla prints under its plaque, or null where the plaque already says it.
- *
- * A casilla titled with its own year would otherwise print it twice, once on the tag sunk into the
- * cardboard and once as a gloss underneath. Null and not the empty string, because since #473 the
- * difference is whether the casilla prints a third thing at all: nothing is reserved for a name
- * that is not there, and what the casilla does not use falls into the gap between two rows.
- *
- * Silent too when the plaque **is** the name (#511), and by the same rule rather than a second one.
+ * The name a casilla prints under its plaque, or null where the plaque already says it: a casilla
+ * titled with its year, or one whose plaque is its name (#511). Null rather than empty, since no
+ * space is reserved for a missing name (#473).
  */
 val DrawnCell.printedName: String?
     get() = if (plaque is CellPlaque.Name) null else printedNameOf(label, year)
 
-/**
- * The rule itself, shared by the two surfaces that draw a casilla under a year.
- *
- * The plate is one and the annex of ADR 0029 is the other, and the annex is where it was measured
- * again: a date run labels its casillas with their year, so «1886» came out on the tag and again
- * underneath it. One function rather than the same `takeIf` twice — a rule about what not to print
- * twice, written twice, is the joke telling itself.
- */
+/** The rule itself, shared by the plate and the annex (ADR 0029), which both draw a year tag. */
 internal fun printedNameOf(label: String, year: String?): String? = label.takeIf { it != year }
 
 /** The one catalog photograph a resting plate shows and exports. */
@@ -237,10 +163,8 @@ fun TypeImages.printedPhoto(side: PrintedSide): CoinPhoto = when (side) {
 }
 
 /**
- * The plate of one catalog, worded once.
- *
- * Takes the resolution and not its pieces so that the pieces cannot arrive apart: an album belongs
- * to the catalog it was built from, and the programmes to both.
+ * The plate of one catalog, worded once. Takes the whole resolution so the album, the catalog and
+ * the programmes arrive together.
  */
 fun plateSubject(
     plate: PlateResult.Available,
@@ -248,27 +172,19 @@ fun plateSubject(
     /** The casillas of this plate the collector marked, by key (ADR 0029). */
     wished: Set<WishKey> = emptySet(),
     /**
-     * Now, for the age every amount on a plate is shown with (ADR 0030 §4, #594).
-     *
-     * A parameter and not a clock of its own, like every other date this app words: the price of a plate
-     * of the shelf window never expires, so what tells «tasada hoy» from «tasada hace un año» is read
-     * where the subject is built and can be held still by a test. Since #594 the collector's own two
-     * figures are read against it too — a catalog price lives ninety days, and the header has to say
-     * where in those ninety days its own amount sits.
+     * For the age every amount on a plate shows (ADR 0030 §4, #594). A parameter so a test can hold
+     * it still.
      */
     nowMillis: Long = System.currentTimeMillis(),
 ): PlateSubject {
     val catalog = plate.catalog
-    // Off the album and not off the catalog, so the heading is lifted out of the very cells the
-    // plate is about to draw: the album is the plate as this collector has it.
+    // From the album, not the catalog, so the heading is lifted out of the cells being drawn.
     val common = plateCommonFacts(plate.album.members.map { it.member })
-    // The card's ratio itself (#218, ADR 0026 §3): what the index prints in rust, what the header
-    // prints over the title, and what the stamp is read from are one measurement.
+    // The card's ratio (#218, ADR 0026 §3): the index, the header and the stamp share it.
     val coverage = plate.album.coverage()
     val cells = plate.album.members.map { albumMember ->
         val wishKey = albumMember.member.wishKey()
-        // Welded once and used twice: the label goes to the foot of the casilla or into its plaque,
-        // and a figure parted from its unit is the same defect in either place (#511).
+        // Welded once, for the foot of the casilla or its plaque (#511).
         val label = albumMember.member.label.weldUnits()
         val year = albumMember.member.year?.toString()
         DrawnCell(
@@ -281,17 +197,14 @@ fun plateSubject(
             missing = albumMember.status is CollectionCatalogMemberStatus.Missing,
             cost = money.holeCosts[albumMember.member.id]?.let(::holeCostLabel),
             wishKey = wishKey,
-            // Only where the casilla is empty, and it is not a filter over the table: a wish whose
-            // coin arrived is dead by ADR 0029 §2, and the album is where that is measured. So the
-            // mark disappears with the hole it was made in, and the row stays for the day the coin
-            // leaves again.
+            // Only on an empty casilla: a wish whose coin arrived is dead (ADR 0029 §2). The mark
+            // goes with the hole; the row stays for the day the coin leaves again.
             wished = albumMember.status is CollectionCatalogMemberStatus.Missing &&
                 wishKey != null && wishKey in wished,
             plaque = plaqueOf(
                 label = label,
                 year = year,
-                // The same reading `plateCellFootnote` makes: a year every casilla shares was lifted
-                // onto the specification, and what is lifted is not said again in each cell.
+                // As in `plateCellFootnote`: a year every casilla shares is in the specification.
                 yearIsCommon = common.year != null,
             ),
         )
@@ -310,8 +223,7 @@ fun plateSubject(
         cost = money.cost?.let { plateCostLabel(it, nowMillis) },
         entry = money.entry?.let { showcaseEntryLabel(it, nowMillis) },
         entryNote = ShowcaseLabels.NOTHING_PRICED.takeIf { money.entryAsked && money.entry == null },
-        // Asked is what turns «Tasar esta lámina» into «Volver a tasar», and not merely priced: a plate
-        // Numista has no price for has been valued all the same.
+        // Asked, not priced, turns «Tasar esta lámina» into «Volver a tasar»: «no price» counts.
         entryValued = money.entryAsked,
         moneyWaiting = money.waiting,
         mine = plate.mine,
@@ -319,12 +231,8 @@ fun plateSubject(
 }
 
 /**
- * The facts every member of a catalog shares, which therefore belong to the plate and not to
- * its cells.
- *
- * An issue run repeats the year across its cells, so a footnote built from it said the same thing
- * in twenty-one cells at once. The type is here for the same reason but is never handed back to a
- * cell: it either heads the whole plate or it is not on the plate at all (see [plateCellFootnote]).
+ * Facts every member of a catalog shares, which belong to the plate rather than its cells. The
+ * type is never handed back to a cell: it heads the plate or isn't shown (see [plateCellFootnote]).
  */
 private data class PlateCommonFacts(val numistaTypeId: Int?, val year: Int?)
 
@@ -339,19 +247,12 @@ private fun plateCommonFacts(members: List<CollectionCatalogMember>): PlateCommo
 }
 
 /**
- * What one cell has left to say under its own title: the year, unless the title is already the
- * year or every cell shares it.
+ * What one cell has left to say under its title: the year, unless the title is the year or every
+ * cell shares it.
  *
- * Null when nothing is left, which is the common case of any catalog whose cells are titled with
- * their year.
- *
- * The Numista type is deliberately absent (issue #88). Lifting it only when every cell agreed left
- * it in the cells of the forty-three catalogs whose cells do not: twenty-one repetitions of one
- * identifier in the fuertes, and a hundred and twenty-one distinct ones — no norm, so no exception
- * to annotate — in the Russian personalities. A type identifier is not what a plate says under a
- * coin: on screen the cell title already links to its Numista page, and the exported sheet is a
- * picture the collection is shown with. Where the type does belong is the plate's own
- * specification, and only when the whole plate is that type — see [plateEntries].
+ * Never the Numista type (#88): on screen the title already links to Numista, and on paper an
+ * identifier under each coin is noise. The type goes in the specification when the whole plate is
+ * one type ([plateEntries]).
  */
 private fun plateCellFootnote(member: CollectionCatalogMember, common: PlateCommonFacts): String? {
     val year = member.year ?: return null
@@ -360,13 +261,9 @@ private fun plateCellFootnote(member: CollectionCatalogMember, common: PlateComm
 }
 
 /**
- * The plate's specification block, said once for the three drawers.
- *
- * Whatever [plateCommonFacts] lifts out of the cells lands here, once.
- *
- * **Every count is the album's** (#218). The divisor the plate prints is the divisor the card
- * divided by — `CollectionCatalogAlbum.issuedMembers` — and the two prose lines next to it count
- * the same statuses rather than the catalog's flags a second time.
+ * The plate's specification block, for the three drawers; whatever [plateCommonFacts] lifts out of
+ * the cells lands here. Every count is the album's (#218), so the divisor is the one the card
+ * divided by (`CollectionCatalogAlbum.issuedMembers`).
  */
 private fun plateEntries(
     catalog: CollectionCatalog,
@@ -398,23 +295,14 @@ private fun plateEntries(
     addAll(variantEntries(catalog.weightMillioz, catalog.finish))
     common.numistaTypeId?.let { typeId -> add("Tipo" to "Numista $typeId") }
     common.year?.let { year -> add("Año" to year.toString()) }
-    // The editorial version of the curated file, and not how old anything is (#518): «Actualizado»
-    // read as «comprobado por última vez», which is the one thing this date cannot mean.
+    // The curated file's edition, not an age (#518).
     add("Catálogo" to catalogDateLabel(catalog.updatedAt))
 }
 
 /**
- * The specification with the progress row taken out, for the two drawers that print the ratio
- * themselves.
- *
- * The screen and the exported sheet both head the plate with `22/22` over the title, which is where
- * the stamp lands (ADR 0026 §3); leaving «Progreso · 22 / 22 emisiones» in the card underneath would
- * print the same number twice, and the frequency rule of §5 prices a word by how often it is printed.
- * The lines the progress *brought with it* — «1 anunciada», «2 no medibles» — stay: they are not the
- * ratio, and the figure over the title deliberately says nothing about them.
- *
- * The printed notebook does not call this: its page has no header of its own to raise the ratio into,
- * so [plateSubject]'s entries reach it whole.
+ * The specification without the «Progreso» row, for the screen and the exported sheet, which print
+ * the ratio over the title (ADR 0026 §3, §5). The lines that come with it («1 anunciada»,
+ * «2 no medibles») stay. The notebook has no such header and prints the entries whole.
  */
 fun plateEntriesBesideRatio(entries: List<Pair<String, String>>): List<Pair<String, String>> =
     entries.filterNot { (label, _) -> label == PROGRESS_LABEL }

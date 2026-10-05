@@ -62,30 +62,21 @@ import com.jenarvaezg.coindex.ui.uncirculatedSentence
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * «Las cifras»: the third cell of the top level, and the one page that is not made of slots
- * (ADR 0026 §8, §10).
+ * «Las cifras»: the third top-level cell, ordered by magnitude rather than by slots
+ * (ADR 0026 §8, §10). It has no filters, sort or search.
  *
- * **It carries no shelf.** No filters, no sorting, no search box: its order is chosen by the figure you
- * touch. Collections orders the collection by plate, Coins by type, and this one by magnitude.
+ * Every tappable figure leads to the pieces behind it; figures with nothing underneath are not
+ * tappable. The money section is absent, not zero, until market prices arrive (ADR 0028 §7), and a
+ * single line stands in its place meanwhile (#519). Everything else comes from the APK, so a fresh
+ * install without network shows the rest of the page.
  *
- * **It goes down.** What earns this a cell of its own is a grain of its own — grams — and what makes it a
- * hierarchy rather than a dashboard is that every figure that can be touched leads to the pieces that
- * compose it. The ones that cannot be touched are drawings and totals with nothing underneath them, and
- * they are silent rather than tappable-and-inert.
- *
- * **The money is absent, not zero, until the market has landed** (ADR 0028 §7). Everything else on the
- * page comes out of the APK, so a freshly installed phone with no network opens it whole. Absent is
- * not the same as unexplained, though: where the section would be, one line says the market has not
- * arrived — without a figure, and without settings' five reasons (#519).
- *
- * @param onOpenCountry the pieces of a country, which is the shelf of Coins narrowed the way the year
- *   axis already narrows it (#386).
- * @param onOpenYear the pieces of one year, the same way.
+ * @param onOpenCountry opens Monedas narrowed to a country, as the year axis does (#386).
+ * @param onOpenYear opens Monedas narrowed to a year.
  */
 @Composable
 fun FiguresScreen(
     subject: FiguresSubject,
-    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    /** Computed once above the three roots so they all show the same counts. */
     sewnEdge: SewnEdgeCounts?,
     nowMillis: Long,
     onOpenCountry: (String) -> Unit,
@@ -109,9 +100,8 @@ fun FiguresScreen(
                     sentence = FiguresLabels.SENTENCE,
                 )
             }
-            // The money opens the page, and that does not contradict #316: what was rejected there is an
-            // amount that changes on its own in a permanent bar. Here it is on a page opened on purpose,
-            // with its origin stated and the date of each of its two clocks under it (#594).
+            // Money first. #316 rejected a self-updating amount in a permanent bar; here it is on a
+            // page opened on purpose, with its source and the date of both its prices (#594).
             subject.money?.let { money ->
                 item("money") {
                     Block(FiguresLabels.MONEY_HEADING) {
@@ -119,9 +109,8 @@ fun FiguresScreen(
                             eurosLabel(money.value.eur),
                             style = MaterialTheme.typography.displayLarge,
                         )
-                        // The stamp rides **against the amount** and the method closes the block, which
-                        // is the order that stops the small caps reading as a heading: in rust and
-                        // pressed against the divider they were the eyebrow of the block below (#398).
+                        // Stamp right under the amount, method last: small caps against the divider
+                        // read as the heading of the next block (#398).
                         Text(
                             moneyStampLabel(money.spot, money.value.catalogReadAt, nowMillis),
                             style = MaterialTheme.typography.labelMedium,
@@ -134,9 +123,8 @@ fun FiguresScreen(
                                 color = Paper.muted,
                             )
                         }
-                        // Between the coverage and the method, which is where it belongs: it is a
-                        // figure and not a footnote —hence the ink— but the criterion still closes
-                        // the block, because it governs the total and this comparison alike.
+                        // A figure, hence the ink; the method still closes the block because it
+                        // governs both the total and this comparison.
                         money.paid?.let { paid ->
                             Text(
                                 paidAgainstTodayLabel(paid),
@@ -152,8 +140,7 @@ fun FiguresScreen(
                     }
                 }
             }
-            // Where the section would have been, and only there: said anywhere else it would be a
-            // notice about the app rather than the page's own missing figure (#519).
+            // In the money section's place and only there (#519).
             if (subject.moneyWaiting) {
                 item("money-waiting") {
                     Block(FiguresLabels.MONEY_HEADING) {
@@ -189,9 +176,7 @@ fun FiguresScreen(
             item("metal") {
                 Block(FiguresLabels.METAL_HEADING) {
                     MetalBar(subject.figures.metals)
-                    // The fine ounces, where the prototype had them: right under the bar that has just
-                    // split the mass, and not next to a weight «la materia» already says (#398). A
-                    // collection with no silver in it does not say it has none — it says nothing.
+                    // Fine ounces under the metal bar (#398); nothing at all without silver.
                     if (subject.figures.fineSilver.value > 0.0) {
                         Text(
                             fineSilverSentence(gramsToOunces(subject.figures.fineSilver.value)),
@@ -231,9 +216,7 @@ fun FiguresScreen(
             subject.figures.size?.let { size ->
                 item("size") {
                     Block(FiguresLabels.SIZE_HEADING) {
-                        // Centred, because what the block is is a **comparison**: the two coins side
-                        // by side with the sheet's margin on both of them, and not a pair pushed
-                        // against the left edge with half a screen of paper to their right.
+                        // Centred: the two coins are a side-by-side comparison.
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(
@@ -252,8 +235,8 @@ fun FiguresScreen(
                 Block(FiguresLabels.MARGIN_HEADING) {
                     val margins = subject.figures.margins
                     MarginLine(demonetizedSentence(margins.demonetized))
-                    // Second and not last: this and the demonetized line say what these coins **are**,
-                    // and the three below say where they came from.
+                    // With the demonetized line, what the coins are; the three below, where they
+                    // came from.
                     margins.uncirculated?.let { MarginLine(uncirculatedSentence(it)) }
                     margins.sameHand?.let { MarginLine(sameHandSentence(it)) }
                     margins.mostMinted?.let { MarginLine(mintSentence(it, margins.distinctMints)) }
@@ -278,7 +261,7 @@ private fun Block(heading: String, content: @Composable ColumnScope.() -> Unit) 
     }
 }
 
-/** A number with something underneath it. Never drawn for a figure that leads nowhere. */
+/** A tappable number; only for figures that lead to pieces. */
 @Composable
 private fun Figure(text: String, onClick: () -> Unit) {
     Text(
@@ -290,11 +273,8 @@ private fun Figure(text: String, onClick: () -> Unit) {
 }
 
 /**
- * The metal bar, **by mass and never by coin**.
- *
- * By coin it is one colour — 565 of his 574 pieces are silver — and by mass it says that almost a kilo of
- * the collection is not silver, because a .835 coin is 16,5 % copper. It grows on its own the day another
- * metal arrives, which is what the bar was asked for (`docs/ux/cifras-326.md`).
+ * The metal split by mass, never by coin count: by count a mostly-silver collection is one colour,
+ * while by mass the copper in a .835 alloy shows (`docs/ux/cifras-326.md`).
  */
 @Composable
 private fun MetalBar(split: MetalSplit) {
@@ -324,7 +304,7 @@ private fun MetalBar(split: MetalSplit) {
     )
 }
 
-/** A metal with a share too small to draw still gets a sliver: the bar lists what the label lists. */
+/** Minimum weight so every metal in the label also shows in the bar. */
 private const val MIN_BAR_WEIGHT = 0.004f
 
 private fun metalColour(metal: Metal): Color = when (metal) {
@@ -336,10 +316,8 @@ private fun metalColour(metal: Metal): Color = when (metal) {
 }
 
 /**
- * The collection's portrait: one country and the three or four things it is a share of.
- *
- * Touchable, and it is the drill-down the whole page is built around: «Venezuela · 62 %» leads to those
- * pieces. The share of the **value** is money, so it is absent exactly when the money section is.
+ * The leading country and its shares; tapping it opens that country's pieces. The value share is
+ * absent whenever the money section is.
  */
 @Composable
 private fun Portrait(portrait: CountryPortrait, onOpenCountry: (String) -> Unit) {
@@ -358,12 +336,7 @@ private fun Portrait(portrait: CountryPortrait, onOpenCountry: (String) -> Unit)
     }
 }
 
-/**
- * One coin drawn at its real diameter relative to the largest, which is what «a la misma escala» means.
- *
- * A drawing and not a figure, and it is what makes this a field guide: `size` is in 100 % of the types, so
- * the smallest coin against the largest costs nothing.
- */
+/** One coin drawn at its diameter relative to the largest («a la misma escala»). */
 @Composable
 private fun CoinToScale(extreme: DiameterExtreme, largestMillimetres: Double) {
     val fraction = (extreme.millimetres / largestMillimetres).coerceIn(0.2, 1.0)

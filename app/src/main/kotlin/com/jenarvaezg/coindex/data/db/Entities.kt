@@ -29,26 +29,16 @@ data class CollectedItemEntity(
 )
 
 /**
- * Permanent catalog cache. No sync and no seed ever asks for a type twice: catalog data is
- * essentially immutable and API calls are the project's scarcest resource.
+ * Permanent catalog cache. No sync asks for a type twice: catalog data barely changes and API calls
+ * are the scarcest resource. A row is overwritten only by the collector asking for the ficha again
+ * (#185, ADR 0025) or by the seed of a newer APK (#606, ADR 0033), so `fetchedAt` is when this phone
+ * got the ficha, which the card prints («ficha traída hace…»).
  *
- * **The collector can** (#185, ADR 0025), one type at a time, from the card where the wrong data is
- * on screen — and that gesture is the only writer that overwrites a row here. `fetchedAt` is
- * therefore the day this phone got the ficha, not the day it was first cached, and it is what the
- * card prints as «ficha traída hace ocho meses».
- *
- * The finish is deliberately *not* stored: it is inferred from `title` and `family` on read,
- * so improving the inference rules fixes old rows without re-fetching anything.
- *
- * The thumbnail URLs arrived in version 3 and are the reason `raw` exists: every row already
- * held them, unread, so the whole cache could be filled in without a single API call.
- *
- * The five columns of version 6 arrived the same way, out of the body rather than out of the
- * network (#221). What they store is what Numista *wrote* — the issuer's name, the composition
- * prose, the diameter, the category, the short URL — and never what this app makes of it: the
- * metal is still inferred from [composition] on read, the class still from [category]. So a rule
- * improved tomorrow still fixes rows cached today, and only a better *reading of the body* needs a
- * pass, which is what `FICHA_READING` and [readVersion] are for.
+ * Columns store what Numista wrote, never what the app makes of it: the finish is inferred from
+ * `title` and `family`, the metal from [composition] and the class from [category] on read, so a
+ * better rule fixes old rows without fetching anything. Columns added later (thumbnails in v3, five
+ * more in v6, #221) were filled from `raw`; only a better reading of the body needs a pass, which is
+ * what `FICHA_READING` and [readVersion] are for.
  */
 @Entity(tableName = "type_meta")
 data class TypeMetaEntity(
@@ -71,35 +61,25 @@ data class TypeMetaEntity(
     val category: String? = null,
     val numistaUrl: String? = null,
     /**
-     * Which reading of the body filled the five columns above; `0` means «none yet».
-     *
-     * The default is declared to Room and not only to Kotlin: SQLite cannot add a `NOT NULL`
-     * column without one, so the exported schema and the `ALTER TABLE` of version 6 have to agree
-     * on it letter by letter or the app throws on opening the collector's database.
+     * Which reading of the body filled the five columns above; `0` means none yet. The default is
+     * declared to Room too: SQLite can't add a `NOT NULL` column without one, and the exported
+     * schema must match the `ALTER TABLE` of version 6 exactly or opening the database throws.
      */
     @ColumnInfo(defaultValue = "0") val readVersion: Int = 0,
     /**
-     * The four columns of version 7, and the same bargain again: read out of the body every row
-     * already stores, so «Las cifras» opens whole on a phone that has never called Numista (ADR 0028
-     * §7).
-     *
-     * [thicknessMillimetres] is Numista's `thickness`, missing in a third of the types, which is why
-     * the stack is the one figure the app gives extrapolated. [demonetized] is
-     * `demonetization.is_demonetized`, and null is «Numista does not say» and not «still money».
-     * [hands] and [mints] are the names of `engravers`/`designers` of both faces and of `mints`, one
-     * per line: a delimited string and not JSON, because a mapper that ran on sixteen hundred rows per
-     * redraw is exactly what version 6 was built to stop (#221).
+     * Version 7, also read from `raw`, so «Las cifras» is complete on a phone that never called
+     * Numista (ADR 0028 §7). [thicknessMillimetres] is Numista's `thickness`, often missing, so the
+     * stack height is extrapolated. [demonetized] is `demonetization.is_demonetized`; null means
+     * Numista doesn't say, not «still money». [hands] (engravers and designers of both faces) and
+     * [mints] are names one per line rather than JSON, so nothing is parsed per redraw (#221).
      */
     val thicknessMillimetres: Double? = null,
     val demonetized: Boolean? = null,
     val hands: String? = null,
     val mints: String? = null,
     /**
-     * The year a medal was issued, read out of `issue_terms.issue_date` (#460).
-     *
-     * Its own column and not merged into [minYear] on the way in, for the reason every column of
-     * version 6 has one: what is stored is what Numista wrote, and which of the two a card prints is
-     * a rule — `TypeMetaEntity.toDomain` decides, and can be improved without a pass over the cache.
+     * The year a medal was issued, from `issue_terms.issue_date` (#460). Kept apart from [minYear];
+     * `TypeMetaEntity.toDomain` decides which one a card prints.
      */
     val issuedYear: Int? = null,
 )
@@ -108,7 +88,7 @@ data class TypeMetaEntity(
 data class TypeRawRow(val typeId: Int, val raw: String)
 
 /**
- * A grouping the collector made themselves (ADR 0013): a heading and the types under it.
+ * A grouping the collector made themselves (ADR 0021 §11): a heading and the types under it.
  *
  * It is the collector's own organization, not a claim about the catalog, so it lives only on
  * this device and never travels with the app.
@@ -145,25 +125,15 @@ data class OwnGroupingMemberEntity(
 )
 
 /**
- * One empty casilla the collector marked: «lo busco» (ADR 0029).
+ * An empty casilla the collector marked: «lo busco» (ADR 0029). Like [OwnGroupingMemberEntity], it
+ * lives only on this device, and none of its columns is a Numista collection row id, so it survives
+ * the sync that replaces `collected_items` wholesale.
  *
- * The sibling of [OwnGroupingMemberEntity] and it inherits its bargain: it is the collector's own
- * declaration over the catalogue and not a claim about it, so it lives only on this device and never
- * travels with the app — and **not one of its columns is a Numista collection row id**, which is what
- * makes it survive the sync that replaces `collected_items` wholesale every month.
- *
- * A **table of its own** and not a column of the inventory, which is the invariant of ADR 0029 §3: a
- * wish is not a piece, and with the row outside `collected_items` nothing that counts pieces, grams,
- * euros or coverage can see it — by construction rather than by a filter anybody has to remember.
- *
- * The key is the casilla's, in three columns rather than one type: a date run repeats one type across
- * its years and an issue run across its issues, so a mark keyed on the type alone would cover a whole
- * plate (`WishKey`). [issueId] is **zero where the curated file declares no issue**, because SQLite
- * cannot hold a null in a primary key — the sentinel is read back as «none» by `toDomain` and lives
- * nowhere else.
- *
- * Nothing here is a clock: a wish has no lifetime and expires never. [markedAt] is the one order the
- * list has, newest first, and «alive» is derived from the inventory on read (ADR 0029 §2).
+ * Its own table rather than a column of the inventory, so nothing that counts pieces, grams, money
+ * or coverage can see it (ADR 0029 §3). Keyed on the casilla (`WishKey`), not the type, since a date
+ * run or an issue run repeats one type across slots. [issueId] is 0 when the curated file declares
+ * no issue, because a primary key can't hold null; `toDomain` reads it back as none. Wishes never
+ * expire: [markedAt] only orders the list, and «alive» is derived from the inventory (ADR 0029 §2).
  */
 @Entity(tableName = "wishes", primaryKeys = ["typeId", "year", "issueId"])
 data class WishEntity(
@@ -182,17 +152,12 @@ data class ApiCallEntity(
 )
 
 /**
- * That one issue's prices were read, and whether Numista had any (ADR 0028 §4).
+ * That one issue's prices were read, and whether Numista had any (ADR 0028 §4). Price rows are per
+ * grade, so an issue answered with no prices needs this row or it would be asked on every pass; a
+ * failed read writes neither, so «not asked» and «asked and empty» stay apart.
  *
- * **This table is what makes three states out of two**, and it is the reason there are two of them
- * rather than one. A price row exists per grade; an issue Numista answered for and had no price for
- * has no grade to be keyed on, and without a row of its own those 19 issues of his 223 would be asked
- * for again on every pass, for ever. A pass that **failed** writes neither, so «not asked yet» and
- * «asked and empty» stay different questions.
- *
- * [readAt] is also the only clock: a price expires 90 days after the issue was read, not per grade,
- * because one call brought every grade at the same instant. And **expiry is not deletion** — the row
- * stays and is shown with this date until a newer read replaces it.
+ * [readAt] is the only clock: one call brings every grade, so they expire together. Expired rows
+ * stay and are shown with this date until a newer read replaces them.
  */
 @Entity(tableName = "issue_price_reads", primaryKeys = ["typeId", "issueId"])
 data class IssuePriceReadEntity(
@@ -212,19 +177,9 @@ data class IssuePriceEntity(
 )
 
 /**
- * That this phone has listed the issues of one type, and when (#452).
- *
- * The sibling of [IssuePriceReadEntity], and it exists for the same reason: without it, «Numista
- * listed this type and none of its issues is the year this hole wants» is indistinguishable from
- * «nobody has asked yet», and the lookup is spent again on every pass, for ever. A listing that
- * **failed** writes neither this nor [TypeIssueEntity], so the next pass retries it.
- *
- * [readAt] is a clock, and since #561 it ticks at **exactly a price's** rate: `PRICE_LIFETIME_MILLIS`
- * and `LISTING_LIFETIME_MILLIS` are both ninety days, because a catalog price is as much the catalogue
- * as the listing that addresses it. It cannot be «never», tempting as that is at 102 lookups a pass:
- * an open date run grows a slot every January, and a listing that never expired would leave that new
- * hole unpriceable for the life of the phone, silently — `ValuationStatus.missing` counts owned issues
- * and would not say a word. Ninety days amortises to about one lookup a day over his collection.
+ * That this phone has listed the issues of one type, and when (#452). Like [IssuePriceReadEntity],
+ * it tells «listed, and no issue matches this hole's year» from «not asked yet»; a failed listing
+ * writes neither this nor [TypeIssueEntity]. [readAt] expires after `LISTING_LIFETIME_MILLIS`.
  */
 @Entity(tableName = "type_issue_reads")
 data class TypeIssueReadEntity(
@@ -233,17 +188,11 @@ data class TypeIssueReadEntity(
 )
 
 /**
- * One issue of one type, as `/types/{id}/issues` listed it.
- *
- * Only the fields a hole is matched on. Both readings of the year are kept because a hole can be
- * either: the Hijri 1316 of a Moroccan dirham is its `year` and the 1899 beside it is its
- * `gregorianYear`, and the curated file may name whichever the plate is built on.
- *
- * [position] is where Numista put it in the listing, and it is stored for one reason: a year can have
- * more than one issue — 1987 has two on the type this is tested against — and the hole is priced by
- * **the first that matches**, which is the same choice the plate makes between two varieties of one
- * slot. Without the order, a listing read back from the table would pick a different issue than the
- * pass that stored it, and the price it already holds would go unrecognised.
+ * One issue of one type, as `/types/{id}/issues` listed it, with only the fields a hole is matched
+ * on. Both years are kept because the curated file may name either: a Moroccan dirham's Hijri 1316
+ * is its `year` and 1899 its `gregorianYear`. [position] is Numista's order: a year can have several
+ * issues and a hole is priced by the first match, so reading the listing back in another order would
+ * miss the price already held.
  */
 @Entity(tableName = "type_issues", primaryKeys = ["typeId", "issueId"])
 data class TypeIssueEntity(
@@ -255,14 +204,10 @@ data class TypeIssueEntity(
 )
 
 /**
- * The last spot this phone read for one metal, in euros per troy ounce, and when.
- *
- * One row per symbol and **no history**: a table of daily spots is how wealth management would arrive
- * without anybody deciding it, and that stays outside (ADR 0026 §10, ADR 0028). What is kept is the
- * last reading and its date, because the date is what stops the number reading as a quotation.
- *
- * It is not seeded in the APK either: a seeded spot would only buy the silver floor of a piece opened
- * with no network, and the silver floor alone is precisely the figure the page refuses to show.
+ * The last spot this phone read for one metal, in euros per troy ounce, and when. No history: daily
+ * spots would turn the app into wealth tracking (ADR 0026 §10, ADR 0028), and the date keeps the
+ * number from reading as a quotation. Not seeded: offline it would only give the silver floor, which
+ * the page never shows alone.
  */
 @Entity(tableName = "metal_spot")
 data class MetalSpotEntity(

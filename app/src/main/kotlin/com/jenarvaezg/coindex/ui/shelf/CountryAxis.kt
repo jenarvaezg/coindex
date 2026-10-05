@@ -22,10 +22,7 @@ sealed interface CountryAxisCell {
         override val quantity: Int,
     ) : CountryAxisCell
 
-    /**
-     * A piece no casilla claims: inked ring, no sunk cardboard, and it does not grow the
-     * denominator («Francia 9»).
-     */
+    /** A piece no casilla claims: no cardboard behind it, and not in the denominator. */
     data class Loose(
         val itemId: Long,
         override val typeId: Int,
@@ -60,47 +57,31 @@ data class CountryAxisModel(
     val tail: List<CountryAxisBlock> get() = blocks.filter { it.compact }
 }
 
-/**
- * What a country block paints, and how many absences it keeps behind the fold (#417).
- *
- * Venezuela 42/115 printed seventy-three dotted holes: ten rows of identical circles to cross on
- * the way to Haití, and the whole sheet measured 7,15 screens against the 2,25 the atlas had
- * measured when this axis was chosen (`docs/ux/pliegue-417.md`).
- */
+/** What a country block paints, and how many absences stay behind the fold (#417). */
 data class CountryAxisFold(
     val cells: List<CountryAxisCell>,
     /**
-     * Absences the fold would keep — the number the mark says, folded or open.
-     *
-     * Zero means there is no fold at all: the block paints every absence it has, and nothing offers
-     * to hide them. It is not the same as an open fold, which still counts what closing it hides.
+     * Absences behind the fold, the number the fold label shows whether folded or open. Zero means
+     * no fold at all.
      */
     val foldable: Int,
 )
 
 /**
- * A country's coins first, then **one row** of absences, and the rest behind «… y faltan N».
+ * A country's coins first, then one row of absences, and the rest behind «… y faltan N»
+ * (`docs/ux/pliegue-417.md`).
  *
- * Three decisions, taken on the HTML mock-up of the #417 at phone size and none of them free:
+ * Coins come first, so the block no longer shows where a coin falls in its series; the plate does
+ * (#473). One row of absences always shows what the series looks like. The fold appears only when
+ * it hides more than one row's worth. Loose pieces count as coins, not absences (§9).
  *
- * - **The coins come together.** To summarise absences at all they have to be at the end, so the
- *   block stops saying *where* a coin falls inside its series. That reading moves to the plate,
- *   which says it with the year and the name (#473); here the question is what this country is.
- * - **One row of absences always**, so the absence keeps a face — a country that owns nothing of a
- *   sequence still shows what the sequence looks like — and the cost stays predictable.
- * - **The fold only appears when what it hides is more than that row.** Sudáfrica 2/9 prints its
- *   seven holes whole: «… y faltan 2» is more ink than the two holes it would save.
- *
- * Loose pieces count as coins and not as absences: they are metal the collector owns, with no
- * cardboard behind them (§9), so they travel with the owned slots.
- *
- * @param columns how many holes fit in one row, measured from the width the block actually has.
+ * @param columns holes per row, from the block's actual width.
  * @param expanded whether the collector opened this country's fold.
  */
 fun CountryAxisBlock.fold(columns: Int, expanded: Boolean = false): CountryAxisFold {
     val missing = cells.filter { it is CountryAxisCell.Slot && !it.owned }
     val present = cells.filterNot { it is CountryAxisCell.Slot && !it.owned }
-    // A row of zero holes is not a measurement: paint the block whole rather than hide all of it.
+    // With no measured width, paint everything rather than hide it all.
     val foldable = if (columns <= 0) 0 else (missing.size - columns).coerceAtLeast(0)
     if (expanded || foldable == 0) {
         return CountryAxisFold(cells = present + missing, foldable = foldable)
@@ -109,40 +90,29 @@ fun CountryAxisBlock.fold(columns: Int, expanded: Boolean = false): CountryAxisF
 }
 
 /**
- * The country axis of the notebook (ADR 0026 §9 / atlas-315).
+ * The notebook's country axis (ADR 0026 §9, atlas-315).
  *
- * Each measurable casilla the assembly resolved becomes a cell in **the member's** country (#170),
- * not the catalog header's. Loose pieces join their country's block with no «sueltas» band. Order is
- * [countryAxisOrder] — the same spirit as `indexOrder()`: reveals, does not reproach.
- *
- * **It groups; it does not decide** (#538). Which plates count, which casillas are measurable, what
- * fills one and what country it falls in are all read off `state.slots`, so this axis and the plate
- * of the same collection cannot come to disagree about a hole.
+ * Each measurable casilla is a cell in its member's country, not the catalog's (#170); loose pieces
+ * join their country's block. Ordered by [countryAxisOrder]. It only groups `state.slots` (#538),
+ * so the axis and the plate can't disagree about a hole.
  */
 fun countryAxis(
     state: CollectionState,
     /**
-     * Who claims what, which is what tells a loose piece from one already in a plate.
-     *
-     * The assembly's answer by default (#540): the axis, the grid of Coins and the last lámina of
-     * the notebook divide by one reading of the index, so a coin cannot be loose on one sheet and
-     * placed on the next. A test hands in an empty [CoinClaims] to draw an axis of nothing but
-     * loose metal.
+     * Tells loose pieces from placed ones. Defaults to the assembly's (#540), shared with Monedas
+     * and the notebook's loose-coin lámina; tests pass an empty one for an all-loose axis.
      */
     claims: CoinClaims = state.claims,
     /**
-     * Catalog ids that survive the shelf's filters, or null to keep every evidenced catalog.
-     *
-     * The weight / estado / serie chips still narrow the sheet when the axis is not «por lámina»:
-     * a slot belongs to a catalog, and a catalog that the shelf hid does not paint.
+     * Catalog ids that survive the shelf's filters, or null for every evidenced catalog. Filters
+     * still apply off the plate axis: a hidden catalog's slots don't paint.
      */
     keptCatalogIds: Set<String>? = null,
     /** Loose row ids that survive the shelf, or null to keep every unclaimed piece. */
     keptLooseIds: Set<Long>? = null,
     /**
-     * When the país chip is on, only that country's cells paint (#415): a spanning plate kept
-     * because one of its members matched must not still open México and Nueva Gales del Sur beside
-     * the Imperio austríaco the collector asked for.
+     * With the país chip on, only that country's cells paint (#415), even when a kept plate spans
+     * other countries.
      */
     keptCountry: String? = null,
 ): CountryAxisModel {
@@ -150,8 +120,7 @@ fun countryAxis(
 
     for (slot in state.slots) {
         if (keptCatalogIds != null && slot.catalogId !in keptCatalogIds) continue
-        // A casilla whose country neither the file nor the ficha names paints nowhere: the axis is
-        // made of blocks, and a block with no name is not one the collector could read.
+        // A casilla with no known country has no block to go in.
         val country = slot.country ?: continue
         if (keptCountry != null && country != keptCountry) continue
         byCountry.getOrPut(country) { mutableListOf() }.add(
@@ -206,9 +175,8 @@ fun countryAxis(
 }
 
 /**
- * Same spirit as `indexOrder()`: has ratio ↓, ratio ↓, denominator ↓, name ↑.
- *
- * Opens on Italia 2/2 rather than Rusia 3/280 — reveals, does not reproach.
+ * Like `indexOrder()`: has ratio ↓, ratio ↓, denominator ↓, name ↑. Opens on the most complete
+ * countries rather than the largest gaps.
  */
 internal fun countryAxisOrder(): Comparator<CountryAxisBlock> {
     val names = Collator.getInstance(Locale.forLanguageTag("es"))

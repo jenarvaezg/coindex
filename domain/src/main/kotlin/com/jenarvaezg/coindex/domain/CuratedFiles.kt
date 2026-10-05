@@ -1,14 +1,10 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * One of the three curated species that ship with the app, and the directory it lives in.
- *
- * The same three names on both sides of the seam: `data/` is an asset source directory of the APK
- * (`app/build.gradle.kts`), so what a phone opens under `collection-catalogs` and what the suite
- * reads from `../data/collection-catalogs` are the same bytes under the same name.
- *
- * The orphans register (#133) is not here: it is editorial, it never reaches a card, and it is
- * read by the suite alone ([OrphanSeeds]).
+ * One of the three curated species that ship with the app, and its directory. `data/` is an asset
+ * source directory of the APK (`app/build.gradle.kts`), so the phone's `collection-catalogs` and
+ * the suite's `../data/collection-catalogs` are the same bytes. The orphans register (#133) is
+ * editorial and read only by the suite ([OrphanSeeds]).
  */
 enum class CuratedSpecies(val directory: String) {
     Catalogs("collection-catalogs"),
@@ -18,11 +14,7 @@ enum class CuratedSpecies(val directory: String) {
 
 /**
  * Where the curated files are read from: the APK's assets on a phone, `data/` in the suite (#545).
- *
- * One port with one verb, so that both sides reach [Curation.load] and therefore every invariant it
- * enforces. Before it there was a loader per species on each side, and the rules that only hold
- * *across* species — a `short_name` shared by a catalog and a grouping (#22) — were checked in the
- * app's container alone, which is the one place no test looks.
+ * One port, so both sides go through [Curation.load] and every cross-species invariant it enforces.
  */
 interface CuratedFiles {
     /**

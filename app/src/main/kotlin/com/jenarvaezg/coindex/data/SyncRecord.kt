@@ -1,11 +1,8 @@
 package com.jenarvaezg.coindex.data
 
 /**
- * What the last synchronization left behind, kept beyond the snackbar that announced it.
- *
- * A sync spends real API budget, so «when was the last one and did it finish» is durable state
- * of the collection, not a transient notice: the report used to live for four seconds and then
- * there was no way to tell a collection synced this morning from one synced in March.
+ * What the last sync left behind, kept beyond the snackbar that announced it: when it ran and
+ * whether it finished is durable state, not a transient notice.
  */
 data class SyncRecord(
     val atMillis: Long,

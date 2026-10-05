@@ -44,29 +44,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * The one state the screens read, and the gestures that move it.
+ * The one state the screens read ([UiState]), and the gestures that move it.
  *
- * What is left here is **[UiState] and nothing else**: every gesture below either writes a field or
- * hands the work to the module whose subject it is — [CollectionSync] for a sync, [PhotoPrefetchLoop]
- * for the photographs, [UpdateFlow] for the APK, [credentialsEntry] and [boxToCreate] for what was
- * typed into a form. And what is **read** off that state is [reading]'s and not this class's (#542):
- * the shelf window and the living marks used to be computed here and again in the root composable,
- * with a comment on each side promising the two agreed.
+ * Each gesture writes a field or hands the work to the module it belongs to: [CollectionSync],
+ * [PhotoPrefetchLoop], [UpdateFlow], [credentialsEntry], [boxToCreate]. What the screens derive
+ * from the state lives in [reading] (#542).
  *
- * There is one clock in this file and it stamps one field — the arrival of a price book, which is the
- * «now» every age on screen is measured against. The three `System.currentTimeMillis()` that used to
- * be read in place still belong to the modules that stamp with them, and this one arrives the same
- * way: as a parameter a test can hold still (#220).
- *
- * The collaborators arrive one by one rather than as an `AppContainer`, which is what makes any of
- * this readable: a container is not something a test can substitute, and «no hay nada que sustituir»
- * was the reason the largest file in the app had not a single test.
+ * Collaborators, the clock included, are passed one by one rather than as an `AppContainer` so a
+ * test can substitute each of them (#220).
  */
 class CoindexViewModel(
     /**
-     * Resolved on first use rather than in the factory: the curated files are parsed the first time
-     * anybody asks for them, and a file that fails to parse has to reach the collector as
-     * [UiState.fatalError] — which is inside [start]'s `try` — instead of as a crash at launch.
+     * Resolved on first use, not in the factory: a curated file that fails to parse must surface as
+     * [UiState.fatalError] inside [start]'s `try`, not as a crash at launch.
      */
     repository: () -> CoindexRepository,
     private val credentials: StoredCredentials,
@@ -82,20 +72,14 @@ class CoindexViewModel(
     /** A client bound to the stored API key, or null while onboarding is pending. */
     private val client: () -> NumistaClient?,
     /**
-     * Tops the shipped ficha cache up before the collection is read for the first time.
-     *
-     * Awaited rather than launched beside the collection: a plate drawn before its fichas exist is
-     * the plate with holes in it of #67.
+     * Tops up the shipped ficha cache before the collection is first read. Awaited, not launched
+     * alongside: a plate drawn before its fichas exist shows holes (#67).
      */
     private val warmUpFichaCache: suspend () -> Unit,
     /** A checkpointed copy of the base, for whatever the share sheet hands it to (#548). */
     private val dataExport: DatabaseExport,
     private val installedVersionName: String,
-    /**
-     * The one clock this class reads for itself, and it reads it for one thing: stamping the arrival
-     * of a price book (see [UiState.pricesArrivedAt]). Every other clock in the app belongs to the
-     * collaborator that needs it, and a test can hold each of them still (#220).
-     */
+    /** Only stamps a price book's arrival ([UiState.pricesArrivedAt]). Injectable (#220). */
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val repository by lazy(repository)
@@ -104,60 +88,44 @@ class CoindexViewModel(
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     /**
-     * The curated files shipped with the app; constant for the process lifetime (#217).
-     *
-     * Private on purpose: the screens ask this class for a name or a plate, and what they are
-     * given is the answer and not the files it came from.
+     * The curated files shipped with the app; constant for the process lifetime (#217). Private:
+     * screens get answers through [reading], not the files.
      */
     private val curation get() = repository.curation
 
     /**
-     * The last reading handed out, kept so the next caller gets **the same object** (#542).
+     * The last reading handed out, so the next caller gets the same object (#542). Its walks are
+     * `by lazy` and belong to the instance, and the ViewModel shares them with the screens (the
+     * pass's plan and the notebook's pages read the same wishes the annex draws).
      *
-     * A [ScreenReading] is eight references and builds nothing, so this is not about the cost of
-     * making one: it is about the walks hanging off it, which are `by lazy` and therefore belong to
-     * an instance. Held here and not in the composition because the ViewModel reads the same
-     * derivations the screens do — the pass's plan and the notebook's pages are made of the wishes
-     * the annex draws — and two instances is exactly the arrangement this ticket removed.
-     *
-     * **One slot, and nothing depends on it holding.** A miss costs the walks again and never a wrong
-     * answer, because what comes back is built from the state that was asked about; the composition
-     * and this class's own commands both read it on the main thread, which is where `viewModelScope`
-     * runs.
+     * One slot: a miss costs the walks again, never a wrong answer. Only touched on the main
+     * thread, by the composition and by `viewModelScope`.
      */
     private var lastReading: ScreenReading? = null
 
     /**
-     * And the collection's own half of it, kept apart because it moves far less often (#218).
-     *
-     * A price lands row by row while a pass runs, so a single memo would rebuild the shelf window and
-     * re-resolve every open plate once per row — for a reading none of them is made of.
+     * The collection's half of the reading, memoised apart because it changes far less often
+     * (#218): prices land row by row during a pass, and one memo would rebuild the shelf window and
+     * every open plate per row.
      */
     private var lastCollectionReading: CollectionReading? = null
 
     /**
-     * Everything the screens read, derived from one state and the curated files.
+     * Everything the screens read, derived from [state] and the curated files.
      *
-     * The state comes in rather than being taken off [_state], so the reading a composition draws is
-     * the reading **of the state it is drawing**: a root that asked for the current one could paint a
-     * frame of two moments. The ViewModel's own callers pass nothing and get the state of right now,
-     * which is what a command acts on.
+     * The state is a parameter so a composition reads the state it is drawing, not a newer one;
+     * commands pass nothing and get the current state. The same instance comes back while the
+     * slices in [ScreenReading]'s constructor are equal, so a screen can key `remember` on it.
      *
-     * **The same instance comes back while nothing it is made of has moved.** That is the whole of
-     * the memoisation: `equals` over the slices in [ScreenReading]'s constructor is what decides,
-     * and a screen keys its `remember` on the value instead of listing the fields of the state that
-     * feed it.
-     *
-     * With the curated files unreadable there are none, and the reading says so rather than raising
-     * the same fatal error a second time: what is on screen then is [UiState.fatalError] itself, and
-     * the masthead and the sewn edge above it still have to draw.
+     * With the curated files unreadable the reading uses none instead of raising the fatal error
+     * again: the masthead and the sewn edge still draw over [UiState.fatalError].
      */
     fun reading(state: UiState = _state.value): ScreenReading {
         val next = state.reading(collectionReading(state))
         return lastReading?.takeIf { it == next } ?: next.also { lastReading = it }
     }
 
-    /** The same trade one level in, over the half of a reading a price cannot move. */
+    /** The same memo one level in, over the half of a reading that prices don't affect. */
     private fun collectionReading(state: UiState): CollectionReading {
         val next = CollectionReading(
             curation = if (state.fatalError == null) curation else NO_CURATION,
@@ -171,8 +139,7 @@ class CoindexViewModel(
         _state.update {
             it.copy(
                 versionName = installedVersionName,
-                // Launch, so that an age is never measured against 1970 on the frames before the
-                // first book lands. What it dates then is an empty book, which fetches nothing.
+                // Launch time, so no age is measured against 1970 before the first book lands.
                 pricesArrivedAt = now(),
                 lastSync = collectionSync.last,
                 indexShelf = shelves.index,
@@ -191,12 +158,8 @@ class CoindexViewModel(
     }
 
     /**
-     * Mirrors how far the valuation pass has got (ADR 0028).
-     *
-     * Observed for the same reason the photograph count is: the pass outlives the screen that started it,
-     * and on the second launch of a month there is no new pass at all — the plan has not changed — so a
-     * status that travelled with the pass would leave the money section absent over a phone that holds
-     * every price it needs.
+     * Mirrors the valuation pass's progress (ADR 0028). Observed, not returned by the pass: it
+     * outlives the screen, and on a later launch with an unchanged plan no pass runs at all.
      */
     private fun watchValuation() {
         viewModelScope.launch {
@@ -205,11 +168,9 @@ class CoindexViewModel(
     }
 
     /**
-     * The prices themselves, which change while a pass runs and never rebuild the index.
-     *
-     * The arrival is stamped here, and only when the book is actually a different one: what the stamp
-     * dates is a figure that never expires (ADR 0030 §4), so re-reading the clock for a book that has
-     * not changed would move every age on screen for nothing.
+     * The prices, which change during a pass and never rebuild the index. The arrival is stamped
+     * only when the book actually changed, since every age on screen is measured from it
+     * (ADR 0030 §4).
      */
     private fun watchPrices() {
         viewModelScope.launch {
@@ -225,19 +186,10 @@ class CoindexViewModel(
      * The casillas the collector marked (ADR 0029), observed like the prices and never joined to the
      * collection.
      *
-     * A mark is also the app's first **elastic** spend, so a new one starts a pass: what the collector
-     * asked for by marking is exactly that price, and waiting for the next launch to fetch it would
-     * make the gesture's «+2 consultas al mes» a promise about some other day.
-     *
-     * **Forced, and it costs nothing when there is nothing new.** A mark usually does move the plan, so
-     * the loop would start a pass on its own — but not always: a mark on a casilla that is already full
-     * moves nothing, and the loop remembers the plan it covered. A pass over an unchanged plan asks for
-     * whatever the phone does not already hold, which in that case is nothing at all (ADR 0028 §1).
-     *
-     * **And the first emission of a launch cannot get ahead of the collection.** This flow may well emit
-     * before the snapshot has been read, and then the plan is empty — `ValuationLoop.start` returns on
-     * `plan.isEmpty` before it launches anything, so nothing is started and nothing is recorded as
-     * covered. What arrives second is the collection, with the plan the pass is actually for.
+     * Every change forces a pass, so a new mark is priced now rather than next launch. Forcing is
+     * free when nothing is new: a pass asks only for what the phone doesn't hold (ADR 0028 §1). If
+     * this emits before the collection is read, the plan is empty and `ValuationLoop.start` returns
+     * without recording anything as covered.
      */
     private fun watchWishes() {
         viewModelScope.launch {
@@ -248,14 +200,7 @@ class CoindexViewModel(
         }
     }
 
-    /**
-     * Marks an empty casilla, or takes the mark off it (ADR 0029 §5).
-     *
-     * One gesture for both directions, because that is what the casilla is: a press on a hole that is
-     * already marked unmarks it, and the state it is toggling is the one on screen. Silent — no
-     * snackbar — because the mark itself is the answer, and a notice per press on a plate of ten holes
-     * would be ten notices.
-     */
+    /** Marks an empty casilla or unmarks it (ADR 0029 §5). Silent: the mark is the answer. */
     fun toggleWish(key: WishKey) {
         val marked = _state.value.wishes.any { it.key == key }
         viewModelScope.launch {
@@ -269,19 +214,13 @@ class CoindexViewModel(
     }
 
     /**
-     * Asks Numista what entering one plate of the shelf window costs (ADR 0030 §3).
+     * Prices one plate of the shelf window on request (ADR 0030 §3): only its holes, so the spend
+     * is the number the gesture printed. Besides the ficha refresh, the only gesture that spends
+     * the budget on purpose.
      *
-     * The app's **only** gesture that spends the budget on purpose besides the ficha's own refresh, and
-     * the one place a plate that is not the collector's ever costs a call. What it asks for is that
-     * plate's holes and nothing else, so the spend is the number the gesture printed.
-     *
-     * **A plate whose prices are all fresh asks for nothing and says so** (ADR 0028 §5): the pass's
-     * ninety days decide whether an issue is worth a second call, and buying the same answer twice
-     * because a button was pressed is the one thing a gesture that names its spend must not do.
-     *
-     * Silent about success, like the mark: what the collector sees is the figure appearing in the header
-     * with its date. What is spoken is the two cases where **nothing** happened — a refusal, or nothing
-     * left to ask — because both leave the screen looking exactly as it did.
+     * Fresh prices are not asked for again (ADR 0028 §5). Success is silent, since the figure
+     * appears in the header; a refusal is reported here, and «nothing to ask» by
+     * [PlateFinance.press].
      */
     fun valuePlate(catalogId: String) {
         val plate = reading().showcasePlateOf(catalogId) ?: return
@@ -293,19 +232,15 @@ class CoindexViewModel(
             val status = valuation.valueNow(plan)
             _state.update { it.copy(valuingPlate = null) }
             status.held?.let { refusal -> showMessage(UiNotice(showcaseRefusalMessage(refusal))) }
-            // The pass the gesture displaced starts again: what it had covered was forgotten when the
-            // budget was handed over, so whatever it had not asked for is asked for on this call and not
-            // on the next launch.
+            // Restart the pass this displaced: it forgot what it had covered when it handed over
+            // the budget.
             valuePrices(force = true)
         }
     }
 
     /**
-     * Mirrors what the phone holds of the photographs into the state (#191).
-     *
-     * Observed and not written by [prefetchPhotographs], because the pass outlives the screen that
-     * started it: a collector who comes back to a new ViewModel gets no new pass — the fichas have
-     * not changed — and the settings line still has to say what is there.
+     * Mirrors the photo cache into the state (#191). Observed rather than written by
+     * [prefetchPhotographs]: the pass outlives the screen, and a new ViewModel may start none.
      */
     private fun watchPhotoCache() {
         viewModelScope.launch {
@@ -342,11 +277,8 @@ class CoindexViewModel(
     }
 
     /**
-     * Asks for the catalog's photographs, quietly, once the collection has been read (#191).
-     *
-     * Called on **every** emission and cheap to call twice: [PhotoPrefetchLoop] holds the rules about
-     * what a second call is worth. Creating a box or renaming one emits too, and neither changes what
-     * there is to fetch.
+     * Fetches the catalog's photographs quietly once the collection is read (#191). Called on every
+     * emission; [PhotoPrefetchLoop] decides whether a repeat call does anything.
      */
     private fun prefetchPhotographs(force: Boolean = false) {
         photos.start(
@@ -358,11 +290,8 @@ class CoindexViewModel(
     }
 
     /**
-     * Asks Numista for the prices of what is owned and of the holes within reach (ADR 0028).
-     *
-     * On every emission and cheap to call twice, like the photographs: [ValuationLoop] holds the rules
-     * about what a second call is worth, and the plan it compares is the plan itself rather than a count
-     * two changes could cancel out.
+     * Prices what is owned and the holes within reach (ADR 0028). Called on every emission;
+     * [ValuationLoop] compares the plan itself to decide whether a repeat call does anything.
      */
     private fun valuePrices(force: Boolean = false) {
         val state = _state.value.collection
@@ -373,8 +302,7 @@ class CoindexViewModel(
                 curation = curation,
                 albums = state.albums,
                 evidencedCatalogIds = state.evidencedCatalogIds,
-                // A marked casilla is priced whatever its plate's shape (ADR 0029 §4), which is what
-                // makes the month's spend a function of what the collector marked.
+                // A marked casilla is priced whatever its plate's shape (ADR 0029 §4).
                 wishes = reading().livingWishes,
             ),
             force = force,
@@ -382,12 +310,8 @@ class CoindexViewModel(
     }
 
     /**
-     * Gives the network back while the notebook is being exported, and takes it up again after.
-     *
-     * The export takes all four of the loader's slots and the collector is watching it happen; two
-     * of those four held by pictures nobody has asked for is exactly the theft this prefetch was
-     * designed not to commit (#191). The valuation stands down for the same reason and one more of its
-     * own: an export is what the collector is waiting for, and the pass is not.
+     * Pauses photo prefetch and valuation while the notebook exports, and resumes them after: the
+     * export needs all four of the loader's slots and the collector is waiting on it (#191).
      */
     fun notebookExporting(active: Boolean) {
         if (active) {
@@ -400,13 +324,9 @@ class CoindexViewModel(
     }
 
     /**
-     * Tries the photographs again when the app comes back to the front.
-     *
-     * The conditions are read once, when a pass starts, so a phone that walks into a wifi while the
-     * app is open would otherwise wait for the next launch — and the settings line says «se traerán
-     * cuando haya wifi», which has to be true. Coming back from the background is the moment that
-     * costs nothing to check, and the guard keeps it from rescanning sixteen hundred cache entries
-     * every time the collector glances at another app.
+     * Retries the missing photographs when the app returns to the foreground. A pass reads its
+     * conditions (wifi) only when it starts, so otherwise a phone that joins a wifi would wait for
+     * the next launch. Skipped when nothing is missing, to avoid rescanning the cache.
      */
     fun retryPhotoPrefetch() {
         if (_state.value.photoCache.missing == 0) return
@@ -452,10 +372,8 @@ class CoindexViewModel(
         }
 
     /**
-     * Forgets the credentials and returns to onboarding.
-     *
-     * The collection stays on the device, and so does the record of when it was last synced:
-     * signing out is «these credentials are wrong», not «throw away what we already have».
+     * Forgets the credentials and returns to onboarding. The collection and the record of its last
+     * sync stay on the device.
      */
     fun signOut() {
         credentials.clear()
@@ -463,12 +381,8 @@ class CoindexViewModel(
     }
 
     /**
-     * Writes the raw base out and hands back the file for the share sheet (#548).
-     *
-     * Returns the file rather than sending it: the chooser is an `Intent` and belongs to the screen,
-     * as every other export in the app does. A failure is a message and null — nothing here is worth
-     * taking the app down for, and the collector who reads «no se pudieron exportar los datos» knows
-     * as much as a stack trace would tell them.
+     * Writes the raw database out and returns the file; the screen opens the share sheet (#548). A
+     * failure shows a message and returns null.
      */
     suspend fun exportData(): File? {
         if (_state.value.exportingData) return null
@@ -488,11 +402,8 @@ class CoindexViewModel(
     }
 
     /**
-     * Narrows one of the two hierarchies, and remembers it (ADR 0021 §1).
-     *
-     * Written through on every chip rather than saved on the way out: there is no «way out» of a
-     * root destination — the bottom bar crosses to the other one and the app is killed from wherever
-     * it happens to be — so a shelf saved on exit is a shelf that survives only some of the time.
+     * Narrows a hierarchy's shelf and remembers it (ADR 0021 §1). Stored on every chip, since a
+     * root has no exit to save on and the app can be killed from anywhere.
      */
     fun narrowIndex(shelf: IndexShelf) {
         shelves.index = shelf
@@ -538,10 +449,8 @@ class CoindexViewModel(
     }
 
     /**
-     * The client, or null having said why there isn't one.
-     *
-     * Every gesture that spends API budget goes through here, so «falta la API key» is one sentence
-     * in one place — and it is the same sentence [syncErrorLabel] gives for an empty key.
+     * The client, or null after saying why there isn't one. Every gesture that spends API budget
+     * goes through here, with the sentence [syncErrorLabel] gives for an empty key.
      */
     private fun clientOrComplain(): NumistaClient? {
         val ready = client()
@@ -552,25 +461,16 @@ class CoindexViewModel(
     }
 
     /**
-     * Brings the inventory up to date on a launch, if a day has passed since the last one (#605).
+     * The unrequested version of [sync]: brings the inventory up to date on launch if a day has
+     * passed since the last one (#605). Because nobody asked for it, it:
      *
-     * The quiet half of [sync], and the differences are all the same difference — **nobody asked for
-     * this one**:
+     * - shows no message, for what it found or for what failed;
+     * - buys at most [com.jenarvaezg.coindex.data.AUTOMATIC_FICHA_LIMIT] fichas;
+     * - gives up on a refusal already recorded, so the phone doesn't pay twice a day to hear it
+     *   again (#579). A press still retries, which is how the collector learns the key works.
      *
-     * - **It says nothing.** No snackbar on the way out and none on the way back, neither for the
-     *   pieces it found nor for the network it could not reach. The refusals that have a sentence
-     *   keep it for the press that earns it, and a collector reading «Numista rechazó tu API key»
-     *   over an app he has just opened has been interrupted by something he did not do.
-     * - **It buys at most [com.jenarvaezg.coindex.data.AUTOMATIC_FICHA_LIMIT] fichas**, because it is
-     *   not being watched.
-     * - **It gives up in front of a standing wall**, which a press does not: the press is how the
-     *   collector finds out the key works again, and this is how the phone avoids paying twice a day
-     *   to be told what it wrote down (#579).
-     *
-     * What it does share with the press is the order of the ceremony: the network and the budget are
-     * taken off the photographs and the pass first, and the pass is forced afterwards — held or not,
-     * it has to be started again, because a pass that stood down for a sync recorded nothing as
-     * covered and would otherwise wait for the next launch.
+     * Like [sync], it takes the network and budget from the photographs and the pass first, and
+     * forces the pass afterwards: a pass that stood down recorded nothing as covered.
      */
     private fun refreshInventory() {
         if (_state.value.syncing || !inventoryRefresh.due()) return
@@ -593,10 +493,9 @@ class CoindexViewModel(
         val userId = credentials.credentials()?.userId ?: return
         _state.update { it.copy(syncing = true, message = null) }
         viewModelScope.launch {
-            // The photographs give the network back to the sync, which is both spending API budget
-            // and being waited for. The valuation gives back something graver — the **calls
-            // themselves**, out of the same monthly bote — so a pass in flight could otherwise eat
-            // what the sync needs and make it fail with `BudgetExhausted` (ADR 0028 §6).
+            // The photographs yield the network, and the valuation the calls themselves: they come
+            // out of the same monthly budget, and a pass in flight could make the sync fail with
+            // `BudgetExhausted` (ADR 0028 §6).
             photos.yieldNetwork()
             valuation.yieldNetwork()
             val outcome = collectionSync.run(ready, userId)
@@ -613,22 +512,18 @@ class CoindexViewModel(
                     )
                 }
             }
-            // Forced, because a sync that changed nothing emits nothing, and the pass it cancelled
-            // would otherwise wait for the next launch to be picked up again. The end of a sync is
-            // also the valuation's second trigger: it is the ceremony that already spends budget and
-            // already says what it spent (ADR 0028 §3).
+            // Forced: a sync that changed nothing emits nothing, and the pass it cancelled would
+            // wait for the next launch. The end of a sync is also a valuation trigger
+            // (ADR 0028 §3).
             prefetchPhotographs(force = true)
             valuePrices(force = true)
         }
     }
 
     /**
-     * Asks Numista again for one type's ficha (#185, ADR 0025).
-     *
-     * One call, and the collector asked for it, so unlike the update check every outcome is spoken:
-     * what changed, that nothing did, or why it could not be asked. The corrected ficha reaches the
-     * screen through the same flow a sync does — nothing here pushes it — so the card the collector
-     * is looking at redraws itself with the family Numista now publishes.
+     * Asks Numista again for one type's ficha (#185, ADR 0025). The collector asked, so every
+     * outcome gets a message. The new ficha reaches the screen through the collection flow, as
+     * after a sync.
      */
     fun refreshFicha(typeId: Int) {
         if (typeId in _state.value.refreshingFichas) return
@@ -693,24 +588,15 @@ class CoindexViewModel(
     }
 
     /**
-     * The one door into the printer: whatever [subject] is, on the configuration the collector chose
+     * The pages of [subject] on the collector's configuration; the only way into the printer
      * (#169, #228, #539).
      *
-     * Built on demand and never observed. What is printed is what was on screen when the button was
-     * pressed — the index hands over its own cards, a plate hands over its id — so a sync landing
-     * mid-export cannot change the paper. There is no `Notebook` behind it: no table, no name, no
-     * second order (ADR 0021 §1).
+     * Built on demand, never observed: what prints is what was on screen at the press, so a sync
+     * landing mid-export can't change the paper. [subject] picks the sections and
+     * [NotebookSubject.asSheet] the configuration; the rest is shared by all four subjects.
      *
-     * **One producer and not four** (#539). The wish list used to reach `printPages` through a second
-     * call of its own, and the plate and the loose card each spelled `forSheetExport()` again; the
-     * three switches that make the paper what it is — the geometry, the money and the marks — were
-     * therefore threaded twice and could have drifted without a test noticing. Now [subject] says
-     * which sections, [NotebookSubject.asSheet] says which configuration, and everything after that
-     * is the same machine for all four doors.
-     *
-     * [options] comes in rather than being read off the state, because the export sheet recounts on
-     * every tap and what it is counting is the configuration **under the collector's thumb** — which
-     * is only stored once they press «Exportar».
+     * [options] is a parameter because the export sheet recounts on every tap, before the
+     * configuration is stored on «Exportar».
      */
     fun notebookPages(
         subject: NotebookSubject,
@@ -724,21 +610,17 @@ class CoindexViewModel(
     }
 
     /**
-     * The sections of one subject, which is the only thing the four doors disagree about.
-     *
-     * Named apart from `notebookSections` rather than overloading it, because a member shadowing the
-     * printer's own function would be told apart by argument count alone. It returns sections and not
-     * pages, so exactly one place turns a section into a folio: this decides *what is on the paper*
-     * and `printPages` decides how much of it fits.
+     * The sections of one subject, the only part where the four subjects differ. Returns sections,
+     * not pages, so pagination stays in `printPages`. Not an overload of `notebookSections`, which
+     * it would shadow.
      */
     private fun sectionsOf(
         subject: NotebookSubject,
         options: NotebookOptions,
     ): List<PrintSection> {
         val state = _state.value
-        // The card of a plate is looked up here and not by the screen: the index is what draws cards,
-        // and `página(tarjeta) = su destino` has to go through a card to hold (ADR 0021 §9). Nothing
-        // to print if the plate has no card, which is the same silence the screen shows.
+        // A plate prints through its card, so its page matches the card's destination
+        // (ADR 0021 §9). No card, nothing to print, as on screen.
         val cards: List<IndexCard> = when (subject) {
             is NotebookSubject.Index -> subject.cards
             is NotebookSubject.Sheet -> listOf(subject.card)
@@ -756,49 +638,36 @@ class CoindexViewModel(
         return notebookSections(
             state = state.collection,
             cards = cards,
-            // Only the whole notebook has coins outside its cards (#275): the lámina of the
-            // unclaimed is measured against the whole index and narrowed by the shelf on screen,
-            // and a sheet of one collection has no such neighbours — `forSheetExport` has already
-            // cleared the switch that would draw it.
+            // Only the whole notebook prints the unclaimed coins (#275); for a sheet,
+            // `forSheetExport` has already turned that switch off.
             unclaimed = (subject as? NotebookSubject.Index)?.unclaimed.orEmpty(),
             curation = curation,
             options = options,
-            // The money switch is answered once, here, by handing the printer either a value or
-            // nothing (#228, ADR 0021 §13). And nothing is also what it gets while the market has
-            // not landed: a total at 60 % is false on paper too, and paper cannot be taken back.
+            // The money switch is applied here by passing a value or nothing (#228, ADR 0021 §13).
+            // Nothing too while the market hasn't fully landed: a partial total is false on paper.
             plateValue = { resolved ->
                 if (options.money) reading(state).plateValue(resolved.album) else null
             },
-            // Not behind a switch: a wish mark is a state at rest and travels by ADR 0026 §4, and what
-            // the money switch withholds is an amount. The keys are the table's own and not the living
-            // slots, because what decides whether a casilla prints its mark is the casilla being empty
-            // — which is the album's answer, and the album is what the printer is walking.
+            // Not behind the money switch: a mark is a state, not an amount (ADR 0026 §4). The
+            // table's keys rather than the living slots, because whether a casilla prints its mark
+            // depends on it being empty, which the album the printer walks decides.
             wished = state.wishes.mapTo(mutableSetOf()) { it.key },
         )
     }
 
     /**
-     * Remembers how the notebook was printed, so the next export opens where this one left off.
-     *
-     * Written on the export and not on every toggle: a sheet the collector opened, played with and
-     * dismissed has not changed how they print, and storing each tap would make «Cancelar» a lie.
+     * Stores the export's options so the next export opens with them. Written on export, not on
+     * every toggle, so «Cancelar» discards.
      */
     fun notebookPrinted(options: NotebookOptions) {
         notebook.options = options
         _state.update { it.copy(notebookOptions = options) }
     }
 
-    // The pair that used to answer «is there a catalog for this key, and would its plate open?»
-    // left with the screen that asked: a card with a reachable plate now *is* the plate (ADR 0021
-    // §9), so nothing between the index and the plate needs to explain a jump it cannot make.
-
     companion object {
         /**
-         * The one place the collaborators above are named twice.
-         *
-         * `AppContainer` builds and holds them — a prefetch loop that outlives a rotation keeps
-         * knowing which photographs it already covered — and this only picks the ones the screens'
-         * state is made of.
+         * `AppContainer` builds and owns the collaborators, so they outlive a rotation (a prefetch
+         * loop remembers what it covered); this only hands them over.
          */
         fun factory(container: AppContainer): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {

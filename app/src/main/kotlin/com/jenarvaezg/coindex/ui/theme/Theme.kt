@@ -19,10 +19,7 @@ import com.jenarvaezg.coindex.ui.components.paperSurface
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.R
 
-/**
- * Ornithological field-guide palette, carried over from the frozen web prototype so both
- * renderings of Coindex look like the same notebook.
- */
+/** The field-guide palette, carried over from the web prototype. */
 object Paper {
     val ink = Color(0xFF2D3029)
     val muted = Color(0xFF686A5D)
@@ -40,11 +37,8 @@ object PlateMetrics {
     val gutter = 16.dp
 
     /**
-     * Gap between stacked cards that carry their own action row.
-     *
-     * Wider than [gutter] on purpose: with the actions at the bottom edge of one card and the
-     * next card's title right under them, a thumb aiming for «Ignorar» could land on the card
-     * below — which happened during the UX review itself.
+     * Gap between stacked cards with their own action row. Wider than [gutter] so a thumb aiming
+     * at one card's bottom actions doesn't land on the next card.
      */
     val cardStack = 26.dp
     val cardPadding = 14.dp
@@ -79,10 +73,7 @@ val BarlowCondensedFamily = FontFamily(
     Font(R.font.barlow_condensed_semibold, weight = FontWeight.SemiBold),
 )
 
-/**
- * A guide, not a dashboard: serif for prose, a condensed sans in small caps for data. The
- * palette is paper-toned in both system themes on purpose — the plate is a printed page.
- */
+/** Serif for prose, condensed sans in small caps for data. */
 internal val fieldTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = BitterFamily,
@@ -138,15 +129,15 @@ internal val fieldTypography = Typography(
     ),
 )
 
-/** The palette does not follow the system dark theme on purpose: a plate is paper. */
+/** Ignores the system dark theme on purpose: a plate is paper (ADR 0026 §2). */
 @Composable
 fun CoindexTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = fieldColors,
         typography = fieldTypography,
     ) {
-        // The sheet is the window, and not a background each screen paints for itself: the grain
-        // used to live on two screens and stop at the edge of the third (#351).
+        // Paper painted once for the whole window, not per screen, so the grain is everywhere
+        // (#351).
         Box(modifier = Modifier.fillMaxSize().paperSurface(), content = { content() })
     }
 }

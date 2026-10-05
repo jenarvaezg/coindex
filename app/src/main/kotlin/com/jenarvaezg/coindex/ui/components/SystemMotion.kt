@@ -14,13 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 
 /**
- * The system's animation scale, watched while the app is composed.
- *
- * **Observed and not read once** (#514): the accessibility switch is thrown in Settings, with
- * Coindex still in the background and its process alive, and the collector comes back to the app he
- * left. A value read at `onCreate` would say «move» for the rest of the process, which is the whole
- * of the setting's audience getting the flight anyway. The observer is what Compose itself keeps
- * for the same URI, and it costs nothing while nothing changes.
+ * The system's animation scale, observed while the app is composed rather than read once (#514):
+ * the setting is usually changed while Coindex sits in the background with its process alive.
+ * Compose observes the same URI.
  */
 @Composable
 fun rememberSystemMotion(): Boolean {
@@ -42,6 +38,6 @@ fun rememberSystemMotion(): Boolean {
     return moving
 }
 
-/** One is the documented default of a device that has never been told otherwise. */
+/** One is the documented default. */
 private fun animatorDurationScale(resolver: ContentResolver): Float =
     Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)

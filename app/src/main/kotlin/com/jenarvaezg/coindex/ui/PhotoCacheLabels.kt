@@ -5,12 +5,9 @@ import com.jenarvaezg.coindex.data.photos.PrefetchRefusal
 import java.util.Locale
 
 /**
- * The prefetch's one sentence, in the settings screen.
- *
- * Everything else about it is silent by design — it is an optimization, and an optimization that
- * announces itself becomes a chore to supervise. This line exists because two situations that look
- * identical from the outside are not: «faltan 320 y están cayendo» and «faltan 320 porque estás con
- * datos móviles» need different things from the collector, and the second one needs him to know.
+ * The prefetch's one sentence, on «Este teléfono»; otherwise it is silent. It tells photos still
+ * arriving apart from photos held back (mobile data, power saving…), which the collector may need
+ * to act on.
  */
 fun photoCacheLabel(status: PhotoCacheStatus): String {
     if (status.wanted == 0) {
@@ -33,11 +30,6 @@ fun photoCacheLabel(status: PhotoCacheStatus): String {
     }
 }
 
-/**
- * Bytes as megabytes with a Spanish decimal comma, whatever language the phone is in.
- *
- * The locale is pinned rather than taken from the device because the sentence around it is written
- * in Spanish: «10.9 MB» in the middle of it reads as a typo, not as a setting.
- */
+/** Bytes as megabytes with a decimal comma whatever the phone's language: the copy is Spanish. */
 fun megabytesLabel(bytes: Long): String =
     String.format(Locale.forLanguageTag("es-ES"), "%.1f MB", bytes / 1_000_000.0)

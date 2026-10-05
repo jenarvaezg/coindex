@@ -12,10 +12,8 @@ import com.jenarvaezg.coindex.ui.fichaRefreshLabel
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * What one type's ficha needs to be asked for again (#185, ADR 0025).
- *
- * A value rather than four parameters, because it travels through two screens to reach the two
- * places a piece of a given type is visible: the piece inside a collection, and the row of Coins.
+ * What one type's ficha needs to be asked for again (#185, ADR 0025), bundled because it travels
+ * through two screens.
  *
  * @param fetchedAt when this phone got the ficha; null when it has none at all, which is a piece
  *   waiting for a sync to complete rather than a stale ficha.
@@ -27,16 +25,10 @@ data class FichaRefresh(
 )
 
 /**
- * When the ficha was brought and the gesture that brings it again, drawn together because neither
- * means much alone: a date with no way to act on it is trivia, and an action with no date is a
- * button whose cost the collector cannot judge.
- *
- * Named for the date and not for freshness: whether a ficha is *fresh* is exactly what this cannot
- * say (ADR 0025), since a ficha that arrived in the APK may hold older content than the day it
- * landed here.
- *
- * A piece with no ficha yet gets no line and no button: nothing has gone stale, the sync simply has
- * not finished bringing it, and one call spent here would be a call the next sync spends anyway.
+ * When the ficha was fetched, with the button to fetch it again: the date lets the collector judge
+ * whether the call is worth it. It says when, not how fresh: a ficha shipped in the APK may be
+ * older than its arrival here (ADR 0025). Nothing is drawn without a ficha; the next sync will
+ * bring it.
  */
 @Composable
 fun FichaBrought(

@@ -5,10 +5,8 @@ import com.jenarvaezg.coindex.domain.cardCountry
 import com.jenarvaezg.coindex.domain.placementYear
 
 /**
- * Three states of a year on the year axis (ADR 0026 §9) — coin, ghost hole, bare cardboard.
- *
- * The third is what shows sixty-two consecutive empty years without a word: nobody names them and
- * the collector owns nothing there.
+ * A year on the year axis (ADR 0026 §9): an owned coin, a ghost hole (a plate names the year), or
+ * bare cardboard (nobody names it and nothing is owned).
  */
 sealed interface YearCellState {
     data class Coin(val quantity: Int, val typeId: Int?) : YearCellState
@@ -22,11 +20,9 @@ data class YearAxisCell(
 )
 
 /**
- * A front sheet for owned pieces whose placement year falls outside the dated/slot calendar.
- *
- * Romans without an engraved year inherit 270 or 316; putting them on the calendar would paint
- * seventeen centuries of bare cardboard before the first Thaler. They open here under their
- * country instead — one island, not N empty centuries (atlas-315 / #340).
+ * Owned pieces whose placement year falls outside the calendar's range, shown up front under their
+ * country (atlas-315, #340). Undated Roman coins inherit years like 270, which would otherwise
+ * stretch the calendar by centuries of bare cardboard.
  */
 data class YearAxisIslandCoin(
     val typeId: Int,
@@ -47,7 +43,7 @@ data class YearAxisCentury(
     val century: Int,
     val decades: List<YearAxisDecade>,
 ) {
-    /** Atlas-315 paints arabic centuries («SIGLO 20»); BC keeps Roman so a minus sign never shows. */
+    /** Arabic numerals («SIGLO 20», atlas-315); BC uses Roman so no minus sign shows. */
     val label: String
         get() = when {
             century <= 0 -> "SIGLO ${roman(-century + 1)}"
@@ -79,16 +75,12 @@ data class YearAxisModel(
 }
 
 /**
- * The year axis of the notebook (ADR 0026 §9).
+ * The notebook's year axis (ADR 0026 §9). Owned pieces are placed by [placementYear], Gregorian
+ * first, so Hijri years don't stretch it.
  *
- * Owned pieces are placed by [placementYear] — Gregorian first — so Hijri engraved years do not
- * stretch the arc. A year a plate names and the collector does not own is a ghost; a year nobody
- * names and nobody owns is bare cardboard.
- *
- * **The range is dated pieces and slots, not undated inheritances.** The type minimum (#326) still
- * places an undated piece when it falls inside that range (Portuguese escudos). An undated Roman
- * whose inherited year falls outside opens a front [YearAxisIsland] under its country — never the
- * 1,756-year calendar that belongs to «Las cifras».
+ * The range spans dated pieces and slot years only. An undated piece placed by its type's minimum
+ * year (#326) is drawn inside the range when it falls there; otherwise it goes to a
+ * [YearAxisIsland].
  */
 fun yearAxis(
     state: CollectionState,
@@ -128,9 +120,8 @@ fun yearAxis(
         )
     }
 
-    // The same walk the shelf of Monedas answers with (#550): the ghost this paints and the coin
-    // that ghost opens come from one reading, so a seat cannot lead to a page that knows nothing
-    // about the plate that drew it. It reads the casillas of the assembly (#538) like everyone else.
+    // Same walk as the Monedas shelf (#550, #538), so a ghost seat always opens a page that knows
+    // its plate.
     val slotYears = slotYears(state, keptCatalogIds).years
 
     val rangeYears = (datedYears + slotYears).ifEmpty {
@@ -194,14 +185,9 @@ fun yearAxis(
 }
 
 /**
- * The century a year belongs to, by the decade convention: «Siglo 20» is 1900-1999 (#407).
- *
- * Strict centuries (1801-1900) split the round hundred across two headers, so 1900 closed a row
- * labelled «1900» under «Siglo 19» holding that year alone while «Siglo 20» opened with another
- * «1900» holding 1901-1909 — two rows under one label, each with nine dead seats. The notebook
- * reads by decade rows, so the row keeps its ten seats and the century takes the impurity.
- *
- * The BC branch is defensive: [yearAxis] only ever builds cells for years above zero.
+ * A year's century by the decade convention: «Siglo 20» is 1900–1999 (#407), so each decade row
+ * stays under one header with its ten seats. The BC branch is defensive: [yearAxis] only builds
+ * cells for years above zero.
  */
 private fun centuryOf(year: Int): Int = when {
     year > 0 -> year / 100 + 1

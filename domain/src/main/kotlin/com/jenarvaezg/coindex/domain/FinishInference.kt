@@ -5,15 +5,10 @@ private val LUNAR_COLOURS = listOf(
 )
 
 /**
- * How a composition says the coin was coated in gold, and how it says it is made of it.
- *
- * A coating always names an action — plated, chapado, highlighted — and that verb is the whole
- * rule: «Oro 999,9» names gold and no action, so it is an alloy and not a finish. `gilded` and
- * `gilt` carry both halves in one word and stand alone.
- *
- * Measured on 1 September 2026 over the 1,089 seeded fichas and the 44 pound sterling ones fetched
- * for #573: three wordings appear and no other, «(with selective gold plating)» in the eleven
- * gilded pounds, «chapado en oro» in N#440309 and «(highlighted in 24-carat gold)» in the koala.
+ * How a composition says a coin was coated in gold. A coating names an action (plated, chapado,
+ * highlighted), so «Oro 999,9» is an alloy and not a finish; `gilded` and `gilt` carry both halves
+ * and stand alone. Wordings seen so far (#573): «(with selective gold plating)», «chapado en oro»
+ * (N#440309) and «(highlighted in 24-carat gold)».
  */
 private val GOLD_WORDS = listOf("gold", "oro")
 private val COATING_WORDS = listOf("plating", "plated", "chapad", "highlighted", "baño")
@@ -57,31 +52,15 @@ fun inferFinish(title: String?, family: String?, composition: String?): Finish? 
 /**
  * Whether the composition declares a gold coating, which outranks every reading of the title.
  *
- * It has to outrank them, and that is the finding of #573: the fifteen gilded round pounds are
- * titled «Silver Proof» **word for word** like the thirty-two of `uk-1-libra-plata-proof`, same 9,5
- * g and same silver, so a title-only rule keys them as the plate's own variant and stands a second
- * card next to it. What separates them is a field — `Silver (.925) (with selective gold plating)`
- * against `Silver (.925)`, measured in all forty-four fichas, eleven and thirty-three with neither
- * a false positive nor a false negative — and the curator already ruled which finish wins when both
- * are true: «Son `Gilded`, no `Proof`». There is no composite Proof gilded and this is why one is
- * not needed.
+ * The gilded round pounds are titled «Silver Proof» exactly like those of `uk-1-libra-plata-proof`,
+ * with the same weight and metal; only the composition tells them apart (`Silver (.925) (with
+ * selective gold plating)`), and the curator ruled them `Gilded`, not `Proof` (#573), so no
+ * composite finish is needed. Reverse descriptions and comments are not used: they describe gold in
+ * the drawing or mention other editions.
  *
- * The reverse description was the other candidate the issue proposed and the seeded cache refuses
- * it: «un fénix **dorado**» (N#511576, N#519836), «la inserción **dorada** … Au 999» (N#80877), «La
- * sala de conciertos **dorada**» (N#9165). A description of a face describes the drawing, and gold
- * leaf on the coin and gold on the thing drawn are the same sentence. The comments are worse still
- * — ten of the thirty-two pounds that do belong mention the 2008 gilded edition without being it.
- *
- * The composition is the field that cannot say that, because it is about the material and nothing
- * else. Which is why [inferMetal] reads the head of this same string and drops what follows the
- * bracket: the head answers what the coin is made of, and what it drops answers how it was
- * finished. Neither reading is complete without the other, and a coin **of** gold is not a gilded
- * one — so the dominant metal is the guard rail, and no needle has to be spelled as an exception.
- *
- * That guard reads what is written **before** the coating word rather than the whole string, and
- * that is not a detail: [inferMetal] resolves its needles in order and `oro` precedes `cobre`, so
- * «Cobre chapado en oro» asked whole comes back gold and the gilding would be dropped as an alloy.
- * What a coin is made of is what the composition says before it says what was laid on top.
+ * A coin made of gold is not gilded, so the guard reads the metal of the text before the coating
+ * word only: [inferMetal] tries `oro` before `cobre`, and «Cobre chapado en oro» read whole would
+ * come back gold.
  */
 private fun isGoldCoated(composition: String?): Boolean {
     val lowered = composition?.lowercase() ?: return false

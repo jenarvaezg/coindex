@@ -1,44 +1,21 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * The eleven issuer codes whose Numista label is not the name of a country in Spanish, and what a
- * card says instead.
+ * Issuer codes whose Numista label is not a country name in Spanish, and what a card says instead
+ * (ADR 0023). Numista names issuing entities with their period of validity («Federación de Rusia
+ * (1991-presente)») or inverted for an index. That is correct catalogue data (the period tells
+ * `russie` from `ancienne_urss`), so the cure is ours, at display time.
  *
- * Numista does not write countries: it writes **issuing entities with their period of validity**,
- * which is why `russie` arrives as «Federación de Rusia (1991-presente)» and `rome` as «Romano,
- * Imperio (27 a. C. - 395 d. C.)». Both are correct as catalogue data — the parenthesis is what
- * tells the Russian Federation apart from `ancienne_urss`, and that distinction is real — so this
- * is not something to fix on numista.com. It is ours at the moment we paint it.
+ * Only the exceptions live here; any other code uses the ficha's label. A table and not a
+ * heuristic: cutting at `(` and un-inverting at the comma still leaves «Federación de Rusia» or
+ * «Alemania, República Federal de».
  *
- * **A table of corrections and not a catalogue of countries.** The seeded cache serves 40 issuer
- * codes and 31 of them already read as a country in Spanish; keeping «Venezuela» here would
- * duplicate in Kotlin what the ficha says right, and a coin from a country nobody owns yet would
- * label its card with no line added. What lives here is the exception, and the ficha is the default.
- *
- * **Why a table and not a heuristic.** Cutting at the first `(` and un-inverting on the comma is one
- * line of code over a third party's prose, and it gets each of these subtly wrong: «Federación de
- * Rusia» is still not the name of a country, «Imperio Romano» carries Numista's capital inside it,
- * and «Alemania, República Federal de» either loses its tail or keeps a scope definition on a line
- * of identity. Nine strings the curator wrote are worth more than a mechanism that guesses.
- *
- * **What each correction says depends on what the entity is** (ADR 0023): a country served with its
- * period, or inverted for an index, gives its common Spanish name — the Russian Federation *is*
- * today's Russia — while a state that is nobody's country any more keeps its own name, which is why
- * `russia-empire` is «Imperio ruso» and not «Rusia», beside the `ancienne_urss` the ficha already
- * calls «Unión Soviética». `allemagne-pre1945` is «Alemania» because that is what Numista itself
- * calls it: «Alemania (1871-1948)» is a country with a period, not the name of another state.
- * `ghana` is the plainest reading of the first rule — «Ghana (1957-presente)» is today's Ghana
- * served with its period — and it arrived with the Alien of Scottsdale, whose three first plates
- * are Ghanaian before the range moved to Samoa. `samoa` needed nothing: the ficha already says
- * «Samoa».
- *
- * **One is here for a third reason: the language** (#257). `new_south_wales` arrives as «New
- * South Wales» even with `lang=es`, which is a clean label — no period of validity, no inversion, 15
- * characters — and therefore the one vice [readsAsACountry] cannot see. It is the only English label
- * among the 27 issuer codes the curated files declare, measured over the shipped cache, and ADR 0021
- * §4 asks for Spanish. It takes its own name rather than «Australia» by the second rule above: in
- * 1813 it was a British colony and today it is a state, so it is nobody's country and «Nueva Gales
- * del Sur» is what it is called.
+ * A country served with its period or inverted takes its common Spanish name (`russie` is «Rusia»,
+ * `ghana` is «Ghana»); a state that is nobody's country any more keeps its own name
+ * (`russia-empire` is «Imperio ruso»). `allemagne-pre1945` is «Alemania» because Numista itself
+ * calls it «Alemania (1871-1948)». `new_south_wales` is here for its language (#257, ADR 0021 §4):
+ * Numista serves it in English even with `lang=es`, and as a former colony and today a state it is
+ * «Nueva Gales del Sur».
  */
 private val curedCountries: Map<String, String> = mapOf(
     "allemagne" to "Alemania",
@@ -57,29 +34,19 @@ private val curedCountries: Map<String, String> = mapOf(
 /**
  * The country a card's eyebrow says, given the issuer code and the name Numista serves for it.
  *
- * Reading the raw name through a function rather than storing the cured one is the bargain the metal,
- * the finish and [objectClassOf] already take: a correction made today reaches fichas cached long ago
- * without an API call, and [TypeMeta.issuerName] stays what Numista actually said.
- *
- * The code answers on its own where the table has it, so a curated file naming `haiti` labels its
- * card whether or not a Haitian ficha has reached the phone yet (ADR 0021 §9). Everywhere else the
- * ficha is the only authority, and a country the curator has never had to correct is printed as it
- * came — the same deal [familyLabel] gives an uncurated family.
+ * Read through a function rather than stored, like the metal, the finish and [objectClassOf], so a
+ * correction reaches fichas cached long ago and [TypeMeta.issuerName] stays what Numista said. A
+ * code in the table answers before any ficha of it reaches the phone (ADR 0021 §9); any other
+ * country is printed as Numista sent it, as [familyLabel] does for uncurated families.
  */
 fun cardCountry(issuerCode: String?, numistaName: String?): String? =
     issuerCode?.let { code -> curedCountries[code] } ?: numistaName
 
 /**
- * The country **a member** was struck for, which is not always its catalog's (#170).
- *
- * The member's own issuer code where the file declares one, and the catalog's otherwise — then the
- * name: the member's own ficha first, and any sibling of the same issuer next, so a hole whose type
- * has not reached the phone still paints under its country when another coin of that country already
- * did. Both readings go through [cardCountry], so a card, a slot of the country axis and the país
- * chip cannot disagree about how a country is spelled.
- *
- * It lives in the domain and not beside the axis that first needed it (#538): «what country is this
- * casilla in» is a fact about the coin, and the shelf, the axis and the assembly all ask it.
+ * The country a member was struck for, which is not always its catalog's (#170): the member's own
+ * issuer code or else the catalog's, named from the member's ficha or else from any cached ficha
+ * of the same issuer, so a hole whose type is not cached still gets its country. Everything goes
+ * through [cardCountry], so a card, the country axis and the país chip spell a country alike.
  */
 fun CollectionCatalog.countryOf(
     member: CollectionCatalogMember,
@@ -92,22 +59,13 @@ fun CollectionCatalog.countryOf(
 }
 
 /**
- * Whether a label reads as the name of a country rather than as one of Numista's issuing entities.
+ * Whether a label reads as the name of a country rather than one of Numista's issuing entities: no
+ * period of validity («Haití (1804-presente)»), no index inversion («China, República Popular»),
+ * both kept off a line of identity by ADR 0021 §4, and no longer than a `short_name` (#163).
  *
- * The two vices of that prose are the **period of validity** —«Haití (1804-presente)»— and the
- * **inversion of an index** —«China, República Popular»—, and both are what ADR 0021 §4 keeps off a
- * line of identity. Length is the third: the eyebrow is set in small caps above a `short_name` capped
- * at 40 characters (#163), and a country that outruns the name below it does not fit on a card.
- *
- * **The language is a fourth vice this cannot see** (#257). «New South Wales» has none of the three
- * and is still not Spanish, so the net passes it and only a curator reading the ficha catches it. It
- * is not made a fourth clause because detecting a language is not one line of code over a third
- * party's prose, and guessing at that prose is what ADR 0023 refused; the table carries the finding
- * instead.
- *
- * It is the rule of the net over what ships (ADR 0023) and of the one migration that net implies, not
- * a filter any card is dropped by: a card always says what it knows, and a label that fails here is a
- * country waiting to be cured.
+ * It cannot see language (#257): «New South Wales» passes, and only a curator reading the ficha
+ * catches it, so the table carries that finding. This is the rule of the suite's net over what
+ * ships (ADR 0023), never a filter that drops a card.
  */
 fun readsAsACountry(label: String): Boolean =
     '(' !in label && ',' !in label && label.length <= COUNTRY_NAME_CEILING

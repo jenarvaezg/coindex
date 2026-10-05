@@ -32,20 +32,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * The rubber stamp of a complete plate, drawn for the printed notebook in millimetres of paper.
+ * The rubber stamp of a complete plate on the printed notebook (#371): the ratio over «COMPLETA»,
+ * double rule and tilt, on each complete plate's heading. The screen's equivalent is
+ * [com.jenarvaezg.coindex.ui.components.StampedRatio]; the page keeps «Progreso» in its
+ * specification as well (ADR 0026 §5). The slim band of a shared folio (#232) gets a smaller frame.
  *
- * It is **not** [com.jenarvaezg.coindex.ui.components.StampedRatio]: that composable is the screen
- * and the PNG, sized in dp, and it lands on the ratio the header already showed. A page of the
- * cuaderno keeps «Progreso · n / n emisiones» in the specification (ADR 0026 §5), while the
- * caucho celebrates the same already-counted ratio beside «COMPLETA» — double rule and tilt — over
- * each plate's own heading (#371). The screen's blend is **not** part of it: see the layer below.
- *
- * **Per plate, not per folio.** A shared page (#232) can carry two complete plates, and each one
- * stamps its own band; the thin heading gets a smaller frame so the ink still fits the fourteen
- * millimetres the geometry reserved.
- *
- * The notebook is composed at [com.jenarvaezg.coindex.ui.screens.printDensity], where one dp is one
- * millimetre of paper, so the sizes below are millimetres spoken as dp.
+ * Composed at [com.jenarvaezg.coindex.ui.screens.printDensity], where one dp is one millimetre.
  */
 @Composable
 fun PrintedCompletionStamp(
@@ -57,21 +49,15 @@ fun PrintedCompletionStamp(
 
     Box(
         contentAlignment = Alignment.Center,
-        // The air the turn needs, reserved by the caller's own box: a rotated rectangle is wider and
-        // taller than the one it was drawn as, and on paper there is nothing under the ink to bleed
-        // into (#476).
+        // Room for the rotated frame, which is larger than the unrotated one (#476).
         modifier = modifier.size(stampFootprint(metrics.frame)),
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                // **The turn and nothing else.** This used to carry `BlendMode.Multiply` on an
-                // offscreen layer, the way the screen stamp does, and on paper it cost the caucho its
-                // contents: Skia writes a blended layer into the PDF as Type 3 glyphs with a broken
-                // bounding box, so every viewer printed an empty double frame — the ratio and
-                // «COMPLETA» reached no page at all. The offscreen layer clipped the rotation too,
-                // cutting the corners off the frame it did draw. The ink is rust over cream either
-                // way; what multiply added was invisible next to what it took (#476).
+                // Rotation only, no `BlendMode.Multiply` as on screen: Skia writes a blended
+                // offscreen layer into the PDF as Type 3 glyphs with a broken bounding box, so the
+                // text vanished, and the layer clipped the frame's corners (#476).
                 .graphicsLayer { rotationZ = STAMP_TILT }
                 .size(metrics.frame)
                 .border(metrics.outer, Paper.rust.copy(alpha = 0.82f), RoundedCornerShape(0.3f.mm))
@@ -79,14 +65,8 @@ fun PrintedCompletionStamp(
                 .border(metrics.inner, Paper.rust.copy(alpha = 0.72f), RoundedCornerShape(0.3f.mm))
                 .semantics { contentDescription = COMPLETE_STAMP_WORD },
         ) {
-            // **Two lines stacked, each as tall as its own type.** They used to be wrapped in boxes of
-            // a fixed height — 5,2 mm for the ratio and 3,8 for the word — and both numbers are *below*
-            // the line those sizes actually need (6,7 and 5,0 at print density). Compose measured a
-            // paragraph that could not fit a single line and drew **none**: the caucho reached paper as
-            // an empty frame, while the semantics still said «COMPLETA» and two tests believed it
-            // (#476). Nothing has to be fixed for the baselines to stay apart — a column that spaces
-            // its children cannot overlap them, which is what the boxes were for — and thirteen
-            // millimetres of type still leave six inside the rule.
+            // No fixed-height boxes around the lines: boxes shorter than the line height made
+            // Compose draw no text at all, while the semantics still said «COMPLETA» (#476).
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(metrics.lineGap),
@@ -129,24 +109,13 @@ internal fun printedCompletionRatio(ratio: String): String =
     ratio.split('/').joinToString(" / ") { part -> part.trim() }
 
 /**
- * How much of the band the caucho takes: the frame it is drawn as, plus the air its turn needs.
- *
- * It is the **footprint** and not the frame, because what the heading has to hold is what lands on
- * the paper: a 24 × 22 rectangle turned five and a half degrees measures 26,0 × 24,2, and the corners
- * that stick out are exactly what the old offscreen layer was cutting off (#476).
- *
- * The masthead and the plain band take the measured frame; the slim band of a shared folio gets half
- * of it so the stamp still lands inside fourteen millimetres.
+ * The space the stamp takes in a heading: its rotated footprint, not its frame (#476). The slim
+ * band gets a half-size frame so the stamp fits in 14 mm.
  */
 fun printedStampSize(heading: PrintHeading): DpSize =
     stampFootprint(printedStampMetrics(heading).frame)
 
-/**
- * The box a [frame] turned by [STAMP_TILT] actually occupies.
- *
- * Trigonometry rather than a measured constant, so the two frames — and any third one — reserve what
- * their own turn costs: a tilt somebody nudges by a degree cannot go back to clipping the ink.
- */
+/** The box a [frame] turned by [STAMP_TILT] occupies, computed so any frame or tilt fits. */
 internal fun stampFootprint(frame: DpSize): DpSize {
     val radians = STAMP_TILT * PI.toFloat() / 180f
     val sin = abs(sin(radians))

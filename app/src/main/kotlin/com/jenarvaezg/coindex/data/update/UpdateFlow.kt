@@ -4,12 +4,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
- * How far an install attempt got, in terms of what is left for the collector to do.
- *
- * Four of the five are refusals, and each of them is a different sentence
- * ([com.jenarvaezg.coindex.ui.installOutcomeMessage]): a permission that has to be granted, a
- * device that cannot grant it, a phone with no package installer, and a download that died. The
- * one success says nothing, because what happens next is the system's own dialog.
+ * How far an install attempt got, in terms of what is left for the collector to do. Each refusal
+ * has its own message ([com.jenarvaezg.coindex.ui.installOutcomeMessage]); [Handed] says nothing,
+ * since the system's dialog comes next.
  */
 sealed interface InstallOutcome {
     /** The permission screen was opened; the collector has to come back and press again. */
@@ -27,17 +24,10 @@ sealed interface InstallOutcome {
 }
 
 /**
- * Looking for a newer APK, and installing it (ADR 0011).
- *
- * The two gestures live together because they share the one thing that had to come out of the
- * ViewModel: **when it is allowed to ask**. The check runs on a launch, on every return to the
- * front and on a timer, so the interval is what keeps it from asking GitHub every time the
- * collector glances at another app — and it was arithmetic on `System.currentTimeMillis()` read in
- * place, which is a rule no test could reach.
- *
- * Failures are never errors here: [UpdateChecker] swallows its own into
- * [UpdateStatus.Unavailable], because an update check that cannot reach GitHub must never interrupt
- * looking at the collection.
+ * Looking for a newer APK, and installing it (ADR 0011). The check runs on launch, on every return
+ * to the foreground and on a timer, so the interval decides when GitHub may be asked, here where a
+ * test can reach the clock. [UpdateChecker] turns failures into [UpdateStatus.Unavailable]: an
+ * unreachable GitHub never interrupts the collection.
  */
 class UpdateFlow(
     private val checker: UpdateChecker,
@@ -47,25 +37,19 @@ class UpdateFlow(
     private var lastCheckMillis: Long? = null
 
     /**
-     * One question at a time, like [com.jenarvaezg.coindex.data.CallBudgetGate]'s.
-     *
-     * The check fires on a launch, on every return to the front and on a timer, so two of them can
-     * be in the air at once — and both would read a stamp neither had written yet. Serialized, the
-     * second one finds the first one's stamp and answers «no toca».
+     * One check at a time, like [com.jenarvaezg.coindex.data.CallBudgetGate]: two concurrent checks
+     * would both read the old stamp; serialized, the second sees the first's and skips.
      */
     private val asking = Mutex()
 
     /**
-     * What GitHub says, or null when it is not time to ask yet.
-     *
-     * Null and not [UpdateStatus.UpToDate]: «no lo he preguntado» has to leave the banner exactly
-     * as it was, and an answer would replace an available update with a claim nobody checked.
+     * What GitHub says, or null when it is not time to ask yet. Null rather than
+     * [UpdateStatus.UpToDate], so a skipped check leaves the banner as it was.
      */
     suspend fun check(force: Boolean = false): UpdateStatus? = asking.withLock {
         val now = nowMillis()
         if (!force && !shouldCheckForUpdate(lastCheckMillis, now)) return null
-        // Stamped before the request rather than after it: two returns to the front a second apart
-        // must not both reach GitHub because the first one had not answered yet.
+        // Stamped before the request, so a second check during it doesn't ask again.
         lastCheckMillis = now
         checker.check()
     }

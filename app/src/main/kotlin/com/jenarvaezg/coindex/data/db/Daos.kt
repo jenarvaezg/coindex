@@ -55,11 +55,8 @@ interface TypeMetaDao {
     suspend fun insertIfAbsent(type: TypeMetaEntity)
 
     /**
-     * Writes a ficha over the one already cached (#185, ADR 0025).
-     *
-     * The sync still ignores conflicts on purpose: it was never asked for the ficha it is holding.
-     * The two writes that do overwrite are the collector's gesture, one type at a time, and the
-     * seed of a newly installed APK, once per version (#606, ADR 0033).
+     * Writes a ficha over the one already cached (#185, ADR 0025). The sync ignores conflicts; only
+     * the collector's gesture and the seed of a newer APK overwrite (#606, ADR 0033).
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun overwrite(type: TypeMetaEntity)
@@ -68,8 +65,8 @@ interface TypeMetaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun overwrite(types: List<TypeMetaEntity>)
 
-    // Neither face, rather than the obverse alone: a ficha that only has a reverse thumbnail
-    // would otherwise be read, written back with a null obverse, and read again for ever.
+    // Neither face, not just the obverse: a ficha with only a reverse thumbnail would otherwise be
+    // read again forever.
     @Query(
         "SELECT COUNT(*) FROM type_meta " +
             "WHERE obverseThumbnailUrl IS NULL AND reverseThumbnailUrl IS NULL",
@@ -88,8 +85,8 @@ interface TypeMetaDao {
     )
     suspend fun setThumbnails(typeId: Int, obverse: String?, reverse: String?)
 
-    // By version and not by «is the column null», which is what the thumbnails had to settle for:
-    // a ficha with no composition at all would otherwise be read again on every single start.
+    // By version rather than by a null column: a ficha with no composition would otherwise be read
+    // again on every start.
     @Query("SELECT COUNT(*) FROM type_meta WHERE readVersion < :version")
     suspend fun countReadBefore(version: Int): Int
 
@@ -97,11 +94,8 @@ interface TypeMetaDao {
     suspend fun rawReadBefore(version: Int, limit: Int): List<TypeRawRow>
 
     /**
-     * Writes what a batch of bodies said, as one unit.
-     *
-     * One transaction and not one per row: the first launch after version 6 reads the whole cache,
-     * and a couple of thousand auto-committed `UPDATE`s is a couple of thousand `fsync`s in front
-     * of a collector waiting for their index to draw.
+     * Writes what a batch of bodies said in one transaction: a backfill can cover the whole cache,
+     * and one auto-committed `UPDATE` per row is one `fsync` each while the index waits to draw.
      */
     @Transaction
     suspend fun setReadings(readings: Map<Int, FichaReading>, version: Int) {
@@ -124,10 +118,8 @@ interface TypeMetaDao {
     }
 
     /**
-     * Writes what one body said into its columns.
-     *
-     * A targeted `UPDATE` and not [overwrite]: this is the same ficha read again, not a new one,
-     * and the row's `fetchedAt` still means the day this phone got it (#185, ADR 0025).
+     * Writes what one body said into its columns. An `UPDATE` rather than [overwrite]: it is the
+     * same ficha read again, so `fetchedAt` must keep its date (#185, ADR 0025).
      */
     @Query(
         "UPDATE type_meta SET issuerName = :issuerName, composition = :composition, " +
@@ -153,17 +145,13 @@ interface TypeMetaDao {
 }
 
 /**
- * The collector's own groupings.
- *
- * Headings and memberships are observed as two flat lists and stitched together in the
- * repository: a `@Relation` would need a wrapper type whose only purpose is to be unwrapped
- * again one layer up.
+ * The collector's own groupings, observed as two flat lists that the repository stitches together
+ * (a `@Relation` would need a wrapper type only to unwrap it one layer up).
  */
 @Dao
 interface OwnGroupingDao {
-    // By id and not by name: the order of the index is one comparator over every card
-    // (ADR 0021 §6), so a box has no ordering of its own to bring — this only keeps the read
-    // deterministic.
+    // By id only to keep the read deterministic: the index sorts every card with one comparator
+    // (ADR 0021 §6).
     @Query("SELECT * FROM own_groupings ORDER BY id")
     fun observeAll(): Flow<List<OwnGroupingEntity>>
 
@@ -194,8 +182,8 @@ interface OwnGroupingDao {
     }
 
     /**
-     * Drops one type, and the grouping with it when that type was the last one: a heading over
-     * nothing would be a card the collector cannot open and cannot get rid of.
+     * Drops one type, and the grouping with it when that was the last one: an empty grouping would
+     * be a card the collector can neither open nor remove.
      */
     @Transaction
     suspend fun removeMemberOrDelete(groupingId: Long, typeId: Int, now: Long) {
@@ -215,22 +203,17 @@ interface OwnGroupingDao {
 }
 
 /**
- * The casillas the collector marked (ADR 0029).
- *
- * Three writes and one read, and there is deliberately no fourth: nothing deletes a wish because its
- * coin arrived. «Alive» is derived on read from the inventory (ADR 0029 §2), so the sync gains no
- * writer here and there is no stored state machine that could fall out of step with the album.
+ * The casillas the collector marked (ADR 0029). Nothing deletes a wish when its coin arrives:
+ * «alive» is derived from the inventory on read (ADR 0029 §2), so the sync never writes here.
  */
 @Dao
 interface WishDao {
-    // Newest first, which is the order the list is read in: the last casilla marked is the one being
-    // hunted. Said here as well as in `wishedSlots` so that a caller reading the table raw — a test,
-    // a later report — gets the same order the screen shows.
+    // Newest first, as the list shows them; repeated in `wishedSlots` so a raw read of the table
+    // gets the same order.
     @Query("SELECT * FROM wishes ORDER BY markedAt DESC")
     fun observeAll(): Flow<List<WishEntity>>
 
-    // Ignored on conflict: marking a casilla that is already marked is not an event, and REPLACE
-    // would move its `markedAt` and reshuffle the list under the collector's thumb.
+    // IGNORE, not REPLACE, which would move `markedAt` and reshuffle the list.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun mark(wish: WishEntity)
 
@@ -253,11 +236,8 @@ interface ApiCallDao {
 }
 
 /**
- * The catalog prices and the spot: everything money on this phone is made of (ADR 0028).
- *
- * One DAO over three tables, because they are one subject and are always read together — a total needs
- * the prices, the reads that say which issues are answered for, and the spot that buys the silver floor
- * — and a valuation assembled from three DAOs is three things a caller could forget one of.
+ * The catalog prices, the issue listings and the spot: everything money on this phone is made of
+ * (ADR 0028). One DAO because a total always needs them together.
  */
 @Dao
 interface PriceDao {
@@ -276,17 +256,13 @@ interface PriceDao {
     @Query("SELECT * FROM type_issue_reads")
     suspend fun typeIssueReads(): List<TypeIssueReadEntity>
 
-    /** In the order Numista listed them, which is what decides the issue a hole is priced by. */
+    /** In Numista's order, which decides the issue a hole is priced by. */
     @Query("SELECT * FROM type_issues ORDER BY typeId, position")
     suspend fun typeIssues(): List<TypeIssueEntity>
 
     /**
-     * The same two readings the pass makes, observed for the screens (#493).
-     *
-     * Until the plate's header had a cost of closing in it, which issue a casilla stands for was a
-     * question only the pass ever asked, and it asked it once per pass. The header asks it of the 111
-     * holes of 121 whose curated file does not name their issue — so it has to arrive the way a price
-     * does, and change under a screen that is already open while the pass fills the table in.
+     * The listings the pass reads, observed for the plate header's closing cost (#493), so an open
+     * screen updates while the pass fills them in.
      */
     @Query("SELECT * FROM type_issue_reads")
     fun observeTypeIssueReads(): Flow<List<TypeIssueReadEntity>>
@@ -301,14 +277,9 @@ interface PriceDao {
     suspend fun putSpot(spot: MetalSpotEntity)
 
     /**
-     * Writes what one issue answered, as one unit.
-     *
-     * The old grades are deleted first and not merged over: a grade Numista has stopped pricing would
-     * otherwise survive for ever under a fresh [IssuePriceReadEntity.readAt], which is a price with a
-     * date that is not its own.
-     *
-     * Called only for an answer that arrived. A failure writes nothing at all, so being cut off between
-     * the delete and the insert is the one thing this transaction is for.
+     * Writes what one issue answered, as one unit. Old grades are deleted rather than merged, or a
+     * grade Numista stopped pricing would survive under a fresh [IssuePriceReadEntity.readAt]. Only
+     * called for an answer that arrived; the transaction guards against being cut off midway.
      */
     @Transaction
     suspend fun putIssue(read: IssuePriceReadEntity, prices: List<IssuePriceEntity>) {
@@ -327,11 +298,8 @@ interface PriceDao {
     suspend fun insertRead(read: IssuePriceReadEntity)
 
     /**
-     * Writes what one type's listing answered, as one unit (#452).
-     *
-     * The same shape as [putIssue] and for the same reasons: the old rows go first, so an issue
-     * Numista has withdrawn does not survive under a fresh read, and the mark is written last, so
-     * being cut off leaves the type unlisted rather than listed-and-empty.
+     * Writes what one type's listing answered, as one unit (#452). Like [putIssue], old rows go
+     * first, so a withdrawn issue doesn't survive a fresh read.
      */
     @Transaction
     suspend fun putListing(read: TypeIssueReadEntity, issues: List<TypeIssueEntity>) {

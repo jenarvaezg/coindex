@@ -34,21 +34,16 @@ internal const val DOWNLOAD_CHANNEL_ID = "exports"
 
 private val EXPORT_STAMP: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmmss")
 
-/**
- * Where a settled sheet goes once it has been drawn: Descargas for the father, or the share
- * sheet for whoever is showing the collection to somebody else (#285).
- */
+/** Where a drawn sheet goes: Descargas, or the share sheet (#285). */
 enum class ExportDestination {
     Download,
     Share,
 }
 
 /**
- * Records the node's drawing commands into [picture] **without painting it on screen**.
- *
- * A `Picture` is replayed into a software bitmap, which sidesteps the maximum texture size a
- * GPU-backed layer would impose — the point of the whole export being that a long catalog is
- * taller than any screen.
+ * Records the node's drawing commands into [picture] without painting it on screen. The picture
+ * is replayed into a software bitmap, avoiding a GPU layer's maximum texture size: a long catalog
+ * is taller than any screen.
  */
 fun Modifier.recordInto(picture: Picture): Modifier = drawWithCache {
     val width = size.width.toInt()
@@ -70,11 +65,8 @@ suspend fun sharePlateSheet(context: Context, picture: Picture, fileName: String
 }
 
 /**
- * Writes a recorded sheet to Descargas as a PNG (#401).
- *
- * Used when the options panel measures one page — what fits in a photo. More pages take the PDF
- * path instead. The cache holds the temporary, and [handToDownloads] turns it into a durable file
- * without a chooser (#285). Returns the landed URI so Abrir on the snackbar can open it (#403).
+ * Writes a recorded one-page sheet to Descargas as a PNG (#401, #285); more pages go to PDF.
+ * Returns the landed URI for the snackbar's Abrir (#403).
  */
 suspend fun downloadPlateSheet(context: Context, picture: Picture, fileName: String): DownloadedExport {
     val displayName = datedExportFileName(fileName, "png")
@@ -104,11 +96,8 @@ private suspend fun writePlatePng(context: Context, picture: Picture, fileName: 
 }
 
 /**
- * Hands a written export to another app, whatever it is.
- *
- * One place because the grant is the delicate part: the file lives in the cache directory declared
- * in `file_paths.xml`, and only a [FileProvider] uri with the read flag on it survives the trip to
- * a mail client or a chat.
+ * Hands a written export to another app. The file must live in the cache directory declared in
+ * `file_paths.xml`: only a [FileProvider] uri with the read flag survives the trip.
  */
 internal fun handToShareSheet(context: Context, file: File, mimeType: String, title: String) {
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
@@ -122,11 +111,8 @@ internal fun handToShareSheet(context: Context, file: File, mimeType: String, ti
 
 /**
  * Copies a cache file into [MediaStore.Downloads] and announces it so a tap opens it (#285).
- *
- * `minSdk = 29`, so scoped storage already applies and this insert needs no permission: the
- * entry is pending while the bytes land, then released, and the system Files app sees it like
- * any other download. Returns the content URI so the snackbar's Abrir can open the same file
- * the notification does (#403).
+ * With `minSdk = 29` scoped storage applies and the insert needs no permission; the entry stays
+ * pending until the bytes land. Returns the content URI for the snackbar's Abrir (#403).
  */
 internal fun handToDownloads(
     context: Context,
@@ -165,11 +151,9 @@ data class DownloadedExport(
 )
 
 /**
- * A notification that opens the file, so «Descargado» is not only a word on a snackbar (#285).
- *
- * Best-effort: on API 33+ without [android.Manifest.permission.POST_NOTIFICATIONS] the shade
- * stays quiet, and that is fine — asking would put a dialog in front of the «y ya» the father
- * asked for. The snackbar names Descargas and offers Abrir when a viewer exists (#403, #436).
+ * A notification that opens the downloaded file (#285). Best-effort: on API 33+ without
+ * [android.Manifest.permission.POST_NOTIFICATIONS] it stays silent rather than asking. The
+ * snackbar still names Descargas and offers Abrir when a viewer exists (#403, #436).
  */
 internal fun announceDownload(
     context: Context,
@@ -187,8 +171,7 @@ internal fun announceDownload(
             ).apply { description = DOWNLOAD_CHANNEL_EXPLANATION },
         )
     }
-    // Only promise a tap when something can actually open the file — a dead PendingIntent
-    // is not a crash, but it is a lie (#436).
+    // A tap is only offered when something can open the file (#436).
     val intent = viewDownloadedFileIntent(uri, mimeType)
     val open = intent.takeIf { intent.resolveActivity(context.packageManager) != null }
         ?.let { view ->
@@ -217,20 +200,15 @@ fun viewDownloadedFileIntent(uri: Uri, mimeType: String): Intent =
     }
 
 /**
- * Whether anything on the phone can handle [viewDownloadedFileIntent] (#436).
- *
- * Used to withhold Abrir and the notification's tap when the answer is no — promising a door
- * that opens onto nothing is worse than leaving the file in Descargas alone.
+ * Whether anything on the phone can handle [viewDownloadedFileIntent] (#436); if not, Abrir and
+ * the notification's tap are withheld.
  */
 fun canViewDownloadedFile(context: Context, uri: Uri, mimeType: String): Boolean =
     viewDownloadedFileIntent(uri, mimeType).resolveActivity(context.packageManager) != null
 
 /**
- * Opens a file from Descargas without taking the app down when no viewer is installed (#436).
- *
- * Same posture as the update installer's protected starts: an unresolved ACTION_VIEW must not
- * be fatal. Only [android.content.ActivityNotFoundException] counts as «no viewer» — other
- * failures still surface. Returns false so the caller can say so aloud.
+ * Opens a file from Descargas, returning false instead of crashing when no viewer is installed
+ * (#436). Only [android.content.ActivityNotFoundException] counts as «no viewer».
  */
 fun openDownloadedFile(context: Context, uri: Uri, mimeType: String): Boolean =
     try {
@@ -243,12 +221,7 @@ fun openDownloadedFile(context: Context, uri: Uri, mimeType: String): Boolean =
 /** File-system safe name for an exported plate. */
 fun plateFileName(catalogId: String): String = "coindex-$catalogId"
 
-/**
- * The same, for a sheet of pieces, whose subject has no curated id to be named by.
- *
- * The title is prose the collector typed — accents, middle dots, double spaces — so it is
- * flattened here, which is the one place that prose meets a file system.
- */
+/** The same for a sheet of pieces, which has no curated id: its title flattened to a slug. */
 fun piecesFileName(title: String): String {
     val slug = Normalizer.normalize(title, Normalizer.Form.NFD)
         .replace(NON_SPACING_MARKS, "")
@@ -259,21 +232,14 @@ fun piecesFileName(title: String): String {
 }
 
 /**
- * The same, for «la lista de lo que busco», which has no subject to be named after (ADR 0029 §7).
- *
- * A constant and not the destination's own words flattened: it is the one export whose name is not
- * derived from anything the collector typed or the curator wrote, so putting it through
- * [piecesFileName] would only be a slug factory pretending to have an input. The date is added by
- * [datedExportFileName] as it is for every other export.
+ * The same for «Lo que busco», which has no subject to be named after (ADR 0029 §7).
+ * [datedExportFileName] adds the date, as for every export.
  */
 fun wishListFileName(): String = "coindex-lo-que-busco"
 
 /**
- * The name that lands in Descargas: the base plus the moment of the tap (#285).
- *
- * Exporting the same lámina twice is the normal case — a coin was just added — and without the
- * stamp the second would collide with the first. The date is local wall time, readable from the
- * Downloads list without opening the file.
+ * The name that lands in Descargas: the base plus the local time of the tap (#285), so exporting
+ * the same lámina twice doesn't collide.
  */
 fun datedExportFileName(
     baseName: String,

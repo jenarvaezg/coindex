@@ -1,10 +1,8 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * Typed validation of a [CollectionCatalog] (ADR 0027).
- *
- * The sealed error surface is intentional: the curator — not the seed loader that only reads
- * `.message` — is the consumer, and each case names the field and the condition that failed.
+ * Typed validation of a [CollectionCatalog] (ADR 0027). Each error case names the field and the
+ * condition that failed, for the curator; the seed loader only reads `.message`.
  */
 
 fun CollectionCatalog.validate(): CollectionCatalogValidationError? {
@@ -43,10 +41,9 @@ fun CollectionCatalog.validate(): CollectionCatalogValidationError? {
     if (canonical != key()) {
         return CollectionCatalogValidationError.InvalidVariantKey
     }
-    // A series URL when one proposed the list, and a type page when nothing did: the series
-    // only proposes and the catalog is what affirms coverage (#43), so a boundary that lives
-    // outside Numista is not a lesser catalog (#33). The 10 gulden of Beatrix are five in the
-    // Handboek and no series at all in Numista; requiring one would have forced a fake.
+    // A series URL when one proposed the list, a type page otherwise: the catalog affirms
+    // coverage, not the series (#43), and a boundary drawn outside Numista is still a catalog
+    // (#33), like the 10 gulden of Beatrix, which have no Numista series.
     if (!isNumistaSeriesSource(source) && !isNumistaTypeSource(source)) {
         return CollectionCatalogValidationError.InvalidSource
     }
@@ -65,9 +62,8 @@ fun CollectionCatalog.validate(): CollectionCatalogValidationError? {
             return CollectionCatalogValidationError.OpenWithClosedNote
         }
     }
-    // Silenced calendar gaps are the same bargain: years without a note are unsigned claims,
-    // and a note without years is orphan prose. They must sit inside the member year span and
-    // never collide with a slot that already exists.
+    // Years and note come together. Each year sits inside the member year span and is no
+    // member's year.
     if (noIssueYears.isEmpty()) {
         if (noIssueNote != null) {
             return CollectionCatalogValidationError.NoIssueNoteWithoutYears
@@ -117,7 +113,7 @@ fun CollectionCatalog.validate(): CollectionCatalogValidationError? {
         validateMemberStatus(member)?.let { return it }
         // Schema 1 and date runs may refine an issued type with issues. Schema 5 requires
         // that refinement; its members would otherwise be indistinguishable. Sets and
-        // non-issued members retain their established identities.
+        // non-issued members carry none.
         val issuesAllowed = member.isIssued && (schemaVersion == 1 || isDateRun || isIssueRun)
         if (isIssueRun && member.isIssued && member.numistaIssueIds.isEmpty()) {
             return CollectionCatalogValidationError.MemberWithoutIssue(member.id)
@@ -151,8 +147,7 @@ fun CollectionCatalog.validate(): CollectionCatalogValidationError? {
                 )
         }
     }
-    // The default has to default for somebody. A header naming a country every member
-    // overrides is the very lie #170 came from, one indirection further in.
+    // A catalog issuer that every member overrides would name a country no coin has (#170).
     if (issuerCode !in issuerCodes()) {
         return CollectionCatalogValidationError.UnusedIssuerCode(issuerCode)
     }
@@ -160,8 +155,8 @@ fun CollectionCatalog.validate(): CollectionCatalogValidationError? {
 }
 
 /**
- * The symmetry of [MemberStatus], required in both directions so nothing is implicit: an
- * absent `numista_type_id` never *means* announced, the file has to say so.
+ * Checks [MemberStatus] in both directions: an absent `numista_type_id` never implies announced;
+ * the file has to say so.
  */
 private fun validateMemberStatus(
     member: CollectionCatalogMember,

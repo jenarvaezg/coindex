@@ -1,12 +1,10 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * What one phone holds right now, and the only input the domain has.
- *
- * Three lists and nothing else: the inventory as it was last synced, the fichas cached for it, and
- * the boxes the collector typed (ADR 0021 §11). Everything a screen shows is derived from these by
- * [Curation.assemble] — collections are never stored, and since ADR 0021 §7 nothing at all is
- * stored per card.
+ * What one phone holds, and the only input the domain has: the inventory as last synced, the
+ * fichas cached for it and the collector's own boxes (ADR 0021 §11). Everything a screen shows is
+ * derived from these by [Curation.assemble]; nothing is stored per collection or per card (ADR
+ * 0021 §7).
  */
 data class CollectionSnapshot(
     val items: List<CollectedItem> = emptyList(),
@@ -15,12 +13,8 @@ data class CollectionSnapshot(
 )
 
 /**
- * Everything the domain derives from one snapshot, assembled in one place.
- *
- * The snapshot travels through with it — [items] and [typeMeta] are the same lists that went in —
- * because a derived collection is a summary, and every reader that opens one needs the pieces
- * behind it. Two readings of one inventory that disagreed on how many pieces there are would be
- * two truths, which is exactly what having a single assembly prevents.
+ * Everything the domain derives from one snapshot. [items] and [typeMeta] are the snapshot's own
+ * lists, carried along so every reader sees the same pieces behind each derived collection.
  */
 data class AssembledCollection(
     val items: List<CollectedItem> = emptyList(),
@@ -33,43 +27,29 @@ data class AssembledCollection(
     val unclassified: List<UnclassifiedItem> = emptyList(),
     val typeMeta: TypeMetaIndex = emptyMap(),
     /**
-     * The album of every curated catalog, built once against this inventory (#537).
-     *
-     * It travels with the assembly for the reason [items] does, and one step further: a card's ratio,
-     * the casillas of its plate and the tile of the shelf window are not three readings that have to
-     * agree about one collection, they are one album read three times.
+     * The album of every curated catalog, built once against this inventory (#537), so a card's
+     * ratio, its plate's casillas and the shelf window tile read the same album.
      */
     val albums: CatalogAlbums = CatalogAlbums(),
     /**
      * The commemorative programmes each catalog touches, with the collector's progress (#539).
-     *
-     * Here for the reason [albums] is, and it is the same sentence one reading further on: a plate
-     * used to resolve its programmes on every read, which meant the notebook re-derived thirteen
-     * programmes against the whole inventory once per printed card. Nothing it is made of changes
-     * between two reads of one snapshot — the programme files are constant for the life of the
-     * process (ADR 0022) — so the reading belongs to the assembly and not to whoever opens a plate.
+     * Built once per assembly, since programme files are constant for the process (ADR 0022);
+     * resolving them per plate made the notebook re-derive every programme per printed card.
      */
     val programmeStandings: CatalogProgrammes = CatalogProgrammes(),
     /** Catalogs the collector owns at least one official type of (plate reachability). */
     val evidencedCatalogIds: Set<String> = emptySet(),
     /**
-     * Every measurable casilla of every evidenced plate, resolved once (#538).
-     *
-     * The same bargain [albums] made one ticket earlier, one step further out: the country axis and
-     * the year axis are orders over the casillas the plates already have (ADR 0026 §9), so they are
-     * handed the casillas instead of walking the curated files to rebuild them. What an axis knows
-     * after this is how to group and how to sort.
+     * Every measurable casilla of every evidenced plate, resolved once (#538). The country and year
+     * axes group and sort these (ADR 0026 §9) instead of rebuilding them from the curated files.
      */
     val slots: List<AlbumSlot> = emptyList(),
     /** The pieces behind each derived collection, for the screen that opens one. */
     val itemsByKey: Map<VariantKey, List<CollectedItem>> = emptyMap(),
     /**
-     * What to call each piece whose year names nothing, by the **id of the row** (#225).
-     *
-     * By row and not by type, because the rows this answers for are rows of one type: the 100
-     * pesetas of Franco all say 1966 and Numista 1885, and the star is the only thing left that
-     * tells them apart. Resolved here once, so whoever draws a piece is handed the label with it
-     * instead of having to know that some collections have one to ask for.
+     * The emission label of each row whose year does not tell it apart, by row id (#225). By row,
+     * not by type, because these rows share one type: the 100 pesetas of Franco all say 1966 and
+     * only the star tells them apart.
      */
     val emissionLabels: Map<Long, String> = emptyMap(),
     /** The collector's own boxes, which hold only pieces they own (ADR 0021 §11). */
@@ -78,18 +58,9 @@ data class AssembledCollection(
     /**
      * Which collections claim which coin, resolved once per assembly (#540).
      *
-     * It travels with the assembly for the reason [emissionLabels] does — whoever draws a coin is
-     * handed what claims it instead of having to walk the index for itself — and it is **derived
-     * from this value rather than passed into it**, which is the one place the two differ. An
-     * emission label needs the curation, an input the assembly does not carry, so it can only be
-     * resolved on the way in; a claim needs [index] and [itemsByKey], which are both right here. A
-     * constructor field would therefore admit an assembly whose claims contradict its own index —
-     * two truths again, one of them handed in by a caller — and every hand-built assembly in the
-     * suite would quietly answer «no collection claims this» while its index said otherwise.
-     *
-     * Lazy and not a `get()`, because it is asked four times per read of Coins and the walk is over
-     * the whole inventory: once per assembly is the promise, and the assembly is the thing that gets
-     * rebuilt when the collection changes.
+     * Derived from [index] and [itemsByKey] rather than passed in, so no assembly, hand-built test
+     * ones included, can carry claims that contradict its own index. Lazy because Coins asks for it
+     * several times per read and it walks the whole inventory.
      */
     val claims: CoinClaims by lazy { coinClaimsOf(index, itemsByKey) }
 
@@ -98,19 +69,15 @@ data class AssembledCollection(
 }
 
 /**
- * The curated files that travel with the app, tied together once.
+ * The curated files that ship with the app, tied together once.
  *
- * The three species are constant for the lifetime of the process, so what is built from them alone
- * — the card names of #22 and the index comparator of ADR 0021 §6 — is built once here rather than
- * re-derived per read. What varies is the collector's snapshot, and [assemble] is the one door it
- * comes through: the app's repository and the field report of #21 read the same assembly, so a
- * count can no longer have two definitions depending on who asked.
+ * They are constant for the life of the process, so what depends only on them (the card names of
+ * #22, the index comparator of ADR 0021 §6) is built here once. The collector's snapshot comes in
+ * through [assemble], which the app's repository and the field report of #21 share, so a count has
+ * one definition.
  *
- * A curation that exists is a valid one (#545). What only holds across two species is checked
- * where both are together, which is here and nowhere else — it used to be a free function the
- * container remembered to call, so every curation the suite built went without it, the one over
- * the real curated files included. Files come in through [load], the one loading door, and each
- * side of the seam brings its own [CuratedFiles].
+ * Constructing a curation validates it (#545): rules that span two species are checked here. Files
+ * come in through [load], and each side of the seam brings its own [CuratedFiles].
  */
 class Curation(
     val catalogs: List<CollectionCatalog>,
@@ -137,8 +104,8 @@ class Curation(
         val typeMeta = snapshot.typeMeta
         val derivation = deriveCollection(items, typeMeta, catalogs, groupings)
         val boxes = buildOwnGroupingViews(snapshot.ownGroupings, items)
-        // Every catalog and not only the ones with a card: the shelf window is made of the catalogs
-        // this collector owns nothing of, and it reads its albums from here like everyone else.
+        // Every catalog, not only those with a card: the shelf window shows catalogs the collector
+        // owns nothing of.
         val albums = CatalogAlbums.over(catalogs, items)
         val evidencedCatalogIds = catalogs
             .filter { catalog -> catalog.isEvidencedBy(items) }
@@ -147,9 +114,8 @@ class Curation(
             items = items,
             index = index.build(snapshot, derivation, boxes, albums),
             albums = albums,
-            // Every catalog again, and for a second reason on top of the shelf window's: a plate of
-            // the twenty carries the collector's standing in a programme too, because their progress
-            // in it is theirs and not that plate's (ADR 0030, ADR 0022).
+            // Every catalog again: a shelf window plate also shows the collector's standing in a
+            // programme, which belongs to the collector and not to that plate (ADR 0030, ADR 0022).
             programmeStandings = CatalogProgrammes.over(catalogs, programmes, items),
             derivedCollections = derivation.derivedCollections,
             unclassified = derivation.unclassified,
@@ -163,13 +129,9 @@ class Curation(
     }
 
     /**
-     * The emission each row belongs to, where a catalog keyed on issues names one (ADR 0019).
-     *
-     * Only an issue run has anything to add, and a row it does not match keeps its year: this is a
-     * map of the few rows that need one, not of every piece. Two catalogs claiming the same issue
-     * is a curation error `CatalogSeeds.parseAll` refuses to load at all, so the shipped shelf can
-     * never have one to arbitrate between — and arbitrating here, on a shelf assembled by hand in a
-     * test, would be a second rule about which catalog owns an issue.
+     * The emission label of each row an issue run matches (ADR 0019); other rows keep their year.
+     * Two catalogs claiming one issue already fail in `CatalogSeeds.parseAll`, so this does not
+     * arbitrate between them.
      */
     private fun emissionLabelsOf(items: List<CollectedItem>): Map<Long, String> {
         if (issueRuns.isEmpty()) return emptyMap()
@@ -182,15 +144,12 @@ class Curation(
     }
 
     /**
-     * Every Numista type the curated files name, which is exactly the set a plate can be asked
-     * to draw and therefore the set the type cache has to hold.
+     * Every Numista type the curated files name: the set a plate can be asked to draw, and so the
+     * set the type cache must hold.
      *
-     * An announced member names none, and its `design_type_id` is not one either: that is the
-     * design in another variant, and putting it here would seed the cell with the wrong coin.
-     *
-     * A programme's members count too (ADR 0022), including the ones no catalog claims: the plate
-     * names the programme beside its rows, and the 25 escudos of 1977 and 1983 are exactly the
-     * coins a collector with «1 de 3» is missing.
+     * A non-issued member names none, and its `design_type_id` stays out: it is the design in
+     * another variant and would seed the cell with the wrong coin. Programme members count (ADR
+     * 0022), even those no catalog claims, because the plate shows the programme's missing coins.
      */
     fun curatedTypeIds(): Set<Int> = buildSet {
         catalogs.forEach { catalog ->
@@ -204,11 +163,8 @@ class Curation(
 
     companion object {
         /**
-         * The one door curated files come through: parse each species, then hold the whole (#545).
-         *
-         * Loudly and never degrading, as it always was — a seeded file that cannot be trusted stops
-         * the app at startup and the suite at its first assertion, because a silently dropped
-         * catalog reads on the phone as «me falta».
+         * The one door curated files come through: parse each species, then validate the whole
+         * (#545). It fails loudly: a silently dropped catalog reads on the phone as «me falta».
          */
         fun load(files: CuratedFiles): Curation = Curation(
             catalogs = CatalogSeeds.parseAll(files.readAll(CuratedSpecies.Catalogs)),
@@ -217,15 +173,8 @@ class Curation(
         )
 
         /**
-         * One species, in one order, and never zero files of it.
-         *
-         * The order is settled here so that neither side of the seam has to settle it: a curated
-         * file is read by name and nothing about a phone's asset listing has to agree with a
-         * directory listing for the two to load the same curation.
-         *
-         * A species that brings nothing is a build that lost a directory, not a collector with no
-         * programmes: both sides ship all three, so an empty read is the shape of the failure it
-         * used to be on the phone alone — a `data/` gone missing left the suite green.
+         * One species, sorted by file name so asset and directory listings load the same curation.
+         * No files is a build that lost a directory, and fails: both sides ship all three species.
          */
         private fun CuratedFiles.readAll(
             species: CuratedSpecies,
@@ -236,12 +185,9 @@ class Curation(
 }
 
 /**
- * Rejects a `short_name` shared by a catalog and a curated grouping (#22).
- *
- * Each species checks its own names while parsing, but the index draws the two side by side and
- * indistinguishably (#12), so uniqueness only means anything across both. A programme stays out on
- * purpose: it is not a card, so it never sits beside them and cannot be confused with one there
- * (ADR 0022).
+ * Rejects a `short_name` shared by a catalog and a curated grouping (#22). Each species checks its
+ * own while parsing, but the index draws both side by side (#12). Programmes are not cards, so
+ * they stay out (ADR 0022).
  */
 private fun requireDistinctShortNames(
     catalogs: List<CollectionCatalog>,

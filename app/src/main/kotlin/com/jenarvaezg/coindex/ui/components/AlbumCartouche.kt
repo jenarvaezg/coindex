@@ -24,14 +24,9 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 private val ALBUM_CARTOUCHE_HEIGHT = 52.dp
 
 /**
- * A recess pressed into the album board: the shadow the die leaves at the top edge and the fresh
- * cardboard it exposes at the bottom one.
- *
- * The board has one physics and not two (#337). The cartouche of Coins was the first thing sunk
- * into it (#350) and the year tag of a plate cell is the second, so they are the same three
- * strokes rather than two drawings that happen to agree today. The sides are deliberately not
- * drawn: the cartouche spans its card and has none, and giving only the tag four edges would be
- * exactly the second physics this exists to avoid.
+ * A recess pressed into the album board: shadow at the top edge, fresh cardboard at the bottom.
+ * Shared by the Coins cartouche (#350) and the year tag (#337) so both sink the same way. The sides
+ * are deliberately not drawn.
  */
 fun Modifier.recessedInBoard(
     fillAlpha: Float = AlbumToneConfig.Default.cartoucheAlpha,
@@ -62,8 +57,7 @@ fun AlbumCartouche(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            // The measured worst case already fits in 52 dp; exact height keeps every label equal
-            // without adding 26 dp to the row pitch (#350).
+            // Fixed height so every label is equal; the worst case fits (#350).
             .height(ALBUM_CARTOUCHE_HEIGHT)
             .recessedInBoard(tone.cartoucheAlpha, tone.cartoucheTopRuleAlpha)
             .padding(horizontal = 5.dp, vertical = 4.dp),

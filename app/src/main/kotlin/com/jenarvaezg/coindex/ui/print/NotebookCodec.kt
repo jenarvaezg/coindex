@@ -1,16 +1,9 @@
 package com.jenarvaezg.coindex.ui.print
 
 /**
- * How the chosen configuration survives a launch, one key per switch.
- *
- * On shared preferences and one key per switch, exactly as the shelves are stored (`ShelfCodec`),
- * and for the same reason: a key this version does not recognise, or one an older version never
- * wrote, reads back as the **default of the switch it names** instead of as an «off». The default of
- * «fotos» is on, so an absent key must not be allowed to hand the collector a notebook with no coins
- * in it.
- *
- * Nothing here is per card, so ADR 0021 §7 is untouched: how the notebook is printed is what the
- * collector is looking through, not something stored about a collection.
+ * Persists the notebook options in shared preferences, one key per switch, like `ShelfCodec`. A
+ * missing key reads back as that switch's default rather than as off, so an absent «fotos» key
+ * can't produce a notebook with no coins. Nothing is stored per card (ADR 0021 §7).
  */
 object NotebookCodec {
     fun key(switch: NotebookSwitch): String = when (switch) {
@@ -23,12 +16,7 @@ object NotebookCodec {
         NotebookSwitch.Money -> "notebook_money"
     }
 
-    /**
-     * All six, always.
-     *
-     * The default is written as the default and not as an absence, so a switch chosen on purpose and
-     * one never touched read back the same — which they are.
-     */
+    /** Every switch, defaults included, rather than omitting keys left at their default. */
     fun encode(options: NotebookOptions): Map<String, Boolean> =
         NotebookSwitch.entries.associate { switch -> key(switch) to options[switch] }
 

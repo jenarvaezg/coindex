@@ -62,15 +62,9 @@ fun Eyebrow(text: String, modifier: Modifier = Modifier) {
 }
 
 /**
- * A title that opens something, written as text rather than as a button.
- *
- * `TextButton` is the obvious control, but it centres its label inside a fixed minimum height
- * and clips it to the button shape: with `contentPadding = 0` a serif title loses its first and
- * last letters, and a title that wraps loses whole lines. Here the text keeps its own metrics
- * and takes the click itself, with the tap area grown by the padding.
- *
- * Underlined, because with `primary = ink` the moss is too close to the prose around it to
- * carry the affordance on its own.
+ * A title that opens something, written as text rather than as a button: `TextButton` clips its
+ * label to the button shape, cutting a serif title's edge letters and the lines of a wrapped one.
+ * Underlined, because moss alone is too close to the surrounding prose to signal a link.
  */
 @Composable
 fun LinkText(
@@ -93,12 +87,7 @@ fun LinkText(
     )
 }
 
-/**
- * Level 1 of the action system: the action a screen exists for.
- *
- * Filled ink, as «Sincronizar» always was, and rare enough that the eye finds it without
- * reading.
- */
+/** Level 1 of the action system: the action a screen exists for, in filled ink. */
 @Composable
 fun PrimaryAction(
     text: String,
@@ -117,11 +106,9 @@ fun PrimaryAction(
 }
 
 /**
- * Level 2: a card's own actions.
- *
- * Outlined and compact so the card keeps its weight, but bordered: with `primary = ink` a bare
- * `TextButton` is the same colour as the prose around it and reads as a caption. The hairline
- * is the same one the dashed cards use, so the button belongs to the page.
+ * Level 2: a card's own actions. Outlined and compact so the card keeps its weight; bordered
+ * because a bare `TextButton` in ink reads as a caption. The border is the dashed cards' hairline
+ * colour.
  */
 @Composable
 fun CardAction(
@@ -149,16 +136,9 @@ fun CardAction(
 }
 
 /**
- * Level 3: a link that leaves the app.
- *
- * An underlined link with a drawn arrow appended: the underline says it opens something, the
- * arrow says the something is a browser rather than another page of this notebook. The arrow is
- * inline content after a non-breaking space, so wrapping never strands it on a line of its own.
- *
- * It is for prose, and the casilla of a plate is the one place that asked it to be something else:
- * the name under a hole had to shrink and truncate inside a 113 dp cell, and the arrow was 19 dp of
- * that cell. The plate's names are plain ink now and the year's recessed tag opens Numista instead
- * (#337), so the parameters that grid asked for are gone again.
+ * Level 3: a link that leaves the app, underlined with a drawn arrow marking it as a browser link.
+ * The arrow follows a non-breaking space, so wrapping never strands it on its own line. Meant for
+ * prose.
  */
 @Composable
 fun ExternalLink(
@@ -208,11 +188,8 @@ fun BackGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
 }
 
 /**
- * The way on, which is [BackGlyph] the other way round: the door of an annex (ADR 0026 §8).
- *
- * Drawn and not typed, for the reason the external link's arrow is drawn: neither Bitter nor Barlow has
- * an arrow glyph (#298), so a «→» in a string would come out in whatever the system substitutes — and
- * this one is printed at the foot of the index, next to the album's own type.
+ * [BackGlyph] reversed: the door of an annex (ADR 0026 §8). Drawn because neither Bitter nor Barlow
+ * has an arrow glyph (#298), so a typed «→» would fall back to a system font.
  */
 @Composable
 fun ForwardGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
@@ -251,13 +228,7 @@ private fun ExternalLinkGlyph(color: Color, modifier: Modifier = Modifier) {
     }
 }
 
-/**
- * The share mark, drawn rather than imported.
- *
- * Material's icon pack is not a dependency of this app and would be the only piece of Material
- * iconography in a notebook drawn with rules and circles; three dots and two strokes are the
- * same idea in the guide's own hand.
- */
+/** The share mark, drawn rather than imported: the app doesn't depend on Material's icon pack. */
 @Composable
 fun ShareGlyph(color: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(13.dp)) {
@@ -299,16 +270,9 @@ private val DASH_LENGTH = 5.dp
 private val DASH_GAP = 4.dp
 
 /**
- * Bordered paper card.
- *
- * [dashed] is drawn dashed, and means what a dashed box means on paper: nothing is mounted here
- * yet. It is for absences — a «me falta» cell, a section with no cards in it — never for a card
- * that has pieces behind it. [emphasized] is the opposite end: a double-weight rule for the
- * cells the collector actually owns, and it gives way to [dashed], because an absence is never
- * something to emphasize.
- *
- * (The parameter used to only change the border colour, while its comment promised both a
- * dashed rule and an offset shadow the card never drew.)
+ * Bordered paper card. [dashed] marks an absence (a «me falta» cell, a section with no cards),
+ * never a card with pieces behind it. [emphasized] doubles the rule for cells the collector owns,
+ * and [dashed] wins over it.
  */
 @Composable
 fun FieldCard(
@@ -364,11 +328,8 @@ private val GRAYSCALE = ColorMatrix().apply { setToSaturation(0f) }
 private val MOUNT = Paper.card.compositeOver(Paper.paper)
 
 /**
- * Multiplies a picture by the page it is printed on.
- *
- * Catalog photographs are shot on white, and a white rectangle on cream paper is the one thing
- * that gives away that the plate is a screenshot and not a page. Scaling each channel by the
- * mount's own maps that white exactly onto the card and leaves the coin where it was.
+ * Multiplies a picture by the page it is printed on: catalog photographs are shot on white, and
+ * scaling each channel by the mount's maps that white onto the card tone.
  */
 private val PAPER_TINT = ColorMatrix().apply {
     this[0, 0] = MOUNT.red
@@ -381,12 +342,8 @@ private val GRAYSCALE_ON_PAPER = ColorMatrix(GRAYSCALE.values.copyOf()).apply {
 }
 
 /**
- * The filter a coin gets on a printed page, where every coin is on paper by definition.
- *
- * The notebook of #169 draws its coins itself — at their real diameter and one face only — and this
- * is here so it does not reinvent the mapping of the studio white onto the page tone. It is the last
- * caller: on **screen** a coin is now always a photograph inside a die-cut hole, which fades a
- * missing design with its own alpha and needs no matrix (#423).
+ * The filter a coin gets on a printed page (#169). Only print uses it; on screen a hole fades a
+ * missing coin with alpha instead (#423).
  */
 fun paperCoinFilter(missing: Boolean): ColorFilter =
     ColorFilter.colorMatrix(if (missing) GRAYSCALE_ON_PAPER else PAPER_TINT)

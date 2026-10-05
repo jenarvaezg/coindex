@@ -7,14 +7,9 @@ const val UPDATE_NOTES_COLLAPSED_LINES = 2
 data class UpdateNotesDisclosure(val maxLines: Int, val hint: String?)
 
 /**
- * Whether the release notes are cut short, and whether it is worth saying so.
- *
- * The notes are the only place the collector reads what a version brings, so they have to be
- * readable in full; but the banner rides above every screen and cannot claim more than a couple
- * of lines uninvited. Hence the disclosure: two lines by default, the whole note on a tap.
- *
- * [truncated] is what the text layout actually reported, not a guess from the string's length:
- * a note that already fits carries no hint, so «Ver más» never promises anything it cannot show.
+ * Two lines of release notes by default and the whole note on a tap: the banner sits above every
+ * screen, but the notes are where a version's changes are read. [truncated] comes from the text
+ * layout, so a note that fits gets no «Ver más».
  */
 fun updateNotesDisclosure(expanded: Boolean, truncated: Boolean): UpdateNotesDisclosure = when {
     // Nothing hidden: no hint, and nothing for a tap to reveal.

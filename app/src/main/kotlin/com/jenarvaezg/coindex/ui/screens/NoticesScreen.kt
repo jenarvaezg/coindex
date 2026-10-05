@@ -44,9 +44,8 @@ fun NoticesScreen(
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // No eyebrow: the masthead already names this screen, and «Avisos y licencias» over a
-        // page of licence text is the word said twice (§5). The installed version sits here
-        // instead of the masthead (#410): one place an APK build needs to be identifiable.
+        // No eyebrow: the top bar already names the screen (ADR 0026 §5). The installed version
+        // goes here rather than in the top bar (#410).
         Text(
             installedVersionLabel(versionName),
             style = MaterialTheme.typography.bodyMedium,

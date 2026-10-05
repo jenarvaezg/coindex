@@ -49,22 +49,13 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 /**
- * «Lo que busco»: the casillas the collector marked, in one sheet (ADR 0029 §6).
+ * «Lo que busco»: the casillas the collector marked, on one sheet (ADR 0029 §6). Part of the annex
+ * of ADR 0026 §8, not a hierarchy: reached from Colecciones and «Explorar» (ADR 0030 §8), left with
+ * «Volver», no bar cell.
  *
- * It lives inside the annex of ADR 0026 §8 and is not a hierarchy: it hangs off Colecciones, it is left
- * with «Volver» and it carries no cell in the bar. What it is made of is not the collection at all — it
- * is the coins the collector does **not** have — which is why no order of the index's sheet could have
- * held it.
- *
- * **The same casillas, drawn the same way.** The hole, the ghost of the design, the year sunk into the
- * cardboard and the name under it are the plate's, because a marked slot is a slot: what a row adds is
- * which lámina it came from, which is the one thing the plate never has to say, and «Quitar».
- *
- * **A screen of its own behind a door of «Explorar»** since the shelf window arrived (ADR 0030 §8): the
- * annex used to be this list and nothing else, and the list stays whole rather than folding into the
- * shelf because what it is *for* is `Exportar la lista` — the sheet taken to a fair — and a tile saying
- * «2 lo busco» cannot be taken anywhere. Seven rows have one order, the last marked first, so it carries
- * no shelf of its own.
+ * Rows are drawn like the plate's casillas (hole, sunken year, name), plus the lámina they belong
+ * to and «Quitar». It stays a full screen rather than folding into the shelf because its purpose is
+ * «Exportar la lista», the sheet taken to a fair. One order, last marked first, so no shelf.
  */
 @Composable
 fun WishesScreen(
@@ -74,25 +65,18 @@ fun WishesScreen(
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
-    /**
-     * The sheet the year of a marked casilla opens (#508).
-     *
-     * The lámina's own, from the same place: a row here **is** a casilla of a plate, so pressing its
-     * year opens the sheet it opens over there.
-     */
+    /** The coin sheet a row's year opens, the same one its plate opens (#508). */
     sheet: CoinSheetSurface,
     onRemove: (WishKey) -> Unit,
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Which **row** is open — not which type — because the face a casilla rests on is its own plate's
-    // declaration, and the list crosses plates: two marked casillas of one type in two catalogs can
-    // declare different sides (ADR 0020, #227). This screen's own state exactly as it is the lámina's.
+    // A row, not a type: the face up comes from the row's plate, and two plates can declare
+    // different sides for one type (ADR 0020, #227).
     var openRowId by rememberSaveable { mutableStateOf<String?>(null) }
     val openRow = subject.rows.firstOrNull { it.id == openRowId }
     Box(modifier = modifier) {
-        // The same machine a lámina and a hoja use (#430), with a noun of its own: what leaves here is
-        // «la lista», and one page of it is a PNG exactly as one page of a plate is.
+        // The shared export flow (#430), exporting «la lista».
         SheetExportFlow(
             sheet = SharedSheet.LIST,
             key = WishLabels.DESTINATION,
@@ -110,15 +94,12 @@ fun WishesScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = WISH_MARGIN, vertical = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(PlateMetrics.gutter),
-                // The plate's own row gap, because these are the plate's own casillas: what separates two
-                // rows of holes is the sheet's proximity and not its air (see [PlateSpacing]).
+                // Same row gap as the plate (see [PlateSpacing]).
                 verticalArrangement = Arrangement.spacedBy(PlateSpacing.rowGap),
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        // No eyebrow and no title: the masthead of this screen already says «Lo que
-                        // busco», and printing it again one line below is the furniture ADR 0026 §5
-                        // prices.
+                        // No heading: the top bar already says «Lo que busco» (ADR 0026 §5).
                         Text(
                             WishLabels.SENTENCE,
                             style = MaterialTheme.typography.bodyLarge,
@@ -140,7 +121,7 @@ fun WishesScreen(
                                 )
                             }
                         } else {
-                            // Gone while the panel it opened is in its slot (#512).
+                            // Hidden while the panel is open (#512).
                             SheetExportDoorButton(export.door)
                             export.options?.invoke()
                             export.progress?.invoke()
@@ -160,9 +141,8 @@ fun WishesScreen(
         CoinSheetOverlay(
             typeId = openRow?.typeId,
             surface = sheet,
-            // The declaration of the row's own plate, read off the row that was pressed. Where the row
-            // is already gone — a sync filled its casilla while the sheet was open — the album's
-            // reverse-first rule answers instead of a plate's.
+            // The row's plate's side; if a sync removed the row while the sheet was open, the
+            // album's reverse-first rule.
             faces = { typeId ->
                 val side = openRow?.printedSide
                 if (side == null) coinAlbumFaces(images[typeId]) else printedFaces(images[typeId], side)
@@ -172,24 +152,16 @@ fun WishesScreen(
     }
 }
 
-/** The page margin of the list, which is the plate's: the same casillas on the same paper. */
+/** Same page margin as the plate. */
 private val WISH_MARGIN = 20.dp
 
 /**
- * One marked casilla as a row of the list.
+ * One marked casilla in the list.
  *
- * **No mark drawn inside the hole**, and that is the frequency rule of ADR 0026 §5 rather than an
- * omission: every casilla on this sheet is marked, so «lo busco» under each of them would print the
- * same two words seven times to distinguish nothing. On a plate the chip is the whole point, because
- * there it tells one hole from its fifty neighbours. What the chip still says here is the **price**,
- * which does differ per row.
- *
- * **«Quitar» *is* per row, and that is not the control ADR 0029 §5 refused.** What it refused was a
- * toggle on each of a plate's fifty-one casillas, where the mode's cost line would have been printed
- * fifty-one times over coins the collector was only browsing. Here the population is the marks
- * themselves — seven of them — undoing one is the only upkeep the screen has, and it is the shape a
- * box's upkeep already has beside each of its pieces (ADR 0021 §9). A mode would charge two taps to
- * undo one mistake on a list that exists to be pruned.
+ * No «lo busco» chip: every casilla here is marked, so it would distinguish nothing (ADR 0026 §5);
+ * the chip only shows the price. «Quitar» on each row is fine here, unlike per-casilla toggles on a
+ * plate (ADR 0029 §5): the list is just the marks, and removing one is its only upkeep, like a
+ * box's per-piece action (ADR 0021 §9).
  */
 @Composable
 private fun WishCell(
@@ -205,20 +177,15 @@ private fun WishCell(
         Box(contentAlignment = Alignment.Center) {
             AlbumHole(
                 photo = images?.printedPhoto(row.printedSide),
-                // Always an empty casilla — what is on this sheet is by definition what the
-                // collector does not have — and **whole rather than in penumbra** (#520): the penumbra
-                // says «te falta» on a plate you are filling, and this is a list for a fair, where the
-                // drawing has to let a coin be recognised across a table. The dotted rule is what says
-                // it is not yours.
+                // Drawn whole, not as a ghost, so the coin can be recognised at a fair; the dotted
+                // rule says it isn't owned (#520).
                 absence = HoleAbsence.Wanted,
                 otherSide = images?.printedPhoto(row.printedSide.other),
                 modifier = Modifier.size(104.dp),
             )
             HoleStamp(cost = row.cost, wished = false)
         }
-        // The year's own target, reserved whether or not there is a year to put in it, exactly as on
-        // the plate: otherwise a row with none would pull its name up against the hole while its
-        // neighbours' stayed down (#473).
+        // The year's target height is reserved even without a year, as on the plate (#473).
         Box(
             modifier = Modifier.height(YearTagMetrics.target),
             contentAlignment = Alignment.Center,
@@ -228,8 +195,7 @@ private fun WishCell(
             }
         }
         row.printedName?.let { name -> PlateCellName(name = name) }
-        // Which lámina this casilla is a slot of. The list crosses plates, so it is the one thing a
-        // row has that a casilla on its own plate never needs to say.
+        // The lámina this casilla belongs to, since the list crosses plates.
         Text(
             row.plate,
             style = MaterialTheme.typography.labelMedium,

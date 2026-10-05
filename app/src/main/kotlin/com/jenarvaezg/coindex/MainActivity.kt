@@ -20,17 +20,13 @@ class MainActivity : ComponentActivity() {
         val container = (application as CoindexApplication).container
         setContent {
             CoindexTheme {
-                // Whether anything is allowed to move at all (#514), and where the light falls on
-                // the metal (#338). Installed here and not inside the theme because this is the one
-                // composable with a system behind it: the tilt sensor is registered while the
-                // activity is resumed and there is a coin on screen, and both readings are the
-                // device's rather than the collection's.
+                // Whether anything may move (#514), and where the light falls on the metal (#338).
+                // Provided here rather than in the theme because both come from the device: the
+                // tilt sensor is registered while the activity is resumed with a coin on screen.
                 //
-                // **The gloss is the movement the scale cannot reach**, and the only one the app
-                // has to answer for by itself: it follows the sensor and has no duration for a
-                // factor to divide. So where quiet was asked for it is not slowed, it is not
-                // registered — `CoinTilt.Still` is the phone on the table, a defined pose and not
-                // an effect switched off halfway.
+                // The gloss follows the sensor and has no duration for the system's animation
+                // scale to divide, so with motion off the sensor isn't registered at all and the
+                // coin rests in `CoinTilt.Still`.
                 val moving = rememberSystemMotion()
                 CompositionLocalProvider(
                     LocalCoinTilt provides if (moving) rememberCoinTilt() else CoinTilt.Still,

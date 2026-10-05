@@ -18,10 +18,8 @@ enum class CalibrationControl(
     GLOSS_INTENSITY(0f..1f),
 
     /**
-     * A fraction of the diameter and not dp: the prototype's ±55 dp were ±45 % of a 121 dp hole, and
-     * the same dp on production's 104 dp casilla would be ±53 % — a band that spends more time off
-     * the coin than on it. The ceiling leaves room above the approved ±45 % — a slider that opens at
-     * 90 % of its own range can only be pushed one way.
+     * A fraction of the diameter, not dp, so the band travels the same share of the coin at any
+     * casilla size. The ceiling leaves room above the approved ±45 %.
      */
     GLOSS_TRAVEL(0f..0.7f),
     FLIP_DURATION_MILLIS(200f..900f),
@@ -30,12 +28,9 @@ enum class CalibrationControl(
     GHOST_OPACITY(0f..0.3f),
 
     /**
-     * The diameter the ghost is being read at, which is what #556 came to the bench to calibrate.
-     *
-     * The album draws its holes at two sizes and the penumbra was written for one of them: 104 dp on
-     * the plate, the sheet and the shelf, and 34 dp on the country axis. The range covers both ends and
-     * the 40 dp of #520's row in between — the size at which the sunk design measured as two grey discs
-     * — so the floor can be found by walking it rather than argued.
+     * The diameter the ghost is read at (#556). The album draws holes at 104 dp (plate, sheet,
+     * shelf) and 34 dp (country axis); the range covers both and the 40 dp of #520, so the floor can
+     * be found by sliding.
      */
     GHOST_DIAMETER_DP(24f..104f),
     CARTOUCHE_ALPHA(0f..1f),
@@ -59,24 +54,19 @@ enum class CalibrationTab {
 
 data class CalibrationState(
     val grainOpacity: Float = GRAIN_OPACITY,
-    // The gloss opens where production stands, for the same reason the tone tab does (#357): a
-    // bench showing a value the app does not paint cannot tell you whether what you see is the
-    // defect.
+    // Opens at production's values, like the tone tab (#357).
     val glossIntensity: Float = CoinGloss.Default.intensity,
     val glossTravel: Float = CoinGloss.Default.travel,
     val flipDurationMillis: Int = 420,
     val stampingDurationMillis: Int = 300,
     val recessDepthDp: Float = 3f,
     val ghostOpacity: Float = 0.14f,
-    // The ghost slot opens at the diameter production says is the floor, the way the gloss and the tone
-    // open where production stands: a bench showing a size the app does not draw cannot tell you
-    // whether what you are looking at is the defect (#357).
+    // Opens at production's floor diameter (#357).
     val ghostDiameterDp: Float = GHOST_MIN_DP,
     val showGhost: Boolean = false,
     val selectedTab: CalibrationTab = CalibrationTab.EFFECTS,
-    // The tone tab opens where production stands, the way the grain slider already does. It used
-    // to open at #349's starting point, and a bench that shows a tone the app does not paint is a
-    // bench that cannot tell you whether what you are looking at is the defect (#357).
+    // The tone tab opens at production's values: a bench showing a tone the app doesn't paint can't
+    // tell whether what you see is the defect (#357).
     val cartoucheAlpha: Float = AlbumToneConfig.Default.cartoucheAlpha,
     val cardAlpha: Float = AlbumToneConfig.Default.cardAlpha,
     /** 0x87 is the tone whose ramp lands exactly on the calibrated `#878577`. */

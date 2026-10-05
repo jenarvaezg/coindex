@@ -24,23 +24,13 @@ const val DEFAULT_MONTHLY_BUDGET: Int = 1500
 data class Credentials(val apiKey: String, val userId: Long)
 
 /**
- * Stores the collector's own Numista credentials on the device.
+ * Stores the collector's own Numista credentials on the device. The API key is encrypted with an
+ * AES/GCM key that never leaves the Android Keystore; only the ciphertext reaches the named values.
+ * The user id is stored as-is. The secret is passed in ([keystoreSecret] in the app) so a JVM test
+ * can run the encryption round trip (#546).
  *
- * The API key is encrypted with an AES/GCM key that lives in the Android Keystore and never
- * leaves it; only the ciphertext reaches the named values. The user id is stored as-is.
- *
- * A plain class and no longer an interface with a fake of its own (#546), and the seam moved to the
- * thing that actually needs a device: **the key**, which arrives as a function and is
- * [keystoreSecret] in the app. What was untestable here was never the file — onboarding, signing out
- * and the settings form were readable enough behind a fake store — it was the keystore, and a fake
- * store answered by never encrypting anything. With the key handed in, a JVM test runs the round
- * trip whole, which is the half of this class that had no test at all.
- *
- * It also takes down [RejectionWall], and that collaborator is here rather than in the settings
- * screen for the reason the wall exists at all: a `401` has no clock (#579), so the *only* thing
- * that can end it is a key being written — and this is the one place a key is ever written. A screen
- * that had to remember to clear it would be a screen that forgets, and a phone stuck on prices for
- * ever with the right key in the field.
+ * Saving also takes down the [RejectionWall]: the credentials wall has no clock (#579), and this is
+ * the only place a key is written.
  */
 class StoredCredentials(
     private val values: NamedValues,
@@ -54,12 +44,9 @@ class StoredCredentials(
     }
 
     /**
-     * Writes the credentials down and gives Numista another chance.
-     *
-     * The wall falls **whatever its cause** and not only for the `401` that names it: saving this
-     * form is the collector saying «prueba otra vez», and the `403` of a quota shared with another
-     * phone (#562) is undone by a second key exactly as the `401` is by a corrected one. It costs at
-     * most one call to find out the wall was right.
+     * Writes the credentials down and gives Numista another chance. The wall falls whatever its
+     * cause: saving the form means «prueba otra vez», a different key escapes a quota shared with
+     * another phone (#562) as a corrected one escapes a refusal, and being wrong costs one call.
      */
     fun save(apiKey: String, userId: Long) {
         values.write(
@@ -89,18 +76,15 @@ class StoredCredentials(
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, secret())
         val ciphertext = cipher.doFinal(value.toByteArray(Charsets.UTF_8))
-        // The platform's own encoder and no longer `android.util.Base64` with `NO_WRAP`: both are
-        // RFC 4648 padded with no line breaks, so what is already on a phone still decodes, and this
-        // one exists off a device too.
+        // `java.util.Base64` matches the `android.util.Base64` `NO_WRAP` output older versions
+        // stored (RFC 4648, padded, no line breaks) and also runs off a device.
         return Base64.getEncoder().encodeToString(cipher.iv + ciphertext)
     }
 }
 
 /**
  * The AES/GCM key of this install, from the Android Keystore, generated the first time it is asked
- * for.
- *
- * It never leaves the keystore: what travels is the cipher, initialised with it.
+ * for. It never leaves the keystore.
  */
 fun keystoreSecret(): SecretKey {
     val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }

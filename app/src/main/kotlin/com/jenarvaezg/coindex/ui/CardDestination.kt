@@ -13,18 +13,12 @@ sealed interface CardDestination {
 }
 
 /**
- * The destination of a card, chosen by the capability of ADR 0021 §3 — having an issue list to
- * open — and never by which species of collection the card is.
+ * A card opens its plate when it has one and its list of pieces otherwise, whatever species of
+ * collection it is (ADR 0021 §3). The plate shows everything the list would, and more.
  *
- * The plate wins wherever there is one because it shows everything the list of pieces would and
- * more: measured over the 1033 curated slots of `data/`, the pieces that fall in a card with a
- * catalog and in no slot of its plate are **0**. The second destination was 38 rows to reach the
- * same thing.
- *
- * The bit asked is `plateCatalogId` and not «does it have a catalog», because ADR 0021 §7 opens a
- * plate **on evidence**: a catalog the collector owns no issued member of yet has no plate to show,
- * and sending them there would be one tap to a screen whose only content is why it is empty. Such a
- * card still counts `0 de 12` on the way in — see `PiecesSubject.coverage`.
+ * The test is `plateCatalogId`, not whether there is a catalog: a plate opens only on evidence
+ * (ADR 0021 §7), so a catalog with no owned issued member has none yet. Such a card still counts
+ * `0 de 12` on the way in (see `PiecesSubject.coverage`).
  */
 fun destinationOf(card: IndexCard): CardDestination = when (card) {
     is IndexCard.Derived -> card.plateCatalogId

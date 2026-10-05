@@ -4,24 +4,21 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * A curated statement that some Numista types belong together, and nothing more (ADR 0013).
+ * A curated statement that some Numista types belong together, and nothing more (ADR 0013), for
+ * types Numista files under no `series` (the 100 pesetas of Franco, the Venezuelan circulating
+ * silver), which would otherwise stay unclassified however many the collector owns.
  *
- * It exists for the types Numista files under no `series` at all: the 100 pesetas of Franco, the
- * Venezuelan circulating silver. Those pieces have no family to group by, so they pile up in the
- * unclassified list forever, however many of them the collector owns.
- *
- * It is deliberately the weakest claim in the project. It supplies a [family] and stops there:
- * it declares no members, no weight and no finish, so it can never produce a Missing state. A
- * collection catalog naming the same type outranks it, and the physical variant still comes from
- * each type's own metadata — a grouping that happened to span two weights would honestly split
- * into two derived collections rather than pretend they are one piece.
+ * The weakest claim in the project: it supplies a [family] and no members, weight or finish, so it
+ * never produces a Missing state. A collection catalog naming the same type outranks it, and the
+ * physical variant still comes from each type's metadata, so a grouping spanning two weights splits
+ * into two derived collections.
  */
 @Serializable
 data class CuratedGrouping(
     @SerialName("schema_version") val schemaVersion: Int,
     val id: String,
     val name: String,
-    /** The card-sized name (#22): required, unique across every curated file, prefix of [name]. */
+    /** The card name (#22): required, unique among catalogs and groupings, a prefix of [name]. */
     @SerialName("short_name") val shortName: String,
     val family: String,
     @SerialName("issuer_code") val issuerCode: String,

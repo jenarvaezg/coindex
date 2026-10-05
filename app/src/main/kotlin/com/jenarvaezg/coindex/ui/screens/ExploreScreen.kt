@@ -42,35 +42,27 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.wishDoorLabel
 
 /**
- * «Explorar»: the plates where something is missing (ADR 0030 §8).
+ * «Explorar»: the plates where something is missing (ADR 0030 §8, the annex of ADR 0026 §8). One
+ * grid holds both curated plates the collector owns nothing of and their own plates with a marked
+ * casilla, ordered «primero lo que busco». Entered from the last row of Colecciones; left with
+ * «Volver».
  *
- * The annex of ADR 0026 §8, and since the shelf window arrived it is a **shelf** rather than a list: the
- * twenty curated plates the collector owns nothing of, and their own plates holding a marked casilla, in
- * one grid ordered «primero lo que busco». It has no cell and no bar, it is entered from the last row of
- * the Colecciones list and it is left with «Volver».
- *
- * **The mark is a state of a casilla and not a section of a screen** (ADR 0029 §2), which is why the two
- * populations share a grid instead of being stacked: a screen that showed the twenty and hid the three
- * plates where the collector is actually hunting would be sorting by ownership, and ownership is the one
- * thing they are not thinking about in here.
- *
- * «Lo que busco» keeps a screen of its own behind the door at the head of the shelf, because what it is
- * for is the sheet taken to a fair (ADR 0029 §7).
+ * The two kinds share a grid because a wish mark is a state of a casilla, not a section
+ * (ADR 0029 §2), and splitting them would sort by ownership. «Lo que busco» keeps its own screen
+ * behind the door at the top, since it is the sheet taken to a fair (ADR 0029 §7).
  */
 @Composable
 fun ExploreScreen(
     tiles: List<ShowcaseTile>,
-    /** How many casillas are marked, for the door. Zero prints no door: there is nothing behind it. */
+    /** Marked casillas; at zero there is no door to «Lo que busco». */
     wishes: Int,
     images: Map<Int, TypeImages>,
     onOpenPlate: (String) -> Unit,
     onOpenWishes: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // The shelf's own two controls, and they live here rather than in the state that survives a launch
-    // (ADR 0021 §1): what persists there is a **narrowing** — filters a collector can lose half their
-    // collection behind — and this shelf carries no chips at all, so an order and a search box are the
-    // whole of it. `rememberSaveable` keeps both across a rotation, which is where they would be missed.
+    // Survive rotation but not a relaunch, unlike the persisted narrowings of ADR 0021 §1: this
+    // shelf has no filter chips, only an order and a search box.
     var query by rememberSaveable { mutableStateOf("") }
     var sort by rememberSaveable { mutableStateOf(ShowcaseSort.ByCasillas) }
     val shown = showcaseShelf(tiles, sort, query)
@@ -84,9 +76,7 @@ fun ExploreScreen(
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                // The door of «Lo que busco», at the head of the shelf and on deeper paper: the same
-                // shape that brought the collector here from the index (ADR 0026 §8 clause 3), one
-                // level further in. Absent at zero, like that one.
+                // Same door shape as the index's door into this screen (ADR 0026 §8 clause 3).
                 if (wishes > 0) {
                     AnnexDoor(label = wishDoorLabel(wishes), onOpen = onOpenWishes)
                 }
@@ -95,7 +85,7 @@ fun ExploreScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     color = Paper.muted,
                 )
-                // That browsing is free, said once for the whole shelf and not on twenty tiles.
+                // Browsing is free: said once for the shelf, not on every tile.
                 Text(
                     ShowcaseLabels.FREE_SENTENCE,
                     style = MaterialTheme.typography.bodyMedium,
@@ -106,8 +96,7 @@ fun ExploreScreen(
                     onValueChange = { query = it },
                     placeholder = ShowcaseLabels.SEARCH_PLACEHOLDER,
                 )
-                // The shelf **as shown**: the note under the orders counts what the collector is
-                // looking at, so a search narrowed to three unvalued plates says three.
+                // The shown tiles, so the note under the orders counts what is on screen.
                 ShelfOrder(sort = sort, shelf = shown, onSort = { sort = it })
             }
         }
@@ -132,18 +121,14 @@ fun ExploreScreen(
     }
 }
 
-/** The page margin, the calle and the card of the index: this shelf is the album's, in another order. */
+/** The index's margin, gutter and card width. */
 private val SHELF_MARGIN = 12.dp
 private val SHELF_GUTTER = 8.dp
 private val SHELF_CARD_WIDTH = 104.dp
 
 /**
- * One plate of the shelf, whichever population it came from.
- *
- * The card of the index (`CollectionCard`) with one thing added and one taken away: the ghost, because a
- * plate of the window holds no coin of the collector's — the fantasma of ADR 0026 is what says a casilla
- * is empty, and here the whole plate is — and no travelling coin, because nothing flies from a hole that
- * is not the same object at both ends of the journey (ADR 0026 §3).
+ * One plate of the shelf, drawn like the index's `CollectionCard` and, like it, without a
+ * travelling coin (ADR 0026 §3).
  */
 @Composable
 private fun ShelfTile(
@@ -160,19 +145,12 @@ private fun ShelfTile(
     ) {
         AlbumHole(
             photo = images?.printedPhoto(tile.printedSide),
-            // What the hole holds, and not which species of plate this is (#556). Every window tile
-            // used to wear the ghost, which is «te falta» — and on a shelf of plates the collector does
-            // not collect nothing is missing: the coin is not theirs and never was. Worse for a screen
-            // that mixes the two populations on purpose (ADR 0030 §8 clause 1, so as not to sort by
-            // ownership), the penumbra sorted them by ownership in the only loud property a tile has,
-            // and `ShowcaseTile` is explicit that a tile is drawn from what it *has* and never from a
-            // branch on which kind it is. So the shelf draws its coins whole and the dotted rule says
-            // they are not yours, which is the language #520 chose for exactly this sentence.
+            // Drawn from what the hole holds, not from which kind of plate it is (#556): the ghost
+            // means «te falta», which is wrong for a plate the collector doesn't collect, and would
+            // split the shelf by ownership. A coin not theirs gets the dotted rule (#520).
             absence = if (tile.coverOwned) HoleAbsence.Filled else HoleAbsence.Wanted,
-            // **No `otherSide`**, exactly as `CollectionCard` passes none: the coin of a *casilla* turns
-            // over, and a tile is not a casilla — handed the other face, the hole takes the tap to turn
-            // it and the plate behind the tile never opens. Measured on the AVD, where the whole shelf
-            // was inert.
+            // No `otherSide`, as in `CollectionCard`: with one the hole takes the tap to flip the
+            // coin and the plate never opens.
             modifier = Modifier.size(SHELF_CARD_WIDTH),
         )
         CollectionName(tile.name)
@@ -182,8 +160,8 @@ private fun ShelfTile(
             color = if (tile.mine) Paper.rust else Paper.moss,
             textAlign = TextAlign.Center,
         )
-        // What put this plate of the collector's on a shelf of things they do not have. Lower case,
-        // because it is the same note the chip in the hole is (ADR 0029 §5).
+        // Why one of the collector's plates is here. Lower case, like the chip in the hole
+        // (ADR 0029 §5).
         tile.marks?.let { marks ->
             Text(
                 marks,
@@ -196,21 +174,12 @@ private fun ShelfTile(
 }
 
 /**
- * The two orders of the shelf, both on the paper, and what the one in force could not place.
+ * The shelf's two orders as chips, and a note on what the current one couldn't place.
  *
- * `FilterShelf` is what a hierarchy with facets opens; this shelf has none — twenty plates at 0/N and
- * twelve countries buy no chip (ADR 0026 §8 clause 4) — so a disclosure that folded one row with two
- * words in it would be a fold with nothing folded.
- *
- * **Both orders are drawn, and the one in force is the filled one** (#513). It was a muted line beside
- * a framed `CardAction`, which is this album's convention upside down: the enclosed thing reads as the
- * chosen thing, so the shelf sorted by casillas announced itself as «Por coste de entrar» inside a
- * border. What it wears now is [FilterChip], the one drawing of «elegido» the album has — it says which
- * of a set is on without a sentence explaining it, and it says the same to a screen reader.
- *
- * The line under them is [showcaseOrderNote]: «por coste de entrar» sorts only what carries an amount
- * (ADR 0030 §8 clause 3), and a shelf where nothing has been valued does not visibly move when it is
- * pressed. Silence there is the one reading that leaves the collector believing the control is broken.
+ * Not a `FilterShelf`: there are no facets to fold (ADR 0026 §8 clause 4). The order in force is a
+ * selected [FilterChip] (#513). The note is [showcaseOrderNote]: «por coste de entrar» sorts only
+ * what has an amount (ADR 0030 §8 clause 3), so on an unvalued shelf it visibly does nothing and
+ * needs saying.
  */
 @Composable
 private fun ShelfOrder(
@@ -222,10 +191,8 @@ private fun ShelfOrder(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        // A FlowRow and not a Row: the two chips fit a 360 dp phone side by side and stop fitting at
-        // the larger type sizes, where a Row would squeeze them against each other and each would
-        // ellipse its own label ([FilterChip] is one line). Wrapping spends a line and lets each chip
-        // ask for the width its words need.
+        // FlowRow so the chips wrap at large font sizes instead of ellipsizing their one-line
+        // labels.
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -234,15 +201,11 @@ private fun ShelfOrder(
             ShowcaseSort.entries.forEach { order ->
                 FilterChip(
                     label = order.label,
-                    // No tally: what a filter chip counts is what it would leave, and an order leaves
-                    // the whole shelf. The number beside it would be the same number twice.
+                    // No count: an order keeps the whole shelf.
                     count = null,
                     selected = order == sort,
                     onClick = { onSort(order) },
-                    // The 30 dp of ink a chip is, and 48 dp of finger around it. Android's minimum
-                    // bought the way the aspa of the search box and the year tag buy it — the target
-                    // grows without the chip growing with it — because this row is one of the two
-                    // controls of the whole screen and it is read with a thumb.
+                    // 48 dp touch target around the 30 dp chip, without enlarging the chip.
                     modifier = Modifier.minimumInteractiveComponentSize(),
                 )
             }
@@ -250,10 +213,8 @@ private fun ShelfOrder(
         showcaseOrderNote(sort, shelf)?.let { note ->
             Text(
                 note,
-                // The type of the line Ajustes prints under the pass and not the album's small caps:
-                // this is a sentence explaining what the app did, and the versalitas of `labelMedium`
-                // read as a rubric of the control above them — which is the register this line is
-                // least able to afford.
+                // Body text, not `labelMedium` small caps, which would read as a heading for the
+                // chips.
                 style = MaterialTheme.typography.bodyMedium,
                 color = Paper.muted,
             )
