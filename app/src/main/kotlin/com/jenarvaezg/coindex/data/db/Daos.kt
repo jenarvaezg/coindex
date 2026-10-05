@@ -55,12 +55,18 @@ interface TypeMetaDao {
     suspend fun insertIfAbsent(type: TypeMetaEntity)
 
     /**
-     * Writes a ficha over the one already cached. The **only** write that does (#185, ADR 0025):
-     * the seed and the sync both ignore conflicts on purpose, because neither of them was asked
-     * for the ficha it is holding — the collector was, one type at a time.
+     * Writes a ficha over the one already cached (#185, ADR 0025).
+     *
+     * The sync still ignores conflicts on purpose: it was never asked for the ficha it is holding.
+     * The two writes that do overwrite are the collector's gesture, one type at a time, and the
+     * seed of a newly installed APK, once per version (#606, ADR 0033).
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun overwrite(type: TypeMetaEntity)
+
+    /** The same write in a batch, for the snapshot an update brings with it (#606). */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun overwrite(types: List<TypeMetaEntity>)
 
     // Neither face, rather than the obverse alone: a ficha that only has a reverse thumbnail
     // would otherwise be read, written back with a null obverse, and read again for ever.

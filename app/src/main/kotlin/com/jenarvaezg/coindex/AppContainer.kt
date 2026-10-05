@@ -38,6 +38,7 @@ import com.jenarvaezg.coindex.data.prices.ValuationPass
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.seed.AssetCuratedFiles
+import com.jenarvaezg.coindex.data.seed.TYPE_SEED_PREFERENCES
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.data.seed.TypeThumbnailBackfill
 import com.jenarvaezg.coindex.data.update.SystemUpdateInstaller
@@ -136,7 +137,12 @@ class AppContainer(context: Context) {
     }
 
     private val typeCacheSeed: TypeCacheSeed by lazy {
-        TypeCacheSeed.fromAssets(applicationContext.assets, database.typeMeta())
+        TypeCacheSeed.fromAssets(
+            assets = applicationContext.assets,
+            typeMeta = database.typeMeta(),
+            values = valuesIn(TYPE_SEED_PREFERENCES),
+            installedVersionCode = installedVersionCode(),
+        )
     }
 
     private val typeThumbnailBackfill: TypeThumbnailBackfill by lazy {
