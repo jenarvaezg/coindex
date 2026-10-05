@@ -1398,10 +1398,11 @@ class CuratedCatalogsTest {
      * under the very same series, so the members are the Perth ones — .9999 and 40,9 mm against
      * RAM's .999 and 40 mm, and in 2020 RAM even calls the animal a rat where Perth says mouse.
      *
-     * Seven issued members and five scheduled subjects: the official Perth zodiac guide maps
-     * 2027-2031 to Goat through Pig, while Series III is the annual twelve-coin 2020-2031 cycle.
-     * Those five subjects are announced slots, not claims that their individual designs or
-     * specifications have already been released.
+     * Eight issued members and four scheduled subjects: the goat of 2027 was released on
+     * 8 September 2026 and now has its own type, while the official Perth zodiac guide still maps
+     * 2028-2031 to Monkey through Pig inside the annual twelve-coin 2020-2031 cycle. Those four
+     * subjects are announced slots, not claims that their individual designs or specifications
+     * have already been released.
      */
     @Test
     fun `lunar iii bullion fixes the perth cycle from 2020 to 2031`() {
@@ -1412,10 +1413,11 @@ class CuratedCatalogsTest {
         assertEquals(Finish.Bullion, lunar.finish)
         assertEquals((2020..2031).toList(), lunar.members.map { it.year })
         assertEquals(12, lunar.members.size)
-        assertEquals(7, lunar.members.count { !it.isAnnounced })
-        assertEquals(5, lunar.members.count { it.isAnnounced })
+        assertEquals(8, lunar.members.count { !it.isAnnounced })
+        assertEquals(4, lunar.members.count { it.isAnnounced })
         assertEquals(
-            listOf(179_438, 235_118, 307_024, 342_221, 386_213, 441_816, 483_798) + List(5) { null },
+            listOf(179_438, 235_118, 307_024, 342_221, 386_213, 441_816, 483_798, 602_440) +
+                List(4) { null },
             lunar.members.map { it.numistaTypeId },
         )
         assertEquals(
@@ -1427,13 +1429,13 @@ class CuratedCatalogsTest {
                 listOf(841_265),
                 listOf(923_283),
                 listOf(979_731),
-            ) + List(5) { emptyList() },
+                listOf(1_125_086),
+            ) + List(4) { emptyList() },
             lunar.members.map { it.numistaIssueIds },
         )
         val announced = lunar.members.filter { it.isAnnounced }
         assertEquals(
             listOf(
-                "Year of the Goat",
                 "Year of the Monkey",
                 "Year of the Rooster",
                 "Year of the Dog",
@@ -1446,11 +1448,11 @@ class CuratedCatalogsTest {
         assertTrue(announced.all { it.sourceNote?.contains("tema programado") == true })
 
         val album = buildCollectionCatalogAlbum(lunar, emptyList())
-        assertEquals(7, album.issuedMembers())
-        assertEquals(5, album.announcedMembers())
+        assertEquals(8, album.issuedMembers())
+        assertEquals(4, album.announcedMembers())
         val entries = plateSubject(PlateResult.Available(lunar, album)).entries
-        assertEquals("Progreso" to "0 / 7 emisiones", entries[0])
-        assertEquals("" to "5 anunciadas", entries[1])
+        assertEquals("Progreso" to "0 / 8 emisiones", entries[0])
+        assertEquals("" to "4 anunciadas", entries[1])
         // La línea de la Royal Australian Mint: misma serie en Numista, otra moneda.
         val royalAustralianMint =
             listOf(219_663, 266_550, 309_870, 355_589, 406_506, 444_584, 529_884)
@@ -1464,9 +1466,13 @@ class CuratedCatalogsTest {
      * tipo de Numista, separadas por emisión: sin esos ids una pieza proof llenaría la casilla de
      * bullion, o al revés. Las demás también los declaran para no confundirlas con otros acabados
      * presentes o futuros del mismo tipo.
+     *
+     * La de 2027 estrena la regla por el lado incómodo: el 5 de octubre de 2026 la cabra coloreada
+     * sólo tiene la emisión del estuche de tres de 1 oz, y la suelta —6.000 piezas, a la venta el
+     * día 6— añadirá renglón al mismo tipo. La casilla declara lo que la ficha sostiene hoy.
      */
     @Test
-    fun `lunar iii proof coloured is issue qualified from 2020 to 2026`() {
+    fun `lunar iii proof coloured is issue qualified from 2020 to 2027`() {
         val proofColoured = find("lunar-iii-perth-1oz-proof-coloured")
         assertEquals(1, proofColoured.schemaVersion)
         assertEquals("Lunar Series III", proofColoured.family)
@@ -1474,9 +1480,9 @@ class CuratedCatalogsTest {
         assertEquals(Finish.ProofColoured, proofColoured.finish)
         assertEquals(Metal.Silver, proofColoured.metal)
         assertEquals(SeriesStatus.Open, proofColoured.seriesStatus)
-        assertEquals((2020..2026).toList(), proofColoured.members.map { it.year })
+        assertEquals((2020..2027).toList(), proofColoured.members.map { it.year })
         assertEquals(
-            listOf(185_343, 235_118, 307_024, 342_221, 394_043, 576_294, 507_204),
+            listOf(185_343, 235_118, 307_024, 342_221, 394_043, 576_294, 507_204, 602_446),
             proofColoured.members.map { it.numistaTypeId },
         )
         assertEquals(
@@ -1488,6 +1494,7 @@ class CuratedCatalogsTest {
                 listOf(833_480),
                 listOf(1_088_982, 1_091_660),
                 listOf(1_002_105),
+                listOf(1_123_374),
             ),
             proofColoured.members.map { it.numistaIssueIds },
         )
@@ -1831,41 +1838,45 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El primer miembro anunciado del repo (#31): la colección son diez bestias nombradas de
-     * antemano y el Seymour Panther salió en proof en 2022 y **sigue sin salir en bullion**, así
-     * que la décima casilla no es un agujero de curación sino una moneda sin emitir.
+     * El primer miembro anunciado del repo (#31) ya no lo es: el Seymour Panther, que abrió la
+     * gama proof en 2022, cerró la de bullion el 1 de septiembre de 2026 con N#604513 —.9999,
+     * 62,42 g y ⌀38,61 mm, como sus nueve hermanas—, así que las diez bestias están completas y
+     * la décima casilla pasó de «sin emitir» a emitida sin que nadie tuviera que adivinar el año.
      *
-     * Comprobado en la serie 6888 de numista.com, que tiene nueve «5 Pounds · 2 oz Fine Silver»
-     * —.9999 y ⌀38,61 mm— y ninguna es el Panther. Su 2 oz de 2022 es N#307800, que es plata
-     * .999 de 40 mm: la proof, que es exactamente por qué el `design_type_id` no puede emparejar.
+     * La lámina sigue abierta por la completer: la Royal Mint cerró la gama conmemorativa con un
+     * undécimo diseño fechado en 2027 y de él no hay bullion de 2 oz; en The Queen's Beasts sí lo
+     * hubo (N#299474). Eso se espera, no se afirma, así que no hay casilla anunciada: la casa no
+     * ha nombrado la moneda.
+     *
+     * Lo que no cambia es por qué la proof no puede rellenar un hueco de bullion: la 2 oz de 2022
+     * es N#307800, plata .999 de 40 mm, otra moneda.
      */
     @Test
-    fun `the tenth tudor beast is announced and never counted as missing`() {
+    fun `the tenth tudor beast closes the ten and the plate stays open for the completer`() {
         val tudor = find("tudor-beasts-uk-2oz-bullion")
         assertEquals(SeriesStatus.Open, tudor.seriesStatus)
         assertEquals(10, tudor.members.size)
-        assertEquals(9, tudor.members.count { !it.isAnnounced })
+        assertEquals(10, tudor.members.count { !it.isAnnounced })
+        assertTrue(tudor.members.none { it.isAnnounced })
 
-        val panther = tudor.members.single { it.isAnnounced }
-        assertEquals("seymour-panther", panther.id)
-        assertNull(panther.numistaTypeId)
-        // Se sabe cuál falta y no cuándo, así que no lleva año.
-        assertNull(panther.year)
-        assertEquals(307_800, panther.designTypeId)
-        assertTrue(panther.source?.startsWith("https://") == true)
-        assertTrue(panther.sourceNote?.isNotBlank() == true)
+        val panther = tudor.members.last()
+        assertEquals("2026-seymour-panther", panther.id)
+        assertEquals(604_513, panther.numistaTypeId)
+        assertEquals(2026, panther.year)
+        assertNull(panther.designTypeId)
+        assertNull(panther.source)
+        assertTrue(tudor.sourceNote!!.contains("completer"), tudor.sourceNote!!)
 
-        // El padre tiene piezas proof de esta serie: si el diseño emparejara, una de ellas
-        // rellenaría una casilla de bullion que no existe.
+        // El padre tiene piezas proof de esta serie y ninguna rellena una casilla de bullion.
         val album = buildCollectionCatalogAlbum(
             tudor,
             listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800)),
         )
         assertEquals(0, album.ownedMembers())
-        assertEquals(9, album.issuedMembers())
-        assertEquals(1, album.announcedMembers())
+        assertEquals(10, album.issuedMembers())
+        assertEquals(0, album.announcedMembers())
         assertEquals(
-            CollectionCatalogMemberStatus.NotYetIssued,
+            CollectionCatalogMemberStatus.Missing,
             album.members.last().status,
         )
         assertFalse(tudor.isEvidencedBy(listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800))))

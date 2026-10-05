@@ -66,6 +66,17 @@
 > unchanged. (The ticket measured 753 of 829 over sixty plates; the shelf grows every week, and what
 > is written here is `data/` as it stands today.)
 
+> **Amended on 2026-10-05 (#616).** Nothing below changes, and one consequence bullet is now a wrong
+> measurement. The Seymour Panther **was** struck in 2 oz bullion, on 1 September 2026 and as
+> N#604513, so «the Tudor 2 oz bullion reads "2 / 9 emisiones" with "Sin emitir · 1 anunciada"»
+> describes a plate that no longer exists: the ten beasts are complete, the file holds no announced
+> member, and the two real collections read 3/10 and 4/10.
+>
+> The mechanism it illustrated came out unharmed, which is the point worth keeping. It was the first
+> announced member in the repo, it stayed out of the denominator for fourteen months because nobody
+> could name its year, and it entered without anyone having to guess one: the mint struck the coin,
+> Numista published the type, and the slot it had been holding was already in the right place.
+
 ## Context
 
 ADR 0009, 0012, 0013, 0014, 0016, 0018 and 0019 all answer the same kind of question: how a
