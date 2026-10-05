@@ -58,9 +58,9 @@ class CollectionSync(
      */
     val inFlight: Boolean get() = running.get()
 
-    suspend fun run(client: NumistaClient, userId: Long): SyncOutcome {
+    suspend fun run(client: NumistaClient, userId: Long, maxFichas: Int = Int.MAX_VALUE): SyncOutcome {
         running.set(true)
-        val outcome = runCatching { syncService.run(client, userId) }
+        val outcome = runCatching { syncService.run(client, userId, maxFichas) }
         running.set(false)
         return outcome.fold(
             onSuccess = { report ->

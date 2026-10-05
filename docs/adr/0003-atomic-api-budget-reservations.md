@@ -1,6 +1,6 @@
 # ADR 0003: Reservas atómicas del presupuesto de API
 
-Estado: aceptado
+Estado: aceptado, ampliado por [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md) (el tope deja de ser uno: el pase de precios se para 300 consultas antes que el resto)
 
 ## Contexto
 

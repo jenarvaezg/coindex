@@ -18,6 +18,8 @@ import com.jenarvaezg.coindex.data.FakeWishDao
 import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.StoredSyncLog
 import com.jenarvaezg.coindex.data.SyncRecord
+import com.jenarvaezg.coindex.data.InventoryRefresh
+import com.jenarvaezg.coindex.data.RejectionCause
 import com.jenarvaezg.coindex.data.StoredRejectionWall
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
@@ -205,6 +207,20 @@ class CoindexViewModelTest {
     }
 
     /** GitHub, with a release newer than the installed one. */
+    /**
+     * An automatic inventory refresh that is never due, which is what every test here wants (#605).
+     *
+     * A ViewModel built with an empty sync log would otherwise refresh on construction — never having
+     * synced is stale — and the call counts these tests assert on would stop being about what the
+     * test did. A wall with no clock stands it down without a fake, and the tests that *are* about
+     * the refresh hand in one of their own.
+     */
+    private fun neverDue(sync: CollectionSync): InventoryRefresh {
+        val wall = StoredRejectionWall(FakeNamedValues()) { NOW }
+        wall.raise(RejectionCause.Credentials)
+        return InventoryRefresh(sync, wall) { NOW }
+    }
+
     private fun updateChecker(): UpdateChecker = UpdateChecker(
         HttpClient(
             MockEngine { request ->
@@ -242,6 +258,7 @@ class CoindexViewModelTest {
         warmUp: suspend () -> Unit = { warmedUp += 1 },
         catalogs: List<CollectionCatalog> = emptyList(),
         dataExport: DatabaseExport = dataExport(),
+        automaticRefresh: Boolean = false,
     ): CoindexViewModel {
         val repository = CoindexRepository(
             collectedItemDao = items,
@@ -252,16 +269,22 @@ class CoindexViewModelTest {
             curation = Curation(catalogs = catalogs),
         )
         val ledger = ApiCallLedger(apiCalls) { NOW }
+        val collectionSync = CollectionSync(
+            syncService = SyncService(items, types, ledger) { NOW },
+            syncLog = syncLog,
+            wall = StoredRejectionWall(FakeNamedValues()) { NOW },
+        ) { NOW }
         return CoindexViewModel(
             repository = { repository },
             credentials = credentials,
             shelves = shelves,
             notebook = notebook,
-            collectionSync = CollectionSync(
-                syncService = SyncService(items, types, ledger) { NOW },
-                syncLog = syncLog,
-                wall = StoredRejectionWall(FakeNamedValues()) { NOW },
-            ) { NOW },
+            collectionSync = collectionSync,
+            inventoryRefresh = if (automaticRefresh) {
+                InventoryRefresh(collectionSync, StoredRejectionWall(FakeNamedValues()) { NOW }, 0L) { NOW }
+            } else {
+                neverDue(collectionSync)
+            },
             typeRefresh = TypeRefresh(types) { NOW },
             updates = UpdateFlow(updateChecker(), installer) { NOW },
             photos = photos,
@@ -312,10 +335,12 @@ class CoindexViewModelTest {
         catalogs: List<CollectionCatalog> = emptyList(),
         dataExport: DatabaseExport = dataExport(),
         given: () -> Unit = {},
+        /** Handed in only by the tests that are about the automatic refresh; the rest stand it down. */
+        automaticRefresh: Boolean = false,
         body: suspend TestScope.(CoindexViewModel) -> Unit,
     ) = runTest(dispatcher) {
         given()
-        val viewModel = viewModel(client, warmUp, catalogs, dataExport)
+        val viewModel = viewModel(client, warmUp, catalogs, dataExport, automaticRefresh)
         try {
             body(viewModel)
         } finally {
@@ -441,6 +466,37 @@ class CoindexViewModelTest {
             assertEquals("1 pieza · 1 ficha nueva · 3 consultas", state.message?.text)
             // Written down before it was announced: the snackbar is the copy.
             assertEquals(state.lastSync, syncLog.last)
+        }
+
+    /**
+     * The inventory brings itself up to date on a launch, and does it without a word (#605).
+     *
+     * The measured reason is in the father's `api_call_log`: his last `/users/{id}/collected_items`
+     * is dated 10 August 2026, and he kept opening the app every day. What the refresh must not do is
+     * speak — a snackbar over an app he has just opened reports something he did not do — and the
+     * durable line under the button is where it is allowed to show, because that line is read and
+     * not announced.
+     */
+    @Test
+    fun `a launch brings the inventory by itself and says nothing about it`() =
+        onViewModel(automaticRefresh = true) { viewModel ->
+            val state = viewModel.state.first { it.lastSync != null }
+
+            assertEquals(1, requested.count { it.contains("collected_items") })
+            assertEquals(NOW, state.lastSync?.atMillis)
+            assertNull(state.message, "un refresco que nadie pidió no interrumpe con un snackbar")
+            assertFalse(state.syncing)
+        }
+
+    /** And a refresh that could not be made is not an error on a screen nobody opened for it. */
+    @Test
+    fun `a launch whose refresh fails leaves no message behind`() =
+        onViewModel(client = { null }, automaticRefresh = true) { viewModel ->
+            runCurrent()
+
+            assertNull(viewModel.state.value.message)
+            assertNull(viewModel.state.value.lastSync)
+            assertFalse(viewModel.state.value.syncing)
         }
 
     @Test

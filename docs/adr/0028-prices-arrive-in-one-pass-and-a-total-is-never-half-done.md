@@ -1,6 +1,8 @@
 # ADR 0028: Prices arrive in one pass, and a total is never shown half-done
 
-- Status: accepted, §4 amended by [#600](https://github.com/jenarvaezg/coindex/issues/600) (the
+- Status: accepted, §3 and §6 amended by [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md)
+  (the launch has a fourth trigger, and the pass has a ceiling of its own 300 consultas short of the
+  cap so a sync always fits), §4 amended by [#600](https://github.com/jenarvaezg/coindex/issues/600) (the
   quota is the `429` and the key being turned away is the `403`: the two clocks of the wall were
   swapped, and the `429` needs its body read to tell the month from the throttle), §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
   marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number), §3 and
