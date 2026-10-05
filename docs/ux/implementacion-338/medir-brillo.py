@@ -1,27 +1,25 @@
 #!/usr/bin/env python3
 """Mide el brillo de una casilla sobre capturas del AVD a resolución nativa.
 
-Todo se mide por el eje del propio gradiente —105°, el ángulo de la variante H— y
+Todo se mide por el eje del propio gradiente (105°, el ángulo de la variante H) y
 dentro del disco de la fotografía, nunca sobre el cartón.
 
     python3 medir-brillo.py --centro 194 698 --radio 123 \\
-        --reposo colecciones-h-reposo.png \\
-        --izquierda colecciones-h-izquierda.png \\
-        --derecha colecciones-h-derecha.png \\
+        --reposo colecciones-reposo.png \\
+        --izquierda colecciones-izquierda.png \\
+        --derecha colecciones-despues.png \\
         --base colecciones-antes.png
 
 Las tres cifras que decidieron el calibrado:
 
-* **recorrido**: amplitud pico a pico del perfil de la *diferencia* entre las dos
-  poses extremas. Es cuánto mueve el efecto la superficie al inclinar el móvil.
-* **señal contra la hoja de hoy**: diferencia media y máxima entre la casilla de
-  hoy y la misma casilla en reposo con el brillo puesto.
-* **ruido de la propia foto**: amplitud pico a pico del perfil de luminancia de la
-  fotografía por ese mismo eje. Es la vara con la que se compara la señal, y cambia
-  con la moneda: el #338 midió 162 niveles sobre el 1 Bolívar de
-  `implementacion-336/monedas.png` y aquí salen 91,9 sobre la casilla de los
-  Fuertes. Lo que no cambia es el término de comparación — el reflejo fijo del
-  acetato movía 13.
+* recorrido: amplitud pico a pico del perfil de la diferencia entre las dos poses
+  extremas; cuánto mueve el efecto la superficie al inclinar el móvil.
+* señal contra la hoja de hoy: diferencia media y máxima entre la casilla de hoy y
+  la misma casilla en reposo con el brillo puesto.
+* ruido de la propia foto: amplitud pico a pico del perfil de luminancia de la
+  fotografía por ese mismo eje. Es la vara con la que se compara la señal, y depende
+  de la moneda (162 niveles en el 1 Bolívar de `implementacion-336/monedas.png`,
+  91,9 en la casilla de los Fuertes); el reflejo fijo del acetato movía 13.
 """
 
 import argparse

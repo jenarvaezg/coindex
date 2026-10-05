@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Maqueta de las dos salidas del #473, a dp real y con la lámina de hoy de listón.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
-Un solo HTML autocontenido: las fuentes de la app y las cuatro fotos del catálogo van
-embebidas en base64. Los números salen de donde los saca la app —`PlateSpacing`,
-`YearTagMetrics`, la tipografía del tema y `AlbumToneConfig`— y están arriba, juntos,
-para que la maqueta no pueda mentir por copia.
+Un solo HTML autocontenido, con las fuentes de la app y las cuatro fotos del catálogo
+embebidas en base64. Los números salen de donde los saca la app (`PlateSpacing`,
+`YearTagMetrics`, la tipografía del tema y `AlbumToneConfig`) y están juntos arriba.
 
     python3 docs/ux/prototipo-473/build.py && open docs/ux/prototipo-473/maqueta.html
 """
@@ -17,7 +16,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(f"{HERE}/../../..")
 
-# ── lo que la app mide, copiado de un sitio y no de la cabeza ───────────────
+# ── constantes de la app, copiadas de su sitio ─────────────────────────────
 INK = "#2D3029"
 PAPER = "#EEE8D7"
 PAPER_DEEP = "#DDD3BB"

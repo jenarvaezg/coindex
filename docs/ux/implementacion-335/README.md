@@ -12,12 +12,12 @@ escala 1:1.
 Las dos entradas quedan por debajo del máximo de 53 palabras y la primera fila
 empieza muy por encima del antiguo `y=1650`. El volcado de accesibilidad no
 contiene `Progreso`, `Anverso`, `Reverso`, `Tengo`, `Me falta`, `Sin ficha` ni
-`Sin emitir`; el cociente permanece y la rejilla entra en tres columnas.
+`Sin emitir`; el cociente se mantiene y la rejilla entra en tres columnas.
 
 La lámina incompleta muestra el diseño ausente al 14 % dentro del filete de
-puntos. La completa muestra una sola cara por hueco. Ambas caras en reposo
-proceden de `printed_side`; la exportación PNG de 1 Bolívar se abrió en el
-selector de compartir a 2354 × 2211 px con la misma cara y conservó el rótulo
+puntos; la completa, una sola cara por hueco. En reposo, ambas caras salen de
+`printed_side`. La exportación PNG de 1 Bolívar, abierta en el selector de
+compartir a 2354 × 2211 px, muestra la misma cara y conserva el rótulo
 `Progreso`, como el PDF.
 
 - [`bolivar-incompleta.png`](bolivar-incompleta.png): 1 Bolívar, 4 de 22.

@@ -180,7 +180,7 @@ class DeviationTests(unittest.TestCase):
 
     def test_the_note_of_the_lamina_explains_every_member_at_once(self) -> None:
         # #204: los pesos de plata 900 del Libro Rojo son una sola ley, y la explica el
-        # `source_note` del catálogo. Sin esto, una nota escrita no callaría ni una línea.
+        # `source_note` del catálogo.
         report = report_for(
             [
                 catalog(
@@ -225,9 +225,8 @@ class DeviationTests(unittest.TestCase):
         self.assertEqual(0, report.explained_count)
 
     def test_a_foreign_catalog_no_longer_writes_the_key(self) -> None:
-        # Los 33,94 g rusos miden 1091. Acababan en el 1081 que declara la onza mexicana, así
-        # que la desviación contra los 1121 de su propia lámina la terminaba de escribir un
-        # catálogo ajeno; desde el #288 la fila dice los gramos de la ficha y nada más.
+        # Los 33,94 g rusos miden 1091: el 1081 que declara la onza mexicana, un catálogo
+        # ajeno, no mueve la clave (#288).
         report = report_for(
             [
                 catalog("monumentos", 1_121, member("2005-kropotkinskaya", 29_017)),
@@ -266,7 +265,7 @@ class DeviationTests(unittest.TestCase):
         self.assertEqual("casilla", report.explained_clusters[0].first.explained_by)
 
     def test_the_lines_that_say_the_same_collapse_into_one_cumulo(self) -> None:
-        # Los 59 monumentos de 33,94 g repetían 59 veces la misma línea: es un hallazgo.
+        # Filas idénticas de un mismo catálogo son un solo hallazgo.
         report = report_for(
             [
                 catalog(
@@ -380,9 +379,8 @@ class MagnetPullTests(unittest.TestCase):
         self.assertEqual(1, report.unclaimed_without_weight)
 
     def test_a_declared_weight_does_not_pull_a_type_its_catalog_does_not_claim(self) -> None:
-        # El caso del #288: el Morgan dollar pesa 26,73 g de verdad y ningún catálogo lo
-        # reclama, así que el 868 que declara uno ajeno no le toca la clave. Los 31,39 g sí
-        # se mueven, porque la onza de bullion es una convención real.
+        # #288: el Morgan dollar (26,73 g) no lo reclama ningún catálogo, así que el 868 de uno
+        # ajeno no le mueve la clave. Los 31,39 g sí van a la onza, que es un peso común.
         report = report_for(
             [catalog("dolar-de-plata", 868, member("1921", 1_000_001))],
             [ficha(1_000_001, 27.0), ficha(1_492, 26.73), ficha(192_181, 31.39)],
@@ -515,7 +513,7 @@ class RealDataTests(unittest.TestCase):
 
     def test_the_two_laminas_of_two_silver_finenesses_are_explained(self) -> None:
         # Los 1 y 2 rublos rusos son la misma media onza (#204) y los 3 rublos la misma onza
-        # (#160): entre los dos son la mayoría del informe, y su nota está escrita.
+        # (#160): las dos láminas tienen su nota escrita.
         explained_laminas = {
             "red-data-book-russia",
             "architectural-monuments-russia-3-roubles",

@@ -6,10 +6,10 @@ Run from the repository root:
     pip install 'fonttools>=4.61' pillow brotli
     python docs/ux/fuentes-empaquetadas-298/medir.py
 
-Everything the report claims comes out of here: the repertoire is read from this repository's
-own sources, and every candidate is downloaded from `google/fonts`, never from a third-party
-mirror. Widths are normalised by x-height because comparing ems flatters a narrow face with a
-small x — it has to be set larger to read the same size, and then it is not narrow any more.
+Every figure in the report comes from here. The repertoire is read from this repository's own
+sources and every candidate is downloaded from `google/fonts`. Widths are normalised by x-height:
+comparing ems flatters a narrow face with a small x-height, which has to be set larger to read at
+the same size.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ UPSTREAM = "https://raw.githubusercontent.com/google/fonts/main/"
 # The palette of the field guide, so the specimens are read on the app's own paper.
 PAPER, INK, MUTED, RUST, HAIR = (0xEE, 0xE8, 0xD7), (0x2D, 0x30, 0x29), (0x69, 0x6B, 0x5E), (0x8B, 0x55, 0x3C), (0x9F, 0x9B, 0x8B)
 
-# Strings taken from the real collection, not from lorem ipsum.
+# Strings taken from the real collection.
 PROSE = "Colección de monedas conmemorativas españolas"
 CARD_TITLE = "Monumentos arquitectónicos de Rusia"
 CARD_LINE = "3 rublos · plata .925 · desde 2009 — faltan 4 de 22"

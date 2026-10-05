@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """Saca de `data/` y de `.local/padre` lo que la maqueta del #498 enseña.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
-Reproduce las reglas de la app y no las parecidas:
+Reproduce las reglas exactas de la app:
 
-- casilla llena: `CollectionCatalog.memberMatches` entera (`contar-completas-offline`)
+- casilla llena: `CollectionCatalog.memberMatches` entera
 - lámina alcanzable: la evidencia de `CoindexRepository.resolvePlate` (ADR 0021 §7)
 - fuera del divisor: `announced` y `unlisted`, como `buildCollectionCatalogAlbum`
-- **sin el umbral de 10 casillas**, que es la corrección que pide el #498: era la regla del
-  reproche de *tus* huecos (ADR 0028 §1) y una lámina ajena no reprocha nada
+- sin el umbral de 10 casillas, la corrección que pide el #498: era la regla del reproche de
+  tus huecos (ADR 0028 §1), y una lámina ajena no reprocha nada
 - lo que cuesta tasar una lámina: un `/prices` por hueco más un `/types/{id}/issues` por tipo
   cuyo fichero curado no nombra la emisión (`valuationPlan` + `wishCallsPerMonth`)
 - suelo de la plata: gramos x ley del `composition.text` (`Valuation.silverFineness`), con el
   spot y el cambio de los dos endpoints que lee `SilverSpot.kt`
 
-**El dinero no se versiona** (`dinero-fuera-del-repo-publico`): `data.json`, las fotos y la
-maqueta salen a /private/tmp/coindex-privado/escaparate-498/, nunca al repo.
+El dinero no se versiona: `data.json`, las fotos y la maqueta salen a
+/private/tmp/coindex-privado/escaparate-498/, nunca al repo.
 
     python3 docs/ux/prototipo-escaparate-498/extract.py
 """
@@ -37,11 +37,11 @@ FIN = re.compile(r"(?:plata|silver)\s*\.?([0-9]{3}(?:[.,][0-9]+)?)")
 SHELF_MAX_SLOTS = 20      # el corte del #282: las curadas sin evidencia de menos de 20 casillas
 OUT_OF_ALBUM = ("unlisted", "announced")
 
-# ── las siete marcas de «Lo que busco», y por qué son inventadas ────────────
-# El #497 salió ayer (v1.3.0): el padre no ha marcado nada todavía, así que la lista de la
-# maqueta se compone a mano. Cinco marcas caen en tres láminas suyas —el caso normal— y **dos
-# en dos láminas del escaparate**, que es el caso que el #494 tiene abierto: un coste de entrar
-# con dos edades. Se eligen por lámina y no por casilla: la primera casilla vacía con precio.
+# ── las siete marcas de «Lo que busco», inventadas ──────────────────────────
+# El padre aún no había marcado nada con el #497 (v1.3.0), así que la lista se compone a mano.
+# Cinco marcas caen en tres láminas suyas y dos en dos láminas del escaparate, el caso abierto
+# del #494: un coste de entrar con dos edades. Se eligen por lámina, y en cada una la primera
+# casilla vacía con precio.
 WISHED_MINE = 3           # cuántas láminas propias llevan marca
 WISHED_MINE_SLOTS = 5     # y cuántas casillas entre las tres
 WISHED_SHELF = 2          # cuántas láminas del escaparate llevan marca
@@ -182,8 +182,8 @@ mine.sort(key=lambda c: -(c["owned"] / c["issued"]))
 shelf.sort(key=lambda c: c["issued"])
 
 # ── las siete marcas ───────────────────────────────────────────────────────
-# Se reparten por lámina: las tres propias más huecas primero (que es donde un coleccionista
-# mira antes de una feria) y las dos del escaparate más baratas de tasar.
+# Por lámina: las tres propias con más huecos (donde se mira antes de una feria) y las dos del
+# escaparate más baratas de tasar.
 wishes = []
 sources = [c for c in mine if any(not x["owned"] and x["floor"] for x in c["casillas"])]
 sources.sort(key=lambda c: -(c["issued"] - c["owned"]))

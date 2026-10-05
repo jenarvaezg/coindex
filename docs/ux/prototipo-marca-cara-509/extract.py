@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 """Saca de `data/` y de `.local/padre` las tres láminas que la maqueta del #509 enseña.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
-Este prototipo necesita **las dos caras de cada tipo**, no la de reposo: lo que se elige es
-cómo se declara cuál de las dos estás mirando. Reproduce las reglas de la app y no las
-parecidas:
+Necesita las dos caras de cada tipo, no sólo la de reposo: lo que se elige es cómo se declara
+cuál de las dos estás mirando. Reproduce las reglas exactas de la app:
 
 - casilla llena: `CollectionCatalog.memberMatches` entera, con el año del date run
-  (`contar-completas-offline`)
 - fuera del divisor: `announced` y `unlisted`, como `buildCollectionCatalogAlbum`
-- las dos caras de una casilla: `printedFaces` (`AlbumFaces.kt:40-44`), que **no descarta
-  nada** por falta de foto — que es justo el fallo que el ticket persigue
+- las dos caras de una casilla: `printedFaces` (`AlbumFaces.kt:40-44`), que no descarta nada
+  por falta de foto, el fallo que persigue el ticket
 - `hasPicture`: `candidates = listOfNotNull(thumbnail, picture)` (`CoinPhotos.kt:10-23`)
 
-Aquí no hay dinero, así que la maqueta sí puede vivir en el repo
-(`dinero-fuera-del-repo-publico` no aplica).
+Aquí no hay dinero, pero la maqueta tampoco se versiona: lleva fotos de Numista que su
+licencia no deja redistribuir.
 
     python3 docs/ux/prototipo-marca-cara-509/extract.py
 """
@@ -27,13 +25,10 @@ import urllib.request
 REPO = os.path.abspath(f"{os.path.dirname(os.path.abspath(__file__))}/../../..")
 OUT = "/private/tmp/coindex-privado/marca-cara-509"
 
-# ── las tres láminas, y por qué estas tres ──────────────────────────────────
-# La primera es la del #302, donde se decidió el giro: 22 casillas del **mismo tipo**, así que
-# la marca de cara se repite 22 veces sobre la misma moneda y es el peor caso de ruido.
-# La segunda declara `obverse` (6 de los 74 catálogos lo hacen), que es la única manera de ver
-# si una marca que nombra la cara dice la verdad en reposo o sólo cuando se ha volteado.
-# La tercera es una lámina de tipos distintos con caras muy diferentes entre sí, para ver la
-# marca sobre monedas que no se parecen.
+# ── las tres láminas ────────────────────────────────────────────────────────
+# La del #302, donde se decidió el giro: 22 casillas del mismo tipo, el peor caso de ruido.
+# Una que declara `obverse` (6 de los 74 catálogos), para ver si una marca que nombra la cara
+# dice la verdad en reposo o sólo al voltear. Y una de tipos distintos con caras muy diferentes.
 PLATES = [
     ("venezuela-1-bolivar", "datarun"),
     ("espana-2-euros-conmemorativos", "obverso"),

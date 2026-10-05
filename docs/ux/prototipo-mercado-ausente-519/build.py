@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """Maqueta del #519: la línea que dice el mercado ausente, en «Las cifras» y en la lámina.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
 Siete variantes x seis motivos x cuatro escenas, a dp real y con la de hoy de listón. El motivo
-importa porque hoy sólo Ajustes lo distingue, y la escena importa porque **la misma ausencia se
-dice distinta según cuántas cifras iban a faltar**: la lámina cerrada y la que está por encima del
-umbral de ADR 0028 §1 nunca tuvieron «Coste de cerrar» que perder.
+importa porque hoy sólo Ajustes lo distingue, y la escena porque la misma ausencia se dice distinta
+según cuántas cifras iban a faltar: la lámina cerrada y la que está por encima del umbral de
+ADR 0028 §1 nunca tuvieron «Coste de cerrar» que perder.
 
-Las medidas salen de donde las saca la app —`Theme.kt`, `FiguresScreen.kt`, `PlateScreen.kt`,
-`ReferentLadder.kt`, `AlbumChrome.kt`— y están arriba, juntas, para que la maqueta no pueda mentir
-por copia. Las frases de Ajustes son literales de `FiguresLabels.valuationLabel`.
+Las medidas salen de donde las saca la app (`Theme.kt`, `FiguresScreen.kt`, `PlateScreen.kt`,
+`ReferentLadder.kt`, `AlbumChrome.kt`) y están juntas arriba. Las frases de Ajustes son literales
+de `FiguresLabels.valuationLabel`.
 
-**Sale al anexo privado y no al repo** (`dinero-fuera-del-repo-publico`): el estado de control lleva
-los importes de la colección del padre.
+Sale al anexo privado y no al repo, porque el estado de control lleva los importes de la colección
+del padre.
 
     python3 docs/ux/prototipo-mercado-ausente-519/extract.py
     python3 docs/ux/prototipo-mercado-ausente-519/build.py
@@ -62,8 +62,8 @@ DATA = json.load(open(f"{OUT}/data.json"))
 PLATES = {p["role"]: p for p in DATA["plates"]}
 
 # ── los seis motivos, con la frase literal que Ajustes ya dice hoy ──────────
-# `FiguresLabels.valuationLabel` (FiguresLabels.kt:163-179). Van aquí enteras porque lo que el
-# ticket propone es **mudarlas**, y para juzgar la mudanza hay que tener delante lo que dicen.
+# `FiguresLabels.valuationLabel` (FiguresLabels.kt:163-179). Van enteras porque el ticket propone
+# mudarlas, y para juzgarlo hay que tener delante lo que dicen.
 MOTIVOS = [
     ("red", "Sin red", "Esperan a que haya red."),
     ("presupuesto", "Presupuesto agotado",
@@ -93,8 +93,8 @@ PUERTA = "Por qué, en Ajustes"
 def under_eyebrow(sentence):
     """Debajo de «EL VALOR» el sujeto ya está dicho, así que la frase no lo repite.
 
-    Sólo la B lo lleva: es la única que no tiene bloque, y sin el eyebrow encima la frase se queda
-    sin sujeto. Lo demás sería decir «El valor» dos veces en dos renglones seguidos.
+    Sólo la B lo lleva: es la única sin bloque, y sin el eyebrow encima la frase se queda sin
+    sujeto. En las demás sería decir «El valor» en dos renglones seguidos.
     """
     rest = sentence.removeprefix("El valor ")
     return rest[0].upper() + rest[1:]
@@ -554,7 +554,7 @@ def photos_css():
 
 def main():
     for plate in DATA["plates"]:
-        # Una lámina sólo puede tener «Coste de cerrar» si le falta algo **y** está por debajo del
+        # Una lámina sólo puede tener «Coste de cerrar» si le falta algo y está por debajo del
         # umbral de ADR 0028 §1: por encima, esos precios no se piden nunca.
         plate["cost_possible"] = plate["missing"] > 0 and plate["issued"] <= 10
     global CSS

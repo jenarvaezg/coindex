@@ -1,36 +1,34 @@
 # Numista API: what it records about coins you do not own
 
 - Research date: 2026-08-13
-- Official API specification reviewed: **v3.33**, fetched from
-  `https://en.numista.com/api/doc/swagger.yaml?v=3.33` (the machine-readable source behind
-  `https://en.numista.com/api/doc/`, which is a Redoc page and renders nothing without JavaScript)
-- Help centre reviewed: `https://en.numista.com/help/index.php`, article
-  «How can I set multiple collections?» (last updated 7 April 2023)
-- Scope: read-only research. No authenticated request was sent and no API quota was spent — the
-  specification and the help centre are public. Collection figures come from the captures already
-  in `.local/`, not from the network.
-- Opened by [#483](https://github.com/jenarvaezg/coindex/issues/483); the decision it feeds is
-  [#484](https://github.com/jenarvaezg/coindex/issues/484).
+- Official API specification reviewed: **v3.33**, from
+  `https://en.numista.com/api/doc/swagger.yaml?v=3.33` (the machine-readable source behind the
+  Redoc page `https://en.numista.com/api/doc/`, which renders nothing without JavaScript)
+- Help centre reviewed: `https://en.numista.com/help/index.php`, article «How can I set multiple
+  collections?» (last updated 7 April 2023)
+- Scope: read-only research. No authenticated request, no API quota spent: the specification and
+  the help centre are public. Collection facts come from the captures in `.local/`.
+- Opened by [#483](https://github.com/jenarvaezg/coindex/issues/483) for the decision in
+  [#484](https://github.com/jenarvaezg/coindex/issues/484), later taken by ADR 0029 (a wish is
+  marked on the phone).
 
 ## Conclusion
 
-**Numista has no wish list, and the API cannot be made to carry one.** The words *wish*, *want* and
-*desire* do not occur once in the 169 KB specification, and the documentation centre has no article
-about wanting a coin. Every personal-data endpoint is worded around ownership:
-`/users/{user_id}/collected_items` is documented as «Get the items **owned** by a user», and its
-counters are `item_count` («Count of items **owned** by the user») and `item_for_swap_count`.
+**Numista has no wish list, and the API cannot carry one.** The words *wish*, *want* and *desire*
+do not occur in the specification, and the help centre has no article about wanting a coin. Every
+personal-data endpoint is about ownership: `/users/{user_id}/collected_items` is «Get the items
+**owned** by a user», with counters `item_count` («Count of items **owned** by the user») and
+`item_for_swap_count`.
 
-The one adjacent concept, `for_swap`, is the mirror image of a wish: it marks what you **have** and
-will part with. Numista's swap model has no counterpart for what you are looking for — a partner is
-found by browsing what others offer, not by publishing what you lack.
+The nearest concept, `for_swap`, marks what you **have** and will part with. Numista's swap model
+has no counterpart for what you are looking for: partners browse what others offer.
 
-So the elegant path the [#484](https://github.com/jenarvaezg/coindex/issues/484) hoped for — a wish
-that arrives as a measured fact through sync, leaving ADR 0021 §7 untouched — **exists mechanically
-and lies semantically**. It is available only by telling Numista you own a coin you do not.
+So the path #484 hoped for — a wish arriving through sync as a measured fact, leaving ADR 0021 §7
+untouched — works mechanically only by telling Numista you own a coin you do not.
 
 ## 1. Is there a wish list, and does v3 expose it?
 
-No, on both counts. The complete list of paths in v3.33:
+No. The complete list of paths in v3.33:
 
 ```
 /types                                   /issuers          /oauth_token
@@ -42,117 +40,105 @@ No, on both counts. The complete list of paths in v3.33:
 /coins/{coin_id}/issues/{issue_id}/prices
 ```
 
-`/coins*` and `/collected_coins` are the deprecated v2-era duplicates of the `/types*` and
-`/collected_items` pairs. Nothing here holds a coin the user does not own.
+`/coins*` and `/collected_coins` are deprecated v2-era duplicates of `/types*` and
+`/collected_items`. Nothing here holds a coin the user does not own.
 
-This retires the open question from [#279](https://github.com/jenarvaezg/coindex/issues/279), which
-could not check it: `curl` was getting 403 from Cloudflare. It still does on
-`api.numista.com/v3/openapi.json` — that path answers **401**, not 403, because it wants an API key —
-but `en.numista.com/api/doc/swagger.yaml` serves the whole specification to a plain `curl` with a
-browser user-agent, no key and no challenge. The rest of `en.numista.com` (`/echanges/`, `/help/`)
-does throw the Cloudflare challenge at `curl` and needs the browser of
-`numista-navegador-para-scrapear`.
+This settles the open question from [#279](https://github.com/jenarvaezg/coindex/issues/279),
+which could not check it because `curl` got 403 from Cloudflare. `api.numista.com/v3/openapi.json`
+answers **401** (it wants an API key), but `en.numista.com/api/doc/swagger.yaml` serves the whole
+specification to a plain `curl` with a browser user-agent, no key and no challenge. The rest of
+`en.numista.com` (`/echanges/`, `/help/`) still challenges `curl` and needs the browser.
 
-`spec.md §0.5` lists three operations; the real schema has nineteen. Nothing this app uses is
-missing from `spec.md`, but it should not be read as a survey of what Numista offers.
+`spec.md §0.5` lists three operations; the schema has nineteen. Nothing the app uses is missing
+from `spec.md`, but it is not a survey of what Numista offers.
 
 ## 2. Named collections
 
-They are real, first class, and already reachable with the credentials the app holds.
+They are real, first class, and reachable with the credentials the app already holds.
 
 **In the API:**
 
-- `GET /users/{user_id}/collections` → `{count, collections: [{id, name}]}`. Scope
-  `view_collection` — **the same scope `NumistaClient` already requests** (`NumistaClient.kt:53-54`),
-  so this needs no new permission and no second consent. Cost: **one call**.
-- `GET /users/{user_id}/collected_items?collection={id}` filters server-side. Also one call — but
-  it is not needed to tell wishes apart, because each row already carries its own `collection`
-  object inline. Reading that field costs **zero calls**.
-- The `collection` schema is exactly `{id, name}`. The colour and the privacy setting the web UI
-  offers are **not** exposed.
-- `collection` is **optional** on `collected_item`, and absent — not null — when the user has never
-  defined one. Both captures confirm it: the field does not appear among the row keys at all in the
-  padre's 229 rows or Jose's 66.
+- `GET /users/{user_id}/collections` → `{count, collections: [{id, name}]}`, scope
+  `view_collection` — the scope `NumistaClient` already requests, so no new permission or consent.
+  One call.
+- `GET /users/{user_id}/collected_items?collection={id}` filters server-side, but is not needed:
+  each row already carries its `collection` inline, so reading it costs no calls.
+- The `collection` schema is exactly `{id, name}`; the colour and privacy setting of the web UI are
+  not exposed.
+- `collection` is **optional** on `collected_item` and absent (not null) when the user has never
+  defined one. Neither capture (padre, Jose) has the field on any row.
 
-**In the web UI** (help article 3): collections are defined under Settings → «My collections», each
-with a name, a colour and a privacy setting. One is the **default**; every pre-existing item is
-assigned to it, and deleting a collection reassigns its items back to the default rather than
-removing them. They filter the «My coins» / «My banknotes» / «My exonumia» pages.
+**In the web UI** (help article): collections are defined under Settings → «My collections», each
+with a name, a colour and a privacy setting. One is the **default**: pre-existing items are
+assigned to it, and deleting a collection moves its items back to it. Collections filter the «My
+coins» / «My banknotes» / «My exonumia» pages.
 
-**In Coindex today**, the path is built end to end and dead at the tip:
+**In Coindex at the research date**, the field travelled all the way and nobody read it:
 
 | Step | Where | State |
 | --- | --- | --- |
-| Parsed | `NumistaDtos.kt:35` (`collection: CollectionDto?`) | ✅ |
-| Mapped | `Mappers.kt:200` (`collectionName = collection?.name`) | ✅ |
-| Stored | `Entities.kt:26` (`val collectionName: String?`) | ✅ |
-| In the domain | `Inventory.kt:15` (`CollectedItem.collectionName`) | ✅ |
-| Read by anyone | — | ❌ **nobody**, in `app/src/main` or `domain/src/main` |
+| Parsed | `NumistaDtos.kt` (`collection: CollectionDto?`) | ✅ |
+| Mapped | `Mappers.kt` (`collectionName = collection?.name`) | ✅ |
+| Stored | `Entities.kt` (`val collectionName: String?`) | ✅ |
+| In the domain | `Inventory.kt` (`CollectedItem.collectionName`) | ✅ |
+| Read | — | ❌ nobody, in `app/src/main` or `domain/src/main` |
 
-A single named collection would therefore travel from Numista to the domain model without one line
-of new plumbing and without one extra API call.
+A named collection would reach the domain model with no new plumbing and no extra API call.
 
-**The catch, and it is the whole decision.** Numista's collections organise *owned* items — «if you
-want to keep your ancient and modern coins separate, or if you keep some coins for someone else».
-A collection called «Deseos» is not a wish list Numista offers; it is a wish list smuggled into the
-inventory. Registering a coin there makes it owned **on numista.com too**: it counts in
-`item_count`, in the padre's public profile and in the swap listings, and it can be marked
-`for_swap` like anything else. The lie is not confined to the phone.
+**The catch decides it.** Numista's collections organise *owned* items («if you want to keep your
+ancient and modern coins separate, or if you keep some coins for someone else»). A collection
+called «Deseos» smuggles a wish list into the inventory: a coin registered there is owned **on
+numista.com too**. It counts in `item_count`, in the padre's public profile and in the swap
+listings, and can be marked `for_swap`.
 
 ## 3. `for_swap`, by elimination
 
-- Schema: `for_swap` is **required** on `collected_item` — «Indicate whether the item is available
-  for swap». The collection response also carries `item_for_swap_count` and
+- Schema: `for_swap` is **required** on `collected_item` («Indicate whether the item is available
+  for swap»); the collection response also carries `item_for_swap_count` and
   `item_type_for_swap_count`.
-- Reality: `false` in **all 229 rows of the padre and all 66 of Jose**. Neither uses the swap system.
-- In Coindex: same dead-tip shape as `collectionName` — `NumistaDtos.kt:34` → `Mappers.kt:199` →
-  `Entities.kt:25` → `Inventory.kt:14`, and **no reader**.
+- Reality: `false` on every row of both captures. Neither collector uses swaps.
+- In Coindex: same unread path as `collectionName` (`NumistaDtos.kt` → `Mappers.kt` →
+  `Entities.kt` → `Inventory.kt`).
 
-It is the wrong end of the telescope regardless: it says what you would give away, never what you
-are missing. The map's standing note holds — if «what I have spare» is ever wanted, it comes from
-`quantity > 1` (40 of the padre's rows), not from this field.
+It says what you would give away, never what you are missing. If «what I have spare» is ever
+wanted, it comes from `quantity > 1`, not from this field.
 
-## 4. The trap, measured: every place a wish would pass for a piece
+## 4. Every place a wish would pass for a piece
 
-If wishes arrive inside `collected_items`, they arrive as pieces. **Nothing filters rows by
-collection anywhere**: the only two readers are
-`Daos.kt:14` `observeAll()` and `Daos.kt:17` `loadAll()`, both `SELECT * FROM collected_items ORDER
-BY id`, and every screen and figure descends from that one list through a single funnel —
-`Curation.assemble` (`Curation.kt:80`), described in its own doc comment as «the one door».
-
-That funnel is good news for the fix: **one filter, correctly placed, covers most of this table.**
-The list is what it would cost to get it wrong.
+Wishes inside `collected_items` would arrive as pieces. **Nothing filters rows by collection**: the
+only readers are `Daos.kt` `observeAll()` and `loadAll()`, both `SELECT * FROM collected_items
+ORDER BY id`, and every screen and figure descends from that list through `Curation.assemble`
+(`Curation.kt`), «the one door». One filter there covers most of this table:
 
 | What breaks | Where | What the collector would see |
 | --- | --- | --- |
-| The plate cell fills | `CollectionCatalog.kt:139` `memberMatches` — checks `quantity > 0`, type, issue and year, nothing else | A casilla shown as owned for a coin never bought |
-| The plate opens as yours | `CollectionCatalog.kt:171` `isEvidencedBy`, via `Curation.kt:92` and `CollectionIndex.kt:185` | A lámina with no piece of yours in it becomes navigable, and gets a card |
-| The album counts it | `CollectionCatalogAlbum.kt:117` | «14 de 20» when it is 13 |
-| A card appears out of nowhere | `CollectionDerivation.kt:130` | A derived collection whose only evidence is a wish |
-| The emission gets named | `CollectionCatalog.kt:160` `emissionLabelFor` | A wish labelled «Estrella 67» like a piece in hand |
-| Pieces, types and issuers | `Figures.kt:259` `collectionFigures` | 574 pieces becomes 575 |
-| Weight and fine silver | `Figures.kt:63` `metalSplit`, `Figures.kt:310` | Grams you do not hold added to the 6,91 kg |
-| Year arc, size, margins | `Figures.kt:122`, `:143`, `:189` | The oldest coin in the collection is one you have not got |
-| **Money** | `Valuation.kt:94` `pieceValue`, `:164` `collectionValue` | A wish with a catalogue price is euros you do not own — the worst of the list, because [#491](https://github.com/jenarvaezg/coindex/issues/491) is about to print «pagaste X y hoy valen Y» |
-| **API budget** | `ValuationPlan.kt:78-88` | Calls spent pricing wishes *and* the holes of the plates they falsely evidence — a wish would cost quota every month |
-| Boxes | `OwnGrouping.kt:41` | A bulto counting pieces that are not in it |
-| The shelf | `PiecesSubject.kt:125`, `CountryAxis.kt:151,176`, `UnclaimedRows.kt:104` | Wishes drawn among the pieces, and on the country map |
-| **The printed notebook** | `NotebookSections.kt:55,178` | Paper, which is the one output that cannot be corrected later |
+| The plate cell fills | `CollectionCatalog.kt` `memberMatches` — checks `quantity > 0`, type, issue and year only | A casilla shown as owned for a coin never bought |
+| The plate opens as yours | `CollectionCatalog.kt` `isEvidencedBy`, via `Curation.kt` and `CollectionIndex.kt` | A lámina with none of your pieces becomes navigable and gets a card |
+| The album counts it | `CollectionCatalogAlbum.kt` | «14 de 20» when it is 13 |
+| A card appears from nothing | `CollectionDerivation.kt` | A derived collection whose only evidence is a wish |
+| The emission gets named | `CollectionCatalog.kt` `emissionLabelFor` | A wish labelled «Estrella 67» like a piece in hand |
+| Pieces, types and issuers | `Figures.kt` `collectionFigures` | One more piece than the collector has |
+| Weight and fine silver | `Figures.kt` `metalSplit` | Grams the collector does not hold |
+| Year arc, size, margins | `Figures.kt` | The oldest coin is one the collector has not got |
+| **Money** | `Valuation.kt` `pieceValue`, `collectionValue` | A wish with a catalogue price counted as owned value — worst of the list, since [#491](https://github.com/jenarvaezg/coindex/issues/491) prints «pagaste X y hoy valen Y» |
+| **API budget** | `ValuationPlan.kt` | Calls spent pricing wishes *and* the holes of the plates they falsely evidence, every month |
+| Boxes | `OwnGrouping.kt` | A bulto counting pieces that are not in it |
+| The shelf | `PiecesSubject.kt`, `CountryAxis.kt`, `UnclaimedRows.kt` | Wishes drawn among the pieces and on the country map |
+| **The printed notebook** | `NotebookSections.kt` | Paper, the one output that cannot be corrected later |
 
-`for_swap` and `collectionName` reaching the domain unread (§2, §3) is the reason none of this
-misfires **today**: no user of either app has ever defined a collection, so the field is absent and
-the question has never been asked.
+None of this misfires at the research date only because nobody has ever defined a Numista
+collection, so the field is absent.
 
 ## What this leaves for the decision
 
-Facts, not a recommendation — [#484](https://github.com/jenarvaezg/coindex/issues/484) decides.
+Facts, not a recommendation; [#484](https://github.com/jenarvaezg/coindex/issues/484) decides.
 
-1. **There is no measured fact to sync.** Numista does not record wanting. The «it arrives by sync
-   and ADR 0021 §7 stays shut» option is not available on its own terms.
-2. **What is available is a named collection**, at zero extra API cost and zero new plumbing — at
-   the price of declaring ownership on numista.com of coins the collector does not have.
-3. **A local declarative** remains the other road, and it is an amendment to ADR 0021 §7 that must
-   be argued, not assumed.
-4. **Either way, the rule «a wish is not a piece» has to be written**, and §4 is the exact list it
-   has to cover. One filter at `Curation.assemble` guards most of it; `ValuationPlan` and the
-   notebook are worth checking separately, because one spends quota and the other prints.
+1. **There is no measured fact to sync.** Numista does not record wanting, so «it arrives by sync
+   and ADR 0021 §7 stays shut» is not available on its own terms.
+2. **A named collection is available** at no extra API cost and no new plumbing, at the price of
+   declaring on numista.com that the collector owns coins they do not.
+3. **A local declarative** is the other road, and it amends ADR 0021 §7: it must be argued, not
+   assumed.
+4. **Either way, «a wish is not a piece» must be written down**, and §4 is the list it has to
+   cover. One filter at `Curation.assemble` guards most of it; check `ValuationPlan` (spends quota)
+   and the notebook (prints) separately.

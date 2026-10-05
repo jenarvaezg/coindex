@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
 """Siembra fichas de tipo en `data/numista-type-cache.json`, una llamada por tipo nuevo.
 
-Curar un catálogo incluye sembrar sus fichas (#39): la caché existe para que la lámina
-dibuje también lo que al coleccionista le falta, así que un hueco solo se ve en el móvil
-que **no** tiene la moneda. `TypeCacheSeedTest` lo exige, y hasta ahora la siembra se hacía
-a mano.
+Curar un catálogo incluye sembrar sus fichas (#39): con ellas la lámina dibuja también los
+huecos, que sólo se ven en un móvil sin la moneda. `TypeCacheSeedTest` exige que estén.
 
     set -a; . ./.env; set +a
     scripts/seed-type-cache.py --confirm-live-api 45416 45417 45418
 
-Los tipos que ya están en la caché se omiten sin gastar llamada: el gasto es exactamente el
-número de tipos nuevos, y `--dry-run` lo dice antes de gastarlo.
+Los tipos que ya están en la caché se omiten: el gasto es el número de tipos nuevos, y
+`--dry-run` lo dice sin gastar.
 
-`--refresh` es la excepción, y existe porque el informe de desviaciones (#158) produce
-correcciones aguas arriba: cuando Numista acepta una, la ficha sembrada sigue guardando el
-dato viejo y omitirla la deja mintiendo para siempre. Con `--refresh` los tipos que ya están
-también se piden, y entonces el gasto es el número de ids que se le pasen.
+`--refresh` pide también los que ya están, y el gasto pasa a ser el número de ids. Sirve para
+recoger una corrección que Numista aceptó a raíz del informe de desviaciones (#158): sin
+resembrar, la caché guarda el dato viejo.
 
     scripts/seed-type-cache.py --refresh --confirm-live-api 107292 117328
 """
@@ -51,8 +48,8 @@ def load_cache() -> dict:
 
 
 def write_cache(cache: dict) -> None:
-    # Las claves del primer nivel van ordenadas como cadena, y el valor conserva el orden de
-    # campos que trajo la API: así el diff de una siembra es solo lo sembrado.
+    # Claves ordenadas como cadena y campos en el orden de la API: el diff de una siembra es
+    # sólo lo sembrado.
     ordered = {key: cache[key] for key in sorted(cache)}
     with TYPE_CACHE.open("w", encoding="utf-8") as handle:
         json.dump(ordered, handle, ensure_ascii=False, indent=1)

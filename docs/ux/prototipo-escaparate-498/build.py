@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 """Maqueta de «Explorar» con dos cosas dentro (#498), a dp real y con lo de hoy de listón.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
-La pregunta no es «¿cómo se pinta un estante?» —el #279 ya eligió la tarjeta y el fantasma—
-sino la que ese ticket no pudo hacerse porque la puerta estaba vacía: **«Explorar» ya tiene «Lo
-que busco» dentro** (`ExploreScreen.kt`: «es su primera sección, y hoy es toda ella»), así que
-qué es esa pantalla cuando además entran veinte láminas ajenas, y qué enseña el estante el día
-uno, cuando el coleccionista no ha tasado ninguna.
+El #279 ya eligió la tarjeta y el fantasma. La pregunta es otra: «Explorar» ya tiene «Lo que
+busco» dentro (`ExploreScreen.kt`: «es su primera sección, y hoy es toda ella»), así que qué es
+esa pantalla cuando además entran veinte láminas ajenas, y qué enseña el estante el día uno,
+cuando el coleccionista no ha tasado ninguna.
 
 Cinco variantes por tres estados de tasación. Un solo HTML autocontenido: las dos fuentes del
 APK y una foto por tipo en base64, con una clase CSS por tipo para no embeberlas por casilla.
 
-Las medidas salen del código y no se suponen: `IndexScreen` (PAGE_MARGIN 12, INDEX_GUTTER 8,
+Las medidas salen del código: `IndexScreen` (PAGE_MARGIN 12, INDEX_GUTTER 8,
 tarjeta de 104 dp y nombre de dos líneas fijas), `ExploreScreen` (margen 20, `PlateSpacing.rowGap`
-32), `CoindexApp.Masthead` y `AlbumPaper` para el hueco. **No lleva barra inferior**: Explorar no
+32), `CoindexApp.Masthead` y `AlbumPaper` para el hueco. No lleva barra inferior: Explorar no
 es raíz (`Routes.isRoot`), se entra por la puerta del índice y se sale con «Volver».
 
-**Sale al anexo privado y no al repo** (`dinero-fuera-del-repo-publico`): lleva los importes de
-la colección del padre.
+Sale al anexo privado y no al repo, porque lleva los importes de la colección del padre.
 
     python3 docs/ux/prototipo-escaparate-498/extract.py
     python3 docs/ux/prototipo-escaparate-498/build.py
@@ -60,9 +58,9 @@ ANTES = "12 ago"                 # la edad vieja del #494
 DATA = json.load(open(f"{OUT}/data.json"))
 SHELF, MINE, WISHES, SPOT = DATA["shelf"], DATA["mine"], DATA["wishes"], DATA["spot"]
 WISHED_PLATES = {w["plate_id"] for w in WISHES}
-# Las cuatro que el estado intermedio enseña tasadas, más las dos que llevan marca: una lámina
-# con una casilla marcada ya tiene ese precio pedido por el pase (ADR 0029 §4), así que su total
-# nace con dos edades — el caso abierto del #494.
+# Las cuatro que el estado intermedio enseña tasadas, más las dos que llevan marca: el pase ya
+# pidió el precio de la casilla marcada (ADR 0029 §4), así que su total nace con dos edades
+# (#494).
 TASADAS_ALGUNAS = [c["id"] for c in SHELF[:4]] + [
     c["id"] for c in SHELF if c["id"] in WISHED_PLATES
 ]
@@ -159,8 +157,8 @@ def cname(title):
     """
     size = 17 if len(title) <= 28 else 15 if len(title) <= 34 else 13
     line = round(size * 1.24)
-    # 6 + 2 dp de padding del `CollectionName`, que van dentro de la caja: sin sumarlos aquí la
-    # segunda línea se corta por la mitad y la maqueta miente sobre lo que cabe.
+    # 6 + 2 dp de padding del `CollectionName`, que van dentro de la caja: sin sumarlos la
+    # segunda línea se corta por la mitad.
     return (f'<div class="cname" style="font-size:{size}px;line-height:{line}px;'
             f'height:{line * 2 + 8}px">{title}</div>')
 

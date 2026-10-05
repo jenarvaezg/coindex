@@ -1,40 +1,30 @@
 #!/usr/bin/env python3
-"""Informa qué pesos no cuadran — cero red, nunca rojo.
+"""Informa qué pesos no cuadran. Sin red e informativo.
 
-La auditoría del emparejamiento es del curador y vive **fuera** de la app (#20, ADR 0021
-§12). Este es el informe, con la forma de `stale-catalogs.py`: se lee `data/` y nada más,
-se ejecuta a mano al sentarse a curar y `--sync` mantiene un issue único del repo.
+La auditoría del emparejamiento es del curador y vive fuera de la app (#20, ADR 0021 §12).
+Misma forma que `stale-catalogs.py`: lee sólo `data/`, se ejecuta a mano al sentarse a curar y
+`--sync` mantiene un issue único del repo.
 
 Tres bloques:
 
-- **Lo que el catálogo corrige**: miembros cuyo peso normalizado desde los gramos de
-  Numista no es el `weight_millioz` que declara su catálogo. Ordenados por distancia
-  relativa al declarado, porque es lo que separa la variación de gramos del intruso. Va
-  partido en dos: **sin mirar** son las líneas cuya explicación no está escrita en ningún
-  fichero —el trabajo que el informe pide, y lo único que se lista una a una—, y **ya
-  explicadas** van en cúmulos, porque cincuenta y nueve líneas idénticas son un hallazgo,
-  no cincuenta y nueve. Las de «sin mirar» traen la orden de resiembra: la caché no se
-  refresca sola y una corrección que Numista aceptó seguiría saliendo aquí para siempre.
+- **Lo que el catálogo corrige**: miembros cuyo peso normalizado desde los gramos de Numista no
+  es el `weight_millioz` de su catálogo, ordenados por distancia relativa al declarado, que es
+  lo que separa la variación de gramos del intruso. **Sin mirar** son las líneas sin
+  explicación escrita en ningún fichero: se listan una a una con la orden de resiembra, porque
+  la caché no se refresca sola. **Ya explicadas** van agrupadas en cúmulos.
 - **Lo que el imán mueve**: tipos que ningún catálogo reclama y a los que
-  `normalizeWeightMillioz` mueve el peso hasta un peso común de bullion. Son los únicos
-  casos donde la variante se decide sin que nadie la haya verificado a mano, y desde el
-  #288 el imán ya sólo tira de una convención real: lo que declara un catálogo manda
-  sobre sus miembros y no cruza a los tipos que no reclama.
-- **Las tarjetas que la autoridad del catálogo evita**: catálogos cuyos miembros tomarían
-  más de una clave de peso si el fichero no mandara. Es el número que justifica el
-  ADR 0016, y hacerlo visible es todo lo que el informe puede hacer con él.
+  `normalizeWeightMillioz` lleva a un peso común de bullion. Es la única variante que se decide
+  sin verificación manual (#288).
+- **Las tarjetas que la autoridad del catálogo evita**: catálogos cuyos miembros tomarían más de
+  una clave de peso si el fichero no mandara (ADR 0016).
 
-**No es un test, y no por comodidad.** Se pondría rojo más de cien veces el primer día y
-casi todas esas notas dirían «Numista varía los gramos». El cruce de metal
-(`metalDeviations`) sí es un test porque su hallazgo es raro: rojo cuando el hallazgo es
-raro, informe cuando es rutina. Una línea de aquí no dice «arregla el catálogo», dice
-«míralo»: casi siempre es la ficha la que varía, a veces es la ley (los 3 rublos de plata
-900 y de plata 925 son la misma onza fina), y de vez en cuando es una moneda que no va en
-esa lámina.
+Es un informe y no un test porque sus hallazgos son rutina, casi siempre Numista variando los
+gramos; el cruce de metal (`metalDeviations`), de hallazgo raro, sí es test. Una línea pide
+mirar, no arreglar: puede ser la ficha, la ley (los 3 rublos de plata 900 y de plata 925 son la
+misma onza fina) o una moneda que no va en esa lámina.
 
-Sin inventario a propósito: `data/` no sabe qué tiene nadie, y el informe tiene que correr
-sin el móvil de nadie. Las filas del inventario que no casan con ninguna casilla son del
-informe de campo (#168), no de aquí.
+No lee inventario, para correr sin el móvil de nadie. Las filas del inventario que no casan con
+ninguna casilla son del informe de campo (#168).
 
     scripts/weight-deviations.py
     scripts/weight-deviations.py --markdown
@@ -65,28 +55,22 @@ ISSUE_TITLE = "Desviaciones de peso entre la ficha y el catálogo"
 ISSUE_MARKER = "<!-- weight-deviations-report -->"
 NUMISTA_TYPE_URL = "https://en.numista.com/catalogue/pieces{type_id}.html"
 
-# Espejo de domain/…/Weight.kt, y lo que lo sujeta es `fixtures/matching-digest.json`: el
-# digest lo emite la suite Kotlin y `test_matching_digest.py` afirma estas tres constantes
-# contra él, así que mover la tolerancia o los pesos comunes sólo allí rompe CI en vez de
-# dejar el informe midiendo otra cosa que la app.
+# Espejo de domain/…/Weight.kt: `test_matching_digest.py` afirma estas tres constantes contra
+# `fixtures/matching-digest.json`, que emite la suite Kotlin.
 GRAMS_PER_TROY_OUNCE = 31.1034768
 COMMON_WEIGHTS_MILLIOZ = (250, 500, 1_000, 2_000, 5_000, 10_000)
 SNAP_TOLERANCE_MILLIOZ = 10
 
-# Los tres tramos con los que el curador decide si abrir Numista. El corte de arriba no es
-# físico: dos por ciento es más de lo que cualquier ceca se desvía y menos que cualquier ley.
+# Tramos de distancia con los que el curador decide si abrir Numista. El 2 % es más de lo que
+# se desvía cualquier ceca y menos que cualquier cambio de ley.
 NEAR_PERCENT = 2.0
 FAR_PERCENT = 5.0
 
 
 def normalize_weight_millioz(weight_oz: float) -> int | None:
-    """Espejo de `normalizeWeightMillioz`: imán a los pesos comunes y a nada más.
+    """Espejo de `normalizeWeightMillioz`: imán sólo a los pesos comunes (#288).
 
-    Lo que declara un catálogo dejó de ser objetivo en el #288: manda sobre sus miembros
-    (ADR 0016) y sobre nadie más, y sus miembros ni siquiera pasan por aquí.
-
-    Los gramos de `normalized_weights` del digest —las onzas exactas y los dos bordes de la
-    tolerancia— son los vectores que atan este espejo al original.
+    Lo atan al original los vectores `normalized_weights` del digest.
     """
     if not math.isfinite(weight_oz) or weight_oz <= 0.0:
         return None
@@ -106,10 +90,7 @@ def normalize_weight_millioz(weight_oz: float) -> int | None:
 
 
 def normalize_family(family: str | None) -> str | None:
-    """Espejo de `normalizeFamily`: colapsa espacios y trata el vacío como ausencia.
-
-    Atada vector a vector por `families` del digest.
-    """
+    """Espejo de `normalizeFamily`, atado por `families` del digest."""
     if family is None:
         return None
     collapsed = " ".join(family.split())
@@ -119,8 +100,8 @@ def normalize_family(family: str | None) -> str | None:
 def is_technical_family(family: str) -> bool:
     """Espejo de `isTechnicalFamily`: `System YYYY[-YYYY]` es sistema monetario, no serie.
 
-    Atada por `families` del digest, que la lee sobre la familia tal como está escrita:
-    `System 1999 ` con un espacio detrás y `System １９９９` con dígitos anchos no lo son.
+    Atada por `families` del digest. Lee la familia tal cual: `System 1999 ` con espacio final
+    o `System １９９９` con dígitos anchos no son técnicas.
     """
     period = family.removeprefix("System ")
     if period == family or not period:
@@ -190,11 +171,8 @@ class Deviation:
 
     @property
     def explained_by(self) -> str | None:
-        """Dónde está escrita ya la desviación: en la casilla o en la lámina entera.
-
-        Los 36 pesos de plata .900 del Libro Rojo (#204) no son 36 notas de casilla: es una
-        sola ley que la lámina explica de una vez, como los 3 rublos. Si el informe sólo
-        mirara el `variant_note` del miembro, esa nota escrita no callaría ni una línea.
+        """Dónde está escrita la desviación: `variant_note` de la casilla o `source_note` de la
+        lámina, que explica de una vez una ley común a todos sus miembros (#204).
         """
         if self.variant_note:
             return "casilla"
@@ -227,12 +205,7 @@ class MagnetPull:
 
 @dataclass(frozen=True)
 class Cluster:
-    """Las filas de un catálogo que dicen exactamente lo mismo.
-
-    Los 48 monumentos de 33,94 g repiten 48 veces una línea idéntica, y el trabajo que el
-    informe pide son las once que **no** tienen nota. Agrupar por catálogo, gramos, clave y
-    nota deja una línea por hallazgo y devuelve la tabla a un tamaño legible.
-    """
+    """Las filas de un catálogo que dicen exactamente lo mismo: una línea por hallazgo."""
 
     deviations: tuple[Deviation, ...]
 
@@ -246,7 +219,7 @@ class Cluster:
 
     @property
     def years(self) -> str | None:
-        """El tramo de años que abarca el cúmulo, que es lo que queda de las casillas."""
+        """El tramo de años que abarca el cúmulo."""
         years = sorted(
             deviation.year for deviation in self.deviations if deviation.year is not None
         )
@@ -321,11 +294,10 @@ class Report:
 
     @property
     def refresh_type_ids(self) -> tuple[int, ...]:
-        """Los tipos que hay que resembrar antes de acusar a Numista de nada.
+        """Tipos de las líneas sin nota, para resembrar antes de acusar a Numista.
 
-        La caché de `data/` no se refresca sola: una corrección que Numista **acepta** deja
-        la ficha sembrada guardando el gramaje viejo, y la línea sigue saliendo aquí para
-        siempre. Sólo los de las líneas sin nota: las explicadas ya se miraron.
+        La caché de `data/` no se refresca sola: tras una corrección aceptada en Numista, la
+        ficha sembrada conserva el gramaje viejo.
         """
         return tuple(
             dict.fromkeys(deviation.numista_type_id for deviation in self.unexplained)
@@ -353,8 +325,7 @@ def load_catalogs(directory: pathlib.Path = CATALOGS) -> list[Catalog]:
                 weight_millioz=payload.get("weight_millioz"),
                 members=members,
                 # Espejo de `CollectionCatalog.isSet`, atado por `catalog_species` del
-                # digest: el conjunto es la unidad y no declara variante física de
-                # ninguna clase (ADR 0012).
+                # digest: el conjunto no declara variante física (ADR 0012).
                 is_set=payload.get("schema_version") == 3,
                 source_note=payload.get("source_note"),
             )
@@ -411,8 +382,7 @@ def find_deviations(
             if member.numista_type_id is None:
                 continue
             ficha = fichas.get(member.numista_type_id)
-            # Un tipo que nadie ha sembrado no dice nada; el test de la semilla es lo que
-            # convierte eso en un fallo.
+            # Un tipo sin sembrar se omite: lo hace fallar el test de la semilla.
             if ficha is None or ficha.weight_oz is None or ficha.grams is None:
                 continue
             observed = normalize_weight_millioz(ficha.weight_oz)
@@ -466,8 +436,7 @@ def find_magnet_pulls(
         unclaimed += 1
         weight_oz = ficha.weight_oz
         if weight_oz is None:
-            # Sin gramos no hay imán que mover: la pieza acaba en el residuo por peso
-            # desconocido, y eso ya lo dice la app.
+            # Sin gramos no hay imán: la app ya manda la pieza al residuo por peso desconocido.
             without_weight += 1
             continue
         measured = math.floor(weight_oz * 1_000.0 + 0.5)
@@ -527,8 +496,7 @@ def find_split_catalogs(
 def cluster_deviations(deviations: tuple[Deviation, ...]) -> tuple[Cluster, ...]:
     """Junta las filas que sólo se diferencian en qué casilla son.
 
-    El orden de los cúmulos es el de su primera fila, y las filas llegan ya ordenadas por
-    distancia: el cúmulo más lejano sigue arriba.
+    Los cúmulos conservan el orden de su primera fila, que llega ordenada por distancia.
     """
     grouped: dict[tuple, list[Deviation]] = {}
     for deviation in deviations:

@@ -1,23 +1,22 @@
 # Nombres de tarjeta: la pasada de curación de los 52 ficheros
 
-Asset de [#22](https://github.com/jenarvaezg/coindex/issues/22). Este fichero **no** es la decisión
-—esa vive en la resolución del ticket y se escribirá en el ADR 0021 desde
-[#25](https://github.com/jenarvaezg/coindex/issues/25)—: es la pasada de curación que la decisión
-obliga, revisada moneda a moneda, para que la sesión que la implemente aplique un commit mecánico y
-no improvise 52 nombres.
+Material del [#22](https://github.com/jenarvaezg/coindex/issues/22): la pasada de curación que
+exige la decisión, revisada moneda a moneda, para que implementarla sea un commit mecánico. La
+decisión está en el ticket y en el ADR 0021 (desde el
+[#25](https://github.com/jenarvaezg/coindex/issues/25)).
 
 ## Las tres reglas
 
 1. **`short_name` es obligatorio** en los 50 catálogos de `data/collection-catalogs/` y en las 2
    agrupaciones curadas de `data/groupings/`. La validación falla al arrancar si falta.
-2. **Es único** entre los 52. Es la regla que hace el trabajo: obliga a desambiguar en vez de
-   confiar en un corte mecánico que iguala doce ficheros en cinco nombres.
-3. **Es prefijo literal de `name`.** Se valida sola y evita que el nombre corto derive del largo.
+2. **Es único** entre los 52, lo que obliga a desambiguar: un corte mecánico dejaba doce ficheros
+   con cinco nombres.
+3. **Es prefijo literal de `name`**: se valida sola y evita que el nombre corto se separe del largo.
 
-`schema_version` **no se toca**: no es una versión de formato sino el discriminador de especie de
+`schema_version` no se toca: no es una versión de formato sino el discriminador de especie de
 catálogo (`CollectionCatalog.kt:9-16` — 1 tipo único, 2 date run, 3 set, 5 issue run).
 
-## La regla de idioma que la pasada destapó
+## La regla de idioma
 
 El corpus mezclaba idiomas sin criterio escrito. El que se sigue aquí, y que el ADR debería recoger:
 
@@ -28,7 +27,7 @@ El corpus mezclaba idiomas sin criterio escrito. El que se sigue aquí, y que el
   nombre legible: `Libro Rojo de Rusia`, `Personalidades destacadas de Rusia`,
   `Monumentos arquitectónicos de Rusia`.
 - **Todo lo que escribe el curador alrededor va en español**, incluidos los países: `Canadá`,
-  `Países Bajos`, `Sudáfrica`, `EE. UU.`, y **`Ruanda`, no `Rwanda`**.
+  `Países Bajos`, `Sudáfrica`, `EE. UU.`, y `Ruanda`, no `Rwanda`.
 
 ## La tabla
 
@@ -89,20 +88,20 @@ El corpus mezclaba idiomas sin criterio escrito. El que se sigue aquí, y que el
 | uk-royal-mint-1oz-silver-sueltas | Onzas sueltas de la Royal Mint | **Onzas sueltas de la Royal Mint · Reino Unido · 2 £ de plata** |
 | us-classic-silver-dollar | Dólar de plata clásico | sin cambio |
 
-`short_name` más largo: **37 caracteres** («250.º aniversario de la Independencia»). Mediana 19,
+`short_name` más largo: 37 caracteres («250.º aniversario de la Independencia»). Mediana 19,
 mínimo 7 («Fuertes»). Los 52 caben en una línea de tarjeta.
 
 ## Los defectos que la pasada encontró
 
-Ordenados por gravedad. Los cinco primeros los arregla la tabla de arriba; el último no es nuestro.
+Ordenados por gravedad. Los cinco primeros los arregla la tabla de arriba; el último es de Numista.
 
 1. **«Conjunto anual» era el nombre de una tarjeta.** `portugal-500-escudos-plata-500` tenía
    `name: 'Conjunto anual · 500 escudos de plata .500 · Portugal 1995-2001'`, así que con la regla
-   de prefijo el padre habría leído **«Conjunto anual»** en la tarjeta: una especie de catálogo, no
-   un nombre. El cualificador se va al final.
-2. **Dos pares ya salían con título idéntico en el índice, hoy, sin necesidad de cortar nada.**
-   `lunar-iii-perth-1oz-bullion` y `lunar-iii-perth-1oz-proof-coloured` declaran la **misma
-   `family`** («Lunar Series III»), y las dos Tudor Beasts también. Son cuatro tarjetas con dos
+   de prefijo el padre habría leído «Conjunto anual» en la tarjeta: una especie de catálogo, no un
+   nombre. El cualificador se va al final.
+2. **Dos pares ya salían con título idéntico en el índice**, sin cortar nada.
+   `lunar-iii-perth-1oz-bullion` y `lunar-iii-perth-1oz-proof-coloured` declaran la misma `family`
+   («Lunar Series III»), y las dos Tudor Beasts también. Son cuatro tarjetas con dos
    títulos, distinguibles solo por acabado y peso, que la tarjeta no muestra. Es el mismo defecto
    que los cinco escudos de [#157](https://github.com/jenarvaezg/coindex/issues/157) por el mismo
    motivo, y la unicidad de `short_name` lo cierra por construcción.
@@ -111,14 +110,14 @@ Ordenados por gravedad. Los cinco primeros los arregla la tabla de arriba; el ú
    identidad y clave de agrupación, no una definición de alcance — eso es trabajo de `name`, que ya
    lo dice. Debe quedar en `'Silver Krugerrand bullion anual'`. Desde
    [#21](https://github.com/jenarvaezg/coindex/issues/21) renombrar una familia no cierra ninguna
-   lámina, así que el cambio es gratis. **Es el único cambio de `family` de esta pasada.**
+   lámina, así que el cambio es gratis. Es el único cambio de `family` de esta pasada.
 4. **Ortografía y consistencia del español.** «Capitales de Provincia y Ciudades Autónomas» estaba
    en *Title Case* inglés; «Estado Ruso Unificado» igual; «250 aniversario» le faltaba el ordinal
    («250.º»); `Rwanda` estaba sin traducir en dos ficheros.
 5. **Tres tarjetas decían «1 oz» sin decir de qué.** `nikola-tesla-serbia-1oz`,
    `queens-beasts-uk-2oz` y `saltwater-crocodile-australia-1oz`, cuando sus 49 hermanos dicen «de
    plata» o «bullion». Al cocodrilo le faltaba además el segmento de país que tienen todos.
-6. **Una errata que no es nuestra.** La familia de Numista de N#104170 (Gibraltar) es
+6. **Una errata de Numista.** La familia de Numista de N#104170 (Gibraltar) es
    `'Charlemagme - Mounted Knight'` — «Charlemagme» por Charlemagne. No se tapa con un alias en
    código: se abre como issue contra Numista. Secundarios del mismo tipo, menos claros: N#31925
    trae `'Ibero-American'` truncado y N#33 trae
@@ -126,14 +125,14 @@ Ordenados por gravedad. Los cinco primeros los arregla la tabla de arriba; el ú
 
 ## Lo que la pasada deja para el que implemente
 
-- **Los seis alias editoriales de `Family.kt:33-40` mueren enteros.** Cinco son de familias con
+- **Los seis alias editoriales de `Family.kt:33-40` desaparecen.** Cinco son de familias con
   catálogo y pasan a ser `short_name` de su fichero. El sexto, `SML` → «Silver Maple Leaf», es
-  **inalcanzable con los datos sembrados**: sus 6 tipos están todos dentro de
+  inalcanzable con los datos sembrados: sus 6 tipos están todos dentro de
   `canada-silver-maple-leaf-1oz-bullion`, que declara `family: Silver Maple Leaf bullion anual`, y
   por el ADR 0016 el catálogo manda.
 - **Sobrevive una sola regla de etiquetado en código**, `collectionProposalFamilyLabel`:
   `System 1879-1936` → «Sistema monetario 1879-1936». No es un alias editorial sino el formateo de
-  una cadena generada, y el ADR 0012 §41 ya dice que el sistema técnico llega al usuario solo por
-  esa vía.
+  una cadena generada, y el ADR 0012 ya dice que el sistema técnico llega al usuario solo por esa
+  vía.
 - **Las 18 tarjetas de familia cruda de Numista no ganan nada.** Se pintan verbatim, en el idioma
   en que Numista las escribió, y arreglar una fea es curar un fichero o abrir un issue.

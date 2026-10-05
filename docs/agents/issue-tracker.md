@@ -10,9 +10,7 @@ Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all op
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: no.**
-
-External pull requests do not enter the issue-triage queue.
+External pull requests are not a request surface: they do not enter the issue-triage queue.
 
 ## Publishing and fetching
 

@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
-"""Afirma las copias de estos guiones contra el digest de la suite Kotlin.
+"""Contrasta las copias de los scripts con el digest de la suite Kotlin.
 
 `python3 -m unittest scripts/test_matching_digest.py`
 
-Los dos informes de curación son un puerto a mano del emparejamiento del dominio: la tolerancia
-y los pesos comunes del imán, la normalización de familia, la familia técnica, la especie que da
-la versión de esquema y la regla de reclamación cruzada que el arranque de la app hace fatal.
-Hasta este fichero cada suite probaba su propia copia, así que cambiar una constante sólo en
-Kotlin no ponía nada en rojo.
+Los informes de curación portan a mano parte del emparejamiento del dominio: la tolerancia y los
+pesos comunes del imán, la normalización de familia, la familia técnica, la especie según la
+versión de esquema y la regla de reclamación cruzada que el arranque de la app hace fatal.
 
-El contrato es `fixtures/matching-digest.json`, que emite `MatchingDigestTest` de `:domain` y
-que se versiona. Aquí no se afirma nada contra números escritos a mano: lo que dice el digest es
-lo que la app hace, y una copia que no lo siga rompe CI. **El puerto es unidireccional**: si el
-digest y la copia discrepan, lo que se corrige es la copia.
+El contrato es `fixtures/matching-digest.json`, versionado y emitido por `MatchingDigestTest` de
+`:domain`; aquí no se afirma contra números escritos a mano. Si el digest y la copia discrepan,
+se corrige la copia.
 
-Donde el juez de la curación es más severo que la compuerta de arranque, la diferencia va
-declarada en `STRICTER_THAN_THE_RUNTIME` y en ningún otro sitio.
+Donde el juez de la curación es más severo que el arranque, la diferencia se declara en
+`STRICTER_THAN_THE_RUNTIME`.
 """
 
 from __future__ import annotations
@@ -33,20 +30,16 @@ from script_loader import load_script  # noqa: E402
 
 DIGEST = ROOT / "fixtures" / "matching-digest.json"
 
-#: La forma del digest que esta suite sabe leer. Si `MatchingDigestTest` la sube, esto falla
-#: diciéndolo en vez de afirmar sobre campos que ya no existen.
+#: La versión del digest que esta suite sabe leer; si `MatchingDigestTest` la sube, falla aquí.
 DIGEST_VERSION = 1
 
 #: Lo que el digest trae y esta suite lee.
 SECTIONS = ("snapping", "normalized_weights", "families", "catalog_species", "cross_claims")
 
-#: Los casos donde el juez de la curación para y el arranque de la app no.
-#:
-#: Responden a preguntas distintas: `parseAll` deja los conjuntos fuera del cruce porque un
-#: conjunto no es la tarjeta de la denominación (ADR 0012), y `type-claims.py` para igual porque
-#: lo que juzga es si el fichero puede versionarse — el conjunto gana la familia y se llevaría la
-#: moneda de la otra tarjeta. La lista está aquí para que esa severidad de más se declare y no se
-#: herede sin darse cuenta: un caso nuevo donde discrepen rompe este test.
+#: Casos donde el juez de la curación para y el arranque de la app no. `parseAll` deja los
+#: conjuntos fuera del cruce (un conjunto no es la tarjeta de la denominación, ADR 0012), pero
+#: `type-claims.py` para porque el conjunto ganaría la familia y se llevaría la moneda de la otra
+#: tarjeta. Un caso nuevo de discrepancia rompe el test.
 STRICTER_THAN_THE_RUNTIME = {"set_beside_catalog"}
 
 weights = load_script("weight_deviations", "weight-deviations.py")
@@ -145,11 +138,10 @@ class CatalogSpeciesTests(unittest.TestCase):
 
 
 class CrossClaimTests(unittest.TestCase):
-    """El juez de la curación contra la compuerta de arranque, caso a caso.
+    """El juez de la curación contra el arranque, caso a caso.
 
-    Lo que se exige es una sola dirección: donde la app se niega a arrancar, el juez para. Puede
-    parar además donde la app arranca —para eso está `STRICTER_THAN_THE_RUNTIME`—, pero nunca
-    dar por bueno lo que el arranque rechaza, que es justo lo que este informe evita.
+    Donde la app se niega a arrancar, el juez para. Donde arranca, sólo puede parar en los casos
+    de `STRICTER_THAN_THE_RUNTIME`.
     """
 
     def stops_on(self, case: dict) -> bool:

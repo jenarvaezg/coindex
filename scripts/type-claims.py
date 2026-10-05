@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 """Dice quién reclama ya un tipo de Numista en `data/` — cero red (#171).
 
-Antes de versionar un catálogo o una agrupación hay que cruzar sus tipos contra
-los que ya están versionados: dos ficheros que nombran el mismo tipo no dan una
-tarjeta rara, sino un fichero que la app rechaza al arrancar, y el fichero viaja
-al móvil del padre en la release. El validador de semillas
-(`CatalogSeeds.validateCrossCatalogClaims`) lo caza cuando el fichero ya existe;
-esto lo caza antes, cuando lo único que hay es una lista de ids.
+Cruza los tipos de un catálogo o agrupación por versionar contra los ya versionados. Dos
+catálogos que nombran el mismo tipo hacen que la app no arranque, y el fichero viaja al móvil
+del padre en la release. `CatalogSeeds.validateCrossCatalogClaims` lo detecta cuando el fichero
+ya existe; esto, antes, con sólo una lista de ids.
 
     scripts/type-claims.py 235118 307024        # ¿está ocupado lo que voy a nombrar?
     scripts/type-claims.py 235118:582778,585569 # nombrándolo con desempate por emisión
     scripts/type-claims.py --file data/collection-catalogs/nuevo.json
     scripts/type-claims.py --all                # audita todo data/
 
-Sale con 1 cuando algo obliga a parar. Los solapes legítimos —dos catálogos que
-desempatan por `numista_issue_ids` con emisiones disjuntas, o un programa
-conmemorativo, que es otra lectura de la misma moneda (ADR 0022)— salen con 0.
+Sale con 1 cuando algo obliga a parar. Los solapes legítimos salen con 0: dos catálogos que
+desempatan por `numista_issue_ids` con emisiones disjuntas, o un programa conmemorativo, que es
+otra lectura de la misma moneda (ADR 0022).
 """
 
 from __future__ import annotations
@@ -121,16 +119,12 @@ def claims_by_type(claims: list[Claim]) -> dict[int, list[Claim]]:
 
 
 def judge(type_id: int, claims: list[Claim]) -> Verdict:
-    """La regla, en un sitio: qué solape es legítimo y qué solape obliga a parar.
+    """Qué solape es legítimo y cuál obliga a parar.
 
-    Vive aquí y en `CatalogSeeds.validateCrossCatalogClaims`, que es lo que la
-    hace fatal. Esto no la sustituye: la aplica a ids que todavía no son fichero.
-
-    El contrato entre las dos es `cross_claims` de `fixtures/matching-digest.json`, que dice
-    por cada reparto de reclamaciones si la app se niega a arrancar. Lo que exige es una
-    dirección: donde la app se niega, esto para. Puede parar además donde la app arranca —el
-    conjunto, que `parseAll` deja fuera del cruce— y esa severidad de más va declarada en
-    `test_matching_digest.py`.
+    Copia de la regla que `CatalogSeeds.validateCrossCatalogClaims` hace fatal, aplicada a ids
+    que aún no son fichero. El contrato es `cross_claims` de `fixtures/matching-digest.json`:
+    donde la app se niega a arrancar, esto para. Además para con un conjunto, que `parseAll`
+    deja fuera del cruce; esa diferencia está declarada en `test_matching_digest.py`.
     """
     files = {(claim.species, claim.file_id, claim.is_set) for claim in claims}
     if len(files) < 2:
@@ -258,11 +252,9 @@ def render(verdicts: list[Verdict], *, total_types: int, queried: bool) -> str:
 
 
 def cross(versioned: list[Claim], candidate: list[Claim]) -> list[Verdict]:
-    """Lo que se piensa nombrar, contra lo ya versionado.
+    """Lo que se piensa nombrar, contra lo ya versionado, con la misma regla de `judge`.
 
-    El candidato entra en el cruce como una reclamación más, así que lo juzga la
-    misma regla: un id suelto sin `numista_issue_ids` no desempata y para; el
-    mismo id con sus emisiones, si son disjuntas de las del otro catálogo, no.
+    Un id suelto no desempata y para; con emisiones disjuntas de las del otro catálogo, no.
     """
     grouped = claims_by_type(versioned)
     verdicts = []
@@ -357,8 +349,7 @@ def main() -> None:
     if arguments.all:
         verdicts = audit(claims)
     else:
-        # Un fichero ya versionado no se cruza contra sí mismo: lo que se juzga es
-        # lo que dice ahora, no la copia que ya está en `data/`.
+        # Un fichero ya versionado se juzga por lo que dice ahora, no contra su copia en `data/`.
         own = {claim.file_id for claim in candidate}
         verdicts = cross([one for one in claims if one.file_id not in own], candidate)
 

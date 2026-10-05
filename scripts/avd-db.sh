@@ -1,29 +1,24 @@
 #!/usr/bin/env bash
 # Guarda y restaura la base de datos del AVD para medir sin gastar cuota de la API (#452).
 #
-# Una sesión de medición en el emulador costaba 446 llamadas: el AVD arranca con la base
-# vacía, se da de alta, se sincroniza y a los tres segundos la tasación pide los precios y
-# los listados de toda la colección. Eso salía del presupuesto mensual del padre, que es del
-# que depende su móvil — y cambiarlo por el de Jose sólo cambia a quién se le apaga la app.
-#
-# `coindex.db` lleva la colección, las fichas, los precios y (desde el #452) los listados de
-# emisiones. Restaurada, la app tiene todo lo que una pasada le pediría a Numista y no gasta
-# ni una llamada. El volcado es privado: vive fuera del repositorio, como la captura de la
-# colección, porque es la colección.
+# Un AVD vacío que se da de alta y sincroniza gasta cientos de llamadas del presupuesto mensual
+# del padre, del que depende su móvil; usar la clave de Jose sólo cambia a quién se le acaba.
+# `coindex.db` lleva la colección, las fichas, los precios y los listados de emisiones: con ella
+# restaurada la app no llama a Numista. El volcado es la colección, así que vive fuera del
+# repositorio.
 #
 #     scripts/avd-db.sh save        # una vez, con el AVD ya poblado
 #     scripts/avd-db.sh restore     # en cada sesión, después de `adb install -r`
 #
-# El volcado no tiene que salir de un AVD. «Exportar datos», en «Este teléfono», comparte la base del
-# móvil ya con el diario plegado dentro (#548): se copia al vault como `coindex.db`, sin `-wal`
-# ni `-shm`, y `restore` la carga igual. Es el único canal que hay contra un APK de release, y
-# la única forma de medir la colección del padre sin gastar cuota. La regla al cargarla es la
-# que lleva el nombre del fichero: el APK del emulador tiene que ser de versión igual o
-# posterior a la del que exportó, porque las migraciones de Room sólo van hacia delante.
+# El volcado también puede salir de «Exportar datos» en «Este teléfono» (#548), con el diario ya
+# plegado: se copia al vault como `coindex.db`, sin `-wal` ni `-shm`. Es el único canal contra un
+# APK de release y la única forma de medir la colección del padre sin gastar cuota. El nombre del
+# fichero exportado lleva la versión que lo exportó, y el APK del emulador tiene que ser de esa
+# versión o posterior: las migraciones de Room sólo van hacia delante.
 #
-# El alta sigue haciendo falta, porque la clave se cifra contra la Keystore del dispositivo y
-# no viaja en la base de datos. No cuesta nada: el formulario valida el formato y guarda, sin
-# tocar la red. Lo que cuesta es pulsar «Sincronizar», y con la base restaurada no hace falta.
+# El alta sigue haciendo falta porque la clave se cifra contra la Keystore del dispositivo y no
+# viaja en la base. No toca la red; lo que gasta es «Sincronizar», que con la base restaurada
+# sobra.
 set -euo pipefail
 
 PACKAGE=com.jenarvaezg.coindex
@@ -68,8 +63,7 @@ restore() {
         echo "no hay volcado en $VAULT: córrelo primero con save" >&2
         exit 66
     fi
-    # Parada limpia antes de escribir: la app con la base abierta se encuentra el fichero
-    # cambiado debajo y se lleva por delante lo que se acaba de copiar.
+    # Parar la app antes de escribir: con la base abierta pisaría lo que se acaba de copiar.
     adb shell "am force-stop $PACKAGE"
     for file in "${FILES[@]}"; do
         adb shell "run-as $PACKAGE rm -f $DEVICE_DIR/$file"

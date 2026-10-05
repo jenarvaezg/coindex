@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 """Maqueta de las ocho cabeceras del #493, a dp real y con la de hoy de listón.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
 Ocho variantes por lámina y cinco láminas: la holgada (5,5x entre las dos cifras), la que
 colisiona (1,4x), una de siete huecos, una por encima del umbral y una cerrada, que es la
 tercera pregunta del ticket. Un solo HTML autocontenido: las dos fuentes del APK y las fotos
 del catálogo van en base64, una clase CSS por tipo para no embeberlas por casilla.
 
-Las medidas salen de donde las saca la app —`PlateScreen.kt`, `PlateSpacing`, `YearTagMetrics`,
-`CompletionStamp.kt`, `Theme.kt`— y están arriba, juntas, para que la maqueta no pueda mentir
-por copia.
+Las medidas salen de donde las saca la app (`PlateScreen.kt`, `PlateSpacing`, `YearTagMetrics`,
+`CompletionStamp.kt`, `Theme.kt`) y están juntas arriba.
 
-**Sale al anexo privado y no al repo** (`dinero-fuera-del-repo-publico`): la maqueta lleva los
-importes de la colección del padre.
+Sale al anexo privado y no al repo, porque lleva los importes de la colección del padre.
 
     python3 docs/ux/prototipo-cifras-493/extract.py
     python3 docs/ux/prototipo-cifras-493/build.py
@@ -82,10 +80,9 @@ def eur(amount):
 
 # ── la casilla ──────────────────────────────────────────────────────────────
 def hole(cas, chip=None):
-    """El hueco troquelado. `chip` es el precio pegado dentro, que sólo pone la variante C."""
+    """El hueco troquelado. `chip` es el precio pegado dentro (variantes C, E, F y G)."""
     ghost = "" if cas["owned"] else " ghost"
-    # El precio es lo que cuesta el hueco, así que sólo lo lleva el hueco: una casilla llena no
-    # tiene coste, tiene valor, y ése es el de la cabecera.
+    # Sólo el hueco lleva precio: una casilla llena tiene valor, no coste, y va en la cabecera.
     empty_priced = chip and cas["floor"] and not cas["owned"]
     price = f'<b class="chip">{eur(cas["floor"])}</b>' if empty_priced else ""
     return (f'<div class="hole{ghost}"><div class="card"></div><div class="wall"></div>'
@@ -127,9 +124,9 @@ def head_money(plate, variant):
             return money(f'<i>cerrarla</i> {cost} · {MONEY_CRITERION}', "money one")
         return money(f"{inside} · {MONEY_CRITERION}")
     if variant == "g":
-        # La E con el criterio de cada cifra, que no es el mismo: un hueco no tiene «lo que
-        # pagaste», así que sus precios son dos y no tres, y se tasa en `unc` (ADR 0028 §8). El
-        # criterio viaja con su importe, que es lo que pedía el #408.
+        # La E con el criterio de cada cifra: un hueco no tiene «lo que pagaste», así que sus
+        # precios son dos, y se tasa en `unc` (ADR 0028 §8). Cada criterio va con su importe
+        # (#408).
         rows = [f'<div class="line"><i>Valor actual:</i><b>{inside}</b>'
                 f'<u>· {MONEY_CRITERION}</u></div>']
         if cost:
@@ -137,9 +134,8 @@ def head_money(plate, variant):
                         f'<u>· {HOLE_CRITERION}</u></div>')
         return f'<div class="pair said tailed">{"".join(rows)}</div>'
     if variant in ("e", "f"):
-        # Lo que pidió Jose, con las dos etiquetas dichas enteras y el coste sólo si falta algo.
-        # La F es la misma menos la repetición: con un solo hueco el sello del hueco ya dice el
-        # coste, así que el renglón no lo dice otra vez.
+        # La E: las dos etiquetas enteras y el coste sólo si falta algo. La F calla el renglón
+        # del coste cuando sólo falta un hueco, porque el sello ya lo dice.
         rows = [f'<div class="line"><i>Valor actual:</i><b>{inside}</b></div>']
         say_cost = cost and (variant == "e" or plate["missing"] > 1)
         if say_cost:
@@ -157,8 +153,8 @@ def spec(plate, variant):
         ounces = f"{whole} oz" if not frac else f"{whole},{str(frac).rjust(3, '0').rstrip('0')} oz"
         rows.append(("Peso", ounces))
     rows.append(("Actualizado", plate["updated"]))
-    # La B es la única que baja el coste de cerrar a la ficha, que es donde viven los datos
-    # de la lámina: la jerarquía la pone la superficie y no el tamaño de la letra.
+    # La B baja el coste de cerrar a la ficha, donde viven los datos de la lámina: la jerarquía
+    # la pone la superficie y no el tamaño de la letra.
     if variant == "b" and plate["cost"]:
         rows.insert(0, ("Cerrarla", eur(plate["cost"])))
     cells = "".join(
@@ -171,8 +167,8 @@ def phone(plate, variant):
     complete = plate["missing"] == 0
     stamp = '<div class="stamp"><b>COMPLETA</b></div>' if complete else ""
     ratio = f'{plate["owned"]}/{plate["issued"]}'
-    # Un sello sólo puede decir un precio que el pase haya pedido, y el pase no pregunta por los
-    # huecos de una lámina por encima del umbral (ADR 0028 §1): sin coste, sin sellos.
+    # Sin coste no hay sellos: el pase no pide el precio de los huecos de una lámina por encima
+    # del umbral (ADR 0028 §1).
     chip = variant in ("c", "e", "f", "g") and plate["cost"] is not None
     cells = "".join(casilla(c, chip) for c in plate["casillas"])
     return f"""<div class="phone">
@@ -214,8 +210,8 @@ VARIANTS = [
                                                     "circular (ADR 0028 §8)"),
 ]
 
-# Las que se miran después de elegir: el listón, la E que eligió Jose y la G, que es la E con la
-# procedencia corregida. La A, la B, la C sola, la D y la F quedan en el código como registro.
+# Las que se miran después de elegir: el listón, la E que eligió Jose y la G (la E con la
+# procedencia corregida). Las demás quedan en el código como registro.
 CHOSEN = ("hoy", "e", "g")
 
 SCENES = [
