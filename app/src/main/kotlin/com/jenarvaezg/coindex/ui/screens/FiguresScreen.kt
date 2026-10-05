@@ -51,12 +51,12 @@ import com.jenarvaezg.coindex.ui.kilogramsLabel
 import com.jenarvaezg.coindex.ui.matterCensusLabel
 import com.jenarvaezg.coindex.ui.metalLabel
 import com.jenarvaezg.coindex.ui.mintSentence
+import com.jenarvaezg.coindex.ui.moneyStampLabel
 import com.jenarvaezg.coindex.ui.paidAgainstTodayLabel
 import com.jenarvaezg.coindex.ui.percentLabel
 import com.jenarvaezg.coindex.ui.portraitSharesLabel
 import com.jenarvaezg.coindex.ui.sameHandSentence
 import com.jenarvaezg.coindex.ui.screenDiameterLabel
-import com.jenarvaezg.coindex.ui.spotStampLabel
 import com.jenarvaezg.coindex.ui.squareMetresLabel
 import com.jenarvaezg.coindex.ui.uncirculatedSentence
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -111,7 +111,7 @@ fun FiguresScreen(
             }
             // The money opens the page, and that does not contradict #316: what was rejected there is an
             // amount that changes on its own in a permanent bar. Here it is on a page opened on purpose,
-            // with its origin stated and the spot's date under it.
+            // with its origin stated and the date of each of its two clocks under it (#594).
             subject.money?.let { money ->
                 item("money") {
                     Block(FiguresLabels.MONEY_HEADING) {
@@ -123,7 +123,7 @@ fun FiguresScreen(
                         // is the order that stops the small caps reading as a heading: in rust and
                         // pressed against the divider they were the eyebrow of the block below (#398).
                         Text(
-                            spotStampLabel(money.spot, nowMillis),
+                            moneyStampLabel(money.spot, money.value.catalogReadAt, nowMillis),
                             style = MaterialTheme.typography.labelMedium,
                             color = Paper.muted,
                         )

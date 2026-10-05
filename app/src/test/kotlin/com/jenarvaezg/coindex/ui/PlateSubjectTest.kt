@@ -37,6 +37,13 @@ import kotlin.test.assertTrue
  * type, which is never in a cell at all (issue #88): it heads the plate when every cell is that type,
  * and otherwise the plate simply does not say it.
  */
+/** A day of August 2026, so the ages a header prints are the same on every run. */
+private const val NOW = 1_786_442_400_000L
+private const val DAY = 24L * 60 * 60 * 1_000
+
+/** Seven weeks back, which is past the month where the age gives way to the day itself. */
+private const val VALUED = NOW - 48 * DAY
+
 class PlateSubjectTest {
     private fun member(id: String, label: String, year: Int, typeId: Int) =
         CollectionCatalogMember(id = id, label = label, year = year, numistaTypeId = typeId)
@@ -506,6 +513,34 @@ class PlateSubjectTest {
     }
 
     /**
+     * And each of the two carries the age of **its own** price, read against the subject's clock (#594).
+     *
+     * The stamp inside the hole does not repeat it: «Coste de cerrar» totals those very holes and
+     * already says the oldest of their reads, so ten casillas printing the same date under one line
+     * that says it is the frequency ADR 0026 §5 prices.
+     */
+    @Test
+    fun `each figure of the header is handed the age of its own price`() {
+        val plate = pricedSubject(
+            PlateMoney(
+                value = PlateValue(eur = 1_612.0, pieces = 2, catalogReadAt = VALUED),
+                cost = PlateCost(eur = 84.0, holes = 1, catalogReadAt = NOW - 3 * DAY),
+                holeCosts = mapOf("1886" to 84.0),
+            ),
+            nowMillis = NOW,
+        )
+
+        // The absolute form is pinned to a zone in `FiguresLabelsTest`; what this one owes is that the
+        // line is handed **its own** read and not the other line's.
+        assertEquals(
+            "Valor actual: 1.612 € · al mayor de tres precios · Numista: ${priceAgeLabel(VALUED, NOW)}",
+            plate.value,
+        )
+        assertEquals("Coste de cerrar: 84 € · en sin circular · Numista: hace 3 días", plate.cost)
+        assertEquals(listOf(null, "84 €"), plate.cells.map { it.cost })
+    }
+
+    /**
      * And with no money to say, no drawer can print any of it — which is the export with the switch
      * off, the plate whose market has not landed, and every test in this file that says nothing about
      * money at all.
@@ -602,7 +637,10 @@ class PlateSubjectTest {
     }
 
     /** The two-casilla date run with the first one filled, which is the plate a cost is said of. */
-    private fun pricedSubject(money: PlateMoney): PlateSubject {
+    private fun pricedSubject(
+        money: PlateMoney,
+        nowMillis: Long = System.currentTimeMillis(),
+    ): PlateSubject {
         val catalog = catalog(dateRun)
         val album = CollectionCatalogAlbum(
             listOf(
@@ -616,6 +654,6 @@ class PlateSubjectTest {
                 CollectionCatalogAlbumMember(dateRun[1], CollectionCatalogMemberStatus.Missing),
             ),
         )
-        return plateSubject(PlateResult.Available(catalog, album), money)
+        return plateSubject(PlateResult.Available(catalog, album), money, nowMillis = nowMillis)
     }
 }

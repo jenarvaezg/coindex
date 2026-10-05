@@ -1,9 +1,7 @@
 package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.prices.ValuationRefusal
-import java.time.Instant
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 
 /**
  * Every string «Explorar» prints (ADR 0030, ADR 0026 §6).
@@ -215,32 +213,18 @@ private fun coverageLabel(cost: ShowcaseCost): String? =
     "${cost.holes} de ${showcaseSlotsLabel(cost.slots)}".takeIf { cost.holes < cost.slots }
 
 /**
- * How old a hand-asked price is, in the coarsest unit that is still true.
+ * How old a hand-asked price is, said as the gesture that brought it.
  *
- * The ficha's own wording (`fichaAgeLabel`) applied to the other thing this app brings and keeps: a
- * price. Calendar days and not elapsed milliseconds, so a tasación from last night reads «ayer» this
- * morning instead of «hace 11 horas» rounded to today.
+ * The age itself is [priceAgeLabel], which is the vocabulary **every** price in the app now says its
+ * age in (#594): this one only puts the participle in front, because on a plate of the shelf window
+ * the figure is the answer to «Tasar esta lámina» and the word is what ties the two together. Under a
+ * total of the collection there is no gesture to name, so the stamp names the source instead.
  */
 fun valuedAgeLabel(
     readAtMillis: Long,
     nowMillis: Long,
     zone: ZoneId = ZoneId.systemDefault(),
-): String {
-    val read = Instant.ofEpochMilli(readAtMillis).atZone(zone).toLocalDate()
-    val today = Instant.ofEpochMilli(nowMillis).atZone(zone).toLocalDate()
-    // A clock that has gone backwards is not a price from the future: it is today's.
-    val days = ChronoUnit.DAYS.between(read, today).coerceAtLeast(0)
-    return "tasada " + when {
-        days == 0L -> "hoy"
-        days == 1L -> "ayer"
-        days < 30L -> "hace ${plural(days.toInt(), "día", "días")}"
-        // **Past a month it says the day and not the age**, which is where this parts company with
-        // `fichaAgeLabel`: a ficha can always be brought again, and this price cannot — nothing will ever
-        // refresh it (ADR 0030 §4). «hace 8 meses» over an amount that is going to sit there for years is
-        // the date §4 asks for, rounded away.
-        else -> "el ${dayMonthYearLabel(read)}"
-    }
-}
+): String = "tasada ${priceAgeLabel(readAtMillis, nowMillis, zone)}"
 
 /**
  * How many casillas a plate of the shelf window has, under its tile (ADR 0030 §8).

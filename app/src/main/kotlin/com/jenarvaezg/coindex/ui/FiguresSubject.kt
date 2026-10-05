@@ -123,7 +123,7 @@ fun figuresSubject(
         null
     } else {
         MoneyReading(
-            collectionValue(state.items, state.typeMeta, spot, book::of),
+            collectionValue(state.items, state.typeMeta, spot, book::of, book::readAt),
             spot,
             paidComparison(state.items, state.typeMeta, spot, book::of),
         )
@@ -252,8 +252,14 @@ fun coinValue(
     )
 }
 
-/** What a plate's own coins are worth, for the figure over its title. */
-data class PlateValue(val eur: Double, val pieces: Int)
+/**
+ * What a plate's own coins are worth, for the figure over its title.
+ *
+ * @param catalogReadAt the **oldest** catalogue read behind the amount (#494, #594). Null on a plate
+ *   whose coins no catalogue price was ever asked for — then there is no second clock to name, and the
+ *   line is the one #493 drew.
+ */
+data class PlateValue(val eur: Double, val pieces: Int, val catalogReadAt: Long? = null)
 
 /**
  * What closing a plate would cost, for the second figure of the same header (#493).
@@ -262,8 +268,11 @@ data class PlateValue(val eur: Double, val pieces: Int)
  *   hole whose issue nobody knows, or whose price is not on the phone, adds nothing to the total and
  *   is not counted by it. The figure is therefore a floor, and the plate says a cost of closing built
  *   out of the holes it can price rather than nothing at all.
+ * @param catalogReadAt the oldest read behind it, which is **its own** and not [PlateValue]'s: the two
+ *   figures of one header are made of different reads, and a marked casilla is repriced whatever the
+ *   plate's shape (ADR 0029 §4), so the second line can be months fresher than the first (#594).
  */
-data class PlateCost(val eur: Double, val holes: Int)
+data class PlateCost(val eur: Double, val holes: Int, val catalogReadAt: Long? = null)
 
 /**
  * Everything a plate's header says about money, and the price inside each of its empty casillas.
@@ -334,21 +343,38 @@ fun plateMoney(
     // the chips inside the casillas have to be about the same holes (ADR 0028 §1).
     val withinReach = holesWithinReach(album)
     val closing = withinReach.mapTo(mutableSetOf()) { it.member.id }
-    val holeCosts = holeCosts(album, state, book, wished, withinReach)
+    val priced = holeCosts(album, state, book, wished, withinReach)
     return PlateMoney(
         value = plateValue(album, state, book),
         // **Only the holes within reach**, and a marked one past the threshold is deliberately not
         // added: one hole is not the cost of closing a plate of fifty-one, and adding it would print
         // «Coste de cerrar» over a number that closes nothing (ADR 0029 §4). Null and not zero, like
         // every other amount on the page: «0 €» would say closing costs nothing.
-        cost = holeCosts
+        cost = priced
             .filterKeys { it in closing }
             .values
             .takeIf { it.isNotEmpty() }
-            ?.let { PlateCost(it.sum(), it.size) },
-        holeCosts = holeCosts,
+            ?.let { holes ->
+                PlateCost(
+                    eur = holes.sumOf { it.eur },
+                    holes = holes.size,
+                    // The oldest of the reads this amount is made of, and only of **these** holes: the
+                    // ones the header adds up (#494).
+                    catalogReadAt = holes.mapNotNull { it.readAt }.minOrNull(),
+                )
+            },
+        holeCosts = priced.mapValues { (_, hole) -> hole.eur },
     )
 }
+
+/**
+ * What one empty casilla costs and when its catalogue price was brought, held together for one walk.
+ *
+ * The two travel as a pair because the header's second figure needs both and the stamp inside the
+ * casilla needs one: separating them would mean walking the album twice and risking a cost added up
+ * under one reading of the book and dated out of another (ADR 0028, #536).
+ */
+private data class HolePrice(val eur: Double, val readAt: Long?)
 
 /**
  * What each empty casilla of a plate costs, or nothing at all when the plate is out of reach.
@@ -366,17 +392,20 @@ private fun holeCosts(
     book: PriceBook,
     wished: Set<WishKey>,
     withinReach: List<CollectionCatalogAlbumMember>,
-): Map<String, Double> =
+): Map<String, HolePrice> =
     holesToPrice(album, wished, withinReach).mapNotNull { hole ->
         val typeId = hole.member.numistaTypeId ?: return@mapNotNull null
+        val issueId = book.listings.issueOf(hole.member)
         val cost = holeValue(
             typeId = typeId,
-            issueId = book.listings.issueOf(hole.member),
+            issueId = issueId,
             meta = state.typeMeta[typeId],
             spot = book.spot,
             prices = book::of,
         ) ?: return@mapNotNull null
-        hole.member.id to cost.eur
+        // Asked and not priced, which is `showcaseMoney`'s gate (ADR 0030 §6): a hole whose silver beat
+        // its catalogue price still had that price brought on the day the row says.
+        hole.member.id to HolePrice(cost.eur, issueId?.let { book.readAt(typeId, it) })
     }.toMap()
 
 /**
@@ -518,11 +547,19 @@ fun plateValue(
     if (filled.isEmpty()) return null
     var total = 0.0
     var pieces = 0
+    var oldest = Long.MAX_VALUE
     for (item in state.items.filter { it.id in filled }) {
         val value = pieceValue(item, state.typeMeta[item.typeId], book.spot, book::of) ?: continue
         val quantity = item.quantity.coerceAtLeast(1)
         total += value.eur * quantity
         pieces = saturatingAdd(pieces, quantity)
+        item.issueId
+            ?.let { book.readAt(item.typeId, it) }
+            ?.let { oldest = minOf(oldest, it) }
     }
-    return if (pieces == 0) null else PlateValue(total, pieces)
+    return if (pieces == 0) {
+        null
+    } else {
+        PlateValue(total, pieces, oldest.takeIf { it != Long.MAX_VALUE })
+    }
 }

@@ -1,5 +1,8 @@
 package com.jenarvaezg.coindex.ui.print
 
+import com.jenarvaezg.coindex.ui.dayMonthYearLabel
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.math.roundToInt
 
 /**
@@ -75,6 +78,36 @@ const val INVENTORY_SECTION_SOURCE: String = "tu colección en Numista"
 const val COUNTRY_FACT_LABEL: String = "País"
 const val PIECES_FACT_LABEL: String = "Piezas"
 const val VALUE_FACT_LABEL: String = "Valor"
+
+/**
+ * The row that dates the row above it: when the catalogue half of «Valor» was brought (#594).
+ *
+ * **On paper the date matters more than on screen, not less.** A catalog price lives ninety days (ADR
+ * 0028 §5 as amended by #561) and the screen's own figure is refreshed under the collector's nose; a
+ * sheet printed in October with prices from June is read a year later by somebody who was never told
+ * which June it was. The paper outlives the app, which is the argument this file already makes about
+ * the word «curado».
+ *
+ * **«Tasación» and not «Precios» or «Fecha».** «Fecha» over a page that already carries a catalog's
+ * editorial date and a coin's year is three dates and no way to tell them apart; «Tasación» names the
+ * act the amount came out of, which is the one of the three that has an age.
+ *
+ * It is a row of the specification and not a footnote because the amount is one too (#493): the printed
+ * page has no header to raise a figure into, so what the screen says in one line it says in two.
+ */
+const val VALUATION_FACT_LABEL: String = "Tasación"
+
+/**
+ * That date, written out in full, which is the only register paper has.
+ *
+ * Never «hace 12 días» and never «hoy»: `priceAgeLabel` says the age relative to a now the reader is
+ * standing in, and a printed page has no now — it is read whenever it is picked up. An absolute day is
+ * the one form that still means the same thing in a drawer three years from now.
+ */
+fun printedValuationLabel(
+    readAtMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = dayMonthYearLabel(Instant.ofEpochMilli(readAtMillis).atZone(zone).toLocalDate())
 
 /**
  * The page of the coins that are in no collection.

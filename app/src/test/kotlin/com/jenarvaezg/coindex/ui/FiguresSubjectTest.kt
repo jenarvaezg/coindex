@@ -337,6 +337,85 @@ class FiguresSubjectTest {
     }
 
     /**
+     * Each figure of a plate's header is dated by the **oldest** read behind **it** (#494, #594).
+     *
+     * Two figures and not one date: «Valor actual» is made of the reads of the pieces inside and «Coste
+     * de cerrar» of the reads of the holes outside, and the pass is not the only writer of either — a
+     * marked casilla is repriced the day it is marked (ADR 0029 §4). One date over the two would have to
+     * lie about one of them.
+     */
+    @Test
+    fun `each figure of a plate is dated by the oldest read behind it`() {
+        val book = BOOK.copy(
+            prices = BOOK.prices + (PriceKey(typeId = 3, issueId = 9, grade = "unc") to 25.0),
+            readAt = mapOf((2 to 7) to JUNE, (3 to 9) to AUGUST),
+        )
+
+        val money = plateMoney(
+            albumWith(listOf(hole(id = "b", year = 1_961, typeId = 3, issueIds = listOf(9)))),
+            state(),
+            book,
+        )
+
+        // The filled casilla is type 2 issue 7, read in June; the hole is type 3 issue 9, read in August.
+        assertEquals(JUNE, money.value?.catalogReadAt)
+        assertEquals(AUGUST, money.cost?.catalogReadAt)
+    }
+
+    /** With two reads under one figure, the older of them dates it: a date is a promise about all of it. */
+    @Test
+    fun `a cost of closing made of two reads says the older one`() {
+        val book = BOOK.copy(
+            prices = BOOK.prices + (PriceKey(typeId = 3, issueId = 9, grade = "unc") to 25.0),
+            readAt = mapOf((2 to 7) to JUNE, (3 to 9) to AUGUST),
+        )
+
+        val money = plateMoney(
+            albumWith(
+                listOf(
+                    hole(id = "b", year = 1_961),
+                    hole(id = "c", year = 1_962, typeId = 3, issueIds = listOf(9)),
+                ),
+            ),
+            state(),
+            book,
+        )
+
+        assertEquals(2, money.cost?.holes)
+        assertEquals(JUNE, money.cost?.catalogReadAt)
+    }
+
+    /**
+     * A plate nobody asked the catalogue about carries no date, and that is an absence and not a zero.
+     *
+     * Its amount is metal and what was paid, two sources with no reading of Numista behind them: a date
+     * there would be the spot's, which says today for ever and is exactly the stamp #594 came from.
+     */
+    @Test
+    fun `a plate no catalogue price feeds says no date at all`() {
+        val money = plateMoney(albumWith(listOf(hole(id = "b", year = 1_961))), state(), BOOK)
+
+        assertNotNull(money.value)
+        assertNotNull(money.cost)
+        assertNull(money.value?.catalogReadAt)
+        assertNull(money.cost?.catalogReadAt)
+    }
+
+    /**
+     * The total of «Las cifras» carries the same date by the same rule, which is the one #561 leaned on.
+     *
+     * The life of a catalog price was tripled on the promise that the date travels with the amount, and
+     * it did not: the only date under this total was the spot's, read daily and therefore always today.
+     */
+    @Test
+    fun `the total of the page carries the oldest read of its catalogue prices`() {
+        val subject = figuresSubject(state(), BOOK.copy(readAt = mapOf((2 to 7) to JUNE)), settled = true)
+
+        assertEquals(JUNE, subject.money?.value?.catalogReadAt)
+        assertNull(figuresSubject(state(), BOOK, settled = true).money?.value?.catalogReadAt)
+    }
+
+    /**
      * Over the threshold of ADR 0028 §1 there is no cost and no stamp, and **the threshold is read
      * from one place**.
      *
@@ -391,6 +470,10 @@ private fun hole(
     numistaTypeId = typeId,
     numistaIssueIds = issueIds,
 )
+
+/** Two days of the same quarter, which is the spread #561 made possible (ADR 0028 §5). */
+private const val JUNE = 1_780_000_000_000
+private const val AUGUST = 1_786_000_000_000
 
 /** Issue 7 of type 2 is priced in `unc`; nothing else is. */
 private val BOOK = PriceBook(
