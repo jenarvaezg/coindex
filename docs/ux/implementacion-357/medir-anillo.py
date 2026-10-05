@@ -2,22 +2,20 @@
 """Busca la costura del anillo de un hueco troquelado, sobre una captura del AVD a 1080.
 
 Es el recuento que pide el plan de prueba del #357. Un arco de `sweepAngle = 180f` acaba de
-golpe, así que su costura es un **salto de luminancia entre dos muestras contiguas** justo a
-las 3 y a las 9 en punto, que es donde terminan los dos arcos.
+golpe, así que su costura es un salto de luminancia entre dos muestras contiguas justo a las 3
+y a las 9 en punto, donde terminan los dos arcos.
 
     python3 medir-anillo.py colecciones-despues.png
     python3 medir-anillo.py captura.png --centro 540 698
 
-El número no depende de acertar el radio: se barre toda la banda del anillo en pasos de 0,25
-dp y se informa del **peor** salto que se encuentra. Eso importa porque la geometría cambió
-entre las dos versiones —el anillo opaco de la v0.18.6 sobresalía 1,5 dp del borde del
-cartón y la pared del #357 no sobresale nada—, así que un radio fijo mediría cosas distintas
-en cada captura.
+Se barre toda la banda del anillo en pasos de 0,25 dp y se informa del peor salto, porque la
+geometría cambió entre versiones (el anillo opaco de la v0.18.6 sobresalía 1,5 dp del borde
+del cartón y la pared del #357 no sobresale) y un radio fijo mediría cosas distintas en cada
+captura.
 
-El hueco se localiza por el filete, que es `Paper.hairline` opaco (`#878577`) y por tanto un
-color exacto en el PNG. Se toman los extremos **horizontales** del filete, que es donde los
-arcos terminan y por tanto donde ninguno de los dos tapa al otro; con el borde superior
-—que ningún arco pálido cubre— se cierra el centro.
+El hueco se localiza por el filete, `Paper.hairline` opaco (`#878577`) y por tanto un color
+exacto en el PNG. Sus extremos horizontales, donde terminan los arcos y ninguno tapa al otro,
+dan el radio y la x del centro; el borde superior, que ningún arco pálido cubre, da la y.
 """
 
 import argparse
@@ -91,8 +89,8 @@ def report(path, window, reach):
     print(f"  centro ({centre_x:.1f}, {centre_y:.1f}), borde exterior del anillo en "
           f"r = {edge:.1f} px, hueco de ~{2 * edge / DENSITY:.0f} dp")
 
-    # De 5 dp por dentro del borde a 2 por fuera: el ancho del anillo en las dos versiones,
-    # y ni un dp más adentro, que ahí ya empieza la fotografía.
+    # De 5 dp por dentro del borde a 2 por fuera: el ancho del anillo en las dos versiones.
+    # Más adentro empieza la fotografía.
     worst = max(
         (seam(image, centre_x, centre_y, edge + step / 4 * DENSITY), step / 4)
         for step in range(-20, 9)

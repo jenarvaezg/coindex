@@ -9,80 +9,76 @@ constantes de Kotlin.
 ## La medida que abrió el ticket se confirma
 
 Sobre `implementacion-334/despues.png`, en una región de 920 × 600 px de papel
-vacío: **4,17 %** de píxeles fuera del tono exacto del papel, **12** niveles de
-amplitud, **0,78** de desviación típica y 13 tonos distintos. Y el mosaico
-repetía exacto: la diferencia consigo mismo desplazado una tesela era **0 en
-todos los píxeles**.
+vacío: 4,17 % de píxeles fuera del tono exacto del papel, 12 niveles de
+amplitud, 0,78 de desviación típica y 13 tonos distintos. El mosaico se repetía
+exacto: la diferencia consigo mismo desplazado una tesela era 0 en todos los
+píxeles.
 
 El [#300](https://github.com/jenarvaezg/coindex/issues/300) y el ADR 0026 §15
-daban tres salidas. Se eligió **subirlo hasta que se vea**, que es la única que
-obliga a pagar las tres facturas que el [#351](https://github.com/jenarvaezg/coindex/issues/351)
-puso encima de la mesa.
+daban tres salidas. Se eligió subirlo hasta que se vea, la única que obliga a
+pagar las tres facturas que planteaba el
+[#351](https://github.com/jenarvaezg/coindex/issues/351).
 
 ## Qué se ve ahora
 
-Región de papel vacío, misma en el antes y en el después de cada fila:
+Región de papel vacío, la misma en el antes y en el después de cada fila:
 
 | superficie | | antes | después |
 | --- | --- | ---: | ---: |
-| Monedas (400 × 200 px en `340,540`) | píxeles que el grano toca | 4,12 % | **62,12 %** |
-| | amplitud | 12 | **38** |
-| | desviación típica | 0,76 | **3,34** |
-| Lámina (400 × 200 px en `560,1060`) | píxeles que el grano toca | 0,00 % | **62,04 %** |
-| | amplitud | 0 | **41** |
-| Franja de la barra de estado (400 × 100 px en `300,0`) | píxeles que el grano toca | 0,00 % | **61,45 %** |
-| | amplitud | 0 | **47** |
+| Monedas (400 × 200 px en `340,540`) | píxeles que el grano toca | 4,12 % | 62,12 % |
+| | amplitud | 12 | 38 |
+| | desviación típica | 0,76 | 3,34 |
+| Lámina (400 × 200 px en `560,1060`) | píxeles que el grano toca | 0,00 % | 62,04 % |
+| | amplitud | 0 | 41 |
+| Franja de la barra de estado (400 × 100 px en `300,0`) | píxeles que el grano toca | 0,00 % | 61,45 % |
+| | amplitud | 0 | 47 |
 
-Las dos filas de ceros no son un error de medida: **la lámina y la franja del
-canto eran papel liso**, un tono plano de un solo valor. El grano vivía en
-Colecciones y en Monedas y se acababa ahí.
+Los ceros son reales: la lámina y la franja del canto eran papel liso, un tono
+plano de un solo valor. El grano sólo existía en Colecciones y en Monedas.
 
 De las tres salidas del ticket sólo se capturó la elegida. «Dejarlo como está»
-es `lamina-antes.png` en su columna de Monedas —el grano al 4 %—, y de
-«retirarlo» no se compiló una rama propia: la lámina de antes enseña ya cómo se
-ve una superficie sin grano, que es a lo que esa salida llevaba las cinco. Se
-dice aquí en vez de dar la casilla por marcada.
+es `lamina-antes.png` en su columna de Monedas (el grano al 4 %), y para
+«retirarlo» no se compiló una rama propia: la lámina de antes ya enseña cómo se
+ve una superficie sin grano, que es lo que esa salida habría hecho en las cinco.
 
 ![Papel a 1:1, antes y después](papel-1a1.png)
 
 ## Las tres facturas
 
-**1. El mosaico ya no repite exacto.** Desplazando una región de papel limpio
-una tesela en x, los píxeles que cambian pasan de **0,0 %** a **82,5 %**. El
-mosaico horneado son 4 × 4 teselas distintas — 384 dp de periodo, algo más ancho
-que la pantalla — en vez de una tesela repetida cincuenta veces.
+1. El mosaico ya no repite exacto. Desplazando una región de papel limpio una
+   tesela en x, los píxeles que cambian pasan del 0,0 % al 82,5 %. El mosaico
+   horneado son 4 × 4 teselas distintas (384 dp de periodo, algo más ancho que
+   la pantalla) en vez de una tesela repetida cincuenta veces.
 
-**2. La tesela y la fibra se miden en dp.** `GRAIN_TILE_DP = 96` y una fibra de
-0,5 dp, en vez de 256 px y 1 px crudos. Medido en la misma región a las dos
-densidades del plan de prueba:
+2. La tesela y la fibra se miden en dp: `GRAIN_TILE_DP = 96` y una fibra de
+   0,5 dp, en vez de 256 px y 1 px crudos. En la misma región, a las dos
+   densidades del plan de prueba:
 
-| | 420 dpi | 320 dpi |
-| --- | ---: | ---: |
-| píxeles que el grano toca | 61,45 % | 64,45 % |
-| desviación típica | 3,35 | 3,06 |
+   | | 420 dpi | 320 dpi |
+   | --- | ---: | ---: |
+   | píxeles que el grano toca | 61,45 % | 64,45 % |
+   | desviación típica | 3,35 | 3,06 |
 
-**3. El papel es una superficie, no un adorno de dos pantallas.** La hoja se
-pinta una sola vez, en `CoindexTheme`, y por debajo de todo: llega a Colecciones,
-Monedas, la lámina, Piezas, Ajustes, Avisos y el alta, y también a la franja del
-canto y a la de navegación. Ninguna pantalla vuelve a pintar papel encima.
+3. El papel es una superficie común. La hoja se pinta una sola vez, en
+   `CoindexTheme`, por debajo de todo: llega a Colecciones, Monedas, la lámina,
+   Piezas, Ajustes, Avisos y el alta, y también a la franja del canto y a la de
+   navegación. Ninguna pantalla vuelve a pintar papel encima.
 
-**El PDF lo lleva también.** Es la decisión que el plan de prueba pedía tomar
-explícitamente, y se toma con el coste medido: exportar la lámina de `Fuertes`
-como imagen pasa de **3,27 MB a 5,21 MB** (+59 %). Se paga porque la promesa del
-`Theme.kt` es que las dos representaciones de Coindex se lean como el mismo
-cuaderno, y una lámina exportada sobre papel liso al lado de la misma lámina en
-pantalla con fibra son dos cuadernos.
+El PDF también lo lleva. El plan de prueba pedía decidirlo explícitamente, y se
+decide con el coste medido: exportar la lámina de `Fuertes` como imagen pasa de
+3,27 MB a 5,21 MB (+59 %). Se acepta porque `Theme.kt` promete que las dos
+representaciones de Coindex se lean como el mismo cuaderno, y una lámina
+exportada sobre papel liso junto a la misma lámina con fibra en pantalla serían
+dos cuadernos.
 
 ## Lo que cuesta dibujarlo
 
 El grano ya no se dibuja fibra a fibra en cada fotograma. El mosaico se hornea
-una vez por densidad y opacidad, y cada fotograma pinta **un rectángulo** con ese
-mosaico como shader repetido, con la tonalidad del papel ya dentro de la imagen.
-
-Un primer intento que pintaba una tesela transformada por cada casilla de la
-rejilla —unas cincuenta por pantalla y por superficie— dibujaba **peor** que el
-efecto al que sustituía (100 % de fotogramas con retraso, p50 de 77 ms); de ahí
-el rectángulo único.
+una vez por densidad y opacidad, y cada fotograma pinta un único rectángulo con
+ese mosaico como shader repetido, con la tonalidad del papel ya dentro de la
+imagen. Pintar una tesela transformada por cada casilla de la rejilla (unas
+cincuenta por pantalla y superficie) se probó y dibujaba peor que el efecto
+anterior: 100 % de fotogramas con retraso, p50 de 77 ms.
 
 Medido con `dumpsys gfxinfo` sobre seis deslizamientos del índice, y con
 `am start -W` para el arranque en frío:
@@ -94,13 +90,12 @@ Medido con `dumpsys gfxinfo` sobre seis deslizamientos del índice, y con
 | percentil 90 | 65 ms | 81 ms |
 | arranque en frío (tres corridas) | 923–1188 ms | 1022–1196 ms |
 
-**Estos números son del emulador, que rinde por software (`swiftshader`), y ahí
-un relleno de pantalla con textura es caro y nueve mil líneas cortas son
-baratas.** En un teléfono con GPU la comparación se invierte casi con certeza —un
-blit de textura frente a 9.000 `drawLine` en `Softlight` dentro de una capa
-`Offscreen`—, pero **no está medido en hardware real y no se afirma que lo esté**.
-El arranque en frío, que es donde se paga el horneado de las 16 teselas, no se
-distingue del de `main`.
+Estos números son del emulador, que rinde por software (`swiftshader`): ahí un
+relleno de pantalla con textura es caro y nueve mil líneas cortas son baratas.
+En un teléfono con GPU la comparación casi seguro se invierte (un blit de
+textura frente a 9.000 `drawLine` en `Softlight` dentro de una capa
+`Offscreen`), pero no está medido en hardware real. El arranque en frío, donde
+se paga el horneado de las 16 teselas, no se distingue del de `main`.
 
 ## Los valores calibrados
 
@@ -113,10 +108,9 @@ distingue del de `main`.
 | inclinación de la fibra | ±0,45 rad |
 | opacidad en `Softlight` | 0,75 |
 
-El banco de calibrado conserva su deslizador y ahora **pinta el grano de
-producción**, no una copia suya: llama a la misma `Modifier.paperSurface`. Su
-deslizador va por pasos de 0,05 porque cada valor distinto hornea un mosaico
-nuevo.
+El banco de calibrado conserva su deslizador y pinta el grano de producción:
+llama a la misma `Modifier.paperSurface`. El deslizador va por pasos de 0,05
+porque cada valor distinto hornea un mosaico nuevo.
 
 - [Lámina antes](lamina-antes.png) · [Lámina después](lamina-despues.png)
 - [Papel a 1:1](papel-1a1.png): misma región, antes a la izquierda.

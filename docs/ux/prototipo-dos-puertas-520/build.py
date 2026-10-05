@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """Maqueta del #520: dónde cae «Lo que busco» cuando la puerta compuesta se parte en dos.
 
-PROTOTIPO — se tira cuando el ticket se cierre. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se cierre; lo que sobrevive es el README.
 
-El ticket ya decidió **qué**: dos filas, cada una con un nombre estable y un solo destino, y «Lo
-que busco» como anexo hermano colgando de Colecciones. Lo que no decidió es **dónde caen esas dos
-filas ni cómo se dibujan**, y ahí hay una contradicción que sólo se ve a tamaño real: la decisión
-promete «un tap de home con su recuento en la primera vista», y ADR 0026 §8 cláusula 3 dice que la
-puerta del anexo es *lo último de la página*. Con 69 tarjetas, lo último de la página está a cinco
-pliegues del arranque.
+El ticket ya decidió qué: dos filas, cada una con un nombre estable y un solo destino, y «Lo que
+busco» como anexo hermano colgando de Colecciones. Falta decidir dónde caen y cómo se dibujan: la
+decisión promete «un tap de home con su recuento en la primera vista», y ADR 0026 §8 cláusula 3
+dice que la puerta del anexo es lo último de la página, que con 69 tarjetas está a 4,2 pliegues
+del arranque.
 
-Siete formas x cinco estados, a dp real y con la de hoy de listón. En HTML y no en Compose porque
-lo que se elige es estructura (`prototipar-forma-en-html`).
+Siete formas x cinco estados, a dp real y con la de hoy de listón.
 
 Las medidas salen del código y no de la vista: `IndexScreen.kt` (margen 12, calle 8, paso 6, hueco
 104, `indexColumns`), `AlbumChrome.kt` (54), `FilterShelf.kt` (buscador 40, fila 48), `AnnexDoor`
@@ -102,9 +100,9 @@ def composed_label(wishes, plates):
 def hole(tid, size=HOLE, missing=False, lit=False):
     """El hueco troquelado de `AlbumPaper.kt`: cartón, pared del corte, filete y la foto dentro.
 
-    `lit` es la enmienda de Jose del 17 de agosto de 2026 al elegir la E: una casilla que **buscas**
-    no es una que te falta de una lámina que sigues, así que la moneda se ve entera y lo que dice que
-    no es tuya es el filete de puntos. El idioma completo se decide en el #556.
+    `lit` es la enmienda de Jose del 17 de agosto de 2026 al elegir la E: una casilla que buscas no
+    es una que te falta de una lámina que sigues, así que la moneda se ve entera y el filete de
+    puntos dice que no es tuya. El idioma completo se decide en el #556.
     """
     ring = max(2, round(RING * size / HOLE))
     inner = f'<i class="p{tid}" style="inset:{ring}px"></i>' if tid in PHOTOS else ""
@@ -176,8 +174,8 @@ def shelf_row(state, note=None):
     return door(f"Y {other_plates(plates)} que no coleccionas", note=note)
 
 
-# Cuántas láminas guardan las marcas: 1 de verdad hoy, y en la feria preparada las cinco que
-# `wishCensusLabel` contaría si el padre marcase siete casillas.
+# Cuántas láminas guardan las marcas: la real con dos marcas, y cinco en la feria inventada de
+# siete casillas.
 PLATES_OF = {0: 0, 2: D["wish_plates"], 7: 5}
 
 

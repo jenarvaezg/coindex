@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 """Saca lo que la maqueta del #519 necesita para dibujar el pliegue de «Las cifras» y el de una lámina.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
-La pregunta del #519 es **una línea de copy y su sitio**, así que lo que hay que dibujar con datos de
-verdad es el pliegue en el que esa línea cae: la altura del bloque del dinero cuando lo hay, y lo que
-sube cuando no lo hay. De ahí lo que se extrae:
+La pregunta del #519 es una línea de texto y su sitio, así que se dibuja con datos reales el pliegue
+en el que cae: la altura del bloque del dinero cuando lo hay, y lo que sube cuando no. Se extrae:
 
 - el censo y las tres escaleras de «Las cifras», reproduciendo `collectionFigures` y `Ladders`
   (`domain/.../Figures.kt:279`, `domain/.../Referents.kt:89`) sobre la colección del padre
-- las láminas y sus importes, que **se reutilizan tal cual** del prototipo del #493
+- las láminas y sus importes, que se reutilizan tal cual del prototipo del #493
   (`/private/tmp/coindex-privado/cifras-493/data.json` y sus fotos), porque son las mismas cinco y
   volver a pedir el spot no cambia ninguna decisión de esta maqueta
 
-El importe de «Las cifras» es el **suelo de la plata** —gramos x ley x spot—, no el mayor de tres
+El importe de «Las cifras» es el suelo de la plata (gramos x ley x spot), no el mayor de tres
 precios: sin el pase no hay `listings` fuera del teléfono. Es el estado de control («con mercado») y
-sólo tiene que ser una cifra plausible del tamaño correcto; el que manda es el del móvil.
+sólo tiene que ser una cifra plausible del tamaño correcto; el que vale es el del móvil.
 
-**El dinero no se versiona** (`dinero-fuera-del-repo-publico`): la salida va a
-/private/tmp/coindex-privado/mercado-ausente-519/, nunca al repo.
+El dinero no se versiona: la salida va a /private/tmp/coindex-privado/mercado-ausente-519/, nunca
+al repo.
 
     python3 docs/ux/prototipo-mercado-ausente-519/extract.py
 """

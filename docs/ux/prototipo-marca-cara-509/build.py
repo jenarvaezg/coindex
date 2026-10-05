@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """Maqueta de la marca de cara del #509, a dp real, con el giro de verdad y el de hoy de listón.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
 Dos preguntas y dos ejes, porque el ticket son dos problemas distintos:
 
-1. **Qué declara que una casilla está volteada** — cuatro marcas sobre tres láminas, y la de
-   hoy (que no declara nada) de listón. Se toca el hueco y gira de verdad: 420 ms, la
-   perspectiva de `COIN_CAMERA_DISTANCE`, la cara lejana desde su propio cero.
-2. **Qué hace una casilla cuya otra cara no ha bajado** — tres respuestas sobre la misma
-   lámina con las fotos del reverso apagadas, que es lo que se vio el 14 de agosto de 2026.
+1. Qué declara que una casilla está volteada: cinco marcas sobre tres láminas, más las dos de
+   la segunda vuelta (A+ y A+D), con la de hoy (que no declara nada) de listón. Se toca el hueco
+   y gira de verdad: 420 ms, la perspectiva de `COIN_CAMERA_DISTANCE`, la cara lejana desde su
+   propio cero.
+2. Qué hace una casilla cuya otra cara no ha bajado: tres respuestas sobre la misma lámina con
+   las fotos del reverso apagadas, lo que se vio el 14 de agosto de 2026.
 
-Las medidas salen de donde las saca la app —`AlbumPaper.kt`, `PlateScreen.kt`, `PlateSpacing`,
-`YearTagMetrics`, `Theme.kt`— y están arriba, juntas, para que la maqueta no pueda mentir por
-copia.
+Las medidas salen de donde las saca la app (`AlbumPaper.kt`, `PlateScreen.kt`, `PlateSpacing`,
+`YearTagMetrics`, `Theme.kt`) y están juntas arriba.
 
     python3 docs/ux/prototipo-marca-cara-509/extract.py
     python3 docs/ux/prototipo-marca-cara-509/build.py
@@ -57,7 +57,7 @@ STAMP_W, STAMP_H, RATIO_DROP, RATIO_SIZE = 84, 76, 14, 18
 DATA = json.load(open(f"{OUT}/data.json"))
 PLATES = {p["role"]: p for p in DATA["plates"]}
 # La escena del reverso que no ha bajado usa la lámina del #302: 22 casillas del mismo tipo, así
-# que la respuesta se ve repetida veintidós veces, que es como se va a vivir.
+# que la respuesta se ve repetida veintidós veces, como en la app.
 PLATES["sinfoto"] = dict(PLATES["datarun"], role="sinfoto")
 
 
@@ -103,8 +103,7 @@ def casilla(cas, variant, missing_back, turned=False):
     name = cas["label"] if cas["label"] != str(cas["year"]) else None
     printed = f'<div class="name">{name}</div>' if name else ""
     # La E pone la letra en el cartón, al lado de la chapa: la celda mide 113 dp y la chapa 48,3
-    # centrada, así que a cada lado quedan 32 dp de hoja libre donde no hay que pintar sobre
-    # ninguna fotografía.
+    # centrada, así que a cada lado quedan 32 dp de hoja libre, sin fotografía debajo.
     aside = ('<b class="aside"><s>A</s><u>R</u></b>' if variant == "carton" else "")
     return (f'<div class="cell{" turned" if turned else ""}">'
             f'{hole(cas, variant, missing_back, turned)}'
@@ -115,7 +114,7 @@ def strip(plate, variants):
     """La tira: la misma casilla llena en reposo y vuelta, una fila por variante.
 
     El teléfono entero contesta «¿se ve de un vistazo?»; esta tira contesta «¿qué es lo que se
-    ve?», que es la pregunta de al lado y no se puede juzgar a 104 dp de lejos.
+    ve?», que no se puede juzgar a 104 dp.
     """
     cas = next((c for c in plate["casillas"] if c["owned"]), plate["casillas"][0])
     rows = []
@@ -170,9 +169,8 @@ MARKS = [
     ("carton", "E · la letra en el cartón", "la misma letra que la C, pero en la hoja y no sobre "
                                             "el metal: al lado de la chapa quedan 32 dp de "
                                             "cartón libre, y la fotografía no se toca"),
-    # La segunda vuelta, del 15 de agosto: Jose elige la A y da la D por buena. Las dos se
-    # perdían a 104 dp en la primera tanda, así que aquí se les da su mejor versión —el mismo
-    # gesto con más luz— y se miden otra vez antes de darlas por legibles.
+    # La segunda vuelta, del 15 de agosto: Jose elige la A y da la D por buena. Las dos costaban
+    # de ver a 104 dp, así que aquí van en su mejor versión (el mismo gesto con más luz).
     ("troquel2", "A+ · el troquel al revés, con luz",
      "el mismo giro de la pared del corte, pero con el barrido más marcado mientras la casilla "
      "está vuelta: sigue sin poner tinta y sin costar un dp"),

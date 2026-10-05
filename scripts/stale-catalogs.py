@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
-"""Informa qué catálogos abiertos se han quedado atrás — cero red, nunca rojo.
+"""Informa qué catálogos abiertos se han quedado atrás. Sin red e informativo.
 
-Lee `data/collection-catalogs/*.json`, se queda con `series_status: "open"` y saca
-dos bloques (#94, #132):
+Lee los `data/collection-catalogs/*.json` con `series_status: "open"` y saca dos bloques
+(#94, #132), con aritmética sobre los años de los miembros y la fecha de hoy:
 
-- **La cola**: no hay ninguna casilla del año en curso, sin mirar el `status` del
-  miembro. Leer «issued» delataría el trabajo deliberado de #72 (announced /
-  unlisted con casilla del año).
-- **Los huecos**: un año sin ninguna casilla entre el primero del catálogo y el
-  año *anterior* al en curso. El año en curso ausente es cola, no hueco: los dos
-  conjuntos son disjuntos. Los años declarados en `no_issue_years` (con su
-  `no_issue_note`) no cuentan: la ceca no emitió, y eso ya está versionado en el
-  fichero (#130, #131).
+- **Cola**: catálogos sin ninguna casilla del año en curso, sea cual sea el `status` del
+  miembro (una casilla announced o unlisted del año cuenta, #72).
+- **Huecos**: años sin casilla entre el primero del catálogo y el anterior al en curso. Los
+  `no_issue_years` (con su `no_issue_note`) no cuentan: la ceca no emitió (#130, #131).
 
-Cero llamadas a Numista: aritmética sobre los años de los miembros y la fecha de
-hoy. Ejecutable a mano al sentarse a curar; en CI, `--sync` mantiene un issue
-único del repo (abre/reescribe con deuda, cierra con comentario al quedar limpio).
+Se ejecuta a mano al sentarse a curar; en CI, `--sync` mantiene un issue único del repo (lo
+abre o reescribe con deuda y lo cierra al quedar limpio).
 
     scripts/stale-catalogs.py
     scripts/stale-catalogs.py --sync
@@ -82,7 +77,7 @@ def load_open_catalogs(directory: pathlib.Path = CATALOGS) -> list[CatalogYears]
         )
         no_issue_years = tuple(payload.get("no_issue_years") or ())
         no_issue_note = payload.get("no_issue_note")
-        # Misma simetría que el validador Kotlin: años sin nota no se silencian en silencio.
+        # Como el validador Kotlin: `no_issue_years` y `no_issue_note` van juntos.
         if no_issue_years and (
             no_issue_note is None or not str(no_issue_note).strip()
         ):
@@ -119,8 +114,7 @@ def build_report(
             continue
         if current_year not in catalog.years:
             lagging.append(catalog)
-        # Huecos interiores: el año en curso ausente es cola, no hueco (#94).
-        # Los `no_issue_years` versionados en el fichero tampoco son deuda.
+        # El año en curso es cola, no hueco (#94); los `no_issue_years` no son deuda.
         missing = tuple(
             year
             for year in range(catalog.first_year, current_year)

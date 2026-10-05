@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""Graba un fixture de la API de Numista, gastando presupuesto de forma deliberada.
+"""Graba un fixture de la API de Numista. Gasta presupuesto real.
 
-Los tests nunca tocan la red: leen `fixtures/numista/`. Este script es la única forma de
-refrescar ese conjunto, y exige `--confirm-live-api` justamente para que no ocurra por
-accidente. Sustituye al binario Rust `record-fixtures`, retirado con el workspace Rust
-(recuperable en el tag `rust-frozen`).
+Los tests nunca tocan la red: leen `fixtures/numista/`, y este script es la única forma de
+refrescarlo. Exige `--confirm-live-api` para que el gasto no ocurra por accidente.
 
     scripts/record-fixture.py --confirm-live-api --type-id 404044
 
-Las capturas de colección son privadas y nunca van al repositorio: para eso, `--user-id`
-exige un `--output-dir` fuera del árbol.
+Las capturas de colección son privadas y nunca van al repositorio: `--user-id` exige un
+`--output-dir` fuera del árbol, y el script rechaza el conjunto público de fixtures.
 """
 
 from __future__ import annotations
@@ -40,8 +38,7 @@ def request(path: str, api_key: str, token: str | None = None) -> dict:
 
 
 def access_token(api_key: str) -> str:
-    # Omitir scope=view_collection produce un 401 con un mensaje engañoso: es el error más
-    # común con esta API.
+    # Sin scope=view_collection, Numista responde 401 con un mensaje engañoso.
     payload = request(
         "/oauth_token?grant_type=client_credentials&scope=view_collection", api_key
     )

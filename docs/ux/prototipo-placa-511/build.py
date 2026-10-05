@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Maqueta de la casilla cuyo año no discrimina (#511, fleco 4b).
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
 Cuatro formas de la misma casilla, a dp real y con la lámina de hoy (v1.4.7) de listón.
-Los números salen de donde los saca la app —`YearTagMetrics`, `PlateSpacing`,
-`PlateMetrics`, la tipografía del tema y `AlbumToneConfig`— y están arriba, juntos,
-para que la maqueta no pueda mentir por copia.
+Los números salen de donde los saca la app (`YearTagMetrics`, `PlateSpacing`,
+`PlateMetrics`, la tipografía del tema y `AlbumToneConfig`) y están juntos arriba.
 
     python3 docs/ux/prototipo-placa-511/build.py && open docs/ux/prototipo-placa-511/maqueta.html
 """
@@ -16,7 +15,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(f"{HERE}/../../..")
 
-# ── lo que la app mide, copiado de un sitio y no de la cabeza ───────────────
+# ── constantes de la app, copiadas de su sitio ─────────────────────────────
 INK = "#2D3029"
 PAPER = "#EEE8D7"
 PAPER_DEEP = "#DDD3BB"

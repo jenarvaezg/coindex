@@ -1,24 +1,24 @@
 # El brillo metálico: la moneda se inclina bajo una lámpara fija
 
-La respuesta del [#303](https://github.com/jenarvaezg/coindex/issues/303), decidida el 8 de agosto de
+Respuesta del [#303](https://github.com/jenarvaezg/coindex/issues/303), decidida el 8 de agosto de
 2026 sobre un prototipo en HTML a tamaño de móvil real (411 × 914 dp), servido dentro del emulador
-`coindex-ux` (Pixel 7) para juzgarlo a 1:1 en dp y no en el Mac, con la lámina de verdad del
-**1 Bolívar del padre — 4 de 22** y la fotografía de Numista de N#10338.
+`coindex-ux` (Pixel 7) para juzgarlo a 1:1 en dp, con la lámina del 1 Bolívar del padre (4 de 22) y
+la fotografía de Numista de N#10338.
 
-**La moneda brilla como metal, y el brillo es luz *y* sombra: la superficie se inclina, no se
-ilumina.** Vale allí donde haya una moneda dentro de un hueco —la lámina y el índice del
-[#300](https://github.com/jenarvaezg/coindex/issues/300)—, y el cartón vacío nunca brilla.
+La moneda brilla como metal, con luz y sombra: la que se inclina es la superficie, la lámpara está
+fija. Vale en cualquier sitio donde haya una moneda dentro de un hueco (la lámina y el índice del
+[#300](https://github.com/jenarvaezg/coindex/issues/300)); el cartón vacío nunca brilla.
 
-El ticket abría con tres bordes duros y uno que podía matarlo. **Los cuatro se cayeron al medirlos**,
-y lo que quedó en pie fue una decisión de gusto, que la tomó Jose delante del vídeo.
+Los riesgos técnicos que planteaba el ticket desaparecieron al medirlos, y la elección final fue de
+gusto: la tomó Jose viendo el vídeo.
 
 ## Lo que se elige
 
-### H · «se inclina»: un gradiente de luz y sombra, desplazado por el acelerómetro
+### H · «se inclina»: luz y sombra desplazadas por el acelerómetro
 
 Sobre la fotografía, dentro del recorte circular del hueco, un gradiente lineal a 105° que va
-**negro → transparente → blanco → transparente → negro**, en `BlendMode.Softlight`, desplazado a lo
-largo del eje según cuánto esté inclinado el móvil.
+negro → transparente → blanco → transparente → negro, en `BlendMode.Softlight`, desplazado a lo
+largo del eje según la inclinación del móvil.
 
 | | valor del prototipo |
 | --- | ---: |
@@ -29,114 +29,94 @@ largo del eje según cuánto esté inclinado el móvil.
 
 ![La misma lámina a γ 25°: sin brillo a la izquierda, «se inclina» a la derecha](brillo-303/lamina-a-vs-h.jpg)
 
-Lo que gana no es luz: es que la moneda deja de ser un recorte plano pegado en un agujero. La sombra
-del lado contrario es la mitad del efecto, y es la mitad que ninguna de las otras siete variantes
-tenía.
+La moneda deja de parecer un recorte plano pegado en un agujero. La mitad del efecto es la sombra
+del lado contrario, que ninguna de las otras siete variantes tenía.
 
-### Dónde brilla: donde haya una moneda
+### Dónde brilla: toda moneda dentro de un hueco
 
-Regla única, no una lista de pantallas: **toda fotografía de moneda dentro de un hueco brilla**, esté
-en la lámina por años o en el índice de colecciones. El **hueco vacío no brilla nunca** — es cartón,
-y el cartón no es metal. Un test puede defender exactamente eso, que es lo que se le pide a una regla
-en este mapa.
+Toda fotografía de moneda dentro de un hueco brilla, en la lámina o en el índice; el hueco vacío
+no brilla nunca. Es una regla única, sin lista de pantallas, y un test puede fijarla.
 
-### El reposo tiene estado, y por eso el PNG sí lo lleva
+### El reposo es una pose, y el PNG la lleva
 
-Con el móvil plano sobre la mesa la componente lateral es cero, y el gradiente se queda **centrado**:
-luz en el centro del disco, sombra en los dos bordes. Eso **no es «sin efecto»**, es una pose — la de
-una hoja bajo una lámpara cenital.
+Con el móvil plano sobre la mesa la componente lateral es cero y el gradiente queda centrado: luz
+en el centro del disco y sombra en los dos bordes, como una hoja bajo una lámpara cenital.
 
-Que el reposo sea una pose definida resuelve el borde que el ticket temía. `SheetExport` compone la
-hoja fuera de pantalla, igual que hace con `printed_side` (#302), así que **el PNG exportado sale con
-el brillo en reposo**. Lo que no llega al papel es el *movimiento*, no el *efecto*: la nota del #17
-—que el padre enseña sus láminas como PNG— queda cubierta, y no hace falta ninguna excepción en la
-exportación.
+`SheetExport` compone la hoja fuera de pantalla, igual que con `printed_side` (#302), así que el PNG
+exportado sale con el brillo en reposo. Al papel no llega el movimiento, pero sí el efecto: la nota
+del #17 (el padre enseña sus láminas como PNG) queda cubierta sin excepciones en la exportación.
 
 ## Los tres bordes duros del ticket, medidos
 
-### 1 · `minSdk` 29 contra AGSL: no hace falta shader, así que no hace falta fallback
+### 1 · `minSdk` 29 contra AGSL: no hace falta shader ni fallback
 
-El ticket daba por hecho que esto pedía `RuntimeShader` (API 33+) y que había que elegir un fallback
-para 29–32. **El móvil del padre es Android 13+**, así que el fallback ya no tenía usuario; pero es
-que además **el efecto elegido no necesita AGSL**. H es un gradiente lineal con un modo de fusión, no
-un cálculo por píxel: `drawWithContent { drawContent(); drawRect(brush, blendMode = Softlight) }`.
+El ticket suponía `RuntimeShader` (API 33+) y un fallback para 29–32. El móvil del padre es Android
+13+, y además H no necesita AGSL: es un gradiente lineal con un modo de fusión, no un cálculo por
+píxel: `drawWithContent { drawContent(); drawRect(brush, blendMode = Softlight) }`.
 
-`BlendMode.Softlight` se apoya en `android.graphics.BlendMode`, que es **API 29** — justo el `minSdk`
-de la app. Y si en la implementación diera guerra contra la capa, el camino de retirada no baja de
-nivel: dos gradientes en modo normal (uno blanco con alfa, otro negro con alfa) dan lo mismo en
-cualquier API.
+`BlendMode.Softlight` se apoya en `android.graphics.BlendMode`, API 29, que es el `minSdk` de la
+app. Si diera problemas con la capa, la alternativa funciona en cualquier API: dos gradientes en
+modo normal, uno blanco y otro negro con alfa. El efecto no impone versión mínima.
 
-**No hay decisión de fallback que tomar**, y el efecto no impone piso de versión a nadie.
+### 2 · El tinte por metal: no hay variedad que teñir, y H no la usaría
 
-### 2 · El tinte por metal: no hay variedad, y el efecto no la usaría
+- **No hay variedad.** De los 188 tipos del padre con ficha en la caché sembrada, 183 son plata
+  (97,3 %); de sus 231 filas de inventario, 222. Ningún oro; el resto son dos de cuproníquel, uno de
+  bronce, uno de bronce de aluminio y uno bimetálico.
+- **No hay láminas de metal mezclado**, por construcción: el ADR 0018 mete el metal en la clave de
+  variante, así que dos metales nunca comparten catálogo. De los 74 catálogos, 71 declaran metal
+  (68 `silver`, 2 `cupronickel`, 1 `other`) y los 3 que no lo declaran son sets de plata 835 y 925.
+- **H no tiñe.** Es blanco y negro sobre la foto, y el color lo pone la fotografía. No necesita leer
+  `Metal`, así que el ADR 0018 no llega a la capa de interfaz por aquí.
 
-La pregunta era cuántos tintes hay, quién los declara y qué pasa con la lámina de metal mezclado.
-Se responde dos veces, y las dos con un no:
+### 3 · El sensor: basta el acelerómetro
 
-- **No hay variedad que teñir.** De los 188 tipos del padre que tienen ficha en la caché sembrada,
-  **183 son plata (97,3 %)**; de sus 231 filas de inventario, 222. **Cero oro.** El resto son dos de
-  cuproníquel, uno de bronce, uno de bronce de aluminio y uno bimetálico.
-- **No hay láminas de metal mezclado, por construcción.** El ADR 0018 mete el metal dentro de la
-  clave de variante, así que dos metales nunca comparten catálogo. De los 74 catálogos, 71 declaran
-  metal —68 `silver`, 2 `cupronickel`, 1 `other`— y los 3 que no lo declaran son sets: **los tres son
-  de plata 835 y 925**.
-- **Y H no tiñe.** Es blanco y negro sobre la foto: el color lo pone la fotografía. El efecto **no
-  necesita leer `Metal`**, así que el ADR 0018 no sube a la capa de interfaz por esta puerta.
-
-### 3 · El sensor: basta el acelerómetro, y el móvil en la mesa se queda en reposo
-
-Medido dentro del emulador, moviendo el sensor virtual con `adb emu sensor set acceleration`: con
-sólo la componente de gravedad, el ángulo lateral recorre el rango entero de −45° a +45° y la página
-lo recibe como `deviceorientation`.
+Medido en el emulador moviendo el sensor virtual con `adb emu sensor set acceleration`: con sólo la
+componente de gravedad, el ángulo lateral recorre de −45° a +45° y la página lo recibe como
+`deviceorientation`.
 
 ![El HUD del prototipo con el sensor virtual en tres poses](brillo-303/sensor.jpg)
 
-- **`TYPE_ACCELEROMETER` es suficiente.** No hace falta giroscopio ni vector de rotación: lo que se
-  quiere es hacia dónde cae la gravedad, no cuánto gira.
-- **Con el móvil apoyado en la mesa** —que es como se mira una lámina larga— la componente lateral es
-  cero y la hoja se queda en la pose de reposo. El efecto no reclama que nadie mueva nada: es una
-  propina para quien tiene el teléfono en la mano.
-- **El sensor se registra sólo mientras hay huecos con moneda en pantalla y la app está en primer
-  plano**, y se desregistra en `onPause`. `SENSOR_DELAY_UI` basta y sobra.
-- **El consumo no se ha medido aquí y no se finge**: el acelerómetro es el sensor barato del
-  teléfono, pero el número real es de la implementación. Lo que este ticket fija es el techo — nunca
+- `TYPE_ACCELEROMETER` basta: interesa hacia dónde cae la gravedad, no cuánto gira el móvil. No
+  hace falta giroscopio ni vector de rotación.
+- Con el móvil apoyado en la mesa, que es como se mira una lámina larga, la hoja se queda en la pose
+  de reposo. El efecto es un extra para quien tiene el teléfono en la mano.
+- El sensor se registra sólo mientras hay huecos con moneda en pantalla y la app está en primer
+  plano, y se desregistra en `onPause`. `SENSOR_DELAY_UI` basta.
+- El consumo no se midió aquí; se mide en la implementación. Lo que se fija es el techo: nunca
   despierto fuera de primer plano.
 
-## Lo que se descarta, y por qué
+## Lo que se descarta
 
-Ocho tratamientos sobre la misma casilla, todos con la misma inclinación.
+Ocho tratamientos sobre la misma casilla, con la misma inclinación.
 
 ![Los ocho tratamientos sobre la casilla del 1 Bolívar · 1960](brillo-303/ocho-tratamientos.jpg)
 
 | | por qué se cae |
 | --- | --- |
-| **A · sin brillo** | Es la línea base: la hoja de hoy. Se cae porque hay algo mejor, no porque esté mal. |
-| **B · barrido plano** | A 121 dp es **indistinguible de A**. Sólo añade luz, y sumar blanco sobre una foto ya clara no da metal: da veladura. |
-| **C · sólo el acetato** | Mueve el reflejo de la funda y deja la moneda quieta. Honesto como física de álbum, invisible como efecto. |
-| **D · relieve + acetato** | Dos capas para el resultado de una. El acetato no aporta nada que la capa de la moneda no haga mejor. |
-| **E · sin sensor, respira sola** | Se mueve **sin que nadie mueva el móvil**: una hoja de cartón inquieta. Era el fallback candidato, y al no hacer falta fallback se queda sin excusa. |
-| **F · sigue el relieve de la foto** | La idea era enmascarar el brillo por la luminancia de la fotografía, para que prendiera donde hay relieve. No funciona: la luminancia de una foto de plata es alta **en todas partes**, así que la máscara no discrimina y el resultado vuelve a ser veladura. Un mapa de alturas lo haría, y eso es el relieve que el #15 descartó. |
-| **G · destello estrecho** | El más visible de los ocho, y por eso el más tentador. Se lee como **un arañazo o un reflejo en el acetato**, no como la superficie de la moneda: la raya no respeta ni el canto ni el busto. |
+| **A · sin brillo** | La línea base, la hoja de hoy. Se cae porque hay algo mejor. |
+| **B · barrido plano** | A 121 dp no se distingue de A. Sólo añade luz, y blanco sobre una foto ya clara da veladura, no metal. |
+| **C · sólo el acetato** | Mueve el reflejo de la funda y deja la moneda quieta: correcto como física de álbum, invisible como efecto. |
+| **D · relieve + acetato** | Dos capas para el resultado de una; el acetato no añade nada que la capa de la moneda no haga mejor. |
+| **E · sin sensor, respira sola** | Se mueve sin que nadie mueva el móvil. Era el candidato a fallback, y no hace falta fallback. |
+| **F · sigue el relieve de la foto** | Enmascarar el brillo por la luminancia de la foto no discrimina: una foto de plata tiene luminancia alta en todas partes, y vuelve la veladura. Haría falta un mapa de alturas, que es el relieve que el #15 descartó. |
+| **G · destello estrecho** | El más visible de los ocho, pero se lee como un arañazo o un reflejo en el acetato: la raya no respeta ni el canto ni el busto. |
 
-## Lo que hay que saber antes de implementarlo
+## Para implementarlo
 
-- **La fotografía ya trae su luz cocida**, desde arriba a la izquierda, y es fija. El brillo que se
-  mueve convive con ella pero no la sustituye: por eso la intensidad va a la mitad de la del vídeo, y
-  por eso la sombra importa tanto como la luz. Pasarse de intensidad devuelve la veladura de B.
-- **A 121 dp el efecto es sutil, y a 186 dp es evidente.** Es una decisión tomada con los ojos, no un
-  umbral medido: en el vídeo de cerca la diferencia es de otra categoría que en la rejilla. Si al
-  implementarlo en Compose la lámina se queda corta, lo que se sube es la intensidad, no el tamaño
-  del hueco.
-- **Se decidió en HTML dentro del emulador, no en Compose.** El `BlendMode` de Android y el
-  `soft-light` de CSS no son el mismo cálculo, así que el calibrado fino —intensidad, ancho de banda,
-  recorrido— se confirma en el AVD en la primera sesión de implementación. Es un parámetro, no la
-  decisión, igual que el rebaje de la chapa del #302.
-- **El brillo va sobre la moneda, así que gira con ella.** La capa vive dentro del mismo
-  `graphicsLayer` que el `rotationY` del #302: cuando la moneda se voltea, su luz se voltea con ella.
-- **Coste de dibujo**: un `drawRect` por casilla con moneda, dentro del recorte que ya existe. En la
-  lámina son 13,74 casillas por pantalla y en el índice 11,04 colecciones — y en la colección del
-  padre, **de 22 casillas del 1 Bolívar sólo 4 tienen moneda**, así que el coste real es bastante
-  menor que el número de huecos.
+- **La fotografía trae su propia luz**, fija, desde arriba a la izquierda. El brillo convive con
+  ella: por eso la intensidad va a la mitad de la del vídeo y la sombra pesa tanto como la luz. Con
+  más intensidad vuelve la veladura de B.
+- **A 121 dp el efecto es sutil y a 186 dp, evidente.** Es un juicio visual, no un umbral medido.
+  Si en Compose la lámina se queda corta, se sube la intensidad, no el tamaño del hueco.
+- **Se decidió en HTML dentro del emulador.** El `BlendMode` de Android y el `soft-light` de CSS no
+  calculan igual, así que intensidad, ancho de banda y recorrido se calibran en el AVD al
+  implementar. Son parámetros, como el rebaje de la chapa del #302.
+- **El brillo gira con la moneda**: la capa vive dentro del mismo `graphicsLayer` que el
+  `rotationY` del #302.
+- **Coste de dibujo**: un `drawRect` por casilla con moneda, dentro del recorte que ya existe. Son
+  13,74 casillas por pantalla en la lámina y 11,04 colecciones en el índice, y sólo pintan las que
+  tienen moneda (4 de 22 en el 1 Bolívar del padre).
 
 ## Los vídeos
 
@@ -144,7 +124,7 @@ Ocho tratamientos sobre la misma casilla, todos con la misma inclinación.
   balanceándose sola a ±40°, ciclando A → H → G → B → F → E → A, 3,6 s cada uno.
 - [`brillo-303/de-cerca-a-vs-h.mp4`](brillo-303/de-cerca-a-vs-h.mp4) — A contra H a 186 dp.
 
-Grabados en el emulador, que dibuja por software a 25–33 fps; un móvil real va muy por encima. La
-fluidez de los vídeos **no** es la del efecto.
+Grabados en el emulador, que dibuja por software a 25–33 fps; un móvil real va muy por encima, así
+que la fluidez de los vídeos no es la del efecto.
 
 ![Los ocho a 1:1 en el móvil, que es donde se decidió](brillo-303/ocho-en-el-movil.jpg)

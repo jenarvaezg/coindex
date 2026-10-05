@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """Un issue único del repo por informe, idempotente: abrir, reescribir, cerrar.
 
-Lo comparten los informes de curación (`stale-catalogs.py`, `weight-deviations.py`).
-Cada uno trae su título exacto y su marcador HTML, y el par identifica su issue: el
-título lo hace legible en la lista y el marcador lo hace inequívoco, porque la búsqueda
-de GitHub es por subcadena y también pilla los tickets del mapa que hablan del informe.
+Lo usan `stale-catalogs.py` y `weight-deviations.py`. Cada informe identifica su issue por
+título exacto y marcador HTML en el cuerpo: la búsqueda de GitHub es por subcadena y también
+devuelve los tickets del mapa que citan el informe.
 
-Nunca falla en silencio: si `gh` devuelve error, o si hay más de un issue con el mismo
-marcador, sale con mensaje. Lo que no hace es decidir *cuándo* hay deuda — eso es del
-informe que lo llama.
+Sale con mensaje si `gh` falla o si hay más de un issue con el mismo marcador o título. Si hay
+deuda lo decide el informe que llama.
 """
 
 from __future__ import annotations
@@ -38,8 +36,6 @@ def run_gh(args: list[str], *, input_text: str | None = None) -> str:
 
 
 def find_report_issue(title: str, marker: str) -> dict | None:
-    # Título exacto + marcador en el cuerpo: el issue es único e idempotente.
-    # La búsqueda por subcadena también pilla los tickets del mapa que lo citan; se filtran.
     raw = run_gh(
         [
             "issue",
@@ -88,7 +84,7 @@ def sync_report_issue(
     has_debt: bool,
     closing_comment: str,
 ) -> None:
-    """Deja el issue del informe en el estado que dice `has_debt`, y solo eso."""
+    """Abre, reescribe, reabre o cierra el issue del informe según `has_debt`."""
     existing = find_report_issue(title, marker)
     if has_debt:
         if existing is None:

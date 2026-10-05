@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Saca de `data/` y de `.local/padre` las tres láminas que la maqueta del #493 enseña.
+"""Saca de `data/` y de `.local/padre` las cinco láminas que enseña la maqueta del #493.
 
-PROTOTIPO — se tira cuando el ticket se decida. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se decida; lo que sobrevive es el README.
 
-Reproduce las reglas de la app y no las parecidas:
+Reproduce las reglas exactas de la app:
 
 - casilla llena: `CollectionCatalog.memberMatches` entera, con el año del date run y los
-  `numista_issue_ids` del issue run (`contar-completas-offline`)
+  `numista_issue_ids` del issue run
 - fuera del divisor: `announced` y `unlisted`, como `buildCollectionCatalogAlbum`
 - lámina alcanzable: `CollectionCatalog.isEvidencedBy`
 - coste de cerrar: sólo las láminas a <= 10 casillas, que es `HOLE_THRESHOLD_SLOTS` (ADR 0028 §1)
 - suelo de la plata: gramos x ley del `composition.text` (`Valuation.silverFineness`), con el
   spot y el cambio de los dos endpoints que lee `SilverSpot.kt`
 
-**El dinero no se versiona** (`dinero-fuera-del-repo-publico`): `data.json`, las fotos y la
-maqueta salen a /private/tmp/coindex-privado/cifras-493/, nunca al repo.
+El dinero no se versiona: `data.json`, las fotos y la maqueta salen a
+/private/tmp/coindex-privado/cifras-493/, nunca al repo.
 
     python3 docs/ux/prototipo-cifras-493/extract.py
 """
@@ -28,13 +28,10 @@ import urllib.request
 REPO = os.path.abspath(f"{os.path.dirname(os.path.abspath(__file__))}/../../..")
 OUT = "/private/tmp/coindex-privado/cifras-493"
 
-# ── las tres láminas, y por qué estas tres ──────────────────────────────────
-# Las dos primeras son las que hoy tienen las dos cifras a la vez: a una casilla de cerrarse.
-# La tercera es una completa, para ver qué hace cada variante cuando ya no hay hueco (la
-# tercera pregunta del ticket). Se eligen a mano porque son el caso del ticket, no una muestra.
-# La cuarta se añadió al elegir los sellos de la C: con un solo hueco el sello se ve, pero lo
-# que hay que ver es qué hace en una lámina con siete, y si la cabecera queda dominada por el
-# coste cuando lo que falta vale más que lo que hay.
+# ── las cinco láminas ───────────────────────────────────────────────────────
+# Elegidas a mano, una por caso del ticket: dos a una casilla de cerrarse (las dos cifras a la
+# vez, holgada y en colisión), una de siete huecos (sellos repetidos y un coste mayor que el
+# valor), una por encima del umbral (sin coste) y una completa (sin segunda cifra).
 PLATES = [
     ("venezuela-100-bolivares-plata", "holgada"),
     ("portugal-20-escudos-plata", "colision"),

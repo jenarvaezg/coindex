@@ -4,10 +4,9 @@
 #   scripts/release.sh                      # notas a partir de los commits
 #   scripts/release.sh "Resumen de la versión"
 #
-# La firma se hace aquí, en la máquina donde vive el keystore: la clave no viaja a ningún
-# servicio (ADR 0011). El script comprueba primero que la versión es publicable, después
-# construye el APK firmado, verifica la firma, genera el update.json que lee el actualizador
-# de la app y crea la release con el tag vX.Y.Z.
+# Firma en la máquina donde vive el keystore: la clave no viaja a ningún servicio (ADR 0011).
+# Comprueba que la versión es publicable, construye y verifica el APK firmado, genera el
+# update.json que lee el actualizador de la app y crea la release con el tag vX.Y.Z.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -39,8 +38,7 @@ if gh release view "$TAG" >/dev/null 2>&1; then
   exit 1
 fi
 
-# El versionCode es lo que decide si los móviles ven la actualización, así que subir solo el
-# versionName produciría una release que nadie llega a instalar.
+# Los móviles deciden por versionCode: subir sólo versionName daría una release que nadie instala.
 PUBLISHED_CODE=$(
   curl -sfL "https://github.com/$REPO/releases/latest/download/update.json" 2>/dev/null |
     python3 -c 'import json,sys; print(json.load(sys.stdin).get("versionCode", 0))' 2>/dev/null ||
@@ -59,10 +57,8 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 # --- Notas ------------------------------------------------------------------------------
-# `gh release create` crea el tag en el servidor y no en el clon, así que sin este fetch el
-# changelog se calcula desde el tag anterior y repite los commits de la release pasada. No se
-# nota mientras haya un `git pull` entre release y release, que es justo lo que no hay cuando
-# se publican dos seguidas.
+# `gh release create` crea el tag en el servidor, no en el clon: sin este fetch, dos releases
+# seguidas sin `git pull` entre medias repetirían en el changelog los commits de la anterior.
 git fetch --tags --quiet
 LAST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -1)
 if [[ -n "$LAST_TAG" ]]; then
@@ -71,16 +67,13 @@ else
   CHANGELOG=$(git log --no-merges --pretty='- %s')
 fi
 CHANGELOG=${CHANGELOG:-"- Coindex $VERSION_NAME"}
-# El resumen va al banner de la app, que muestra dos líneas; el changelog entero va al
-# cuerpo de la release.
+# El resumen va al banner de la app, que muestra dos líneas; el changelog, al cuerpo de la release.
 if [[ -z "$SUMMARY" ]]; then
   SUMMARY=$(head -1 <<<"$CHANGELOG" | sed 's/^- //')
 fi
 
-# Los catálogos viajan dentro del APK y se rechazó el canal remoto (ADR 0020), así que la
-# frescura de un catálogo queda atada a la versión instalada. Esta línea es la mitigación: quien
-# lee el banner sabe si la actualización trae datos curados o solo código. El banner corta a dos
-# líneas, así que la segunda va corta a propósito y el detalle vive en el cuerpo de la release.
+# Los catálogos viajan dentro del APK, sin canal remoto (ADR 0020): la segunda línea del banner
+# dice si la versión trae datos curados. Va corta; la lista de ficheros va al cuerpo de la release.
 if [[ -n "$LAST_TAG" ]]; then
   DATA_FILES=$(git diff --name-only "$LAST_TAG"..HEAD -- data/)
 else
@@ -105,8 +98,7 @@ OUT=build/release
 rm -rf "$OUT" && mkdir -p "$OUT"
 cp "$BUILT_APK" "$OUT/$APK_NAME"
 
-# El actualizador lee este fichero: el tag es para humanos y sería un sitio frágil
-# donde codificar el versionCode del que depende la decisión de actualizar.
+# El actualizador lee el versionCode de este fichero, no del tag, que es para humanos.
 python3 - "$OUT/update.json" "$VERSION_CODE" "$VERSION_NAME" "$APK_NAME" "$SUMMARY" <<'PY'
 import json, sys
 path, version_code, version_name, apk_asset, notes = sys.argv[1:6]

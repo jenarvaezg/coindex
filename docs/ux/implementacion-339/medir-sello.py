@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """Mide el sello de completado sobre una captura del AVD a resolución nativa.
 
-Dos preguntas, que son las dos que el #339 dejó abiertas para el banco:
+Responde a las dos preguntas que el #339 dejó para el banco:
 
-1. **¿El `multiply` deja pasar el papel?** Un sello opaco pintaría el trazo de un
-   color plano; uno multiplicado deja el grano del papel debajo, atenuado por el
-   mismo factor que la luminancia. Se compara el detalle de alta frecuencia dentro
-   del trazo con el del papel vacío de al lado, y se predice el primero a partir
-   del segundo.
-2. **¿Cuánto ocupa en la hoja?** La caja envolvente de la tinta, en dp. No es el
-   rectángulo declarado —mide los píxeles que pasan el umbral, y el segundo marco
-   asoma por dos lados— así que sirve para contrastar el orden de magnitud contra
-   los 84 × 76 dp del #304, no para deducirlos.
+1. ¿El `multiply` deja pasar el papel? Un sello opaco pintaría el trazo de un color
+   plano; uno multiplicado deja debajo el grano del papel, atenuado por el mismo
+   factor que la luminancia. Se compara el detalle de alta frecuencia dentro del
+   trazo con el del papel vacío de al lado, y se predice el primero a partir del
+   segundo.
+2. ¿Cuánto ocupa en la hoja? La caja envolvente de la tinta, en dp. Mide los píxeles
+   que pasan el umbral, no el rectángulo declarado (el segundo marco asoma por dos
+   lados), así que sólo sirve para contrastar el orden de magnitud con los
+   84 × 76 dp del #304.
 
     python3 medir-sello.py lamina-completa.png --sello 760 430 1070 740 \
         --papel 990 760 1070 900

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Saca de la caché sembrada del móvil lo que el índice del padre enseña hoy (#520).
 
-PROTOTIPO — se tira cuando el ticket se cierre. Lo que sobrevive es el README.
+Prototipo: se tira cuando el ticket se cierre; lo que sobrevive es el README.
 
-La fuente es `.local/padre/coindex.db`, que es lo que la app lee y no lo que `data/` dice
-(`medir-en-el-movil-no-en-el-asset`): el inventario, los tipos sembrados con sus fotos, la caja
-propia y **las dos casillas que el padre tiene marcadas de verdad**.
+La fuente es `.local/padre/coindex.db`, que es lo que la app lee y no lo que dice `data/`: el
+inventario, los tipos sembrados con sus fotos, la caja propia y las dos casillas que el padre
+tiene marcadas de verdad.
 
-Reglas copiadas del dominio y no supuestas:
+Reglas copiadas del dominio:
 
 - casilla llena y evidencia: `CollectionCatalog.memberMatches` / `isEvidencedBy`
 - casillas medibles: las que tienen `numista_type_id` (`CollectionCatalogAlbum.issuedMembers`:
@@ -17,7 +17,7 @@ Reglas copiadas del dominio y no supuestas:
   (`indexOrder`)
 - cara de la casilla: `printed_side` del catálogo y, si no lo declara, reverso antes que anverso
 
-Lo que **no** reproduce: la derivación fina de `deriveCollection` (familia de set, familia de
+Lo que no reproduce: la derivación fina de `deriveCollection` (familia de set, familia de
 Numista, agrupación curada, sistema monetario). Las tarjetas sin catálogo se agrupan por la
 `family` que la caché trae por tipo, que es la tercera de esas cinco reglas. El recuento resultante
 se imprime al final para poder compararlo con el canto cosido del teléfono.
@@ -159,11 +159,11 @@ GROUPINGS = {
 
 # ── los bultos: una tarjeta pide familia y peso, o la pieza es residuo ──────
 #
-# `deriveCollection` sólo saca familia de tres sitios —catálogo, serie de Numista, agrupación
-# curada— y el **sistema monetario no es uno de ellos**: sin familia la pieza cae en «Sin
-# colección» (#275), y sin peso también. Un artículo suelto por nombre («The») tampoco es una
-# familia (#404). Lo que esta regla no distingue son las familias técnicas de ADR 0012, que
-# necesitan una curada encima; así que este recuento es un **suelo** y no el número exacto.
+# `deriveCollection` sólo saca familia del catálogo, la serie de Numista o una agrupación curada;
+# el sistema monetario no cuenta. Sin familia la pieza cae en «Sin colección» (#275), y sin peso
+# también. Un artículo suelto por nombre («The») tampoco es una familia (#404). Esta regla no
+# distingue las familias técnicas del ADR 0012, que necesitan una curada encima, así que el
+# recuento es un suelo y no el número exacto.
 loose, residue = {}, 0
 for it in items:
     tid = it["type"]["id"]

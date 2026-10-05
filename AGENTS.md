@@ -10,7 +10,7 @@ Uses the canonical `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-h
 
 ### Domain docs
 
-This is a single-context repository. See `docs/agents/domain.md`.
+Single-context repository: before exploring, read `CONTEXT.md` and the relevant ADRs under `docs/adr/`. See `docs/agents/domain.md`.
 
 ### Curating catalogs
 
