@@ -19,13 +19,7 @@ import kotlin.test.assertTrue
 class CoinRowTest {
     private val rows = coinRows(ShelfFixtures.state)
 
-    /**
-     * The card is dated by **the coin the collector has**, not by the first year of the design (#448).
-     *
-     * The father said it of his 75 bolívares and it turned out to be the smaller half: measured over
-     * his collection, 63 rows of 34 types printed a year that is not their coin's, because `minYear`
-     * is when Numista's type opens. His ¼ bolívar of 1948 said 1894; his Libertad of 2024 said 2000.
-     */
+    /** `minYear` is when the Numista type opens, not the year of the coin held (#448). */
     @Test
     fun `a coin is dated by the piece the collector holds, not by the type`() {
         val state = stateOf(
@@ -39,14 +33,7 @@ class CoinRowTest {
         assertEquals("1948", coinAlbumFootnote(row))
     }
 
-    /**
-     * A type the collector holds in several years prints the arc, not one of its ends.
-     *
-     * Seven of his 170 dated types are like this, and one of them is the whole reason it is a range
-     * and not a list: his 5 bolívares N#10340 is twenty-one years, 1879 to 1936. The individual years
-     * are still one screen away — «Piezas» prints them one by one — and still reachable, because the
-     * year chips below take every one of them.
-     */
+    /** A range, not a list: «Piezas» prints each year, and the year chips reach every one. */
     @Test
     fun `a type held in several years prints the arc it covers`() {
         val state = stateOf(
@@ -64,13 +51,7 @@ class CoinRowTest {
         assertEquals("1879 – 1936 · ×3", coinAlbumFootnote(row))
     }
 
-    /**
-     * With no year on any piece the ficha answers, which is what it is good for.
-     *
-     * Twenty-one of his types are in this state — a row Numista holds no issue for — and the type's
-     * first year is a truthful thing to say about them: it is the year of the design, and there is no
-     * coin's own year to contradict it.
-     */
+    /** With no issue on the row, the design's first year has no coin's year to contradict it. */
     @Test
     fun `a coin whose pieces carry no year falls back on the ficha`() {
         val state = stateOf(
@@ -81,13 +62,7 @@ class CoinRowTest {
         assertEquals(listOf(1_978), coinRows(state).single().years)
     }
 
-    /**
-     * And with neither, «Sin año» — the same hole, said out loud.
-     *
-     * This is the father's 75 bolívares as his phone has it (#448): the ficha never arrived, because
-     * the valuation pass had spent his month (#452). The row's own piece carries 1980 and the card
-     * now says so, ficha or no ficha.
-     */
+    /** The ficha can fail to arrive when the pass spent the month's quota (#448, #452). */
     @Test
     fun `a coin with no ficha still prints the year its piece carries`() {
         val state = stateOf(
@@ -103,13 +78,8 @@ class CoinRowTest {
     }
 
     /**
-     * Numista's `0` on an undated medal is not the year zero (#460).
-     *
-     * The father has two of these, both medals whose ficha carries no `min_year` either: the row says
-     * `"year": 0, "is_dated": true`, which is Numista's way of saying it has an issue and no date for
-     * it. `placementYear` already refused it — «treating it as a placement would open the axis on year
-     * 0 and paint two thousand years of bare cardboard» — and the card has to refuse it too, or #448
-     * turns a «Sin año» into a «0», which is worse: a wrong answer reads as an answer.
+     * Numista writes `"year": 0, "is_dated": true` for an issue with no date (#460).
+     * `placementYear` already ignores it; on the card a «0» would read as a real year.
      */
     @Test
     fun `the zero Numista stores on an undated medal is not a year`() {
@@ -124,7 +94,6 @@ class CoinRowTest {
         assertEquals("Sin año", coinAlbumFootnote(row))
     }
 
-    /** And with a ficha that does know the year, the zero steps aside for it. */
     @Test
     fun `an undated row takes the year its ficha knows`() {
         val state = stateOf(
@@ -184,7 +153,7 @@ class CoinRowTest {
         assertNull(orphan.issuer)
         assertTrue(orphan.years.isEmpty())
         assertNull(orphan.weightOz)
-        // Money is the default with two chips and no third place to put it.
+        // Coin is the default: the class chips have no third place for an unknown.
         assertEquals(ObjectClass.Coin, orphan.objectClass)
         assertEquals("Pieza 12", orphan.title)
     }
@@ -198,11 +167,8 @@ class CoinRowTest {
     }
 
     /**
-     * Dropping a type from a box does not touch the coin (ADR 0013, ADR 0021 §10).
-     *
-     * It stays in the inventory and in Coins with the same quantity, and what changes is only which
-     * collections claim it — which is what makes a box a second membership rather than a move. Here
-     * the box was the onza's only claim, so it lands under «Sin colección» and nowhere else.
+     * A box is a second membership, not a move (ADR 0013, ADR 0021 §10). The box was the onza's
+     * only claim, so it ends with none.
      */
     @Test
     fun `a coin dropped from a box is still a coin, with one claim fewer`() {
@@ -217,10 +183,8 @@ class CoinRowTest {
     }
 
     /**
-     * The bottom bar promises a number and this screen has to be able to keep it (ADR 0021 §1).
-     *
-     * After #424 the bar reads [collectionFigures].types (via [SewnEdgeCounts]), not a parallel
-     * type walk — so the fixture check is the same census [coinRows] draws (#426, #427).
+     * The bar reads [collectionFigures].types via [SewnEdgeCounts] (ADR 0021 §1, #424), so both
+     * must count the same census (#426, #427).
      */
     @Test
     fun `the count the bottom bar prints is the number of rows Coins draws`() {
@@ -229,11 +193,7 @@ class CoinRowTest {
         assertEquals(figures.types, rows.size)
     }
 
-    /**
-     * Sewn edge and Coins share one census (#426): figures coerce a hostile zero to one piece, and
-     * [coinRows] must draw that type too — otherwise the bar says «Monedas · N+1» while the screen
-     * paints N rows.
-     */
+    /** Figures coerce a zero quantity to one piece, so [coinRows] must draw it too (#426). */
     @Test
     fun `a coerced zero still draws a row, matching the figures type count`() {
         val state = CollectionState(
@@ -262,12 +222,8 @@ class CoinRowTest {
     }
 
     /**
-     * Monedas rotula el mismo país que la tarjeta, y no la entidad emisora de Numista (#180).
-     *
-     * Aquí no es sólo el rótulo de una fila: la chip de país de la estantería se construye con estas
-     * cadenas, y «Federación de Rusia (1991-presente)» se llevaba una fila de chips para ella sola.
-     * Los 293 tipos `russie` de la caché sembrada son el emisor más numeroso que hay, así que es la
-     * chip que más se toca.
+     * The shelf's country chips are built from these strings, and Numista's issuer name «Federación
+     * de Rusia (1991-presente)» took a whole row of chips (#180).
      */
     @Test
     fun `Coins says the country its card says`() {
@@ -298,7 +254,7 @@ class CoinRowTest {
             listOf("Rusia", "Unión Soviética"),
             coinRows(rusas).map { it.issuer },
         )
-        // Y la búsqueda sigue alcanzando el país que la fila pinta.
+        // The search still reaches the country the row prints.
         assertTrue(matchesQuery(coinRows(rusas).first().haystack, "rusia"))
     }
 
@@ -338,13 +294,7 @@ class CoinRowTest {
         assertTrue(ShelfFixtures.ONZA_MEXICANA.toString() !in coinAlbumFootnote(britannia))
     }
 
-    /**
-     * The sheet a casilla opens says what Monedas says, because it is the same reading (#508).
-     *
-     * The strongest form the assertion has: not «they agree on the title» but «they are the same row».
-     * A second construction for the sheet is what would let a coin be one thing on a lámina and
-     * another in the grid.
-     */
+    /** The sheet a casilla opens reuses the grid's row, so a coin can't read differently (#508). */
     @Test
     fun `the row of a coin the collector holds is the row the grid draws`() {
         assertEquals(
@@ -353,12 +303,7 @@ class CoinRowTest {
         )
     }
 
-    /**
-     * A hole is a coin like any other, with nothing of it in the collection.
-     *
-     * Half the casillas of a lámina are holes and every one of them now opens this sheet, so the row
-     * has to survive having no piece behind it: no count, no collection, and a «×0» nowhere in sight.
-     */
+    /** Every hole on a lámina opens this sheet, so the row must work with no piece behind it. */
     @Test
     fun `a type no piece of which is held reads as a coin with nothing in it`() {
         val state = stateOf(
@@ -380,13 +325,7 @@ class CoinRowTest {
         assertEquals("Venezuela · 1886 · N# 10", coinFichaIdentity(row))
     }
 
-    /**
-     * With no piece to be dated by, the type's own arc is what is true — both ends of it.
-     *
-     * The other half of #448: the year a type *opens* is the year of a coin only where the type has
-     * one year, and a date run whose sheet said «1879» over the casilla of 1886 would be giving a
-     * wrong answer where it has a truthful one.
-     */
+    /** A type's opening year is a coin's year only when the type has one year (#448). */
     @Test
     fun `a type held by nobody is dated by the arc the type covers`() {
         val state = stateOf(
@@ -397,7 +336,6 @@ class CoinRowTest {
         assertEquals(listOf(1_879, 1_936), coinRowOf(state, 10).years)
     }
 
-    /** No ficha on the phone and no piece: the Numista number is the only name such a coin has. */
     @Test
     fun `a type with no ficha at all is named by its Numista number`() {
         val row = coinRowOf(stateOf(meta = null, items = emptyList()), 596_807)

@@ -8,13 +8,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * A plate cell is about a centimetre wide and the sheet asks for every one of them at once.
- * The original photographs are around 220 KB each, so nineteen issues meant eight megabytes in
- * one burst and Numista's edge refused ten of the thirty-eight with `503` — twelve cells of the
- * 1000 escudos came out empty, six of them coins the collector owns (issue #67).
- *
- * The order below is the fix: ask for the 180-pixel thumbnail, and keep the original as the
- * fallback rather than as the only thing on offer.
+ * A plate asks for every cell's photograph at once, and a burst of originals made Numista's edge
+ * answer `503` (#67), so the 180-pixel thumbnail goes first and the original is the fallback.
  */
 class CoinPhotosTest {
     private val original = "https://en.numista.com/catalogue/photos/portugal/10207-original.jpg"

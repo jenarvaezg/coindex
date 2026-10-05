@@ -10,19 +10,15 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 
-/** The three seconds the loop lets the first screen have the phone to itself. */
+/** How long the first screen has the phone to itself. */
 private const val START_DELAY = 3_000L
 
 private fun images(vararg urls: String): List<TypeImages> =
     urls.map { TypeImages(obverse = CoinPhoto(thumbnail = it)) }
 
 /**
- * When a pass of the photograph prefetch is worth starting, and who gets the network (#191, #220).
- *
- * These four rules used to be guards inside a coroutine in the ViewModel, and one of them was
- * wrong: the pass was skipped when `images.hashCode()` matched, which is «probably the same
- * photographs» — a collision cost a whole pass until the next launch. Here it is the fichas
- * themselves, and that is a difference a test can see.
+ * When a photograph prefetch pass starts, and who gets the network (#191, #220). A repeat is
+ * detected by comparing the fichas themselves, not a hash that could collide.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class PhotoPrefetchLoopTest {
@@ -34,10 +30,9 @@ class PhotoPrefetchLoopTest {
     ) = PhotoPrefetchLoop(prefetch, { syncing -> conditions(syncing) }, START_DELAY)
 
     /**
-     * Lets the pass past the three seconds it gives the first screen.
-     *
-     * `advanceUntilIdle` would not do: since coroutines 1.10 it leaves work started in another scope
-     * where it is, and the pass is launched into the caller's — which in the app is the ViewModel's.
+     * Lets the pass past its start delay. `advanceUntilIdle` would not: since coroutines 1.10 it
+     * leaves work launched in another scope alone, and the pass runs in the caller's scope (in the
+     * app, the ViewModel's).
      */
     private fun TestScope.settle() = advanceTimeBy(START_DELAY + 1)
 

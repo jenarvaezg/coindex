@@ -7,15 +7,10 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Which curated catalogs the shelf window of «Explorar» is made of (ADR 0030 §1).
- *
- * Two facts decide it and nothing else does: **no evidence**, and **fewer than twenty measurable
- * casillas**. The cut is about what a plate can say — at twenty slots a plate of zeros stops being a
- * shelf window and becomes a catalogue nobody asked for — so what it counts is the divisor the plate
- * itself divides by, and never the members of the file.
+ * Which curated catalogs make up the «Explorar» shelf window (ADR 0030 §1): no evidence and fewer
+ * than twenty measurable casillas, counted by the plate's divisor and not by the file's members.
  */
 class ShowcaseTest {
-    /** The cut is exclusive, which is what «fewer than twenty» means where it is measured. */
     @Test
     fun `a catalog with no evidence is in the window below twenty casillas and out at twenty`() {
         val nineteen = dateRun("britannia", 2_000..2_018)
@@ -25,12 +20,7 @@ class ShowcaseTest {
         assertNull(showcasePlate(twenty, albumOf(twenty), emptySet()))
     }
 
-    /**
-     * Evidence takes a catalog out of the window, and it is the same evidence that opens its plate.
-     *
-     * The window is «what you do **not** collect», so the moment a sync brings one coin of it the plate
-     * becomes the collector's own — with its ratio, its two figures of money and its «Exportar».
-     */
+    /** The same evidence that opens its plate. */
     @Test
     fun `a catalog the collector owns something of is not in the window`() {
         val run = dateRun("kooka", 2_010..2_012)
@@ -41,14 +31,7 @@ class ShowcaseTest {
         assertNotNull(showcasePlate(run, albumOf(run), emptySet()))
     }
 
-    /**
-     * The cut counts the **divisor** and not the file's members.
-     *
-     * An announced casilla is not something money can buy and an unlisted one cannot be measured at
-     * all, so neither is a slot of the window: a plate of nineteen buyable coins plus two announcements
-     * is a plate of nineteen, and pushing it out over a design nobody has struck would be the divisor
-     * rule read backwards.
-     */
+    /** The cut counts the plate's divisor, not the file's members. */
     @Test
     fun `announced and unlisted casillas do not count towards the cut`() {
         val members = dateRunMembers("beasts", 2_000..2_018) + listOf(
@@ -65,7 +48,6 @@ class ShowcaseTest {
         assertEquals(22, plate?.album?.members?.size)
     }
 
-    /** Every casilla of a plate in the window is empty, which is what «you own none of it» means. */
     @Test
     fun `every casilla of a plate in the window is a hole`() {
         val kooka = dateRun("kooka", 2_010..2_012)
@@ -77,11 +59,8 @@ class ShowcaseTest {
     }
 
     /**
-     * The default order is fewest casillas first (ADR 0030 §8).
-     *
-     * It is the same «what can be said» reading as the cut itself: the plate closest to being a plate
-     * comes first. The order #282 chose — by cost of entering — cannot be the default, because with the
-     * tasación in the collector's hands the shelf is born with no amount at all.
+     * ADR 0030 §8. Not by cost of entering, as #282 chose: with the tasación in the collector's
+     * hands, the shelf starts with no amounts.
      */
     @Test
     fun `the window is ordered by casillas, fewest first`() {
@@ -97,7 +76,6 @@ class ShowcaseTest {
         assertEquals(listOf(3, 8, 15), window.map { it.slots })
     }
 
-    /** A catalog with nothing measurable in it is not a shelf window: there is no plate to open. */
     @Test
     fun `a catalog with no measurable casilla is not in the window`() {
         val onlyAnnounced = catalog("soon", listOf(announced("soon-2027", 2_027)))
@@ -108,12 +86,7 @@ class ShowcaseTest {
 
 private const val TYPE_ID = 30
 
-/**
- * The album the assembly would carry for this catalog (#537).
- *
- * Through [CatalogAlbums] and not straight to the builder, because that is the door the window reads
- * its albums by: a test that built one of its own would be the seventh place they are built.
- */
+/** Built through [CatalogAlbums], as the window reads its albums, and not by the builder (#537). */
 private fun albumOf(
     catalog: CollectionCatalog,
     items: List<CollectedItem> = emptyList(),

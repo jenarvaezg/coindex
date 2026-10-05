@@ -22,14 +22,8 @@ import kotlin.test.assertTrue
 private const val NOW = 1_754_600_000_000L
 private const val DAY = 24L * 60 * 60 * 1_000
 
-/**
- * Which issues a pass may ask Numista about (ADR 0028 §1).
- *
- * The threshold is the part worth pinning, and it is **not a saving**: a plate with 51 holes does not have
- * a cost of completion, it has a reproach of 51 slots, so the number that came back could not be shown.
- */
+/** Which issues a pass may ask Numista about (ADR 0028 §1). */
 class ValuationPlanTest {
-    /** Every piece that carries an issue, once, however many rows share it. */
     @Test
     fun `the owned half is every distinct issue of the collection`() {
         val plan = plan(
@@ -48,13 +42,6 @@ class ValuationPlanTest {
         assertTrue(plan.holes.isEmpty())
     }
 
-    /**
-     * A plate ten slots or fewer from closing has its holes valued; one further out does not.
-     *
-     * Over his 49 plates the cut takes 28 of them and 138 holes, and it falls clean: what stays outside are
-     * the bullion runs where he owns a single coin, which is exactly where a cost of completion would be
-     * the reproach.
-     */
     @Test
     fun `the holes of a plate within ten slots are asked for, and no others`() {
         val withinReach = dateRun("reach", years = 1_960..1_965, typeId = 10)
@@ -71,7 +58,6 @@ class ValuationPlanTest {
         assertEquals(listOf(1_961, 1_962, 1_963, 1_964, 1_965), plan.holes.mapNotNull { it.year })
     }
 
-    /** A plate with nothing missing has nothing to cost, and leaves by the same clause. */
     @Test
     fun `a closed plate contributes no holes`() {
         val closed = dateRun("closed", years = 1_960..1_961, typeId = 10)
@@ -88,12 +74,7 @@ class ValuationPlanTest {
         assertTrue(plan.holes.isEmpty())
     }
 
-    /**
-     * Only the plates that are **open** are walked.
-     *
-     * A catalog with no evidence has no plate to put a cost of completion in the header of, so asking about
-     * its slots would spend the budget on a screen the collector cannot reach.
-     */
+    /** A catalog with no evidence has no plate on screen to show a closing cost on. */
     @Test
     fun `a catalog with no evidence is not walked at all`() {
         val plan = plan(
@@ -105,12 +86,7 @@ class ValuationPlanTest {
         assertTrue(plan.holes.isEmpty())
     }
 
-    /**
-     * An issue Numista answered for is not asked again, **including when it had no price**.
-     *
-     * That second half is what makes three states out of two: without the row, those 19 issues of his 223
-     * would be asked for again on every single pass, for ever (ADR 0028 §4).
-     */
+    /** A row without prices is still an answer (ADR 0028 §4). */
     @Test
     fun `an issue already answered for is not asked again, priced or not`() {
         val plan = ValuationPlan(
@@ -125,7 +101,6 @@ class ValuationPlanTest {
         assertEquals(listOf(OwnedIssue(10, 102)), ownedIssuesToAsk(plan, reads, NOW))
     }
 
-    /** Ninety days later it is asked again — and the row it replaces was still being shown until now. */
     @Test
     fun `a price older than ninety days is asked again`() {
         val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
@@ -139,12 +114,8 @@ class ValuationPlanTest {
     }
 
     /**
-     * The life itself, in days, because it is the whole of #561 and a symbol cannot pin it.
-     *
-     * Every other test here reads [PRICE_LIFETIME_MILLIS] and would go on passing at any value at all.
-     * What the issue decided is the **number**: a catalog price lives as long as the listing that
-     * addresses it, so the cold pass of the father's collection lands once a quarter instead of once a
-     * month, and the month it lands in is no longer the month the listings land in too.
+     * Pins the number #561 decided; every other test reads [PRICE_LIFETIME_MILLIS] and would pass
+     * at any value.
      */
     @Test
     fun `a catalog price lives the ninety days of the listing that addresses it`() {
@@ -152,12 +123,7 @@ class ValuationPlanTest {
         assertEquals(LISTING_LIFETIME_MILLIS, PRICE_LIFETIME_MILLIS)
     }
 
-    /**
-     * The month that used to be a wall: a price of thirty-one days is kept, not bought again.
-     *
-     * The 442 calls of a cold pass came due every month at the old life, all on the same day because
-     * they were all brought on the same day (ADR 0028 §5). This is that day not happening.
-     */
+    /** The old monthly life made the whole cold pass fall due on one day (ADR 0028 §5, #561). */
     @Test
     fun `a price of a month and a day is no longer asked again`() {
         val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
@@ -167,12 +133,7 @@ class ValuationPlanTest {
         assertEquals(0, valuationCallCount(plan, listOf(month), NOW))
     }
 
-    /**
-     * A hole whose curated file names its issues costs **one** call and not two.
-     *
-     * An issue run declares them (ADR 0014), so there is nothing to look up: the saving is real and it is
-     * the reason the two halves are read apart.
-     */
+    /** An issue run declares its issues (ADR 0014), so its holes cost one call and not two. */
     @Test
     fun `a hole whose file names its issue needs no lookup`() {
         val plan = ValuationPlan(
@@ -183,16 +144,12 @@ class ValuationPlanTest {
             ),
         )
 
-        // The first of the declared issues, which is the same choice the plate makes: a slot holding two
-        // varieties of one issue is one slot, and closing it costs one of them.
+        // The first declared issue, as the plate picks: two varieties in one slot cost one of them.
         assertEquals(listOf(OwnedIssue(10, 8_508)), resolvedHoleIssues(plan, emptyList(), NOW))
         assertEquals(mapOf(20 to plan.holes.drop(1)), holeIssuesToAsk(plan, emptyList(), NOW))
     }
 
-    /**
-     * The lookups are grouped by type, because a plate's holes are years of one type nine times out of ten
-     * and one `/types/{id}/issues` answers all of them.
-     */
+    /** One `/types/{id}/issues` answers every year of a type. */
     @Test
     fun `the lookups are one per type and not one per hole`() {
         val plan = ValuationPlan(
@@ -212,7 +169,7 @@ class ValuationPlanTest {
         assertEquals(5, valuationCallCount(plan, emptyList(), NOW))
     }
 
-    /** A hole with no year has nothing to match a listing against, so it is not asked about. */
+    /** With no year there is nothing to match in a listing. */
     @Test
     fun `a hole with no year is not asked about`() {
         val plan = ValuationPlan(
@@ -224,7 +181,7 @@ class ValuationPlanTest {
         assertEquals(0, valuationCallCount(plan, emptyList(), NOW))
     }
 
-    /** With everything on the phone the pass costs nothing, which is what «every launch» is bought with. */
+    /** That is what lets the pass run on every launch. */
     @Test
     fun `with everything cached a pass costs zero calls`() {
         val plan = ValuationPlan(owned = listOf(OwnedIssue(10, 100)), holes = emptyList())
@@ -232,15 +189,7 @@ class ValuationPlanTest {
         assertEquals(0, valuationCallCount(plan, listOf(read(10, 100, NOW, true)), NOW))
     }
 
-    /**
-     * A type whose listing is on the phone is not listed again — which is the whole of #452.
-     *
-     * The hole does not declare its issue, so before the listing was stored there was no way to tell
-     * its cached price from an unasked one: `hole.issueIds.none { it in fresh }` is `true` over an
-     * empty list, so the type was listed again on every pass, for ever. Measured over the father's
-     * collection that was 102 listings and 111 prices on every cold start, 213 of the 1.999 calls
-     * Numista let him make in August.
-     */
+    /** A hole does not declare its issue; the stored listing addresses it with no lookup (#452). */
     @Test
     fun `a type already listed is not listed again`() {
         val plan = ValuationPlan(
@@ -261,12 +210,6 @@ class ValuationPlanTest {
         assertEquals(1, valuationCallCount(plan, emptyList(), NOW, listings))
     }
 
-    /**
-     * With the listing stored **and** the price fresh, the hole costs nothing at all.
-     *
-     * This is the assertion the old `with everything cached` one could not make: it only ever covered
-     * the owned half, and the holes were the half that bled.
-     */
     @Test
     fun `with the listing stored and the price fresh a hole costs zero calls`() {
         val plan = ValuationPlan(
@@ -281,13 +224,7 @@ class ValuationPlanTest {
         assertEquals(0, valuationCallCount(plan, listOf(read(20, 900, NOW, true)), NOW, listings))
     }
 
-    /**
-     * A year the listing does not have costs nothing either, once the listing has been stored.
-     *
-     * It used to cost the lookup for ever: the KDoc of `askHoles` called that «not a datum», and over
-     * a plate whose curated file names a year Numista has no issue for it was a lookup every pass.
-     * «This type was listed» is a datum about *this phone*, which is all that is needed to stop.
-     */
+    /** «This type was listed» is enough to stop asking, whatever years the listing brought. */
     @Test
     fun `a year the stored listing does not have is not looked up again`() {
         val plan = ValuationPlan(
@@ -305,11 +242,8 @@ class ValuationPlanTest {
     }
 
     /**
-     * An expired price is asked again without listing the type a second time.
-     *
-     * The two clocks run at the same rate since #561 and are still asked apart: a price expired here and
-     * the listing that addresses it did not, because «which issue is the 1905 of this type» was read on
-     * a different day. Nothing makes them expire together, so the pass buys the one it needs.
+     * Price and listing share a lifetime since #561 but are read on different days, so each expires
+     * on its own.
      */
     @Test
     fun `an expired hole price is re-asked but the listing is not`() {
@@ -331,13 +265,9 @@ class ValuationPlanTest {
     }
 
     /**
-     * The two readings of the same table, and why they differ (#493).
-     *
-     * The pass drops an expired listing, because it is about to be listed again in this same pass and
-     * answering a hole from the stale map would price the wrong issue and then the right one. A screen
-     * has nothing to spend and no second chance: ADR 0028 §5 keeps showing an expired row rather than
-     * emptying the page, so the header of a plate would otherwise lose a cost of closing whose price
-     * is still sitting on the phone.
+     * The pass drops an expired listing because it is about to list the type again, and the stale
+     * map would price the wrong issue first. The screen keeps it, as ADR 0028 §5 keeps expired rows
+     * (#493).
      */
     @Test
     fun `an expired listing leaves the pass but stays on the screen`() {
@@ -355,11 +285,8 @@ class ValuationPlanTest {
     }
 
     /**
-     * A casilla of an album is addressed by the same rule a [PlateHole] is: the file's declaration
-     * first, and the listing when the file declares nothing (#493).
-     *
-     * One rule and not two, because the header adds up the very prices the pass went and fetched: read
-     * differently, a plate would total prices addressed to other coins.
+     * Same rule as a [PlateHole] (#493): the plate header adds up what the pass fetched, so both
+     * must address the same issue.
      */
     @Test
     fun `an empty casilla is addressed by its file first and by the listing after`() {
@@ -375,8 +302,7 @@ class ValuationPlanTest {
         )
 
         assertEquals(900, listings.issueOf(member))
-        // The file wins, and the first of its ids: a casilla holding two varieties of one issue is
-        // one casilla, and its cost is the cost of one of them.
+        // The first of the file's ids: two varieties in one casilla cost one of them.
         assertEquals(
             41,
             listings.issueOf(member.copy(numistaIssueIds = listOf(41, 42))),
@@ -386,13 +312,8 @@ class ValuationPlanTest {
     }
 
     /**
-     * A marked casilla is priced past the threshold **and** with no evidence at all (ADR 0029 §4).
-     *
-     * The two filters go for two different reasons. The threshold is a rule about whether a number
-     * deserves to be shown, and a mark answers it — of the 51, this one. The evidence filter is #282's
-     * decision 1, narrowed by name to the marked slot so that the father never has to work out which
-     * régime his coin is under. Measured: 419 holes in 17 plates were past the threshold and 157 slots
-     * of the shelf window had no evidence, and neither had a gesture that could ask.
+     * A mark is the collector asking for that number, so it overrides both the threshold and the
+     * evidence filter of #282, for that slot alone (ADR 0029 §4).
      */
     @Test
     fun `a marked casilla enters the plan past the threshold and with no evidence`() {
@@ -415,7 +336,6 @@ class ValuationPlanTest {
         )
     }
 
-    /** And it is one hole and not two where the plate was already within reach. */
     @Test
     fun `a marked casilla of a plate within reach is not asked about twice`() {
         val withinReach = dateRun("reach", years = 1_960..1_962, typeId = 10)
@@ -431,12 +351,8 @@ class ValuationPlanTest {
     }
 
     /**
-     * What a mark costs a month: **two calls, or one where the file names the issue** (ADR 0029 §5).
-     *
-     * The ceiling of a cold month and the same arithmetic the pass uses, which is what the gesture's
-     * «+2 consultas al mes» is quoting. It is generous about **both** calls on purpose since #561 —
-     * price and listing each last ninety days, so the real cost falls once a quarter — because rounding
-     * a spend down is the direction this figure must never err in.
+     * The ceiling the gesture's «+2 consultas al mes» quotes (ADR 0029 §5). Both calls last a
+     * quarter since #561, but the figure must never round a spend down.
      */
     @Test
     fun `a mark costs two calls a month, or one when its file names the issue`() {
@@ -448,7 +364,7 @@ class ValuationPlanTest {
 
         assertEquals(2, wishCallsPerMonth(listOf(wish(dates, "dates-1900"))))
         assertEquals(1, wishCallsPerMonth(listOf(wish(declared, "dates-1900"))))
-        // Two years of one type share the listing, so three marks of it are four calls and not six.
+        // Two years of one type share the listing: two marks are three calls and not four.
         assertEquals(
             3,
             wishCallsPerMonth(listOf(wish(dates, "dates-1900"), wish(dates, "dates-1901"))),
@@ -457,11 +373,8 @@ class ValuationPlanTest {
     }
 
     /**
-     * A plate of the shelf window is valued **whole**, threshold and all (ADR 0030 §3, §7).
-     *
-     * The threshold is the rule of the reproach, and a plate the collector owns nothing of reproaches
-     * nothing: every casilla of it is empty by definition, and they went there to look at what they do
-     * not have. So a twelve-slot plate — two over the cut of ADR 0028 §1 — is asked about entirely.
+     * The threshold of ADR 0028 §1 does not apply to a shelf-window plate, opened to see what the
+     * collector lacks (ADR 0030 §3, §7); twelve slots is two over it.
      */
     @Test
     fun `tasar one plate of the shelf window asks about every casilla of it`() {
@@ -472,17 +385,13 @@ class ValuationPlanTest {
         assertTrue(plan.owned.isEmpty())
         assertEquals(12, plan.holes.size)
         assertEquals(setOf("lunar"), plan.holes.mapTo(mutableSetOf()) { it.catalogId })
-        // And it is not what a pass would have asked for: the pass's own plan leaves it out entirely.
+        // The pass's own plan leaves it out.
         assertTrue(plan(emptyList(), Curation(listOf(twelve)), emptySet()).holes.isEmpty())
     }
 
     /**
-     * The gesture prints the pass's own arithmetic and not a second one (ADR 0030 §3).
-     *
-     * One `/prices` per hole plus one `/types/{id}/issues` per type whose file names no issue — so a
-     * date run of three years costs four, and the same three casillas cost three where the curated file
-     * declares their issues. What is already on the phone and fresh is not counted, which is what makes
-     * «Volver a tasar» honest a month later and silent a week later.
+     * The gesture uses the pass's arithmetic (ADR 0030 §3): one `/prices` per hole plus one listing
+     * per type whose file names no issue, minus what is fresh on the phone.
      */
     @Test
     fun `the gesture counts what the pass would spend, and nothing it already holds`() {
@@ -501,7 +410,7 @@ class ValuationPlanTest {
             2,
             showcaseCallCount(showcase(declared), PriceBook(readAt = mapOf((20 to 900) to NOW)), NOW),
         )
-        // A month later it has expired and is asked about again: this is what «Volver a tasar» buys.
+        // Once expired it is asked about again: this is what «Volver a tasar» buys.
         assertEquals(
             3,
             showcaseCallCount(
@@ -514,13 +423,8 @@ class ValuationPlanTest {
 }
 
 /**
- * A listing older than ninety days is **not** a listing the gesture may discount (ADR 0030 §3).
- *
- * The screen's own reading of the listings ignores expiry on purpose (#493): it has nothing to spend, and
- * ADR 0028 §5 keeps showing an expired row. A gesture that names its calls cannot use that reading — the
- * pass will spend the `/types/{id}/issues` again — and rounding a spend **down** is the one direction that
- * sentence must never err in. The distinction lives inside the book (`freshListings`), so the gesture
- * cannot be handed the wrong reading by a caller.
+ * The screen's reading of listings ignores expiry (#493), but the gesture counts what the pass will
+ * spend, so an expired listing is a lookup (ADR 0030 §3). `freshListings` keeps that in the book.
  */
 class ShowcaseSpendTest {
     @Test
@@ -547,13 +451,7 @@ class ShowcaseSpendTest {
     }
 }
 
-/**
- * The pass's plan over one inventory, with the albums the assembly would carry (#537).
- *
- * The albums are built here with the same call `Curation.assemble` uses, because the plan walks the
- * holes of the collector's own plates: a pass that indexed the inventory itself would be asking about
- * casillas nobody's card is divided by.
- */
+/** The pass's plan, with albums built by the same call `Curation.assemble` uses (#537). */
 private fun plan(
     items: List<CollectedItem>,
     curation: Curation,
@@ -597,11 +495,7 @@ private fun item(id: Long, typeId: Int, issueId: Int?, year: Int? = null) = Coll
     issueId = issueId,
 )
 
-/**
- * A date run of one type over a range of years.
- *
- * The years the collector has no piece for are the holes, which is what the threshold counts.
- */
+/** A date run of one type; the years without a piece are the holes the threshold counts. */
 private fun dateRun(id: String, years: IntRange, typeId: Int): CollectionCatalog =
     CollectionCatalog(
         schemaVersion = 2,

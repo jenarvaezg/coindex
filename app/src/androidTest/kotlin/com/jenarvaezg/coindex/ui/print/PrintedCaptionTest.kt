@@ -32,15 +32,10 @@ private const val LONGEST =
 /**
  * A name the screen prints whole is never an ellipsis on the paper (#412).
  *
- * That parity is the whole of this file. The screen was given a third line for these very names, and
- * the paper cannot be given one: the sixteen millimetres of [PrintGeometry.captionMm] are what the
- * page count was computed from, so a taller caption is a longer notebook. What the paper has instead
- * is resolution — 2,9 mm of serif is a comfortable caption at 300 dpi and 13 sp was already the
- * screen's floor — so here the ladder of #348 does the work the third line does on the glass.
- *
- * Every shape of page is measured, because each one takes millimetres from somewhere else: the code
- * (#478), the checklist with no photographs (#231), the scaled page whose caption has to say the real
- * diameter in words (#233).
+ * The paper can't get the third line the screen got: the 16 mm of [PrintGeometry.captionMm] fix
+ * the page count. It relies on the size ladder of #348 instead, since 2,9 mm of serif still reads
+ * at 300 dpi. Every page shape is measured because each takes millimetres from elsewhere: the code
+ * (#478), the checklist without photographs (#231), the scaled page stating the diameter (#233).
  */
 @RunWith(AndroidJUnit4::class)
 class PrintedCaptionTest {
@@ -84,9 +79,8 @@ class PrintedCaptionTest {
     }
 
     @Test
-    // The parity works the other way too, and this is where it is honest: the 73 characters of the
-    // Potsdam Garrison Church are five lines on the screen and an ellipsis there, so an ellipsis on
-    // the paper is the same page saying the same thing. It is not what the ladder promises to save.
+    // Parity the other way: the 73-character label is cut on screen too, and the ladder doesn't
+    // promise to save it.
     fun theLongestLabelOfAllIsCutOnPaperJustAsItIsOnScreen() {
         showPage(NotebookOptions(actualSize = false))
 

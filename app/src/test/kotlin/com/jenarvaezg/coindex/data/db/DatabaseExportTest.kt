@@ -10,17 +10,10 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
 /**
- * The raw base leaving the phone as one file, and named so the load rule can be read (#548).
- *
- * Two things are worth a test here and neither of them is Android. The **name** carries the rule the
- * issue states — the APK that loads a dump must be of a version equal to or later than the one that
- * wrote it — so the version comes first and the day after it; a dump nobody can date to a version is
- * a dump nobody can safely load. And the **order**: the WAL is folded back into the base *before* the
- * bytes are copied, because a copy taken first is a base missing the last transactions, which is
- * exactly the failure `scripts/avd-db.sh` was written to avoid.
- *
- * The checkpoint arrives as a lambda for that reason: what it does on a real phone is one `PRAGMA`,
- * and what a test needs to know is that it ran, and when.
+ * Exporting the raw database as one file (#548). The name leads with the version because only an
+ * APK of that version or later may load the dump. The WAL is checkpointed into the base before the
+ * copy, or the copy would miss the last transactions (as `scripts/avd-db.sh` guards against); the
+ * checkpoint is a lambda so the test can see that it ran, and when.
  */
 class DatabaseExportTest {
     private val at = LocalDateTime.of(2026, 8, 16, 14, 30, 7)
@@ -30,10 +23,7 @@ class DatabaseExportTest {
         assertEquals("coindex-1.4.8-2026-08-16.db", databaseExportFileName("1.4.8", at))
     }
 
-    /**
-     * The version is the whole point of the name, so its absence is written down rather than
-     * quietly dropped: a file called `coindex-2026-08-16.db` reads like a complete name.
-     */
+    /** `coindex-2026-08-16.db` would read like a complete name. */
     @Test
     fun `a dump with no version to declare says so instead of losing the field`() {
         assertEquals("coindex-sin-version-2026-08-16.db", databaseExportFileName("", at))
@@ -69,10 +59,7 @@ class DatabaseExportTest {
         assertEquals(File(target, "coindex-1.4.8-2026-08-16.db"), copy)
     }
 
-    /**
-     * Two exports on one day is the normal case — a coin was just added — and the second is the one
-     * that is wanted. Overwriting is the honest outcome, as it is for the notebook.
-     */
+    /** The usual case is a coin just added, and the later export is the one wanted. */
     @Test
     fun `a second export the same day replaces the first`() = runTest {
         val directory = temporaryDirectory()
@@ -86,10 +73,7 @@ class DatabaseExportTest {
         assertEquals("segunda", copy.readText())
     }
 
-    /**
-     * The cache holds one dump and not one per day of exporting: a base is a few megabytes and this
-     * directory is nobody's archive.
-     */
+    /** A base is a few megabytes, and this cache directory is not an archive. */
     @Test
     fun `an export clears the dumps of other days`() = runTest {
         val directory = temporaryDirectory()
@@ -103,10 +87,7 @@ class DatabaseExportTest {
         assertEquals(listOf(copy.name), output.listFiles().orEmpty().map { it.name })
     }
 
-    /**
-     * There is no base on a phone that has never opened one, and «se exportó» over an empty share
-     * sheet would be the worst of the three outcomes.
-     */
+    /** A phone that never opened the base has none, and claiming «se exportó» would mislead. */
     @Test
     fun `a base that is not there fails saying so`() = runTest {
         val directory = temporaryDirectory()

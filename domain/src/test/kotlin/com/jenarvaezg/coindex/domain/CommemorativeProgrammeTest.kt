@@ -6,8 +6,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * El segundo eje del ADR 0022: la moneda cuenta en su lista por denominación y **además** en el
- * programa conmemorativo que la emitió, sin que ninguna de las dos lecturas toque a la otra.
+ * El segundo eje del ADR 0022: la moneda cuenta en su lista por denominación y además en el
+ * programa conmemorativo que la emitió, sin que una lectura toque a la otra.
  */
 class CommemorativeProgrammeTest {
     private fun programme(
@@ -49,7 +49,7 @@ class CommemorativeProgrammeTest {
 
     @Test
     fun `progress counts every member, including the one no catalog claims`() {
-        // Exactamente el caso del padre: tiene el 2,50 y le faltan el 5 y el 25.
+        // El caso del padre: tiene el 2,50 y le faltan el 5 y el 25.
         val progress = programme().progress(listOf(item(6_071)))
         assertEquals(ProgrammeProgress(owned = 1, total = 3), progress)
     }
@@ -79,12 +79,8 @@ class CommemorativeProgrammeTest {
     }
 
     /**
-     * One walk of the files answers for every catalog at once (#539), and it answers the same thing.
-     *
-     * What the assembly saves is the walk of the inventory and of the programme list, never the rule:
-     * the standings of a catalog that touches nothing are absent rather than empty, so the map is two
-     * entries and not forty-nine — and a catalog nobody keyed reads as «ningún programa», which is
-     * what a second reading beside a plate is when there is none (ADR 0022).
+     * Same answer as per catalog (#539). A catalog that touches no programme is absent from the
+     * map, which reads as «ningún programa» (ADR 0022).
      */
     @Test
     fun `the standings of every catalog come out of one walk, in file order`() {

@@ -12,11 +12,7 @@ class CatalogDateLabelTest {
         assertEquals("31 dic 2025", catalogDateLabel("2025-12-31"))
     }
 
-    /**
-     * The editorial date is **not** an age (#518): it is the version of the curated file, and nothing
-     * about it expires. So it never borrows the wording the ficha and the price use for how old a
-     * datum is — «hoy», «ayer», «hace 13 días» — even on the day the catalog was written.
-     */
+    /** It is the curated file's version, which never expires (#518). */
     @Test
     fun `the catalog's date never reads as an age`() {
         val today = catalogDateLabel("2026-08-15")
@@ -26,9 +22,8 @@ class CatalogDateLabelTest {
     }
 
     /**
-     * `CollectionCatalogValidation` refuses a blank `updated_at` but not a malformed one, so this is
-     * the case that can actually reach a screen: it prints as it was written. Inventing «sin fecha»
-     * over a value that is right there would hide from the curator what needs fixing.
+     * `CollectionCatalogValidation` lets a malformed `updated_at` through; printing it as written
+     * shows the curator what to fix.
      */
     @Test
     fun `a date this cannot read passes through untouched`() {
@@ -49,10 +44,7 @@ class DayLabelTest {
         assertEquals("1 ene", dayAndMonthLabel(LocalDate.of(2026, 1, 1)))
     }
 
-    /**
-     * September is «sep» and never CLDR's «sept», which is the whole reason the months are a written
-     * list rather than a `DateTimeFormatter` pattern: two JDKs must not spell one month two ways.
-     */
+    /** «sep», never CLDR's «sept»: the months are a written list so two JDKs can't disagree. */
     @Test
     fun `every month keeps one spelling`() {
         assertEquals("30 sep 2026", dayMonthYearLabel(LocalDate.of(2026, 9, 30)))

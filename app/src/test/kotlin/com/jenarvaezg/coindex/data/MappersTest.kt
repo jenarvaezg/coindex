@@ -12,19 +12,13 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 
 /**
- * A mapper is a mapper again: the type cache row is read column by column, and only the collected
- * item still reaches into a stored response.
- *
- * There is no `fetchedAt` in this file any more. The five fields the ficha used to be parsed for on
- * every read were memoized behind `(typeId, fetchedAt)`, so two assertions about one type
- * contaminated each other unless each invented a moment of its own — nothing in the interface said
- * so, it was discovered by the failure (#221). What the body says is now `FichaTest`'s subject and
- * a column by the time it gets here.
+ * The type cache row is read column by column (#221); only the collected item still parses its
+ * stored response. Reading the ficha body is `FichaBodyTest`'s subject.
  */
 class MappersTest {
     private val lenient = Json { ignoreUnknownKeys = true }
 
-    /** The row exactly as the sync, the refresh and the seed write it: through the one mapper. */
+    /** The row as the sync, the refresh and the seed write it, through the one mapper. */
     private fun typeEntity(raw: String) = typeMetaEntity(
         typeId = 404_044,
         dto = runCatching { lenient.decodeFromString(NumistaTypeDto.serializer(), raw) }
@@ -35,8 +29,7 @@ class MappersTest {
 
     @Test
     fun `the ficha's own fields travel from the body to the columns to the card`() {
-        // The cache row keeps the whole response, so the 608 seeded types already carry the
-        // name Numista wrote in the collector's own language: `australie` is «Australia».
+        // The issuer name is in the language the ficha was asked in: `australie` is «Australia».
         val meta = typeEntity(Fixtures.type(404_044)).toDomain()
 
         assertEquals("Australia", meta.issuerName)
@@ -52,9 +45,8 @@ class MappersTest {
     }
 
     /**
-     * El metal se deriva **en lectura** de la prosa de `composition.text`, que ahora es columna:
-     * lo que se guarda es lo que Numista escribió, nunca el veredicto de `inferMetal`, así que una
-     * regla mejor sigue arreglando las fichas cacheadas hace meses sin gastar una llamada.
+     * Se guarda la prosa de Numista y no el veredicto de `inferMetal`, así que una regla mejor
+     * arregla las fichas ya cacheadas sin gastar una llamada.
      */
     @Test
     fun `the metal is inferred from the stored prose, never stored itself`() {

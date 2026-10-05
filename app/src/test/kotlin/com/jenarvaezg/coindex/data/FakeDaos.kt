@@ -110,12 +110,8 @@ class FakeTypeMetaDao : TypeMetaDao {
 }
 
 /**
- * The boxes the collector typed, in memory.
- *
- * The last of the four DAOs to get a stand-in (#217), and the only one with logic of its own to
- * stand in for: `create` and `removeMemberOrDelete` are `@Transaction` default methods, so what is
- * reimplemented here is the two queries they call and never the rule between them — a grouping over
- * nothing is deleted here because the interface's own body says so.
+ * The collector's own boxes in memory (#217). `create` and `removeMemberOrDelete` are
+ * `@Transaction` default methods, so only the queries they call are reimplemented, not the rule.
  */
 class FakeOwnGroupingDao : OwnGroupingDao {
     val groupings = MutableStateFlow<List<OwnGroupingEntity>>(emptyList())
@@ -130,8 +126,7 @@ class FakeOwnGroupingDao : OwnGroupingDao {
         return id
     }
     override suspend fun addMembers(added: List<OwnGroupingMemberEntity>) {
-        // `IGNORE` sobre la clave (groupingId, typeId): un tipo repetido no duplica fila, y eso
-        // vale también dentro del mismo lote — `create(nombre, listOf(7, 7), now)` deja una.
+        // `IGNORE` sobre la clave (groupingId, typeId), también dentro de un mismo lote.
         members.value = (members.value + added).distinct()
     }
     override suspend fun rename(id: Long, name: String, updatedAt: Long) {
@@ -157,11 +152,8 @@ class FakeOwnGroupingDao : OwnGroupingDao {
 }
 
 /**
- * The casillas the collector marked, in memory (ADR 0029).
- *
- * The `IGNORE` of the real DAO is reimplemented here because it is the rule and not an optimization:
- * marking a casilla twice keeps the date of the first mark, which is what stops the list reshuffling
- * itself under the collector's thumb.
+ * The casillas the collector marked, in memory (ADR 0029). The real DAO's `IGNORE` is a rule, not
+ * an optimization: marking twice keeps the first date, so the list doesn't reorder itself.
  */
 class FakeWishDao : WishDao {
     val rows = MutableStateFlow<List<WishEntity>>(emptyList())
@@ -190,11 +182,9 @@ class FakeApiCallDao : ApiCallDao {
 }
 
 /**
- * The prices and the spot, in memory.
- *
- * The three states of ADR 0028 §4 are visible from here and that is the point of the stand-in: [reads]
- * with `hasPrices = false` is «Numista answered and had none», and **no** row at all is «not asked yet».
- * A pass that failed must leave the second, not the first.
+ * Prices and spot in memory, with the states of ADR 0028 §4 apart: a [reads] row with
+ * `hasPrices = false` is «Numista had none», no row is «not asked yet», and a failed pass must
+ * leave the latter.
  */
 class FakePriceDao : PriceDao {
     val prices = MutableStateFlow<List<IssuePriceEntity>>(emptyList())

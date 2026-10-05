@@ -20,15 +20,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * One door in, and the destination asked once — inside (#434).
+ * One door in, and the destination asked once, inside (#434). Descargar and Compartir belong to the
+ * «Cómo se exporta» panel, so either one on screen before it opens means a second entrance is back.
  *
- * The lámina and the hoja used to offer «Descargar lámina» **and** «Compartir», and since #401 both
- * opened the same «Cómo se exporta» card, which ends in Descargar / Compartir / Cancelar. The words
- * are the measure of the defect: Descargar and Compartir belong to the panel, so finding either of
- * them on the screen before the panel is open is the second entrance coming back.
- *
- * It mounts [SheetExportFlow] rather than a whole screen, because that is where the door now lives
- * and it is the same one both screens hang off their heading.
+ * It mounts [SheetExportFlow], the door the lámina and the hoja both hang off their heading.
  */
 @RunWith(AndroidJUnit4::class)
 class SheetExportDoorTest {
@@ -46,8 +41,8 @@ class SheetExportDoorTest {
                     fileName = "prueba",
                     notebookOptions = NotebookOptions(),
                     onNotebookPrinted = {},
-                    // No page is drawn to run this: what is under test is the conversation, and
-                    // the panel prints its cost over whatever it is handed.
+                    // No pages: what is under test is the flow, and the panel prints its cost over
+                    // whatever it is handed.
                     notebookPages = { emptyList() },
                     onExporting = {},
                     onMessage = {},
@@ -68,23 +63,21 @@ class SheetExportDoorTest {
     fun theDestinationIsAskedInsideThePanelAndNowhereElse() {
         mountTheDoor()
 
-        // One way in, and it promises a conversation rather than a destination.
+        // One way in, with no destination on it.
         compose.onAllNodesWithText(door).assertCountEquals(1)
         compose.onAllNodesWithText(DOWNLOAD_ACTION).assertCountEquals(0)
         compose.onAllNodesWithText(SHARE_ACTION).assertCountEquals(0)
 
         compose.onNodeWithText(door).performClick()
 
-        // And inside it, the destination — once each.
+        // Inside, each destination once.
         compose.onNodeWithText(NOTEBOOK_OPTIONS_EYEBROW).assertExists()
         compose.onAllNodesWithText(DOWNLOAD_ACTION).assertCountEquals(1)
         compose.onAllNodesWithText(SHARE_ACTION).assertCountEquals(1)
     }
 
     @Test
-    // The door is replaced by what it opened, not left behind greyed out (#512): a button that
-    // cannot be pressed and repeats a question already on screen reads as broken, and «Cancelar»
-    // is what puts it back.
+    // #512: a greyed-out door repeating the question already on screen read as broken.
     fun theDoorCedesItsPlaceToThePanelAndComesBackWithCancelar() {
         mountTheDoor()
 

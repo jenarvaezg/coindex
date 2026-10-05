@@ -5,13 +5,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-/**
- * The one door curated files come through (#545).
- *
- * What it is for is the second test: a rule that spans two species used to be applied by whoever
- * loaded the files, and only one loader — the app's container — applied it. A curation the app
- * would have refused to start with was a curation the suite read happily.
- */
+/** The single loader of curated files (#545), so the suite applies the same cross-species rules. */
 class CurationLoadTest {
     @Test
     fun `the door brings in the three species`() {
@@ -29,10 +23,7 @@ class CurationLoadTest {
         assertEquals(setOf(295_025, 1_492, 5_580, 7_338, 9_831), curation.curatedTypeIds())
     }
 
-    /**
-     * The collision of #22 seen where it is visible: a catalog's card and a grouping's card read
-     * the same, and the index draws the two side by side with nothing else to tell them apart.
-     */
+    /** The collision of #22: the index would draw two cards with nothing to tell them apart. */
     @Test
     fun `a catalog and a grouping cannot come in reading the same`() {
         val error = assertFailsWith<CatalogSeedException> {
@@ -53,10 +44,7 @@ class CurationLoadTest {
         assertTrue(error.message!!.contains("Dólar de plata clásico"), error.message!!)
     }
 
-    /**
-     * A species that brings nothing is a build that lost a directory. Before the door, that was
-     * fatal on the phone and invisible in the suite, which read `data/` with a loader of its own.
-     */
+    /** A species with no file means the build lost a directory. */
     @Test
     fun `a species with no file at all stops the load`() {
         val error = assertFailsWith<CatalogSeedException> {

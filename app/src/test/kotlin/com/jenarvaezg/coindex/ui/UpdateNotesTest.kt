@@ -29,11 +29,7 @@ class UpdateNotesTest {
         assertEquals("Ver menos", disclosure.hint)
     }
 
-    /**
-     * The banner never opens a note that fits, so this state is unreachable through the UI; it
-     * resolves to the collapsed strip rather than to an unbounded height, because «expanded» is
-     * only meaningful when there was something to expand.
-     */
+    /** Unreachable from the UI, which never opens a note that fits; it stays collapsed anyway. */
     @Test
     fun `expanding a note with nothing hidden changes nothing`() {
         val disclosure = updateNotesDisclosure(expanded = true, truncated = false)

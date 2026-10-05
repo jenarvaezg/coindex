@@ -11,11 +11,9 @@ import kotlinx.coroutines.test.runTest
 private val PLAN = ValuationPlan(owned = listOf(OwnedIssue(30, 297)), holes = emptyList())
 
 /**
- * When a pass is worth starting, and who gets the budget when two things want it (ADR 0028 §3, §6).
- *
- * The sibling of `PhotoPrefetchLoopTest`, with one condition gone and one graver: there is no wifi to wait
- * for, and a sync does not merely take the network — it takes **calls out of the same monthly bote**, so a
- * pass still unwinding can make the sync fail with `BudgetExhausted`.
+ * When a pass starts and who gets the budget (ADR 0028 §3, §6). Unlike `PhotoPrefetchLoopTest`
+ * there is no wifi to wait for, but a sync draws on the same monthly budget, so a pass still
+ * unwinding can make it fail with `BudgetExhausted`.
  */
 class ValuationLoopTest {
     private val pass = FakeValuationPass(ValuationStatus(wanted = 1, missing = 0))
@@ -33,7 +31,7 @@ class ValuationLoopTest {
         assertEquals(0, loop.status.value.missing)
     }
 
-    /** The same collection does not buy a second pass: with everything cached it would cost nothing. */
+    /** With everything cached a second pass would cost nothing anyway. */
     @Test
     fun `the same plan does not buy a second pass`() = runTest {
         val loop = loop()
@@ -46,7 +44,6 @@ class ValuationLoopTest {
         assertEquals(1, pass.passes.size)
     }
 
-    /** A plan that has changed does, because a new piece is a new issue to ask about. */
     @Test
     fun `a plan that has changed buys one`() = runTest {
         val loop = loop()
@@ -59,7 +56,7 @@ class ValuationLoopTest {
         assertEquals(2, pass.passes.size)
     }
 
-    /** Forced is what the end of a sync uses: there is something new to ask about that the plan cannot show. */
+    /** The end of a sync forces it: there may be something new the plan cannot show. */
     @Test
     fun `forcing starts a pass over the same plan`() = runTest {
         val loop = loop()
@@ -72,7 +69,6 @@ class ValuationLoopTest {
         assertEquals(2, pass.passes.size)
     }
 
-    /** An empty plan is nothing to ask about, so no pass and no status. */
     @Test
     fun `an empty plan starts nothing`() = runTest {
         val loop = loop()
@@ -83,7 +79,7 @@ class ValuationLoopTest {
         assertTrue(pass.passes.isEmpty())
     }
 
-    /** Two passes would fight for the same allowance, so a second start while one runs is dropped. */
+    /** Two passes would share one allowance. */
     @Test
     fun `only one pass runs at a time`() = runTest {
         pass.gate = CompletableDeferred()
@@ -100,10 +96,8 @@ class ValuationLoopTest {
     }
 
     /**
-     * A sync in flight when the pass starts holds it, and the pass writes nothing.
-     *
-     * Read **when the pass starts** and not when it was asked for: three seconds of a cold start is long
-     * enough for the collector to have pressed «Sincronizar».
+     * The sync is checked when the pass starts, not when it is asked for: the collector can press
+     * «Sincronizar» during the three-second wait.
      */
     @Test
     fun `a sync in flight holds the pass`() = runTest {
@@ -116,12 +110,7 @@ class ValuationLoopTest {
         assertEquals(listOf(ValuationRefusal.Syncing), pass.passes.map { it.held })
     }
 
-    /**
-     * A pass held by a sync has covered nothing, so the next launch tries again.
-     *
-     * Remembering the plan would strand every issue the held pass never asked about until the collection
-     * itself changed, which on a phone that syncs once a month is a month.
-     */
+    /** Remembering a held plan would strand its issues until the collection changed. */
     @Test
     fun `a held pass does not talk the next one out of trying`() = runTest {
         val loop = loop()
@@ -137,10 +126,8 @@ class ValuationLoopTest {
     }
 
     /**
-     * Yielding waits for the pass to finish unwinding, which is stricter than the photographs' cancel.
-     *
-     * What the sync needs back is not bandwidth but **calls**, and a pass still unwinding can still be
-     * inside `reserve()` taking one of them.
+     * Stricter than the photographs' cancel: the sync needs calls back, and an unwinding pass can
+     * still be inside `reserve()` taking one.
      */
     @Test
     fun `yielding cancels the pass and waits for it`() = runTest {
@@ -154,7 +141,6 @@ class ValuationLoopTest {
         assertEquals(1, pass.cancelled)
     }
 
-    /** After a yield the plan is forgotten, so the pass that follows the sync starts from scratch. */
     @Test
     fun `after yielding the same plan buys a pass again`() = runTest {
         val loop = loop()
@@ -168,7 +154,7 @@ class ValuationLoopTest {
         assertEquals(2, pass.passes.size)
     }
 
-    /** An export stands it down without being waited for: the export spends no API budget. */
+    /** An export spends no API budget, so it does not wait for the pass. */
     @Test
     fun `an export cancels the pass without waiting`() = runTest {
         pass.gate = CompletableDeferred()

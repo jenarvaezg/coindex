@@ -5,12 +5,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 /**
- * The two journeys of ADR 0026 §3 share a layout and must not share a key.
- *
- * A catalog flight (index → casilla) and a type flight (Monedas → ficha) can both be on screen
- * for the same photograph — Lunar Series III's Snake is the cover of a card and a cell of
- * Monedas. One key for both would make Compose pick an end that is not the one the finger
- * opened.
+ * The two journeys of ADR 0026 §3 share a layout but not a key: a catalog flight (index → casilla)
+ * and a type flight (Monedas → ficha) can show the same photograph, and one key would let Compose
+ * pick the wrong end.
  */
 class TravellingCoinTest {
     @Test

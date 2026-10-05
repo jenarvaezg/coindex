@@ -26,25 +26,14 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
 /**
- * How the shipped catalogs come out on A4 at 1:1, which is the one thing #169 can be checked
- * against without a printer.
- *
- * The diameters are read from the seeded type cache exactly as the phone reads them — through
- * `raw`, so this also pins that `size` survives the trip from the asset to [PrintCell].
- *
- * What is pinned is the *shape* of each switch and not the length of the notebook: the shelf grows
- * every week, so a test that named a page count would go red on whoever cured the next plate and
- * say nothing about the printer. Each switch is measured against the notebook the default
- * configuration produces, in the same run.
+ * The shipped catalogs paginated on A4 (#169). Diameters come from the seeded type cache through
+ * `raw`, as on the phone. Page counts are never pinned, since the shelf grows: each switch is
+ * measured against the default notebook in the same run.
  */
 class NotebookPagesTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    /**
-     * El cuaderno de hoy es el que la configuración por omisión produce (#228), y la vara de medir
-     * de todos los demás: la geometría dejó de ser un `object` de constantes y es el valor que una
-     * configuración declara.
-     */
+    /** La configuración por omisión (#228), contra la que se mide cada interruptor. */
     private val paper = printGeometry(NotebookOptions())
 
     private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
@@ -63,30 +52,27 @@ class NotebookPagesTest {
         }
         .associateBy { it.id }
 
-    /** El mismo cuaderno con «QR de Numista» puesto, que es lo único que el #234 mueve. */
+    /** «QR de Numista» (#234). */
     private val coded = printGeometry(NotebookOptions(numistaQr = true))
 
-    /** Y con «ambas caras», que es lo único que el #230 mueve: la casilla se ensancha. */
+    /** «Ambas caras» (#230). */
     private val doubled = printGeometry(NotebookOptions(bothFaces = true))
 
-    /** Y con las fotos apagadas, que es el #231: la casilla deja de ser una moneda y es una línea. */
+    /** Sin fotos (#231): cada casilla es una línea. */
     private val listed = printGeometry(NotebookOptions(photographs = false))
 
-    /** Y compartiendo folio, que es el #232: la cabecera adelgaza y una lámina empieza donde otra acabó. */
+    /** Compartir folio (#232). */
     private val shared = printGeometry(NotebookOptions(sharePage = true))
 
-    /** Y al 60 % del diámetro, que es el #233: la moneda encoge y la regla se va del pie. */
+    /** Al 60 % del diámetro y sin regla (#233). */
     private val scaled = printGeometry(NotebookOptions(actualSize = false))
 
-    /** Los dos interruptores del papel juntos, que es donde el #233 rinde de verdad. */
+    /** Escala y folio compartido a la vez (#233). */
     private val compact = printGeometry(NotebookOptions(actualSize = false, sharePage = true))
 
     /**
-     * One catalog as it would go to paper: every member a cell, nothing owned yet.
-     *
-     * [faces] is how many sides each cell prints, which is what «ambas caras» decides (#230) — the
-     * two of them are two distinct photographs, so this is also what the warm-up has to fetch. Zero
-     * is «sin fotos» (#231): a cell that is a line, and a plate with nothing to warm at all.
+     * One catalog with nothing owned yet. [faces] is 2 for «ambas caras» (#230) and 0 for «sin
+     * fotos» (#231); it is also how many photographs each cell needs warmed.
      */
     private fun section(catalog: CollectionCatalog, faces: Int = 1) = PrintSection(
         eyebrow = "COINDEX · CATÁLOGO CURADO",
@@ -101,7 +87,7 @@ class NotebookPagesTest {
                 footnote = member.year?.toString(),
                 diameterMm = member.numistaTypeId
                     ?.let { typeMeta[it]?.sizeMillimetres?.toFloat() },
-                // Thumbnail and original, as a cached type has: what is warmed is the first.
+                // Thumbnail and original, as a cached type has; the thumbnail is what gets warmed.
                 faces = listOf("anverso", "reverso").takeLast(faces).map { side ->
                     CoinPhoto(
                         thumbnail = "https://numista.invalid/${member.id}-$side-180.jpg",
@@ -122,13 +108,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * The default configuration reproduces today's notebook **plate by plate**, not just in total.
-     *
-     * This is the load-bearing test of #228: the geometry stopped being an `object` of constants and
-     * became the value a configuration declares, threaded through `notebookSections`, `printGrid`,
-     * `printPages` and the drawing of the page. What is checked is the cutting itself — a millimetre
-     * lost anywhere in that plumbing loses or repeats a cell — and not the length of the shelf,
-     * which grows every week.
+     * #228 threads the geometry through `notebookSections`, `printGrid` and `printPages`; a
+     * millimetre lost on the way would drop or repeat a cell.
      */
     @Test
     fun `the default configuration reproduces today's notebook plate by plate`() {
@@ -136,16 +117,14 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, paper)
 
-        // Una lámina por folio: es la regla que el #232 levanta y que aquí sigue puesta.
+        // Una lámina por folio mientras no se pida compartir (#232).
         assertTrue(pages.all { it.blocks.size == 1 }, "una página lleva dos láminas sin pedirlo")
         assertEquals(
             sections.size,
             pages.flatMap { it.blocks }.map { it.section.title }.distinct().size,
         )
 
-        // Y los cortes: ninguna casilla se pierde ni se repite, ninguna página va sobrecargada, y
-        // sólo la última de cada lámina puede ir corta. La primera cabe lo que el masthead le deja y
-        // las que la continúan lo que la banda fina les deja, que es más (#480).
+        // Sólo la última página de una lámina puede ir corta; las continuaciones caben más (#480).
         sections.forEach { plate ->
             val ofPlate = pages.flatMap { it.blocks }.filter { it.section === plate }
             assertEquals(plate.cells, ofPlate.flatMap { it.cells }, "corte roto: ${plate.title}")
@@ -165,15 +144,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the QR costs in paper, and what it must never cost.
-     *
-     * The caption is a constant of the layout, so this is what the switch is: the code is 12 mm and
-     * every cell of every plate reserves them, whether or not that cell has a code to draw. That is
-     * also the reason the decision was «under the name» — beside it would have forced a 44 mm cell
-     * and taken a **column** from almost every coin, which this grid cannot spare.
-     *
-     * The cost itself is a measured fact of a shelf that grows every week, so what is pinned is its
-     * *shape*: the caption grows, the columns do not, and no plate ever gets shorter.
+     * The QR grows cells in height, never in width (#234, #478), so the notebook only gets longer
+     * and no plate loses a column.
      */
     @Test
     fun `the qr grows the notebook by a few pages and never takes a column`() {
@@ -181,7 +153,7 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, coded)
 
-        // Ninguna lámina se acorta, ni una: el cuaderno sólo puede crecer.
+        // El cuaderno crece y ninguna lámina se acorta.
         assertTrue(pages.size > printPages(sections, paper).size, "el código sale gratis")
         sections.forEach { plate ->
             assertTrue(
@@ -199,13 +171,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * The five paquillos carry the **same** code, and that is the answer the ticket asked for.
-     *
-     * They are five members of one Numista type qualified by `numista_issue_ids` (ADR 0019), and the
-     * URL per issue the ticket sent us looking for does not exist: a type page marks each issue only
-     * with the id of the empty row its collection widget fills in, nothing on Numista links to one, and
-     * the fragment it would make is 42 characters — a version 3, which the whole notebook would pay
-     * for. So the code promises «esta moneda en Numista», and the ficha of a paquillo is the type's.
+     * Five members of one Numista type told apart by `numista_issue_ids` (ADR 0019). Numista has no
+     * URL per issue, and an anchor would make the code a version 3 (42 characters).
      */
     @Test
     fun `the five paquillos share one code, because no url names an issue`() {
@@ -244,15 +211,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * What both faces cost in paper, which is the most expensive of the five switches (#230).
-     *
-     * A cell stops being a coin wide and becomes two coins and a gutter, so an ounce goes from
-     * 40,9 mm to 84,8 and its plate from twelve cells a page to **six**. That is the check the ticket
-     * asks for, and it is arithmetic done before anything is drawn: the height of the cell does not
-     * move at all, because the second face is paid for in width or it is not paid for.
-     *
-     * Doubling is not exact —a plate whose coins go from three columns to one more than doubles, and
-     * a plate of two coins still fits on one page— so what is pinned is that it costs and never saves.
+     * «Ambas caras» (#230): an ounce cell goes from 40,9 mm to 84,8 and a page from twelve cells to
+     * six. The total isn't exactly double: three columns can drop to one, small plates still fit.
      */
     @Test
     fun `both faces doubles the cell and very nearly doubles the notebook`() {
@@ -264,7 +224,7 @@ class NotebookPagesTest {
         assertTrue(pages.size > plain.size * 1.5, "dos caras no llegan a hora y media de papel")
         assertTrue(pages.size < plain.size * 2.5, "dos caras cuestan más del doble largo")
 
-        // La comprobación que pide el ticket, casilla a casilla: la onza australiana.
+        // La onza australiana, casilla a casilla (#230).
         val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
         val one = section(kookaburra).grid(paper)
         val two = section(kookaburra, faces = 2).grid(doubled)
@@ -272,27 +232,16 @@ class NotebookPagesTest {
         assertEquals(6, two.cellsPerPage)
         assertEquals(4 to 3, one.columns to one.rows)
         assertEquals(2 to 3, two.columns to two.rows)
-        // La casilla dobla de ancho —dos monedas y la calle de en medio— y no crece de alto.
+        // Dos monedas y la calle de ancho; el alto no cambia.
         assertEquals(one.cellWidthMm * 2 + paper.gutterMm, two.cellWidthMm, 0.01f)
         assertEquals(one.cellHeightMm, two.cellHeightMm)
-        // Y el bloque sigue cabiendo en el papel que se midió contra él.
         assertTrue(two.blockWidthMm <= doubled.gridWidthMm, "dos caras se salen: ${two.blockWidthMm}")
     }
 
     /**
-     * What the shelf costs with the photographs off, which is **almost exactly its floor**.
-     *
-     * A cell stops being a coin and becomes a line, so a plate of ounces goes from twelve cells a
-     * page to forty-six and nearly every plate now fits on one page. What is left over the floor is
-     * the handful of plates of a hundred-odd members.
-     *
-     * That floor is the constraint #228 names in its own text — «una sección nunca comparte página» —
-     * so one plate is one page before a single member is printed, and lowering it is exactly and only
-     * what «compartir página» (#232) is for. The other half of the arithmetic is ours: the line is
-     * 7 mm but its **pitch is 10**, because the gutter that separates two columns is the one that
-     * separates two rows. A row gutter of its own would put four more lines in each column and save
-     * some three pages, for a field in the geometry that no other switch needs, so the gutter stays
-     * one number.
+     * «Sin fotos» (#231): nearly every plate fits on one page, the floor until «compartir página»
+     * (#232). Lines are 7 mm at a 10 mm pitch because the column gutter also separates rows; a row
+     * gutter of its own wasn't worth another geometry field.
      */
     @Test
     fun `with no photographs the shelf is a list and the plate is its floor`() {
@@ -300,8 +249,7 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, listed)
 
-        // El suelo es una página por lámina, y el cuaderno se le pega: lo que queda por ahorrar aquí
-        // ya no es de este interruptor, sino del #232.
+        // Una página por lámina es el suelo; bajar de ahí es cosa del #232.
         assertTrue(pages.size < printPages(catalogs.map(::section), paper).size / 1.3)
         assertEquals(catalogs.size, pages.flatMap { it.blocks }.groupBy { it.section.title }.size)
         assertTrue(pages.size >= catalogs.size, "una lámina ha compartido folio sin pedirlo")
@@ -310,8 +258,7 @@ class NotebookPagesTest {
             "el cuaderno en lista se ha despegado del suelo: ${pages.size} folios",
         )
 
-        // La onza australiana, casilla a casilla: de doce por página a cuarenta y seis, y la rejilla
-        // ya no la decide el diámetro — la lámina de medios venezolanos tiene exactamente la misma.
+        // La onza pasa de 12 por página a 46, con la misma rejilla que los medios venezolanos.
         val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
         val lines = section(kookaburra, faces = 0).grid(listed)
         assertEquals(12, section(kookaburra).grid(paper).cellsPerPage)
@@ -323,14 +270,7 @@ class NotebookPagesTest {
         assertEquals(lines.cellHeightMm, medios.cellHeightMm)
     }
 
-    /**
-     * The half of «sin fotos» that is worth more than the paper: there is nothing left to warm.
-     *
-     * No face is no candidate URL, so `notebookPhotographs` is empty, no page waits on a decode and
-     * the closing message divides by zero photographs — it **cannot** say that three of them failed
-     * to arrive, because none were asked for. That makes this the one export of the three that cannot
-     * come out incomplete, and it is not a check anywhere: it falls out of the cells being empty.
-     */
+    /** It follows from the cells having no faces, not from a check of its own (#231). */
     @Test
     fun `a notebook with no photographs asks for none and cannot come out incomplete`() {
         val curation = Curation(catalogs)
@@ -350,8 +290,7 @@ class NotebookPagesTest {
             ),
         )
 
-        // Ni con «ambas caras» marcada de antes: sin fotos no hay cara que negociar, y la hoja la
-        // pone en gris precisamente porque aquí ya no significa nada.
+        // Tampoco con «ambas caras» marcada de antes, que la hoja pone en gris.
         listOf(
             NotebookOptions(photographs = false),
             NotebookOptions(photographs = false, bothFaces = true),
@@ -367,22 +306,14 @@ class NotebookPagesTest {
         val pages = printPages(catalogs.map { section(it, faces = 0) }, listed)
         assertEquals(emptyList(), notebookPhotographs(pages))
         assertEquals(0, pages.sumOf { it.photographs })
-        // Y el mensaje de cierre no puede hablar de fotos que no llegaron, porque no hay ninguna
-        // entre la que contarlas: el denominador es cero y la resta también.
+        // Sin fotos que esperar, el mensaje de cierre no habla de fotos.
         assertEquals(
             "Cuaderno completo exportado · ${pages.size} páginas",
             notebookExportMessage(pages.size, expectedPhotos = 0, loadedPhotos = 0),
         )
     }
 
-    /**
-     * Two faces are two photographs, and a face nobody photographed is one missing photograph.
-     *
-     * The warm-up is what keeps a picture from being frozen into the PDF as a hole (#169), so the
-     * face that is not on this list is the hole: with «ambas caras» the list doubles, deduplicated
-     * exactly as it already was. And the closing message divides by the same number — a type whose
-     * obverse never arrived costs one photograph, not a broken plate.
-     */
+    /** The warm-up list (#169): a face nobody photographed costs one photo, not the cell. */
     @Test
     fun `both faces asks for two photographs per type and counts them one by one`() {
         val kookaburra = catalogs.first { it.id == "australian-kookaburra-perth-1oz" }
@@ -394,15 +325,13 @@ class NotebookPagesTest {
         assertEquals(urls.size, urls.distinct().size)
         assertEquals(kookaburra.members.size * 2, pages.sumOf { it.photographs })
 
-        // Y el mismo tipo en dos casillas sigue siendo dos fotos y no cuatro: la deduplicación no
-        // se rompe por contar caras en vez de casillas.
+        // El mismo tipo en dos casillas sigue siendo dos fotos, no cuatro.
         val repeated = section(kookaburra, faces = 2).let { plate ->
             plate.copy(cells = plate.cells.take(1) + plate.cells.take(1))
         }
         assertEquals(2, notebookPhotographs(printPages(listOf(repeated), doubled)).size)
 
-        // Una cara que nadie fotografió es una foto menos que pedir, no una casilla rota: la otra
-        // sigue contando, y el denominador del mensaje de cierre es el de las caras.
+        // Una cara sin foto es una foto menos que pedir; la otra sigue contando.
         val halfLit = pages.map { page ->
             PrintPage(
                 page.blocks.map { block ->
@@ -418,13 +347,7 @@ class NotebookPagesTest {
         assertEquals(kookaburra.members.size, notebookPhotographs(halfLit).size)
     }
 
-    /**
-     * The switch decides how many faces a cell has, and the cache only decides what is in them.
-     *
-     * A type the cache has never seen keeps its two slots empty rather than getting one: the cells
-     * of a plate have to line up, and a lone coin where its neighbours print a pair reads as a
-     * misprint. It is the same reason a hole keeps its own diameter (#169).
-     */
+    /** The cells of a plate must line up, so an uncached type keeps two empty slots, not one. */
     @Test
     fun `both faces gives every cell two slots, cached or not`() {
         val curation = Curation(catalogs)
@@ -448,13 +371,12 @@ class NotebookPagesTest {
             notebookSections(state, assembled.index, emptyList(), curation, options).single().cells.first().faces
         }
 
-        // Una cara es una y sólo una: la que la lámina declara —los paquillos imprimen el anverso
-        // desde el #229, y cuál sea es asunto del test de más abajo y no de éste—.
+        // Una cara: la que declara la lámina (los paquillos, el anverso desde el #229).
         assertEquals(
             listOf(CoinPhoto(thumbnail = "anverso-180.jpg")),
             faces(photographed, NotebookOptions()),
         )
-        // Dos son el anverso y después el reverso, en ese orden: es como se lee una ficha.
+        // Dos: anverso y luego reverso, como se lee una ficha.
         assertEquals(
             listOf(
                 CoinPhoto(thumbnail = "anverso-180.jpg"),
@@ -462,23 +384,15 @@ class NotebookPagesTest {
             ),
             faces(photographed, NotebookOptions(bothFaces = true)),
         )
-        // Y un tipo del que no hay ninguna foto conserva los dos huecos, vacíos.
+        // Un tipo sin fotos conserva los dos huecos, vacíos.
         val blank = faces(CollectionState(assembled), NotebookOptions(bothFaces = true))
         assertEquals(listOf(CoinPhoto(), CoinPhoto()), blank)
         assertTrue(blank.none { it.hasPicture }, "un hueco vacío no pide ninguna foto")
     }
 
     /**
-     * Cuál de las dos caras se imprime lo declara la lámina, y su silencio es el reverso (#227).
-     *
-     * «Reverso de Numista» no es «la cara de la moneda»: en Haití el reverso es el escudo y la
-     * sirena está en el anverso, y hoy el cuaderno imprime el escudo porque nadie eligió. Con la
-     * declaración en la cabecera, la casilla saca la cara que el curador dice que **es** la moneda,
-     * y la lámina que no declara nada saca el reverso, que es el cuaderno de hoy intacto.
-     *
-     * Lo que se calienta es la cara que se va a dibujar y no la otra (`notebookPhotographs`): una
-     * lámina de anversos con el reverso en la cola de descargas sería un cuaderno con agujeros y una
-     * petición inútil por moneda, que es exactamente el fallo del #169.
+     * El reverso de Numista no siempre es la cara de la moneda: en Haití es el escudo, y la sirena
+     * va en el anverso (#227). Sólo se calienta la cara que se dibuja (#169).
      */
     @Test
     fun `the plate declares which face goes to paper and silence is the reverse`() {
@@ -503,31 +417,26 @@ class NotebookPagesTest {
             }
         }
 
-        // Sin declaración, el reverso. Los paquillos ya no son una lámina callada —el #229 les
-        // declaró el anverso, que es la cabeza de Franco—, así que el silencio se escribe aquí con
-        // el valor que el silencio significa; que un fichero sin el campo se lea así lo fija
-        // `FinishInferenceTest`.
+        // Sin declaración, el reverso. Los paquillos declaran el anverso (#229), así que aquí el
+        // silencio va explícito; `FinishInferenceTest` fija que el campo ausente se lea así.
         assertEquals(
             listOf(CoinPhoto(thumbnail = "reverso-180.jpg")),
             cellsOf(declaring(PrintedSide.Reverse), NotebookOptions()).first().faces,
         )
-        // Declarándolo, el anverso, y en **todas** las casillas de la lámina: la excepción es de la
-        // lámina entera y no de un miembro, así que aquí no hay dos criterios que puedan discrepar.
+        // El anverso, en todas las casillas: la declaración es de la lámina, no del miembro.
         val obverse = cellsOf(declaring(PrintedSide.Obverse), NotebookOptions())
         assertEquals(5, obverse.size)
         assertTrue(
             obverse.all { it.faces == listOf(CoinPhoto(thumbnail = "anverso-180.jpg")) },
             "una casilla de la lámina ha impreso otra cara que sus hermanas",
         )
-        // Y lo que sale al papel es lo que el fichero curado declara, no lo que este test simule:
-        // la lámina que viaja en el APK imprime el anverso.
+        // La lámina que viaja en el APK imprime el anverso.
         assertEquals(
             listOf(CoinPhoto(thumbnail = "anverso-180.jpg")),
             cellsOf(catalogs, NotebookOptions()).first().faces,
         )
 
-        // Con «ambas caras» la declaración no pinta nada: se imprimen las dos, anverso y después
-        // reverso, que es como se lee una ficha (#230). Es justo el caso donde deja de importar.
+        // Con «ambas caras» la declaración no importa: anverso y luego reverso (#230).
         val both = NotebookOptions(bothFaces = true)
         assertEquals(
             listOf(
@@ -541,7 +450,7 @@ class NotebookPagesTest {
             cellsOf(declaring(PrintedSide.Obverse), both),
         )
 
-        // Y la cola de descargas es la de la cara declarada: una sola foto, la que se dibuja.
+        // Sólo se descarga la cara declarada.
         val plate = PrintSection(
             eyebrow = "COINDEX · CATÁLOGO CURADO",
             title = "Paquillos",
@@ -586,7 +495,6 @@ class NotebookPagesTest {
         assertTrue(plate.cells.all { it.state == null })
     }
 
-    /** Y con el interruptor apagado ninguna casilla lleva URL: el cuaderno de hoy, intacto. */
     @Test
     fun `with the switch off no cell carries a url at all`() {
         val paquillos = catalogs.first { it.id == "espana-paquillos" }
@@ -619,17 +527,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * What sharing a folio is worth, which is more than any other lever of paper (#232).
-     *
-     * The floor is what it takes away, and the floor was almost all of it: one plate is one page
-     * before a member is printed, and a third of the plates measured did not fill half a page. Both
-     * halves of the switch are in the one number — a plate may start where the last one ended, **and**
-     * the band over it drops from the forty millimetres of the album's masthead to fourteen, which is
-     * where most of the saving is (the ticket measured 90 pages sharing folios with the masthead
-     * against 73 with the thin band).
-     *
-     * A third off, which is what the ticket promised and what the emulator printed: 89 folios of a
-     * real collection came out as 53.
+     * «Compartir página» (#232): a plate may start where the last one ended, under a 14 mm band
+     * instead of the 40 mm masthead. Most of the saving comes from the thinner band.
      */
     @Test
     fun `sharing a folio takes a third off the notebook and loses no cell`() {
@@ -637,14 +536,13 @@ class NotebookPagesTest {
 
         val pages = printPages(sections, shared)
 
-        // Un tercio menos de papel: lo que se ahorra es el blanco que dejaba «una lámina, un folio».
+        // Se ahorra el blanco que dejaba «una lámina, un folio».
         val alone = printPages(sections, paper).size
         assertTrue(
             pages.size < alone * 0.75,
             "compartir folio no llega al tercio: ${pages.size} de $alone",
         )
-        // La cuenta de láminas no se mueve: lo que cambia es cuántas caben en un folio, no cuántas
-        // hay. Ninguna se cae del cuaderno por compartir folio con otra.
+        // Ninguna lámina se cae del cuaderno por compartir folio.
         assertEquals(
             sections.size,
             pages.flatMap { it.blocks }.map { it.section.title }.distinct().size,
@@ -660,8 +558,7 @@ class NotebookPagesTest {
             pages.flatMap { it.blocks }.flatMap { it.cells },
         )
 
-        // Y ningún folio se sale del papel: es la aritmética que el empaquetador hace antes de
-        // dibujar, sumada aquí como la sumaría una regla puesta sobre la hoja impresa.
+        // Ningún folio se sale del papel, sumado como lo sumaría una regla sobre la hoja.
         pages.forEach { page ->
             val used = page.blocks.sumOf { it.heightMm.toDouble() }.toFloat() +
                 shared.blockGapMm * (page.blocks.size - 1)
@@ -673,13 +570,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * What the coins at three fifths are worth, which is **only half of it without #232** (#233).
-     *
-     * On its own it runs straight into the floor of «una lámina, un folio» — a switch that only makes
-     * cells smaller cannot go below one page a plate — so it lands a handful of pages above it.
-     * Shrinking the coins and sharing the folio are the two levers that multiply, and neither had to
-     * learn about the other to do it: together they take a little over a third of the paper, and the
-     * plate stops being the floor.
+     * Alone, scaling (#233) can't go below one page per plate; with shared folios (#232) the two
+     * multiply and the plate stops being the floor.
      */
     @Test
     fun `scaling the coins halves the notebook, and halves it again on shared folios`() {
@@ -688,10 +580,10 @@ class NotebookPagesTest {
         val alone = printPages(sections, scaled)
         val pages = printPages(sections, compact)
 
-        // Sola, la lámina sigue siendo el suelo y la escala se le pega por arriba.
+        // Sola, la escala se queda justo encima del suelo de una página por lámina.
         assertTrue(alone.size >= sections.size, "una lámina ha compartido folio sin pedirlo")
         assertTrue(alone.size < sections.size * 1.25, "encoger no ha llegado al suelo")
-        // Y los dos interruptores juntos multiplican: por debajo del suelo y de lo que da cada uno.
+        // Juntos, por debajo del suelo y de lo que da cada uno.
         assertTrue(pages.size < alone.size * 0.75, "los dos juntos no rinden más que la escala sola")
         assertTrue(
             pages.size < printPages(sections, shared).size,
@@ -703,7 +595,7 @@ class NotebookPagesTest {
             sections.flatMap { it.cells },
             pages.flatMap { it.blocks }.flatMap { it.cells },
         )
-        // Y ningún folio se sale del papel, sumado como lo sumaría una regla sobre la hoja impresa.
+        // Ningún folio se sale del papel.
         pages.forEach { page ->
             val used = page.blocks.sumOf { it.heightMm.toDouble() }.toFloat() +
                 compact.blockGapMm * (page.blocks.size - 1)
@@ -715,15 +607,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * The same, cell by cell: what shrinks is the circle and the columns are what it buys.
-     *
-     * The grid of a plate stops being fixed by its largest coin's **printed** size alone — the floor is
-     * still there, an eighteen-millimetre one — and the check the ticket asks for is that the small-coin
-     * plates are the ones that gain most: the Venezuelan medios were the reason the floor exists at all,
-     * and at three fifths they go from thirty cells a page to fifty-six.
-     *
-     * The real diameter survives all of it, on the grid and in the cell, because that is what a caption
-     * with no ruler under it has to print as a number.
+     * Small coins gain most, down to the 18 mm floor. The real diameter is kept, since a caption
+     * with no ruler prints it as a number (#233).
      */
     @Test
     fun `every plate keeps its real diameter and gains columns`() {
@@ -743,58 +628,45 @@ class NotebookPagesTest {
         // Las rusas de 33 mm: de veinte a cuarenta, cinco columnas a ocho.
         assertEquals(20, roubles.grid(paper).cellsPerPage)
         assertEquals(40, roubles.grid(scaled).cellsPerPage)
-        // Y los medios venezolanos de 16 mm, que son los que el suelo de 28 mm estaba sosteniendo: la
-        // casilla es ahora el suelo nuevo de 18 y no la moneda, que sale a 9,6.
+        // Los medios de 16 mm salen a 9,6, así que la casilla es el suelo nuevo de 18 mm.
         assertEquals(30, medios.grid(paper).cellsPerPage)
         assertEquals(56, medios.grid(scaled).cellsPerPage)
         assertEquals(18f, medios.grid(scaled).cellWidthMm)
         assertEquals(9.6f, medios.grid(scaled).printedDiameterMm, 0.01f)
     }
 
-    /**
-     * The check the ticket asks for: two short plates on one folio, each under its own heading.
-     *
-     * Three coins and five coins are two plates that today take a page each and leave most of it
-     * white. Sharing, they are one folio with two headings on it — which is the other half of what a
-     * heading is for once a page can hold two plates: not only «which collection is this» after the
-     * page turned, but where one stops and the next begins.
-     */
+    /** On a shared folio the heading also marks where one plate ends and the next begins (#232). */
     @Test
     fun `a plate of three and a plate of five come out on the same folio`() {
         val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
         val three = ounces.copy(title = "Tres onzas", cells = ounces.cells.take(3))
         val five = ounces.copy(title = "Cinco onzas", cells = ounces.cells.take(5))
 
-        // Apartadas son dos folios, cada una con una página casi vacía.
+        // Sin compartir, dos folios casi vacíos.
         assertEquals(2, printPages(listOf(three, five), paper).size)
 
         val folio = printPages(listOf(three, five), shared).single()
 
         assertEquals(listOf("Tres onzas", "Cinco onzas"), folio.blocks.map { it.section.title })
         assertEquals(listOf(3, 5), folio.blocks.map { it.cells.size })
-        // Cada una con su cabecera fina, y ninguna diciendo «2 de 2»: son dos láminas enteras.
+        // Cabecera fina y sin «2 de 2»: son dos láminas enteras.
         assertTrue(folio.blocks.all { it.pagesInSection == 1 })
         assertEquals(14f, shared.headingMm)
-        // Y cada una centrada en lo suyo: la de tres no se descoloca por la de cinco debajo.
+        // Cada una centrada en lo suyo.
         assertEquals(3, folio.blocks.first().columnsUsed)
         assertEquals(4, folio.blocks.last().columnsUsed)
     }
 
     /**
-     * A plate that spills still says «2 de 4» and still lines its columns up, folio shared or not.
-     *
-     * That is the third thing the ticket asks for, and it is the one the packer could most easily
-     * have broken: «2 de 4» is no longer `pageCount` of the plate on its own — a plate that starts
-     * halfway down somebody else's folio is cut differently — so the number and the total are read
-     * off the finished notebook instead. The columns are the other half: the pages of one plate are
-     * read as a run, so a tail row keeps the grid's columns even where it holds one coin.
+     * A plate starting halfway down another's folio is cut differently, so «2 de 4» is read off the
+     * finished notebook, not `pageCount` (#232). Its pages read as a run: the columns stay aligned.
      */
     @Test
     fun `a plate that spills says two of four and keeps its columns on a shared folio`() {
         val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
         val three = ounces.copy(title = "Tres onzas", cells = ounces.cells.take(3))
 
-        // La lámina de tres deja sitio para dos filas del Kookaburra, que se lleva las demás detrás.
+        // La de tres deja sitio para dos filas del Kookaburra, que se lleva el resto detrás.
         val pages = printPages(listOf(three, ounces), shared)
         val spilled = pages.flatMap { it.blocks }.filter { it.section === ounces }
 
@@ -805,8 +677,7 @@ class NotebookPagesTest {
             spilled.all { it.pagesInSection == spilled.size },
             "la lámina no sabe cuántos trozos es",
         )
-        // Ninguna casilla perdida en los cortes, y las columnas alineadas de un folio al siguiente
-        // —incluso las cinco de la cola, que no se centran porque continúan una columna.
+        // Ninguna casilla perdida, y las columnas alineadas entre folios, cola incluida.
         assertEquals(ounces.cells, spilled.flatMap { it.cells })
         assertTrue(
             spilled.all { it.columnsUsed == it.grid.columns },
@@ -814,21 +685,14 @@ class NotebookPagesTest {
         )
     }
 
-    /**
-     * A collection with nothing in it costs its heading and not a folio (#232).
-     *
-     * An emptied box survives (ADR 0021 §11), and on paper it is fourteen millimetres saying there is
-     * nothing in it. Sharing folios, giving that a page of its own would be the same waste the switch
-     * exists to take away — so the packer asks whether the *block* fits and not whether a row of it
-     * does, and zero rows is a real answer rather than «no cabe».
-     */
+    /** An emptied box survives (ADR 0021 §11); the packer fits it as zero rows (#232). */
     @Test
     fun `an empty collection costs its heading and not a whole folio`() {
         val ounces = section(catalogs.first { it.id == "australian-kookaburra-perth-1oz" })
         val three = ounces.copy(title = "Tres onzas", cells = ounces.cells.take(3))
         val nothing = ounces.copy(title = "Caja vacía", cells = emptyList())
 
-        // Sin compartir son tres folios: cada lámina abre el suyo, la vacía incluida.
+        // Sin compartir son tres folios, la vacía incluida.
         assertEquals(3, printPages(listOf(three, nothing, three), paper).size)
 
         val folio = printPages(listOf(three, nothing, three), shared).single()
@@ -855,7 +719,7 @@ class NotebookPagesTest {
         assertTrue(blocks.all { it.pagesInSection == pages.size })
         // Every page carries the same heading, because on paper there is no scrolling back.
         assertTrue(blocks.all { it.section.title == kookaburra.title })
-        // And no cell is lost or repeated across the break.
+        // No cell is lost or repeated across the break.
         assertEquals(kookaburra.cells, pages.flatMap { it.cells })
         assertEquals(grid.cellsPerPage, pages.first().cells.size)
         assertTrue(
@@ -865,16 +729,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * The masthead is printed **once** and the name band on every page after it (#480).
-     *
-     * The band the collector's own notebook repeated was forty millimetres of eyebrow, two-line title,
-     * subtitle and the whole specification block — and on page two that specification says nothing page
-     * one has not just said, at the price of a row of coins. What repeats instead is the thin band #232
-     * designed for shared folios, so the page still says which collection it belongs to: what is dropped
-     * is the summary and the second line of the title, never the identity of the page.
-     *
-     * The row that buys is the point: the Kookaburra's first folio holds twelve ounces and each of the
-     * ones that continue it holds sixteen.
+     * Continuations repeat the thin band of #232 (#480): the name stays, the specification and the
+     * second title line go, and that buys a row of coins.
      */
     @Test
     fun `a spilled plate prints its masthead once and its name on every page after`() {
@@ -888,29 +744,23 @@ class NotebookPagesTest {
             blocks.drop(1).all { it.heading == PrintHeading.Slim },
             "una página de continuación sigue repitiendo el masthead",
         )
-        // La banda fina sigue nombrando la lámina: es la especificación la que se cae, no la página.
+        // La banda fina sigue nombrando la lámina; sólo se cae la especificación.
         assertTrue(blocks.all { it.section.title == kookaburra.title })
         assertTrue(blocks.drop(1).none { it.heading.facts })
         assertTrue(blocks.drop(1).all { it.heading.titleLines >= 1 })
-        // Y la fila que eso paga: doce onzas en la primera y dieciséis en cada continuación.
+        // Doce onzas en la primera y dieciséis en cada continuación.
         assertEquals(12, blocks.first().cells.size)
         assertTrue(
             blocks.drop(1).dropLast(1).all { it.cells.size == 16 },
             "una continuación no se ha llevado la fila que la banda fina le deja",
         )
-        // Y el empaquetador y `pageCount` siguen contando lo mismo, que es lo que la hoja recuenta.
+        // El empaquetador y `pageCount` cuentan lo mismo.
         assertEquals(kookaburra.pagesAlone(paper), blocks.size)
     }
 
     /**
-     * What the thin band on continuation pages is worth on the collector's own notebook (#480).
-     *
-     * His switches are the photographs, both faces, real size and the code, and one plate to a folio —
-     * so the length of the notebook is the sum of the plates' own lengths, and the notebook before this
-     * ticket is exactly that sum computed with one band for every page. That is the «before» measured
-     * here rather than a number written down: the shelf grows every week.
-     *
-     * On the seventy-five shipped catalogs it was 207 folios and it is 187.
+     * With the collector's options (both faces and QR, one plate per folio), measured against the
+     * same notebook with one band for every page (#480).
      */
     @Test
     fun `the thin band on continuation pages takes folios off and loses no cell`() {
@@ -934,7 +784,7 @@ class NotebookPagesTest {
             sections.flatMap { it.cells },
             pages.flatMap { it.blocks }.flatMap { it.cells },
         )
-        // Y ningún folio se sale del papel, sumado como lo sumaría una regla sobre la hoja impresa.
+        // Ningún folio se sale del papel.
         pages.forEach { page ->
             assertTrue(
                 page.blocks.sumOf { it.heightMm.toDouble() }.toFloat() <= his.contentHeightMm + 0.01f,
@@ -943,13 +793,7 @@ class NotebookPagesTest {
         }
     }
 
-    /**
-     * «Compartir página» sale cortado como el #232 lo dejó, y no es una coincidencia (#480).
-     *
-     * La banda que una continuación se lleva **es** la que ese interruptor ya imprime en todas las
-     * páginas de todo, así que allí no había una fila que ahorrar: el ahorro de este ticket es entero
-     * del cuaderno de «una lámina, un folio».
-     */
+    /** Compartir folio ya imprimía la banda fina en todas las páginas: el #480 no lo cambia. */
     @Test
     fun `sharing a folio already printed the thin band on every page`() {
         val sections = catalogs.map(::section)
@@ -963,13 +807,7 @@ class NotebookPagesTest {
         assertTrue(blocks.any { it.numberInSection > 1 }, "ninguna lámina se derrama")
     }
 
-    /**
-     * A plate of one short row is centred on what it holds; a plate that spills is not.
-     *
-     * The three 20 escudos of Portugal in a four-column grid printed visibly left of centre. The
-     * Kookaburra's tail page holds one coin and must **not** be centred: it continues the column it
-     * started in, and the four pages are read as a run.
-     */
+    /** A spilled plate's tail isn't centred: it continues its columns across pages. */
     @Test
     fun `a plate of one short row is centred on the cells it has`() {
         val escudos = section(catalogs.first { it.id == "portugal-20-escudos-plata" })
@@ -989,12 +827,8 @@ class NotebookPagesTest {
     }
 
     /**
-     * The photographs the notebook has to fetch, once each.
-     *
-     * This list is the fix for an export that came out with 64 photographs out of some 600: asked
-     * page by page, a picture got one page's budget and no second chance. Two properties make it
-     * work — **deduplicated**, because a type shows up on several pages, and **the thumbnail only**,
-     * because the original behind it is a fallback and warming both would double the requests.
+     * Warmed once for the whole notebook: page by page, a photo got one page's budget and no second
+     * try. Thumbnails only, since the original is a fallback and warming both doubles the requests.
      */
     @Test
     fun `the photographs to warm are the thumbnails, each one once`() {
@@ -1003,7 +837,7 @@ class NotebookPagesTest {
 
         val urls = notebookPhotographs(pages)
 
-        // One per cell, and the four pages of the plate do not ask for anything four times over.
+        // One per cell, however many pages the plate spans.
         assertEquals(kookaburra.members.size, urls.size)
         assertEquals(urls.size, urls.distinct().size)
         assertTrue(urls.all { it.startsWith("https://numista.invalid/") }, "no son las miniaturas")
@@ -1018,8 +852,7 @@ class NotebookPagesTest {
     @Test
     fun `a cell with no picture asks for nothing`() {
         val bare = section(catalogs.first()).let { plate ->
-            // La casilla conserva su hueco y pierde la foto: es lo que le pasa a un tipo que la
-            // caché no tiene, y lo que dibuja un hueco vacío es cosa del renderizador.
+            // Como un tipo que la caché no tiene: la casilla conserva su hueco, sin foto.
             plate.copy(cells = plate.cells.map { it.copy(faces = listOf(CoinPhoto())) })
         }
 
@@ -1036,14 +869,7 @@ class NotebookPagesTest {
         assertEquals(emptyList(), pages.single().cells)
     }
 
-    /**
-     * One card in, one section out — including the box the collector emptied.
-     *
-     * A box survives with nothing in it (ADR 0021 §11), and what stays out of the notebook is a
-     * question for the index and not for the printer (#147): dropping it here would be a second
-     * rule about what a collection is, kept only in the exporter, and the button's count would have
-     * to learn it too.
-     */
+    /** The index decides what stays out of the notebook, not the printer (#147, ADR 0021 §11). */
     @Test
     fun `an emptied box is still a section of the notebook`() {
         val emptied = IndexCard.Box(

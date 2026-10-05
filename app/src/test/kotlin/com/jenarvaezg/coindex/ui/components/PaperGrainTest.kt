@@ -18,9 +18,7 @@ class PaperGrainTest {
     fun `neighbouring tiles do not repeat the mosaic`() {
         val tile = grainFibres(0, 0, TILE)
 
-        // #351: the mosaic used to be identical under a one-tile shift — the same 180 fibres in
-        // the same positions some fifty times per screen. Once the grain is visible, what would
-        // be read is the tiling.
+        // #351: identical tiles would make the tiling itself visible.
         assertNotEquals(tile, grainFibres(1, 0, TILE))
         assertNotEquals(tile, grainFibres(0, 1, TILE))
         assertNotEquals(grainFibres(1, 0, TILE), grainFibres(0, 1, TILE))
@@ -48,8 +46,7 @@ class PaperGrainTest {
 
     @Test
     fun `fibre length scales with the tile so the grain keeps its size in dp`() {
-        // #351: the mosaic was 256 raw pixels and the fibre 1 raw pixel, so the calibrated value
-        // did not survive a change of density — 97.5 dp of tile at 420 dpi, 128 dp at 320 dpi.
+        // #351: measured in raw pixels, the calibrated grain changed size with screen density.
         val small = grainFibres(2, 2, 100f)
         val large = grainFibres(2, 2, 200f)
 
@@ -71,11 +68,8 @@ class PaperGrainTest {
 
     @Test
     fun `the sheet is opaque, which is what lets one destination cover another`() {
-        // #381: the two ends of a navigation are composed together for as long as the coin is in
-        // the air, and each of them paints this paper. While the tone carried any transparency the
-        // one arriving could not cover the one leaving, and half of every journey was the index and
-        // the plate drawn over each other. The grain is baked on top of this rect, so the whole
-        // mosaic is opaque exactly as long as this is.
+        // #381: both ends of a navigation paint this paper while the coin travels, so any
+        // transparency shows one through the other. The grain is baked on top of this rect.
         assertEquals(1f, Paper.paper.alpha)
     }
 

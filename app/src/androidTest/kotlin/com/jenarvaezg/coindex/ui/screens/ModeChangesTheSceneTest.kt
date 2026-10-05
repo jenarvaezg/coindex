@@ -37,7 +37,7 @@ import org.junit.runner.RunWith
 /** The cell of the plate on a 411 dp phone, the same three columns `PlateCellNameTest` measures. */
 private val CELL_WIDTH = 113.dp
 
-/** The father's 1 Bolívar, which is the plate every map of the casilla was measured on. */
+/** The 1 Bolívar, the reference plate for the casilla's layout. */
 private const val A_TYPE = 10_338
 
 private const val A_YEAR = "1886"
@@ -48,16 +48,10 @@ private val A_KEY = WishKey(typeId = A_TYPE, year = 1_886, issueId = null)
 private val SHOWN = listOf(A_TYPE, 4_242)
 
 /**
- * A mode changes the scene and not only the gesture (#517).
- *
- * «Marcar lo que busco» and «Hacer una colección» used to be a line of small print in a header that
- * scrolls away: two taps down the plate no frame of that screen could tell you which of two apps you
- * were in, and a full casilla went on turning its coin over as if nothing had been opened.
- *
- * What is checked here is what a test can hold of that change: the band says the mode and holds the
- * way out wherever the sheet is scrolled to, what the mode cannot touch answers nothing at all, and
- * closing gives the screen its meanings back. The change of air itself — the paper a shade deeper,
- * the ghost of the mark, the faint casilla — is drawing, and it is measured on the AVD.
+ * A mode changes the scene and not only the gesture (#517): the band names the mode and holds the
+ * way out wherever the sheet is scrolled, what the mode cannot touch answers nothing, and closing
+ * it restores the screen's gestures. The visual change (deeper paper, faint casilla) is checked on
+ * the AVD.
  */
 @RunWith(AndroidJUnit4::class)
 class ModeChangesTheSceneTest {
@@ -82,7 +76,7 @@ class ModeChangesTheSceneTest {
         assertEquals(1, out)
     }
 
-    /** While the mode is open the hole marks, and it says so where a screen reader can hear it. */
+    /** The only click target is the mark, labelled for screen readers. */
     @Test
     fun anEmptyCasillaTakesTheMarkWhileTheModeIsOpen() {
         var marked: WishKey? = null
@@ -92,7 +86,7 @@ class ModeChangesTheSceneTest {
             }
         }
 
-        // One target on the casilla and no other: the year's tag has stood down with everything else.
+        // One target only: the year's tag stands down too.
         val targets = compose.onAllNodes(hasClickAction()).fetchSemanticsNodes()
         assertEquals(1, targets.size)
         assertEquals(
@@ -104,13 +98,7 @@ class ModeChangesTheSceneTest {
         assertEquals(A_KEY, marked)
     }
 
-    /**
-     * A full casilla has nothing to mark, so while the mode is open it answers nothing.
-     *
-     * Neither the body — which turns the coin over the rest of the time — nor the year, which opens
-     * the coin's sheet. The sheet means one thing at a time, and this is the other half of the step
-     * back its ink makes.
-     */
+    /** Neither the body (turns the coin over) nor the year (opens its sheet) answers. */
     @Test
     fun aFullCasillaAnswersNothingWhileTheModeIsOpen() {
         compose.setContent {
@@ -122,7 +110,7 @@ class ModeChangesTheSceneTest {
         assertTrue(compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().isEmpty())
     }
 
-    /** With the mode closed the casilla is what it always was: the year opens its coin's sheet. */
+    /** With the mode closed the year opens its coin's sheet again. */
     @Test
     fun closingTheModeGivesTheCasillaItsOwnGesturesBack() {
         var opened: Int? = null
@@ -137,12 +125,7 @@ class ModeChangesTheSceneTest {
         assertEquals(A_TYPE, opened)
     }
 
-    /**
-     * In Coins the mode is one thing at a time too: the door, or the band that replaces it.
-     *
-     * The door lives in the header and the band at the foot, which is the whole of the fix — the
-     * sentence and the way out used to scroll away with the filters.
-     */
+    /** In Coins the header's door gives way to the band at the foot, which doesn't scroll away. */
     @Test
     fun theDoorOfCoinsBecomesTheBandAndComesBack() {
         val selection = PieceSelection()
@@ -194,8 +177,8 @@ class ModeChangesTheSceneTest {
                 owned = !missing,
                 missing = missing,
                 wishKey = A_KEY,
-                // What the tag says is the subject's rule and no longer the `year` field (#511):
-                // a casilla built without a plaque has no year for the mode to take away.
+                // The tag comes from the plaque, not from `year` (#511); without one there is no
+                // year for the mode to take away.
                 plaque = plaqueOf(label = "Bolívar", year = A_YEAR, yearIsCommon = false),
             ),
             images = null,

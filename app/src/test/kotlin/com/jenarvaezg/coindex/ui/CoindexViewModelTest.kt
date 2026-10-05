@@ -88,7 +88,7 @@ private const val THUMBNAIL = "https://en.numista.com/catalogue/photos/anverso-1
 /** Long enough after the first of the month that a stamped call counts against it. */
 private const val NOW = 1_786_170_660_000L
 
-/** The last sync there was, for the tests that check it is neither invented nor thrown away. */
+/** A stored last sync, for the tests that check it is read and kept. */
 private val RECORD = SyncRecord(
     atMillis = NOW,
     collectionItems = 58,
@@ -98,10 +98,8 @@ private val RECORD = SyncRecord(
 
 /**
  * A two-year date run of the type the collection carries, so a casilla can be marked (ADR 0029).
- *
- * Two members and not one, because the sharp questions are about telling them apart: a mark is keyed on
- * the year as well as the type, and a mark whose coin arrives has to die without taking its sibling's
- * hole with it.
+ * Two members because a mark is keyed on type and year, and a filled mark must leave its sibling's
+ * hole alone.
  */
 private val WISHED_CATALOG = CollectionCatalog(
     schemaVersion = 2,
@@ -136,13 +134,8 @@ private const val ONE_ITEM = """
 """
 
 /**
- * The state the screens read, and what each gesture does to it (#220).
- *
- * The largest file in the app had no test at all, for two reasons the constructor below is the
- * answer to: it took an `AppContainer`, which is not something a test can substitute, and it read
- * three clocks in place. Every collaborator here is a stand-in, every clock is held still, and what
- * is left to check is exactly what a ViewModel is for — that a tap moves the right field, that a
- * refusal is spoken, and that nothing is written twice.
+ * The state the screens read and what each gesture does to it (#220). Every collaborator is a
+ * stand-in and every clock is held still.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class CoindexViewModelTest {
@@ -162,13 +155,13 @@ class CoindexViewModelTest {
     private val wishes = FakeWishDao()
     private val valuationPass = FakeValuationPass()
 
-    /** Held outside the ViewModel, exactly as `AppContainer` holds it. */
+    /** Held outside the ViewModel, as `AppContainer` holds it. */
     private val photos = PhotoPrefetchLoop(
         prefetch,
         { syncing -> PrefetchConditions(unmeteredNetwork = true, syncing = syncing) },
     )
 
-    /** Held outside it for the same reason, and told whether a sync is in flight the same way. */
+    /** Also held outside, and told whether a sync is in flight the same way. */
     private val valuation = ValuationLoop(valuationPass, { syncing })
     private var syncing = false
     private val installer = FakeUpdateInstaller()
@@ -206,14 +199,9 @@ class CoindexViewModelTest {
         return NumistaClient(HttpClient(engine), "key", budget, "https://api.example/v3") { NOW }
     }
 
-    /** GitHub, with a release newer than the installed one. */
     /**
-     * An automatic inventory refresh that is never due, which is what every test here wants (#605).
-     *
-     * A ViewModel built with an empty sync log would otherwise refresh on construction — never having
-     * synced is stale — and the call counts these tests assert on would stop being about what the
-     * test did. A wall with no clock stands it down without a fake, and the tests that *are* about
-     * the refresh hand in one of their own.
+     * An automatic inventory refresh that is never due (#605). With an empty sync log the ViewModel
+     * would refresh on construction and skew the call counts; a raised wall stands it down.
      */
     private fun neverDue(sync: CollectionSync): InventoryRefresh {
         val wall = StoredRejectionWall(FakeNamedValues()) { NOW }
@@ -221,6 +209,7 @@ class CoindexViewModelTest {
         return InventoryRefresh(sync, wall) { NOW }
     }
 
+    /** GitHub, with a release newer than the installed one. */
     private fun updateChecker(): UpdateChecker = UpdateChecker(
         HttpClient(
             MockEngine { request ->
@@ -248,9 +237,7 @@ class CoindexViewModelTest {
         apiBaseUrl = "https://api.example",
     )
 
-    /**
-     * The one clock the ViewModel reads for itself, movable so a stamp can be seen to move (#220).
-     */
+    /** The clock the ViewModel reads itself, movable so a stamp can be seen to move (#220). */
     private var clock = NOW
 
     private fun viewModel(
@@ -297,13 +284,7 @@ class CoindexViewModelTest {
         )
     }
 
-    /**
-     * A dump over real files in a temporary directory (#548).
-     *
-     * Nothing is mocked because there is nothing to mock: [DatabaseExport] is four values and a
-     * lambda, and what this class needs to know about it is what the ViewModel does with the file
-     * it returns and with the failure it throws.
-     */
+    /** A dump over real files in a temporary directory (#548). */
     private fun dataExport(
         base: File = File(exportRoot, "coindex.db").apply { writeText("la colección") },
     ): DatabaseExport = DatabaseExport(
@@ -318,24 +299,19 @@ class CoindexViewModelTest {
     }
 
     /**
-     * One test, one ViewModel, and the ViewModel cancelled at the end.
+     * Runs [body] on a fresh ViewModel and cancels its scope at the end: the update poll is an
+     * endless `while (true)`, so an uncancelled test would never finish.
      *
-     * The update poll is an endless `while (true)` on purpose — a session left open all afternoon has
-     * to notice a release — so a test that did not cancel the scope would keep the scheduler busy for
-     * ever and never finish. Cancelling is what a screen going away does anyway.
-     *
-     * @param given whatever the stores have to be holding **before** the ViewModel reads them, which
-     *   is most of what a launch is.
+     * @param given what the stores hold before the ViewModel first reads them.
      */
     private fun onViewModel(
         client: () -> NumistaClient? = { numistaClient() },
         warmUp: suspend () -> Unit = { warmedUp += 1 },
-        // The curated shelf, empty unless a test needs a casilla to mark: what a wish resolves against
-        // is the file, so there is no marked slot at all without a catalog that names it (ADR 0029 §2).
+        // Empty unless a test marks a casilla: wishes resolve against a catalog (ADR 0029 §2).
         catalogs: List<CollectionCatalog> = emptyList(),
         dataExport: DatabaseExport = dataExport(),
         given: () -> Unit = {},
-        /** Handed in only by the tests that are about the automatic refresh; the rest stand it down. */
+        /** True only in the tests about the automatic refresh. */
         automaticRefresh: Boolean = false,
         body: suspend TestScope.(CoindexViewModel) -> Unit,
     ) = runTest(dispatcher) {
@@ -350,10 +326,8 @@ class CoindexViewModelTest {
 
 
     /**
-     * One piece of the ficha above, with the issue the valuation is addressed by.
-     *
-     * The issue id lives in the stored body and not in a column (ADR 0028), so a row that means to carry
-     * one has to have it in `raw` — which is also the only place a real sync ever puts it.
+     * One piece of [ficha]'s type. Its issue id lives in `raw`, not in a column, as a real sync
+     * stores it (ADR 0028).
      */
     private fun collected(typeId: Int = LOOSE_TYPE, issueId: Int = 8_508) = CollectedItemEntity(
         id = 1,
@@ -460,22 +434,17 @@ class CoindexViewModelTest {
             val state = viewModel.state.first { it.lastSync != null }
 
             assertFalse(state.syncing)
-            // Token, collection and the one ficha nobody had: three calls, and the report says so.
+            // Token, collection and the one missing ficha: three calls.
             assertEquals(3, state.lastSync?.callsSpent)
             assertEquals(NOW, state.lastSync?.atMillis)
             assertEquals("1 pieza · 1 ficha nueva · 3 consultas", state.message?.text)
-            // Written down before it was announced: the snackbar is the copy.
+            // Stored, not only announced.
             assertEquals(state.lastSync, syncLog.last)
         }
 
     /**
-     * The inventory brings itself up to date on a launch, and does it without a word (#605).
-     *
-     * The measured reason is in the father's `api_call_log`: his last `/users/{id}/collected_items`
-     * is dated 10 August 2026, and he kept opening the app every day. What the refresh must not do is
-     * speak — a snackbar over an app he has just opened reports something he did not do — and the
-     * durable line under the button is where it is allowed to show, because that line is read and
-     * not announced.
+     * Silent because the collector did not ask for it (#605); the line under the sync button is
+     * where it shows.
      */
     @Test
     fun `a launch brings the inventory by itself and says nothing about it`() =
@@ -488,7 +457,6 @@ class CoindexViewModelTest {
             assertFalse(state.syncing)
         }
 
-    /** And a refresh that could not be made is not an error on a screen nobody opened for it. */
     @Test
     fun `a launch whose refresh fails leaves no message behind`() =
         onViewModel(client = { null }, automaticRefresh = true) { viewModel ->
@@ -519,13 +487,12 @@ class CoindexViewModelTest {
         viewModel.refreshFicha(LOOSE_TYPE)
         viewModel.refreshFicha(LOOSE_TYPE + 1)
 
-        // Two rows working and not one screen greyed out: that is why it is a set (#185).
+        // A set, so two rows can spin at once instead of greying out the screen (#185).
         assertEquals(setOf(LOOSE_TYPE, LOOSE_TYPE + 1), viewModel.state.value.refreshingFichas)
 
         val state = viewModel.state.first { it.refreshingFichas.isEmpty() && it.message != null }
 
-        // Each of the two was asked for, and the snackbar names the ficha it is talking about —
-        // whichever of the two answered last, because the two calls are independent.
+        // The snackbar names whichever of the two answered last, hence the shared prefix.
         assertEquals(2, requested.count { it.contains("/types/") })
         assertTrue(state.message!!.text.startsWith("Ficha de Numista 99022"), state.message!!.text)
     }
@@ -581,7 +548,7 @@ class CoindexViewModelTest {
 
         assertNull(credentials.credentials())
         assertFalse(viewModel.state.value.onboarded)
-        // The collection stays on the device, and so does the record of when it was last synced.
+        // The collection and the last-sync record stay on the device.
         assertEquals(58, viewModel.state.value.lastSync?.collectionItems)
     }
 
@@ -596,15 +563,7 @@ class CoindexViewModelTest {
         assertEquals(IndexSort.Alphabetical, viewModel.state.value.indexShelf.sort)
     }
 
-    /**
-     * The four doors of the notebook are one printer (#539).
-     *
-     * A plate and the card behind it print **the same paper**: the plate screen hands over a catalog id
-     * and the pieces screen hands over a card, and both end in the one card `destinationOf` sends to
-     * its plate (ADR 0021 §9). Before this they were two methods, and nothing said they had to agree —
-     * the day one of them stopped clearing a switch, only a collector holding both printouts would
-     * have known.
-     */
+    /** Both doors end in the card `destinationOf` sends to its plate (ADR 0021 §9, #539). */
     @Test
     fun `a plate and its card print the same pages`() = onViewModel(
         catalogs = listOf(WISHED_CATALOG),
@@ -623,12 +582,8 @@ class CoindexViewModelTest {
     }
 
     /**
-     * Exporting one lámina clears the two switches that only mean something with neighbours (#401).
-     *
-     * Packing a folio and the lámina of the coins no collection claims are both about a notebook, and
-     * a sheet of one collection has none of it. What this pins is that the clause is read **once**, off
-     * the subject: the same cards printed as the index and as a sheet differ by exactly
-     * [forSheetExport] and by nothing else.
+     * Packing a folio and the unclaimed coins only mean something in a notebook (#401): the same
+     * card as a sheet and as the index differs by [forSheetExport] and nothing else.
      */
     @Test
     fun `one lamina is printed with the notebook switches cleared`() = onViewModel(
@@ -651,11 +606,8 @@ class CoindexViewModelTest {
     }
 
     /**
-     * «La lista de lo que busco» comes out of that same printer and not a second one (ADR 0029 §7).
-     *
-     * It is the one subject whose coins are in no card of the index, which is why it used to reach
-     * `printPages` through a call of its own — and why the four doors are a value now: the geometry and
-     * the switches it prints under are the notebook's, whoever asks.
+     * Its coins are in no card of the index, yet it prints with the notebook's geometry and
+     * switches (ADR 0029 §7).
      */
     @Test
     fun `the wish list is one more subject of the same printer`() = onViewModel(
@@ -744,7 +696,7 @@ class CoindexViewModelTest {
     ) { viewModel ->
         runCurrent()
 
-        // Three seconds of cold start belong to the first screen and to nothing else.
+        // The first three seconds of a cold start are left to the first screen.
         assertTrue(prefetch.passes.isEmpty())
 
         advanceTimeBy(4_000)
@@ -758,11 +710,8 @@ class CoindexViewModelTest {
 
 
     /**
-     * The valuation runs on the same trigger as the photographs, and asks about the issues the
-     * collection carries (ADR 0028 §3).
-     *
-     * Every launch, because asking for what is missing is idempotent: with everything cached the second
-     * launch of a month costs zero calls, which is what makes «every launch» affordable at all.
+     * Same trigger as the photographs, for the issues the collection carries (ADR 0028 §3). Running
+     * every launch is affordable because a fully cached pass costs no calls.
      */
     @Test
     fun `the prices are asked for once the collection has been read`() = onViewModel(
@@ -783,13 +732,7 @@ class CoindexViewModelTest {
         assertEquals(0, viewModel.state.value.valuation.missing)
     }
 
-    /**
-     * One gesture in both directions, because that is what a casilla is (ADR 0029 §5).
-     *
-     * A press on a hole marks it and a second press takes the mark off, and the state it is toggling is
-     * the one on screen. Marking twice is not an event either: the row keeps the date of the first
-     * mark, which is what stops the list of the annex reshuffling itself under the collector's thumb.
-     */
+    /** One gesture toggles the mark both ways (ADR 0029 §5). */
     @Test
     fun `marking a casilla twice is a mark and then no mark`() = onViewModel(
         catalogs = listOf(WISHED_CATALOG),
@@ -807,12 +750,8 @@ class CoindexViewModelTest {
     }
 
     /**
-     * A new mark starts a pass, and the marked casilla is in its plan (ADR 0029 §4).
-     *
-     * The plate has **no evidence at all** here — the collection is empty — so this is the filter #282
-     * closed and ADR 0029 reopens for the marked slot alone: what the collector marks gets priced,
-     * wherever it comes from. And it is asked for now rather than on the next launch, because the
-     * gesture's «+2 consultas al mes» is a promise about the month it was made in.
+     * The collection is empty, yet the marked slot is priced: ADR 0029 §4 lifts #282's filter for
+     * it. The pass starts now because «+2 consultas al mes» promises the current month.
      */
     @Test
     fun `a marked casilla reaches the plan of its own pass`() = onViewModel(
@@ -834,7 +773,7 @@ class CoindexViewModelTest {
         )
     }
 
-    /** And a mark whose coin is already in the collection is not in the plan: it is dead (ADR 0029 §2). */
+    /** A mark on a filled casilla is dead (ADR 0029 §2). */
     @Test
     fun `a mark whose casilla is full is not priced`() = onViewModel(
         catalogs = listOf(WISHED_CATALOG),
@@ -850,17 +789,13 @@ class CoindexViewModelTest {
         runCurrent()
         advanceTimeBy(4_000)
 
-        // The mark is dead and gone from the plan; the plate's **other** hole is still there, because
-        // that one is the cost of closing it and has nothing to do with the mark.
+        // The plate's other hole stays: it is priced as the cost of closing, not as a mark.
         assertEquals(listOf(1_930), valuationPass.passes.last().plan.holes.map { it.year })
     }
 
     /**
-     * **A sync launched during a pass wins, and it does not fail with `BudgetExhausted`.**
-     *
-     * The gravest of the yields, and the one this loop is stricter about than its photographic sibling:
-     * the two spend the *same* monthly allowance, so a pass still unwinding can be inside `reserve()`
-     * taking a call the sync is about to need. Waited for, and not merely cancelled (ADR 0028 §6).
+     * The pass and the sync share the monthly allowance, so the sync cancels the pass and waits for
+     * it to unwind instead of failing with `BudgetExhausted` (ADR 0028 §6).
      */
     @Test
     fun `a sync during a pass takes the budget back and waits for it`() = onViewModel(
@@ -875,13 +810,11 @@ class CoindexViewModelTest {
         assertEquals(1, valuationPass.passes.size)
 
         viewModel.sync()
-        // Waited for by its own outcome and never with `advanceUntilIdle`: the update poll is an endless
-        // `while (true)`, so the scheduler is never idle and a test that waited for it would hang.
+        // Not `advanceUntilIdle`: the endless update poll never lets the scheduler idle.
         val state = viewModel.state.first { it.lastSync != null }
 
         assertEquals(1, valuationPass.cancelled)
-        // And the sync went through: it is the one that must not fail with `BudgetExhausted`, and the
-        // record it wrote is the proof it got its calls.
+        // The record the sync wrote proves it got its calls.
         assertFalse(state.syncing)
         assertEquals(NOW, state.lastSync?.atMillis)
         assertTrue(
@@ -891,12 +824,8 @@ class CoindexViewModelTest {
     }
 
     /**
-     * The collector leaves the app and comes back: a new ViewModel over the same process.
-     *
-     * No new pass, because the fichas have not changed — reopening sixteen hundred cache snapshots
-     * to find that out is the cold start the guard exists to avoid — and the settings line still has
-     * to be true. It said «no hay fotos que traer» over a phone holding all of them until the status
-     * stopped travelling with the pass (ADR 0024).
+     * A new ViewModel over the same process starts no pass, since the fichas have not changed, and
+     * still reports the cache status, which does not travel with the pass (ADR 0024).
      */
     @Test
     fun `a second launch in the same process still knows what the phone holds`() = onViewModel(
@@ -917,25 +846,17 @@ class CoindexViewModelTest {
         second.viewModelScope.cancel()
     }
 
-    /**
-     * The dump is handed back rather than sent: the chooser is an `Intent` and belongs to the screen
-     * (#548).
-     */
+    /** The dump is returned: the share chooser is an `Intent` and belongs to the screen (#548). */
     @Test
     fun `exporting the data returns the written file`() = onViewModel { viewModel ->
         val dump = viewModel.exportData()
 
-        // The day itself is `DatabaseExportTest`'s to pin, with a clock it can hold still; what this
-        // one is about is that the file the ViewModel hands over is the one that was written.
+        // The date in the name is `DatabaseExportTest`'s to pin.
         assertTrue(dump?.name.orEmpty().startsWith("coindex-0.15.0-"))
         assertEquals("la colección", dump?.readText())
         assertNull(viewModel.state.value.message)
     }
 
-    /**
-     * A base that cannot be copied is a message, not a crash: there is nothing on the other side of
-     * this gesture worth taking the app down for.
-     */
     @Test
     fun `an export that fails says so and hands back nothing`() = onViewModel(
         dataExport = dataExport(base = File(exportRoot, "no-existe.db")),
@@ -947,12 +868,8 @@ class CoindexViewModelTest {
     }
 
     /**
-     * The same reading comes back until something it is made of moves (#542).
-     *
-     * This is what the screens key their `remember` on, so it is the whole of the memoisation: the
-     * fields of a [ScreenReading] are `by lazy` and therefore belong to an instance, and a new
-     * instance per emission would walk the inventory again for «Las cifras», the shelf window and the
-     * marks — the defect the root composable had been carrying its keys by hand to avoid.
+     * Screens key their `remember` on the reading, and [ScreenReading]'s fields are `by lazy`, so a
+     * new instance per emission would walk the inventory again (#542).
      */
     @Test
     fun `the reading is the same object until the collection under it moves`() = onViewModel(
@@ -966,28 +883,25 @@ class CoindexViewModelTest {
 
         assertSame(reading, viewModel.reading())
 
-        // A ficha being asked for is in flight and derives nothing: the reading does not move for it.
+        // A ficha in flight derives nothing.
         viewModel.refreshFicha(LOOSE_TYPE)
         assertSame(reading, viewModel.reading())
 
-        // A second piece is another collection, and everything hanging off it has to be read again.
+        // A second piece is another collection.
         items.rows.value = listOf(collected(), collected().copy(id = 2))
         runCurrent()
         assertTrue(reading !== viewModel.reading())
     }
 
     /**
-     * The arrival of a price book is stamped, and a book that has not changed is not re-stamped.
-     *
-     * What the stamp dates is a figure that never expires (ADR 0030 §4) — the cost of entering a plate
-     * of the shelf window, the day the silver was read — so a clock read per emission would move every
-     * age on screen while the collector is looking at it.
+     * Stamped on arrival rather than per emission, which would move every age on screen; the
+     * figures it dates never expire (ADR 0030 §4).
      */
     @Test
     fun `a price book that lands is stamped, and the empty one it replaces was stamped at launch`() =
         onViewModel { viewModel ->
             runCurrent()
-            // Never 1970: an age read before the first book has to be measured against something.
+            // Never 1970: an age read before the first book needs a reference.
             assertEquals(NOW, viewModel.state.value.pricesArrivedAt)
 
             clock = NOW + 60_000
@@ -1000,11 +914,8 @@ class CoindexViewModelTest {
         }
 
     /**
-     * A price landing does not move the collection's half of the reading (#218).
-     *
-     * The seam the reading is split on: a pass writes its rows one by one, so a single memo would
-     * rebuild the shelf window and re-resolve whatever plate is open once per row — for a reading
-     * none of them is made of.
+     * A pass writes its rows one by one, so a single memo would rebuild the shelf window and the
+     * open plate once per row (#218).
      */
     @Test
     fun `a price that lands leaves the collection's own reading where it was`() = onViewModel(
@@ -1026,7 +937,6 @@ class CoindexViewModelTest {
         assertSame(before.of, after.of)
     }
 
-    /** And the flag it raises comes back down, whichever of the two ways it ended. */
     @Test
     fun `the button is free again once the copy is written`() = onViewModel { viewModel ->
         assertFalse(viewModel.state.value.exportingData)

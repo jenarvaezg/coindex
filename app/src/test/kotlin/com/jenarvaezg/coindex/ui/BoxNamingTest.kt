@@ -7,13 +7,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/**
- * The baptism of a box: one field, 40 characters, and unique at creation (ADR 0021 §4, §11).
- *
- * The three cases #173 asks for are empty, repeated — against a curated file **and** against another
- * box — and longer than the limit. What makes them one function is that all three answer the same two
- * questions the dialog has: can «Crear» be pressed, and is there anything to say about why not.
- */
+/** Naming a box: one field, 40 characters, unique at creation (ADR 0021 §4, §11; #173). */
 class BoxNamingTest {
     private val taken = listOf(
         // A curated `short_name` from `data/`, and a box the collector already typed.
@@ -53,7 +47,7 @@ class BoxNamingTest {
 
     @Test
     fun `accents and case are not a distinction`() {
-        // The same shelf in anybody's head, and two cards a letter apart would be a filing mistake.
+        // Two cards a letter apart would be a filing mistake.
         assertFalse(boxName("onza LIBERTAD", taken).canSave)
         assertFalse(boxName("bolivar de venezuela", taken).canSave)
         assertFalse(boxName("Las que cambie", taken).canSave)
@@ -75,7 +69,7 @@ class BoxNamingTest {
             "Son 41 caracteres y el límite son 40: tiene que caber en una tarjeta.",
             name.problem,
         )
-        // Exactly at the limit is fine: the measured files run from 6 to 37 characters.
+        // Exactly at the limit is fine.
         assertTrue(boxName("a".repeat(BOX_NAME_LIMIT), taken).canSave)
     }
 

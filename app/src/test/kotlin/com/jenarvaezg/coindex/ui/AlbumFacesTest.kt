@@ -8,12 +8,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * The resting face of a hole nobody declared a `printed_side` for.
- *
- * Two surfaces read this — the album grid of Monedas with its ficha, and the pieces of a collection
- * without an issue list or of a box (#423) — so it is tested where it lives rather than as a footnote
- * of one of them. The rule it defends is that the turn is only ever offered when there is a second
- * photograph to turn to: a hole that swings round onto a silhouette is a coin with no back.
+ * The resting face of a hole with no declared `printed_side`, shared by the Monedas grid and the
+ * pieces of a collection (#423). The turn is offered only when there is a second photograph.
  */
 class AlbumFacesTest {
     private val reverse = CoinPhoto(picture = "https://example.test/rev.jpg")
@@ -55,12 +51,8 @@ class AlbumFacesTest {
     }
 
     /**
-     * The sheet a casilla opens arrives on the face the casilla was resting on (#508).
-     *
-     * The other half of the rule: where a plate **has** declared a side, the sheet obeys the same
-     * declaration and not the album's reverse-first default (ADR 0020, #227) — or the coin turns over
-     * on its way into a sheet that promised it was the same one. Six of the 74 catalogs declare
-     * `obverse`, and this is the case that would have gone unnoticed on the other 68.
+     * A declared side wins over the album's reverse-first default (ADR 0020, #227), or the coin
+     * would turn over on its way into the sheet (#508).
      */
     @Test
     fun `a casilla opens its sheet on the face its plate declared`() {
@@ -70,7 +62,7 @@ class AlbumFacesTest {
         assertEquals(reverse to obverse, printedFaces(images, PrintedSide.Reverse))
     }
 
-    /** A hole has no photograph and still has a casilla: the ghost is the drawing, not a face. */
+    /** The hole's ghost is a drawing, not a face. */
     @Test
     fun `a type nobody photographed still answers with two absent faces`() {
         assertEquals(null to null, printedFaces(null, PrintedSide.Reverse))

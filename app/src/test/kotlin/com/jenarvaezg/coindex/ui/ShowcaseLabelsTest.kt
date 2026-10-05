@@ -17,20 +17,11 @@ private const val NOW = 1_786_442_400_000L
 private const val DAY = 24L * 60 * 60 * 1_000
 
 /**
- * What «Explorar» says, and the three things it must never say (ADR 0030).
- *
- * The gesture has to name its spend **before** it is pressed; the one figure of a plate that is not
- * yours has to say which figure it is, where it came from and **when**; and neither of them may print a
- * zero — «· 0 consultas» and «0/12» are the two ways this screen could turn a plate the collector went
- * looking at into a reproach.
+ * What «Explorar» says (ADR 0030): the gesture names its spend before it is pressed, the figure
+ * says which it is, where it came from and when, and neither prints a zero.
  */
 class ShowcaseLabelsTest {
-    /**
-     * The spend rides in the gesture, and the word changes once there is something to refresh.
-     *
-     * «Volver a tasar» never disappears (ADR 0030 §4), because the price it asks for never expires: what
-     * would otherwise be left is an amount from March with no way on earth to bring a newer one.
-     */
+    /** «Volver a tasar» never disappears (ADR 0030 §4): the price it asks for never expires. */
     @Test
     fun `the gesture names its spend, and says «volver» once the plate has a price`() {
         assertEquals(
@@ -47,12 +38,7 @@ class ShowcaseLabelsTest {
         )
     }
 
-    /**
-     * With nothing left to ask the figure is dropped rather than printed as a zero.
-     *
-     * «Volver a tasar · 0 consultas» reads as a gesture that is broken; what happens when it is pressed
-     * is [ShowcaseLabels.ALREADY_FRESH], which is a sentence about the prices and not about the button.
-     */
+    /** Pressing it then answers with [ShowcaseLabels.ALREADY_FRESH]. */
     @Test
     fun `a plate with nothing left to ask drops the figure instead of printing a zero`() {
         val label = showcaseValueAction(calls = 0, valued = true, valuing = false)
@@ -63,15 +49,8 @@ class ShowcaseLabelsTest {
     }
 
     /**
-     * The snackbar quotes the life of a price, so it has to survive the oldest one it can be said over
-     * (#561).
-     *
-     * «Menos de un mes» was true while `PRICE_LIFETIME_MILLIS` was thirty days and became a lie the
-     * moment it was ninety: the press answers this over a price of eighty-nine days too. And the age
-     * itself is not rounded away beside it — past a month the plate says **the day** that price was
-     * brought and not how old it is, which is what stops a figure from May reading as a quotation
-     * (ADR 0028 §5). The day itself is pinned by the tests above; what is read off the life here is
-     * that the oldest price the pass leaves alone is still on the far side of that rule.
+     * The snackbar quotes `PRICE_LIFETIME_MILLIS` (#561), so it must hold for the oldest price the
+     * pass leaves alone, which past a month is shown by its date (ADR 0028 §5).
      */
     @Test
     fun `the snackbar holds over the oldest price the pass will not re-ask`() {
@@ -84,7 +63,6 @@ class ShowcaseLabelsTest {
         )
     }
 
-    /** While the calls are in flight the gesture says so, in the ficha's own words. */
     @Test
     fun `the gesture says it is asking while it asks`() {
         assertEquals(
@@ -93,12 +71,7 @@ class ShowcaseLabelsTest {
         )
     }
 
-    /**
-     * The one figure of the header: its name, its amount, its provenance and its date.
-     *
-     * «Coste de entrar» and not «Coste de cerrar», which is ADR 0030 §6: closing a plate is buying the
-     * last of something you collect, and this is buying the first of something you do not.
-     */
+    /** «Entrar», not «cerrar» (ADR 0030 §6): this buys the first of a set, not the last. */
     @Test
     fun `the figure of a plate that is not yours says entering, in unc, with its date`() {
         val label = showcaseEntryLabel(
@@ -112,13 +85,7 @@ class ShowcaseLabelsTest {
         assertFalse(FiguresLabels.MONEY_CRITERION in label)
     }
 
-    /**
-     * What the amount covers, whenever it is not the whole plate (ADR 0028 §4, §7).
-     *
-     * A plate of twelve casillas where four were priced — Numista had no price for the rest, or the budget
-     * ran out halfway and the pass is resumable, so it wrote what it had asked — says so. «412 €» over
-     * that plate is not an incomplete total, it is a false one.
-     */
+    /** Partial when Numista lacked prices or the budget ran out mid-pass (ADR 0028 §4, §7). */
     @Test
     fun `the figure says what part of the plate it covers, and stays quiet when it covers all of it`() {
         val partial = showcaseEntryLabel(
@@ -136,32 +103,20 @@ class ShowcaseLabelsTest {
         assertFalse("casillas" in whole)
     }
 
-    /**
-     * How old a price is, in calendar days and in the coarsest unit that is still true.
-     *
-     * The ficha's own wording applied to a price, because it is the same fact about the same phone: what
-     * this app brought, and when. Elapsed milliseconds would make last night's tasación «hace 11 horas»
-     * rounded to today, which is the contradiction #398 measured for the spot.
-     */
+    /** The ficha's wording; elapsed hours would contradict the calendar day, as in #398. */
     @Test
     fun `the age of a price is counted in calendar days`() {
         assertEquals("tasada hoy", valuedAgeLabel(NOW, NOW, MADRID))
         assertEquals("tasada ayer", valuedAgeLabel(NOW - DAY, NOW, MADRID))
         assertEquals("tasada hace 6 días", valuedAgeLabel(NOW - 6 * DAY, NOW, MADRID))
-        // Past a month it says the **day**: nothing will ever refresh this price, so «hace 8 meses» is
-        // the date ADR 0030 §4 asks for, rounded away.
+        // Past a month, the date: nothing refreshes this price on its own (ADR 0030 §4).
         assertEquals("tasada el 2 jul 2026", valuedAgeLabel(NOW - 40 * DAY, NOW, MADRID))
         assertEquals("tasada el 7 jul 2025", valuedAgeLabel(NOW - 400 * DAY, NOW, MADRID))
-        // A clock that has gone backwards is not a price from the future: it is today's.
+        // A clock that went backwards reads as today.
         assertEquals("tasada hoy", valuedAgeLabel(NOW + 5 * DAY, NOW, MADRID))
     }
 
-    /**
-     * A tile of the window says its casillas or its cost, and **never** a fraction.
-     *
-     * «0/12» is a fraction of a plate you are collecting; on one you are not it says you are nought of
-     * the way through a collection you never started, which is the reproach ADR 0026 §10 exists to avoid.
-     */
+    /** Never a fraction: «0/12» on a plate you don't collect is the reproach of ADR 0026 §10. */
     @Test
     fun `a tile says how many casillas it is, or what entering costs and when`() {
         assertEquals("12 casillas", showcaseSlotsLabel(12))
@@ -174,7 +129,7 @@ class ShowcaseLabelsTest {
                 zone = MADRID,
             ),
         )
-        // The provenance is not repeated on twenty tiles: the plate says it once, inside.
+        // The provenance is said once, inside the plate.
         assertFalse(
             FiguresLabels.HOLE_CRITERION in showcaseTileCostLabel(
                 ShowcaseCost(eur = 1.0, holes = 1, slots = 1, readAt = NOW),
@@ -185,23 +140,19 @@ class ShowcaseLabelsTest {
     }
 
     /**
-     * The order that sorts by money says how much of the shelf it could not place (#513).
-     *
-     * «Por coste de entrar» leaves everything with no amount behind it (ADR 0030 §8 clause 3), and on a
-     * shelf where little has been valued that is a screen that barely moves when the order is changed.
-     * The line is the same transparency Ajustes prints under the pass: what the app is doing, in the one
-     * place the collector is looking at it.
+     * Unvalued plates go last (ADR 0030 §8 clause 3), so on a lightly valued shelf the order barely
+     * moves without this line (#513).
      */
     @Test
     fun `the cost order says how many plates it could not place, and the other order says nothing`() {
         val valued = shelfTile("panda", entryEur = 412.0)
         val unvalued = shelfTile("kooka")
 
-        // The default order needs no price, so nothing is owed about the ones that have none.
+        // The default order needs no prices.
         assertNull(showcaseOrderNote(ShowcaseSort.ByCasillas, listOf(valued, unvalued)))
-        // Nothing to warn about: every plate on the shelf carries an amount.
+        // Every plate has an amount.
         assertNull(showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(valued)))
-        // An empty shelf already says why it is empty, and a second sentence under it would be furniture.
+        // An empty shelf already explains itself.
         assertNull(showcaseOrderNote(ShowcaseSort.ByEntryCost, emptyList()))
 
         assertEquals(
@@ -218,13 +169,8 @@ class ShowcaseLabelsTest {
     }
 
     /**
-     * With nothing valued at all the line stops counting and says the order has nothing to sort (#513).
-     *
-     * «4 láminas sin tasar, al final» over a shelf where *everything* is at the end describes an order
-     * that placed nothing as though it had placed something. And what it says instead is about the
-     * **prices** and not about the screen: with a marked casilla anywhere, the grid does move — the
-     * collector's own plates lead the default order and not this one — so «este orden no cambia nada»
-     * would be a sentence the shelf contradicts on the spot.
+     * A count would describe an order that placed nothing (#513). The line speaks of prices, not of
+     * the grid: the collector's own plates lead the default order, so switching can still move it.
      */
     @Test
     fun `an unvalued shelf is told the cost order has no prices to sort by`() {
@@ -234,19 +180,12 @@ class ShowcaseLabelsTest {
         )
 
         assertEquals(ShowcaseLabels.NOTHING_VALUED, note)
-        // No count in it: there is nothing to compare the number against.
+        // No count: there is nothing to compare it against.
         assertFalse("2" in note.orEmpty())
         assertFalse("no cambia nada" in note.orEmpty())
     }
 
-    /**
-     * A plate of the collector's is never counted among the ones left to value (#513).
-     *
-     * It carries no `entryEur` and never will: entering a plate you already collect is not a thing that
-     * costs, so it has neither «Coste de entrar» nor the gesture that asks for one (ADR 0030 §3, §6).
-     * Counted as «sin tasar» it would send the collector into their own plate looking for a button that
-     * is not there — and a shelf whose window is valued would print a line about a debt nobody owes.
-     */
+    /** Own plates never get «Coste de entrar» nor its gesture (ADR 0030 §3, §6; #513). */
     @Test
     fun `the collector's own plates are not counted among the ones left to value`() {
         val valued = shelfTile("panda", entryEur = 412.0)
@@ -257,17 +196,16 @@ class ShowcaseLabelsTest {
             "1 lámina sin tasar, al final: este orden sólo coloca las tasadas.",
             showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(valued, mine, shelfTile("kooka"))),
         )
-        // Nothing of the window valued: the line is the one about prices, and the count stays out of it.
+        // Nothing in the window valued: the prices line, without a count.
         assertEquals(
             ShowcaseLabels.NOTHING_VALUED,
             showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(mine, shelfTile("kooka"))),
         )
-        // A shelf of nothing but the collector's own plates owes no line at all: there is nothing on it
-        // that could be valued, so there is nothing the order failed to place.
+        // Only own plates: nothing could be valued, so there is no line.
         assertNull(showcaseOrderNote(ShowcaseSort.ByEntryCost, listOf(mine)))
     }
 
-    /** What put one of the collector's own plates on this shelf, in the words the hole's chip uses. */
+    /** Why an own plate is on this shelf, in the words of the hole's chip. */
     @Test
     fun `a plate of yours says how many of its casillas you are looking for`() {
         assertEquals("2 lo busco", showcaseWishedLabel(2))
@@ -275,14 +213,8 @@ class ShowcaseLabelsTest {
     }
 
     /**
-     * The row of the index that opens the shelf: one name, one destination, and the zero not printed.
-     *
-     * It used to be a composed label —«Lo que busco · 7, y otras 20 láminas»— that named two rooms and
-     * opened one of them (#520). The marks took a row of their own at the head of the sheet, and this one
-     * kept the foot, where ADR 0026 §8 clause 3 puts the door of an annex.
-     *
-     * The count is the **twenty and not the twenty-three**: what is behind this row which the index does
-     * not already hold is the shelf window (ADR 0030 §8).
+     * The annex row at the foot of the index (ADR 0026 §8 clause 3; #520). It counts only the shelf
+     * window, the plates the index doesn't already hold (ADR 0030 §8).
      */
     @Test
     fun `the shelf row names the plates the collector does not collect, and is absent at zero`() {
@@ -290,17 +222,13 @@ class ShowcaseLabelsTest {
         // The number disappears in the singular: «otra 1 lámina» is not Spanish.
         assertEquals("Y otra lámina que no coleccionas", showcaseDoorLabel(plates = 1))
         assertNull(showcaseDoorLabel(plates = 0))
-        // Nothing of the marks in it any more: that row is `wishDoorLabel`'s, one destination each.
+        // The marks have their own row, `wishDoorLabel`.
         assertFalse(WishLabels.DESTINATION in showcaseDoorLabel(plates = 20).orEmpty())
-        // The arrow is drawn and not typed, on this row as on the one it replaced (#298).
+        // The arrow is drawn, not typed (#298).
         assertFalse('→' in showcaseDoorLabel(20).orEmpty())
     }
 
-    /**
-     * A refusal is the answer to a press and says nothing was spent.
-     *
-     * Its own sentence and not the settings line's: that one is about prices arriving on their own.
-     */
+    /** Worded as a reply to a press, apart from the settings line, which is about the pass. */
     @Test
     fun `a refused tasación says so in its own words`() {
         assertEquals(
@@ -312,7 +240,6 @@ class ShowcaseLabelsTest {
         }
     }
 
-    /** The spend of this feature is spoken in the unit the marking mode already spends in. */
     @Test
     fun `the spend is counted in consultas, like the marks`() {
         assertEquals("2 consultas", queriesLabel(2))
@@ -321,12 +248,7 @@ class ShowcaseLabelsTest {
     }
 }
 
-/**
- * A tile of the shelf with only the fact the order note reads: whether it carries an amount.
- *
- * The assembled ones live in `ShowcaseSubjectTest`, where the catalogs and the price table decide what
- * a tile says; this line is about a list of tiles and nothing else touches them.
- */
+/** A bare tile with only what the order note reads; assembled ones are in `ShowcaseSubjectTest`. */
 private fun shelfTile(
     catalogId: String,
     entryEur: Double? = null,

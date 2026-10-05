@@ -5,26 +5,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * What claims a coin, asked of the assembly itself (#540).
- *
- * The reading used to be an `internal` class of the shelf's UI, recomputed from scratch by its four
- * callers — the rows of Coins, the sheet a casilla opens, the «Sin colección» set and the country
- * axis — so nothing could exercise it on its own and the two grains it answers at had to be learned
- * again by whoever asked. Here they are read through [Curation.assemble], which is the only door the
- * app comes through: if the assembly gets this wrong, the four surfaces are wrong together, and this
- * is where it is said once.
- */
+/** What claims a coin, read through [Curation.assemble], the app's only way in (#540). */
 class CoinClaimsTest {
     /**
-     * A coin links back to **every** collection that claims it, in the one order of the index
-     * (ADR 0021 §1, §6, §10).
-     *
-     * The two hands of §10 in one snapshot: a curated file claims the type and a box the collector
-     * typed claims it too, and on screen neither outranks the other. A single card per type would
-     * have to pick one of them, which is exactly the «home» that §10 refused to invent — so the
-     * answer is a list, and the list is in index order because the card that says «1 de 2» is the
-     * one the collector recognises first.
+     * A curated file and a box claim the same type and neither outranks the other (ADR 0021 §10),
+     * so the answer is a list, in index order (§1, §6).
      */
     @Test
     fun `a coin links back to every collection that claims it, in index order`() {
@@ -63,14 +48,8 @@ class CoinClaimsTest {
     }
 
     /**
-     * The row and the type are **not** the same question (ADR 0019).
-     *
-     * Measured on the father's collection: his American Silver Eagle N#298883 is two rows, and the
-     * catalog qualifies its members by issue, so the bullion row fills the 2021 casilla and the
-     * burnished row of the same type and the same year fills nothing. The type is in a collection
-     * and one of his two coins is not — which is what the «Sin colección» chip of Coins exists to
-     * say (ADR 0021 §12), and reading membership off the type alone made that second coin
-     * invisible in the one place left for it.
+     * The row and the type are different questions (ADR 0019): the burnished 2021 Silver Eagle
+     * fills nothing, and the «Sin colección» chip has to show it (ADR 0021 §12).
      */
     @Test
     fun `an issue-qualified catalog claims one row of a type and leaves its sibling loose`() {
@@ -94,14 +73,7 @@ class CoinClaimsTest {
         assertEquals(1, assembled.claims.unclaimedPieces(listOf(bullion, burnished)))
     }
 
-    /**
-     * A coin no card claims answers with silence, and it is a fact about the coin and not a gap in
-     * the reading (ADR 0021 §1).
-     *
-     * The row with no ficha on the phone cannot be placed at all — no family, no catalog, no card —
-     * so it is the residue the notebook's last lámina prints. Asked of the assembly it says «no
-     * collection», which is the same sentence a coin outside every plate says in Coins.
-     */
+    /** A row with no ficha can't be placed: it is the notebook's last residue (ADR 0021 §1). */
     @Test
     fun `a coin no card claims is claimed by nothing at either grain`() {
         val curation = Curation(listOf(silverEagleCatalog()))

@@ -21,18 +21,14 @@ import kotlin.test.assertTrue
 /** Every word «Las cifras» prints, and the one number the bottom bar prints for it. */
 class FiguresLabelsTest {
     /**
-     * The third cell counts **grams and never money**.
-     *
-     * An amount in a permanent bar is a pocket ticker: it changes on its own, with nobody touching
-     * anything, and puts the collector's estate in front of whoever glances at the phone. The weight only
-     * moves when a coin arrives (#316).
+     * Weight, never money: an amount in a permanent bar moves on its own and shows the collection's
+     * worth to anyone glancing at the phone (#316).
      */
     @Test
     fun `the cell of the bottom bar counts weight`() {
         assertEquals("6,91 kg", figuresCellCount(6_907.4))
         assertEquals("0,00 kg", figuresCellCount(0.0))
-        // Absence, not zero (#418): while the snapshot is still being read, «0,00 kg» would claim
-        // the collection weighs nothing.
+        // Absence, not zero, while the snapshot is still being read (#418).
         assertEquals("—", figuresCellCount(null))
     }
 
@@ -45,7 +41,6 @@ class FiguresLabelsTest {
         assertEquals("86 %", percentLabel(0.8607))
     }
 
-    /** The stack is the one figure that carries «unos», and only while it is extrapolated. */
     @Test
     fun `only an extrapolated magnitude says «unos»`() {
         assertEquals("unos 94 cm", ladderAmountLabel(LadderUnit.Centimetres, 94.0, true))
@@ -53,19 +48,14 @@ class FiguresLabelsTest {
         assertEquals("15,22 m", ladderAmountLabel(LadderUnit.Metres, 15.22, false))
     }
 
-    /**
-     * The sentence the ladder exists for: what has just been passed and what is within reach.
-     *
-     * «Más que un gato y a 310 g de una bola de bolos» **is** the figure — the comparison does not decorate
-     * it (`docs/ux/cifras-326.md`).
-     */
+    /** The comparison is the figure, not a decoration (`docs/ux/cifras-326.md`). */
     @Test
     fun `the ladder says what has been passed and what is a hand's breadth away`() {
         assertEquals(
             "más que un gato y a 310 g de una bola de bolos",
             ladderComparison(reading(Ladders.weight, 6.95)),
         )
-        // The gap is read in the smallest unit that keeps it whole: «a 0,31 kg» is a dashboard's number.
+        // The gap uses the smallest unit that keeps it whole: «310 g», not «0,31 kg».
         assertEquals(
             "más que un autobús y a 3,50 m de un camión",
             ladderComparison(reading(Ladders.row, 13.0)),
@@ -76,7 +66,6 @@ class FiguresLabelsTest {
         )
     }
 
-    /** Under the first rung nothing has been passed, and over the last there is nothing left to reach. */
     @Test
     fun `the ends of a ladder are said as ends`() {
         assertEquals("todavía por debajo de un ladrillo", ladderComparison(reading(Ladders.weight, 0.5)))
@@ -86,12 +75,7 @@ class FiguresLabelsTest {
         )
     }
 
-    /**
-     * Coverage yes, progress no (ADR 0028 §7).
-     *
-     * «El valor de N de tus 574 piezas» is said; «llevo 140 de 223» is not. Complete, the sentence has
-     * nothing in it, so there is none.
-     */
+    /** Coverage, never progress (ADR 0028 §7); a complete total needs no sentence. */
     @Test
     fun `the total says its coverage and only when it has one`() {
         assertEquals("el valor de 570 de tus 574 piezas", coverageLabel(570, 574))
@@ -99,12 +83,8 @@ class FiguresLabelsTest {
     }
 
     /**
-     * The two halves of «la materia» after #398: the census here, the silver under the metal bar.
-     *
-     * The weight is not in either of them — it was said in the summary line and again three lines below in
-     * display size, under «todas juntas pesan». And the ounces read as a **conversion**: sat under
-     * `PLATA 6,14 KG (86 %)`, «de plata pura, 196,4 oz finas» looked like a second figure when it is the
-     * same silver in the unit bullion is quoted in.
+     * The ounces are the silver above them in bullion's unit, so they read as a conversion rather
+     * than a second figure (#398).
      */
     @Test
     fun `the matter says its census and the silver says it is a conversion`() {
@@ -112,13 +92,7 @@ class FiguresLabelsTest {
         assertEquals("que son 196,4 oz finas de plata pura", fineSilverSentence(196.42))
     }
 
-    /**
-     * The stamp says **which** silver price and when, and an expired one still says it.
-     *
-     * It is what stops the total reading as a quotation, and «caducar no es borrar» read out loud: a phone
-     * with no network for a month says «hace 40 días» rather than emptying itself. The price is half of the
-     * job — «plata de hoy» named a date and no figure, so nothing in it could be checked (#398).
-     */
+    /** An old reading shows its age instead of vanishing; the price makes it checkable (#398). */
     @Test
     fun `the stamp carries the price of the silver and when it was read`() {
         val read = spot(day = 8, hour = 11, minute = 52)
@@ -131,7 +105,7 @@ class FiguresLabelsTest {
             "plata: 55,23 €/oz · ayer 11:52",
             spotStampLabel(read, millis(day = 9, hour = 8, minute = 0), MADRID),
         )
-        // Past yesterday the hour explains nothing, so it goes: the figure is the age of the reading.
+        // Past yesterday the hour gives way to the age.
         assertEquals(
             "plata: 55,23 €/oz · hace 40 días",
             spotStampLabel(read, millis(day = 48, hour = 8, minute = 0), MADRID),
@@ -139,14 +113,8 @@ class FiguresLabelsTest {
     }
 
     /**
-     * The stamp of the total names **each of its clocks once**, and never one for the other (#594).
-     *
-     * The silver is read daily and for free, so its clause always says today; a catalog price lives
-     * ninety days (ADR 0028 §5 as amended by #561). Until this, the only date under the total was the
-     * spot's, so a figure whose catalogue half was from June was read under a stamp promising this
-     * morning. The two are not averaged and neither is dropped: the spot's clause carries a **price**
-     * as well as a date (#398), and the catalogue's carries the oldest read the amount is made of
-     * (#494).
+     * The spot is read daily and a catalogue price lives ninety days (ADR 0028 §5, #561), so each
+     * clock gets its own clause (#594); the catalogue's dates the oldest read in the total (#494).
      */
     @Test
     fun `the stamp of the total names each of its two clocks`() {
@@ -157,29 +125,20 @@ class FiguresLabelsTest {
             "plata: 55,23 €/oz · hoy 11:52 · Numista: hace 12 días",
             moneyStampLabel(read, millis(day = -4, hour = 9, minute = 0), now, MADRID),
         )
-        // Past a month the catalogue says the day and not the age: «hace 83 días» is a number nobody
-        // can place on a calendar, which is the cut `valuedAgeLabel` already made for the same datum.
-        // And the clause is «Numista» and not «catálogo»: a plate's specification already labels a row
-        // «Catálogo» with the curated file's editorial date, and two clocks under one word on one
-        // screen is the drift #518 undid.
+        // Past a month the date replaces the age, as in `valuedAgeLabel`. «Numista», because a
+        // plate already labels the curated file's date «Catálogo» (#518).
         assertEquals(
             "plata: 55,23 €/oz · hoy 11:52 · Numista: el 21 jun 2026",
             moneyStampLabel(read, millis(day = -40, hour = 9, minute = 0), now, MADRID),
         )
-        // A total no catalogue price feeds has one clock, and then the stamp is the one it always was:
-        // the clause is absent rather than written as «sin fecha», like every other absence here.
+        // With no catalogue price the clause is absent, not «sin fecha».
         assertEquals(
             spotStampLabel(read, now, MADRID),
             moneyStampLabel(read, catalogReadAt = null, nowMillis = now, zone = MADRID),
         )
     }
 
-    /**
-     * Yesterday at 23:00 seen this morning is **ayer**, which twenty-four-hour blocks got wrong.
-     *
-     * `toDays(now - readAt)` counted nine hours as zero days and announced them as «hoy»: invisible while
-     * the line carried no hour, a plain contradiction — «hoy 23:00» read before midday — now that it does.
-     */
+    /** Nine hours across midnight is «ayer»; counting 24-hour blocks would call it «hoy». */
     @Test
     fun `the days are calendar days and not elapsed ones`() {
         assertEquals(
@@ -208,18 +167,16 @@ class FiguresLabelsTest {
     private fun spot(day: Int, hour: Int, minute: Int) = SilverSpot(55.23, millis(day, hour, minute))
 
     /**
-     * The one line the pass is allowed, and it has to tell the two silences apart.
-     *
-     * «Faltan y están cayendo» and «faltan porque se acabó el presupuesto» look identical from outside, and
-     * only one of the two is worth waiting for (ADR 0028 §6).
+     * Prices still arriving and a spent budget must read differently: only the first is worth
+     * waiting for (ADR 0028 §6).
      */
     @Test
     fun `the settings line says which silence it is`() {
         val falling = ValuationStatus(wanted = 223, missing = 83)
 
         assertTrue(valuationLabel(falling).endsWith("Se traen solos con la app abierta."))
-        // The pass's own allowance and not the phone's (#605): it stops 300 consultas short of the
-        // cap so the inventory always has its two, so the line cannot claim the month is gone.
+        // The pass's own allowance, not the phone's (#605): the pass stops short of the monthly cap
+        // so the inventory keeps its calls.
         assertTrue(
             valuationLabel(falling.copy(held = ValuationRefusal.BudgetExhausted))
                 .contains("consultas que los precios tienen"),
@@ -235,12 +192,7 @@ class FiguresLabelsTest {
         assertTrue(valuationLabel(ValuationStatus()).contains("Todavía no hay emisiones"))
     }
 
-    /**
-     * Zero missing is done, even when the monthly budget is already spent (#421).
-     *
-     * «Faltan 0… seguirán el mes que viene» promised more work after the work had finished. The
-     * budget is only news while there is still something to bring.
-     */
+    /** The budget is news only while something is still missing (#421). */
     @Test
     fun `settled prices do not mention a spent budget`() {
         assertEquals(
@@ -255,7 +207,7 @@ class FiguresLabelsTest {
         )
     }
 
-    /** The origin of a value, because a number with no provenance is one nobody can check (#316). */
+    /** A number with no provenance can't be checked (#316). */
     @Test
     fun `a value says where it came from`() {
         assertEquals(
@@ -270,7 +222,6 @@ class FiguresLabelsTest {
         assertEquals("lo que pagaste", FiguresLabels.valueOrigin(ValueSource.Paid, null))
     }
 
-    /** A coin's ficha: the amount, how many pieces it covers when it is more than one, and the origin. */
     @Test
     fun `a coin's value line carries its pieces only when there are several`() {
         assertEquals(
@@ -281,18 +232,13 @@ class FiguresLabelsTest {
             "80 € · 2 piezas · precio de catálogo en unc",
             coinValueLabel(CoinValue(80.0, 2, ValueSource.Market, "unc")),
         )
-        // Pieces that disagree about their origin leave **the origin** unsaid rather than print the wrong
-        // one for half of them. How many pieces the total covers is not an origin, so it stays.
+        // Pieces with different origins leave the origin unsaid; the piece count stays.
         assertEquals("540 € · 2 piezas", coinValueLabel(CoinValue(540.0, 2, null, null)))
     }
 
     /**
-     * The plate's total carries the criterion, like the ficha carries its origin (#408).
-     *
-     * «4.116 €» alone was the only money surface without a provenance tag: the ficha says
-     * «lo que pagaste» and Las cifras spells the method. The plate prints the same criterion once.
-     *
-     * The amount with no name is the **paper's** reading, whose row is already titled «Valor» (#493).
+     * The plate's total carries its criterion, as the ficha carries its origin (#408). It is
+     * unnamed because it is the paper's reading, whose row is already titled «Valor» (#493).
      */
     @Test
     fun `a plate's value line names the criterion`() {
@@ -302,38 +248,23 @@ class FiguresLabelsTest {
         )
     }
 
-    /**
-     * On screen the two figures are told apart by their names, and each says where it came from.
-     *
-     * The names are the whole of the hierarchy (#493): in a plate one casilla from closing the two
-     * amounts are of the same order, and in one of the father's plates the *larger* of the two is the
-     * cost of closing. No type size could have done this.
-     */
+    /** The names carry the hierarchy (#493): near closing, the cost can be the larger amount. */
     @Test
     fun `the two figures of a header are named, and neither borrows the other's criterion`() {
         val now = millis(day = 8, hour = 11, minute = 0)
-        // No catalogue read behind either amount, which is a plate valued out of its metal and what
-        // was paid for it: then there is no catalogue to date, and the lines are the ones #493 drew.
+        // No catalogue read behind either amount, so neither line carries a date.
         val value = plateValueLabel(PlateValue(4_116.0, pieces = 12), now, MADRID)
         val cost = plateCostLabel(PlateCost(84.0, holes = 2), now, MADRID)
 
         assertEquals("Valor actual: 4.116 € · al mayor de tres precios", value)
         assertEquals("Coste de cerrar: 84 € · en sin circular", cost)
-        // A hole has no «lo que pagaste», so its prices are two and not three (ADR 0028 §8): the
-        // criterion of the first figure may never appear on the second.
+        // A hole has no «lo que pagaste», so it has two prices, not three (ADR 0028 §8).
         assertTrue(FiguresLabels.MONEY_CRITERION !in cost)
     }
 
     /**
-     * Each figure of the header carries **its own** age, because each is made of its own reads (#594).
-     *
-     * One date over the two would be a promise about a total that is not one total: «Valor actual» sums
-     * the pieces inside and «Coste de cerrar» the holes outside, and a marked casilla is repriced
-     * whatever the plate's shape (ADR 0029 §4) — so the second line can be three months fresher than
-     * the first with nothing wrong anywhere.
-     *
-     * And within one line the date is the **oldest** of its reads, which is #494's rule: a date over a
-     * total is a promise about all of it.
+     * The two figures are made of different reads, and a marked casilla is repriced whatever the
+     * plate (ADR 0029 §4), so their ages can differ (#594). Each dates its oldest read (#494).
      */
     @Test
     fun `each figure of a header carries the age of its own price`() {
@@ -358,17 +289,13 @@ class FiguresLabelsTest {
     }
 
     /**
-     * The stamp inside a hole is the amount and nothing else.
-     *
-     * The criterion was said in the header three lines above, and ten holes repeating seven words is
-     * the frequency ADR 0026 §5 prices.
+     * The header already says the criterion; ten holes repeating it is the cost ADR 0026 §5 counts.
      */
     @Test
     fun `the stamp of a hole says its amount and repeats no criterion`() {
         assertEquals("12 €", holeCostLabel(12.0))
     }
 
-    /** Every referent has a name, or a rung would be a drawing with a blank under it. */
     @Test
     fun `every referent is named`() {
         Referent.entries.forEach { referent ->
@@ -379,7 +306,6 @@ class FiguresLabelsTest {
         }
     }
 
-    /** And every ladder says what it measures, which is the figure's own sentence and not furniture. */
     @Test
     fun `every ladder says what it measures`() {
         assertEquals(
@@ -388,13 +314,7 @@ class FiguresLabelsTest {
         )
     }
 
-    /**
-     * The portrait's four shares, and the money one is absent rather than zero.
-     *
-     * The share of the value is money, so it goes exactly where the money section goes (ADR 0028
-     * §4): a country with no valued piece says three shares and not «0 % del valor», which would be
-     * a figure about a total the page is not showing.
-     */
+    /** The value share follows the money section (ADR 0028 §4): absent, never «0 % del valor». */
     @Test
     fun `a country's shares drop the money clause instead of printing it empty`() {
         fun venezuela(valueShare: Double?) = CountryPortrait(
@@ -417,10 +337,8 @@ class FiguresLabelsTest {
     }
 
     /**
-     * On screen the coin beside the number is the measure, so the number is whole millimetres.
-     *
-     * The printed page keeps the tenth (`printedDiameterLabel`) because it has no coin to compare
-     * against, and on a scaled page no ruler either.
+     * On screen the coin drawn beside it is the measure; paper, with no coin to compare against,
+     * keeps the tenth (`printedDiameterLabel`).
      */
     @Test
     fun `a diameter on screen is whole millimetres`() {
@@ -428,16 +346,10 @@ class FiguresLabelsTest {
         assertEquals("40 mm", screenDiameterLabel(40.9))
     }
 
-    /**
-     * The four sentences «al margen», which moved out of the screen they were written in.
-     *
-     * They are the reason the page reads as a field guide rather than a dashboard, and they were the
-     * one exception to this file's promise to hold every string «Las cifras» prints (ADR 0026 §6).
-     */
+    /** The four «al margen» sentences live with the rest of «Las cifras»' copy (ADR 0026 §6). */
     @Test
     fun `the margin says the four things the ficha already knew`() {
-        // The denominator is the whole collection and not the types Numista answered for: a
-        // percentage over a moving denominator is a figure nobody can check.
+        // The denominator is the whole collection, not the types Numista answered for.
         assertEquals(
             "75 % ya no son dinero en ninguna parte",
             demonetizedSentence(MarginFigure(pieces = 429, outOf = 572)),
@@ -456,7 +368,6 @@ class FiguresLabelsTest {
         )
     }
 
-    /** A figure counted over nothing is 0 % and not a division by zero. */
     @Test
     fun `a margin figure over an empty collection says zero`() {
         assertEquals(
@@ -465,12 +376,7 @@ class FiguresLabelsTest {
         )
     }
 
-    /**
-     * The fifth sentence at the margin: how the collection is kept, said as a share of its pieces.
-     *
-     * «o casi» is not a hedge, it is the second grade: `au` is *about* uncirculated, and a line that
-     * called it «sin circular» would file 66 of his pieces under a word their ficha does not use.
-     */
+    /** «o casi» covers `au`, which is about uncirculated and not «sin circular» on its ficha. */
     @Test
     fun `the margin says how much of the collection has not circulated`() {
         assertEquals(
@@ -480,11 +386,8 @@ class FiguresLabelsTest {
     }
 
     /**
-     * What was paid against what those pieces are worth today, with **its own denominator in front**.
-     *
-     * It says how many pieces declared a price and never what share of the collection they are: the
-     * complement is not missing data but what he did not buy, and «el 84 % no las compraste» would turn
-     * a 2019 habit of not writing prices down into a claim about his life (#491).
+     * Counted over the pieces with a declared price, never as a share of the collection: the rest
+     * had no price written down, which doesn't mean they weren't bought (#491).
      */
     @Test
     fun `what was paid says over how many pieces it was declared`() {
@@ -494,7 +397,7 @@ class FiguresLabelsTest {
         )
     }
 
-    /** One declared price is «la única pieza», because «De la 1 pieza» is not Spanish. */
+    /** «De la 1 pieza» is not Spanish. */
     @Test
     fun `a single declared price is said in the singular`() {
         assertEquals(

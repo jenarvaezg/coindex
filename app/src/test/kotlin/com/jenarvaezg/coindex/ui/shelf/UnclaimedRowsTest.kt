@@ -8,42 +8,30 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Las monedas que ninguna colección reclama, que son las que el cuaderno no imprimía (#275).
- *
- * Se mide sobre el mismo `ShelfFixtures` que Monedas, y no por comodidad: la lámina promete ser el
- * complemento de lo que sale en papel, así que tiene que contestar exactamente lo que contesta el
- * chip «Sin colección» de la otra jerarquía (ADR 0021 §1, §12). Dos fixtures con dos ideas de
- * «suelta» serían dos verdades sobre el mismo cajón.
+ * Las monedas que ninguna colección reclama, que el cuaderno no imprimía (#275). Usa el mismo
+ * `ShelfFixtures` que Monedas porque debe contestar lo mismo que su chip «Sin colección»
+ * (ADR 0021 §1, §12).
  */
 class UnclaimedRowsTest {
     private val loose = unclaimedFacts(ShelfFixtures.state)
 
     /**
-     * Las dos direcciones en que el residuo del dominio y esto se separan.
-     *
-     * **La caja cuenta**: la onza mexicana no cae en ninguna colección derivada, pero la caja «Las
-     * mexicanas» la reclama y su lámina la imprime, así que aquí no está — repetirla sería mentir
-     * sobre lo que hay en el cajón. **Y la fila cuenta**: la fila 10 de la Britannia es del mismo
-     * tipo que la 9, que sí llena su casilla, y es la forma del American Silver Eagle N#298883 del
-     * padre (ADR 0019). El tipo está en una colección y esa moneda suya no.
+     * La caja «Las mexicanas» reclama la onza, así que no sale aquí. La fila 10 de la Britannia es
+     * del tipo de la 9, que sí llena su casilla: el tipo está en una colección y esa fila no
+     * (ADR 0019).
      */
     @Test
     fun `una caja tapa a su moneda, y una fila suelta asoma bajo un tipo que sí está`() {
         assertEquals(listOf(10L, 12L), loose.map { it.piece.id })
 
-        // Sacada de la caja, la onza no tiene quien la reclame y aparece: lo que cambió no fue la
-        // moneda sino quién la imprime.
+        // Sin la caja, nadie reclama la onza y aparece.
         val sinCaja = unclaimedFacts(ShelfFixtures.stateWithoutTheBox)
         assertEquals(listOf(5L, 10L, 12L), sinCaja.map { it.piece.id })
     }
 
     /**
-     * Una suelta se mide **como una tarjeta de una pieza sin lámina**, que es lo que deja usar
-     * `matches` tal cual en vez de escribir un segundo filtro con reglas propias.
-     *
-     * Tres facetas salen de su ficha y dos son la respuesta honesta de algo que no tiene lista de
-     * emisiones: «Sin lámina» es literalmente verdad, y de serie no dice nada, igual que ya se calla
-     * hoy una tarjeta sin catálogo.
+     * Se trata como una tarjeta de una pieza sin lámina para reutilizar `matches`. La serie queda
+     * vacía, como en una tarjeta sin catálogo.
      */
     @Test
     fun `una suelta contesta las cinco facetas como la tarjeta que no es`() {
@@ -56,13 +44,7 @@ class UnclaimedRowsTest {
         assertNull(britannia.series)
     }
 
-    /**
-     * La suelta cuya ficha aún no ha llegado dice lo que sabe y no inventa lo demás.
-     *
-     * Y lo que no sabe la deja fuera de los filtros que preguntan por ello, en vez de colarla bajo
-     * una etiqueta falsa: `OunceBand.of(null)` es «Varias onzas» para una tarjeta que abarca
-     * varios pesos, y una moneda suelta no es una caja.
-     */
+    /** En una tarjeta `OunceBand.of(null)` es «Varias onzas»; en una suelta sería falso. */
     @Test
     fun `la suelta sin ficha no tiene peso y por eso no entra en ningún filtro de peso`() {
         val sinFicha = loose.single { it.piece.id == 12L }
@@ -80,7 +62,6 @@ class UnclaimedRowsTest {
         assertTrue(sinFicha.piece.id in narrowed(IndexShelf()))
     }
 
-    /** El estante recorta la lámina con las mismas respuestas que acaba de dar cada pieza. */
     @Test
     fun `el estante recorta la lámina por país, época y peso`() {
         assertEquals(listOf(10L), narrowed(IndexShelf(issuer = "Reino Unido")))
@@ -90,13 +71,7 @@ class UnclaimedRowsTest {
         assertEquals(listOf(10L), narrowed(IndexShelf(weight = OunceBand.HalfToOne)))
     }
 
-    /**
-     * Las dos facetas que una moneda suelta no tiene, y que por eso la dejan fuera.
-     *
-     * «Sin lámina» las deja pasar todas porque es lo que son; cualquier otra pregunta sobre una
-     * lámina o sobre una serie no la contesta ninguna, y entonces la lámina no se imprime — que es
-     * el gris del interruptor y no una hoja vacía.
-     */
+    /** Si no pasa ninguna, la lámina no se imprime: el interruptor queda gris, sin hoja vacía. */
     @Test
     fun `filtrar por lámina hecha o por serie no deja ninguna suelta`() {
         assertEquals(listOf(10L, 12L), narrowed(IndexShelf(status = PlateStatus.NoPlate)))
@@ -111,7 +86,7 @@ class UnclaimedRowsTest {
         }
     }
 
-    /** Lo que se busca es la moneda: su título, su país y el número de Numista que lleva impreso. */
+    /** Título, país y el número de Numista impreso. */
     @Test
     fun `la búsqueda encuentra una suelta por lo que la casilla dice de ella`() {
         assertEquals(listOf(10L), narrowed(query = "britannia"))
@@ -120,11 +95,7 @@ class UnclaimedRowsTest {
         assertEquals(emptyList(), narrowed(query = "kookaburra"))
     }
 
-    /**
-     * País, año y título: el orden de cuaderno de campo de Monedas, porque esta lámina es su
-     * desbordamiento. Las que aún no tienen ficha van al final — dicen menos que una fechada, y
-     * abrir la página con ellas sería abrirla por lo que la última sincronización no terminó.
-     */
+    /** País, año y título: el orden de Monedas, porque esta lámina es su desbordamiento. */
     @Test
     fun `se leen por país y por año, y las que no tienen ficha van al final`() {
         val muchas = ShelfFixtures.stateWithoutTheBox.let { sinCaja ->
@@ -144,7 +115,7 @@ class UnclaimedRowsTest {
         assertEquals(listOf(5L, 10L, 20L, 12L), unclaimedFacts(muchas).map { it.piece.id })
     }
 
-    /** Una fila que ya no tienes no es una moneda suelta: no es una moneda. */
+    /** Cantidad cero es una fila que ya no está en la colección. */
     @Test
     fun `una fila vendida no aparece`() {
         val vendida = ShelfFixtures.state.let { state ->

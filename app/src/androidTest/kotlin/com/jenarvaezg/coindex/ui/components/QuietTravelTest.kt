@@ -14,24 +14,19 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** The father's Snake, which is a cell of Monedas and the cover of a card at the same time. */
+/** The Snake: both a cell of Monedas and a card's cover. */
 private const val A_TYPE = 404_064
 
 private const val A_CATALOG = "lunar-series-iii-1oz"
 
 /**
- * The coin does not take off where the system asked for quiet (#514).
- *
- * This is the defect itself and not a duration around it: at `animator_duration_scale 0` the sheet
- * already arrived settled, and what the audit of 14 August 2026 caught was a **shared element**
- * drawing its photograph where it took off — over «Ver en Numista», with the sheet's hole empty. Its
- * place comes from a lookahead pass that lands a frame later, and no scale factor divides a frame
- * away, so the only fix is not to make the journey. What is defended here is exactly that: with
+ * The coin does not take off where the system asked for quiet (#514). Even at
+ * `animator_duration_scale 0` a shared element drew its photograph at its origin for a frame,
+ * because its target comes from a lookahead pass a frame later; the only fix is not to travel. With
  * quiet asked for, the two modifiers of ADR 0026 §3 hand back the modifier they were given.
  *
- * Both journeys are composed inside a real layout **and** a real destination, so each has
- * everything it needs to fly. Without that the modifiers return `this` for want of a scope and both
- * tests would pass against the bug they exist for — which is what the two controls check.
+ * Both journeys are composed inside a real layout and destination: without a scope the modifiers
+ * return `this` anyway, and the two take-off tests are the controls for that.
  */
 @RunWith(AndroidJUnit4::class)
 class QuietTravelTest {

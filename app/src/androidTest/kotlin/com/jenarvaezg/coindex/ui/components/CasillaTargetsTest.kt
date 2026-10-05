@@ -23,15 +23,12 @@ import org.junit.runner.RunWith
 private val OBVERSE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg", picture = null)
 private val REVERSE = CoinPhoto(thumbnail = "https://example.invalid/b-180.jpg", picture = null)
 
-/** Android's minimum, and the number the #302 map measured all four year tags against. */
+/** Android's minimum touch target, as in the #302 map. */
 private val MINIMUM_TARGET = 48.dp
 
 /**
- * The two targets of a casilla: the body of the hole turns the coin over, the year goes to Numista.
- *
- * The photographs never arrive — the URLs are unreachable on purpose — because none of this is
- * about the picture: what is being fixed is that a casilla now has two independent targets where
- * it had one, and that both of them are as big as the ink promises.
+ * The two targets of a casilla: the hole turns the coin over and the year opens the coin's sheet
+ * (#508). The URLs are unreachable on purpose: only the targets and their size matter here.
  */
 @RunWith(AndroidJUnit4::class)
 class CasillaTargetsTest {
@@ -69,7 +66,7 @@ class CasillaTargetsTest {
         compose.onNodeWithTag("tag").performClick()
         assertEquals(1, opened)
         compose.onNodeWithTag("hole").performClick()
-        // Turning the coin over is the hole's own business and leaves the year alone.
+        // Turning the coin over doesn't trigger the year's action.
         assertEquals(1, opened)
     }
 
@@ -92,8 +89,8 @@ class CasillaTargetsTest {
     }
 
     @Test
-    // The sheet composes off screen and is never handed the other side, so an exported PNG cannot
-    // inherit a turned coin — there is nothing there to turn it.
+    // The off-screen sheet is never handed the other side, so an exported PNG can't show a turned
+    // coin.
     fun aHoleWithoutASecondFaceTakesNoTap() {
         compose.setContent {
             CoindexTheme {
@@ -105,7 +102,7 @@ class CasillaTargetsTest {
         assertFalse(node.config.contains(SemanticsActions.OnClick))
     }
 
-    /** An announced casilla has no page to open, so its tag is a label and not a target. */
+    /** An announced casilla has no page to open. */
     @Test
     fun theTagOfAnAnnouncedCasillaTakesNoTap() {
         compose.setContent {

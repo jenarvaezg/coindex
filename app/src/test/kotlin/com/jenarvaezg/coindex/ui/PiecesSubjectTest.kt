@@ -18,12 +18,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * What the merged screen is handed, whichever card sent the collector there.
- *
- * The subject is the whole point of the merge (ADR 0021 §9): two screens became one because the
- * two cases differ in what they *have*, not in what they are. So the test that matters is that
- * both cases arrive as the same shape, and that the only difference left — the box's upkeep — is
- * a field and not a species.
+ * What the merged screen is handed, whichever card sent the collector there (ADR 0021 §9): one
+ * shape, with the box's upkeep as a field.
  */
 class PiecesSubjectTest {
     private val francesas = DerivedCollection(
@@ -79,10 +75,7 @@ class PiecesSubjectTest {
         assertEquals(listOf(1L, 2L), subject.pieces.map { it.item.id })
     }
 
-    /**
-     * A box spans whatever the collector put in it, so there is no physical variant to state —
-     * the one line of the header that the two cases genuinely do not share.
-     */
+    /** A box spans whatever the collector put in it, so it has no physical variant. */
     @Test
     fun `a box brings its own pieces and states no variant`() {
         val pieces = listOf(piece(9, 300, 2011), piece(8, 301, 2010))
@@ -98,10 +91,8 @@ class PiecesSubjectTest {
     }
 
     /**
-     * The one card that reaches this screen with a ratio: a catalog the collector owns no issued
-     * member of yet. With evidence the card opens its plate instead (ADR 0021 §7, §9), so this is
-     * the only way a ratio gets here — and it has to survive the tap, or the same collection would
-     * say «0 de 12 · te faltan 12» on the card and «1 tipo distinto · 1 pieza» one tap later.
+     * Only a catalog with no owned issued member reaches this screen with a ratio; with evidence
+     * the card opens its plate (ADR 0021 §7, §9). The ratio must survive the tap.
      */
     @Test
     fun `a card that counts a ratio keeps counting it inside`() {
@@ -118,17 +109,14 @@ class PiecesSubjectTest {
         assertNull(piecesSubject(CollectionState(), boxCard(emptyList())).coverage)
     }
 
-    /** The maintenance is what tells a box apart, and it is an `if` on this field (ADR 0021 §9). */
+    /** Upkeep is what tells a box apart, as an `if` on this field (ADR 0021 §9). */
     @Test
     fun `only a box carries an id to maintain`() {
         assertEquals(7L, piecesSubject(CollectionState(), boxCard(emptyList())).boxId)
         assertNull(piecesSubject(CollectionState(), derivedCard()).boxId)
     }
 
-    /**
-     * Pieces are ordered by what tells them apart on paper: the year first, and a row without one
-     * goes last rather than first — an undated row is the least identified thing on the screen.
-     */
+    /** An undated row goes last: it is the least identified thing on the screen. */
     @Test
     fun `pieces are ordered by year, then title, then row`() {
         val pieces = listOf(
@@ -144,11 +132,7 @@ class PiecesSubjectTest {
         assertEquals(listOf(1L, 2L, 3L, 4L), subject.pieces.map { it.item.id })
     }
 
-    /**
-     * The collection is derived from what is owned right now, so it can vanish under the screen
-     * while it is open: a piece sold on Numista and synced away leaves the route valid and its
-     * subject gone.
-     */
+    /** A derived collection can vanish while open: a piece sold on Numista and synced away. */
     @Test
     fun `a route whose card is gone resolves to nothing rather than to an empty screen`() {
         val state = CollectionState(AssembledCollection(index = listOf(derivedCard())))
@@ -158,13 +142,7 @@ class PiecesSubjectTest {
         assertTrue(state.piecesCardFor(francesas.key()) is IndexCard.Derived)
     }
 
-    /**
-     * A piece arrives with its emission already on it, through either card (#225).
-     *
-     * Which emission a coin is is a fact about the coin and not about the card it was opened from,
-     * so the same row says «Estrella 67» read from its own collection and from a box. The screen
-     * cannot forget to ask for it, because there is nothing to ask: it is a field of the piece.
-     */
+    /** The emission is a field of the piece, so both cards show it (#225). */
     @Test
     fun `a piece brings the emission that names it`() {
         val star = piece(1, 1_885, 1966)

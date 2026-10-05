@@ -10,11 +10,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The orphans register is a curator verdict, not the unclassified residue (#121, #133).
- *
- * A type enters it only once a curator signs it, so the shipped list is short on purpose.
- * Structural mistakes fail here; a type that a catalog already claims is a suite collision,
- * never a fatal boot red.
+ * The orphans register holds curator verdicts, not the unclassified residue (#121, #133). A type
+ * that a catalog already claims fails here, in the suite, and never at boot.
  */
 class CuratedOrphansTest {
     private val orphans = OrphanSeeds.parse("orphans.json", OrphanFile.read())
@@ -27,18 +24,8 @@ class CuratedOrphansTest {
     }
 
     /**
-     * Cómo se firma un veredicto, que es lo único de él que el código puede vigilar.
-     *
-     * **Qué** hay firmado y **por qué** vive en `data/orphans.json`, donde cada entrada lleva su
-     * motivo en prosa, y en el issue que lo firmó. Repetir aquí la lista no añadía una afirmación:
-     * añadía una segunda copia que diverge —ya lo hizo, con los veredictos que el #256 y el #257
-     * reabrieron— y una colisión garantizada con cualquier sesión que firme al mismo tiempo.
-     *
-     * Lo que sí se vigila es la forma, porque es lo que separa un veredicto de una etiqueta: el
-     * motivo es prosa y no una palabra. Las lecciones del registro —que un veredicto de intención
-     * se reabre por intención (#257), que una casilla sola no es una lámina (#256), y que contrastar
-     * al coleccionista **fuera** de Numista evitó firmar tres falsos (#152, #153)— están en
-     * `spec.md §0.7`.
+     * Sólo se vigila la forma. Qué hay firmado y por qué vive en `data/orphans.json` y en el issue
+     * que lo firmó; una copia de la lista aquí diverge (#256, #257). Lecciones en `spec.md` §0.7 y en el ADR 0020.
      */
     @Test
     fun `a verdict is signed with prose and not with a label`() {
@@ -55,9 +42,8 @@ class CuratedOrphansTest {
     }
 
     /**
-     * El parser convierte en excepción lo que `validate()` devuelve, y el fichero y el id llegan al
-     * mensaje: sin eso, un error de curación sale como un fallo de arranque sin dónde mirar. Las
-     * reglas en sí son de `CuratedOrphansTest` en `domain/`, que es donde vive `validate()`.
+     * El fichero y el id llegan al mensaje para que un error de curación diga dónde mirar. Las
+     * reglas se prueban en el `CuratedOrphansTest` de `domain/`, junto a `validate()`.
      */
     @Test
     fun `a validation error names the file and the type`() {

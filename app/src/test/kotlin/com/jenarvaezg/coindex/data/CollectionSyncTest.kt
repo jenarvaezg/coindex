@@ -24,15 +24,12 @@ private const val ONE_ITEM = """
 }
 """
 
-/** 7 de agosto de 2026, 10:31 en Madrid. Any fixed instant would do; a real one reads better. */
+/** 8 August 2026, 08:31 in Madrid; any fixed instant would do. */
 private const val STAMPED_AT = 1_786_170_660_000L
 
 /**
- * What one sync leaves behind (#220).
- *
- * The stamp is the whole reason this is a class of its own: `System.currentTimeMillis()` read where
- * the record was built made «última sincronización: ayer 19:04» a line no test could reach, while
- * [lastSyncLabel], which prints it, has taken an injected clock since it was written.
+ * What one sync leaves behind (#220). The stamp comes from an injected clock so the line
+ * «última sincronización: ayer 19:04» can be tested.
  */
 class CollectionSyncTest {
     private val items = FakeCollectedItemDao()
@@ -83,7 +80,7 @@ class CollectionSyncTest {
             assertEquals(STAMPED_AT, record.atMillis)
             assertEquals(1, record.collectionItems)
             assertEquals(1, record.typesFetched)
-            // The snackbar is the copy: what the next launch reads has to be there already.
+            // The snackbar shows a copy; the stored record is what the next launch reads.
             assertEquals(record, log.last)
             assertEquals(record, sync.last)
         }

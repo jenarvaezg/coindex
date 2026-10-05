@@ -6,13 +6,9 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
 /**
- * El defecto que #40 mandó cerrar, en el caso que lo produce: una serie bullion emitida en plata
- * y en oro con **el mismo peso y el mismo acabado**.
- *
- * Equilibrium es el caso vivo — N#307244 en plata y N#309842 en oro, los dos a 31,1 g— y hasta
- * esta versión los dos catálogos compartían clave. Nada fallaba a la vista: la tarjeta se empareja
- * con su catálogo por clave exacta y se queda con el primero que encuentre, así que el segundo
- * catálogo que alguien curara nacería sin lámina que abrir.
+ * El defecto de #40: una serie bullion en plata y en oro con el mismo peso y acabado, como
+ * Equilibrium (N#307244 y N#309842, ambas de 31,1 g). Sin el metal en la clave, el segundo
+ * catálogo curado se quedaba sin lámina que abrir.
  */
 class MetalKeyTest {
     private fun ounceCatalog(id: String, metal: Metal, typeId: Int) = CollectionCatalog(
@@ -60,10 +56,7 @@ class MetalKeyTest {
         assertEquals(silver.finish, gold.finish)
     }
 
-    /**
-     * Lo que la pantalla hace con la tarjeta: `IndexScreen` se queda con el primer catálogo cuya
-     * clave coincida. Con dos claves distintas cada tarjeta encuentra el suyo.
-     */
+    /** La tarjeta se queda con el primer catálogo de clave idéntica: las claves deben diferir. */
     @Test
     fun `each catalog is reachable from the derived collection its own pieces produce`() {
         val catalogs = listOf(silver, gold)
@@ -83,11 +76,7 @@ class MetalKeyTest {
         assertEquals(listOf("equilibrium-silver", "equilibrium-gold"), found)
     }
 
-    /**
-     * El metal lo declara el catálogo, no la ficha de cada miembro (ADR 0016): una pieza de oro
-     * dentro del catálogo de plata sigue contando en la lámina de plata. Quien la delata es el
-     * cruce del suite, no la clave.
-     */
+    /** El metal lo declara el catálogo (ADR 0016); la pieza intrusa la delata el cruce. */
     @Test
     fun `a member takes its catalog's metal even when its own ficha says another`() {
         val intruder = piece(3, 309_842)
@@ -100,7 +89,6 @@ class MetalKeyTest {
         assertEquals(Metal.Silver, derivation.derivedCollections.single().metal)
     }
 
-    /** Una pieza sin catálogo sí toma el metal de su ficha, y dos metales son dos tarjetas. */
     @Test
     fun `without a catalog the metal comes from the ficha and splits the card`() {
         val derivation = deriveCollection(

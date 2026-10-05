@@ -13,18 +13,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * One file carries the whole collection across the share sheet (#548).
+ * One file carries the whole collection across the share sheet (#548). `DatabaseExportTest` pins
+ * naming and order with a fake checkpoint; this needs real SQLite to show that
+ * `PRAGMA wal_checkpoint(TRUNCATE)` folds the `-wal` back in. Room runs in WAL mode, and a copy
+ * taken without the fold misses the latest writes.
  *
- * `DatabaseExportTest` pins the naming and the order with a checkpoint it can hold in its hand; this
- * is the half that needs a real SQLite underneath, because the risk is not in the copying — it is in
- * whether `PRAGMA wal_checkpoint(TRUNCATE)` does anything at all. Room opens in WAL mode, so a
- * transaction lives in `…-wal` until something folds it back in, and a dump taken without that is a
- * base missing exactly the coins that were added last. `scripts/avd-db.sh` carries three files to
- * sidestep this; the share sheet carries one, so the fold has to happen here.
- *
- * The assertion is the row read back **out of the copy**, opened as its own database: a `-wal` of
- * zero bytes would also be true of a checkpoint that quietly did nothing to a base that never had
- * anything to write.
+ * The row is read back out of the copy, opened as its own database: an empty `-wal` alone would
+ * also be true of a base that never had anything to write.
  */
 @RunWith(AndroidJUnit4::class)
 class DatabaseCheckpointTest {
@@ -68,16 +63,11 @@ class DatabaseCheckpointTest {
     }
 
     /**
-     * A checkpoint somebody else was in the way of is a failure and not a quiet older dump.
+     * A blocked `PRAGMA wal_checkpoint` doesn't throw: it answers `busy = 1` and leaves the log, so
+     * a sync, the call ledger or the prefetch writing meanwhile would silently export a stale base.
      *
-     * `PRAGMA wal_checkpoint` does not throw: it answers `busy = 1` and leaves the log where it was.
-     * A write in flight is exactly what a sync, the call ledger or the prefetch look like from here,
-     * and all three run while the collector is sitting on «Este teléfono» — so the base that reached the
-     * share sheet would be the collection as of some earlier moment, with no sign of it anywhere.
-     *
-     * The other connection holds a **write** and not a read: an Android cursor fills its window and
-     * lets the snapshot go, so a reader parked on `moveToFirst()` blocks nothing (which is how this
-     * test was written first, and it went green against a checkpoint that reported `busy = 0`).
+     * The other connection holds a write, not a read: an Android cursor fills its window and lets
+     * the snapshot go, so a reader parked on `moveToFirst()` blocks nothing.
      */
     @Test
     fun aCheckpointSomethingElseIsHoldingUpFailsOutLoud() {
@@ -89,8 +79,7 @@ class DatabaseCheckpointTest {
         val base = context.getDatabasePath(databaseName)
 
         val writer = SQLiteDatabase.openDatabase(base.path, null, SQLiteDatabase.OPEN_READWRITE)
-        // BEGIN IMMEDIATE: the write lock is taken now and held until this transaction ends, which
-        // is what a checkpoint cannot get past.
+        // BEGIN IMMEDIATE: takes the write lock now and holds it until the transaction ends.
         writer.beginTransactionNonExclusive()
         writer.execSQL("INSERT INTO wishes (typeId, year, issueId, markedAt) VALUES (1, 2, 3, 4)")
         try {

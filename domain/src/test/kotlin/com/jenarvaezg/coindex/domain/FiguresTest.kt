@@ -6,18 +6,12 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Everything «Las cifras» draws out of the APK, with not a single call (ADR 0028 §7).
- *
- * The numbers pinned here are the ones measured over the father's real collection on 10 August 2026 —
- * 572 pieces, 34 issuers, `docs/ux/cifras-316.md` and `docs/ux/cifras-326.md` — reduced to the smallest
- * inventory that exercises each rule. What the suite cannot hold is his collection itself: that is
- * `FieldReportTest`, and it stays inert without a private snapshot.
+ * «Las cifras», computed from the APK without a single call (ADR 0028 §7), over the smallest
+ * inventory that exercises each rule (`docs/ux/cifras-316.md`, `docs/ux/cifras-326.md`). The real
+ * collection is `FieldReportTest`'s job.
  */
 class FiguresTest {
-    /**
-     * The metal splits by **mass and never by coin**, because by coin it is a bar of one colour: 565 of
-     * his 574 pieces are silver, and by mass almost a kilo of the collection is not.
-     */
+    /** By coin the bar would be almost all silver; by mass the base metals show. */
     @Test
     fun `the metal is split by mass, and the alloy of a silver coin is copper`() {
         val split = metalSplit(
@@ -33,10 +27,7 @@ class FiguresTest {
         assertEquals(100.0, split.measuredGrams)
     }
 
-    /**
-     * A copper alloy counts as copper, which is what it mostly is, and every other base metal counts as
-     * itself — so the bar grows on its own the day a steel coin arrives, which is what it was asked for.
-     */
+    /** A new base metal gets its own band when its first coin arrives. */
     @Test
     fun `a copper alloy is copper and every other base metal is itself`() {
         val split = metalSplit(
@@ -48,8 +39,8 @@ class FiguresTest {
             ),
         )
 
-        // Copper before steel on a tie of mass, which is `metalOrder`: the order of the inventory must
-        // not be able to swap two bands between launches.
+        // Copper before steel on a tie (`metalOrder`), so inventory order can't swap two bands
+        // between launches.
         assertEquals(
             listOf(MetalMass(Metal.Copper, 30.0), MetalMass(Metal.Steel, 30.0)),
             split.masses,
@@ -57,11 +48,8 @@ class FiguresTest {
     }
 
     /**
-     * A piece with no dominant metal is left **out** of the split rather than guessed at.
-     *
-     * The bimetallic 500 bolívares describes a core and a ring, and «Cobre recubierto de cuproníquel» is
-     * a copper core clad in something else. Between them they are 0,1 % of his collection, and the
-     * denominator says so instead of absorbing them.
+     * Left out rather than guessed: the bimetallic 500 bolívares, or «Cobre recubierto de
+     * cuproníquel». The denominator shows the gap instead of absorbing it.
      */
     @Test
     fun `a piece with no dominant metal is measured by nobody`() {
@@ -79,11 +67,8 @@ class FiguresTest {
     }
 
     /**
-     * The arc reads **Gregorian** years, and the undated inherit their type's minimum.
-     *
-     * Both halves are measured defects the prototype found: two of his pieces are dated in Hijri years and
-     * read literally they stretch the axis to 711 years, and 23 rows carry no year at all — without the
-     * inheritance the arc is 246 years instead of 1.756 (ADR 0026 §9, #326).
+     * Hijri years read literally would stretch the axis, and dropping the undated would shrink it
+     * (ADR 0026 §9, #326).
      */
     @Test
     fun `the arc is Gregorian, and the undated inherit their type's minimum`() {
@@ -106,18 +91,13 @@ class FiguresTest {
         assertEquals(1_756, arc?.years)
     }
 
-    /** No year anywhere is no arc, rather than an arc from zero. */
+    /** Rather than an arc from year zero. */
     @Test
     fun `a collection with no year at all has no arc`() {
         assertNull(yearArc(listOf(item(id = 1, typeId = 1)), mapOf(1 to meta())))
     }
 
-    /**
-     * The smallest against the largest, and **on a tie the older piece**.
-     *
-     * The tie is not hypothetical: four of his pieces are 42 mm, and what is worth drawing is the Maria
-     * Theresa thaler of 1780 rather than whichever of them the inventory listed last.
-     */
+    /** Ties happen (several 42 mm thalers), and the older piece beats inventory order. */
     @Test
     fun `the size extremes break a tie by the older piece`() {
         val comparison = sizeComparison(
@@ -139,7 +119,6 @@ class FiguresTest {
         assertEquals(1_780, comparison?.largest?.item?.gregorianYear)
     }
 
-    /** One coin drawn against itself is not a comparison. */
     @Test
     fun `one measured coin is no size comparison`() {
         assertNull(
@@ -147,12 +126,7 @@ class FiguresTest {
         )
     }
 
-    /**
-     * The four figures nobody asked for, out of the ficha that was already in the APK.
-     *
-     * The denominator of the demonetized share is the **whole collection** and not the types Numista
-     * answered for: a percentage over a moving denominator is a figure nobody can check.
-     */
+    /** A share over only the types Numista answered for would have a moving denominator. */
     @Test
     fun `the margins count pieces over the whole collection, and silence is not a no`() {
         val margins = marginFigures(
@@ -181,21 +155,14 @@ class FiguresTest {
         assertEquals(MarginFigure(4, 5, "1960"), margins.commonestYear)
     }
 
-    /**
-     * The grade counts **pieces**, like every other figure of the page, and that is what inverts it.
-     *
-     * By row the collector's collection is 178 of 229 uncirculated or near — the «3 de cada 4» of #491
-     * — and by piece it is 227 of 572, because his seven Venezuelan bulks are 298 pieces graded `f`
-     * (`.local/padre`, measured 14 August 2026). The page counts pieces everywhere else, and two
-     * denominators on one page is a figure nobody can check.
-     */
+    /** By piece, like the rest of the page: worn bulks invert what the rows would say (#491). */
     @Test
     fun `the uncirculated figure counts pieces and holds both grades`() {
         val margins = marginFigures(
             listOf(
                 item(id = 1, typeId = 1).copy(grade = "unc"),
                 item(id = 2, typeId = 1).copy(grade = "AU"),
-                // A bulk of worn pieces is 102 pieces and not one row, which is the whole inversion.
+                // A worn bulk counts as 102 pieces, not one row.
                 item(id = 3, typeId = 1, quantity = 102).copy(grade = "f"),
                 // No grade is not «circulated»: it counts in the denominator and in nothing else.
                 item(id = 4, typeId = 1),
@@ -206,13 +173,7 @@ class FiguresTest {
         assertEquals(MarginFigure(2, 105), margins.uncirculated)
     }
 
-    /**
-     * A collection with nothing uncirculated says nothing, rather than saying it has none.
-     *
-     * The same silence as the fine ounces under the metal bar: the four figures at the margin that can
-     * come out empty are absent, and only the demonetized one — whose zero is a real reading of a real
-     * ficha — is written as 0 %.
-     */
+    /** Like every margin figure except the demonetized share, whose zero is a real reading. */
     @Test
     fun `no uncirculated piece is silence and not a zero`() {
         val margins = marginFigures(
@@ -223,13 +184,7 @@ class FiguresTest {
         assertNull(margins.uncirculated)
     }
 
-    /**
-     * The stack is the one figure the app gives extrapolated, and it says so with «unos».
-     *
-     * `thickness` is missing in a third of the types, so it is measured over the 449 of his 572 pieces
-     * that carry one and scaled to all of them: 73,8 cm measured becomes «unos 94 cm»
-     * (`docs/ux/cifras-316.md`).
-     */
+    /** The only extrapolated figure, so it says «unos»: many types lack `thickness` (#316). */
     @Test
     fun `the stack is measured over the pieces that have a thickness and scaled to all of them`() {
         val figures = collectionFigures(
@@ -252,18 +207,12 @@ class FiguresTest {
         assertEquals(50.0, figures.weight.value)
     }
 
-    /** Nothing measured extrapolates to nothing, and never to zero. */
     @Test
     fun `a magnitude nobody measured extrapolates to nothing`() {
         assertNull(Magnitude(value = 0.0, measuredPieces = 0, pieces = 12).extrapolated)
     }
 
-    /**
-     * The row and the area come off the diameter, and the spread is read in A4 sheets.
-     *
-     * 15,22 m in a row and 0,35 m² — 5,6 folios — over his collection, which is the figure that makes
-     * «extendidas» mean anything at all.
-     */
+    /** The spread is read in A4 sheets. */
     @Test
     fun `the row is diameters end to end and the area is circles`() {
         val figures = collectionFigures(
@@ -278,7 +227,7 @@ class FiguresTest {
         assertEquals(1, figures.types)
     }
 
-    /** The fine silver is the figure the spot multiplies, and it is not the weight. */
+    /** The spot multiplies the fine silver, not the weight. */
     @Test
     fun `the fine silver is counted apart from the weight`() {
         val figures = collectionFigures(
@@ -290,10 +239,7 @@ class FiguresTest {
         assertEquals(90.0, figures.fineSilver.value)
     }
 
-    /**
-     * The sewn edge and «La materia» share one census (#400): a hostile zero still counts as one
-     * piece, the same way the magnitudes do.
-     */
+    /** The sewn edge and «La materia» share one census (#400). */
     @Test
     fun `a coerced zero still counts as one piece in the figures census`() {
         val items = listOf(

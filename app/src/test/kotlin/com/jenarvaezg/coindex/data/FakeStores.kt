@@ -16,18 +16,13 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 
 /**
- * In-memory stand-ins for what needs a device: the preferences file, the shelf store and the two
- * passes (#220).
- *
- * There used to be one per store, and behind each sat a rule that is not about storage at all: when
- * a shelf is written, what a sync leaves behind, whether a pass of photographs is worth starting.
- * Three of those stores were a seam apiece over the same preferences file, so what stands in for
- * them now is [FakeNamedValues] and the stores themselves are the real ones (#546).
+ * The preferences file in memory (#220). The stores over it are the real ones (#546), so their
+ * rules are tested and only the storage is faked.
  */
 class FakeNamedValues(initial: Map<String, Stored> = emptyMap()) : NamedValues {
     private val stored = initial.toMutableMap()
 
-    /** Everything that is in the file, so a test can check the shape a value went in as. */
+    /** The stored entries, so a test can check the shape a value was written in. */
     val entries: Map<String, Stored> get() = stored.toMap()
 
     override fun read(key: String): Stored? = stored[key]
@@ -40,10 +35,8 @@ class FakeNamedValues(initial: Map<String, Stored> = emptyMap()) : NamedValues {
 }
 
 /**
- * The credential store with a key the JVM can make instead of the device's (#546).
- *
- * One key per store and read through a lambda, exactly as the app reads the keystore's: a fresh key
- * on every call would encrypt what it could no longer decrypt.
+ * The credential store with a JVM-made key instead of the device's (#546). One key per store, read
+ * through a lambda as the app reads the keystore's: a new key per call couldn't decrypt.
  */
 fun credentialsOnJvm(
     values: NamedValues = FakeNamedValues(),
@@ -59,10 +52,8 @@ class FakeShelfStore(
 ) : ShelfStore
 
 /**
- * A prefetch that fetches nothing and remembers being asked.
- *
- * [gate] is what makes a pass hold still: with it set, the pass waits there, which is the only way
- * to watch a sync take the network off one that is already running.
+ * A prefetch that fetches nothing and records each call. Setting [gate] holds a pass mid-run, so
+ * a test can watch a sync take the network from it.
  */
 class FakePhotoPrefetch(private val result: PhotoCacheStatus = PhotoCacheStatus()) : PhotoPrefetch {
     data class Pass(val images: List<TypeImages>, val held: PrefetchRefusal?)
@@ -89,10 +80,8 @@ class FakePhotoPrefetch(private val result: PhotoCacheStatus = PhotoCacheStatus(
 }
 
 /**
- * A valuation pass that asks nobody and remembers being asked.
- *
- * [gate] does what its sibling's does: with it set the pass holds still there, which is the only way to
- * watch a sync take the **budget** off one that is already running (ADR 0028 §6).
+ * A valuation pass that asks nobody and records each call. Setting [gate] holds a pass mid-run, so
+ * a test can watch a sync take the budget from it (ADR 0028 §6).
  */
 class FakeValuationPass(private val result: ValuationStatus = ValuationStatus()) : ValuationPass {
     data class Pass(val plan: ValuationPlan, val held: ValuationRefusal?)

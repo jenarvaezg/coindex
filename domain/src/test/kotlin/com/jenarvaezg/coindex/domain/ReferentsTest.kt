@@ -5,21 +5,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/**
- * The ladder of referents: **the comparison does not decorate the figure, it is the figure**.
- *
- * «6,95 kg» says nothing; «más que un gato y a 310 g de una bola de bolos» does
- * (`docs/ux/cifras-326.md`).
- */
+/** The ladder of everyday referents a figure is read against (`docs/ux/cifras-326.md`). */
 class ReferentsTest {
-    /**
-     * The scale is **ordinal and not metric**: five rungs equally spaced, the collection interpolated
-     * between its two neighbours.
-     *
-     * Logarithmic was tried first and piled three labels on top of the fourth, and that is also why the
-     * ladder carries no zoom — zooming an ordinal scale means nothing, and making it metric brings the
-     * overlaps back.
-     */
+    /** Ordinal on purpose: a log scale piled the labels up, and an ordinal one can't be zoomed. */
     @Test
     fun `the rungs are equally spaced whatever their amounts`() {
         // Brick 2 · cat 4,5 · bowling ball 7,26 · tyre 9,5 · labrador 30.
@@ -31,7 +19,6 @@ class ReferentsTest {
         assertEquals(0.875, Ladders.weight.place(19.75).fraction)
     }
 
-    /** The collection sits between the two rungs it is between, and says which they are. */
     @Test
     fun `the collection is placed between its two neighbours`() {
         val placement = Ladders.weight.place(6.95)
@@ -41,7 +28,7 @@ class ReferentsTest {
         assertTrue(placement.fraction > 0.25 && placement.fraction < 0.5)
     }
 
-    /** Under the first rung there is nothing passed yet, and the mark sits at the foot. */
+    /** The mark sits at the foot. */
     @Test
     fun `below the first rung nothing has been passed`() {
         val placement = Ladders.row.place(0.4)
@@ -51,12 +38,7 @@ class ReferentsTest {
         assertEquals(Referent.Bicycle, placement.nextUp?.referent)
     }
 
-    /**
-     * Over the last rung there is nothing left to reach, which is the day the list has to grow.
-     *
-     * «La escalera se queda corta por arriba»: the referents are a datum of the app and not of the
-     * collector, so the state that says so has to be legible from the outside.
-     */
+    /** The referents are app data, so this has to be visible: it means the list must grow. */
     @Test
     fun `over the last rung there is nothing left to reach`() {
         val placement = Ladders.stack.place(400.0)
@@ -66,7 +48,7 @@ class ReferentsTest {
         assertNull(placement.nextUp)
     }
 
-    /** Exactly on a rung is on it, and not a hair past it. */
+    /** Exactly on a rung counts as on it, not past it. */
     @Test
     fun `landing on a rung is landing on it`() {
         val placement = Ladders.row.place(12.0)
@@ -76,12 +58,7 @@ class ReferentsTest {
         assertEquals(Referent.Lorry, placement.nextUp?.referent)
     }
 
-    /**
-     * The three ladders, their units and their rungs, pinned.
-     *
-     * They are literals and the pinning is the point: nothing here is derived from the collection, so a
-     * rung edited by accident is a figure that silently means something else.
-     */
+    /** Literals, pinned: a rung edited by accident would silently change what a figure means. */
     @Test
     fun `the three ladders are the ones the prototype settled`() {
         assertEquals(listOf(LadderKind.Weight, LadderKind.Row, LadderKind.Stack), Ladders.all.map { it.kind })
@@ -103,7 +80,7 @@ class ReferentsTest {
         )
     }
 
-    /** Every referent of the enum is on exactly one ladder: an unused one is a drawing nobody sees. */
+    /** An unused referent is a drawing nobody sees. */
     @Test
     fun `every referent stands on one ladder and only one`() {
         val used = Ladders.all.flatMap { ladder -> ladder.rungs.map { it.referent } }

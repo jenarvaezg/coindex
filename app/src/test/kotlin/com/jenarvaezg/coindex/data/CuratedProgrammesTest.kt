@@ -10,17 +10,14 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Los programas conmemorativos que se publican (ADR 0022).
- *
- * Salieron del criterio del coleccionista al curar el #157: la lista principal es por
- * denominación y metal, y el programa es la lectura de al lado. Lo que fija este test es que la
- * lectura de al lado **no** se convierta en una tarjeta ni en un denominador de lámina.
+ * Los programas conmemorativos que se publican (ADR 0022): una lectura al lado de la lista por
+ * denominación y metal (#157), que nunca se convierte en tarjeta ni en denominador de lámina.
  */
 class CuratedProgrammesTest {
     private val programmes: List<CommemorativeProgramme> =
         SHIPPED_CURATION.programmes
 
-    /** The standings of one catalog, read the way the assembly builds them for all of them (#539). */
+    /** One catalog's standings, built the way the assembly builds them (#539). */
     private fun standingsOf(
         catalog: CollectionCatalog,
         programmes: List<CommemorativeProgramme>,
@@ -42,9 +39,8 @@ class CuratedProgrammesTest {
     }
 
     /**
-     * Las dos series de tres denominaciones que la INCM acuñó para una sola conmemoración, y que
-     * se venden como carteira de tres. Su tercera moneda —el 25 escudos— no está en ningún
-     * catálogo, que es exactamente por lo que el programa es un fichero y no un campo del miembro.
+     * La INCM vendía cada conmemoración en carteira de tres. El 25 escudos no está en ningún
+     * catálogo, y por eso el programa es un fichero y no un campo del miembro.
      */
     @Test
     fun `both portuguese programmes are three denominations of one commemoration`() {
@@ -63,8 +59,7 @@ class CuratedProgrammesTest {
         assertEquals(1983, fao.year)
         assertEquals(listOf(9_829, 9_830, 9_831), fao.members.map { it.numistaTypeId })
 
-        // El 25 escudos de cada programa no lo reclama ningún catálogo: nadie tiene uno, así que
-        // curar los diez 25 escudos de cuproníquel habría sido un fichero sin tarjeta ni lámina.
+        // Ningún catálogo reclama el 25 escudos: nadie tiene uno, y no tendría tarjeta ni lámina.
         val catalogued = SHIPPED_CURATION.catalogs
             .flatMap { catalog -> catalog.members.mapNotNull { it.numistaTypeId } }
             .toSet()
@@ -73,9 +68,8 @@ class CuratedProgrammesTest {
     }
 
     /**
-     * El conteo cruzado que pidió el coleccionista, medido sobre los ficheros que se publican: el
-     * 2,50 de 1977 está en su lista por denominación **y** en el programa de 1977, y el programa
-     * cuenta sobre tres aunque el catálogo sólo sostenga dos de ellas.
+     * El 2,50 de 1977 está en su lista por denominación y en su programa, y cada programa cuenta
+     * sobre sus tres monedas, no sobre las que sostiene el catálogo.
      */
     @Test
     fun `a cupronickel catalog carries its programme, counted over the whole programme`() {
@@ -94,13 +88,9 @@ class CuratedProgrammesTest {
     }
 
     /**
-     * El primer programa multinacional (#387): una casilla por país sobre las catorce monedas que
-     * la FNMT coordinó para la I Serie Iberoamericana, y la única de las catorce que un catálogo
-     * reclama es la portuguesa, que es justamente la que hace aparecer la lectura en pantalla.
-     *
-     * Lo que fija este test es la forma de la lista: catorce miembros y ningún país repetido, para
-     * que un desdoble de acabado —la proof portuguesa de .925, la leyenda vertical peruana— no se
-     * cuele como una casilla más y el denominador deje de contar países.
+     * El primer programa multinacional (#387). Ningún país se repite, para que un desdoble de
+     * acabado —la proof portuguesa de .925, la leyenda vertical peruana— no se cuele como casilla y
+     * el denominador siga contando países.
      */
     @Test
     fun `the ibero-american programme is one slot per country over fourteen`() {
@@ -124,8 +114,7 @@ class CuratedProgrammesTest {
         assertTrue(67_304 !in members)
         assertTrue(596_861 !in members)
 
-        // La lectura sale en la lámina de los 1000 escudos, que es el único catálogo que comparte
-        // un tipo con el programa: la casilla de 1992 del Encontro de Dois Mundos.
+        // Sólo la lámina de los 1000 escudos comparte un tipo con el programa: su casilla de 1992.
         val catalogs = SHIPPED_CURATION.catalogs
         val touched = catalogs.filter { catalog ->
             standingsOf(catalog, listOf(serie)).isNotEmpty()
@@ -134,12 +123,8 @@ class CuratedProgrammesTest {
     }
 
     /**
-     * Las trece series enteras (#387), que es lo que el coleccionista pidió después de la primera.
-     *
-     * Tres cosas fija este test, y las tres son la forma editorial que las notas declaran: una
-     * casilla por país en todas, la medalla de la FNMT donde la FNMT define así la colección, y
-     * ningún tipo repetido entre series —una moneda pertenece a una sola serie, y la reaparición de
-     * un tipo sería una casilla mal atribuida—.
+     * Las trece series (#387): una casilla por país, la medalla de la FNMT donde la FNMT define así
+     * la colección, y ningún tipo en dos series, porque sería una casilla mal atribuida.
      */
     @Test
     fun `the thirteen ibero-american series are one file each, with no type in two of them`() {

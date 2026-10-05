@@ -16,12 +16,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * What the completion stamp is, said as what is on screen and what reaches an exported sheet.
- *
- * The stamp is a **state and not an event** (ADR 0026 §3): there is nothing to remember, so there
- * is nothing here about «the first time». What is defended is the pair of rules that decide whether
- * ink falls at all — every issued member owned — and the export rule of §4, which is one line in
- * `OffScreenSheet` and this test: **the stamp travels to the PNG and the stamping does not**.
+ * The completion stamp is a state, not an event (ADR 0026 §3): ink falls only when every issued
+ * member is owned, and an exported sheet carries the stamp but not the stamping (§4).
  */
 @RunWith(AndroidJUnit4::class)
 class CompletionStampTest {
@@ -37,11 +33,11 @@ class CompletionStampTest {
         compose.waitForIdle()
 
         compose.onNodeWithContentDescription(COMPLETE_STAMP_WORD).assertIsDisplayed()
-        // And it adds not one figure: the ratio under the ink is the one the header already had.
+        // The ratio under the ink is the header's own; the stamp adds no figure.
         compose.onNodeWithText("22/22").assertIsDisplayed()
     }
 
-    /** Four of twenty-two enters with its eighteen ghosts and its bare ratio (#304). */
+    /** 4 of 22 shows its bare ratio and no ink (#304). */
     @Test
     fun aPlateThatIsMissingEightGetsNoInk() {
         compose.setContent {
@@ -53,10 +49,7 @@ class CompletionStampTest {
         compose.onNodeWithText("4/22").assertIsDisplayed()
     }
 
-    /**
-     * The sheet the father shows other people carries the stamp, because it is a state — unlike the
-     * gloss, which follows a sensor and stays in the app.
-     */
+    /** The stamp is a state, so it travels; the gloss follows a sensor and stays in the app. */
     @Test
     fun anExportedSheetCarriesTheStampWithTheInkAlreadyDry() {
         var stamping: Stamping? = Stamping.Default
@@ -70,12 +63,11 @@ class CompletionStampTest {
         }
         compose.waitForIdle()
 
-        // Nothing alive is provided, so no frame of the export can catch the ink in the air.
+        // No `Stamping` is provided, so the export never catches the ink mid-fall.
         assertNull(stamping)
         compose.onNodeWithContentDescription(COMPLETE_STAMP_WORD).assertExists()
     }
 
-    /** A sheet of a plate that is not complete comes out with no stamp on it at all. */
     @Test
     fun anExportedSheetOfAnIncompletePlateCarriesNoStamp() {
         compose.setContent {

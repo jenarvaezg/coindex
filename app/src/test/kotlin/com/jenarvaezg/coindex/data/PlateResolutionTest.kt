@@ -25,19 +25,10 @@ import kotlin.test.assertIs
 import kotlin.test.assertSame
 
 /**
- * What a plate demands of the inventory, now that it demands nothing of the collector (ADR 0021 §7).
- *
- * A plate used to have four conditions, and following was the only one of them that said nothing
- * about the world: the other three describe the inventory, that one said «tap here first». The field
- * report of #21 measured what it cost — two Lunar III catalogs curated, evidenced and photographed,
- * and both plates invisible until «seguir colección» was found. A newly curated catalog was born
- * `Disponible`, so **curating never lit a plate on its own**.
- *
- * The three surviving reasons had no test at all before this file: a grep of `resolvePlate` in both
- * `src/test` trees came back empty, which is exactly why the condition is pinned here as it changes.
+ * When a plate opens: only the inventory and the curation decide, not a gesture of the collector
+ * (ADR 0021 §7), so curating a catalog over pieces already owned lights its plate (#21).
  */
 class PlateResolutionTest {
-    /** El único catálogo curado que ve esta prueba: la lámina se resuelve contra la curación. */
     private val curation = Curation(listOf(SOUTHERN_CROSS))
 
     @Test
@@ -65,33 +56,20 @@ class PlateResolutionTest {
         assertEquals(PlateResult.Unavailable(PlateUnavailable.UnknownCatalog), result)
     }
 
-    /**
-     * With no pieces of the variant there is no card — and since ADR 0030 there **is** a plate.
-     *
-     * This is the clause §7 left open being answered: *«cutting the toll does not open the 51 catalogs
-     * to navigation … is not decided here»*. It is decided in ADR 0030 §1, and bounded — a curated
-     * catalog with no evidence and fewer than twenty measurable casillas is one of the twenty of
-     * «Explorar», and it opens **not as the collector's**: no ratio of theirs, no «Exportar», and a
-     * gesture that spends where the export was.
-     */
+    /** ADR 0030 §1: with no evidence and under twenty casillas, the plate opens from «Explorar». */
     @Test
     fun `a catalog you own nothing of opens as one of the shelf window, and not as yours`() {
         val result = resolvePlate(stateWithoutCards(SOUTHERN_CROSS), curation, SOUTHERN_CROSS.id)
 
         val available = assertIs<PlateResult.Available>(result)
         assertFalse(available.mine)
-        // Every casilla a hole, which is what «you own none of it» means on the sheet.
         assertEquals(0, available.album.ownedMembers())
         assertEquals(2, available.album.issuedMembers())
     }
 
     /**
-     * The cut is what keeps this from being «the 51 catalogs open to navigation» (ADR 0030 §1).
-     *
-     * A plate of twenty casillas the collector owns nothing of is not a shelf window: it is a
-     * catalogue nobody asked for, and it stays shut with the reason it always had. `NotACollection`
-     * rather than `NoEvidence` because there is no card either — the two refusals are ordered, and
-     * only the window is asked before them.
+     * The twenty-casilla cut of ADR 0030 §1. `NotACollection` and not `NoEvidence` because there is
+     * no card either: the window is checked first, then the two refusals in that order.
      */
     @Test
     fun `a catalog too big for the shelf window is still shut`() {
@@ -101,12 +79,8 @@ class PlateResolutionTest {
     }
 
     /**
-     * A card can exist without any official issue of its catalog: the piece is of the variant, but of
-     * no member the catalog names.
-     *
-     * The plate is then all holes, and since ADR 0030 that is a plate of the shelf window rather than a
-     * refusal — **and it is still not the collector's**, which is the half of this test that was always
-     * the point: a card of the index is not evidence, a matching member is.
+     * The piece is of the catalog's variant but of no member it names: a card of the index is not
+     * evidence, only a matching member is.
      */
     @Test
     fun `a card with no official issue of the catalog opens a plate that is not yours`() {
@@ -118,9 +92,8 @@ class PlateResolutionTest {
     }
 
     /**
-     * Owning the **design** of an announced member is not owning the member: `design_type_id` is
-     * the same design in another variant, and it is never consulted for matching (#31). A plate
-     * lit by it would draw a bullion slot from a proof coin that does not exist in bullion.
+     * `design_type_id` is the same design in another variant and never counts for matching (#31):
+     * otherwise a proof coin would fill a bullion casilla.
      */
     @Test
     fun `the design of an announced member is no evidence either`() {
@@ -131,30 +104,21 @@ class PlateResolutionTest {
 
         val result = resolvePlate(state, curation, SOUTHERN_CROSS.id)
 
-        // Not the collector's, which is the whole claim: a plate lit by a design would draw a bullion
-        // casilla from a proof coin that does not exist in bullion. What it is instead is one of the
-        // twenty, with every casilla empty (ADR 0030 §1).
+        // A shelf-window plate with every casilla empty (ADR 0030 §1).
         val available = assertIs<PlateResult.Available>(result)
         assertFalse(available.mine)
         assertEquals(0, available.album.ownedMembers())
     }
 
-    /**
-     * **La tarjeta y su lámina no son dos lecturas que coinciden: son el mismo álbum** (#537).
-     *
-     * El invariante del #218 estaba argumentado en prosa y garantizado por nadie: el índice construía
-     * un álbum para dividir su tarjeta y la resolución de la lámina construía un segundo contra su
-     * propio comentario. Aquí se afirman las dos mitades — el numerador y el denominador salen iguales,
-     * y salen iguales porque es el mismo objeto, así que no hay dos reglas que puedan separarse.
-     */
+    /** La tarjeta y su lámina dividen por el mismo objeto álbum (#537), no por dos cálculos. */
     @Test
     fun `the card's ratio and its plate's ratio come out of one album`() {
         val items = listOf(item(1, 2025))
         val assembled = curation.assemble(
             CollectionSnapshot(
                 items = items,
-                // La ficha en caché, que es lo que hace de la pieza una tarjeta y no un residuo sin
-                // clasificar: la clave la declara el catálogo que reclama el tipo (ADR 0016).
+                // La ficha en caché hace de la pieza una tarjeta y no residuo; la clave la declara
+                // el catálogo que reclama el tipo (ADR 0016).
                 typeMeta = mapOf(
                     TYPE_2025 to TypeMeta(
                         id = TYPE_2025,
@@ -179,14 +143,8 @@ class PlateResolutionTest {
     }
 
     /**
-     * **La lámina no resuelve sus programas: los lee** (#539).
-     *
-     * Una tarjeta impresa entra por aquí, y el cuaderno del padre imprime sesenta y siete: derivar
-     * trece programas contra el inventario entero una vez por tarjeta contestaba lo mismo las sesenta
-     * y siete veces, porque de lo único que depende una posición es de la instantánea — y la
-     * instantánea es lo que se ensambló. Lo que se afirma aquí es la mitad fuerte: es **el mismo
-     * objeto** que porta el ensamblaje, así que no hay dos lecturas que puedan separarse, igual que
-     * el álbum del #537.
+     * La lámina lee los programas que trae el ensamblaje en vez de derivarlos (#539): el cuaderno
+     * resuelve una lámina por tarjeta, y la respuesta sólo depende de la instantánea.
      */
     @Test
     fun `a plate reads the programme standings the assembly carried`() {
@@ -231,12 +189,7 @@ class PlateResolutionTest {
         assertEquals(listOf("Cruz del Sur"), available.programmes.map { it.programme.shortName })
     }
 
-    /**
-     * An assembly with no card at all, carrying the albums the curation would carry anyway (#537).
-     *
-     * The two are separate facts and this test file needs them apart: a catalog the collector owns
-     * nothing of has no derived collection, and its album is still the one the shelf window draws.
-     */
+    /** No cards, but the albums `Curation.assemble` would carry (#537). */
     private fun stateWithoutCards(catalog: CollectionCatalog) = CollectionState(
         AssembledCollection(albums = CatalogAlbums.over(listOf(catalog), emptyList())),
     )
@@ -246,8 +199,7 @@ class PlateResolutionTest {
         return CollectionState(
             AssembledCollection(
                 items = items,
-                // The albums the assembly carries (#537): the plate reads the one its card divided by,
-                // so a state fabricated by hand carries them exactly as `Curation.assemble` would.
+                // As `Curation.assemble` would: the plate reads its card's album (#537).
                 albums = CatalogAlbums.over(listOf(catalog), items),
                 derivedCollections = listOf(
                     DerivedCollection(
@@ -279,7 +231,7 @@ class PlateResolutionTest {
     private companion object {
         const val TYPE_2025 = 295_025
 
-        /** Twenty casillas, which is exactly the cut of the shelf window: a plate this long stays shut. */
+        /** Twenty casillas, the shelf-window cut: a plate this long stays shut. */
         val LONG_RUN = CollectionCatalog(
             schemaVersion = 2,
             id = "panda-plata-30g",
@@ -306,10 +258,7 @@ class PlateResolutionTest {
         /** El mismo diseño en otra variante: la casilla de 2027 lo cita, nadie casa con él. */
         const val DESIGN_TYPE_2027 = 999_001
 
-        /**
-         * Southern Cross de Niue: dos casillas emitidas y una anunciada, que es la forma que
-         * tienen los catálogos abiertos del padre.
-         */
+        /** Dos casillas emitidas y una anunciada: la forma de un catálogo abierto. */
         val SOUTHERN_CROSS = CollectionCatalog(
             schemaVersion = 2,
             id = "niue-southern-cross-1oz-bullion",

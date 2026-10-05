@@ -27,22 +27,17 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/**
- * What a page of pieces says about each one, which is the one place the emission label reaches paper.
- *
- * The star is the whole content of the line for the 100 pesetas of Franco: five rows that all say
- * 1966, all say Numista 1885, and differ only in the star Numista files as a variety of the issue.
- * Printing five identical footnotes is the failure #225 measured, and it happened because the label
- * was an optional parameter three drawers could forget — so what this pins is the drawn line and not
- * `emissionLabelFor`, which was right and green the whole time.
- */
-/** A day of June 2026, which is where a price brought by the quarter's pass sits by October (#561). */
+/** A day in June 2026: a price from the quarterly pass, read in October (#561). */
 private const val VALUED = 1_782_000_000_000L
 
+/**
+ * What a notebook section prints. Footnotes are pinned on the drawn cell, not on
+ * `emissionLabelFor` (#225): the label was an optional parameter a drawer could forget.
+ */
 class NotebookSectionsTest {
     private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
-    /** The five stars, plus a coin no curated catalog claims, in a box the collector typed. */
+    /** The five stars of the 100 pesetas 1966 (N#1885), told apart only by their emission. */
     private val stars = listOf(
         CollectedItem(id = 1, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 8_508),
         CollectedItem(id = 2, quantity = 1, typeId = 1_885, issueYear = 1966, issueId = 33_204),
@@ -89,12 +84,7 @@ class NotebookSectionsTest {
         )
     }
 
-    /**
-     * And a piece no issue run claims keeps the year, which is what tells its rows apart.
-     *
-     * The two cases live in one function on purpose: the label is not a second kind of line, it is
-     * the head of the same one, taken over where the year has nothing to say.
-     */
+    /** The emission label takes the year's place at the head of the same line. */
     @Test
     fun `a piece outside an issue run still leads with its year`() {
         val unclaimed = CollectedItem(id = 6, quantity = 2, typeId = 999_999, issueYear = 1994)
@@ -106,12 +96,8 @@ class NotebookSectionsTest {
     }
 
     /**
-     * The page counts what the screen and the shared sheet count.
-     *
-     * A card whose catalog the collector owns no issued member of yet arrives carrying the ratio
-     * (ADR 0021 §7) — the one collection with an issue list that lands on pieces instead of a plate
-     * — and the notebook has to print «0 de 12 · te faltan 12» like the other two. It is the third
-     * of the three surfaces #226 measured, and the only other one a JVM test can read.
+     * Same count as the screen (#226): a card with no issued member owned yet arrives with the
+     * ratio (ADR 0021 §7) and lands on a page of pieces instead of a plate.
      */
     @Test
     fun `a page of pieces counts the ratio the card arrived with`() {
@@ -152,12 +138,8 @@ class NotebookSectionsTest {
     }
 
     /**
-     * What nothing can name goes unsaid rather than printed blank.
-     *
-     * The promise was the shared sheet's until the PNG became a printed page (#431), and this is where
-     * it lives now (#543): the country is silent when the pieces disagree about it, and a box states
-     * no variant at all — it spans whatever the collector put in it. An empty row on a folio reads as
-     * something lost, and there is no app around the folio to say otherwise.
+     * No country when the pieces disagree and no variant for a box (#431, #543): a blank row on
+     * paper reads as something lost.
      */
     @Test
     fun `a page of pieces leaves unsaid what nothing can name`() {
@@ -215,10 +197,8 @@ class NotebookSectionsTest {
     }
 
     /**
-     * The stamp is a state of the plate (ADR 0026 §3 / §4), and the notebook page has to carry it
-     * the same way the PNG does (#371). The Progress row stays whole — a page of the cuaderno has
-     * no header figure to raise the ratio into (ADR 0026 §5) — so completeness travels as its own
-     * bit on the section, not by eating the specification.
+     * The stamp travels as its own bit, as on the PNG (#371, ADR 0026 §3, §4). The Progress row
+     * stays, since paper has no header to raise the ratio into (ADR 0026 §5).
      */
     @Test
     fun `a complete plate section says so and keeps the progress row`() {
@@ -229,7 +209,6 @@ class NotebookSectionsTest {
         assertEquals("Progreso" to "2 / 2 emisiones", section.facts.first())
     }
 
-    /** Missing one is the same plate with no ink: the stamp is read off the inventory, not remembered. */
     @Test
     fun `an incomplete plate section carries no stamp`() {
         val section = dateRunSection(ownedYears = listOf(1879))
@@ -239,7 +218,6 @@ class NotebookSectionsTest {
         assertEquals("Progreso" to "1 / 2 emisiones", section.facts.first())
     }
 
-    /** A page of pieces has no plate to be complete, so the rubber stamp never lands on it. */
     @Test
     fun `a pieces page never carries the completion stamp`() {
         val card = IndexCard.Box(
@@ -264,14 +242,7 @@ class NotebookSectionsTest {
     }
 
 
-    /**
-     * **With the money off, nothing derived from an amount reaches the page** (#228, ADR 0021 §13).
-     *
-     * The switch is answered once, by handing the printer nothing rather than by asking the options
-     * again further down, so a drawer that has no amount cannot print one. That is what makes
-     * «apagarlo no deja escapar ninguna cifra derivada de dinero» a property of the code and not a
-     * promise about it.
-     */
+    /** The printer is handed no amount at all, so no drawer can print one (#228, ADR 0021 §13). */
     @Test
     fun `with the money off no fact of the page carries an amount`() {
         val section = dateRunSection(listOf(1879), options = NotebookOptions(money = false))
@@ -280,7 +251,7 @@ class NotebookSectionsTest {
         assertTrue(section.facts.none { (_, value) -> "€" in value })
     }
 
-    /** With it on, the plate's own value joins its specification, because paper has no header. */
+    /** Paper has no header, so the plate's value joins its specification. */
     @Test
     fun `with the money on the plate prints what is in it`() {
         val section = dateRunSection(
@@ -293,16 +264,13 @@ class NotebookSectionsTest {
             listOf("Valor" to "54 € · al mayor de tres precios"),
             section.facts.filter { it.first == "Valor" },
         )
-        // A value no catalogue price feeds has no day to print, and the row is absent rather than blank.
+        // With no catalogue price there is no day to print: the row is absent, not blank.
         assertTrue(section.facts.none { it.first == "Tasación" })
     }
 
     /**
-     * And the day it was priced goes right under it, written out in full (#594).
-     *
-     * Paper has no «hoy»: a sheet is read whenever it is picked up, and a catalog price lives ninety
-     * days (ADR 0028 §5 as amended by #561). The screen's own figure is refreshed under the collector's
-     * nose; a page printed in October with prices from June outlives every chance to ask.
+     * Written out in full (#594): paper has no «hoy», and a catalog price lives ninety days
+     * (ADR 0028 §5, amended by #561).
      */
     @Test
     fun `the printed value says the day it was priced`() {
@@ -318,7 +286,6 @@ class NotebookSectionsTest {
         )
     }
 
-    /** With the money off there is no amount, so there is no date of one either. */
     @Test
     fun `with the money off the date of the valuation goes with the amount`() {
         val section = dateRunSection(listOf(1879), options = NotebookOptions(money = false))
@@ -327,20 +294,15 @@ class NotebookSectionsTest {
     }
 
     /**
-     * The mark travels to the paper, and it travels as the casilla's state (ADR 0026 §4, ADR 0029 §7).
-     *
-     * «Alive» in §4 is what follows the finger, the sensor or the navigation; a wish mark is a state at
-     * rest, like the rubber stamp of a complete plate, so it needs no exception written. It lands in the
-     * line a printed caption has always reserved and never used, so it costs no millimetre and moves no
-     * page count — and it is **not** behind the money switch, because what that one withholds is an
-     * amount.
+     * The mark is a state at rest, like the stamp (ADR 0026 §4, ADR 0029 §7). It uses the caption's
+     * reserved line, so it moves no page count, and the money switch leaves it: it is no amount.
      */
     @Test
     fun `a marked casilla prints its mark and an owned one prints nothing`() {
         val section = dateRunSection(ownedYears = listOf(1879), wishedYears = listOf(1886))
 
         assertEquals(listOf(null, "lo busco"), section.cells.map { it.state })
-        // With the money off the mark is still there: it is not a figure.
+        // With the money off, the mark stays.
         assertEquals(
             listOf(null, "lo busco"),
             dateRunSection(
@@ -349,15 +311,11 @@ class NotebookSectionsTest {
                 wishedYears = listOf(1886),
             ).cells.map { it.state },
         )
-        // And with nothing marked the page is the page it always was.
+        // Nothing marked, nothing printed.
         assertEquals(listOf(null, null), dateRunSection(ownedYears = listOf(1879)).cells.map { it.state })
     }
 
-    /**
-     * A two-year date run resolved the way `resolvePlate` resolves production plates: the card
-     * names the catalog, the state carries the evidence, and `notebookSections` is what reads
-     * completeness off the subject.
-     */
+    /** A two-year date run, resolved as `resolvePlate` resolves production plates. */
     private fun dateRunSection(
         ownedYears: List<Int>,
         options: NotebookOptions = NotebookOptions(),
@@ -406,7 +364,7 @@ class NotebookSectionsTest {
                 items = items,
                 index = listOf(card),
                 derivedCollections = listOf(card.collection),
-                // The album the assembly carries (#537), which is the one the plate draws.
+                // The plate draws the assembly's album (#537).
                 albums = CatalogAlbums.over(listOf(catalog), items),
                 evidencedCatalogIds = setOf(catalog.id),
                 itemsByKey = mapOf(key to items),

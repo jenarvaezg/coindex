@@ -6,14 +6,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Lo que la lámina imprime cuando el texto viene del fichero curado.
- *
- * Cuarenta de los setenta y cinco nombres llevan cifra y unidad, y las casillas de tres de las cuatro
- * láminas de un solo año también («750 escudos · 12,5 g»), así que la viuda del #511 no era un caso
- * raro: era la mayoría del corpus esperando a una caja estrecha.
+ * Lo que la lámina imprime cuando el texto viene del fichero curado: la cifra y su unidad no se
+ * separan al partir la línea (#511).
  */
 class CuratedTextTest {
-    /** El caso que abrió el ticket: la «g» de los fuertes abría línea sola. */
     @Test
     fun `una unidad no se queda sola al final de la linea`() {
         assertEquals(
@@ -33,17 +29,13 @@ class CuratedTextTest {
         assertEquals("½\u00A0oz", "½ oz".weldUnits())
     }
 
-    /**
-     * Una denominación no es una unidad: «5 euros» parte como cualquier pareja de palabras, porque un
-     * «euros» al principio de línea se lee como prosa y una «g» sola se lee como una errata.
-     */
+    /** Un «euros» a principio de línea se lee como prosa; una «g» sola, como una errata. */
     @Test
     fun `una denominacion sigue partiendo`() {
         assertEquals("5 euros · 18\u00A0g", "5 euros · 18 g".weldUnits())
         assertEquals("100 pesetas de Franco", "100 pesetas de Franco".weldUnits())
     }
 
-    /** Nada más cambia: es cómo se imprime el texto, no lo que dice. */
     @Test
     fun `el resto del nombre llega intacto`() {
         val name = "Silver Britannia 1 oz .999 · Reino Unido · bullion anual desde 2013"

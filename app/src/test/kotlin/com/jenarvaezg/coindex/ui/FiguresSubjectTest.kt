@@ -32,29 +32,21 @@ import kotlin.test.assertTrue
 private val SPOT = SilverSpot(eurPerTroyOunce = 55.23, readAtMillis = 1_754_600_000_000)
 
 /**
- * The page assembled from what the phone holds, and above all **when the money is not there**.
- *
- * A total at 60 % is not incomplete, it is false: without the market, `max(silver, paid)` gives 10.500 €
- * of the real 16.800, which is literally the «only the silver floor» #316 rejected (ADR 0028 §7).
+ * «Las cifras» assembled from what the phone holds, above all while the money is missing: a total
+ * without the market is the silver floor #316 rejected (ADR 0028 §7).
  */
 class FiguresSubjectTest {
-    /** While the pass has not finished, there is no money section at all. Not a zero, not a strikethrough. */
     @Test
     fun `the money is absent while the market is still arriving`() {
         val subject = figuresSubject(state(), BOOK, settled = false)
 
         assertNull(subject.money)
-        // And everything else is there: the page opens whole out of the APK.
+        // Everything else is there: the page opens from the APK alone.
         assertEquals(3, subject.figures.pieces)
         assertEquals(3, subject.ladders.size)
     }
 
-    /**
-     * Absent is not the same as unexplained: the slot says the market has not landed (#519).
-     *
-     * And it says it **instead of** the section and never beside it, which is the one thing that
-     * would reintroduce the half-done total ADR 0028 §7 forbids.
-     */
+    /** Said instead of the section, never beside it: that would be a half-done total (#519). */
     @Test
     fun `waiting, the money's slot says the market has not landed`() {
         val subject = figuresSubject(state(), BOOK, settled = false, waiting = true)
@@ -63,13 +55,11 @@ class FiguresSubjectTest {
         assertTrue(subject.moneyWaiting)
     }
 
-    /** The two reasons that fix themselves are not said: a line that comes and goes is furniture. */
     @Test
     fun `a pass that is about to finish on its own says nothing`() {
         assertFalse(figuresSubject(state(), BOOK, settled = false).moneyWaiting)
     }
 
-    /** With the market landed there is a section, so there is nothing to explain. */
     @Test
     fun `with the market landed nothing is said about waiting`() {
         val subject = figuresSubject(state(), BOOK, settled = true, waiting = true)
@@ -78,12 +68,7 @@ class FiguresSubjectTest {
         assertFalse(subject.moneyWaiting)
     }
 
-    /**
-     * The export waits for nothing: it was asked for a page without money (#228, ADR 0021 §13).
-     *
-     * Without this clause the printed page would carry a sentence about the network on a sheet the
-     * collector asked to have no money on at all.
-     */
+    /** An export without money waits for nothing (#228, ADR 0021 §13). */
     @Test
     fun `the export with the money off does not say the market is missing`() {
         val off = figuresSubject(
@@ -93,13 +78,12 @@ class FiguresSubjectTest {
         assertFalse(off.moneyWaiting)
     }
 
-    /** With no spot there is no money either: the silver floor is what the spot buys. */
+    /** The silver floor needs the spot. */
     @Test
     fun `with no spot on the phone there is no money section`() {
         assertNull(figuresSubject(state(), BOOK.copy(spot = null), settled = true).money)
     }
 
-    /** Settled, the amount arrives with the day its silver was read. */
     @Test
     fun `settled, the money says its total and the day of its silver`() {
         val subject = figuresSubject(state(), BOOK, settled = true)
@@ -109,13 +93,7 @@ class FiguresSubjectTest {
         assertTrue(subject.money?.value?.covered == true)
     }
 
-    /**
-     * The export's money switch withdraws the amount **and every figure derived from one**.
-     *
-     * This is the trap the prototype fell into: «Venezuela · 30 % del valor» is money as much as a total is,
-     * and it went out with the money switched off. With it off the portrait keeps its pieces, its mass and
-     * its silver, and drops its share of the value.
-     */
+    /** The portrait's value share is money too; its other shares stay. */
     @Test
     fun `money off takes the amount and every figure derived from one`() {
         val off = figuresSubject(state(), BOOK, settled = true, moneyAllowed = false)
@@ -129,13 +107,7 @@ class FiguresSubjectTest {
         assertTrue((on.portrait?.valueShare ?: 0.0) > 0.0)
     }
 
-    /**
-     * What was paid rides **inside** the money, which is what stops it leaking with the switch off.
-     *
-     * Two amounts in euros are money as much as the total is, and the export's switch withdraws every
-     * figure derived from one. Hanging the comparison off `MoneyReading` rather than off the subject
-     * means there is no branch that could forget it.
-     */
+    /** Hung off `MoneyReading`, so no branch can leak it with the money switched off. */
     @Test
     fun `what was paid arrives with the money and cannot leave without it`() {
         val bought = state(items = listOf(item(id = 1, typeId = 2, grade = "unc", price = 30.0)))
@@ -148,18 +120,11 @@ class FiguresSubjectTest {
         assertNull(figuresSubject(bought, BOOK, settled = true, moneyAllowed = false).money)
     }
 
-    /** A collection that declares no price says nothing about what it cost. */
     @Test
     fun `nothing declared leaves the comparison unsaid`() {
         assertNull(figuresSubject(state(), BOOK, settled = true).money?.paid)
     }
 
-    /**
-     * The portrait is the country with the most pieces, with its share of the four things.
-     *
-     * «Venezuela es el 62 % de sus piezas, el 33 % de su peso y el 33 % de su plata»: the three together say
-     * what none of them says alone — that they are a lot of small coins.
-     */
     @Test
     fun `the portrait is the country with the most pieces`() {
         val portrait = figuresSubject(state(), BOOK, settled = true).portrait
@@ -167,11 +132,10 @@ class FiguresSubjectTest {
         assertEquals("Venezuela", portrait?.country)
         assertEquals(2, portrait?.pieces)
         assertEquals(2.0 / 3.0, portrait?.pieceShare)
-        // Two coins of 5 g against one of 25 g: a third of the mass, two thirds of the pieces.
+        // Two coins of 5 g against one of 25 g: two sevenths of the mass, two thirds of the pieces.
         assertEquals(10.0 / 35.0, portrait?.massShare)
     }
 
-    /** An empty collection has no portrait rather than a country called nothing. */
     @Test
     fun `an empty collection has no portrait`() {
         val subject = figuresSubject(CollectionState(), BOOK, settled = true)
@@ -181,12 +145,7 @@ class FiguresSubjectTest {
         assertNull(subject.figures.size)
     }
 
-    /**
-     * The three ladders, in their own units, with the stack extrapolated and declared.
-     *
-     * The weight is read in kilos and accumulated in grams, and the stack is the only one that carries
-     * «unos» — `thickness` is missing in a third of the types.
-     */
+    /** Weight is read in kilos; the stack is extrapolated because many types lack `thickness`. */
     @Test
     fun `the ladders read in their own units and only the stack is approximate`() {
         val subject = figuresSubject(state(), BOOK, settled = true)
@@ -202,11 +161,7 @@ class FiguresSubjectTest {
         assertEquals(Referent.Brick, subject.ladders.first().placement.nextUp?.referent)
     }
 
-    /**
-     * The value of one coin, with the origin said, and the pieces it covers.
-     *
-     * A number with no provenance in an app with two users is a number nobody can check (#316).
-     */
+    /** A number with no provenance can't be checked (#316). */
     @Test
     fun `a coin is worth what its pieces are worth, with the origin said`() {
         val value = coinValue(2, state(), BOOK)
@@ -217,7 +172,6 @@ class FiguresSubjectTest {
         assertEquals("unc", value?.grade)
     }
 
-    /** Two pieces of one type that disagree about their origin are given no origin at all. */
     @Test
     fun `two pieces with different origins leave the origin unsaid`() {
         val disagreeing = state(
@@ -233,18 +187,12 @@ class FiguresSubjectTest {
         assertNull(value?.source)
     }
 
-    /** A coin no source covers is worth nothing that can be said, and prints nothing. */
     @Test
     fun `a coin no source covers has no value`() {
         assertNull(coinValue(3, state(), PriceBook()))
     }
 
-    /**
-     * A plate is worth what is **in its casillas**, and not what every coin of those types is worth.
-     *
-     * A type that fills one casilla and sits loose in three more rows is one casilla here: the plate's
-     * value is the plate's, which is what keeps it a shopping companion rather than a portfolio.
-     */
+    /** The plate's value, not a portfolio's: a type loose elsewhere counts only in its casilla. */
     @Test
     fun `a plate is worth what fills its casillas and nothing else`() {
         val album = CollectionCatalogAlbum(
@@ -266,19 +214,14 @@ class FiguresSubjectTest {
         assertEquals(80.0, value?.eur)
     }
 
-    /** A plate with nothing in it has no value, rather than a value of zero. */
     @Test
     fun `an empty plate is worth nothing that can be printed`() {
         assertNull(plateValue(CollectionCatalogAlbum(emptyList()), state(), BOOK))
     }
 
     /**
-     * The cost of closing is the price of the holes that **can** be priced, and the plate still says a
-     * figure with the rest (#493).
-     *
-     * A hole whose curated file does not declare its issue and whose type no stored listing answered
-     * for has nothing to address a price to. It adds nothing and is not counted — the alternative was
-     * saying nothing at all about a plate one of whose three holes is unknown.
+     * A hole with neither a declared issue nor a stored listing can't be priced; it is left out
+     * rather than silencing the whole figure (#493).
      */
     @Test
     fun `the cost of closing prices the holes it can and leaves the rest out`() {
@@ -286,7 +229,7 @@ class FiguresSubjectTest {
             albumWith(
                 listOf(
                     hole(id = "b", year = 1_961),
-                    // Type 3 has neither a price nor a weight: no catalogue price and no silver floor.
+                    // Type 3 has neither price nor weight: no catalogue price, no silver floor.
                     hole(id = "c", year = 1_962, typeId = 3, issueIds = emptyList()),
                 ),
             ),
@@ -297,16 +240,11 @@ class FiguresSubjectTest {
         assertEquals(80.0, money.value?.eur)
         assertEquals(40.0, money.cost?.eur)
         assertEquals(1, money.cost?.holes)
-        // And only the hole that has a price carries a stamp: nothing is invented, and no «—».
+        // Only the priced hole carries a stamp, and the other gets no «—».
         assertEquals(mapOf("b" to 40.0), money.holeCosts)
     }
 
-    /**
-     * A hole whose issue only the **stored listing** knows is priced like any other (#452).
-     *
-     * This is 111 of the father's 121 holes: without the listing reaching the screen, the cost of
-     * closing would exist for the ten whose curated file names their issues and for nothing else.
-     */
+    /** Few curated files name their issues; the stored listing addresses the rest (#452). */
     @Test
     fun `a hole the listing addresses is priced as well as one the file declares`() {
         val listings = IssueListings.held(
@@ -326,7 +264,6 @@ class FiguresSubjectTest {
         assertEquals(mapOf("b" to 40.0), money.holeCosts)
     }
 
-    /** A closed plate has no cost and no stamps: without a hole there is no zero to word either. */
     @Test
     fun `a complete plate has no cost of closing and no stamps`() {
         val money = plateMoney(albumWith(emptyList()), state(), BOOK)
@@ -337,12 +274,8 @@ class FiguresSubjectTest {
     }
 
     /**
-     * Each figure of a plate's header is dated by the **oldest** read behind **it** (#494, #594).
-     *
-     * Two figures and not one date: «Valor actual» is made of the reads of the pieces inside and «Coste
-     * de cerrar» of the reads of the holes outside, and the pass is not the only writer of either — a
-     * marked casilla is repriced the day it is marked (ADR 0029 §4). One date over the two would have to
-     * lie about one of them.
+     * The two figures are made of different reads, and a marked casilla is repriced when marked
+     * (ADR 0029 §4), so one date could not cover both (#494, #594).
      */
     @Test
     fun `each figure of a plate is dated by the oldest read behind it`() {
@@ -357,12 +290,12 @@ class FiguresSubjectTest {
             book,
         )
 
-        // The filled casilla is type 2 issue 7, read in June; the hole is type 3 issue 9, read in August.
+        // The filled casilla is type 2 issue 7, read in June; the hole, type 3 issue 9, in August.
         assertEquals(JUNE, money.value?.catalogReadAt)
         assertEquals(AUGUST, money.cost?.catalogReadAt)
     }
 
-    /** With two reads under one figure, the older of them dates it: a date is a promise about all of it. */
+    /** A date is a promise about the whole figure. */
     @Test
     fun `a cost of closing made of two reads says the older one`() {
         val book = BOOK.copy(
@@ -386,10 +319,7 @@ class FiguresSubjectTest {
     }
 
     /**
-     * A plate nobody asked the catalogue about carries no date, and that is an absence and not a zero.
-     *
-     * Its amount is metal and what was paid, two sources with no reading of Numista behind them: a date
-     * there would be the spot's, which says today for ever and is exactly the stamp #594 came from.
+     * Metal and paid prices have no Numista read; the spot's date would always say today (#594).
      */
     @Test
     fun `a plate no catalogue price feeds says no date at all`() {
@@ -401,12 +331,7 @@ class FiguresSubjectTest {
         assertNull(money.cost?.catalogReadAt)
     }
 
-    /**
-     * The total of «Las cifras» carries the same date by the same rule, which is the one #561 leaned on.
-     *
-     * The life of a catalog price was tripled on the promise that the date travels with the amount, and
-     * it did not: the only date under this total was the spot's, read daily and therefore always today.
-     */
+    /** The plate's rule, which #561 relied on when it lengthened a catalogue price's life. */
     @Test
     fun `the total of the page carries the oldest read of its catalogue prices`() {
         val subject = figuresSubject(state(), BOOK.copy(readAt = mapOf((2 to 7) to JUNE)), settled = true)
@@ -416,12 +341,8 @@ class FiguresSubjectTest {
     }
 
     /**
-     * Over the threshold of ADR 0028 §1 there is no cost and no stamp, and **the threshold is read
-     * from one place**.
-     *
-     * The pass never asked for those prices, so a header that counted its own ten would print a cost
-     * of closing out of prices nobody has. The bound is `holesAreWithinReach` and it is asked here
-     * rather than repeated: the #497 lowers it, and a duplicated ten would survive that edit.
+     * The pass never prices holes beyond the ADR 0028 §1 threshold. The bound is asked of
+     * `holesAreWithinReach` rather than repeated, so changing it cannot leave a stale copy here.
      */
     @Test
     fun `over the threshold a plate has no second figure, and the bound is not duplicated`() {
@@ -435,14 +356,13 @@ class FiguresSubjectTest {
         assertEquals(HOLE_THRESHOLD_SLOTS, counted.holeCosts.size)
         assertNull(over.cost)
         assertEquals(emptyMap(), over.holeCosts)
-        // The same clause, said once and asked twice.
         assertTrue(holesAreWithinReach(HOLE_THRESHOLD_SLOTS))
         assertFalse(holesAreWithinReach(HOLE_THRESHOLD_SLOTS + 1))
         assertFalse(holesAreWithinReach(0))
     }
 }
 
-/** An album of one filled casilla and the holes a test wants, which is the shape of every plate here. */
+/** One filled casilla plus the holes a test wants. */
 private fun albumWith(holes: List<CollectionCatalogMember>) = CollectionCatalogAlbum(
     members = listOf(
         CollectionCatalogAlbumMember(
@@ -457,7 +377,7 @@ private fun albumWith(holes: List<CollectionCatalogMember>) = CollectionCatalogA
     ) + holes.map { CollectionCatalogAlbumMember(it, CollectionCatalogMemberStatus.Missing) },
 )
 
-/** One empty casilla, of the type the fixture prices unless a test asks for another. */
+/** One empty casilla, of the priced type unless a test asks for another. */
 private fun hole(
     id: String,
     year: Int,
@@ -471,7 +391,7 @@ private fun hole(
     numistaIssueIds = issueIds,
 )
 
-/** Two days of the same quarter, which is the spread #561 made possible (ADR 0028 §5). */
+/** Two reads within one catalogue price's ninety-day life (ADR 0028 §5, #561). */
 private const val JUNE = 1_780_000_000_000
 private const val AUGUST = 1_786_000_000_000
 
@@ -498,8 +418,8 @@ private fun item(
 )
 
 /**
- * One Spanish coin of 25 g and two Venezuelan ones of 5 g, which is the smallest inventory that has a
- * dominant country, a priced issue and a type with no thickness.
+ * One Spanish coin of 25 g and two Venezuelan ones of 5 g: the smallest inventory with a dominant
+ * country, a priced issue and a type with no thickness.
  */
 private fun state(
     items: List<CollectedItem> = listOf(

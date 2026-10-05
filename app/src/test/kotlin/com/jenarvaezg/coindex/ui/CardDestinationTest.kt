@@ -12,11 +12,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Where a card of the index goes when it is tapped — one card, one destination (ADR 0021 §9).
- *
- * The destination is chosen by a **capability** and not by a declared species: whether there is a
- * plate to open. That is the same bit that already decides the third line of the card, which is why
- * the collector never sees a seam between a curated collection and a box.
+ * Where an index card goes when tapped (ADR 0021 §9), chosen by whether it has a plate to open
+ * rather than by its species: the same bit that decides the card's third line.
  */
 class CardDestinationTest {
     private val paquillos = DerivedCollection(
@@ -54,11 +51,7 @@ class CardDestinationTest {
         )
     }
 
-    /**
-     * A catalog the collector owns no official type of yet has no plate to open — `plateCatalogId`
-     * is null exactly when `resolvePlate` would refuse — so the card goes to its pieces rather than
-     * to a screen that would only explain why it is empty.
-     */
+    /** `plateCatalogId` is null exactly when `resolvePlate` would refuse. */
     @Test
     fun `a catalog with no evidence yet is not a plate destination`() {
         assertEquals(

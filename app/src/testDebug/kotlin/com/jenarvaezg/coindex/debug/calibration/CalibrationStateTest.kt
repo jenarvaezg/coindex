@@ -33,8 +33,7 @@ class CalibrationStateTest {
 
     @Test
     fun `the tone tab opens exactly where production paints`() {
-        // The bench used to open at the tones the app had before #349 calibrated them, so what it
-        // showed was never what shipped. #357 was measured on the shipped drawing, not the bench's.
+        // #357: the bench once opened at the pre-#349 tones, so it never showed what shipped.
         assertEquals(AlbumToneConfig.Default, CalibrationState().albumToneConfig())
     }
 

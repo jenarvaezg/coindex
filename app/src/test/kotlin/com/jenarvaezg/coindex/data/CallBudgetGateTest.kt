@@ -43,13 +43,8 @@ class CallBudgetGateTest {
     }
 
     /**
-     * The shape of August 2026, and the reason the reserve exists (#605).
-     *
-     * On the 11th the father's phone spent 1.484 consultas in one day against the same plan (#560),
-     * hit the cap, and from then until the 1st the gate refused **everything** — including the two
-     * that would have told him what he owned. His inventory stayed frozen from 10 August. That bug is
-     * fixed; the coupling that let a bug in the expensive thing freeze the cheap thing is what this
-     * pins.
+     * Why the reserve exists (#605): in August 2026 a runaway pass emptied the month (#560), and
+     * the gate then refused the inventory's consultas too, freezing it until the 1st.
      */
     @Test
     fun `a month the pass has emptied still has the inventory's consultas in it`() = runTest {
@@ -73,7 +68,6 @@ class CallBudgetGateTest {
         )
     }
 
-    /** And the reserve is a floor and not a second month: the pass keeps 1.200 of the 1.500. */
     @Test
     fun `the pass spends everything up to the reserve`() = runTest {
         val dao = FakeApiCallDao()

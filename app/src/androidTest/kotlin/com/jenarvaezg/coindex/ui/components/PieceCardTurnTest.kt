@@ -22,11 +22,9 @@ private val OBVERSE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg",
 private val REVERSE = CoinPhoto(thumbnail = "https://example.invalid/b-180.jpg", picture = null)
 
 /**
- * A piece of a collection is the same coin as one in a casilla, so it turns over the same way (#423).
- *
- * The photographs never arrive — the URLs are unreachable on purpose — because this is not about the
- * picture: what is pinned is that the card offers **the turn** where it used to print «Anverso» and
- * «Reverso» under a pair of flat squares.
+ * A piece of a collection turns over like a coin in a casilla (#423), instead of printing
+ * «Anverso» and «Reverso» under two flat squares. The URLs are unreachable on purpose: the picture
+ * is beside the point.
  */
 @RunWith(AndroidJUnit4::class)
 class PieceCardTurnTest {
@@ -70,7 +68,7 @@ class PieceCardTurnTest {
         assertTrue(clickLabels().toString(), TURN_THE_COIN_OVER in clickLabels())
     }
 
-    /** The captions went with the pair: a coin in a hole is not labelled, on paper or on screen. */
+    /** A coin in a hole carries no face captions, on paper or on screen. */
     @Test
     fun aPieceNoLongerPrintsTheNamesOfItsFaces() {
         card(TypeImages(obverse = OBVERSE, reverse = REVERSE))
@@ -79,7 +77,7 @@ class PieceCardTurnTest {
         compose.onAllNodesWithText("Reverso").assertCountEquals(0)
     }
 
-    /** One photographed face is a coin with no back, and a hole that swings onto nothing is worse. */
+    /** With one photographed face there is nothing to turn onto. */
     @Test
     fun aPieceWithOnlyOneFaceOffersNoTurn() {
         card(TypeImages(reverse = REVERSE))

@@ -17,18 +17,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * The seeded cache is what lets a plate draw the designs the collector is **missing**: nobody
- * syncs a coin they do not own, so a type absent from the seed stays blank on a fresh install
- * until someone spends their own budget on it.
- *
- * That makes the seed a silent dependency of every curated file, and curating a new catalog
- * without extending it is the easy mistake — it cost three blank cards on the 500 escudos and
- * another sixteen on the 1000 escudos and Lunar III. This test is the check that was missing.
+ * The seeded cache is how a plate draws the designs the collector is missing: nobody syncs a coin
+ * they don't own, so a curated type absent from the seed stays blank on a fresh install. Curating a
+ * catalog without extending the seed is the easy mistake this class catches.
  */
 class TypeCacheSeedTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    /** The `versionCode` of the APK under test; any number does, as long as a bump is a bump. */
+    /** The APK's `versionCode`: any value works, only a bump matters. */
     private val version = 78
 
     private fun seed(
@@ -37,13 +33,7 @@ class TypeCacheSeedTest {
         versionCode: Int = version,
     ) = TypeCacheSeed(dao, values, versionCode) { TypeCacheFile.read() }
 
-    /**
-     * The snapshot used to be a **first-install** gift: it was only written into an empty cache,
-     * so every catalog curated afterwards shipped its fichas in the asset and none of them ever
-     * reached a phone that already had the app. A cached type is never re-fetched either, so the
-     * missing fichas had no second route in and their cells stayed silhouettes for good — most
-     * of the plate reported with 7 pictures out of 19 (issue #67).
-     */
+    /** A cached type is never re-fetched: new curated fichas only arrive with the seed (#67). */
     @Test
     fun `a cache from an older release is topped up with the types curated since`() = runTest {
         val dao = FakeTypeMetaDao()
@@ -62,11 +52,8 @@ class TypeCacheSeedTest {
     }
 
     /**
-     * The second launch of the same APK reads two cheap things and returns.
-     *
-     * The snapshot is 2,4 MB of JSON and it is parsed on the starts that have something to do. With
-     * every curated type cached **and** this version's snapshot already written down, there is
-     * nothing: the `cachedTypeIds` column and one integer out of a preferences file settle it.
+     * The snapshot is megabytes of JSON: a repeat launch of the same APK settles on the
+     * `cachedTypeIds` column and one stored integer.
      */
     @Test
     fun `a cache that already has every curated type is left alone and never parses the asset`() =
@@ -82,13 +69,7 @@ class TypeCacheSeedTest {
             assertEquals(before, dao.rows.value)
         }
 
-    /**
-     * A new APK writes its snapshot over the ficha that was there, which is the whole of #606.
-     *
-     * Until this, a corrected ficha had no route to the two phones that exist: the curator re-seeds
-     * it, the asset travels in the APK, and `insertIfAbsent` ignored the conflict. The nine Peruvian
-     * fichas of #603 would have needed nine gestures on a card nobody had reason to press.
-     */
+    /** How a ficha corrected in the seed reaches phones that already cached it (#606). */
     @Test
     fun `a new version writes its snapshot over the ficha that was cached`() = runTest {
         val dao = FakeTypeMetaDao()
@@ -106,11 +87,8 @@ class TypeCacheSeedTest {
     }
 
     /**
-     * And a ficha the collector refreshed **after** the update stays his until the next one.
-     *
-     * The gesture of ADR 0025 is one type, one consulta, over a card where he has already seen the
-     * error; a seed that undid it on the next launch would make it pointless. The version is what
-     * protects it: this snapshot has been applied here, and it is not applied twice.
+     * The applied version is recorded, so relaunching the same APK doesn't undo the refresh gesture
+     * of ADR 0025.
      */
     @Test
     fun `a ficha refreshed after the update survives until the next one`() = runTest {
@@ -125,7 +103,6 @@ class TypeCacheSeedTest {
         assertEquals(refreshed, dao.rows.value.first { it.typeId == refreshed.typeId })
     }
 
-    /** A first install has nothing to overwrite, and says so rather than claiming 1.089 writes. */
     @Test
     fun `the first install only adds`() = runTest {
         val report = seed(FakeTypeMetaDao()).topUp(curatedTypeIds.toSet())
@@ -158,14 +135,9 @@ class TypeCacheSeedTest {
             .mapValues { (_, element) -> element.jsonObject }
 
     /**
-     * Every type id the curated files name: catalogs, groupings and commemorative programmes.
-     *
-     * An announced member names none. Its `design_type_id` is not one either: that is the same
-     * design in **another** variant, so seeding it here would fill the cell with a coin the
-     * catalog does not claim.
-     *
-     * A programme's members count even where no catalog claims them (ADR 0022): the 25 escudos of
-     * 1977 and 1983 are in no catalog and are exactly the coins «1 de 3» says are missing.
+     * Every type id the curated files name: catalogs, groupings and commemorative programmes, the
+     * latter even where no catalog claims them (ADR 0022). An announced member's `design_type_id`
+     * is left out: it is another variant, and seeding it would fill the cell with the wrong coin.
      */
     private val curatedTypeIds: List<Int> =
         SHIPPED_CURATION.catalogs
@@ -181,8 +153,8 @@ class TypeCacheSeedTest {
     }
 
     /**
-     * `TypeCacheSeed` drops a row it cannot decode without saying so, and a row with no picture
-     * seeds a card as empty as no row at all — both fail exactly like the hole above.
+     * `TypeCacheSeed` silently drops a row it cannot decode, and a row with no picture leaves the
+     * card as blank as a missing row.
      */
     @Test
     fun `every seeded type decodes into a card with two faces`() {
@@ -204,18 +176,10 @@ class TypeCacheSeedTest {
     }
 
     /**
-     * El vocabulario del chapado, fijado contra las fichas que de verdad se publican (#573).
-     *
-     * `inferFinish` lee el dorado de `composition.text` porque es el único campo que separa las
-     * quince libras redondas doradas de las treinta y dos que no lo son —los títulos dicen «Silver
-     * Proof» en las cuarenta y siete—, y una regla de agujas literales se pudre en silencio si
-     * Numista cambia la redacción: se convertiría en un no-op y nadie se enteraría, que es la misma
-     * lección que obligó a fijar aparte el vocabulario de `objectClassDeviations`.
-     *
-     * Así que la premisa se mide aquí: de las 1.089 fichas sembradas, cuatro nombran el oro en la
-     * composición y cada una cae del lado que le toca. Un quinto tipo con oro que llegue con la
-     * próxima siembra pone esto en rojo, y eso es lo que se quiere — que alguien mire si es una
-     * moneda de oro o una dorada.
+     * `inferFinish` lee el dorado de `composition.text`, el único campo que separa una libra dorada
+     * de otra que no lo es (#573), y una regla de cadenas literales deja de funcionar en silencio
+     * si Numista cambia la redacción. Un tipo nuevo con oro en la siembra pone esto en rojo: hay
+     * que mirar si es una moneda de oro o una dorada.
      */
     @Test
     fun `every seeded composition that names gold is read as the alloy or the coating it is`() {
@@ -240,9 +204,9 @@ class TypeCacheSeedTest {
             listOf(
                 // La onza de koala con el detalle resaltado en oro de 24 quilates.
                 42_672 to Finish.Gilded,
-                // El Bitcoin de 2025 chapado, cuya casilla ya decía en prosa que el título calla.
+                // El Bitcoin de 2025 chapado, aunque el título no lo diga.
                 440_309 to Finish.Gilded,
-                // Y las dos que están **hechas** de oro, que no son un acabado de nadie.
+                // Las dos acuñadas en oro: la aleación no es un acabado.
                 304_649 to null,
                 448_512 to null,
             ).sortedBy { it.first },

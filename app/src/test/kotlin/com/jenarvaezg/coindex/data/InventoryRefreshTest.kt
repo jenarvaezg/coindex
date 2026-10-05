@@ -17,17 +17,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 
-/** 7 de agosto de 2026, 10:31 en Madrid, y un día justo después. */
+/** 8 de agosto de 2026, 08:31 en Madrid. */
 private const val NOW = 1_786_170_660_000L
 private const val HOUR = 60L * 60 * 1_000
 
 /**
- * The inventory refreshing itself because a day passed (#605).
- *
- * What is being pinned is everything the refresh **does not** do, because that is where it differs
- * from the press it borrows its machinery from: it does not ask when the answer would be a day old
- * at most, it does not ask into a wall, it does not buy an unbounded number of fichas, and it does
- * not raise a single sentence on the way out.
+ * The inventory refreshing itself once a day has passed (#605). Mostly what it doesn't do, unlike
+ * the manual sync it borrows from: ask within the day, ask into a wall, fetch unlimited fichas or
+ * show an error.
  */
 class InventoryRefreshTest {
     private val items = FakeCollectedItemDao()
@@ -44,7 +41,7 @@ class InventoryRefreshTest {
     private fun refresh(startDelayMillis: Long = 0L, now: Long = NOW) =
         InventoryRefresh(sync, wall, startDelayMillis) { now }
 
-    /** A collection of [pieces] distinct types, so the cap on fichas has something to bite on. */
+    /** A collection of [pieces] distinct types, enough to hit the ficha cap. */
     private fun client(pieces: Int = 1, collectionStatus: HttpStatusCode = HttpStatusCode.OK): NumistaClient {
         val body = buildString {
             append("""{"item_count": $pieces, "items": [""")
@@ -94,7 +91,6 @@ class InventoryRefreshTest {
         assertEquals(NOW, log.last?.atMillis, "y la línea durable pasa a decir la verdad")
     }
 
-    /** Eight launches of the same day cost what one does: two consultas, not sixteen. */
     @Test
     fun `a launch an hour after the last sync asks for nothing`() = runTest {
         log.last = SyncRecord(atMillis = NOW - HOUR, collectionItems = 1, typesFetched = 0, callsSpent = 2)
@@ -104,12 +100,7 @@ class InventoryRefreshTest {
         assertTrue(calls.calls.isEmpty(), "ni el token se pide: ${calls.calls.map { it.endpoint }}")
     }
 
-    /**
-     * A standing wall stops it, which is the one rule a press does not share (#579).
-     *
-     * The press is how the collector finds out the key works again; this would only pay twice a day
-     * to be told what the phone already wrote down.
-     */
+    /** Unlike the manual sync, which is how the collector checks the key works again (#579). */
     @Test
     fun `it does not ask into a wall that is standing`() = runTest {
         wall.raise(RejectionCause.Quota)
@@ -120,11 +111,8 @@ class InventoryRefreshTest {
     }
 
     /**
-     * The fichas are capped because nobody is watching this one.
-     *
-     * A cache emptied by a reinstall would otherwise turn one launch into two hundred consultas. The
-     * inventory itself is never capped — it is one call and it is the point of the exercise — so the
-     * pieces all land and only their fichas queue up for the next run.
+     * Nobody watches this sync, and a cache emptied by a reinstall would turn one launch into
+     * hundreds of consultas. The inventory is one call and never capped; other fichas wait.
      */
     @Test
     fun `an automatic refresh buys ten fichas and leaves the rest`() = runTest {
@@ -136,10 +124,8 @@ class InventoryRefreshTest {
     }
 
     /**
-     * Nothing it meets is worth interrupting the collection with, so nothing comes back but a false.
-     *
-     * The sentences of `syncErrorLabel` belong to the press that earned them. And the record of the
-     * last sync that did happen survives, because a refresh that failed did not happen either.
+     * The messages of `syncErrorLabel` are only for the manual sync, and the record of the last
+     * sync survives because a failed refresh did not happen.
      */
     @Test
     fun `a refresh that could not reach Numista says nothing and breaks nothing`() = runTest {
@@ -153,12 +139,9 @@ class InventoryRefreshTest {
     }
 
     /**
-     * The pass has to see it coming, not find out when the call goes out.
-     *
-     * The refresh waits two seconds so the first screen is drawn before the network is touched, and
-     * the valuation pass asks «is a sync in flight?» one second after that. If the claim were raised
-     * with the first call, the pass would start, take budget the refresh is about to need, and be
-     * cancelled halfway through a consulta it had already paid for (ADR 0028 §6).
+     * The refresh waits two seconds for the first screen, and the valuation pass checks for a sync
+     * one second in; a claim raised with the first call would let the pass spend budget the refresh
+     * needs and be cancelled mid-consulta (ADR 0028 §6).
      */
     @Test
     fun `the claim is raised before the delay and dropped after the sync`() = runTest {
@@ -173,7 +156,6 @@ class InventoryRefreshTest {
         assertFalse(refresh.inFlight)
     }
 
-    /** A phone that has never synced is the one that has just been set up, and it fills itself. */
     @Test
     fun `a phone that has never synced refreshes on its first launch`() = runTest {
         assertNull(log.last)

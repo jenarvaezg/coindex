@@ -6,11 +6,8 @@ import kotlin.test.assertTrue
 
 class MastheadLabelsTest {
     /**
-     * Same three magnitudes on every root (#400): collections, **pieces** (quantities), and types —
-     * never «monedas», which already names the sibling hierarchy and its type count in the bar.
-     * All three words are written in full: abbreviating only «col» left the line half-spoken.
-     * The wall-clock minute is gone (#419): the system clock is five millimetres away, and the
-     * line never meant «last sync».
+     * Collections, pieces and types on every root (#400), in full; «monedas» already names the
+     * sibling hierarchy. No wall-clock minute (#419): the line never meant «last sync».
      */
     @Test
     fun `the sewn edge owns the three counts`() {
@@ -21,11 +18,8 @@ class MastheadLabelsTest {
     }
 
     /**
-     * While the snapshot is still arriving, the chrome must not invent an empty collection (#418).
-     *
-     * «0 colecciones · 0 piezas · 0 tipos» and «Colecciones · 0» are false claims for a cold start:
-     * the placeholder already says the phone is still reading, so the sewn edge and the bar only
-     * keep the rótulo and leave the number as «—».
+     * Zeros would claim an empty collection on a cold start (#418); the placeholder already says
+     * the phone is still reading.
      */
     @Test
     fun `while the snapshot is unread the chrome stays silent about counts`() {
@@ -35,10 +29,7 @@ class MastheadLabelsTest {
         assertEquals("Las cifras · —", figuresCellLabel(figuresCellCount(null)))
     }
 
-    /**
-     * The two hierarchies of the top level are one notebook (ADR 0021 §1), so both keep its
-     * strapline: the bottom bar says which of the two you are in, and the heading names it in full.
-     */
+    /** Both hierarchies are one notebook (ADR 0021 §1); the bottom bar says which one. */
     @Test
     fun `both roots keep the notebook's own strapline`() {
         assertEquals("Inventario de campo · plata bullion", screenTitle(Routes.INDEX))
@@ -64,8 +55,7 @@ class MastheadLabelsTest {
 
     @Test
     fun `a derived collection names the collection, with the curator's own word for it`() {
-        // «Paquillos» is the collector's word (#13) and now reaches the masthead the way every
-        // other card name does: from the catalog's `short_name`, not from an alias in code (#22).
+        // The collector's word (#13), from the catalog's `short_name` like any card name (#22).
         assertEquals(
             "Colección · Paquillos",
             screenTitle(Routes.DERIVED_COLLECTION, subjectName = "Paquillos"),
@@ -73,11 +63,7 @@ class MastheadLabelsTest {
         assertEquals("Colección", screenTitle(Routes.DERIVED_COLLECTION, subjectName = null))
     }
 
-    /**
-     * The masthead was the last place that ranked a box below a curated collection. With one
-     * species (ADR 0021 §2) and one screen for both (§9), «Tu agrupación · …» has nothing left to
-     * distinguish — and saying it would reintroduce the word of provenance the card dropped.
-     */
+    /** One species (ADR 0021 §2), one screen (§9): «Tu agrupación» would mark provenance again. */
     @Test
     fun `a box is a collection too, and the masthead calls it one`() {
         assertEquals(
@@ -94,15 +80,8 @@ class MastheadLabelsTest {
     }
 
     /**
-     * Each cell of the hierarchy bar names its grain with the count of it.
-     *
-     * The count is what the destination is **made of** and not how many things are inside it: cards,
-     * Numista types owned, and grams. «Las cifras» counts weight and never money — an amount in a
-     * permanent bar is a pocket ticker that puts the estate in front of anyone glancing at the phone
-     * (#316) — so this label is handed a count and has no way to be given an amount.
-     *
-     * The middle cell names the grain and no longer calls it «Monedas» (#516): the number under that
-     * word was the type count all along.
+     * «Las cifras» counts weight, never money: a permanent bar must not show the collection's value
+     * to anyone glancing at the phone (#316). The middle cell says «Tipos» since #516.
      */
     @Test
     fun `the three cells count what their destination is made of`() {
@@ -111,7 +90,7 @@ class MastheadLabelsTest {
         assertEquals("Las cifras · 4,2 kg", figuresCellLabel("4,2 kg"))
     }
 
-    /** Stopping instead of drawing a wrong plate, said in those terms because nobody can fix the assets. */
+    /** It stops rather than draw a wrong plate, and the collector can't fix the assets. */
     @Test
     fun `a fatal start says it stopped rather than that it lost anything`() {
         assertEquals("No se pudo arrancar", FATAL_HEADING)

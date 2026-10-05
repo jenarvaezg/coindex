@@ -5,11 +5,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * The three silences of a hole, told apart (#510).
- *
- * Until this existed two of them were the same drawing: a photograph still travelling and a
- * photograph that is never going to arrive on this launch both left the stand-in disc, which is
- * what the audit of 14 August 2026 read as a broken image with the prefetch pending.
+ * The three silences of a hole (#510). A photograph still loading and one that will not arrive on
+ * this launch used to draw the same stand-in disc.
  */
 class HoleSilenceTest {
     @Test
@@ -43,7 +40,6 @@ class HoleSilenceTest {
 
     @Test
     fun `settling is what separates waiting from loading, and nothing else does`() {
-        // The whole point of the ticket: same candidates, same empty hole, two different states.
         val loading = holeSilence(candidates = 1, settled = false, painted = false)
         val waiting = holeSilence(candidates = 1, settled = true, painted = false)
         assertEquals(HoleSilence.Loading, loading)

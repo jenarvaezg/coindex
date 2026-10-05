@@ -13,21 +13,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** The Australian ounce, which is the coin whose rows the repeated masthead was costing. */
+/** The Australian ounce: the coin whose rows the repeated masthead cost (#480). */
 private const val OUNCE_MM = 40.9f
 
 /**
- * What the second page of a plate draws, which is its name and not its specification (#480).
+ * A plate's continuation page draws its name and not its specification (#480). The arithmetic is in
+ * `PrintGeometryTest` and `NotebookPagesTest`; this checks that the drawing agrees with it.
  *
- * The arithmetic is `PrintGeometryTest`'s and `NotebookPagesTest`'s; this is the other half of the same
- * decision — the band's height and its contents are one value precisely so the brush cannot disagree
- * with the count, and here the brush is asked. A continuation page that still drew the specification
- * into fourteen millimetres would be half a fact under a rule, and one that dropped the name would be a
- * folio nobody can file: on paper there is no scrolling back to find out which collection this is.
- *
- * The fourth row is what the band buys, so it is checked **against the edge of the paper** and not as a
- * count: the grid is clipped to the folio, so a row the packer placed and the page could not hold would
- * simply be drawn off the bottom and vanish.
+ * The fourth row the thin band makes room for is checked against the paper edge, not as a count:
+ * the grid is clipped to the folio, so a row that didn't fit would just vanish.
  */
 @RunWith(AndroidJUnit4::class)
 class PrintedContinuationHeadingTest {
@@ -63,7 +57,7 @@ class PrintedContinuationHeadingTest {
         compose.onNodeWithText(plate.subtitle!!).assertExists()
         compose.onNodeWithText("Progreso").assertExists()
         compose.onNodeWithText("Metal").assertExists()
-        // Doce onzas bajo los cuarenta milímetros que lo dicen todo, y ni una más.
+        // Doce onzas bajo el masthead completo, y ni una más.
         compose.onNodeWithText("Casilla 12").assertExists()
         compose.onNodeWithText("Casilla 13").assertDoesNotExist()
     }
@@ -72,10 +66,10 @@ class PrintedContinuationHeadingTest {
     fun thePageThatContinuesItDrawsTheNameAndNotTheSpecification() {
         show(1)
 
-        // El nombre sigue: es lo que el #232 dejó escrito y lo que la banda fina existe para decir.
+        // El nombre se mantiene (#232).
         compose.onNodeWithText(plate.title).assertExists()
         compose.onNodeWithText(printedPageOfSection(2, pages.size)).assertExists()
-        // Y lo que se cae es la especificación repetida y el subtítulo, enteros y no a medias.
+        // Caen enteros la especificación repetida y el subtítulo.
         compose.onNodeWithText("Progreso").assertDoesNotExist()
         compose.onNodeWithText("Metal").assertDoesNotExist()
         compose.onNodeWithText("Plata").assertDoesNotExist()
@@ -90,8 +84,8 @@ class PrintedContinuationHeadingTest {
 
         show(1)
 
-        // La cuarta fila es la que el masthead repetido costaba, y se dibuja dentro del folio: el
-        // rótulo de la última casilla acaba por encima del canto de la hoja, márgenes y pie incluidos.
+        // La cuarta fila se dibuja dentro del folio: el rótulo de la última casilla acaba por
+        // encima del canto de la hoja.
         val paper = with(compose.density) { pages[1].geometry.heightMm.dp.toPx() }
         listOf("Casilla 25", "Casilla 28").forEach { label ->
             val bounds = compose.onNodeWithText(label).fetchSemanticsNode().boundsInRoot

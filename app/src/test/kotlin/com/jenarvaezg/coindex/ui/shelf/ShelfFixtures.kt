@@ -16,11 +16,9 @@ import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.gramsToOunces
 
 /**
- * A collection small enough to reason about and shaped like the real one.
- *
- * The four coins cover the four cases the two shelves have to answer for: a type held twice, a medal
- * that lives inside a collection, a complete plate, and a coin no collection claims at all. The three
- * cards cover the two species of ADR 0021 §2 plus the ratio's absence.
+ * Four coins for the shelves' four cases: a type held twice, a medal inside a collection, a
+ * complete plate, and a coin no collection claims. Three cards: a complete and a partial derived
+ * collection, and a box, which has no ratio (ADR 0021 §2).
  */
 internal object ShelfFixtures {
     const val FUERTE = 100
@@ -58,18 +56,17 @@ internal object ShelfFixtures {
             metal = Metal.Silver,
             category = "coin",
         ),
-        // Cached by nobody: the state a phone is in between a sync arriving and the fichas landing.
+        // No ficha yet: a sync has arrived and the fichas have not.
         UNCACHED to null,
     ).filterValues { it != null }.mapValues { (_, meta) -> checkNotNull(meta) }
 
-    /** Two rows of the same type on purpose: Coins collapses them into one coin held three times. */
+    /** Two rows of one type on purpose: Coins collapses them into one coin held three times. */
     private val items = listOf(
         item(id = 1, typeId = FUERTE, quantity = 2),
         item(id = 2, typeId = FUERTE, quantity = 1),
         item(id = 5, typeId = ONZA_MEXICANA, quantity = 1),
         item(id = 9, typeId = BRITANNIA, quantity = 1),
-        // The sibling row an issue-qualified catalog does not claim (ADR 0019): the shape of the
-        // father's American Silver Eagle N#298883, whose 2026 issue no member names.
+        // A sibling row that an issue-qualified catalog does not claim (ADR 0019).
         item(id = 10, typeId = BRITANNIA, quantity = 1),
         item(id = 12, typeId = UNCACHED, quantity = 1),
     )
@@ -129,20 +126,14 @@ internal object ShelfFixtures {
             typeMeta = typeMeta,
             itemsByKey = mapOf(
                 fuertesKey to items.filter { it.typeId == FUERTE },
-                // Only row 9. Row 10 is the same type and produced no collection, which is exactly
-                // what `deriveCollection` does with an issue no member claims.
+                // Only row 9: `deriveCollection` leaves out row 10, an issue no member claims.
                 britanniaKey to items.filter { it.id == 9L },
             ),
             ownGroupings = listOf(box.box),
         ),
     )
 
-    /**
-     * The same collection after the Mexican onza was dropped from the box.
-     *
-     * Dropping a type does not touch the piece (ADR 0013, ADR 0021 §10): the inventory is untouched
-     * and only the membership goes, which is what makes a box a second reading rather than a move.
-     */
+    /** [state] without the onza's box; the inventory is untouched (ADR 0013, ADR 0021 §10). */
     val stateWithoutTheBox = state.copy(
         collection = state.collection.copy(
             index = state.index.filterNot { it is IndexCard.Box },
@@ -151,12 +142,8 @@ internal object ShelfFixtures {
     )
 
     /**
-     * One coin the collector holds in three years, which is the shape seven of the father's types
-     * have and one — the 5 bolívares N#10340, 1879 to 1936 — has twenty-one times over (#448).
-     *
-     * Its own shelf and not a sixth row of [state], because it is the case that breaks the «the chips
-     * add up to the total» arithmetic on purpose, and mixing it into the fixture every other test
-     * counts would make that arithmetic unreadable everywhere else.
+     * One coin held in three years (#448). Kept out of [state] because it makes the year chips sum
+     * to more than the total.
      */
     val stateWithASpanningCoin = CollectionState(
         AssembledCollection(

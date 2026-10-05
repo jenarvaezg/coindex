@@ -5,14 +5,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * The plate reads the grid's own arithmetic one step ahead of it, because the casilla the sheet
- * opens on is an item index and the grid counts items by rows (#396).
- *
- * If `GridCells.Adaptive` ever counted differently, the sheet would open one row off the casilla the
- * coin is flying to — quietly, and only on some screen widths.
+ * The plate repeats `GridCells.Adaptive`'s column arithmetic to turn a casilla into an item index
+ * (#396). If the two disagreed, the sheet would open a row off on some screen widths.
  */
 class PlateColumnsTest {
-    /** The Pixel 7 the whole map was measured on: 411 dp, 20 dp of margin on each side. */
+    /** The Pixel 7 the map was measured on: 411 dp, 20 dp of margin on each side. */
     @Test
     fun `a 411 dp phone gets the three columns the map measured`() {
         assertEquals(3, plateColumns(411.dp - 40.dp))

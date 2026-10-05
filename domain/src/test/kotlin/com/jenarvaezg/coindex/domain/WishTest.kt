@@ -8,16 +8,12 @@ import kotlin.test.assertTrue
 private const val NOW = 1_786_400_000_000L
 
 /**
- * What a marked casilla is, and when it stops being one (ADR 0029).
- *
- * The two halves worth pinning are the **key** and the **death**. The key is three facts and not one
- * type, because a date run repeats its type across years and an issue run across issues, so a mark
- * keyed on the type alone would be a mark over a whole plate — which is what §2 refuses. The death is
- * `memberMatches` and not a second reading of the inventory, so «dies measured» cannot disagree with
- * the album about the same coin.
+ * What a marked casilla is, and when it stops being one (ADR 0029). The key is three facts, since
+ * a mark keyed on the type alone would cover a whole plate (§2). A mark dies through
+ * `memberMatches`, so it cannot disagree with the album about the same coin.
  */
 class WishTest {
-    /** The three facts, and the first issue where the file declares several. */
+    /** With several issues declared, the key takes the first. */
     @Test
     fun `a casilla is keyed by its type, its year and the issue its file declares`() {
         val member = CollectionCatalogMember(
@@ -29,20 +25,14 @@ class WishTest {
         )
 
         assertEquals(WishKey(typeId = 20, year = 1_966, issueId = 8_508), member.wishKey())
-        // A casilla whose file names no issue is keyed on the two facts it has, and null is «none»
-        // rather than a zero — the sentinel lives in the table and nowhere else.
+        // No issue in the file: null rather than zero, since the sentinel lives only in the table.
         assertEquals(
             WishKey(typeId = 20, year = 1_966, issueId = null),
             member.copy(numistaIssueIds = emptyList()).wishKey(),
         )
     }
 
-    /**
-     * A coin the app cannot name cannot be looked for, which is the recorte ADR 0029 accepts.
-     *
-     * An announced member has no Numista type — its `design_type_id` is the design in another variant
-     * and is never consulted — so there is nothing to key a mark on, and no price to ask for either.
-     */
+    /** An announced member's `design_type_id` is never consulted, so it has no key (ADR 0029). */
     @Test
     fun `a casilla with no Numista type cannot be marked`() {
         val announced = CollectionCatalogMember(
@@ -58,10 +48,6 @@ class WishTest {
         assertNull(announced.wishKey())
     }
 
-    /**
-     * The years of one date run are **different** casillas, which is the whole reason the key is not a
-     * type: 419 of the father's unpriced holes live in date runs.
-     */
     @Test
     fun `two years of one date run are two different marks`() {
         val run = dateRun("kooka", 2_010..2_012, typeId = 30)
@@ -72,12 +58,8 @@ class WishTest {
     }
 
     /**
-     * A wish dies when its own casilla fills, and not when any coin of the type arrives.
-     *
-     * `memberMatches` is what decides it, which is the rule that fills the casilla on the plate: on a
-     * date run it requires the year recorded on the piece, so buying the 2010 leaves the mark on the
-     * 2011 exactly where it was. The row is **not deleted** — if he sells it the wish comes back, which
-     * is probably right and is zero measured cases.
+     * Decided by `memberMatches`, so on a date run the piece's year counts. The row is kept: if the
+     * piece is sold, the wish comes back.
      */
     @Test
     fun `a wish dies when its own casilla fills and not when a sibling does`() {
@@ -96,7 +78,7 @@ class WishTest {
         assertEquals(2, wishedSlots(marks, listOf(run), emptyList()).size)
     }
 
-    /** The list is read newest first: the last casilla marked is the one being hunted. */
+    /** Newest first: the last casilla marked is the one being hunted. */
     @Test
     fun `the list is ordered by the mark and not by the catalog`() {
         val run = dateRun("kooka", 2_010..2_012, typeId = 30)
@@ -110,12 +92,7 @@ class WishTest {
         )
     }
 
-    /**
-     * A mark no curated file claims any more is dropped from the reading and kept in the table.
-     *
-     * What names a casilla is the file, so a catalog retired by an app update leaves the row with
-     * nothing to draw. Counting it would make the door say «7» and open on six.
-     */
+    /** Kept in the table but not read, or the door would say «7» and open on six. */
     @Test
     fun `a mark no catalog claims is not read`() {
         val orphan = Wish(WishKey(typeId = 999, year = 1_900, issueId = null), markedAt = NOW)
@@ -123,12 +100,7 @@ class WishTest {
         assertTrue(wishedSlots(listOf(orphan), listOf(dateRun("kooka", 2_010..2_011, 30)), emptyList()).isEmpty())
     }
 
-    /**
-     * On an issue run the mark carries the issue, because that is what tells the casillas apart.
-     *
-     * The six stars of the 100 pesetas of Franco share a type **and** a year, so a wish keyed on either
-     * would cover all six — and only the star the collector is missing is the one they are looking for.
-     */
+    /** The stars of Franco's 100 pesetas share type and year; only the issue tells them apart. */
     @Test
     fun `an issue run keeps its marks apart by issue`() {
         val run = issueRun("franco", typeId = 20, year = 1_966, issues = listOf(8_508, 33_204))

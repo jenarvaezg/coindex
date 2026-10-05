@@ -11,19 +11,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Los cinco interruptores por los que sale el cuaderno, y la puerta que el #228 abre.
- *
- * La configuración no es un parámetro del pincel: el número de páginas es aritmética hecha antes de
- * dibujar nada, así que lo que se comprueba aquí es que un interruptor se convierte en milímetros y
- * que los milímetros de hoy son los que nadie eligió.
+ * Las opciones del cuaderno (#228). Las páginas se cuentan antes de dibujar, así que se comprueba
+ * que cada interruptor se traduce en milímetros y que el cuaderno por omisión no cambia.
  */
 class NotebookOptionsTest {
     @Test
     fun `the notebook of today is what nobody chose`() {
         val untouched = NotebookOptions()
 
-        // Fotos sí, una cara, tamaño real sí, sin compartir página, sin QR y sin la lámina de las
-        // sueltas: nadie se encuentra su cuaderno cambiado sin haberlo pedido.
+        // Nadie se encuentra el cuaderno cambiado sin haberlo pedido.
         assertTrue(untouched.photographs)
         assertFalse(untouched.bothFaces)
         assertTrue(untouched.actualSize)
@@ -33,15 +29,8 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The door is open all the way: **every** configuration but the untouched one moves a millimetre.
-     *
-     * Each of the five became millimetres in its own ticket (#230-#234): «QR de Numista» grows the
-     * caption to make room for the code (#234), «ambas caras» widens the cell to hold the second one
-     * (#230), «fotos» takes the coin band away altogether (#231), «compartir página» thins the heading
-     * and lets a folio hold two plates (#232), and «tamaño real» shrinks every coin and trades the
-     * ruler for a number (#233). This test used to have two halves and the last ticket emptied one of
-     * them — what is left is the promise #228 made from the start: the defaults are the notebook of
-     * today, and everything else is a notebook the collector asked for.
+     * One ticket per switch: «ambas caras» #230, «fotos» #231, «compartir página» #232, «tamaño
+     * real» #233, «QR de Numista» #234.
      */
     @Test
     fun `every configuration but the untouched one moves a millimetre`() {
@@ -57,16 +46,8 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The half a geometry check cannot see: two of the five never touch a cell at all.
-     *
-     * The configuration reaches `notebookSections` too, because what a cell *is* depends on it — both
-     * faces gives it an obverse (#230), no photographs gives it neither (#231). The two that are checked
-     * here are the two that are **pure geometry**: «compartir página» packs folios and thins a heading,
-     * so a coin on a shared page is the same coin (#232); and «tamaño real» is a fraction the page is
-     * drawn with, so a cell keeps the **real** diameter it always carried and what shrinks is the circle
-     * (#233) — which is exactly what lets a scaled caption still say «33 mm». The three that do change a
-     * cell are left out because changing one is precisely what they do, and `NotebookPagesTest` is where
-     * that is measured.
+     * These two are pure geometry: packing (#232) and the drawing scale (#233), so a cell keeps its
+     * real diameter. QR, both faces and no photographs do change cells (`NotebookPagesTest`).
      */
     @Test
     fun `sharing a folio and scaling the coins change no cell`() {
@@ -103,41 +84,31 @@ class NotebookOptionsTest {
         assertEquals(PrintHeading.Masthead, paper.heading)
         assertEquals(40f, paper.headingMm)
         assertTrue(paper.printsCoins)
-        // Una lámina por folio, y por tanto ninguna costura entre láminas que pagar (#232).
+        // Una lámina por folio, sin costura entre láminas (#232).
         assertFalse(paper.sharesPage)
         assertEquals(0f, paper.blockGapMm)
         assertEquals(14f, paper.footMm)
         assertEquals(50f, paper.rulerBarMm)
         assertEquals(16f, paper.captionMm)
         assertEquals(28f, paper.minCellWidthMm)
-        // Al tamaño con el que sale del cajón, que es el 1:1 del #169: la moneda no se escala, y por
-        // eso la página lleva la regla y ninguna casilla dice ningún número.
+        // A 1:1 (#169): la página lleva la regla y ninguna casilla imprime el diámetro.
         assertEquals(1f, paper.coinScale)
         assertEquals(40.9f, paper.printedDiameterMm(40.9f))
         assertFalse(paper.printsDiameterLabel)
-        // Y ningún código: sin él, el rótulo es el pie de foto entero.
+        // Sin QR.
         assertEquals(0f, paper.qrMm)
         assertEquals(0f, paper.qrGapMm)
-        // Una cara por moneda, que es la del #169: el reverso, que es el lado que se mira.
+        // Una cara por moneda (#169): el reverso, el lado que se mira.
         assertEquals(1, paper.facesPerCell)
-        // 210 menos los dos márgenes; 297 menos los dos márgenes y la regla del pie, y de ahí la
-        // cabecera de la única lámina que hay en el folio.
+        // 210 menos los márgenes; 297 menos los márgenes y la regla del pie; menos la cabecera.
         assertEquals(180f, paper.gridWidthMm)
         assertEquals(253f, paper.contentHeightMm)
         assertEquals(213f, paper.gridHeightMm)
     }
 
     /**
-     * What «compartir página» declares: a folio that takes more than one plate, under a thin band.
-     *
-     * **The band comes with the switch and is not a switch of its own** (#228 decided that, #232
-     * implements it): forty millimetres of masthead per plate makes no sense once two of them share a
-     * folio, and it is where most of the saving comes from — 90 pages sharing folios with the
-     * masthead against 73 with this band, on the sixty plates the ticket measured.
-     *
-     * Nothing else moves. The coins keep their diameter, the caption keeps its sixteen millimetres
-     * and the strip at the foot keeps its ruler: a folio shared by two plates is still printed at
-     * 1:1, and that is the whole reason this switch is about packing and not about size.
+     * The thin band comes with the switch, not as a switch of its own (#228, #232): a 40 mm
+     * masthead per plate makes no sense on a shared folio. Coins stay at 1:1.
      */
     @Test
     fun `sharing a folio thins the heading and moves nothing else`() {
@@ -147,31 +118,22 @@ class NotebookOptionsTest {
         assertTrue(folio.sharesPage)
         assertEquals(PrintHeading.Slim, folio.heading)
         assertEquals(14f, folio.headingMm)
-        // La cabecera fina se queda con el epígrafe, una línea de título y la raya: ni subtítulo ni
-        // bloque de fichas caben en catorce milímetros, y medio dato bajo una raya es peor que nada.
+        // Epígrafe, una línea de título y la raya: ni subtítulo ni fichas caben en 14 mm.
         assertEquals(1, folio.heading.titleLines)
         assertFalse(folio.heading.subtitle)
         assertFalse(folio.heading.facts)
-        // Y la costura entre dos láminas, que sólo existe cuando hay dos.
+        // La costura entre láminas, que sólo existe al compartir folio.
         assertEquals(6f, folio.blockGapMm)
         assertEquals(
             paper,
             folio.copy(sharesPage = paper.sharesPage, heading = paper.heading),
         )
-        // El folio no crece: lo que cambia es que la cabecera sale de él una vez por lámina y no una
-        // vez por página, así que la rejilla de una lámina sola gana los veintiséis milímetros.
+        // El folio no crece; la rejilla de una lámina sola gana los 26 mm de cabecera.
         assertEquals(paper.contentHeightMm, folio.contentHeightMm)
         assertEquals(239f, folio.gridHeightMm)
     }
 
-    /**
-     * Sharing a folio composes with the other three, and with «sin fotos» it thins a thin heading.
-     *
-     * The list of #231 already dropped the specification block and came down to twenty-eight
-     * millimetres; sharing takes it to fourteen, and what it gives up on top is the subtitle and the
-     * second line of the title. Two lists of a dozen lines each on one folio is what the two switches
-     * together are for, and neither had to learn about the other to do it.
-     */
+    /** The list heading of #231 goes from 28 mm to 14, losing the subtitle and a title line. */
     @Test
     fun `sharing a folio thins the list's heading too`() {
         val list = printGeometry(NotebookOptions(photographs = false))
@@ -186,12 +148,8 @@ class NotebookOptionsTest {
     }
 
     /**
-     * What the QR costs, which since #478 is **whatever the cell has spare** and not a fixed band.
-     *
-     * The page, the margins, the heading, the ruler and the caption are untouched: the words keep the
-     * sixteen millimetres of #169 whether or not there is a code. What moves is the height of a cell,
-     * and only of a cell too narrow to carry the code beside the caption — under one face an ounce is
-     * 40,9 mm wide and stacks it, with both faces it is 84,8 and does not.
+     * Since #478 the QR sits beside the caption when the cell is wide enough; only a narrower cell
+     * grows to stack it underneath. Nothing else moves.
      */
     @Test
     fun `the qr costs a cell nothing where the cell has width to spare`() {
@@ -199,61 +157,48 @@ class NotebookOptionsTest {
         val coded = printGeometry(NotebookOptions(numistaQr = true))
         val doubled = printGeometry(NotebookOptions(numistaQr = true, bothFaces = true))
 
-        // El rótulo no se toca: los 16 mm del #169 son los 16 mm del #169.
+        // El rótulo conserva los 16 mm del #169.
         assertEquals(16f, coded.captionMm)
         assertEquals(12f, coded.qrMm)
         assertEquals(2f, coded.qrGapMm)
         assertEquals(paper, coded.copy(qrMm = paper.qrMm, qrGapMm = paper.qrGapMm))
-        // Un módulo de 0,364 mm: 33 de ellos —25 de versión 2 y las dos zonas de silencio— en 12 mm.
+        // Módulos de 0,364 mm: 33 (25 de versión 2 más la zona de silencio) en 12 mm.
         assertEquals(0.364f, coded.qrMm / 33f, 0.001f)
 
-        // Una cara: la onza de 40,9 no da para el código a los lados, así que lo apila y paga 14 mm.
+        // Una cara: la onza de 40,9 no deja sitio al lado, así que lo apila y paga 14 mm.
         assertFalse(coded.qrBesideCaption(40.9f))
         assertEquals(paper.cellHeightMm(40.9f) + 14f, coded.cellHeightMm(40.9f), 0.01f)
-        // Dos caras: la misma onza mide 84,8 mm de casilla y el código no cuesta ni un milímetro.
+        // Dos caras: 84,8 mm de casilla, y el código no cuesta nada.
         assertTrue(doubled.qrBesideCaption(40.9f))
         assertEquals(
             printGeometry(NotebookOptions(bothFaces = true)).cellHeightMm(40.9f),
             doubled.cellHeightMm(40.9f),
             0.01f,
         )
-        // Y con dos caras de un medio de 16 mm la casilla vuelve a ser estrecha: 35 mm, código debajo.
+        // Dos caras de 16 mm son 35 mm de casilla: el código va debajo.
         assertFalse(doubled.qrBesideCaption(16f))
     }
 
-    /**
-     * **The code never touches the coin** (#478).
-     *
-     * Whatever the QR does, it does to the caption's neighbourhood and never to the circle: the
-     * printed diameter, the band the faces take and the width of the cell are the same figures with the
-     * switch on and off, so a page with codes is a page whose coins are still at 1:1 and still round —
-     * the drawing gives a face a **square** of `printedDiameterMm` and a circle is what fills it. This
-     * is the invariant the whole notebook of #169 rests on, and moving the code was not allowed to cost
-     * it a millimetre.
-     */
+    /** With the QR on, coins stay at 1:1 and round, the invariant of #169 (#478). */
     @Test
     fun `the code never touches the coin`() {
         val paper = printGeometry(NotebookOptions(bothFaces = true))
         val coded = printGeometry(NotebookOptions(bothFaces = true, numistaQr = true))
 
-        // El 1000 escudos de Portugal, la lámina que abrió el ticket: 40,1 mm de plata.
+        // Los 1000 escudos de Portugal (40,1 mm), la lámina que abrió el #478.
         assertEquals(40.1f, coded.printedDiameterMm(40.1f), 0.001f)
         assertEquals(paper.printedDiameterMm(40.1f), coded.printedDiameterMm(40.1f), 0.001f)
         assertEquals(paper.coinBandWidthMm(40.1f), coded.coinBandWidthMm(40.1f), 0.001f)
         assertEquals(paper.cellWidthMm(40.1f), coded.cellWidthMm(40.1f), 0.001f)
         assertEquals(1f, coded.coinScale)
-        // Y la casilla que era de dos filas es de tres: 56,1 mm de alto contra los 70,1 de antes.
+        // La casilla mide 56,1 mm en vez de 70,1: tres filas por folio en vez de dos.
         assertEquals(56.1f, coded.cellHeightMm(40.1f), 0.01f)
         assertEquals(70.1f, coded.cellHeightMm(40.1f) + 14f, 0.01f)
     }
 
     /**
-     * The bar the code has to clear to sit beside the caption, and what it is measured against (#478).
-     *
-     * The code's band is kept clear on **both** sides of the caption, so the name stays centred under
-     * the coin instead of drifting left on every cell of the notebook. What has to be left over is the
-     * floor a caption needs — [PrintGeometry.minCellWidthMm], the 28 mm of #233 — and the plates that
-     * do not clear it are the small coins, whose rows are short anyway.
+     * The QR's band is reserved on both sides so the name stays centred under the coin (#478), and
+     * what is left must reach the caption floor, [PrintGeometry.minCellWidthMm].
      */
     @Test
     fun `the code sits beside the caption from fifty-six millimetres of cell`() {
@@ -263,21 +208,15 @@ class NotebookOptionsTest {
         assertEquals(56f, coded.minCellWidthMm + 2 * (coded.qrMm + coded.qrGapMm))
         assertFalse(coded.qrBesideCaption(26f))
         assertTrue(coded.qrBesideCaption(27f))
-        // Sin código no hay nada que colocar, ni al lado ni debajo.
+        // Sin código no hay nada que colocar.
         assertFalse(printGeometry(NotebookOptions(bothFaces = true)).qrBesideCaption(40.9f))
-        // Y una página de líneas nunca lo apila: el código cierra la línea (#231).
+        // En una página de líneas el código cierra la línea (#231).
         val list = printGeometry(NotebookOptions(photographs = false, numistaQr = true))
         assertFalse(list.qrBesideCaption(40.9f))
         assertFalse(list.qrCostsHeight(40.9f))
     }
 
-    /**
-     * What both faces cost in millimetres, which is all they cost: only the coin band moves (#230).
-     *
-     * The page, the margins, the heading, the ruler and the caption are untouched — the second face
-     * is paid for in width, because at 1:1 the alternative is halving the diameter and that is the
-     * one thing a page measured with a ruler cannot do.
-     */
+    /** At 1:1 the second face can only be paid for in width (#230). */
     @Test
     fun `both faces widen the coin band and nothing else`() {
         val paper = printGeometry(NotebookOptions())
@@ -291,18 +230,9 @@ class NotebookOptionsTest {
     }
 
     /**
-     * What «tamaño real» apagado declares: every coin at three fifths, and no ruler to check it with.
-     *
-     * The switch gives up the one promise #169 was built on, so what goes with the diameter is the bar
-     * at the foot — a ruler nobody is going to lay a coin against protects nothing, and beside a coin
-     * that is not at 1:1 it is a foot that lies. What takes its place is the diameter as a **number** in
-     * every caption, which is what the list of #231 already prints for exactly the same reason.
-     *
-     * The floor on a cell comes down with the coins or the saving is never made: at three fifths every
-     * member of the shelf prints narrower than 28 mm, so that floor would become the width of every cell
-     * in the notebook. And the caption **grows** by two millimetres, which is the switch's one surprise:
-     * the number needs a line of its own, because appended to the year it was the millimetres an ellipsis
-     * ate on the cells of a collection with no issue list.
+     * «Tamaño real» off (#233): coins at three fifths. The ruler goes, since next to a scaled coin
+     * it would lie, and each caption prints the diameter on a line of its own (+2 mm): appended to
+     * the year it got ellipsized. The cell floor drops too, or every scaled cell would be 28 mm.
      */
     @Test
     fun `scaling the coins takes the ruler away and prints the diameter instead`() {
@@ -315,14 +245,14 @@ class NotebookOptionsTest {
         assertEquals(19.8f, scaled.coinBandWidthMm(33f), 0.01f)
         assertEquals(18f, scaled.captionMm)
         assertEquals(37.8f, scaled.cellHeightMm(33f), 0.01f)
-        // Ni regla ni tira: el pie de página se queda con la línea que dice de dónde salió la lámina.
+        // Sin regla: el pie de página se queda sólo con la fuente.
         assertEquals(0f, scaled.rulerBarMm)
         assertEquals(5f, scaled.footMm)
         assertTrue(scaled.printsDiameterLabel)
-        // Y el suelo de la casilla baja con las monedas: 17 mm es lo que mide «SIN EMITIR».
+        // El suelo baja a 18 mm: «SIN EMITIR» mide 17.
         assertEquals(18f, scaled.minCellWidthMm)
         assertEquals(18f, scaled.cellWidthMm(16f))
-        // Nada más se mueve. La casilla de 24,5 de una onza ya no es el suelo, sino la moneda.
+        // La onza escalada (24,5 mm) ya pasa del suelo. Nada más se mueve.
         assertEquals(24.54f, scaled.cellWidthMm(40.9f), 0.01f)
         assertEquals(
             paper,
@@ -336,13 +266,7 @@ class NotebookOptionsTest {
         )
     }
 
-    /**
-     * A hole scales like the coin that goes in it, and so does a casilla nobody measured (#169).
-     *
-     * The fraction multiplies into the cell's width and height and nowhere else, so the fallback
-     * diameter — the ounce a lone hole borrows when no Numista type backs it — needs to know nothing
-     * about the switch: it is a real diameter like any other and comes out at three fifths of itself.
-     */
+    /** The fallback diameter of a hole with no Numista type scales like a real one (#169). */
     @Test
     fun `the diameter of a cell nobody measured scales like its siblings`() {
         val scaled = printGeometry(NotebookOptions(actualSize = false))
@@ -350,21 +274,13 @@ class NotebookOptionsTest {
         assertEquals(40f, scaled.fallbackDiameterMm)
         assertEquals(24f, printGrid(null, scaled).printedDiameterMm, 0.01f)
         assertEquals(40f, printGrid(null, scaled).diameterMm)
-        // La rejilla se mide contra el diámetro real y se dibuja al escalado, que es lo que deja a un
-        // pie de foto decir «40,9 mm» de un círculo de 24,5.
+        // Medida al diámetro real y dibujada al escalado: dice «40,9 mm» bajo un círculo de 24,5.
         val ounces = printGrid(40.9f, scaled)
         assertEquals(40.9f, ounces.diameterMm)
         assertEquals(24.54f, ounces.printedDiameterMm, 0.01f)
     }
 
-    /**
-     * Exactly the pages printed at 1:1 carry a ruler, and every other page says the size in words.
-     *
-     * One fact and two ways of keeping it: #169 put on paper that a coin's size can be **checked**, and
-     * a page does that with a bar the collector measures or with a number they read. Both would be a
-     * caption arguing with a ruler; neither would be a coin with no size at all. So it is asked of the
-     * thirty-two configurations rather than of the two that were being written at the time.
-     */
+    /** A coin's size can be checked on paper (#169), by exactly one of the two means. */
     @Test
     fun `a page carries the ruler or the number, and never both or neither`() {
         allCombinations().forEach { options ->
@@ -376,15 +292,6 @@ class NotebookOptionsTest {
         }
     }
 
-    /**
-     * The scaled page composes with the other four, and none of them had to learn about it.
-     *
-     * The second face is paid for in width off the **printed** diameter, which is the one thing at 1:1
-     * that could not be done — «ambas caras» at real size doubles a cell to 84,8 mm and takes a plate of
-     * ounces to six cells a page, and at three fifths the pair costs 52 and keeps three columns. The code
-     * adds its own band to whatever caption the page arrived with. And «sin fotos» wins outright: there
-     * is no coin to scale, so the list is the list.
-     */
     @Test
     fun `the scaled page composes with the other four`() {
         val scaled = printGeometry(NotebookOptions(actualSize = false))
@@ -395,16 +302,15 @@ class NotebookOptionsTest {
         // Dos onzas de 24,54 mm y la calle de 3 que las separa, contra los 84,8 del 1:1.
         assertEquals(52.08f, doubled.coinBandWidthMm(40.9f), 0.01f)
         assertEquals(scaled, doubled.copy(facesPerCell = scaled.facesPerCell))
-        // El código no toca el rótulo escalado: sigue en los 18 mm que la escala le dio, y lo que el
-        // QR mueve es la casilla —y sólo la que no tiene ancho para llevarlo al lado (#478).
+        // El QR deja el rótulo escalado en 18 mm y sólo alarga la casilla estrecha (#478).
         assertEquals(18f, coded.captionMm)
         assertEquals(12f, coded.qrMm)
         assertEquals(37.8f + 14f, coded.cellHeightMm(33f), 0.01f)
-        // Y compartir folio adelgaza la cabecera y no toca ni la escala ni el suelo de la casilla.
+        // Compartir folio no toca la escala ni el suelo de la casilla.
         assertEquals(PrintHeading.Slim, folio.heading)
         assertEquals(0.6f, folio.coinScale)
         assertEquals(18f, folio.minCellWidthMm)
-        // Sin fotos no hay moneda que escalar: la lista es la lista, marcada o no la casilla.
+        // Sin fotos no hay moneda que escalar.
         assertEquals(
             printGeometry(NotebookOptions(photographs = false)),
             printGeometry(NotebookOptions(photographs = false, actualSize = false)),
@@ -412,11 +318,8 @@ class NotebookOptionsTest {
     }
 
     /**
-     * The code and the second face compose, which is what «cinco interruptores» buys.
-     *
-     * Neither knows about the other in the millimetres they declare: the second face widens the cell
-     * and the code declares its band. They **do** meet in [PrintGeometry.cellHeightMm], and that is
-     * the point of #478 — the width the second face buys is what makes the code free.
+     * They meet only in [PrintGeometry.cellHeightMm], where the width of the second face makes the
+     * QR free (#478).
      */
     @Test
     fun `the code and the second face compose without knowing about each other`() {
@@ -432,14 +335,8 @@ class NotebookOptionsTest {
     }
 
     /**
-     * What «sin fotos» declares: a page of lines, and nothing on it measured against a ruler (#231).
-     *
-     * It is the only one of the five that changes the *shape* of the page rather than a measure of
-     * it. No coin band, so a cell is its caption and a caption is one line of seven millimetres; no
-     * diameter deciding the width, so the floor is the whole of it and exactly two columns fill the
-     * printable band; no ruler, because there is nothing at 1:1 to catch a viewer's «ajustar a la
-     * página» with; and a heading that names the plate without summarising it, since a list that says
-     * «Tengo» or «Me falta» on every line has printed the coverage already.
+     * «Sin fotos» (#231): each cell is a 7 mm line. No ruler, since nothing is at 1:1, and a 28 mm
+     * heading without facts, since every line already says «Tengo» or «Me falta».
      */
     @Test
     fun `with no photographs the page is lines, two to a row, and carries no ruler`() {
@@ -450,36 +347,26 @@ class NotebookOptionsTest {
         assertEquals(7f, list.captionMm)
         assertEquals(0f, list.rulerBarMm)
         assertEquals(28f, list.headingMm)
-        // La casilla es su línea, mida lo que mida la moneda: es lo que quita las cien páginas.
+        // La casilla es su línea, mida lo que mida la moneda.
         assertEquals(7f, list.cellHeightMm(40.9f))
         assertEquals(7f, list.cellHeightMm(16f))
         assertEquals(0f, list.coinBandWidthMm(40.9f))
-        // Media banda imprimible, así que caben dos exactas y la llenan.
+        // Media banda imprimible: caben dos exactas.
         assertEquals(88.5f, list.cellWidthMm(40.9f), 0.01f)
         val grid = printGrid(40.9f, list)
         assertEquals(2, grid.columns)
         assertEquals(23, grid.rows)
         assertEquals(46, grid.cellsPerPage)
         assertEquals(list.gridWidthMm, grid.blockWidthMm, 0.01f)
-        // Y la rejilla ya no la decide el diámetro: la lámina de medios y la de onzas son la misma,
-        // y una casilla que nadie midió no necesita ningún diámetro de reserva para caber.
+        // El diámetro ya no decide la rejilla, ni hace falta el de reserva.
         val shape = { it: PrintGrid -> Triple(it.columns, it.rows, it.cellWidthMm) }
         assertEquals(shape(grid), shape(printGrid(16f, list)))
         assertEquals(shape(grid), shape(printGrid(null, list)))
     }
 
     /**
-     * The code closes the line instead of sitting under it, so it costs the row five millimetres.
-     *
-     * On a page of coins the caption grows by the code's whole band, because the cell is read top to
-     * bottom and there is a name to stack it under. A line is read left to right and has a right edge
-     * going spare, so what the code costs is only the height it does not already have: seven
-     * millimetres of line become the twelve of the square.
-     *
-     * And no air of its own: [PrintGeometry.qrGapMm] is what separates a code from a caption stacked
-     * over it, which is a thing a line does not have — the row already spaces what is on it, and the
-     * twelve millimetres of the square carry the symbol's own quiet zone. A gap the renderer never spends
-     * would be a millimetre in the arithmetic that is nowhere on the paper.
+     * The QR closes the line on the right, so the row grows from 7 mm to the square's 12. No
+     * [PrintGeometry.qrGapMm]: that gap only separates a stacked code from its caption.
      */
     @Test
     fun `on a page of lines the code costs the row its own height and no more`() {
@@ -489,30 +376,24 @@ class NotebookOptionsTest {
         assertEquals(12f, coded.qrMm)
         assertEquals(0f, coded.qrGapMm)
         assertEquals(12f, coded.cellHeightMm(40.9f))
-        // Sólo el pie de foto se mueve: la cabecera, el pie de página y las columnas siguen igual.
+        // Sólo se mueve el pie de foto.
         assertEquals(
             printGeometry(NotebookOptions(photographs = false)),
             coded.copy(captionMm = 7f, qrMm = 0f),
         )
-        // El código más robusto reduce las filas, pero la rejilla sigue cabiendo entera en el folio.
+        // Líneas más altas, menos filas por folio.
         val bare = printGeometry(NotebookOptions(photographs = false))
         assertTrue(printGrid(40.9f, coded).rows < printGrid(40.9f, bare).rows)
     }
 
-    /**
-     * Two of the five stop being questions when the coins stop being drawn.
-     *
-     * With the photographs off no coin reaches the page at all, so «ambas caras» and «tamaño real»
-     * have nothing to negotiate. The sheet greys them rather than leaving them ticked and inert.
-     */
+    /** The sheet greys them out rather than leaving them ticked and inert. */
     @Test
     fun `with the photographs off there is no face and no size to negotiate`() {
         val bare = NotebookOptions(photographs = false)
 
         assertFalse(bare.offers(NotebookSwitch.BothFaces))
         assertFalse(bare.offers(NotebookSwitch.ActualSize))
-        // Los otros tres siguen siendo preguntas: una lista sin fotos aún se puede compartir página
-        // y llevar el QR, y las fotos se pueden volver a encender.
+        // Una lista sin fotos aún puede compartir folio y llevar QR.
         assertTrue(bare.offers(NotebookSwitch.Photographs))
         assertTrue(bare.offers(NotebookSwitch.SharePage))
         assertTrue(bare.offers(NotebookSwitch.NumistaQr))
@@ -534,17 +415,7 @@ class NotebookOptionsTest {
         }
     }
 
-    /**
-     * The order of the enum is the order of the sheet, and all six of them do something now.
-     *
-     * `pending` was what made a grey switch honest — the issue that would make it work, named under a
-     * control that could not be touched — and each ticket set its own to null: «QR de Numista» first,
-     * then «ambas caras», «fotos», «compartir página» and «tamaño real» (#233). With the last one the
-     * property itself went, because a field that can only be null is the same lie a grey switch was.
-     *
-     * «Sin colección» is last because its lámina is last (#275), and it is the only one of the six
-     * that adds a page instead of rearranging the ones there are.
-     */
+    /** «Sin colección» follows the layout switches because its lámina prints last (#275). */
     @Test
     fun `the seven switches are in the order the sheet draws them`() {
         assertEquals(
@@ -561,11 +432,7 @@ class NotebookOptionsTest {
         )
     }
 
-    /**
-     * A single lámina or hoja cannot share a folio with another plate, and «Sin colección» is the
-     * index's loose-coin plate (#401). What remains is the same how-and-what the notebook asks,
-     * minus the two questions that only make sense over many cards.
-     */
+    /** A single lámina can't share a folio, and «Sin colección» is an index-wide plate (#401). */
     @Test
     fun `a single sheet asks five switches, not the index-only ones`() {
         assertEquals(
@@ -580,10 +447,7 @@ class NotebookOptionsTest {
         )
     }
 
-    /**
-     * Packing and the loose-coin plate stay as they were stored: the sheet UI never offers them, so
-     * confirming a lámina must not silently rewrite how the next full notebook will print (#401).
-     */
+    /** Only this export drops them; the stored options for the next notebook keep them (#401). */
     @Test
     fun `sheet export clears packing and the loose plate without touching the rest`() {
         val chosen = NotebookOptions(
@@ -604,11 +468,8 @@ class NotebookOptionsTest {
 }
 
 /**
- * The thirty-two configurations the **five geometry switches** can be in.
- *
- * «Sin colección» is deliberately out (#275): it decides *what* is printed and not how, so it moves
- * no millimetre and changes no cell of a card — and folding it in would double this list to say
- * nothing new about the geometry these tests are about.
+ * The 32 combinations of the five geometry switches. «Sin colección» (#275) and the money switch
+ * are left out: they decide what is printed, not how.
  */
 internal fun allCombinations(): List<NotebookOptions> = buildList {
     for (photographs in BOTH) {

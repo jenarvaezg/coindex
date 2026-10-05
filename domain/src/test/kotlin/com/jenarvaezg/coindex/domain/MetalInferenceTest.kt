@@ -5,15 +5,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * Cada caso de aquí es un `composition.text` **medido** en las 723 fichas sembradas, no un
- * ejemplo inventado: el censo de la caché da 33 redacciones distintas y estas reglas son las que
- * las cubren todas. Numista no tiene campo de metal, sólo prosa, así que esto es todo lo que hay
- * (ADR 0005 para el acabado, ADR 0018 para el metal).
+ * Cada caso es un `composition.text` real de las fichas sembradas, no un ejemplo inventado. Numista
+ * no tiene campo de metal, sólo prosa (ADR 0005 para el acabado, ADR 0018 para el metal).
  */
 class MetalInferenceTest {
     @Test
     fun `las ocho formas de escribir plata son plata`() {
-        // 611 de las 723 fichas, con la ley escrita de cuatro maneras y el desglose en paréntesis.
+        // La forma más común: la ley escrita de cuatro maneras y el desglose en paréntesis.
         listOf(
             "Plata",
             "Plata 999",
@@ -41,17 +39,12 @@ class MetalInferenceTest {
         )
     }
 
-    /**
-     * El Koala de 2016 dice «Plata 999 (highlighted in 24-carat gold)»: una onza de plata con un
-     * detalle dorado. Sin tirar el paréntesis, la palabra «gold» de una frase sobre el **acabado**
-     * decidiría de qué está hecha la moneda.
-     */
+    /** El Koala de 2016: «Plata 999 (highlighted in 24-carat gold)» es plata con un dorado. */
     @Test
     fun `lo que hay entre parentesis no decide el metal`() {
         assertEquals(Metal.Silver, inferMetal("Plata 999 (highlighted in 24-carat gold)"))
     }
 
-    /** El nombre compuesto gana siempre al metal que contiene. */
     @Test
     fun `las aleaciones con nombre propio no se leen como sus componentes`() {
         assertEquals(Metal.Cupronickel, inferMetal("Cuproníquel"))
@@ -60,10 +53,7 @@ class MetalInferenceTest {
         assertEquals(Metal.Brass, inferMetal("Latón de níquel"))
     }
 
-    /**
-     * [Metal.Other] no es «no lo sé»: es «esta pieza no tiene metal dominante». En la caché son
-     * exactamente dos, las que #40 nombró.
-     */
+    /** [Metal.Other] significa sin metal dominante, no desconocido (#40). */
     @Test
     fun `la bimetalica y el nucleo recubierto no tienen metal dominante`() {
         assertEquals(
@@ -79,7 +69,6 @@ class MetalInferenceTest {
         )
     }
 
-    /** Una prosa que nadie escribió, o que estas reglas no reconocen, no afirma nada. */
     @Test
     fun `lo que no se reconoce es nulo y no Other`() {
         assertNull(inferMetal(null))
@@ -90,11 +79,7 @@ class MetalInferenceTest {
         assertNull(inferMetal("(Copper .700)"))
     }
 
-    /**
-     * Se pide `lang=es`, así que la prosa llega en castellano; el inglés se reconoce igual porque
-     * los paréntesis de una ficha española vienen en inglés a diario y un cambio de idioma no
-     * debería vaciar el campo en silencio.
-     */
+    /** Se pide `lang=es`, pero los paréntesis llegan en inglés a diario. */
     @Test
     fun `el ingles se lee igual que el castellano`() {
         assertEquals(Metal.Silver, inferMetal("Silver .900"))
@@ -106,7 +91,7 @@ class MetalInferenceTest {
         assertEquals(Metal.Copper, inferMetal("Nickel silver (Copper, Nickel, Zinc)"))
     }
 
-    /** Los códigos que persisten la clave y la ruta van y vuelven sin perder el caso ausente. */
+    /** Los códigos de la clave y de la ruta, incluido el caso ausente. */
     @Test
     fun `los codigos de metal van y vuelven`() {
         Metal.entries.forEach { metal ->
@@ -114,7 +99,7 @@ class MetalInferenceTest {
         }
         assertEquals("unknown", metalCode(null))
         assertNull(metalFromCode("unknown")!!.metal)
-        // Un código que no existe no es «metal desconocido»: es una clave que no se reconstruye.
+        // Con un código que no existe, la clave no se reconstruye.
         assertNull(metalFromCode("plata"))
         assertNull(metalFromCode("Silver"))
     }

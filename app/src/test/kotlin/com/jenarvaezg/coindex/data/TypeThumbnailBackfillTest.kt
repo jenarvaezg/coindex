@@ -8,12 +8,8 @@ import kotlin.test.assertNull
 import kotlinx.coroutines.test.runTest
 
 /**
- * A cached type is never requested again — that is what makes the cache worth having — so the
- * two phones that already hold the collection would have gone on asking for the heavy originals
- * for ever, which is the plate with holes in it (issue #67).
- *
- * Nothing is re-fetched to fix that: `raw` keeps the whole ficha as Numista sent it, thumbnails
- * included. This is exactly the case the column was written for.
+ * A cached type is never requested again, so phones that already held the collection would keep
+ * loading the heavy originals (#67). The thumbnails are recovered from `raw`, with no new call.
  */
 class TypeThumbnailBackfillTest {
     private fun ficha(typeId: Int, obverse: String?, reverse: String?): String {
@@ -73,10 +69,7 @@ class TypeThumbnailBackfillTest {
         assertNull(filled.reverseThumbnailUrl)
     }
 
-    /**
-     * The pass has to end. A row read, written back with a null face and read again the next
-     * start would reintroduce, for ever, the very scan this is written to stop paying.
-     */
+    /** Otherwise a row with a null face would be scanned again on every start. */
     @Test
     fun `a face left empty is not read again on the next start`() = runTest {
         val dao = FakeTypeMetaDao()
@@ -88,7 +81,7 @@ class TypeThumbnailBackfillTest {
         assertEquals(0, TypeThumbnailBackfill(dao).run())
     }
 
-    /** A ficha this version cannot read is a row to leave as it is, never a crash at start-up. */
+    /** This runs at start-up: an unreadable ficha is left as it is, never a crash. */
     @Test
     fun `an unreadable ficha is skipped without taking the rest with it`() = runTest {
         val dao = FakeTypeMetaDao()

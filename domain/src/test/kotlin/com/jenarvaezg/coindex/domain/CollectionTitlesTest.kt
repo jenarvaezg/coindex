@@ -6,15 +6,9 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 /**
- * The card-sized name of a collection, and the three rules that keep it honest (#22).
- *
- * The rule that does the work is uniqueness: cutting `name` at its first `·` would have been
- * free, and it collapsed twelve curated files into five names — three Britannias reading the
- * same thing on three cards, with the weight and finish that tell them apart nowhere in sight.
- *
- * That rule covers the files. What it cannot cover is the cards no file names, and the cards a
- * grouping names two of: those collide only against the inventory of the day, so the index
- * resolves its names together (#565).
+ * The card-sized name of a collection (#22). It is unique across files: cutting `name` at its first
+ * `·` left three Britannias with one name. Cards no file names, and a grouping's two cards, only
+ * collide against the day's inventory, so the index resolves its names together (#565).
  */
 class CollectionTitlesTest {
     @Test
@@ -135,9 +129,7 @@ class CollectionTitlesTest {
             typeIds = listOf(1492),
         )
 
-        // Neither species can see the collision on its own; the index that draws them side by
-        // side can, and so does the curation that holds both — there is no way to hold them
-        // together without the check (#545).
+        // Neither species sees the collision alone; the curation that holds both does (#545).
         val error = assertFailsWith<CatalogSeedException> {
             Curation(catalogs = listOf(catalog), groupings = listOf(grouping))
         }
@@ -146,13 +138,8 @@ class CollectionTitlesTest {
     }
 
     /**
-     * The defect of #565, with the two cards that produced it.
-     *
-     * Numista's series «5 francs Semeuse» spans two physical patterns the collector owns: the
-     * 12 g circulation coin of 1963 in silver .835 (N#679) and the 22,8 g essai piéfort of 1960
-     * in .950 (N#448144). The variant key does its job and splits them; the name did not, and the
-     * card has nothing else to say since ADR 0026 §12. Neither can be curated out of the collision
-     * — both are signed huérfanas — so the name is where it is answered.
+     * The defect of #565: «5 francs Semeuse» spans the 12 g coin of 1963 (N#679) and the 22,8 g
+     * piéfort of 1960 (N#448144). Both are signed huérfanas, so only the name can tell them apart.
      */
     @Test
     fun `two cards of one Numista family say which weight they are`() {
@@ -165,16 +152,12 @@ class CollectionTitlesTest {
 
         assertEquals("5 francs Semeuse · 0,386 oz", names.getValue(circulation))
         assertEquals("5 francs Semeuse · 0,733 oz", names.getValue(piefort))
-        // A card with no twin says nothing it did not say before: the variant line died with
-        // ADR 0026 §12 and only comes back where it is the difference. What it does say is the
-        // cured label of ADR 0031, because the cure happens where the name is resolved.
+        // A card with no twin gets no variant (ADR 0026 §12), but does get its cured label
+        // (ADR 0031).
         assertEquals("Tipo Hércules", names.getValue(hercules))
     }
 
-    /**
-     * A grouping is the one curated species that can name two cards, because it claims a family
-     * and a family holds as many keys as Numista has patterns for it (ADR 0013).
-     */
+    /** A grouping claims a family, and a family holds a key per Numista pattern (ADR 0013). */
     @Test
     fun `a curated grouping that names two cards disambiguates them too`() {
         val grouping = CuratedGrouping(
@@ -199,7 +182,7 @@ class CollectionTitlesTest {
     }
 }
 
-/** One name at a time, which is all a test about a single file is asking about. */
+/** For tests about a single file. */
 private fun CollectionTitles.of(key: VariantKey): String = of(listOf(key)).getValue(key)
 
 private fun catalogJson(

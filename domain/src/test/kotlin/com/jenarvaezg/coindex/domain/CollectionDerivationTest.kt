@@ -13,8 +13,8 @@ private fun ounces(grams: Double): Double = grams / GRAMS_PER_TROY_OUNCE
 private fun item(id: Long, typeId: Int, quantity: Int) =
     CollectedItem(id = id, quantity = quantity, typeId = typeId)
 
-// The year is what a published Numista page always carries: without one the type reads as a
-// submission still in review and derives no collection (#186), which is another test's subject.
+// Every published Numista page has a year; without one the type reads as a submission in review
+// and derives no collection (#186).
 private fun metadata(id: Int, family: String, grams: Double, finish: Finish?) = TypeMeta(
     id = id,
     family = family,
@@ -44,17 +44,16 @@ class WeightNormalizationTest {
     }
 
     /**
-     * The only targets are the common bullion weights. A weight a catalog declares rules its own
-     * members (ADR 0016) and reaches nothing else (#288), and those members never arrive here in
-     * the first place: their key comes from the file.
+     * Only the common bullion weights are targets. A catalog's members take their key from the file
+     * (ADR 0016), so its declared weight has nothing to snap (#288).
      */
     @Test
     fun `a weight a catalog declares is not a snapping target`() {
-        // The 13,96 g Porto 500 escudos stays where Numista puts it. Its siblings at 14 g are 450
-        // and it is 449, and what joins the seven of them is the catalog that names all seven.
+        // The 13,96 g Porto 500 escudos stays at 449 beside its siblings' 450; the catalog that
+        // names all seven is what joins them.
         assertEquals(449, normalizeWeightMillioz(ounces(13.96)))
         assertEquals(450, normalizeWeightMillioz(ounces(14.0)))
-        // 26,73 g are the Morgan dollar's legal weight, not a careless figure: nothing moves it.
+        // 26,73 g is the Morgan dollar's legal weight, not a rounding slip.
         assertEquals(859, normalizeWeightMillioz(ounces(26.73)))
     }
 }
@@ -127,16 +126,12 @@ class CollectionDerivationTest {
 
     @Test
     fun `a raw family prints verbatim and technical systems group as the weakest family`() {
-        // The six editorial aliases died with #22: what a curated file names, it names in its
-        // own `short_name`, and what no file claims reads as Numista wrote it — abbreviation,
-        // language and all. A generated monetary system is formatted (ADR 0012), and the eight
-        // series of the cured table are corrected (ADR 0031); everything else is verbatim, and
-        // that includes the two range names the table deliberately leaves in English.
+        // A family no curated file claims prints as Numista wrote it (#22), except a generated
+        // monetary system (ADR 0012) and the series of the cured table (ADR 0031). Gothic Horror
+        // and DC Comics stay in English on purpose.
         //
-        // `Charlemagme` is the stale spelling one phone still holds: numista.com fixed the typo
-        // and the table is keyed on the corrected string, so the misspelled label keeps printing
-        // as it came until somebody asks that ficha again (ADR 0025). A cured label is not a
-        // rewrite rule over anything that looks like it.
+        // `Charlemagme` is a stale spelling a phone may still hold: the table is keyed on the
+        // corrected string, so the typo prints until that ficha is fetched again (ADR 0025).
         val labels = listOf(
             "SML" to "SML",
             "Red Data Book" to "Red Data Book",
@@ -176,8 +171,8 @@ class CollectionDerivationTest {
             emptyList(),
         ).derivedCollections
 
-        // A technical family no longer costs the piece its card (ADR 0012); the raw value
-        // stays in the key, and only the label reads as a monetary system.
+        // A technical family still gets a card (ADR 0012): the raw value stays in the key and
+        // only the label is formatted.
         assertEquals(
             listOf(
                 "System 19-2001",
@@ -248,15 +243,9 @@ class CollectionDerivationTest {
     }
 
     /**
-     * The 1000 escudos of Portugal are one coin whose weight Numista records three ways: 27, 28
-     * and 28.2 grams — 868, 900 and 907 milli-ounces, three keys for one card. Measured on the
-     * real collection before this rule existed: one catalog produced two cards, and the five
-     * lightest pieces were counted in both.
-     *
-     * Snapping never fixed this. It could close the seven milli-ounces to 28.2 g and never the
-     * thirty-two to 27 g, and widening the tolerance that far would read a 30 g piece as an ounce.
-     * What holds the three together is the file naming all three (ADR 0016), which is why the
-     * weight it declares no longer needs to be a target at all (#288).
+     * Numista records the Portuguese 1000 escudos as 27, 28 and 28.2 g: three keys for one coin.
+     * Snapping can't close a 32 milli-ounce gap without reading a 30 g piece as an ounce, so the
+     * file naming all three holds them together (ADR 0016, #288).
      */
     @Test
     fun `a catalog claims its members whatever weight numista records for each`() {
@@ -304,13 +293,8 @@ class CollectionDerivationTest {
     }
 
     /**
-     * A weight a catalog declares reaches its own members and nobody else (#288).
-     *
-     * The Morgan dollar weighs 26.73 g — 859 milli-ounces, its legal weight, not a careless
-     * Numista figure — and no catalog claims it. While declared weights were targets for
-     * everyone, the 868 of a Spanish commemorative 10 euros fixed the variant of a 19th-century
-     * American silver coin nobody had looked at, and the same loose coin was weighed two ways:
-     * 859 in its shelf row, which never snapped to a curated target, and 868 in its card's key.
+     * The unclaimed Morgan dollar (26.73 g, 859) used to snap to the 868 a Spanish catalog
+     * declares, and was weighed 859 in its shelf row and 868 in its card's key (#288).
      */
     @Test
     fun `a declared weight does not reach a type its catalog does not claim`() {
@@ -337,17 +321,13 @@ class CollectionDerivationTest {
         val morgan = derivation.derivedCollections.single { it.family != catalog.family }
         assertEquals("Dólar de plata clásico de EE. UU.", morgan.family)
         assertEquals(859, morgan.weightMillioz)
-        // And the same 868 still rules the member it does name: that authority is the point.
+        // The declared 868 still rules the member the catalog names.
         val declaration = derivation.derivedCollections.single { it.family == catalog.family }
         assertEquals(catalog.key(), declaration.key())
         assertEquals(868, declaration.weightMillioz)
     }
 
-    /**
-     * La clave ya no persiste nada (ADR 0021 §5), pero sigue siendo la identidad de la tarjeta que
-     * ningún fichero nombra y la de su ruta, así que reconstruirla desde sus partes tiene que
-     * seguir rechazando todo lo que no sea ya canónico.
-     */
+    /** La clave no se persiste (ADR 0021 §5), pero identifica la tarjeta sin fichero y su ruta. */
     @Test
     fun `canonical keys round trip finish codes and refuse anything uncanonical`() {
         val proofColoured = DerivedCollection(
@@ -478,16 +458,9 @@ class CollectionDerivationTest {
 
     @Test
     fun `an unpublished submission derives no collection, whatever family it half-declares`() {
-        // #38 accepted such a card on the grounds that it would vanish by itself once published;
-        // #185 measured that a cached type is never fetched again, so it would not.
-        //
-        // This one is written from no coin in particular, and saying so matters. It used to be
-        // N#596807, and that was wrong twice over: the shield is a missing year (`looksUnpublished`,
-        // Inventory.kt), the ficha of N#596807 declares 2026 and always did, and the card it was
-        // supposed to prevent was on the collector's phone on 11 August 2026 (#404). Of the two
-        // yearless fichas in the seeded cache — N#578835 and N#581856, the two Venezuelan medals of
-        // #60 and #61 — neither declares a family, so nothing owned today reaches this branch. The
-        // shield stays for the draft that arrives tomorrow with a family typed in.
+        // #38 let such a card stand until publication, but a cached type is never fetched again
+        // (#185). The fixture is invented: the shield is a missing year (`looksUnpublished`,
+        // Inventory.kt), and no yearless ficha in the seeded cache declares a family.
         val submission = TypeMeta(
             id = 999_001,
             title = "Una propuesta cualquiera a la espera de árbitro",
@@ -512,10 +485,7 @@ class CollectionDerivationTest {
 
     @Test
     fun `a family made only of articles is read as no family at all`() {
-        // N#596807 as Numista published it: the page is live and dated 2026, so nothing about it
-        // looks unpublished any more, and its `series` still reads «The» (#404). Verbatim printing
-        // gave the collector a card called «The» over one coin; the residue says «sin familia en
-        // Numista», which is what a half-typed field amounts to.
+        // N#596807 as published: dated 2026, so not unpublished, but its `series` is «The» (#404).
         val published = TypeMeta(
             id = 596_807,
             title = "2 Pounds - Charles III (American Declaration of Independence; 1 oz Fine Silver",
@@ -571,8 +541,7 @@ class CollectionDerivationTest {
             listOf(grouping),
         )
 
-        // The residue is where the piece waits, not where it is condemned: the moment a curator
-        // says what this coin belongs to, the card is the curator's word and not Numista's typo.
+        // Once a curator names the coin's collection, it leaves the residue.
         assertEquals(emptyList(), derivation.unclassified.map { it.reason })
         assertEquals(
             listOf("Declaration of Independence"),
@@ -585,7 +554,7 @@ class CollectionDerivationTest {
         for (placeholder in listOf("The", "the", "La", "El", "Le", "De la", "The  of ")) {
             assertTrue(isPlaceholderFamily(placeholder), placeholder)
         }
-        // A name says something besides its article, and an initialism is a name.
+        // Anything beyond an article is a name, and so is an initialism.
         for (family in listOf("The Royal Tudor Beasts", "Noah's Ark", "SML", "UN", "Disney", "Lunar ounce")) {
             assertFalse(isPlaceholderFamily(family), family)
         }
@@ -593,8 +562,7 @@ class CollectionDerivationTest {
 
     @Test
     fun `a curated catalog still claims a type whose page is unpublished`() {
-        // The file outranks the check: a curator verified this by hand, so no plate slot is lost
-        // to a field Numista left half-typed.
+        // The curated file outranks the check: a curator verified the type by hand.
         val catalog = teslaCatalogStub().copy(
             family = "The Royal Tudor Beasts",
             finish = Finish.Bullion,
@@ -723,10 +691,7 @@ class CollectionDerivationTest {
         }
     }
 
-    /**
-     * A curated grouping is the weakest claim there is: it only names types, so it loses to
-     * every family that means something and still rescues the ones Numista files nowhere.
-     */
+    /** A grouping only names types, so it is the weakest claim. */
     @Test
     fun `a curated grouping rescues family-less types and loses to every real claim`() {
         val grouping = CuratedGrouping(
@@ -791,10 +756,7 @@ class CollectionDerivationTest {
         assertEquals("5 Bolívares de Venezuela", catalogued[0].family)
     }
 
-    /**
-     * Every card keeps the rows it was built from: the screen that opens one shows the
-     * pieces, and «los 5 paquillos» is five rows of one single Numista type.
-     */
+    /** The card's screen lists its rows: «los 5 paquillos» are five rows of one Numista type. */
     @Test
     fun `each derived collection keeps the pieces it was derived from`() {
         val typeMeta = mapOf(

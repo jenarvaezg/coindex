@@ -26,8 +26,8 @@ class TopChromeInsetTest {
         compose.setContent {
             CoindexTheme {
                 statusBarInset = WindowInsets.statusBars.getTop(LocalDensity.current).toFloat()
-                // The two album roots draw no masthead (ADR 0026 §1), so the banner is first in
-                // the column with nothing above it to pay the strip — which is how #356 happened.
+                // The album roots draw no masthead (ADR 0026 §1), so the banner comes first in the
+                // column and has to clear the status bar itself (#356).
                 TopChrome {
                     UpdateBanner(update = AVAILABLE, updating = false, onInstall = {})
                 }

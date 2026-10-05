@@ -22,18 +22,15 @@ import org.junit.runner.RunWith
 private val MINIMUM_TARGET = 48.dp
 
 /**
- * The width a country block gets on the Pixel 7 of the measurements: 411 dp of screen less the
- * two 12 dp page margins. The label column and its gap come out of it inside the row.
+ * A country block on a 411 dp Pixel 7, less two 12 dp page margins; the label column and its gap
+ * come out of it inside the row.
  */
 private val PHONE_BLOCK_WIDTH = 387.dp
 
 /**
- * The fold of the country axis on a phone (#417).
- *
- * The unit test fixes the arithmetic; this fixes the two things only a device can answer: that
- * 387 dp of block measures **seven** holes to a row — the number the whole decision was taken on —
- * and that the mark is a target of its own, big enough to press and quiet about the country behind
- * it. No photographs: the fold is about how many holes there are, not what is in them.
+ * The fold of the country axis on a phone (#417). The unit test fixes the arithmetic; this checks
+ * that a 387 dp block fits seven holes to a row, and that the fold mark is a pressable target of
+ * its own.
  */
 @RunWith(AndroidJUnit4::class)
 class CountryAxisFoldTest {
@@ -59,7 +56,7 @@ class CountryAxisFoldTest {
 
         compose.onNodeWithText(FOLDED).performClick()
         assertEquals(1, toggled)
-        // The block behind it opens Monedas; the mark opens holes. One tap does one of the two.
+        // The block behind opens Monedas; the mark only toggles the fold.
         assertEquals(0, opened)
     }
 

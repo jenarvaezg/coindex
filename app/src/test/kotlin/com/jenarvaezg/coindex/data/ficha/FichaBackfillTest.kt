@@ -10,12 +10,8 @@ import kotlin.test.assertNull
 import kotlinx.coroutines.test.runTest
 
 /**
- * The five columns of version 6 reach the fichas that were cached before they existed (#221).
- *
- * A cached type is never fetched again, so without this pass the two phones that already have the
- * app would show no issuer name on any card, no metal on any chip and no QR in the notebook — and
- * the fix costs no API call, because the body each row already stores is where those five were
- * being read from until now.
+ * Columns added after a ficha was cached are filled from the body the row already stores (#221):
+ * a cached type is never fetched again, and this costs no API call.
  */
 class FichaBackfillTest {
     /** A row exactly as an APK older than version 6 left it: a body, and no reading of it. */
@@ -57,9 +53,8 @@ class FichaBackfillTest {
     }
 
     /**
-     * A body nobody can parse is read **once**. This is the difference from the thumbnail backfill,
-     * whose marker is «is the column null»: there, a ficha with nothing to write is re-read at
-     * every single start for ever.
+     * The marker is the reading version, not a null column, so an unreadable body is not re-read on
+     * every start.
      */
     @Test
     fun `a ficha with nothing to say is still marked as read`() = runTest {
@@ -74,11 +69,7 @@ class FichaBackfillTest {
         assertEquals(0, FichaBackfill(types).run())
     }
 
-    /**
-     * The row a newer reading has not seen is the one that gets read, and it is found by version
-     * rather than by an empty column: that is what lets [FICHA_READING] be bumped to fix a bad
-     * reading over rows that already have values in them.
-     */
+    /** Rows are picked by version, so bumping [FICHA_READING] can fix a bad reading. */
     @Test
     fun `only the rows an older reading wrote are read again`() = runTest {
         val types = FakeTypeMetaDao()

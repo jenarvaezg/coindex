@@ -23,27 +23,18 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/**
- * The plate as its three drawers receive it — the screen, the exported sheet, the notebook page.
- *
- * Everything below is read off one [PlateSubject] because that is what shipped for #218: the plate
- * is worded once and consumed whole, so a fact that used to be recomputed in three places can no
- * longer be recomputed differently in one of them.
- *
- * What a cell has left to say once the heading has said the rest is the older half of this file. A
- * date run repeats one type across years, so «1879 · Numista 10340» under a cell titled 1879 was the
- * same two facts twice, twenty-one times over. An issue run repeats the year as well. Whatever every
- * member shares belongs in the heading; the cell keeps only what tells it apart — except the Numista
- * type, which is never in a cell at all (issue #88): it heads the plate when every cell is that type,
- * and otherwise the plate simply does not say it.
- */
 /** A day of August 2026, so the ages a header prints are the same on every run. */
 private const val NOW = 1_786_442_400_000L
 private const val DAY = 24L * 60 * 60 * 1_000
 
-/** Seven weeks back, which is past the month where the age gives way to the day itself. */
+/** Seven weeks back: past a month, the age gives way to the date. */
 private const val VALUED = NOW - 48 * DAY
 
+/**
+ * The plate as the screen, the exported sheet and the notebook page receive it, worded once in a
+ * [PlateSubject] (#218). A cell keeps only what tells it apart; what every member shares goes to
+ * the heading, and the Numista type is never in a cell (#88).
+ */
 class PlateSubjectTest {
     private fun member(id: String, label: String, year: Int, typeId: Int) =
         CollectionCatalogMember(id = id, label = label, year = year, numistaTypeId = typeId)
@@ -99,7 +90,7 @@ class PlateSubjectTest {
         members = members,
     )
 
-    /** One coin of a date run, which is matched by its type and the year it was recorded with. */
+    /** A date-run coin, matched by its type and recorded year. */
     private fun coin(id: Long, typeId: Int, year: Int) =
         CollectedItem(id = id, quantity = 1, typeId = typeId, issueYear = year)
 
@@ -120,10 +111,6 @@ class PlateSubjectTest {
         )
     }
 
-    /**
-     * The heading of the plate, the file the sheet is exported as and the face the notebook prints
-     * come off the catalog once, so no drawer has to reach past what it was handed.
-     */
     @Test
     fun `a plate is handed its own heading and never a catalog to read it off`() {
         val plate = subject(dateRun)
@@ -135,13 +122,8 @@ class PlateSubjectTest {
     }
 
     /**
-     * The divisor of «Progreso» is the album's and only the album's (#218).
-     *
-     * It used to be counted a second time off the catalog's own member flags, which agreed with the
-     * album by accident: `Owned ∪ Missing` are exactly the members that are neither announced nor
-     * unlisted. The album here disagrees on purpose — the 1886 is a casilla the catalog calls issued
-     * and the inventory cannot measure — and the plate follows the album, because the card's ratio
-     * did, and the same collection cannot count one way on the card and another one tap later.
+     * «Progreso» divides by the album alone, as the card does (#218). The album here disagrees with
+     * the catalog's flags on purpose: the 1886 is issued but cannot be measured.
      */
     @Test
     fun `the plate divides by the album, which is what the card divided by`() {
@@ -193,27 +175,19 @@ class PlateSubjectTest {
         assertEquals(listOf("2011", "2012"), plate.cells.map { it.footnote })
     }
 
-    /**
-     * A date run that outgrew its single type — the fuertes gained the 1876 Venezuelan, N#48672,
-     * next to twenty-one cells of N#10340 — used to hand every one of the twenty-two cells a
-     * footnote, twenty-one of them repeating the same identifier (issue #88). A type identifier is
-     * not what a plate says under a coin: on screen the cell title already links to its Numista
-     * page, and the exported sheet is a picture, not a database dump.
-     */
+    /** The cell title already links to Numista, and the sheet is a picture, not a dump (#88). */
     @Test
     fun `a run of two types puts no identifier under any of its cells`() {
         val plate = subject(dateRun + member("1876", "1876", 1876, 48_672))
 
         assertEquals(listOf(null, null, null), plate.cells.map { it.footnote })
-        // And it does not reappear in the heading either: two types are not one type.
+        // Nor in the heading: there is no single type to name.
         assertEquals(emptyList(), plate.entries.filter { it.first == "Tipo" })
     }
 
     /**
-     * The 121 cells of the Russian personalities said 121 different identifiers, and not one of
-     * them was an exception to a norm: there was no norm to be the exception to. Real members —
-     * of `outstanding-personalities-russia-2-roubles-plata-500` since #159 split the series by
-     * fineness — three years apart so the year stays theirs.
+     * Real members of `outstanding-personalities-russia-2-roubles-plata-500` (#159), in different
+     * years so each cell keeps its own.
      */
     @Test
     fun `a catalog where every cell is its own type says no identifier either`() {
@@ -243,11 +217,7 @@ class PlateSubjectTest {
         )
     }
 
-    /**
-     * Y un acabado declarado sí es una fila (#409). La especificación de los fuertes no la tiene
-     * porque los fuertes no tienen acabado que nombrar; la de una lámina proof la tiene entera, que es
-     * lo único que se pretendía conservar al callar el hueco.
-     */
+    /** Los fuertes no tienen acabado que nombrar; una lámina proof sí (#409). */
     @Test
     fun `a declared finish keeps its row in the specification`() {
         val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879)), finish = Finish.Proof)
@@ -265,9 +235,8 @@ class PlateSubjectTest {
     }
 
     /**
-     * El programa conmemorativo entra en la especificación **después** del progreso de la lámina
-     * y sin mezclarse con él (ADR 0022): «1 / 2 emisiones» cuenta lo que el catálogo sostiene, y
-     * «1 de 3» cuenta el programa entero, cuya tercera moneda no está en ningún catálogo.
+     * «1 / 2 emisiones» cuenta lo que sostiene el catálogo; «1 de 3», el programa entero, cuya
+     * tercera moneda no está en ningún catálogo (ADR 0022).
      */
     @Test
     fun `a programme is a second line and never touches the plate progress`() {
@@ -355,11 +324,8 @@ class PlateSubjectTest {
     }
 
     /**
-     * The two drawers that head the plate with the figure itself take the row out from under it.
-     *
-     * The printed notebook does not, which is why this is a function and not a shape of `entries`:
-     * a page of the cuaderno has no header to raise a ratio into, so «Progreso · 1 / 2 emisiones»
-     * is the only place it says it.
+     * Screen and sheet raise the ratio into the header and drop the row; the notebook page has no
+     * header, so `entries` keeps it.
      */
     @Test
     fun `the ratio is printed once, and never twice on the same surface`() {
@@ -369,14 +335,12 @@ class PlateSubjectTest {
         assertEquals("1/2", plate.ratio)
         val beside = plateEntriesBesideRatio(plate.entries)
         assertEquals(emptyList(), beside.filter { it.first == "Progreso" })
-        // What the progress brought with it stays: it is not the ratio, and the figure over the
-        // title deliberately says nothing about an emission the app cannot measure.
+        // The unmeasurable note stays: the ratio over the title doesn't mention it.
         assertEquals("" to "1 emisión no medible", beside[0])
     }
 
     /**
-     * The stamp is read from the inventory like the die-cut (ADR 0026 §3), so it is the album's
-     * `owned == issued` and nothing else — no date, no flag, nothing remembered.
+     * Read from the inventory like the die-cut (ADR 0026 §3): `owned == issued`, nothing stored.
      */
     @Test
     fun `a plate with every issued member owned says it is complete`() {
@@ -386,11 +350,7 @@ class PlateSubjectTest {
         assertTrue(complete.complete)
     }
 
-    /**
-     * Completing expires: `issuedMembers` leaves announced members out of the divisor, so the day
-     * the curator turns an announced year into a real casilla the same catalog reads 2 of 3 and
-     * the stamp is simply not drawn. 33 of the 74 catalogs are open series.
-     */
+    /** Completion expires: a new casilla in an open series just stops the stamp being drawn. */
     @Test
     fun `a date run that grows loses the stamp without drama`() {
         val owned = listOf(coin(1, 10_340, 1879), coin(2, 10_340, 1886))
@@ -400,7 +360,6 @@ class PlateSubjectTest {
         assertFalse(grown.complete)
     }
 
-    /** A catalog with nothing measurable divides by nothing, so it heads itself with no figure. */
     @Test
     fun `a plate with no measurable emission offers no ratio and no stamp`() {
         val plate = subject(listOf(announced))
@@ -410,12 +369,8 @@ class PlateSubjectTest {
     }
 
     /**
-     * Where the coin of the index card lands, which is the first casilla this collector **owns**
-     * and not the first of the catalog (#304).
-     *
-     * It is the same rule `CollectionIndex.firstOwnedCover` picks the card's photograph by, and it
-     * has to be: the card of the 1 Bolívar shows the 1945 he has, and flying it to the 1879 would
-     * land a coin in full colour on a hole where it is a ghost.
+     * The rule `CollectionIndex.firstOwnedCover` picks the card's photo by; otherwise the flying
+     * coin would land in colour on a ghost (#304).
      */
     @Test
     fun `the coin lands on the first casilla the collector owns`() {
@@ -424,7 +379,6 @@ class PlateSubjectTest {
         assertEquals(1, plate.landingCell)
     }
 
-    /** A complete sheet lands on its own first casilla, so the ceremony falls where the eye is. */
     @Test
     fun `a complete plate lands on the top of the sheet`() {
         val plate = subject(dateRun, owned = listOf(coin(1, 10_340, 1879), coin(2, 10_340, 1886)))
@@ -432,11 +386,7 @@ class PlateSubjectTest {
         assertEquals(0, plate.landingCell)
     }
 
-    /**
-     * The footnote goes silent when the plate already said the year; the tag does not, because it
-     * is not a note but the handle that opens Numista (#337). Twelve casillas of four shipped
-     * catalogs live in this gap, and without the year they would have nothing to press.
-     */
+    /** The tag is the handle that opens Numista, so it keeps the year (#337). */
     @Test
     fun `the tag keeps the year the footnote drops`() {
         val plate = subject(issueRun)
@@ -483,7 +433,7 @@ class PlateSubjectTest {
 
         assertEquals(listOf(true, false, false, false), plate.cells.map { it.owned })
         assertEquals(listOf(false, true, false, false), plate.cells.map { it.missing })
-        // What identifies a cell to a drawer: its key, its title and the type behind it.
+        // What identifies a cell to a drawer: its key and its type.
         assertEquals(listOf("1879", "1886", "2023-rabbit", "2027-goat"), plate.cells.map { it.id })
         assertEquals(
             listOf(10_340, 10_340, null, null),
@@ -491,12 +441,7 @@ class PlateSubjectTest {
         )
     }
 
-    /**
-     * The two figures of money reach a drawer already worded, and the stamp of a hole with them (#493).
-     *
-     * A stamp lands on the hole and never on a full casilla: a casilla that is filled has no cost, it
-     * has a value, and that one is the header's.
-     */
+    /** A filled casilla has a value, not a cost, so only holes get a stamp (#493). */
     @Test
     fun `a plate is handed both figures of money and the price inside each hole`() {
         val plate = pricedSubject(
@@ -513,11 +458,8 @@ class PlateSubjectTest {
     }
 
     /**
-     * And each of the two carries the age of **its own** price, read against the subject's clock (#594).
-     *
-     * The stamp inside the hole does not repeat it: «Coste de cerrar» totals those very holes and
-     * already says the oldest of their reads, so ten casillas printing the same date under one line
-     * that says it is the frequency ADR 0026 §5 prices.
+     * Each figure dates its own reads (#594). The holes' stamps don't repeat the date, which
+     * «Coste de cerrar» already says (ADR 0026 §5).
      */
     @Test
     fun `each figure of the header is handed the age of its own price`() {
@@ -530,8 +472,7 @@ class PlateSubjectTest {
             nowMillis = NOW,
         )
 
-        // The absolute form is pinned to a zone in `FiguresLabelsTest`; what this one owes is that the
-        // line is handed **its own** read and not the other line's.
+        // The absolute form is pinned in `FiguresLabelsTest`; here each line gets its own read.
         assertEquals(
             "Valor actual: 1.612 € · al mayor de tres precios · Numista: ${priceAgeLabel(VALUED, NOW)}",
             plate.value,
@@ -540,11 +481,6 @@ class PlateSubjectTest {
         assertEquals(listOf(null, "84 €"), plate.cells.map { it.cost })
     }
 
-    /**
-     * And with no money to say, no drawer can print any of it — which is the export with the switch
-     * off, the plate whose market has not landed, and every test in this file that says nothing about
-     * money at all.
-     */
     @Test
     fun `a plate handed no money says nothing about money anywhere`() {
         val plate = pricedSubject(PlateMoney())
@@ -555,12 +491,7 @@ class PlateSubjectTest {
         assertEquals(listOf(null, null), plate.cells.map { it.cost })
     }
 
-    /**
-     * And when the reason is the market, the header says so instead of the two figures (#519).
-     *
-     * The line stands **in the figures' slot**, so it can never be true beside one of them: what a
-     * plate says of its money is either the amounts or that they have not arrived.
-     */
+    /** The line takes the figures' slot, so it never sits beside an amount (#519). */
     @Test
     fun `a plate whose market has not landed says it, and says no amount`() {
         val plate = pricedSubject(PlateMoney(waiting = true))
@@ -571,10 +502,7 @@ class PlateSubjectTest {
         assertEquals(listOf(null, null), plate.cells.map { it.cost })
     }
 
-    /**
-     * La lámina de un solo año no repite el año en cada casilla: lo repetía cinco veces en Paquillos
-     * mientras «Estrella 66…70», que es lo único que las distingue, iba debajo en texto plano (#511).
-     */
+    /** Con un solo año, lo que distingue las casillas es el nombre (#511). */
     @Test
     fun `una lamina de un solo ano pone en la chapa lo que distingue`() {
         val plate = subject(issueRun)
@@ -583,13 +511,12 @@ class PlateSubjectTest {
             listOf(CellPlaque.Name("Estrella 66"), CellPlaque.Name("Estrella 67")),
             plate.cells.map { it.plaque },
         )
-        // Y no lo dice dos veces: lo que sube a la chapa deja de escribirse al pie de la casilla.
+        // Lo que sube a la chapa deja de escribirse al pie.
         assertEquals(listOf(null, null), plate.cells.map { it.printedName })
-        // El año sigue dicho una vez, donde vive un hecho de toda la lámina.
+        // El año se dice una vez, en la especificación.
         assertTrue(plate.entries.contains("Año" to "1966"))
     }
 
-    /** Donde el año sí distingue, la chapa es la de siempre y el nombre no se duplica. */
     @Test
     fun `una date run mantiene el ano en la chapa`() {
         val plate = subject(dateRun)
@@ -601,11 +528,7 @@ class PlateSubjectTest {
         assertEquals(listOf(null, null), plate.cells.map { it.printedName })
     }
 
-    /**
-     * Una casilla titulada con su propio año en una lámina de un solo año se queda con el año: no hay
-     * otra distinción que levantar, y una chapa que repitiese el título sería la misma duplicación
-     * del revés.
-     */
+    /** Si el título ya es el año, no hay otro nombre que subir a la chapa. */
     @Test
     fun `una casilla titulada con su ano no cambia de chapa`() {
         assertEquals(CellPlaque.Year("1966"), plaqueOf("1966", "1966", yearIsCommon = true))
@@ -613,7 +536,7 @@ class PlateSubjectTest {
         assertEquals(CellPlaque.Year("1966"), plaqueOf("Estrella 66", "1966", yearIsCommon = false))
     }
 
-    /** Una anunciada no tiene año, y sin año no hay chapa que colgar del hueco. */
+    /** Una anunciada no tiene año. */
     @Test
     fun `una casilla sin ano no tiene chapa`() {
         assertNull(plaqueOf("Year of the Goat", null, yearIsCommon = false))
@@ -636,7 +559,7 @@ class PlateSubjectTest {
         )
     }
 
-    /** The two-casilla date run with the first one filled, which is the plate a cost is said of. */
+    /** The two-casilla date run with the first one filled. */
     private fun pricedSubject(
         money: PlateMoney,
         nowMillis: Long = System.currentTimeMillis(),

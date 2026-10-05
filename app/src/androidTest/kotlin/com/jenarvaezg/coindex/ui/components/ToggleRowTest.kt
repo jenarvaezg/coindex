@@ -17,11 +17,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The whole line is the control, and a greyed line is still a line (#512).
- *
- * The tick this row draws is 20 dp of a phone held in one hand, which is the measured miss the
- * filter shelf fixed by taking the whole line; the KDoc of [ToggleRow] promised that and the
- * Material switch it used to hold took the tap on its own. So the promise is the test.
+ * The whole line is the control, and a greyed line still reports its state (#512). The 20 dp tick
+ * alone is easy to miss one-handed, and the Material switch the row used to hold took the tap on
+ * its own.
  */
 @RunWith(AndroidJUnit4::class)
 class ToggleRowTest {
@@ -61,15 +59,14 @@ class ToggleRowTest {
 
         compose.onNodeWithText(LABEL).assertIsNotEnabled()
         compose.onNodeWithText(LABEL).performClick()
-        // Still reporting the configuration, which is the other half of what grey owes: the note
-        // says why it cannot move, and the tick says which way it is.
+        // Greyed, it still reports the configuration: the note says why it can't move, the tick
+        // which way it is.
         compose.onNodeWithText(LABEL).assertIsOn()
         compose.onNodeWithText(NOTE).assertExists()
     }
 
     private companion object {
-        // The words of the panel this row is drawn in, so a reading of the test is a reading of the
-        // card: «Fotos» with the note the configuration puts under a switch it has made moot.
+        // The real panel's words: «Fotos» and the note shown when the switch is moot.
         const val LABEL = "Fotos"
         const val NOTE = "Sin fotos no hay nada que ajustar"
     }

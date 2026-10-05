@@ -5,11 +5,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Where the chips of the two shelves put a weight and a year.
- *
- * The property that matters across the weight and start bands is that **every band is total**: a row
- * with no value lands on a chip of its own rather than on none. The year facet of Coins keeps the
- * same bargain via [YearFilter.Undated], but offers each dated year rather than an era.
+ * Where the chips of the two shelves put a weight and a year. Every band is total: a row with no
+ * value gets a chip of its own, like [YearFilter.Undated] on the year facet.
  */
 class BandsTest {
     @Test
@@ -37,8 +34,7 @@ class BandsTest {
             listOf(YearFilter.Of(1879), YearFilter.Of(1904), YearFilter.Of(1936)),
             YearFilter.of(listOf(1879, 1904, 1936)),
         )
-        // «Sin año» is the chip of a piece nobody has dated — the two medals of #186 had one
-        // after all, in `issue_terms.issue_date` (#460), but the state they stood for still exists.
+        // «Sin año» is for a piece nobody has dated (#460).
         assertEquals(listOf(YearFilter.Undated), YearFilter.of(emptyList()))
     }
 
@@ -56,7 +52,7 @@ class BandsTest {
         assertEquals(StartBand.BeforeFifty, StartBand.of(1874))
         assertEquals(StartBand.FiftyToNinetyNine, StartBand.of(1966))
         assertEquals(StartBand.SinceTwoThousand, StartBand.of(2020))
-        // A collection whose types no ficha has arrived for yet is one sync from a date.
+        // No ficha has arrived yet for any of the collection's types.
         assertEquals(StartBand.Unknown, StartBand.of(null))
     }
 }

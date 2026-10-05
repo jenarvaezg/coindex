@@ -11,21 +11,12 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * The invariant of #550: every seat of the year axis that opens Monedas finds something there.
- *
- * The axis places a piece by [com.jenarvaezg.coindex.domain.placementYear] and paints a ghost on
- * every year a plate names, but the shelf answered only the engraved years of the pieces owned —
- * so a seat could paint a coin whose own tap opened an empty page. Measured on the father's
- * collection before the fix: nine pieces whose Gregorian year differs from the engraved one, and
- * 1899, 1947, 1955 and 1956 painting a coin nobody could reach.
+ * #550: every seat of the year axis that opens Monedas finds a coin there. The axis places pieces
+ * by [com.jenarvaezg.coindex.domain.placementYear] and paints a ghost on every year a plate names,
+ * so the shelf has to answer to those years too, not just the engraved ones.
  */
 class YearAxisAnswersTest {
-    /**
-     * The 100 pesetas «*67»: engraved 1966, struck 1967, placed on 1967 by the axis.
-     *
-     * The card keeps saying 1966 — that is what is on the coin (ADR 0016) — and the seat that
-     * paints it now finds it too.
-     */
+    /** The 100 pesetas «*67»: engraved 1966, struck 1967; the card keeps 1966 (ADR 0014). */
     @Test
     fun `a piece placed by its Gregorian year answers to both years`() {
         val state = state(
@@ -49,12 +40,6 @@ class YearAxisAnswersTest {
         assertTrue(matchesYear(row, 1_967))
     }
 
-    /**
-     * A ghost of an evidenced plate finds the versions of its type the collector does own.
-     *
-     * The father's 2 bolívares: he holds 1879 and the plate names 1900 and 1901 as holes. Tapping
-     * the hole used to open nothing at all; it now opens the coin the hole is about.
-     */
     @Test
     fun `a hole of an evidenced plate answers with the type it is a hole of`() {
         val state = state(
@@ -70,7 +55,7 @@ class YearAxisAnswersTest {
         assertEquals(listOf(1_879), row.years, "a hole is not a coin the collector holds")
     }
 
-    /** Chips and predicate come from the same list, so the ghost's year is a chip that counts one. */
+    /** Chips and filter read the same list of years. */
     @Test
     fun `the year of a hole is a chip of its own`() {
         val state = state(
@@ -87,11 +72,8 @@ class YearAxisAnswersTest {
     }
 
     /**
-     * The explicit restriction of #550: the ficha's run is **not** a filter criterion.
-     *
-     * The Maria Theresa Thaler is a posthumous restrike, ficha 1780–2024. Answering to its 245
-     * years would put it under almost every seat of the axis, and the shelf's year chips would go
-     * from ~230 to more than 800. What answers is the curated knowledge — the casillas.
+     * #550: the ficha's run is not a filter criterion; only the casillas add years. Otherwise a
+     * restrike like the Maria Theresa Thaler (1780–2024) would sit under almost every seat.
      */
     @Test
     fun `a type whose ficha spans centuries does not answer to the years in between`() {
@@ -111,7 +93,6 @@ class YearAxisAnswersTest {
         assertEquals(1, row.yearFilters.size)
     }
 
-    /** «Sin año» is not replaced by what the axis adds: an undated medal keeps its chip. */
     @Test
     fun `an undated piece still answers to Sin año`() {
         val state = state(
@@ -124,12 +105,7 @@ class YearAxisAnswersTest {
         assertEquals(listOf(YearFilter.Undated), row.yearFilters)
     }
 
-    /**
-     * The one paseo: what the axis paints as a ghost is what the shelf answers to.
-     *
-     * Both surfaces read the same [slotYears], so a plate cannot name a year on one screen and be
-     * unknown to the other one tap later.
-     */
+    /** The axis and the shelf both read [slotYears]. */
     @Test
     fun `every ghost of the axis is answered by the coin whose hole it is`() {
         val state = state(
@@ -163,7 +139,7 @@ class YearAxisAnswersTest {
         typeMeta: Map<Int, TypeMeta>,
         slots: List<AlbumSlot> = emptyList(),
     ) = CollectionState(
-        // The casillas the assembly carries (#538): what this walk indexes is what the plate draws.
+        // The casillas the assembly carries (#538), the same ones the plate draws.
         AssembledCollection(items = items, typeMeta = typeMeta, slots = slots),
     )
 
