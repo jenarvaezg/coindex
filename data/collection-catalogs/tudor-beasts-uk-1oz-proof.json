@@ -10,7 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=6888",
-  "updated_at": "2026-08-01",
+  "source_note": "La completer de 2027 (N#605121, salida el 10 de septiembre de 2026, límite de 6.000) es el undécimo diseño de una serie de diez bestias: reúne las diez alrededor de una rosa Tudor en un reverso de David Lawrence. Su propia ficha lo dice —«This is the eleventh design in the Tudor Beasts series; there are a total of ten beasts»— y el canal la presenta como la última de la serie. La lámina se queda `open` de todos modos: cerrar pide la declaración de la casa (ADR 0020) y www.royalmint.com devuelve hoy la sala de espera del lanzamiento de la Britannia 2027, así que la frase que lo sostendría no se ha podido leer en la fuente. Con esa página delante, la siguiente pasada la cierra.",
+  "updated_at": "2026-10-05",
   "members": [
     {
       "id": "2022-seymour-panther-silver-proof",
@@ -71,6 +72,12 @@
       "label": "Royal Dragon; Silver Proof",
       "year": 2026,
       "numista_type_id": 577854
+    },
+    {
+      "id": "2027-completer-silver-proof",
+      "label": "Completer; Silver Proof",
+      "year": 2027,
+      "numista_type_id": 605121
     }
   ]
 }

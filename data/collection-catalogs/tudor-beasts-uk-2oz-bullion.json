@@ -10,7 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=6888",
-  "updated_at": "2026-08-01",
+  "source_note": "Las diez bestias están completas. La Seymour Panther abrió la gama proof en 2022 y la Royal Mint la dejó para el final del bullion: salió el 1 de septiembre de 2026 (N#604513), décima y última de las diez estatuas del puente de Hampton Court. La lámina sigue `open` por la completer: la casa cerró la gama conmemorativa con «The Tudor Beasts Completer» fechada en 2027 —el undécimo diseño, con las diez bestias en un reverso—, y de esa pieza hoy sólo hay proof y un BU de cuproníquel, ningún bullion de 2 oz anunciado ni a la venta. En The Queen’s Beasts sí lo hubo (N#299474, 2 oz bullion de 2021, que cierra `queens-beasts-uk-2oz`), así que la undécima casilla se espera, no se afirma: una casilla `announced` necesitaría que la Royal Mint nombrara la moneda, y no la ha nombrado (ADR 0020).",
+  "updated_at": "2026-10-05",
   "members": [
     {
       "id": "2022-lion-of-england",
@@ -67,12 +68,10 @@
       "numista_type_id": 583080
     },
     {
-      "id": "seymour-panther",
+      "id": "2026-seymour-panther",
       "label": "Seymour Panther",
-      "status": "announced",
-      "source": "https://britannia-uk.com/royal-tudor-beasts/",
-      "source_note": "Las diez bestias están nombradas de antemano y el orden de salida difiere entre bullion y proof: «The Seymour Panther Proof was released in 2022 but has yet to be released in Bullion». Sin año: la Royal Mint ha anunciado cuál falta, no cuándo. Comprobado en la serie 6888 de Numista, que tiene nueve «5 Pounds · 2 oz Fine Silver» y ninguna es el Panther; su 2 oz de 2022 es N#307800, plata .999 de 40 mm, que es proof.",
-      "design_type_id": 307800
+      "year": 2026,
+      "numista_type_id": 604513
     }
   ]
 }

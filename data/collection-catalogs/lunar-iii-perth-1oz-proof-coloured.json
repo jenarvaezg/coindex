@@ -10,7 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=4750",
-  "updated_at": "2026-08-02",
+  "source_note": "La casilla de 2027 nace con una sola emisión declarada, la del estuche de tres de 1 oz (1.500 piezas): el 5 de octubre de 2026 es la única que la ficha de N#602446 lista. La coloreada suelta, con límite de 6.000, sale el 6 de octubre de 2026 y añadirá renglón al mismo tipo; hasta que se lea ese id, la pieza suelta no casa con la casilla.",
+  "updated_at": "2026-10-05",
   "members": [
     {
       "id": "2020-year-of-the-mouse",
@@ -76,6 +77,15 @@
       "numista_type_id": 507204,
       "numista_issue_ids": [
         1002105
+      ]
+    },
+    {
+      "id": "2027-year-of-the-goat",
+      "label": "Year of the Goat",
+      "year": 2027,
+      "numista_type_id": 602446,
+      "numista_issue_ids": [
+        1123374
       ]
     }
   ]

@@ -107406,6 +107406,428 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "602440": {
+  "id": 602440,
+  "url": "https://es.numista.com/602440",
+  "title": "1 Dollar - Charles III (1st Portrait - Year of the Goat - Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2027,
+  "max_year": 2027,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-09-08"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.9,
+  "thickness": 3.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Daniel (Dan) Thorne"
+   ],
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda",
+   "lettering": "· CHARLES III AUSTRALIA ·\r\n1oz 9999 Ag 1 DOLLAR\r\nDT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6aa1f957dbabd7.58747187-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6aa1f957dbabd7.58747187-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "reverse": {
+   "designers": [
+    "Natasha Muhl"
+   ],
+   "description": "(en) A mature goat, a young goat, and a baby goat grazing together peacefully in a rugged mountainous setting.",
+   "lettering": "羊\r\nGOAT\r\n2027\r\nP\r\nNM",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6aa1f9590191a6.85543024-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6aa1f9590191a6.85543024-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "series": "Lunar Series III",
+  "commemorated_topic": "Año de la Cabra",
+  "comments": "(en) <p>Available individually, in a 3-coin proof set (with ½oz and 2oz) or in a 3-coin 1oz set (with coloured and gilded coins)</p><p><a href=\"https://en.numista.com/catalogue/images/6aa1fbe2b946d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6aa1fbe2b946d.jpg\"></a></p><p><a href=\"https://en.numista.com/catalogue/images/6aa1fb6e6d728.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6aa1fb6e6d728.jpg\"></a><a href=\"https://en.numista.com/catalogue/images/6aa1fb61b536d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6aa1fb61b536d.jpg\"></a></p>",
+  "tags": [
+   "Cabra o caprino",
+   "Calendario chino"
+  ],
+  "weight": 31.107,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "602446": {
+  "id": 602446,
+  "url": "https://es.numista.com/602446",
+  "title": "1 Dollar - Charles III (1st Portrait - Year of the Goat - Silver Coloured)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "australie",
+   "name": "Australia"
+  },
+  "min_year": 2027,
+  "max_year": 2027,
+  "ruler": [
+   {
+    "id": 6815,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 825,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "1 Dollar",
+   "numeric_value": 1,
+   "currency": {
+    "id": 243,
+    "name": "Dólar",
+    "full_name": "Dólar (1966-presente)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-09-00"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40.9,
+  "thickness": 3.5,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Daniel (Dan) Thorne"
+   ],
+   "description": "Retrato sin corona del rey Carlos III mirando hacia la izquierda",
+   "lettering": "· CHARLES III AUSTRALIA ·\r\n1oz 9999 Ag 1 DOLLAR\r\nDT",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6aa2093fd329d1.86666764-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6aa2093fd329d1.86666764-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "reverse": {
+   "designers": [
+    "Natasha Muhl"
+   ],
+   "description": "(en) A mature goat, a young goat, and a baby goat grazing together peacefully in a rugged mountainous setting.",
+   "lettering": "羊\r\nGOAT\r\n2027\r\nP\r\nNM",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/australie/6aa2094101e588.48141106-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/australie/6aa2094101e588.48141106-180.jpg",
+   "picture_copyright": "Perth Mint",
+   "picture_copyright_url": "http://www.perthmint.com.au"
+  },
+  "series": "Lunar Series III",
+  "commemorated_topic": "Año de la Cabra",
+  "comments": "(en) <p>Available in a 3-coin 1oz set (with proof and gilded coins)</p><p>&nbsp;</p><p><a href=\"https://en.numista.com/catalogue/images/6aa1fb61b536d.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6aa1fb61b536d.jpg\"></a></p>",
+  "tags": [
+   "Cabra o caprino",
+   "Calendario chino"
+  ],
+  "weight": 31.107,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 21,
+    "name": "Casa de la Moneda de Perth"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "604513": {
+  "id": 604513,
+  "url": "https://es.numista.com/604513",
+  "title": "5 Pounds - Charles III (Seymour Panther; 2 oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-09-01"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999,9"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda y fecha alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·5 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6ab5e6fc1b3627.33468810-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6ab5e6fc1b3627.33468810-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
+  },
+  "reverse": {
+   "engravers": [
+    "David Lawrence"
+   ],
+   "description": "Una imagen de una Pantera, leyenda arriba, fecha abajo",
+   "lettering": "· SEYMOUR PANTHER ·\r\nDL\r\n2026",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6ab5e6fd50e2a6.14414686-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6ab5e6fd50e2a6.14414686-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
+  },
+  "series": "The Royal Tudor Beasts",
+  "comments": "(en) <p>Although the the first design in The Tudor's Beasts series, this was the last of the bullion beasts to be released, there are a total of ten Beasts representing the statues that stand in Hampton Court Palace.<br><br>This David Lawrence reverse design was struck in a variety of base and precious metal compositions and denominations.</p>",
+  "tags": [
+   "Gato o felino",
+   "Corona",
+   "Escudo de armas"
+  ],
+  "weight": 62.42,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "605121": {
+  "id": 605121,
+  "url": "https://es.numista.com/605121",
+  "title": "2 Pounds - Charles III (The Tudor Beasts Completer; Silver Proof)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2027,
+  "max_year": 2027,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-09-10"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda y fecha alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS·2027 ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6abc8aed7a05f3.58413212-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6abc8aed7a05f3.58413212-180.jpg",
+   "picture_copyright": "The Royal Mint, 2027"
+  },
+  "reverse": {
+   "designers": [
+    "David Lawrence"
+   ],
+   "description": "(en) Image of all 10 Royal Tudor Beasts, encircling Tudor Rose, legend above date below.",
+   "lettering": "THE ROYAL BEASTS\r\n2027\r\nDL",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6abc8aee7808f3.83579039-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6abc8aee7808f3.83579039-180.jpg",
+   "picture_copyright": "The Royal Mint, 2027"
+  },
+  "series": "The Royal Tudor Beasts",
+  "comments": "(en) <p>This is the eleventh design in the Tudor Beasts series; there are a total of ten beasts representing the statues that stand in Hampton Court Palace. Individual coin issue limit: 6,000</p><p>&nbsp;<a href=\"https://en.numista.com/catalogue/images/6abc8a7899f5e.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6abc8a7899f5e.jpg\"></a></p><p>© The Royal Mint, 2027</p><p>&nbsp;</p><p>There was a 2-coin set with a reverse frosted edition issued as well. Issue Limit: 375<br><a href=\"https://en.numista.com/catalogue/images/6abc8a7194262.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6abc8a7194262.jpg\"></a><br>© The Royal Mint, 2027</p><p>&nbsp;</p><p>Overal coin issue limit: 6,387</p><p style=\"margin-left:0px;\">&nbsp;</p>",
+  "tags": [
+   "Gato o felino",
+   "Animal fantástico",
+   "Armadura",
+   "Corona",
+   "Flor"
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Liso con letras incusas",
+   "lettering": "• HAMPTON COURT PALACE • ROYAL TUDOR BEASTS",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ]
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "60709": {
   "category": "coin",
   "commemorated_topic": "Cocodrilo de agua salada",
