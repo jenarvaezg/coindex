@@ -122,6 +122,22 @@ object FiguresLabels {
      */
     const val HOLE_CRITERION: String = "en sin circular"
 
+    /**
+     * What the **other** clock under an amount is called, beside the silver's (#594).
+     *
+     * **«Numista» and not «catálogo», which is the word measured and thrown away.** A plate's own
+     * specification already carries a row labelled «Catálogo» — the editorial date of the curated file,
+     * a *version and not an age* (`catalogDateLabel`, #518) — so «catálogo: el 1 sep 2026» under the
+     * header put two different clocks on one screen under one word, with two different dates and no way
+     * for the reader to tell which was which. That is the exact drift #518 spent a document undoing.
+     *
+     * It names the **source** and not a gesture, which is what parts it from `valuedAgeLabel`'s
+     * «tasada»: nobody pressed anything to bring these prices, the pass did (ADR 0028 §3). And naming
+     * the source is what makes the pair legible — the silver spot is two keyless calls to somebody who
+     * is not Numista (§9), so «plata» and «Numista» really are the two places the two clocks come from.
+     */
+    const val NUMISTA_STAMP_LABEL: String = "Numista"
+
     const val MATTER_HEADING: String = "La materia"
     const val METAL_HEADING: String = "El metal, por masa"
     const val PORTRAIT_HEADING: String = "El retrato"
@@ -411,6 +427,82 @@ private fun readAtLabel(readAtMillis: Long, nowMillis: Long, zone: ZoneId): Stri
 
 private val CLOCK = DateTimeFormatter.ofPattern("HH:mm", SPANISH)
 
+/**
+ * How old a price brought from Numista is, in the coarsest unit that is still true.
+ *
+ * The one vocabulary every price in the app says its age in: the plate of the shelf window dresses it
+ * as a gesture (`valuedAgeLabel`), and the stamps under a total of the collection name their source
+ * ([numistaStampLabel]), but the age itself is said once and in one place (#594).
+ *
+ * Calendar days and not elapsed milliseconds, so a price brought last night reads «ayer» this morning
+ * instead of «hace 11 horas» rounded to today — the same correction #398 made to the spot's own stamp.
+ *
+ * **Past a month it says the day and not the age.** A catalog price lives ninety days (ADR 0028 §5 as
+ * amended by #561), so «hace 83 días» is where this figure spends most of its life, and it is a number
+ * nobody can place on a calendar.
+ */
+fun priceAgeLabel(
+    readAtMillis: Long,
+    nowMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String {
+    val read = Instant.ofEpochMilli(readAtMillis).atZone(zone).toLocalDate()
+    val today = Instant.ofEpochMilli(nowMillis).atZone(zone).toLocalDate()
+    // A clock that has gone backwards is not a price from the future: it is today's.
+    val days = ChronoUnit.DAYS.between(read, today).coerceAtLeast(0)
+    return when {
+        days == 0L -> "hoy"
+        days == 1L -> "ayer"
+        days < 30L -> "hace ${plural(days.toInt(), "día", "días")}"
+        else -> "el ${dayMonthYearLabel(read)}"
+    }
+}
+
+/**
+ * The second clock under an amount: when the catalogue half of it was brought (#594).
+ *
+ * Shaped like the silver's clause — «fuente: cuándo» — because that is what stops one date being read
+ * as the date of the whole: two clauses, each naming what it is the clock of. The silver's carries a
+ * price as well, which is the one asymmetry and the reason the spot does not simply cede its place:
+ * «28,40 €/oz» is the only way the metal floor can be checked (#398).
+ *
+ * The date it is handed is the **oldest** read the amount is made of (#494): a date over a total is a
+ * promise about all of it.
+ */
+fun numistaStampLabel(
+    readAtMillis: Long,
+    nowMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = "${FiguresLabels.NUMISTA_STAMP_LABEL}: ${priceAgeLabel(readAtMillis, nowMillis, zone)}"
+
+/**
+ * The whole stamp under the total of «Las cifras»: **one clause per clock**, and never one for the
+ * other (#594).
+ *
+ * Until this it was [spotStampLabel] alone, and the spot is the one price under that total that does
+ * **not** age: it is read daily, outside the budget (ADR 0028 §9), so its clause always said «hoy».
+ * Under it sat catalog prices that live ninety days since #561 — three months of a figure promising
+ * this morning, which is the exact thing the stamp exists to prevent (ADR 0028 §5).
+ *
+ * The two are not averaged into one date. #494's «the oldest of its reads» is a rule for a total whose
+ * parts came from **one** clock on different days, and it is applied inside the catalogue's clause; two
+ * clocks that tick at different rates under one amount are two sentences, because a single date would
+ * have to lie about one of them whichever one it picked.
+ *
+ * @param catalogReadAt null where no catalog price feeds the total at all — a collection valued out of
+ *   its metal and what was paid for it. Then there is one clock and one clause, and the absence is
+ *   written as an absence rather than as «sin fecha».
+ */
+fun moneyStampLabel(
+    spot: SilverSpot,
+    catalogReadAt: Long?,
+    nowMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = listOfNotNull(
+    spotStampLabel(spot, nowMillis, zone),
+    catalogReadAt?.let { numistaStampLabel(it, nowMillis, zone) },
+).joinToString(" · ")
+
 /** The arc, which is two years and the distance between them. */
 fun arcLabel(years: Int): String = "$years años"
 
@@ -523,8 +615,17 @@ fun plateAmountLabel(value: PlateValue): String =
  * The name is what tells this figure from the one under it, and it is dropped only where something
  * else is already saying it — see [plateAmountLabel], which is the paper's reading of the same amount.
  */
-fun plateValueLabel(value: PlateValue): String =
-    "${FiguresLabels.PLATE_VALUE_LABEL}: ${plateAmountLabel(value)}"
+fun plateValueLabel(
+    value: PlateValue,
+    nowMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = listOfNotNull(
+    "${FiguresLabels.PLATE_VALUE_LABEL}: ${plateAmountLabel(value)}",
+    // **Its own age and not the header's**, because the two lines are not made of the same reads: a
+    // marked casilla is repriced whatever the plate's shape (ADR 0029 §4), so the line below can be
+    // three months fresher than this one with nothing wrong anywhere (#594).
+    value.catalogReadAt?.let { numistaStampLabel(it, nowMillis, zone) },
+).joinToString(" · ")
 
 /**
  * The second line: what closing the plate costs, with **its own** provenance (#493).
@@ -536,8 +637,15 @@ fun plateValueLabel(value: PlateValue): String =
  * There is no reading of this for a closed plate. A plate with nothing missing has no cost, which is
  * absence and not a zero: the line is not written rather than written as «0 €».
  */
-fun plateCostLabel(cost: PlateCost): String =
-    "${FiguresLabels.PLATE_COST_LABEL}: ${eurosLabel(cost.eur)} · ${FiguresLabels.HOLE_CRITERION}"
+fun plateCostLabel(
+    cost: PlateCost,
+    nowMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = listOfNotNull(
+    "${FiguresLabels.PLATE_COST_LABEL}: ${eurosLabel(cost.eur)}",
+    FiguresLabels.HOLE_CRITERION,
+    cost.catalogReadAt?.let { numistaStampLabel(it, nowMillis, zone) },
+).joinToString(" · ")
 
 /**
  * The price stamped inside one empty casilla: the amount alone, and nothing else (#493).
@@ -545,6 +653,13 @@ fun plateCostLabel(cost: PlateCost): String =
  * The criterion is not repeated here. It was said once in the header, three lines above, and the same
  * seven words under every hole of a plate of ten would be the frequency ADR 0026 §5 prices: what the
  * stamp adds to the header is **which** hole costs what, and the header has already said out of what.
+ *
+ * **And the date is not repeated either, for exactly the same reason** (#594). «Coste de cerrar» totals
+ * these very holes and carries the oldest of their reads, so a stamp that said its own would be the
+ * same date ten times under one line that already says it. The one case the header does not cover is a
+ * **marked** casilla on a plate past the threshold of ADR 0028 §1: there is a price inside the hole and
+ * no «Coste de cerrar» over it (ADR 0029 §4), so that one amount is still undated — and so is its row
+ * in «Lo que busco», which is a list of bare amounts with no header figure to carry a date for them.
  */
 fun holeCostLabel(eur: Double): String = eurosLabel(eur)
 

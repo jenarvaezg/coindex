@@ -248,11 +248,13 @@ fun plateSubject(
     /** The casillas of this plate the collector marked, by key (ADR 0029). */
     wished: Set<WishKey> = emptySet(),
     /**
-     * Now, for the one amount on a plate that is shown with its age (ADR 0030 §4).
+     * Now, for the age every amount on a plate is shown with (ADR 0030 §4, #594).
      *
      * A parameter and not a clock of its own, like every other date this app words: the price of a plate
      * of the shelf window never expires, so what tells «tasada hoy» from «tasada hace un año» is read
-     * where the subject is built and can be held still by a test.
+     * where the subject is built and can be held still by a test. Since #594 the collector's own two
+     * figures are read against it too — a catalog price lives ninety days, and the header has to say
+     * where in those ninety days its own amount sits.
      */
     nowMillis: Long = System.currentTimeMillis(),
 ): PlateSubject {
@@ -304,8 +306,8 @@ fun plateSubject(
         ratio = coverage?.let { "${it.owned}/${it.issued}" },
         complete = coverage?.nothingMissing == true,
         landingCell = plate.album.firstOwnedIndex(),
-        value = money.value?.let(::plateValueLabel),
-        cost = money.cost?.let(::plateCostLabel),
+        value = money.value?.let { plateValueLabel(it, nowMillis) },
+        cost = money.cost?.let { plateCostLabel(it, nowMillis) },
         entry = money.entry?.let { showcaseEntryLabel(it, nowMillis) },
         entryNote = ShowcaseLabels.NOTHING_PRICED.takeIf { money.entryAsked && money.entry == null },
         // Asked is what turns «Tasar esta lámina» into «Volver a tasar», and not merely priced: a plate

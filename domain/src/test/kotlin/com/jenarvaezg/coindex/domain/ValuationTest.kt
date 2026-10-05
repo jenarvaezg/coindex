@@ -199,12 +199,50 @@ class ValuationTest {
             item(id = 2, typeId = 2, grade = null, price = null),
         )
 
-        val total = collectionValue(items, emptyMap(), null, priceOf(mapOf("unc" to 10.0)))
+        val total = collectionValue(items, emptyMap(), null, priceOf(mapOf("unc" to 10.0)), NEVER_READ)
 
         assertEquals(30.0, total.eur)
         assertEquals(3, total.valued)
         assertEquals(4, total.pieces)
         assertTrue(!total.covered)
+        // Nothing was ever asked for, so there is no catalogue clock to name (#594).
+        assertNull(total.catalogReadAt)
+    }
+
+    /**
+     * A total is dated by the **oldest** of the reads behind it (#494, #594).
+     *
+     * A date over a total is a promise about all of it, so the promise has to be the weakest one the
+     * amount can keep. The reads mix because the pass is not the only writer: a marked casilla is
+     * repriced the day it is marked (ADR 0029 §4), and a catalog price lives ninety days since #561 —
+     * so a collection holds three months of dates at once and the stamp has to say which end it is at.
+     */
+    @Test
+    fun `a total is dated by the oldest read behind it`() {
+        val june = 1_780_000_000_000
+        val august = 1_786_000_000_000
+        val items = listOf(
+            item(id = 1, grade = "unc"),
+            item(id = 2, typeId = 2, issueId = 9, grade = "unc"),
+        )
+        val reads = { typeId: Int, _: Int -> if (typeId == 1) august else june }
+
+        // Both pieces are priced, so both reads are behind the total: the older one dates it.
+        assertEquals(
+            june,
+            collectionValue(
+                items,
+                emptyMap(),
+                null,
+                { typeId, _, grade -> if (grade == "unc") 10.0 * typeId else null },
+                reads,
+            ).catalogReadAt,
+        )
+        // A piece no source covers is not in the total, so its read does not age it either.
+        assertEquals(
+            august,
+            collectionValue(items, emptyMap(), null, priceOf(mapOf("unc" to 10.0)), reads).catalogReadAt,
+        )
     }
 
     /** With no spot there is no silver floor: the source is absent rather than zero. */
@@ -383,6 +421,9 @@ private fun item(
 )
 
 /** Prices for issue 7 of type 1, by grade, which is the shape the app's price book hands over. */
+/** A phone that has never asked Numista about a price, which is every test that is not about dates. */
+private val NEVER_READ: (Int, Int) -> Long? = { _, _ -> null }
+
 private fun priceOf(grades: Map<String, Double>): (Int, Int, String) -> Double? =
     { typeId, issueId, grade ->
         if (typeId == 1 && issueId == 7) grades[grade] else null

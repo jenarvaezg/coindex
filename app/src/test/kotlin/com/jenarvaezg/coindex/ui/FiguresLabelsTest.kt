@@ -139,6 +139,42 @@ class FiguresLabelsTest {
     }
 
     /**
+     * The stamp of the total names **each of its clocks once**, and never one for the other (#594).
+     *
+     * The silver is read daily and for free, so its clause always says today; a catalog price lives
+     * ninety days (ADR 0028 §5 as amended by #561). Until this, the only date under the total was the
+     * spot's, so a figure whose catalogue half was from June was read under a stamp promising this
+     * morning. The two are not averaged and neither is dropped: the spot's clause carries a **price**
+     * as well as a date (#398), and the catalogue's carries the oldest read the amount is made of
+     * (#494).
+     */
+    @Test
+    fun `the stamp of the total names each of its two clocks`() {
+        val now = millis(day = 8, hour = 23, minute = 10)
+        val read = spot(day = 8, hour = 11, minute = 52)
+
+        assertEquals(
+            "plata: 55,23 €/oz · hoy 11:52 · Numista: hace 12 días",
+            moneyStampLabel(read, millis(day = -4, hour = 9, minute = 0), now, MADRID),
+        )
+        // Past a month the catalogue says the day and not the age: «hace 83 días» is a number nobody
+        // can place on a calendar, which is the cut `valuedAgeLabel` already made for the same datum.
+        // And the clause is «Numista» and not «catálogo»: a plate's specification already labels a row
+        // «Catálogo» with the curated file's editorial date, and two clocks under one word on one
+        // screen is the drift #518 undid.
+        assertEquals(
+            "plata: 55,23 €/oz · hoy 11:52 · Numista: el 21 jun 2026",
+            moneyStampLabel(read, millis(day = -40, hour = 9, minute = 0), now, MADRID),
+        )
+        // A total no catalogue price feeds has one clock, and then the stamp is the one it always was:
+        // the clause is absent rather than written as «sin fecha», like every other absence here.
+        assertEquals(
+            spotStampLabel(read, now, MADRID),
+            moneyStampLabel(read, catalogReadAt = null, nowMillis = now, zone = MADRID),
+        )
+    }
+
+    /**
      * Yesterday at 23:00 seen this morning is **ayer**, which twenty-four-hour blocks got wrong.
      *
      * `toDays(now - readAt)` counted nine hours as zero days and announced them as «hoy»: invisible while
@@ -275,14 +311,50 @@ class FiguresLabelsTest {
      */
     @Test
     fun `the two figures of a header are named, and neither borrows the other's criterion`() {
-        val value = plateValueLabel(PlateValue(4_116.0, pieces = 12))
-        val cost = plateCostLabel(PlateCost(84.0, holes = 2))
+        val now = millis(day = 8, hour = 11, minute = 0)
+        // No catalogue read behind either amount, which is a plate valued out of its metal and what
+        // was paid for it: then there is no catalogue to date, and the lines are the ones #493 drew.
+        val value = plateValueLabel(PlateValue(4_116.0, pieces = 12), now, MADRID)
+        val cost = plateCostLabel(PlateCost(84.0, holes = 2), now, MADRID)
 
         assertEquals("Valor actual: 4.116 € · al mayor de tres precios", value)
         assertEquals("Coste de cerrar: 84 € · en sin circular", cost)
         // A hole has no «lo que pagaste», so its prices are two and not three (ADR 0028 §8): the
         // criterion of the first figure may never appear on the second.
         assertTrue(FiguresLabels.MONEY_CRITERION !in cost)
+    }
+
+    /**
+     * Each figure of the header carries **its own** age, because each is made of its own reads (#594).
+     *
+     * One date over the two would be a promise about a total that is not one total: «Valor actual» sums
+     * the pieces inside and «Coste de cerrar» the holes outside, and a marked casilla is repriced
+     * whatever the plate's shape (ADR 0029 §4) — so the second line can be three months fresher than
+     * the first with nothing wrong anywhere.
+     *
+     * And within one line the date is the **oldest** of its reads, which is #494's rule: a date over a
+     * total is a promise about all of it.
+     */
+    @Test
+    fun `each figure of a header carries the age of its own price`() {
+        val now = millis(day = 8, hour = 11, minute = 0)
+
+        assertEquals(
+            "Valor actual: 4.116 € · al mayor de tres precios · Numista: el 21 jun 2026",
+            plateValueLabel(
+                PlateValue(4_116.0, pieces = 12, catalogReadAt = millis(day = -40, hour = 9, minute = 0)),
+                now,
+                MADRID,
+            ),
+        )
+        assertEquals(
+            "Coste de cerrar: 84 € · en sin circular · Numista: hace 3 días",
+            plateCostLabel(
+                PlateCost(84.0, holes = 2, catalogReadAt = millis(day = 5, hour = 9, minute = 0)),
+                now,
+                MADRID,
+            ),
+        )
     }
 
     /**

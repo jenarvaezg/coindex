@@ -36,6 +36,9 @@ import kotlin.test.assertTrue
  * was an optional parameter three drawers could forget — so what this pins is the drawn line and not
  * `emissionLabelFor`, which was right and green the whole time.
  */
+/** A day of June 2026, which is where a price brought by the quarter's pass sits by October (#561). */
+private const val VALUED = 1_782_000_000_000L
+
 class NotebookSectionsTest {
     private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
@@ -290,6 +293,37 @@ class NotebookSectionsTest {
             listOf("Valor" to "54 € · al mayor de tres precios"),
             section.facts.filter { it.first == "Valor" },
         )
+        // A value no catalogue price feeds has no day to print, and the row is absent rather than blank.
+        assertTrue(section.facts.none { it.first == "Tasación" })
+    }
+
+    /**
+     * And the day it was priced goes right under it, written out in full (#594).
+     *
+     * Paper has no «hoy»: a sheet is read whenever it is picked up, and a catalog price lives ninety
+     * days (ADR 0028 §5 as amended by #561). The screen's own figure is refreshed under the collector's
+     * nose; a page printed in October with prices from June outlives every chance to ask.
+     */
+    @Test
+    fun `the printed value says the day it was priced`() {
+        val section = dateRunSection(
+            listOf(1879),
+            options = NotebookOptions(money = true),
+            plateValue = { PlateValue(eur = 54.0, pieces = 1, catalogReadAt = VALUED) },
+        )
+
+        assertEquals(
+            listOf("Tasación" to printedValuationLabel(VALUED)),
+            section.facts.filter { it.first == "Tasación" },
+        )
+    }
+
+    /** With the money off there is no amount, so there is no date of one either. */
+    @Test
+    fun `with the money off the date of the valuation goes with the amount`() {
+        val section = dateRunSection(listOf(1879), options = NotebookOptions(money = false))
+
+        assertTrue(section.facts.none { it.first == "Tasación" })
     }
 
     /**

@@ -231,8 +231,16 @@ fun paidComparison(
  * @param pieces every piece the collection holds, quantities included.
  * @param valued how many of them a source covered. The page says **coverage and never progress**
  *   (ADR 0028 §7): «el valor de N de tus 574 piezas» is said, «llevo 140 de 223» is not.
+ * @param catalogReadAt the **oldest** catalogue read behind the total, which is how a total whose
+ *   parts arrived on different days is dated (#494). Null where no piece of the collection was ever
+ *   asked about — a total out of metal and what was paid, which has no catalogue clock to name (#594).
  */
-data class CollectionValue(val eur: Double, val valued: Int, val pieces: Int) {
+data class CollectionValue(
+    val eur: Double,
+    val valued: Int,
+    val pieces: Int,
+    val catalogReadAt: Long? = null,
+) {
     val covered: Boolean get() = valued == pieces
 }
 
@@ -249,16 +257,33 @@ fun collectionValue(
     typeMeta: TypeMetaIndex,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
+    /**
+     * When this phone asked Numista about an issue, for the date the total is stamped with (#594).
+     *
+     * A lambda beside [prices] and for the same reason: the catalogue's two halves — what it answered
+     * and when it was asked — reach the domain by one door, so a total cannot be added up out of one
+     * and dated out of a reading of the other taken a moment later.
+     *
+     * The gate is **asked** and not **priced**, which is `showcaseMoney`'s own rule (ADR 0030 §6): a
+     * piece whose silver beat its catalogue price still had that price brought on the day the row says,
+     * and a date that counted it out would promise a freshness the amount does not have. Erring older
+     * is the one direction a date may err in.
+     */
+    readAt: (Int, Int) -> Long?,
 ): CollectionValue {
     var total = 0.0
     var valued = 0
     var pieces = 0
+    var oldest = Long.MAX_VALUE
     for (item in items) {
         val quantity = item.quantity.coerceAtLeast(1)
         pieces = saturatingAdd(pieces, quantity)
         val value = pieceValue(item, typeMeta[item.typeId], spot, prices) ?: continue
         total += value.eur * quantity
         valued = saturatingAdd(valued, quantity)
+        item.issueId
+            ?.let { readAt(item.typeId, it) }
+            ?.let { oldest = minOf(oldest, it) }
     }
-    return CollectionValue(total, valued, pieces)
+    return CollectionValue(total, valued, pieces, oldest.takeIf { it != Long.MAX_VALUE })
 }

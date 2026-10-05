@@ -105,10 +105,10 @@ private fun plateSection(
     //
     // The money is the one thing the paper words for itself (#493): the amount is the same figure the
     // screen adds up, and it is printed as a row of a specification — with «Valor» in the label —
-    // rather than as the named line the header carries. The cost of closing and the price inside each
-    // hole are **not on paper at all**: the printed money is the sixth switch of the export (ADR 0021
-    // §13) and what it does with two more figures is a decision of its own ticket, not a side effect
-    // of this one.
+    // rather than as the named line the header carries, and with «Tasación» under it saying the day it
+    // was priced (#594). The cost of closing and the price inside each hole are **not on paper at all**:
+    // the printed money is the sixth switch of the export (ADR 0021 §13) and what it does with two more
+    // figures is a decision of its own ticket, not a side effect of this one.
     val amount = plateValue(resolved)
     val plate = plateSubject(resolved, wished = wished)
     return PrintSection(
@@ -120,7 +120,13 @@ private fun plateSection(
         // The value joins the specification rather than the heading, because the printed page has no
         // header to raise a figure into — which is the same reason the ratio reaches paper as a row
         // (`plateEntriesBesideRatio` is deliberately not called here).
-        facts = plate.entries + listOfNotNull(amount?.let { VALUE_FACT_LABEL to plateAmountLabel(it) }),
+        facts = plate.entries + listOfNotNull(
+            amount?.let { VALUE_FACT_LABEL to plateAmountLabel(it) },
+            // And the day that amount was priced, right under it (#594). Off the amount and not off the
+            // book, so the money switch withholds the two together: a «Tasación» row over a page with no
+            // figure on it would be the date of something the reader cannot see.
+            amount?.catalogReadAt?.let { VALUATION_FACT_LABEL to printedValuationLabel(it) },
+        ),
         source = plate.source,
         // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371), together with
         // the exact ratio the subject already measured. The paper must not reconstruct it from cells.

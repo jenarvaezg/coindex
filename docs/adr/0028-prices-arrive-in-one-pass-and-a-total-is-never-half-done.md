@@ -15,7 +15,9 @@
   itself stays without a handle), §5 amended by
   [#561](https://github.com/jenarvaezg/coindex/issues/561) (a catalog price — and a «Numista has no
   price» with it — lives ninety days, the same life as the listing that addresses it, and the batch is
-  not staggered)
+  not staggered), §5 amended by [#594](https://github.com/jenarvaezg/coindex/issues/594) (every figure
+  the pass feeds carries the date of its catalogue half, and a total with two clocks in it says one
+  clause per clock)
 - Date: 2026-08-10
 - Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
   left to its own document
@@ -281,6 +283,57 @@ each day — was discarded: it turns a minute a month into a permanent backgroun
 > stands and filed as [#594](https://github.com/jenarvaezg/coindex/issues/594), because what it needs is
 > a wording and a rule for a total with two clocks in it — the *«dated by its oldest»* of #494 read over
 > the spot as well — and not a line squeezed into this one.
+
+> **Amended on 2026-10-05 ([#594](https://github.com/jenarvaezg/coindex/issues/594)). Every figure the
+> pass feeds carries the date of its catalogue half, and a total with two clocks says one clause per
+> clock.** This is the ticket the paragraph above filed, and it is the promise the triple was granted
+> on: «on the day after, the old price is still shown, **with the date it was brought**».
+>
+> **The two clocks are two clauses, and never averaged into one date.** #494's rule — a total is dated
+> by its oldest read — was written for a total whose parts came from **one** clock on different days,
+> and it still governs: it decides what each clause says. It cannot decide *between* the clocks, because
+> the silver and the catalogue do not tick at the same rate — the spot is two keyless calls a day (§9)
+> and a catalog price lives ninety days — so a single date would have to lie about one of them whichever
+> one it picked. Under the total of «Las cifras» the stamp is therefore
+> `plata: 28,40 €/oz · hoy 11:52 · Numista: el 21 jun 2026`: «fuente: cuándo», twice.
+>
+> **The clause names Numista and not «el catálogo», and that word was measured before it was kept.**
+> Drawn on the emulator against the father's real collection, «catálogo: el 1 sep 2026» under a plate's
+> header sat four lines above the specification row labelled «Catálogo · 4 ago 2026» — which is the
+> curated file's **edition**, a version and not an age (#518). Two clocks, one word, two dates, on one
+> screen: exactly the drift #518 spent a document undoing. Naming the source also makes the pair
+> legible, because the silver spot is two keyless calls to somebody who is not Numista (§9).
+>
+> **The spot does not cede its place**, which was the other candidate. Its clause carries a **price**
+> and not only a date, and that figure is the only way the metal floor can be checked (#398, #326): the
+> silver third of «the maximum of three» is arithmetic — weight × fineness × spot — and it is the one
+> of the three that is quoted nowhere else on the page.
+>
+> **A plate's own header gains the date, and each of its two lines carries its own.** The shelf window
+> already did it (`showcaseEntryLabel`, `showcaseTileCostLabel`) and the symmetry is not the argument:
+> «Coste de cerrar» is the *actionable* figure of ADR 0026 §10, and a cost of closing read as this
+> morning's when it is June's is the one that costs money. One date over the two lines was refused
+> because they are not one total — «Valor actual» sums the pieces inside and «Coste de cerrar» the holes
+> outside, and a marked casilla is repriced the day it is marked (ADR 0029 §4), so the second line can
+> be months fresher than the first with nothing wrong anywhere.
+>
+> **The date counts a component as read when this phone asked about it, not when the catalogue won.**
+> That is `showcaseMoney`'s gate (ADR 0030 §6) read over the collection: a piece whose silver beat its
+> catalogue price still had that price brought on the day the row says, and a date that counted it out
+> would promise a freshness the amount does not have. **Erring older is the one direction a date may
+> err in**, which is the mirror of §3's rule about rounding a spend down. Where no component was ever
+> asked about — a total out of metal and what was paid — the clause is **absent**, not «sin fecha».
+>
+> **The stamp inside a casilla stays bare, and the printed page gains a row.** A hole's stamp repeats no
+> criterion (#493) and now repeats no date either, for the same reason: «Coste de cerrar» totals those
+> very holes and says the oldest of their reads, three lines above. Paper is the opposite case — it
+> outlives the app and has no now to be relative to — so the notebook prints «Tasación · 21 jun 2026» as
+> a row of the specification under «Valor», written out in full and never «hace 12 días».
+>
+> **What is still undated, said out loud**: a **marked** casilla on a plate past the threshold of §1 has
+> a price inside the hole and no «Coste de cerrar» over it (ADR 0029 §4), and its row in «Lo que busco»
+> is a bare amount with no header figure to date it. Both are one amount the collector asked for by
+> marking, so the gap is small and named rather than closed by inventing a fourth dated surface.
 
 > **Amended on 2026-08-14 (§5, [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). A
 > price asked for by hand does not expire, and it is always shown with its date.** The life in the table
