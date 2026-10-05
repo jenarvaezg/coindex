@@ -6,10 +6,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * What survives an `am force-stop` and what deliberately does not (ADR 0021 §1).
- *
- * The search text has no key here at all, which is the whole point: it cannot be persisted by
- * accident, because there is nowhere to put it.
+ * What survives an `am force-stop` (ADR 0021 §1). The search text has no key here, so it cannot be
+ * persisted by accident.
  */
 class ShelfCodecTest {
     private fun roundTrip(shelf: IndexShelf): IndexShelf {
@@ -57,8 +55,7 @@ class ShelfCodecTest {
             YearFilter.Undated,
             ShelfCodec.decodeCoins { key -> "Undated".takeIf { key == ShelfCodec.COINS_YEAR } }.year,
         )
-        // What an upgrade looks like: a phone that still had «Desde 2000» stored under the old
-        // era-band codec reopens with no year filter rather than inventing a year from the name.
+        // An upgrade: «Desde 2000» stored by the old era-band codec reopens with no year filter.
         assertEquals(
             CoinsShelf(),
             ShelfCodec.decodeCoins { key ->
@@ -71,8 +68,7 @@ class ShelfCodecTest {
     fun `an empty shelf stores nothing but the sort, and reads back empty`() {
         assertEquals(IndexShelf(), roundTrip(IndexShelf()))
         assertEquals(CoinsShelf(), roundTrip(CoinsShelf()))
-        // The sort is written as the default rather than as an absence, so «chosen on purpose» and
-        // «never chosen» read back the same — which they are. Nothing else is stored.
+        // The default sort is written rather than left absent; nothing else is stored.
         assertEquals(
             listOf(ShelfCodec.INDEX_SORT, ShelfCodec.INDEX_AXIS),
             ShelfCodec.encode(IndexShelf()).filterValues { it != null }.keys.toList(),
@@ -92,7 +88,7 @@ class ShelfCodecTest {
 
     @Test
     fun `a value this version has never heard of is no filter at all`() {
-        // What a downgrade looks like: a chip added later, read by an APK that predates it.
+        // A downgrade: a chip added later, read by an APK that predates it.
         val stored = mapOf(
             ShelfCodec.INDEX_SORT to "MasBonitas",
             ShelfCodec.INDEX_WEIGHT to "DosOnzasJustas",
@@ -113,16 +109,8 @@ class ShelfCodecTest {
     }
 
     /**
-     * La migración de las nueve etiquetas que retiró el ADR 0023, que es la única que el país
-     * necesita.
-     *
-     * El país es la única faceta que no es un enum, así que la promesa de arriba —un valor que esta
-     * versión no reconoce se lee como «sin filtro»— no la heredaba: guardaba la etiqueta misma. Un
-     * teléfono con «Federación de Rusia (1991-presente)» puesto habría reabierto filtrando por una
-     * cadena que ya no produce ninguna fila —lista vacía, contador de filtros en 1 y ninguna chip
-     * encendida—, y `russie` es el emisor de cerca de un tercio de las fichas, así que es la chip que
-     * más probable es que se dejara puesta. No hace falta clave de versión: las chips se construyen
-     * con lo que dicen las filas, así que esto no se puede volver a escribir.
+     * The labels ADR 0023 retired. The country is the only facet that is not an enum, so a stale
+     * label would reopen filtering by a string no row produces: an empty list with one filter on.
      */
     @Test
     fun `a country this version no longer paints is no filter at all`() {
@@ -144,7 +132,7 @@ class ShelfCodecTest {
                 ShelfCodec.decodeIndex { key -> label.takeIf { key == ShelfCodec.INDEX_ISSUER } },
             )
         }
-        // Y un país que sí se pinta sigue siendo un filtro, que es lo que esto no puede romper.
+        // A country still painted stays a filter.
         assertEquals(
             "Rusia",
             ShelfCodec.decodeCoins { key -> "Rusia".takeIf { key == ShelfCodec.COINS_ISSUER } }.issuer,

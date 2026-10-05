@@ -15,17 +15,13 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
 /**
- * The code that goes under a coin on paper, which is the half of #234 a printer is not needed for.
- *
- * What a printer *is* needed for is the closing criterion of the ticket — a folio scanned with a
- * phone at arm's length — and nothing here stands in for it. What is pinned here is everything a
- * bad print would otherwise hide: that the modules decode back to the page they promise, and that
- * the whole seeded cache fits in the version the millimetres were reserved for.
+ * The QR printed under a coin (#234): it decodes to the promised page, and every seeded type fits
+ * the version the caption was sized for. Scanning a printed folio is not covered here.
  */
 class NumistaQrTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    /** The five paquillos share this one: type N#1885, and 27 characters of it. */
+    /** Shared by the five paquillos (N#1885). */
     private val paquillos = "https://es.numista.com/1885"
 
     private val seeded: List<TypeMeta> = json
@@ -41,12 +37,7 @@ class NumistaQrTest {
             typeMetaEntity(typeId, dto, raw.toString(), 0L).toDomain()
         }
 
-    /**
-     * The one thing the paper cannot be asked about later: the code says what it claims to say.
-     *
-     * Decoded from the modules themselves rather than from a bitmap, because a bitmap would be
-     * testing the renderer's scaling and this is testing the payload.
-     */
+    /** Decoded from the modules, not a bitmap, so it tests the payload and not the scaling. */
     @Test
     fun `the modules decode back to the numista page they promise`() {
         val code = numistaQr(paquillos)!!
@@ -55,13 +46,8 @@ class NumistaQrTest {
     }
 
     /**
-     * Every type of the seeded cache carries a URL, and every one of them is a version 2.
-     *
-     * This is the measurement the whole cost of the switch rests on. 25 × 25 modules with their quiet
-     * zone is 33, and it is 33 that the twelve millimetres of the caption were chosen against: a type
-     * whose URL spilled into a version 3 would still fit the square —the drawing divides by the
-     * symbol's own module count— and would print at 0,324 mm a module instead of 0,364, which is the
-     * one number the printed folio of the ticket was about.
+     * The 12 mm caption was sized for 33 modules (25 plus the quiet zone). A version 3 would still
+     * fit the square, but at 0,324 mm a module instead of 0,364.
      */
     @Test
     fun `every seeded type is a version two symbol of twenty-five modules`() {
@@ -76,13 +62,8 @@ class NumistaQrTest {
     }
 
     /**
-     * And todas son la URL corta de Numista, que es la única razón por la que 25 módulos bastan.
-     *
-     * El límite es 32 y no «lo que mide hoy la más larga»: 32 bytes es exactamente lo que cabe en una
-     * versión 2 al nivel L, así que es **la** invariante — la página larga,
-     * `.../catalogue/pieces1885.html`, son 49 y no cabría. Fijar el máximo de hoy convertiría este
-     * test en un chivato de lo que hay en `data/`, y curar una moneda con un id de siete dígitos lo
-     * rompería sin que nada estuviese mal.
+     * 32 bytes is what a version 2 holds at level L; the catalogue page (`.../pieces1885.html`) is
+     * 49. The bound is that capacity, not today's longest URL, so a longer id breaks nothing.
      */
     @Test
     fun `the url the code carries is numista's short one and not the catalogue page`() {
@@ -101,11 +82,8 @@ class NumistaQrTest {
     }
 
     /**
-     * The runs are the row, exactly: nothing added, nothing dropped, nothing overlapping.
-     *
-     * The drawing paints runs instead of modules — for the size of the PDF, not for the seams — so an
-     * off-by-one here would be a code with a column of white through it. And a QR is designed to
-     * survive that, which is what makes it the kind of bug that only shows up on somebody else's phone.
+     * Runs are drawn instead of modules to keep the PDF small. An off-by-one would leave a white
+     * column that error correction mostly hides, so only some phones would fail to scan it.
      */
     @Test
     fun `the runs a row is drawn as are that row's dark modules`() {

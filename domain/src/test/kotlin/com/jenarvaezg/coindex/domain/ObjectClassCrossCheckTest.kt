@@ -5,16 +5,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * El cruce vive en el suite y **nunca** en el validador de arranque, como el del metal (#40).
- *
- * #89 mató el estado de miembro para «se ve y no cuenta por no ser moneda»: ninguna pieza de las
- * dos colecciones está mal contada por no tenerlo, y el estado habría sido la primera casilla
- * poseíble que se queda fuera del divisor. Así que un ensayo que un curador meta en un catálogo es
- * un miembro de pleno derecho, y esto sólo avisa.
- *
- * Lo que caza es el intruso accidental: los dos ensayos de 1874 del venezolano salieron de la misma
- * enumeración por peso que pobló el catálogo en #55 —25 g de plata .900, el módulo exacto de las 22
- * casillas— y los descartó una persona leyendo.
+ * El cruce vive en la suite y nunca en el validador de arranque, como el del metal (#40). Un ensayo
+ * que un curador mete en un catálogo es miembro de pleno derecho (#89); esto sólo avisa del intruso
+ * accidental, como los dos ensayos de 1874 que la enumeración por peso del #55 coló en el catálogo
+ * venezolano.
  */
 class ObjectClassCrossCheckTest {
     private fun catalog(vararg members: CollectionCatalogMember) = CollectionCatalog(
@@ -54,10 +48,7 @@ class ObjectClassCrossCheckTest {
         assertTrue(deviation.toString().contains("Monedas de ensayo"), deviation.toString())
     }
 
-    /**
-     * La salida del curador, la misma que la del metal: una nota en prosa en la casilla. Aquí manda
-     * el criterio del curador sobre la tabla de Numista, no al revés.
-     */
+    /** Como en el metal, manda el criterio del curador sobre la tabla de Numista. */
     @Test
     fun `a member that declares the exception in prose is exempt`() {
         val declared = essai.copy(
@@ -69,9 +60,8 @@ class ObjectClassCrossCheckTest {
     }
 
     /**
-     * `Monedas de colección` no avisa: dos miembros de pleno derecho de Equilibrium la llevan
-     * (N#356004 y N#477907), y para esa clase la propia tabla de Numista dice que depende del
-     * alcance declarado — es decir, que decide el curador.
+     * La llevan miembros legítimos de Equilibrium (N#356004, N#477907), y para esa clase la propia
+     * tabla de Numista deja la decisión al curador.
      */
     @Test
     fun `a collector coin is not reported`() {
@@ -86,7 +76,6 @@ class ObjectClassCrossCheckTest {
         )
     }
 
-    /** Un anunciado o un `unlisted` no tienen tipo, así que la ficha no dice nada de ellos. */
     @Test
     fun `a member with no numista type is not reported`() {
         val announced = CollectionCatalogMember(
@@ -100,7 +89,7 @@ class ObjectClassCrossCheckTest {
         assertEquals(emptyList(), objectClassDeviations(listOf(catalog(announced)), objectClasses))
     }
 
-    /** Una ficha que nadie sembró no dice nada; quien convierte eso en fallo es `TypeCacheSeedTest`. */
+    /** Ese fallo es cosa de `TypeCacheSeedTest`. */
     @Test
     fun `a type absent from the cache is not reported`() {
         assertEquals(emptyList(), objectClassDeviations(listOf(catalog(essai)), emptyMap()))

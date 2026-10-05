@@ -57,13 +57,9 @@ class FinishInferenceTest {
     }
 
     /**
-     * Las once fichas doradas de la libra redonda, medidas una a una el 1 de septiembre de 2026
-     * contra `en.numista.com` (#573): las diez del estuche del 25.º aniversario de 2008 que se
-     * pudieron enumerar y la del Jubileo de Diamante de 2012, todas con la misma composición.
-     *
-     * El título dice «Silver Proof» en las quince y también en las treinta y dos que sí son proof,
-     * así que el título no las parte y la composición sí — y el acabado que gana es el dorado,
-     * porque es el que el catálogo de la libra declaró suyo: «Son `Gilded`, no `Proof`».
+     * Las fichas doradas de la libra redonda (#573): el título dice «Silver Proof» igual que en las
+     * que sí son proof, así que sólo la composición las separa. Gana el dorado porque es el acabado
+     * que declara el catálogo de la libra.
      */
     @Test
     fun `a gold plating the title never mentions outranks the proof the title does`() {
@@ -86,13 +82,7 @@ class FinishInferenceTest {
         )
     }
 
-    /**
-     * Las tres formas que las fichas sembradas usan para decir lo mismo, y la que no lo dice.
-     *
-     * Numista se pide en español y aun así el paréntesis llega en inglés, que es la trampa que
-     * [inferMetal] documenta desde el otro lado: la cabeza dice de qué está hecha y el paréntesis
-     * cómo está acabada.
-     */
+    /** La ficha se pide en español, pero el paréntesis del acabado llega en inglés. */
     @Test
     fun `every wording a seeded composition uses for a gold coating is read`() {
         assertEquals(
@@ -110,13 +100,7 @@ class FinishInferenceTest {
         assertEquals(Finish.Gilded, inferFinish("1 Dollar", null, "Silver .925, gilded"))
     }
 
-    /**
-     * Una moneda **de** oro no está dorada, y ninguna regla de acabado puede leerla como tal.
-     *
-     * El guardarraíl es el metal dominante y no una lista de excepciones: lo que separa el baño
-     * de la aleación es que el oro venga después de otro metal, así que la pregunta la contesta
-     * [inferMetal], que es quien ya sabe leer la cabeza de esa misma frase.
-     */
+    /** Lo decide el metal dominante de [inferMetal]: es baño si el oro va tras otro metal. */
     @Test
     fun `a coin made of gold is not a gilded one`() {
         assertNull(inferFinish("100 Dollars - Elizabeth II (Bitcoin)", null, "Oro 999,9"))
@@ -173,10 +157,7 @@ class CatalogSeedsTest {
         assertEquals(true, error.message!!.contains("typo.json"))
     }
 
-    /**
-     * Un catálogo que se calla el estado de su serie afirma por omisión que ya no falta nada
-     * (#28), así que callárselo no se tolera: la app no arranca y dice qué fichero es.
-     */
+    /** Callarlo afirmaría que no falta nada (#28): la app no arranca y nombra el fichero. */
     @Test
     fun `a seed that keeps quiet about its series status is rejected`() {
         val seed = { status: String ->
@@ -225,12 +206,8 @@ class CatalogSeedsTest {
     }
 
     /**
-     * Qué cara imprime el cuaderno lo declara la lámina, y callarse es declarar el reverso (#227).
-     *
-     * El campo es de la cabecera y de un solo nivel: la excepción es siempre de la lámina entera,
-     * así que no hay `printed_side` por miembro que validar. Y como sólo hay dos caras, un tercer
-     * valor no es una preferencia rara sino un fichero curado que no dice nada — la app no arranca
-     * y nombra el fichero, igual que con `series_status`.
+     * Campo de cabecera (#227): la excepción es siempre de la lámina entera. Un tercer valor impide
+     * arrancar y nombra el fichero, igual que `series_status`.
      */
     @Test
     fun `a seed declares which face the notebook prints, and silence is the reverse`() {
@@ -262,7 +239,7 @@ class CatalogSeedsTest {
             """.trimIndent()
         }
 
-        // Ausente es el reverso, que es lo que las 73 láminas de hoy imprimen sin haberlo dicho.
+        // Ausente es el reverso, que es lo que imprimen las láminas que no lo declaran.
         assertEquals(PrintedSide.Reverse, CatalogSeeds.parse("cara.json", seed("")).printedSide)
         assertEquals(
             PrintedSide.Obverse,

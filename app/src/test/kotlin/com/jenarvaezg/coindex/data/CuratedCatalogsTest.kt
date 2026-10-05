@@ -21,9 +21,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The shipped catalogs are the most expensive asset in the project: every `numista_type_id`
- * was verified against numista.com by hand. This pins what they contain so a bad edit fails
- * here instead of producing a wrong "me falta" on someone's phone.
+ * Pins what the shipped catalogs contain. Every `numista_type_id` was checked by hand against
+ * numista.com, so a bad edit has to fail here and not as a wrong «me falta» on the phone.
  */
 class CuratedCatalogsTest {
     private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
@@ -31,9 +30,8 @@ class CuratedCatalogsTest {
     private fun find(id: String) = catalogs.first { it.id == id }
 
     /**
-     * Una tirada anual abierta crece cada año, así que lo que se fija de ella es dónde **empieza**
-     * y que no tenga huecos. Pinchar el último año sólo garantiza que el test se ponga rojo en
-     * enero, o en cuanto otra sesión ponga al día una lámina que no es la suya.
+     * Una tirada abierta crece cada año, así que se fija dónde empieza y que no tenga huecos; fijar
+     * el último año la pondría en rojo cada enero.
      */
     private fun assertOpenRunFrom(first: Int, catalog: CollectionCatalog) {
         val years = catalog.members.mapNotNull { it.year }.distinct()
@@ -42,7 +40,7 @@ class CuratedCatalogsTest {
         assertEquals((first..years.max()).toList(), years, "hueco en ${catalog.id}")
     }
 
-    /** Y de qué tipos sale, que en un date run de un solo tipo es la casilla repetida. */
+    /** Los tipos de las casillas; en un date run de un solo tipo, el que se repite en todas. */
     private fun assertTypes(vararg typeIds: Int, catalog: CollectionCatalog) {
         assertEquals(typeIds.toSet(), catalog.members.mapNotNull { it.numistaTypeId }.toSet())
     }
@@ -54,12 +52,8 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * En la lámina el año es la chapa hundida, y la chapa es lo que abre Numista (#337): una
-     * casilla con ficha y sin año se quedaría sin asa, en silencio y sin que nada lo denunciara.
-     *
-     * Hoy no hay ninguna en los 74 catálogos, así que esto fija una propiedad que ya se cumple en
-     * vez de arreglar nada. Lo que no se pide es lo contrario: un miembro anunciado no tiene ficha
-     * y a menudo tampoco año, y esa casilla es un rótulo y no un objetivo.
+     * La chapa con el año es el asa que abre la ficha de la moneda (#337, #508). Un miembro
+     * anunciado puede no tener ni ficha ni año.
      */
     @Test
     fun `todo miembro con ficha de Numista trae su año, que es lo que la lámina hace pulsable`() {
@@ -72,11 +66,8 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Cada catálogo declara si su serie sigue emitiendo (#28), y cerrar cuesta prueba: los cerrados
-     * llevan su nota y los abiertos no afirman nada más que «N de N catalogadas».
-     *
-     * Gothic Horror ya no está: su único miembro, N#519925, trae `series: "Gothic Horror"` de
-     * Numista, así que la lista no afirmaba nada que la familia no dijera ya.
+     * Los cerrados llevan nota (#28). Gothic Horror no es catálogo: su único miembro, N#519925, ya
+     * trae `series` de Numista y la lista no añadía nada.
      */
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
@@ -88,18 +79,16 @@ class CuratedCatalogsTest {
             )
         }
         assertTrue(catalogs.none { it.id == "gothic-horror-uk-1oz" })
-        // Las tres que llegaban a 2024 y 2025 y parecían muertas siguen vivas, medido fuera de
-        // Numista: el plan de emisión del Banco de Rusia para 2026 trae Libro Rojo y Monumentos
-        // arquitectónicos, y la decimotercera Tesla salió en 2026.
+        // Abiertas aunque Numista se quede en 2024-2025: el plan de emisión del Banco de Rusia
+        // para 2026 trae Libro Rojo y Monumentos arquitectónicos, y la Tesla de 2026 ya salió.
         listOf("red-data-book-russia", "architectural-monuments-russia-3-roubles", "nikola-tesla-serbia-1oz")
             .forEach { assertEquals(SeriesStatus.Open, find(it).seriesStatus) }
     }
 
     /**
-     * Cerrar exige que la lista esté completa, y esta no lo estaba: el programa del Banco Estatal
-     * de la URSS son **seis** monedas de 3 rublos de plata .900, dos por año entre 1989 y 1991, y
-     * las dos de 1991 faltaban. Numista no las tiene en la serie 13245 ni les da familia —ninguna
-     * de las dos declara `series`—, así que sin este catálogo salen huérfanas.
+     * El programa del Banco Estatal de la URSS: dos monedas de 3 rublos de plata .900 por año entre
+     * 1989 y 1991. Numista no pone las dos de 1991 en la serie 13245 ni les da `series`, así que
+     * sin este catálogo salen huérfanas.
      */
     @Test
     fun `the 500th anniversary programme is six three rouble coins and ends in 1991`() {
@@ -130,13 +119,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Las 52 Capitales, que cierran por aritmética: España tiene 50 provincias y el programa de
-     * la FNMT les suma Ceuta y Melilla, así que la lista completa se puede contar sin fiarse de
-     * que Numista haya terminado la serie. Las tres tandas son 12, 20 y 20.
-     *
-     * El acabado importa aquí más que en ningún otro catálogo: Numista no dice «proof» en el
-     * título de ninguna de las 52 —lo dice la FNMT—, así que la finish inferida de la ficha es
-     * `null` y sólo el ADR 0016 hace que la moneda del padre caiga en esta lámina.
+     * Cierran por aritmética: las 50 provincias más Ceuta y Melilla, en tandas de 12, 20 y 20.
+     * Numista no dice «proof» en el título de ninguna (lo dice la FNMT), así que la finish inferida
+     * es `null` y sólo la que declara el catálogo (ADR 0016) lleva las piezas a esta lámina.
      */
     @Test
     fun `the 52 provincial capitals close by arithmetic and are declared proof`() {
@@ -149,23 +134,19 @@ class CuratedCatalogsTest {
         assertEquals(12, capitales.members.count { it.year == 2010 })
         assertEquals(20, capitales.members.count { it.year == 2011 })
         assertEquals(20, capitales.members.count { it.year == 2012 })
-        // Ceuta y Melilla son las dos que no son capital de provincia, y la de Madrid es la
-        // única que el padre tiene.
+        // Ceuta y Melilla son las dos que no son capital de provincia.
         assertTrue(capitales.members.any { it.label == "Ceuta" })
         assertTrue(capitales.members.any { it.label == "Melilla" })
         assertEquals(45_425, capitales.members.first { it.label == "Madrid" }.numistaTypeId)
     }
 
     /**
-     * Dos gamas de lingote de la Royal Mint cuyo límite pone la propia ceca y no una serie. Nacieron
-     * cuando sus cinco tipos declaraban `series: null` —sin catálogo salían huérfanas y con él
-     * afirman algo que la familia de Numista no decía (#28)—, y siguen enteras después de que
-     * Numista aceptara las series 10572 y 13401 que se propusieron desde aquí (#85, #86): una serie
-     * propone agrupación y no afirma cobertura, así que no retira un catálogo (#83).
+     * Dos gamas de lingote de la Royal Mint cuyo límite pone la ceca. Siguen siendo catálogos
+     * aunque Numista aceptara las series 10572 y 13401 (#85, #86): una serie propone agrupación y
+     * no afirma cobertura (#83).
      *
-     * La casilla es el año aunque el diseño no cambie, y ahí se separan las dos: St George reparte
-     * un tipo por año y The Lion and the Eagle mete 2024 y 2025 en N#404024 —el mismo reverso de
-     * Mercanti las dos veces—, así que ésta es un date run y aquélla un catálogo simple.
+     * St George tiene un tipo por año, así que es un catálogo simple; The Lion and the Eagle repite
+     * N#404024 en 2024 y 2025 (el mismo reverso de Mercanti), así que es un date run.
      */
     @Test
     fun `the two royal mint bullion ranges are one slot per year`() {
@@ -173,7 +154,6 @@ class CuratedCatalogsTest {
         assertEquals(Finish.Bullion, george.finish)
         assertEquals(1_000, george.weightMillioz)
         assertOpenRunFrom(2024, george)
-        // Un tipo por año, que es lo que la hace un catálogo simple y no un date run.
         assertFalse(george.isDateRun)
         assertEquals(
             george.members.size,
@@ -185,7 +165,6 @@ class CuratedCatalogsTest {
         assertEquals(Finish.Bullion, eagle.finish)
         assertEquals(1_000, eagle.weightMillioz)
         assertOpenRunFrom(2024, eagle)
-        // Y aquí 2024 y 2025 comparten el mismo reverso de Mercanti, que es lo que la hace date run.
         assertEquals(
             listOf(404_024, 404_024),
             eagle.members.filter { it.year in 2024..2025 }.map { it.numistaTypeId },
@@ -193,15 +172,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El British Lion estuvo en la agrupación de onzas sueltas mientras sólo existía su año de
-     * debut. En cuanto la ceca lo devolvió —«Back for 2026 following a successful debut in 2025»,
-     * mismo reverso de David Lawrence y otros 50.000— dejó de ser una suelta y pasó a ser lo mismo
-     * que el león y el águila: un date run cuyas dos casillas comparten el N#476689, que Numista
-     * fecha con una emisión por año.
-     *
-     * Sale de la agrupación al entrar aquí, porque una agrupación pierde la familia ante cualquier
-     * catálogo que nombre el tipo (ADR 0013), y allí queda lo que sí es de un solo año: la D-Day 80
-     * de 2024 y The Angel de 2026.
+     * El British Lion volvió en 2026 con el mismo reverso de David Lawrence, así que dejó la
+     * agrupación de onzas sueltas: es un date run sobre N#476689, que Numista fecha con una emisión
+     * por año. Una agrupación pierde la familia ante el catálogo que nombre el tipo (ADR 0013).
      */
     @Test
     fun `the british lion stopped being a loose ounce when 2026 returned`() {
@@ -218,18 +191,15 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * N#143754 empieza en 2018: la pieza Premium Uncirculated del cincuentenario de 2017 es una
-     * emisión distinta y no abre esta tirada anual bullion. Como Numista no propone una serie,
-     * la fuente es la página del tipo y cada fecha repite ese tipo sin fijar emisiones.
+     * Empieza en 2018: la Premium Uncirculated del cincuentenario de 2017 es otra emisión. Numista
+     * no propone serie, así que la fuente es la página de N#143754 y cada año repite ese tipo.
      */
     @Test
     fun `the silver krugerrand annual bullion date run starts in 2018`() {
         val krugerrand = find("south-africa-silver-krugerrand-1oz-bullion")
         assertEquals(2, krugerrand.schemaVersion)
         assertTrue(krugerrand.isDateRun)
-        // La `family` es identidad y clave de agrupación, no una definición de alcance: eso lo
-        // dice `name`, que ya lo dice. Retirar la cláusula es gratis desde el ADR 0021 §7, que
-        // dejó de persistir nada por tarjeta — antes le habría cerrado la lámina al padre.
+        // El alcance lo dice `name`; la `family` sólo identifica y agrupa.
         assertEquals("Silver Krugerrand bullion anual", krugerrand.family)
         assertEquals(
             "Silver Krugerrand · Sudáfrica · 1 oz bullion anual desde 2018 " +
@@ -249,9 +219,8 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Southern Cross de ABC Mint (Niue): un solo tipo N#485082 sin `series` en Numista, con las
-     * fechas 2025 y 2026 en la ficha. Date run abierto —programa bullion de tirada ilimitada—
-     * y solo la plata de 1 oz: el oro (N#476767 / N#476766) es otra clave de variante.
+     * Southern Cross de ABC Mint (Niue): un solo tipo, N#485082, sin `series` en Numista. Programa
+     * bullion de tirada ilimitada; el oro (N#476767, N#476766) es otra clave de variante.
      */
     @Test
     fun `the southern cross niue silver ounce is an open date run from 2025`() {
@@ -275,11 +244,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Tanda 2 de #57 / #95: programas anuales que ya tenían serie en Numista y por tanto tarjeta
-     * sin denominador. Un tipo por catálogo, una casilla por año, sin cualificar emisiones —la
-     * ficha no mezcla acabados; las filas duplicadas de algunos años son variedades de mintage
-     * del mismo bullion. 2026 está emitido en los cuatro; ni Jose ni el padre tienen 5 oz, 1 kg
-     * ni otras fracciones del Arca dentro de las dos colecciones.
+     * Programas anuales que ya tenían serie en Numista y por tanto tarjeta sin denominador (#57,
+     * #95). Una casilla por año sin cualificar emisiones: la ficha no mezcla acabados, y las filas
+     * repetidas de un año son variedades de tirada del mismo bullion. Del Arca sólo se catalogan
+     * las fracciones que hay en las colecciones.
      */
     @Test
     fun `vienna philharmonic and noahs ark are open single-type bullion date runs`() {
@@ -345,11 +313,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Onza Libertad bullion: one open date run from the 1982 decree that replaced the Onza Troy.
-     * Three type pages (N#14465 36 mm 1982-1995, N#17818 and N#13855 at 40 mm) mix proof and
-     * later reverse/antiqued, so every slot is issue-qualified for the standard bullion row.
-     * Die varieties of the same finish share a year; 2026 is not on Numista yet. Emission ids
-     * read from the type pages in the browser (#92) — no `/issues` budget.
+     * Onza Libertad bullion, one open date run from the 1982 decree that replaced the Onza Troy.
+     * Its three types (N#14465 at 36 mm until 1995, N#17818 and N#13855 at 40 mm) mix proof and
+     * reverse/antiqued, so every slot is qualified by its bullion emission; die varieties of one
+     * finish share the year. Emission ids read from the type pages (#92).
      */
     @Test
     fun `the mexican libertad is an issue-qualified bullion run over three types`() {
@@ -371,7 +338,7 @@ class CuratedCatalogsTest {
             libertad.members.mapNotNull { it.numistaTypeId }.distinct(),
         )
         assertTrue(libertad.members.all { it.numistaIssueIds.isNotEmpty() })
-        // Father's 2024 bullion fills; the matching Proof of that year must not.
+        // The 2024 bullion fills; the proof of that year must not.
         assertTrue(898_129 in libertad.members.single { it.year == 2024 }.numistaIssueIds)
         assertTrue(libertad.members.none { 929_350 in it.numistaIssueIds })
         val bullion2024 = CollectedItem(
@@ -393,21 +360,15 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Nautical Ounce: the antiqued high relief is a second plate over the same ten type pages,
-     * and it is the case ADR 0019 exists for — Numista keeps the standard, the proof and the
-     * antiqued row inside one type, so an antiqued piece filled the bullion slot of its year and
-     * completed a plate the collector had never touched.
+     * The antiqued high relief Nautical Ounce is a second plate over five of the bullion plate's
+     * types, the case ADR 0019 exists for: Numista keeps the standard, proof and antiqued rows in
+     * one type, so without emissions an antiqued piece would fill the bullion slot of its year.
      *
-     * The variant closes in 2024 while the series stays open, like the .500 Canadian dollar
-     * (#52): gold.de gives the antiqued 1 oz as struck 2020-2024 at 1,000 a year and «nicht
-     * geprägt» before 2020, and AgAuNEWS enumerates the whole 2025 and 2026 ranges without it.
-     * 2020 was `unlisted` until a referee split the year: N#220874 now carries «2020 – Antique
-     * Finish» at 1,000 pieces, so the slot names the type like its sisters and the antiqued
-     * emission 1116210 is what qualifies it. Jose owns that piece, and while the slot had no type
-     * it filled nothing at all — not the bullion plate, whose 2020 qualifies 545873, and not this
-     * one, because a member without a type never matches (#596).
-     *
-     * Emission ids from `/types/{id}/issues` over the ten types, ten calls.
+     * The variant closes in 2024 while the series stays open, like the .500 Canadian dollar (#52):
+     * gold.de gives the antiqued 1 oz as struck 2020-2024 and not before, and AgAuNEWS lists the
+     * 2025 and 2026 ranges without it. Its 2020 row is emission 1116210 of N#220874, split out by
+     * a referee; until then the slot had no type, and a member without one never matches (#596).
+     * Emission ids from `/types/{id}/issues`.
      */
     @Test
     fun `the antiqued nautical ounce is five closed years sharing every type with the bullion`() {
@@ -425,7 +386,7 @@ class CuratedCatalogsTest {
         assertTrue(antiqued.closedNote!!.contains("2020 a 2024"))
         assertEquals((2020..2024).toList(), antiqued.members.map { it.year })
 
-        // Every slot names its type since the 2020 split, and every one qualifies an emission.
+        // Every slot names its type and qualifies one emission.
         val issued = antiqued.members.filter { it.isIssued }
         assertEquals(antiqued.members, issued)
         assertEquals(
@@ -443,8 +404,8 @@ class CuratedCatalogsTest {
             issued.map { it.numistaIssueIds },
         )
 
-        // The two plates share all four published types, so both sides must be qualified and
-        // disjoint: Jose's antiqued 2022 fills the antiqued slot and leaves the bullion one open.
+        // Both plates share these types, so both sides are qualified and disjoint: an antiqued
+        // 2022 fills the antiqued slot and leaves the bullion one open.
         val bullion = find("rwanda-nautical-50-francs")
         assertTrue(bullion.members.all { it.numistaIssueIds.isNotEmpty() })
         assertEquals(
@@ -461,7 +422,7 @@ class CuratedCatalogsTest {
         )
         assertTrue(antiqued.memberMatches(antiqued.members.single { it.year == 2022 }, antiqued2022))
         assertTrue(bullion.members.none { bullion.memberMatches(it, antiqued2022) })
-        // And the proof of that same type fills neither: a closed world for a qualified type.
+        // The proof of that same type fills neither plate.
         val proof2022 = CollectedItem(
             id = 2,
             quantity = 1,
@@ -471,7 +432,7 @@ class CuratedCatalogsTest {
         )
         assertTrue(antiqued.members.none { antiqued.memberMatches(it, proof2022) })
         assertTrue(bullion.members.none { bullion.memberMatches(it, proof2022) })
-        // The 2020 Mayflower Jose owns: antiqued row of a year Numista used to keep in one line.
+        // The 2020 antiqued Mayflower, from the year Numista used to keep in a single row.
         val antiqued2020 = CollectedItem(
             id = 3,
             quantity = 1,
@@ -484,10 +445,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Onza Troy .925: the four-year closed run the Libertad replaced. Physical variant is
-     * 33.625 g / 41.5 mm (1081 millioz), so it never shares a key with the Libertad. N#13333 is
-     * 1949; N#13398 covers 1978-1980. Closed by Banxico's stated succession and the DOF decree
-     * of 21/28 December 1981, not by Numista going quiet (#92).
+     * Onza Troy .925, the closed run the Libertad replaced. At 33.625 g / 41.5 mm (1081 millioz)
+     * it never shares a key with the Libertad. N#13333 is 1949 and N#13398 covers 1978-1980.
+     * Closed by Banxico's stated succession and the DOF decree of 21/28 December 1981 (#92).
      */
     @Test
     fun `the mexican onza troy is four closed years at 1081 millioz`() {
@@ -518,25 +478,17 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * American Silver Eagle bullion: one date run across N#1493 (Type 1, 1986-2021) and
-     * N#298883 (Type 2, 2021-2026). 2021 keeps two slots because the reverse changed mid-year
-     * and the market names them apart (#57). Both type pages mix proof and burnished, so every
-     * slot is issue-qualified; Star Privy 2024 and Eagle Privy 2025 stay out as thematic
-     * privies. Ids from `/types/1493/issues` and `/types/298883/issues`, two calls (#91).
+     * American Silver Eagle bullion, one date run over N#1493 (Type 1, 1986-2021) and N#298883
+     * (Type 2, from 2021). 2021 keeps two slots because the reverse changed mid-year and the
+     * market names them apart (#57). Both types mix proof and burnished, so every slot is
+     * issue-qualified; Star Privy 2024 and Eagle Privy 2025 stay out as thematic privies (#91).
      *
-     * La casilla de 2023 acepta además la proof 760576 (#216). Es la moneda que hay en la
-     * colección del padre, confirmada por él en la mano, y la decisión es de esta casilla:
-     * proof, BU y coloreada son acabados distintos y ninguno se subsume en otro por regla.
-     * Lo que sostiene ésta es que el eagle no tiene lámina proof hermana, así que la pieza no
-     * marca ninguna otra casilla; donde sí la hay —Lunar Series III, Nautical de Ruanda— una
-     * sola moneda marcaría dos, que es lo que el ADR 0019 impide.
-     *
-     * La de 2021 Type 2 acepta además la burnished 675331, y es la única ampliación **con deuda**:
-     * aquí sí hay otra lámina posible y está medida —20 filas de burnished sobre 18 años,
-     * 2006-2025—, pero no se puede escribir mientras el dominio no tenga ese acabado y mientras
-     * `inferFinish` lea sólo el título, que dice «Bullion Coin» en las dos fichas del eagle. La
-     * nota de la casilla dice cómo se deshace, y este test la vigila para que no se borre en
-     * silencio.
+     * Dos casillas aceptan además otro acabado, decidido caso a caso (#216). La de 2023 acepta la
+     * proof 760576, la de la colección: el eagle no tiene lámina proof hermana, así que la pieza no
+     * marca dos casillas (ADR 0019). La de 2021 Type 2 acepta la burnished 675331 de forma
+     * provisional: sí cabría una lámina de burnished, pero el dominio no tiene ese acabado e
+     * `inferFinish` sólo lee el título, «Bullion Coin» en las dos fichas. La nota de la casilla
+     * dice cómo deshacerlo, y este test vigila que no se borre.
      */
     @Test
     fun `the american silver eagle is an issue-qualified bullion run over two types`() {
@@ -560,11 +512,11 @@ class CuratedCatalogsTest {
         assertEquals("Type 1", type1.single { it.year == 2021 }.label)
         assertEquals("Type 2", type2.single { it.year == 2021 }.label)
         assertTrue(eagle.members.all { it.numistaIssueIds.isNotEmpty() })
-        // Standard bullion rows the father owns, and the 2023 Proof he also owns.
+        // Standard bullion rows, and the widened 2023 proof.
         assertTrue(64_283 in type1.single { it.year == 1987 }.numistaIssueIds)
         assertTrue(1_059_386 in type2.single { it.year == 2026 }.numistaIssueIds)
         assertTrue(760_576 in type2.single { it.year == 2023 }.numistaIssueIds)
-        // La burnished 2021-W de Jose, con su deuda escrita en la nota de la casilla.
+        // La burnished 2021-W, con la deuda escrita en la nota de la casilla.
         val slot2021 = type2.single { it.year == 2021 }
         assertTrue(675_331 in slot2021.numistaIssueIds)
         assertTrue(
@@ -592,8 +544,6 @@ class CuratedCatalogsTest {
         )
         assertTrue(eagle.memberMatches(type2.single { it.year == 2023 }, proof2023))
         assertTrue(eagle.memberMatches(type2.single { it.year == 2026 }, bullion2026))
-        // La burnished de Jose rellena la casilla en cuanto reetiquete su fila al tipo nuevo: hoy
-        // apunta a la proof 637384 de N#1493 y por eso el informe la sigue dando sin clasificar.
         val burnished2021 = CollectedItem(
             id = 3,
             quantity = 1,
@@ -602,8 +552,7 @@ class CuratedCatalogsTest {
             issueId = 675_331,
         )
         assertTrue(eagle.memberMatches(slot2021, burnished2021))
-        // Dos notas, y las dos son ampliaciones de acabado: la proof de 2023 y la burnished de
-        // 2021. Sólo la segunda dice «provisional», porque sólo ella tiene una lámina esperando.
+        // Las dos ampliaciones llevan nota, y sólo la de 2021 es provisional.
         assertEquals(
             listOf("2021-type-2", "2023"),
             eagle.members.filter { it.variantNote != null }.map { it.id },
@@ -611,12 +560,11 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Silver Maple Leaf bullion (#96): the longest of the twelve annual runs, hidden under the
-     * Numista series «SML». Six type pages cover 1988-2026 (N#18655, N#6735, N#381278, N#58596,
-     * N#356135, N#401696). Types mix proof, reverse-proof privies, incuse, gilded and specimen,
-     * so every slot is issue-qualified; bullion privies on the same type fill the year, and a
-     * privy is never its own slot. 2000 has no plain bullion row — Firework/Dragon/Expo fill it.
-     * Ids from `/types/{id}/issues`.
+     * Silver Maple Leaf bullion (#96), under the Numista series «SML». Six types from 1988
+     * (N#18655, N#6735, N#381278, N#58596, N#356135, N#401696) mix proof, reverse-proof privies,
+     * incuse, gilded and specimen, so every slot is issue-qualified. A bullion privy on the same
+     * type fills its year and is never a slot of its own; 2000 has no plain bullion row, so
+     * Firework, Dragon and Expo fill it. Ids from `/types/{id}/issues`.
      */
     @Test
     fun `the silver maple leaf is an issue-qualified bullion run over six types`() {
@@ -643,7 +591,7 @@ class CuratedCatalogsTest {
             maple.members.mapNotNull { it.numistaTypeId }.distinct(),
         )
         assertTrue(maple.members.all { it.numistaIssueIds.isNotEmpty() })
-        // Father owns 2007/2012/2014 bullion; 1989 proof and 2018 incuse must not fill.
+        // Bullion rows fill; the 1989 proof and the 2018 incuse must not.
         assertTrue(814_014 in maple.members.single { it.year == 2007 }.numistaIssueIds)
         assertTrue(228_562 in maple.members.single { it.year == 2014 }.numistaIssueIds)
         assertTrue(maple.members.none { 118_027 in it.numistaIssueIds }) // 1989 proof
@@ -877,10 +825,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * The stars of the 100 pesetas, keyed on Numista issues because the year cannot tell them
-     * apart: all six issues of N#1885 are dated 1966 and the star is a variety of the issue.
-     * Ids read from `/types/1885/issues`, one call, and the comment of each one is the star it
-     * carries.
+     * The stars of the 100 pesetas are keyed on issues because the year cannot tell them apart:
+     * the six issues of N#1885 are all dated 1966 and the star is a variety of the issue. Ids from
+     * `/types/1885/issues`, whose comment on each issue names its star.
      */
     @Test
     fun `the paquillos are five stars over six numista issues`() {
@@ -902,14 +849,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * The father's own closure project: he is missing 1965. Three Numista types make one date
-     * run because all three weigh 10 g, so they share one variant key.
-     *
-     * N#10399 is the regression this pins. It is dated 1945 and was struck in 1947, and the
-     * type's `min_year`/`max_year` say 1947, so v0.4.0 shipped a member for 1947 — but the issue
-     * itself carries `year: 1945` with `gregorian_year: 1947`, and `recordedYear` prefers the
-     * date on the coin. The member had to be 1945 or it could never be filled, and the plate
-     * would have reported a coin in his hand as missing.
+     * Three Numista types make one date run because all three weigh 10 g. N#10399 is dated 1945
+     * and struck in 1947: the type's `min_year`/`max_year` say 1947, but the issue's `year` is 1945
+     * and `recordedYear` prefers the date on the coin, so a 1947 member could never be filled.
      */
     @Test
     fun `the venezuelan 2 bolivares date run spans its three types`() {
@@ -947,10 +889,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El 1 bolívar sale de agrupación a date run (#113): el tronco N#10338 que la agrupación
-     * no nombraba, más N#10398 / N#7034 / N#5316. Los años no se copian del 2 bolívares —aquí
-     * hay 1893, 1901 y 1921, y no hay 1894 ni 1930— y el bulto de 102 de N#5316 sigue siendo
-     * una fila hasta que el padre la parta por años en Numista.
+     * El 1 bolívar pasa de agrupación a date run (#113) con el tronco N#10338, que la agrupación no
+     * nombraba, más N#10398, N#7034 y N#5316. Los años no se copian del 2 bolívares: aquí hay 1893,
+     * 1901 y 1921, y no hay 1894 ni 1930.
      */
     @Test
     fun `the venezuelan 1 bolivar date run spans its four types including the trunk`() {
@@ -995,11 +936,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Los reales —½ bolívar y 50 céntimos, 2,5 g de plata .835— eran una agrupación de dos
-     * tipos que omitía el tronco N#17945 y N#7727. Misma forma que el 1 bolívar (#113): date
-     * run cerrado, casilla = año, y la etiqueta nombra el año de acuñación cuando Numista lo
-     * apunta. No hay 1926 (sí en el 1 bolívar y en los fuertes). Familia de la calle: «Reales
-     * de Venezuela», no «½ Bolívar», porque en Venezuela «medio» es el ¼ (#114).
+     * Los reales (½ bolívar y 50 céntimos, 2,5 g de plata .835), con la forma del 1 bolívar (#113):
+     * date run cerrado, una casilla por año, y la etiqueta nombra el año de acuñación si Numista
+     * lo apunta. No hay 1926, aunque sí en el 1 bolívar y en los fuertes. La familia es «Reales de
+     * Venezuela» y no «½ Bolívar» porque en Venezuela «medio» es el ¼ (#114).
      */
     @Test
     fun `the venezuelan reales date run spans its four types including the trunk`() {
@@ -1046,13 +986,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Los medios: ¼ bolívar / 25 céntimos, 1,25 g de plata .835. La agrupación solo nombraba
-     * N#4369 y N#9488; falta el 1954 (N#5317, acuñado en 1955), el mismo agujero que el 1
-     * bolívar. Dieciocho casillas —dieciséis años del tronco más 1954 y 1960— y el ⅕ de 1879
-     * (N#59789, 1 g) queda fuera por clave de variante y por el mínimo de dos de #33.
-     *
-     * Familia coloquial «Medios de Venezuela», pareja de «Reales de Venezuela»: en la calle
-     * «medio» es el cuarto, así que el fichero no puede llamarse medio-bolívar (#114 / #115).
+     * Los medios: ¼ bolívar o 25 céntimos, 1,25 g de plata .835, con el 1954 (N#5317, acuñado en
+     * 1955) como en el 1 bolívar. El ⅕ de 1879 (N#59789, 1 g) queda fuera por clave de variante y
+     * por el mínimo de dos de #33. «Medios de Venezuela» hace pareja con «Reales de Venezuela»: en
+     * la calle «medio» es el cuarto (#114, #115).
      */
     @Test
     fun `the venezuelan medios date run spans its three types including 1954`() {
@@ -1106,15 +1043,11 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El primer catálogo al que Numista no le da ninguna serie: las cinco fichas traen
-     * `series: null`, así que la lista no la propuso nadie dentro de Numista y el `source` es la
-     * página de un tipo. Quien delimita es el Handboek van de Nederlandse munten 1795-2001, que
-     * cierra los 10 gulden de Beatrix en cinco piezas correlativas —LSch. 1168 a 1172— y archiva
-     * aparte los de Juliana, que además pesan 25 g y son otra variante física.
-     *
-     * Las cinco caben en un fichero con dos leyes distintas —.720 la de 1994 y .800 las otras
-     * cuatro, todas a 15 g— porque por el ADR 0016 el catálogo es autoridad sobre la variante de
-     * sus propios miembros.
+     * Las cinco fichas traen `series: null`, así que `source` es la página de un tipo y el límite
+     * lo pone el Handboek van de Nederlandse munten 1795-2001: los 10 gulden de Beatrix son LSch.
+     * 1168 a 1172, y los de Juliana pesan 25 g y son otra variante. Caben dos leyes, .720 en 1994
+     * y .800 las demás, todas de 15 g, porque el catálogo manda sobre la variante de sus miembros
+     * (ADR 0016).
      */
     @Test
     fun `the ten gulden of Beatrix are five and cite a type page because no series proposed them`() {
@@ -1134,15 +1067,12 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Los seis escudos que resolvían por el peldaño 5 —la familia técnica de Numista— y salían
-     * como cinco tarjetas, dos de ellas homónimas (#157). Ninguna serie de Numista propone estas
-     * cuatro listas: las catorce fichas cuelgan de «System 1927-1968», «System 1969-1980» y
-     * «System 1981-2001», así que las cuatro citan la página de un tipo.
-     *
-     * El criterio es del coleccionista y es uno solo, denominación más metal, el mismo patrón que
-     * ya sostenía los 500 y los 1000 escudos de plata .500. La lectura temática que pidió además
-     * —el programa de 1977 y el de 1983, cada uno en tres denominaciones— vive aparte, en los
-     * programas conmemorativos del ADR 0022, porque su tercera moneda no está en ningún catálogo.
+     * Seis escudos sueltos que salían como cinco tarjetas, dos homónimas (#157). Ninguna serie de
+     * Numista propone estas listas (las fichas cuelgan de «System 1927-1968», «System 1969-1980» y
+     * «System 1981-2001»), así que citan la página de un tipo. El criterio del coleccionista es
+     * denominación más metal, como en los 500 y 1000 escudos de plata .500; los programas de 1977
+     * y 1983 viven aparte como programas conmemorativos (ADR 0022), porque su tercera moneda no
+     * está en ningún catálogo.
      */
     @Test
     fun `the six loose escudos become four catalogs by denomination and metal`() {
@@ -1151,9 +1081,8 @@ class CuratedCatalogsTest {
         assertEquals(Metal.Silver, veinte.metal)
         assertEquals(listOf(11_158, 11_161, 6_580), veinte.members.map { it.numistaTypeId })
         assertEquals(listOf(1953, 1960, 1966), veinte.members.map { it.year })
-        // El módulo reducido de 1966 —10,12 g de plata .650 contra 21 g de plata .800— entra a
-        // propósito: por el ADR 0016 el catálogo manda sobre la variante de sus miembros, y la
-        // desviación se declara en prosa en vez de partir la lámina en dos.
+        // El módulo reducido de 1966 (10,12 g de plata .650 contra 21 g de .800) entra a propósito:
+        // el catálogo manda sobre la variante de sus miembros (ADR 0016) y lo dice en prosa.
         val salazar = veinte.members.last()
         assertEquals(6_580, salazar.numistaTypeId)
         assertTrue(salazar.variantNote!!.contains("10,12 g"), salazar.variantNote!!)
@@ -1166,7 +1095,7 @@ class CuratedCatalogsTest {
             cincuenta.members.map { it.numistaTypeId },
         )
         // 1970 no falta: en las 135 conmemorativas circulantes de la era del escudo no hay
-        // ninguna de ese año. Al estar cerrado, el hueco interior no lo informa nadie.
+        // ninguna de ese año, y en un catálogo cerrado ese hueco no se señala.
         assertEquals(listOf(1968, 1969, 1969, 1971, 1972), cincuenta.members.map { it.year })
 
         val dosCincuenta = find("portugal-2-50-escudos-cuproniquel")
@@ -1207,13 +1136,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * The second set, and the first one no derivation could ever have suggested (#146).
-     *
-     * 28,28 g and 35 g share no variant key and never will, so the *absence* of a card over
-     * them was the signal. The plate claims the two-coin silver case the
-     * Royal Mint struck for the Banco Central de Venezuela, not the conservation programme: the
-     * BCV Directorio approved a third coin, the Gallito de las Rocas in gold, sold apart and
-     * therefore outside this denominator.
+     * A set (#146): 28,28 g and 35 g never share a variant key, so no derivation would propose
+     * this plate. It is the two-coin silver case the Royal Mint struck for the Banco Central de
+     * Venezuela, not the conservation programme, whose gold third coin (the Gallito de las Rocas)
+     * was sold apart.
      */
     @Test
     fun `the 1975 venezuelan pair is the silver case and not the whole programme`() {
@@ -1235,16 +1161,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El rótulo de una casilla dice la especificación **sólo cuando se desvía de la lámina** (#412).
-     *
-     * Los cuatro 100 bolívares llevaban su peso y su ley pegados al nombre, y en la casilla eso
-     * competía por dos líneas con el nombre para morir en puntos suspensivos. En dos de los cuatro
-     * la cola repetía lo que la lámina ya declara arriba —31,1 g de plata— y en los otros dos lo
-     * contradice: 22 g en el de 1980 y .835 en el de 1981. Lo que contradice la declaración es lo
-     * único que un rótulo tiene que añadir; lo que la repite se lee una vez, en la especificación.
-     *
-     * El `variant_note` de cada desviación sigue siendo la prosa con la fuente, y sigue sin
-     * imprimirse en ninguna superficie: es del curador y de los cruces de metal y clase de objeto.
+     * El rótulo de una casilla lleva peso o ley sólo cuando se desvía de la lámina (#412): aquí,
+     * los 22 g del de 1980 y la .835 del de 1981. La fuente de cada desviación va en su
+     * `variant_note`, que no se imprime en ninguna superficie.
      */
     @Test
     fun `a member says its own weight only where it deviates from the plate`() {
@@ -1362,14 +1281,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Los fuertes, que son veintidós años y **dos** tipos: el venezolano de 1876 abre el run tres
-     * años antes del primer 5 bolívares porque es la misma moneda con otro nombre —la ley de 1871
-     * llamó venezolano a la unidad y la del 31 de marzo de 1879 la renombró bolívar—, y por eso la
-     * familia dice «fuertes», que es como la llama el coleccionista, y no la denominación de
-     * veintiuna de sus veintidós casillas.
-     *
-     * Los dos ensayos de 1874 comparten los 25 g de plata .900 y **no** están: son patterns, así
-     * que no abren hueco. Lo dice la `closed_note` para que la lista no parezca corta.
+     * Los fuertes son veintidós años y dos tipos: el venezolano de 1876 es la misma moneda con otro
+     * nombre (la ley de 1871 llamó venezolano a la unidad y la del 31 de marzo de 1879 la renombró
+     * bolívar), y por eso la familia dice «fuertes», como el coleccionista. Los dos ensayos de 1874
+     * comparten los 25 g de plata .900, pero son patterns y no abren hueco (lo dice `closed_note`).
      */
     @Test
     fun `the venezuelan fuertes run from the 1876 venezolano to 1936`() {
@@ -1384,7 +1299,7 @@ class CuratedCatalogsTest {
         assertEquals(1876, venezolano.year)
         assertEquals(48_672, venezolano.numistaTypeId)
         assertEquals("1 Venezolano", venezolano.label)
-        // Las otras veintiuna siguen siendo un solo tipo, y sus etiquetas siguen siendo el año.
+        // Las otras veintiuna son un solo tipo y su etiqueta es el año.
         val fuerte = fuertes.members.drop(1)
         assertEquals(21, fuerte.size)
         assertTrue(fuerte.all { it.numistaTypeId == 10_340 })
@@ -1393,16 +1308,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Lunar Series III runs 2020-2031, not 2019-2030: the 2019 pig closes Lunar II, which this
-     * repo already ships whole. Numista files the Royal Australian Mint's parallel lunar line
-     * under the very same series, so the members are the Perth ones — .9999 and 40,9 mm against
-     * RAM's .999 and 40 mm, and in 2020 RAM even calls the animal a rat where Perth says mouse.
-     *
-     * Eight issued members and four scheduled subjects: the goat of 2027 was released on
-     * 8 September 2026 and now has its own type, while the official Perth zodiac guide still maps
-     * 2028-2031 to Monkey through Pig inside the annual twelve-coin 2020-2031 cycle. Those four
-     * subjects are announced slots, not claims that their individual designs or specifications
-     * have already been released.
+     * Lunar Series III runs 2020-2031; the 2019 pig closes Lunar II. Numista files the Royal
+     * Australian Mint's lunar line under the same series, so the members are Perth's: .9999 and
+     * 40,9 mm against RAM's .999 and 40 mm. 2028-2031 are announced slots from Perth's zodiac
+     * guide, scheduled subjects and not released designs.
      */
     @Test
     fun `lunar iii bullion fixes the perth cycle from 2020 to 2031`() {
@@ -1462,14 +1371,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * La proof coloreada repite tres tipos de bullion entre 2021 y 2023. Son ediciones del mismo
-     * tipo de Numista, separadas por emisión: sin esos ids una pieza proof llenaría la casilla de
-     * bullion, o al revés. Las demás también los declaran para no confundirlas con otros acabados
-     * presentes o futuros del mismo tipo.
-     *
-     * La de 2027 estrena la regla por el lado incómodo: el 5 de octubre de 2026 la cabra coloreada
-     * sólo tiene la emisión del estuche de tres de 1 oz, y la suelta —6.000 piezas, a la venta el
-     * día 6— añadirá renglón al mismo tipo. La casilla declara lo que la ficha sostiene hoy.
+     * La proof coloreada repite tres tipos de la bullion entre 2021 y 2023 y se separa por emisión:
+     * sin esos ids una proof llenaría la casilla de bullion, o al revés. Las demás casillas también
+     * los declaran, por otros acabados del mismo tipo. La de 2027 declara sólo la emisión del
+     * estuche de tres de 1 oz, la única de la ficha al curarla; la suelta añadirá otra.
      */
     @Test
     fun `lunar iii proof coloured is issue qualified from 2020 to 2027`() {
@@ -1546,20 +1451,14 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Equilibrium es una serie de Numista que da **tres** colecciones y no una (#43): ocho onzas
-     * de plata, cinco décimos de onza de oro y cinco onzas de oro. Se cura la de plata, que es la
-     * que el coleccionista persigue, y el oro se queda fuera a propósito: además de fallar la
-     * intención del #33, la onza de oro comparte hoy clave de variante con la de plata —los dos
-     * pesan 31,1 g— hasta que el metal entre en la clave (#62).
+     * Equilibrium es una serie de Numista con tres colecciones (#43): ocho onzas de plata, cinco
+     * décimos de onza de oro y cinco onzas de oro. Se cura la de plata; el oro queda fuera a
+     * propósito.
      *
-     * El emisor alterna por año entre Tokelau y Niue sin que el programa cambie de ceca: es un
-     * acuerdo de respaldo legal de la Pressburg Mint, así que las ocho son una tirada anual.
-     *
-     * Y por eso fue el primero cuya cabecera no puede decir el país sola (#170): el emisor lo dicen
-     * las dos casillas de Niue —2023 y 2025, verificadas en N#356004 y N#477907, 2 dólares de Nueva
-     * Zelanda contra los 5 de Tokelau—, y la cabecera hace de defecto para las otras seis. La propia
-     * serie 3245 de Numista se encabeza «Emisores: Niue, Tokelau». Ya no es el único: `historia-del-real`
-     * abarca **tres** emisores (#257), y son los dos únicos que se reparten países.
+     * El emisor alterna entre Tokelau y Niue sin cambiar de ceca (es un acuerdo de respaldo legal
+     * de la Pressburg Mint), así que las ocho son una tirada anual. La cabecera dice Tokelau y las
+     * dos casillas de Niue, 2023 y 2025 (N#356004 y N#477907, de 2 dólares neozelandeses contra los
+     * 5 de Tokelau), declaran su emisor (#170).
      */
     @Test
     fun `equilibrium is the pressburg silver ounce from 2018 to 2025`() {
@@ -1595,26 +1494,16 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El primer catálogo **temático** (#257): la frontera no es una denominación, ni un programa, ni
-     * el rango de una ceca, sino un tema que el padre declaró con sus palabras el 6 de agosto de 2026
-     * —«el Thaler es para mostrar con el real bajo el tema historia del real, me falta allí un holey
-     * dollar (y el dump) para completar»— y que cerró en cuatro piezas al preguntarle si entraban 8
-     * reales de otros reyes, otras cecas americanas o los resellos.
+     * El primer catálogo temático (#257): el límite es un tema que declaró el padre y que cerró en
+     * cuatro piezas. Funciona con lo que ya había: el ADR 0020 no exige un solo emisor ni un solo
+     * patrón físico, el fichero manda sobre la variante de sus miembros (ADR 0016) y cada casilla
+     * puede declarar su emisor (#170).
      *
-     * No necesitó mecanismo nuevo. El ADR 0020 ya había matado «un solo emisor» y «un solo patrón
-     * físico» como porteros, el ADR 0016 hace que el fichero mande sobre la variante de sus miembros,
-     * y el `issuer_code` por casilla del #170 ya existía. Lo que se declara es el peso de la moneda
-     * **ancla** —los 27,07 g del real de a ocho, 870 milésimas de onza— y las tres desviaciones van
-     * escritas: el thaler pesa más (28,0668 g, norma Conventionsthaler de 1750) y las dos de 1813
-     * pesan lo que queda de un duro perforado, 21,035 g el anillo y 5,619 g el disco, que sumados son
-     * los 26,65 g del duro del que salieron.
-     *
-     * Se cierra y eso cuesta prueba: Carlos IV acaba en 1808, las dos de 1813 se desmonetizaron en
-     * 1829 según sus propias fichas, y el thaler que Viena sigue vendiendo lleva la fecha congelada en
-     * 1780, así que ninguna ceca puede añadir casilla.
-     *
-     * Y es la primera curación que **reabre una huérfana firmada**: N#18852 salió de `data/orphans.json`
-     * al escribirse este fichero, porque un veredicto de intención lo reabre la intención.
+     * Se declara el peso del ancla, los 27,07 g del real de a ocho (870 milésimas de onza), y las
+     * tres desviaciones van escritas: el thaler pesa 28,0668 g (norma Conventionsthaler de 1750) y
+     * las dos de 1813 son lo que queda de un duro perforado de 26,65 g, 21,035 g el anillo y
+     * 5,619 g el disco. Está cerrado: Carlos IV acaba en 1808, las de 1813 se desmonetizaron en
+     * 1829 y el thaler que Viena sigue vendiendo lleva la fecha congelada en 1780.
      */
     @Test
     fun `historia del real is the first thematic catalog and spans three issuers`() {
@@ -1628,7 +1517,7 @@ class CuratedCatalogsTest {
         assertEquals(SeriesStatus.Closed, theme.seriesStatus)
         assertEquals(listOf(1780, 1791, 1813, 1813), theme.members.map { it.year })
         assertEquals(listOf(7_393, 18_852, 19_811, 17_316), theme.members.map { it.numistaTypeId })
-        // La cabecera es México, que es de quien es el real, y hace de defecto para su casilla sola.
+        // La cabecera es México, emisor del real, y es el defecto de su casilla.
         assertEquals("mexique", theme.issuerCode)
         assertEquals(
             listOf("autriche-habsbourg", "mexique", "new_south_wales", "new_south_wales"),
@@ -1638,19 +1527,17 @@ class CuratedCatalogsTest {
             setOf("autriche-habsbourg", "mexique", "new_south_wales"),
             theme.issuerCodes(),
         )
-        // Las cuatro casillas llevan nota, que es el peaje de un catálogo temático (ADR 0016): tres
-        // dicen por qué se apartan del peso declarado y la del real dice por qué la casilla es el
-        // tipo entero y no un año.
+        // Las cuatro llevan nota (ADR 0016): tres explican su peso y la del real por qué la
+        // casilla es el tipo entero y no un año.
         assertTrue(theme.members.all { it.variantNote?.isNotBlank() == true })
         assertTrue(theme.members.all { it.isIssued })
     }
 
     /**
-     * Esta lámina es la emisión BU anual oficial de una onza, sin privy opcional. Las marcas que
-     * forman parte de la emisión anual —P100, P20, P125 y 35th Anniversary— sí pertenecen a ella.
-     * Quedan fuera privies opcionales, color, dorado, high relief, proof o piezas exclusivas de
-     * estuche, y mules. El tipo y la issue se fijan juntos porque varias de esas variantes comparten
-     * tipo o año; 2005 es su propia casilla anual y no una extensión de la de 2004.
+     * La emisión BU anual oficial de una onza. Las marcas que forman parte de la emisión anual
+     * (P100, P20, P125 y 35th Anniversary) sí entran; quedan fuera privies opcionales, color,
+     * dorado, high relief, proof, piezas de estuche y mules. Tipo y emisión se fijan juntos porque
+     * varias de esas variantes comparten tipo o año; 2005 tiene su propia casilla.
      */
     @Test
     fun `the kookaburra catalog is the issue-qualified standard annual bullion run`() {
@@ -1700,10 +1587,9 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Mismo criterio que el Kookaburra (#70/#106): la emisión BU anual estándar de Perth Mint,
-     * una casilla por año del programa oficial, cualificada por emisión. El catálogo original
-     * empezaba en 2011 porque eso es lo que enumeraba la serie 10445 de Numista; la tabla de la
-     * ceca arranca en 2007 y esas cuatro casillas vivían en la serie hermana 4424.
+     * Mismo criterio que el Kookaburra (#70, #106): la emisión BU anual estándar de Perth, una
+     * casilla por año cualificada por emisión. Empieza en 2007, como la tabla de la ceca, aunque la
+     * serie 10445 de Numista empiece en 2011: las cuatro primeras están en la serie hermana 4424.
      */
     @Test
     fun `the koala catalog is the issue-qualified standard annual bullion run`() {
@@ -1747,14 +1633,10 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El Koala de la Royal Australian Mint (#152): tres tipos que la lámina de Perth ya excluía
-     * uno a uno y que son un programa propio. La ceca anuncia el de 2026 como «a third release …
-     * follows the success of the 2025 Koala Series», así que 2024 es la primera entrega y no una
-     * huérfana —el censo de #120 la había puesto en la caja 1 porque Numista no le da serie.
-     *
-     * La serie 10445 sostiene los dos catálogos a la vez, que es justo lo que dice el ADR 0020:
-     * la serie propone y sólo el fichero afirma cobertura. Cada tipo trae una sola emisión BU,
-     * así que ninguna casilla necesita cualificador de emisión.
+     * El Koala de la Royal Australian Mint (#152) es un programa propio, no tres huérfanas: la ceca
+     * anuncia el de 2026 como «a third release … follows the success of the 2025 Koala Series».
+     * La serie 10445 sostiene este catálogo y el de Perth (ADR 0020: la serie propone y el fichero
+     * afirma cobertura). Cada tipo trae una sola emisión BU, así que no hace falta cualificar.
      */
     @Test
     fun `the ram koala catalog is the other mint's annual bullion run`() {
@@ -1788,16 +1670,12 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Lunar Series II cierra el ciclo 2008-2019; cada tipo mezcla la bullion estándar con
-     * colour, gilded, proof, typesets y privys, así que la casilla se identifica por emisión.
+     * Lunar Series II cierra el ciclo 2008-2019. Cada tipo mezcla la bullion estándar con colour,
+     * gilded, proof, typesets y privys, así que la casilla se identifica por emisión.
      *
-     * Once casillas abren con una sola emisión y la de 2012 con dos (#216). La coleccionada de
-     * ese año es la «BU - Dark Orange» de tirada 2.500 y no la BU lisa, y ninguna lámina de
-     * coloreadas la podría acoger: la edición coloreada anual de Perth existe en 2008-2011,
-     * 2013 y 2017-2018 y no en 2014-2016 ni 2019, y en 2012 Numista archiva quince colores
-     * distintos bajo N#28574 sin que ninguno sea la del año —por tirada sería la roja de
-     * 64.001—. Dejarla fuera habría marcado 2012 como pendiente con el dragón en el cajón, así
-     * que la casilla se amplía y el ADR 0016 obliga a decirlo en el `variant_note`.
+     * La de 2012 acepta además la «BU - Dark Orange» de 2.500 piezas (#216), que ninguna lámina de
+     * coloreadas acogería: en 2012 Numista archiva quince colores bajo N#28574 y ninguno es la
+     * edición del año. El ADR 0016 obliga a declararlo en el `variant_note`.
      */
     @Test
     fun `the lunar ii bullion catalog is the issue-qualified standard annual run`() {
@@ -1838,18 +1716,11 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El primer miembro anunciado del repo (#31) ya no lo es: el Seymour Panther, que abrió la
-     * gama proof en 2022, cerró la de bullion el 1 de septiembre de 2026 con N#604513 —.9999,
-     * 62,42 g y ⌀38,61 mm, como sus nueve hermanas—, así que las diez bestias están completas y
-     * la décima casilla pasó de «sin emitir» a emitida sin que nadie tuviera que adivinar el año.
-     *
-     * La lámina sigue abierta por la completer: la Royal Mint cerró la gama conmemorativa con un
-     * undécimo diseño fechado en 2027 y de él no hay bullion de 2 oz; en The Queen's Beasts sí lo
-     * hubo (N#299474). Eso se espera, no se afirma, así que no hay casilla anunciada: la casa no
-     * ha nombrado la moneda.
-     *
-     * Lo que no cambia es por qué la proof no puede rellenar un hueco de bullion: la 2 oz de 2022
-     * es N#307800, plata .999 de 40 mm, otra moneda.
+     * La Seymour Panther (N#604513, .9999, 62,42 g y ⌀38,61 mm como sus hermanas) cerró en 2026
+     * las diez bestias de bullion. La lámina sigue abierta por la completer de 2027, sin casilla
+     * anunciada porque la Royal Mint no ha nombrado un bullion de 2 oz de ella (en The Queen's
+     * Beasts sí lo hubo, N#299474). La proof de 2 oz de 2022, N#307800, es plata .999 de 40 mm:
+     * otra moneda, que no rellena un hueco de bullion.
      */
     @Test
     fun `the tenth tudor beast closes the ten and the plate stays open for the completer`() {
@@ -1867,7 +1738,7 @@ class CuratedCatalogsTest {
         assertNull(panther.source)
         assertTrue(tudor.sourceNote!!.contains("completer"), tudor.sourceNote!!)
 
-        // El padre tiene piezas proof de esta serie y ninguna rellena una casilla de bullion.
+        // Una proof de la serie no rellena ninguna casilla de bullion.
         val album = buildCollectionCatalogAlbum(
             tudor,
             listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800)),
@@ -1883,17 +1754,14 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * El dólar de plata canadiense son **dos** catálogos y no uno, y lo que los separa no es el
-     * peso —los dos pesan 23,33 g y por tanto declaran los mismos 750 millioz— sino la familia,
-     * que es la primera componente de la clave. Ninguno de los treinta y dos tipos trae `series`
-     * en Numista, así que la familia la aporta el catálogo (ADR 0009) y sin ellos las tres piezas
-     * de las dos colecciones salen huérfanas por «sin familia ni catálogo».
+     * El dólar de plata canadiense son dos catálogos que pesan lo mismo (23,33 g, 750 millioz) y se
+     * separan por la familia, la primera componente de la clave. Ninguno de los treinta y dos tipos
+     * trae `series` en Numista, así que la familia la pone el catálogo (ADR 0009).
      *
-     * Los dos cierran por un hecho externo y **distinto**: la .800 porque en 1968 la Royal
-     * Canadian Mint pasó el dólar al níquel (N#3326, 15,62 g), y la .500 porque en 1992 pasó a
-     * plata esterlina (N#23296, .925 y 25,175 g). Ese segundo cierre no es el del programa: la
-     * propia RCM dice que el proof silver dollar se emite todos los años desde 1971 y que su
-     * composición varía, así que lo que cierra es la variante, que es la unidad de catálogo (#43).
+     * Cierran por hechos distintos: la .800 en 1968, cuando la Royal Canadian Mint pasó el dólar al
+     * níquel (N#3326, 15,62 g), y la .500 en 1992, cuando pasó a plata esterlina (N#23296, .925 y
+     * 25,175 g). El proof silver dollar se sigue emitiendo cada año desde 1971; lo que cierra es la
+     * variante, que es la unidad de catálogo (#43).
      */
     @Test
     fun `the canadian silver dollar is two catalogs told apart by family and not by weight`() {
@@ -1922,7 +1790,6 @@ class CuratedCatalogsTest {
         // N#449 cubre 1937-1947, N#451 1948-1952, N#453 1953-1963 y N#456 1965-1966.
         assertEquals(11, eightHundred.members.size)
 
-        // Veintiún años seguidos, uno por moneda, de 1971 a 1991.
         assertEquals((1971..1991).toList(), fiveHundred.members.map { it.year })
         assertEquals(
             listOf(
@@ -1937,19 +1804,14 @@ class CuratedCatalogsTest {
     }
 
     /**
-     * Las personalidades destacadas de Rusia son **dos** catálogos por el corte de 1998 (#159):
-     * diecisiete de plata .500 y 15,87 g —7,78 g de plata fina, un cuarto de onza— contra ciento
-     * cuatro de plata .925 y 17,00 g —15,55 g finos, media onza—. La serie de Numista (id=5460)
-     * propone las dos épocas juntas; lo que las separa es la variante física, que es la unidad de
-     * catálogo (ADR 0020), y el límite lo dibuja la ceca: sus números 5110-0001 a 5110-0020 son
-     * .500 y el 5110-0021 es el primer .925, medido ficha a ficha en cbr.ru.
+     * Las personalidades destacadas de Rusia son dos catálogos por el corte de 1998 (#159): plata
+     * .500 de 15,87 g (7,78 g finos, un cuarto de onza) contra plata .925 de 17,00 g (15,55 g
+     * finos, media onza). La serie 5460 de Numista junta las dos épocas; las separa la variante
+     * física (ADR 0020), y el límite lo pone la ceca: sus números 5110-0001 a 5110-0020 son .500 y
+     * el 5110-0021 es el primer .925, comprobado ficha a ficha en cbr.ru.
      *
-     * La lámina de .925 se queda el id **y la familia** a propósito. La familia es parte de la
-     * clave de `collection_proposal_preferences`, así que renombrarla le cerraría al coleccionista
-     * una lámina que ya seguía sin decirle por qué — lo midió #62 con los fuertes —, y por eso la
-     * `PreservedKey` de `CoindexDatabase` sigue valiendo. La ruta contraria, un solo catálogo con
-     * la desviación en `variant_note` como los 20 escudos de 1966, se descartó porque aquí no es
-     * una moneda distinta entre tres sino una época entera con la mitad de la plata.
+     * No se resolvió con un `variant_note`, como los 20 escudos de 1966, porque aquí no es una
+     * moneda suelta sino una época entera con la mitad de plata.
      */
     @Test
     fun `the russian personalities split at the 1998 redenomination by fineness`() {
@@ -1963,15 +1825,15 @@ class CuratedCatalogsTest {
         }
         assertNotEquals(sterling.key(), fiveHundred.key())
 
-        // La familia y el peso de la .925 no se tocan: son la clave que preserva la disposición.
+        // La .925 conserva el id, la familia y el peso que tenía antes del corte.
         assertEquals("Outstanding Personalities of Russia", sterling.family)
         assertEquals(547, sterling.weightMillioz)
         assertEquals(SeriesStatus.Open, sterling.seriesStatus)
         assertEquals(104, sterling.members.size)
         assertEquals(1998, sterling.members.first().year)
 
-        // 15,87 g miden 510 milionzas y `normalizeWeightMillioz` las imanta a 500 estando justo en
-        // la tolerancia, así que declarar 500 es lo que no parte la tarjeta de un hermano suelto.
+        // 15,87 g son 510 millioz y `normalizeWeightMillioz` los ajusta a 500 por tolerancia:
+        // declarar 500 evita que una pieza suelta de la misma época caiga en otra tarjeta.
         assertEquals("Outstanding Personalities of Russia · plata .500", fiveHundred.family)
         assertEquals(500, fiveHundred.weightMillioz)
         assertEquals(SeriesStatus.Closed, fiveHundred.seriesStatus)
@@ -1988,8 +1850,7 @@ class CuratedCatalogsTest {
                 1997, 1997, 1997, 1997),
             fiveHundred.members.map { it.year },
         )
-        // Los dos Nikitin son los dos reversos del 5110-0018 y del 5110-0019, y cada casilla dice
-        // el suyo: dos celdas con el mismo rótulo es lo que #22 no puede dejar pasar.
+        // Los dos Nikitin (5110-0018 y 5110-0019) nombran su reverso para no repetir rótulo (#22).
         assertEquals(
             listOf("A. Nikitin · la partida", "A. Nikitin · la India"),
             fiveHundred.members.filter { it.label.startsWith("A. Nikitin") }.map { it.label },

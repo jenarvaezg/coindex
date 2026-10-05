@@ -17,12 +17,8 @@ import kotlin.test.assertTrue
 private const val NOW = 1_786_400_000_000L
 
 /**
- * «La lista de lo que busco» on paper (ADR 0029 §7).
- *
- * It exists because ADR 0026 §4 alone was not enough: the mark reaches the paper of any plate the
- * collector can open, and the plate of «Explorar» has no «Exportar» at all — so without this lámina the
- * 157 slots of the shelf window could never be printed. What is pinned here is that it is **a lámina
- * like the others** and that it says nothing a page of coins nobody owns must not say.
+ * «Lo que busco» on paper (ADR 0029 §7). The plates of «Explorar» have no «Exportar», so this
+ * lámina is the only way to print their marked casillas. It prints like any other lámina.
  */
 class WishSectionTest {
     private val kooka = dateRun("kooka", 2_010..2_012, typeId = 30)
@@ -49,45 +45,32 @@ class WishSectionTest {
         assertEquals(listOf("Casillas" to "2 casillas en 2 láminas"), section.facts)
         assertEquals(listOf("2011", "2014"), section.cells.map { it.label })
         assertEquals(listOf("kooka", "koala"), section.cells.map { it.footnote })
-        // Every one of them is a coin the collector does not have, so every one is a die-cut hole.
+        // None is owned, so every cell is a die-cut hole.
         assertTrue(section.cells.none { it.filled })
-        // The mark itself is **not** repeated here: this whole sheet is what he is looking for, and
-        // «lo busco» under each cell would print the same two words to distinguish nothing.
+        // No «lo busco» per cell: the whole sheet is the list.
         assertTrue(section.cells.all { it.state == null })
-        // A real diameter where the cache has one, borrowed by nobody where it has none.
+        // The cached diameter, or none; never another type's.
         assertEquals(listOf(40.6f, null), section.cells.map { it.diameterMm })
     }
 
-    /**
-     * It is not a page of the collection, and the eyebrow is where that is said once.
-     *
-     * The paper outlives the app: a sheet that said «COLECCIÓN» over seven coins in a dealer's tray
-     * would be a false claim in somebody else's hands, and the source line has the same problem — «tu
-     * colección en Numista» is what every other page says and none of these coins is in it.
-     */
+    /** Neither the eyebrow nor the source may say «colección»: none of these coins is owned. */
     @Test
     fun `it never claims to be a collection`() {
         val section = wishSections(state, listOf(slot(kooka, "kooka-2011")), NotebookOptions()).single()
 
         assertTrue("COLECCIÓN" !in section.eyebrow)
         assertEquals("los catálogos curados de Coindex", section.source)
-        // No completion stamp and no ratio: there is no album here to be complete against.
+        // No album to be complete against, so no stamp and no ratio.
         assertEquals(null, section.ratio)
         assertTrue(!section.complete)
     }
 
-    /** No folio is ever spent on a heading with nothing under it. */
     @Test
     fun `an empty list prints no lamina at all`() {
         assertTrue(wishSections(state, emptyList(), NotebookOptions()).isEmpty())
     }
 
-    /**
-     * It obeys the same switches every other lámina does (#228, #231).
-     *
-     * One machine and not a second printer: with the photographs off a cell has no face, and with both
-     * faces on it has two — which is what makes the list a page of the notebook rather than a report.
-     */
+    /** The notebook switches (#228, #231) apply as on any lámina. */
     @Test
     fun `the switches reach its cells like any other lamina`() {
         val slots = listOf(slot(kooka, "kooka-2011"))

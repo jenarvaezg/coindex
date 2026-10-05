@@ -30,13 +30,8 @@ private const val NOW = 1_786_400_000_000L
 private const val TYPE = 2
 
 /**
- * Everything the screens read, and the one rule about when it is read again.
- *
- * These derivations used to be written in the body of the root composable — the shelf window, the
- * living marks and their month, «Las cifras», the sewn edge, the value of a coin, the address of its
- * ficha — where an emulator was the only thing that could answer any of them. The last class of this
- * file's tests is the other half of the ticket: what a screen keys its `remember` on is this value,
- * so what has to be true is that the value stops changing when nothing behind it has.
+ * [ScreenReading]: what the screens derive (shelf window, living marks, «Las cifras», sewn edge,
+ * coin value, ficha address), and that it stays equal while nothing behind it changes.
  */
 class ScreenReadingTest {
     @Test
@@ -44,7 +39,7 @@ class ScreenReadingTest {
         val reading = reading()
 
         assertEquals(listOf("libertad"), reading.showcase.map { it.catalog.id })
-        // And the plate the collector does own resolves as theirs, from the same reading.
+        // The plate the collector owns resolves as theirs.
         val mine = reading.plate("britannia")
         assertTrue(mine is PlateResult.Available && mine.mine)
         assertNull(reading.showcasePlateOf("britannia"))
@@ -56,8 +51,7 @@ class ScreenReadingTest {
         val reading = reading(marks = listOf(mark(1_990), mark(1_991)))
 
         assertEquals(listOf(1_991), reading.livingWishes.map { it.member.year })
-        // The keys are the table's own, dead marks included: a plate paints one only on an empty
-        // casilla, so the album is what decides whether it shows (ADR 0029 §2).
+        // Dead marks stay in the keys: a plate paints one only on an empty casilla (ADR 0029 §2).
         assertEquals(setOf(key(1_990), key(1_991)), reading.wishedKeys)
     }
 
@@ -68,13 +62,12 @@ class ScreenReadingTest {
         assertEquals(listOf("britannia/britannia-1991"), reading.wishedRows.map { it.id })
         assertNull(reading.wishedRows.single().cost)
         assertEquals("40 €", reading.wishAnnex.rows.single().cost)
-        // What the mark costs a month, which is the figure «Este teléfono» prints: one `/prices` for a
-        // casilla whose curated file already names its issue, and the second call of the gesture's
-        // «+2 consultas al mes» only where the issue has to be looked up too (ADR 0029 §5).
+        // The mark's monthly cost: one `/prices`, since the curated file names the issue. The
+        // second call of «+2 consultas al mes» is for an issue to look up (ADR 0029 §5).
         assertEquals(1, reading.wishCalls)
     }
 
-    /** The same gate as every other amount in the app: no market, no price anywhere (ADR 0028 §7). */
+    /** The same gate as every amount in the app: no market, no price (ADR 0028 §7). */
     @Test
     fun `while the market is arriving the annex prices nothing and no coin is worth anything`() {
         val reading = reading(
@@ -84,7 +77,7 @@ class ScreenReadingTest {
 
         assertNull(reading.wishAnnex.rows.single().cost)
         assertNull(reading.coinValue(TYPE))
-        // And the absence is worth a line, which is the pass's own reading and not a second guess.
+        // The absence gets a line, read from the pass itself.
         assertTrue(reading.figures.moneyWaiting)
     }
 
@@ -96,10 +89,7 @@ class ScreenReadingTest {
         assertEquals(1, value?.pieces)
     }
 
-    /**
-     * The URL Numista handed over, in the language the ficha was asked in, and the type's own
-     * address where this phone holds no ficha at all (#508).
-     */
+    /** Numista's URL keeps the language the ficha was asked in (#508). */
     @Test
     fun `the ficha of a coin is the address Numista gave, or the type's own`() {
         val reading = reading()
@@ -116,7 +106,7 @@ class ScreenReadingTest {
         val edge = assertNotNull(reading().sewnEdge)
         assertEquals(1, edge.pieces)
         assertEquals(1, edge.types)
-        // The same three counts «La materia» draws, and never a second walk of the inventory.
+        // The counts «La materia» draws, not a second walk of the inventory.
         assertEquals(reading().figures.figures.pieces, edge.pieces)
     }
 
@@ -131,11 +121,8 @@ class ScreenReadingTest {
     }
 
     /**
-     * With the curated files unreadable there is no shelf, and the reading says so.
-     *
-     * What is on screen at that moment is [UiState.fatalError] itself, and the masthead and the sewn
-     * edge above it still have to draw: touching `repository.curation` again would raise the parse
-     * error a second time, this time with nothing to catch it.
+     * The screen then shows [UiState.fatalError] under a masthead and sewn edge that still draw;
+     * reading `repository.curation` again would rethrow the parse error with nothing to catch it.
      */
     @Test
     fun `without curated files there is no catalog, no name and no plate`() {
@@ -146,16 +133,13 @@ class ScreenReadingTest {
         assertEquals(emptyList(), reading.showcase)
         assertNull(reading.catalogName("britannia"))
         assertTrue(reading.plate("britannia") is PlateResult.Unavailable)
-        // And the sewn edge still counts what the phone holds, because that is the snapshot's.
+        // The sewn edge comes from the snapshot, so it still counts.
         assertEquals(1, reading.sewnEdge?.pieces)
     }
 
     /**
-     * Two readings of the same state are the same value, which is what a screen's `remember` needs.
-     *
-     * The fields are `by lazy`, so a walk belongs to an instance: what makes it happen once is
-     * `equals` over the slices in the constructor, and the ViewModel handing back the instance it
-     * already had.
+     * A screen's `remember` keys on this. The fields are `by lazy`, so walking once also relies on
+     * the ViewModel handing back the instance it already had.
      */
     @Test
     fun `two readings of one state are equal`() {
@@ -165,12 +149,8 @@ class ScreenReadingTest {
     }
 
     /**
-     * **What is in flight is not part of a reading**, which is the whole of why it is a value.
-     *
-     * A ficha being refreshed, a tasación in flight, a chooser opening, a snackbar: none of them
-     * moves an amount, an album or a mark, and a reading that changed with them would rebuild the
-     * plate's subject — and re-walk its album — twice per press. The pass's running count is the same
-     * clause read once more: it moves every twenty-five issues and nothing here reads it.
+     * Otherwise each press would rebuild the plate's subject and re-walk its album. The pass's
+     * running count moves every twenty-five issues and nothing in a reading uses it.
      */
     @Test
     fun `a reading does not move for what is in flight, nor for the count of a running pass`() {
@@ -198,7 +178,7 @@ class ScreenReadingTest {
         assertTrue(reading != state.reading(CollectionReading(CURATION, state(items = emptyList()))))
         assertTrue(reading != state.copy(prices = valuedBook()).reading(of()))
         assertTrue(reading != state.copy(wishes = listOf(mark(1_991))).reading(of()))
-        // And when the market stops having landed, which is not the same event as a price arriving.
+        // Also when the market stops having landed, a separate event from a price arriving.
         assertTrue(
             reading != state.copy(
                 valuation = ValuationStatus(wanted = 2, missing = 2, held = ValuationRefusal.NoApiKey),
@@ -213,15 +193,12 @@ private val LIBERTAD = catalog("libertad", 1_992..1_993)
 
 private val CURATION = Curation(catalogs = listOf(BRITANNIA, LIBERTAD))
 
-/** The collection's own half of a reading, which is the half a price cannot move. */
+/** The collection half of a reading, which prices don't move. */
 private fun of(curation: Curation = CURATION) = CollectionReading(curation, state())
 
 /**
- * The collector's phone: one 1990 Britannia, its ficha, and a box they typed a name into.
- *
- * Assembled through [Curation.assemble] rather than filled in by hand, because that is the whole
- * point of the door (#217): what a reading crosses has to be the assembly the app reads, index and
- * albums included, or the counts under test are counts of something else.
+ * The collector's phone: one 1990 Britannia, its ficha, and a named box. Built with
+ * [Curation.assemble] so the reading crosses the same assembly the app reads (#217).
  */
 private fun state(items: List<CollectedItem> = listOf(item())): CollectionState = CollectionState(
     collection = CURATION.assemble(
@@ -255,7 +232,7 @@ private fun reading(
     valuation = pass,
 ).reading(of())
 
-/** A pass with nothing left to ask, which is the state every amount on screen is gated on. */
+/** A pass with nothing left to ask, which gates every amount on screen. */
 private fun settled() = ValuationStatus(wanted = 2, missing = 0)
 
 private fun key(year: Int) = WishKey(TYPE, year, issueOf(year))

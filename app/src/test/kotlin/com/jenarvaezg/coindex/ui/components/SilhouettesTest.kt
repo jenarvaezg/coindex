@@ -8,11 +8,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Every rung of every ladder has a figure standing on it.
- *
- * The silhouettes are hand-made and are part of the identity — «no son un asset que se pueda descargar»
- * (`docs/ux/cifras-326.md`) — and a referent added without its drawing is invisible from the code:
- * `ReferentSilhouette` simply draws nothing, and the ladder gets a hole with a label under it.
+ * Every rung of every ladder has a figure. The silhouettes are hand-drawn
+ * (`docs/ux/cifras-326.md`), and for a referent without one `ReferentSilhouette` draws nothing.
  */
 class SilhouettesTest {
     @Test
@@ -20,12 +17,7 @@ class SilhouettesTest {
         assertEquals(emptyList(), referentsWithoutDrawing())
     }
 
-    /**
-     * The height is fixed and the width follows the drawing's own proportions.
-     *
-     * A bus and a person given the same box would put the bus's roof at the person's waist, which is what
-     * standing them on one rule is for.
-     */
+    /** In one shared box, the bus's roof would sit at the person's waist. */
     @Test
     fun `a figure keeps its own proportions at a fixed height`() {
         val person = silhouetteWidth(Referent.Person, SILHOUETTE_HEIGHT)
@@ -35,7 +27,6 @@ class SilhouettesTest {
         assertTrue(person < SILHOUETTE_HEIGHT, "la persona es más alta que ancha")
     }
 
-    /** Two rungs share one drawing, which is why the prototype counted fourteen figures for fifteen rungs. */
     @Test
     fun `the labrador and the shepherd are the same dog`() {
         assertEquals(
@@ -44,7 +35,6 @@ class SilhouettesTest {
         )
     }
 
-    /** And every drawing stands on a rung: one nobody uses is a drawing nobody sees. */
     @Test
     fun `every drawing stands on some ladder`() {
         val standing = Ladders.all.flatMap { ladder -> ladder.rungs.map { it.referent } }.toSet()

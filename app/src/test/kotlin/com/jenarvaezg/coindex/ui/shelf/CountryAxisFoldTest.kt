@@ -6,10 +6,7 @@ import kotlin.test.assertTrue
 
 /**
  * The fold of a country block (#417): coins first, one row of absences, the rest behind «… y
- * faltan N».
- *
- * The numbers are the father's own sheet, measured on the HTML mock-up at phone size: Venezuela
- * 42/115 in seven-hole rows, Sudáfrica 2/9 whole, Portugal 38/54 in between.
+ * faltan N». The fixtures are real blocks at phone width, seven holes per row.
  */
 class CountryAxisFoldTest {
     @Test
@@ -62,7 +59,7 @@ class CountryAxisFoldTest {
 
         assertEquals(12, phone.foldable)
         assertEquals(4, tablet.foldable)
-        // And what fitted a phone in two rows fits a tablet in one, so nothing folds at all.
+        // Two phone rows fit in one tablet row, so nothing folds.
         assertEquals(0, block(owned = 1, issued = 16).fold(columns = 15).foldable)
         assertEquals(16, block(owned = 1, issued = 16).fold(columns = 15).cells.size)
     }

@@ -25,7 +25,7 @@ import java.io.File
 private val OBVERSE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg", picture = null)
 private val REVERSE = CoinPhoto(thumbnail = "https://example.invalid/b-180.jpg", picture = null)
 
-/** A tilt that only counts: whoever asks it for light is a coin photograph on screen. */
+/** Counts the coin photographs on screen that ask the tilt for light. */
 private class CountingTilt : CoinTilt {
     var coins = 0
         private set
@@ -42,16 +42,12 @@ private class CountingTilt : CoinTilt {
 }
 
 /**
- * Where the gloss goes, said as what asks the accelerometer for a reading.
+ * Which surfaces gloss, observed as which ones register with the accelerometer: every coin
+ * photograph does and empty cardboard never does (#303), and an exported sheet carries no gloss
+ * (ADR 0026 §4).
  *
- * What is being defended is the rule of #303: **every coin photograph glosses and empty cardboard
- * never does**, and the export rule of ADR 0026 §4, which is one line in `OffScreenSheet` and this
- * test.
- *
- * The coins that must gloss are drawn from a file this test writes, and that is the point rather
- * than a convenience: since #510 a hole glosses the photograph it **painted**, not the one it was
- * given. An unreachable URL used to light the stand-in disc and follow the accelerometer while it
- * did, which is the brilliant disc of that ticket's own title.
+ * The glossing coins come from a file the test writes because since #510 a hole glosses only the
+ * photograph it painted; the stand-in disc of an unreachable URL must stay matte.
  */
 @RunWith(AndroidJUnit4::class)
 class CoinGlossSurfacesTest {
@@ -69,7 +65,7 @@ class CoinGlossSurfacesTest {
         return tilt
     }
 
-    /** Waits for the picture to be on the hole, which is what the sensor now waits for too. */
+    /** Waits until the picture is painted, which is when the hole registers with the sensor. */
     private fun awaitGloss(tilt: CountingTilt) =
         compose.waitUntil(PAINTS_MILLIS) { tilt.coins > 0 }
 
@@ -84,7 +80,7 @@ class CoinGlossSurfacesTest {
         assertEquals(1, tilt.coins)
     }
 
-    /** The disc of a photograph that never came is not metal, and #510 is that it looked like it. */
+    /** #510: the stand-in disc of an unreachable photograph used to gloss. */
     @Test
     fun aPhotographThatNeverArrivedDoesNotGloss() {
         val tilt = tiltOf {
@@ -102,7 +98,7 @@ class CoinGlossSurfacesTest {
         assertEquals(0, tilt.coins)
     }
 
-    /** The ghost of a member the collector does not have is a design, not metal. */
+    /** The ghost of a missing member is a printed design, not metal. */
     @Test
     fun aMissingCasillaDoesNotGloss() {
         val tilt = tiltOf {
@@ -116,14 +112,7 @@ class CoinGlossSurfacesTest {
         assertEquals(0, tilt.coins)
     }
 
-    /**
-     * And neither does a casilla the collector marked, drawn whole though it is (#520).
-     *
-     * `HoleAbsence.Wanted` takes the penumbra off the coin so it can be recognised at a fair, and that is
-     * the **only** thing it takes off: the hole is still empty, and the gloss is the metal's own light.
-     * The rule `coinGloss` states — «empty cardboard never glosses, for the direct reason that there is no
-     * coin there» — is about the coin being there and not about how brightly its design is printed.
-     */
+    /** #520: `HoleAbsence.Wanted` draws the design whole, but the hole is still empty. */
     @Test
     fun aWantedCasillaDoesNotGlossEither() {
         val tilt = tiltOf {
@@ -137,13 +126,7 @@ class CoinGlossSurfacesTest {
         assertEquals(0, tilt.coins)
     }
 
-    /**
-     * A loose coin glosses too, and it is the same hole doing it.
-     *
-     * `PieceCard` painted both faces of a piece as flat squares until #423; the piece of a collection
-     * is now the album's own hole without its cardboard, and one photograph asking for light is what
-     * says so.
-     */
+    /** Since #423 a loose piece is the album's own hole without its cardboard. */
     @Test
     fun aLoosePieceGlossesWithoutItsCardboard() {
         val tilt = tiltOf {
@@ -176,16 +159,13 @@ class CoinGlossSurfacesTest {
         compose.waitForIdle()
 
         assertNull(gloss)
-        // And nothing on a sheet that is being photographed wakes the sensor either.
+        // Nor does a sheet rendered for export wake the sensor.
         assertEquals(0, tilt.coins)
     }
 
     /**
-     * A photograph that actually paints, written once into the test's own cache directory.
-     *
-     * Not a fixture and not a network: Coil takes a `file://` like any other model, and what these
-     * tests need is a hole that reaches [AsyncImagePainter.State.Success] — the state the gloss
-     * hangs off since #510.
+     * A photograph that actually paints, written once into the test's cache directory: Coil loads a
+     * `file://` like any model, and the gloss hangs off [AsyncImagePainter.State.Success] (#510).
      */
     private fun onDisk(): CoinPhoto {
         val context = InstrumentationRegistry.getInstrumentation().targetContext

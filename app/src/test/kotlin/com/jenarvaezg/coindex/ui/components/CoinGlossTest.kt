@@ -5,12 +5,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * The band of light, measured as a fraction of the coin and not in dp.
- *
- * #303 prototyped ±55 dp over a hole of 121 dp and wrote down what that was: ±45 % of the diameter.
- * Production's hole is 104 dp, so 55 dp literally would be ±53 % and the band would spend more time
- * off the coin than on it. The proportion is what survives a hole of another size — «Las cifras»
- * brings one of its own.
+ * The band of light, as a fraction of the coin rather than in dp: #303's ±55 dp over a 121 dp hole
+ * is ±45 % of the diameter, which holds for holes of any size.
  */
 class CoinGlossTest {
     /** The photograph inside a 104 dp casilla, once the die-cut's cardboard is taken off. */

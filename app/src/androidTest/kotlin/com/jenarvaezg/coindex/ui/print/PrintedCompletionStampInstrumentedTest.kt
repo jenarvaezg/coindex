@@ -30,10 +30,9 @@ import org.junit.runner.RunWith
 private const val SHEET_MM = 40f
 
 /**
- * The rubber stamp on paper: the word reaches the PDF, and the Progress row is not what carries it.
- *
- * Drawing lives in millimetres under [printDensity], so this pins the ink itself rather than the
- * page packer — a complete heading says «completa», an incomplete one does not (#371).
+ * The rubber stamp on paper (#371): the word reaches the PDF on the stamp itself, not through the
+ * Progress row. Drawing is in millimetres under [printDensity], so this checks the ink, not the
+ * page packer.
  */
 @RunWith(AndroidJUnit4::class)
 class PrintedCompletionStampInstrumentedTest {
@@ -81,12 +80,9 @@ class PrintedCompletionStampInstrumentedTest {
     }
 
     /**
-     * The ink itself, and not the semantics of it (#476).
-     *
-     * Everything above reads the tree, which is exactly how a caucho that printed an empty frame kept
-     * two green tests: the nodes were there and had bounds. This one draws the stamp down the path the
-     * export takes — a [Picture] replayed onto a bitmap — and looks at the middle of the frame, where
-     * «n / n» and «COMPLETA» are. Fixed-height boxes below the font's own line drew no glyph at all.
+     * #476: the tests above read the semantics tree, which stayed green while the stamp printed an
+     * empty frame. This replays the export path (a [Picture] onto a bitmap) and looks for ink in
+     * the middle of the frame, where «n / n» and «COMPLETA» are.
      */
     @Test
     fun theInkOfTheStampReachesTheMiddleOfItsFrame() {
@@ -115,8 +111,8 @@ class PrintedCompletionStampInstrumentedTest {
         )
         Canvas(sheet).drawPicture(picture)
 
-        // The middle third of the sheet: inside the double rule wherever the tilt leaves it, and well
-        // clear of both frames, so what is counted here can only be the two lines of type.
+        // The middle third: inside the double rule whatever the tilt and clear of both frames, so
+        // only the two lines of type can ink it.
         val third = picture.width / 3
         val paper = sheet.getPixel(1, 1)
         var inked = 0

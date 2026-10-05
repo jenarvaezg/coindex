@@ -25,11 +25,8 @@ private val OBVERSE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg",
 private val NO_PICTURE = CoinPhoto(thumbnail = null, picture = null)
 
 /**
- * A hole that comes round to a face this phone does not have says so (#509).
- *
- * The URLs are unreachable on purpose, which is exactly the state the audit of 14 August 2026 hit
- * with the prefetch pending: the photograph exists in the catalogue — all 848 types carry both
- * faces — and simply is not here yet. What the ticket refused is the mute disc that leaves behind.
+ * A hole turned to a face this phone hasn't downloaded says so instead of showing a mute disc
+ * (#509). The URLs are unreachable on purpose: the photograph exists but hasn't arrived.
  */
 @RunWith(AndroidJUnit4::class)
 class TurnedFaceNoticeTest {
@@ -59,9 +56,8 @@ class TurnedFaceNoticeTest {
 
     @Test
     fun aFaceWithNoPhotographAtAllSaysItToo() {
-        // A lámina asks for `printedPhoto(side.other)` and gets a `CoinPhoto` whichever way, so a
-        // casilla can turn onto a face that has no candidate to try: nothing ever settles there,
-        // and without this the disc would stay mute for good rather than for a while.
+        // `printedPhoto(side.other)` always returns a `CoinPhoto`, so a casilla can turn onto a
+        // face with no candidate at all; nothing ever settles there.
         compose.setContent {
             CoindexTheme {
                 AlbumHole(
@@ -79,8 +75,6 @@ class TurnedFaceNoticeTest {
 
     @Test
     fun pressingItAgainBringsTheRestingFaceBack() {
-        // The third acceptance criterion of the ticket, and the reason the notice is not a dead end:
-        // whatever the far face turned out to be, the way back is the same tap.
         compose.setContent {
             CoindexTheme {
                 AlbumHole(
@@ -100,11 +94,8 @@ class TurnedFaceNoticeTest {
     }
 
     /**
-     * Waits for the load to give up, which is the thing being tested and is genuinely asynchronous.
-     *
-     * On a phone with no network Coil fails as soon as there is no socket to open, which is the
-     * case the ticket is about; here it is a DNS lookup for a domain that cannot resolve, and that
-     * takes as long as it takes.
+     * Waits for the load to give up. Offline, Coil fails at once; here it waits on a DNS lookup for
+     * a domain that can't resolve.
      */
     private fun awaitNotice() = compose.waitUntil(GIVES_UP_MILLIS) {
         compose.onAllNodesWithText(FACE_NOT_DOWNLOADED).fetchSemanticsNodes().isNotEmpty()
@@ -114,7 +105,7 @@ class TurnedFaceNoticeTest {
         /** Room for a failing lookup on an emulator, not a budget the app is held to. */
         const val GIVES_UP_MILLIS = 10_000L
 
-        /** The casilla of a lámina (`PlateScreen`), which is where the audit found the mute disc. */
+        /** The hole size of a lámina (`PlateScreen`), where #509 was found. */
         val HOLE = 104.dp
     }
 }

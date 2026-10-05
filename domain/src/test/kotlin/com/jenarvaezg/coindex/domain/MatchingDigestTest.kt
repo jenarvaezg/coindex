@@ -16,27 +16,16 @@ import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
 /**
- * The matching rules `scripts/` keeps a copy of, written down where the copy can be checked.
+ * Pins the matching rules that two Python reports port by hand (ADR 0021 §12):
+ * `weight-deviations.py` copies the snapping tolerance, the common bullion weights and the family
+ * functions, and `type-claims.py` the cross-catalog claim rule [CatalogSeeds.parseAll] makes fatal.
  *
- * Two curation reports live in Python and mirror this module by hand: `weight-deviations.py`
- * copies the snapping tolerance, the common bullion weights and the family functions, and
- * `type-claims.py` copies the cross-catalog claim rule that [CatalogSeeds.parseAll] makes fatal.
- * They are outside the app on purpose (ADR 0021 §12) and they are ports, not shared code — so
- * until this test existed, the Python suite tested the copy against itself and nothing went red
- * when a constant moved here alone.
+ * The test generates `fixtures/matching-digest.json` (the constants plus vectors that pin them),
+ * and `scripts/test_matching_digest.py` asserts the Python copies against it. The app is the
+ * source: nothing reads the digest back into production code.
  *
- * This narrows the crossing to one file: `fixtures/matching-digest.json`, generated here and
- * versioned, holding the constants plus the vectors that pin them — grams to normalized
- * milli-ounces, families to technical or not, schema version to catalog species, and a claim
- * layout to whether the app refuses to start on it. `scripts/test_matching_digest.py` asserts the
- * Python copies against it, so changing a rule here alone turns CI red on the Python side.
- *
- * **The port is one-directional.** The app is the runtime gate and the single source: the digest
- * says what this module does, and never what the reports would like it to do. Nothing reads the
- * digest back into production code.
- *
- * When this test fails, the generated candidate is already written to
- * `domain/build/matching-digest.json`; the fix is to install it and to follow it in Python.
+ * On failure the candidate is already at `domain/build/matching-digest.json`: install it and
+ * follow it in Python.
  */
 class MatchingDigestTest {
     @Test
@@ -62,9 +51,8 @@ private const val VERSIONED_DIGEST = "../fixtures/matching-digest.json"
 private const val CANDIDATE_DIGEST = "build/matching-digest.json"
 
 /**
- * Bumped when the **shape** of the digest changes, so that a Python suite reading a layout it does
- * not know fails saying so instead of asserting nothing. Adding a vector to an existing list is not
- * a shape change; adding, renaming or removing a field is.
+ * Bumped when a field is added, renamed or removed (not for a new vector), so a Python suite
+ * reading an unknown layout fails instead of asserting nothing.
  */
 private const val DIGEST_VERSION = 1
 
@@ -138,10 +126,8 @@ private fun generateDigest(): String {
 }
 
 /**
- * The grams a ficha can carry, chosen at the edges: the six common weights exactly, the 31.1 g
- * Numista writes for an ounce, both sides of the tolerance above and below it, the near-ounce
- * that must never read as one, the Morgan dollar the magnet used to get wrong (#288), and what is
- * not a weight at all.
+ * Edge cases: the six common weights, Numista's 31.1 g ounce, both sides of the tolerance, the
+ * near-ounce that must never read as one, the Morgan dollar (#288), and non-weights.
  */
 private val NORMALIZED_WEIGHT_INPUTS = listOf(
     0.0,
@@ -164,9 +150,8 @@ private val NORMALIZED_WEIGHT_INPUTS = listOf(
 )
 
 /**
- * `technical` is read off the family **as written**, which is why the trailing-space and the
- * full-width-digit rows are here: `System 1999 ` and `System １９９９` are not monetary systems, and
- * a copy that trims or that accepts any Unicode digit would say they are.
+ * `technical` is read off the family as written: `System 1999 ` and `System １９９９` are not
+ * monetary systems, and a copy that trims or accepts any Unicode digit would say they are.
  */
 private val FAMILY_INPUTS = listOf(
     "",
@@ -189,13 +174,9 @@ private val FAMILY_INPUTS = listOf(
 private val PROBED_SCHEMA_VERSIONS = listOf(0, 1, 2, 3, 4, 5, 6)
 
 /**
- * What species of catalog a `schema_version` makes: a simple one, a date run, a set, an issue run,
- * or no catalog at all.
- *
- * Asked of a probe that is not a valid catalog in every version — it declares a physical variant
- * that a set may not, and carries no issue that an issue run needs — which it does not have to be:
- * the schema check is the first of [validate], so any other error it reports already means the
- * version is supported.
+ * The species a `schema_version` makes: simple, date run, set, issue run, or none. The probe is
+ * not valid in every version, which is fine: the schema check runs first in [validate], so any
+ * other error already means the version is supported.
  */
 private fun speciesOf(schemaVersion: Int): String {
     val probe = schemaProbe(schemaVersion)
@@ -208,7 +189,6 @@ private fun speciesOf(schemaVersion: Int): String {
     }
 }
 
-/** The catalog [speciesOf] reads the species off. */
 private fun schemaProbe(schemaVersion: Int): CollectionCatalog = CollectionCatalog(
     schemaVersion = schemaVersion,
     id = "schema-probe",
@@ -250,7 +230,7 @@ private class CatalogClaim(
     val members: List<MemberClaim>,
 )
 
-/** A member with no type is announced, which the expansion below has to say out loud. */
+/** A member with no type is announced, and the expansion below has to mark it so. */
 private class MemberClaim(
     val typeId: Int?,
     val issueIds: List<Int> = emptyList(),
@@ -264,11 +244,9 @@ private class CrossClaimCase(
 )
 
 /**
- * The claim layouts the reports have to judge the same way the app does.
- *
- * A set beside a catalog is deliberately **not** rejected: [CatalogSeeds.parseAll] leaves sets out
- * of the crossing (ADR 0012). The Python judge stops on it all the same, and says why where it
- * declares the difference — `STRICTER_THAN_THE_RUNTIME` in `test_matching_digest.py`.
+ * A set beside a catalog is not rejected: [CatalogSeeds.parseAll] leaves sets out of the crossing
+ * (ADR 0012). The Python judge is stricter and says so in `STRICTER_THAN_THE_RUNTIME`
+ * (`test_matching_digest.py`).
  */
 private val CROSS_CLAIM_CASES = listOf(
     CrossClaimCase(
@@ -367,13 +345,9 @@ private fun CatalogClaim.claimView(): JsonObject = buildJsonObject {
 }
 
 /**
- * Whether the app refuses to start on this layout, asked of the gate itself.
- *
- * The claim view is expanded into whole catalog files, because the runtime verdict is what
- * [CatalogSeeds.parseAll] says and not what a rule extracted from it would say. Which means the
- * crossing has to be told apart from every other reason a seed is refused, and the wording of its
- * two messages is what tells it: a rejection that does not read as one fails here, loudly, rather
- * than being written into the digest as a claim verdict it is not.
+ * Whether the app refuses to start on this layout, asked of [CatalogSeeds.parseAll] itself rather
+ * than of an extracted rule. A rejection whose message is not one of the crossing's two fails here
+ * instead of entering the digest as a claim verdict.
  */
 private fun runtimeRejects(case: CrossClaimCase): Boolean {
     val files = case.catalogs.map { catalog -> "${catalog.id}.json" to catalog.seedFile() }

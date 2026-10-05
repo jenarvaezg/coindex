@@ -33,20 +33,12 @@ private const val NOW = 1_786_400_000_000L
 private const val PRICED_TYPE = 2
 
 /**
- * Which of the three régimes a plate's money comes from, and what tasar it would spend (ADR 0030 §3).
- *
- * The selector used to be a lambda in the body of the root composable, with no test of its own but the
- * device measuring the drawing: the three branches — the shelf window, the market still arriving, the
- * collector's own plate — were only ever exercised by hand. What each branch *computes* is covered by
- * `ShowcaseSubjectTest` and `FiguresSubjectTest`; what this file covers is the choice between them, and
- * that the plate takes the same reading twice.
+ * Which of the three régimes a plate's money comes from, and what tasar would spend (ADR 0030 §3).
+ * Each régime's own arithmetic is in `ShowcaseSubjectTest` and `FiguresSubjectTest`.
  */
 class PlateFinanceTest {
     /**
-     * A plate of the shelf window is priced as one, and it is **not** gated on the collection's pass.
-     *
-     * Its prices arrive by a gesture of their own (ADR 0030 §3), so waiting for the market of a
-     * collection it has no coin in would leave the amount off a plate that has just been valued.
+     * Its prices come from its own gesture (ADR 0030 §3), so the collection's pass doesn't gate it.
      */
     @Test
     fun `a plate of the shelf window says what entering costs, pass or no pass`() {
@@ -62,19 +54,17 @@ class PlateFinanceTest {
         assertEquals(120.0, money.entry?.eur)
         assertEquals(3, money.entry?.holes)
         assertTrue(money.entryAsked)
-        // And the stamp inside each hole, which the collector's own plate draws from the same field:
-        // the two régimes differ in the header's figure and never in what is laid on a casilla.
+        // Hole stamps use the same field in both régimes; only the header's figure differs.
         assertEquals(
             mapOf("libertad-1990" to 40.0, "libertad-1991" to 40.0, "libertad-1992" to 40.0),
             money.holeCosts,
         )
-        // The collector's two figures are the other régime's and are never beside this one.
+        // The collector's two figures belong to the other régime.
         assertNull(money.value)
         assertNull(money.cost)
         assertFalse(money.waiting)
     }
 
-    /** While the market is still arriving, a plate of the collector's says so instead of a figure. */
     @Test
     fun `the collector's plate withdraws all three readings while the market is arriving`() {
         val plate = catalog("britannia", 1_990..1_991)
@@ -92,12 +82,7 @@ class PlateFinanceTest {
         assertTrue(money.waiting)
     }
 
-    /**
-     * With the market landed, the collector's plate is the album's own walk: value, cost and stamps.
-     *
-     * And no `entry`: what entering costs is the other régime's figure, and a plate that holds a coin is
-     * not one the collector is looking at from outside (ADR 0030 §6).
-     */
+    /** No `entry`: a plate that holds a coin is not seen from outside (ADR 0030 §6). */
     @Test
     fun `with the market landed the collector's plate values what it holds and prices its holes`() {
         val plate = catalog("britannia", 1_990..1_991)
@@ -118,11 +103,7 @@ class PlateFinanceTest {
     }
 
     /**
-     * The shelf window is looked up by catalog id and not by `mine`, which is the resolution's own bit.
-     *
-     * The two answer the same question today and they are two readings: a plate the window does not hold
-     * falls through to the collector's régime whatever the resolution said about it, which is what keeps
-     * the empty `entry` of a plate nobody curated out of the header.
+     * Looked up by catalog id, not by `mine`, so an uncurated plate never shows an empty `entry`.
      */
     @Test
     fun `a plate the window does not hold is the collector's, whatever the resolution says`() {
@@ -136,11 +117,8 @@ class PlateFinanceTest {
     }
 
     /**
-     * The collector's marks reach the plate's own régime, which is ADR 0029 §4's clause.
-     *
-     * Read on a plate **over** the threshold of ADR 0028 §1, because that is the only place the set can
-     * be seen at all: within reach every hole is priced anyway, so a dispatch that dropped the marks on
-     * the floor would look identical. Of the fifty-one holes, this one.
+     * Marks are priced on the collector's plate (ADR 0029 §4). Only beyond the ADR 0028 §1
+     * threshold does that show, since within it every hole is priced anyway.
      */
     @Test
     fun `a marked casilla is priced on a plate whose holes are out of reach`() {
@@ -152,23 +130,20 @@ class PlateFinanceTest {
 
         assertEquals(emptyMap(), unmarked.holeCosts)
         assertEquals(mapOf("britannia-2010" to 40.0), money.holeCosts)
-        // And the header's second figure is still absent: one hole is not the cost of closing
-        // twenty-one, and printing it would say «Coste de cerrar» over a number that closes nothing.
+        // Still no cost of closing: one priced hole doesn't close the plate.
         assertNull(money.cost)
     }
 
-    /** What the gesture prints before it is pressed: the pass's own arithmetic over this plate's holes. */
+    /** The pass's own arithmetic over this plate's holes. */
     @Test
     fun `the gesture names what tasar this plate would spend`() {
         val plate = catalog("libertad", 1_990..1_992)
         val finance = finance(showcase = listOf(showcase(plate)))
 
-        // Three casillas of one type: one `/prices` each and no `/issues` call at all, because the
-        // curated file names the issue of every one of them.
+        // One `/prices` per casilla and no `/issues`: the curated file names every issue.
         assertEquals(3, finance.calls(resolved(plate, mine = false)))
     }
 
-    /** A plate that is not the window's has nothing to tasar: the gesture is not on it at all. */
     @Test
     fun `the collector's own plate spends nothing, because it has no gesture`() {
         val plate = catalog("britannia", 1_990..1_991)
@@ -176,7 +151,6 @@ class PlateFinanceTest {
         assertEquals(0, finance().calls(resolved(plate, mine = true)))
     }
 
-    /** A plate whose prices are all fresh has nothing left to ask, and the gesture says zero. */
     @Test
     fun `a plate valued today asks for nothing more`() {
         val plate = catalog("libertad", 1_990..1_992)
@@ -185,7 +159,6 @@ class PlateFinanceTest {
         assertEquals(0, finance.calls(resolved(plate, mine = false)))
     }
 
-    /** Pressing it starts the pass over **this** plate, which is the unit the collector chose. */
     @Test
     fun `pressing the gesture values this plate and nothing else`() {
         val plate = catalog("libertad", 1_990..1_992)
@@ -203,12 +176,7 @@ class PlateFinanceTest {
         assertEquals(emptyList(), notices)
     }
 
-    /**
-     * With nothing to ask, the press answers in words and buys nothing (ADR 0028 §5).
-     *
-     * A gesture that silently did nothing is a button the collector reads as broken, and one that ran a
-     * pass over an empty plan would spend a call to be told what the phone already holds.
-     */
+    /** A silent press would read as a broken button (ADR 0028 §5). */
     @Test
     fun `pressing a plate that is already fresh says so and spends nothing`() {
         val plate = catalog("libertad", 1_990..1_992)
@@ -227,13 +195,7 @@ class PlateFinanceTest {
         assertEquals(listOf(UiNotice(ShowcaseLabels.ALREADY_FRESH)), notices)
     }
 
-    /**
-     * One reading and not a fresh one per call, which is what the screen's `remember` is keyed for.
-     *
-     * It cannot assert the `remember` itself — that lives in a composition — but it can assert the half
-     * the module owes it: one instance, asked twice about one plate, answers the same thing. An object
-     * that did not would make a held reading a lie rather than a saving.
-     */
+    /** The screen's `remember` holds one reading, so it must answer the same thing twice. */
     @Test
     fun `one reading asked twice answers the same thing`() {
         val plate = catalog("libertad", 1_990..1_992)
@@ -248,7 +210,7 @@ class PlateFinanceTest {
 
 private val SPOT = SilverSpot(eurPerTroyOunce = 30.0, readAtMillis = NOW)
 
-/** The issue a given year of the fixture's type is, which is what the curated files declare. */
+/** The issue of a given year of the fixture's type, as the curated files declare it. */
 private fun issueOf(year: Int): Int = 70 + year - 1_990
 
 /** Each year of the fixture's type addressed to an issue, as a stored listing would answer. */
@@ -257,14 +219,14 @@ private val LISTINGS = IssueListings(
     issueIdByTypeAndYear = (1_990..2_030).associate { year -> (PRICED_TYPE to year) to issueOf(year) },
 )
 
-/** Every issue of the fixture is 40 € in `unc`, which is the one grade a hole is priced in. */
+/** Every issue is 40 € in `unc`, the grade holes are priced in. */
 private val PRICED: Map<PriceKey, Double> =
     LISTINGS.issueIdByTypeAndYear.values.associate { PriceKey(PRICED_TYPE, it, "unc") to 40.0 }
 
 /** A book nobody has asked anything of: the listings are seeded, the reads are not. */
 private fun freshBook() = PriceBook(prices = PRICED, spot = SPOT, listings = LISTINGS)
 
-/** The same book after a tasación today: every issue asked about, so nothing is left to spend on. */
+/** The same book after a tasación today: nothing is left to spend on. */
 private fun valuedBook() = freshBook().copy(
     readAt = LISTINGS.issueIdByTypeAndYear.values.associate { (PRICED_TYPE to it) to NOW },
 )
@@ -273,8 +235,8 @@ private fun finance(
     showcase: List<ShowcasePlate> = emptyList(),
     state: CollectionState = state(),
     book: PriceBook = freshBook(),
-    // The pass whole, taken apart here exactly as `ScreenReading` takes it apart: what the class holds
-    // is its two answers, so that a running count cannot rebuild the object the album walk hangs on.
+    // Taken apart as `ScreenReading` does: holding only its two answers keeps a running count from
+    // rebuilding the object.
     pass: ValuationStatus = ValuationStatus(),
     wished: Set<WishKey> = emptySet(),
     onValue: (String) -> Unit = {},
@@ -305,7 +267,7 @@ private fun showcase(catalog: CollectionCatalog): ShowcasePlate = requireNotNull
     ),
 )
 
-/** The collector's coin of the 1990 casilla, on the plates the tests hand an inventory to. */
+/** The collector's 1990 coin, on the «britannia» plates. */
 private fun itemsOf(catalog: CollectionCatalog): List<CollectedItem> =
     if (catalog.id == "britannia") listOf(item(id = 1, issueId = 70)) else emptyList()
 
@@ -351,8 +313,7 @@ private fun catalog(id: String, years: IntRange): CollectionCatalog = Collection
             label = year.toString(),
             year = year,
             numistaTypeId = PRICED_TYPE,
-            // The file names the issue of every casilla, as an issue run does (ADR 0014): so the
-            // gesture's ceiling is one `/prices` per hole and no `/types/{id}/issues` at all.
+            // Every casilla names its issue (ADR 0014): one `/prices` per hole, no `/issues`.
             numistaIssueIds = listOf(issueOf(year)),
         )
     },

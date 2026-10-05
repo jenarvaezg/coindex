@@ -4,15 +4,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-/** Las palabras que van en el papel, que no son las que la app dice sobre el papel. */
+/** Los textos que se imprimen en el cuaderno. */
 class PrintedLabelsTest {
-    /**
-     * The diameter as a number, for the page that has no ruler to hold a coin against (#231).
-     *
-     * One decimal and a comma, because that is how Numista records it and how the collector says it.
-     * A whole number of millimetres drops the decimal instead of printing a zero it never claimed,
-     * and a coin nobody measured prints a blank rather than «0 mm».
-     */
+    /** For pages not at 1:1 (#231): one decimal and a comma, as Numista records it. */
     @Test
     fun `the diameter prints as a number where the page cannot print it at size`() {
         assertEquals("40,9 mm", printedDiameterLabel(40.9f))
@@ -21,23 +15,14 @@ class PrintedLabelsTest {
         // Un número redondo no finge un decimal.
         assertEquals("40 mm", printedDiameterLabel(40f))
         assertEquals("33 mm", printedDiameterLabel(33.02f))
-        // Y lo que nadie midió no es un cero.
+        // Lo que nadie midió no se imprime.
         assertNull(printedDiameterLabel(null))
         assertNull(printedDiameterLabel(0f))
     }
 
     /**
-     * The furniture of the four sections, which is where the notebook says what kind of page this is.
-     *
-     * Every one of these was a literal in the exporter or a twin in a copy file nobody read (#543):
-     * the eyebrow of a curated catalog, the source of the two pages of owned pieces, and the labels of
-     * the specification rows. What is pinned here is the wording, because the folio outlives the app
-     * and a page that called a derived collection «CATÁLOGO CURADO» could not be corrected by an
-     * update.
-     *
-     * The two eyebrows say which of the two hierarchies the page came out of (ADR 0021 §1), and the
-     * two pages that are neither say so with their own: what no collection claims, and what the
-     * collector does not own yet.
+     * The wording is pinned because a printed folio can't be fixed by an update (#543). The
+     * eyebrows name the hierarchy the page came from (ADR 0021 §1), or say it is neither.
      */
     @Test
     fun `each kind of page says what it is and where its coins came from`() {
@@ -56,16 +41,14 @@ class PrintedLabelsTest {
             ),
             eyebrows,
         )
-        // Y son cuatro y no tres: dos páginas diciéndose lo mismo serían una sola clase de página.
+        // Cuatro distintas: dos iguales serían una sola clase de página.
         assertEquals(eyebrows.size, eyebrows.distinct().size)
 
-        // Los tres orígenes: lo que hay en casa, lo que nadie tiene todavía, y el catálogo de cada
-        // lámina, que es el único que no es una constante porque lo pone el curador.
+        // El tercer origen, el catálogo de cada lámina, no es constante: lo pone el curador.
         assertEquals("tu colección en Numista", INVENTORY_SECTION_SOURCE)
         assertEquals("los catálogos curados de Coindex", WISH_SECTION_SOURCE)
     }
 
-    /** Las filas de una especificación impresa, que son etiquetas y no frases. */
     @Test
     fun `the rows of a printed specification are named once each`() {
         assertEquals("País", COUNTRY_FACT_LABEL)
@@ -75,11 +58,8 @@ class PrintedLabelsTest {
     }
 
     /**
-     * Where the folio says its coins came from, which is a plural since a folio can hold two plates.
-     *
-     * The strip at the foot is one per page and the heading is one per plate (#232), so a page that
-     * named only the first catalog would attribute the second plate's coins to it. Each source named
-     * once — a folio of five plates of the same catalog says it once — and in the order they print.
+     * The foot strip is per page and a folio can hold several plates (#232), so it names every
+     * source, once each, in print order.
      */
     @Test
     fun `the foot names every catalog on the folio, once each`() {
@@ -88,29 +68,23 @@ class PrintedLabelsTest {
             "Fuentes: Numista · tu colección en Numista",
             notebookSourceLabel(listOf("Numista", "tu colección en Numista")),
         )
-        // Y el mismo catálogo dos veces se dice una: cinco láminas de una serie en un folio no son
-        // cinco fuentes, y es esta función la que sostiene lo que promete la palabra «Fuentes».
+        // Cinco láminas de una serie en un folio son una sola fuente.
         assertEquals("Fuente: Numista", notebookSourceLabel(listOf("Numista", "Numista")))
         assertEquals(
             "Fuentes: Numista · tu colección en Numista",
             notebookSourceLabel(listOf("Numista", "tu colección en Numista", "Numista")),
         )
-        // Y un folio sin láminas no existe, así que esto es una frase que nadie llega a leer.
+        // Un folio sin láminas no existe: esta frase no se llega a leer.
         assertEquals("", notebookSourceLabel(emptyList()))
     }
 
-    /**
-     * La sección partida en dos folios lo dice; la que cabe en uno, no.
-     *
-     * «PÁGINA 1 DE 1» es ruido en papel, así que la condición está en quien la llama y no aquí: esta
-     * frase existe porque una lámina cortada entre dos folios es indistinguible de dos láminas.
-     */
+    /** Sin ella, una lámina partida entre folios parecería dos; quien llama omite «1 DE 1». */
     @Test
     fun `un folio de una sección partida dice cuál es`() {
         assertEquals("PÁGINA 2 DE 3", printedPageOfSection(2, 3))
     }
 
-    /** La regla dice la escala además de la medida: una barra de milímetros que no está a 1:1 es peor que ninguna. */
+    /** Una regla de milímetros que no está a 1:1 es peor que ninguna. */
     @Test
     fun `la regla promete la escala que dibuja`() {
         assertEquals("40 MM · ESCALA 1:1", printedRulerLabel(40))

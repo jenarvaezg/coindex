@@ -6,12 +6,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Which endpoint belongs to which purse, pinned against the strings `NumistaClient` actually builds.
- *
- * The classification is a substring match on a URL, which is the kind of rule that is right until
- * somebody adds a sixth endpoint. This test is the alarm: the five below are every path the client
- * asks for, copied from the five methods that build them, and a new one that is not here has quietly
- * been given the whole month.
+ * The endpoint classification is a substring match on the URLs `NumistaClient` builds. The five
+ * below are every path it asks for; a new endpoint missing here silently gets the whole month.
  */
 class BudgetReserveTest {
     @Test

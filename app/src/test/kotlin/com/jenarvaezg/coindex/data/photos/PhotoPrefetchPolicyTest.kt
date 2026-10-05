@@ -5,12 +5,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * When the collector's data and battery may be spent on pictures nobody has asked for yet (#191).
- *
- * The whole index is some 1.600 photographs and around 22 MB. Fetched over wifi while the app is
- * open that is free and invisible; fetched over a mobile tariff it is the collector paying for a
- * plate they may never open. So the rule is arithmetic on four facts, kept apart from the Android
- * classes that read them, and it can be read here rather than inferred from a `if` in a coroutine.
+ * When the collector's data and battery may be spent on photographs nobody has asked for yet
+ * (#191): over a metered network it would be them paying for plates they may never open.
  */
 class PhotoPrefetchPolicyTest {
     @Test
@@ -48,8 +44,7 @@ class PhotoPrefetchPolicyTest {
 
     @Test
     fun `the sync is the first reason given, because it is the one that passes on its own`() {
-        // Reported to the collector as one sentence, so which reason wins is not cosmetic: a sync
-        // ends by itself in a minute, a mobile tariff needs them to walk into a wifi.
+        // The collector is shown a single reason, so which one wins matters.
         assertEquals(
             PrefetchRefusal.Syncing,
             prefetchRefusal(
@@ -72,9 +67,8 @@ class PhotoPrefetchPolicyTest {
             ),
         )
 
-        // The thumbnail alone: the original behind it is the fallback for a thumbnail that is
-        // refused (ADR 0017), and warming both would double the traffic to pre-empt a failure
-        // that mostly does not happen.
+        // The thumbnail alone: the original is only the fallback for a refused thumbnail
+        // (ADR 0017), and warming both would double the traffic.
         assertEquals(listOf("a-180.jpg", "b-180.jpg"), photographsToPrefetch(images.values))
     }
 
@@ -114,8 +108,7 @@ class PhotoPrefetchPolicyTest {
         val now = 400L * day
         val remembered = mapOf(
             "yesterday.jpg" to now - day,
-            // A CDN having a bad minute would otherwise take this picture out of the catalog on
-            // this phone for good, invisibly, and not even clearing the cache would bring it back.
+            // Otherwise a bad minute at the CDN would hide this picture on this phone for good.
             "last-year.jpg" to now - 365 * day,
         )
 

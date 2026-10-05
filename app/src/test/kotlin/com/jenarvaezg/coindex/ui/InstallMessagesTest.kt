@@ -6,18 +6,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/**
- * What the collector reads when installing a new APK goes one way or the other (#220, ADR 0011).
- *
- * Four of the five outcomes are refusals, and they lived inside the one class with no test.
- */
+/** What the collector reads when installing a new APK ends one way or another (#220, ADR 0011). */
 class InstallMessagesTest {
-    /**
-     * Each refusal of installing ends in something the collector can do on this phone.
-     *
-     * There is no store to fall back on (ADR 0011), so «no se pudo» with no way out would leave the
-     * only route to a new version behind a sentence that names no action.
-     */
+    /** There is no store to fall back on (ADR 0011), so each refusal names an action. */
     @Test
     fun `every way an install can refuse names what to do next`() {
         assertEquals(
@@ -43,8 +34,7 @@ class InstallMessagesTest {
 
     @Test
     fun `an install the system took over says nothing at all`() {
-        // The system's own dialog is on screen asking for the confirmation; a snackbar under it
-        // would be Coindex talking over the only screen that matters.
+        // The system's confirmation dialog is on screen; a snackbar would talk over it.
         assertNull(installOutcomeMessage(InstallOutcome.Handed))
     }
 
@@ -53,12 +43,6 @@ class InstallMessagesTest {
         assertEquals("NUEVA VERSIÓN 1.2.0", updateAvailableLabel("1.2.0"))
     }
 
-    /**
-     * The button says the word the refusals ask the collector to press again.
-     *
-     * «Instalar» and not «Actualizar»: all four refusals end in «vuelve a pulsar Instalar», and a
-     * button labelled otherwise would send them looking for a control that does not exist.
-     */
     @Test
     fun `the button says Instalar, which is the word the refusals name`() {
         assertEquals("Instalar", updateInstallLabel(downloading = false))

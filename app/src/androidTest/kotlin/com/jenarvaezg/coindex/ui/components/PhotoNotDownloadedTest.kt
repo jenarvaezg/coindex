@@ -17,18 +17,16 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** A face the catalogue does hold, on a phone that cannot reach it — the state of a plate off wifi. */
+/** A face the catalogue holds but the phone can't reach, as on a plate off wifi. */
 private val UNREACHABLE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg", picture = null)
 
-/** A face Numista has no picture for at all: there is nothing to bring and nothing to say. */
+/** A face Numista has no picture for: nothing to download, so nothing to report. */
 private val NO_PICTURE = CoinPhoto(thumbnail = null, picture = null)
 
 /**
- * A hole at rest whose photograph did not arrive says so, and only then (#510).
- *
- * The URL is unreachable on purpose, which is the state the audit of 14 August 2026 found with the
- * prefetch pending: the picture exists in the catalogue and is simply not on this phone. What the
- * ticket refused is that this look identical to a picture that is still on its way.
+ * A hole at rest whose photograph did not arrive says so, and only then (#510). The URL is
+ * unreachable on purpose: the picture exists but isn't on this phone, which must not look like a
+ * picture still on its way.
  */
 @RunWith(AndroidJUnit4::class)
 class PhotoNotDownloadedTest {
@@ -50,8 +48,7 @@ class PhotoNotDownloadedTest {
 
     @Test
     fun aTypeWithNoPictureInNumistaKeepsTheStandInDisc() {
-        // The second acceptance criterion: the mark is about a download and not about a catalogue.
-        // Nothing was ever asked for here, so nothing is being waited for either.
+        // The mark is about a download, not the catalogue: nothing was ever asked for here.
         compose.setContent {
             CoindexTheme {
                 AlbumHole(photo = NO_PICTURE, modifier = Modifier.size(HOLE))
@@ -64,9 +61,7 @@ class PhotoNotDownloadedTest {
 
     @Test
     fun theMarkTravelsToPaper() {
-        // ADR 0026 §4 as ADR 0029 §7 reads it: what is still travels, and «alive» is what follows
-        // the finger, the sensor or the navigation. The mark is a state and does none of the three
-        // — and a plate exported with no pictures says why it is empty instead of eleven mute discs.
+        // The mark is a still state, not motion, so it travels to paper (ADR 0026 §4, ADR 0029 §7).
         compose.setContent {
             CoindexTheme {
                 OffScreenSheet(Density(1f)) {
@@ -80,10 +75,8 @@ class PhotoNotDownloadedTest {
     }
 
     /**
-     * Waits for the load to give up, which is the thing being tested and is genuinely asynchronous.
-     *
-     * On a phone with no network Coil fails as soon as there is no socket to open; here it is a DNS
-     * lookup for a domain that cannot resolve, and that takes as long as it takes.
+     * Waits for the load to give up. Offline, Coil fails at once; here it waits on a DNS lookup for
+     * a domain that can't resolve.
      */
     private fun awaitMark() = compose.waitUntil(GIVES_UP_MILLIS) {
         compose.onAllNodesWithContentDescription(PHOTO_NOT_DOWNLOADED)

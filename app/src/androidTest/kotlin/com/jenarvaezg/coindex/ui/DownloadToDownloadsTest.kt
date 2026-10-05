@@ -11,10 +11,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A download reaches Descargas as a durable MediaStore entry (#285).
- *
- * The snackbar and the notification are the human face of it; this is the bit that has to survive
- * «Borrar caché» — the cache file is only the intermediate.
+ * A download reaches Descargas as a MediaStore entry that survives «Borrar caché»; the cache file
+ * is only the intermediate (#285).
  */
 @RunWith(AndroidJUnit4::class)
 class DownloadToDownloadsTest {

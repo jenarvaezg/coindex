@@ -19,23 +19,16 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The shelf both tests below draw: one plate with an amount and one without.
- *
- * Its note is asked of [showcaseOrderNote] rather than typed out — the wording is fixed once, in
- * `ShowcaseLabelsTest`, and what this file measures is that the screen prints what that function says
- * and prints it only when the order asks for it.
+ * One plate with an amount and one without. The note comes from [showcaseOrderNote], whose wording
+ * `ShowcaseLabelsTest` pins; this file checks only when the screen prints it.
  */
 private val MIXED_SHELF = listOf(shelfTile("panda", entryEur = 412.0), shelfTile("kooka"))
 
 private val MIXED_NOTE = showcaseOrderNote(ShowcaseSort.ByEntryCost, MIXED_SHELF)!!
 
 /**
- * The order of «Explorar»: which one is on, and what it could not place (#513).
- *
- * Both facts are drawn ones — a fill and a line of type — so they are measured where Compose renders
- * them rather than in the labels' own test. The two that mattered on the AVD were an active order
- * that read as a caption of the framed alternative, and a shelf that did not visibly move when it was
- * asked for an order it had no amounts for.
+ * The order of «Explorar»: which one is on, and what it could not place (#513). Both are drawn (a
+ * fill and a line of type), so they are measured as Compose renders them.
  */
 @RunWith(AndroidJUnit4::class)
 class ShelfOrderTest {
@@ -66,11 +59,7 @@ class ShelfOrderTest {
         compose.onNodeWithText(ShowcaseSort.ByCasillas.label).assertIsNotSelected()
     }
 
-    /**
-     * The default order owes nothing about prices, and the cost order says what it left at the end.
-     *
-     * The note is absent until it is asked for: «por casillas» sorts by a fact every plate has.
-     */
+    /** Only the cost order shows the note: «por casillas» sorts by what every plate has. */
     @Test
     fun theCostOrderSaysWhatItCouldNotPlace() {
         compose.setContent {
@@ -92,13 +81,7 @@ class ShelfOrderTest {
         compose.onNodeWithText(MIXED_NOTE).assertIsDisplayed()
     }
 
-    /**
-     * A shelf with no price anywhere on it is told the order has nothing to sort by (#513).
-     *
-     * This is the state the shelf is **born** in (ADR 0030 §3): every plate is valued by hand, so a
-     * collector who has valued none of them presses «Por coste de entrar» and the grid barely moves.
-     * Silence there is what reads as a broken control.
-     */
+    /** #513: the state a shelf starts in (ADR 0030 §3); without the note the order looks broken. */
     @Test
     fun anUnvaluedShelfIsToldTheOrderHasNoPricesToSortBy() {
         compose.setContent {

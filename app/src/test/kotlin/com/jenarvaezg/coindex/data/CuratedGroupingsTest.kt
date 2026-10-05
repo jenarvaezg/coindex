@@ -11,10 +11,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The shipped groupings say which coins belong together where Numista says nothing at all.
- *
- * They cannot invent a missing piece, but they can file a coin under the wrong heading, and
- * their type ids were verified against numista.com one by one just like the catalogs'.
+ * The shipped groupings put coins together where Numista says nothing. They can't invent a missing
+ * piece but can file a coin under the wrong heading; their type ids were verified on numista.com.
  */
 class CuratedGroupingsTest {
     private val groupings: List<CuratedGrouping> = SHIPPED_CURATION.groupings
@@ -41,13 +39,9 @@ class CuratedGroupingsTest {
     }
 
     /**
-     * Morgan y Peace, el caso limpio de agrupación: los dos tipos comparten los 26,73 g de plata
-     * .900 del acta de 1837, ninguno declara `series` y la única cosa que los junta es que el
-     * coleccionista los llama lo mismo. El programa oficial de 2021 que los reedita es plata .999
-     * moderna y no estos dos, así que la afirmación es nuestra — y por eso no hay cobertura.
-     *
-     * El Silver Eagle se queda fuera aunque también sea un dólar de plata: 31,1 g de .999 es otra
-     * variante física, así que estaría en otro cartón, y de ahí que la familia diga «clásico».
+     * Morgan y Peace comparten los 26,73 g de plata .900 y ninguno declara `series`: la afirmación
+     * es nuestra, y por eso no hay cobertura. El Silver Eagle (31,1 g de .999) es otra variante y
+     * otra tarjeta; de ahí el «clásico» de la familia.
      */
     @Test
     fun `the classic us silver dollar is morgan and peace`() {
@@ -58,16 +52,9 @@ class CuratedGroupingsTest {
     }
 
     /**
-     * Lo que la Royal Mint acuñó en una onza de plata y no metió en ninguna gama: el D-Day 80 de
-     * 2024, The Angel de 2026 y la del 250.º de la Declaración de Independencia (N#596807), cada
-     * una de un solo año. Las tres onzas de 2 £ que parecían sobras con ellas resultaron ser
-     * programas de la propia ceca y salieron de aquí como catálogo —St George and the Dragon, The
-     * Lion and the Eagle y el British Lion, que volvió en 2026 «following a successful debut in
-     * 2025» y es el date run `uk-british-lion-1oz-bullion`—, así que esta agrupación es el residuo
-     * de verdad y no la lista entera.
-     *
-     * N#596807 entra ahora que su ficha está publicada (#451): «The» es familia placeholder (#404),
-     * no una serie, y la agrupación le gana a ese silencio.
+     * Onzas de plata de la Royal Mint de un solo año y fuera de toda gama. Las de 2 £ que
+     * resultaron ser programas de la ceca, como el British Lion, son catálogos. N#596807 entra con
+     * su ficha publicada (#451): su familia «The» es un placeholder (#404) y la agrupación le gana.
      */
     @Test
     fun `the loose royal mint ounces are what no range claims`() {
@@ -78,14 +65,9 @@ class CuratedGroupingsTest {
     }
 
     /**
-     * Las 18 g de plata .925 alemanas son una secuencia de verdad —el 20 € nació en 2016 como
-     * sucesor oficial del 10 €, y el BMF encargó 94 motivos en esa misma variante— y aun así no
-     * son catálogo: el coleccionista no las persigue, «es que la cantidad es abrumadora» (#154),
-     * así que una lámina de 94 casillas afirmaría una cobertura que nadie va a completar. La
-     * agrupación les da familia a las dos que hay, una en cada colección, y no afirma nada más.
-     *
-     * Los cinco años del corte métrico —2011-2015, cuproníquel de 14 g y plata .625 de 16 g— no
-     * faltan aquí: son otra clave de variante, no un hueco.
+     * Las 18 g de plata .925 alemanas son una secuencia real, pero el coleccionista no la persigue
+     * (#154) y una lámina de 94 casillas afirmaría una cobertura que nadie va a completar. Los años
+     * 2011-2015 son otra clave de variante, no un hueco.
      */
     @Test
     fun `the german sterling silver is a family and never a plate`() {
@@ -95,10 +77,7 @@ class CuratedGroupingsTest {
         assertEquals("allemagne", german.issuerCode)
     }
 
-    /**
-     * The 2 bolívares are a catalog, not a grouping: a grouping declares no members, so it
-     * could never point at the 1965 he is missing.
-     */
+    /** Where both could claim a type the catalog wins: a grouping has no members, so no holes. */
     @Test
     fun `no grouping claims a type that a catalog already names`() {
         val catalogTypes = SHIPPED_CURATION.catalogs

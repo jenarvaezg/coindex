@@ -7,10 +7,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Ten of the thirty-eight photographs of a plate came back `503`, and the same URLs asked for
- * one at a time came back `200`: the pictures were never dead, they were throttled. Coil takes
- * the first failure as final, so each of those left a cell empty for good and the export froze
- * the hole into the sheet that gets shared (issue #67).
+ * A `503` from Numista's edge is throttling, not a dead picture (#67), but Coil takes the first
+ * failure as final and an exported sheet would keep the empty cell.
  */
 class PhotoRetryPolicyTest {
     @Test
@@ -60,9 +58,9 @@ class PhotoRetryPolicyTest {
     fun `a 404 is the picture being gone, and a throttle never is`() {
         assertEquals(true, PhotoRetryPolicy.isGone(404))
         assertEquals(true, PhotoRetryPolicy.isGone(410))
-        // 403 is deliberately not remembered: without a User-Agent Cloudflare answers it to every
-        // photograph (ADR 0017), so a bad afternoon at the edge would switch the catalog off for
-        // good on this phone. It is not retried either — it is simply asked again another day.
+        // 403 is not remembered: without a User-Agent Cloudflare answers it to every photograph
+        // (ADR 0017), and remembering it would switch the catalog off for good on this phone.
+        // It is not retried either; it is asked again another day.
         listOf(403, 429, 500, 503).forEach { status ->
             assertEquals(false, PhotoRetryPolicy.isGone(status), "$status no es una foto perdida")
         }

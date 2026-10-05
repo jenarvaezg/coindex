@@ -4,12 +4,7 @@ import java.time.LocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * What a download is called in Descargas when the same lámina leaves twice (#285).
- *
- * The base name alone would collide; the date of the tap is what makes each file its own, and
- * readable from the Downloads list without opening it.
- */
+/** Dated file names in Descargas (#285), told apart in the list without opening them. */
 class ExportFileNameTest {
     @Test
     fun `a download carries the moment it was saved, so a second tap never overwrites`() {

@@ -6,12 +6,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * The one line the prefetch is allowed to say out loud (#191).
- *
- * Everything else about it is silent on purpose — no snackbar, no banner, nothing to dismiss —
- * because an optimization that announces itself becomes a chore to supervise. This line lives in
- * the settings screen, where the collector goes when they want to know what the phone is holding,
- * and it is also the only way to tell «ya están todas» from «no las trae porque estás con datos».
+ * The prefetch's only visible line, in settings (#191); the rest stays silent so the optimization
+ * isn't a chore to supervise. It tells «ya están todas» from a hold the collector can act on.
  */
 class PhotoCacheLabelsTest {
     @Test
@@ -70,8 +66,7 @@ class PhotoCacheLabelsTest {
 
     @Test
     fun `the size is read in megabytes with a Spanish comma, whatever the phone's locale`() {
-        // The device may well be in English; this line is written in Spanish and «10.9 MB» in the
-        // middle of it reads as a typo.
+        // The phone may be in English, but in this Spanish line «10.9 MB» would read as a typo.
         assertEquals("0,5 MB", megabytesLabel(500_000))
         assertEquals("11,4 MB", megabytesLabel(11_400_000))
         assertEquals("0,0 MB", megabytesLabel(0))

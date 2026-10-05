@@ -6,18 +6,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * The search box of both hierarchies (ADR 0021 §1).
- *
- * The measured case is «bolivar» finding «Bolívar»: the corpus is written in Spanish by rule and
- * typed on a phone keyboard, so a search that respected accents would answer «0 de 58» to a query
- * about a collection the collector is looking at.
+ * The search of both hierarchies (ADR 0021 §1) ignores accents and case: names are written in
+ * Spanish but typed on a phone keyboard, so «bolivar» must find «Bolívar».
  */
 class FoldingTest {
     @Test
     fun `folding drops the accents and the case`() {
         assertEquals("bolivar de venezuela", fold("Bolívar de Venezuela"))
         assertEquals("ruanda", fold("Ruanda"))
-        // Not a table of Spanish letters: the first German series has to work too.
+        // Not only Spanish letters: German series names must fold too.
         assertEquals("munzgeschichte", fold("Münzgeschichte"))
         assertEquals("sao tome", fold("São Tomé"))
     }

@@ -6,11 +6,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * The shelf of Coins: five chip rows, a live count on each, and the search on top of them.
- *
- * The one that replaces a screen is «Sin colección» — the masthead button «Sin clasificar · N» was
- * always this filter (ADR 0021 §1), and what it does *not* carry any more is the reason: §12 moved
- * the why to the field report and left the app answering only which.
+ * The Coins shelf: chip rows with live counts, and the search on top. «Sin colección» replaces the
+ * old «Sin clasificar · N» screen (ADR 0021 §1, §12).
  */
 class CoinsShelfTest {
     private val rows = coinRows(ShelfFixtures.state)
@@ -26,12 +23,8 @@ class CoinsShelfTest {
     }
 
     /**
-     * The regression this chip exists to prevent, measured on the father's collection.
-     *
-     * His American Silver Eagle N#298883 is two rows, issues 760576 and 1059386, and its catalog
-     * qualifies members by issue (ADR 0019): one row fills a member and the other is unclassified
-     * residue. `UnclassifiedScreen` listed that second coin row by row; deciding membership from the
-     * type's `claims` would have made it disappear from the one place ADR 0021 §12 leaves for it.
+     * Catalogs qualify members by issue (ADR 0019), so one row of a type can fill a member while
+     * another stays loose. Deciding by the type's `claims` would hide that row (ADR 0021 §12).
      */
     @Test
     fun `a coin in a collection is still under Sin coleccion while one of its pieces is loose`() {
@@ -39,7 +32,7 @@ class CoinsShelfTest {
 
         assertEquals(2, britannia.quantity)
         assertEquals(1, britannia.unclaimedPieces)
-        // In a collection *and* holding a loose piece: both statements are true of it.
+        // Claimed and loose at once.
         assertEquals(listOf("Britannia"), britannia.claims.map { it.name })
         assertTrue(
             britannia in CoinsShelf(membership = Membership.InNone).narrow(rows, ""),
@@ -68,7 +61,7 @@ class CoinsShelfTest {
         )
     }
 
-    /** ADR 0021 §1: «both sides carry filters, **sorting** and a live search». */
+    /** ADR 0021 §1: both sides carry filters, sorting and a live search. */
     @Test
     fun `the sort reorders what the chips leave, and never loses a row`() {
         val byCountry = CoinsShelf().narrow(rows, "")
@@ -87,7 +80,7 @@ class CoinsShelfTest {
             listOf(2020, 1978, 1929, null),
             newest.map { it.newestYear },
         )
-        // The unweighed coin sits at the bottom: it is not lighter, it is unweighed.
+        // The unweighed coin sorts last, not as the lightest.
         assertEquals(ShelfFixtures.UNCACHED, heaviest.last().typeId)
         assertEquals(ShelfFixtures.ONZA_MEXICANA, heaviest.first().typeId)
         // Three of the Bolívar against one or two of everything else.
@@ -126,13 +119,8 @@ class CoinsShelfTest {
     }
 
     /**
-     * The invariant that makes a shelf trustworthy: the chips of a facet add up to its total, so a
-     * coin reachable by no chip cannot exist. The uncached coin is the case that proves it — it has
-     * no year and no weight, and lands on «Sin año» and «Sin peso» rather than on nothing.
-     *
-     * The years add up here because no coin of this shelf is held in more than one; where one is, the
-     * sum is *larger* than the total on purpose, and that is
-     * [a coin of several years is found by every one of them]'s business.
+     * The uncached coin has no year or weight and must land on «Sin año» and «Sin peso». Years sum
+     * to the total only because no coin here spans several (see the next test).
      */
     @Test
     fun `every chip row adds up to its own total, so no coin is unreachable`() {
@@ -148,16 +136,8 @@ class CoinsShelfTest {
     }
 
     /**
-     * A coin held in several years is found by tapping **any** of them (#448).
-     *
-     * The father's 5 bolívares N#10340 is twenty-one years in one card, 1879 to 1936. Its cartouche
-     * prints the arc, so the individual years exist nowhere on the row — and a chip that could not
-     * find it would be a coin only reachable by not using the year facet at all, which is the one
-     * thing this file's bands exist to prevent.
-     *
-     * The chips of the facet now sum to more than its total, and that is the honest reading: the
-     * total counts coins and each chip counts the coins it would leave, so a coin of three years is
-     * three chips' answer and one coin.
+     * The cartouche prints only the arc (#448), so every year chip must still find the coin. The
+     * chips then sum to more than the total: the total counts coins, each chip what it would leave.
      */
     @Test
     fun `a coin of several years is found by every one of them`() {
@@ -174,7 +154,7 @@ class CoinsShelfTest {
             assertEquals(1, counts.year.of(YearFilter.Of(year)), "el chip de $year no la cuenta")
         }
         assertEquals(1, counts.year.total, "una moneda de tres años sigue siendo una moneda")
-        // Y el año que no tiene no la ofrece: el chip que dice cero es un callejón visible.
+        // A year it does not have offers nothing.
         assertEquals(0, counts.year.of(YearFilter.Of(1_900)))
     }
 
@@ -196,9 +176,8 @@ class CoinsShelfTest {
     }
 
     /**
-     * #413: a chip that would leave nobody is not offered. País already hid empties via
-     * [FacetCounts.issuers]; the enum bands do the same, keeping the band order so «Sin peso»
-     * stays last when it has anyone.
+     * Like [FacetCounts.issuers], the bands hide empty chips (#413) but keep their order, so
+     * «Sin peso» stays last.
      */
     @Test
     fun `a weight chip that would leave nobody is not offered`() {
@@ -213,10 +192,7 @@ class CoinsShelfTest {
         assertEquals(0, counts.weight.of(GramBand.Unweighed))
     }
 
-    /**
-     * A second filter can empty the band the collector already chose; that chip stays at «· 0»
-     * so the shelf still names what emptied the list.
-     */
+    /** A second filter can empty the chosen band; its «· 0» chip shows what emptied the list. */
     @Test
     fun `the weight chip already chosen stays offered even at zero`() {
         val shelf = CoinsShelf(issuer = "Venezuela", weight = GramBand.Ounce)

@@ -7,12 +7,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * The door «Este teléfono» grows into «Credenciales» (ADR 0028 §6.1, #521).
- *
- * Two of the six states of the valuation card have a cause the collector can act on, and the audit
- * of 14 August 2026 asked for the notices to become doors. This is the answer measured: four of the
- * six say «wait» — for the network, for the sync, for the 1st of the month — and the pass has no
- * handle by design, so only the two that blame the key open anything.
+ * The valuation card on «Este teléfono» opens «Credenciales» only in the two states that blame the
+ * key (ADR 0028 §6.1, #521); the other four can only be waited for.
  */
 class ValuationDoorTest {
     private fun held(refusal: ValuationRefusal?) =
@@ -24,13 +20,7 @@ class ValuationDoorTest {
         assertTrue(valuationBlamesCredentials(held(ValuationRefusal.Rejected)))
     }
 
-    /**
-     * The four that can only be waited for print no row.
-     *
-     * A door on these would lead to the two fields that are already right, which teaches the
-     * collector that the screen it opens is where you go when anything is missing — and the next
-     * time the key really is wrong, the row means nothing.
-     */
+    /** A door here would lead to fields that are already right and devalue the real one. */
     @Test
     fun `the four states that can only be waited for open nothing`() {
         assertFalse(valuationBlamesCredentials(held(null)))
@@ -40,11 +30,8 @@ class ValuationDoorTest {
     }
 
     /**
-     * The door follows the line, not the state underneath it.
-     *
-     * `valuationLabel` returns before its refusal branch with nothing to price and with the prices
-     * settled, so a `held` surviving in either case is a refusal nobody is being told about — and a
-     * row hanging under «Los precios están al día» would be a complaint with no complaint above it.
+     * The door follows the line, not `held`: with nothing to price or the prices settled,
+     * `valuationLabel` shows no refusal.
      */
     @Test
     fun `no door hangs under a line that is not complaining`() {

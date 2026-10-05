@@ -7,10 +7,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * The pure layout decisions behind the collection index.
- *
- * The column count decides whether the heading folds into a spread. The rendered height of the
- * card name is covered on-device by `CollectionNameTest`, where Compose can measure the text.
+ * The pure layout decisions behind the collection index. The card name's rendered height is
+ * covered on-device by `CollectionNameTest`.
  */
 class IndexLayoutTest {
     @Test

@@ -5,15 +5,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/**
- * The one order of the first level: `(has ratio ↓, ratio ↓, denominator ↓, name ↑)` (ADR 0021 §6).
- *
- * No ADR had ever decided the order of the index, and what shipped was two glued orderings — boxes
- * first by SQL, everything else by the raw four-part key — under three headings of dispositions.
- * The field report of #17 measured what that cost: of the collector's 33 cards with a catalog, the
- * **4 complete plates** were scattered through the list with nothing to tell them from the **15
- * that plate a single slot**.
- */
+/** The index order: `(has ratio ↓, ratio ↓, denominator ↓, name ↑)` (ADR 0021 §6, #17). */
 class CollectionIndexTest {
     @Test
     fun `the cover is the first owned issue in album order on its printed side`() {
@@ -43,12 +35,8 @@ class CollectionIndexTest {
     }
 
     /**
-     * The golden table of the comparator.
-     *
-     * Every level of it does work here: two complete collections are ordered by denominator so
-     * `22/22` beats `2/2`, a half-done one follows, the single slot of a 52-member catalog falls to
-     * the bottom of the ratio stretch, and the two cards with no issue list — a card no file names
-     * and a box the collector typed — come last, in the order of their names.
+     * Every level of the comparator does work: `22/22` beats `2/2`, the single slot of a 52-member
+     * catalog ends the ratio stretch, and the two cards with no ratio come last by name.
      */
     @Test
     fun `the index is one list ordered by ratio, denominator and name`() {
@@ -86,13 +74,7 @@ class CollectionIndexTest {
         )
     }
 
-    /**
-     * A box falls in the no-ratio stretch **without privilege** (ADR 0021 §2, §6).
-     *
-     * By ADR 0020 a piece you do not own is not in the inventory, so a box can never contain a gap
-     * and has no ratio to offer — and the empty «Tus agrupaciones» heading both measured phones
-     * showed at the top of the index disappears with the block that drew it.
-     */
+    /** A box can never hold a gap (ADR 0020), so it has no ratio (ADR 0021 §2, §6). */
     @Test
     fun `a box has no ratio and no privilege, and an empty one keeps its place`() {
         val southernCross = catalog("niue-southern-cross", "Southern Cross", 2, typeBase = 20_000)
@@ -108,9 +90,8 @@ class CollectionIndexTest {
             snapshot = CollectionSnapshot(items = items),
         )
 
-        // «Álbum» delante de «Zeta», que es lo que dice el alfabeto español: comparar las cadenas
-        // en crudo lo manda al final de la lista, porque toda letra acentuada va detrás de la Z en
-        // UTF-16. Y una caja vacía sobrevive con su cero, sin nivel extra en el comparador.
+        // «Álbum» delante de «Zeta», como en el alfabeto español: en UTF-16 crudo toda letra
+        // acentuada va detrás de la Z.
         assertEquals(
             listOf("Southern Cross", "Álbum vacío", "Zeta de dos monedas"),
             cards.map { it.name },
@@ -119,11 +100,7 @@ class CollectionIndexTest {
         assertEquals(0, (cards[1] as IndexCard.Box).box.quantity)
     }
 
-    /**
-     * The denominator is what the app can measure, so an announced member never counts against the
-     * collector: a series with two years still to be struck is complete at `3/3`, and it therefore
-     * outranks a half-owned one instead of being buried under it.
-     */
+    /** A series with years still unstruck is complete at `3/3` and outranks a half-owned one. */
     @Test
     fun `announced members stay out of the denominator`() {
         val announced = catalog("tudor-beasts-uk-2oz", "The Royal Tudor Beasts 2 oz", 3, 50_000)
@@ -150,11 +127,7 @@ class CollectionIndexTest {
         assertTrue(cards.single().coverage!!.nothingMissing)
     }
 
-    /**
-     * The plate action is drawn from the same evidence `resolvePlate` demands, and the toll is gone
-     * (ADR 0021 §7): a catalog curated over something the collector already owns lights its plate
-     * on its own, where before the whole curation stayed invisible until they guessed.
-     */
+    /** The same evidence `resolvePlate` demands, with no toll (ADR 0021 §7). */
     @Test
     fun `the card offers its plate on evidence alone`() {
         val owned = catalog("niue-southern-cross", "Southern Cross", 2, typeBase = 20_000)
@@ -176,14 +149,7 @@ class CollectionIndexTest {
         assertNull(byName.getValue("Lunar Series II").plateCatalogId)
     }
 
-    /**
-     * The eyebrow of a curated card is the country its **file** declares (ADR 0021 §9).
-     *
-     * Before this it was derived from the pieces in the phone, which is a leftover from when the
-     * card *was* the derived collection: one uncached type among Venezuelans was enough to leave a
-     * card bare while its own file knew the answer. The silence clause survives exactly where the
-     * pieces are the only authority there is — the cards no file names.
-     */
+    /** A curated card's eyebrow comes from its file, not from its pieces (ADR 0021 §9). */
     @Test
     fun `the file names the country, and only a card without one can go bare`() {
         val reales = catalog("venezuela-reales", "Reales", members = 2, typeBase = 10_000)
@@ -225,13 +191,8 @@ class CollectionIndexTest {
     }
 
     /**
-     * El eyebrow dice el **país**, y no la entidad emisora con su vigencia (#180).
-     *
-     * Cuatro catálogos declaran `russie` y dos `chine`, y hasta aquí la tarjeta rotulaba la etiqueta
-     * de Numista tal cual: «Federación de Rusia (1991-presente)» son 35 caracteres en versalitas
-     * sobre un `short_name` de 20 de mediana, y un paréntesis de vigencia en la línea de identidad es
-     * exactamente lo que el §4 del ADR 0021 le quitó a la `family` del Krugerrand. La distinción que
-     * el paréntesis hace sí es real, y la sigue haciendo `ancienne_urss` → «Unión Soviética».
+     * Sin la vigencia de «Federación de Rusia (1991-presente)» (#180, ADR 0021 §4); la distinción
+     * real la sigue haciendo `ancienne_urss` → «Unión Soviética».
      */
     @Test
     fun `the eyebrow says the country and not Numista's issuing entity`() {
@@ -265,14 +226,7 @@ class CollectionIndexTest {
         assertEquals("Unión Soviética", byName.getValue("Rublos soviéticos"))
     }
 
-    /**
-     * Dos códigos de un mismo país dejan de ser un desacuerdo, y la tarjeta sin fichero habla.
-     *
-     * La cláusula de silencio protege contra un eyebrow que cubre media tarjeta, no contra dos
-     * momentos de la historia de Alemania: `allemagne` («Alemania, República Federal de») y
-     * `allemagne-pre1945` («Alemania (1871-1948)») son el mismo país, y curados los dos a «Alemania»
-     * la tarjeta rotula en vez de callar por contradecirse consigo misma.
-     */
+    /** `allemagne` y `allemagne-pre1945` se curan los dos a «Alemania»: no son un desacuerdo. */
     @Test
     fun `two codes of one country agree, and the card labels instead of going silent`() {
         val alemanas = VariantKey("Deutsche Mark", 1_000, null, Metal.Silver)
@@ -295,11 +249,8 @@ class CollectionIndexTest {
     }
 
     /**
-     * El eyebrow de una caja es el país de sus piezas, y calla si son varios (ADR 0021 §11, #173).
-     *
-     * Aquí la cláusula de silencio **no** es el error de categoría del §9: sin fichero que la nombre,
-     * las piezas son la única autoridad que hay. Es la misma regla que las tarjetas sin fichero, y no
-     * un privilegio ni un castigo por ser lo único que el coleccionista escribió.
+     * Sin fichero, las piezas son la única autoridad, igual que en una tarjeta sin fichero
+     * (ADR 0021 §11, #173).
      */
     @Test
     fun `the eyebrow of a box is the country of its pieces, and silent when they disagree`() {
@@ -372,12 +323,7 @@ private fun announcedMember(label: String) = CollectionCatalogMember(
     sourceNote = "Anunciada por la casa de la moneda y todavía sin acuñar.",
 )
 
-/**
- * The albums the assembly carries, which is what `Curation.assemble` hands the index (#537).
- *
- * Built with the same call production uses rather than per card, because the point of the parameter
- * is that the card and its plate divide by one instance and not by two agreeing rules.
- */
+/** Built as `Curation.assemble` builds it, so a card and its plate share one instance (#537). */
 private fun albums(catalogs: List<CollectionCatalog>, items: List<CollectedItem>): CatalogAlbums =
     CatalogAlbums.over(catalogs, items)
 
@@ -397,10 +343,7 @@ private fun box(id: Long, name: String, items: List<CollectedItem>) = OwnGroupin
     items,
 )
 
-/**
- * A derivation with one card per key. The index never fabricates a card: what it draws is exactly
- * what `deriveCollection` produced from the pieces the collector owns right now (ADR 0007).
- */
+/** One card per key: the index only draws what `deriveCollection` produced (ADR 0007). */
 private fun derivation(
     keys: List<VariantKey>,
     items: List<CollectedItem>,

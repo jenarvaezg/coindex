@@ -6,10 +6,8 @@ import com.jenarvaezg.coindex.domain.Curation
 import java.io.File
 
 /**
- * The recorded Numista responses.
- *
- * Tests never touch the network: every byte comes from `fixtures/numista/`, which is only
- * refreshed by a deliberate, manual run of `scripts/record-fixture.py`.
+ * Recorded Numista responses from `fixtures/numista/`, so tests never touch the network. They are
+ * only refreshed by a manual run of `scripts/record-fixture.py`.
  */
 object Fixtures {
     private val root = File("../fixtures/numista")
@@ -26,10 +24,8 @@ object Fixtures {
 }
 
 /**
- * The curated seeds as they ship: read straight from `data/`, not from a copy.
- *
- * The suite's side of the loading seam of #545 — the phone's is `AssetCuratedFiles`, over the very
- * same directories, because `data/` is an asset source directory of the APK.
+ * The curated seeds read straight from `data/`: the suite's side of the loading seam of #545. The
+ * phone's side is `AssetCuratedFiles`, over the same directories packed as APK assets.
  */
 object RepoCuratedFiles : CuratedFiles {
     override fun read(species: CuratedSpecies): List<Pair<String, String>> =
@@ -40,12 +36,8 @@ object RepoCuratedFiles : CuratedFiles {
 }
 
 /**
- * The shipped curation, through the app's own door and therefore under its own invariants.
- *
- * One curation for the whole suite, and one parse: reading every curated file once per test class
- * was the same bytes decoded twenty times over. Whatever a test asks of it — the catalogs, the
- * groupings, the programmes — it asks of a curation that could not have been built at all if a
- * catalog and a grouping read the same on two cards.
+ * The shipped curation, parsed once for the whole suite through the app's own loader, so every
+ * test reads a curation that passed the app's invariants.
  */
 val SHIPPED_CURATION: Curation by lazy { Curation.load(RepoCuratedFiles) }
 

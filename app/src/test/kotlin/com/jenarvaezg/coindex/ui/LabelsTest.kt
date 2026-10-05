@@ -6,27 +6,15 @@ import com.jenarvaezg.coindex.domain.Metal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * The lines a card writes about itself.
- *
- * Both cases here were UX findings rather than bugs: the absent finish was writing the state of the
- * curation datum onto the collector's card, and the metal, which the key needs in all four positions,
- * is worth a word on screen only where it is not the silver almost every card is made of.
- */
+/** The lines a card writes about itself. */
 class LabelsTest {
-    /**
-     * Un acabado no declarado no escribe nada (#409). Decía «Acabado sin confirmar» en nueve de cada
-     * diez tarjetas —179 de los 191 tipos del padre no llevan marca en el título de Numista— y lo que
-     * anunciaba era el hueco del dato de curación, no un hecho de la moneda.
-     */
+    /** Un acabado sin declarar es un hueco de la curación, no un hecho de la moneda (#409). */
     @Test
     fun `an undeclared finish says nothing at all`() {
         assertEquals("0,804 oz", variantLabel(804, null, Metal.Silver))
-        // Sin acabado no hay fila que rellenar, y el peso se queda solo.
         assertEquals(listOf("Variante" to "0,804 oz"), variantEntries(804, null))
     }
 
-    /** Los seis acabados declarados son justo donde la palabra se gana el sitio. */
     @Test
     fun `a declared finish is the same word on the card and in the specification`() {
         assertEquals("Bullion", finishLabel(Finish.Bullion))
@@ -37,49 +25,34 @@ class LabelsTest {
         )
     }
 
-    /**
-     * El metal solo se nombra cuando no es plata (#40): decirlo en todas las tarjetas de plata que
-     * miden las dos colecciones alargaría cada línea para no distinguir nada, y la onza de oro
-     * —la que obligó a meterlo en la clave— es justo la que necesita la palabra.
-     */
+    /** Casi todas las tarjetas son de plata: nombrarla alargaría la línea sin distinguir (#40). */
     @Test
     fun `the metal is named only when it is not silver`() {
         assertEquals("1 oz · Bullion", variantLabel(1_000, Finish.Bullion, Metal.Silver))
-        // Una ficha sin composición legible tampoco escribe nada: no se sabe, no se afirma.
+        // Una ficha sin composición legible no afirma ningún metal.
         assertEquals("1 oz · Bullion", variantLabel(1_000, Finish.Bullion, null))
         assertEquals("1 oz · Bullion · Oro", variantLabel(1_000, Finish.Bullion, Metal.Gold))
-        // Y el hueco del acabado no deja separador suelto entre el peso y el metal (#409).
+        // Sin acabado no queda un separador suelto entre el peso y el metal (#409).
         assertEquals("0,25 oz · Cuproníquel", variantLabel(250, null, Metal.Cupronickel))
-        // Un conjunto no tiene variante física que describir, y el metal no cambia eso.
+        // Un conjunto no tiene variante física, tenga el metal que tenga.
         assertEquals(
             "Conjunto de varias denominaciones",
             variantLabel(null, null, Metal.Gold),
         )
     }
 
-    /**
-     * La tercera línea de una tarjeta con lista de emisiones es el mismo ratio por el que está
-     * ordenado el índice (ADR 0021 §3 y §6). Que se lea es lo que hace legible el orden: sin ella
-     * el índice se mueve con el ratio mientras cada tarjeta cuenta piezas.
-     */
+    /** Es el ratio por el que se ordena el índice (ADR 0021 §3 y §6): así el orden se entiende. */
     @Test
     fun `a card with an issue list says its progress, and claims no closure when nothing is missing`() {
         assertEquals("4 de 12 · te faltan 8", coverageLabel(CoverageRatio(4, 12)))
         assertEquals("0 de 52 · te faltan 52", coverageLabel(CoverageRatio(0, 52)))
-        // Ni «completa» ni una marca de 22/22: por el ADR 0020 una serie abierta no tiene
-        // completitud que
-        // afirmar, y este enero las mismas 22 casillas pueden ser 23.
+        // Ni «completa» ni marca: una serie abierta no tiene completitud que afirmar (ADR 0020).
         assertEquals("22 de 22", coverageLabel(CoverageRatio(22, 22)))
     }
 
     /**
-     * La otra tercera línea, la de una colección sin lista de emisiones: **«5 monedas · 5 tipos»**,
-     * la frase que fija el ADR 0021 §3 y `CONTEXT.md`.
-     *
-     * Las monedas van primero porque es lo que hay en casa, y los tipos después porque es lo que
-     * distingue «cinco monedas distintas» de «la misma cinco veces». Decía «5 tipos distintos · 5
-     * piezas», que ponía delante la unidad del curador y gastaba dos palabras —«distinto», «pieza»—
-     * en decir lo que «tipo» y «moneda» ya dicen.
+     * La frase que fija el ADR 0021 §3 y `CONTEXT.md`: las monedas primero, porque es lo que hay en
+     * casa; los tipos distinguen «cinco monedas distintas» de «la misma cinco veces».
      */
     @Test
     fun `a card without an issue list counts coins first and types second`() {

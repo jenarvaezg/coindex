@@ -4,13 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-/**
- * What the two credential forms make of what was typed (#220).
- *
- * It used to be three branches of validation braided into a keystore write, a preferences write and
- * a snackbar, inside the one file with no tests — so the sentence a collector reads when they paste
- * their profile URL instead of the number in it could only be checked by running the app.
- */
+/** What the two credential forms make of what was typed (#220). */
 class SettingsEntryTest {
     @Test
     fun `the number in the profile URL is what a user id is`() {

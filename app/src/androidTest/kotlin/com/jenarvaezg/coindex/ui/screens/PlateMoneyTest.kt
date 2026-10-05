@@ -22,10 +22,10 @@ import org.junit.runner.RunWith
 /** The cell of the plate on a 411 dp phone, the same three columns `PlateCellNameTest` measures. */
 private val CELL_WIDTH = 113.dp
 
-/** The hole the stamp is laid inside, and what the year's tag hangs off since #473. */
+/** The hole the stamp is laid inside; the year's tag hangs off it (#473). */
 private val HOLE = 104.dp
 
-/** Any Numista type: what it buys the casilla is a tag that takes a click, like the real ones. */
+/** Any Numista type: it makes the tag clickable, as on real casillas. */
 private const val A_TYPE = 10338
 
 private const val VALUE_LINE = "Valor actual: 1.612 € · al mayor de tres precios"
@@ -33,15 +33,9 @@ private const val COST_LINE = "Coste de cerrar: 84 € · en sin circular"
 private const val HOLE_COST = "84 €"
 
 /**
- * The two figures of money of a plate, and the price laid inside a hole, measured on the device
- * (#493).
- *
- * Everything decided about this drawing was decided on an HTML prototype at dp size, which is where
- * *structure* is chosen (`prototipar-forma-en-html`). What the prototype cannot answer is whether the
- * chip fits: it is drawn over a hole of 104 dp that already carries the ghost of the coin and hangs a
- * 48 dp tag under it, and «cabe» in a browser is not «cabe» in Bitter on Android. So the two
- * measurements that matter are here — the stamp stays inside its own cardboard, and it does not reach
- * the year it would otherwise be read as a gloss on.
+ * The plate's two money figures and the price laid inside a hole, measured on the device (#493).
+ * The structure came from an HTML prototype; only Bitter on Android can say whether the chip fits
+ * inside its 104 dp hole without reaching the year's tag below.
  */
 @RunWith(AndroidJUnit4::class)
 class PlateMoneyTest {
@@ -70,15 +64,13 @@ class PlateMoneyTest {
         assertTrue("el sello llega a la chapa del año", stamp.bottom <= cell.top + hole)
         assertTrue("el sello se sale por la izquierda", stamp.left >= cell.left)
         assertTrue("el sello se sale por la derecha", stamp.right <= cell.right)
-        // And centred in it, which is what makes it read as laid on the coin rather than pinned to
-        // an edge of the cardboard.
+        // Centred, so it reads as laid on the coin rather than pinned to an edge.
         assertEquals(cell.center.x, stamp.center.x, 1f)
         assertEquals(cell.top + hole / 2f, stamp.center.y, 1f)
     }
 
     @Test
-    // A full casilla has no cost at all — it has a value, and that one is the header's — so there is
-    // nothing to draw over its coin. The one thing a filled hole must not do is carry a chip.
+    // A full casilla has a value, which the header shows, and no cost to draw over its coin.
     fun aFilledCasillaCarriesNoStamp() {
         compose.setContent {
             CoindexTheme {
@@ -92,8 +84,7 @@ class PlateMoneyTest {
     }
 
     @Test
-    // The hierarchy is in the words and not in the type: two lines of the same weight, four dp apart,
-    // because they are one statement about money and not two blocks that happen to be adjacent.
+    // The hierarchy is in the words, not the type: one statement about money, not two blocks.
     fun theTwoFiguresAreTwoLinesOfOneWeight() {
         compose.setContent { CoindexTheme { PlateMoneyLines(VALUE_LINE, COST_LINE) } }
 
@@ -109,8 +100,7 @@ class PlateMoneyTest {
     }
 
     @Test
-    // A closed plate says one line and no zero, and it reads as well alone as in company — which is
-    // 22 of the father's 49 reachable plates, and the whole reason the short «dentro» was dropped.
+    // The value line must read as well alone as with the cost line below it.
     fun aClosedPlateSaysOneLineAndNoZero() {
         compose.setContent { CoindexTheme { PlateMoneyLines(VALUE_LINE, cost = null) } }
 

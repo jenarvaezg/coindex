@@ -11,12 +11,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * The country axis: blocks, ratio order and the compact tail (ADR 0026 §9).
- *
- * It is built from the casillas the assembly resolved and no longer from curated files (#538), which
- * is what this file is about after the move: what a casilla *is* — the evidence behind its plate, its
- * Owned/Missing status and the country it falls in — is asserted in `AlbumSlotsTest`, on the domain.
- * What is left here is the axis' own share: how the cells are grouped, counted and ordered.
+ * The country axis: blocks, ratio order and the compact tail (ADR 0026 §9). What a casilla is
+ * (#538) is asserted in `AlbumSlotsTest`; here, how cells are grouped, counted and ordered.
  */
 class CountryAxisTest {
     @Test
@@ -39,12 +35,7 @@ class CountryAxisTest {
         assertEquals(4, model.totalSlots)
     }
 
-    /**
-     * One plate, two blocks: Equilibrium is struck for Tokelau and for Niue (#170).
-     *
-     * The axis groups by the country of the casilla and never by the plate it came from, so a series
-     * a mint did not split does not have to be split to be painted.
-     */
+    /** Equilibrium is struck for Tokelau and Niue (#170): blocks follow the casilla's country. */
     @Test
     fun `a plate spanning two countries opens a block in each`() {
         val model = countryAxis(
@@ -117,7 +108,7 @@ class CountryAxisTest {
         assertEquals("1/1", model.blocks.single().label)
     }
 
-    /** The weight, estado and serie chips narrow the sheet by plate: a hidden card paints nothing. */
+    /** The weight, estado and serie chips narrow the sheet by plate. */
     @Test
     fun `a plate the shelf hid leaves no cell behind`() {
         val model = countryAxis(
@@ -133,7 +124,6 @@ class CountryAxisTest {
         assertEquals(listOf("Italia"), model.blocks.map { it.country })
     }
 
-    /** A casilla nobody can name a country for is not painted under an invented one. */
     @Test
     fun `a casilla with no country opens no block`() {
         val model = countryAxis(

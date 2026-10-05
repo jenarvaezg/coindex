@@ -6,11 +6,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Cómo sobrevive a un lanzamiento lo que el coleccionista eligió en la hoja de exportación.
- *
- * Un interruptor por clave, como los filtros de la estantería (`ShelfCodec`), y por la misma razón:
- * lo que esta versión no reconoce se lee como «el cuaderno de hoy» en vez de romper o, peor, dejar
- * encendido algo que nadie pidió.
+ * Las opciones del cuaderno entre lanzamientos. Como en `ShelfCodec`, una clave por interruptor, y
+ * la que falta se lee como el valor por omisión de ese interruptor.
  */
 class NotebookCodecTest {
     @Test
@@ -34,12 +31,7 @@ class NotebookCodecTest {
         assertEquals(NotebookOptions(), NotebookCodec.decode { null })
     }
 
-    /**
-     * A key written on its own leaves the other five at their default.
-     *
-     * The missing key is not an «off», it is the default of the switch it names — and the default of
-     * «fotos» is on.
-     */
+    /** A missing key means the switch's default, not «off», and «fotos» defaults to on. */
     @Test
     fun `a switch stored on its own does not turn the other five off`() {
         val stored = NotebookCodec.encode(NotebookOptions(sharePage = true))
@@ -51,14 +43,7 @@ class NotebookCodecTest {
         assertTrue(read.photographs, "el cuaderno se ha quedado sin fotos por una clave ausente")
     }
 
-    /**
-     * El sexto interruptor sobre un móvil que guardó cinco (#275).
-     *
-     * Es el caso que este fichero llevaba escrito desde el #228, y ahora existe: una clave que la
-     * versión anterior nunca escribió se lee como el valor por omisión del interruptor que nombra,
-     * y el de «sin colección» es apagado. Un cuaderno que creciera tres páginas solo, en el primer
-     * lanzamiento después de actualizar, sería exactamente lo que el #228 prometió que no pasaría.
-     */
+    /** «Sin colección» (#275) es apagado por omisión: actualizar no alarga el cuaderno (#228). */
     @Test
     fun `un móvil que guardó cinco interruptores no estrena el sexto encendido`() {
         val cinco = NotebookCodec
@@ -77,8 +62,7 @@ class NotebookCodecTest {
 
         assertEquals(keys.size, keys.distinct().size, "dos interruptores comparten clave: $keys")
         assertTrue(keys.all { it.startsWith("notebook_") }, "claves sin prefijo: $keys")
-        // Y la codificación escribe las seis, para que «elegido a propósito» y «nunca elegido»
-        // se lean igual — que es lo que son.
+        // Se escriben las seis, para que «elegido a propósito» y «nunca elegido» se lean igual.
         assertEquals(keys.toSet(), NotebookCodec.encode(NotebookOptions()).keys)
     }
 }

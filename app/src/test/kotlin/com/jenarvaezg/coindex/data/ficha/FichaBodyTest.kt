@@ -6,14 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-/**
- * What a stored Numista body says beyond its columns.
- *
- * Every assertion here reads the same ficha as many times as it likes, in any order, and gets the
- * same answer: [Ficha] is a function of the body and of nothing else. The version this replaced
- * had to be handed a different `fetchedAt` per assertion — 5, 1, 2, 4, 10, 12… — because a memo
- * nobody could empty was keyed on it, and nothing in the interface said so (#221).
- */
+/** What a stored Numista body says beyond its columns, as a function of the body alone (#221). */
 class FichaBodyTest {
     private val australianKookaburra = Fixtures.type(404_044)
 
@@ -30,12 +23,8 @@ class FichaBodyTest {
     }
 
     /**
-     * A medal's date lives in `issue_terms.issue_date` and nowhere else (#460).
-     *
-     * A coin type has `min_year`; a medal has neither that nor `max_year`, and writes `1995-00-00`
-     * — a year, and zeros where Numista does not know the month or the day. Until this was read, the
-     * father's silver bicentenary medal of Sucre said «Sin año» on a card whose own photograph reads
-     * 1795-1995.
+     * A medal has no `min_year` or `max_year`; its date is `issue_terms.issue_date`, with zeros
+     * where Numista does not know the month or the day (#460).
      */
     @Test
     fun `a medal gives up the year of its issue date`() {
@@ -46,7 +35,6 @@ class FichaBodyTest {
         )
     }
 
-    /** And a date that is not one says nothing, rather than saying zero. */
     @Test
     fun `an issue date with no year in it is no year`() {
         listOf(
@@ -102,9 +90,8 @@ class FichaBodyTest {
 
     @Test
     fun `a field of the wrong shape costs only itself`() {
-        // The issuer is there but has no name, and the size arrives as an object rather than a
-        // number: the other three still come back, which is how these read before they shared a
-        // parse.
+        // The issuer has no name and the size is an object rather than a number: the other
+        // fields still come back.
         val reading = readFichaBody(
             """{"issuer": {"code": "australie"}, "size": {"mm": 32.6}, "category": "exonumia"}""",
         )
@@ -115,18 +102,9 @@ class FichaBodyTest {
     }
 
     /**
-     * The tripwire the memo did not need.
-     *
-     * A memo re-read the body whenever the row changed; a column is written once, so a field added
-     * here reaches nothing that is already cached unless [FICHA_READING] goes up with it — and no
-     * cached type is ever fetched again. Both halves are pinned so that adding one without the other
-     * turns this red.
-     *
-     * It has caught it **twice** now, which is what the pinning is for. The four fields «Las cifras»
-     * needed (ADR 0028 §7) arrived with the reading still at 1, and every ficha in the cache would
-     * have stayed without a thickness, a demonetization, a hand or a mint for ever. The tenth is the
-     * issue year of a medal (#460), and without the bump the two medals the father owns would have
-     * kept saying «Sin año» on a card whose own photograph reads 1795-1995.
+     * Columns are written once and cached types are never fetched again, so a new field reaches the
+     * cache only if [FICHA_READING] goes up with it. Both numbers are pinned so that changing one
+     * without the other fails here.
      */
     @Test
     fun `an eleventh field would have to be read into the fichas already cached`() {

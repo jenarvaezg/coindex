@@ -87,9 +87,8 @@ internal fun portugueseAnnualCatalogStub() = CollectionCatalog(
 )
 
 /**
- * The tenth Royal Tudor Beast: named by the mint in 2022, struck in proof, and still not issued
- * in bullion. Its design points at the 2 oz proof — the very piece the father owns and the one
- * that must never fill this slot.
+ * A Royal Tudor Beast announced in bullion. Its design points at the 2 oz proof, which the
+ * collector owns and which must never fill this slot.
  */
 internal fun announcedMemberStub() = CollectionCatalogMember(
     id = "seymour-panther",
@@ -117,10 +116,8 @@ private fun datedItem(id: Long, typeId: Int, issueYear: Int?) =
     CollectedItem(id = id, quantity = 1, typeId = typeId, issueYear = issueYear)
 
 /**
- * The stars of the 100 pesetas of Franco (ADR 0014): one type, one year on every issue, and the
- * star is a variety of it. The issue ids here are stand-ins; the shipped seed carries the real
- * ones. The 1969 holds two — the curved and the straight nine — because the collector counts one
- * star.
+ * The stars of Franco's 100 pesetas (ADR 0014): one type and one year, the star being the issue.
+ * The issue ids are stand-ins. The 1969 lists two issues, curved and straight nine, as one star.
  */
 internal fun issueRunCatalogStub() = CollectionCatalog(
     schemaVersion = 5,
@@ -266,14 +263,8 @@ class CollectionCatalogValidationTest {
     }
 
     /**
-     * El emisor de la cabecera es el de un miembro que no dice otro, y no una afirmación sobre la
-     * lista (#170): Pressburg acuña Equilibrium alternando Tokelau y Niue, así que un solo código
-     * sólo podía rotularse encima de las dos monedas que dicen Niue mintiendo.
-     *
-     * Las dos reglas son la misma en los dos sentidos. Un `issuer_code` en blanco en el miembro se
-     * rechaza como cualquier campo declarado y vacío, y una cabecera que no es el emisor de nadie
-     * también: un valor por defecto que no le sirve de defecto a ningún miembro es el mismo rótulo
-     * falso una indirección más adentro.
+     * Pressburg alterna Tokelau y Niue en Equilibrium, así que un solo código mentiría en la mitad
+     * (#170). Se rechazan un `issuer_code` en blanco y una cabecera que no es el emisor de nadie.
      */
     @Test
     fun `a member may name its own issuer and the header defaults for the rest`() {
@@ -307,10 +298,7 @@ class CollectionCatalogValidationTest {
         )
     }
 
-    /**
-     * Closing costs proof and opening costs none (#28): the note is obligatory one way and
-     * forbidden the other, the same symmetry the issue ids already use outside an issue run.
-     */
+    /** Closing needs proof and opening needs none (#28). */
     @Test
     fun `a closed catalog must say why and an open one cannot`() {
         val open = teslaCatalogStub()
@@ -341,8 +329,8 @@ class CollectionCatalogValidationTest {
     }
 
     /**
-     * The boundary an open catalog cannot write in `closed_note` (#53, ADR 0020): a `source_note`
-     * is optional, allowed in both statuses, and refused only when blank.
+     * What an open catalog can't write in `closed_note` (#53, ADR 0020): a `source_note` is
+     * optional in both statuses and refused only when blank.
      */
     @Test
     fun `a catalog may cite the boundary that Numista does not draw`() {
@@ -359,10 +347,8 @@ class CollectionCatalogValidationTest {
     }
 
     /**
-     * Interior years the mint skipped are not curation debt (#130, #131). Declaring them takes
-     * the same bargain as `closed_note`: the years are structured for the stale-catalogs report,
-     * and the note is required prose with the proof. They never become members, so the plate
-     * denominator stays untouched.
+     * Skipped interior years are not curation debt (#130, #131): structured for the stale-catalogs
+     * report, with a required note, and never members, so the plate's denominator doesn't move.
      */
     @Test
     fun `a catalog may declare years the mint did not issue`() {
@@ -510,11 +496,7 @@ class CollectionCatalogValidationTest {
         )
     }
 
-    /**
-     * The symmetry of [MemberStatus], both ways round (#31). Nothing is implicit: an absent
-     * `numista_type_id` never *means* announced, and an announced member never carries one —
-     * Numista catalogues struck coins.
-     */
+    /** No `numista_type_id` never implies announced, and Numista only lists struck coins (#31). */
     @Test
     fun `an announced member costs its source and forbids a numista type`() {
         val definition = teslaCatalogStub().let { tesla ->
@@ -622,9 +604,8 @@ class CollectionCatalogValidationTest {
     }
 
     /**
-     * «Announced» composes with every way of identifying a member, which is exactly why it is a
-     * field and not a `schema_version` of its own. What it cannot do is name issues: an issue
-     * run keys on struck emissions, and an unstruck member has none.
+     * «Announced» is a field rather than a `schema_version` because it composes with every way of
+     * identifying a member, except issues: an unstruck member has none.
      */
     @Test
     fun `an announced member composes with a date run and never fills a slot`() {
@@ -820,10 +801,7 @@ class CollectionCatalogAlbumTest {
 
     }
 
-    /**
-     * The case the date run cannot express: six issues, one year. Keying on the year would fill
-     * one slot and call the other five missing while they sit in the album.
-     */
+    /** Six issues in one year: keying on the year would fill one slot and miss the other five. */
     @Test
     fun `an issue run matches by issue and ignores the year entirely`() {
         val definition = issueRunCatalogStub()

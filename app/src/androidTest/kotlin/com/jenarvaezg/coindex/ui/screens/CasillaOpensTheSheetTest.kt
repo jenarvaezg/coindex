@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
 /** The cell of the plate on a 411 dp phone, the same three columns `PlateCellNameTest` measures. */
 private val CELL_WIDTH = 113.dp
 
-/** The father's 1 Bolívar, which is the plate every map of the casilla was measured on. */
+/** The 1 Bolívar, the reference plate for the casilla's layout. */
 private const val A_TYPE = 10_338
 
 private const val A_TITLE = "1 Bolívar - Simón Bolívar"
@@ -45,19 +45,15 @@ private val A_COIN = CoinRow(
     years = listOf(1_886),
     objectClass = ObjectClass.Coin,
     weightOz = null,
-    // A hole: the casilla is empty and the collector holds no piece of the type at all.
+    // A hole: the collector holds no piece of the type.
     quantity = 0,
     claims = emptyList(),
     unclaimedPieces = 0,
 )
 
 /**
- * The year of a casilla opens the coin's sheet **inside the app** (#508).
- *
- * The audit of 14 August 2026 left Chrome three times without meaning to: of the two targets of a
- * casilla (ADR 0026 §3) the body turned the coin over and the year left for Numista, and nothing on
- * the sunken tag said which was which — no arrow fits on it (#298, #302). What the tag hands over now
- * is a **type**, not a URL: there is no address in this composable for a browser to be given.
+ * The year of a casilla opens the coin's sheet inside the app (#508); it used to leave for Numista
+ * with no arrow to say so (ADR 0026 §3, #298, #302). The tag hands over a type, never a URL.
  */
 @RunWith(AndroidJUnit4::class)
 class CasillaOpensTheSheetTest {
@@ -79,7 +75,7 @@ class CasillaOpensTheSheetTest {
         assertEquals(A_TYPE, opened)
     }
 
-    /** An announced member is not in the catalogue: there is no ficha to open and no tap to take. */
+    /** An announced member has no ficha to open. */
     @Test
     fun theTagOfAnAnnouncedCasillaOpensNothing() {
         var opened: Int? = null
@@ -94,12 +90,7 @@ class CasillaOpensTheSheetTest {
         assertNull(opened)
     }
 
-    /**
-     * The sheet a casilla opens leaves the app through one labelled door and no other.
-     *
-     * «Ver en Numista ↗» is the arrow the tag could never carry, and it is on the one element of this
-     * sheet that goes anywhere near a browser.
-     */
+    /** «Ver en Numista ↗» is the sheet's only way to the browser, with the arrow the tag lacks. */
     @Test
     fun theSheetOffersNumistaBehindItsOwnArrow() {
         var left: Int? = null
@@ -115,12 +106,7 @@ class CasillaOpensTheSheetTest {
         assertEquals(A_TYPE, left)
     }
 
-    /**
-     * The lámina the collector is standing on is not a door out of its own casilla's sheet.
-     *
-     * Every other collection that claims the coin still is: what is dropped is the one link that would
-     * lead onto the sheet being read.
-     */
+    /** Other collections that claim the coin keep their link; only the open lámina's is dropped. */
     @Test
     fun theSheetDrawsNoDoorOntoTheLaminaItWasOpenedFrom() {
         val plate = CardDestination.Plate("venezuela-bolivar")
@@ -154,9 +140,8 @@ class CasillaOpensTheSheetTest {
                 year = year,
                 owned = false,
                 missing = numistaTypeId != null,
-                // What the tag says is the subject's rule and no longer the `year` field (#511):
-                // a casilla built without a plaque has no year to press, which is the very gesture
-                // under test.
+                // The tag comes from the plaque, not from `year` (#511); without one there is no
+                // year to press.
                 plaque = plaqueOf(label = "Bolívar", year = year, yearIsCommon = false),
             ),
             images = null,

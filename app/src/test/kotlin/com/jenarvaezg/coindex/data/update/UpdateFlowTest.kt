@@ -18,11 +18,8 @@ private const val MANIFEST_URL = "$API/download/update.json"
 private const val APK_URL = "$API/download/coindex-24.apk"
 
 /**
- * Asking GitHub for a newer APK, and installing it (ADR 0011, #220).
- *
- * Two things had no way of being read before: **how often it is allowed to ask** — six hours of
- * arithmetic on a clock read in place, on a gesture that fires on every return to the front — and
- * the four refusals of installing, none of which can be provoked on a device on purpose.
+ * Asking GitHub for a newer APK and installing it (ADR 0011, #220): how often it may ask, and the
+ * install refusals no device can be made to produce on purpose.
  */
 class UpdateFlowTest {
     private val asked = mutableListOf<String>()

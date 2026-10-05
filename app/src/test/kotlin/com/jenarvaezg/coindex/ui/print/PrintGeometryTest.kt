@@ -5,50 +5,40 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * La geometría del papel, que es la única parte de la exportación que se puede medir sin un
- * teléfono delante.
- *
- * Escala 1:1: la rejilla no la elige el número de casillas —eso es lo que hace la lámina en
- * pantalla— sino el diámetro mayor de la lámina, porque una moneda impresa a su tamaño real no
- * puede encogerse para que quepan más.
+ * La geometría del papel a escala 1:1: la rejilla sale del diámetro mayor de la lámina y no del
+ * número de casillas, porque una moneda impresa a tamaño real no puede encoger.
  */
 class PrintGeometryTest {
-    /** El papel de hoy, que es el que la configuración por omisión declara (#228). */
+    /** El papel de la configuración por omisión (#228). */
     private val paper = PrintGeometry()
 
     @Test
     fun `an A4 page keeps a printable band between its heading and its ruler`() {
         assertEquals(180f, paper.gridWidthMm)
-        // 297 menos los dos márgenes y la regla del pie: el folio entero, que es de las láminas.
+        // 297 menos los dos márgenes y la regla del pie.
         assertEquals(253f, paper.contentHeightMm)
-        // Y de ahí la cabecera de la lámina, que en un folio suyo es la única que sale.
+        // Menos la cabecera de la lámina, la única de un folio propio.
         assertEquals(213f, paper.gridHeightMm)
     }
 
     /**
-     * Cuántas filas caben en lo que queda de un folio, que es la pregunta del empaquetador (#232).
-     *
-     * Cero es una respuesta de verdad aquí y no lo es en [PrintGrid.rows]: una lámina a la que se le
-     * da un folio entero se lleva una fila como mínimo, porque la alternativa es una lámina de cero
-     * páginas; una lámina a la que se le ofrece la cola de un folio ajeno puede sencillamente no
-     * caber, y entonces abre el siguiente.
+     * Las filas que caben en la cola de un folio (#232). Aquí cero vale, a diferencia de
+     * [PrintGrid.rows]: la lámina que no cabe abre el folio siguiente.
      */
     @Test
     fun `a plate offered the tail of a folio takes the rows that fit and no more`() {
         val ounce = grid(40.9f)
 
-        // El folio entero da las mismas tres filas que la rejilla, que es lo que la hace la misma
-        // aritmética: una lámina sola cortada por el empaquetador se corta como siempre se cortó.
+        // Con el folio entero, la misma cuenta que la rejilla.
         assertEquals(ounce.rows, ounce.rowsIn(paper.contentHeightMm, paper.heading))
-        // La cabecera sale de lo que queda, así que 40 mm de banda y 56,9 de fila son 96,9.
+        // La cabecera sale de lo que queda: 40 mm de banda y 56,9 de fila son 96,9.
         assertEquals(0, ounce.rowsIn(96f, paper.heading))
         assertEquals(1, ounce.rowsIn(97f, paper.heading))
         assertEquals(2, ounce.rowsIn(156.8f, paper.heading))
-        // Y una cola en la que no cabe ni la cabecera no vale para nada.
+        // Una cola en la que no cabe ni la cabecera.
         assertEquals(0, ounce.rowsIn(20f, paper.heading))
         assertEquals(0, ounce.rowsIn(0f, paper.heading))
-        // Qué banda se resta lo dice quien pregunta y no el papel (#480): con la fina, veintiséis
-        // milímetros menos que restar son una fila más en el mismo hueco.
+        // La banda la elige quien pregunta (#480): con la fina, 26 mm menos dan una fila más.
         assertEquals(0, ounce.rowsIn(70f, paper.continuationHeading))
         assertEquals(1, ounce.rowsIn(71f, paper.continuationHeading))
         assertEquals(2, ounce.rowsIn(131f, paper.continuationHeading))
@@ -58,14 +48,9 @@ class PrintGeometryTest {
     }
 
     /**
-     * La página que continúa una lámina se lleva la fila que la especificación repetida costaba (#480).
-     *
-     * Es la banda fina del #232 puesta a un segundo trabajo: en la página 2 el bloque de fichas no dice
-     * nada que la página 1 no acabe de decir, y son veintiséis milímetros —los 40 del masthead menos los
-     * 14 del nombre— que en una lámina de onzas valen exactamente una fila de cuatro monedas.
-     *
-     * La rejilla lleva las dos cuentas porque las dos existen en el mismo cuaderno, y la primera nunca
-     * es mayor que la segunda: catorce milímetros es la más corta de las tres bandas.
+     * La continuación no repite el bloque de fichas (#480): los 26 mm que ahorra (40 del masthead
+     * menos 14 del nombre) son una fila de onzas. Nunca tiene menos filas que la primera página,
+     * porque 14 mm es la banda más corta.
      */
     @Test
     fun `a page that continues a plate is measured against the thin band`() {
@@ -80,14 +65,12 @@ class PrintGeometryTest {
         assertEquals(12, ounce.cellsPerPage)
         assertEquals(16, ounce.continuationCellsPerPage)
 
-        // Y ninguna lámina puede perder filas al continuar, sea cual sea su moneda.
         listOf(14.5f, 16f, 22f, 33f, 38.61f, 40.9f, 45.6f).forEach { diameter ->
             val grid = grid(diameter)
             assertTrue(
                 grid.continuationRows >= grid.rows,
                 "$diameter mm pierde filas al continuar: ${grid.rows} → ${grid.continuationRows}",
             )
-            // Y la rejilla de continuación cabe en el folio que se midió contra ella.
             assertTrue(
                 grid.heightOfMm(grid.continuationRows) <= paper.continuationGridHeightMm,
                 "$diameter mm se sale del folio que continúa",
@@ -95,13 +78,7 @@ class PrintGeometryTest {
         }
     }
 
-    /**
-     * Compartir folio no se mueve ni un milímetro (#232, #480).
-     *
-     * La banda que una continuación se lleva **es** la que ese interruptor ya imprime en todas las
-     * páginas, así que allí no hay nada que ahorrar y no hay nada que cambiar: las dos cuentas de la
-     * rejilla son la misma cuenta, y el cuaderno compartido sale cortado como el #232 lo dejó.
-     */
+    /** Compartir folio no cambia: la banda fina ya está en todas las páginas (#232, #480). */
     @Test
     fun `on shared folios the thin band was already every page's`() {
         val shared = printGeometry(NotebookOptions(sharePage = true))
@@ -113,7 +90,7 @@ class PrintGeometryTest {
         assertEquals(ounce.cellsPerPage, ounce.continuationCellsPerPage)
     }
 
-    /** Y la altura de un bloque es la de sus filas y las calles entre ellas, nunca alrededor. */
+    /** Las calles van sólo entre filas, nunca alrededor. */
     @Test
     fun `the height of a block is its rows and the gutters between them`() {
         val ounce = grid(40.9f)
@@ -121,7 +98,6 @@ class PrintGeometryTest {
         assertEquals(0f, ounce.heightOfMm(0))
         assertEquals(56.9f, ounce.heightOfMm(1), 0.01f)
         assertEquals(56.9f * 3 + 3f * 2, ounce.heightOfMm(3), 0.01f)
-        // Las tres filas de la rejilla y su cabecera caben en el folio que se midió contra ellas.
         assertTrue(
             paper.headingMm + ounce.heightOfMm(ounce.rows) <= paper.contentHeightMm,
             "la rejilla de la onza se sale del folio",
@@ -130,55 +106,48 @@ class PrintGeometryTest {
 
     @Test
     fun `the grid comes from the diameter and not from the number of cells`() {
-        // Las 2 rublos rusas de plata miden 33 mm: cinco columnas de cuatro filas.
+        // Las 2 rublos rusas de plata miden 33 mm.
         val roubles = grid(33f)
         assertEquals(5, roubles.columns)
         assertEquals(4, roubles.rows)
         assertEquals(20, roubles.cellsPerPage)
 
-        // La onza australiana mide 40,9 mm y sólo caben cuatro por tres.
+        // La onza australiana mide 40,9 mm.
         val ounce = grid(40.9f)
         assertEquals(4, ounce.columns)
         assertEquals(3, ounce.rows)
         assertEquals(12, ounce.cellsPerPage)
 
-        // Y la moneda más grande de la colección, el Lunar II de 45,6 mm, baja a tres columnas.
+        // El Lunar II mide 45,6 mm.
         assertEquals(3, grid(45.6f).columns)
     }
 
     @Test
     fun `no cell is ever narrower than its own caption needs`() {
-        // Los medios venezolanos miden 16 mm: la casilla no encoge con ellos, porque debajo de la
-        // moneda hay un rótulo que se lee igual de lejos que el de una onza.
+        // Los medios venezolanos miden 16 mm, pero su rótulo pide el ancho del de una onza.
         val tiny = grid(16f)
         assertEquals(paper.minCellWidthMm, tiny.cellWidthMm)
         assertTrue(tiny.columns in 5..6, "columnas para 16 mm: ${tiny.columns}")
     }
 
-    /**
-     * Con «ambas caras» la casilla son dos monedas y la calle de en medio (#230).
-     *
-     * Es el interruptor más caro en papel y el más fácil de dibujar: a 1:1 la segunda cara no se
-     * puede pagar encogiendo la moneda, así que se paga en ancho. La altura no se mueve.
-     */
+    /** A 1:1 la segunda cara se paga en ancho, no encogiendo la moneda (#230). */
     @Test
     fun `both faces make the cell two coins wide and leave its height alone`() {
         val doubled = PrintGeometry(facesPerCell = 2)
         val ounce = printGrid(40.9f, doubled)
 
-        // 40,9 + 3 + 40,9 = 84,8 mm, y sólo caben dos por fila en vez de cuatro.
+        // 40,9 + 3 + 40,9 = 84,8 mm.
         assertEquals(84.8f, ounce.cellWidthMm, 0.01f)
         assertEquals(2, ounce.columns)
         assertEquals(3, ounce.rows)
         assertEquals(6, ounce.cellsPerPage)
         assertEquals(grid(40.9f).cellHeightMm, ounce.cellHeightMm)
 
-        // El suelo del rótulo sigue mandando donde la moneda es más estrecha que sus palabras: dos
-        // medios venezolanos de 16 mm son 35 mm, que ya pasa de los 28 y deja de ser el suelo.
+        // Dos caras de 16 mm y la calle son 35 mm, que ya pasan del suelo de 28 del rótulo.
         assertEquals(35f, printGrid(16f, doubled).cellWidthMm, 0.01f)
         assertEquals(paper.minCellWidthMm, grid(16f).cellWidthMm)
 
-        // Y la moneda más grande de la colección cabe una sola vez por fila, pero cabe.
+        // El Lunar II cabe una sola vez por fila.
         val lunar = printGrid(45.6f, doubled)
         assertEquals(1, lunar.columns)
         assertTrue(lunar.blockWidthMm <= doubled.gridWidthMm, "94,2 mm no caben: $lunar")
@@ -203,12 +172,7 @@ class PrintGeometryTest {
         }
     }
 
-    /**
-     * What the grid leaves over is margin on both sides, because the block is centred.
-     *
-     * The 45,6 mm Lunar II is the case that made this visible: three coins to a row leave 37 mm,
-     * and all of it against the right edge read as a page printed askew.
-     */
+    /** Con el Lunar II sobran 37 mm, y todos a un lado parecen una página impresa torcida. */
     @Test
     fun `the block is narrower than the page and what is left over is centred`() {
         val lunar = grid(45.6f)
@@ -216,17 +180,12 @@ class PrintGeometryTest {
         assertEquals(3, lunar.columns)
         assertEquals(142.8f, lunar.blockWidthMm, 0.01f)
         assertTrue(paper.gridWidthMm - lunar.blockWidthMm > 30f, "no sobraba tanto aire")
-        // A grid that nearly fills the width has almost nothing left to centre.
+        // Una rejilla que casi llena el ancho apenas deja nada que centrar.
         val roubles = grid(33f)
         assertEquals(177f, roubles.blockWidthMm, 0.01f)
     }
 
-    /**
-     * Y lo que cuesta es la primera página y después las continuaciones, no una división (#480).
-     *
-     * El Kookaburra son 37 emisiones: doce bajo el masthead y las veinticinco restantes a dieciséis por
-     * folio, que son tres páginas donde antes eran cuatro.
-     */
+    /** La primera página y luego continuaciones, no una división (#480): 37 son 12 + 16 + 9. */
     @Test
     fun `a plate that does not fit continues on the next page`() {
         val ounce = grid(40.9f)
@@ -236,11 +195,10 @@ class PrintGeometryTest {
         assertEquals(2, pageCount(13, ounce))
         assertEquals(2, pageCount(28, ounce))
         assertEquals(3, pageCount(29, ounce))
-        // Una lámina de una sola casilla sigue siendo una página, no cero.
+        // Siempre al menos una página, aunque la lámina tenga una casilla o ninguna.
         assertEquals(1, pageCount(1, ounce))
         assertEquals(1, pageCount(0, ounce))
     }
 
-    /** La rejilla se mide contra un papel, y lo dice: es lo que el #228 hace enhebrable. */
     private fun grid(diameterMm: Float?) = printGrid(diameterMm, paper)
 }

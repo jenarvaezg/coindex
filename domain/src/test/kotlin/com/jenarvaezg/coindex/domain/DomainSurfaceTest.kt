@@ -7,25 +7,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * The public surface of `:domain` is what the app calls, plus what the suite is told it may call.
+ * Every public symbol of `:domain` has a caller in the app, or is marked [SuiteOnly] (#222). A
+ * public function with no caller keeps a green test while the app is broken, as
+ * `CollectionCatalog.emissionLabelFor` did after #183 deleted its caller.
  *
- * A public symbol with no caller is an interface nobody exercises, and its green test proves
- * nothing about the app. `CollectionCatalog.emissionLabelFor` is the demonstration (#222): the
- * function was right, its test was green, and the printed output had been broken for two weeks
- * because the caller was deleted in #183 and nothing said so.
+ * A net, not a proof: usage is matched by name over source text, so an overload hides behind a
+ * called sibling and a name shared with an unrelated symbol reads as used.
  *
- * Six symbols are public with no caller **on purpose** — the disagreement reports of ADR 0021 §12
- * live in the suite and never at startup — so intent is declared at the symbol with [SuiteOnly],
- * and the list of them is pinned below. Anything else is a leftover.
- *
- * **It is a net, not a proof.** Usage is decided by name over source text, so an overload is
- * invisible when a sibling of the same name is called — the second deletion of #222,
- * `CollectionTitles.of(DerivedCollection)`, is precisely that shape and had to be found by
- * reading — and a name shared with an unrelated symbol reads as used. What it does catch is the
- * symbol that goes quiet, which is the failure #222 is about.
- *
- * `domain/build.gradle.kts` declares the trees it reads as task inputs. Without that the task is
- * UP-TO-DATE whenever only `:app` changed, which is the one change this test exists to see.
+ * `domain/build.gradle.kts` declares the trees it reads as task inputs; without that the task
+ * stays UP-TO-DATE when only `:app` changed.
  */
 class DomainSurfaceTest {
     @Test
@@ -39,10 +29,7 @@ class DomainSurfaceTest {
         )
     }
 
-    /**
-     * The label has to keep meaning what it says. A report the app started calling is no longer a
-     * report: it is production code wearing an exemption from the test above.
-     */
+    /** A report the app calls is production code wearing an exemption from the test above. */
     @Test
     fun `a suite-only symbol has no caller in production`() {
         val called = domainSurface.filter { it.suiteOnly }.filter { productionUses(it.name) > 0 }
@@ -53,7 +40,6 @@ class DomainSurfaceTest {
         )
     }
 
-    /** A report nobody runs is the same leftover as an uncalled function, only labelled. */
     @Test
     fun `a suite-only symbol is exercised by the suite`() {
         val unread = domainSurface.filter { it.suiteOnly }.filter { suiteUses(it.name) == 0 }
@@ -64,11 +50,7 @@ class DomainSurfaceTest {
         )
     }
 
-    /**
-     * The three tests above are all «find nothing», which a scanner that reads nothing passes green
-     * and forever. This is what says it read the module: a top-level function, a member of a public
-     * class, and a type.
-     */
+    /** The tests above all expect nothing, which a scanner that reads nothing would pass. */
     @Test
     fun `the scanner sees the surface it is checking`() {
         val names = domainSurface.map { it.name }
@@ -76,17 +58,13 @@ class DomainSurfaceTest {
         assertTrue("emissionLabelFor" in names, "no ve un miembro de una clase pública")
         assertTrue("CollectionCatalog" in names, "no ve un tipo")
         assertFalse("DerivedCollectionAccumulator" in names, "cuenta una clase privada")
-        // 346 the day this was written. The floor only has to catch a scanner reading nothing;
-        // that it reads nothing *but* surface is the test below, on source written to prove it.
+        // The floor only has to catch a scanner that reads nothing.
         assertTrue(domainSurface.size > 200, "el escáner sólo ve ${domainSurface.size} símbolos")
     }
 
     /**
-     * What it must not mistake for surface, pinned on source written for the purpose rather than on
-     * the module, whose every private member happens to share its name with a public one somewhere.
-     *
-     * Counting a local is not a harmless extra: `quantity` declared inside a function makes every
-     * public `quantity` read as used, and the exemption is invisible because nothing declares it.
+     * On a written sample, since the module's private names all collide with public ones. A counted
+     * local would hide misses: a local `quantity` makes every public `quantity` read as used.
      */
     @Test
     fun `the scanner tells surface from what merely looks like it`() {
@@ -100,11 +78,9 @@ class DomainSurfaceTest {
     }
 
     /**
-     * The exemptions, written out. Marking a symbol `@SuiteOnly` is what quiets the first test, so
-     * it cannot also be the only record that it was quieted: an eighth has to be read here too.
-     * These are the disagreement reports of ADR 0021 §12 and the vocabularies they are pinned by,
-     * plus the two curated tables of corrections netted against the cache that ships (ADR 0023,
-     * ADR 0031).
+     * `@SuiteOnly` silences the first test, so the exemptions are also listed here: the
+     * disagreement reports of ADR 0021 §12 with their vocabularies, and the cured tables of
+     * ADR 0023 and ADR 0031.
      */
     @Test
     fun `the exemptions are the reports that live in the suite on purpose`() {
@@ -157,7 +133,6 @@ private val SAMPLE = """
     fun marked(): Int = 0
 """.trimIndent()
 
-/** One public declaration of `:domain`, and whether it declares itself suite-only. */
 private data class PublicSymbol(
     val name: String,
     val file: String,
@@ -168,10 +143,8 @@ private data class PublicSymbol(
 }
 
 /**
- * What a declaration is standing inside, so a member can be told from a local.
- *
- * [holdsSurface] is false for a function — everything declared inside one is local, however public
- * the function is — and [visible] carries the whole chain, so nothing inside a private class counts.
+ * The scope a declaration sits in. [holdsSurface] is false for a function, whose declarations are
+ * all locals; [visible] carries the whole chain, so nothing inside a private class counts.
  */
 private data class Enclosing(val indent: Int, val holdsSurface: Boolean, val visible: Boolean)
 
@@ -189,18 +162,15 @@ private val TYPE_KINDS = setOf("object", "class", "interface")
 private val BLOCK_COMMENT = Regex("""/\*.*?\*/""", RegexOption.DOT_MATCHES_ALL)
 
 /**
- * Comments blanked out rather than removed: a KDoc reference like `[metalDeviations]` is not a
- * call, and line numbers have to survive so a finding can say where it is.
+ * A KDoc reference like `[metalDeviations]` is not a call. Blanked rather than removed so that line
+ * numbers survive.
  */
 private fun withoutComments(source: String): String = BLOCK_COMMENT
     .replace(source) { match -> match.value.replace(Regex("""[^\n]"""), " ") }
     .lines()
     .joinToString("\n") { withoutLineComment(it) }
 
-/**
- * The `//` that opens a comment is the one outside a string literal. Blanking the other kind eats
- * the tail of every line carrying a URL, and a use that hides there reads as no use at all.
- */
+/** Only a `//` outside a string literal opens a comment; otherwise a URL blanks its line's tail. */
 private fun withoutLineComment(line: String): String {
     var insideText = false
     var index = 0
@@ -235,10 +205,8 @@ private val domainSurface: List<PublicSymbol> = productionSource
     .flatMap { (file, source) -> surfaceOf(file.name, source) }
 
 /**
- * The public declarations of one file, read by indentation.
- *
- * A declaration belongs to the innermost thing still open above it, and it is surface only when
- * that thing is a type — a public one, all the way out. Anything else is a local of some function.
+ * The public declarations of one file, read by indentation: a declaration belongs to the innermost
+ * scope still open above it, and is surface only inside a chain of public types.
  */
 private fun surfaceOf(fileName: String, source: String): List<PublicSymbol> {
     val lines = source.lines()
@@ -261,12 +229,7 @@ private fun surfaceOf(fileName: String, source: String): List<PublicSymbol> {
     return surface
 }
 
-/**
- * How many lines outside the suite name this symbol, not counting the ones that declare it.
- *
- * A name only ever mentioned where it is declared counts as zero: something `:domain` exposes and
- * nobody reads is exactly what this test is looking for.
- */
+/** Lines in production sources that name the symbol, not counting its declarations. */
 private fun productionUses(name: String): Int = usesIn(productionSource, name)
 
 private fun suiteUses(name: String): Int = usesIn(suiteSource, name)

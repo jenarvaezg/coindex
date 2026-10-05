@@ -19,16 +19,10 @@ private val RECORD = SyncRecord(
 )
 
 /**
- * The three stores that used to be an interface each, over the one seam they share (#546).
- *
- * Half of what is checked here is a **format pin**, and that is the point of the ticket: these three
- * were adapters over `SharedPreferences` with a fake apiece, and a phone that updates has to find
- * its notebook, its log and its credentials where it left them. So each store is asked not only
- * whether a value comes back, but under which key and in which shape it went in — a number stored 32
- * bits wide is not the same entry as one stored 64, and the file keeps the two apart.
- *
- * That the shapes then reach a real file as themselves is `SharedPreferenceValuesTest`'s, which is
- * instrumented: it is the half of the format that no JVM test can see.
+ * The notebook, sync log and credential stores over their shared seam (#546). Much of this is a
+ * format pin: an updated phone must find its values under the same key and width, since a 32-bit
+ * and a 64-bit number are different entries. That they reach a real file intact is checked by the
+ * instrumented `SharedPreferenceValuesTest`.
  */
 class NamedValueStoresTest {
     @Test

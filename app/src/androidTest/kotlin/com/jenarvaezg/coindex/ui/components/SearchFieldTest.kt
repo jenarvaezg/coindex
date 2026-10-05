@@ -19,15 +19,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Android's minimum, the same one the casillas of the #302 map are measured against. */
+/** Android's minimum touch target, as for the casillas (#302). */
 private val MINIMUM_TARGET = 48.dp
 
 /**
- * The aspa that empties the search box (#414).
- *
- * The query does not survive a launch (ADR 0021 §1) but it does survive walking into a collection
- * and back, so a word typed once keeps narrowing the shelf until it is deleted — and deleting it was
- * one backspace per letter.
+ * The aspa that empties the search box (#414). The query survives walking into a collection and
+ * back (though not a relaunch, ADR 0021 §1), and clearing it used to take a backspace per letter.
  */
 @RunWith(AndroidJUnit4::class)
 class SearchFieldTest {
@@ -68,13 +65,7 @@ class SearchFieldTest {
         clearButton().assertDoesNotExist()
     }
 
-    /**
-     * Android's 48 dp, bought without the 40 dp field growing to it (ADR 0026).
-     *
-     * The ink is the field's own height and the drawn cross is 16 dp of that, so what is measured
-     * here is the **touch** box and not the drawing: the same distinction the year tag of the #302
-     * map is measured by, and the reason neither of them pretends its ink is its target.
-     */
+    /** The touch box reaches 48 dp while the field stays 40 dp and the cross 16 dp (ADR 0026). */
     @Test
     fun theAspaIsTappableWellBeyondItsStroke() {
         searchFieldHolding("The")

@@ -11,11 +11,8 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 /**
- * The year axis: three states, Gregorian placement, no Hijri stretch (ADR 0026 §9).
- *
- * The ghosts come from the casillas the assembly resolved (#538): which plate has evidence and what
- * year one of its casillas stands on is asserted in `AlbumSlotsTest`, and what is left here is the
- * arc — what is a coin, what is a ghost and what is bare cardboard between the two ends.
+ * The year axis: three states, Gregorian placement, no Hijri stretch (ADR 0026 §9). Which casillas
+ * exist is asserted in `AlbumSlotsTest` (#538); here, the arc of coins, ghosts and bare cardboard.
  */
 class YearAxisTest {
     @Test
@@ -109,9 +106,7 @@ class YearAxisTest {
 
     @Test
     fun `an undated ancient piece lands on an island instead of opening two millennia`() {
-        // The denarius inherits year 270; the sheet's calendar stays the dated Thaler at 1780 and
-        // the plate at 1876-1878. The Roman coin opens a front island under its country, not 1,700
-        // years of bare cardboard before the first modern cell.
+        // The denarius inherits year 270; the calendar must still start at the Thaler's 1780.
         val model = yearAxis(
             state = state(
                 items = listOf(
@@ -161,8 +156,6 @@ class YearAxisTest {
 
     @Test
     fun `a year the collector owns is never painted empty even when no plate names it`() {
-        // The prototype bug: eleven owned years painted as empty because placement read the
-        // wrong year. Here an owned year with no slot must still be Coin, not Bare.
         val model = yearAxis(
             state = state(
                 items = listOf(item(1, TYPE_A, year = 1790)),
@@ -178,9 +171,8 @@ class YearAxisTest {
 
     @Test
     fun `the century seam never prints two rows with the same label`() {
-        // #407: with strict centuries (1801-1900) the year 1900 closed the «Siglo 19» in a row
-        // labelled «1900» and the «Siglo 20» opened with another «1900» holding 1901-1909. The
-        // row label the sheet paints is the decade's first year, so uniqueness is asserted on it.
+        // #407: strict centuries (1801-1900) gave two rows labelled «1900». The sheet labels a row
+        // by its decade's first year, so that is what must be unique.
         val model = twoSeamsAxis()
 
         val rows = model.centuries.flatMap { century -> century.decades.map { it.decade.toString() } }
@@ -206,7 +198,7 @@ class YearAxisTest {
         assertEquals(2000, model.centuries.single { it.century == 21 }.decades.single().decade)
     }
 
-    /** An axis spanning 1898-2002: both century seams the #407 audit found, in one model. */
+    /** 1898-2002 crosses both century seams of #407. */
     private fun twoSeamsAxis() = yearAxis(
         state = state(
             items = listOf(item(1, TYPE_A, year = 1898), item(2, TYPE_B, year = 2002)),
@@ -219,8 +211,7 @@ class YearAxisTest {
         typeMeta: Map<Int, TypeMeta>,
         slots: List<AlbumSlot> = emptyList(),
     ) = CollectionState(
-        // The casillas the assembly carries (#538): a ghost of this axis is a casilla of the plate
-        // the card opens, and both read the same one.
+        // The casillas the assembly carries (#538), the same ones the plate draws.
         AssembledCollection(items = items, typeMeta = typeMeta, slots = slots),
     )
 

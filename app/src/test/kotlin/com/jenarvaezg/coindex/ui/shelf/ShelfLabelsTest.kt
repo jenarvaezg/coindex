@@ -9,11 +9,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The folded shelf's own line, which is the only thing on screen that says a filter is on.
- *
- * The shelf enters folded (ADR 0021 §1) and the filters survive a launch, so this line carries the
- * whole weight of «why is half my collection missing?» — a summary that said «Filtros y orden» with
- * a country selected would be the failure the persisted search text was rejected for.
+ * The folded shelf's summary line. The shelf enters folded and its filters survive a launch
+ * (ADR 0021 §1), so this line is the only place that says a filter is on.
  */
 class ShelfLabelsTest {
     @Test
@@ -29,10 +26,7 @@ class ShelfLabelsTest {
         assertEquals("Filtros y orden", coinsShelfSummary(CoinsShelf()))
     }
 
-    /**
-     * Counted **and named** (#414): «1 filtro» sent the collector to open the shelf and scan a wall
-     * of chips for the green one, which on the year facet is a calendar of them.
-     */
+    /** Named as well as counted (#414): a bare «1 filtro» meant scanning every chip for it. */
     @Test
     fun `a filter that is on is counted out loud and said out loud`() {
         assertEquals("1 filtro · Venezuela", indexShelfSummary(IndexShelf(issuer = "Venezuela")))
@@ -46,7 +40,6 @@ class ShelfLabelsTest {
         )
     }
 
-    /** In the order the shelf paints the rows, so the line and the open shelf read downwards alike. */
     @Test
     fun `every filter that is on is named, in the order of the chip rows`() {
         assertEquals(
@@ -61,10 +54,7 @@ class ShelfLabelsTest {
         )
     }
 
-    /**
-     * The two chips that cannot be read away from their eyebrow, for opposite reasons: «Cerrada» is
-     * an adjective on its own, and «Monedas» is the name of the screen it would be printed on.
-     */
+    /** Alone, «Cerrada» is just an adjective and «Monedas» is the name of the screen itself. */
     @Test
     fun `a chip that would be read as something else keeps its facet`() {
         assertEquals(
@@ -78,11 +68,8 @@ class ShelfLabelsTest {
     }
 
     /**
-     * Named while open too, which is where the axis stays quiet (atlas-315).
-     *
-     * The axis is one chip in the first row of an opened shelf, so opening it is enough to see it.
-     * A chosen year is eight rows down behind a calendar of chips — the walk #414 is about — so the
-     * line keeps saying which one it is for as long as it is on.
+     * Unlike the axis (atlas-315): a chosen year sits rows down behind a calendar of chips, so the
+     * line names it even while the shelf is open (#414).
      */
     @Test
     fun `the filters are named whether the shelf is open or folded`() {
@@ -93,12 +80,8 @@ class ShelfLabelsTest {
     }
 
     /**
-     * A chip borrows its facet's noun only when it does not name itself (#414).
-     *
-     * Chip labels are written to be read under their facet's eyebrow: «1960» and «10 – 25 g» say
-     * what they are only because «Año» and «Peso» are printed above them, and out on the folded line
-     * there is no eyebrow. «Sin colección» and «Antes de 1950» carry their own noun already, and
-     * «Colección Sin colección» would be the same mistake in the other direction.
+     * Chip labels lean on the facet heading above them: on the line «1960» needs «Año», while
+     * «Sin colección» and «Antes de 1950» already carry their noun (#414).
      */
     @Test
     fun `a chip that names itself is not made to say its facet twice`() {
@@ -151,7 +134,7 @@ class ShelfLabelsTest {
             "1 filtro · Venezuela · orden alfabético",
             indexShelfSummary(IndexShelf(issuer = "Venezuela", sort = IndexSort.Alphabetical)),
         )
-        // ADR 0021 §6's own comparator: choosing it on purpose is not a deviation to announce.
+        // The index's default comparator (ADR 0021 §6), so there is nothing to announce.
         assertEquals("Filtros y orden", indexShelfSummary(IndexShelf(sort = IndexSort.MostComplete)))
     }
 
@@ -181,14 +164,7 @@ class ShelfLabelsTest {
         assertEquals("112 años", yearAxisTally(112, 112))
     }
 
-    /**
-     * The country axis names its unit, like the other two (#416).
-     *
-     * Changing the axis changes the magnitude under the same rótulo — «70 colecciones» becomes a
-     * count of casillas across the sheet — and a bare «170/678» beside «Exportar láminas» left the
-     * collector to guess which two things had been divided. The shape is the year axis's, so the
-     * three axes say the same sentence about three different units.
-     */
+    /** Changing the axis changes the unit under the same label, so the tally names it (#416). */
     @Test
     fun `the country-axis tally says N de M casillas`() {
         assertEquals("170 de 678 casillas", countryAxisTally(170, 678))
@@ -196,12 +172,7 @@ class ShelfLabelsTest {
         assertEquals("1 casilla", countryAxisTally(1, 1))
     }
 
-    /**
-     * No axis prints a cifra pelada: whatever a tally counts, the tally names (#416).
-     *
-     * The guard is the last character rather than the wording: a fraction that stops at a digit is
-     * exactly the failure, and any noun at all answers it.
-     */
+    /** Checks the last character rather than the wording: any noun will do (#416). */
     @Test
     fun `every axis tally ends in what it counted`() {
         val tallies = listOf(
@@ -233,10 +204,7 @@ class ShelfLabelsTest {
         assertEquals("6 de 191 tipos", coinsTally(6, 191))
     }
 
-    /**
-     * Three questions and not one: reading the collection off the database takes a frame or two, and
-     * «todavía no hay colecciones» in that gap is a lie about a collection already on the device.
-     */
+    /** Reading the database takes a frame or two; «todavía no hay» in that gap would be false. */
     @Test
     fun `an empty index says which of the three cases it is`() {
         assertEquals(
@@ -257,7 +225,7 @@ class ShelfLabelsTest {
         )
     }
 
-    /** The other side has nothing to read off the database first, so it has two cases and not three. */
+    /** Coins has no loading case: it has nothing to read off the database first. */
     @Test
     fun `an empty Coins tells a filter from an empty collection`() {
         assertEquals(
@@ -270,7 +238,6 @@ class ShelfLabelsTest {
         )
     }
 
-    /** Loading wins over the filter: a shelf cannot have hidden what has not been read yet. */
     @Test
     fun `the loading gap is never reported as a filter`() {
         assertEquals(
@@ -280,11 +247,8 @@ class ShelfLabelsTest {
     }
 
     /**
-     * What is narrowing is read off the two controls, and they are not one control (#515).
-     *
-     * The chips survive a launch behind a folded shelf; the query is typed in a box in view and is
-     * gone next launch (ADR 0021 §1). Blank is not typed: a box holding a space narrows nothing, so
-     * it cannot be what an empty screen blames.
+     * Chips persist across launches and the query does not (ADR 0021 §1), so they are told apart
+     * (#515). A blank query narrows nothing.
      */
     @Test
     fun `the narrowing is the chips, the word, both or neither`() {
@@ -295,14 +259,7 @@ class ShelfLabelsTest {
         assertEquals(ShelfNarrowing.Both, shelfNarrowing(filters = 1, query = "panda"))
     }
 
-    /**
-     * An empty screen answers what was actually put on it (#515).
-     *
-     * «Lo que has puesto» was said to a collector who had only typed, over a button offering to
-     * remove filters nobody had chosen — and the button did empty the box, under a name that said it
-     * would not. Each narrowing now has its own sentence, and the verb goes with it: a card passes
-     * through a chip and answers to a word.
-     */
+    /** Each narrowing has its own verb (#515): a card «pasa por» a chip, «responde a» a query. */
     @Test
     fun `an empty shelf names the narrowing that emptied it`() {
         assertEquals(
@@ -319,11 +276,7 @@ class ShelfLabelsTest {
         )
     }
 
-    /**
-     * The country and year axes can come out empty with a bare shelf, and that is not a narrowing.
-     *
-     * It used to read «pasa por lo que has puesto» over a button offering to remove nothing at all.
-     */
+    /** The country and year axes can be empty with nothing narrowing them. */
     @Test
     fun `an axis with nothing on it blames no filter and offers no way out`() {
         assertEquals(
@@ -333,7 +286,6 @@ class ShelfLabelsTest {
         assertNull(clearNarrowingAction(ShelfNarrowing.None))
     }
 
-    /** The way out undoes exactly what is narrowing, under the name that act already has. */
     @Test
     fun `the way out is named after what it undoes`() {
         assertEquals("Quitar los filtros", clearNarrowingAction(ShelfNarrowing.Filters))
@@ -341,13 +293,7 @@ class ShelfLabelsTest {
         assertEquals("Quitar los filtros y la búsqueda", clearNarrowingAction(ShelfNarrowing.Both))
     }
 
-    /**
-     * Each of the three boxes says which population it is searching (#515).
-     *
-     * They are one drawing over three populations, and the possessive is the whole of the
-     * distinction: «tus» is what the collector has, and the shelf window of «Explorar» — made of what
-     * they do not — takes no possessive at all.
-     */
+    /** «tus» marks what the collector has; the «Explorar» window holds what they don't (#515). */
     @Test
     fun `every search box says what it searches`() {
         assertEquals("Buscar entre tus colecciones", INDEX_SEARCH_PLACEHOLDER)

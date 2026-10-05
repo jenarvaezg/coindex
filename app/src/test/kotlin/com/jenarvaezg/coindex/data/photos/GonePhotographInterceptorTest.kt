@@ -11,12 +11,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 
-/**
- * Remembers the photographs Numista says are gone, and ignores every other answer (#191, #224).
- *
- * [GonePhotographs] exists because the interceptor writes from OkHttp's thread and the prefetch
- * reads before asking: without a stand-in here that seam would be indirección with no test.
- */
+/** Only a `404` or a `410` marks a photograph as gone (#191, #224). */
 class GonePhotographInterceptorTest {
     @Test
     fun `a 404 is written down so the next launch does not ask again`() {
@@ -64,12 +59,7 @@ private class RecordingGonePhotographs : GonePhotographs {
     }
 }
 
-/**
- * An OkHttp chain that answers with a fixed status and never touches the network.
- *
- * Only [request] and [proceed] are used by [GonePhotographInterceptor]; the rest exist to
- * satisfy the interface and fail loudly if a future change starts calling them.
- */
+/** An OkHttp chain whose [proceed] answers a fixed status without touching the network. */
 private class FixedChain(
     url: String,
     private val code: Int,

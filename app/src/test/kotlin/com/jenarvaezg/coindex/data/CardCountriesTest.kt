@@ -11,20 +11,14 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * La cura de #180 medida sobre lo que de verdad se publica: la caché sembrada y los ficheros curados.
- *
- * La tabla de `CardCountry.kt` es una lista de correcciones sobre prosa de tercero, y una lista así se
- * podre de dos maneras: por arriba, cuando Numista cambia una etiqueta y la corrección apunta a nada;
- * y por abajo, cuando llega una moneda de un emisor nuevo cuya etiqueta tampoco es un país. Las dos
- * se notan aquí y en ningún otro sitio.
- *
- * **Rojo aquí no significa «cambia el test».** Significa que hay un país nuevo que rotular, y se
- * arregla añadiendo una línea a la tabla o borrando la que sobra.
+ * Las correcciones de país de `CardCountry.kt` (#180) contra la caché sembrada y los ficheros
+ * curados: una corrección muere cuando Numista cambia la etiqueta, y un emisor nuevo puede traer
+ * otra que no sea un país. Si falla, se añade o se borra una línea de la tabla, no se toca el test.
  */
 class CardCountriesTest {
     private val json = Json { ignoreUnknownKeys = true }
 
-    /** El emisor por tipo, leído del mismo sitio del que lo lee la app: la ficha entera. */
+    /** El emisor por tipo, leído de la ficha entera como lo lee la app. */
     private val issuers: List<Pair<String?, String?>> =
         json.parseToJsonElement(TypeCacheFile.read()).jsonObject.values.map { ficha ->
             val issuer = ficha.jsonObject["issuer"]?.jsonObject
@@ -33,13 +27,9 @@ class CardCountriesTest {
         }
 
     /**
-     * Ninguna tarjeta rotula una entidad emisora con su vigencia.
-     *
-     * Los tres vicios los dice `readsAsACountry`: el paréntesis de vigencia —«Haití (1804-presente)»—,
-     * el nombre invertido de índice —«China, República Popular»— y el largo, medido contra los 40
-     * caracteres de techo del `short_name` que el eyebrow lleva debajo. Los dos primeros son
-     * exactamente lo que el §4 del ADR 0021 no quiere en una línea de identidad, y la caché tiene hoy
-     * nueve códigos con uno de ellos.
+     * Los vicios de `readsAsACountry`: paréntesis de vigencia («Haití (1804-presente)»), nombre
+     * invertido («China, República Popular») y pasar del techo de 40 caracteres del `short_name`
+     * que va bajo el eyebrow (ADR 0021 §4).
      */
     @Test
     fun `no issuer the seeded cache serves reads as a Numista label`() {
@@ -51,13 +41,7 @@ class CardCountriesTest {
         assertEquals(emptyList(), dirty)
     }
 
-    /**
-     * Ninguna corrección apunta a un código que ya no exista.
-     *
-     * Una entrada podrida es verde para siempre y no la nota nadie: si Numista renombra un código o
-     * el último tipo de un emisor sale de la caché, la línea sobra y su comentario miente sobre lo que
-     * la app pinta.
-     */
+    /** Si Numista renombra un código o su último tipo sale de la caché, la corrección sobra. */
     @Test
     fun `every correction still has a ficha behind it`() {
         val present = issuers.mapNotNull { (code, _) -> code }.toSet()
@@ -66,12 +50,8 @@ class CardCountriesTest {
     }
 
     /**
-     * Todo `issuer_code` que declara un fichero curado rotula un país, y lo rotula limpio.
-     *
-     * Es la otra mitad del §9 del ADR 0021: el fichero habla, así que un código declarado sin nombre
-     * detrás es una tarjeta con el eyebrow desnudo teniendo la curación hecha. Se mide sobre las tres
-     * familias de ficheros porque las tres declaran emisor, y sobre el emisor de cada casilla porque
-     * un catálogo puede abarcar más de uno (Equilibrium, #170).
+     * Un código declarado sin nombre detrás deja el eyebrow desnudo (ADR 0021 §9). Se mide el
+     * emisor de cada casilla porque un catálogo puede abarcar más de uno (Equilibrium, #170).
      */
     @Test
     fun `every issuer a curated file declares is a country`() {

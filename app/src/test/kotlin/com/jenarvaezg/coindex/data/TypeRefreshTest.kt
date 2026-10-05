@@ -69,9 +69,9 @@ class TypeRefreshTest {
         assertTrue(report.changed)
         val row = types.rows.value.single()
         assertEquals("The Perth Mint's Wedge-tailed Eagle", row.family)
-        // The mapper reads `raw`, so the stored body has to be the new one too, not the draft's.
+        // The stored body has to be the new one too: a later reading of the ficha starts from it.
         assertTrue(row.raw.contains("Wedge-tailed"), row.raw)
-        // And when it was brought, so «esta ficha es de hace ocho meses» stops being a guess.
+        // And restamped, so the ficha's age on screen is true.
         assertEquals(1_000L, row.fetchedAt)
     }
 
@@ -82,15 +82,14 @@ class TypeRefreshTest {
         val report = refresh.refresh(client(DRAFT), 596_807)
 
         assertEquals(false, report.changed)
-        // Asked again is still newer than it was: the row is rewritten with today's date.
+        // Unchanged but asked again: the row takes today's date.
         assertEquals(1_000L, types.rows.value.single().fetchedAt)
     }
 
     @Test
     fun `a seeded ficha is not a change just because this app re-encoded the snapshot`() = runTest {
-        // What `TypeCacheSeed` stores: the asset element re-encoded by kotlinx — compact, and in
-        // whatever key order the snapshot file happens to carry. Byte-comparing that against
-        // Numista's own body would have announced a change on every seeded ficha in the cache.
+        // `TypeCacheSeed` stores the asset element re-encoded by kotlinx, compact and in the
+        // snapshot's key order: comparing bytes would report every seeded ficha as changed.
         val reEncoded = json.parseToJsonElement(
             """{"series": "The", "title": "1 Onza", "id": 596807}""",
         ).toString()
@@ -103,8 +102,8 @@ class TypeRefreshTest {
 
     @Test
     fun `a field only the raw body carries still counts as a change`() = runTest {
-        // The metal, the issuer's name, the diameter and the category are read out of `raw` on every
-        // pass (see Mappers.kt), so a corrected composition is a change the collector can see.
+        // The composition column comes from the body and the metal from it, so a corrected
+        // composition is a change the collector can see.
         val withoutMetal = """{"id": 596807, "title": "1 Onza", "series": "The"}"""
         val withMetal =
             """{"id": 596807, "title": "1 Onza", "series": "The",

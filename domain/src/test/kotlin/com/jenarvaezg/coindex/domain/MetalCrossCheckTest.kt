@@ -5,13 +5,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * El cruce vive en el suite y **nunca** en el validador de arranque (#40).
- *
- * Lo que un catálogo declara es la variante de la colección, no una afirmación sobre cada miembro:
- * siete monedas de plata y una de cuproníquel pueden ser curaduría legítima, y una comprobación
- * fatal convertiría el `composition.text` de Numista en un veto sobre el criterio del curador. Lo
- * que sí caza es el intruso accidental — el vigésimo de onza de **oro** que estuvo en el catálogo
- * del Kookaburra haciéndose pasar por la onza de plata de 2009 (#63).
+ * El cruce vive en la suite y nunca en el validador de arranque (#40): el catálogo declara la
+ * variante de la colección, y mezclar metales puede ser curaduría legítima. Caza el intruso
+ * accidental, como el vigésimo de onza de oro que pasaba por la onza de plata de 2009 del
+ * Kookaburra (#63).
  */
 class MetalCrossCheckTest {
     private fun catalog(vararg members: CollectionCatalogMember) = CollectionCatalog(
@@ -51,10 +48,7 @@ class MetalCrossCheckTest {
         assertTrue(deviation.toString().contains("gold"), deviation.toString())
     }
 
-    /**
-     * La salida del curador: una nota en prosa en la casilla, como la `closed_note` al cerrar una
-     * serie. Silencia esa casilla y ninguna otra.
-     */
+    /** Como la `closed_note` al cerrar una serie; silencia esa casilla y ninguna otra. */
     @Test
     fun `a member that declares the deviation in prose is exempt`() {
         val declared = goldTwentieth.copy(
@@ -87,7 +81,7 @@ class MetalCrossCheckTest {
         )
     }
 
-    /** Un conjunto no declara metal, así que no hay nada contra lo que cruzar. */
+    /** Un conjunto no declara metal. */
     @Test
     fun `a set is not cross-checked`() {
         val set = setCatalogStub()

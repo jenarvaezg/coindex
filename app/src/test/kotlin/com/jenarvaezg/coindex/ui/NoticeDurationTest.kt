@@ -7,12 +7,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * A notice with an action still goes away on its own (#435).
- *
- * The download snackbar was measured on the emulator sitting there at fourteen seconds, posted over
- * the bottom bar with no cross and no swipe, because material3 reads `actionLabel` without `duration`
- * as [SnackbarDuration.Indefinite]. Two tests, because there are two ways to bring it back: the
- * decision itself, and dropping the argument that carries it at the one call site that shows notices.
+ * A notice with an action still goes away on its own (#435): material3 reads `actionLabel` without
+ * `duration` as [SnackbarDuration.Indefinite]. Pinned at the decision and at the call sites.
  */
 class NoticeDurationTest {
     @Test
@@ -29,7 +25,7 @@ class NoticeDurationTest {
             .sortedBy { it.path }
             .toList()
 
-        // A scan that reads nothing passes for ever; `ui/` holds some seventy files.
+        // A loose floor that catches the scan reading nothing.
         assertTrue(sources.size > 40, "the scan found no sources to read")
 
         val offenders = sources.flatMap { file ->
@@ -64,11 +60,8 @@ class NoticeDurationTest {
     }
 
     /**
-     * The arguments of every `showSnackbar` that names an action and no duration.
-     *
-     * The argument list is read whole, counting brackets and stepping over string and char literals,
-     * because `actionLabel = openFile?.let { DOWNLOAD_OPEN_ACTION }` puts a call inside the call and
-     * the first `)` after it is not the end of anything.
+     * Arguments of every `showSnackbar` with an action and no duration. Brackets are counted and
+     * literals skipped, since `actionLabel = openFile?.let { … }` nests a call.
      */
     private fun indefiniteCalls(source: String): List<String> {
         val calls = mutableListOf<String>()

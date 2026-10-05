@@ -26,16 +26,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 
 /**
- * What the phone actually shows, assembled from the rows the phone actually has (#217).
- *
- * `observeState()` composes the whole domain — five mappers, the derivation, the boxes, the index
- * comparator, the evidence — and until this file it had no test at all, because the repository took
- * Room's `CoindexDatabase` and there is no standing in for an abstract class with a generated
- * subclass. It takes the three DAOs now, so the seam has two adapters and this is the second one.
- *
- * Deliberately over a catalog written here rather than over `data/`: what is under test is the
- * assembly, and a test that counted the shipped catalogs would go red every time the curator adds
- * a plate.
+ * `observeState()` end to end over fake DAOs (#217): mappers, derivation, boxes, index order and
+ * evidence. The catalog is written here rather than read from `data/` so that curating a new plate
+ * doesn't turn this red.
  */
 class CollectionStateTest {
     @Test
@@ -61,12 +54,8 @@ class CollectionStateTest {
     }
 
     /**
-     * The residue comes out of the same door as the cards. A piece whose ficha has not been
-     * downloaded yet is not a card and not a hole in one: it waits in «Sin clasificar» saying why.
-     *
-     * Its catalog is evidenced all the same — evidence is by type and asks nothing of the ficha —
-     * so what keeps the plate shut here is that there is no collection yet, which is exactly the
-     * `NotACollection` of `resolvePlate` and not a missing-evidence case.
+     * The piece waits in «Sin clasificar». Its catalog is evidenced all the same (evidence is by
+     * type), so the plate stays shut as `NotACollection`, not for missing evidence.
      */
     @Test
     fun `a piece whose ficha never arrived is reported rather than dropped`() = runTest {
@@ -83,10 +72,7 @@ class CollectionStateTest {
         assertNull(state.derivedCollectionFor(SOUTHERN_CROSS.key()))
     }
 
-    /**
-     * A box the collector typed reaches the index through the same assembly as everything else, and
-     * lands in the no-ratio stretch of the one comparator (ADR 0021 §6, §11).
-     */
+    /** It sorts into the no-ratio stretch of the index (ADR 0021 §6, §11). */
     @Test
     fun `a box the collector typed becomes a card of the index, ratioless`() = runTest {
         val repository = repository(
@@ -101,14 +87,11 @@ class CollectionStateTest {
         assertEquals("Las de la caja de puros", box.name)
         assertNull(box.coverage)
         assertEquals(listOf(2L), box.box.items.map { it.id })
-        // La pieza no se mudó: sigue en el residuo, porque una caja es una segunda lectura.
+        // La pieza sigue en el residuo: una caja es una segunda lectura.
         assertEquals(LOOSE_TYPE, state.unclassified.single().item.typeId)
     }
 
-    /**
-     * Dropping the last type of a box takes the box with it — the rule lives in the DAO's own
-     * `@Transaction` body, so the fake reimplements its two queries and never the rule.
-     */
+    /** The rule lives in the DAO's `@Transaction` body: the fake only reimplements its queries. */
     @Test
     fun `dropping the last type of a box leaves no heading over nothing`() = runTest {
         val repository = repository(
@@ -123,11 +106,8 @@ class CollectionStateTest {
     }
 
     /**
-     * The stand-in has to answer what Room answers, or every test above it measures a fiction.
-     *
-     * `INSERT OR IGNORE` collapses a repeated `(groupingId, typeId)` inside a single batch too, and
-     * `create` — the `@Transaction` body this fake inherits rather than reimplements — hands it the
-     * list unfiltered. A fake that kept both rows would have the box counting one coin twice.
+     * Room's `INSERT OR IGNORE` collapses a repeated `(groupingId, typeId)` within one batch too,
+     * and the inherited `create` passes the list unfiltered, so the fake must collapse it as well.
      */
     @Test
     fun `the same type twice in one box is one member, as the database has it`() = runTest {
@@ -139,13 +119,8 @@ class CollectionStateTest {
     }
 
     /**
-     * The price book arrives with the listings that address its prices (#493).
-     *
-     * This is the one piece of plumbing the plate's cost of closing needed: `type_issues` was read
-     * only inside the pass, so 111 of the father's 121 holes could not tell which issue they are and
-     * therefore could not find the price already on the phone. Read together with the prices and the
-     * spot, and not a moment apart, or a plate could total a price under one issue and stamp it into a
-     * casilla the newer listing addresses to another.
+     * Read together with prices and spot (#493), so a plate never totals a hole's price under one
+     * listing and stamps it under a newer one.
      */
     @Test
     fun `the price book carries the listings that say which issue a hole is`() = runTest {
@@ -229,15 +204,7 @@ class CollectionStateTest {
     )
 
     private companion object {
-        /**
-         * Identificadores que **no existen** en `data/numista-type-cache.json`, y `fetchedAt`
-         * siempre distinto de cero.
-         *
-         * Los memos de `Mappers.kt` viven en el proceso y se clavan por `(typeId, fetchedAt)`, así
-         * que una ficha inventada aquí con el número de una real y `fetchedAt = 0` le contesta a
-         * cualquier otra prueba de la misma JVM que lea la caché sembrada — `NotebookPagesTest`
-         * midió el diámetro de esta y encontró el «{}» de aquí.
-         */
+        /** Un identificador que no existe en `data/numista-type-cache.json`. */
         const val TYPE_2025 = 990_025
 
         /** Un tipo que ningún fichero curado nombra: sirve de contenido para una caja propia. */
@@ -245,7 +212,7 @@ class CollectionStateTest {
 
         const val THUMBNAIL = "https://en.numista.com/catalogue/photos/anverso-180.jpg"
 
-        /** El mismo catálogo abierto de dos casillas emitidas y una anunciada de #21. */
+        /** Catálogo abierto: dos casillas emitidas y una anunciada. */
         val SOUTHERN_CROSS = CollectionCatalog(
             schemaVersion = 2,
             id = "niue-southern-cross-1oz-bullion",

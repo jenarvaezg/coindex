@@ -110,8 +110,7 @@ class SyncErrorLabelTest {
     @Test
     fun `a rejected key points at the credentials instead of at the endpoint`() {
         val label = syncErrorLabel(NumistaException.Api("/oauth_token", 401, ""))
-        // The screen's own name, interpolated rather than spelled again (#521): these three refusals
-        // are the only place in the app that sends the collector somewhere by name.
+        // The screen's name is interpolated, not spelled again (#521).
         assertEquals("Numista rechazó tu API key. Revísala en Credenciales.", label)
         assertTrue(!label.contains("401") && !label.contains("oauth"), label)
     }
@@ -124,13 +123,7 @@ class SyncErrorLabelTest {
         )
     }
 
-    /**
-     * The two readings of the `429` are two sentences, because they are two waits (#600).
-     *
-     * The collector read «vuelve a intentarlo dentro de un rato» for three weeks of an exhausted
-     * month, which is not a hedge but a falsehood: it does not come back in a while, it comes back on
-     * the 1st. And the other way costs as much — a throttle told to wait until the 1st.
-     */
+    /** An exhausted month comes back on the 1st, a throttle in a while (#600). */
     @Test
     fun `the exhausted month and the throttle are not told to wait the same`() {
         val exhausted = syncErrorLabel(NumistaException.Api("/types/1", 429, "Quota exceeded"))
@@ -146,12 +139,8 @@ class SyncErrorLabelTest {
     }
 
     /**
-     * And the exhausted month of the **key** is not the exhausted month of the **phone**.
-     *
-     * `BudgetExhausted` is the local gate of ADR 0003 refusing before sending; this one is Numista
-     * refusing a key a second phone spends too (#562). Both wait for the 1st and both are said in
-     * consultas, but a collector told the app ran out when the app has 900 left would go looking in
-     * the wrong place.
+     * `BudgetExhausted` is ADR 0003's local gate; the 429 is Numista refusing a key another phone
+     * also spends (#562). Mixing them up would send the collector looking in the wrong place.
      */
     @Test
     fun `the month of the key and the month of the phone are different sentences`() {
@@ -177,9 +166,7 @@ class SyncErrorLabelTest {
         assertFalse(label.contains("Credenciales"), label)
         assertFalse(label.contains("Presupuesto"), label)
         assertFalse(label.contains("1500"), label)
-        // What ran out is said in the app's one unit (#516). Asserted here as well as in
-        // `PrunedVocabularyTest` because this file owns the string, and while it only checked the
-        // three absences above, «Llamadas a la API agotadas» was green for a whole issue.
+        // The app's one unit (#516), asserted here too because this file owns the string.
         assertTrue(label.contains("Consultas"), label)
         assertFalse(label.contains("llamada", ignoreCase = true), label)
     }

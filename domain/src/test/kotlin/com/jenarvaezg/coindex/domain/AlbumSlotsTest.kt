@@ -6,11 +6,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The casilla the axes of the shelf are handed (#538): measurable, placed, and counted once.
- *
- * What used to be three rules in two files of `ui/shelf` — the evidence filter, the Owned/Missing
- * fork and the second readings of the country and the year — is asserted here, on the assembly the
- * app actually runs. The axes' own tests are now about grouping and order, which is all they decide.
+ * The casillas the shelf's axes receive (#538): measurable, placed and counted once, asserted on
+ * the assembly the app runs. The axes' own tests only cover grouping and order.
  */
 class AlbumSlotsTest {
     @Test
@@ -25,11 +22,8 @@ class AlbumSlotsTest {
     }
 
     /**
-     * The fork the two axes each carried a copy of, in one place.
-     *
-     * `Unlisted` and `NotYetIssued` are outside it for the reason they are outside the denominator of
-     * the plate (#48, #31): one has no Numista type to answer with and the other is a coin no money
-     * can buy, so neither is a seat the collector could act on.
+     * `Unlisted` and `NotYetIssued` stay out, as they do from the plate's denominator (#48, #31):
+     * the collector can't act on either.
      */
     @Test
     fun `only what can be owned or missed becomes a casilla`() {
@@ -55,12 +49,7 @@ class AlbumSlotsTest {
         assertEquals(listOf(1, 0), slots.map { it.quantity })
     }
 
-    /**
-     * The album's counter and not a second sum of the rows behind it (#218).
-     *
-     * Two rows of one year is the ordinary shape of a duplicate — the father holds the 1929 twice —
-     * and the casilla is one casilla holding three pieces, not two casillas.
-     */
+    /** The album's counter, not a second sum (#218): two rows of one year are one casilla. */
     @Test
     fun `an owned casilla counts every piece behind it, and a hole counts none`() {
         val slots = assemble(
@@ -77,10 +66,8 @@ class AlbumSlotsTest {
     }
 
     /**
-     * The country of the **member** and not of the catalog header (#170).
-     *
-     * Historia del real is issued by `mexique` and holds two New South Wales members; the axis that
-     * printed the header's country is what made Nueva Gales del Sur disappear from the atlas.
+     * Not the header's country (#170): Historia del real is issued by `mexique` and holds two New
+     * South Wales members.
      */
     @Test
     fun `a casilla falls in the member's country, cured`() {
@@ -104,12 +91,7 @@ class AlbumSlotsTest {
         assertEquals(listOf("Nueva Gales del Sur", "México"), slots.map { it.country })
     }
 
-    /**
-     * A hole whose ficha has not landed still paints under its country.
-     *
-     * The state a phone is in between a sync arriving and the type cache filling: the member's own
-     * ficha is missing, and a sibling of the same issuer answers for the name.
-     */
+    /** Before the type cache fills, a sibling of the same issuer names the country. */
     @Test
     fun `a casilla whose ficha is missing borrows the name of its issuer`() {
         val catalog = catalog(
@@ -126,7 +108,6 @@ class AlbumSlotsTest {
         assertEquals(listOf("Venezuela", "Venezuela"), slots.map { it.country })
     }
 
-    /** No code the table corrects and no ficha at all: the casilla has no country to be grouped by. */
     @Test
     fun `a casilla with neither a cured code nor a ficha has no country`() {
         val catalog = catalog(
@@ -143,7 +124,6 @@ class AlbumSlotsTest {
         assertTrue(slots.all { it.country == null })
     }
 
-    /** The year written on the casilla, which is the whole answer for every catalog that ships. */
     @Test
     fun `a date run puts each casilla on its own year`() {
         val slots = assemble(
@@ -156,10 +136,8 @@ class AlbumSlotsTest {
     }
 
     /**
-     * A plate naming one type and no year stands on the type's floor, so its hole leaves a ghost.
-     *
-     * The fallback is deliberately narrow — one *typed member*, not one distinct type — because a
-     * date run repeats its type across twenty years and each of its casillas has a year of its own.
+     * Its hole leaves a ghost. Narrow on purpose: one typed member, not one distinct type, since a
+     * date run repeats its type and each of its casillas has its own year.
      */
     @Test
     fun `a single-type plate with no year on the member stands on the type's floor`() {
@@ -178,7 +156,6 @@ class AlbumSlotsTest {
         assertEquals(listOf(ONZA), slots.map { it.typeId })
     }
 
-    /** Nothing names a year and no ficha floors it: the casilla stands nowhere, and says so. */
     @Test
     fun `a casilla nobody dates has no year rather than a seat before the era`() {
         val catalog = catalog(
@@ -200,11 +177,8 @@ class AlbumSlotsTest {
     }
 
     /**
-     * The status of a casilla is the plate's own, not a second reading of the inventory (#537).
-     *
-     * The demonstration is a piece an issue-qualified member does not claim (ADR 0019): the row is in
-     * the inventory and of the right type, and the casilla is still a hole — which is exactly what a
-     * fork of its own in the UI got wrong before there was one album per assembly.
+     * Not a second reading of the inventory (#537): a piece of the right type that an
+     * issue-qualified member does not claim (ADR 0019) leaves the casilla a hole.
      */
     @Test
     fun `a casilla says what its plate says about the same coin`() {

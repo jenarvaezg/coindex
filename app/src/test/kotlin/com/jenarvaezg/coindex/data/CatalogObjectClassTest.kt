@@ -14,23 +14,16 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * La red de #89 sobre lo que de verdad se publica: los catálogos contra la caché sembrada.
- *
- * #89 decidió que **no hay estado de miembro** para lo que se muestra y no cuenta por no ser
- * moneda. Ninguna de las catorce piezas de clase «no moneda» de las dos colecciones está dentro de
- * un catálogo, la Semeuse de ensayo del padre es huérfana estable —no tiene detrás ni un solo
- * 5 francs normal— y los dos ensayos venezolanos ya viven en la `closed_note` de los fuertes. El
- * residuo útil de aquella discusión es esto: no un mecanismo que decida, sino un aviso.
- *
- * Rojo aquí no significa «saca la casilla». Significa «míralo»: si el ensayo entra a propósito, se
- * declara en prosa en su `variant_note` y el cruce la respeta.
+ * La red de #89, los catálogos publicados contra la caché sembrada: no hay estado de miembro para
+ * lo que no es moneda, sólo este aviso. Si falla, no se saca la casilla: se mira, y un ensayo que
+ * entra a propósito se declara en su `variant_note`, que el cruce respeta.
  */
 class CatalogObjectClassTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     private val catalogs: List<CollectionCatalog> = SHIPPED_CURATION.catalogs
 
-    /** La clase de objeto por tipo, leída del mismo sitio del que la lee la app: la ficha entera. */
+    /** La clase de objeto por tipo, leída de la ficha entera como la lee la app. */
     private val objectClasses: Map<Int, String?> =
         json.parseToJsonElement(TypeCacheFile.read()).jsonObject.entries.associate { (id, ficha) ->
             id.toInt() to ficha.jsonObject["type"]?.jsonPrimitive?.contentOrNull
@@ -48,20 +41,9 @@ class CatalogObjectClassTest {
     }
 
     /**
-     * Por qué las medallas son **filtro y no sección** (ADR 0021 §1).
-     *
-     * La mayoría de la exonumia de la caché sembrada son miembros de catálogos curados. Una sección
-     * «Medallas» tendría que arrancarlas de su lámina, y este test es la razón medida de que no
-     * exista: siguen siendo miembros de pleno derecho, y lo único que la clase hace con ellas es
-     * dejar que el coleccionista las encuentre.
-     *
-     * El reparto se movió del 4 sobre 13 con que el ADR se escribió, y se movió a favor de §1: los
-     * ECU y euros de la FNMT del #258 son «Monedas de fantasía» para Numista —el ECU fue una divisa
-     * de cuenta y España nunca dio curso legal a estas piezas— y son dos láminas que el padre
-     * persigue.
-     *
-     * Rojo aquí no significa «saca la casilla». Significa que el reparto se dio la vuelta y hay que
-     * releer §1.
+     * Las medallas son filtro y no sección (ADR 0021 §1) porque la mayor parte de la exonumia
+     * sembrada son miembros de láminas, como los ECU y euros de la FNMT (#258), y una sección las
+     * arrancaría de ellas. Si falla, el reparto se dio la vuelta y hay que releer §1.
      */
     @Test
     fun `most curated exonumia is why the class is a chip and not a section`() {
@@ -80,14 +62,10 @@ class CatalogObjectClassTest {
     }
 
     /**
-     * La red compara cadenas literales en español, porque en español está la caché: la app y
-     * `scripts/seed-type-cache.py` piden las dos `lang=es`. Una red así puede pudrirse hasta ser un
-     * test que nunca falla si Numista cambia el idioma o la redacción, y eso no se notaría — sería
-     * verde igual. Así que se fija el vocabulario contra los datos: las cinco clases están hoy en
-     * la caché —el ensayo es la Semeuse del padre, las fantasías son sobre todo los ECU y euros de
-     * la FNMT, y las dos de medallas y el medallón una ficha cada uno—, así que si alguna dejara de
-     * aparecer hay que
-     * mirar por qué antes de fiarse del cruce de arriba.
+     * La red compara cadenas literales en español, porque la app y `scripts/seed-type-cache.py`
+     * piden `lang=es`; si Numista cambiara el idioma o la redacción, el cruce seguiría en verde sin
+     * comprobar nada. Las cinco clases están hoy en la caché: si una deja de aparecer, hay que
+     * mirar por qué antes de fiarse del cruce.
      */
     @Test
     fun `the seeded cache still speaks the vocabulary this net reads`() {

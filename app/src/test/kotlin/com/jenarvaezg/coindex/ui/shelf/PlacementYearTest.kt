@@ -8,10 +8,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * Which year a piece is placed by on an axis (ADR 0026 §9).
- *
- * Matching a casilla still reads the engraved year; the axis reads the Gregorian one, and the
- * undated inherit their type's minimum (#326).
+ * Which year places a piece on an axis (ADR 0026 §9): the Gregorian one, while matching a casilla
+ * still reads the engraved one. Undated pieces inherit their type's minimum (#326).
  */
 class PlacementYearTest {
     @Test

@@ -34,35 +34,23 @@ import kotlinx.serialization.json.jsonObject
 import org.junit.Assume.assumeTrue
 
 /**
- * Prints what the app would show for a real collection snapshot, run through the shipped domain.
+ * Prints what the app would show for a real collection snapshot, through the shipped
+ * [Curation.assemble] rather than a reimplementation of it (#217): a listing rebuilt elsewhere
+ * reports orphans the app does not have.
  *
- * A field session used to mean transcribing «Sin clasificar» card by card off a phone screen.
- * That answers slowly and, worse, approximately: only [Curation.assemble] knows the family
- * precedence of ADR 0012 and ADR 0013, which types a catalog claims and therefore keys itself
- * (ADR 0016, #288), the weight normalization of the rest, and the inferred finish. A listing rebuilt by hand — or reimplemented in a script — reports
- * orphans the app does not have, which is the one error this project cannot afford.
- *
- * It calls that assembly rather than reproducing it (#217). This file used to rebuild the body of
- * `observeState()` line by line, so the report ordered its index with a second implementation of
- * the app's and nothing guaranteed the two stayed in step.
- *
- * Inert without `COINDEX_FIELD_SNAPSHOT`, so the suite stays green and offline for everyone
- * else. Point it at a directory holding a `collected_items.json` captured by
- * `scripts/record-fixture.py --user-id`, which refuses to write one inside the repository: a
- * private collection never becomes a committed fixture.
+ * Inert without `COINDEX_FIELD_SNAPSHOT`, so the suite stays green and offline. Point it at a
+ * directory holding a `collected_items.json` captured by `scripts/record-fixture.py --user-id`,
+ * which refuses to write inside the repository.
  *
  *     COINDEX_FIELD_SNAPSHOT=/private/tmp/coindex-privado/padre \
  *     COINDEX_FIELD_TYPES=/private/tmp/coindex-privado/types \
  *       ./gradlew :app:testDebugUnitTest --tests '*FieldReportTest*' --rerun
  *
- * **`--rerun` no es opcional al cambiar de colección**: la variable de entorno no es una entrada
- * declarada de la tarea, así que cambiarla sola deja la tarea `UP-TO-DATE` y el XML anterior en
- * su sitio. Sin ella se lee el informe de una captura creyendo que es el de la otra — el mismo
- * falso verde de #66, con otra cara.
+ * `--rerun` is required when switching collections: the environment variable is not a declared
+ * task input, so Gradle would report `UP-TO-DATE` and leave the previous report in place (#66).
  *
  * `COINDEX_FIELD_TYPES` is optional and holds `type_<id>_es.json` captures for types the seeded
- * cache lacks. Leaving them out reports those pieces as missing metadata, which is a state a
- * phone only shows until it syncs — so it would invent orphans nobody has.
+ * cache lacks; without them those pieces show as missing metadata, which a synced phone never does.
  *
  * Gradle swallows stdout, so read the report from the test result:
  *
@@ -82,9 +70,7 @@ class FieldReportTest {
         val typeMeta = types.associate { it.typeId to it.toDomain() }
         val curation = SHIPPED_CURATION
 
-        // Sin base de datos no hay cajas propias: lo que el informe ordena es lo que sale de los
-        // ficheros y del inventario, que es la mitad medible desde una captura. Lo demás es el
-        // mismo ensamblaje que corre en el móvil, sin una segunda versión aquí.
+        // Sin base de datos no hay cajas propias: sólo ficheros curados e inventario.
         val collection = curation.assemble(CollectionSnapshot(items = items, typeMeta = typeMeta))
         val state = CollectionState(
             collection = collection,
@@ -101,23 +87,18 @@ class FieldReportTest {
     }
 
     /**
-     * How long the printed notebook of #169 comes out for this collection, card by card.
-     *
-     * The only place the answer exists: the length of the notebook is not a property of `data/` —
-     * it depends on which variants the collector owns, because a card with no catalog prints its
-     * pieces instead of a hundred and twenty-one empty slots. Fifty-six catalogs would be a
-     * hundred and one pages (`NotebookPagesTest`); a real collection is not the shelf.
+     * Length of the printed notebook (#169) for this collection, card by card. It depends on what
+     * the collector owns, since a card with no catalog prints its pieces rather than slots.
      */
     private fun notebookReport(state: CollectionState, curation: Curation): String = buildString {
-        // El cuaderno de hoy, que es el que la configuración por omisión produce (#228).
+        // La configuración por omisión (#228).
         val paper = printGeometry(NotebookOptions())
         val sections = notebookSections(state, state.index, emptyList(), curation, NotebookOptions())
         val pages = printPages(sections, paper)
         appendLine()
         appendLine("== CUADERNO IMPRESO: ${pages.size} PÁGINAS A4 (${sections.size} láminas) ==")
         appendLine("fotos que pediría: ${pages.sumOf { it.photographs }}")
-        // Y lo que cuesta encender «Sin colección» (#275), que es la única forma de saberlo: cuántas
-        // monedas de esta colección no salen en ninguna lámina, y cuánto papel más son.
+        // Lo que añade encender «Sin colección» (#275): monedas fuera de toda lámina y sus páginas.
         val loose = unclaimedFacts(state).map { it.piece }
         val whole = printPages(
             notebookSections(state, state.index, loose, curation, NotebookOptions(unclaimed = true)),
@@ -150,11 +131,8 @@ class FieldReportTest {
     }
 
     /**
-     * The shipped type cache, plus any deliberate captures for what it misses.
-     *
-     * Kept as rows rather than as domain fichas because a row is what the phone has: it carries the
-     * picture URLs the printed notebook counts, and it is the same `toDomain()` the app calls that
-     * turns it into what the derivation reasons about.
+     * The shipped type cache plus any captures for what it misses, kept as rows because rows carry
+     * the picture URLs the printed notebook counts.
      */
     private fun readTypeEntities(extraDirectory: String?): List<TypeMetaEntity> {
         val cache = json.parseToJsonElement(File(TYPE_CACHE).readText()).jsonObject
@@ -198,13 +176,8 @@ class FieldReportTest {
     }
 
     /**
-     * The second reading of ADR 0022, collection by collection: a commemorative programme produces
-     * no card, so its `owned / total` appears nowhere in the index above and nowhere in the printed
-     * notebook — only inside the specification block of whichever plate happens to touch it.
-     *
-     * Without this section a curator cannot **measure** what a programme file did for the two
-     * collections; the Ibero-American programme of #387 is the case that showed it, since one of
-     * its two owned coins hangs off a derived card that prints no specification block at all.
+     * Commemorative programmes (ADR 0022) produce no card, so their `owned / total` only shows in
+     * the specification block of a plate that touches them, if any (#387).
      */
     private fun programmesReport(
         curation: Curation,
@@ -219,14 +192,8 @@ class FieldReportTest {
     }
 
     /**
-     * The index **in the order the phone shows it** (ADR 0021 §6), each card saying its ratio — and
-     * where no curated file claims it, the types it is made of, which is what a curation ticket
-     * needs to start from.
-     *
-     * Printed through [CollectionIndex] rather than in derivation order on purpose: the comparator
-     * is the thing under test here, and reimplementing the sort in the report would report an order
-     * nobody's phone has. It is also the only place the whole order is measurable at once — 58 cards
-     * against a real inventory, where the emulator shows the first two.
+     * The index in the phone's order (ADR 0021 §6), taken from [CollectionIndex] rather than
+     * re-sorted here. Cards no curated file claims list their types, to start a curation from.
      */
     private fun indexReport(collection: AssembledCollection): String = buildString {
         val index = collection.index
@@ -277,14 +244,7 @@ class FieldReportTest {
         }
     }
 
-    /**
-     * Why a piece produced no collection — and this is now the **only** place it is said.
-     *
-     * ADR 0021 §12 took the four reasons out of the app: «nothing is discarded silently» became
-     * «nothing is discarded» once a coin had a hierarchy of its own, so the «Sin colección» chip of
-     * Coins answers *which* and the *why* migrated here, which is where the curator already looks.
-     * The wording came from `unclassifiedReasonLabel`, which had no reader left on screen.
-     */
+    /** Why a piece produced no collection; the app no longer says it anywhere (ADR 0021 §12). */
     private fun reasonLine(reason: UnclassifiedReason): String = when (reason) {
         UnclassifiedReason.MissingTypeMetadata ->
             "Ficha del tipo sin descargar: se completará en el próximo sincronizado."
@@ -300,19 +260,9 @@ class FieldReportTest {
     }
 
     /**
-     * The types with no year at all, which is the offline trace of an unpublished Numista page.
-     *
-     * A referee has to publish a submission before it becomes publicly visible, and can also ask
-     * for editing or delete it outright — but the API serves the draft meanwhile, with every field
-     * exactly as the contributor left it. Measured over the two collections and the seeded cache,
-     * a missing `min_year` picked out the three unpublished pages and nothing else. It is a trace,
-     * not the state itself: an undated medal that Numista did publish lands here too, and the
-     * answer for it is simply «published, dated nowhere».
-     *
-     * Worth its own section because the damage is invisible from the outside. A draft with no
-     * family piles up in «Sin clasificar» like any orphan, but one with a half-typed family — the
-     * `series: "The"` of N#596807 — becomes a card named after the typo, and only the collector
-     * who owns that piece ever sees it.
+     * Types with no year at all: the offline trace of an unpublished Numista page, whose draft the
+     * API serves as the contributor left it. Only a trace, since a published undated medal lands
+     * here too.
      */
     private fun unpublishedReport(items: List<CollectedItem>, typeMeta: TypeMetaIndex): String =
         buildString {
@@ -337,8 +287,7 @@ class FieldReportTest {
                 val family = meta.family
                 val symptom = when {
                     family == null -> "sin familia: cae en «Sin clasificar» como cualquier huérfana"
-                    // Desde #186 una ficha a medias ya no inventa tarjeta: la pieza espera en el
-                    // residuo hasta que se publique y su ficha se refresque.
+                    // Una ficha a medias no forma tarjeta hasta publicarse y refrescarse (#186).
                     else -> "familia «$family» a medias: cae en «Sin clasificar» y no forma tarjeta"
                 }
                 appendLine("· N#${meta.id} ${meta.title ?: "?"}")

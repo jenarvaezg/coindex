@@ -14,10 +14,8 @@ import kotlin.test.assertNull
 private const val NOW = 1_786_400_000_000L
 
 /**
- * What the annex draws, worded once for the screen and the exported list (ADR 0029 §6).
- *
- * The row is the plate's casilla plus **which plate it came from**, which is the one thing a list that
- * crosses plates needs and a casilla on its own plate never does.
+ * What the annex draws, worded once for the screen and the exported list (ADR 0029 §6). A row is a
+ * casilla plus the plate it came from.
  */
 class WishSubjectTest {
     @Test
@@ -30,17 +28,12 @@ class WishSubjectTest {
         assertEquals(listOf("2010", "2011"), subject.rows.map { it.label })
         assertEquals(listOf("kooka", "kooka"), subject.rows.map { it.plate })
         assertEquals(listOf(PrintedSide.Reverse, PrintedSide.Reverse), subject.rows.map { it.printedSide })
-        // The amount alone inside the hole, as on a plate: the criterion was said in the header.
+        // The amount alone, as in a plate's hole: the header says the criterion.
         assertEquals(listOf("42 €", null), subject.rows.map { it.cost })
         assertEquals("2 casillas en 1 lámina", subject.census)
     }
 
-    /**
-     * A casilla labelled with its own year prints it once, which is the plate's rule (#473).
-     *
-     * Measured on the emulator the first time this screen was drawn: a date run labels every casilla
-     * with its year, so «1886» came out on the tag sunk into the cardboard and «1886» again underneath.
-     */
+    /** The plate's rule (#473). */
     @Test
     fun `a row labelled with its year does not print it twice`() {
         val run = dateRun("kooka", 2_010..2_010, typeId = 30)
@@ -54,12 +47,8 @@ class WishSubjectTest {
     }
 
     /**
-     * A row is keyed by the plate it is drawn under, because a lazy grid needs a stable key and two
-     * catalogs can name the same coin (ADR 0021 §10).
-     *
-     * The two slots are assembled by hand here on purpose: `wishedSlots` hands the coin to the first
-     * catalog that claims it, so this is the shape a **later** delivery would produce — and the key
-     * has to survive it rather than collapse two rows into one.
+     * Two catalogs can name the same coin (ADR 0021 §10), so the grid keys rows by plate too. Built
+     * by hand: `wishedSlots` gives the coin only to the first catalog that claims it.
      */
     @Test
     fun `rows of two plates keep separate keys in the grid`() {
@@ -73,12 +62,8 @@ class WishSubjectTest {
     }
 
     /**
-     * With no price on the phone no row invents one, and an empty list says no census.
-     *
-     * Absence and not zero, which is the rule every amount in the app follows (ADR 0028 §7): a phone
-     * whose pass has not landed shows the same silence a plate over the threshold does. And what the
-     * marks cost a month is **not here at all** — ADR 0029 §5 names the gesture and Ajustes, and a
-     * third printing over a list that is being used rather than budgeted is what ADR 0026 §5 prices.
+     * Absence, not zero (ADR 0028 §7). The marks' monthly cost is said by the gesture and Ajustes
+     * (ADR 0029 §5), not here.
      */
     @Test
     fun `an unpriced list says no amount and an empty one says no census`() {

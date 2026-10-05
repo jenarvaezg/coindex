@@ -9,18 +9,12 @@ import kotlin.test.assertTrue
 
 /** What the notebook says about itself before, during and after an export that takes minutes. */
 class NotebookLabelsTest {
-    /**
-     * The line under the five switches, which is what the export sheet exists for (#228).
-     *
-     * Pages first, because they are what the configuration moves and what the collector is deciding
-     * about; láminas after, because the filter already chose those and no switch changes them.
-     */
+    /** Pages first: the switches move them, while the filter already chose the láminas (#228). */
     @Test
     fun `the sheet says what the export is about to cost, in pages and in plates`() {
         assertEquals("104 páginas · 60 láminas", notebookCostLabel(104, 60))
         assertEquals("1 página · 1 lámina", notebookCostLabel(1, 1))
-        // A checklist of nineteen pages over the same sixty collections is the whole point of
-        // recounting: the láminas do not move and the paper does.
+        // A checklist: fewer pages, the same láminas.
         assertEquals("19 páginas · 60 láminas", notebookCostLabel(19, 60))
     }
 
@@ -31,8 +25,7 @@ class NotebookLabelsTest {
                 "Fotos",
                 "Ambas caras",
                 "Tamaño real",
-                // Not «Compartir página»: the panel ends in a Compartir button and the two meant
-                // different things three centimetres apart (#420).
+                // Not «Compartir página», which clashed with the panel's Compartir button (#420).
                 "Dos por página",
                 "QR de Numista",
                 "Sin colección",
@@ -42,14 +35,7 @@ class NotebookLabelsTest {
         )
     }
 
-    /**
-     * Why a switch is grey, said on the spot rather than in a help screen.
-     *
-     * **Two reasons** (#233, #275), and each is about something the collector can undo: the
-     * configuration they built made the question moot, or the narrowing they put on leaves no loose
-     * coin for «Sin colección» to print. «Pendiente · #233» was the third — a switch drawn and
-     * remembered before its ticket landed — and it went for good with the last of the five.
-     */
+    /** Said on the spot; both reasons are something the collector can undo (#233, #275). */
     @Test
     fun `a greyed switch says which reason it is, and a live one says nothing`() {
         assertEquals(
@@ -77,11 +63,7 @@ class NotebookLabelsTest {
         assertEquals("Página 84 de 84 · x", notebookProgressLabel(84, 84, "x"))
     }
 
-    /**
-     * The two steps say different things, because they offer different things: while pages are
-     * being drawn there is a «Cancelar» beside the line, and once the file is being written there
-     * is not.
-     */
+    /** The steps differ because only drawing offers «Cancelar»; writing the file does not. */
     @Test
     fun `the writing step says so instead of freezing on the last page`() {
         // The long step, and it counts photographs because no page exists yet.
@@ -103,11 +85,7 @@ class NotebookLabelsTest {
         )
     }
 
-    /**
-     * The same criterion the single plate settled on in #67: a photograph that never arrived is a
-     * hole in a page somebody is about to be shown, so it is said out loud and it never fails the
-     * export.
-     */
+    /** As for a single plate (#67): a missing photo is said aloud and never fails the export. */
     @Test
     fun `the closing message counts the photographs that never arrived`() {
         assertEquals(
@@ -124,8 +102,7 @@ class NotebookLabelsTest {
         )
         // Never a negative shortfall, whatever order the callbacks landed in.
         assertEquals("Cuaderno completo exportado · 1 página", notebookExportMessage(1, 12, 13))
-        // Y con «fotos» apagada (#231) no queda nada de lo que hablar: cero pedidas, cero llegadas,
-        // y ninguna forma de decir «pero 3 fotos no llegaron» sobre un cuaderno que no pidió una.
+        // With «Fotos» off (#231) nothing was asked for, so nothing can be missing.
         assertEquals("Cuaderno completo exportado · 74 páginas", notebookExportMessage(74, 0, 0))
     }
 
@@ -140,10 +117,6 @@ class NotebookLabelsTest {
         assertTrue("No se ha compartido nada" in message)
     }
 
-    /**
-     * Cancelling the download is «not now» and not «start over»: what arrived stays in the cache, so
-     * the next export does not ask Numista for it again.
-     */
     @Test
     fun `cancelling the download says that what arrived is kept`() {
         assertEquals(
@@ -154,9 +127,8 @@ class NotebookLabelsTest {
     }
 
     /**
-     * The cost under a single lámina is not the index: there is no filter above it, and the
-     * notebook's scope sentence would lie about where the pages come from (#401). The format is
-     * measured by pages — one is a PNG, more is a PDF — and the line announces it.
+     * No filter sits above a single lámina, so the notebook's scope sentence would lie (#401). One
+     * page exports as a PNG, more as a PDF, and the line says which.
      */
     @Test
     fun `a single sheet says the cost is about this plate or this leaf`() {
@@ -175,9 +147,7 @@ class NotebookLabelsTest {
         assertTrue(!sheetExportAsBitmap(2))
     }
 
-    /**
-     * Sharing one PDF page of a lámina still names the lámina, not the whole notebook (#401).
-     */
+    /** Names the lámina, not the notebook (#401). */
     @Test
     fun `sharing a single sheet names the sheet and counts its pages`() {
         assertEquals(
@@ -194,14 +164,7 @@ class NotebookLabelsTest {
         )
     }
 
-    /**
-     * The PNG honours the switches now, so nothing here is annotated for being one (#431).
-     *
-     * The note used to be true: the bitmap was a drawing of its own that received no options, so all
-     * five said «Sólo en el cuaderno» whenever the measure came out a photo. Since the PNG became the
-     * printed page trimmed to its folio, every one of them reaches the file — «tamaño real» included,
-     * with the ruler at the foot — and a note that distinguishes nothing is a word for nothing.
-     */
+    /** Since #431 the PNG is the printed page trimmed to its folio, so every switch reaches it. */
     @Test
     fun `no switch is greyed for landing in a PNG, because they all land in it`() {
         for (switch in listOf(
@@ -213,7 +176,7 @@ class NotebookLabelsTest {
         )) {
             assertNull(sheetExportSwitchNote(switch, offered = true))
         }
-        // The two reasons that survive are the notebook's own, and both are the collector's to undo.
+        // The notebook's own two reasons still apply.
         assertEquals(
             "Sin fotos no hay nada que ajustar",
             sheetExportSwitchNote(NotebookSwitch.ActualSize, offered = false),

@@ -6,17 +6,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * What the collector is told once a sheet has left for the share sheet.
- *
- * The sheet that gets shared is the product, so what it is called after exporting has to match what
- * is on it. It used to call any sheet «completa» as long as every picture had reported back, and a
- * picture that failed reported back exactly like one that arrived: twelve empty cells of the 1000
- * escudos were announced as a complete plate (issue #67).
- *
- * **One sentence for the two sheets** (#219). A plate and a collection's pieces used to have a
- * message each — same three branches, same arithmetic, two nouns — and that is the shape #226
- * drifted in. What differs between them is what they are called and what they count, and both are
- * arguments now, so the drift has nowhere left to happen.
+ * What the collector is told once a sheet is exported. «Completa» only when every picture arrived
+ * (#67); one set of sentences serves both sheets, with noun and count as arguments (#219).
  */
 class SheetLabelsTest {
     @Test
@@ -60,7 +51,6 @@ class SheetLabelsTest {
         )
     }
 
-    /** More painted than expected is not a negative complaint: the count floors at zero. */
     @Test
     fun `more photos than expected never reads as a negative`() {
         assertEquals(
@@ -69,11 +59,6 @@ class SheetLabelsTest {
         )
     }
 
-    /**
-     * A plate of one slot says «1 casilla». The old sentence pasted the number in front of the
-     * plural and read «1 casillas» — invisible on the catalogs there are, and wrong the day one has
-     * a single member.
-     */
     @Test
     fun `a plate of one slot counts it in the singular`() {
         assertEquals(
@@ -82,11 +67,7 @@ class SheetLabelsTest {
         )
     }
 
-    /**
-     * The message counts what the sheet counts, because both read [countSentence] off the same
-     * collection: a card carrying a ratio is announced with the ratio and not with a count of rows
-     * (#226).
-     */
+    /** Both read [PiecesSubject.countSentence]: a ratio card is announced with its ratio (#226). */
     @Test
     fun `a shared sheet is announced in the words its collection counts itself with`() {
         val subject = PiecesSubject(
@@ -106,12 +87,7 @@ class SheetLabelsTest {
         )
     }
 
-    /**
-     * A failed export names what it could not share, with the noun the message would have used.
-     *
-     * It is prose and not a stack trace, but it keeps the cause: the two ways this fails — no room
-     * on disk, no app to share to — are things the collector can act on.
-     */
+    /** Keeps the cause: no disk space or no app to share to are things the collector can fix. */
     @Test
     fun `a failed export says which sheet it could not share`() {
         assertEquals(
@@ -124,12 +100,6 @@ class SheetLabelsTest {
         )
     }
 
-    /**
-     * An exception with nothing to say stops at the sentence.
-     *
-     * Interpolated straight in, a null message put the word «null» in front of the collector, which
-     * reads as the app having broken rather than as an export that did not happen.
-     */
     @Test
     fun `an exception with no message never says null`() {
         assertEquals(
@@ -142,12 +112,7 @@ class SheetLabelsTest {
         )
     }
 
-    /**
-     * Snackbar and notification share the landing, not the same sentence (#285, #403).
-     *
-     * The snackbar names the folder and offers Abrir; the notification keeps the short title
-     * and the file name underneath — two surfaces of one event, each with its own job.
-     */
+    /** One event, two jobs (#285, #403): the snackbar offers Abrir, the notification names it. */
     @Test
     fun `the snackbar names Descargas and the notification keeps Descargado`() {
         assertEquals("Descargado en Descargas", downloadMessage(38, 38))
@@ -156,18 +121,11 @@ class SheetLabelsTest {
         assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
     }
 
-    // Where a sheet came from and which of the two hierarchies it is are printed words since #431:
-    // both are pinned by `PrintedLabelsTest`, where the strings live (#543).
+    // A sheet's origin and hierarchy are printed words (#431) pinned in `PrintedLabelsTest` (#543).
 
     /**
-     * Each sheet exports under its own noun, and the pair of sentences is written once.
-     *
-     * Both nouns are feminine, which is what lets one pair serve both — the same fact that lets
-     * [sheetExportMessage] be one sentence (#219).
-     *
-     * **«Exportar» and not «Descargar»** (#434): the button is the door into «Cómo se exporta», and
-     * the panel is where Descargar or Compartir is answered. A door that promised Descargar and then
-     * asked again was the second entrance, and it is gone.
+     * Both nouns are feminine, so one pair of sentences serves both (#219). «Exportar», not
+     * «Descargar» (#434): the button opens «Cómo se exporta», where the destination is chosen.
      */
     @Test
     fun `each sheet exports under its own noun`() {
@@ -180,13 +138,7 @@ class SheetLabelsTest {
         assertEquals("Preparando la hoja…", sheetExportLabel(SharedSheet.PIECES, exporting = true))
     }
 
-    /**
-     * The destination is asked once, at the end (#434).
-     *
-     * Descargar and Compartir are the panel's own pair — [DOWNLOAD_ACTION] and [SHARE_ACTION] — and
-     * they stay exactly where the question is answered. What the lámina and the hoja no longer have
-     * is a second copy of them on the way in.
-     */
+    /** The destination is asked once, at the end (#434). */
     @Test
     fun `Descargar and Compartir belong to the panel and not to the way in`() {
         assertEquals("Descargar", DOWNLOAD_ACTION)

@@ -5,11 +5,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Where the notebook stamp fits, which is the decision #371 had to make before drawing anything.
- *
- * A shared folio (#232) can carry two complete plates, so the caucho lands on each plate's own
- * heading and not once on the page. The slim band is fourteen millimetres; the masthead is forty —
- * both frames have to fit the band that hosts them, or the ink is clipped by the heading itself.
+ * The printed completion stamp (#371). It goes on each plate's heading, since a shared folio can
+ * hold two complete plates (#232), so it must fit both the 14 mm slim band and the masthead.
  */
 class PrintedCompletionStampTest {
     @Test
@@ -18,12 +15,7 @@ class PrintedCompletionStampTest {
         assertEquals("3 / 3", printedCompletionRatio("3 / 3"))
     }
 
-    /**
-     * What the band reserves is the **turned** rectangle and not the one it was drawn as (#476).
-     *
-     * A 24 × 22 frame tilted 5,5° measures 26,0 × 24,2, and those two millimetres are where the four
-     * corners of the caucho live: reserving the frame alone is what let a layer clip them off.
-     */
+    /** The band reserves the tilted rectangle (#476): 24 × 22 turned 5,5° is 26,0 × 24,2. */
     @Test
     fun `the masthead stamp reserves the air its tilt needs and still fits the band`() {
         val size = printedStampSize(PrintHeading.Masthead)

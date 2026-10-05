@@ -10,12 +10,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * The migration to version 2 must create exactly the tables Room derives from the entities.
- *
- * Room compares the live schema against the exported one at open time and throws if they differ
- * by a single keyword — on the phone, on a database holding a collection that cost API budget to
- * fetch, where the only remaining escape is destructive. Comparing the two here means that
- * failure surfaces on this machine instead.
+ * Each migration must produce exactly the schema Room exports for its version: Room checks the
+ * live schema when it opens the database and throws on any difference, on the collector's phone.
+ * What is already stored cost API budget, so migrations only add, except for the dispositions.
  */
 class MigrationSqlTest {
     private fun schema(version: Int) = File(
@@ -108,10 +105,8 @@ class MigrationSqlTest {
     }
 
     /**
-     * La versión 4 mete el metal en la clave (#40, ADR 0018), y la clave **es** la primary key de
-     * las disposiciones, así que la tabla se reconstruye. Es el primer rehacer de este proyecto:
-     * si la tabla nueva no es letra por letra la que Room deriva de la entidad, la app revienta al
-     * abrir la base de datos del coleccionista.
+     * La versión 4 mete el metal en la clave (#40, ADR 0018), que es la primary key de las
+     * disposiciones, así que la tabla se reconstruye.
      */
     @Test
     fun `version 4 rebuilds the dispositions exactly as Room declares them`() {
@@ -138,10 +133,8 @@ class MigrationSqlTest {
     }
 
     /**
-     * La versión 5 retira las disposiciones (ADR 0021 §7): un `DROP`, hacia delante y sin rescatar
-     * nada. La tabla que desaparece tiene que ser exactamente la que el esquema exportado deja de
-     * declarar — un `DROP` sobre otro nombre no falla al abrir la base de datos, se queda callado
-     * con una tabla huérfana en el móvil del coleccionista.
+     * La versión 5 retira las disposiciones (ADR 0021 §7). Un `DROP` sobre otro nombre no falla al
+     * abrir la base de datos: deja una tabla huérfana en el móvil.
      */
     @Test
     fun `version 5 drops exactly the table the schema stops declaring`() {
@@ -154,10 +147,7 @@ class MigrationSqlTest {
         )
     }
 
-    /**
-     * Las cajas del coleccionista **no** caen con ella (ADR 0021 §11): son lo único que él tecleó,
-     * y la colección sincronizada y la caché de tipos siguen costando presupuesto de API.
-     */
+    /** Las cajas las tecleó el coleccionista, y no caen con las disposiciones (ADR 0021 §11). */
     @Test
     fun `version 5 leaves the boxes, the snapshot and the type cache intact`() {
         assertEquals(
@@ -180,9 +170,8 @@ class MigrationSqlTest {
     }
 
     /**
-     * La versión 6 mete en columnas los cinco campos que se parseaban del cuerpo en cada lectura
-     * (#221). Aditiva y anulable como la 3, con un `readVersion` que **no** es anulable: el cero
-     * por omisión es «a esta fila no la ha leído nadie», que es justo lo que hay al otro lado.
+     * La versión 6 guarda en columnas cinco campos del cuerpo (#221). Son anulables salvo
+     * `readVersion`, cuyo cero por omisión significa «fila sin leer».
      */
     @Test
     fun `version 6 adds the five read columns and the marker exactly as Room declares them`() {
@@ -199,9 +188,8 @@ class MigrationSqlTest {
             ),
             added,
         )
-        // Declaration and not affinity: `readVersion` is the first `NOT NULL` column this project
-        // has ever added, and SQLite refuses one without a default. Both halves — the `NOT NULL`
-        // and the `DEFAULT 0` — have to be the ones Room itself writes.
+        // Declaration and not affinity: SQLite refuses a `NOT NULL` column without a default, so
+        // both the `NOT NULL` and the `DEFAULT 0` of `readVersion` must be the ones Room writes.
         assertEquals(
             added.keys.map { column ->
                 "ALTER TABLE `type_meta` ADD COLUMN `$column` " +
@@ -224,13 +212,9 @@ class MigrationSqlTest {
     }
 
     /**
-     * La versión 7 le da sitio al dinero (ADR 0028): tres tablas que el teléfono no tenía y cuatro
-     * columnas más en la caché de fichas.
-     *
-     * Aditiva de punta a punta, y sin una sola llamada: las columnas las rellena después
-     * `FichaBackfill` desde los cuerpos que cada fila ya guarda, como la 3 y la 6. El `issue_id` que
-     * el #327 esperaba migrar ya se lee del cuerpo guardado, así que la instantánea de la colección
-     * no se toca.
+     * La versión 7 le da sitio al dinero (ADR 0028): tres tablas y cuatro columnas en la caché de
+     * fichas, que `FichaBackfill` rellena desde el cuerpo guardado. La instantánea de la colección
+     * no se toca: el `issue_id` ya se lee del cuerpo guardado (#327).
      */
     @Test
     fun `version 7 creates the three money tables exactly as Room declares them`() {
@@ -271,7 +255,6 @@ class MigrationSqlTest {
         }
     }
 
-    /** Y no toca nada más: la colección sincronizada y las cajas del coleccionista siguen costando. */
     @Test
     fun `version 7 touches the type cache and adds tables, and nothing else`() {
         (exportedCreateSql(6).keys - "type_meta").forEach { table ->
@@ -296,12 +279,6 @@ class MigrationSqlTest {
         )
     }
 
-    /**
-     * Y no toca nada más — ni una columna.
-     *
-     * Es la migración de un ahorro y no de una función: los precios de la versión 7 valen lo que
-     * costaron, y el punto entero del #452 es dejar de volver a comprarlos.
-     */
     @Test
     fun `version 8 adds tables and touches nothing else`() {
         exportedCreateSql(7).keys.forEach { table ->
@@ -327,7 +304,6 @@ class MigrationSqlTest {
         assertTrue("NOT NULL" !in exportedDeclaration(9, "type_meta", "issuedYear"))
     }
 
-    /** Y no toca nada más: los precios y los listados de la 7 y la 8 siguen donde estaban. */
     @Test
     fun `version 9 touches the type cache and nothing else`() {
         assertEquals(exportedCreateSql(8).keys, exportedCreateSql(9).keys)
@@ -341,11 +317,8 @@ class MigrationSqlTest {
     }
 
     /**
-     * La versión 10 le da su tabla a las casillas marcadas (ADR 0029, #497).
-     *
-     * Es la primera fila declarativa del esquema desde que la 5 tiró las disposiciones, y a propósito no
-     * es aquella tabla volviendo: la clave es la casilla —tipo, año y emisión— y no la variante, así que
-     * un `typeId` suelto no puede marcar una lámina entera.
+     * La versión 10 le da su tabla a las casillas marcadas (ADR 0029, #497). La clave es la
+     * casilla (tipo, año y emisión), no la variante: un `typeId` suelto no marca una lámina entera.
      */
     @Test
     fun `version 10 creates the wishes table exactly as Room declares it`() {
@@ -373,12 +346,6 @@ class MigrationSqlTest {
         }
     }
 
-    /**
-     * Y no toca nada más — ni una columna.
-     *
-     * Lo que hay al otro lado costó presupuesto de API: la colección sincronizada, la caché de fichas,
-     * los precios de la 7 y los listados de la 8. Una tabla nueva no es motivo para reescribir ninguno.
-     */
     @Test
     fun `version 10 adds one table and touches nothing else`() {
         exportedCreateSql(9).keys.forEach { table ->

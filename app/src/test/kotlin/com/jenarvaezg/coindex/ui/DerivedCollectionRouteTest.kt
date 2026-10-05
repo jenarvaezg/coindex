@@ -9,13 +9,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * A derived-collection route carries the same four canonical parts a disposition is stored
- * under, and it is read back with the same suspicion: anything that is not already canonical
- * is refused rather than guessed at, because the alternative is a screen about a variant that
- * does not exist.
- *
- * `Routes.derivedCollection` itself is not exercised here: it encodes through
- * `android.net.Uri`, which is not available to a JVM unit test. What matters is the reading.
+ * Reading a derived-collection route back into the four canonical parts of its [VariantKey]:
+ * anything not already canonical is refused rather than guessed. `Routes.derivedCollection` needs
+ * `android.net.Uri`, so only the reading is tested on the JVM.
  */
 class DerivedCollectionRouteTest {
     @Test

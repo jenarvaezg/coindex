@@ -13,7 +13,7 @@ class DieCutWallTest {
 
     @Test
     fun `the wall closes where the two half arcs used to meet`() {
-        // 3 and 9 o'clock: the terminations of the old `sweepAngle = 180f` pair.
+        // 3 and 9 o'clock, where the old pair of `sweepAngle = 180f` arcs met.
         assertEquals(0f, alphaAt(0f), TOLERANCE)
         assertEquals(0f, alphaAt(0.5f), TOLERANCE)
         assertEquals(0f, alphaAt(1f), TOLERANCE)
@@ -21,9 +21,7 @@ class DieCutWallTest {
 
     @Test
     fun `the wall has no step anywhere along the sweep`() {
-        // The arc that #357 measured jumped 76 of the 255 luminance levels between two pixels. This
-        // is the profile the brush is handed, sampled every half degree: what replaces the seam is
-        // the absence of any step big enough to be a border, not a smaller step.
+        // Sampled every half degree: no step may be big enough to read as a border (#357).
         val steepest = (0..720)
             .map { alphaAt(it / 720f) }
             .zipWithNext { before, after -> abs(after - before) }
@@ -43,17 +41,16 @@ class DieCutWallTest {
 
     @Test
     fun `the wall is translucent everywhere and never the separating hairline`() {
-        // A 5 dp stroke that models a cut edge is not the 1 dp rule that separates cardboard from
-        // paper: #349 gave the hairline its 3:1 and #357 keeps the two jobs apart.
+        // The cut edge and the 1 dp hairline that separates cardboard from paper (#349) are
+        // separate jobs (#357).
         assertTrue(stops.all { (_, color) -> color.alpha < 1f })
         assertTrue(stops.none { (_, color) -> color.copy(alpha = 1f) == Paper.hairline })
     }
 
     @Test
     fun `the wall is exactly as wide as the cardboard the die leaves free`() {
-        // Drawn inwards from the hole's edge, so this is what puts its inner edge where the
-        // photograph starts and not one dp further in. #303: the photograph brings its own light
-        // already baked in, and a second one painted on top contradicts it.
+        // Drawn inwards from the hole's edge, so its inner edge meets the photograph and adds no
+        // light over the one already baked into it (#303).
         assertEquals(HOLE_CARD_PADDING_DP, wall.widthDp)
     }
 
@@ -67,9 +64,8 @@ class DieCutWallTest {
 
     @Test
     fun `a turned casilla is lit from the other side`() {
-        // The whole of #509 in two assertions: what was the lit edge at 6 o'clock is now in shadow,
-        // and what was in shadow at 12 o'clock is now the lit one. Nothing moves — the sweep is
-        // cross-faded against this profile — so the cardboard ADR 0026 §3 keeps still stays still.
+        // #509: the lit and shadowed sides swap. The sweep is cross-faded against this profile,
+        // so the cardboard stays still (ADR 0026 §3).
         val turned = wall.turnedStops()
 
         assertEquals(Paper.ink, colorAt(0.25f, turned))
@@ -80,9 +76,8 @@ class DieCutWallTest {
 
     @Test
     fun `the turned wall is brighter than the one at rest, and still closes`() {
-        // Turned, the wall competes with a photograph that has just changed, so swapping sides is
-        // not enough on its own: the prototype measured the swap at 38 % of the ring's pixels
-        // moving and the swap with this extra light at 39.5 %, with nearly a third more mean delta.
+        // Turned, the wall competes with a photograph that has just changed, so swapping sides
+        // alone is not enough.
         val turned = wall.turnedStops()
 
         assertTrue(wall.turnedSheenAlpha > wall.sheenAlpha)

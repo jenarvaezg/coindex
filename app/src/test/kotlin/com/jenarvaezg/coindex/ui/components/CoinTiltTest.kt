@@ -28,10 +28,7 @@ private class FakeTiltSensor : TiltSensor {
     }
 }
 
-/**
- * The ceiling #303 refused to fake and this block had to hold: **never awake outside the
- * foreground**, and never for a screen with no coin on it.
- */
+/** The accelerometer runs only in the foreground and only while a coin is on screen (#303). */
 class CoinTiltTest {
     @Test
     fun `the accelerometer sleeps until a coin is on screen`() {
@@ -63,7 +60,7 @@ class CoinTiltTest {
         val tilt = SensedCoinTilt(sensor)
         tilt.enteredForeground()
         tilt.coinAppeared()
-        // Held over, not tapped: since #372 the lean is filtered, so it arrives over some frames.
+        // Held, not tapped: the lean is filtered (#372), so it takes some frames to arrive.
         repeat(30) { sensor.tilt(x = 9.81f) }
         assertEquals(1f, tilt.lateral, 0.01f)
 
@@ -110,19 +107,15 @@ class CoinTiltTest {
     fun `lateral gravity becomes a signed position saturated at the declared lean`() {
         assertEquals(0f, lateralTiltFraction(x = 0f, y = 0f, z = 9.81f), 0.001f)
         assertEquals(1f, lateralTiltFraction(x = 100f, y = 0f, z = 1f), 0.001f)
-        // 20° of lean, which is what a hand does, now spends the whole travel; 45° used to.
+        // 20° of lean, what a hand does, spends the whole travel.
         val twenty = 9.81 * kotlin.math.tan(Math.toRadians(20.0))
         assertEquals(1f, lateralTiltFraction(twenty.toFloat(), 0f, 9.81f), 0.01f)
         assertEquals(-1f, lateralTiltFraction(-twenty.toFloat(), 0f, 9.81f), 0.01f)
     }
 
     /**
-     * The whole of #372, said as a number: how much of a hand's tremor reaches the coin.
-     *
-     * A tremor is uncorrelated between samples — it changes sign — which is exactly what an average
-     * kills and what the unfiltered reading of 1.0.0 painted frame for frame. The series below is a
-     * phone held still at 8° with ±0.3 m/s² of hand on it, which is what `docs/ux/` measured the
-     * gloss to be nervous at.
+     * #372: a tremor changes sign between samples, so averaging removes it. The series is a phone
+     * held at 8° with ±0.3 m/s² of hand on it, where `docs/ux/` measured the gloss jittering.
      */
     @Test
     fun `a tremor of the hand is swallowed, and a real lean still arrives`() {
@@ -144,7 +137,7 @@ class CoinTiltTest {
             "el temblor pasa de $rawSwing a $filteredSwing, y debía caer a menos de un cuarto",
         )
 
-        // And the lean itself still gets there: twelve samples is under a second at SENSOR_DELAY_UI.
+        // The lean itself still arrives: twelve samples is under a second at SENSOR_DELAY_UI.
         var arriving = 0f
         repeat(12) { arriving = smoothedTilt(arriving, 1f, TiltResponse.Default) }
         assertTrue(arriving > 0.9f, "una inclinación real llega al $arriving en doce muestras")

@@ -17,11 +17,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * The shelf of Collections, and the one thing it must not do: replace the order of ADR 0021 §6.
- *
- * The default entry is that comparator, applied in the domain, and every other sort is built on top
- * of the list it already produced — so a second definition of «the order of the index» never appears
- * in the UI layer.
+ * The Collections shelf. Its default sort is ADR 0021 §6's comparator, applied in the domain, and
+ * every other sort is built on that list, so the UI layer never defines the index order again.
  */
 class IndexShelfTest {
     private val facts = indexFacts(ShelfFixtures.state)
@@ -123,9 +120,8 @@ class IndexShelfTest {
     }
 
     /**
-     * The same invariant Coins has: the chips of a facet add up to its total, so no card is
-     * unreachable. «Serie» is the deliberate exception — a box declares no series, and inventing one
-     * for it would be the word of provenance ADR 0021 §2 removed, said in a chip.
+     * «Serie» is the exception: a box declares no series, and a chip inventing one would bring back
+     * the provenance label ADR 0021 §2 removed.
      */
     @Test
     fun `every chip row adds up to its own total, except the one a box cannot answer`() {
@@ -138,10 +134,7 @@ class IndexShelfTest {
         assertEquals(counts.series.total - 1, counts.series.byValue.values.sum())
     }
 
-    /**
-     * #413: «Sin fecha · 0» is the dead end the audit named — hide it once another chip has
-     * already left nobody undated, same bargain País already keeps.
-     */
+    /** #413: «Sin fecha · 0» is hidden once another chip leaves nobody undated, as País does. */
     @Test
     fun `a start chip that would leave nobody is not offered`() {
         val counts = indexFacetCounts(facts, IndexShelf(issuer = "Venezuela"), "")
@@ -154,14 +147,8 @@ class IndexShelfTest {
     }
 
     /**
-     * The país chip and the country-axis header share one cured name per issuer (#415).
-     *
-     * `autriche` is «Austria» and `autriche-habsbourg` is «Imperio austríaco» — ADR 0023 keeps them
-     * apart on purpose, the same way `russie` and `russia-empire` stay apart. What the audit saw as
-     * «the same issuer with two names» was the filter reading the **card** header while the axis
-     * reads the **member**; Historia del real's thaler never reached the chip row because its card
-     * says México. Both surfaces now speak member countries, so each name appears once and filters
-     * the collections that actually have that issuer.
+     * The país chip and the country-axis header both read member countries, not the card's (#415).
+     * ADR 0023 keeps `autriche` («Austria») and `autriche-habsbourg` («Imperio austríaco») apart.
      */
     @Test
     fun `país chips use member countries, so Austria and Imperio austríaco stay distinct and filterable`() {

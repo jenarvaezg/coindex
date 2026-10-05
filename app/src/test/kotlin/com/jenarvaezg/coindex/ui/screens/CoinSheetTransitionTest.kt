@@ -7,10 +7,8 @@ import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
 /**
- * The sheet is the ceremony the audit of 14 August 2026 caught in the air (#514), so it is the one
- * written down here: with the system asking for quiet there is **no transition object at all**, and
- * not one of duration zero. The two read the same on a stopwatch and only the first cannot leak a
- * frame of a half-arrived sheet.
+ * With animations off (#514) the sheet gets no transition object at all rather than one of zero
+ * duration, which could still leak a frame of a half-arrived sheet.
  */
 class CoinSheetTransitionTest {
     @Test

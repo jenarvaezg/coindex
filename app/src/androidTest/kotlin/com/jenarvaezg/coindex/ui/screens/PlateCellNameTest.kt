@@ -31,31 +31,28 @@ import org.junit.runner.RunWith
 /** The cell of the plate on a 411 dp phone: three columns of (411 − 40 padding − 32 gutter) / 3. */
 private val CELL_WIDTH = 113.dp
 
-/** The hole a casilla is drawn around, and what its tag hangs off since #473. */
+/** The casilla's hole; its tag hangs off it (#473). */
 private val HOLE = 104.dp
 
 /** The longest label in `data/`, at 73 characters: seven lines of Bitter if nothing stops it. */
 private const val LONGEST_LABEL =
     "Iglesia de la Guarnición de Potsdam, con marca de ceca debajo (1934-1935)"
 
-/** The name #412 was reported with: 42 characters, three lines of Bitter, and not one more. */
+/** The name #412 was reported with: exactly three lines of Bitter. */
 private const val THREE_LINE_LABEL = "V centenario de la primera vuelta al mundo"
 
-/** One of the two titled casillas of the 1 Bolívar, and the row #473 was reported on. */
+/** A titled casilla of the 1 Bolívar row #473 was reported on. */
 private const val MINTED_LATER = "1945 (acuñada en 1947)"
 
-/** Any Numista type: what it buys the casilla is a tag that takes a click, like the real ones. */
+/** Any Numista type: it makes the tag clickable, as on real casillas. */
 private const val A_TYPE = 10338
 
 /**
  * The casilla of a plate, drawn: hole, sunken year, name (#473).
  *
- * Two things a reader of these numbers has to know, both measured on the device rather than assumed.
- * The tag's node is its **drawing** — 28 dp of sunken cardboard — and not the 48 dp target it bought
- * with `minimumInteractiveComponentSize`, so the drop from a hole to a tag is read straight off it.
- * The name's node, on the other hand, **includes its own breathing room**, so what is compared here
- * is box to box: the ink is 6 dp further in on each side, which only widens the margins these tests
- * assert. The ink-to-ink arithmetic is `PlateSpacingTest`'s.
+ * The tag's node is its 28 dp drawing, not the 48 dp touch target, so hole-to-tag drops are read
+ * straight off it. The name's node includes 6 dp of padding on each side, so names are compared box
+ * to box; the ink-to-ink arithmetic is in `PlateSpacingTest`.
  */
 @RunWith(AndroidJUnit4::class)
 class PlateCellNameTest {
@@ -68,8 +65,8 @@ class PlateCellNameTest {
         compose.setContent {
             CoindexTheme {
                 Row {
-                    // The row of the 1 Bolívar the ticket was reported on: two titled casillas and
-                    // one whose label is already its year and prints no name at all.
+                    // The 1 Bolívar row of #473: two titled casillas and one whose label is its
+                    // year, so it prints no name.
                     Cell(name = MINTED_LATER, year = "1945")
                     Cell(name = THREE_LINE_LABEL, year = "1954")
                     Cell(name = null, year = "1960")
@@ -83,9 +80,8 @@ class PlateCellNameTest {
     }
 
     @Test
-    // #473 itself: the casilla with no name used to reserve its row's whole name box, empty, so its
-    // year hung 64 dp under its coin against the 42 dp that separated two rows. Now every tag of the
-    // plate is the same short drop under its own hole, and that is what makes them line up.
+    // #473: a nameless casilla used to reserve its row's empty name box, hanging its year 64 dp
+    // under its coin when rows were 42 dp apart.
     fun theCasillaWithNoNameKeepsItsYearUnderItsOwnCoin() {
         compose.setContent {
             CoindexTheme {
@@ -102,11 +98,8 @@ class PlateCellNameTest {
     }
 
     @Test
-    // The other half of #473, and the one no width of `rowGap` could have bought: the box a name
-    // reserved was measured against the density and grew with the collector's type while the gap
-    // between rows stayed put. Nothing inside a casilla is measured in sp any more, so the drop from
-    // a coin to its year is the same at font scale 2 as at 1 — and a name that grows pushes the
-    // *next row* away instead of pushing its own year down.
+    // #473: nothing inside a casilla is sized in sp, so the coin-to-year drop holds at font
+    // scale 2; a growing name pushes the next row away instead of its own year down.
     fun thePlateKeepsItsProximityWhenTheCollectorEnlargesTheType() {
         compose.setContent {
             CoindexTheme {
@@ -129,7 +122,6 @@ class PlateCellNameTest {
     }
 
     @Test
-    // A name is a gloss on the year above it, and the row below has to stay further away than that.
     fun aNameStaysNearerItsOwnYearThanTheRowBelow() {
         compose.setContent { CoindexTheme { TwoRows() } }
 
@@ -143,9 +135,8 @@ class PlateCellNameTest {
     }
 
     @Test
-    // An announced member has no year, and a listed one whose tag takes no click does not buy the
-    // 48 dp target the rest have. Either would pull its name up against the hole while its
-    // neighbours' stayed down, so the casilla reserves that height whether or not it fills it.
+    // An announced member has no year and an unclickable tag lacks the 48 dp target; the casilla
+    // reserves that height anyway so its name lines up with its neighbours'.
     fun aCasillaWithNoYearStillLeavesTheTagsRoom() {
         compose.setContent {
             CoindexTheme {
@@ -160,8 +151,7 @@ class PlateCellNameTest {
     }
 
     @Test
-    // Three lines is what a casilla prints, and the reason is the notebook's cartouche and no longer
-    // the cardboard hanging over the neighbours of its row (#412, #473).
+    // Three lines is the casilla's limit, set by the notebook's cartouche (#412, #473).
     fun aThreeLineNameIsPrintedWhole() {
         compose.setContent {
             CoindexTheme {
@@ -175,7 +165,7 @@ class PlateCellNameTest {
     }
 
     @Test
-    // And a name that had to be cut is still the whole name to search and to accessibility (#348).
+    // #348: search and accessibility still read the whole name.
     fun aTruncatedNameKeepsItsWholeTextInSemantics() {
         compose.setContent {
             CoindexTheme {
@@ -187,7 +177,7 @@ class PlateCellNameTest {
         compose.onNodeWithText(LONGEST_LABEL).assertExists()
     }
 
-    /** The row of the 1 Bolívar with the row underneath it, spaced as the grid spaces them. */
+    /** The 1 Bolívar row and one below it, spaced as the grid spaces them. */
     @Composable
     private fun TwoRows() {
         Column(verticalArrangement = Arrangement.spacedBy(PlateSpacing.rowGap)) {
@@ -213,17 +203,15 @@ class PlateCellNameTest {
                 year = year,
                 owned = true,
                 missing = false,
-                // What the tag says is the subject's rule and no longer the `year` field (#511):
-                // a casilla built without a plaque wears nothing sunk into its cardboard, which is
-                // not the casilla any of these measurements is about.
+                // The tag comes from the plaque, not from `year` (#511); without one the casilla
+                // draws no tag at all.
                 plaque = plaqueOf(label = label, year = year, yearIsCommon = false),
             ),
             images = null,
             printedSide = PrintedSide.Obverse,
             travellingFrom = null,
             onOpenCoin = {},
-            // Keyed by the year, which is what the tag under the hole prints and what the
-            // measurements below look the casilla up by.
+            // Keyed by the year, which is how the helpers below look the casilla up.
             modifier = Modifier.width(CELL_WIDTH).testTag("cell-${year ?: name}"),
         )
     }
@@ -244,7 +232,7 @@ class PlateCellNameTest {
     /** From that same drawing down to the coins of the row underneath. */
     private fun untilTheNextRow(year: String): Float = topOf("row-2") - bottomOfText(year)
 
-    /** What Bitter actually did: how many lines it took, and whether it was cut. */
+    /** How Bitter laid the name out: line count and whether it was cut. */
     private fun layoutOf(name: String): TextLayoutResult {
         val results = mutableListOf<TextLayoutResult>()
         val node = compose.onNodeWithText(name).fetchSemanticsNode()

@@ -20,18 +20,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * What the band blends against when the photograph is not there yet.
- *
- * The gloss lives inside the same `graphicsLayer` as the flip's `rotationY`, so that the light turns
- * with the face it belongs to. That raises a fair question: if the layer were composited off screen,
- * `Softlight` over a transparent backdrop degenerates into the source colour, and the band would
- * paint as an opaque black→white streak over the empty hole — while a picture is still loading, or
- * behind a catalog PNG with a transparent background, which this app knows exist.
- *
- * It does not: with the default compositing strategy the layer draws into the frame it is part of,
- * so the band blends against the paper underneath. The test pins that, because the day someone adds
- * an `alpha` or a `RenderEffect` above the gloss the layer *would* become an off-screen buffer and
- * the defect would appear where nobody is looking — on a slow photograph.
+ * The gloss shares the flip's `graphicsLayer` so the light turns with its face. Composited off
+ * screen, `Softlight` over a transparent backdrop would paint an opaque streak over an empty hole
+ * (a loading photograph, or a catalog PNG with a transparent background). With the default
+ * compositing strategy it blends against the paper; an `alpha` or `RenderEffect` above the gloss
+ * would break that.
  */
 @RunWith(AndroidJUnit4::class)
 class CoinGlossBlendTest {
@@ -70,11 +63,9 @@ class CoinGlossBlendTest {
             }
         }
 
-        // The paper is at 221. Blended against it, soft-light can only bend it: the shadow half of
-        // the band lands around 206. Blended against nothing, the band keeps its own black at half
-        // alpha and the same pixel lands around 110 — so 150 separates the two outcomes with room to
-        // spare either way. (Measured on the AVD both ways, forcing `CompositingStrategy.Offscreen`
-        // to see the defect appear.)
+        // Against the paper (221) the band's shadow lands around 206; against nothing it keeps its
+        // own black at half alpha, around 110. Measured on the AVD both ways, forcing
+        // `CompositingStrategy.Offscreen` for the second.
         assertTrue("el más oscuro fue $darkest", darkest > 150)
         assertTrue("el más claro fue $lightest", lightest < 250)
     }
