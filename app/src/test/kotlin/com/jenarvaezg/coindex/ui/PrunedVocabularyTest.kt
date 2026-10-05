@@ -217,9 +217,10 @@ class PrunedVocabularyTest {
      * The 429 is here too: «peticiones» was a third word, and Numista throttling the same thing the
      * budget counts is not a different object.
      *
-     * **There are three exhausted-month sentences and not two**, which is what the first pass of this
+     * **There are four exhausted-month sentences and not two**, which is what the first pass of this
      * test got wrong: `valuationLabel`'s state in Ajustes, `showcaseRefusalMessage`'s answer to a
-     * press, and `syncErrorLabel`'s snackbar. The third was missed because it opens with the word
+     * press, `syncErrorLabel`'s snackbar, and — since #600 — the snackbar of the month Numista counts
+     * on the key rather than the one the app counts on the phone. The third was missed because it opens with the word
      * capitalised — «Llamadas a la API agotadas este mes» — and a case-sensitive sweep of the copy
      * files walked straight past it. Every check here reads `ignoreCase`, for that reason and no
      * other.
@@ -238,6 +239,7 @@ class PrunedVocabularyTest {
             ),
             syncErrorLabel(NumistaException.BudgetExhausted(1_500, 1_500)),
             syncErrorLabel(NumistaException.Api("/types/1", 429, "")),
+            syncErrorLabel(NumistaException.Api("/types/1", 429, "Quota exceeded")),
             syncReportLabel(SyncRecord(0L, 22, 3, 5, null)),
             WishLabels.MARK_HINT,
         ).forEach { said ->

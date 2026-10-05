@@ -22,6 +22,31 @@ private val NEXT_MONTH = startOfMonthMillis(NOW + 40 * DAY)
  * each of the four causes is asked for its last moment standing and its first moment down.
  */
 class RejectionWallTest {
+    /**
+     * Which answer means what, which is the whole of #600 and the reason it is one function.
+     *
+     * The published contract (OpenAPI 3.36, read on 7 September 2026) declares the `429` on all five
+     * routes this app asks for, as «too many simultaneous requests **or** you reached the limit of
+     * your monthly quota», and the `403` on two paid routes it never asks for, as a permission. So
+     * the status alone cannot pick a clock, and the body is all there is: the one exhausted month
+     * anybody measured — 14 August 2026, Jose's key, `scripts/seed-type-cache.py --refresh` over
+     * `/types/{id}` — came back as `HTTP 429 «Quota exceeded»`.
+     *
+     * A `429` whose body stops saying it is read as the throttle, deliberately: the doubt costs six
+     * hours of prices that way, and a month of them the other.
+     */
+    @Test
+    fun `the status alone does not say which refusal it is`() {
+        assertEquals(RejectionCause.Quota, rejectionCauseFor(429, "Quota exceeded"))
+        assertEquals(RejectionCause.Quota, rejectionCauseFor(429, """{"error":"quota exceeded"}"""))
+        assertEquals(RejectionCause.Throttled, rejectionCauseFor(429, "Too many simultaneous requests"))
+        assertEquals(RejectionCause.Throttled, rejectionCauseFor(429, ""))
+        assertEquals(RejectionCause.Credentials, rejectionCauseFor(401, ""))
+        assertEquals(RejectionCause.Credentials, rejectionCauseFor(403, "not activated for this endpoint"))
+        assertNull(rejectionCauseFor(404, "Quota exceeded"), "un 404 no es la cuota aunque lo diga")
+        assertNull(rejectionCauseFor(500, ""))
+    }
+
     /** A credential is not a matter of time, so no amount of it takes this wall down. */
     @Test
     fun `the wall of a refused key is never taken down by the clock`() {
@@ -29,7 +54,7 @@ class RejectionWallTest {
     }
 
     /**
-     * The `403` is Numista's own quota, and their month is the calendar month the gate already counts.
+     * The quota is Numista's own, and their month is the calendar month the gate already counts.
      *
      * Not «thirty days since», which would fall mid-month and spend a call into an allowance that has
      * not reset — and would then fall again thirty days after that, drifting further off the 1st every
@@ -135,8 +160,8 @@ class RejectionWallTest {
     /**
      * Saving the credentials takes the wall down, whatever raised it — the criterion of #579.
      *
-     * It is the only thing that ends the `401`, which has no clock; and it ends the `403` too, because
-     * a second key is exactly what undoes a quota shared with another phone (#562).
+     * It is the only thing that ends the credentials wall, which has no clock; and it ends the quota
+     * too, because a second key is exactly what undoes an allowance shared with another phone (#562).
      */
     @Test
     fun `a key the collector has just saved takes the wall down`() {

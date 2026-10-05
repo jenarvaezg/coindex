@@ -33,6 +33,15 @@ sealed interface SyncOutcome {
 class CollectionSync(
     private val syncService: SyncService,
     private val syncLog: StoredSyncLog,
+    /**
+     * The refusal the valuation pass wrote down, taken back off on a sync that got through (#600).
+     *
+     * The pass raises the wall and the pass takes it down, and that left one gap: the collector
+     * presses «Sincronizar», Numista answers, and the pass still refuses to ask for a month because
+     * nothing told it the quota came back. A sync that reached Numista is the same proof a pass is,
+     * and it is the proof arriving on the one gesture the collector makes when something looks stuck.
+     */
+    private val wall: RejectionWall,
     private val nowMillis: () -> Long = System::currentTimeMillis,
 ) {
     /** The last sync there was, so a launch opens on it instead of on a blank line. */
@@ -55,6 +64,7 @@ class CollectionSync(
         running.set(false)
         return outcome.fold(
             onSuccess = { report ->
+                wall.clear()
                 val record = SyncRecord(
                     atMillis = nowMillis(),
                     collectionItems = report.collectionItems,
