@@ -1,53 +1,35 @@
 # ADR 0028: Prices arrive in one pass, and a total is never shown half-done
 
-- Status: accepted, §3 and §6 amended by [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md)
-  (the launch has a fourth trigger, and the pass has a ceiling of its own 300 consultas short of the
-  cap so a sync always fits), §4 amended by [#600](https://github.com/jenarvaezg/coindex/issues/600) (the
-  quota is the `429` and the key being turned away is the `403`: the two clocks of the wall were
-  swapped, and the `429` needs its body read to tell the month from the throttle), §1 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (a
-  marked slot lifts both filters of the plan, and the monthly pass stops being a fixed number), §3 and
-  §5 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (one plate of the
-  shelf window is valued by a gesture, and that price never expires), §4 amended by
-  [#560](https://github.com/jenarvaezg/coindex/issues/560) (Numista refusing stops the pass, and a run
-  of answers that leave no row is one of the shapes that counts as refusing), §6 and §7 amended by
-  [#521](https://github.com/jenarvaezg/coindex/issues/521) (the line lives on «Este teléfono», the
-  screen the sewn edge opens, and two of its six states carry a door into `Credenciales` — the pass
-  itself stays without a handle), §5 amended by
-  [#561](https://github.com/jenarvaezg/coindex/issues/561) (a catalog price — and a «Numista has no
-  price» with it — lives ninety days, the same life as the listing that addresses it, and the batch is
-  not staggered), §5 amended by [#594](https://github.com/jenarvaezg/coindex/issues/594) (every figure
-  the pass feeds carries the date of its catalogue half, and a total with two clocks in it says one
-  clause per clock)
+- Status: accepted; amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md)
+  (§1), [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (§3, §5),
+  [#560](https://github.com/jenarvaezg/coindex/issues/560) (§4),
+  [#579](https://github.com/jenarvaezg/coindex/issues/579) (§4),
+  [#600](https://github.com/jenarvaezg/coindex/issues/600) (§4),
+  [#561](https://github.com/jenarvaezg/coindex/issues/561) (§5),
+  [#594](https://github.com/jenarvaezg/coindex/issues/594) (§5),
+  [#521](https://github.com/jenarvaezg/coindex/issues/521) (§6, §7) and
+  [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md) (§3, §6)
 - Date: 2026-08-10
-- Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 deliberately
-  left to its own document
+- Decides [#327](https://github.com/jenarvaezg/coindex/issues/327), which ADR 0026 §11 left to its
+  own document
 
 ## Context
 
-ADR 0026 §10 settled what a piece is worth — **the maximum of three numbers**: its silver floor,
-its Numista market price for its grade, and what was paid ([#316](https://github.com/jenarvaezg/coindex/issues/316),
-`docs/ux/cifras-316.md`). Two of the three are already on the phone. `weight` and `composition` are
-in 100 % of the seeded fichas, so the silver floor costs one spot reading; `price` is a column of
-the collection snapshot. The third is not: Numista publishes an estimated price **per issue and per
-grade** on `/types/{id}/issues/{issue_id}/prices`, an endpoint the app has never called.
-
-That endpoint is the whole of the design problem, because it is paid in the scarcest resource the
-project has. ADR 0003 caps the app at a monthly budget of API calls — `DEFAULT_MONTHLY_BUDGET` is
-1.500, and §5 of the API contract allows roughly 2.000 on the free plan. Measured against the
-father's real collection (229 rows, 191 types) crossed with the 74 catalogs of `data/`:
+ADR 0026 §10 values a piece at the maximum of its silver floor, its Numista price for its grade, and
+what was paid ([#316](https://github.com/jenarvaezg/coindex/issues/316), `docs/ux/cifras-316.md`).
+The first and last are already on the phone. The Numista price comes per issue and grade from
+`/types/{id}/issues/{issue_id}/prices`, paid from the monthly budget of ADR 0003
+(`DEFAULT_MONTHLY_BUDGET` is 1.500; the free plan allows about 2.000). Over the father's collection
+(229 rows, 191 types) and the 74 catalogs of `data/`:
 
 | what | calls |
 | --- | ---: |
-| the **223 issues he owns** | 223 — one `/prices` each, since the `issue_id` is in `collected_items` |
-| the **1.182 slots** of the 74 catalogs | **2.036** — 854 `/issues` plus 1.182 `/prices`, because a catalog member stores `numista_type_id` and `year` and **never** the `issue_id` |
+| the **223 issues he owns** | 223, one `/prices` each, since the `issue_id` is in `collected_items` |
+| the **1.182 slots** of the 74 catalogs | **2.036**: 854 `/issues` plus 1.182 `/prices`, because a catalog member stores `numista_type_id` and `year` and never the `issue_id` |
 | both | **2.259** |
 
-**Valuing every hole in one block does not fit in the month even once.** So the question was never
-when to ask for them: it was **which**.
-
-This is also the exact sibling of ADR 0024. That document decided when photographs are prefetched —
-in the background, on every launch, on wifi, never during a sync — and the same four questions come
-back here with different answers, which is precisely why it could not be a paragraph of ADR 0026.
+Valuing every hole does not fit in a month even once, so the question is which holes. The other
+questions are those ADR 0024 answered for photographs, with different answers.
 
 ## Decision
 
@@ -57,12 +39,9 @@ back here with different answers, which is precisely why it could not be a parag
 > are ten slots or fewer from closing. 223 + 264 = 487 calls a month, between 24 % and 32 % of the
 > budget. No laziness per plate, and no gesture to press.**
 
-The threshold is not thrift. ADR 0026 §10 wrote that the cost of completing a plate is actionable
-*per plate* and a reproach once totalled, and the cut is that rule read forwards: **a plate with 51
-holes does not have a cost of completion, it has a reproach of 51 slots.** It is not that those
-holes are expensive to value; it is that the number that came back could not be shown.
-
-Where the cut falls over his 49 plates (679 slots, 531 holes, 805 calls to value them all):
+A number that says nothing is not shown: the cost of completing a plate is actionable per plate and
+a reproach once totalled (ADR 0026 §10), so the holes of a plate far from closing are not valued
+(`HOLE_THRESHOLD_SLOTS`). Over his 49 plates:
 
 | slots from closing | plates | holes | calls |
 | ---: | ---: | ---: | ---: |
@@ -71,378 +50,195 @@ Where the cut falls over his 49 plates (679 slots, 531 holes, 805 calls to value
 | 1-15 | 34 | 221 | 363 |
 | all | 49 | 531 | 805 |
 
-And it falls clean: what stays outside are the bullion runs where he owns **a single coin** —
-Kookaburra 36/37, Libertad 43/44, Capitales de provincia 51/52 — which is exactly where a cost of
-completion would be the reproach. What comes inside runs from the single hole of the silver 20
-escudos to the ten of the Canadian dollar.
+What stays out are the bullion runs where he owns a single coin (Kookaburra 36/37, Libertad 43/44).
 
-> **Amended on 2026-08-14 (§1, [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md)). A
-> marked slot lifts both filters, and 487 stops being a number.** The threshold above is a rule about
-> **whether a number deserves to be shown**, and a wish answers exactly that question: of the 51 holes,
-> this one. So a marked slot is priced whatever its plate's shape — past the threshold, and with no
-> evidence at all, which is #282's decision 1 narrowed by name to the marked slot. The **plate's**
-> second figure is untouched and still governed by `holesAreWithinReach`: a plate of 51 holes with one
-> marked has a price inside that hole and no «Coste de cerrar», because one hole is not the cost of
-> closing it.
->
-> The consequence is the one worth writing down: **«no laziness per plate, and no gesture to press»
-> gains a gesture that spends, and the month stops being fixed.** 1-2 calls per wish, for ever, said in
-> the gesture and totalled where the budget is already shown. No automatic cap.
+> **Amended on 2026-08-14 by ADR 0029 §4.** A marked slot is priced past the threshold and with no
+> evidence. «Coste de cerrar» still follows `holesAreWithinReach`, so one marked hole on a plate of
+> 51 has a price and the plate has no «Coste de cerrar». The monthly pass is no longer fixed: 1-2
+> calls per wish, named in the gesture, with no automatic cap.
 
 ### 2. Each phone pays with its own budget, and the seed is not the way out
 
-The route that already exists for fichas — the curator spends their calls, `scripts/seed-type-cache.py`
-puts the result in an asset, and it travels in the APK — is **rejected here**. That asset lives in
-`data/`, which is a public repository, and [#329](https://github.com/jenarvaezg/coindex/issues/329)
-already records that shipping fichas that way breaks §8.4 of the API contract. With prices on top it
-would be worse, and it collides with the rule that amounts in euros are never versioned. Repairing
-the seeding route is another ticket's problem, not this one's toll.
+Prices do not travel in the APK as fichas do: the asset lives in a public repository, shipping
+fichas that way already breaks §8.4 of the API contract
+([#329](https://github.com/jenarvaezg/coindex/issues/329)), and euro amounts are never versioned.
 
 ### 3. Two triggers, and no gesture
 
-There are not two paths. There is **one pass** that works out what is missing or expired and asks
-for it, started from two places:
+One idempotent pass asks for what is missing or expired. It starts **on launch, in the background**
+(like the prefetch of ADR 0024) and **when a sync finishes**. With everything cached a launch costs
+zero; the first one of a month costs ~487 calls and about two minutes.
 
-- **On launch, in the background**, like the photograph prefetch of ADR 0024 — so a freshly
-  installed app has its figures without anybody syncing, and so a datum that failed once has a
-  second route.
-- **When a sync finishes**, which is the ceremony that already spends budget and already says what
-  it spent.
+Discarded: `Tasar la colección · 487 llamadas`, a button that leaves «Las cifras» empty until
+somebody remembers; and valuing when «Las cifras» opens, which is two minutes of empty screen and
+the automatic policy ADR 0025 forbade.
 
-It runs on every launch because **asking for what is missing is idempotent**: with everything
-cached the second launch costs zero calls. The first time in a month is ~487 calls and some two
-minutes; the rest of the month, nothing.
-
-Two alternatives were discarded. **An explicit gesture** (`Tasar la colección · 487 llamadas`) adds
-a button and a word to a map whose whole purpose is removing prose, and leaves «Las cifras» empty
-until somebody remembers. **Valuing when «Las cifras» opens** is two minutes staring at an empty
-screen, and is exactly the automatic policy ADR 0025 forbade.
-
-> **Amended on 2026-08-14 (§3, [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)).
-> There is a gesture, it is one plate of the shelf window, and it names its spend before it is
-> pressed.** «No gesture» stands for the collection: `Tasar la colección · 487 llamadas` is still
-> refused, and the two triggers above are still how everything a collector **owns** is priced.
+> **Amended on 2026-08-14 by ADR 0030 §3.** One plate of the shelf window is valued by a gesture,
+> «Tasar esta lámina · N consultas», because no pass will ever ask for an unmarked one. A gesture
+> that spends prints its ceiling before it is pressed. It runs this same pass over that plate's
+> holes.
 >
-> What the refusal above was weighing does not exist for a plate of the shelf window. There the
-> alternative to the gesture is not «later, in the background» — it is **never**: ADR 0029 §4 lifted the
-> evidence filter for a *marked* slot alone, so an unmarked plate of the twenty has no route to a price
-> at all, and no pass will ever ask for one. So the button is not a shortcut to what a pass would do
-> anyway; it is the only door, and the spend behind it is the collector's to decide: **«Tasar esta
-> lámina · N consultas»**, per plate, never the twenty at once.
->
-> The pass is unchanged and is the one that runs: valuing by hand is one pass over a plan holding that
-> plate's holes and nothing else, so there is no second writer and no second price — the rows land in
-> the same two tables ADR 0029 §4 already points at.
+> **Amended on 2026-09-30 by ADR 0032 §2.** The launch also refreshes the inventory once a day, one
+> second before the pass, which holds for it.
 
 ### 4. Three states, not two
-
-«Numista has no price for this» **is not a failure**, and confusing the two was the risk this
-document exists to remove. The shape was already settled in ADR 0024 for the `404` of a photograph:
 
 | answer | what is done |
 | --- | --- |
 | Numista gives a price | it is stored |
-| **Numista answers with no prices** | **stored as a datum** — 19 of the 223 issues; 91 % do carry a price. Without storing it they would be asked for again on every pass, for ever |
+| **Numista answers with no prices** | **stored as a datum** (19 of the 223 issues; 91 % do carry a price). Otherwise they would be asked for again on every pass |
 | dead network, 5xx, budget exhausted | **no row is written**; the next pass retries. ADR 0025: *«a refresh that fails is never worse than not having asked»* |
-| **Numista refusing — `401`, `403`, `429`, or five answers in a row that leave no row** | **the pass stops** and says so; what it had already written stands |
+| **Numista refusing: `401`, `403`, `429`, or five answers in a row that leave no row** | **the pass stops** and says so; what it had already written stands |
 
-> **Amended on 2026-09-01 (#560).** The last row is new, and the bug it closes is what happens without
-> it: only the budget and the network stopped a pass, so every other status was read as «this issue has
-> no price, carry on». On 11 August 2026 the father's phone spent **1.484 calls in nine passes of the
-> same plan** — the same issue asked for nine times — and wrote **zero** rows, because his key was
-> answering `Quota exceeded`: Numista's own month is 2.000 calls and the local gate of ADR 0003 is
-> 1.500, so a key spent from another phone is refused with budget still on the counter.
->
-> The `401`, the `429` and the `403` are read as the budget always was: the next call would be refused
-> the same way. The streak is the general case of the same claim — the pass has a month's plan to spend
-> against a wall and no way to name every shape one can take — and it counts **rows written, not
-> statuses**, which is what keeps the `404` of row two out of it: an issue Numista has no price for is
-> answered, stored and never asked again, so a collection made entirely of those still costs one call
-> each, once. A **listing** neither feeds the streak nor breaks it: a wall can stand in front of
-> `/prices` alone, and a listing that reset the count would leave the pass alternating down the whole
-> plan.
+«No price» is a datum, not a failure, as ADR 0024 treats a photograph's `404`.
 
-> **Amended on 2026-09-07 ([#579](https://github.com/jenarvaezg/coindex/issues/579)). Stopping is half
-> of it: the wall is remembered, so it stops costing a call to find.** The amendment above taught the
-> pass to stop; it did not teach it to *remember having stopped*, so nothing of the refusal survived the
-> pass and the next one rediscovered it by paying for it. And the next one is never far: the triggers
-> are the launch, every end of sync, every marked casilla, every notebook export and the «Tasar esta
-> lámina» gesture — the last four with `force = true`, which skips the `covered` memory of
-> `ValuationLoop`, and `covered` itself is lost on every cold start.
+> **Amended on 2026-09-01 (#560): the last row.** Before it, every status but budget and network
+> read as «no price»: on 11 August 2026 the father's phone spent 1.484 calls in nine passes and
+> wrote nothing, because his key, also spent from another phone, answered `Quota exceeded`. The
+> streak counts rows written, not statuses, so «no price» answers never feed it; a listing neither
+> feeds it nor resets it.
+
+> **Amended on 2026-09-07 (#579): the wall is remembered** (`RejectionWall`), because each new pass
+> paid to rediscover it, and `CallBudgetGate.reserve()` counts a call before it is sent:
 >
-> | what came back | per pass | a day of his (~8 launches) | a month |
+> | what came back | per pass | a day (~8 launches) | a month |
 > | --- | ---: | ---: | ---: |
 > | `429` / `403` / `401` | 1 call | 8 | ~240 |
 > | a run of five | 5 calls | 40 | ~1.200 |
 >
-> Against the 1.500 of ADR 0003 the bottom row eats the month on its own — and every one of those calls
-> is recorded by `CallBudgetGate.reserve()` **before** it is sent, so a `403` over a quota that is gone
-> keeps eating the budget that is not.
->
-> **The wall is one named value pair that survives a launch** (`RejectionWall`), and it is
-> `PhotoRetryPolicy.isGone` read over a pass instead of a photograph: some refusals are worth another
-> try in a moment, and some are worth writing down. **The wait goes by cause**, because the four do not
-> wait on the same thing:
->
 > | what Numista answered | until when | why |
 > | --- | --- | --- |
-> | `429` saying the quota | the 1st of the next month | it is the allowance **Numista** counts, and their month is the same calendar month `startOfMonthMillis` draws for the gate |
-> | `401` or `403` | until the key changes | waiting does not fix a credential. `StoredCredentials.save` takes it down, which is the gesture that means «prueba otra vez» — and the door to «Credenciales» is already printed in this state by §6.1. A sync that gets through takes it down too (#600) |
-> | any other `429` | 6 hours | the throttle says «ahora no», not «este mes no» |
-> | a run of five | 6 hours | nobody knows what it is, so it is believed for the shortest of the three lives |
+> | `429` naming the quota | the 1st of the next month | Numista's month is the same calendar month `startOfMonthMillis` draws for the gate |
+> | `401` or `403` | until the key changes | waiting does not fix a credential. `StoredCredentials.save` takes it down, and the door to «Credenciales» is printed in this state (§6.1). A sync that gets through takes it down too (#600) |
+> | any other `429` | 6 hours | the throttle means «not now», not «not this month» |
+> | a run of five | 6 hours | the cause is unknown, so it gets the shortest life |
 >
-> **Amended on 2026-09-30 ([#600](https://github.com/jenarvaezg/coindex/issues/600)): the first two
-> rows used to be the other way round, and both clocks were wrong.** The table above said `403` for the
-> quota and `429` for the throttle, and the published contract says neither. The OpenAPI 3.36 declares
-> the `429` on the five routes this app asks for as «too many simultaneous requests **or** you reached
-> the limit of your monthly quota», and the `403` on exactly two paid routes it never asks for
-> (`/types/{type_id}/sales_records`, `/search_by_image`) as «your API key is not activated for using
-> this API endpoint». The evidence agrees with the spec: on 14 August 2026 `scripts/seed-type-cache.py
-> --refresh` got `HTTP 429 «Quota exceeded»` out of `/types/{id}` with Jose's key.
->
-> So the quota and the throttle **share a status**, and the body is the only thing that separates them.
-> `rejectionCauseFor` reads it, and a `429` that does not name the quota is the throttle: the doubt is
-> resolved towards six hours because mistaking a throttle for the quota costs a month of prices, and
-> mistaking the quota for a throttle costs six hours and one call. What the collector reads changed
-> here too, and it had to: «vuelve a intentarlo dentro de un rato» was said to an exhausted month for
-> three weeks, and it does not come back in a while — it comes back on the 1st.
->
-> Nothing the collector reads changes: the pass still returns `Rejected` and «Este teléfono» still says
-> the one sentence that is true of all four (§6.1). What changes is what it costs to say it — one call
-> per **wall** instead of one per pass. A pass that reaches Numista takes the wall down, and an expired
-> wall does not stand in front of the pass that follows it: forgetting matters as much as remembering,
-> and a wall that never fell would switch the prices off on this phone permanently and invisibly.
+> The collector still reads one sentence for all four (§6.1). A pass that reaches Numista takes the
+> wall down, and an expired wall does not block the next pass.
+
+> **Amended on 2026-09-30 (#600): the first two rows were swapped.** The OpenAPI 3.36 contract
+> declares the quota as a `429` on the five routes this app uses, and the `403` only on two paid
+> routes it never calls; on 14 August 2026 `/types/{id}` answered `HTTP 429 «Quota exceeded»`. Quota
+> and throttle share the status, so `rejectionCauseFor` reads the body, and doubt resolves to the
+> throttle (six hours lost, against a month). An exhausted month no longer says «vuelve a intentarlo
+> dentro de un rato».
 
 ### 5. Expired is not deleted
-
-Three clocks, different on purpose:
 
 | what | expires after |
 | --- | --- |
 | a catalog price | **90 days** (30 until [#561](https://github.com/jenarvaezg/coindex/issues/561)) |
-| a «Numista has no price» | **90 days** (30 until [#561](https://github.com/jenarvaezg/coindex/issues/561): it is the same row and the same clock) — it is a datum, and if it never expired, an issue Numista prices tomorrow would never find out |
+| a «Numista has no price» | **90 days** (30 until #561; same row, same clock). It is a datum, and if it never expired an issue Numista prices tomorrow would never be found |
 | the silver spot | **the day** (two keyless calls, outside the budget) |
 | a failure | nothing is written |
 
-**And on the day after, the old price is still shown, with the date it was brought.** It is the rule #316
-already signed for spot — *«se enseña siempre con la fecha de su última lectura»* — and the same
-sentence of ADR 0025 read the right way round: deleting on expiry **is** worse than not having
-asked. A phone with no network for months says a total with an old date instead of emptying itself,
-and that lies very little: a 3 % swing in silver moves the total by 1,9 %, because the catalogue
-rules the mix.
+After expiry the old price is still shown, with the date it was brought: the rule #316 set for the
+spot (*«se enseña siempre con la fecha de su última lectura»*). A phone offline for months shows an
+old date rather than an empty page, and a 3 % swing in silver moves the total by 1,9 %.
 
-Since they are all brought on the same day by the first pass, they all expire on the same day: the
-trickle really is **one batch per life** — once a month as this was written, once a quarter since
-[#561](https://github.com/jenarvaezg/coindex/issues/561). Spreading it out — fetching the oldest few
-each day — was discarded: it turns a minute a month into a permanent background call.
+One pass fetches everything, so everything expires as one batch per life. Staggering was rejected:
+it turns a minute per batch into a permanent background call.
 
-> **Amended on 2026-09-07 ([#561](https://github.com/jenarvaezg/coindex/issues/561)). A catalog price
-> lives ninety days, the same life as the listing that addresses it.** The two top rows of the table
-> above are the amendment; everything else in this section stands, and the sentence it stands on
-> matters more at three months than it did at one.
->
-> Thirty days were given to a price on the reading that it is *the market*. It is not: what follows the
-> market here is the silver spot of §9, which expires **daily** and costs no budget at all. A catalog
-> price is Numista's own estimate for an issue and a grade, and it moves at the speed of the catalogue
-> that publishes it — which is the exact argument `LISTING_LIFETIME_MILLIS` already made for its ninety
-> days.
->
-> And thirty days did not buy freshness, they bought a **peak**. Every price of the collection is read
-> on the same day by the same pass, so — as the paragraph above already says — they expire *in one
-> block*, and the first launch after that day costs the whole plan. Measured with the app's own domain
-> over the father's collection as of 16 August 2026:
+> **Amended on 2026-08-14 by ADR 0030 §4.** A price asked for by hand never expires, since no pass
+> will refresh it: it is shown with its date and «Volver a tasar» stays on the plate. A total whose
+> parts were read on different days is dated by its oldest
+> ([#494](https://github.com/jenarvaezg/coindex/issues/494)).
+
+> **Amended on 2026-09-07 (#561): ninety days**, the life of the listing that addresses the price.
+> The market is followed by the spot (§9); a catalog price moves at the catalogue's pace, and thirty
+> days only produced a monthly peak. A cold pass, measured on 16 August 2026:
 >
 > | what | calls |
 > | --- | ---: |
 > | the issues he owns | 231 |
-> | the holes of plates within reach | 115 — 10 whose curated file names the issue, 105 through a listing |
+> | the holes of plates within reach | 115: 10 whose curated file names the issue, 105 through a listing |
 > | the types still to list | 96 |
 > | **a cold pass** | **442** |
 >
-> Numista's own counter for the month that reset on 1 September 2026 read 468 `getPrices` + 96
-> `getIssues` + 11 `getType` + 2 of sync = 577, with the 96 listings spent **once**: the proof that the
-> cache works and that what is being paid for is a single cold pass. At thirty days that lands every
-> month against an allowance of 2.000, and lands in the same month as the listings whenever the two
-> clocks meet. At ninety it lands once a quarter, and the two clocks now *are* the same clock — so the
-> price and the listing of a given type come due together and the pass buys the pair on one day instead
-> of the price alone three times over.
->
-> **Staggering is still not worth it, and at ninety days less than before.** The paragraph above
-> discarded it at one batch a month; the batch is now one a quarter, so what a stagger would save is a
-> peak the collector meets four times a year instead of twelve, at the price this document already
-> named — a permanent background call, every day, for ever. A cold pass is 442 of 2.000 and it does not
-> run into the wall; and it is not the *pass* that has to be smoothed but the wall itself, which is the
-> shared key of §4 as amended by [#560](https://github.com/jenarvaezg/coindex/issues/560). No stagger.
->
-> **And the stamp this section leans on turns out not to be drawn where it is now needed most.** The
-> life was tripled on the promise that the date travels with the amount, so it was checked: the two
-> figures of the shelf window carry it (`showcaseEntryLabel`, `showcaseTileCostLabel`), and **no other
-> figure in the app does**. «Las cifras» and a plate's own header stamp the *silver spot*, which is read
-> daily and therefore always says today, over a total whose catalog prices may now be three months old.
-> Every figure the pass feeds is undated, which is exactly the set this amendment ages. Left as it
-> stands and filed as [#594](https://github.com/jenarvaezg/coindex/issues/594), because what it needs is
-> a wording and a rule for a total with two clocks in it — the *«dated by its oldest»* of #494 read over
-> the spot as well — and not a line squeezed into this one.
+> 442 of 2.000 needs no staggering. Only the shelf window's figures carried their date, which became
+> #594.
 
-> **Amended on 2026-10-05 ([#594](https://github.com/jenarvaezg/coindex/issues/594)). Every figure the
-> pass feeds carries the date of its catalogue half, and a total with two clocks says one clause per
-> clock.** This is the ticket the paragraph above filed, and it is the promise the triple was granted
-> on: «on the day after, the old price is still shown, **with the date it was brought**».
+> **Amended on 2026-10-05 (#594): every figure the pass feeds carries the date of its catalogue
+> half.**
 >
-> **The two clocks are two clauses, and never averaged into one date.** #494's rule — a total is dated
-> by its oldest read — was written for a total whose parts came from **one** clock on different days,
-> and it still governs: it decides what each clause says. It cannot decide *between* the clocks, because
-> the silver and the catalogue do not tick at the same rate — the spot is two keyless calls a day (§9)
-> and a catalog price lives ninety days — so a single date would have to lie about one of them whichever
-> one it picked. Under the total of «Las cifras» the stamp is therefore
-> `plata: 28,40 €/oz · hoy 11:52 · Numista: el 21 jun 2026`: «fuente: cuándo», twice.
->
-> **The clause names Numista and not «el catálogo», and that word was measured before it was kept.**
-> Drawn on the emulator against the father's real collection, «catálogo: el 1 sep 2026» under a plate's
-> header sat four lines above the specification row labelled «Catálogo · 4 ago 2026» — which is the
-> curated file's **edition**, a version and not an age (#518). Two clocks, one word, two dates, on one
-> screen: exactly the drift #518 spent a document undoing. Naming the source also makes the pair
-> legible, because the silver spot is two keyless calls to somebody who is not Numista (§9).
->
-> **The spot does not cede its place**, which was the other candidate. Its clause carries a **price**
-> and not only a date, and that figure is the only way the metal floor can be checked (#398, #326): the
-> silver third of «the maximum of three» is arithmetic — weight × fineness × spot — and it is the one
-> of the three that is quoted nowhere else on the page.
->
-> **A plate's own header gains the date, and each of its two lines carries its own.** The shelf window
-> already did it (`showcaseEntryLabel`, `showcaseTileCostLabel`) and the symmetry is not the argument:
-> «Coste de cerrar» is the *actionable* figure of ADR 0026 §10, and a cost of closing read as this
-> morning's when it is June's is the one that costs money. One date over the two lines was refused
-> because they are not one total — «Valor actual» sums the pieces inside and «Coste de cerrar» the holes
-> outside, and a marked casilla is repriced the day it is marked (ADR 0029 §4), so the second line can
-> be months fresher than the first with nothing wrong anywhere.
->
-> **The date counts a component as read when this phone asked about it, not when the catalogue won.**
-> That is `showcaseMoney`'s gate (ADR 0030 §6) read over the collection: a piece whose silver beat its
-> catalogue price still had that price brought on the day the row says, and a date that counted it out
-> would promise a freshness the amount does not have. **Erring older is the one direction a date may
-> err in**, which is the mirror of §3's rule about rounding a spend down. Where no component was ever
-> asked about — a total out of metal and what was paid — the clause is **absent**, not «sin fecha».
->
-> **The stamp inside a casilla stays bare, and the printed page gains a row.** A hole's stamp repeats no
-> criterion (#493) and now repeats no date either, for the same reason: «Coste de cerrar» totals those
-> very holes and says the oldest of their reads, three lines above. Paper is the opposite case — it
-> outlives the app and has no now to be relative to — so the notebook prints «Tasación · 21 jun 2026» as
-> a row of the specification under «Valor», written out in full and never «hace 12 días».
->
-> **What is still undated, said out loud**: a **marked** casilla on a plate past the threshold of §1 has
-> a price inside the hole and no «Coste de cerrar» over it (ADR 0029 §4), and its row in «Lo que busco»
-> is a bare amount with no header figure to date it. Both are one amount the collector asked for by
-> marking, so the gap is small and named rather than closed by inventing a fourth dated surface.
-
-> **Amended on 2026-08-14 (§5, [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). A
-> price asked for by hand does not expire, and it is always shown with its date.** The life in the table
-> above — thirty days when this was written, ninety since #561 — is the clock of a price **the pass will
-> ask for again**, and that is what makes the trickle a trickle. A plate of the shelf window has no pass
-> coming for it (§3 as amended), so expiry there would mean one thing only: the amount disappearing off
-> a screen with no way to refill it.
->
-> So the deletion clause is dropped for that one case and the rest of §5 is kept exactly: **the row is
-> never deleted, the amount is shown with the date it was brought, and «Volver a tasar» stays on the
-> plate for ever.** It is the sentence this section already signed — *«on the day after, the old price
-> is still shown, with the date it was brought»* — with nothing left to make it that day.
->
-> **And a total whose components were read on different days is dated by its oldest.** That case is
-> created by the shelf window and the marks together: a plate valued by hand in August with one marked
-> casilla refreshed by September's pass is not a total half done (§7) — it is whole, with two ages. One
-> date, and the **oldest**, because a date over a total is a promise about all of it
-> ([#494](https://github.com/jenarvaezg/coindex/issues/494)).
+> - Two clocks, two clauses, never averaged: `plata: 28,40 €/oz · hoy 11:52 · Numista: el 21 jun
+>   2026`. Each clause is dated by its oldest read (#494).
+> - The clause says «Numista», not «el catálogo», which already labels the curated file's edition
+>   (#518).
+> - The spot clause keeps its price: it is the only way to check the metal floor (#326, #398).
+> - A plate's header dates each line, because «Valor actual» and «Coste de cerrar» are separate
+>   totals and a marked casilla is repriced the day it is marked (ADR 0029 §4).
+> - A component counts as read when this phone asked about it, not when its catalogue price won
+>   (ADR 0030 §6): a date may only err older. With nothing ever asked, the clause is absent.
+> - The stamp in a casilla stays bare (#493). The notebook prints «Tasación · 21 jun 2026» under
+>   «Valor», always as a full date.
+> - Still undated: a marked casilla past the threshold of §1, and its row in «Lo que busco».
 
 ### 6. The conditions of the pass: ADR 0024's, minus the wifi
 
 | condition | photographs | the pass | why |
 | --- | --- | --- | --- |
 | on every launch | yes | **yes** | idempotent: the second launch costs zero |
-| only on wifi | yes | **no** | what wifi protects there is the **data tariff** (30 MB); what is scarce here is the **budget**, and waiting for wifi does not protect it. It is ~487 JSON responses |
-| a sync cancels it | yes | **yes, and more gravely** | both spend the **same** budget: a pass in flight can eat the calls the sync needs and make it fail with `BudgetExhausted` |
+| only on wifi | yes | **no** | wifi protects the data tariff (30 MB of photographs); what is scarce here is the budget, which waiting for wifi does not protect. It is ~487 JSON responses |
+| a sync cancels it | yes | **yes, and more gravely** | both spend the same budget: a pass in flight can eat the calls the sync needs and make it fail with `BudgetExhausted` |
 | an export stands it down | yes | **yes** | it takes the network from something the collector is waiting for |
-| ceiling per pass | no | **no** | 487 of 1.500 is not a burst worth staging, and staging it is four launches before there is any money |
-| silent | yes | **yes**, with the line that already exists on «Este teléfono» (§6.1) |
-| with no API key | — | **does not run** | that is the freshly installed app before onboarding, not an error to discover |
+| ceiling per pass | no | **no** | 487 of 1.500 is not a burst worth staging, and staging it means four launches before any money shows |
+| silent | yes | **yes**, with a line on «Este teléfono» (§6.1) |
+| with no API key | — | **does not run** | that is a freshly installed app before onboarding, not an error |
 
-With the budget exhausted the pass stops and writes nothing: the money section does not appear and
-«Este teléfono» says why.
+With the budget exhausted the pass writes nothing, the money section does not appear, and «Este
+teléfono» says why.
+
+> **Amended on 2026-09-30 by ADR 0032 §1.** The pass's endpoints stop `INVENTORY_RESERVE` (300)
+> short of the monthly cap, so a sync always fits.
 
 **§6.1, added by [#521](https://github.com/jenarvaezg/coindex/issues/521): the line is read, and the
-pass has no handle.** The screen it lives on stopped being called «Ajustes» when the audit of 14
-August found that «Sincronizar» — maintenance of the inventory, not configuration — was sitting
-between the API key and `Cerrar sesión`. Two things were asked of that line there and are answered
-here:
+pass has no handle.** The line lives on «Este teléfono».
 
-1. **It does not become a button.** Of the six states this section produces, **none** is something the
-   collector can push: four are «wait» — for the network, for the sync, for the 1st — and the pass is
-   already idempotent on every launch, so a handle would only add a way to spend the budget twice.
-   That budget is **the key's and not the phone's** (#562), and August 2026 went on nine passes that
-   saved nothing (#560). A silent pass with no handle is the decision, restated because it was
-   questioned.
-2. **Two of the six states do open a door**, and it goes to `Credenciales`, not to a queue:
-   `NoApiKey` and `Rejected` are the only two whose cause the collector can act on, and the field
-   that fixes them is now one screen down (ADR 0026 §14). The door is a row and not a tappable
-   paragraph — the app has no tappable paragraph anywhere — and it is printed **only** in those two
-   states, so it is not furniture on the four where nothing can be done.
+1. **It does not become a button.** Four of its six states mean «wait», and the pass already runs on
+   every launch, so a handle would only spend the key's budget twice (#562).
+2. **Two states open a door to `Credenciales`**: `NoApiKey` and `Rejected`, the only causes the
+   collector can fix (ADR 0026 §14). The door is a row, printed only in those two states.
 
 ### 7. The total is never shown half-done
 
-**The page opens whole and the money arrives late — but the total is never shown half-done.**
+**The page opens whole and the money arrives late, but the total is never shown half-done.** Without
+the market price the total is `max(silver, paid)`, the silver floor alone that #316 rejected because
+it *«diría que la colección vale menos de lo que cualquiera puede comprobar en el propio Numista»*.
+A partial total is false, not incomplete.
 
-This is not prudence. A partial total reintroduces through the back door what #316 discarded:
-without the market, the value is `max(silver, paid)` ≈ 10.500 € against the real 16.800, which is
-literally *«enseñar sólo el suelo de plata»* — rejected there because *«diría que la colección vale
-menos de lo que cualquiera puede comprobar en el propio Numista»*. A total at 60 % is not
-incomplete, it is **false**, and it corrects itself upwards while you look at it.
-
-1. **Without a single call to Numista, «Las cifras» is not empty**: the weight, the matter, the
-   three ladders of referents, the arc of years, the emitters and the size all come whole out of the
-   APK. The local-first promise of ADR 0024 extends to this page.
-2. **While the pass runs, the money section is not there.** No struck-through number, no provisional
-   total. It is the same silence as ADR 0024, and «Este teléfono» is already the place where one line
-   tells «they are missing and falling» from «they are missing because there is no network».
-3. **Complete, the total says its coverage and not its progress.** «Llevo 140 de 223» is a progress
-   and is not said; «el valor de N de tus 574 piezas» is a coverage and is. Today that sentence has
-   no subtraction to make — the maximum of the three sources covers 100 % of the 574 (#326) — but the
-   rule is written for the day a piece arrives that no source covers.
+1. **Without a call to Numista, «Las cifras» is not empty**: weight, metal, referents, years,
+   issuers and size come from the APK, as ADR 0024 promises.
+2. **While the pass runs, the money section is absent.** No provisional total; the line on «Este
+   teléfono» says whether the prices are on their way or held up by the network.
+3. **Complete, the total states its coverage, not its progress**: «el valor de N de tus 574 piezas»,
+   never «llevo 140 de 223». Today every piece is covered (#326); the rule is for the day one is
+   not.
 
 ### 8. The grade is the pricing key, and a hole is valued in `unc`
 
-A piece of his is valued **in its grade** (`grade` is at 100 %), with the neighbouring grade when
-its own has no price: 188 exact, 22 neighbouring, 19 with none (#316). **A hole is valued in `unc`**,
-which is what #326 already used to measure the 14 plates within reach.
+A piece is valued in its own grade, or the neighbouring one when its own has no price (#316: 188
+exact, 22 neighbouring, 19 with none). A hole is valued in `unc`, as #326 measured the plates within
+reach.
 
 ### 9. The spot is two keyless calls and is not seeded
 
-`https://api.gold-api.com/price/XAG` for the troy ounce in dollars, and
-`https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR` for the ECB rate. Neither is
-`api.numista.com`, so **neither is counted against the budget of ADR 0003** — the same distinction
-ADR 0024 makes for CDN photographs, and it must not start being counted as one.
-
-**The spot is not seeded into the APK.** The last one read is stored with its date. A seeded spot
-would only buy the silver floor of a piece opened with no network, and the silver floor alone is
-precisely the figure we do not want to show on its own.
+`https://api.gold-api.com/price/XAG` (troy ounce in dollars) and
+`https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR` (ECB rate). Neither is
+`api.numista.com`, so neither counts against the budget of ADR 0003, like the CDN photographs of
+ADR 0024. The last reading is stored with its date and none is seeded: a seeded spot would only show
+the silver floor alone, which §7 refuses.
 
 ## Consequences
 
-`issue_id` **is already on the phone**, which is the one thing #327 expected to cost a migration. It
-recorded that `IssueDto` parses only `year` and `gregorian_year`, and that without the id every piece
-would cost an extra call to `/types/{id}/issues` just to find out. Since then `Mappers.issueIdFromRaw`
-reads it out of the stored response body, which `SyncService` keeps verbatim for exactly this reason:
-every piece already synced carries its issue id with no migration and no API call. What this ADR adds
-to the schema is the price cache and the spot, and nothing about the collection snapshot.
-
-The pass runs in the ViewModel's scope, like the photograph prefetch and for the same reason: every
-issue is independent, what is written is one row per issue, and being cut short when the collector
-leaves costs only the calls not yet made. They are made on the next launch.
-
-Two things this deliberately does not do. It does not keep a **history** of anything — no spot
-series, no evolution of the total, no aggregate of return — because wealth management stays outside
-(ADR 0026 §10), and a table of daily spots is how it would arrive without a decision. And it does
-not value **every** hole, so the cost of completing a plate exists for 28 of his 49 plates and is
-absent, rather than approximate, on the other 21.
-
-The euro amounts of all this are **not in this document, and are never versioned**: this repository
-is public. The method, the coverages and the proportions are here and in `docs/ux/cifras-316.md` and
-`docs/ux/cifras-326.md`; the amounts live in `/private/tmp/coindex-privado/`.
+- `issue_id` needs no migration: `Mappers.issueIdFromRaw` reads it from the response body
+  `SyncService` stores. The schema gains the price cache and the spot.
+- The pass runs in the ViewModel's scope: each issue writes its own row, so being cut short costs
+  only the calls not yet made.
+- No history: no spot series, no evolution of the total. Wealth management stays outside
+  (ADR 0026 §10).
+- The cost of completing a plate exists for 28 of his 49 plates, and is absent, not approximate, on
+  the rest.
+- Euro amounts are never versioned: this repository is public. The method and proportions are here
+  and in `docs/ux/cifras-316.md` and `docs/ux/cifras-326.md`; the amounts live in
+  `/private/tmp/coindex-privado/`.

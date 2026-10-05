@@ -1,6 +1,6 @@
 # ADR 0003: Reservas atómicas del presupuesto de API
 
-Estado: aceptado, ampliado por [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md) (el tope deja de ser uno: el pase de precios se para 300 consultas antes que el resto)
+Estado: aceptado; ampliado por el [ADR 0032](0032-the-inventory-has-its-own-clock-and-its-own-reserve.md) §1
 
 ## Contexto
 
@@ -18,6 +18,9 @@ usuarios y réplicas de la aplicación.
 Se registra la reserva inmediatamente antes de enviar la petición. Una petición que falle
 en transporte sigue contando: ha podido alcanzar Numista y consumir cuota. Si no se puede
 persistir la reserva, la petición no sale.
+
+En la app Android un mutex local hace el papel del bloqueo de Postgres (ADR 0010 §6). El ADR 0032
+§1 parte el tope en dos: el pase de precios se para 300 consultas antes que el resto.
 
 ## Consecuencias
 

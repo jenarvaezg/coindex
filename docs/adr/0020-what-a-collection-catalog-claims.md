@@ -1,311 +1,177 @@
 # ADR 0020: What a collection catalog claims, and what it does not
 
-- Status: accepted
+- Status: accepted; amended by #256 (the existence criterion), #227 (the printed face), #257 and
+  #616 (Consequences)
 - Date: 2026-08-03
-
-> **Amended on 2026-08-06 (#256).** The existence criterion below stands whole, and its second
-> clause gets its wording fixed by the first file that broke it. «One of the two collections is
-> pursuing it» was written as if pursuit were readable off the inventory, and
-> `venezuela-500-bolivares-plata` ships at **0 of 5 in both collections**: five silver proofs of
-> 31,1 g the Banco Central struck between 1990 and 1997, curated because the collector said so
-> with the measurement in front of him, not because a piece of it is in a drawer.
->
-> The clause therefore reads: **the curator declares the pursuit, and owning a member is evidence
-> of it and never the test.** A plate exists to say «me falta», so a plate that says it about every
-> slot is doing its job and not failing a gate — the same reason ADR 0013's grouping and this
-> ADR's own orphan verdict are editorial and reach none of the validator. What the file owes in
-> exchange is honesty in prose: `source_note` says outright that neither collection holds one.
->
-> Nothing else moves. A plate still needs two rows, the sequence still has to exist without us,
-> and a sequence nobody is chasing and nobody has declared is still an orphan (#242 signed two
-> that way on the collector's word alone).
-
-> **Amended on 2026-08-06 (#257).** Nothing below changes. What changes is that «there are no
-> measurable gatekeepers» finally got a file that uses the whole of it, and one consequence bullet is
-> now a wrong measurement.
->
-> `historia-del-real` is a **thematic catalog**: four slots over **three** issuers — the Austrian
-> Empire, Mexico and New South Wales — and four physical patterns, 28,0668 g of .833, 27,07 g of
-> .896, 21,035 g of .903 and 5,619 g of .903. It needed no new mechanism. «One issuer only» and «one
-> physical standard only» were already dead here, ADR 0016 already makes the file authoritative over
-> its members' variant, and the per-member `issuer_code` of #170 already existed; the declared weight
-> is the **anchor coin's** — the real de a ocho that names the theme — and the three deviations are
-> written as `variant_note`. The existence criterion held as written: the sequence exists without us
-> (Numista's own dump ficha describes the 1813 operation, and the two 1813 fichas cite each other),
-> the curator declared the pursuit in his own words, and the plate holds four rows.
->
-> So the consequence bullet «**Equilibrium is the only catalog whose members span two issuers**» is
-> no longer true. Two catalogs span issuers out of 73, and the spanning one is now the wider case:
-> what a card prints when a catalog spans more than one country remains the open half of #170, and
-> this plate reads «México» off the header over a list that also holds Vienna and Sydney.
->
-> One thing this file did that no curation had done before: **it reversed a signed orphan verdict**.
-> N#18852 was signed in #242 and left `data/orphans.json` here. That is not a defect of the register
-> — a verdict of intention is reopened by intention, and the #242 motive was true of the sequence it
-> was offered. It is the reason the orphan list is editorial and reaches none of the validator.
-
-> **Amended on 2026-08-06 (#227).** A catalog claims one more thing: **which face of its coins the
-> notebook prints.** `printed_side: "obverse" | "reverse"` in the header, absent meaning `reverse`,
-> and a third value stops the app at startup with the file name like every other enum here.
->
-> The notebook prints one face per coin and that is #169's settled decision; what was never a
-> decision is *which*. The cells read Numista's `reverse` because the field is called that, and
-> «Numista's reverse» is not «the face of the coin»: on `haiti-50-gourdes-plata` the reverse is the
-> coat of arms and the mermaid — the coin — is the obverse. The criterion is the face the collector
-> recognises as this piece, and it is a **declaration**, never an inference: the oracle written over
-> `obverse.description` and `reverse.description` to find the candidates already fails on two of five.
->
-> Two rules make it a claim of the same kind as the rest. It is **of the plate and never of a
-> member** — if one coin wants a face its sisters do not, the whole plate changes or it is borne, and
-> the reason goes in `source_note`; even the catalogs of heterogeneous members are uniform inside the
-> plate, where the obverse is the constant and the reverse is what changes. And it lives **here and
-> not in the type cache**, which is re-asked of Numista in the hot path (ADR 0023) and would overwrite
-> it on the next sync. The header covers 842 of the 911 cached types; the remaining 69 are what the
-> derived collections and the boxes print, they keep the reverse, and #216 is emptying that residue on
-> its own. Curating the seventy-three shipped plates is #229 — until one is written the notebook is
-> unchanged. (The ticket measured 753 of 829 over sixty plates; the shelf grows every week, and what
-> is written here is `data/` as it stands today.)
-
-> **Amended on 2026-10-05 (#616).** Nothing below changes, and one consequence bullet is now a wrong
-> measurement. The Seymour Panther **was** struck in 2 oz bullion, on 1 September 2026 and as
-> N#604513, so «the Tudor 2 oz bullion reads "2 / 9 emisiones" with "Sin emitir · 1 anunciada"»
-> describes a plate that no longer exists: the ten beasts are complete, the file holds no announced
-> member, and the two real collections read 3/10 and 4/10.
->
-> The mechanism it illustrated came out unharmed, which is the point worth keeping. It was the first
-> announced member in the repo, it stayed out of the denominator for fourteen months because nobody
-> could name its year, and it entered without anyone having to guess one: the mint struck the coin,
-> Numista published the type, and the slot it had been holding was already in the right place.
 
 ## Context
 
-ADR 0009, 0012, 0013, 0014, 0016, 0018 and 0019 all answer the same kind of question: how a
-curated file *identifies* a slot. None of them answers what the file *claims* — whether its list
-is finished, what a slot means when no coin exists to fill it, and what the boundary rests on when
-Numista is not what draws it. `spec.md §0.9` carried three open questions about exactly that, and
-the answers arrived one curation at a time across map #14 without a document to land in.
+ADR 0009, 0012, 0013, 0014, 0016, 0018 and 0019 answer how a curated file *identifies* a slot, not
+what it *claims*: whether its list is finished, what a slot means when no coin exists to fill it,
+and what the boundary rests on when Numista does not draw it. `spec.md §0.9` left three open
+questions about this, answered one curation at a time across map #14.
 
-The gap was not academic. A catalog exists to give a plate a denominator: «13 / 19 emisiones» is
-the whole product, and every number in it is an editorial claim about a boundary. A file that says
-nothing about whether its series is still being issued claims completeness by omission. A file
-that must name a Numista type per member cannot represent a coin the mint has announced but not
-struck, nor one struck without a published Numista page — and both exist in the two real
-collections this project serves.
-
-Two further pressures shaped the answers. Numista's data is not a boundary: it has no series
-operation in its API, its families span physical variants, and a family has no denominator at all.
-And the catalogs ship inside the APK, so a claim is only as fresh as the release that carries it.
+A catalog gives a plate its denominator, so «13 / 19 emisiones» is an editorial claim about a
+boundary. A file silent about whether its series is still issued claims completeness by omission,
+and a file that must name a Numista type per member cannot hold a coin announced but not struck, or
+struck without a Numista page; both exist in the two collections. Numista's data is not a boundary
+either (no series operation in its API, families that span physical variants, no denominator for a
+family), and catalogs ship inside the APK, so a claim is only as fresh as its release.
 
 ## Decision
 
 ### A catalog declares whether its series is still open
 
 `series_status: "open" | "closed"` is **required in every schema version**. Closing requires
-`closed_note` in prose; opening **forbids** it. The asymmetry is the point: closing is the claim
-that costs proof, so `open` is also what a curator declares when the search simply does not find
-a closure.
-
-An open catalog claims «N of N catalogued» and **promises nothing about any date**. It does not
-claim to be up to date, and going behind is not a defect in the file.
-
-The field belongs where coverage belongs — every catalog, no grouping. A curated grouping
-(ADR 0013) affirms no coverage, so it has no boundary to declare.
+`closed_note` in prose; opening **forbids** it. Closing is the claim that costs proof, so `open` is
+also what a curator declares when no closure is found. An open catalog claims «N of N catalogued»
+and **promises nothing about any date**: falling behind is not a defect in the file. Groupings (ADR
+0013) affirm no coverage, so they carry no status.
 
 ### A catalog earns its existence by claiming what a Numista family cannot
 
-A catalog is justified when it affirms something the family Numista gives its types does not
-already affirm. The relationship with Numista is **hybrid: the series proposes, only the versioned
-catalog affirms coverage**, and the app never counts from `series`. Three consequences:
+The relationship is **hybrid: the series proposes, only the versioned catalog affirms coverage**,
+and the app never counts from `series`.
 
-- **The series is not the unit of catalog; the physical variant is.** One Numista series routinely
-  sustains several catalogs — the 18 types of Equilibrium are three collections, and series 6598
-  already sustained three.
-- **A series has no denominator**, because it is not homogeneous in variant. The collector does not
-  own 1 of 18 but 1 of 8, so populating members from a series would print a worse number than the
-  curated one.
-- **There are no measurable gatekeepers.** «One issuer only» and «one physical standard only» were
-  both proposed and both died against real catalogs. What a sequence must satisfy to be curated is
-  editorial and stays editorial: the sequence exists without us, one of the two collections is
-  pursuing it, and the plate would hold at least two rows.
+- **The unit of catalog is the physical variant, not the series.** One series routinely sustains
+  several catalogs: the 18 types of Equilibrium are three collections.
+- **A series has no denominator**, being heterogeneous in variant: the collector owns 1 of 8, not 1
+  of 18.
+- **There are no measurable gatekeepers.** «One issuer only» and «one physical standard only» both
+  died against real catalogs. A sequence qualifies editorially: it exists without us, **the curator
+  declares the pursuit**, and the plate would hold at least two rows.
 
-Annual bullion of stable design **is** catalogued, one slot per year even when the design does not
-change, and it is catalogued the same way when Numista happens to have named its family. The
-editorial limit is «a coin a year that would make sense to buy»: it excludes ordinary circulation
-and a restrike with a frozen date. What splits one plate from another is the **physical variant**,
-not the design — a privy mark or a new annual animal splits nothing.
+Annual bullion of stable design **is** catalogued, one slot per year, whether or not Numista named
+its family; the limit is «a coin a year that would make sense to buy», which excludes circulation
+money and restrikes with a frozen date. Plates split by **physical variant**, not design: a privy
+mark or a new annual animal splits nothing.
 
-A coin for which no plate would make sense is an **orphan**, and that is a curator's verdict
-recorded by hand in `data/orphans.json`, never the automatic residue of what `deriveCollection`
-could not place. Calendar solitude — a programme that may still grow — is not an orphan.
+A coin for which no plate would make sense is an **orphan**: a curator's verdict recorded by hand in
+`data/orphans.json`, never the residue of what `deriveCollection` could not place. A programme that
+may still grow is not an orphan, and a verdict of intention can be reopened by intention (#257 moved
+N#18852 out of the list).
+
+> **Amended by #256 (2026-08-06).** The clause read «one of the two collections is pursuing it», and
+> `venezuela-500-bolivares-plata` ships at 0 of 5 in both because the collector asked for it. So
+> **the curator declares the pursuit, and owning a member is evidence of it, never the test**;
+> `source_note` then says that neither collection holds one.
 
 ### A member declares its own state, and the file always says so out loud
 
-`status: "issued" | "announced" | "unlisted"`, defaulting to `issued`. This is a property of a
-member, not a schema version: it composes with all four ways of identifying one, so
-`schema_version: 4` remains unused.
+`status: "issued" | "announced" | "unlisted"`, defaulting to `issued`. It is a property of the
+member and composes with every way of identifying one, so `schema_version: 4` stays unused.
 
-- **issued** names a `numista_type_id` and a year, and may carry neither `source` nor
-  `design_type_id`: its own type is the proof.
-- **announced** is named by the issuer and not yet struck. It **forbids** `numista_type_id` and
-  requires `source` plus `source_note`; the year becomes optional only here, because writing in a
-  date the mint has not announced would claim more than the source says. An optional
-  `design_type_id` cites the same design in another physical variant and **never** participates in
-  matching or in evidence.
-- **unlisted** was struck and sold but has no published Numista type. It forbids
-  `numista_type_id` — an id is never written for a page a referee may still delete — requires the
-  same `source`/`source_note` pair, and requires the year.
+- **issued** names a `numista_type_id` and a year, and needs neither `source` nor `design_type_id`.
+- **announced** is named by the issuer and not yet struck. It **forbids** `numista_type_id`,
+  requires `source` plus `source_note`, and is the only state where the year is optional, since a
+  date the mint has not given would claim more than the source. An optional `design_type_id` cites
+  the design in another variant and **never** takes part in matching or evidence.
+- **unlisted** was struck and sold but has no published Numista type. It forbids `numista_type_id`
+  (no id for a page a referee may still delete) and requires `source`, `source_note` and the year.
 
-The symmetry is enforced in both directions: an absent `numista_type_id` never *means* announced,
-the file has to say so.
-
-Three editorial rules govern an announced member, none of them in the validator: an announcement
-does earn existence, because Numista catalogs what was struck and can never affirm an unstruck
-coin; an announcement with **no identity at all** — no name, no year — is worth nothing without a
-programme count, since «more will come» is what `series_status: open` already says; and a catalog
-needs **at least one issued** member, because one made only of announcements never progresses and
-would ship in the APK unopened.
+An absent `numista_type_id` never *means* announced: the file has to say so. Editorially, outside
+the validator: an announcement earns existence, since Numista only catalogs what was struck; one
+with no name and no year is worth nothing without a programme count; and a catalog needs **at least
+one issued** member, or it never progresses.
 
 ### The issuer is a fact about a coin, and the catalog's is only a default
 
-**A member may declare its own `issuer_code`, and the catalog's is what a member means when it
-declares none** (#170). Absence therefore changes nothing about the 58 files that already shipped,
-and the header stops being readable as the issuer *of a collection*: `issuerCodes()` is what names
-a country, one code in 58 catalogs and two in Equilibrium.
+**A member may declare its own `issuer_code`; the catalog's applies to members that declare none**
+(#170), and `issuerCodes()` names the countries. Pressburg Mint strikes the Equilibrium ounce for
+Tokelau (2018–2022, 2024) and Niue (2023, 2025), and Numista's series 3245 lists both issuers, so
+one header code would print «Tokelau» over a coin that says Niue — a coin the collector owns.
+Splitting the catalog would make two plates of a series the mint never split, and reinstate «one
+issuer only». **The catalog's `issuer_code` must issue at least one member**: a default that applies
+to nobody is the same false label.
 
-The measurement forced it. Pressburg Mint strikes the silver ounce of Equilibrium for Tokelau from
-2018 to 2022 and again in 2024, and for Niue in 2023 and 2025 — verified on the fichas, where the
-issuer changes with the denomination (5 dollars against 2) — and Numista's own series 3245 heads
-itself «Emisores: Niue, Tokelau». One header code over that list is not an imprecision of
-catalogue: it prints «Tokelau» over a coin whose obverse says Niue, and the collector owning
-exactly that coin is the case in the field.
-
-Splitting the catalog in two was the alternative and is refused: the years interleave, so it would
-produce two plates of a series the mint never split, and «one issuer only» is precisely the
-gatekeeper this ADR already killed above. The curator had it right before the schema did — the
-country is written into every member id.
-
-One rule guards it, and it is structural: **the catalog's `issuer_code` must be the issuer of at
-least one member.** A default that defaults for nobody is the same false label one indirection
-deeper.
+`historia-del-real` (#257) is the wider case, a **thematic catalog** of four slots over three
+issuers and four physical patterns, with no new mechanism: the file is authoritative over its
+members' variant (ADR 0016), the declared weight is the **anchor coin's** (the real de a ocho), and
+the deviations are `variant_note`.
 
 ### The denominator counts what the app can measure
 
-A plate's denominator counts issued members only. Announced and unlisted slots are shown and
-excluded from it.
-
-This follows from a hard fact of the inventory rather than from taste: `CollectedItem.typeId` is
-non-null and the inventory *is* the collector's Numista collection, so **a piece with no Numista
-type cannot be in the inventory and never will be**. An unlisted slot is therefore unfillable, and
-counting it would print «1 / 7» forever with all seven coins in the drawer. An Album marks such a
-slot neither Owned nor Missing but with a fourth state, because the app cannot know whether the
-collector has it.
+A plate's denominator counts issued members only; announced and unlisted slots are shown outside it.
+The inventory *is* the collector's Numista collection and `CollectedItem.typeId` is non-null, so **a
+piece with no Numista type can never be in the inventory**. Counting an unlisted slot would print «1
+/ 7» forever with all seven coins in the drawer; the album gives it a fourth state, neither Owned
+nor Missing.
 
 ### Provenance: `source` may be a series or a type, and prose carries what a URL cannot
 
-`source` accepts a Numista series page **or** a Numista type page. Requiring a series URL assumed
-every list is born from a Numista series, and the 10 gulden of Beatrix have `series: null` on all
-five types with the *Handboek van de Nederlandse munten 1795-2001* drawing the boundary.
+`source` accepts a Numista series **or** type page: the 10 gulden of Beatrix have `series: null` on
+all five types, and their boundary comes from the *Handboek van de Nederlandse munten 1795-2001*.
+**A catalog may carry an optional `source_note`**, open or closed, because an open catalog whose
+boundary comes from its mint had nowhere to cite it (#53). It is the members' `source`/`source_note`
+pair one level up, never proof by itself, and refused only when blank.
 
-**A catalog may carry an optional `source_note`**, prose beside `source`, allowed whether the
-series is open or closed. Since `closed_note` is forbidden while open, an open catalog whose
-boundary comes from its mint previously had nowhere in the file to cite it. It is the
-`source`/`source_note` pair the members already have, one level up. It is optional and never
-proves anything by itself; the validator only refuses it blank.
+### The printed face is a declaration of the catalog
+
+Added by #227 (2026-08-06). `printed_side: "obverse" | "reverse"`, absent meaning `reverse`, says
+**which face of its coins the notebook prints**; any other value stops the app at startup.
+«Numista's reverse» is not «the face of the coin»: on `haiti-50-gourdes-plata` the coin is the
+mermaid on the obverse. It is the face the collector recognises, **declared, never inferred**, and
+**of the plate, never of a member** (an odd coin out is borne, with the reason in `source_note`). It
+lives **in the catalog, not the type cache**, which every sync overwrites (ADR 0023). Types no
+catalog claims keep the reverse.
 
 ### Freshness is the release, not a channel
 
-**Catalogs keep travelling inside the APK. The optional remote catalog file of `spec.md §0.9.4` is
-rejected.** An open catalog promises nothing about any date, so shortening the distance between
-curation and phone buys convenience, not honesty — 136 KB of catalog inside a 29.5 MB APK, with
-ten releases published in two days. It would also turn a fatal startup validator into a remote
-weapon: today every byte it validates passed through CI. Identity already lives inside the file
-(`id`, `updated_at`), so no external manifest is needed to identify a catalog.
+**Catalogs travel inside the APK; the optional remote catalog file of `spec.md §0.9.4` is
+rejected.** An open catalog promises nothing about dates, so a faster path from curation to phone
+buys convenience, not honesty, and it would turn a fatal startup validator into a remote weapon when
+today every byte it validates passed through CI. A catalog's freshness is therefore **bounded by the
+installed APK**; a third user, a second curator or a measured phone-to-repository connection would
+reopen this. `scripts/release.sh` says in the release `notes` when `data/` changed since the
+previous tag.
 
-The accepted consequence is that **a catalog's freshness is bounded by the installed APK**. Three
-signals would reopen the question: a third user, curation decoupled from a single curator, or a
-measured connection between phone and repository. The mitigation is not architecture: the release
-manifest already carries `notes`, so `scripts/release.sh` says when a release brings changed
-`data/`, derived from `git diff <previous tag>..HEAD -- data/`.
-
-Being behind is reported, not stored as freshness. No `checked_at` field and no new meaning for
-`updated_at`, which is a modification stamp. A CI step keeps a single issue in sync with the tail
-and the interior gaps of every open catalog, informative and never red.
-
-**Interior years the mint skipped are not debt.** An open catalog may declare
-`no_issue_years` with a required `no_issue_note` — the same proof bargain as `closed_note` —
-so the stale-catalogs report drops those years from gaps. They are never members and never
-touch the plate denominator: the claim is «the mint issued nothing that year for this variant»,
-not a slot to fill. #94 left gaps listed forever because an open catalog then had nowhere to
-write the exception; `source_note` opened the door for prose, and this field makes the exception
-machine-readable.
+Being behind is reported, not stored: no `checked_at`, and `updated_at` stays a modification stamp.
+A CI step keeps one issue in sync with the tail and interior gaps of every open catalog, never red.
+**Interior years the mint skipped are not debt**: `no_issue_years`, with a required `no_issue_note`
+(the bargain of `closed_note`), removes them from the report and never touches the denominator.
 
 ### Physical cross-checks live in the suite and are never fatal
 
-By ADR 0016 what a catalog declares — weight, finish, metal — is **the variant of the collection,
-not an assertion about each member**. A curator who puts seven silver coins and one of cupronickel
-in one list is curating. So a check against a Numista ficha may never be fatal: it lives in the
-test suite and is silenced by declaring the exception in prose on the slot, the same bargain
-`closed_note` makes. What it catches is the accidental intruder, not the curator's decision. Only
-the metal is cross-checkable at all: Numista's grams do not agree with themselves, its finish
-field does not exist, and both checks stop at catalogs, because a grouping has no members in which
-to write the exception.
+By ADR 0016 a catalog's weight, finish and metal are **the variant of the collection, not an
+assertion about each member**: one cupronickel coin among seven silver ones is curation. A check
+against a Numista ficha therefore lives in the test suite and is silenced by declaring the exception
+in prose on the slot; it catches accidental intruders, not decisions. Only the metal is checkable
+(Numista's grams disagree with themselves and it has no finish), and only on catalogs, since a
+grouping has no members to write the exception on.
 
 ## Consequences
 
-- **The validator.** It stops the app at startup with the file and the reason, so every rule above
-  that is structural is now a startup rule: `series_status` required in all versions,
-  `closed_note` required exactly when closed and forbidden when open, `source` accepting a series
-  or a type page, `source_note` refused only when blank, `no_issue_years` requiring
-  `no_issue_note` (and the reverse; a blank note is refused), years unique and inside the
-  member span without colliding with a slot, a member `issuer_code` refused only when blank and a
-  catalog one that is the issuer of no member, and the full status symmetry with its proof pair.
-  The editorial rules — the existence criterion, the minimum of two rows, the three rules for
-  announcements, the annual-bullion limit — deliberately reach **none** of it: they are judgments,
-  and a judgment that halts the app is a judgment nobody can override.
-- The 49 shipped catalogs declare their status: 28 open and 21 closed. Gothic Horror was retired
-  under the existence criterion, and no other file failed it.
-- `schema_version: 4` stays unused. Nothing here needed a new version: coverage is a property of
-  the catalog and state is a property of the member, and both compose with the four existing ways
-  of identifying a slot.
-- A plate can now show what does not exist yet. The Tudor 2 oz bullion reads «2 / 9 emisiones»
-  with «Sin emitir · 1 anunciada», because the Seymour Panther was never struck in that variant —
-  a fact about the programme, not a hole in the curation.
-- The two Royal Mint bullion ranges are the first files to carry a catalog-level `source_note`.
-  They are open catalogs that exist because the mint declared a range, and Numista groups neither.
-- **Equilibrium is the only catalog whose members span two issuers**, remeasured over all 59 files
-  of `data/collection-catalogs/` and every member of them against the type cache — 20 distinct
-  declared issuers, no member without a cached ficha. Its two Niue slots are the only per-member
-  `issuer_code` in the repository, and its 1 oz strand is complete: 2018-2025 with no gap and no
-  duplicate. #170 measured 50 catalogs, which is what the number was in the same week.
-- **What a card prints when a catalog spans two issuers is not decided here.** The file no longer
-  claims one country, and `Issuers` already has both the fallback to the pieces and the silence
-  clause it applies to a card with no file; which of the two a spanning catalog gets is the open
-  half of #170, and until it is decided the eyebrow still reads the header.
-- No database migration, no new API call and no remote fetch comes out of this ADR. What changes
-  is what the curated files are allowed and required to say.
+- **The validator** stops the app at startup with the file and the reason, so every structural rule
+  above is a startup rule: the status and its notes, the two kinds of `source`, blank `source_note`
+  or member `issuer_code` refused, `no_issue_years` paired with its note, years unique and inside
+  the member span, a catalog `issuer_code` that issues some member, `printed_side`'s two values, and
+  the full status symmetry. The editorial rules — existence, two rows, announcements, the
+  annual-bullion limit — deliberately reach **none** of it: a judgment that halts the app cannot be
+  overridden.
+- The 49 catalogs shipped then declared 28 open and 21 closed; Gothic Horror was retired under the
+  existence criterion.
+- **A plate can show what does not exist yet.** The first announced member, the Seymour Panther of
+  the Tudor 2 oz bullion, stayed out of the denominator for over a year with no year to name, until
+  it was struck on 1 September 2026 (N#604513, #616) and took its slot.
+- The two Royal Mint bullion ranges were the first catalog-level `source_note`: open catalogs that
+  exist because the mint declared a range Numista does not group.
+- Equilibrium and `historia-del-real` span issuers. What a card printed for them was the open half
+  of #170; since ADR 0026 §12 the card has no country line, and the country axis reads each member's
+  own.
+- No database migration, new API call or remote fetch: only what the curated files may and must say
+  changes.
 
 ## Alternatives considered
 
-- **A new `schema_version` for announced or unlisted members.** Rejected: both are properties of a
-  member and compose with every existing identification, so a new version would duplicate the
-  rules of version 1 and force a file-wide choice for a per-slot fact.
-- **A nullable `numista_type_id` to mean «not catalogued by Numista».** Rejected: it would lose the
-  fatal error that catches the forgetful curator. An explicit third state keeps the error and says
-  what the slot is.
-- **Populating members from a Numista series.** Rejected above: no denominator, no homogeneity in
-  variant, and no series operation in the API.
-- **An optional remote catalog file.** Rejected: it buys convenience an open catalog never promised
-  and turns a fatal validator into a remote weapon.
-- **A free-prose silence list in comments or `source_note` alone.** Rejected for the report: the
-  script needs structured years. `no_issue_years` + `no_issue_note` is the machine-readable form
-  of the same proof bargain.
-- **Allowing `closed_note` while open**, instead of adding `source_note`. Rejected: it would undo
-  the asymmetry of the status decision, and a reader could no longer read the presence of that note
-  as «this is closed».
-- **An `issuer_codes` list in the header** instead of a per-member issuer. Rejected: it renames the
-  field in all 52 curated files, plus the tests that read it, to describe one catalog — and it would
-  say *which* countries a list spans while still not saying which coin is from which, when the
-  members are where that already lives.
-- **A `checked_at` field for freshness.** Rejected: if a programme died the catalog closes with its
-  note, and if it is alive the gap is temporary by construction. A stamp would record when someone
-  looked, which is not a claim about the coins.
+- **A new `schema_version` for announced or unlisted members**: per-member properties would force a
+  file-wide choice and duplicate version 1's rules.
+- **A nullable `numista_type_id` meaning «not on Numista»**: it would lose the fatal error that
+  catches a forgetful curator.
+- **A silence list in comments or `source_note`**: the report needs structured years.
+- **Allowing `closed_note` while open** instead of `source_note`: the note would stop meaning
+  «closed».
+- **An `issuer_codes` list in the header**: it renames the field in every file to describe one
+  catalog, and still does not say which coin is from where.
+- **A `checked_at` field**: it records when someone looked, not a claim about the coins; a dead
+  programme closes with a note and a live one's gap is temporary.
+- Rejected in their sections: populating members from a Numista series, and a remote catalog file.

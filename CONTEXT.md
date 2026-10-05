@@ -11,14 +11,11 @@ multiple physical variants and is not necessarily a curated series.
 _Avoid_: Series
 
 **Placeholder family**:
-A Numista family made **entirely** of articles and the like — the «The» that N#596807 declares —
-which is the start of a name and not a name. Since #404 it is read as the absent field it is: the
-piece joins the unclassified residue as one with no family at all, instead of heading a card called
-«The». It is not a judgement about ugly names: every word must be a function word, an initialism is
-always a name, and a curated file or grouping outranks it as it outranks any other silence from
-Numista. Unlike an **unpublished type**, its page can be perfectly live — this one was published
-between 4 and 11 August 2026 with the field still cut — so the repair is an edit upstream plus the
-collector's gesture of asking for the ficha again.
+A Numista family made only of function words, such as the «The» of N#596807. It is treated as no
+family at all (#404): the piece joins the unclassified residue. An initialism counts as a name, and
+a curated file or grouping overrides it. Unlike an **unpublished type**, its page is live. The fix
+is an edit on Numista, which reaches the phone when the ficha is asked again (ADR 0025) or
+re-seeded (ADR 0033).
 _Avoid_: Unpublished type, family display alias, Numista error
 
 **Physical variant**:
@@ -29,14 +26,11 @@ the same series.
 _Avoid_: Family, type
 
 **Dominant metal**:
-What a coin is mostly made of, inferred from Numista's `composition.text` because Numista has
-no metal field. Billon counts as silver. A composition with no dominant metal at all — a
-bimetallic piece, a clad core — is **other**, which is a claim; a composition nobody recorded,
-or one the rules do not recognise, is simply unknown. A collection catalog **declares** its
-own, as it declares weight and finish, and that declaration is about the variant the catalog
-covers rather than about each of its members (ADR 0016, ADR 0018). Two rules read this one
-string and each takes a different half: the metal is the head, and a gold **coating** is what
-follows it — «Plata 925 (with selective gold plating)» is a silver coin with a gilded finish.
+What a coin is mostly made of, read from the head of Numista's `composition.text` (Numista has no
+metal field). Billon counts as silver. **Other** is a claim, a composition with no dominant metal
+(bimetallic, clad); unknown means unrecorded or unrecognised. A collection catalog declares its own
+for the variant it covers, not per member (ADR 0016, ADR 0018). A coating after the head is a
+finish, not the metal: «Plata 925 (with selective gold plating)» is gilded silver.
 _Avoid_: Alloy, fineness, composition
 
 **Composite finish**:
@@ -45,12 +39,10 @@ distinct from Proof and Coloured and participates in card identity and grouping.
 _Avoid_: Display label, either component finish
 
 **Variant key**:
-The exact canonical tuple of resolved family, normalized weight, finish and dominant metal
-that identifies a physical variant, and therefore groups the pieces of a derived collection. A
-matching catalog declares the resolved family and complete key; without one, the remaining
-precedence ladder resolves the family. It **persists nothing**: since ADR 0021 nothing is stored
-per card, and identity is the curated file wherever there is one, so the key is the identity only
-of the cards no file names.
+Resolved family, normalized weight, finish and dominant metal: the tuple that identifies a physical
+variant and groups the pieces of a derived collection. A matching catalog supplies the whole key;
+otherwise the precedence ladder resolves the family. Nothing is stored against it, and where a
+curated file names the types, the file is the identity (ADR 0021).
 _Avoid_: Proposal variant key, family display alias, card name
 
 **Absent weight**:
@@ -67,15 +59,11 @@ bullion is not one: a quarter-ounce and a one-ounce piece are the same coin in t
 _Avoid_: Date run, fractional bullion family, curated series
 
 **Thematic catalog**:
-A collection catalog whose boundary is a **theme the collector declared**, not a denomination, a
-programme or a mint's range — so it may cross issuers, centuries and physical patterns, and its
-declared weight is the **anchor coin's** rather than a standard every member shares. It is an
-ordinary schema 1 catalog and needs no mechanism of its own: ADR 0020 already refused «one issuer
-only» and «one physical standard only» as gatekeepers, and ADR 0016 makes the file authoritative
-over its members' variant, so the members land on one card however far apart they weigh. What it
-owes in exchange is prose: the `source_note` says whose declaration draws the line and quotes it
-with a date, and each deviating member carries a `variant_note`. `historia-del-real` is the first,
-with four slots over three issuers.
+A schema 1 collection catalog bounded by a theme the collector declared, not by a denomination,
+programme or mint range, so it may cross issuers, centuries and physical patterns. Its declared
+weight is the anchor coin's, and ADR 0016 keeps every member on its card. It owes prose: a dated
+`source_note` quoting whose declaration draws the line, and a `variant_note` on each deviating
+member. Example: `historia-del-real`.
 _Avoid_: Agrupación, commemorative programme, set catalog, own grouping
 
 **Technical family**:
@@ -85,156 +73,127 @@ groups pieces no catalog claims, so a piece is never dropped for having one.
 _Avoid_: Numista family, unclassified reason
 
 **Orphan**:
-A coin for which the curator has affirmed that a collection-catalog plate would not make
-sense — not merely one that currently lacks a catalog. The verdict is manual: the curator records
-the Numista type and a prose reason in `data/orphans.json`, usually after investigating the
-automatic unclassified residue but not only there — a coin that already has a raw-family card can
-be an orphan, because a card is not a plate and a raw family has no denominator.
-Absolute solitude is enough but not required; a real
-sequence Coindex will never plate (for example ordinary euro circulation by country) can be
-an orphan too. Calendar solitude — a programme that may still grow, such as a lone Gothic
-Horror character — is not an orphan. The rows `deriveCollection` could not place are unclassified
-residue, not the orphan list, and the collector reaches them through the «Sin colección» filter of
-Coins — which shows *which* pieces are out, never *why* (ADR 0021 §12).
+A coin the curator has recorded in `data/orphans.json`, with its Numista type and a prose reason, as
+one a collection-catalog plate would not make sense for: a verdict, not the lack of a catalog. A
+sequence Coindex will never plate (euro circulation by country) or a coin with a raw-family card can
+be one; a programme that may still grow (a lone Gothic Horror character) cannot. Distinct from the
+**unclassified residue**, the rows `deriveCollection` could not place, which the «Sin colección»
+filter of Coins shows without a reason (ADR 0021 §12).
 _Avoid_: Unclassified, missing, stable orphan
 
 **Collection**:
-Any card of the index, and there is only one species: a curated catalog, a curated grouping and a
-collector's own box sit in one list, sorted by one comparator, with no block, no section and no word
-of provenance telling them apart. Having a curated file is not a rank and none is subordinate to
-another. What a collection *does* depends on one capability only — whether it has an issue list.
+Any card of the index: a curated catalog, a curated grouping or a collector's own box, in one list
+under one comparator, with no word of provenance and no rank between them. What a collection can do
+depends only on whether it has an **issue list**.
 _Avoid_: Collection proposal, album, automatic series, own grouping as a separate species
 
 **Derived collection**:
-A collection nobody curated, fabricated from the collector's current pieces by one variant key
-because no file names those types. It is ephemeral and per collector (ADR 0007), recomputed after
-each sync, and it prints Numista's raw family verbatim as its card name.
+A collection nobody curated, built from the collector's current pieces by one variant key because
+no file names those types. Ephemeral and per collector (ADR 0007), recomputed after each sync; its
+card name is Numista's raw family, cured where the label table has an entry (ADR 0031).
 _Avoid_: Collection proposal, followed proposal, unclassified
 
 **Issue list**:
-The property that splits what a collection can do: with one — a catalog's members — the card says
-progress (`4 de 12 · te faltan 8`), opens its plate in one tap and can show a hole. Without one, the
-card counts what there is (`3 monedas · 2 tipos`) and opens its list of pieces. It is the only
-provenance signal on screen, and it is never spelled out as a word.
+What splits what a collection can do. With one (a catalog's members) the card shows progress
+(`4 de 12 · te faltan 8`), opens its plate and can show a hole; without one it counts what there is
+(`3 monedas · 2 tipos`) and opens its list of pieces. It is the only provenance signal on screen,
+and is never spelled out as a word.
 _Avoid_: Provenance label, curated flag, coverage claim
 
 **Card name**:
-The card-sized name of a collection: `short_name` in the curated file — required, unique across the
-index and a prefix of `name` — Numista's raw family verbatim where no file exists, and the single
-40-character name a collector types when creating a box (where `name == short_name`). It is written
-by the curator, never renamed by the collector, and there are no display aliases in code. Two cards
-of one index can never read alike: where they would — one Numista series over two physical patterns,
-or one grouping over two variant keys — each says the weight that splits it, «5 francs Semeuse ·
-0,386 oz» (#565). That is the whole of it; nothing else is ever appended.
+A collection's card-sized name: the curated file's `short_name` (required, unique in the index, a
+prefix of `name`); without a file, Numista's raw family, corrected only by the cured-label table
+(ADR 0031) and the technical-family format; for a box, the single 40-character name the collector
+types. The collector never renames a card. Where two cards would read alike, each appends the weight
+that splits them, «5 francs Semeuse · 0,386 oz» (#565); nothing else is ever appended.
 _Avoid_: Family, name, family display alias, editorial scope
 
 **Card country**:
-The country of a card, read by the shelf facet, the plate's ficha and paper — **no longer printed
-above its name**, since ADR 0026 §12 replaced the eyebrow with the die-cut hole: `issuer_code` from the curated
-file wherever one names the collection, and the pieces' own issuer where none does — silent when they
-disagree, because an eyebrow covering half a card is worse than no eyebrow. It is a **country and not
-an issuing entity**: Numista names entities with their period of validity, so nine of the 40 issuer
-codes in the cache are cured to the name the curator writes in Spanish, `russie` → «Rusia»
-(ADR 0023). The remaining 31 are the ficha's, verbatim.
+The country of a card, used by the shelf facet, the plate's ficha and paper, and no longer printed
+above the name (ADR 0026 §12): the curated file's `issuer_code`, else the pieces' own issuer, blank
+when they disagree. A country, not Numista's issuing entity with its period of validity: some codes
+are cured to the curator's Spanish name, `russie` → «Rusia» (ADR 0023).
 _Avoid_: Numista's issuer label as the country, issuing entity, period of validity on a card
 
 **Coverage ratio**:
-Issued members owned over issued members catalogued, which is what a collection with an issue list
-prints and what the index is sorted by — `(has ratio ↓, ratio ↓, denominator ↓, short_name ↑)`. It
-is a measured fact and it replaced the collector's declaration of intent: nothing is stored per card
-any more.
+Issued members owned over issued members catalogued: what a collection with an issue list prints
+and what the index sorts by, `(has ratio ↓, ratio ↓, denominator ↓, short_name ↑)`. It is measured,
+and it replaced the collector's declaration of intent: nothing is stored per card.
 _Avoid_: Followed disposition, progress bar, completeness claim
 
 **Collector's own box**:
-A collection whose members the collector enumerated by hand on the phone (`own_groupings`), born
-from a filter in Coins that seeds the selection. It is indistinguishable from any other card in the
-index, but it is a different act: it only ever holds pieces you own, so it **can never contain a
-gap**, and its only product is a sheet. A collection pursues; a box shows. «Box» is a word of this
-document and of the code, and **the interface never says it**: on the phone the gesture that makes one
-says «Hacer una colección», it is filled into «la colección» and named «Tu colección» (#516), because a
-word of provenance on screen is what ADR 0021 §2 removed.
+A collection whose members the collector picked by hand (`own_groupings`), seeded from a filter in
+Coins. It only holds pieces the collector owns, so it **can never contain a gap**, and its only
+product is a sheet. «Box» is a word of the code and this document, never of the screen: the gesture
+says «Hacer una colección» and the box is headed «Tu colección» (#516, ADR 0021 §2).
 _Avoid_: Own grouping, curated grouping, unclassified bucket, subordinate collection, «caja» or
 «agrupación» on screen
 
 **Coins**:
-The sibling hierarchy of Collections at the top level, reached through the bottom bar, where a piece
-exists whether or not any collection claims it. It carries the filters — «Sin colección», class,
-country — the sort and the search, and each coin links back to the collections that claim it.
+The sibling of Collections at the top level, reached through the bottom bar, where a piece exists
+whether or not any collection claims it. It carries the filters («Sin colección», class, country),
+the sort and the search, and each coin links back to the collections that claim it.
 _Avoid_: Unclassified screen, inventory view, collection detail
 
 **Disagreement report**:
-The audit surface for what the matching contradicts in silence — a member whose weight normalized
-from Numista's grams is not the one its catalog declares, a row so year-blind it is invisible in its
-own plate. It is a script with no network that never goes red and keeps a single issue in sync, not a
-screen: red when the finding is rare, a report when it is routine (ADR 0021 §12). The weight half is
-`scripts/weight-deviations.py`; the year-blind rows need the inventory and belong to the field report.
+The out-of-app audit of what the matching contradicts silently: a member whose normalized Numista
+weight is not its catalog's, or a row so year-blind it is invisible in its own plate. A script with
+no network that never goes red and keeps one issue in sync (ADR 0021 §12): the weights are
+`scripts/weight-deviations.py`; the year-blind rows need the inventory and belong to the field
+report.
 _Avoid_: Manual override, unclassified reason, in-app audit
 
 **Matching digest**:
-What holds the Python ports of the matching to the domain that owns it:
-`fixtures/matching-digest.json`, emitted by the Kotlin suite with the snapping constants and the
-vectors that pin them — grams to normalized milli-ounces, families to technical or not, schema
-version to catalog species, a claim layout to whether the app refuses to start — and asserted by
-the Python suite. It is not shared code and it travels one way only: the app is the runtime gate
-and the single source, so a disagreement is the port's to fix. Nothing in production reads it.
+`fixtures/matching-digest.json`: the snapping constants and the vectors that pin them, emitted by
+the Kotlin suite and asserted by the Python suite so that the Python ports of the matching follow
+the domain. It travels one way: the app is the source, a disagreement is the port's to fix, and
+production never reads it.
 _Avoid_: Shared matching rules, matching config, mirror config
 
 **Curation**:
-All the curated files that travel with the app taken together — collection catalogs, curated
-groupings and commemorative programmes — bound once and treated as one thing. It is what the
-snapshot is read **against**: the card names, the index order and the plates all come from it, and
-the assembly that turns a snapshot into what the screens show is the single entry to the domain
-(#217). Constant for the lifetime of the process, because the files ship inside the APK. **Valid by
-construction** (#545): a rule that only holds across two species — a card name shared by a catalog
-and a grouping — is checked where both are held, so a curation that exists has passed it. Files
-reach one **loading door**, and each side of the seam brings its own reader: the APK's assets on a
-phone, `data/` in the suite.
+All the curated files shipped with the app — collection catalogs, curated groupings and
+commemorative programmes — loaded once as one value that the snapshot is read **against**: card
+names, index order and plates come from it, through a single entry to the domain (#217). It is
+constant for the process and **valid by construction** (#545): a rule spanning two species is
+checked where both are held. Files arrive through one **loading door**, read from the APK's assets
+on a phone and from `data/` in the suite.
 _Avoid_: Seeds, catalogs, curated data
 
 **Snapshot**:
 What one phone holds of the collector right now, and the only input the curation is applied to: the
-inventory as it was last synced, the fichas cached for it, and the boxes the collector typed.
-Everything else is derived from it and nothing about it is stored per card (ADR 0021 §7).
+inventory as last synced, the fichas cached for it, and the boxes the collector made. Everything
+else is derived from it, and nothing is stored per card (ADR 0021 §7).
 _Avoid_: State, local data, cache
 
 **Reading**:
-Everything a screen shows that nobody stores: the snapshot crossed with the curation, and with the
-prices and the marks that arrive by their own doors. A reading is a **value** and never a field of
-the state — the shelf window, the living marks, «Las cifras», the sewn edge, what a coin is worth —
-so a stored one would be a third truth able to disagree with both the table and the inventory. It is
-one object rather than a field per derivation, and the object is the memo: the same one comes back
-until a reading behind it moves, which is what a screen keys its `remember` on (#542). It has two
-halves because they move at different speeds — what only the snapshot and the curation decide (the
-shelf window, a plate, the name of a card) survives the price that lands mid-pass.
+What a screen shows that nobody stores: the snapshot crossed with the curation, plus prices and
+marks. It is a **value**, never a field of the state, so it cannot become a third truth disagreeing
+with the table and the inventory. It is one memoized object a screen keys its `remember` on (#542),
+in two halves that move at different speeds, so what only the snapshot and the curation decide
+survives a price landing mid-pass.
 _Avoid_: Derived state, ui state, cache
 
 **Collection catalog**:
-A curated, sourced reference list of official members for one exact variant key.
-It remains separate from curated series, and it is what gives a collection its issue list.
-It **declares** that variant rather than inferring it: for the types it claims, its own family,
-weight, finish and metal are the key, whatever family or grams Numista records (ADR 0016).
+A curated, sourced reference list of official members for one exact variant key. It is distinct
+from a curated series, and it is what gives a collection its issue list. It **declares** that
+variant rather than inferring it: for the types it claims, its own family, weight, finish and metal
+are the key, whatever Numista records (ADR 0016).
 _Avoid_: Collection proposal, curated series
 
 **Open series**:
-A collection catalog's declaration that its series is still being issued, so the boundary it
-claims is «N of N catalogued» today and **no promise about any date**. Closing is the claim that
-costs proof, so a closed catalog must say in `closed_note` what sustains the closure and an open
-one is forbidden from carrying that note — a curator who cannot find the closure declares open.
-Every catalog declares it and no curated grouping does, because coverage is what the field is
-about. An open catalog going behind its mint is therefore not a defect in the file: the **tail**
-(missing current year) is reported in an issue, never stored as freshness. Interior years the mint
-skipped are a different claim — `no_issue_years` with `no_issue_note` — so the report stops
-listing them once the curator has versioned the proof (ADR 0020).
+A catalog's declaration that its series is still being issued: «N of N catalogued» today, with **no
+promise about any date**. Closing needs proof in `closed_note`, which an open catalog may not carry;
+a curator without proof declares open. Every catalog declares it and no grouping does. A missing
+current year (the **tail**) is reported in an issue, never stored; interior years the mint skipped
+are declared in `no_issue_years` with `no_issue_note` (ADR 0020).
 _Avoid_: Up to date, incomplete catalog, curated series
 
 **Announced member**:
-A collection-catalog member the issuer has named but not yet struck, so no piece can ever fill it
-and it stays outside the plate denominator. It cites the issuer instead of Numista — no
-`numista_type_id`, a required `source` and prose saying what that source proves — and its year is
-optional, because writing in a date the mint has not announced would claim more than the source
-says. Its optional `design_type_id` points at the same design in another physical variant and
-never takes part in matching or evidence. An announcement with no identity at all is worth nothing
-without a programme count: «more will come» is what an open series already says.
+A member the issuer has named but not yet struck: no piece can fill it and it stays outside the
+plate denominator. It cites the issuer (a required `source`, with prose on what it proves) instead
+of a `numista_type_id`, and its year is optional. An optional `design_type_id` points at the same
+design in another physical variant and never takes part in matching or evidence. An announcement
+with no identity adds nothing an open series does not already say.
 _Avoid_: Missing, unlisted member, not-yet-issued slot
 
 **Issue-qualified member**:
@@ -244,12 +203,10 @@ exhaustive in an issue run; an unlisted issue belongs to neither by fallback nor
 _Avoid_: Issue run, date run, type-wide member
 
 **Emission label**:
-What an issue run calls one owned row, where the year calls it nothing: «Estrella 67» on a 100
-pesetas of Franco whose row can only say 1966, like its four sisters. It is a fact about the
-**piece** and not about the card it is read from — the same row is named that from its own
-collection, from a box the collector typed and from the notebook page — so it is resolved once in
-the assembly and travels inside the piece that gets drawn. Only an issue run has one to give;
-everywhere else the head of the line is the year (#225).
+The name an issue run gives an owned row its year cannot tell apart: «Estrella 67» on a 100 pesetas
+of Franco whose row says 1966. It belongs to the **piece**, not the card, so it is resolved once in
+the assembly and travels with the piece wherever it is drawn. Elsewhere the line starts with the
+year (#225).
 _Avoid_: Member label, variety, year
 
 **Unlisted member**:
@@ -261,75 +218,53 @@ curated catalog.
 _Avoid_: Missing, announced member, unpublished type
 
 **Unpublished type**:
-A Numista type whose page is not publicly visible yet, because a referee has still to publish,
-edit or delete the submission. The API serves it anyway, with every field as the contributor
-left it, so a half-typed family arrives as a real family. It is **not verifiable**, and verified
-is what a curated file requires: an unpublished type never enters a collection catalog or a
-curated grouping, however certain the coin is, because the referee may delete the page and take
-the id with it. Since #186 the same bar applies to the collection the app derives on its own: a
-type that looks unpublished and declares a family derives no card, and its pieces wait in the
-unclassified residue until the page is published. Nothing corrects the fields in the app — the
-editor's fix upstream is the fix, and it reaches a phone only when somebody there asks for the ficha
-again, which since #185 is a gesture on the coin itself (ADR 0025) and never something the app does
-on its own. Its offline trace is a type with no year at all.
+A Numista type whose page a referee has not yet published, edited or deleted. The API serves it with
+the contributor's half-typed fields, so its family looks real. Being unverifiable, it never enters a
+catalog or grouping, and since #186 a type that looks unpublished derives no card: its pieces wait
+in the unclassified residue. The fix is an edit on Numista, which reaches the phone when the ficha
+is asked again (ADR 0025) or re-seeded (ADR 0033). Offline trace: a type with no year at all.
 _Avoid_: Numista error, manual override, missing type metadata
 
 **Ficha**:
-The Numista type as this phone holds it: the fields a card prints, the untouched body they were read
-from, and the day it was **brought** — which is what the card says, «ficha traída hace ocho meses»,
-because for a ficha that arrived in the APK's snapshot the content may be older than the day it
-landed. No sync and no seed ever asks for a ficha twice; the collector can, one type at a time, on
-the coin where the wrong datum is on screen, and that gesture is the only thing that overwrites one
-(ADR 0025). It costs one **consulta**, it says so before spending it, and failing it leaves the ficha
-that was already there — including the 404 that means a referee deleted the page.
+The Numista type as this phone holds it: the printed fields, the untouched body, and the day it was
+**brought**, shown as «ficha traída hace ocho meses» because a snapshot ficha can be older than its
+arrival. No sync asks for a ficha twice. It is overwritten when the collector asks for it again from
+the coin (ADR 0025: one **consulta**, announced first, and a failure, 404 included, keeps the old
+ficha) or by a newly installed version's snapshot, once (ADR 0033).
 _Avoid_: Type metadata, permanent cache, refrescar la colección, ficha fresca
 
 **Consulta**:
-The unit the monthly budget of a Numista key is spent and quoted in, and the only word the interface has
-for it (#516): the sync's report, the durable line under the sync button, a ficha's refresh, a lámina's
-tasación, the two sentences about an exhausted month and the 429 all count in it. It is what the app is
-going to **ask** Numista, which is why it beat «llamada» — that is what the code does — and it is the
-unit the marking mode promises a month at a time, «+2 consultas al mes» per casilla (ADR 0029 §5).
+The unit a Numista key's monthly budget is spent and shown in, and the interface's only word for it
+(#516): the sync report, the line under the sync button, a ficha refresh, a tasación, the exhausted
+month and the 429 all count in it. «Llamada» is the code's word. The marking mode promises «+2
+consultas al mes» per casilla (ADR 0029 §5).
 _Avoid_: Llamada, petición, API call on screen, request
 
 **Collection catalog plate**:
 The per-collector comparison between a collection that exists today and its matching collection
-catalog, showing owned and Missing members. It opens with no gesture from the collector, on two
-conditions and nothing else: the collection exists — the collector owns pieces of that variant — and
-there is **evidence by type**, at least one official member of the catalog among them. Evidence by
-type rather than by issue is what keeps a plate open while years are missing.
+catalog, showing owned and Missing members. It opens with no gesture when the collector owns pieces
+of that variant and at least one is an official member of the catalog (**evidence by type**, not by
+issue, so a plate stays open while years are missing). The **Shelf window** opens plates without
+evidence.
 _Avoid_: Album, followed proposal, disposition
 
 **Printed side**:
-The face of its coins a catalog declares for the page that prints one — `printed_side`, «la cara que
-es la moneda»: the one the collector recognises as this piece, Britannia, the Amur tiger, the mermaid
-of the 50 gourdes. It is **not** the face that tells the members apart; that is the caption's job, and
-the criterion would print monarchs' portraits over a run of identical Britannias. It is declared by
-the curator and never inferred from the ficha's descriptions, it belongs to the whole plate rather
-than to a member, and its absence means the reverse — which is what «Numista's reverse» had silently
-been until #227.
+The face a catalog declares for printing its coins (`printed_side`, «la cara que es la moneda»): the
+one the collector recognises as the piece, such as Britannia or the Amur tiger. It is not the face
+that tells members apart; that is the caption's job. Declared for the whole plate by the curator,
+never inferred from the ficha; absent, it means the reverse (#227).
 _Avoid_: Numista's reverse, the distinguishing face, obverse override
 
 **Commemorative programme**:
-A curated statement that some Numista types were struck for the same commemoration, and nothing
-more (ADR 0022). It is a **second reading** of a coin that already belongs to a collection, not a
-collection itself: it declares no variant, never reaches `deriveCollection` and produces no card,
-which is exactly what lets it coexist with the card the coin already has instead of replacing it —
-a set catalog would have won the family precedence and moved the coin. Its members are types and
-they are **not** bounded by what the catalogs hold: the 25 escudos of the 1977 and 1983 Portuguese
-programmes sit in no catalog, so its denominator counts three where a join across catalogs would
-have printed two. Its boundary is never a Numista fact, so it cites any host and its prose note is
-required. It reads today on the plate, beside the plate's own progress and never mixed into it.
-A programme need not be one mint's denominations: the thirteen Series Iberoamericanas are **one slot
-per country** — 138 slots over sixteen countries — so their header `issuer_code` names the mint that
-coordinated the programme rather than the issuer of its members, the `year` is the year the series was
-issued, and each member's label is a country (ADR 0022 amended). Where a country struck its coin in
-several finishes, the slot is **the one that circulated**, because hiding a coin the collector owns is
-the same lie as inventing one he lacks; a country's slot may even be a medal. And a programme may ship
-**invisible** when no catalog names any of its types and neither collection owns a piece — nine of the
-thirteen do — which the collector decided in those terms and every note says out loud. What a programme
-cannot do is show its count beside a coin whose card has no plate, which is why the field report prints
-the programmes too.
+A curated statement that some Numista types were struck for the same commemoration (ADR 0022): a
+**second reading** of coins that already belong to collections. It declares no variant, never
+reaches `deriveCollection` and makes no card, so it coexists with the coin's card. Its members are
+types, not bounded by what the catalogs hold; its boundary is never a Numista fact, so it may cite
+any host and requires a prose note; and it is read on the plate, beside the plate's own progress.
+The Series Iberoamericanas are one slot per country, each the circulated finish or a medal, with the
+coordinating mint as `issuer_code`. A programme may ship invisible when no catalog names its types
+and neither collection owns one; the field report prints programmes for coins whose card has no
+plate.
 _Avoid_: Subseries, set catalog, curated grouping, thematic collection
 
 **Curated series**:
@@ -354,87 +289,75 @@ not-yet-issued members. A collection with no issue list is not an Album.
 _Avoid_: Collection proposal, inventory
 
 **Die-cut hole**:
-The unit of the album sheet, and since ADR 0026 the shape of both a collection in the index and a
-member on a plate: cardboard whose cut wall is shaded at the top and pale at the bottom, and a round
-window with the coin's photograph inside. Since #357 the wall lives entirely on the cardboard — the
-photograph carries its own light and nothing is drawn over it but the acetate's reflection. Its body flips the coin; the year beside it is a **Sunken tag**. A hole with no
-coin shows the design as a **Ghost**; a hole with no cardboard behind it is a coin no collection
-claims. It is a drawing and not a domain object — it says nothing an issue list does not.
+The unit of the album sheet and, since ADR 0026, the shape of both a collection in the index and a
+member on a plate: shaded cardboard around a round window with the coin's photograph, over which
+nothing is drawn but the acetate's reflection (#357). The year beside it is a **Sunken tag**. A hole
+with no coin shows a **Ghost**; a coin with no cardboard behind it is one no collection claims. It is
+a drawing, not a domain object.
 _Avoid_: Cell, tile, card, slot (which is the member, not its drawing)
 
 **Ghost**:
-The design of a member the collector does not own, drawn at 14 % with a dotted rule inside its hole.
-It replaces the greyscale-and-opacity Missing member, and it is what makes progress **seen** rather
-than read. Distinct from **bare cardboard**, the third state of the year axis: a year with no slot to
-fill at all.
+The design of a member the collector does not own, drawn at 14 % with a dotted rule inside its hole,
+so that progress is **seen** rather than read. It replaced the greyscale-and-opacity Missing member.
+Distinct from **bare cardboard**, the third state of the year axis: a year with no slot at all.
 _Avoid_: Greyed member, empty slot, placeholder
 
 **Completion stamp**:
-The rubber stamp a plate shows over the ratio in its header while every issued member is owned. It is
-a **state and not an event**: it is read from the inventory like the hole, it is stamped on opening
-the sheet and never on syncing, it is never shown in the index, and it says one word, «completa»,
-including for an open series. It travels to the exported PNG because it is a state.
+The rubber stamp a plate shows over the ratio in its header while every issued member is owned. It
+is a **state, not an event**: read from the inventory, stamped when the sheet opens and never on
+sync, never shown in the index, and it says «completa», even for an open series. Being a state, it
+travels to the exported PNG.
 _Avoid_: Badge, achievement, medal, completion date
 
 **Furniture**:
 Any visible string that is not the datum: labels, tails, explanations and section titles. It is what
 the density bar of ADR 0026 §5 counts (Collections ≤ 25 words in the first fold) and what the
-**frequency rule** prices — a word costs what it costs multiplied by the number of times it is
-printed, so no furniture string is printed per row, per slot or per card.
+**frequency rule** prices: a word costs its length times the number of times it is printed, so no
+furniture string is printed per row, per slot or per card.
 _Avoid_: Copy (which is every string, furniture or not), chrome, boilerplate
 
 **Grain of a cell**:
-What a top-level destination is made of, and the test for whether it deserves a cell at all: cards for
-Collections, types for Coins, grams for «Las cifras». A cell prints its grain as its count, **and names
-it**: the middle cell says «Tipos · 15» since #516, because it always counted types and «Monedas · 15»
-over a collection of 72 coins put the bar's one permanent number under the wrong word. If what is
-inside is what is outside with a different order applied, its grain is borrowed and it is an **Axis of
-the shelf**, not a destination.
+What a top-level destination is made of, and the test for whether it deserves a cell: cards for
+Collections, types for Coins, grams for «Las cifras». A cell shows its grain as its count **and names
+it** («Tipos · 15», #516). If what is inside is what is outside in another order, the grain is
+borrowed and it is an **Axis of the shelf**, not a destination.
 _Avoid_: Tab, section, count of what is inside, a cell that names one grain and counts another
 
 **Axis of the shelf**:
-The order a hierarchy with a list is read in — by plate (the default), by country, by year — chosen in
-the folded shelf beside the filters and the sort. The country stain and the timeline are axes and not
-screens, because they are made of the same slots.
+The order a hierarchy with a list is read in — by plate (the default), by country, by year — chosen
+in the folded shelf beside the filters and the sort. The country stain and the timeline are axes,
+not screens, because they are made of the same slots.
 _Avoid_: View, map screen, timeline screen
 
 **Annex**:
-A screen that fails the test of the **Grain of a cell** and is not an **Axis of the shelf** either,
-because its population is not the collection at all: «Explorar» is made of what the collector does not
-have. It hangs off exactly one hierarchy, is entered through the last row of that hierarchy's list —
-a door that names what is behind it with its count, and is not printed when that count is zero — and
-carries no cell and no bar. With a list it opens with its shelf folded, and its chips are whatever its
-population earns, which in «Explorar» is none. It holds **two rooms** (ADR 0030 §8): the **Shelf
-window** and, one door further in, «Lo que busco».
+A screen whose population is not the collection, so it is neither a cell nor an **Axis of the
+shelf**: «Explorar», made of what the collector does not have. It hangs off one hierarchy, entered
+through a last-row door that names its count and is not printed at zero, and has no cell and no
+bar. It holds **two rooms** (ADR 0030 §8): the **Shelf window** and, one door further in, «Lo que
+busco».
 _Avoid_: Tab, sub-screen, modal, section of the index
 
 **Shelf window**:
-The curated catalogs the collector owns nothing of and that are **under twenty measurable casillas**,
-opened as plates they can walk into — twenty of the father's twenty-six (ADR 0030 §1). Browsing them
-costs nothing: their types are in the seeded ficha cache. A plate of the window is **open and not
-theirs**: no «Exportar», one figure of money instead of two — the **Cost of entering** — and a gesture
-that spends where the export was. The shelf that holds them is of «lo que te falta», so their own plates
-holding a marked casilla are on it too, which is a second **order** over one plate and not a second
-species of collection.
+The curated catalogs the collector owns nothing of that have **fewer than twenty measurable
+casillas**, browsable as plates at no API cost because their types are seeded (ADR 0030 §1). A
+window plate is **open but not theirs**: no «Exportar», and one figure of money, the **Cost of
+entering**, with a valuing gesture where the export was. The shelf also lists the collector's own
+plates with a marked casilla, as another order over plates, not another species of collection.
 _Avoid_: Escaparate as a word on screen, catalog browser, wishlist, a fourth cell
 
 **Cost of entering**:
-What buying every casilla of a **Shelf window** plate would cost, in `unc` and shown **with the date it
-was brought** — a hand-asked price never expires, because no pass will ever refresh it (ADR 0030 §4).
-Never «Coste de cerrar»: closing is buying the last of something you collect, entering is buying the
-first of something you do not. A plate nobody has valued says **nothing**, even though its silver floor
-costs no API call: a floor shown alone reads as the price. A total whose parts were read on different
-days carries the **oldest** of them.
+What buying every casilla of a **Shelf window** plate would cost, in `unc`, with the date it was
+brought: a hand-asked price never expires, because no pass refreshes it (ADR 0030 §4). It is not
+«Coste de cerrar», which is buying the last of something you collect. A plate nobody has valued
+shows nothing, because a silver floor shown alone reads as the price, and a total carries the
+**oldest** date of its parts.
 _Avoid_: Coste de cerrar on a plate that is not yours, «desde N €», a floor with no date
 
 **Wish**:
-An empty slot the collector marked on this phone, held in a table of its own and keyed by the slot's
-own catalogue facts — type, year and Numista issue where the file names one — never by anything
-Numista hands back (ADR 0029). It is **not a piece**: it never enters the inventory, so nothing that
-counts pieces, grams, euros or coverage can see it. It is **alive** while its slot is empty by the
-same rule the plate fills a casilla by, and it **dies measured** when a sync brings the coin —
-nothing is written and nothing is announced. Its
-plate is derived from it and never the other way round: a mark on a plate cannot say which coin goes
-to the fair. Marked slots are read in the **Annex**, «Lo que busco», and each one is priced whatever
-its plate's shape.
+An empty slot the collector marked on this phone, stored in its own table and keyed by the slot's
+catalogue facts (type, year, and Numista issue where the file names one), never by anything Numista
+hands back (ADR 0029). It is **not a piece**, so nothing that counts pieces, grams, euros or coverage
+sees it. It lives while its slot is empty and dies silently when a sync brings the coin. Marks are
+per slot, never per plate, and are read in the **Annex**, «Lo que busco», each priced whatever its
+plate's shape.
 _Avoid_: Wishlist as a collection, followed plate, «lo colecciono», favourite
