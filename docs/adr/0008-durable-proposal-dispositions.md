@@ -3,67 +3,47 @@
 - Status: superseded by [ADR 0021](0021-what-a-collection-is-and-the-top-level.md)
 - Date: 2026-07-29
 
-> **Retired on 2026-08-04.** ADR 0021 §7 withdraws the disposition entirely: a plate now opens on a
-> current collection plus evidence by type, `Available`/`Followed`/`Ignored` are gone and
-> `collection_proposal_preferences` is dropped in the v5 migration. The body below is left intact
-> because nothing in it was false — it is entirely about something that stopped existing — and it is
-> the only document that explains the ~58 meaningless rows in the collector's phone and why
-> `MIGRATION_3_4` repopulated only 30 literal keys. The plate paragraph (lines 37-45 below) is **not**
-> inherited: ADR 0021 rewrites that condition, with evidence by type rather than by issue.
+> **Retired on 2026-08-04 by ADR 0021 §7.** Dispositions are gone: `Available`/`Followed`/`Ignored`
+> no longer exist and `collection_proposal_preferences` is dropped in the v5 migration. The body is
+> kept as the record of what that table held and why `MIGRATION_3_4` carried over only 30 literal
+> keys. Its plate condition (the paragraph on collection catalog plates) does not carry over: a
+> plate now opens on a current collection plus evidence by type (ADR 0021).
 
 ## Context
 
-Collection proposal content is derived from current holdings and remains ephemeral under
-ADR 0007. A collector may nevertheless want a choice to follow or ignore a proposal to
-survive later syncs without turning that proposal into editorial catalog coverage.
-
-Family display aliases can improve presentation, but they are not stable identities.
-Likewise, a preference whose matching holdings have disappeared must not create a
-proposal from stale state.
+Proposal content is derived from current holdings and stays ephemeral (ADR 0007), but a collector
+may want a choice to follow or ignore a proposal to survive later syncs without turning it into
+catalog coverage. Family display aliases are not stable identities, and a preference whose holdings
+have disappeared must not bring a proposal back.
 
 ## Decision
 
-Persist only the per-user followed or ignored disposition for an exact proposal variant
-key: the canonical tuple of resolved family, normalized weight, finish and dominant metal. The
-[catalog-family precedence decision](https://github.com/jenarvaezg/coindex/issues/83) later
-made a selected catalog authoritative for that key; without one, the remaining precedence
-ladder resolves the family. Disposition lookup uses the same normalization as proposal
-derivation. Family display aliases are presentation-only and never participate in this key.
+Persist only the per-user followed or ignored disposition for an exact proposal variant key: the
+canonical tuple of resolved family, normalized weight, finish and dominant metal. Since the
+[catalog-family precedence decision](https://github.com/jenarvaezg/coindex/issues/83) a selected
+catalog is authoritative for that key. Lookup uses the same normalization as derivation, and display
+aliases never take part.
 
-Each currently derived proposal is in exactly one mutually exclusive state:
+Each derived proposal is in exactly one state: Available (nothing stored), Followed or Ignored.
+Ignoring is reversible. Following is not promotion to a curated series or Album, establishes no
+coverage and never creates `Missing` members.
 
-- Available when no disposition is stored for its user and key.
-- Followed when the followed disposition is stored.
-- Ignored when the ignored disposition is stored.
+A collection catalog may provide sourced coverage for one exact proposal variant. When the collector
+follows that proposal and owns at least one official member identified by the catalog, Coindex may
+render a catalog plate with owned and `Missing` members. The plate changes neither the disposition
+nor the curated-series registry, and does not make the Numista family a closed series.
 
-Ignoring is reversible. Following by itself is not promotion to a curated series or Album,
-does not establish catalog coverage, and never creates `Missing` members.
-
-A separately maintained collection catalog may provide sourced catalog coverage for one
-exact proposal variant. When the collector follows that current proposal and owns at
-least one official member identified by the catalog, Coindex may render a collection
-catalog plate with owned and `Missing` reference members. This plate does not change the
-proposal disposition, does not add the catalog to the curated-series registry, and does
-not make the underlying Numista family a closed series.
-
-A disposition whose exact key is absent from current derived proposals is dormant. It
-does not materialize a proposal, but applies again if that exact key reappears. Proposal
-derivation remains inventory-based and performs no runtime scraping. Collection catalogs
-are versioned local data with explicit sources; they are never discovered over the
-network at request time.
+A disposition whose key is absent from current proposals is dormant: it creates nothing, and applies
+again if the key reappears. Derivation stays inventory-based with no runtime scraping, and catalogs
+are versioned local data with explicit sources, never fetched at request time.
 
 ## Consequences
 
-Only user intent survives sync; proposal content, counts, and membership continue to be
-recomputed from current holdings. Renaming a family for display cannot orphan or merge
-preferences, while any actual family, weight, or finish change denotes a different
-variant.
+Only user intent survives sync; content, counts and membership are recomputed. Renaming a family for
+display cannot orphan or merge preferences, while a real change of family, weight or finish is a
+different variant. The persistence change is additive and forward-only: a rollback is a new forward
+migration.
 
-The persistence change is additive and forward-only. Any later rollback is expressed as
-a new forward migration rather than reversing an already applied schema change.
-
-Catalog access remains user-scoped and variant-scoped. A matching family, weight, and
-finish is insufficient on its own because issuers can reuse family names: at least one
-current holding must match an official catalog member by Numista type ID. Removing that
-holding or unfollowing the proposal makes the plate unavailable without deleting the
-dormant preference.
+Catalog access stays user- and variant-scoped. Family, weight and finish alone are not enough,
+because issuers reuse family names: a current holding must match an official member by Numista type
+ID. Losing that holding or unfollowing hides the plate without deleting the dormant preference.

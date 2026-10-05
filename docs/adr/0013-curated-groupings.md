@@ -1,60 +1,29 @@
 # ADR 0013: Curated groupings and the proposal screen
 
-- Status: accepted, amended by [ADR 0021](0021-what-a-collection-is-and-the-top-level.md)
+- Status: accepted; amended by [ADR 0021](0021-what-a-collection-is-and-the-top-level.md) §2, §8,
+  §9, §10
 - Date: 2026-07-30
-
-> **Amended on 2026-08-04.** The family ladder below survives whole, and so does what a curated
-> grouping claims. Two sentences do not, and ADR 0021 replaces them:
->
-> - «the proposal screen is what you own, the plate is the catalog with its gaps, and only the plate
->   can say "me falta"» — **false in the code**: the plate is also what you own
->   (`plateMemberStateLabel` says `Tengo · ×3`), and measured against the 1033 curated slots, zero
->   pieces fall in a card with a catalog and in no slot of its plate. One card, one destination
->   (ADR 0021 §9).
-> - a curated grouping as a subordinate view of a real collection — there are no extra views, only
->   collections, and none is subordinate to another (ADR 0021 §2, §10).
->
-> One sentence is added: **a grouping cannot join what the variant key splits**, because it declares
-> no weight, so a family broken apart by weight is cured as a catalog rather than as a grouping — as
-> the six Portuguese escudos showed (#157). And «proposal» stops being the word for the card this ADR
-> gave a screen to (ADR 0021 §8).
 
 ## Context
 
-Proposal derivation reads the family from Numista's `series` field. Measured on the real
-inventory, **81 of the 608 cached types record no `series` at all**: with no set catalog and no
-collection catalog naming them, they fail with `NoFamilyOrCatalog` and stay in the unclassified
-list forever, however many of them the collector owns.
+Many cached types record no Numista `series` (81 of 608 at the time) and, with no catalog naming
+them, stay unclassified for ever: the 100 pesetas of Franco (N#1885, «los paquillos»), or the
+Venezuelan circulating silver other than the 5 bolívares. A catalog could give them a family
+(ADR 0009), but a catalog is a coverage claim that can report a member as Missing, which is false
+over a bulk row such as 102 pieces of N#5316 under a single year. Nothing could say «these coins go
+together» without claiming coverage.
 
-That list is not a rounding error. It holds the 100 pesetas of Franco — N#1885, one type whose
-five star dates 66 to 70 are what the collector calls «los paquillos» — and every Venezuelan
-circulating silver denomination except the 5 bolívares, which has a curated catalog. Numista is
-never going to file these under a series, because a series is a collector's idea and these are
-just money.
-
-A collection catalog could give them a family (ADR 0009), but a catalog is a coverage claim: it
-declares the official members of a sequence, so it can report one as Missing. Half of the real
-inventory is bulk rows — 333 pieces in six rows, one of them 102 pieces of N#5316 under a single
-year — and a coverage claim over a bulk row lies by construction: it would report five years as
-absent while the coins sit in the same bag. There is no honest way to express «these coins go
-together» with the tools the project had.
-
-The same gap had a second symptom in the UI. A proposal card's title only opened something when
-a catalog happened to match its exact variant key: the plate when followed and evidenced,
-numista.com when only a catalog existed. With neither, the title was a plain `Text`. Every
-French coin in the collection has its own `series` («Hercules type», «French regions», «100
-francs Egalité - La Fayette») and no curated catalog, so those cards looked exactly like the
-others and did nothing at all. Reported from the field as «sigue habiendo ventanas que no se
-abren, casi todas las francesas».
+The UI had the same gap: a proposal card's title only opened something when a catalog matched its
+key, so cards such as every French coin did nothing («sigue habiendo ventanas que no se abren, casi
+todas las francesas»).
 
 ## Decision
 
-**A curated grouping declares that some Numista types form a family, and nothing else.** It
-ships as an asset in `data/groupings/`, carries `type_ids` and no members, and declares neither
-weight nor finish. It cannot produce a Missing state, because it never claims what a complete
-sequence contains.
+**A curated grouping declares that some Numista types form a family, and nothing else.** It ships
+in `data/groupings/` with `type_ids`, no members, no weight and no finish, so it can never produce a
+Missing state.
 
-It is the weakest claim in the family ladder, which now resolves in this order:
+It is the weakest claim in the family ladder:
 
 1. a set catalog naming the exact types issued together (ADR 0012)
 2. a collection catalog selected by the catalog routing for the type and piece (ADR 0009, as
@@ -64,52 +33,39 @@ It is the weakest claim in the family ladder, which now resolves in this order:
 4. **a curated grouping that names the type**
 5. Numista's technical `System YYYY` monetary system (ADR 0012)
 
-A grouping loses to a catalog on purpose: where a catalog exists it can also point at the gap,
-which is strictly more than a grouping can do. It beats a technical family for the same reason
-a catalog does — «Sistema monetario 1879-1936» is not a thing anybody collects. Two groupings
-claiming the same type is a curation mistake and fails at startup rather than being resolved by
-file order.
+A catalog outranks it because a catalog can also show the gap; it outranks a technical family
+because nobody collects «Sistema monetario 1879-1936». Two groupings claiming one type fail at
+startup instead of being resolved by file order.
 
-The physical variant still comes from each type's own metadata. A grouping declares no weight,
-so a grouping that happened to span two weights honestly splits into two proposals instead of
-pretending a ¼ bolívar and a 2 bolívares are one piece. The shipped groupings keep uniform
-weight inside each file, so each is exactly one card.
+The physical variant still comes from each type's metadata, so a grouping spanning two weights
+splits into two proposals. The shipped groupings keep uniform weight per file.
 
-**Every proposal card opens its own screen**, catalog or no catalog. The proposal screen lists
-the pieces the collector owns in that group, as recorded, with the year on each row. The plate
-and the catalog source moved into it, and the plate keeps a shortcut on the card as an action
-rather than as the title. The division of labour is now stated in one line: the proposal screen
-is what you own, the plate is the catalog with its gaps, and only the plate can say «me falta».
+> **Amended by ADR 0021.** A grouping cannot join what the variant key splits: a family split by
+> weight is curated as a catalog (#157). And a grouping is a collection like any other, not a view
+> subordinate to one (§2, §10).
 
-The Venezuelan silver denominations that hunt a year ship as date-run catalogs, not as
-groupings: a grouping could never show the hole. The 2 bolívares were the first (25 members
-across three types); the 1 bolívar followed (#113) with 22 members across four types, including
-the trunk N#10338 the old grouping had omitted; the reales (#114) are the same shape — 22
-members across four types, trunk N#17945 plus N#7727 that the old grouping had omitted; the
-medios (#115) close the set with 18 members across three types, adding the 1954 N#5317 the old
-grouping had omitted. The colloquial pair «Medios de Venezuela» / «Reales de Venezuela» stays,
-because on the street «medio» is the quarter and must not name the half. Publishing the 1
-bolívar plate accepts that a bulk row of N#5316 under a single year can still report a false
-Missing for 1960 or 1965 until the collector splits the bag by year in Numista — the honest
-fix for those two cells, not a reason to keep the whole denomination silent.
+**Every proposal card opens its own screen**, listing the pieces owned in that group, as recorded,
+with the year on each row. The plate and the catalog source move into it, and the plate keeps a
+shortcut on the card as an action.
+
+> **Amended by ADR 0021 §8, §9.** This also said «the proposal screen is what you own, the plate is
+> the catalog with its gaps», which is false: the plate shows what you own too. A card has one
+> destination, and «proposal» is no longer the word.
+
+The Venezuelan silver denominations that hunt a year ship as date-run catalogs, because a grouping
+cannot show the hole: the 2 bolívares, the 1 bolívar (#113), the reales (#114) and the medios
+(#115), each with types the old grouping had omitted. «Medios de Venezuela» and «Reales de
+Venezuela» keep the street names, where «medio» is the quarter. A bulk row of N#5316 under one year
+may report a false Missing for 1960 or 1965 until the collector splits it by year in Numista; that
+is accepted.
 
 ## Consequences
 
-The 81 orphans stop being unreachable by construction: any of them can be given a family by
-curating a file, without inventing a sequence for it. Two groupings ship now — the loose Royal
-Mint ounces and the classic US silver dollar. The paquillos and all four Venezuelan silver
-denominations already graduated to catalogs, and the rest of the list is candidates.
-
-A grouping is cheap enough to be tempting, and that is its risk: it is an editorial claim with
-no source of truth behind it beyond the curator's judgement, so it names a representative
-Numista page and its type ids are verified against numista.com like a catalog's.
-
-No title is dead any more, but the gesture the collector already learned has changed: a title
-used to be able to open numista.com and now always opens a screen of the app. The external link
-survives inside, still marked with «↗».
-
-The proposal screen also answers an open question by showing it. Numista indexes the year a coin
-was **struck**, not the year on its face — N#10398 is dated 1945 and Numista dates it 1947 — and
-whether a collected row carries the star year of a paquillo was never verified against real
-data. The screen prints the recorded year of every row, so the first screenshot of the paquillos
-settles whether a five-member date run for them is honest or a lie.
+- Any type without a family can get one by curating a file, without inventing a sequence.
+- A grouping is cheap, and that is its risk: it rests only on the curator's judgement, so it names a
+  representative Numista page and its type ids are verified like a catalog's.
+- No card title is dead. Titles that opened numista.com now open an app screen, with the external
+  link inside, marked «↗».
+- The screen prints each row's recorded year, which matters because Numista records the year a coin
+  was **struck**, not its face date (N#10398 is dated 1945 and recorded as 1947). ADR 0014 settles
+  what that means for the paquillos.

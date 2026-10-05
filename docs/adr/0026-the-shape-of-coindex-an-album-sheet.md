@@ -1,136 +1,74 @@
 # ADR 0026: The shape of Coindex — an album sheet, and what moves owes a datum
 
-- Status: accepted, §15 amended by #351 (the grain's approved value), by #357 (the die-cut's wall)
-  and by #338 (the gloss confirmed and the acetate withdrawn); §3 and §5 amended by #339 (the stamp
-  keeps no bit, and the ratio leaves the specification wherever the stamp reaches it); §3 and §13
-  amended by #370 (the ficha sheet is the landing of the second journey) and again by #381 (a
-  destination paints its own paper, and only the leaf on top is animated); §4 amended by #371 (the
-  stamp reaches the printed notebook too); §3 amended by #473 (the tag hangs off the hole and the
-  name goes under it); §8 amended by #281 (what fails the test may still earn a screen, as an annex);
-  §4 amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (the wish mark travels
-  to paper, and it gets an output of its own); §3 amended by #508 (the year of a casilla opens the
-  coin's sheet inside the app, and no label without an arrow reaches a browser); §3 and §4 amended by
-  #514 (a system asking for quiet does not shorten the ceremonies, it keeps them from starting); §8 clause 4 amended by
-  [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (the annex's list arrives, and the
-  shelf is of the plates where something is missing); §5 clause 3 and §14 amended by
-  [#521](https://github.com/jenarvaezg/coindex/issues/521) (the screen the sewn edge opens is «Este
-  teléfono» and it is maintenance, not settings; the credentials nest inside it in §14's shape, and
-  the frequency rule stops naming screens)
+- Status: accepted; amended by #304, #400 and #419 (§1), #338 (§1, §3, §4, §15), #339 (§3, §5),
+  #342 (§6), #351 (§15), #357 (§15), #370 (§3, §13), #371 (§4), #381 (§3), #473 (§3), #281 (§8),
+  [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (§4),
+  [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (§8 clause 4), #508 (§3),
+  #514 (§3, §4), #516 (§8), #520 (§8 clause 3, §15), #521 (§1, §5 clause 3, §14), #556 (§15)
 - Date: 2026-08-08
-- Amends ADR 0021 §1 (the top level grows to three hierarchies) and §9 (the eyebrow of a card stops
-  being the country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018,
-  0020, 0023 and 0024, and leans on all four.
-- Written by map [#278](https://github.com/jenarvaezg/coindex/issues/278) across twenty tickets; the
-  measurement that decided each one lives in its ticket and its report under `docs/ux/`.
+- Amends ADR 0021 §1 (three top-level hierarchies) and §9 (the card's eyebrow stops being the
+  country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018, 0020, 0023
+  and 0024. Written by map [#278](https://github.com/jenarvaezg/coindex/issues/278); each
+  decision's measurement lives in its ticket and its report under `docs/ux/`.
 
 ## Context
 
-On 7 August 2026 the collector's son — who is also the only other user — looked at v0.16.0 and said
-it is «un par de listados, algo muy simplón», that it lacks any wow, and that there is too much prose
-for the space a phone has. The information architecture was not the problem: map #16 decided it and
-ADR 0021 wrote it down. The problem was that of the five screens the app has, **only the plate had
-ever been designed**, and that `spec.md §0.4` declared an aesthetic — «serif para los textos,
-tipografía condensada para los datos, paleta apagada de papel» — that was **written and never
-built**.
+On 7 August 2026 the collector's son, the app's only other user, called v0.16.0 «un par de listados,
+algo muy simplón»: no wow, and too much prose for a phone. The information architecture (ADR 0021)
+was not the problem. Only the plate had ever been designed, and the aesthetic `spec.md §0.4`
+declared — «serif para los textos, tipografía condensada para los datos, paleta apagada de papel» —
+had never been built. The baseline ([#296](https://github.com/jenarvaezg/coindex/issues/296),
+`docs/ux/medida-base-296.md`): 2.16 cards per index screen, 69 % of an arrival screen's words were
+furniture, no photographs in the index, no packaged fonts, no animation.
 
-The baseline was measured before anything was drawn ([#296](https://github.com/jenarvaezg/coindex/issues/296),
-`docs/ux/medida-base-296.md`):
-
-- **2.16 collection cards** fit on the index screen (5.2 without the masthead), out of 70.
-- **69 %** of the words on an arrival screen are furniture, at 4 lines and 14.6 words per card.
-- **994 words and zero photographs** in an index whose APK already carries 916 fichas with images.
-- `app/src/main/res/font` **does not exist**: the field guide runs on the system `FontFamily.Serif`
-  and `SansSerif`. The paper is a flat `#EEE8D7`.
-- `grep -rn -E "animate|Animated|SharedTransition|graphicsLayer|BlendMode"` over `app/src/main/kotlin`
-  returns **0 results**. In 22 of 22 gestures, nothing happens.
-
-This ADR records the shape the map chose. It **does not choose a new identity**: it executes the one
-`spec.md §0.4` already declared, and the reason it needed twenty tickets is that executing it turned
-out to require deciding what a collection *looks like*, not what it *is*.
-
-Two standing constraints shaped every decision. **The user who matters is the father**: 70 cards, 6
-complete plates, and his main gesture is exporting a plate as a PNG to show people — so an effect
-that only exists in motion does not reach where he shows it. And **density and wow are one task**:
+This ADR executes that declared identity rather than choosing a new one. Two constraints shaped it:
+the user who matters is the father, whose main gesture is exporting a plate as a PNG, so an effect
+that exists only in motion never reaches where he shows it; and density and wow are one task, since
 the room for the die-cut, the stamp and the flip comes out of the pruning.
 
 ## Decision
 
 ### 1. Coindex is an album sheet, not a listing
 
-A collection stops being a four-line card and becomes a **die-cut hole with its coin inside**; the
-plate is the same sheet arranged by year, with the design as a ghost where the piece is missing. The
-index goes from **2.07 to 11.04 collections per screen** and shows coins for the first time
-([#300](https://github.com/jenarvaezg/coindex/issues/300), `docs/ux/hoja-300.md`).
+A collection is a **die-cut hole with its coin inside**; the plate is the same sheet arranged by
+year, with the design as a ghost where a piece is missing. The index goes from 2.07 to 11.04
+collections per screen (#300, `docs/ux/hoja-300.md`).
 
-- **Two typefaces ship inside the APK: Bitter + Barlow Condensed** — 245 KB, **+0.81 %** over 30.86 MB
-  ([#298](https://github.com/jenarvaezg/coindex/issues/298), `docs/ux/fuentes-empaquetadas-298.md`).
-  Neither wins on weight: Bitter is the only serif that **costs no width** (44.5 against the 44.4 of
-  today's Noto Serif) and Barlow brings **real small caps** for 48 KB, which retires the `smcp`
-  faked with capitals and `letterSpacing` in `Theme.kt`. Tabular figures (`tnum`) become real too.
-  **The fonts are not subset**, and no italic ships — the whole `ui/` layer does not use one.
-- **`←`, `✓` and `↗` become vector icons.** They exist in neither face, so today Android's fallback
-  already paints them with a different font; with packaged type they would be three obvious foreign
-  bodies.
-- **Paper is fine fibre in `soft-light`, flat, with no sheet shadow.** The shadow is redundant, not
-  expensive: with the entry sunk into the cardboard the relief is already the die-cut's job. The
-  **acetate sleeve reflection** was the one fixed highlight, static, and it did survive the exported
-  PNG. #338 withdrew it (§15), and since inside the hole was the only place it was ever painted, the
-  sheet has no fixed highlight any more: the only light over the metal is the gloss, which travels
-  nowhere.
-- **Numista's photographs solve themselves.** A round hole with `cover` cropping makes the cut-out
-  over a light background simply invisible. Measured: of the father's 192 types, **188 have a seeded
-  ficha and all 188 carry an image**; the other four have no ficha until the first sync.
-- **The card's photograph is the first issue he *has***, not the first of the catalog (amended by
-  [#304](https://github.com/jenarvaezg/coindex/issues/304)): under the old rule the 1 Bolívar card
-  showed 1879, which is a ghost in his plate.
-- **Search, filter and sort live in a 76 dp strip** that is identical for Collections and for Coins —
-  the symmetry the code had (`IndexShelf.kt`, `CoinsShelf.kt`, `Bands.kt`) and the interface did not
-  show. The shelf loses its «cerrar» button: the whole row is already the control.
-- **The masthead is replaced by a sewn edge** carrying the three counts:
-  `70 colecciones · 574 piezas · 192 tipos`, with Ajustes as an icon.
-  (Amended by [#400](https://github.com/jenarvaezg/coindex/issues/400): the middle count is
-  **pieces**, never «monedas», so the word that already names the sibling hierarchy and its type
-  count in the bar is not reused for a different magnitude one line above; the three words are
-  written in full; and the three numbers are assembled once above the roots so the tabs cannot
-  invent three censuses. Amended by [#419](https://github.com/jenarvaezg/coindex/issues/419):
-  the wall-clock minute is gone — the system clock is five millimetres away, and the line never
-  meant «last sync». Amended by [#521](https://github.com/jenarvaezg/coindex/issues/521): the icon
-  opens **«Este teléfono»** and says so. «Ajustes» named a screen where more than half the words —
-  87 of 165 — were the maintenance of the inventory, and whose only filled action was «Sincronizar»;
-  the credentials it did name are visited once, and hang off its foot.)
+- **Bitter + Barlow Condensed ship in the APK** (245 KB, +0.81 %, #298). Bitter costs no width
+  against Noto Serif; Barlow brings real small caps and tabular figures, retiring the faked `smcp`
+  in `Theme.kt`. No subsetting, and no italic because `ui/` uses none.
+- **`←`, `✓` and `↗` are vector icons**: neither face has them.
+- **Paper is fine fibre in `soft-light`, flat, with no sheet shadow**; the die-cut gives the relief.
+  The acetate reflection inside the hole was withdrawn by #338 (§15).
+- **Numista's photographs need no treatment**: a round hole with `cover` cropping hides the cut-out.
+- **The card's photograph is the first issue the collector has**, not the catalog's first (#304).
+- **Search, filter and sort live in a 76 dp strip**, identical for Collections and Coins. The shelf
+  has no «cerrar»: the whole row is the control.
+- **A sewn edge replaces the masthead**: `70 colecciones · 574 piezas · 192 tipos` and one icon.
+  The middle count is **piezas**, never «monedas», which names the sibling hierarchy, and the counts
+  are assembled once above the roots (#400); no wall-clock minute (#419). The icon opens **«Este
+  teléfono»**, inventory maintenance with the credentials at its foot (#521, §14).
 
 ### 2. Paper at any hour: there is no dark theme, and the promise is declared
 
-Coindex does **not** follow the system's dark theme
-([#301](https://github.com/jenarvaezg/coindex/issues/301)). The lamp — «the paper dims and the ink
-does not invert» — is not rejected for coherence but because **it is not buildable on an emissive
-screen**. On real paper, dimming the light dims the ink too and the order is preserved; on a phone,
-for the text to stay legible the ink has to *lighten*, and that **is** inverting, only warm. What
-would be left is the dashboard `spec.md §0.4` forbids.
+Coindex does not follow the system's dark theme (#301). A «lamp» where the paper dims and the ink
+does not invert cannot be built on an emissive screen: legible ink has to lighten, which is
+inverting, and what is left is the dashboard `spec.md §0.4` forbids.
 
-- **`android:forceDarkAllowed` is `false` in `Theme.Coindex`.** `Theme.kt` only governs what Compose
-  draws; the manufacturer force-dark of Samsung and Xiaomi acts underneath, on the drawing commands,
-  and no heuristic knows that `#EEE8D7` is paper — the result would not be a lamp, it would be paper
-  inverted to dirty grey with the photographs intact on top. The attribute is API 29, which is the
-  `minSdk`. The cost is stated rather than discovered: on a phone set to dark, Coindex will be the
-  one light screen, and that moves from side effect to promise.
-- **The shielding lives in the theme, never in the export path.** A `ForcedPaperTheme` around
-  `OffScreenSheet` would give false cover: if there ever were a real lamp, the sheet background would
-  still be paper while the ink had lightened, so the PNG would come out **broken** rather than dark.
-- **There is no switch in Ajustes**, because there are not two states to choose between. Night belongs
-  to the system: «Extra dim» and «Night light» dim the whole panel, which is better than lying with
-  colours, and Coindex does not compete with that layer.
+- **`android:forceDarkAllowed` is `false` in `Theme.Coindex`** (API 29, the `minSdk`). Manufacturer
+  force-dark acts beneath Compose and would turn the paper grey under untouched photographs. On a
+  phone set to dark, Coindex is the one light screen, by promise.
+- **The shielding lives in the theme, never in the export path**: a `ForcedPaperTheme` around
+  `OffScreenSheet` would export lightened ink on paper the day a lamp existed.
+- **No switch**, since there are not two states; night belongs to the system («Extra dim»).
 
 ### 3. The ceiling is measured in movements, and each one owes a cause and a datum
 
-> A movement enters if **(a)** it answers an act of the collector **and** **(b)** it says something
-> the resting state does not. Both, not either.
-
-This rule ([#307](https://github.com/jenarvaezg/coindex/issues/307)) is what judges any future
-movement without having to draw it, and it is what rejected the header parallax — cause, no datum.
-Of the twenty-one candidates the six prototypes left, **sixteen are still** — they are how the sheet
-is drawn, and they never compete for attention — and five move. **Four move and are approved**, and
-they are the first four movements in the life of the app:
+**The rule** ([#307](https://github.com/jenarvaezg/coindex/issues/307)): a movement enters if (a) it
+answers an act of the collector **and** (b) it says something the resting state does not. It judges
+future movements without drawing them, and rejected the header parallax (cause, no datum). Of the
+prototypes' twenty-one candidates, sixteen are still — they are how the sheet is drawn — and four
+movements are approved:
 
 | movement | cause | datum | to paper? |
 | --- | --- | --- | --- |
@@ -139,341 +77,146 @@ they are the first four movements in the life of the app:
 | **the stamping** — the ink falls on the ratio when a complete sheet is opened | opening the sheet | it is complete | the stamp yes, the stamping no |
 | **the journey** — the coin flies from the card to **its** slot, `SharedTransitionLayout` | navigating | it is the same coin | no |
 
-The gloss is the only exception to (a) and earns it on (b): it is the one thing in the app that says
-this is metal and not a drawing. It pays for it by resting on a table, which is how a long plate is
-looked at.
+The gloss fails (a) and earns its place on (b): it is the one thing saying the coin is metal.
 
-**The flip** ([#302](https://github.com/jenarvaezg/coindex/issues/302), `docs/ux/giro-302.md`) is
-fired by a tap on the body of the hole — which was free, since only the title was tappable
-(`PlateScreen.kt:193`) — so a slot has **two targets and not one**: the hole flips, the year goes to
-Numista. The year is a **sunken tag**, 48.3 × 28 dp, the same language as the die-cut and the only one
-of four candidates whose drawing reaches Android's 48 dp, at a cost of 7 dp per slot (0.54 of 13.74).
-Today's convention falls to the `↗`: neither face carries it, so it would be **22 arrows in the system
-font** on a sheet of paper. Which face rests is `printed_side` (ADR 0020), the same declaration paper
-obeys. It is accepted knowingly that this leaves a plate in **mixed states**, which a real cardboard
-sheet cannot be: the flip is momentary, the sheet returns to `printed_side` on recomposition, and the
-PNG never comes out mixed.
+**The flip** (#302, `docs/ux/giro-302.md`) fires on a tap on the hole's body, so a casilla has
+**two targets**: the hole flips, and the year tag opens the coin (#508 below). The tag is
+**sunken**, 48.3 × 28 dp, the one candidate whose drawing reaches Android's 48 dp. The resting face
+is `printed_side` (ADR 0020), as on paper; the flip is momentary and the PNG is never mixed.
 
-**The gloss** ([#303](https://github.com/jenarvaezg/coindex/issues/303), `docs/ux/brillo-303.md`) is
-light *and* shadow: the surface tilts, it is not lit. Its three hard edges dissolved on measurement —
-**no AGSL is needed** (it is a gradient with a blend mode, and `BlendMode` is API 29, exactly the
-`minSdk`, so there is no fallback to decide), **no metal tint** (183 of the father's 188 typed
-fichas are silver, zero gold, and ADR 0018 puts metal in the variant key, so a mixed-metal plate
-cannot exist by construction), and **the accelerometer is enough**, registered only in the foreground
-with a coin on screen, at `SENSOR_DELAY_UI`, released on `onPause`. Intensity is half of the
-prototype video's: the photograph already carries its light baked in from the upper left.
+**The gloss** (#303, `docs/ux/brillo-303.md`) tilts the surface rather than lighting it. No AGSL
+(`BlendMode` is API 29) and no metal tint (ADR 0018 puts metal in the variant key, so plates are
+single-metal). The accelerometer is registered only in the foreground with a coin on screen, at
+`SENSOR_DELAY_UI`, and released on `onPause`. Intensity is half the prototype's: the photograph
+carries its own light.
 
-**The stamp** ([#304](https://github.com/jenarvaezg/coindex/issues/304), `docs/ux/ceremonia-304.md`)
-**is a state and not a medal**, which is what dissolves the edge the ticket feared — «when does it
-*just* become complete» — because there is no event to remember. It is read from the inventory like
-the die-cut: 84 × 76 dp of rubber stamp in `multiply`, rotated 5.5°, landing **on the ratio the header
-already showed**, so it adds not one word and not one figure. It is stamped **on opening the sheet and
-never on syncing** — see the amendment of 9 August below — and **only on the plate**: an index card
-is never opened, so a stamp there would fire the ceremony on scroll. The word is **«completa»**, the
-only one, including for an open series.
+**The stamp** (#304, `docs/ux/ceremonia-304.md`) **is a state, not an event**, so there is no
+«just became complete» to remember. It is read from the inventory like the die-cut: 84 × 76 dp of
+rubber stamp in `multiply` rotated 5.5°, landing on the ratio the header already shows (`22/22`), so
+it adds no word or figure. It is stamped **when the sheet is opened, never on sync**, and **only on
+the plate**: on an index card it would fire on scroll. The word is **«completa»**, including for an
+open series. The father's complete plates were complete since curation: the ceremony reveals.
 
-The measurement that changed this decision before anything was drawn: **the father's six complete
-plates have been complete since the day we curated their catalog**. He has never completed one inside
-Coindex. So the ceremony **does not congratulate — it reveals.**
+**The journey** flies the coin only where it is the protagonist: its slot on a plate, and its ficha
+sheet in Monedas (#370, §13). Not into `Pieces` or a box, where the other end is inventory rows and
+landing on the first of twelve would be a lie. The cards that do not fly carry no ratio (ADR 0021
+§3), so the difference is visible before touching.
 
-> **Amended on 2026-08-12 (§3, #473). The tag hangs off the hole, and the name goes under it.** The
-> sunken year is unchanged — 48.3 × 28 dp, two targets per casilla, the same declaration paper obeys
-> — but it is now the **first** thing under the hole and the name is the last. This is form, so it is
-> the map's call by the rule of §15: the owner made it on 12 August with two dp-real mockups in front
-> of him (`docs/ux/prototipo-473/`), and the alternative he turned down was widening the gap between
-> rows.
->
-> What it buys is that the tags of a row line up **by construction** — each hangs off its own hole by
-> the same ten dp — where before they only lined up if every casilla of the row reserved a name box
-> of one height (#337), measured per row against real Bitter (#412). A casilla with no name reserved
-> that box empty, and hung 54 dp of bare cardboard between its coin and its year against the 42 dp
-> that separated two rows: the year read as the label of the row below, which is the inversion #411
-> had gone looking for and #473 found where #411 could not reach. **No width of gap could have closed
-> it**: the box was measured in `sp` and the gap in `dp`, so a collector who enlarged the type
-> reopened it every time. Now what a name does not use falls at the foot of the casilla, where it is
-> added to the separation between rows instead of taken from it, and nothing inside a casilla is
-> measured in the collector's own type. The numbers are in `docs/ux/implementacion-473/`.
-
-> **Amended on 2026-08-15 (§3, #508). The year opens the coin's sheet, and no unmarked label reaches
-> a browser.** «The hole flips, the year goes to Numista» stops being true of the second half. The two
-> targets stand and the tag is untouched — 48.3 × 28 dp, sunken in the cardboard, its 48 dp of target
-> bought with `minimumInteractiveComponentSize` — but what it opens is the sheet of **that coin, over
-> the lámina**: the one Monedas has carried since #370, with «Ver en Numista ↗» and «Actualizar la
-> ficha · 1 llamada» inside it. The audit of 14 August 2026 left for Chrome three times without meaning
-> to, and a wrong tap here does not cost a wrong screen: Numista is behind Cloudflare and the way back
-> is a challenge. What the paragraph above books as a debt — «today's convention falls to the ↗:
-> neither face carries it» — is paid by not owing it: **a door that does not leave the app owes no
-> arrow**, and the rule the audit leaves behind is the other way round — nothing without a ↗ in its
-> label opens a browser. That reaches one more surface, the annex's list of marked casillas (ADR 0029
-> §6), because it draws the plate's casillas and therefore had the same tag.
->
-> **The sheet brings «Actualizar la ficha · 1 llamada» into the shelf window**, where ADR 0030 §1 says
-> hojear costs nothing. It does not contradict it: what that clause refuses is spending nobody asked
-> for, and this is the shape ADR 0028 §3 requires of a gesture that spends — it prints its ceiling
-> before it is pressed, one call, one coin, on the label itself. A plate of the twenty is browsed for
-> free and stays browsed for free unless the collector presses something that says what it costs.
->
-> It is also the row #302 could not take: its table dropped «abrir una ficha del tipo» because «no hay
-> tal pantalla» — the ficha was one line inside a card — and #370 built the screen four days later.
-> **The coin does not fly into it**, which is the one thing Monedas' sheet does and this one does not:
-> the hole of a casilla is already one end of the journey of this section, a photograph cannot be two
-> shared elements at once, and what the flight would say — «es la misma moneda» — the casilla said on
-> the way in.
-
-> **Amended on 2026-08-16 (§3 and §4, #514). A system asking for quiet does not shorten the
-> ceremonies: it keeps them from starting.** Everything this section approves gains one precondition,
-> and it is not the app's to argue with — `Settings.Global.ANIMATOR_DURATION_SCALE` at zero is
-> «quita las animaciones» in accessibility, or whoever gets dizzy. Compose already divides by that
-> scale every duration it governs, so the finding of the audit of 14 August 2026 was not a scale
-> being ignored: a **shared element** places its photograph where it took off before it places it
-> where it lands, because its place comes from a lookahead pass that arrives a frame later, and a
-> frame is not a duration — no factor divides it away. That frame is the capture with the coin over
-> «Ver en Numista» and the sheet's hole empty. So at zero the journeys of this section do not happen
-> at all, the sheet is given no entrance, and neither end yields its photograph: the casilla keeps
-> its coin, because the yield only ever meant «this one is in the air».
->
-> §4's export rule gains its second reader by the same stroke. What a still device refuses is not the
-> stamp but the **stamping**, which is the distinction the export already draws, so
-> `rememberInkFall` finds the ink dry for the reason `OffScreenSheet` did.
->
-> **And the gloss rests.** It is the movement no scale can reach — it follows the sensor and has no
-> duration for a factor to divide — so it is the one this section has to answer for by itself, and it
-> is also the one «quien se marea» is likeliest to have meant: metal that moves under the hand.
-> Where quiet was asked for the sensor is not registered at all, and `CoinTilt.Still` is the phone
-> on the table, which #303 already defined as a pose and not as an effect switched off halfway.
->
-> **The rule is throw every switch you own**, and the app owns four: a modifier not applied, a
-> transition object not built, a `Stamping` not provided, a sensor not registered. None of them costs
-> anything, and together they make quiet a guarantee instead of an accident of frame timing. Two
-> movements have no switch short of inventing one — the flip of a casilla (#337) and the fade of the
-> return (#381) — and they are left to Compose, which is safe for a second reason: what their leaked
-> frame draws is the face that was already up and the plate still covering the index, «not turned
-> yet» and «not gone yet». That is the test the shared element failed, and it is why the flight is
-> the one that had to be switched off rather than trusted. Measured, frame by frame, in
-> `docs/ux/implementacion-514/`.
-
-> **Amended on 2026-08-09 (§3, #339). The bit is withdrawn: the sheet stamps every time it is
-> opened.** #304 had costed the ceremony at «one bit per catalog in `NamedValues`» — *ya te lo
-> enseñé* — and its own test plan contradicted it in the next paragraph («volver a abrirlos vuelve a
-> estampar sin guardar ningún hecho»). The owner settled it on 9 August, and the test plan was
-> right. Three reasons, and the first is the ceremony's own: with a bit the stamping happens
-> **exactly six times in the life of a phone**, once per complete plate, and each of those six is
-> unrepeatable — a photograph that has not painted yet, or an eye somewhere else, spends the only
-> one there was. The second is that **no other movement of the app is spent**: the flip answers the
-> finger every time it is touched and the gloss answers the sensor always, so a stamp with a memory
-> would be the one effect that runs out, which is what turns a state back into the half-event #304
-> refused. The third is that ADR 0021 §7 left the app storing **nothing per card** and #276 retired
-> the last of it: a 1.0.0 does not reopen that door for an animation. The consequence accepted is
-> that the ink falls again on a sheet whose owner has already seen it fall; at 300 ms on a screen
-> that is opened rarely, that is the cheaper of the two mistakes. The bench fired a third time and
-> confirmed the rest of the block without moving a value: the `multiply` over #351's grained paper
-> leaves the grain **3.6 % off what multiplying the paper predicts**, where a flat ink would be 100 %
-> off, and the long title of a real catalog — four lines of it — no longer reaches the stamp, which
-> closes #319 where it was opened. The numbers are in `docs/ux/implementacion-339/`.
-
-**The journey** flies the coin **only where it is the protagonist**: its slot on a plate, and the
-coin's ficha sheet (§5 / §13). In `Pieces` and in `Box` it does not fly, because on the other side there is no
-slot of its own but inventory rows where `CoinSides` paints both faces at 150 dp — promising «it is
-this one» and landing on the first of twelve is a lie. That some cards fly and others do not **is
-visible before touching**: the ones that do not carry no ratio (ADR 0021 §3), which is exactly what
-already tells them apart. They are 20 of the father's 69 cards.
-
-> **Amended on 2026-08-10 (§3 and §13, #370).** The ficha sheet carries the landing: a **104 dp
-> die-cut** centred above the title — the same hole the cell left, cardboard only when a collection
-> claims the type (the form «En ninguna colección» already used in the grid). It is not a loose coin
-> and not a full-screen destination: `ModalBottomSheet` is a dialog window and cannot host a shared
-> element, so the sheet stays a Compose overlay under the same `SharedTransitionLayout` as the
-> plate journey, with caller-managed visibility on the type key. The catalog journey (`coin-$id`)
-> and the type journey (`type-$id`) keep separate keys so Lunar Series III's Snake can be both a
-> card cover and a Monedas cell without Compose picking the wrong end. The INDEX ↔ PLATE routes
-> enter and exit with nothing of their own: a destination crossfade washed the casillas while the
-> coin was still in the air and snapped them opaque as it landed.
->
-> **Amended on 2026-08-10 (§3, #381), the same day: a destination paints its own paper, and only
-> the leaf on top is animated.** The paragraph above blamed the crossfade and the sentence before
-> this one is what it settled on instead — both were wrong about the same thing. A destination
-> painted no paper of its own (the grain has been the window's since #351), so the two ends of a
-> navigation, which are composed together for as long as the coin is in the air, were two
-> transparencies. The crossfade let the paper show through both; `None` on all four let the plate be
-> drawn whole over the whole index, half a second of double exposure per journey, which is what a
-> video at real speed showed on the 10th. **Every route now paints `paperSurface`**, which is what
-> lets one destination cover another at all — and it does not reopen #351, because that mosaic is
-> anchored to the window, so the destination's leaf falls on the theme's in register. What is left
-> then follows from the NavHost stacking by depth: going in, the plate arrives on top and needs
-> nothing; coming back it is *still* on top while it leaves, so it is given a 180 ms fade out, and
-> without it the plate sits opaque through the whole flight home and vanishes in one frame — the pop
-> of #370 from the other side. Nothing else is animated, in either direction. Measured in
-> `docs/ux/implementacion-381/`, which also retires `viaje.png` of #339: that strip was recorded
-> with the crossfade and has the double exposure inside it, described at the time as «the grid
-> arrives behind».
+- **Amended by #339 (2026-08-09): the sheet stamps every time it is opened.** #304's one bit per
+  catalog in `NamedValues` is withdrawn: it would make the stamping the one movement that runs out,
+  and ADR 0021 §7 stores nothing per card. Re-stamping a seen sheet is the cheaper mistake.
+- **Amended by #370 (2026-08-10, with §13): the ficha sheet is the second journey's landing**: a
+  104 dp die-cut above the title, with cardboard only when a collection claims the type.
+  `ModalBottomSheet` is a dialog window and cannot host a shared element, so the sheet is a Compose
+  overlay under the same `SharedTransitionLayout`. The catalog journey (`coin-$id`) and the type
+  journey (`type-$id`) keep separate keys: one type can be a card cover and a Monedas cell.
+- **Amended by #381 (2026-08-10): every route paints `paperSurface`, and only the leaf on top is
+  animated.** Both ends are composed during the flight, and transparent destinations washed out or
+  double-exposed; the grain is anchored to the window (#351), so opaque leaves fall in register.
+  Coming back, the plate is still on top and fades out in 180 ms. `docs/ux/implementacion-381/`.
+- **Amended by #473 (2026-08-12): the tag hangs off the hole and the name goes under it.** The tag
+  sits ten dp under its hole, so a row's tags align by construction. Before, a name box in `sp`
+  above a gap in `dp` let the year read as the label of the row below once the collector enlarged
+  the type; nothing in a casilla is measured in `sp` now. The owner's call (form), over widening the
+  row gap: `docs/ux/prototipo-473/`, `docs/ux/implementacion-473/`.
+- **Amended by #508 (2026-08-15): the year opens the coin's sheet, not Numista** — Monedas' sheet,
+  over the lámina, with «Ver en Numista ↗» and «Actualizar la ficha · 1 llamada» (whose label prints
+  its cost, per ADR 0028 §3 and ADR 0030 §1). The audit of 14 August 2026 left for Chrome by
+  accident, behind Cloudflare. **Nothing without a ↗ in its label opens a browser**, the annex's
+  list of marked casillas included (ADR 0029 §6). The coin does not fly into this sheet: its hole is
+  already one end of the plate journey.
+- **Amended by #514 (2026-08-16, with §4): a system asking for quiet keeps the ceremonies from
+  starting.** At `ANIMATOR_DURATION_SCALE` = 0 a shared element still shows its photograph at the
+  take-off for one lookahead frame, which no scale divides. So **every switch the app owns is
+  thrown**: the journeys do not run and neither end yields its photograph, the sheet has no
+  entrance, `rememberInkFall` finds the ink dry, and the sensor is not registered
+  (`CoinTilt.Still`). The casilla flip (#337) and the return fade (#381) are left to Compose: their
+  leaked frame shows the previous state. `docs/ux/implementacion-514/`.
 
 ### 4. The export rule: what is still travels to paper, what is alive does not
 
-> Anything still travels to the PNG and the PDF. Anything that follows the finger, the sensor or the
-> navigation stays in the app.
+**Anything still travels to the PNG and the PDF; anything that follows the finger, the sensor or the
+navigation stays in the app.** One line in `OffScreenSheet` and one test, not a check per effect.
+So **the stamp goes into the PNG** of a complete plate, and **the gloss does not** (amending #303):
+what the father shows other people carries no metal.
 
-One line in `SheetExport` and one test, instead of a condition per effect. It settles two loose ends
-in opposite directions: **the stamp does go into the PNG** of a complete plate, because it is a state
-and not an animation; and **the gloss does not**, amending #303, which had reasoned that rest is a
-defined pose and therefore composable. The consequence is accepted knowingly: what the father shows
-other people carries no metal. The app is where he looks at his collection; the PNG is where he shows
-it.
+**The gloss belongs to the coin, not the hole.** Every coin photograph glosses, die-cut or loose,
+through one modifier, `Modifier.coinGloss()`, shared by `AlbumHole` and `CoinSides`. Empty cardboard
+and the ghost of a missing issue never gloss.
 
-> **Amended on 2026-08-10 (§4, #371). The stamp reaches the PDF too.** Block 8 (#339) carried the
-> ink to the exported sheet and left the printed notebook without it — the rule above already named
-> both surfaces, and only one of them painted. The notebook keeps «Progreso · n / n emisiones» in
-> the specification (§5), so the caucho is drawn in millimetres of paper on each plate's own
-> heading — not by reusing `StampedRatio`, which is sized in dp and lands on the ratio — and a
-> shared folio (#232) stamps every complete plate on the page, each in its band. The slim heading
-> gets a smaller frame so the ink still fits fourteen millimetres.
-
-> **Amended on 2026-08-14 (§4, [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md)). The
-> wish mark travels, and it needs an output of its own.** The rule above already decided the first
-> half and it does not say what it appears to: «alive» here is *anything that follows the finger, the
-> sensor or the navigation*, and a wish mark is a **state at rest**, like the rubber stamp of a
-> complete plate. So it reaches the PNG and the PDF with no exception written, as the slot's `state` —
-> the line a printed cell has always reserved and never used, so the mark costs no millimetre and
-> moves no page count.
->
-> What the rule alone could not give is the other population: the plate of «Explorar» has no
-> «Exportar» (#282, decision 8), so the wished holes of the collector's own plates would print and the
-> 157 slots of the shelf window never would. Hence a second product on paper, **«la lista de lo que
-> busco»**, exported from the annex of §8 and crossing both — one more `PrintSection` under the same
-> five switches, and not a second printer. It carries an **eyebrow of its own**, as the coins no
-> collection claims already do (#275): a page of coins nobody owns may not say «COLECCIÓN» over them,
-> and the paper outlives the app. The printed notebook of the index is untouched: the list is not a card
-> of the index.
-
-**The gloss belongs to the coin, not to the hole** — the second amendment to #303. Every coin
-photograph glosses, die-cut or loose: on the plate, in the index, in «Las cifras», in `PieceCard` and
-in the side sheets. Two components paint one by the time the block was written — `AlbumHole` for what
-is die-cut and `CoinSides` for what is loose — and the wider scope still costs no session, because
-what they share is one composable modifier, `Modifier.coinGloss()`. **Empty cardboard never glosses**,
-now for the direct reason: there is no coin. Nor does the ghost of a missing issue, which is the
-catalog's design and not metal. «Las cifras» is block 10 and does not exist yet; when it does, its
-photographs get the same modifier and nothing else.
+- **Amended by #371 (2026-08-10): the stamp reaches the PDF.** It is drawn in millimetres on each
+  plate's heading, not by reusing the dp-sized `StampedRatio`; a shared folio (#232) stamps each
+  complete plate in its band, and the slim heading gets a smaller frame.
+- **Amended by [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (2026-08-14): the
+  wish mark travels, and gets an output of its own.** It is a state at rest, printed as the slot's
+  `state` line. Since «Explorar» has no «Exportar» (#282), **«la lista de lo que busco»** is
+  exported from the annex (§8) as one more `PrintSection` under the same switches, with its own
+  eyebrow: a page of coins nobody owns may not say «COLECCIÓN» (#275).
 
 ### 5. Density: three clauses, and a word costs what it costs times how often it is printed
 
-The pruning ([#305](https://github.com/jenarvaezg/coindex/issues/305)) is **not a matter of wording,
-it is a matter of place**: almost nothing goes for being long, it goes for being printed in the wrong
-place, or 192 times. Furniture in the first fold of Collections drops from **56 to ≈22 words**.
+The pruning ([#305](https://github.com/jenarvaezg/coindex/issues/305)) is about place more than
+wording: a string goes because it is printed in the wrong place, or once per row. Furniture in the
+first fold of Collections drops from 56 to ≈22 words. The bar:
 
-The bar is three clauses and not one figure:
+1. **Collections ≤ 25 words of furniture in the first fold.**
+2. **No furniture string is printed per row, per slot or per card.** Copy is expensive because of
+   how often it prints, not its length.
+3. **A screen visited once is exempt by the frequency rule**, and none of its explanations may
+   appear on a notebook screen. Today: «Este teléfono», «Credenciales», onboarding and «Avisos y
+   licencias», which follow from the rule rather than defining it (#521).
 
-1. **Collections ≤ 25 words of furniture in the first fold** (56 today).
-2. **No furniture string is printed per row, per slot or per card.** This is the clause that protects
-   the result: the 19 convertible copy entries were expensive because they printed 192 times, not
-   because they were long.
-3. **A screen visited once is exempt by the frequency rule**, and in exchange is watched the other
-   way round: none of its explanations may appear on a notebook screen. Today those screens are
-   «Este teléfono», «Credenciales», onboarding and «Avisos y licencias» — named as a **consequence**
-   of the rule and not as the list the rule is applied from
-   ([#521](https://github.com/jenarvaezg/coindex/issues/521): the clause said «Ajustes and
-   onboarding», so a screen splitting in two had to amend the rule to keep an exemption it already
-   earned by frequency).
+**The frequency rule.** A word costs what it costs multiplied by the times it is printed. On a
+screen visited once, a paragraph that saves a phone call pays for itself; in a string printed per
+row, slot or card, none does. It protects explanation, not furniture.
 
-> **The frequency rule.** A word costs what it costs **multiplied by the number of times it is
-> printed**. Where a screen is visited once, a paragraph costs once, and avoiding a phone call pays
-> for it. Where a string is printed per row, per slot or per card, no paragraph is worth it.
+- **The screen may say less than paper when the screen has form and paper does not.** The plate's
+  16-word tail line goes entirely.
+- **One string, one owner.** One «no filter» word for all ten chips, **`Cualquiera`**, and one
+  wording of «this collection no longer exists».
+- **The budget leaves the interface** — the index line, the Ajustes meter and `Techo de llamadas al
+  mes`. The ceiling is internal, and the exhausted message says to wait for the 1st. This is the
+  map's one behaviour change.
 
-This replaces the «Ajustes is not pruned» exception, which **was written nowhere** and had a hole: it
-did not cover onboarding, which is another 52 words on the first screen of a new phone. The rule
-covers it without naming it, protects only explanation and not furniture — the `Ajustes` eyebrow, the
-duplicated `Coindex v0.16.0` and the `Cerrar sesión` that is both title and button all still fall —
-and can be written as a rule that a review can apply.
+The ≈22 was counted on HTML; the real number comes from `uiautomator dump` on the AVD `coindex-ux`,
+and above 25 the bar is adjusted with the measurement in front, not the measurement to the bar.
 
-Two further rules come out of the same pruning:
-
-> **The screen may say less than paper when the screen has form and paper does not.** The plate's
-> 16-word tail line goes entirely — it lives only in `PlateScreen.kt:138` and never travelled to the
-> PNG or to the 90 pages — and `Progreso` loses its label on screen while keeping it on paper, because
-> the stamp lands on that very ratio.
-
-> **Amended on 2026-08-09 (§5, #339). The ratio leaves the specification on both surfaces the stamp
-> reaches.** The clause above was written while §4 was still deciding, and it no longer agrees with
-> itself: the stamp **does** travel to the PNG, and it lands on the ratio, so screen and exported
-> sheet now have the same form — `22/22` at the top right of the title, with the ink over it — and
-> keeping «Progreso · 22 / 22 emisiones» in the card underneath would print the same figure twice on
-> the same surface, which is what the frequency rule of this very section prices. The printed notebook
-> keeps the row whole, because its page has no header to raise a figure into: that is where the
-> original clause still holds. What the row brought with it — «1 anunciada», «2 no medibles» — stays
-> everywhere, because it is not the ratio.
-
-> **One string, one owner.** Eleven literals for four strings today; ten chips and six words for «no
-> filter», which become **`Cualquiera`**, one, in all ten; four wordings of «this collection no longer
-> exists», which become the short one.
-
-What the pruning changes beyond copy, with eyes open: **the budget disappears from the whole
-interface** — the index line, the Ajustes meter *and* the `Techo de llamadas al mes` field. Nobody
-decides anything looking at 6 of 1500. The ceiling becomes an internal value, and the
-budget-exhausted message stops being able to say «you can raise the ceiling in Ajustes»; it says to
-wait for the 1st. It is the only decision of this map that changes behaviour and not just copy.
-
-**The `≈22` is counted on an HTML prototype, not on the emulator.** The real number is measured on the
-AVD `coindex-ux` with `uiautomator dump`, as #296 measured it, and if it comes out above 25 **the bar
-is adjusted with the measurement in front, not the measurement to the bar.**
+**Amended by #339 (2026-08-09): the ratio leaves the specification wherever the stamp reaches it.**
+Screen and exported sheet show `22/22` at the title with the ink over it, so «Progreso · 22 / 22
+emisiones» below would print the figure twice. The printed notebook keeps the row: its page has no
+header to raise the figure into. «1 anunciada» and «2 no medibles» stay everywhere.
 
 ### 6. Copy lives in one place, and two tests defend the promises
 
-The bar **is not turned into a test** ([#306](https://github.com/jenarvaezg/coindex/issues/306)). The
-diagnosis that changed the answer: the prose never went away — the 110 hand-written strings entered
-**without a test**, and the eleven existing tests did not fail because they were not looking at them.
-The hole was not a missing criterion, it was that **there are two places to write copy and only one
-has tests.**
+The bar is **not** a test (#306). Prose came in through hand-written strings no test looked at: of
+the two places copy is written, only one had tests.
 
 - **`CopyLivesInOnePlaceTest`** goes red if a literal containing letters reaches a visible slot
   (`Text(`, `text =`, `label =`, `placeholder =`, `title =`, `supportingText =`,
-  `contentDescription =`) outside the twelve copy files. **51 sites in 13 files** today. It counts
-  nothing; it forces every new string through the place that already has tests and shows up in a diff.
-  **No exemptions** — not symbols, not Ajustes, not onboarding, not interpolations. A whitelist with a
-  reason *is* the back door: nobody rejects a PR that adds one line with its comment, and in six
-  months the list is the map of everything unwatched. The frequency exemption of §5 says **how much
-  text is worth, not where it is written**; the two are not the same exemption.
+  `contentDescription =`) outside the copy files, so every string goes through the place that has
+  tests. **No exemptions**: a whitelist with a reason is a back door. §5's frequency exemption says
+  how much text is worth, not where it is written.
 - **`SinglePaletteTest`** asserts that `darkColorScheme` and `isSystemInDarkTheme` appear nowhere in
-  `ui/`, and that `android:forceDarkAllowed` is `false` in `themes.xml`. It is born half red — the
-  first half passes today, the second does not — which is how a test that declares an unkept promise
-  should be born.
+  `ui/` and that `android:forceDarkAllowed` is `false` in `themes.xml`.
 
-> **Amended on 2026-08-11 (§6, [#342](https://github.com/jenarvaezg/coindex/issues/342)). Both tests
-> came out different from what was imagined here, and in opposite directions.**
->
-> **`SinglePaletteTest` was not born half red: it was born green.** Block 1 closed
-> `android:forceDarkAllowed` before the test was written, so the unkept promise it was meant to
-> declare was already kept, and what it is is a **regression guardrail** — which is worth having and
-> is not what this section described. It did get born half red in the end, but for something else:
-> [#349](https://github.com/jenarvaezg/coindex/issues/349) measured `Paper.muted` at 4,44 against the
-> paper and `Paper.hairline` at 2,28, and those two floors went into this test as its second half.
->
-> **`CopyLivesInOnePlaceTest` found more than the 51 sites in 13 files counted here: 117 in 17.**
-> The count above was taken with a line-based grep, and copy does not respect lines — `Text(` with its
-> string on the next line, and `text = if (x) "Ocultar" else "Mostrar"` with two strings behind a
-> conditional, are the two shapes it could not see. The test reads the whole argument instead, so the
-> number it gives is the real one.
->
-> Two things the list of slots had to learn, and neither is an exemption. `Text(` is matched **on a
-> word boundary**, because `setContentText(` is a notification and not a Compose slot. And `Eyebrow(`
-> and `Facet(` are on the list, because their parameters already are — `fun Eyebrow(text: String)`,
-> `fun Facet(title: String)` — and an album that wraps `Text` in a composable of its own moved the
-> slot, not the copy. **The list only grows**; what §6 forbids is taking something off it. A literal
-> whose only letters are inside an interpolation is not prose and not an exemption either: what is
-> left of `"$label · $it"` once the interpolations go is a middle dot, and a middle dot has no wording
-> to diverge — while `"Colecciones · $collections"` has one, and went.
+The first defends that copy is in one place, not the bar: prose written inside `Labels.kt` passes.
+A declared registry that would make the bar an `assertEquals` was dropped as disproportionate.
 
-Said plainly: a new wall of prose written correctly *inside* `Labels.kt` passes green. The test
-defends that prose is **visible in one place**, not the bar. The declared registry that would have
-made the bar an `assertEquals` was chosen and then dropped: it meant moving 110 strings and rewriting
-`Labels.kt` so templates were data — inventing mechanism for a two-user app, inside a map whose motto
-is plan, do not do. **With one string and one owner, checking that a label prints per slot is reading
-a file.**
+**Amended by [#342](https://github.com/jenarvaezg/coindex/issues/342) (2026-08-11).**
+`SinglePaletteTest` is a regression guard (block 1 had already set `forceDarkAllowed`), and its
+second half holds #349's contrast floors (`Paper.muted` 4.44, `Paper.hairline` 2.28).
+`CopyLivesInOnePlaceTest` reads whole arguments, because a line-based grep misses strings on the
+next line or behind a conditional. `Text(` matches on a word boundary (`setContentText(` is a
+notification); `Eyebrow(` and `Facet(` are slots, since a wrapper moves the slot, not the copy.
+**The list only grows.** A literal whose only letters are inside interpolations (`"$label · $it"`)
+is not prose; `"Colecciones · $collections"` is.
 
 ### 7. The name of a coin is two strings, and it is derived, not curated
 
-A coin's name comes from its ficha and **is not one string: it is two — the denomination and the
-theme** ([#319](https://github.com/jenarvaezg/coindex/issues/319)). While they share a line, the
-two-line block forces a choice between cutting the figure and cutting the theme. Separated — the
-denomination on its line, the theme underneath at a smaller size, which is the hierarchy of a real
-album's cartouche — **the ellipsis falls from 44 cards to two**, and the denomination never gets cut.
+A coin's name is **the denomination and the theme**
+([#319](https://github.com/jenarvaezg/coindex/issues/319)). Sharing a line, one of them gets cut;
+separated — denomination on its line, theme underneath, smaller, like an album cartouche — the
+ellipsis falls from 44 cards to two and the denomination is never cut.
 
 | | types | |
 | --- | ---: | ---: |
@@ -482,161 +225,78 @@ album's cartouche — **the ellipsis falls from 44 cards to two**, and the denom
 | theme on two lines | 46 | 24 % |
 | **theme that gets cut** | **2** | **1 %** |
 
-The rule, in four steps: **(1)** the ruler is not deleted, it **falls to theme** and only when there
-is no other — position decides, not identity, because `ruler` arrives in Spanish while the title is in
-English and matches only 48 % of the time; **(2)** material and portrait tails go (`2 oz Fine
-Silver`, `Bullion Coin(age)`, `Silver Proof`, `Nth portrait` — 29 of 187); **(3)** a quoted nickname
-is theme, not denomination; **(4)** when a cut is needed, it bites the theme.
+**(1)** The ruler is not deleted: it **falls to theme**, only when there is no other, by position,
+because `ruler` arrives in Spanish and the title in English. **(2)** Material and portrait tails go
+(`2 oz Fine Silver`, `Bullion Coin(age)`, `Silver Proof`, `Nth portrait`). **(3)** A quoted nickname
+is theme. **(4)** A cut bites the theme.
 
-**It is not curated per type.** Numista's full title yields **181 distinct names out of 187** — three
-«1 Bolívar», two «50 Céntimos» — and the pruned title yields the same 181, so curating 192 names, plus
-one for every coin that arrives, would buy no distinction. What disambiguates is the year underneath.
-**Abbreviations were chosen and then withdrawn**: with the two-range cartouche they save 0 cards of
-187, which would be dead code, and they carried «10 Pesos» coming out as «10 $».
-
-The name is **the same on all three surfaces** — `pieceTitle` (`PiecesSubject.kt:100`), including the
-PDF, because the paper cell has the same form plus a QR, so §5's screen-says-less exception does not
-fire. **The search box is the exception in reverse**: `CoinRow.searchable` keeps indexing the full
-title, so «Elizabeth» still finds all 18. The accepted price is that a result may not visibly contain
-the word searched for.
+**Not curated per type**: full and pruned titles give the same number of distinct names, and the
+year disambiguates. Abbreviations saved no card and turned «10 Pesos» into «10 $». The name is **the
+same on all three surfaces** (`pieceTitle`), PDF included; only the search box indexes the full
+title (`CoinRow.searchable`), so a result may not visibly contain the word searched for.
 
 ### 8. Amendment to ADR 0021 §1: the top level holds three sibling hierarchies
 
-**Collections, Coins and «Las cifras».** What a cell earns is **having a grain of its own**
-([#317](https://github.com/jenarvaezg/coindex/issues/317)).
+**Collections, Coins and «Las cifras».** A cell is earned by **having a grain of its own**
+([#317](https://github.com/jenarvaezg/coindex/issues/317)). **The test:** if what is inside is what
+is outside in a different order, it is a facet of the shelf, not a destination. **Two symptoms
+give it away**: the only name that fits fights an existing one («tu colección» against
+«Colecciones»), and the count has to be borrowed («El mundo · 678» are slots of the sheet).
 
-> **The test — one clause that decides:** is its grain its own? If what is inside is what is outside
-> with a different order applied, it is not a destination: it is a facet of the shelf.
->
-> **Two symptoms that give it away when it is not:** the only name that fits **fights one that already
-> exists** («tu colección» against «Colecciones»); and the count has to be **borrowed** — «El mundo ·
-> 678» are slots of the sheet.
+What changes in ADR 0021 §1:
 
-The symptoms are not independent gates: they are the two ways a borrowed grain shows, and they are
-worth stating because they cannot be faked. Stated as three separate doors, a candidate with a pretty
-name and a number to hand would pass by arguing only the first.
-
-What changes in §1:
-
-1. The title: from *two* sibling hierarchies to **three**.
-2. *«A bottom bar of two destinations»* becomes **three cells**, in this order: **Colecciones,
-   Monedas, Las cifras**. The app **still opens in Collections** and the third is last.
-3. **Each cell names its grain with its count** — `Colecciones · 69` (cards), `Monedas · 192` (types),
-   `Las cifras · 6,91 kg` (grams). The cell does **not** promise how many things are inside: it says
-   what the destination is made of. «Las cifras» counts weight and **never money**.
-
-   *Nota de forma, #516: la celda del medio dice `Tipos · 192`. La cláusula se cumple ahora y antes no:
-   el número era el recuento de tipos —el mismo que imprime el canto cosido y el mismo conjunto que
-   dibuja `coinRows`— bajo la palabra «Monedas», y sobre una colección de 72 monedas en 15 tipos el
-   único número permanente de la app estaba mal rotulado. Cambia el rótulo y no el número, porque el
-   número es lo que el destino está hecho de: una tarjeta por tipo, que es también lo que cuenta el
-   recuento del estante de esa pantalla («15 tipos»). Contar piezas fue el otro candidato y cuesta más:
-   «Monedas · 72» sobre un canto que lee «72 piezas» es un número bajo dos palabras, que es el choque
-   del #400 reconstruido.*
+1. Two sibling hierarchies become **three**.
+2. The bottom bar has **three cells**: **Colecciones, Monedas, Las cifras**. The app still opens in
+   Collections.
+3. **Each cell names its grain with its count**: `Colecciones · 69` (cards), `Monedas · 192`
+   (types), `Las cifras · 6,91 kg` (grams). «Las cifras» counts weight and **never money**.
+   *Nota de forma, #516: la celda del medio dice `Tipos · 192`. El número ya era el recuento de
+   tipos, el mismo del canto cosido, así que cambia el rótulo y no el número; contar piezas pondría
+   un número bajo dos palabras, que es el choque del #400.*
 4. The shelf invariant — filters, sort and live search, folded on entry — narrows to the hierarchies
-   **with a list**, which are two of three. «Las cifras» carries no shelf: its order is chosen by the
-   figure you touch.
-5. **The shelf gains one facet, the axis** — by plate (the one there has always been), by country, by
-   year.
-6. The test above is written down, so a fourth candidate is examined rather than debated.
+   **with a list**. «Las cifras» has none: its order is the figure you touch.
+5. **The shelf gains the axis facet**: by plate (default), by country, by year (§9).
+6. The test is written down, so a fourth candidate is examined rather than debated.
 
-What does **not** change: the three consequences of §1 («Sin clasificar» as a filter of Coins, a coin
-linking back to its collections, medals as a filter and not a section) follow from Collections **and**
-Coins existing, not from their being exactly two; the **home screen that asks where you want to go
-stays rejected**, and with three cells the argument is stronger, not weaker; and **§2 is untouched** —
-there is still one species of collection. This amendment is about the bar, not the index.
+Unchanged: ADR 0021 §1's three consequences follow from Collections and Coins both existing; a home
+screen asking where to go stays rejected; and ADR 0021 §2 stands.
 
-> **Amended on 2026-08-13 (§8, [#281](https://github.com/jenarvaezg/coindex/issues/281)). What fails
-> the test may still earn a screen, as an annex.** The test stands whole and its verdict is unchanged
-> for every candidate it has judged. What it lacked is an exit: it was read as having two outcomes —
-> a cell, or an **Axis of the shelf** — and «Explorar» is neither. Its grain is borrowed (plates, the
-> same as the shelf's; a wish is a slot), so it is not a cell; but its **population is not the
-> collection at all** — it is made of what the collector does **not** have — so there is no order of
-> the sheet that could hold it. That third outcome is an **annex**, and it is ruled here rather than
-> per screen:
->
-> 1. An annex **hangs off the hierarchy that gives it its door**, and off exactly one. Two doors into
->    one annex would need two names for it, which is the first symptom of the test firing again.
-> 2. It carries **no cell and no bar**. It is entered from that hierarchy and left with «Volver»: the
->    bar is drawn on the roots only, and a bar offering to jump hierarchies from inside an annex would
->    be a second «Volver» that does something else. The price is written and accepted — from
->    «Explorar» there is no crossing to Coins or to «Las cifras» without going back.
-> 3. Its door is the **last row of that hierarchy's list**, deeper paper, and it **names what is
->    behind it with its count**. The door is written twice, because a zero is not printed: «Y otras 20
->    láminas que no coleccionas →» while nothing is marked, «Lo que busco · 7, y otras 20 láminas →»
->    once something is. Same rule as the sewn edge, which stays silent while it reads (#418), and as
->    the threshold of ADR 0028 §1: a number that says nothing is not shown.
-> 4. **The shelf invariant follows having a list, not being a hierarchy.** Point 4 above narrowed it
->    to «the hierarchies with a list»; what it was really tracking is the list. An annex with a list
->    opens with its shelf folded — search and sort — and carries the chips its population earns, which
->    in «Explorar» is none: its twenty plates are all at 0/N, and twelve countries with nine of them
->    holding a single plate do not buy a facet
->    ([#279](https://github.com/jenarvaezg/coindex/issues/279),
->    [#282](https://github.com/jenarvaezg/coindex/issues/282)). «Las cifras» is unaffected: it has no
->    list, which is why it has no shelf.
->
-> What this does **not** open: an annex is not a cheaper way into the bar. It fails the test and stays
-> failed — no cell, no count in the bar, and the app still **opens in Collections**. The top level
-> remains **three**.
+**Amended by [#281](https://github.com/jenarvaezg/coindex/issues/281) (2026-08-13): what fails the
+test may still be an annex.** «Explorar» fails it (plates and slots are a borrowed grain), but its
+population is what the collector does **not** have, which no order of the sheet holds. An **annex**:
 
-> **Amended on 2026-08-14 (§8 clause 4,
-> [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)). The annex's list arrives, and its
-> population is one plate wider than clause 4 assumed.** Clause 4 was written about the twenty plates of
-> the shelf window, and it arrives with one word of it spent: **search and sort and no chips**, because
-> twenty plates at 0/N and twelve countries buy no facet. And **with no chips there is nothing to fold** —
-> the disclosure of `FilterShelf` is what keeps five facets out of the way, so a fold over one row holding
-> two words would be the furniture §5 prices. «Opens folded» is this clause's answer for a shelf that
-> *has* chips; this one wears its search box and its order in the open.
->
-> What it did not foresee is that «Explorar» would be built **after** the annex already held «Lo que
-> busco». The shelf is therefore of **the plates where something is missing**: the twenty, and the
-> collector's own plates holding a marked casilla. A plate of theirs is then drawn in two lists — its
-> card in the index, its tile here — which is a second **order** and not a second species of collection
-> (ADR 0021 §2 stands): a shelf is explicitly not a hierarchy, and there is no second card with a name
-> of its own. And «Lo que busco» keeps a screen of its own behind a door at the head of the shelf,
-> because what it is *for* is `Exportar la lista` and a tile saying «2 lo busco» cannot be taken to a
-> fair.
->
-> **The two forms of the door in clause 3 are untouched, and the count stays the twenty**: what is
-> behind that door which the index does not already hold is the shelf window. A door counting the
-> collector's own plates as well would be claiming they live somewhere else.
+1. **Hangs off exactly one hierarchy**, which gives it its door; two doors would need two names.
+2. Has **no cell and no bar**. It is entered from that hierarchy and left with «Volver»; the bar is
+   drawn on the roots only.
+3. Is entered by a row of that hierarchy's list, on deeper paper, that **names what is behind it
+   with its count**, prints no zero (as the sewn edge, #418, and ADR 0028 §1) and draws its arrow
+   rather than typing it.
+4. **Follows the shelf invariant if it has a list.** An annex with a list opens with its shelf
+   folded — search and sort — and carries only the chips its population earns: none in «Explorar»,
+   whose plates are all at 0/N across a handful of countries (#279, #282).
 
-> **Amended on 2026-08-17 (§8 clause 3, [#520](https://github.com/jenarvaezg/coindex/issues/520)). One
-> row, one name, one destination — and the row is no longer always the last one.** Clause 3 wrote the
-> door of an annex in two forms, and the composed one —«Lo que busco · 7, y otras 20 láminas →»— named
-> two rooms and opened one of them. It is withdrawn. The index hangs **two** rows, each with a stable
-> name and a single destination:
->
-> 1. **«Lo que busco · 7» at the head of the sheet**, under the shelf and before the first card, opening
->    the list. Its casillas are **drawn** beside the count — the first three as coins, the rest counted in
->    words — which is what makes it a row about coins rather than a label with a number.
-> 2. **«Y otras 20 láminas que no coleccionas →» at the foot**, opening «Explorar», where clause 3 already
->    put it.
->
-> So **«the last row of that hierarchy's list» becomes one of two places**, and the criterion is what the
-> population is for: a **shopping list** goes to the head, because it is what the collector came to act on
-> and the foot of sixty-nine cards is four folds and 3417 dp away (measured, `docs/ux/prototipo-dos-puertas-520/`);
-> a **window to browse** stays at the foot, because browsing what you do not own is where a page ends.
-> Everything else in clause 3 holds: deeper paper, the count with the name, the zero not printed, and the
-> arrow drawn rather than typed.
->
-> Two consequences that are the clause's and not the screen's. **The note of #515 is printed once**: both
-> rows count populations the search box does not reach, so «Lo que escribes arriba no llega hasta aquí»
-> hangs on the row at the head — the one the eye crosses right after typing — and the row at the foot
-> carries nothing. And **the price of the head row is paid only when it exists**: with nothing marked it is
-> not printed, so the first view is exactly the one it was before this ticket; with marks it costs 1,76 of
-> the 11,36 cards the fold held.
->
-> What this does **not** open: still no cell, still no count in the bar, and the marks are still not a
-> collection of the index (ADR 0021 §2). A row at the head of the sheet is not a section — there is one
-> list and one order under it, unchanged.
+An annex is not a way into the bar: no cell, no count there, and the top level remains three.
+
+- **Clause 4 amended by [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md)
+  (2026-08-14).** With no chips there is nothing to fold, so «Explorar» shows search and sort open.
+  Its shelf is **the plates where something is missing**: the twenty of the shelf window plus the
+  collector's own plates with a marked casilla — a second order, not a second species (ADR 0021 §2).
+  «Lo que busco» keeps its own screen, because its purpose is `Exportar la lista`. The door's count
+  stays the twenty.
+- **Clause 3 amended by [#520](https://github.com/jenarvaezg/coindex/issues/520) (2026-08-17): one
+  row, one name, one destination.** The last-row door read «Lo que busco · 7, y otras 20 láminas →»
+  once something was marked: two rooms named, one opened. Now **«Lo que busco · 7» sits at the
+  head**, under the shelf, with its first three casillas drawn as coins, and is not printed while
+  nothing is marked; **«Y otras 20 láminas que no coleccionas →» stays at the foot**, opening
+  «Explorar». A shopping list goes where it is acted on, a window to browse where a page ends
+  (`docs/ux/prototipo-dos-puertas-520/`). #515's note «Lo que escribes arriba no llega hasta aquí»
+  goes once, on the head row.
 
 ### 9. The country map and the timeline are two axes of the notebook, not two screens
 
-The stain and the axis are made of **slots**, so by the test of §8 they are orders of the same sheet,
-chosen in the folded shelf ([#315](https://github.com/jenarvaezg/coindex/issues/315),
-`docs/ux/atlas-315.md`). The order is `indexOrder()`, not a new rule, and the **default axis is «by
-plate», which is today's Collections**: the app still opens the same and nobody has to learn anything.
+Both are made of **slots**, so by §8's test they are orders of the same sheet, chosen in the folded
+shelf ([#315](https://github.com/jenarvaezg/coindex/issues/315), `docs/ux/atlas-315.md`), ordered by
+`indexOrder()`. The **default axis is «by plate»**, today's Collections.
 
 | axis | one cell is | at once | screens | words |
 | --- | --- | ---: | ---: | ---: |
@@ -644,200 +304,119 @@ plate», which is today's Collections**: the app still opens the same and nobody
 | **by country** | a slot | **390** (422 with the shelf folded) | 2.25 | 15 |
 | **by year** | a year | 112 cells | 1.62 | **3** |
 
-The year axis has **three states and not two** — coin, ghost hole and **bare cardboard** — and the
-third is what shows the shape of a collection without a word, like the father's 62 consecutive empty
-years (1813→1876). Sorting by ratio opens the sheet on **Italia 2/2** rather than Rusia 3/280:
-*it reveals, it does not reproach*, the same criterion as the stamp.
+The year axis has **three states**: coin, ghost hole and **bare cardboard**, which shows a run of
+empty years without a word. Sorting by ratio opens on a small complete plate rather than a large
+empty one: it reveals, it does not reproach.
 
-Four defects the prototype found, which are implementation obligations and not taste: the year axis
-**painted eleven years empty in which the father owns a coin** (93 of 112, not 78 of 104); **1316 and
-1375 were Hijri years** stretching the axis to 711 years; a slot was painted in the **catalog's**
-country rather than the **member's** (#170), which is what makes Nueva Gales del Sur and Tokelau
-appear; and the «loose pieces» band makes no sense on an axis where every piece has a country.
+Implementation obligations: no year in which the collector owns a coin painted as empty; Hijri years
+must not stretch the axis; a slot goes in the **member's** country, not the catalog's (#170); and no
+«loose pieces» band on an axis where every piece has a country.
 
-**A piece has two years, and the interface reads only one today.** The rule:
-
-> **To match a slot, the coin's year** (`recordedYear`, which prefers `issueYear`). **To place a piece
-> on an axis, the Gregorian one** (`gregorianYear ?: recordedYear`). The domain already carries both
-> fields, so this is not new mechanism — it is saying which one each thing reads.
-
-And a third reading, from [#326](https://github.com/jenarvaezg/coindex/issues/326): **23 pieces carry
-no year at all** — undated Portuguese escudos, a Roman denarius — and the 1,756-year arc exists only
-if they inherit their type's minimum year. Without that rule it is 246 years.
+**A piece has two years.** To match a slot, the coin's year (`recordedYear`, preferring
+`issueYear`); to place it on an axis, the Gregorian one (`gregorianYear ?: recordedYear`). Undated
+pieces inherit their type's minimum year ([#326](https://github.com/jenarvaezg/coindex/issues/326));
+without it the arc is 246 years instead of 1,756.
 
 ### 10. «Las cifras»: money opens the page, and matter is ordered in ladders of referents
 
-The analytics page is a hierarchy and not a dashboard, and what makes it one is that **you go down**:
-every figure that can be touched leads to the pieces or the plates that compose it. Collections orders
-the collection by plate, Coins by type, **Las cifras by magnitude**.
+A hierarchy, not a dashboard: every figure that can be touched leads down to the pieces or plates
+that compose it. Collections orders by plate, Coins by type, Las cifras by magnitude.
 
-**A piece is worth the maximum of three numbers** ([#316](https://github.com/jenarvaezg/coindex/issues/316),
-`docs/ux/cifras-316.md`): its silver floor, its Numista market price **for its grade**, and what was
-paid — covering 98 %, 96 % and 16 % of pieces, with the maximum reaching **99.5 %**. This is not an
-occasional tie-break: catalog prices **do not follow the metal**, so the order inverts as spot rises —
-today the market wins on 517 of 572 pieces and silver on 14; at 34 % more spot, silver wins on 338.
-The `grade` field, which the ticket thought was an analytic, is the **pricing key**: Numista publishes
-price per issue and grade on an endpoint the app does not call.
+**A piece is worth the maximum of three numbers**
+([#316](https://github.com/jenarvaezg/coindex/issues/316), `docs/ux/cifras-316.md`): its silver
+floor, its Numista market price **for its grade**, and what was paid. Together they cover 99.5 % of
+pieces. Catalog prices do not follow the metal, so which one wins moves with spot. `grade` is the
+**pricing key**: Numista prices per issue and grade.
 
-> **What is read piece by piece or plate by plate is a shopping companion. The same thing, totalled
-> for the whole collection, is wealth management.** The premium on one piece is the scale of that
-> purchase; summed, it is a portfolio's return. The cost of completing one plate is a plan — twelve of
-> his plates are one to three slots from closing; for the whole shelf it is «you are tens of thousands
-> of euros short», which is the opposite of *reveal, do not reproach*.
+**Read piece by piece or plate by plate this is a shopping companion; totalled for the collection
+it is wealth management.** The cost of completing one plate is a plan; for the whole shelf it is
+«you are tens of thousands of euros short», a reproach.
 
-The page's form ([#326](https://github.com/jenarvaezg/coindex/issues/326), `docs/ux/cifras-326.md`):
+The page ([#326](https://github.com/jenarvaezg/coindex/issues/326), `docs/ux/cifras-326.md`):
 
-- **Money opens the page**, which does not contradict #316: what was rejected there is an amount that
-  changes on its own in a permanent bar — a pocket ticker. Here it is on a page you opened on purpose,
-  with its origin stated and the spot's timestamp. The cell's count is still weight.
-- **Matter is ordered in three ladders of referents** — weight, row and stack — five referents each
-  with the collection interpolated between two, because **the comparison does not decorate the figure:
-  it is the figure**. «6.95 kg» says nothing; «more than a cat and 310 g short of a bowling ball» does.
-  The scale is **ordinal, not metric** — logarithmic piled three labels on top of the fourth — and for
-  that same reason it **carries no zoom**.
-- **Metal is split by mass, not by coin**: silver 5.975 kg (86 %) against 963 g of copper (14 %); by
-  coin it would be 565 of 574, a bar of one colour.
-- The house bet fell: **the tower drawn to honest scale** — 574 coins of 26.6 mm stacked — is an
-  8 px needle spending 250 px of the first screen.
-- **«A una casilla» does not live here.** It is what is missing, not what is there, and its place is
-  the plate header.
-- Four figures nobody asked for, out of the ficha already in the APK: **75 % are no longer money**,
-  **246 were engraved by the same hand** (Barre, 43 %), **296 came out of Paris** from 51 mints, and
-  **210 are dated 1960**; plus the smallest coin against the largest at the same scale.
+- **Money opens the page.** #316 rejected an amount changing on its own in a permanent bar; this is
+  a page opened on purpose, with its origin and the spot's timestamp. The cell still counts weight.
+- **Matter is ordered in three ladders of referents** (weight, row, stack), five referents each,
+  with the collection between two: «more than a cat and 310 g short of a bowling ball». The scale is
+  **ordinal**, so it has **no zoom**.
+- **Metal is split by mass, not by coin.**
+- **«A una casilla» lives in the plate header**, not here: it is what is missing.
+- A few unrequested figures come from the fichas in the APK (coins no longer legal tender, the most
+  frequent engraver, mint and year), plus the smallest coin against the largest.
 
-Money at export is **the sixth switch** of the configurable export (#228, ADR 0021 §13). Turning it
-off is **not** hiding the amount section: there are derived figures that are also money — «Venezuela ·
-30 % of the value» leaked through with money off.
+**Money at export is the sixth switch** (#228, ADR 0021 §13). Off, it removes every figure derived
+from money, not only the amount section («Venezuela · 30 % of the value» is money too).
 
 ### 11. Prices arrive in one pass, and the total is never shown half-done
 
 One valuation pass, paid by each phone ([#327](https://github.com/jenarvaezg/coindex/issues/327)):
-the **223 issues he owns** plus the holes of the plates **≤10 slots** from closing — **487 calls**,
-24-32 % of the monthly budget. The threshold is not a saving, it is §10 applied: a plate with 51 holes
-does not have a cost of completion, it has a reproach of 51 slots.
+the issues the collector owns plus the holes of plates **≤ 10 slots** from closing. The threshold is
+§10 applied: a plate with 51 holes has a reproach, not a cost of completion. Rules of form:
 
-The rules that belong to form rather than to networking, and therefore to `spec.md §0.4`:
+1. **The total is never shown half-done.** Without the market price the money section is absent: no
+   provisional total. `max(silver, paid)` alone gave about 60 % of the real total, which is false,
+   not incomplete.
+2. **Coverage yes, progress no.** «The value of N of your 574 pieces», never «140 of 223».
+3. **«Las cifras» opens whole without a call.** Everything but money comes from the APK (ADR 0024).
+4. **Every number brought from outside shows when it was read**, and an expired one stays shown.
 
-1. **The total is never shown half-done.** While the market price is missing, the money section **is
-   not there** — no struck-through number, no provisional total. Without the market,
-   `max(silver, paid)` gives 10,500 € of the real 16,800, which is literally the «only the silver
-   floor» #316 rejected. A total at 60 % is not incomplete, it is **false**.
-2. **Coverage yes, progress no.** «The value of N of your 574 pieces» is said; «I have 140 of 223» is
-   not.
-3. **«Las cifras» opens whole without a single call.** Weight, matter, the ladders, the arc, the
-   emitters and size all come out of the APK (`weight` and `composition` at 100 %). The local-first
-   promise of ADR 0024 extends to this page; money is the only thing that arrives late.
-4. **Every number brought from outside is shown with the date it was last read**, and an expired
-   figure keeps being shown rather than deleted. Already written for spot in #316; here it becomes a
-   general rule.
-
-Also settled there, and recorded because it would vanish silently otherwise: **`issue_id` is not
-stored today** — `IssueDto` parses only `year` and `gregorian_year` — and without it every piece costs
-an extra call to `/types/{id}/issues` just to find out. When and how the pass runs is the exact
-sibling of ADR 0024 and belongs in **its own ADR**, written by the session that builds «Las cifras»,
-not in a paragraph of this one.
+When the pass runs, what expires and how it stores the `issue_id` it needs is ADR 0028.
 
 ### 12. Amendment to ADR 0021 §9: the eyebrow of a card is no longer the country
 
-§9 settled that the eyebrow vacated by «Propuesta de colección» is the country, taken from
-`issuer_code` (`IndexScreen.kt:448` says so literally). **It dies with the card's four lines.** The
-argument: the eyebrow existed to give hierarchy to a flat card; with the hole, hierarchy is the
-die-cut's job and the country goes back to being what it always was — **a facet**. It survives as a
-shelf facet (which is how «mis venezolanas» is actually looked for), in the plate's ficha, on paper,
-and often in the photograph itself.
+The country eyebrow **dies with the card's four lines**: with the hole, hierarchy is the die-cut's
+job. The country stays a shelf facet, in the plate's ficha, on paper and often in the photograph.
+The **variant line** (`peso · acabado`) dies too: real twins already carry the variant in
+`short_name` (`Noah's Ark 1 oz` / `½ oz`, `5 Reichsmark .500` / `.900`), and most cards said
+`Acabado sin confirmar`. If a catalog ever arrives whose `short_name` omits the variant, that is a
+curation rule (`curate-catalog` disambiguates in the name), not a line on every card. The rest of
+ADR 0021 §9 stands.
 
-The **variant line** (`peso · acabado`) dies with it and converts into nothing. `data/` contradicted
-the ticket: of 74 catalogs, **73 have distinct `short_name`**, and in every real twin the variant is
-already in the name — `Noah's Ark 1 oz` / `½ oz` / `¼ oz`, `5 Reichsmark .500` / `.900`. In **49 of 68
-cards** it does not even repeat, because the finish is null and it says `Acabado sin confirmar`, which
-talks about a hole in the ficha and not about the coin. The residual risk closes where it is born: if
-a catalog ever arrives whose `short_name` omits the variant, that is **a curation rule**
-(`curate-catalog` disambiguates in the name), not a line on 70 cards.
-
-The rest of §9 stands whole: the destination is still chosen by the capability of §3, the plate still
-does not merge, box maintenance is still an `if`.
-
-**ADR 0023 does not fall with it.** The cured country name is still needed — by the shelf facet, by
-the plate's ficha and by paper — so `readsAsACountry` and `CardCountriesTest` stay as they are. What
-loses its subject is the **third clause of its width rule** («no more than the 40 characters the
-`short_name` below it is capped at»), which was an argument about a card that no longer prints an
-eyebrow; it survives as a facet-chip argument, which is a narrower one. And the open half of #170 —
-what a card prints when a catalog spans two issuers — **stops being a question about the card** and
-becomes one about the country axis, where §9 already obliges reading the **member's** country and not
-the catalog's. `CONTEXT.md` keeps «Card country» as a term with its definition intact and loses «the
-country a card says above its name» as its first surface.
+**ADR 0023 stands**: the cured country name is still needed by the facet, the ficha and paper. Only
+the third clause of its width rule («no more than the 40 characters the `short_name` below it is
+capped at») loses the card as its subject. The open half of #170, a catalog spanning two issuers,
+becomes a question for the country axis, which reads the member's country (§9).
 
 ### 13. A coin gets an inside: the hole in Coins opens a sheet
 
-**A coin had no screen.** In `CoinsScreen.kt` the only tappable thing inside a card is the links to
-its collections; the card itself leads nowhere. That is why the maintenance toll lives *outside*, in
-the grid — **16 of the 37 content words of Coins (43 %), printed 192 times**; 25 of 56 (45 %) in
-Pieces.
-
-The hole in Coins **opens a bottom sheet with the coin's ficha**, and inside move: the same 104 dp
-die-cut the cell left (#370), `Actualizar la
-ficha · 1 llamada` (from 192 impressions to one — the action is untouched, its frequency is not), the
-`Ficha traída hoy` / `hace N meses` line **with words**, `Ver en Numista`, and the links to its
-collections. `En ninguna colección` stays outside **as form**: a hole with no cardboard behind it —
-and the landing hole of the sheet obeys the same rule.
-
-Yes, this is new mechanism, and this map does not invent mechanism. The distinction that justifies it:
-a «by country» sort order would have been inventing a place to put a line that was surplus; this is
-**giving an inside to a screen that has none**, and without it the toll has nowhere to move — either
-it stays on 192 rows, or a capability the father uses is lost.
+A coin had no screen, so its maintenance toll lived in the grid, printed once per type (43 % of
+the content words of Coins). The hole in Coins **opens a bottom sheet with the coin's ficha**
+holding the 104 dp die-cut the cell left (#370), `Actualizar la ficha · 1 llamada`, the `Ficha
+traída hoy` / `hace N meses` line, `Ver en Numista` and the links to its collections. `En ninguna
+colección` stays outside **as form** — a hole with no cardboard behind it — and the landing hole
+follows it. This is new mechanism, justified because otherwise the toll stays on every row.
 
 ### 14. Licence notices: three words at the foot, one screen with everything inside
 
-Three subjects and not two ([#323](https://github.com/jenarvaezg/coindex/issues/323)): **Numista**
-(the 916-ficha, 3.1 MB seeded cache plus the downloaded photographs), **software** — the real release
-classpath is **205 artefacts from 56 groups**, not the nine of `libs.versions.toml`, and among them
-travels `org.slf4j:slf4j-api`, which is **MIT**, brought in by Ktor — and **the typefaces**, OFL 1.1.
-A notice written by eye would have said «all Apache 2.0» and been false the day it was written.
+Three subjects (#323): **Numista** (seeded fichas and downloaded photographs), **software** from
+the real release classpath rather than `libs.versions.toml` (Ktor brings `org.slf4j:slf4j-api`,
+MIT), and **the typefaces** (OFL 1.1). The full texts ship **in the APK** (Apache 2.0 §4(a), OFL
+1.1; a sideloaded APK, ADR 0011, carries no repository `LICENSES.txt`), **as assets, not
+literals**, outside `CopyLivesInOnePlaceTest` (§6). The entry is `Avisos y licencias`, three words
+at the foot of the screen the sewn edge opens, **no subtitle**. Notices are kept by hand, by family
+and without versions; a Gradle task and a test go red when a dependency group has no notice.
 
-The full texts ship **inside the APK** by obligation (Apache 2.0 §4(a) and OFL 1.1), and because
-Coindex is a sideloaded APK that self-updates against releases (ADR 0011), a `LICENSES.txt` in the
-repository does not travel with it. They live **as assets and not as literals**, which is what keeps
-them out of `CopyLivesInOnePlaceTest` (§6). The entry is `Avisos y licencias`, three words at the foot
-of the screen the sewn edge opens, in the hole left by the `Coindex v0.16.0` the pruning killed as a
-duplicate — **no subtitle**, because the entry pays the frequency rule while the screen it opens is
-exempt. Maintained
-by hand, by family and without versions, plus a Gradle task and a test that goes red when a group
-appears with no notice — because what sneaks in does not pass through `libs.versions.toml`.
+Of Numista's §4 obligations, the N# is shown and the source attributed here. **Preserving
+third-party photo credits is knowingly not met**: closed `wontfix` on 8 August 2026 by the owner
+(two collections on two phones, no public surface).
 
-Numista's §4 obligations — show the N# (already done), attribute the source «where an ordinary End
-User can readily identify the source» (this screen), and **preserve third-party copyright notices** —
-are met by the first two. The third is **knowingly not met**: photograph credit was closed `wontfix`
-on 8 August 2026 by the owner's decision (two collections on two phones, no public surface). It is a
-conscious breach recorded as such, not a loose end.
+**Amended by [#521](https://github.com/jenarvaezg/coindex/issues/521).** `Credenciales` — the two
+fields, their promise and `Cerrar sesión` — moves into the same shape at the foot, because it is
+visited once (onboarding, or a key Numista starts refusing). The top keeps what the trip is for:
+`Sincronizar`, the two queues and the export, hence «Este teléfono». Two rules pay for the nesting:
 
-**Amended by [#521](https://github.com/jenarvaezg/coindex/issues/521): three words at the foot is a
-shape, and it has a second user.** `Credenciales` — the two fields, their promise and `Cerrar sesión`
-— goes down into it. The trip into that foot is the trip of a screen visited **once**: onboarding
-fills the two fields, and the only reason to come back is a key Numista has started refusing. What
-stays at the top is what the trip is actually for — `Sincronizar`, the two queues and the export —
-which is why the screen is «Este teléfono» and not «Ajustes».
-
-Two rules come out of it, and they are the price of the nesting:
-
-1. **What blames the credentials must open them.** The valuation line says «Faltan las credenciales de
-   Numista» and «Numista está rechazando las consultas»; in those two states, and only those two, the
-   card carries a row into `Credenciales`. Nesting the cure two taps away without a door from the
-   symptom is the dead end §14's own screen was invented to avoid.
-2. **A message that names a place names this one.** The three sync refusals that said «Añádela en
-   Ajustes» say `Credenciales`, because that is now where the field is. A message pointing at a
-   screen that no longer holds what it promises is worse than a message pointing at nothing.
+1. **What blames the credentials must open them.** In the valuation states «Faltan las credenciales
+   de Numista» and «Numista está rechazando las consultas», and only those, the card carries a row
+   into `Credenciales`.
+2. **A message that names a place names this one**: sync refusals say `Credenciales`, not Ajustes.
 
 ### 15. What «approved» means, and what an implementation session may change
 
-**None of the six prototypes has been seen on a phone.** The four form reports were decided in HTML,
-and this ADR records that debt rather than hiding it: **approved here means approved in HTML.** Every
-effect passes through the AVD before entering production, and for that there is a bench.
-
-**The calibration bench** is #303's HUD ported to Compose. It lives **only in `debug`**, ships in no
-release and adds no word to Ajustes; it paints one real slot — the 1 Bolívar · 1960 — with the
-parameter controls to hand. It is **written once and serves all five**, and each calibration is half a
-session ending in AVD captures and video, with **the number chosen before the production effect is
-written**.
+None of the prototypes had been seen on a phone: **approved here means approved in HTML.** Every
+effect passes through the AVD first, on **the calibration bench**: #303's HUD ported to Compose,
+**`debug` only**, painting one real slot (the 1 Bolívar · 1960) with the parameter controls. Each
+calibration ends in AVD captures and video, with **the number chosen before the production effect
+is written**. Numbers for each amendment below are in its `docs/ux/implementacion-NNN/`.
 
 | parameter | approved value | who decides |
 | --- | --- | --- |
@@ -850,91 +429,27 @@ written**.
 | the wall of the die-cut | one 5 dp sweep on the cardboard: ink at 22 % at the top, white at 85 % at the bottom, nothing at the horizontals (#357) | the bench |
 | **the gesture, the place, the drawing** | — | **the map**: an implementation session never changes form without coming back |
 
-> **Amended on 2026-08-09 (§15, #351).** The bench's rule stands whole, and it fired: the approved
-> 256 px mosaic at 0.08 measured **indistinguishable at 1:1** — 4.17 % of the pixels of an empty
-> region, 12 levels of amplitude, 0.78 of standard deviation — and the mosaic repeated exactly under
-> a one-tile shift. What the rule offered was withdrawal; the owner chose the other reading of the
-> same sentence, **raise it until it is distinguishable**, and the three costs #351 priced were paid:
-> variation per tile, the tile measured in dp, and the paper as one surface painted in `CoindexTheme`
-> and reaching the plate and the PDF. The calibrated value is a 96 dp mosaic of 2,600 fibres at 0.75,
-> and the grain now touches 62 % of the pixels of the same kind of region. The numbers, including a
-> drawing cost that regressed on the emulator and is not measured on a phone, are in
-> `docs/ux/implementacion-351/`.
-
-> **Amended on 2026-08-09 (§15, #357).** Raising the contrast in #349 put on show a drawing nobody
-> had ever calibrated, and the bench could not calibrate it: its four parameters were all colour or
-> alpha. The die-cut's wall is now the bench's too — width, shadow and sheen — and two things it used
-> to paint are gone. The pair of 180° arcs on the cardboard **jumped 76 of the 255 luminance levels
-> inside 2° of arc** at 3 and at 9 o'clock, three times the 29 the ticket had measured on the other
-> pair, and a sweep that fades to nothing at both horizontals brings that to 0.6 and 0.0. The pair
-> **inside** the hole was withdrawn, not recalibrated: it fell eight dp inside the edge, squarely on
-> the coin's face, and a second model of light drawn over the one the photograph already carries
-> (#303) is what read as a mark on the metal. That last one is form and so it is the map's call — the
-> owner made it on 9 August with the 1:1 crop in front of him, and it hands #338 a hole whose only
-> remaining layer over the photograph is the acetate's reflection. The numbers are in
-> `docs/ux/implementacion-357/`.
-
-> **Amended on 2026-08-09 (§1, §3, §4 and §15, #338).** The bench fired a second time and this time it
-> confirmed the approved value instead of moving it. The ticket predicted that half the video's
-> intensity would fall short on production's 104 dp hole — it does not: on the father's own sheet the
-> gloss moves the casilla **104.7 of 255 levels peak to peak** against the **91.9** the photograph
-> varies by itself along the same axis, where the acetate's fixed reflection moved 13, «one twelfth
-> of the photograph's own noise». Nor is it haze: the standard deviation inside the disc **rises**
-> from 29.1 to 34.8. The sweep did find a ceiling, and it is not variant B's haze but **the edge of
-> the coin**: at 99 % the darkest twentieth of the outer ring falls to 14 of 255 and the coin stops
-> having a rim against its hole. Two things changed shape and so were the map's call, and the owner
-> made both on 9 August: **the travel is written as a fraction of the diameter** — ±45 % of the
-> *photograph*, which is what the prototype's ±55 dp over its 121 dp coin actually were, and what
-> survives «Las cifras» bringing a hole of its own. On production's casilla that is ±42.3 dp and not
-> the ±47 the ticket estimated, because the ticket took the fraction of the 104 dp hole while the
-> prototype had measured the 121 dp coin inside a 133 dp recess. And **the acetate's reflection is
-> withdrawn from inside the recess**,
-> because leaving it under the gloss rebuilds #303's discarded variant D, two layers for the result
-> of one. Moving it out to the cardboard was weighed and dropped: the ring is 5 dp wide and already
-> carries #357's die-cut wall. The numbers, including a drawing cost measured only on the emulator,
-> are in `docs/ux/implementacion-338/`.
-
-> **Amended on 2026-08-17 (§15, [#520](https://github.com/jenarvaezg/coindex/issues/520)). The ghost is
-> two absences, and only one of them is a penumbra.** The bench's row said «the ghost | design at 14 % with
-> a dotted rule» as if an empty casilla were one thing. It is two sentences: **«te falta»**, on a plate the
-> collector is filling, where the sunk design says there is something to buy without saying what it is; and
-> **«esto lo buscas»**, on the list for a fair, where the drawing has one job — letting a coin be
-> recognised across a table. Drawn at 40 dp on the row of #520 the 14 % measured as two grey discs, which
-> is what the owner rejected with the prototype in front of him: *«sólo tiene sentido fantasma cuando no la
-> tienes en una colección que sigues»*. So the marked casilla is drawn **whole**, and what says it is not
-> yours is the dotted rule, which both absences keep. Neither glosses: the gloss is the metal's own light
-> and there is no metal in the hole.
->
-> The value stays the bench's — 14 % is calibrated and unchanged for «te falta» — and what moved is **which
-> absence a surface is drawing**, which is form and therefore the map's. `HoleAbsence` is where that lands.
-> **Six surfaces draw this same penumbra to mean six different things** — the plate, the list, the shelf
-> window, a coin's own sheet, the notebook's two axes and the printed page — and whether the other four
-> should keep it is [#556](https://github.com/jenarvaezg/coindex/issues/556), not this amendment.
-
-> **Amended on 2026-09-01 (§15, [#556](https://github.com/jenarvaezg/coindex/issues/556)). The penumbra
-> needs a diameter to be a sentence, and two of the six surfaces were never speaking.** The census the
-> #520 amendment left open came back smaller than the list. The **year axis** draws its ghost with
-> `photo = null`: there has never been a design behind it to sink, so `HoleAbsence.Missing` leaves the
-> dashed hole and nothing else. The **printed page** does not dim at all — `paperCoinFilter` desaturates
-> (`GRAYSCALE_ON_PAPER`), which is a different language wearing the same name, and #509's ceiling of 243
-> is why: on paper there is no light left to take away. Neither is a decision pending; one is a branch
-> with no effect and the other is not the ghost.
->
-> What was left was **one language spoken at two sizes**, and only one of them had ever been calibrated:
-> 104 dp on the plate, a coin's sheet and the shelf window, against 34 dp on the country axis — smaller
-> than the 40 dp that measured as two grey discs on the row of #520. So the ghost gains a floor,
-> **`GHOST_MIN_DP = 72 dp`**, and it lives in `AlbumPaper` — the one place the ghost is drawn — rather
-> than in the six callers: a hole under the floor says the absence the way that row already does, with
-> the coin whole under the dotted rule that both absences keep. One rule, not a list of exceptions per
-> screen.
->
-> **The bench chose the number and gained the control to do it**: its ghost slot had an opacity and no
-> diameter, so it could only ever show the size at which the penumbra was never in doubt. With
-> «FANTASMA · Diámetro» (24–104 dp) the 1 Bolívar reads as a borrón at 40 dp, as a profile you cannot
-> name at 56, and as a bust with its ring of legend at 72. The floor is where the drawing **reads**, not
-> where it stops reading altogether. The captures are in `docs/ux/implementacion-556/`.
->
-> The 14 % is untouched: what moved is the smallest hole allowed to use it.
+- **Amended by #351 (2026-08-09).** The 256 px mosaic at 0.08 was indistinguishable at 1:1. The
+  owner chose to raise it rather than withdraw it: variation per tile, the tile in dp, and the paper
+  as one surface painted in `CoindexTheme` that reaches the plate and the PDF.
+- **Amended by #357 (2026-08-09).** #349's contrast exposed an uncalibrated die-cut wall, so its
+  width, shadow and sheen join the bench. The 180° arcs on the cardboard jumped 76 luminance levels
+  within 2° at 3 and 9 o'clock, which a sweep fading out at the horizontals removes. The arcs
+  **inside** the hole are withdrawn (owner's call): on the coin's face they read as a mark.
+- **Amended by #338 (2026-08-09, with §1, §3 and §4).** The bench confirmed the gloss intensity; its
+  ceiling is the coin's rim vanishing against the hole. The owner set the **travel as a fraction of
+  the diameter**, ±45 % of the photograph (±42.3 dp on the production casilla), and **withdrew the
+  acetate reflection**, which under the gloss rebuilt #303's discarded two-layer variant.
+- **Amended by #520 (2026-08-17): the ghost is two absences.** **«Te falta»**, on a plate being
+  filled, keeps the design at 14 %. **«Esto lo buscas»**, on the list for a fair, draws the coin
+  **whole** so it can be recognised across a table. Both keep the dotted rule; neither glosses.
+  Which absence a surface draws is form, and `HoleAbsence` holds it.
+- **Amended by #556 (2026-09-01): the penumbra needs a diameter.** The year axis has no design
+  behind its ghost (`photo = null`) and the printed page desaturates instead (`GRAYSCALE_ON_PAPER`,
+  #509), so neither draws one. The rest drew it at 104 dp, except the country axis at 34 dp, where
+  it read as a grey disc. Hence **`GHOST_MIN_DP = 72 dp`** in `AlbumPaper`, the one place the ghost
+  is drawn (chosen with the bench's new «FANTASMA · Diámetro»): below it the coin is drawn whole
+  under the dotted rule.
 
 ### 16. The order, the cost, and three PRs per screen
 
@@ -956,102 +471,57 @@ next, and nothing is written twice.
 | 11 | the remaining pruning (§5) and the two tests (§6) | 1 |
 | | **total** | **19.5** |
 
-**The wow is not bringable forward, and this is a fact and not a preference**: the gloss is a gradient
-inside the hole's circular clip and the flip turns the coin inside the hole. Today's slot paints both
-faces side by side (`CoinSides`, `PlateScreen.kt:177`), so there is no clip to put a gloss in and no
-hidden face to reveal. Without §1's sheet, both effects would have to be written twice.
-
-The big block rewrites `IndexScreen` (692 lines), `PlateScreen` (224) and `CoinsScreen` (377). It goes
-in **three PRs — Collections, the plate, Coins** — and not one of ~1,300 lines nobody can review.
-`main` is left half album sheet and half listing twice, and that is fine: **the only person who
-installs is the father, and he does not see `main`, he sees a release.**
+The wow cannot come first: the gloss and the flip both live inside the hole's circular clip, which
+the old side-by-side slot (`CoinSides`) did not have. The big block goes in **three PRs —
+Collections, the plate, Coins**; `main` may be half album in between, since the father installs
+releases.
 
 ## Consequences
 
-- **The first four movements in the life of the app enter at once**, in an app where
-  `animate|SharedTransition|graphicsLayer|BlendMode` returns zero results today. The API risk is one:
-  `BlendMode` at API 29, which is the `minSdk`; the accelerometer's battery cost **has not been
-  measured and is not faked** — what is fixed is the ceiling, never awake outside the foreground.
-- **One behaviour change, not just copy**: the call ceiling becomes an internal value and disappears
-  from the interface, field included (§5).
-- **The bottom bar grows to three cells** and a page that does not exist today has to be built (§8,
-  §10), which is the one thing this map produced that is a new capability rather than a redrawing.
-- **The curator inherits one rule**: `short_name` must carry the variant, because the card no longer
-  prints it (§12).
-- **Two tests are born, one of them half red** (§6), and 51 sites move to the copy files as part of
-  the pruning block.
-- **What the father shows loses the metal**: the PNG carries the stamp, the paper and the die-cut, and
-  not the gloss (§4).
-- **Nothing here was seen on a phone** (§15). The first implementation session starts by confirming
-  the sheet on the AVD, and parameters are adjusted with the measurement in front rather than
-  reopening decisions.
+- **The app's first four movements enter at once.** The API risk is `BlendMode` at API 29, the
+  `minSdk`; the accelerometer's battery cost is unmeasured, and it never runs in the background.
+- One behaviour change (the call ceiling leaves the interface, §5), one new capability («Las
+  cifras», §8, §10), one new curation rule (`short_name` carries the variant, §12) and two new tests
+  (§6).
+- **What the father shows carries no metal** (§4), and nothing here was seen on a phone until the
+  bench (§15).
 
 ## Documents this ADR changes
 
-- **ADR 0021 §1** is amended by §8: two sibling hierarchies become three, the shelf invariant narrows
-  to the hierarchies with a list, and the shelf gains the axis facet. **§9** is amended by §12: the
-  eyebrow stops being the country. **§13** is extended by §4's export rule and by the sixth switch of
-  §10. **§2, §3, §6, §7, §10, §11 and §12 are untouched.**
-- **ADR 0010 §8** (the plate as a PNG) is upheld and gains the export rule of §4.
-- **ADR 0023** stands whole (§12): the cured country name is still needed by the shelf facet, the
-  ficha and paper. Only the third clause of its width rule loses the card as its subject.
-- **`CONTEXT.md`** keeps «Card country» with its definition and loses its first surface; it gains the
-  vocabulary of §1 (hole, ghost, sunken tag, stamp), §5 (furniture, the frequency rule) and §8 (grain
-  of a cell, axis of the shelf).
-- **ADR 0020** (`printed_side`, what a catalog claims) and **ADR 0018** (metal in the variant key) are
-  upheld and leaned on: the first decides which face rests, the second is why there is no metal tint.
-- **ADR 0024** is upheld whole and extended in spirit by §11.3: a page opens without a call.
-- **`spec.md §0.4`** is rewritten: it stops declaring an aesthetic that is not built and starts
-  describing what is built and what is approved, pointing here.
-- **A new ADR is owed**, not written here: when the valuation pass runs, what expires and what yields
-  to a sync (§11), by the session that builds «Las cifras».
+- **ADR 0021**: §1 amended by §8, §9 by §12; §13 gains §4's export rule and §10's sixth switch.
+- **ADR 0010 §8** (the plate as a PNG) gains §4's export rule. **ADR 0023** stands (§12).
+- **ADR 0018**, **0020** and **0024** are upheld: metal in the variant key is why there is no tint,
+  `printed_side` is the resting face, and §11.3 extends local-first to «Las cifras».
+- **`CONTEXT.md`** gains the vocabulary of §1 (hole, ghost, sunken tag, stamp), §5 (furniture, the
+  frequency rule) and §8 (grain of a cell, axis of the shelf). **`spec.md §0.4`** describes what is
+  built, pointing here. **ADR 0028** is the valuation ADR §11 asked for.
 
 ## Alternatives considered
 
-Each rejection was argued in its ticket; they are gathered here so the list is one and not six.
-
-- **The lamp — dark theme, warm** (#301). Not buildable on an emissive screen without inverting the
-  ink; what survives is the dashboard `spec.md §0.4` forbids. With it fall the Ajustes switch and any
-  paper forced at export.
-- **The header parallax** (#307), by the ceiling rule of §3: cause, no datum. It is the whole «minor
-  movement» question closed without drawing it.
-- **Flipping the whole sheet** (#302) — the physically honest gesture and the only one that could
-  export a PNG of obverses. A real sheet **inverts the column order** when turned: keeping the years
-  in place is cheating, inverting them makes a date run's grid dance. With it fall no-flip, the
-  cross-fade (which brings back the `anverso`/`reverso` labels the die-cut had just removed) and
-  hold-to-see.
-- **Seven ways of glossing** (#303), of which two are worth recording: **following the relief by
-  luminance** cannot discriminate, because silver is light everywhere — what it would need is a height
-  map, and that is the relief #15 discarded; and the **narrow flash**, the most visible of the eight,
-  reads as a scratch on the acetate rather than as the coin's surface.
-- **The stamp as a dated fact**, stepping out at sync time, at the foot of the sheet (stamped at 706 px
-  of scroll, off screen), the cascading brass (the prettiest and the one that best survives the PNG,
-  but nobody has been taught that brass means complete) and the gummed label (#304).
-- **The world map** (#315): it colours 15 of 37 emitters and needs **81 words** to excuse the other 22
-  — Tokelau finishes it off, with a plate and no polygon. With it fall the per-country mini-maps, the
-  phenology bars, the strip with breaks and the country table, which is a screen with zero coins.
-- **Calling the Collections cell «láminas»** (#315): 20 of the father's 69 cards have no plate to open.
-- **A fifth cell for the stain and the axis** (#315, #317): it fits — five 13.5 px small caps enter
-  411 dp — and it is not needed. What sinks it is that the only name that served, «tu colección»,
-  fought «Colecciones».
-- **The declared copy registry with slots and templates** (#306), chosen and then dropped as
-  disproportionate; and **measuring real width from the TTF** with `java.awt.Font`, which promises
-  pixels while measuring another engine; and **booting an AVD per PR**.
-- **A curated `short_name` per coin type** (#319): 192 names today and one more per coin that arrives,
-  buying zero distinction. With it fall the six abbreviations, which save 0 cards of 187.
-- **Only the silver floor**, a total of what was paid, the aggregate premium and the total cost of
-  completing (#316); and **calling the page «Analíticas»**, which is dashboard vocabulary.
-- **The tower drawn to honest scale**, the comparison written as text, the colophon without a drawing,
-  and zoom on the ladders (#326).
-- **`Créditos` as the Ajustes entry** and a licence-notice generator plugin (#323): the first does not
-  announce where the legal text lives; the second produces 205 entries, 150 of them `androidx.*`.
-- **Lazy per-plate valuation** (#327): pricing all 1,182 slots is 2,036 calls and does not fit in the
-  month even once, because a member stores `numista_type_id` and `year` and never the `issue_id`.
-- **Own photographs of the pieces.** Discarded whole in
-  [#15](https://github.com/jenarvaezg/coindex/issues/15) on 7 August 2026, and recorded here because
-  it was the one promise still alive in the **original** `spec.md` — «en Fase 2 las piezas propias se
-  fotografían nosotros», which lives in `rust-frozen:spec.md` and therefore in a document that stopped
-  being the specification on 29 July 2026. **Today's `spec.md` never promised it**: `grep -i foto`
-  returns nothing. The withdrawal is this line, so nobody goes looking for it in a frozen tag and
-  takes it for a commitment. Relief and interactive relighting (shape-from-shading, RTI) stay
-  discarded with it: §3's gloss is a material effect, not a reconstruction.
+- **The lamp — a warm dark theme** (#301): inverts the ink on an emissive screen. With it go the
+  Ajustes switch and any paper forced at export.
+- **Flipping the whole sheet** (#302), the only way to export obverses: a turned sheet inverts the
+  column order, which either cheats or makes a date run dance. With it go no-flip, the cross-fade
+  and hold-to-see.
+- **Other glosses** (#303): following the relief by luminance cannot discriminate on silver and
+  would need a height map; the narrow flash reads as a scratch on the acetate.
+- **The stamp as a dated fact**, at sync, at the sheet's foot, as brass or as a label (#304).
+- **The world map** (#315): it colours a minority of issuers, needs words to excuse the rest, and
+  Tokelau has a plate and no polygon. With it go mini-maps, phenology bars and a country table.
+- **«Láminas» as the Collections cell** (many cards have no plate) and **a fifth cell for the map
+  and the timeline** («tu colección» fights «Colecciones») (#315, #317).
+- **A declared copy registry** (#306), width measured from the TTF with `java.awt.Font` (another
+  engine), and an AVD booted per PR.
+- **A curated name per coin type**, and with it the abbreviations (#319).
+- **Only the silver floor**, totals of what was paid, the aggregate premium and the total cost of
+  completing (#316); **«Analíticas»** as the page's name.
+- **The tower drawn to honest scale** (an 8 px needle over 250 px), the comparison as text, and zoom
+  on the ladders (#326).
+- **`Créditos` as the entry** (it does not say where the legal text lives) and a licence-generator
+  plugin, mostly `androidx.*` noise (#323).
+- **Lazy per-plate valuation** (#327): pricing every slot does not fit a month's calls.
+- **Own photographs of the pieces**, discarded in
+  [#15](https://github.com/jenarvaezg/coindex/issues/15) on 7 August 2026. Only the frozen
+  `rust-frozen:spec.md` promised them («en Fase 2 las piezas propias se fotografían nosotros»), and
+  it stopped being the specification on 29 July 2026. Relief and relighting (shape-from-shading,
+  RTI) go with them: §3's gloss is a material effect, not a reconstruction.

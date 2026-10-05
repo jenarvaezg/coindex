@@ -8,24 +8,11 @@
 
 ## Context
 
-ADR 0025 opened a route for a corrected ficha to reach a phone, and measured its own shape
-honestly: **one gesture, one type, one consulta, where the wrong data is on screen**. It works for
-what it was written for — the collector sees «The» on a card and presses.
-
-It does not work for anything else, and this repository produces the anything else constantly.
-Numista gets corrected here as a matter of course: #603 has nine Peruvian fichas with the fine
-weight in the gross weight's box, #388 was a weight Numista accepted, #596 an issue that did not
-exist. When a referee accepts one of those, the curator re-seeds it —
-`scripts/seed-type-cache.py --refresh` — and the corrected ficha travels in the next APK, inside
-`data/numista-type-cache.json`, at a cost to the collectors of **zero consultas**.
-
-And then nothing happens, because `TypeCacheSeed.topUp` writes with `insertIfAbsent`. Its own
-comment said so: *«Nothing is overwritten: the insert ignores conflicts, so a ficha the collector
-paid API budget to sync stays as it was synced.»* The corrected datum is on the phone, in the
-assets, and the row does not move.
-
-Nine gestures on nine cards the collector has no reason to press is not a route. And the fichas he
-cannot know are wrong have no route at all.
+ADR 0025's route needs the collector to see the error and press. But this repository corrects
+Numista routinely (#603, #388, #596), and once a referee accepts a fix the curator re-seeds the
+ficha (`scripts/seed-type-cache.py --refresh`) into `data/numista-type-cache.json` for the next APK.
+There it stops: `TypeCacheSeed.topUp` writes with `insertIfAbsent` to protect fichas the collector
+paid for, so the corrected datum never reaches the row.
 
 ## Decision
 
@@ -37,43 +24,28 @@ cannot know are wrong have no route at all.
 
 ### 2. The clock is the version, and not a date
 
-A snapshot travels inside exactly one APK. So «is this snapshot newer than this row?» is «has this
-`versionCode` been applied on this phone?», which is one integer in a preferences file — no stamp
-in the asset, no build timestamp, no `git log` in the build, and nothing that makes two builds of
-the same commit differ.
-
-It also protects ADR 0025's gesture without needing a date at all: the seed writes once, when the
-update lands, so **a ficha the collector refreshes by hand afterwards is his until the next
-release**. Two writes now overwrite a cached ficha and they do not collide — his gesture, and the
-update he installed.
-
-The window it cannot see is a hand refresh made **between** the curator taking the snapshot and the
-release shipping it. In this repository those travel in the same pull request, so the window is
-hours; and what overwrites him inside it is the curated datum, which was verified against
-numista.com before it was versioned, which is the curator's standing rule for any external id.
-That is the trade, and it is deliberately not symmetrical: an unnoticed wrong ficha lasts for ever,
-and a stomped hand refresh lasts one gesture.
+A snapshot ships in exactly one APK, so «newer than this row» means «this `versionCode` not yet
+applied»: one integer in preferences, with no timestamp in the asset or the build. A hand refresh
+made after the update stays until the next release, which protects ADR 0025's gesture. The blind
+spot, a refresh between the snapshot and its release, lasts hours because both travel in one pull
+request, and what wins there is a datum verified against numista.com. An unnoticed wrong ficha would
+last for ever; a lost refresh costs one gesture.
 
 ### 3. The version is written down after the writes, not before
 
-A process killed halfway leaves the version unapplied and the next start does the whole thing
-again. Re-applying a snapshot is idempotent; skipping one is a wrong ficha that stays for a release.
+A killed process re-applies everything on the next start. Re-applying is idempotent; skipping is
+not.
 
 ### 4. Nothing new is read on a start that has nothing to do
 
-The 2,4 MB of JSON is still parsed only when there is something to write. The condition gained one
-term and both are cheap: every curated type cached (one column of integers) **and** this version
-already applied (one integer out of a preferences file).
+The 2,4 MB of JSON is parsed only when there is something to write: a curated type missing from the
+cache, or this version not yet applied.
 
 ## Consequences
 
-- A correction accepted by a Numista referee reaches both phones with the next release, for zero
-  consultas, without anybody pressing anything.
-- The first launch after an update writes ~1.089 rows. It is one batch, no network, and it runs on
-  the warm-up that already runs before the collection is read.
-- ADR 0025 is **not** superseded. Its gesture is still the only thing that fetches a ficha from
-  Numista on a phone, it still costs one consulta, and it still outranks the seed until the next
-  release. What changes is that it is no longer the only way a correction can arrive.
-- The rejected alternative stays rejected: a trickle of automatic ficha refreshes, oldest first,
-  would cost one consulta each and arrive later than a release does here. It is worth reopening only
-  if releases start being rare.
+- An accepted Numista correction reaches both phones with the next release, at zero consultas.
+- The first launch after an update writes ~1.089 rows, offline, in the existing warm-up.
+- ADR 0025 is not superseded: its gesture is still the only Numista fetch of a ficha from a phone,
+  and it wins until the next release.
+- Automatic trickle refreshes stay rejected (one consulta each, slower than a release); reopen if
+  releases become rare.

@@ -1,23 +1,15 @@
 # Coindex
 
-App de Android local-first que organiza una colección de plata de Numista en propuestas y
-láminas: qué piezas están y cuáles faltan de cada serie catalogada. Dos usuarios reales,
-instalación por APK, sin backend.
+App de Android local-first que ordena en láminas una colección de Numista: qué piezas hay y cuáles
+faltan de cada serie catalogada. Dos usuarios reales, instalación por APK, sin backend.
 
-Hubo una primera implementación web en Rust (Axum, Maud, SQLx, Shuttle) que se retiró del
-árbol al portar el dominio a Kotlin. Sigue siendo consultable:
-
-```console
-git checkout rust-frozen
-```
-
-La especificación de aquella fase viaja en el mismo tag. Lo que de ella sigue vigente está en
-`spec.md`, que es la de la app.
+La primera implementación, web en Rust (Axum, Maud, SQLx, Shuttle), y su especificación siguen en
+el tag `rust-frozen` (`git checkout rust-frozen`). Lo vigente está en `spec.md`.
 
 ## Estructura
 
 ```
-├── domain/     # Kotlin puro, sin Android: propuestas, catálogos v1/v2, acabados, pesos
+├── domain/     # Kotlin puro, sin Android: colecciones, catálogos, acabados, pesos
 ├── app/        # Compose + Room + Ktor + Coil
 ├── data/       # catálogos curados y snapshot de la caché de tipos (assets de la app)
 ├── fixtures/   # respuestas grabadas de Numista, que leen los tests
@@ -25,9 +17,8 @@ La especificación de aquella fase viaja en el mismo tag. Lo que de ella sigue v
 └── scripts/    # publicar releases, grabar fixtures, informes de curación
 ```
 
-Los catálogos curados y el snapshot de la caché de tipos **no se copian a los assets**: el
-módulo `app` monta `../data` como directorio de assets, así que se empaquetan desde donde se
-curan.
+El módulo `app` monta `../data` como directorio de assets: los catálogos curados y el snapshot se
+empaquetan desde donde se curan, sin copiarlos.
 
 ## Requisitos
 
@@ -47,8 +38,8 @@ El proyecto está en la raíz: se abre directamente con Android Studio, sin eleg
 ./gradlew :app:assembleRelease   # APK de release (firmado si hay keystore.properties)
 ```
 
-Ningún test toca la red: todo sale de `fixtures/numista/` y de `data/`. Para refrescar un
-fixture hay que pedirlo a mano y de forma consciente, porque gasta presupuesto de la API:
+Ningún test toca la red: todo sale de `fixtures/numista/` y de `data/`. Refrescar un fixture gasta
+presupuesto de la API y se pide a mano:
 
 ```console
 export NUMISTA_API_KEY=...
@@ -57,20 +48,18 @@ scripts/record-fixture.py --confirm-live-api --type-id 404044
 
 ## Primer arranque
 
-La app pide la API key de Numista y el identificador de usuario. La key se cifra con una
-clave AES/GCM que vive en el Android Keystore y nunca sale de él; solo el criptograma llega
-a `SharedPreferences`. Cada usuario gasta sus propias llamadas de API, con un techo mensual
-interno de 1500 que se cuenta en `api_call_log` antes de cada llamada.
+La app pide la API key de Numista y el identificador de usuario. La key se cifra con una clave
+AES/GCM del Android Keystore y sólo el criptograma llega a `SharedPreferences`. Cada usuario gasta
+su propia cuota, con un techo mensual interno de 1500 consultas contadas en `api_call_log` antes de
+cada llamada.
 
-La caché de tipos se siembra con `data/numista-type-cache.json` (687 tipos, ~650 llamadas de
-API que nadie tiene que volver a gastar). **No solo en la primera instalación**: en cada
-arranque se comparan los tipos que nombran los ficheros curados con los que hay en caché, y si
-falta alguno se rellena desde el snapshot —sin pisar nunca una ficha sincronizada—. Sembrar
-solo al instalar dejaba fuera cada catálogo curado después, y sin ficha una casilla es una
-silueta y una pieza se va a «sin clasificar» (ADR 0017).
+La caché de tipos se siembra desde `data/numista-type-cache.json`. En cada arranque se rellenan los
+tipos que nombran los ficheros curados y faltan en caché (ADR 0017), y el primer arranque de una
+versión nueva reescribe las fichas cacheadas con las de su snapshot, para que las correcciones de
+Numista lleguen sin gastar consultas (ADR 0033).
 
-Un catálogo curado inválido detiene el arranque con el fichero y el motivo: es preferible no
-arrancar a mostrar un «me falta» falso.
+Un catálogo curado inválido detiene el arranque con el fichero y el motivo: mejor no arrancar que
+mostrar un «me falta» falso.
 
 ## Firmar el APK
 
@@ -81,9 +70,8 @@ cp keystore.properties.example keystore.properties   # y rellénalo
 ./gradlew :app:assembleRelease
 ```
 
-**Conserva el keystore y sus contraseñas para siempre.** Una actualización firmada con otra
-clave no se puede instalar encima de la anterior; habría que desinstalar y perder la base de
-datos local.
+**Conserva el keystore y sus contraseñas para siempre**: una actualización firmada con otra clave
+no se instala encima, y habría que desinstalar y perder la base de datos local.
 
 Instalación en el móvil: `adb install -r app/build/outputs/apk/release/app-release.apk`, o
 copiar el APK y permitir la instalación de orígenes desconocidos.
@@ -91,16 +79,12 @@ copiar el APK y permitir la instalación de orígenes desconocidos.
 ## Actualizaciones
 
 Coindex se actualiza a sí misma contra las releases públicas de
-[jenarvaezg/coindex](https://github.com/jenarvaezg/coindex/releases) (ADR 0011). Comprueba si
-hay una versión con `versionCode` mayor que el instalado al abrir la app, al volver a primer
-plano y cada 6 h mientras siga abierta, con un suelo de tiempo para no repetir la consulta en
-cada vuelta. No hay notificaciones: el aviso vive dentro de la app.
-
-Cuando hay versión nueva aparece un **banner fijo bajo la cabecera**, visible en todas las
-pantallas, con la versión, las notas y un botón que descarga el APK y lo entrega al
-instalador del sistema. La primera vez, Android pedirá conceder a Coindex el permiso de
-instalar aplicaciones; después basta confirmar cada actualización. La cabecera muestra siempre
-la versión instalada, así que se ve de un vistazo si la actualización se aplicó.
+[jenarvaezg/coindex](https://github.com/jenarvaezg/coindex/releases) (ADR 0011). Busca un
+`versionCode` mayor que el instalado al abrir la app, al volver a primer plano y cada 6 h, con un
+intervalo mínimo entre comprobaciones. Sin notificaciones: si hay versión nueva aparece un **banner
+fijo bajo la cabecera** con las notas y un botón que descarga el APK y lo entrega al instalador. La
+primera vez Android pide el permiso de instalar aplicaciones. La versión instalada se lee en «Avisos
+y licencias».
 
 Publicar una versión nueva:
 
@@ -111,67 +95,45 @@ scripts/release.sh                      # notas a partir de los commits
 scripts/release.sh "Resumen opcional"   # o un resumen tuyo para el banner
 ```
 
-El script comprueba primero, sin compilar nada, que la versión es publicable, y se niega si:
-
-- falta `keystore.properties`, porque el APK saldría sin firmar;
-- el tag ya existe;
-- el `versionCode` no supera el de la release publicada, que es el error silencioso de verdad:
-  subir solo el `versionName` produce una release que ningún móvil llega a ver;
-- el árbol tiene cambios sin commitear, porque la release apuntaría a un commit que no los
-  incluye.
-
-Después construye el APK, **verifica la firma**, genera el `update.json` y crea la release. El
-resumen va al banner de la app y el changelog completo al cuerpo de la release.
+Antes de compilar, el script se niega si falta `keystore.properties`, si el tag ya existe, si el
+`versionCode` no supera el publicado (subir sólo `versionName` da una release que ningún móvil ve) o
+si hay cambios sin commitear. Después construye el APK, **verifica la firma**, genera el
+`update.json` y crea la release: el resumen va al banner y el changelog al cuerpo de la release.
 
 **La firma se hace aquí, no en CI**: el keystore no viaja a ningún servicio (ADR 0011). El CI
-compila y prueba en cada push, y anota en el resumen del job si la versión del repositorio es
-publicable, pero nunca publica.
+compila y prueba en cada push y anota si la versión es publicable, pero nunca publica.
 
-## Exportar lámina
+## Exportar láminas
 
-«Exportar lámina como imagen» compone la hoja **completa** fuera de pantalla —con su propia
-densidad, no la del móvil—, espera a que Coil termine con todas las imágenes y la graba en un
-`Picture` que se reproduce sobre un bitmap software. El PNG resultante lleva la cabecera con
-el progreso, una sola cara por emisión según `printed_side`, las que faltan como fantasma al
-14 % con filete de puntos y la fuente al pie. Un catálogo de 104 emisiones sale en ocho columnas
-a menor densidad para que el bitmap no se desmande.
-
-Los bitmaps de hardware están desactivados en Coil: un `Picture` no se puede reproducir sobre
-un canvas software si contiene alguno.
-
-Si al terminar falta alguna foto, el aviso lo dice y cuántas: la hoja se comparte tal cual, así
-que llamarla «completa» sin serlo era mentir sobre el producto (ADR 0017).
+Una lámina se exporta como PNG y el cuaderno entero como PDF, con el mismo dibujo: el PNG es la
+página impresa recortada a su contenido (#431), con las opciones elegidas al exportar (fotos, caras,
+tamaño real, QR, valor). La página se graba en un `Picture` que se reproduce sobre un bitmap
+software o sobre el PDF; por eso Coil tiene desactivados los bitmaps de hardware. Si al terminar
+falta alguna foto, el aviso dice cuántas (ADR 0017).
 
 ## Exportar datos
 
-«Exportar datos», en Ajustes, comparte una copia de `coindex.db` por el share sheet: la
-colección, las fichas, los precios y las marcas en un solo fichero. Antes de copiarlo se pliega
-el diario (`PRAGMA wal_checkpoint(TRUNCATE)`), porque Room escribe en modo WAL y un fichero
-suelto sin ese paso es la base sin las últimas transacciones.
+«Exportar datos», en «Este teléfono», comparte una copia de `coindex.db`: colección, fichas,
+precios y marcas. Antes se vuelca el diario WAL (`PRAGMA wal_checkpoint(TRUNCATE)`); sin eso el
+fichero no tendría las últimas transacciones. **La API key no viaja**: está cifrada con la Keystore
+del dispositivo, no en una tabla. El alta en el emulador sigue siendo a mano.
 
-**La API key no viaja**: se cifra contra la Keystore del dispositivo y no está en ninguna tabla,
-así que un volcado no le gasta cuota a nadie. El alta en el emulador sigue siendo a mano, y no
-toca la red.
-
-El fichero se llama `coindex-<versión>-<fecha>.db`, y ese nombre es la regla: **el APK que lo
-carga tiene que ser de versión igual o posterior a la del que lo exportó**, porque las
-migraciones de Room sólo van hacia delante. Para cargarlo en el emulador se copia al vault de
-`scripts/avd-db.sh` como `coindex.db` y se restaura como cualquier otro volcado. No hay import
-dentro de la app: el destino es un Mac y un AVD, no otro móvil.
+El fichero se llama `coindex-<versión>-<fecha>.db`: **lo carga un APK de versión igual o posterior**,
+porque las migraciones de Room sólo van hacia delante. Para cargarlo en el emulador se copia al
+vault de `scripts/avd-db.sh` como `coindex.db` y se restaura como cualquier volcado. No hay
+importación en la app: el destino es un Mac y un AVD, no otro móvil.
 
 ## Fotos del catálogo
 
-Las fotos son de Numista y se piden con el `ImageLoader` que arma `data/photos/`: se pide la
-**miniatura** (`-180.jpg`) y el original queda de respaldo, de cuatro en cuatro, reintentando
-con espera lo que la CDN estrangula, y con un `User-Agent` propio (`Coindex/<versión>`) porque
-sin ninguno Cloudflare responde `403` a todas. El razonamiento y las medidas están en el
-ADR 0017.
+Las fotos son de Numista y las pide el `ImageLoader` del paquete `data/photos` de `app`: la
+**miniatura** (`-180.jpg`) con el original de respaldo, de cuatro en cuatro, con reintentos y un
+`User-Agent` propio (`Coindex/<versión>`), porque sin él Cloudflare responde `403` (ADR 0017). Con
+wifi se precargan en segundo plano (ADR 0024).
 
 ## Limitaciones conocidas
 
-- **R8 desactivado** en release: el APK pesa ~29 MB. Activar minificación reduciría mucho el
-  tamaño, pero no se ha hecho sin poder verificar en un dispositivo real que nada se rompe.
-- Las series curadas y el emparejamiento heurístico no se portaron (ADR 0010 §2): el código con
-  sus tests vive en el tag `rust-frozen`, y sus dos JSON (`data/series/lunar-iii.json` y
-  `data/series/tudor-beasts.json`) se retiraron del árbol — quedan en el historial, en el commit
-  `9fc2582`.
+- **R8 desactivado** en release: minificar reduciría mucho el APK, pero no se ha hecho sin poder
+  verificar en un dispositivo real que nada se rompe.
+- Las series curadas y el emparejamiento heurístico no se portaron (ADR 0010 §2): el código y sus
+  tests viven en el tag `rust-frozen`, y sus dos JSON (`data/series/lunar-iii.json` y
+  `data/series/tudor-beasts.json`) quedan en el historial, en el commit `9fc2582`.
