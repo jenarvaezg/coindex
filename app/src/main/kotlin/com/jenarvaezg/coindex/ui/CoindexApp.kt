@@ -92,13 +92,13 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     val navController = rememberNavController()
     val snackbarHost = remember { SnackbarHostState() }
     val context = LocalContext.current
-    // Tied to the composition and not to the ViewModel: what runs on it ends in a chooser, and a
-    // chooser opened after the screen is gone is a chooser for nobody.
+    // Composition-scoped, not ViewModel-scoped: what runs on it ends in a chooser, which needs the
+    // screen to still be there.
     val scope = rememberCoroutineScope()
     val backStackEntry by navController.currentBackStackEntryAsState()
 
-    // Al volver a primer plano se recomprueba, con el suelo de tiempo de shouldCheckForUpdate.
-    // Y es también cuando se reintentan las fotos que faltan: puede que ahora haya wifi (#191).
+    // Back in the foreground: check for an update (throttled by shouldCheckForUpdate) and retry
+    // the missing photos, in case there is wifi now (#191).
     LifecycleEventEffect(Lifecycle.Event.ON_START) {
         viewModel.checkForUpdate()
         viewModel.retryPhotoPrefetch()
@@ -106,9 +106,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 
     LaunchedEffect(state.message) {
         state.message?.let { notice ->
-            // Offer Abrir only when something can open the file — a button that crashes is worse
-            // than no button (#436). The try/catch in openDownloadedFile still covers the race
-            // where the viewer vanishes between the check and the tap.
+            // Abrir is offered only when something can open the file (#436). openDownloadedFile
+            // still catches the viewer vanishing between this check and the tap.
             val openFile = notice.openFile?.takeIf { file ->
                 canViewDownloadedFile(context, Uri.parse(file.uri), file.mimeType)
             }
@@ -128,11 +127,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         }
     }
 
-    // Everything this composition draws that nobody stores, crossed once (#542): the shelf window, the
-    // living marks and what they cost, «Las cifras», the sewn edge, the value of a coin, the address of
-    // its ficha. **The same object comes back while none of the readings behind it has moved**, which
-    // is what the `remember`s below key on — a screen no longer has to be handed the four fields of the
-    // state its subject happens to be made of, and the root derives nothing of its own.
+    // Everything derived from the state, computed in one place (#542). The same object comes back
+    // while none of its inputs has changed, which is what the `remember`s below key on.
     val reading = viewModel.reading(state)
 
     val openUrl: (String) -> Unit = { url ->
@@ -140,26 +136,20 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     }
 
     val openTypeOnNumista: (Int) -> Unit = { typeId -> openUrl(reading.numistaUrl(typeId)) }
-    // The one door of the index, which four places used to open by hand: a card of any species knows
-    // its own destination (ADR 0021 §9), and a claim on a coin's sheet is that same door.
+    // Every card opens through here, and so does a claim on a coin's sheet (ADR 0021 §9).
     val openCard: (CardDestination) -> Unit = { destination ->
         navController.navigate(routeOf(destination))
     }
 
-    // Everything a plate says about money and what tasar it would spend, in one object the plate keys
-    // its subject on (#541). The three régimes and the gesture's ceiling are `PlateFinance`'s: what is
-    // decided here is only who answers a press, which is the half of it the reading cannot know.
-    //
-    // One key, because the reading is the key: what the object is made of are readings of it, so it
-    // cannot move without the reading moving first. And what is in flight is not a key at all —
-    // `state.valuingPlate` flips twice per press and no amount in here reads it.
+    // A plate's money and what tasar it would spend (#541); the régimes are `PlateFinance`'s, and
+    // only who handles a press is decided here. Keyed on the reading alone: `state.valuingPlate`
+    // flips twice per press and nothing in here reads it.
     val plateFinance = remember(reading) {
         reading.plateFinance(onValue = viewModel::valuePlate, onMessage = viewModel::showMessage)
     }
 
-    // Built here, once, for the two surfaces that show a piece of a type (#185): both read the same
-    // cache date and the same in-flight set, so the two cards can never disagree about how old a
-    // ficha is or whether it is already being refreshed.
+    // Shared by the two surfaces that show a piece of a type (#185), so they agree on a ficha's age
+    // and on whether it is being refreshed.
     val ficha: (Int) -> FichaRefresh = { typeId ->
         FichaRefresh(
             fetchedAt = reading.fichaFetchedAt(typeId),
@@ -168,14 +158,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         )
     }
 
-    // The coin sheet the three surfaces that draw casillas open, assembled once (#508). `coinRowOf`
-    // walks the inventory and the index, so it is **the overlay** that holds one coin's reading still
-    // while its sheet is open; what this keeps still is the lambda, so that remembering can work at
-    // all — a fresh lambda per recomposition would rebuild the row on every frame of the entrance.
-    //
-    // Two keys and neither of them kept by hand: the reading covers the collection, the market and the
-    // pass at once (#542), and what is left beside it is the one thing that is in flight rather than
-    // derived. A surface held past either would answer with the fichas or the inventory of a moment ago.
+    // The coin sheet of the three surfaces that draw casillas (#508). Remembered so its lambdas are
+    // stable: a fresh one per recomposition would rebuild the row on every frame of the entrance.
+    // `refreshingFichas` is the only key besides the reading because it is in flight, not derived.
     val coinSheet = remember(reading, state.refreshingFichas) {
         CoinSheetSurface(
             coin = reading::coin,
@@ -186,16 +171,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         )
     }
 
-    // The plate and the collection name themselves in the masthead, which means reading what the
-    // route carries; every other destination knows its own title from the route alone.
+    // The plate and the collections take their masthead title from the route's arguments; every
+    // other destination's title comes from the route alone.
     val route = backStackEntry?.destination?.route
     val subjectName = when {
         Routes.isPlate(route) ->
             reading.catalogName(backStackEntry?.arguments?.getString("catalogId"))
-        // The whole key, not just the family: three Britannias share one and only the key
-        // tells them apart (#22). And the name is read off the card the route opened rather than
-        // resolved a second time, because since #565 a name knows about its neighbours: asking the
-        // titles alone would put «5 francs Semeuse» over a screen whose card said «· 0,733 oz».
+        // The whole key, not just the family: three Britannias share one (#22). The name is read
+        // off the card so it keeps the disambiguation against its neighbours (#565).
         Routes.isDerivedCollection(route) -> variantKeyFromRoute(
             family = backStackEntry?.arguments?.getString("family"),
             weight = backStackEntry?.arguments?.getString("weight"),
@@ -210,10 +193,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         else -> null
     }
 
-    // A root destination has nothing underneath it, and a «Volver» that pops an empty back stack is
-    // a button that teaches you to ignore it. In that gap the masthead offers settings instead —
-    // from **both** roots now (ADR 0021 §1), because neither is more the home than the other.
-    // Onboarding has no masthead actions at all.
+    // A root has nothing to pop, so it offers «Este teléfono» instead of «Volver» (ADR 0021 §1).
+    // Onboarding has no masthead actions.
     val atRoot = state.onboarded && Routes.isRoot(route)
 
     val onBack: (() -> Unit)? =
@@ -230,21 +211,15 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         }
 
     Scaffold(
-        // Transparent so the sheet [CoindexTheme] paints reaches the strip behind the status bar:
-        // painting paper here left that strip plain wherever the top bar was empty, and a grain
-        // that stops at the clock is two papers again (#351).
+        // Transparent so the paper [CoindexTheme] paints also shows behind the status bar (#351).
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHost) },
         topBar = {
             TopChrome {
-                // Both album roots own their chrome: the sewn edge is their shared masthead.
-                // Keeping the generic one above either would print COINDEX and the way into
-                // «Este teléfono» twice and
-                // spend the space their die-cut grids just recovered (ADR 0026 §1, §13).
+                // The roots draw the sewn edge as their masthead (ADR 0026 §1, §13).
                 if (!Routes.ownsChrome(route)) {
                     Masthead(
-                        // The installed version lives in Avisos y licencias (#410): printing it on
-                        // every interior masthead was permanent furniture the collector does not need.
+                        // The installed version is in Avisos y licencias instead (#410).
                         subtitle = screenTitle(route, subjectName),
                         onBack = onBack,
                         onOpenPhone = onOpenPhone,
@@ -256,24 +231,21 @@ fun CoindexApp(viewModel: CoindexViewModel) {
             }
         },
         bottomBar = {
-            // Only on the two roots. Everything else is reached *through* one of them, and a bar
-            // offering to jump hierarchies from three screens deep would be a second «Volver» that
-            // does something else.
+            // Only on the roots: deeper screens leave with «Volver», and a bar there would be a
+            // second way back that goes somewhere else.
             if (atRoot) {
                 HierarchyBar(
                     route = route,
                     collections = reading.sewnEdge?.collections,
-                    // Same type count the sewn edge prints, and the same distinct set [coinRows]
-                    // draws — including a hostile zero coerced to one piece (#426). The cell names
-                    // this magnitude since #516: it never counted coins.
+                    // Distinct types, the same count the sewn edge prints (#426, #516).
                     types = reading.sewnEdge?.types,
-                    // Grams, and never money (#316): an amount in a permanent bar is a pocket ticker.
-                    // Null with the sewn edge (#418): «0,00 kg» while reading is a false empty collection.
+                    // Grams, never money (#316). Null until the sewn edge is ready, so loading
+                    // doesn't read as an empty collection (#418).
                     grams = reading.sewnEdge?.let { reading.figures.figures.weight.value },
                     onCross = { destination ->
                         navController.navigate(destination) {
-                            // The two roots are siblings, not a stack: crossing over and back must
-                            // not pile up entries, and each side keeps its own scroll position.
+                            // The roots are siblings, not a stack: crossing piles up no entries
+                            // and each root keeps its scroll position.
                             popUpTo(Routes.INDEX) { saveState = true }
                             launchSingleTop = true
                             restoreState = true
@@ -291,36 +263,16 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                 onSave = viewModel::completeOnboarding,
                 modifier = content,
             )
-            // The journey of ADR 0026 §3 needs one layout over both ends of it, and the NavHost is
-            // the only thing in the app that is on both sides of a navigation. What actually flies
-            // is decided far from here — `Modifier.travellingCoin` on the two die-cut holes — so
-            // the host provides the scope and knows nothing about coins.
+            // The coin of ADR 0026 §3 flies between both ends of a navigation, and the NavHost is
+            // the only thing on both sides of one, so the shared-transition layout goes around it.
+            // What flies is decided by `Modifier.travellingCoin` on the die-cut holes.
             //
-            // **Only the leaf on top is animated, and which one that is changes direction with
-            // the journey.** Both ends of a navigation are composed together for as long as the
-            // coin is in the air, so what is seen in that half second is decided here and nowhere
-            // else. Two attempts got it wrong for the same reason: a destination painted no paper
-            // of its own, so a stack of two of them was a stack of two transparencies. Compose's
-            // crossfade let the paper show through both and the casillas washed out mid-flight,
-            // then snapped opaque on landing; `None` on all four (#377) faded nothing and drew the
-            // plate whole over the whole index, a double exposure for half of every journey (#381).
-            // `page` is what fixes both: an opaque destination can simply cover the one it
-            // replaces, and then the only question left is who covers whom.
-            //
-            // The NavHost stacks by depth, so going in, the plate arrives on top — it needs no
-            // transition, it just covers the index, and the index below it needs none either
-            // because nothing of it is left to see. Coming back the same stacking works against
-            // us: the plate is *still* on top while it leaves, so with nothing of its own it sits
-            // there opaque for the whole flight home and then vanishes in one frame. That is the
-            // snap of #370 arriving from the other side, and it is why the return — and only the
-            // return — is given a fade out. Short: the index is uncovered early and the coin lands
-            // on a sheet that has been settled for most of its flight.
-            //
-            // This one is left to Compose where the system asks for quiet (#514) and is not given
-            // an `ExitTransition.None` of its own: at scale zero the tween is over on the frame it
-            // starts, and the single frame it can leak is the plate still covering the index —
-            // which is what «not gone yet» looks like anyway. A shared element leaks a frame of a
-            // photograph in mid-air, which looks like nothing at all, and that is the difference.
+            // Both destinations stay composed during the flight, each on opaque paper ([page]), so
+            // the one on top just covers the other (#377, #381). The NavHost stacks by depth: going
+            // in, the plate lands on top and needs no transition. Coming back it is still on top
+            // while it leaves, so without the pop-exit fade it would sit opaque through the flight
+            // and vanish in one frame (#370). With animations off (#514) the fade needs no special
+            // case: at scale zero it ends on its first frame.
             else -> TravelLayout(modifier = content) {
                 NavHost(
                     navController = navController,
@@ -345,9 +297,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     crossToCoins(navController, viewModel, coinsShelf)
                                 },
                                 sewnEdge = reading.sewnEdge,
-                                // The rows and not the count: the row at the head of the sheet draws
-                                // the first few casillas as coins (#520). No costs — a door does not
-                                // price what is behind it, and the list one tap in does.
+                                // Rows, not a count: the head of the sheet draws the first few
+                                // casillas (#520). No costs here; the list one tap in has them.
                                 wishes = reading.wishedRows,
                                 showcase = reading.showcase.size,
                                 onOpenWishes = { navController.navigate(Routes.WISHES) },
@@ -383,9 +334,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         FiguresScreen(
                             subject = reading.figures,
                             sewnEdge = reading.sewnEdge,
-                            // The arrival of the book this page is drawn from, which is what dates the
-                            // spot: a clock that ticked would make «plata de hoy» a thing that changes
-                            // while you look at it, which is the pocket ticker #316 refused.
+                            // The spot is dated by when the prices arrived, not by a ticking clock,
+                            // so «plata de hoy» doesn't change while you look at it (#316).
                             nowMillis = reading.pricesArrivedAt,
                             onOpenCountry = { country ->
                                 crossToCoins(
@@ -432,7 +382,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     onRemoveType = { typeId ->
                                         viewModel.removeFromOwnGrouping(box.box.id, typeId)
                                     },
-                                    // Undoing it leaves nothing to look at, so the screen goes too.
+                                    // A deleted box leaves nothing to show, so the screen goes too.
                                     onDelete = {
                                         viewModel.deleteOwnGrouping(box.box.id)
                                         navController.popBackStack()
@@ -448,9 +398,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             finish = entry.arguments?.getString("finish"),
                             metal = entry.arguments?.getString("metal"),
                         )
-                        // A route that does not describe a canonical key is not guessed at: the key
-                        // is the identity of the cards no curated file names (ADR 0021 §5), and half
-                        // a key names none of them.
+                        // A route that isn't a whole canonical key is not guessed at: the key is
+                        // the identity of a derived card (ADR 0021 §5).
                         if (key == null) {
                             MissingSubject(
                                 UNKNOWN_VARIANT_LINK,
@@ -458,9 +407,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             )
                         } else {
                             val card = reading.derivedCard(key)
-                            // No upkeep: a derived collection is not something anyone typed. What
-                            // it says when it is gone is `PiecesScreen`'s own default, which is the
-                            // one wording of that event (ADR 0026 §5).
+                            // No upkeep: nobody typed a derived collection. When it is gone,
+                            // `PiecesScreen` uses its default wording (ADR 0026 §5).
                             PiecesScreen(
                                 state = state.collection,
                                 subject = card?.let(reading::pieces),
@@ -478,10 +426,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             )
                         }
                     }
-                    // The annex (ADR 0026 §8): no cell, no bar, and «Volver» is the way out. It is
-                    // reached from the last row of the Colecciones list and from nowhere else, which is
-                    // the clause that keeps it hanging off exactly one hierarchy. Two rooms since the
-                    // shelf window arrived (ADR 0030 §8): the shelf here, the list one door further in.
+                    // The annex (ADR 0026 §8), reached only from the last row of the Colecciones
+                    // list. The shelf window is here, the wish list one door further in
+                    // (ADR 0030 §8).
                     page(Routes.EXPLORE) {
                         ExploreScreen(
                             tiles = reading.tiles,
@@ -514,16 +461,14 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         PhoneScreen(
                             photoCache = state.photoCache,
                             valuation = state.valuation,
-                            // Where the budget is already spoken (ADR 0029 §5), named: on this card
-                            // nothing else is about the marks, so an amount on its own would be a
-                            // number nobody can attribute. Absent rather than zero — with nothing
-                            // marked the pass is the fixed thing it always was.
+                            // Labelled, since nothing else on this card is about the marks
+                            // (ADR 0029 §5). Null rather than zero when nothing is marked.
                             wishSpend = wishBudgetLabel(reading.wishCalls),
                             syncing = state.syncing,
                             exporting = state.exportingData,
                             onSync = viewModel::sync,
-                            // Written by the ViewModel and sent from here, like every other export:
-                            // the chooser is an Intent and the Intent belongs to the screen (#548).
+                            // Written by the ViewModel, sent from here: the chooser is an Intent
+                            // and belongs to the screen, like every other export (#548).
                             onExportData = {
                                 scope.launch {
                                     viewModel.exportData()?.let { dump ->
@@ -545,24 +490,23 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         )
                     }
                     page(Routes.CREDENTIALS) {
-                        // Read once per visit: the form owns its own edits from then on, and it
-                        // opens on a clean slate rather than on the last visit's complaint.
+                        // Read once per visit: the form owns its edits from then on, and it opens
+                        // without the last visit's validation error.
                         val values = remember { viewModel.currentCredentials() }
                         LaunchedEffect(Unit) { viewModel.clearValidation() }
                         CredentialsScreen(
                             values = values,
                             validation = state.validation,
-                            // Back to «Este teléfono», which is where the sync that sent the
-                            // collector here lives.
+                            // Back to «Este teléfono», where the sync that sent the collector here
+                            // lives.
                             onSave = { apiKey, userId ->
                                 if (viewModel.saveCredentials(apiKey, userId)) {
                                     navController.popBackStack()
                                 }
                             },
-                            // Popped before the state flips: the NavHost leaves composition on
-                            // sign-out, but the controller outlives it, and a surviving entry
-                            // would make the masthead say «Credenciales» over the onboarding form
-                            // and drop the collector back into it once they sign in again.
+                            // Popped before signing out: the controller outlives the NavHost, and
+                            // a surviving entry would title the onboarding form «Credenciales» and
+                            // reopen after the next sign-in.
                             onSignOut = {
                                 navController.popBackStack(Routes.INDEX, inclusive = false)
                                 viewModel.signOut()
@@ -576,9 +520,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         val catalogId = entry.arguments?.getString("catalogId").orEmpty()
                         Travelling(this) {
                             PlateScreen(
-                                // Resolved once per collection and not once per recomposition (#218):
-                                // building the album walks the whole inventory, and the screen recomposes
-                                // for reasons — a scroll, an export in flight — that leave it unchanged.
+                                // Once per reading, not per recomposition (#218): building the
+                                // album walks the inventory; scrolls and exports don't change it.
                                 result = remember(reading, catalogId) { reading.plate(catalogId) },
                                 images = state.collection.images,
                                 finance = plateFinance,
@@ -610,11 +553,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 }
 
 /**
- * Crosses to Coins with the shelf already narrowed.
- *
- * The one gesture three surfaces share: the country and year axes of the index (#386) and now every
- * touchable figure of «Las cifras». Sibling roots are not a stack, so crossing must not pile up entries
- * and each side keeps its own scroll position.
+ * Crosses to Coins with the shelf already narrowed, from the index's country and year axes (#386)
+ * and from the figures of «Las cifras». Navigates like the bottom bar: no stacking, scroll kept.
  */
 private fun crossToCoins(
     navController: androidx.navigation.NavHostController,
@@ -630,11 +570,8 @@ private fun crossToCoins(
 }
 
 /**
- * The one shared-element layout of the app, over both ends of every navigation.
- *
- * It is here and not around a screen because a shared element is a promise about two screens: the
- * hole of a card and the hole of a casilla are the same object seen twice (#300), and the layout is
- * what lets Compose believe it.
+ * The app's single shared-element layout, around the NavHost because a shared element spans two
+ * screens: the hole of a card and the hole of a casilla are the same object (#300).
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -644,28 +581,21 @@ private fun TravelLayout(modifier: Modifier, content: @Composable () -> Unit) {
     }
 }
 
-/** Hands one destination its own arrival, which is the half of a journey a screen can see. */
+/** Exposes a destination's own enter/exit scope to the shared elements inside it. */
 @Composable
 private fun Travelling(scope: AnimatedVisibilityScope, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalNavAnimation provides scope, content = content)
 }
 
-/** How long the leaf on top takes to lift off the one underneath, on the way back. */
+/** The fade of the page on top as it leaves on the way back. */
 private const val LIFT_MS = 180
 
 /**
- * A destination that is a leaf of paper: opaque, so it can be laid over the one it replaces.
+ * A destination on opaque paper, so it can cover the one it replaces during a transition (#381).
+ * Every route goes through here rather than `composable`.
  *
- * Every route goes through here rather than through `composable` directly, because being opaque is
- * not a property of one screen — it is what makes a transition possible at all. Two destinations are
- * composed together for as long as a navigation lasts, and while they were transparent there was no
- * honest way to cross between them: the paper showed through both of them at once (#381).
- *
- * This does not take the sheet back to the days of #351, when the grain lived on two screens and
- * stopped at the edge of the third. [paperSurface] anchors its mosaic to the window and not to the
- * surface, so this leaf falls exactly on top of the one [com.jenarvaezg.coindex.ui.theme.CoindexTheme]
- * paints behind everything — same tone, same fibre, in register. It is still one sheet; there are
- * simply no gaps in it now, which is the case that anchoring was for.
+ * [paperSurface] anchors its grain to the window, so this sheet lands in register with the one
+ * [com.jenarvaezg.coindex.ui.theme.CoindexTheme] paints behind everything (#351).
  */
 private fun NavGraphBuilder.page(
     route: String,
@@ -676,22 +606,16 @@ private fun NavGraphBuilder.page(
 }
 
 /**
- * The bottom bar of three destinations: Collections, Coins and «Las cifras» (ADR 0021 §1, amended by
- * ADR 0026 §8).
+ * The bottom bar: Collections, Coins and «Las cifras» (ADR 0021 §1, amended by ADR 0026 §8). The
+ * app opens in Collections; a launch screen asking which hierarchy to open was rejected as a tap
+ * per launch to pick the same thing.
  *
- * **The app still opens in Collections and the third is last.** A home screen that asked which hierarchy
- * you wanted was prototyped and rejected — it charged a tap per launch to choose the same thing every
- * time — and with three cells that argument is stronger, not weaker.
+ * Each cell counts what its destination is made of: cards, Numista types owned (#516) and grams.
+ * Never money: an amount in a permanent bar is a ticker on show to anyone glancing at the phone
+ * (#316).
  *
- * **Each cell names its grain with its count**, and the count is what the destination is *made of*
- * rather than how many things are inside it: cards, Numista types owned, and grams. The middle cell is
- * the grain and not the old «Monedas» since #516 — it always counted types, and the word is what was
- * wrong. «Las cifras» counts weight and **never money** — an amount in a permanent bar is a pocket
- * ticker that changes on its own and puts the collector's estate in front of anyone glancing at the
- * phone (#316).
- *
- * Drawn as three parts of a rule rather than as Material's `NavigationBar`, which brings its own
- * elevation, ripple and icon slot into a notebook that has none of the three.
+ * Drawn as a rule rather than Material's `NavigationBar`, whose elevation, ripple and icon slot the
+ * notebook doesn't use.
  */
 @Composable
 private fun HierarchyBar(
@@ -742,19 +666,13 @@ private fun HierarchyCell(
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .background(if (selected) Paper.ink else Paper.paperDeep)
-            // The cell you are already on still takes the tap: a dead half of the bar reads as a
-            // control that has stopped working.
+            // The current cell still takes the tap: a dead cell reads as a broken control.
             .clickable(role = Role.Tab, onClick = onClick)
             .padding(vertical = 16.dp),
     )
 }
 
-/**
- * Persistent notice that a newer APK is published.
- *
- * It lives in the top bar rather than among the cards so it is visible on every screen,
- * and it does not block: a pending update is not a reason to stop looking at the collection.
- */
+/** Persistent, non-blocking notice in the top bar of every screen that a newer APK is out. */
 @Composable
 internal fun UpdateBanner(
     update: UpdateStatus.Available,
@@ -778,8 +696,8 @@ internal fun UpdateBanner(
         Column(
             modifier = Modifier
                 .weight(1f)
-                // The whole block takes the tap, not just the hint: a two-line strip is a small
-                // enough target already. No hint means nothing is hidden, so nothing to open.
+                // The whole block takes the tap, not just the hint. No hint means nothing is
+                // hidden.
                 .then(
                     if (disclosure.hint == null) {
                         Modifier
@@ -830,15 +748,10 @@ internal fun UpdateBanner(
 /**
  * Everything the [Scaffold] stacks above the page, kept clear of the status bar.
  *
- * With targetSdk 36 the window is edge-to-edge and there is no way back: without
- * [statusBarsPadding] whatever comes first sits under the clock and the system bar swallows its
- * taps. `Scaffold` does not pad its `topBar` slot — `contentWindowInsets` reaches the body only —
- * so the strip is paid here, once, rather than by whoever happens to be first: the masthead used
- * to pay it for both, and when the album roots dropped it (ADR 0026 §1) the update banner was
- * left drawing under the clock with «Instalar» sharing the strip with the system icons (#356).
- *
- * The paper background is painted before the padding so the inset strip still reads as part of
- * the page, and not as a loose band of whatever colour the first occupant happens to use.
+ * targetSdk 36 forces edge-to-edge, and `Scaffold` doesn't pad its `topBar` slot
+ * (`contentWindowInsets` reaches the body only), so the inset is paid here once rather than by
+ * whichever occupant comes first. When the roots dropped the masthead that used to pay it
+ * (ADR 0026 §1), the update banner ended up under the clock (#356).
  */
 @Composable
 internal fun TopChrome(content: @Composable ColumnScope.() -> Unit) {
@@ -849,14 +762,9 @@ internal fun TopChrome(content: @Composable ColumnScope.() -> Unit) {
 }
 
 /**
- * The notebook's masthead.
+ * The notebook's masthead. The status-bar inset is [TopChrome]'s.
  *
- * The status-bar inset is [TopChrome]'s, not this composable's: it is one of several occupants
- * of the top bar and only one of them may pay the strip.
- *
- * The right-hand slot holds at most one action, and only when it does something: [onBack] away
- * from the start destination, [onOpenPhone] on it — the same destination the sewn edge's glyph opens
- * on the three roots that draw their own chrome.
+ * The right-hand slot holds at most one action: [onBack] away from a root, [onOpenPhone] on one.
  */
 @Composable
 private fun Masthead(

@@ -31,10 +31,9 @@ import com.jenarvaezg.coindex.domain.saturatingAdd
 /**
  * What one ladder reads for this collection.
  *
- * @param amount in the ladder's own unit, which is what the label prints.
- * @param approximate the stack and only the stack: `thickness` is missing in a third of the types, so it
- *   is measured over the pieces that have one and scaled to all of them, and the word «unos» is the whole
- *   of that declaration.
+ * @param amount in the ladder's own unit.
+ * @param approximate only for the stack, scaled up from the pieces that have a `thickness`; the
+ *   label says «unos».
  */
 data class LadderReading(
     val ladder: Ladder,
@@ -44,11 +43,9 @@ data class LadderReading(
 )
 
 /**
- * The country that portrays the collection, in the three or four numbers that say it at once.
- *
- * «Venezuela es el 62 % de tus piezas, el 33 % de su peso y el 33 % de su plata» — the three together
- * say what none of them says alone: that they are a lot of small coins. The fourth, the share of the
- * **value**, is money and comes and goes with it.
+ * The country that portrays the collection. Its shares of pieces, weight and silver together say
+ * what none says alone, such as «many small coins»; the share of the value is money and comes and
+ * goes with it.
  */
 data class CountryPortrait(
     val country: String,
@@ -61,12 +58,11 @@ data class CountryPortrait(
 )
 
 /**
- * The amount, where it came from, and the day the silver behind it was read.
+ * The amount, where it came from, and the silver spot behind it.
  *
- * @param paid what he paid for the pieces he wrote a price for, against what those same pieces are
- *   worth today. It hangs here and not off [FiguresSubject] because two amounts in euros are money as
- *   much as the total is: inside the reading there is no branch that could let it out with the export's
- *   switch off. Null when no row declares a price.
+ * @param paid what was paid for the pieces with a declared price, against their value today. Here
+ *   rather than on [FiguresSubject] so the export's money switch withholds it with the total. Null
+ *   when no row declares a price.
  */
 data class MoneyReading(
     val value: CollectionValue,
@@ -77,10 +73,9 @@ data class MoneyReading(
 /**
  * Everything «Las cifras» draws, assembled once.
  *
- * @param money **absent, and not zero, while the market is still arriving** (ADR 0028 §7). Without it
- *   the value is `max(silver, paid)`, some 60 % of the real figure, which is the «only the silver floor»
- *   #316 rejected: a total at 60 % is not incomplete, it is false. Every other field of this type comes
- *   out of the APK and is there on a phone that has never called Numista.
+ * @param money absent, not zero, until the market lands (ADR 0028 §7): without catalog prices the
+ *   value is `max(silver, paid)`, a total that is false rather than incomplete (#316). Every other
+ *   field comes from the APK.
  */
 data class FiguresSubject(
     val figures: CollectionFigures,
@@ -88,12 +83,9 @@ data class FiguresSubject(
     val ladders: List<LadderReading>,
     val portrait: CountryPortrait?,
     /**
-     * Whether the page says out loud that the money is missing, in the money's own slot (#519).
-     *
-     * Never true at the same time as [money]: it is what stands in for the section, not a note on
-     * it. And false whenever the absence is not the market's — the export with the money switched
-     * off has nothing to wait for, and neither has a pass that is about to finish on its own (see
-     * `ValuationStatus.waiting`).
+     * Whether the page says the money is missing, in the money's slot (#519). Never true alongside
+     * [money], and false when the absence isn't the market's: the export with money off, or a pass
+     * about to finish on its own (`ValuationStatus.waiting`).
      */
     val moneyWaiting: Boolean = false,
 )
@@ -101,14 +93,13 @@ data class FiguresSubject(
 /**
  * Assembles the page from what the phone holds.
  *
- * @param moneyAllowed the export's money switch, and **only** the export's (#228, ADR 0021 §13). On
- *   screen it is always true: there is nothing to switch off on a page the collector opened on purpose.
- *   Off, it withdraws the amount **and every figure derived from one** — «Venezuela · 30 % del valor» is
- *   money as much as the total is, and the prototype let it through with the money off.
- * @param settled whether the valuation pass has finished. False leaves [FiguresSubject.money] absent
- *   however many prices happen to be on the phone.
- * @param waiting whether that absence is worth a line (#519). It is the pass's own reading and not a
- *   second guess at [settled]: three of the five reasons a pass holds are said, and two are not.
+ * @param moneyAllowed the export's money switch only (#228, ADR 0021 §13); always true on screen.
+ *   Off, it withdraws the amount and every figure derived from it, such as a country's share of the
+ *   value.
+ * @param settled whether the valuation pass has finished. False leaves [FiguresSubject.money]
+ *   absent however many prices are on the phone.
+ * @param waiting whether that absence gets a line (#519). The pass's own reading, since only some
+ *   of its hold reasons are worth saying.
  */
 fun figuresSubject(
     state: CollectionState,
@@ -134,8 +125,7 @@ fun figuresSubject(
         ladders = listOf(
             reading(Ladders.weight, figures.weight.value / 1_000.0, approximate = false),
             reading(Ladders.row, figures.row.value, approximate = false),
-            // The one figure of the page that is scaled rather than measured; a collection with no
-            // thickness at all reads zero and sits at the foot of the ladder, which is honest.
+            // Scaled rather than measured; a collection with no thickness at all reads zero.
             reading(
                 Ladders.stack,
                 figures.stack.extrapolated ?: 0.0,
@@ -143,8 +133,8 @@ fun figuresSubject(
             ),
         ),
         portrait = portrait(state, figures, money, book),
-        // The export never waits: a drawer with the money switched off is not a page missing a
-        // section, it is a page that was asked not to have one (ADR 0021 §13).
+        // The export never waits: with money off it was asked not to have the section
+        // (ADR 0021 §13).
         moneyWaiting = moneyAllowed && money == null && waiting,
     )
 }
@@ -160,11 +150,8 @@ private fun reading(ladder: Ladder, amount: Double, approximate: Boolean) = Ladd
 fun LadderReading.isStack(): Boolean = ladder.kind == LadderKind.Stack
 
 /**
- * The country with the most pieces, and its share of the four things.
- *
- * One country and not a ranking: this is the collection's portrait and not a breakdown, and a table of
- * 34 issuers is the dashboard this page is not. The shelf of Coins is where a country is looked *up*;
- * this is where one is *noticed*, which is why it leads there.
+ * The country with the most pieces, and its four shares. One country, not a ranking: Coins is where
+ * a country is looked up, and the portrait leads there.
  */
 private fun portrait(
     state: CollectionState,
@@ -212,16 +199,12 @@ private class MutableCountry {
 }
 
 /**
- * What one coin is worth, for its ficha.
+ * What one coin is worth, for its ficha: the page's three sources, for one type. Per piece or per
+ * plate this is a buying aid; totalled for the shelf it would be wealth management (ADR 0026 §10).
  *
- * The same three sources the page totals, read for one type. **The grain is the whole argument**
- * (ADR 0026 §10): read piece by piece or plate by plate this is a shopping companion — the premium is
- * the scale of that purchase — and the same thing totalled for the shelf is wealth management, which
- * stays outside.
- *
- * @param pieces how many pieces of the type the total covers, so «×3» is not read as one coin's price.
- * @param source and [grade] only when **every** piece agrees on them. Two pieces of one type graded
- *   differently are two origins, and one of them printed for both would be the wrong one half the time.
+ * @param pieces how many pieces of the type the total covers, so «×3» isn't read as one coin's
+ *   price.
+ * @param source and [grade] only when every piece agrees on them.
  */
 data class CoinValue(
     val eur: Double,
@@ -255,101 +238,79 @@ fun coinValue(
 /**
  * What a plate's own coins are worth, for the figure over its title.
  *
- * @param catalogReadAt the **oldest** catalogue read behind the amount (#494, #594). Null on a plate
- *   whose coins no catalogue price was ever asked for — then there is no second clock to name, and the
- *   line is the one #493 drew.
+ * @param catalogReadAt the oldest catalogue read behind the amount (#494, #594). Null when no
+ *   catalogue price was ever asked for its coins.
  */
 data class PlateValue(val eur: Double, val pieces: Int, val catalogReadAt: Long? = null)
 
 /**
- * What closing a plate would cost, for the second figure of the same header (#493).
+ * What closing a plate would cost, for the header's second figure (#493).
  *
- * @param holes how many empty casillas the amount covers, which is **not** how many the plate has: a
- *   hole whose issue nobody knows, or whose price is not on the phone, adds nothing to the total and
- *   is not counted by it. The figure is therefore a floor, and the plate says a cost of closing built
- *   out of the holes it can price rather than nothing at all.
- * @param catalogReadAt the oldest read behind it, which is **its own** and not [PlateValue]'s: the two
- *   figures of one header are made of different reads, and a marked casilla is repriced whatever the
- *   plate's shape (ADR 0029 §4), so the second line can be months fresher than the first (#594).
+ * @param holes how many empty casillas the amount covers, not how many the plate has: a hole with
+ *   no known issue or no price on the phone adds nothing, so the figure is a floor.
+ * @param catalogReadAt its own oldest read, not [PlateValue]'s: a marked casilla is repriced
+ *   whatever the plate's shape (ADR 0029 §4), so this line can be months fresher (#594).
  */
 data class PlateCost(val eur: Double, val holes: Int, val catalogReadAt: Long? = null)
 
 /**
- * Everything a plate's header says about money, and the price inside each of its empty casillas.
+ * Everything a plate's header says about money, and the price inside each of its empty casillas:
+ * one walk of the album behind one gate, since until the market lands there is no value, cost or
+ * stamp (ADR 0028 §7).
  *
- * The three readings arrive together because they are one walk of the same album and because they are
- * answered by one gate: while the market has not landed there is no value, no cost and no stamp
- * either (ADR 0028 §7), and a drawer holding this empty cannot print any of the three.
- *
- * @param holeCosts what one empty casilla costs, keyed by member id, for the stamp drawn inside it.
- *   Empty for a plate over the threshold of ADR 0028 §1 — the pass never asked for those prices, so
- *   there is nothing to stamp — and empty for a plate that is closed, which has no casilla to stamp.
+ * @param holeCosts the price of each empty casilla, by member id, for the stamp inside it. Past the
+ *   threshold of ADR 0028 §1 only marked casillas have one (ADR 0029 §4).
  */
 data class PlateMoney(
     val value: PlateValue? = null,
     val cost: PlateCost? = null,
     /**
-     * What entering costs, on a plate that is not the collector's (ADR 0030 §6).
-     *
-     * The third figure and never a second reading of the second: this one is a **whole** plate priced
-     * because no casilla of it reproaches anything (§7), and it carries the date the amount was brought
-     * because nothing will ever refresh it (§4). A plate of the collector's leaves it null, and one of
-     * the shelf window leaves [value] and [cost] null: they are two régimes and not two styles.
+     * What entering costs, on a plate that isn't the collector's (ADR 0030 §6): the whole plate
+     * priced (§7), dated because nothing will refresh it (§4). Such a plate leaves [value] and
+     * [cost] null; the collector's plates leave this null.
      */
     val entry: ShowcaseCost? = null,
     /**
      * Whether this phone has asked Numista about this plate at all (ADR 0028 §4, ADR 0030 §4).
-     *
-     * The third state of §4 said about a whole plate: «Numista has no price for this» is a **datum** and
-     * not a failure, so a plate that was valued and came back with nothing is not a plate nobody valued.
-     * Without this the two look identical — no figure, and a gesture still offering to «tasar» what it
-     * has already asked for.
+     * «No price» is an answer, so a plate asked and left without a figure isn't offered «tasar»
+     * again as if nobody had asked.
      */
     val entryAsked: Boolean = false,
     val holeCosts: Map<String, Double> = emptyMap(),
     /**
-     * Whether the plate says out loud that its money is still coming (#519).
-     *
-     * The three readings above leave together and this one arrives in their place, so it is never
-     * true beside any of them. A plate of the shelf window never sets it: its prices are not gated
-     * on the collection's pass at all (ADR 0030 §3), so there is nothing it is waiting for.
+     * Whether the plate says its money is still coming (#519), in place of the readings above. A
+     * shelf-window plate never sets it: its prices don't wait on the collection's pass
+     * (ADR 0030 §3).
      */
     val waiting: Boolean = false,
 )
 
 /**
- * The plate's money, assembled once for the header and the casillas that share it.
+ * The plate's money, assembled once for the header and the casillas.
  *
- * @param book the whole book and not its readings, so the header and the casillas cannot disagree
- *   about *when* (ADR 0028). Which issue each empty casilla stands for is its stored listings' answer
- *   (#452): without them only the ten holes of a hundred and twenty-one whose curated file names its
- *   issues could be priced at all.
+ * @param book the whole book, so the header and the casillas agree on when (ADR 0028). The issue
+ *   each empty casilla stands for comes from its stored listings (#452), since few curated files
+ *   name their issues.
  */
 fun plateMoney(
     album: CollectionCatalogAlbum,
     state: CollectionState,
     book: PriceBook,
     /**
-     * The casillas of this album the collector marked, which carry a price whatever the plate's shape
-     * (ADR 0029 §4).
-     *
-     * The pass asked for them, so they are on the phone, so the stamp is drawn — that is the rule #493
-     * wrote for every hole and it does not change here. What does **not** change either is the second
-     * figure of the header: see [PlateCost].
+     * The casillas of this album the collector marked. They are priced whatever the plate's shape
+     * (ADR 0029 §4), so their stamps are drawn, but they don't enter the header's cost.
      */
     wished: Set<WishKey> = emptySet(),
 ): PlateMoney {
-    // The one walk of the album's holes, handed on rather than repeated: the header's second figure and
-    // the chips inside the casillas have to be about the same holes (ADR 0028 §1).
+    // One walk of the holes, shared so the header's cost and the casillas' stamps are about the
+    // same holes (ADR 0028 §1).
     val withinReach = holesWithinReach(album)
     val closing = withinReach.mapTo(mutableSetOf()) { it.member.id }
     val priced = holeCosts(album, state, book, wished, withinReach)
     return PlateMoney(
         value = plateValue(album, state, book),
-        // **Only the holes within reach**, and a marked one past the threshold is deliberately not
-        // added: one hole is not the cost of closing a plate of fifty-one, and adding it would print
-        // «Coste de cerrar» over a number that closes nothing (ADR 0029 §4). Null and not zero, like
-        // every other amount on the page: «0 €» would say closing costs nothing.
+        // Only the holes within reach: a marked hole past the threshold is not the cost of closing
+        // the plate (ADR 0029 §4). Null rather than zero, which would say closing is free.
         cost = priced
             .filterKeys { it in closing }
             .values
@@ -358,8 +319,7 @@ fun plateMoney(
                 PlateCost(
                     eur = holes.sumOf { it.eur },
                     holes = holes.size,
-                    // The oldest of the reads this amount is made of, and only of **these** holes: the
-                    // ones the header adds up (#494).
+                    // The oldest read among these holes only (#494).
                     catalogReadAt = holes.mapNotNull { it.readAt }.minOrNull(),
                 )
             },
@@ -368,23 +328,15 @@ fun plateMoney(
 }
 
 /**
- * What one empty casilla costs and when its catalogue price was brought, held together for one walk.
- *
- * The two travel as a pair because the header's second figure needs both and the stamp inside the
- * casilla needs one: separating them would mean walking the album twice and risking a cost added up
- * under one reading of the book and dated out of another (ADR 0028, #536).
+ * One empty casilla's cost and when its catalogue price was fetched, kept together so a sum and its
+ * date come from the same reading of the book (ADR 0028, #536).
  */
 private data class HolePrice(val eur: Double, val readAt: Long?)
 
 /**
- * What each empty casilla of a plate costs, or nothing at all when the plate is out of reach.
- *
- * Which holes count is [holesWithinReach]'s answer plus whatever the collector marked, and neither is
- * counted again here: what the header adds up and what the pass spent its calls on are the same holes
- * (ADR 0028 §1, ADR 0029 §4).
- *
- * A casilla with no price is **absent** rather than zero: without a price on the phone there is no
- * stamp to draw and nothing to add, and neither the amount nor the casilla invents a «—».
+ * What each empty casilla of a plate costs: those within reach ([holesWithinReach]) and the marked
+ * ones, the same holes the pass spent its calls on (ADR 0028 §1, ADR 0029 §4). A casilla with no
+ * price is absent, not zero.
  */
 private fun holeCosts(
     album: CollectionCatalogAlbum,
@@ -403,17 +355,14 @@ private fun holeCosts(
             spot = book.spot,
             prices = book::of,
         ) ?: return@mapNotNull null
-        // Asked and not priced, which is `showcaseMoney`'s gate (ADR 0030 §6): a hole whose silver beat
-        // its catalogue price still had that price brought on the day the row says.
+        // Dated by when the catalogue price was asked, as in `showcaseMoney` (ADR 0030 §6), even
+        // when the silver beat it.
         hole.member.id to HolePrice(cost.eur, issueId?.let { book.readAt(typeId, it) })
     }.toMap()
 
 /**
- * The empty casillas of a plate that have a price to say: the ones within reach, and the marked ones.
- *
- * On a plate within reach the second half adds nothing — a marked hole is already one of them — so the
- * union is only ever wider on the plates ADR 0028 §1 leaves outside, which is exactly what a mark is
- * for: of the 51, this one.
+ * The empty casillas with a price to say: those within reach, plus the marked ones. The union only
+ * widens on plates past ADR 0028 §1's threshold, which is what a mark is for.
  */
 private fun holesToPrice(
     album: CollectionCatalogAlbum,
@@ -430,14 +379,12 @@ private fun holesToPrice(
 }
 
 /**
- * What entering one plate of the shelf window costs, and when its price was brought (ADR 0030 §6).
+ * What entering one plate of the shelf window costs, and when its price was fetched (ADR 0030 §6).
  *
- * @param holes how many casillas the amount covers, which is not [slots]: a hole Numista had no price
- *   for adds its silver floor, and one whose issue nobody can name adds nothing. The figure is a floor,
- *   like the plate's own cost of closing.
- * @param readAt the **oldest** of the reads the amount is made of, which is how a total whose parts
- *   arrived on different days is dated ([#494](https://github.com/jenarvaezg/coindex/issues/494)). A
- *   date over a total is a promise about all of it.
+ * @param holes how many casillas the amount covers, which is not [slots]: a hole with no Numista
+ *   price adds its silver floor, and one with no known issue adds nothing, so the figure is a
+ *   floor.
+ * @param readAt the oldest read behind the amount (#494).
  */
 data class ShowcaseCost(
     val eur: Double,
@@ -449,13 +396,9 @@ data class ShowcaseCost(
 /**
  * The money of a plate the collector owns nothing of: one figure, and the price inside each hole.
  *
- * **A plate that has never been valued says nothing**, and that is a decision rather than a
- * consequence: the silver floor costs no API call at all — the spot is two keyless calls (ADR 0028 §9)
- * and the weight is in every seeded ficha — so an amount *could* be shown over the twenty without
- * anybody pressing anything. It is not, for the reason ADR 0028 §1 gives for the plates over its
- * threshold: what a floor-only figure would say is «entrar cuesta al menos esto», and the collector
- * cannot tell it apart from the real price. So the gate is exactly whether **this phone asked about the
- * issue** — [PriceBook.readAt], which is the same row that makes the date sayable.
+ * A plate never valued shows nothing, although its silver floor would cost no API call
+ * (ADR 0028 §9): a floor-only figure can't be told apart from the real price (ADR 0028 §1). The
+ * gate is whether this phone asked about the issue ([PriceBook.readAt]), which also dates it.
  */
 fun showcaseMoney(
     plate: ShowcasePlate,
@@ -470,11 +413,9 @@ fun showcaseMoney(
             if (hole.status !is CollectionCatalogMemberStatus.Missing) continue
             val typeId = hole.member.numistaTypeId ?: continue
             val issueId = book.listings.issueOf(hole.member) ?: continue
-            // Asked about, and therefore sayable. An issue this phone has never priced has no date to
-            // show and no figure to show either, whatever its metal is worth.
+            // Never asked: nothing to date and nothing to show, whatever the metal is worth.
             val read = book.readAt(typeId, issueId) ?: continue
-            // Asked, whatever came back: an issue Numista answered with no price is on the phone as much
-            // as a priced one, and the plate has to be able to say so (ADR 0028 §4).
+            // Asked, whatever came back: «no price» is an answer the plate must show (ADR 0028 §4).
             asked = true
             val cost = holeValue(
                 typeId = typeId,
@@ -489,8 +430,7 @@ fun showcaseMoney(
         }
     }
     return PlateMoney(
-        // No «Valor actual»: a plate holding nothing has no pieces to total, and that is absence and
-        // not a zero (ADR 0030 §6).
+        // No «Valor actual»: the plate holds nothing (ADR 0030 §6).
         entry = holeCosts
             .takeIf { it.isNotEmpty() }
             ?.let { ShowcaseCost(total, it.size, plate.slots, oldest) },
@@ -500,12 +440,8 @@ fun showcaseMoney(
 }
 
 /**
- * What each marked casilla of the annex would cost, by key (ADR 0029).
- *
- * The list's own reading of the same rule the plate uses, and it takes the resolved slots rather than
- * an album because the list crosses plates: what a hole costs is `holeValue` — two prices and never
- * three, in `unc` (ADR 0028 §8) — and the issue it is addressed to is the curated file's or a stored
- * listing's, exactly as on the plate.
+ * What each marked casilla of the annex would cost, by key (ADR 0029): the plate's rule
+ * (`holeValue`, ADR 0028 §8) over resolved slots, because the list crosses plates.
  */
 fun wishCosts(
     slots: List<WishedSlot>,
@@ -523,16 +459,9 @@ fun wishCosts(
 }.toMap()
 
 /**
- * The value of what a plate holds, which is the other place the grain rule allows a total.
- *
- * Only the pieces the plate's own casillas are filled with, so it is the plate's value and not the
- * value of every coin of those types: a type that fills one casilla and sits loose in three more rows is
- * one casilla here.
- *
- * **The cost of closing it is the other figure and not this one** (#493). They share a header and
- * nothing else: this one is a total over what is there, at the maximum of three prices, and the cost
- * is a total over what is not, out of two prices in `unc` — which is why each of them reaches the
- * screen with its own provenance beside it instead of sharing one line of criterion.
+ * The value of what a plate holds: only the pieces filling its casillas, so a type with more loose
+ * rows elsewhere counts as the casilla it fills. The cost of closing is a separate figure with its
+ * own criterion (#493).
  */
 fun plateValue(
     album: CollectionCatalogAlbum,

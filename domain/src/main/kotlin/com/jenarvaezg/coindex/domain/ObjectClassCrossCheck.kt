@@ -12,21 +12,15 @@ data class ObjectClassDeviation(
 }
 
 /**
- * The Numista object classes for a thing that was struck, can be owned, and is not money.
+ * Numista object classes for something struck and ownable that is not money. `Monedas de
+ * colección` and `Monedas no circulantes` stay out: full members carry them (Equilibrium's
+ * N#356004 and N#477907; most seeded fichas are non-circulating), so the curator decides.
  *
- * Deliberately five and not the whole table. `Monedas de colección` is **out**: two members of the
- * Equilibrium catalog carry it (N#356004 and N#477907) and they are members in full, so the class
- * says nothing there — Numista's own table calls it "depends on the declared scope", which is to
- * say the curator decides. `Monedas no circulantes` is out for the same reason at scale: most of the
- * seeded fichas are one, which is what the two collections are made of.
+ * Spanish because every ficha is fetched with `lang=es` (`NumistaClient`,
+ * `scripts/seed-type-cache.py`); the suite pins this vocabulary so a wording drift cannot turn the
+ * net into a silent no-op.
  *
- * The strings are Spanish because the cache is: every ficha is fetched with `lang=es`, by the app
- * (`NumistaClient`) and by `scripts/seed-type-cache.py` alike. A literal-string net can rot into a
- * silent no-op if that wording ever drifts, so the suite pins the vocabulary separately.
- *
- * Not to be confused with [ObjectClass], which reads the coarse `category` for the chip of Coins:
- * this net exists to make a curator look at one member, and that one exists to let a collector find
- * their medals without moving them out of the collections they belong to.
+ * Not to be confused with [ObjectClass], which reads the coarse `category` for the chip of Coins.
  */
 private val THINGS_THAT_ARE_NOT_MONEY = setOf(
     "Monedas de ensayo",
@@ -39,22 +33,14 @@ private val THINGS_THAT_ARE_NOT_MONEY = setOf(
 /**
  * Finds the members whose Numista ficha says they are not money at all.
  *
- * A sibling of [metalDeviations] and bound by the same rule: it lives in the test suite and
- * **never** in [CollectionCatalog.validate], which stops the app at startup. There is no member
- * status for "shown but not counted because it is not a coin" — #89 killed it, because neither
- * collection has a piece that a curated catalog miscounts and the state would have been the first
- * slot that can be filled and still stay out of the divisor. So a pattern a curator puts inside a
- * catalog is a member in full, and this check only ever says "look at it".
+ * Like [metalDeviations], it runs in the suite and never in [CollectionCatalog.validate], which
+ * stops the app. There is no "shown but not counted" member status (#89), so a pattern a curator
+ * puts in a catalog is a full member, and this only says "look at it"; `variant_note` silences it.
  *
- * What it catches is the accidental intruder, the way #63's twentieth-ounce of gold was caught: the
- * two 1874 essais of the Venezuelan silver — N#352550 and N#352551, 25 g of .900 and the very
- * module of the 22 slots — came out of the same weight enumeration that populated the catalog in
- * #55 and were dropped by a person reading. With `st=all` the weight search returns essais next to
- * coins, so the intruder is not hypothetical: it is the normal path of curating.
+ * It catches the accidental intruder: weight searches with `st=all` return essais next to coins,
+ * like the two 1874 Venezuelan essais (N#352550, N#352551) a person dropped in #55.
  *
- * It stops at catalogs. A curated grouping asserts no coverage, so an odd piece inside one
- * miscounts nothing — and it has no members to write the exception on, which would make the red
- * unsilenceable and turn this into the fatal check the domain forbids.
+ * Groupings are skipped: they assert no coverage, and have no member to write an exception on.
  *
  * @param objectClassByType Numista's `type` per type id, from the seeded cache
  */

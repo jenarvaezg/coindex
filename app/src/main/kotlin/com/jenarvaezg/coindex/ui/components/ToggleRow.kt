@@ -24,15 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * One switch of a configuration: what it is called, why it is greyed, and its state.
- *
- * The whole line carries the tap, because a thumb aiming at a 22dp mark on a phone held in one hand
- * is the same measured miss the filter shelf fixed by taking the whole line (`FilterShelf`). It is
- * one `toggleable` node and not a label beside a control, so the reader hears the name, the reason
- * and the state as a single answer.
- *
- * [note] is where a disabled row says why, and it is what keeps grey from reading as broken: a
- * control the collector cannot move owes them the reason on the spot, not in a help screen.
+ * One switch of a configuration: its name, why it is greyed, and its state. The whole line is one
+ * `toggleable` node, so it is easy to hit and screen readers announce name, note and state
+ * together. [note] tells the collector why a disabled row can't be changed.
  */
 @Composable
 fun ToggleRow(
@@ -46,8 +40,7 @@ fun ToggleRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            // The 48dp the Material switch used to bring with it, kept now that the row draws its
-            // own mark: what a line of this card is worth is a finger, not a line of type.
+            // A full touch target, as the Material switch used to provide.
             .heightIn(min = 48.dp)
             .toggleable(
                 value = checked,
@@ -74,17 +67,9 @@ fun ToggleRow(
 }
 
 /**
- * The mark this row makes: a ruled square, ticked by hand (#512).
- *
- * A Material `Switch` was the last piece of raw Material in the app — a rounded track, a shadowed
- * thumb and a ripple, in a page made of rectangles, hairlines and glyphs drawn with two strokes.
- * What replaces it is the rule of a [FieldCard] bent into a square, with the tick drawn in the hand
- * of [ShareGlyph] and [ForwardGlyph]: nothing imported, nothing rounded. It stays private to this
- * file while this row is its only caller — the guide's shared marks live in `FieldGuide`, and one
- * of them is what this becomes the day a second card asks for a tick.
- *
- * Grey and still readable as ticked or empty, because a disabled row is reporting the configuration
- * as well as refusing to change it: the fill drops to the hairline instead of losing the tick.
+ * The row's mark: a ruled square with a hand-drawn tick (#512), in place of a Material `Switch`.
+ * Private while this row is its only caller; move it to `FieldGuide` if another needs it. Disabled,
+ * it stays readable as ticked or empty.
  */
 @Composable
 private fun TickBox(checked: Boolean, enabled: Boolean) {
@@ -96,8 +81,7 @@ private fun TickBox(checked: Boolean, enabled: Boolean) {
     val edge = if (enabled) Paper.line else Paper.hairline
     Canvas(modifier = Modifier.size(TICK_BOX)) {
         drawRect(fill)
-        // Inset by half the stroke so the rule lands inside the square instead of straddling it,
-        // which is what the dashed cards of the guide do with theirs.
+        // Inset by half the stroke so the rule lands inside the square.
         val rule = EDGE_WIDTH.toPx()
         drawRect(
             color = edge,

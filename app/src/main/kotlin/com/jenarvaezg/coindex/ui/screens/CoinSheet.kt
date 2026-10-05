@@ -56,22 +56,12 @@ import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * The one coin sheet a screen can open, as it is handed it (#508).
+ * What a screen needs to open a coin sheet (#508), bundled so the three surfaces that draw casillas
+ * word and link a coin the same way. What varies per surface (face up, current collection, flight)
+ * stays a parameter of [CoinSheetOverlay].
  *
- * A value rather than five parameters, for the reason [FichaRefresh] is one: it travels through three
- * screens to reach the three surfaces that draw casillas, and handed apart they could disagree — a
- * lámina wording a coin one way and Monedas another, or one of them leaving to a different address
- * for the same ficha. What varies per surface is **not** in here and stays a parameter of the overlay:
- * which face rests up, which collection the collector is already standing in, and whether the coin
- * flies. Those are three facts about the surface, not about the coin.
- *
- * @param coin the row of a type, holding whatever the collector has of it — nothing, on a hole. Null
- *   only where the collection changed under an open sheet, and then there is nothing left to draw.
- * @param value what the coin is worth, which on a hole is null by construction: nothing owned,
- *   nothing worth anything.
- * @param onOpenNumista the sheet's «Ver en Numista» under its drawn arrow — the one label of any of
- *   these screens that reaches a browser.
- * @param onOpenClaim where the collections that claim this coin are.
+ * @param coin the type's row; null only when the collection changed under an open sheet.
+ * @param value null on a hole, where nothing is owned.
  */
 class CoinSheetSurface(
     val coin: (typeId: Int) -> CoinRow?,
@@ -82,28 +72,20 @@ class CoinSheetSurface(
 )
 
 /**
- * The sheet of one coin, as any surface of the app can open it (#508).
+ * The sheet of one coin, openable from any surface (#508). A casilla's year tag opens it instead of
+ * leaving for Numista directly; leaving is the sheet's labelled «Ver en Numista» (ADR 0026 §3).
  *
- * It was Monedas' own until the audit of 14 August 2026: a casilla of a lámina had two invisible
- * targets, and the year's sunken tag **left the app** — no arrow on it, Numista behind Cloudflare,
- * and three unintended trips to Chrome in one session. The tag now opens this, which is the same
- * sheet with the same «Ver en Numista» under its drawn arrow and the same «Actualizar la ficha ·
- * 1 consulta»: leaving is still one tap away, and it is behind a label that says so (ADR 0026 §3,
- * amended).
+ * Place it last inside a Box that fills the screen. It is an overlay rather than a
+ * `ModalBottomSheet` because a dialog window cannot host a shared element (#370).
  *
- * Placed **last inside a Box that fills the screen**: it is an overlay and not a destination, because
- * `ModalBottomSheet` is a dialog window and cannot host a shared element (#370).
- *
- * @param typeId the coin that is open, or null when none is. The one input that says what to draw.
- * @param faces which photograph rests up and which waits behind it. A parameter and not a rule of its
- *   own: a casilla obeys its catalog's `printed_side` (ADR 0020) and an album cell obeys
- *   reverse-first, and the sheet must open on the face the surface behind it was showing.
- * @param here the collection the collector is already standing in, whose claim is therefore not drawn
- *   as a door: a link from the plate of «1 Bolívar» back to the plate of «1 Bolívar» is a door onto
- *   the sheet you are reading.
- * @param travelling whether the coin flies between this sheet and the surface behind it (ADR 0026 §3).
- *   True in Monedas, where the cell yields its photograph on opening. False on a casilla: the hole of a
- *   plate is already one end of the index's journey, and one photograph cannot be two shared elements.
+ * @param typeId the open coin, or null when none is.
+ * @param faces the photograph that rests up and the one behind it, matching what the surface was
+ *   showing: a casilla follows its catalog's `printed_side` (ADR 0020), an album cell
+ *   reverse-first.
+ * @param here the collection the collector is in, whose claim is not drawn as a link.
+ * @param travelling whether the coin flies between the sheet and the surface (ADR 0026 §3). False
+ *   on a casilla: its hole is already one end of the index's transition, and one photograph cannot
+ *   be two shared elements.
  */
 @Composable
 fun CoinSheetOverlay(
@@ -114,8 +96,8 @@ fun CoinSheetOverlay(
     here: CardDestination? = null,
     travelling: Boolean = false,
 ) {
-    // Kept across the dismiss so `AnimatedVisibility` still has a coin to draw while the sheet exits,
-    // and saved with it: restored after a process death the sheet has to draw on its first frame.
+    // Kept across the dismiss so the exit animation still has a coin to draw, and saveable so a
+    // sheet restored after process death draws on its first frame.
     var exiting by rememberSaveable { mutableStateOf<Int?>(null) }
     SideEffect {
         if (typeId != null) exiting = typeId
@@ -130,8 +112,8 @@ fun CoinSheetOverlay(
         exit = sheetExit(moving),
     ) {
         val open = exiting ?: return@AnimatedVisibility
-        // Read once per coin and not once per recomposition: building the row walks the inventory and
-        // the index, and the sheet recomposes for the whole of its own entrance.
+        // Once per coin: building the row walks the inventory and the index, and the sheet
+        // recomposes on every frame of its entrance.
         val row = remember(open, surface) { surface.coin(open) } ?: return@AnimatedVisibility
         val (photo, otherSide) = faces(open)
         CoinSheet(
@@ -139,16 +121,14 @@ fun CoinSheetOverlay(
             photo = photo,
             otherSide = otherSide,
             travelling = travelling,
-            // The sheet yields on dismiss the same way the cell yielded on open (#370): `exiting`
-            // keeps the hole composed through the exit, but ownership follows the open coin, or both
-            // ends claim the photograph and the return pops.
+            // Ownership follows the open coin, not `exiting`: otherwise both ends claim the
+            // photograph during the exit and the return transition pops (#370).
             ownsCoin = typeId == open,
             ficha = surface.ficha(open),
             value = surface.value(open),
             doors = row.claims.filterNot { it.destination == here },
             onDismiss = onDismiss,
-            // Both ways out close the sheet first: coming back from Numista or from a collection onto
-            // an overlay nobody asked to still be there is the sheet outliving the gesture.
+            // Both ways out close the sheet first, so coming back doesn't land on it still open.
             onOpenNumista = {
                 onDismiss()
                 surface.onOpenNumista(open)
@@ -162,10 +142,8 @@ fun CoinSheetOverlay(
 }
 
 /**
- * The sheet coming up from the foot of the screen, and none at all where the system asked for quiet.
- *
- * [LocalMotion] and not a duration of its own: at zero the app does not animate faster, it does not
- * animate (#514). Named so the pair can be read — and defended — without an emulator between them.
+ * The sheet slides up from the bottom, or appears without animation when [LocalMotion] is off
+ * (#514). Extracted so tests can check the pair without an emulator.
  */
 internal fun sheetEnter(moving: Boolean): EnterTransition =
     if (moving) fadeIn() + slideInVertically { it } else EnterTransition.None
@@ -228,12 +206,11 @@ private fun CoinSheet(
 }
 
 /**
- * Exact identity and upkeep live inside the coin instead of being repeated under every hole.
+ * The sheet's content: exact identity, value, ficha upkeep and the collections that claim the coin.
  *
- * The die-cut at the top is the landing of ADR 0026 §3's second journey (#370): same 104 dp hole as
- * the cell it left, cardboard only when a collection claims the type — the form «En ninguna
- * colección» already used in the grid — and the **ghost of the design** where the collector owns no
- * piece at all, which is the casilla of a lámina that opened it (#508).
+ * The 104 dp hole at the top is the landing of ADR 0026 §3's second transition (#370), drawn like
+ * the cell it left: cardboard only when a collection claims the type, and the design's ghost when
+ * no piece is owned (#508).
  */
 @Composable
 private fun CoinFicha(
@@ -256,8 +233,6 @@ private fun CoinFicha(
         val hole = Modifier.padding(top = 20.dp, bottom = 12.dp).size(104.dp)
         AlbumHole(
             photo = photo,
-            // A coin no piece of which is in the collection is drawn as what it is: a hole with the
-            // catalog design behind it, exactly as the casilla the sheet was opened from.
             absence = if (row.quantity == 0) HoleAbsence.Missing else HoleAbsence.Filled,
             backed = row.claims.isNotEmpty(),
             otherSide = otherSide,
@@ -280,8 +255,7 @@ private fun CoinFicha(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
-        // The value with its origin said, because a number with no provenance in an app with two
-        // users is a number nobody can check (#316).
+        // The value always says where it comes from (#316).
         value?.let { reading ->
             Text(
                 coinValueLabel(reading),

@@ -125,16 +125,16 @@ import com.jenarvaezg.coindex.ui.wishDoorMoreLabel
 import com.jenarvaezg.coindex.ui.wishDoorNote
 import com.jenarvaezg.coindex.ui.theme.Paper
 
-/** The album cell: one round coin and two short lines under it. */
+/** The album cell: one coin and two short lines under it. */
 private val MIN_CARD_WIDTH = 104.dp
 
-/** Every card reserves the same name range, so the fractions form one baseline across a row. */
+/** Every card reserves two name lines, so the fractions share a baseline across a row. */
 internal const val COLLECTION_NAME_LINES = 2
 
 private val PAGE_MARGIN = 12.dp
 private val INDEX_GUTTER = 8.dp
 
-/** How many cards fit side by side, counted from the page rather than from the device. */
+/** Cards that fit side by side in [availableWidth]. */
 internal fun indexColumns(availableWidth: Dp): Int {
     val usable = availableWidth - PAGE_MARGIN * 2 + INDEX_GUTTER
     val perColumn = MIN_CARD_WIDTH + INDEX_GUTTER
@@ -142,16 +142,11 @@ internal fun indexColumns(availableWidth: Dp): Int {
 }
 
 /**
- * The collection index: one card per current collection, in **one list and one order**.
+ * The collection index: one card per collection, in one list and one order.
  *
- * There is one species of collection (ADR 0021 §2) — a curated catalog, a curated grouping and a
- * box the collector typed — so there is no block, no section heading and no word of provenance
- * telling them apart. What replaced the three blocks of dispositions is a single comparator,
- * `(has ratio ↓, ratio ↓, denominator ↓, name ↑)` (ADR 0021 §6), applied in the domain: this
- * screen draws [CollectionState.index] in the order it arrives.
- *
- * Three compact cells fit across the measured Pixel 7. Wider screens keep adding cells rather than
- * stretching the holes, so the album keeps the same reading density in every orientation.
+ * Catalogs, groupings and boxes are one kind of collection (ADR 0021 §2), so nothing on screen
+ * tells them apart. The order comes from the domain (ADR 0021 §6); this screen draws
+ * [CollectionState.index] as it arrives. Wider screens add cells rather than stretching the holes.
  */
 @Composable
 fun IndexScreen(
@@ -160,122 +155,85 @@ fun IndexScreen(
     lastSync: SyncRecord?,
     shelf: IndexShelf,
     /**
-     * The curated catalogs, for the país chip of the shelf: a card spans every country its plate
-     * names, and a member's country is not the card's (#170). The axes no longer need them — their
-     * casillas arrive resolved on the assembly (#538).
+     * For the país chip: a card spans every country its plate names, not just its members' (#170).
      */
     catalogs: List<CollectionCatalog>,
     onNarrow: (IndexShelf) -> Unit,
     onOpen: (CardDestination) -> Unit,
-    /**
-     * Open Monedas with a shelf already narrowed — country or year axis seats that want the list,
-     * not another plate.
-     */
+    /** Opens Monedas pre-narrowed, from country or year axis seats. */
     onOpenCoins: (CoinsShelf) -> Unit,
-    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    /** Computed once above the three roots so they all show the same counts. */
     sewnEdge: SewnEdgeCounts?,
     /**
-     * The casillas the collector is looking for, which the row at the head of the sheet names and draws
-     * (ADR 0029 §6, #520).
-     *
-     * **The rows and not a count**, since #520: the row draws the first few of them as coins, so it needs
-     * the type and the face each casilla rests on. Empty means there is no row at all — they are crossed
-     * with the collection above this screen, over the whole of it and never over the narrowing, because a
-     * filter on the shelf is about the cards of the index and these coins are not in it.
-     *
-     * In the list's own order, the last marked first: what the row shows is what was just marked.
+     * The marked casillas, drawn on the row at the top (ADR 0029 §6, #520), last marked first.
+     * Empty means no row. Computed over the whole collection, never the narrowing: these coins are
+     * not index cards.
      */
     wishes: List<DrawnWish>,
     /**
-     * How many curated plates the collector owns nothing of, which the row at the foot names (ADR 0030 §8).
-     *
-     * The **twenty and not the twenty-three**: what is behind that row which this list does not already
-     * hold is the shelf window. Zero means no row, which is the same clause the marks above keep.
+     * Curated plates the collector owns nothing of, for the row at the foot (ADR 0030 §8). Excludes
+     * the marked plates «Explorar» also shows, which are already in this list. Zero means no row.
      */
     showcase: Int,
-    /** Into «Lo que busco», from the row at the head: the annex's sibling room (ADR 0030 §8, #520). */
+    /** Opens «Lo que busco» from the row at the top (ADR 0030 §8, #520). */
     onOpenWishes: () -> Unit,
-    /** Into «Explorar», from the row at the foot. Two rows, two destinations, one name each. */
+    /** Opens «Explorar» from the row at the foot. */
     onOpenShowcase: () -> Unit,
     onOpenPhone: () -> Unit,
     /**
-     * How the notebook is printed, as it was left last time (#228).
-     *
-     * The export sheet opens on it and works on a copy: what the collector is dragging switches
-     * around is a draft, and it only becomes how they print when they press «Exportar».
+     * The last-used print options (#228). The export sheet edits a copy, saved only on export.
      */
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
     /**
-     * The cards this screen is showing, as printable pages on a given configuration.
-     *
-     * It takes the list rather than reading the index itself, so the notebook is what is on screen
-     * — filters and search included — and not what the collector had just narrowed away. Called
-     * once the export sheet is open and once per switch moved, never on an idle recomposition:
-     * resolving every card's plate is work the index does not owe until somebody asks for paper.
-     *
-     * The second list is the coins no collection claims (#275), narrowed by the same shelf: what
-     * belongs in the notebook is this screen's answer, and the printer only decides where it goes.
+     * Turns the shown cards, plus the loose coins under the same narrowing (#275), into printable
+     * pages for a configuration. Takes the lists so the notebook is exactly what is on screen.
+     * Called when the export sheet opens and on each switch change, never on idle recomposition.
      */
     notebook: (List<IndexCard>, List<CollectedItem>, NotebookOptions) -> List<PrintPage>,
     onMessage: (UiNotice) -> Unit,
     /**
-     * Whether the notebook is being exported right now.
-     *
-     * The export wants all four of the loader's slots, and the background photograph prefetch holds
-     * two of them (#191). This is what lets it stand aside for as long as the collector is watching
-     * a progress bar — and start again, on whatever is still missing, when the PDF is out.
+     * Whether an export is running. The export wants all four image-loader slots, so the background
+     * photo prefetch (which holds two) pauses meanwhile and resumes afterwards (#191).
      */
     onExporting: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val openCard: (IndexCard) -> Unit = { card -> onOpen(destinationOf(card)) }
-    // Null while nothing is being printed. The job itself is the switch: what is being exported is
-    // the notebook as it was when the button was pressed, so a sync landing mid-export cannot
-    // reshuffle the pages under the printer. [destination] says whether it lands in Descargas or
-    // leaves for another app (#285).
+    // Null when idle. The job freezes the pages at the tap, so a sync mid-export can't reshuffle
+    // them.
     var printing by remember { mutableStateOf<NotebookJob?>(null) }
     var step by remember { mutableStateOf<NotebookExportStep>(NotebookExportStep.Drawing(0, "")) }
-    // Whether the export sheet is open, and **not** the cards it was opened over: the shelf and the
-    // search box stay live above it, so a sheet holding the list from the moment of the tap would go
-    // on claiming «lo que hay en el índice ahora mismo» about a narrowing the collector had already
-    // changed — and «Exportar» would print it. What freezes is the export, at the second tap.
+    // Only whether the sheet is open, not a snapshot of the cards: the shelf stays live above it,
+    // and the pages freeze only when the export starts.
     var configuring by remember { mutableStateOf(false) }
-    // A draft, discarded on «Cancelar»: playing with the switches and backing out has not changed
-    // how this collector prints. Reset from the stored configuration each time the sheet opens.
+    // Discarded on «Cancelar»; reset from the stored options each time the sheet opens.
     var draft by remember { mutableStateOf(notebookOptions) }
-    // Announced from the state and not from the tap, so cancelling and failing say it too: every
-    // way out of an export goes through `printing` becoming null.
+    // Driven by the state, not the tap, so cancel and failure report it too.
     LaunchedEffect(printing != null) { onExporting(printing != null) }
-    // Joined once per collection, not once per chip counted: five facets over sixty cards would
-    // otherwise walk the inventory thirty times a redraw.
+    // Once per collection, not once per counted chip.
     val facts = remember(state, catalogs) { indexFacts(state, catalogs) }
     // Saved across a rotation and never persisted (ADR 0021 §1), unlike the shelf above it.
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
-    // Countries whose absences the collector unfolded (#417). Saved across a rotation like the
-    // search box and, like it, never persisted: which country you were reading is not a preference
-    // the app should still hold tomorrow, and the sheet opens folded so the axis keeps its measure.
+    // Countries whose absences are unfolded (#417). Like the search, survives rotation but is never
+    // persisted.
     var unfolded by rememberSaveable(
         saver = listSaver<MutableState<Set<String>>, String>(
             save = { it.value.toList() },
             restore = { mutableStateOf(it.toSet()) },
         ),
     ) { mutableStateOf(emptySet<String>()) }
-    // **What prints is what the index is showing** (ADR 0021 §13): the filter is the selection, so
-    // the notebook needs no mechanism of its own to choose pages.
+    // What prints is what the index shows (ADR 0021 §13): the filter is the selection.
     val shown = remember(facts, shelf, query) { shelf.narrow(facts, query) }
-    // What is narrowing right now, which the empty card answers and the door of the annex declares
-    // itself outside of (#515).
+    // What the empty card names and undoes, and what the wishes row says it ignores (#515).
     val narrowing = shelfNarrowing(filters = shelf.active, query = query)
-    // The coins no collection claims, measured against the **whole** index and then narrowed by the
-    // same shelf (#275): having a collection is a fact about the coin, so a filter cannot orphan one
-    // that lives in a box — but a filtered notebook still takes only the loose coins it is about.
+    // Loose coins are found against the whole index, then narrowed by the shelf (#275): a filter
+    // can't make a boxed coin loose.
     val loose = remember(state) { unclaimedFacts(state) }
     val looseShown = remember(loose, shelf, query) { shelf.narrowUnclaimed(loose, query) }
-    // Catalogs and loose rows that survive the shelf: the country/year axes honour the same chips
-    // the plate axis does, so a weight filter does not leave Rusia painted in full beside a
-    // narrowed card grid.
+    // What survives the shelf, so the country and year axes honour the same chips as the plate
+    // axis.
     val keptCatalogIds = remember(shown) {
         shown.mapNotNull { card -> (card as? IndexCard.Derived)?.plateCatalogId }.toSet()
     }
@@ -296,8 +254,7 @@ fun IndexScreen(
         if (shelf.axis != NotebookAxis.ByYear) {
             null
         } else {
-            // Years walk every owned piece that still belongs to a kept catalog or is loose-kept;
-            // pieces inside a hidden card stay off the arc with it.
+            // Only pieces in a kept card or kept loose; a hidden card's pieces stay off the axis.
             val keptItemIds = buildSet {
                 for (card in shown) {
                     when (card) {
@@ -325,17 +282,14 @@ fun IndexScreen(
             yearAxisTally(it.ownedYears, it.totalYears)
         } ?: indexTally(shown.size, state.index.size)
     }
-    // What the export sheet is showing the cost of: recounted when a switch moves, and when the
-    // narrowing under it moves. **Outside the grid**, like the export itself and for the same
-    // reason: a lazy item is disposed the moment it scrolls off, and resolving sixty plates again
-    // every time the sheet scrolls back into view is not what «recontado a cada toque» means.
+    // Recounted when a switch or the narrowing changes. Kept outside the grid: a lazy item is
+    // disposed when it scrolls off, and would resolve every plate again on scrolling back.
     val preview = remember(configuring, shown, looseShown, draft) {
         if (!configuring) {
             null
         } else {
             ExportPreview(
-                // The lámina of the loose coins counts as one, because it is one: the sheet counts
-                // what this configuration produces, which is the whole reason it recounts at all.
+                // The loose-coin lámina counts as one card.
                 cards = shown.size + if (draft.unclaimed && looseShown.isNotEmpty()) 1 else 0,
                 pages = notebook(shown, looseShown, draft),
             )
@@ -346,9 +300,8 @@ fun IndexScreen(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        // Counted here rather than left to GridCells.Adaptive, because the heading needs the
-        // same answer: one column is a page, two are a spread. The country and year axes are one
-        // column of blocks; the plate axis keeps the album density.
+        // Computed here rather than with GridCells.Adaptive because the heading needs it too. The
+        // country and year axes are a single column of blocks.
         val columns = when (shelf.axis) {
             NotebookAxis.ByPlate -> indexColumns(maxWidth)
             NotebookAxis.ByCountry, NotebookAxis.ByYear -> 1
@@ -360,7 +313,7 @@ fun IndexScreen(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = PAGE_MARGIN, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(INDEX_GUTTER),
-            // 6dp is the measured pitch that leaves 3.68 rows in the Pixel 7 fold: 11.04 cards.
+            // 6 dp leaves 3.68 rows (11 cards) above the fold on a Pixel 7.
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             fullWidth {
@@ -403,23 +356,15 @@ fun IndexScreen(
                 }
             }
 
-            // «Lo que busco», at the **head** of the sheet and with its casillas drawn (#520).
-            //
-            // The one row of this screen that is not about what the collector has, and the reason it
-            // is up here rather than at the foot with the shelf's: a list for a fair is the most
-            // actionable thing the app holds, and the foot of sixty-nine cards is four folds away.
-            // ADR 0026 §8 clause 3 is amended for it — an annex has two possible places now, and
-            // which one it takes is whether its population is a shopping list or a window.
-            //
-            // **Not printed at zero**, the clause the sewn edge keeps while it reads (#418): with
-            // nothing marked the first view is exactly the one it was before this ticket.
+            // «Lo que busco» at the top, with its casillas drawn (#520): a shopping list for a fair
+            // is the most actionable thing here, and the foot of the index is several screens down
+            // (ADR 0026 §8 clause 3, amended). Absent when nothing is marked, as in #418.
             if (wishes.isNotEmpty()) {
                 fullWidth {
                     AnnexDoor(
                         label = wishDoorLabel(wishes.size),
-                        // Its count is of another population, so a search running above it leaves it
-                        // where it was — and the row says that rather than looking stale (#515). It
-                        // is said **here and not at the foot**: two rows, one sentence.
+                        // The search doesn't narrow its count, and the note says so rather than
+                        // look stale (#515). Only this row carries it, not the one at the foot.
                         note = wishDoorNote(searching = query.isNotBlank()),
                         onOpen = onOpenWishes,
                     ) {
@@ -428,9 +373,8 @@ fun IndexScreen(
                 }
             }
 
-            // The six switches and what they cost, before a single page is drawn (#228). In the
-            // same slot the progress card takes, because it is the same conversation: what is
-            // about to come out of the printer.
+            // The print switches and their cost, before any page is drawn (#228), in the slot the
+            // progress card later takes.
             preview?.let { about ->
                 fullWidth {
                     fun begin(destination: ExportDestination) {
@@ -441,8 +385,7 @@ fun IndexScreen(
                             onNotebookPrinted(draft)
                             step = NotebookExportStep.Drawing(
                                 0,
-                                // The plate at the top of the folio, which since #232 may not
-                                // be the only one on it.
+                                // The folio's first plate; it may share the folio (#232).
                                 pages.first().blocks.first().section.title,
                             )
                             printing = NotebookJob(pages, destination)
@@ -453,8 +396,7 @@ fun IndexScreen(
                         options = draft,
                         pages = about.pages.size,
                         cards = about.cards,
-                        // What «Sin colección» has left to offer under the current narrowing, so a
-                        // switch with no lámina behind it is greyed instead of ticked and inert.
+                        // Greys out «Sin colección» when the narrowing leaves no loose coin.
                         loose = looseShown.size,
                         onChange = { draft = it },
                         onDownload = { begin(ExportDestination.Download) },
@@ -464,15 +406,14 @@ fun IndexScreen(
                 }
             }
 
-            // Visible progress and a way out, which is what a job of eighty-four pages and a
-            // thousand photographs owes whoever pressed the button (#169).
+            // Progress and a cancel action for a long export (#169).
             printing?.let { job ->
                 fullWidth {
                     ExportProgress(
                         step = step,
                         pages = job.pages.size,
-                        // Every step but the write, which would close the document under the
-                        // thread serializing it.
+                        // Cancellable except while writing, which would close the document under
+                        // the thread serializing it.
                         onCancel = when (val current = step) {
                             is NotebookExportStep.Warming -> {
                                 {
@@ -519,8 +460,8 @@ fun IndexScreen(
                 }
             }
 
-            // A shelf that hides everything owes the way out on the spot: the shelf enters
-            // folded, so the chip responsible may be two taps away.
+            // When the shelf hides everything, offer the undo here: the folded shelf may hide the
+            // responsible chip.
             val axisEmpty = when (shelf.axis) {
                 NotebookAxis.ByPlate -> shown.isEmpty()
                 NotebookAxis.ByCountry -> countryModel?.blocks.isNullOrEmpty()
@@ -538,9 +479,8 @@ fun IndexScreen(
                             style = MaterialTheme.typography.bodyLarge,
                             color = Paper.muted,
                         )
-                        // Exactly what is narrowing, undone by the name it is offered under (#515):
-                        // the chips go without taking the axis and the sort with them, and the box
-                        // is emptied only where something was typed into it.
+                        // Undo only what narrows (#515): filters but not axis or sort, and the
+                        // search box only if it has text.
                         val undo = clearNarrowingAction(narrowing).takeIf {
                             !loading && state.index.isNotEmpty()
                         }
@@ -571,9 +511,8 @@ fun IndexScreen(
                     CollectionCard(
                         card = card,
                         photo = photo,
-                        // A coin only flies where it has a casilla of its own to land in, which is
-                        // exactly the cards that open a plate (ADR 0026 §3). The other 20 of the
-                        // father's 69 have no ratio, and that is what tells them apart before touching.
+                        // Only cards that open a plate have a casilla for the coin to fly to
+                        // (ADR 0026 §3).
                         travelsTo = (card as? IndexCard.Derived)?.plateCatalogId,
                         onOpen = { openCard(card) },
                     )
@@ -624,11 +563,8 @@ fun IndexScreen(
                 }
             }
 
-            // The door of «Explorar», and the last row of this list whatever axis it is read on
-            // (ADR 0026 §8 clause 3). **One name and one destination** since #520: it used to carry a
-            // composed label that named the marks too and opened only this, which is a row promising
-            // two rooms from one tap. **Not printed at zero**, and it carries no note: the sentence
-            // about the search box lives on the row at the head, once.
+            // The door to «Explorar», last on every axis (ADR 0026 §8 clause 3). One name, one
+            // destination (#520); absent at zero.
             showcaseDoorLabel(plates = showcase)?.let { label ->
                 fullWidth {
                     AnnexDoor(label = label, onOpen = onOpenShowcase)
@@ -636,9 +572,8 @@ fun IndexScreen(
             }
         }
 
-        // Outside the grid on purpose: a lazy item is disposed the moment it scrolls off, and the
-        // page being recorded would go with it — the export would restart, or stop, depending on
-        // where the collector's thumb was.
+        // Outside the grid: a lazy item is disposed when it scrolls off, and would take the export
+        // with it.
         printing?.let { job ->
             NotebookPdfExport(
                 pages = job.pages,
@@ -654,23 +589,15 @@ fun IndexScreen(
 }
 
 /**
- * A door of the annex: deeper paper, its name with its count, and the way on.
+ * A row leading to an annex screen: deeper paper, its name with a count, and a forward arrow.
  *
- * **A row of the sheet and not a card**, which is the whole of ADR 0026 §8 clause 3: an annex is not a
- * fourth cell of the bar and not a collection of the index, so its entrance is a row on paper a shade
- * deeper, the way the sewn edge is deeper than the leaf.
+ * An annex is neither a bar cell nor an index collection, so its entrance is a row, not a card
+ * (ADR 0026 §8 clause 3, amended by #520). The index has two (marks at the top, the shelf window at
+ * the foot) and «Explorar» a third into «Lo que busco»; all three share this composable so they
+ * can't drift apart.
  *
- * **Where that row goes is no longer «the last thing on the page»** (§8 clause 3 as amended by #520). The
- * index hangs two of them: the marks at the head, because a list for a fair is what the collector came to
- * act on, and the shelf window at the foot, because browsing what you do not own is where a page ends.
- * «Explorar» hangs a third at its own head, into «Lo que busco». **One drawing for the three** — two
- * drawings of one shape is how the second one comes to be a shade off.
- *
- * The arrow is drawn rather than typed, because neither of the album's two typefaces has that glyph
- * (#298), and it is the same chevron «Volver» uses, mirrored: the two halves of one journey.
- *
- * [content] is what a row draws under its name — the marked casillas, on the index's own row — and it is
- * inside the target, because it is part of what the row is about rather than a second thing to press.
+ * The arrow is drawn because neither typeface has the glyph (#298); it is «Volver»'s chevron,
+ * mirrored. [content] (the marked casillas on the index's row) sits inside the tap target.
  */
 @Composable
 internal fun AnnexDoor(
@@ -690,11 +617,8 @@ internal fun AnnexDoor(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // The note is under the name and inside the target, so it reads as this row saying something
-        // about itself. Body and not the album's versalitas — it is a sentence about what the app did
-        // with a word, which is the shape #513 gave the line under the shelf's orders — but the small
-        // body and not #513's: there the line answered the control above it, and here it sits under
-        // the name of the door, which has to stay the loudest thing in the row.
+        // The note is a sentence, so body text rather than small caps (as in #513), but small so
+        // the name stays the loudest thing in the row.
         Column(modifier = Modifier.weight(1f, fill = false)) {
             Text(label, style = MaterialTheme.typography.labelLarge, color = Paper.ink)
             note?.let {
@@ -714,26 +638,18 @@ internal fun AnnexDoor(
     }
 }
 
-/** How many marked casillas the index's row draws before it starts counting them instead (#520). */
+/** Marked casillas the index's row draws before switching to a count (#520). */
 private const val WISHED_COINS_DRAWN = 3
 
-/** The diameter of a coin on that row: a quarter of the album's, and not a target of its own. */
+/** Coin diameter on that row; not a tap target of its own. */
 private val WISHED_COIN = 40.dp
 
 /**
- * The marked casillas as coins, on the row that opens «Lo que busco» (#520).
+ * The marked casillas as coins on the row that opens «Lo que busco» (#520), last marked first.
  *
- * **The first three and then a count**, because what the drawing is for is recognising a coin: seven of
- * them across 411 dp would be 32 dp each with nothing left for the cardboard, and a coin nobody can
- * recognise is furniture ADR 0026 §5 would price. The order is the list's own — the last marked first —
- * so the row shows what the collector just marked rather than a fixed three.
- *
- * **Whole and not in penumbra** ([HoleAbsence.Wanted]): these are casillas he is hunting, not casillas
- * missing from a plate he is filling. On the prototype the 14 % ghost at this size measured as two grey
- * discs, which is what #520 changed and what #556 will decide for the rest of the app.
- *
- * No year, no name and no price under them: the row is a door, and what is behind it is the list where
- * each casilla carries all three.
+ * Three and then a count, so each coin stays big enough to recognise. Drawn whole
+ * ([HoleAbsence.Wanted]), not as a ghost: these are being hunted, not missing from a plate. No
+ * year, name or price: the list behind the row has them.
  */
 @Composable
 private fun WishedCoins(wishes: List<DrawnWish>, images: Map<Int, TypeImages>) {
@@ -760,30 +676,20 @@ private fun WishedCoins(wishes: List<DrawnWish>, images: Map<Int, TypeImages>) {
 }
 
 /**
- * What the export sheet is about to produce: how many collections, and how much paper (#228).
- *
- * The two travel together because they are recounted together — the láminas are what the filter
- * chose and the pages are what the configuration makes of them — and holding the pages themselves
- * rather than only their number is what lets «Descargar» / «Compartir» start the printer on exactly
- * what the sheet had been describing.
+ * What the export sheet would produce: the card count and the pages (#228). Holding the pages
+ * themselves lets «Descargar» and «Compartir» print exactly what the sheet described.
  */
 private data class ExportPreview(val cards: Int, val pages: List<PrintPage>)
 
-/**
- * The notebook in flight: the pages frozen at the tap, and whether they land in Descargas or leave
- * for another app (#285).
- */
+/** A running export: the pages frozen at the tap, and Descargas or share (#285). */
 private data class NotebookJob(
     val pages: List<PrintPage>,
     val destination: ExportDestination,
 )
 
 /**
- * What tells one card of the grid from another across recompositions.
- *
- * The identity of a card is its curated file wherever there is one (ADR 0021 §5), but a route is
- * still what opens it, so the key here is what the destination is addressed by: the box id, or the
- * variant key of a collection derived from the inventory.
+ * The lazy-grid key: the box id, or the variant key of a derived collection, i.e. what its route is
+ * addressed by (ADR 0021 §5).
  */
 private fun cardKey(card: IndexCard): String = when (card) {
     is IndexCard.Derived -> "derived-${card.key}"
@@ -791,18 +697,11 @@ private fun cardKey(card: IndexCard): String = when (card) {
 }
 
 /**
- * One collection of the index, whichever of the two it is.
+ * One collection card. A single composable for every kind, since ADR 0021 §2 makes them identical
+ * on screen; anything that varies is drawn from what the card has, never from its kind.
  *
- * **One composable and not two**, because ADR 0021 §2 makes the cases indistinguishable on screen:
- * two of them would drift apart the first time one grew a line. What varies is drawn from what the
- * card *has* — a physical variant, a ratio, a reachable plate — never from which case it is.
- *
- * The photograph now carries the hierarchy the former country eyebrow and physical-variant line
- * were doing badly. Under the hole only the card name and its ratio/count remain (ADR 0026 §12).
- *
- * **The card is the whole of what the card does.** It used to carry a «Ver lámina» action besides,
- * which was a second destination on a card that has one (ADR 0021 §9): where a plate exists the
- * hole, name and fraction now open it as one target.
+ * Under the hole only the name and its ratio or count remain (ADR 0026 §12). The whole card is one
+ * target that opens the collection (ADR 0021 §9).
  */
 @Composable
 private fun CollectionCard(
@@ -843,9 +742,8 @@ internal fun CollectionName(
 ) {
     Text(
         text = name,
-        // Simple + Auto: wrap at spaces/hyphens (with a real hyphen when the dictionary
-        // splits a word). Without them, HighQuality was carving «Ibero-American» into
-        // «Ibero-America» / «n» on the three-column card (#405).
+        // Simple + Auto wraps at spaces and hyphens, hyphenating by dictionary. HighQuality split
+        // «Ibero-American» as «Ibero-America» / «n» on the three-column card (#405).
         style = MaterialTheme.typography.titleMedium.copy(
             lineBreak = LineBreak.Simple,
             hyphens = Hyphens.Auto,
@@ -865,11 +763,8 @@ internal fun CollectionName(
 }
 
 /**
- * The chip rows of Collections: the axis first, then the sort, then the five filters.
- *
- * The axis leads because it is the one control that answers «what is a cell?» (ADR 0026 §9), and
- * the sort follows because it answers «why is this card at the top?» — which is the question
- * ADR 0021 §6 created by making the order a measured ratio rather than the alphabet.
+ * The chip rows of Colecciones: axis (what a cell is, ADR 0026 §9), then sort (why a card is on
+ * top, ADR 0021 §6), then the filters.
  */
 @Composable
 private fun IndexFacets(
@@ -990,7 +885,7 @@ private fun IndexFacets(
     }
 }
 
-/** A row of the page rather than a card of the grid: headings and notices span every column. */
+/** An item spanning every column, for headings and notices. */
 private fun LazyGridScope.fullWidth(content: @Composable () -> Unit) {
     item(span = { GridItemSpan(maxLineSpan) }) { content() }
 }

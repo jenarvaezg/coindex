@@ -5,16 +5,11 @@ import com.jenarvaezg.coindex.ui.fold
 import com.jenarvaezg.coindex.ui.matchesQuery
 
 /**
- * Whether every piece of a coin is in some collection.
+ * Whether every piece of a coin is in some collection. [InNone] is the «Sin colección» chip, which
+ * replaced the «Sin clasificar» screen (ADR 0021 §1).
  *
- * [InNone] is the chip «Sin colección», which is what the masthead button «Sin clasificar» always
- * was (ADR 0021 §1): the same coins, reached from the hierarchy where they already live instead of
- * from a screen that existed to apologise for them.
- *
- * It is decided **by piece and not by type**, so a coin whose sibling row fell in the residue is
- * under it even though the type has a collection — see [CoinRow.unclaimedPieces]. Read off `claims`
- * instead, the chip would have quietly stopped showing one of the father's two Silver Eagles, which
- * is the one thing this filter inherited from the screen it replaced.
+ * Decided per piece, not per type ([CoinRow.unclaimedPieces]): a type with a collection can still
+ * have an unclaimed piece.
  */
 enum class Membership(val label: String) {
     InSome("En alguna colección"),
@@ -22,20 +17,16 @@ enum class Membership(val label: String) {
 }
 
 /**
- * What the shelf of Coins is currently narrowing by. A null facet is that facet's «all» chip.
+ * What the Monedas shelf narrows by; a null facet is its «all» chip.
  *
- * Search is deliberately **not** a field of this type: filters persist between launches and the
- * query does not (ADR 0021 §1), so the thing that is stored and the thing that is typed are two
- * different values, and keeping them one would have made «reopen the app with half the collection
- * hidden» a one-line mistake.
+ * The search query is kept apart because filters persist between launches and the query doesn't
+ * (ADR 0021 §1).
  */
 data class CoinsShelf(
     val sort: CoinSort = CoinSort.ByCountry,
     /**
-     * How the list is ordered on the axis of the notebook (ADR 0026 §8–§9).
-     *
-     * Same facet the index carries: the two hierarchies with a list both gain it. It is not a
-     * filter, so it is not counted in [active] nor named among them on the folded line.
+     * The notebook axis (ADR 0026 §8–§9), shared with the index. Not a filter, so not counted in
+     * [active] nor named on the folded line.
      */
     val axis: NotebookAxis = NotebookAxis.ByPlate,
     val issuer: String? = null,
@@ -47,7 +38,7 @@ data class CoinsShelf(
     val active: Int
         get() = listOfNotNull(issuer, weight, year, objectClass, membership).size
 
-    /** The chips dropped and the axis and sort kept, as on the other shelf (#515). */
+    /** Clears the filters, keeping axis and sort, as in the index (#515). */
     fun withoutFilters(): CoinsShelf =
         copy(issuer = null, weight = null, year = null, objectClass = null, membership = null)
 
@@ -63,20 +54,15 @@ data class CoinsShelf(
             (except == CoinsFacet.Membership || membership == null || membershipOf(row) == membership)
 }
 
-/** The five chip rows of Coins, named so a facet can be counted with its own choice dropped. */
+/** The filter facets, named so each can be counted with its own choice dropped. */
 enum class CoinsFacet { Issuer, Weight, Year, Class, Membership }
 
 private fun membershipOf(row: CoinRow): Membership =
     if (row.unclaimedPieces > 0) Membership.InNone else Membership.InSome
 
 /**
- * How the list of coins is ordered (ADR 0021 §1: «both sides carry filters, **sorting** and a live
- * search»).
- *
- * The default is the reading order of a field notebook, which is the one Coins has no alternative
- * to: with no ratio to rank by, the collector arriving here is looking for a coin they can picture.
- * Everything else answers a question about the pile rather than about one coin — «what is the newest
- * thing I have?», «which is the heavy one?» — and «Más piezas» is where the duplicates surface.
+ * The Monedas sort orders (ADR 0021 §1). The default is the field-notebook reading order; the rest
+ * answer questions about the whole pile, and «Más piezas» surfaces duplicates.
  */
 enum class CoinSort(val label: String) {
     ByCountry("Por país"),
@@ -87,15 +73,14 @@ enum class CoinSort(val label: String) {
     MostPieces("Más piezas"),
 }
 
-/** The coins this shelf and this query leave, in the order the shelf's axis and sort ask for. */
+/** The coins this shelf and query leave, ordered by the shelf's axis and sort. */
 fun CoinsShelf.narrow(rows: List<CoinRow>, query: String): List<CoinRow> = rows
     .filter { row -> matches(row) && matchesQuery(row.haystack, query) }
     .sortedWith(coinSortOrder(effectiveSort()))
 
 /**
- * The axis is the same facet Collections carries (ADR 0026 §8–§9): on Coins it chooses the reading
- * order when it is not «por lámina». «Por país» and «por año» are the field-notebook orders; the
- * collector's own sort only applies on the default axis.
+ * Off the plate axis, the axis sets the order (ADR 0026 §8–§9); the chosen sort applies only on the
+ * default axis.
  */
 private fun CoinsShelf.effectiveSort(): CoinSort = when (axis) {
     NotebookAxis.ByPlate -> sort
@@ -104,18 +89,13 @@ private fun CoinsShelf.effectiveSort(): CoinSort = when (axis) {
 }
 
 /**
- * Every order but the default is built on top of it, never instead of it.
- *
- * `sortedWith` is stable and [coinRows] already left the list in reading order, so «Más pesadas»
- * breaks its own ties by country and year without restating either. Unknowns go last in every order
- * that has one to place: an uncached type says less than a dated one, and opening the list on
- * whatever the last sync had not finished would be the wrong first screen.
+ * Each order refines the default one: `sortedWith` is stable and [coinRows] returns reading order,
+ * so ties fall back to country and year. Unknown values go last.
  */
 private fun coinSortOrder(sort: CoinSort): Comparator<CoinRow> = when (sort) {
     CoinSort.ByCountry -> Comparator { _, _ -> 0 }
     CoinSort.Alphabetical -> coinTitleOrder()
-    // By the newest year it holds and the oldest respectively: a type spanning 1879 to 1936 is the
-    // collection's oldest coin and also one of its later ones, and each order asks a different end.
+    // Newest sorts by a row's latest year and Oldest by its earliest, since a row can span years.
     CoinSort.Newest -> compareBy<CoinRow> { it.newestYear == null }
         .thenByDescending { it.newestYear ?: 0 }
     CoinSort.Oldest -> compareBy<CoinRow> { it.oldestYear == null }

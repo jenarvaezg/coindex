@@ -10,15 +10,8 @@ private const val KEY_CALLS = "last_sync_calls"
 private const val KEY_PARTIAL = "last_sync_partial"
 
 /**
- * The last [SyncRecord], on named values rather than in the database.
- *
- * It is a single row about the device, not about the collection, and putting it in Room would
- * cost a schema migration for something no query ever joins against.
- *
- * A plain class and no longer an interface with a fake of its own (#546): what writes it —
- * [CollectionSync] — still has to be readable without a device, because the record carries a
- * timestamp and a timestamp nobody can pin down is a line of the masthead nobody can test. That is
- * what a fake [NamedValues] is for.
+ * The last [SyncRecord], on named values rather than in Room: one row about the device that no
+ * query joins, not worth a schema migration. Tested through a fake [NamedValues] (#546).
  */
 class StoredSyncLog(private val values: NamedValues) {
     var last: SyncRecord?
@@ -34,9 +27,8 @@ class StoredSyncLog(private val values: NamedValues) {
         }
         set(value) = values.write(
             if (value == null) {
-                // The five keys by name and not a `clear()` of the file: the seam removes what it
-                // is told to, and these five are everything this file has held since it was
-                // written (#10) — no sixth key was ever added to it and later dropped.
+                // Removed by name: the seam has no `clear()`, and these five keys are all the
+                // file has ever held (#10).
                 mapOf(
                     KEY_AT to null,
                     KEY_ITEMS to null,

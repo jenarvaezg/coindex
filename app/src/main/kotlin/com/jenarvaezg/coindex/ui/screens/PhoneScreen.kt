@@ -30,37 +30,28 @@ import com.jenarvaezg.coindex.ui.valuationBlamesCredentials
 import com.jenarvaezg.coindex.ui.valuationLabel
 
 /**
- * The maintenance of the inventory: what this phone holds, and how it is brought up to date (#521).
+ * «Este teléfono»: what the phone holds and how it is kept up to date (#521). Formerly «Ajustes»,
+ * renamed because most of it is maintenance, not configuration.
  *
- * It was «Ajustes», and it was named after the two fields it opened with. The audit of 14 August 2026
- * measured what the name was covering: 87 of the screen's 165 words — the sync, the two queues and the
- * export — are maintenance and not configuration, and the one filled action on it was «Sincronizar»,
- * sitting between the API key and «Cerrar sesión» behind a glyph of sliders that suggests filters.
- *
- * So the nesting is inverted rather than the screen split in two (ADR 0026 §14): what the trip is for
- * is at the top, and the credentials — filled once at onboarding, revisited only when Numista starts
- * refusing the key — go down into the shape §14 wrote for the licence notices, three words at the
- * foot. What blames them opens them: the valuation card grows a row in those two states, because a
- * cure two taps away with no door from the symptom is the dead end Ajustes was invented to end.
- *
- * Reading order: «Sincronizar» first and filled — FieldGuide's level 1, the one thing this screen is
- * opened to do — then the two queues that report on it, then the export, then the two feet.
+ * «Sincronizar» comes first as the filled action, then the photo and valuation cards that report on
+ * it, then the data export, then two links at the foot. The credentials moved one screen down, in
+ * the shape of ADR 0026 §14; the valuation card links to them when the key is the problem.
  */
 @Composable
 fun PhoneScreen(
     photoCache: PhotoCacheStatus,
-    /** How far the valuation pass has got, and why it is held if it is (ADR 0028 §6). */
+    /** The valuation pass's progress, and why it is held if it is (ADR 0028 §6). */
     valuation: ValuationStatus,
     /**
-     * What the marked casillas add to the month, or null while nothing is marked (ADR 0029 §5).
-     *
-     * It rides on the valuation's card because it is the same subject: that card is where the app says
-     * what the pass costs, and a mark is the first thing that makes the figure the collector's own
-     * decision. Absent and not zero — a phone with nothing marked has the fixed pass it always had.
+     * What the marked casillas add to the monthly pass, or null when nothing is marked
+     * (ADR 0029 §5). Shown on the valuation card, which is where the pass's cost is stated.
      */
     wishSpend: String?,
     syncing: Boolean,
-    /** Whether the raw dump of #548 is being written; two taps would open two choosers. */
+    /**
+     * Whether the raw dump (#548) is being written; disables the button so two taps don't open two
+     * choosers.
+     */
     exporting: Boolean,
     onSync: () -> Unit,
     onExportData: () -> Unit,
@@ -75,17 +66,15 @@ fun PhoneScreen(
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // No eyebrow and no heading: the masthead of this screen already says «Este teléfono», and
-        // printing it twice one line apart is the furniture §5 prices.
+        // No heading: the top bar already says «Este teléfono» (ADR 0026 §5).
         PrimaryAction(
             text = syncActionLabel(syncing),
             onClick = onSync,
             enabled = !syncing,
         )
 
-        // The photographs are the one thing here that cannot be pressed. It is the only place the
-        // background prefetch is allowed to speak (#191), and it is here because «faltan 320 y están
-        // cayendo» and «faltan 320 porque estás con datos» look identical from the outside and are not.
+        // The only place the background photo prefetch reports (#191): «downloading» and «waiting
+        // for Wi-Fi» look identical from outside.
         FieldCard(modifier = Modifier.fillMaxWidth()) {
             Text(PHOTO_CACHE_HEADING, style = MaterialTheme.typography.titleMedium)
             Text(
@@ -96,9 +85,8 @@ fun PhoneScreen(
             )
         }
 
-        // The pass is silent everywhere else, and this is the one line it is allowed (ADR 0028 §6):
-        // «Las cifras» with no money section looks the same whether the prices are on their way or
-        // the month's allowance is gone, and only one of the two is worth waiting for.
+        // The only place the valuation pass reports (ADR 0028 §6): from «Las cifras», prices on
+        // their way and an exhausted monthly allowance look the same.
         FieldCard(modifier = Modifier.fillMaxWidth()) {
             Text(VALUATION_HEADING, style = MaterialTheme.typography.titleMedium)
             Text(
@@ -107,8 +95,7 @@ fun PhoneScreen(
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 4.dp),
             )
-            // The elastic half of the same budget (ADR 0029 §5): the line above says what the pass is
-            // doing, and this one says what the collector's own marks add to it every month.
+            // What the collector's marks add to the pass each month (ADR 0029 §5).
             wishSpend?.let { spend ->
                 Text(
                     spend,
@@ -117,9 +104,8 @@ fun PhoneScreen(
                     modifier = Modifier.padding(top = 4.dp),
                 )
             }
-            // The door of ADR 0028 §6.1, in the two states of six whose cause is the key and not a
-            // wait. It says the name of what it opens and nothing else, the pairing §14 holds for
-            // «Avisos y licencias»: an action worded for this card would read as a second feature.
+            // ADR 0028 §6.1: only in the states caused by the key. Labelled with the destination's
+            // name, as the foot link is (ADR 0026 §14).
             if (valuationBlamesCredentials(valuation)) {
                 CardAction(
                     text = CREDENTIALS_LABEL,
@@ -130,8 +116,7 @@ fun PhoneScreen(
         }
 
         FieldCard(modifier = Modifier.fillMaxWidth()) {
-            // No title — the word is the button, and a card whose heading repeats its only control
-            // says it twice (§5).
+            // No title: it would repeat the card's only button (ADR 0026 §5).
             Text(
                 DATA_EXPORT_EXPLANATION,
                 style = MaterialTheme.typography.bodyMedium,
@@ -145,8 +130,7 @@ fun PhoneScreen(
             )
         }
 
-        // The two feet, in the order of how often they are needed: the key that stops a sync, then
-        // the licences. Three words each and no subtitle (ADR 0026 §14).
+        // Ordered by how often they are needed (ADR 0026 §14).
         CardAction(text = CREDENTIALS_LABEL, onClick = onOpenCredentials)
         CardAction(text = NOTICES_LABEL, onClick = onOpenNotices)
     }

@@ -16,10 +16,8 @@ const val UPDATE_REPO: String = "jenarvaezg/coindex"
 const val UPDATE_MANIFEST_ASSET: String = "update.json"
 
 /**
- * What a release says about itself.
- *
- * Kept as a separate asset rather than parsed out of the tag name: the tag is for humans and
- * would be a fragile place to encode the version code an update decision depends on.
+ * What a release says about itself, as a separate asset rather than parsed out of the tag name,
+ * which is for humans.
  */
 @Serializable
 data class UpdateManifest(
@@ -54,10 +52,7 @@ private data class GithubAsset(
 )
 
 /**
- * Asks GitHub whether a newer APK has been published.
- *
- * These requests go to GitHub, not to Numista, so they are deliberately outside the API
- * budget gate: they cost nothing of the collector's monthly allowance.
+ * Asks GitHub whether a newer APK has been published. Outside the Numista budget gate on purpose.
  */
 class UpdateChecker(
     private val httpClient: HttpClient,

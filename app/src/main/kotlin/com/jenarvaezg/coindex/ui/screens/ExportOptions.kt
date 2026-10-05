@@ -35,22 +35,15 @@ import com.jenarvaezg.coindex.ui.print.NotebookSwitch
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * How the notebook is about to be printed: six switches, and what they cost in paper (#228, #275).
+ * The notebook's print switches and what they cost in pages (#228, #275).
  *
- * **The count is why this exists**, and why it could not go in Ajustes: pages are arithmetic over
- * what the index is showing at that moment — filters and search included — so a screen with no index
- * in front of it has no number to print. It is recounted on every tap and nothing is drawn to get it.
+ * The page count depends on what the index shows right now, filters and search included, which is
+ * why this lives in the index and not in Ajustes. It is recounted on every tap without drawing.
+ * A card in the progress card's slot, not a dialog: ADR 0021 §13 rules out confirming an export,
+ * and this is for choosing.
  *
- * It is a card in the index and not a modal dialog. ADR 0021 §13 refused a dialog in front of the
- * export on the grounds that the button already says how much it will export; what earns a surface
- * here is not confirming, it is **choosing** — and it lands in the same slot the progress card uses,
- * in the app's one visual language, rather than as the first bottom sheet in the app.
- *
- * All six do something now (#233, #275). While a ticket was outstanding its switch was drawn, remembered
- * and **disabled**, with the issue named under it, because the one thing a control must never be is
- * tickable and inert. What is left grey is what makes the question moot — «ambas caras» and «tamaño
- * real» with the photographs off, «sin colección» with no loose coin under the current narrowing — and
- * both resolve themselves: one when the coins come back, the other when the filter is cleared.
+ * A switch is greyed only when the current choices make it moot («ambas caras» and «tamaño real»
+ * with photographs off, «sin colección» with no loose coin under the narrowing).
  */
 @Composable
 fun ExportOptions(
@@ -58,14 +51,9 @@ fun ExportOptions(
     pages: Int,
     cards: Int,
     /**
-     * How many coins no collection claims, of the ones this narrowing leaves (#275).
-     *
-     * The sheet holds it and [NotebookOptions] does not, because it is a fact about the collection
-     * on screen and not about the configuration: the switches know nothing about the inventory, and
-     * teaching them would put the index inside them.
-     *
-     * A single lámina never asks «Sin colección» (#401), so the count stays zero there and the
-     * switch is simply not drawn.
+     * Coins no collection claims among those the narrowing leaves (#275). Passed here rather than
+     * held in [NotebookOptions], which knows nothing about the inventory. Zero on a single lámina,
+     * which never offers «Sin colección» (#401).
      */
     loose: Int,
     onChange: (NotebookOptions) -> Unit,
@@ -73,22 +61,17 @@ fun ExportOptions(
     onShare: () -> Unit,
     onDismiss: () -> Unit,
     /**
-     * Which switches this surface asks (#401). The index draws all seven; a single lámina or hoja
-     * drops packing and the loose-coin plate, which only make sense over many cards.
+     * Which switches this surface offers (#401). A single lámina or hoja drops packing and the
+     * loose-coin plate, which only make sense over many cards.
      */
     switches: List<NotebookSwitch> = NotebookSwitch.entries,
-    /** What the cost line is counted over — the index, or this one sheet (#401). */
+    /** What the cost line counts over: the index, or one sheet (#401). */
     costScope: String = NOTEBOOK_COST_SCOPE,
     /**
-     * The cost line itself. Defaults to the notebook's pages · láminas arithmetic; a single hoja
-     * passes [sheetExportCostLabel] so the noun matches the sheet (#401).
+     * The cost line. A single hoja passes [sheetExportCostLabel] so the noun matches (#401).
      */
     costLabel: String = notebookCostLabel(pages, cards),
-    /**
-     * Why a switch is annotated under its row. The index uses [notebookSwitchNote]; a single sheet
-     * passes [sheetExportSwitchNote] so every switch says «Sólo en el cuaderno» when the
-     * measured result is still a PNG (#401).
-     */
+    /** The note under a switch; a single sheet passes [sheetExportSwitchNote] (#401). */
     switchNote: (NotebookSwitch, Boolean) -> String? = ::notebookSwitchNote,
     modifier: Modifier = Modifier,
 ) {
@@ -102,9 +85,8 @@ fun ExportOptions(
                     label = notebookSwitchLabel(switch),
                     note = switchNote(switch, offered),
                     checked = options[switch],
-                    // Two reasons to be grey, and the note says which: the configuration has made
-                    // the question moot, or there is no lámina left to add. «Pendiente · #233» went
-                    // with the last of the five switches to land.
+                    // Greyed when the other choices make it moot or there is no loose coin to
+                    // add; the note says which.
                     enabled = offered,
                     onCheckedChange = { on -> onChange(options.with(switch, on)) },
                 )
@@ -128,7 +110,7 @@ fun ExportOptions(
             itemVerticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 12.dp),
         ) {
-            // Descargar is the «y ya» (#285); compartir keeps the old path beside it.
+            // Descargar is the one-tap path (#285); Compartir stays beside it.
             PrimaryAction(text = DOWNLOAD_ACTION, onClick = onDownload)
             CardAction(
                 text = SHARE_ACTION,
@@ -140,7 +122,7 @@ fun ExportOptions(
     }
 }
 
-/** What the notebook is doing right now, and the way out of it while there is one. */
+/** The export's current step, with a cancel action while one is possible. */
 @Composable
 fun ExportProgress(
     step: NotebookExportStep,

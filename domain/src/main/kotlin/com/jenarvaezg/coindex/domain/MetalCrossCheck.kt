@@ -16,15 +16,10 @@ data class MetalDeviation(
 /**
  * Finds the members whose metal contradicts the one their catalog declares.
  *
- * Deliberately **not** part of [CollectionCatalog.validate], which stops the app at startup. What
- * a catalog declares is the variant of the collection, not an assertion about each member, and the
- * curator's judgement outranks the physical check: a list that makes more sense with seven silver
- * coins and one of cupronickel keeps the cupronickel one. A fatal check would make Numista's
- * `composition.text` a veto over curation, which is exactly backwards.
- *
- * So it lives in the test suite, where it catches the accidental intruder — the twentieth-ounce of
- * **gold** that sat in the Kookaburra catalog as if it were the silver ounce of 2009 (#63) — and
- * is silenced, member by member, by a [CollectionCatalogMember.variantNote] in prose.
+ * Not part of [CollectionCatalog.validate], which stops the app: the catalog declares the
+ * collection's variant, not each member's, and the curator's judgement outranks the physical check.
+ * In the suite it catches accidental intruders, like the gold twentieth-ounce once filed in the
+ * silver Kookaburra catalog (#63); a [CollectionCatalogMember.variantNote] silences it per member.
  *
  * @param compositionByType Numista's `composition.text` per type, from the seeded cache
  */

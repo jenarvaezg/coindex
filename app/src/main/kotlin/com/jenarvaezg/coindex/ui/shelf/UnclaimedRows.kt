@@ -11,47 +11,40 @@ import java.text.Collator
 import java.util.Locale
 
 /**
- * One inventory row no collection claims, reduced to what the shelf asks about (#275).
- *
- * The subject of the notebook's last lámina. It is a **row and not a type**, unlike [CoinRow]: the
- * lámina prints a cell per row like every other pieces page of the notebook, and the row is also the
- * grain at which being claimed is decided — the American Silver Eagle N#298883 is two rows, one
- * filling a member its catalog qualifies by issue (ADR 0019) and one left over, and printing the
- * type would print a coin that is already in its plate.
+ * One inventory row no collection claims, reduced to what the shelf asks about (#275); the subject
+ * of the notebook's loose-coin lámina. A row, not a type like [CoinRow]: claiming is decided per
+ * row (a catalog qualifying by issue, ADR 0019, may claim one row of a type and not another), and
+ * the lámina prints one cell per row.
  */
 data class UnclaimedFacts(
     val piece: CollectedItem,
     override val countries: Set<String>,
     override val weight: OunceBand?,
     override val startsIn: StartBand,
-    /** The year to read it by: the row's own where it recorded one, else the type's first. */
+    /** The row's recorded year, else the type's first. */
     val year: Int?,
     val title: String,
     val haystack: String,
 ) : ShelfSubject {
-    /** A loose coin has no issue list and therefore no ratio: «Sin lámina» is literally true. */
+    /** A loose coin has no plate. */
     override val status: PlateStatus get() = PlateStatus.NoPlate
 
-    /** No catalog names it, so no series does — the same silence a card with no catalog keeps. */
+    /** No catalog, so no series. */
     override val series: SeriesStatus? get() = null
 
-    /** The single country a loose coin has, when it has one — for reading order. */
+    /** The coin's country, for reading order. */
     val issuer: String? get() = countries.singleOrNull() ?: countries.firstOrNull()
 }
 
 /**
- * Every row of the inventory that no card of the index claims, in reading order.
+ * Every inventory row no index card claims, in reading order.
  *
- * **Measured against the whole index and never against one export** (#275). Having a collection is a
- * fact about the coin, not about the paper, so this reads the same [CoinClaims] of the assembly the
- * «Sin colección» chip of Coins is counted with (ADR 0021 §12) — the app and the notebook cannot
- * disagree about which coins are loose, and a filter the collector put on today cannot orphan a coin
- * that lives in a box.
+ * Measured against the whole index, never one export (#275), using the assembly's [CoinClaims] like
+ * the «Sin colección» chip (ADR 0021 §12), so the app and the notebook agree and a filter can't
+ * make a boxed coin loose.
  *
- * It is **not** the domain's `unclassified` residue, and the two differ exactly at the collector's
- * own boxes: a box claims rows by type, so a piece the derivation left over may already be printed
- * on its box's lámina. What this asks is the question the notebook needs — which coins does no page
- * show? — and the answer is the complement of what gets printed, with nothing repeated.
+ * Not the domain's `unclassified` residue: a box claims rows by type, so a leftover piece may
+ * already print on its box's lámina. This is the complement of what the notebook prints.
  */
 fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
     val claims = state.claims
@@ -63,17 +56,11 @@ fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
             val year = piece.recordedYear ?: meta?.minYear
             UnclaimedFacts(
                 piece = piece,
-                // The same country the card of a collection with no curated file shows: Numista's
-                // issuing entity carries its period of validity, and `country` is «Rusia» where the
-                // raw name is «Federación de Rusia (1991-presente)» (ADR 0023).
+                // The cured country, not Numista's issuer name with its period (ADR 0023).
                 countries = setOfNotNull(meta?.country),
-                // Numista's own grams, snapped to the common bullion weights: a loose coin is by
-                // definition one no curated file has a weight for. This row used to be the only
-                // place that read it that way, and the same coin weighed one thing here and
-                // another in its card's key; since #288 there is one reading, and since #540 it is
-                // one property of the type rather than the same call made twice. Null where the
-                // ficha declares none, which keeps it out of every weight filter instead of parking
-                // it under «Varias onzas».
+                // Numista's grams snapped to bullion weights, the same type property the card key
+                // uses (#288, #540). Null without a weight, so it matches no weight filter rather
+                // than «Varias onzas».
                 weight = meta?.weightMillioz?.let { millioz -> OunceBand.of(millioz) },
                 startsIn = StartBand.of(year),
                 year = year,
@@ -88,15 +75,10 @@ fun unclaimedFacts(state: CollectionState): List<UnclaimedFacts> {
 }
 
 /**
- * The loose pieces this shelf and this query leave, in the order [unclaimedFacts] put them in.
+ * The loose pieces this shelf and query leave, in [unclaimedFacts] order. Uses the same `matches`
+ * as cards, so the loose-coin lámina honours the chips like the rest of the export.
  *
- * The twin of [narrow], and deliberately not a mechanism of its own: the export sheet promises «lo
- * que hay en el índice ahora mismo, con los filtros puestos», and a lámina that ignored the chips
- * above it would make that sentence false. The five chips are answered by [UnclaimedFacts] as a card
- * of one piece with no plate, so `matches` is used exactly as it is used for a card.
- *
- * The sort is **not** applied: [IndexSort] orders collections by ratio, weight and count, and none
- * of the six means anything about a single coin. Coins are read by country, year and title.
+ * The sort is not applied: [IndexSort] orders collections and means nothing for single coins.
  */
 fun IndexShelf.narrowUnclaimed(
     facts: List<UnclaimedFacts>,
@@ -106,11 +88,7 @@ fun IndexShelf.narrowUnclaimed(
     .map { it.piece }
 
 /**
- * Country, then year, then title: the field-notebook order of Coins and not the index's.
- *
- * This lámina is the overflow of Coins, and thirty coins from twenty countries are read grouped by
- * country. Unknowns go last in both slots, exactly as in [coinRows]: an uncached type says less than
- * a dated one, and putting it first would open the page on whatever the last sync had not finished.
+ * Country, then year, then title, as in Monedas. Unknowns go last, as in [coinRows].
  */
 private fun unclaimedReadingOrder(): Comparator<UnclaimedFacts> {
     val collator = Collator.getInstance(Locale.forLanguageTag("es"))

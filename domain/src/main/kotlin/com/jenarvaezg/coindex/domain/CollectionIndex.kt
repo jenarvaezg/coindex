@@ -4,15 +4,10 @@ import java.text.Collator
 import java.util.Locale
 
 /**
- * Issued members owned over issued members catalogued (ADR 0021 §6).
- *
- * A measured fact, and the one that replaced the collector's declaration of intent: since ADR 0021
- * §7 nothing is stored per card, so what tells a collection being pursued from one that is finished
- * is this ratio and nothing else.
- *
- * The denominator is what the app can measure — see [CollectionCatalogAlbum.issuedMembers] — so an
- * announced or unlisted member, which no money can buy and no inventory can represent, never counts
- * against the collector.
+ * Issued members owned over issued members catalogued (ADR 0021 §6). Nothing is stored per card
+ * (ADR 0021 §7), so this ratio alone tells a collection in progress from a finished one. The
+ * denominator is what the app can measure ([CollectionCatalogAlbum.issuedMembers]): announced and
+ * unlisted members never count against the collector.
  */
 data class CoverageRatio(val owned: Int, val issued: Int) {
     init {
@@ -25,8 +20,8 @@ data class CoverageRatio(val owned: Int, val issued: Int) {
     val missing: Int get() = issued - owned
 
     /**
-     * Every measurable member owned. Deliberately not called complete *coverage*: by ADR 0020 an
-     * open series has no completeness to claim, and next January this same catalog may say 22/23.
+     * Every measurable member owned. Not called complete: an open series claims no completeness
+     * (ADR 0020), and next year the same catalog may say 22/23.
      */
     val nothingMissing: Boolean get() = owned == issued
 }
@@ -38,12 +33,9 @@ data class IndexCover(
 )
 
 /**
- * One card of the index: one species of collection, in one list, sorted by one comparator
- * (ADR 0021 §2).
- *
- * There is no block, no section and no word of provenance telling the cases apart. What a card
- * *does* is decided by one capability — whether it has an issue list — which on this type is
- * exactly whether it carries a [coverage] (ADR 0021 §3).
+ * One card of the index: every species of collection in one list, sorted by one comparator (ADR
+ * 0021 §2). No section or provenance label tells them apart; what a card does depends only on
+ * whether it has an issue list, that is, a [coverage] (ADR 0021 §3).
  */
 sealed interface IndexCard {
     /** The card-sized name: the curated `short_name`, or Numista's raw family verbatim (§4). */
@@ -52,7 +44,7 @@ sealed interface IndexCard {
     /** Null when the collection has no issue list, and therefore no ratio to offer. */
     val coverage: CoverageRatio?
 
-    /** The country, unsaid when nothing can name it without claiming more than it knows. */
+    /** The country, or null when it cannot be named with certainty (see [Issuers]). */
     val issuer: String?
 
     val distinctTypes: Int
@@ -75,12 +67,9 @@ sealed interface IndexCard {
         val plateCatalogId: String?,
         override val cover: IndexCover? = null,
         /**
-         * Whether the catalog behind this card declares its series still being issued (ADR 0020),
-         * or null where no catalog names the collection.
-         *
-         * Never printed on the card — the card says what it does and nothing about its curation
-         * (ADR 0021 §3) — and read only by the shelf of the index, where «cerrada» is the honest
-         * answer to «what can I still finish?».
+         * Whether the catalog behind this card declares its series still issued (ADR 0020), or
+         * null where no catalog names the collection. Never printed on the card (ADR 0021 §3);
+         * only the index shelf reads it.
          */
         val seriesStatus: SeriesStatus? = null,
     ) : IndexCard {
@@ -90,10 +79,8 @@ sealed interface IndexCard {
     }
 
     /**
-     * A box the collector enumerated by hand (ADR 0021 §2, §11).
-     *
-     * It only ever holds pieces you own, so it can never contain a gap: it has no ratio, and it
-     * falls in the no-ratio stretch of the order without privilege.
+     * A box the collector enumerated by hand (ADR 0021 §2, §11). It holds only owned pieces, so it
+     * has no gaps and no ratio, and sorts among the no-ratio cards.
      */
     data class Box(
         override val name: String,
@@ -108,17 +95,12 @@ sealed interface IndexCard {
 }
 
 /**
- * The one order of the whole first level: `(has ratio ↓, ratio ↓, denominator ↓, name ↑)`
- * (ADR 0021 §6).
+ * The one order of the whole first level: `(has ratio ↓, ratio ↓, denominator ↓, name ↑)` (ADR
+ * 0021 §6). A ratio and a piece count are incomparable, so `has ratio` comes first, as a sort level
+ * rather than a headed block (ADR 0021 §7). The denominator puts `22/22` before `2/2`; the name
+ * breaks ties.
  *
- * `has ratio` first because «te faltan 8» and «3 monedas · 2 tipos» are incomparable magnitudes —
- * and it is a level of this comparator rather than a block with a heading, because ADR 0021 §7
- * removed three blocks and none comes back. Then the ratio, because the index is a notebook that
- * shows rather than a list of chores. Then the denominator, so `22/22` beats `2/2`. The name breaks
- * the tie, which is what finally makes the order agree with the text on the card.
- *
- * A function rather than a constant because a [Collator] is not thread safe, and one sort of sixty
- * cards is not worth sharing one.
+ * A function rather than a constant because a [Collator] is not thread safe.
  */
 internal fun indexOrder(): Comparator<IndexCard> {
     val names = cardNameOrder()
@@ -129,11 +111,8 @@ internal fun indexOrder(): Comparator<IndexCard> {
 }
 
 /**
- * Spanish alphabetical order, which is the only reading of «name ↑» that agrees with the card.
- *
- * Comparing the strings themselves would order by UTF-16 code unit, where every accented letter
- * lands after `Z` — «Álbum» at the very end of a list it belongs at the head of. The corpus is
- * written in Spanish by rule (ADR 0021 §4), country names included.
+ * Spanish alphabetical order, so «Álbum» sorts at the head rather than after `Z` as raw UTF-16
+ * would. Card names are in Spanish by rule (ADR 0021 §4).
  */
 private fun cardNameOrder(): Comparator<String> {
     val collator = Collator.getInstance(Locale.forLanguageTag("es"))
@@ -141,10 +120,8 @@ private fun cardNameOrder(): Comparator<String> {
 }
 
 /**
- * Builds the single list of the first level out of the seeds that travel with the app.
- *
- * Built once per process, like [CollectionTitles], because catalogs and groupings are constant for
- * the lifetime of the seeds; only [build] sees the collector's inventory.
+ * Builds the single list of the first level from the seeds that ship with the app. Built once per
+ * process, like [CollectionTitles]; only [build] sees the collector's inventory.
  */
 class CollectionIndex(
     catalogs: List<CollectionCatalog>,
@@ -159,20 +136,16 @@ class CollectionIndex(
         groupings.associate { grouping -> grouping.family to grouping.issuerCode }
 
     /**
-     * The snapshot arrives whole rather than as the `items` and `typeMeta` the derivation already
-     * consumed (#217): the two always travel together, and threading them a second time is what
-     * let a caller hand the index one inventory and the derivation another.
+     * Takes the whole snapshot rather than its `items` and `typeMeta` again (#217), so the index
+     * and the derivation cannot be handed different inventories.
      */
     fun build(
         snapshot: CollectionSnapshot,
         derivation: CollectionDerivation,
         boxes: List<OwnGroupingView>,
         /**
-         * The assembly's albums, which is where a card's ratio comes from (#537).
-         *
-         * Handed in rather than built here, because the plate one tap away divides by this same
-         * album: the index used to build its own, and «the card and the plate agree» was a sentence
-         * in a comment above two separate calls.
+         * The assembly's albums, where a card's ratio comes from (#537); handed in so the card and
+         * its plate divide by the same album.
          */
         albums: CatalogAlbums,
     ): List<IndexCard> {
@@ -212,21 +185,17 @@ class CollectionIndex(
     }
 
     /**
-     * What the curated file says the country is, or null for the cards no file names.
-     *
-     * Resolved by the two keys [CollectionTitles] resolves a name with — a catalog on the whole
-     * variant key, a grouping on its family alone (ADR 0013) — because it is the same file that
-     * answers both questions about the same card.
+     * The country the curated file declares, or null for cards no file names. Looked up by the same
+     * keys [CollectionTitles] uses: a catalog by its whole variant key, a grouping by family (ADR
+     * 0013).
      */
     private fun declaredIssuerCode(key: VariantKey): String? =
         catalogsByKey[key]?.issuerCode ?: groupingIssuers[key.family]
 }
 
 /**
- * The coin a card shows: the first emission the collector owns, on the face the album prints.
- *
- * The index and the plate read [firstOwnedIndex] rather than each picking a first of their own,
- * because the coin that takes off from a card is the coin that has to land in its casilla
+ * The coin a card shows: the first emission the collector owns, on the face the album prints. The
+ * plate reads the same [firstOwnedIndex], so the coin that leaves the card lands in its casilla
  * (ADR 0026 §3).
  */
 private fun CollectionCatalogAlbum.firstOwnedCover(printedSide: PrintedSide): IndexCover? {
@@ -243,27 +212,15 @@ private fun List<CollectedItem>.firstOwnedCover(): IndexCover? =
 /**
  * Who issued a collection, for the eyebrow of its card.
  *
- * **The file speaks when there is one** (ADR 0021 §9): every curated file declares its
- * `issuer_code`, so the card of a curated collection names its country from the curation and not
- * from the pieces that happen to be in the phone. That is what retires the silence clause where it
- * used to hurt — a card whose two pieces have one uncached type would go bare while its own file
- * knew the answer all along.
+ * A curated file's `issuer_code` wins (ADR 0021 §9), so a curated card names its country even when
+ * its pieces' types are not cached. Without a file the pieces decide: two issuers, or one unknown,
+ * leave the eyebrow empty, which is why unknowns stay in the list.
  *
- * Where no file names the collection the pieces are the only authority there is, and there the
- * clause stays: two issuers under one card, or one piece whose issuer nobody recorded, leave the
- * eyebrow unsaid. An eyebrow that covers half its card is worse than no eyebrow at all, which is
- * why the unknowns are kept in the list rather than filtered out.
+ * Open gap (#170): this still reads the catalog header, so a card whose only piece is a Niue
+ * Equilibrium says «Tokelau». `CollectionCatalog.issuerCodes()` is what it should ask.
  *
- * **One file cannot name one country**, and this still reads its header: Equilibrium spans Tokelau
- * and Niue, so a card whose only piece is the 2023 Niue is labelled «Tokelau» today. The catalog
- * stopped claiming a single issuer — `CollectionCatalog.issuerCodes()` is what to ask, and a
- * spanning catalog either falls through to the pieces here or goes bare. Deciding which is the
- * open half of #170.
- *
- * The name of an issuer comes from the type cache either way, keyed by the same code the files
- * declare — `afrique_du_sud`, in French, because Numista's codes are. One source for both kinds of
- * card, and [cardCountry] over it for the nine codes whose Numista label is an issuing entity with
- * its period of validity rather than a country (ADR 0023).
+ * Names come from the type cache, keyed by Numista's issuer codes (in French, like
+ * `afrique_du_sud`), through [cardCountry] for the codes whose label is not a country (ADR 0023).
  */
 internal class Issuers(private val typeMeta: TypeMetaIndex) {
     private val namesByCode: Map<String, String> = buildMap {

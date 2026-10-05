@@ -83,17 +83,11 @@ import com.jenarvaezg.coindex.ui.shelf.years
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * Coins: the other hierarchy of the top level (ADR 0021 §1).
+ * Monedas: every piece, whether or not a collection claims it (ADR 0021 §1). Unclaimed coins are
+ * its «Sin colección» chip rather than a screen of their own.
  *
- * **Not a view inside a collection and not a reading of the index.** A piece exists here whether or
- * not any collection claims it, which is what retired «Sin clasificar» as a screen: those coins are
- * the «Sin colección» chip of this list, reached from where they already live instead of from a
- * screen that existed to apologise for them.
- *
- * What it deliberately does **not** carry is a reason line (§12). The four per-piece reasons of
- * ADR 0010 §3 left the app for the field report: this screen answers *which* coins no collection
- * claims, never *why*, because the collector's channel for correcting the matching is telling the
- * curator, and that already works.
+ * It says which coins no collection claims but never why (§12): the per-piece reasons of
+ * ADR 0010 §3 live in the field report, and corrections go through the curator.
  */
 @Composable
 fun CoinsScreen(
@@ -104,45 +98,38 @@ fun CoinsScreen(
     onNarrow: (CoinsShelf) -> Unit,
     onCreateBox: (name: String, typeIds: List<Int>) -> Unit,
     onAddToBox: (boxId: Long, typeIds: List<Int>) -> Unit,
-    /** The sewn-edge census, assembled once above the three roots so this screen cannot invent its own. */
+    /** Computed once above the three roots so they all show the same counts. */
     sewnEdge: SewnEdgeCounts?,
     onOpenPhone: () -> Unit,
     /**
-     * The sheet a cell of this grid opens, which since #508 is the sheet three surfaces open.
-     *
-     * This is where the ficha's own upkeep lives (#185, ADR 0025), and it has to: a type whose ficha
-     * looks like an unpublished draft derives no card at all (#186), and neither does one whose family
-     * is a half-typed «The» (#404), so their pieces are only ever reachable from here — which is
-     * exactly the coin that issue was opened about, N#596807. The fix is upstream, and it reaches this
-     * phone only when somebody asks for the ficha again on this very sheet.
+     * The coin sheet (#508), which holds the ficha's upkeep (#185, ADR 0025). Pieces whose ficha
+     * derives no card (an unpublished draft, #186, or a placeholder family, #404) are reachable
+     * only from here, so this is where their ficha gets asked for again.
      */
     sheet: CoinSheetSurface,
     modifier: Modifier = Modifier,
 ) {
-    // Recomputed only when the collection changes: 192 rows joined against the type cache is work
-    // the screen does not owe on every keystroke. The casillas the assembly resolved are indexed in
-    // the same memo — the years of a plate are part of what a row answers to (#550).
+    // Only when the collection changes, not per keystroke. A row also matches on the years of the
+    // casillas it fills (#550).
     val rows = remember(state) { coinRows(state, slotYears(state)) }
-    // Saved across a rotation and never persisted (ADR 0021 §1): reopening the app with a stale
-    // word here and half the collection hidden reads as an app that has lost something.
+    // Survives rotation but is never persisted (ADR 0021 §1): a stale word on reopening would hide
+    // half the collection.
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
     var selectedTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
     val shown = remember(rows, shelf, query) { shelf.narrow(rows, query) }
     val selection = rememberPieceSelection()
-    // The seed exists only while something is narrowing the list: without a filter «Hacer una
-    // colección con estas 192» would offer the whole collection, and the two-coin box would be made
-    // by unticking 190.
+    // Seeding a box from the shown coins only makes sense while something narrows the list;
+    // otherwise it would offer the whole collection.
     val seeded = shelf.active > 0 || query.isNotBlank()
-    // What is narrowing right now, which is what the empty card answers and undoes (#515).
+    // What the empty card names and undoes (#515).
     val narrowing = shelfNarrowing(filters = shelf.active, query = query)
     val taken = remember(curatedNames, state.ownGroupings) {
         curatedNames + state.ownGroupings.map { it.name }
     }
     Box(modifier = modifier.fillMaxSize()) {
-        // The album, and under it the band of the mode it is being read in (#517). The band is a row
-        // of this column rather than a bar over the cards: it takes its height off the grid, so the
-        // last row of coins is never underneath it.
+        // The selection band is a row of this column, not an overlay, so it never covers the last
+        // row of coins (#517).
         Column(modifier = Modifier.fillMaxSize()) {
             BoxWithConstraints(modifier = Modifier.weight(1f).sheetUnderMode(selection.active)) {
                 val columns = indexColumns(maxWidth)
@@ -151,9 +138,7 @@ fun CoinsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    // Proximity, and it is arithmetic rather than a screenshot: see [CoinsSpacing].
-                    // The album's 6 dp seam was inherited from a card that ended at its cartouche, and
-                    // the year has hung underneath it since #337.
+                    // See [CoinsSpacing].
                     verticalArrangement = Arrangement.spacedBy(CoinsSpacing.rowSeam),
                 ) {
                     coinFullWidth {
@@ -190,8 +175,8 @@ fun CoinsScreen(
                             EmptyCoins(
                                 everything = rows.isEmpty(),
                                 narrowing = narrowing,
-                                // Exactly what is narrowing and nothing else (#515): the chips go
-                                // without the axis and the sort, the box only where it has a word.
+                                // Undo only what narrows (#515): filters but not axis or sort, and
+                                // the search box only if it has text.
                                 onClear = {
                                     if (narrowing != ShelfNarrowing.Search) {
                                         onNarrow(shelf.withoutFilters())
@@ -207,8 +192,8 @@ fun CoinsScreen(
                         CoinAlbumCell(
                             row = row,
                             photo = photo,
-                            // The cell yields the coin while its ficha is open, so the shared element
-                            // has one owner at a time (#370).
+                            // The cell yields the coin while its sheet is open, so the shared
+                            // element has one owner at a time (#370).
                             travelling = selectedTypeId != row.typeId,
                             picking = selection.active,
                             picked = selection.isPicked(row.typeId),
@@ -231,8 +216,7 @@ fun CoinsScreen(
             )
         }
 
-        // The one sheet of a coin, which every surface of the app now opens (#508). Here it is also
-        // the second end of the journey of ADR 0026 §3: the cell yields its photograph on the way in.
+        // Here the sheet is also the far end of ADR 0026 §3's transition from the cell.
         CoinSheetOverlay(
             typeId = selectedTypeId,
             surface = sheet,
@@ -244,10 +228,8 @@ fun CoinsScreen(
 }
 
 /**
- * The five chip rows, each counted with its own choice dropped.
- *
- * Country goes first because it is the one the collector reaches for, and «colección» last because it
- * is the one that answers a question about the rest of the app rather than about the coin.
+ * The chip rows, each counted with its own choice dropped. «Colección» goes last because it is
+ * about the rest of the app rather than the coin.
  */
 @Composable
 private fun CoinsFacets(
@@ -317,8 +299,8 @@ private fun CoinsFacets(
             selected = shelf.year == null,
             onClick = { onNarrow(shelf.copy(year = null)) },
         )
-        // Exact years, newest first — same shape as País, so a seat on the year axis and a chip
-        // here say the same number. «Sin año» is one of these when the ficha still owes a date.
+        // Exact years, newest first, so a chip and the year axis count the same. «Sin año» appears
+        // when a ficha has no date.
         counts.year.years().forEach { (filter, count) ->
             FilterChip(
                 label = filter.label,
@@ -375,11 +357,6 @@ private fun CoinAlbumCell(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            // The border a picked card wears, and — while the mode is open — the ghost of that same
-            // border on the ones that are not picked yet (#517). It is what says which things on the
-            // screen the band's sentence is talking about: every card wears the frame it is about to
-            // get, and the chrome above them wears nothing. One rule in two strengths, which is the
-            // same device the empty casilla's chip uses on the plate.
             .then(pickingBorder(picking = picking, picked = picked))
             .semantics(mergeDescendants = true) { selected = picking && picked }
             .clickable(role = Role.Button, onClick = onTap)
@@ -393,8 +370,7 @@ private fun CoinAlbumCell(
                 .travellingTypeCoin(row.typeId, visible = travelling),
         )
         AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))
-        // The year stays outside this cartouche; #337 owns its separate rendering change. What keeps
-        // it reading as *this* card's year is [CoinsSpacing], and not this blank on its own.
+        // [CoinsSpacing] keeps the year reading as this card's, not the next row's.
         Text(
             coinAlbumFootnote(row),
             style = MaterialTheme.typography.labelMedium,
@@ -407,10 +383,8 @@ private fun CoinAlbumCell(
 }
 
 /**
- * The frame of a card in the grouping mode: solid once it is picked, a ghost until then (#517).
- *
- * Outside the mode there is no frame at all — a card that is not being put anywhere is a card, and
- * an album page ruled into boxes for no reason is the noise this avoids.
+ * A card's frame while selecting: solid once picked, faint until then, none outside the mode
+ * (#517). The faint frame marks which cards the selection band is talking about.
  */
 private fun pickingBorder(picking: Boolean, picked: Boolean): Modifier = when {
     picked -> Modifier.border(PICK_RULE, Paper.rust)
@@ -418,19 +392,14 @@ private fun pickingBorder(picking: Boolean, picked: Boolean): Modifier = when {
     else -> Modifier
 }
 
-/** The frame is the one the picked card always had; the ghost only changes its ink. */
 private val PICK_RULE = 2.dp
 
-/** Faint enough to read as an empty box, dark enough to survive the paper's own grain. */
+/** Faint enough to read as an empty box, dark enough to show over the paper grain. */
 private const val GHOST_PICK_OPACITY = 0.3f
 
 /**
- * Nothing to show, and which of the reasons it is.
- *
- * A narrowing that hides everything must offer the way out on the spot: the shelf enters folded, so
- * the chip responsible may be two taps away, and «0 de 191» with no action is where an app looks
- * broken. What the way out is called and what it undoes are the narrowing's own (#515) — a screen
- * emptied by a typed word used to be offered «Quitar los filtros», which then emptied the box.
+ * The empty state. When a narrowing hides everything it offers the undo right here, since the
+ * folded shelf may hide the responsible chip; the action is named after what is narrowing (#515).
  */
 @Composable
 private fun EmptyCoins(everything: Boolean, narrowing: ShelfNarrowing, onClear: () -> Unit) {

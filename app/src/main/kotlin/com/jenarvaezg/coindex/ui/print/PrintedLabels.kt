@@ -6,32 +6,18 @@ import java.time.ZoneId
 import kotlin.math.roundToInt
 
 /**
- * What a printed cell says, as opposed to what the app says *about* printing.
- *
- * `NotebookLabels` is the copy of the export — the button, the sheet, the progress line, the message
- * that closes it — and none of it reaches the paper. This is the other half: words the PDF carries,
- * which outlive the app and are read with a coin in the other hand.
+ * Words the PDF carries. The export's own UI copy (button, sheet, progress, closing message) lives
+ * in `NotebookLabels` and never reaches paper.
  */
 
 /**
- * The diameter of a coin the page is not printing at its real size, as a number (#231, #233).
+ * The diameter as a number, for pages that don't print coins at their real size (#231, #233), so
+ * the size can still be checked. A scaled page prints it on its own caption line, a list page at
+ * the end of the row.
  *
- * A notebook of lines has no ruler and nothing at 1:1 to hold one against, so the measure that was
- * the whole point of #169 has to be **said** instead of shown — the collector at a fair still wants
- * to know whether the piece in the tray is the 38,6 mm one or the 40,9. A scaled album page is the
- * other one that has to say it (#233), and it is the same sentence: what a ruler cannot be laid
- * against is measured in words or it is not measured at all.
- *
- * On a page of coins it gets a **line of its own** at the foot of the caption, and it was printed the
- * other way first: appended to the year it shared a line with «1977 · Numista 681», and an ellipsis
- * eating the millimetres —«1977 · Numista 681 · 4…»— is a page that dropped the one thing it promised
- * in place of the ruler. On a page of lines it closes the row instead, where the width runs left to
- * right and there is nothing to stack it under.
- *
- * One decimal and a comma, because that is how Numista records it and how the collector says it. A
- * whole number of millimetres drops the decimal rather than printing «40,0 mm»: the zero would read
- * as a precision the ficha never claimed. Null where nobody recorded a size — an announced member, an
- * unlisted one — because that is a blank and not a «0 mm».
+ * One decimal with a comma, as Numista records it; a whole number drops the decimal, since
+ * «40,0 mm» would claim a precision the ficha doesn't. Null when no size is recorded, rather than
+ * «0 mm».
  */
 fun printedDiameterLabel(millimetres: Float?): String? {
     val tenths = millimetres?.takeIf { it > 0f }?.times(10f)?.roundToInt() ?: return null
@@ -40,141 +26,78 @@ fun printedDiameterLabel(millimetres: Float?): String? {
 }
 
 /**
- * The two mastheads of the notebook, which say which of the two hierarchies a page came out of.
- *
- * They were the mastheads of the shared PNG first, and they are the same words for the same reason: a
- * page arrives in somebody's hands with no app around it, so «catálogo curado» is somebody else's list
- * the collector is filling and «colección» is the collector's own pieces (ADR 0021 §1). Since #431 the
- * PNG **is** a printed page, so the two strings have one home and this is it.
- *
- * A page that said «curado» about a list nobody curated could not be taken back: paper outlives the
- * app, which is why the claim is made in the copy file and not at the printer.
+ * The two mastheads, saying which hierarchy a page came from (ADR 0021 §1): «catálogo curado» is a
+ * list the collector is filling, «colección» their own pieces. Shared by the PDF and the PNG, which
+ * is a printed page since #431.
  */
 const val PLATE_SECTION_EYEBROW: String = "COINDEX · CATÁLOGO CURADO"
 const val PIECES_SECTION_EYEBROW: String = "COINDEX · COLECCIÓN"
 
 /**
- * Where the coins of a page of owned pieces are named from, which is nobody's catalog.
- *
- * Said by the two pages that print what is in the house — a collection with no issue list, and the
- * coins no collection claims — because both are read off the same inventory. The hunt says
- * [WISH_SECTION_SOURCE] instead, and a plate names the catalog it was curated from.
+ * The source of pages of owned pieces (a collection with no issue list, the unclaimed coins), read
+ * off the inventory. A plate names its catalog; the wish list says [WISH_SECTION_SOURCE].
  */
 const val INVENTORY_SECTION_SOURCE: String = "tu colección en Numista"
 
 /**
- * The rows of a printed specification, in the label each one carries.
- *
- * «País» and «Piezas» are the heading of a page of owned pieces — where the coins are from, when they
- * agree on it, and how many there are. Only the labels are here: the sentence in the second row is the
- * subject's own `countSentence`, which is what keeps the folio counting what the screen counts (#226).
- *
- * «Valor» is **not** «Valor actual» (#493). The screen says the name of the figure in full because it
- * has neither row nor column to be read against; on paper the row is already titled, so an amount
- * carrying its own title would say the word twice — which is why `plateAmountLabel` arrives here
- * unnamed. The census row of the hunt is [WISH_SECTION_COUNT_LABEL], which counts casillas and not
- * pieces.
+ * Labels of the rows of a printed specification. «País» and «Piezas» head a page of owned pieces;
+ * the «Piezas» sentence is the subject's own `countSentence` (#226). «Valor» rather than the
+ * screen's «Valor actual» (#493): the row is already titled, so `plateAmountLabel` arrives unnamed.
  */
 const val COUNTRY_FACT_LABEL: String = "País"
 const val PIECES_FACT_LABEL: String = "Piezas"
 const val VALUE_FACT_LABEL: String = "Valor"
 
 /**
- * The row that dates the row above it: when the catalogue half of «Valor» was brought (#594).
- *
- * **On paper the date matters more than on screen, not less.** A catalog price lives ninety days (ADR
- * 0028 §5 as amended by #561) and the screen's own figure is refreshed under the collector's nose; a
- * sheet printed in October with prices from June is read a year later by somebody who was never told
- * which June it was. The paper outlives the app, which is the argument this file already makes about
- * the word «curado».
- *
- * **«Tasación» and not «Precios» or «Fecha».** «Fecha» over a page that already carries a catalog's
- * editorial date and a coin's year is three dates and no way to tell them apart; «Tasación» names the
- * act the amount came out of, which is the one of the three that has an age.
- *
- * It is a row of the specification and not a footnote because the amount is one too (#493): the printed
- * page has no header to raise a figure into, so what the screen says in one line it says in two.
+ * The row under «Valor» dating when its catalog prices were fetched (#594): a printed page is read
+ * long after, with no refresh (ADR 0028 §5, amended by #561). «Tasación» rather than «Fecha», which
+ * would be confused with the catalog's date and the coin's year on the same page.
  */
 const val VALUATION_FACT_LABEL: String = "Tasación"
 
 /**
- * That date, written out in full, which is the only register paper has.
- *
- * Never «hace 12 días» and never «hoy»: `priceAgeLabel` says the age relative to a now the reader is
- * standing in, and a printed page has no now — it is read whenever it is picked up. An absolute day is
- * the one form that still means the same thing in a drawer three years from now.
+ * That date as an absolute day. Never a relative age like `priceAgeLabel`'s «hace 12 días»: a
+ * printed page is read at any later time.
  */
 fun printedValuationLabel(
     readAtMillis: Long,
     zone: ZoneId = ZoneId.systemDefault(),
 ): String = dayMonthYearLabel(Instant.ofEpochMilli(readAtMillis).atZone(zone).toLocalDate())
 
-/**
- * The page of the coins that are in no collection.
- *
- * The eyebrow is not «COLECCIÓN», which is what a page that *is* one says: this is the page of the
- * ones that are in none, and the header is where that is said once instead of cell by cell.
- */
+/** The page of the coins in no collection; its eyebrow must not claim «COLECCIÓN». */
 const val UNCLAIMED_SECTION_EYEBROW: String = "COINDEX · SIN COLECCIÓN"
 const val UNCLAIMED_SECTION_TITLE: String = "Sin colección"
 
 /**
- * The page of what the collector is looking for (ADR 0029 §7).
- *
- * Its own eyebrow because it is neither of the two the notebook had: it is not a curated catalog — the
- * casillas on it come from as many as they come from — and it is emphatically not a collection, which
- * is the one thing a page of coins nobody owns must not claim. The paper outlives the app, and a sheet
- * that said «COLECCIÓN» over seven coins in a dealer's tray would be a false claim in somebody else's
- * hands.
- *
- * The title is the destination's own string, so the screen, the door and the paper cannot drift.
+ * The page of what the collector is looking for (ADR 0029 §7). Its own eyebrow: its casillas come
+ * from several catalogs, and a page of coins nobody owns must not say «COLECCIÓN». The title is the
+ * destination's own string (`WishLabels.DESTINATION`).
  */
 const val WISH_SECTION_EYEBROW: String = "COINDEX · LO QUE BUSCO"
 
-/** What the census row is called on paper, in the label of its own row. */
+/** The census row's label on the wish list: it counts casillas, not pieces. */
 const val WISH_SECTION_COUNT_LABEL: String = "Casillas"
 
-/**
- * Where the coins of this list are named from, which is not anybody's inventory.
- *
- * «tu colección en Numista» is what every other page says and it would be a lie here — none of these
- * coins is in it. What names them is the curated shelf that travels in the APK.
- */
+/** The wish list's source: the curated catalogs in the APK, since none of these coins is owned. */
 const val WISH_SECTION_SOURCE: String = "los catálogos curados de Coindex"
 
 /**
- * Which sheet of a section this folio is, printed only where there is a break to explain.
- *
- * «PÁGINA 1 DE 1» is noise on paper, so the caller asks for this only when the section spans more
- * than one — the sentence exists because a plate cut across two folios is otherwise indistinguishable
- * from two plates.
+ * Which folio of a section this is. Callers print it only for sections spanning several, where a
+ * plate cut in two could pass for two plates.
  */
 fun printedPageOfSection(number: Int, pagesInSection: Int): String =
     "PÁGINA $number DE $pagesInSection"
 
 /**
- * The legend under the ruler, which is the promise the ruler makes.
- *
- * It says the scale as well as the length, because a bar of millimetres on a page that turned out
- * not to be 1:1 is worse than no bar: the collector would measure a coin against it.
+ * The legend under the ruler. It states the scale too, so a page printed at the wrong scale shows
+ * it against the bar.
  */
 fun printedRulerLabel(millimetres: Int): String = "$millimetres MM · ESCALA 1:1"
 
 /**
- * Where what is printed on this folio came from, which is a line the paper has to carry.
- *
- * The strip at the foot is **once per folio** and the heading is once per plate, so since #232 the
- * source can be a plural: two plates sharing a page can come from two different catalogs, and a page
- * that names only the first one would attribute the second to it.
- *
- * **Named once each, and that is this function's job and not its caller's**: a folio of five plates
- * of one catalog says it once, in the order they are printed. Deduplicating here rather than in
- * [PrintPage.sources] is what makes «Fuentes» honest wherever the line is assembled — a caller that
- * handed over the same catalog twice would otherwise print it twice under a word promising it had
- * not.
- *
- * It outlives the app, which is why it is on the paper at all: a list that does not say where it came
- * from cannot be checked later either.
+ * The foot line naming where this folio's plates came from, so the paper can be checked later.
+ * Since #232 a folio can hold plates from several catalogs; each is named once, in print order, and
+ * the deduplication lives here rather than in [PrintPage.sources] so every caller gets it.
  */
 fun notebookSourceLabel(sources: List<String>): String {
     val named = sources.distinct()

@@ -101,8 +101,8 @@ private val GHOST_FILTER = ColorFilter.colorMatrix(ColorMatrix().apply { setToSa
 @Composable
 fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
     var state by remember { mutableStateOf(CalibrationState()) }
-    // The bench holds the tilt the same way the app does — read in the draw phase — so moving the
-    // virtual sensor repaints the coins instead of recomposing the whole HUD under the sliders.
+    // The tilt is read in the draw phase, as in the app, so moving the virtual sensor repaints the
+    // coins without recomposing the sliders.
     val reading = remember { mutableFloatStateOf(0f) }
     SideEffect { reading.floatValue = glossPositionFraction }
     val tilt = remember { object : CoinTilt { override val lateral get() = reading.floatValue } }
@@ -111,8 +111,7 @@ fun CalibrationBenchScreen(glossPositionFraction: Float = 0f) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // The bench calibrates the grain on the production surface itself (#351): the same
-                // Modifier the app paints its sheet with, so the bench cannot drift from what ships.
+                // The production Modifier itself (#351), so the bench can't drift from what ships.
                 .paperSurface(state.grainOpacity)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
@@ -296,21 +295,13 @@ private fun CoinRecess(
         } else {
             FlippingCoin(state, tilt)
         }
-        // Nothing is drawn over the coin here either: production retired the pair of half arcs in
-        // #357 and the acetate's fixed reflection in #338 — two layers for the result of one, which
-        // is the variant D #303 discarded. A slot that kept them would be calibrating a drawing the
-        // app no longer paints.
+        // Nothing is drawn over the coin, as in production since #357 and #338.
     }
 }
 
 /**
- * The empty casilla, at the opacity and the **diameter** it is being read at (#556).
- *
- * The slot the bench paints is 121 dp of coin in a 133 dp recess, which is the plate's own casilla and
- * therefore the one size at which the penumbra was never in doubt. A ghost that could only be seen there
- * could not answer the question #556 asks — whether the sunk design is still a sentence at the 34 dp of
- * the country axis — so the drawing shrinks inside the recess while the cardboard around it stays put:
- * what is being judged is the design, not the hole.
+ * The empty casilla at the opacity and diameter being calibrated (#556). The design shrinks inside
+ * the bench's fixed 133 dp recess, so it can be judged down to the 34 dp of the country axis.
  */
 @Composable
 private fun GhostCoin(opacity: Float, diameterDp: Float) {
@@ -369,20 +360,15 @@ private fun FlippingCoin(state: CalibrationState, tilt: CoinTilt) {
         CatalogFace(
             candidates = if (showsObverse) OBVERSE_URLS else REVERSE_URLS,
             contentDescription = if (showsObverse) "Anverso del Bolívar de 1960" else "Reverso del Bolívar de 1960",
-            // The production effect itself and not a copy of it: what the sliders move here is the
-            // same drawing the plate paints, which is the whole point of calibrating on a bench.
+            // The production effect itself, not a copy.
             modifier = Modifier.fillMaxSize().coinGloss(state.glossConfig(), tilt),
         )
     }
 }
 
 /**
- * The same coin at the size it actually ships at, next to the slot that is three times bigger.
- *
- * #303 judged the gloss on a 121 dp hole and already called it *subtle* there; the three surfaces
- * that paint one use **104 dp** (`IndexScreen`, `CoinsScreen`, `PlateScreen`), so a bench that only
- * shows the big slot would calibrate an effect nobody sees. Three of them and not one because what
- * is at stake is the grid: a casilla in a row of casillas, which is where the father looks.
+ * The same coin at the 104 dp it ships at (`IndexScreen`, `CoinsScreen`, `PlateScreen`), three in a
+ * row, since the gloss is seen across a grid of casillas, not on the big slot alone (#303).
  */
 @Composable
 private fun ProductionStrip(state: CalibrationState, tilt: CoinTilt) {
@@ -468,12 +454,8 @@ private fun RecessedYearTag(depth: Dp, modifier: Modifier = Modifier) {
 }
 
 /**
- * The stamp of a complete sheet, falling on a loop so the millisecond can be judged.
- *
- * **The production drawing itself and not a copy of it**, the way the gloss already is: the ink the
- * sliders time here is the ink the plate presses, which is the whole point of calibrating on a
- * bench. What the bench adds is the repetition — a plate stamps once, on opening, and a number you
- * can only see once is a number you cannot calibrate.
+ * The stamp of a complete sheet, drawn by the production code and repeated on a loop so its timing
+ * can be judged: a plate stamps only once, on opening.
  */
 @Composable
 private fun CompletionRatio(durationMillis: Int, modifier: Modifier = Modifier) {
@@ -484,9 +466,8 @@ private fun CompletionRatio(durationMillis: Int, modifier: Modifier = Modifier) 
             press += 1
         }
     }
-    // Keyed on the press: the stamp falls when it enters composition, so a fresh one is what a
-    // repeat is. Toggling `complete` instead would animate the ink back *out* first, which is a
-    // withdrawal production never draws.
+    // Keyed on the press so each repeat is a fresh stamp; toggling `complete` would first animate
+    // the ink back out, which production never draws.
     key(press) {
         CompositionLocalProvider(LocalStamping provides Stamping(durationMillis)) {
             StampedRatio(

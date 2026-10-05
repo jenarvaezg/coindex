@@ -6,15 +6,10 @@ import com.jenarvaezg.coindex.domain.CuratedFiles
 import com.jenarvaezg.coindex.domain.CuratedSpecies
 
 /**
- * The curated files as the APK ships them: one side of the loading seam of #545.
- *
- * Every `numista_type_id` in them was verified against numista.com before being committed, which
- * makes them the most expensive asset in the project to reproduce. A directory that is not there at
- * all is a broken build and says so here, before anything is parsed; that it brought no file is the
- * door's to refuse, because it is the same failure on the suite's side of the seam. Either way it
- * is loud: a catalog silently dropped would produce false «me falta» states, and a grouping or a
- * programme silently dropped would file a coin under the wrong heading or print «1 de 3» about
- * coins nobody counted.
+ * The curated files as the APK ships them, for the loader of #545. A missing directory is a broken
+ * build and throws here; an empty one is refused by the loader, as in the test suite. Either way it
+ * fails loudly: a silently dropped catalog, grouping or programme would show wrong states and
+ * counts.
  */
 class AssetCuratedFiles(private val assets: AssetManager) : CuratedFiles {
     override fun read(species: CuratedSpecies): List<Pair<String, String>> {

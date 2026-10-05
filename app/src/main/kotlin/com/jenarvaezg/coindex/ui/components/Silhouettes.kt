@@ -20,14 +20,12 @@ import com.jenarvaezg.coindex.domain.Referent
 /**
  * One hand-drawn silhouette, on its own box.
  *
- * @param width the drawing's own box width, in the same arbitrary units as [height]: a bus is long and a
- *   person is tall, and squaring them all would leave the bus a stripe.
+ * @param width the drawing's own box width, in the same arbitrary units as [height].
  * @param body the filled outline, as SVG path data.
- * @param cutouts what is paper rather than ink inside it — the finger holes of the bowling ball, the rim
- *   of the tyre, the windows of the bus. Drawn **over** the body in the sheet's own colour rather than
- *   punched out of it by winding order, which is a hole that vanishes the day the outline is edited.
- * @param strokes what is line rather than fill: a bicycle is two rings and a frame, and filling it would
- *   give a bicycle-shaped blob.
+ * @param cutouts what is paper inside it (the bus's windows, the bowling ball's holes), painted
+ * over the body in the paper colour rather than by winding order, which breaks when the outline is
+ * edited.
+ * @param strokes what is line rather than fill, such as the bicycle.
  */
 internal data class Silhouette(
     val width: Float,
@@ -37,13 +35,7 @@ internal data class Silhouette(
     val strokes: String? = null,
 )
 
-/**
- * Side on, standing, and the same animal twice.
- *
- * 30 kg of labrador on the weight ladder and 60 cm of shepherd on the height ladder are one drawing,
- * which is why the prototype counted fourteen figures for fifteen rungs: what says «dog» at
- * twenty-six density-independent pixels is a body on four legs with a snout, and never a breed.
- */
+/** The labrador and the shepherd share one drawing: at this size a dog reads, a breed doesn't. */
 private val DOG = Silhouette(
     width = 124f,
     height = 84f,
@@ -56,14 +48,9 @@ private val DOG = Silhouette(
 )
 
 /**
- * The fourteen drawings of the three ladders (`docs/ux/cifras-326.md`).
- *
- * **They are ours and they are maintained here.** «No son un asset que se pueda descargar: son parte de
- * la identidad» — the collector asked for little figures and not for italics, and the same comparison
- * written as prose is exactly the thing this map came to prune.
- *
- * Schematic on purpose, because they are read small and above a rule: four strokes that say «bus» beat a
- * faithful outline that turns to mud.
+ * The drawings of the three ladders (`docs/ux/cifras-326.md`), maintained here rather than as
+ * downloaded assets. Schematic on purpose: they are read small, and a faithful outline turns to
+ * mud.
  */
 private val SILHOUETTES: Map<Referent, Silhouette> = mapOf(
     Referent.Brick to Silhouette(
@@ -72,9 +59,7 @@ private val SILHOUETTES: Map<Referent, Silhouette> = mapOf(
         body = "M2 14 L26 4 L98 4 L98 32 L74 42 L2 42 Z",
         cutouts = "M2 13 L75 13 L75 16 L2 16 Z M72 15 L75 15 L75 42 L72 42 Z",
     ),
-    // A sitting cat, drawn as four overlapping shapes that fill as one: the ears are what say «cat»
-    // and the tail is what keeps it from reading as a snowman. Two arc-command attempts read as a bug
-    // with antennae on the AVD; explicit curves are what fixed it.
+    // A sitting cat as four overlapping shapes. Explicit curves: arc commands rendered badly.
     Referent.Cat to Silhouette(
         width = 96f,
         height = 100f,
@@ -179,10 +164,8 @@ internal val SILHOUETTE_HEIGHT: Dp = 26.dp
 private const val STROKE_UNITS = 6f
 
 /**
- * A silhouette drawn at [height], keeping its own proportions.
- *
- * **The height is what is fixed, not the width**, because the three ladders stand their figures on a
- * rule: a bus and a person given the same box would put the bus's roof at the person's waist.
+ * A silhouette drawn at [height], keeping its own proportions. Height rather than width is fixed,
+ * since the figures stand on a common rule.
  */
 @Composable
 internal fun ReferentSilhouette(
@@ -213,11 +196,8 @@ internal fun ReferentSilhouette(
 private fun String.toPath(): Path = PathParser().parsePathString(this).toPath()
 
 /**
- * The referents with no drawing, which has to be nobody.
- *
- * A rung whose figure is missing is a ladder with a hole in it, and the hole is invisible from the code:
- * [ReferentSilhouette] simply draws nothing. Read by the suite, which is where a fifteenth referent added
- * without its figure gets caught.
+ * The referents with no drawing, which must be none: [ReferentSilhouette] silently draws nothing
+ * for them. Checked by the test suite.
  */
 internal fun referentsWithoutDrawing(): List<Referent> =
     Referent.entries.filterNot { it in SILHOUETTES.keys }

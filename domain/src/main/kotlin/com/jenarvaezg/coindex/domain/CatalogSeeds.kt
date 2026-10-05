@@ -45,8 +45,8 @@ object CatalogSeeds {
             if (!ids.add(catalog.id)) {
                 throw CatalogSeedException("collection catalog id `${catalog.id}` is duplicated")
             }
-            // Two cards reading the same thing is a defect the collector cannot get past: the
-            // variant that tells them apart — weight, finish — is not on the card (#22).
+            // Two cards with one name cannot be told apart: weight and finish are not on the
+            // card (#22).
             if (!shortNames.add(catalog.shortName)) {
                 throw CatalogSeedException(
                     "collection catalog `short_name` `${catalog.shortName}` is duplicated",
@@ -147,9 +147,8 @@ object GroupingSeeds {
  * Parses and validates the commemorative programme seeds (ADR 0022), under the same rules as the
  * catalogs: unknown fields are rejected and a bad file stops the app instead of degrading.
  *
- * A programme's `short_name` deliberately stays **out** of the cross-species check [Curation]
- * makes on construction: a programme is not a card, so it never sits beside a catalog in the index
- * and cannot be confused with one there. Uniqueness among programmes is enough.
+ * A programme's `short_name` stays out of the cross-species check in [Curation]: a programme is
+ * not a card, so uniqueness among programmes is enough.
  */
 object ProgrammeSeeds {
     fun parse(fileName: String, contents: String): CommemorativeProgramme {
@@ -201,12 +200,9 @@ object ProgrammeSeeds {
 }
 
 /**
- * Parses the curated orphans register (#133).
- *
- * Same strict JSON as the catalogs: a typo is a bug. Unlike catalogs and groupings, this
- * file is editorial — it is not loaded into the app container — so structural failures surface
- * in the suite rather than as a fatal startup crash. Cross-checks against catalog claims
- * stay in the suite too ([orphanCatalogCollisions]).
+ * Parses the curated orphans register (#133), with the same strict JSON as the catalogs. The file
+ * is editorial and not loaded into the app, so its failures, and its cross-checks against catalog
+ * claims ([orphanCatalogCollisions]), surface in the suite rather than at startup.
  */
 @SuiteOnly
 object OrphanSeeds {

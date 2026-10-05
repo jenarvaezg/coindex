@@ -7,18 +7,12 @@ package com.jenarvaezg.coindex.domain
 const val SPANNING_VARIANTS_WEIGHT: Int = -1
 
 /**
- * The exact canonical tuple that identifies a physical variant. Derived collections and curated
- * catalogs both key off this, and it groups the pieces of either.
+ * The exact canonical tuple that identifies a physical variant; derived collections and curated
+ * catalogs both key off it. It persists nothing (ADR 0021 §5): it is the identity only of cards no
+ * file names, and of the route that opens one.
  *
- * It **persists nothing**: since ADR 0021 §5 nothing is stored per card, and identity is the
- * curated file wherever there is one, so this key is the identity only of the cards no file names —
- * and of the route that opens one.
- *
- * A null [weightMillioz] means the family is a set issued as a set, whose members span
- * physical variants, so no single weight identifies it (ADR 0012).
- *
- * [metal] is the fourth component (#40, ADR 0018) and the only one that can be absent without
- * meaning anything special: a type Numista records no composition for is simply unread.
+ * A null [weightMillioz] means a set issued as a set, whose members span physical variants (ADR
+ * 0012). A null [metal] only means Numista recorded no readable composition (#40, ADR 0018).
  */
 data class VariantKey(
     val family: String,

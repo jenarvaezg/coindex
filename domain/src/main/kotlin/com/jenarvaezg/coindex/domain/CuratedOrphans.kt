@@ -69,11 +69,9 @@ sealed class CuratedOrphansValidationError(val message: String) {
 }
 
 /**
- * Types that appear both as an orphan verdict and as an issued catalog member.
- *
- * Lives in the suite, not at startup: a collision is a curation mistake to fix by editing
- * one of the two files, and making it fatal on boot would be the unsilenceable red #133
- * forbids (same bargain as the metal and object-class nets).
+ * Types that appear both as an orphan verdict and as an issued catalog member. Like the metal and
+ * object-class nets it runs in the suite, not at startup: a collision is fixed by editing one of
+ * the two files (#133).
  */
 @SuiteOnly
 fun orphanCatalogCollisions(

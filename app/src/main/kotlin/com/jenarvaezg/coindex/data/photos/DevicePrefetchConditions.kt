@@ -11,23 +11,17 @@ import androidx.core.content.getSystemService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Below this the battery is «low», and pictures nobody asked for stop being worth their charge. */
+/** Below this the battery is «low», and prefetching pictures is not worth the charge. */
 private const val LOW_BATTERY_FRACTION = 0.20f
 
 /**
- * Reads the three facts [prefetchRefusal] decides on off the phone.
- *
- * A thin wrapper over three system services on purpose: the decision itself is arithmetic and lives
- * in [prefetchRefusal], where it can be read and tested without a device.
+ * Reads off the phone the facts [prefetchRefusal] decides on. A thin wrapper over system services;
+ * the decision lives in [prefetchRefusal], testable without a device.
  */
 class DevicePrefetchConditions(context: Context) {
     private val appContext = context.applicationContext
 
-    /**
-     * Off the main thread, which is this class's business and not its caller's: reading whether the
-     * network is metered and how full the battery is are three binder calls, and the moment they are
-     * asked for is the one right after the app has finished starting.
-     */
+    /** Off the main thread, since it makes several binder calls right after the app starts. */
     suspend fun current(syncing: Boolean): PrefetchConditions = withContext(Dispatchers.IO) {
         PrefetchConditions(
             unmeteredNetwork = isUnmetered(),
@@ -38,11 +32,8 @@ class DevicePrefetchConditions(context: Context) {
     }
 
     /**
-     * Whether the network in use is one the collector does not pay by the megabyte for.
-     *
-     * Asked as a capability rather than as «is it wifi»: a metered wifi hotspot is the collector's
-     * tariff too, and an unmetered ethernet dock is not. No network at all answers false, which is
-     * the right answer — there is nothing to bring.
+     * Whether the network in use is unmetered. Asked as a capability rather than «is it wifi»: a
+     * metered wifi hotspot costs the collector data too. No network answers false.
      */
     private fun isUnmetered(): Boolean {
         val manager = appContext.getSystemService<ConnectivityManager>() ?: return false
@@ -55,11 +46,8 @@ class DevicePrefetchConditions(context: Context) {
         appContext.getSystemService<PowerManager>()?.isPowerSaveMode == true
 
     /**
-     * The battery level, read from the sticky broadcast rather than subscribed to.
-     *
-     * Nothing here reacts to the battery changing: the prefetch is started at a moment, and the
-     * question is only whether that moment is a good one. A phone that is charging is never «low»,
-     * however empty it is.
+     * The battery level, read once from the sticky broadcast: the prefetch only asks at the moment
+     * it starts. A charging phone is never «low».
      */
     private fun isBatteryLow(): Boolean {
         val status: Intent = appContext.registerReceiver(

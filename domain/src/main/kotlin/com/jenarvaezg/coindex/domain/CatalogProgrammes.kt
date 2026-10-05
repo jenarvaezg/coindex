@@ -2,27 +2,14 @@ package com.jenarvaezg.coindex.domain
 
 /**
  * The commemorative programmes every curated catalog touches, standings included, built once per
- * assembly (#539).
+ * assembly (#539) like [CatalogAlbums]: resolving them per plate made the notebook re-derive every
+ * programme once per printed card. Owned types are gathered in one walk, so an assembly costs a
+ * walk of the pieces plus one of the catalogued members.
  *
- * **The sibling of [CatalogAlbums], and it exists for the same reason one step further on.** #537
- * gave the album one instance per assembly so a card and its plate could not divide by two different
- * denominators; the programmes stayed behind, and a plate resolved them again on every read — which
- * on paper meant the notebook re-derived thirteen programmes against the whole inventory once per
- * printed card, sixty-seven times for the father's collection. The reading never changed between
- * those sixty-seven answers, because nothing it is made of changes without a new snapshot: the
- * curated files are constant for the life of the process and the inventory is the assembly's own.
- *
- * **Built off one walk of the inventory and not one per catalog.** The owned types are gathered once
- * and every programme's progress is counted against that set, so an assembly costs a walk of the
- * pieces plus a walk of the catalogued members, instead of `catalogs × pieces`.
- *
- * **A catalog it does not hold reads as no programme, and that is not the null [CatalogAlbums.get]
- * has.** The two absences are different facts: an album is what a plate divides by, so its absence is
- * a wiring mistake that has to be said out loud, while a standing is a *second reading* beside the
- * plate and never part of its denominator (ADR 0022) — the honest answer for a catalog no programme
- * names is «ninguno», and it is the answer for forty-seven of the forty-nine files. The wiring
- * mistake is still caught, and caught first: `resolvePlate` asks for the album before it asks for
- * this.
+ * A catalog it does not hold reads as no programme, unlike the null of [CatalogAlbums.get]: an
+ * album is what a plate divides by, so its absence is a wiring mistake, while a standing is a
+ * second reading beside the plate (ADR 0022) and most catalogs touch none. `resolvePlate` asks for
+ * the album first, so the wiring mistake is still caught.
  */
 data class CatalogProgrammes(
     private val byCatalogId: Map<String, List<ProgrammeStanding>> = emptyMap(),
@@ -33,15 +20,9 @@ data class CatalogProgrammes(
 
     companion object {
         /**
-         * The standings of every catalog, over one inventory.
-         *
-         * **File order survives**, because it is what the plate prints: the programmes are walked in
-         * the order they were loaded and filtered, never grouped by the type that matched them, so
-         * two programmes naming the same coin cannot swap places between two readings of the same
-         * files.
-         *
-         * Only the catalogs that touch something are keyed, so the map is two entries and not forty
-         * nine of an empty list — see [get] for why the missing key is an answer and not a hole.
+         * The standings of every catalog, over one inventory. Programmes keep file order, which the
+         * plate prints, so two programmes naming the same coin cannot swap places. Only catalogs
+         * that touch a programme are keyed (see [get]).
          */
         fun over(
             catalogs: List<CollectionCatalog>,
@@ -49,8 +30,8 @@ data class CatalogProgrammes(
             items: List<CollectedItem>,
         ): CatalogProgrammes {
             if (programmes.isEmpty()) return CatalogProgrammes()
-            // The progress of a programme is over the **programme** and not over any catalog
-            // (ADR 0022), so it does not depend on which catalog is asking and is counted once.
+            // A programme's progress is over the programme, not any catalog (ADR 0022), so it is
+            // counted once.
             val owned = ownedTypeIds(items)
             val standings = programmes.map { ProgrammeStanding(it, it.progressOver(owned)) }
             return CatalogProgrammes(

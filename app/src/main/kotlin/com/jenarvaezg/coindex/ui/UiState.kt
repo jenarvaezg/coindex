@@ -14,12 +14,7 @@ import com.jenarvaezg.coindex.ui.shelf.IndexShelf
 /** What «Credenciales» edits, read from the credential store when it opens. */
 data class CredentialsValues(val apiKey: String, val userId: String)
 
-/**
- * A one-off snackbar notice.
- *
- * [openFile] is set after a download lands in Descargas so the snackbar can offer Abrir (#403);
- * every other notice leaves it null.
- */
+/** A one-off snackbar notice. [openFile] is set only after a download, for Abrir (#403). */
 data class UiNotice(
     val text: String,
     val openFile: OpenDownloadedFile? = null,
@@ -34,9 +29,8 @@ data class OpenDownloadedFile(
 
 /**
  * @param message a one-off notice for the snackbar; it is consumed once shown.
- * @param validation a form error that belongs next to the field that caused it and stays until
- *   the form is submitted again. Keeping the two apart is what stops a dismissed snackbar from
- *   also erasing the inline text under the credential fields.
+ * @param validation a form error shown next to its field until the form is submitted again; kept
+ *   apart from [message] so dismissing a snackbar doesn't erase it.
  */
 data class UiState(
     val onboarded: Boolean = false,
@@ -50,85 +44,58 @@ data class UiState(
     val update: UpdateStatus = UpdateStatus.UpToDate,
     val updating: Boolean = false,
     /**
-     * Whether the raw dump of #548 is being written, read only by «Este teléfono».
-     *
-     * A flag and not a set, unlike [refreshingFichas]: there is one base and one button, and the
-     * whole of what it protects is a second tap opening a second chooser over a second copy.
+     * Whether the raw dump of #548 is being written, so a second tap doesn't open a second chooser.
+     * Read only by «Este teléfono».
      */
     val exportingData: Boolean = false,
     val versionName: String = "",
     /**
-     * What the collector is looking through, on each of the two hierarchies (ADR 0021 §1).
-     *
-     * In the state and not in the screens because it survives a launch, which is exactly what tells
-     * it apart from the search text: that one lives in the screen it belongs to and is gone with it.
+     * Each hierarchy's shelf (ADR 0021 §1). In the state because it survives a launch; the search
+     * text doesn't, and lives in its screen.
      */
     val indexShelf: IndexShelf = IndexShelf(),
     val coinsShelf: CoinsShelf = CoinsShelf(),
     /**
-     * How the notebook comes out of the printer (#228), across launches like the shelves above.
-     *
-     * In the state and not in the export sheet because it survives a launch: the collector who
-     * printed a checklist last month opens the sheet on a checklist. It is **not** per card
-     * (ADR 0021 §7) — it is how the paper looks, not something stored about a collection.
+     * How the notebook is printed (#228), kept across launches like the shelves. Global, not per
+     * card (ADR 0021 §7).
      */
     val notebookOptions: NotebookOptions = NotebookOptions(),
     /**
-     * The types whose ficha is being asked for right now (#185).
-     *
-     * A set and not a flag: the two surfaces that carry the gesture are lists, and the collector who
-     * taps two rows must see which two are working — one boolean would have greyed out every button
-     * on screen to report one call.
+     * The types whose ficha is being fetched right now (#185). A set, so each row shows its own
+     * progress.
      */
     val refreshingFichas: Set<Int> = emptySet(),
     /** What the phone holds of the catalog's photographs (#191). Read only on «Este teléfono». */
     val photoCache: PhotoCacheStatus = PhotoCacheStatus(),
     /**
-     * Every catalog price and the last spot (ADR 0028).
-     *
-     * In the state rather than fetched by «Las cifras» when it opens: the value of a piece also lands in
-     * its ficha and in the header of its plate, and three screens reading three books is three totals
-     * that can disagree about the same coin.
+     * Every catalog price and the last spot (ADR 0028), in the state so every screen pricing a
+     * piece reads the same book.
      */
     val prices: PriceBook = PriceBook(),
     /**
-     * When [prices] reached this phone, which is the «now» every age on screen is measured against.
+     * When [prices] reached this phone: the «now» every age on screen is measured against. Not
+     * `PriceBook.readAt`, which is when one issue was asked about.
      *
-     * **Not `PriceBook.readAt`**, which is when one issue was asked about: this is when the book the
-     * screen is drawn from arrived, and it is what an age is measured *from* rather than one of the
-     * dates being aged.
-     *
-     * Stamped on the arrival of a book and not on every emission, so it is exactly as still as the
-     * figures it dates: what it ages is an amount that never expires (ADR 0030 §4), and a clock that
-     * ticked would make «hace ocho días» a thing that changes while the collector reads it. It is
-     * here rather than in the screens because it is a fact about the state — the two places that used
-     * to read `System.currentTimeMillis()` in a composable body did it once each, with a different
-     * key, and could therefore date the same book two ways.
+     * Stamped when a different book arrives, so ages don't change while being read (ADR 0030 §4),
+     * and kept in the state so every screen dates the same book the same way.
      */
     val pricesArrivedAt: Long = 0L,
     /**
-     * The casillas the collector marked, as the table holds them (ADR 0029).
-     *
-     * The **rows** and not the resolved slots, which is the seam ADR 0029 §3 asks for: nothing that
-     * reads inventory joins this table, so the crossing happens once, where a screen asks for it —
-     * `wishedSlots` — and never inside the assembly of the collection.
+     * The casillas the collector marked, as the table holds them (ADR 0029). Rows, not resolved
+     * slots: they meet the inventory only in `wishedSlots`, never in the collection's assembly
+     * (ADR 0029 §3).
      */
     val wishes: List<Wish> = emptyList(),
     /**
-     * How far the valuation pass has got, which is what decides whether the money section exists at all.
-     *
-     * **Absence and not zero** (ADR 0028 §7): while this says the market is still arriving, the total
-     * would be `max(silver, paid)` — some 60 % of the real figure — and a total at 60 % is not
-     * incomplete, it is false.
+     * How far the valuation pass has got, which decides whether the money section exists. While
+     * the market is arriving the total would be `max(silver, paid)`, false rather than incomplete,
+     * so it is absent, not zero (ADR 0028 §7).
      */
     val valuation: ValuationStatus = ValuationStatus(),
     /**
-     * The plate of the shelf window whose price is being asked for right now, by catalog id (ADR 0030 §3).
-     *
-     * One and not a set, unlike the fichas being refreshed: the gesture lives on a plate and there is one
-     * plate on screen, and a second tasación in flight would be spending the budget on a screen the
-     * collector has already left. It is what the gesture reads to say «Preguntando a Numista…» and what
-     * stops a second press from starting a second pass.
+     * The shelf-window plate being valued right now, by catalog id (ADR 0030 §3). One at a time:
+     * the gesture shows «Preguntando a Numista…» from it, and it stops a second press from starting
+     * a second pass.
      */
     val valuingPlate: String? = null,
 )

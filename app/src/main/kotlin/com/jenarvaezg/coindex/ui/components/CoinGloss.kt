@@ -12,24 +12,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
 
 /**
- * The gloss of a coin: light **and** shadow, moved by the tilt of the phone.
+ * The gloss of a coin, light and shadow moved by the tilt of the phone (variant H of #303): a
+ * linear gradient at 105°, black → transparent → white → transparent → black, over the photograph
+ * in `BlendMode.Softlight` (API 29, the `minSdk`; no `RuntimeShader`).
  *
- * A linear gradient at 105° — black → transparent → white → transparent → black — laid over the
- * photograph in `BlendMode.Softlight`. It is variant H of #303, and what it wins is not light: it is
- * that the coin stops being a flat cut-out glued into a hole. No `RuntimeShader` is involved, so the
- * effect imposes no version floor: `BlendMode` is API 29, exactly the `minSdk`.
- *
- * **Everything is a fraction of the diameter, never a dp.** #303 prototyped ±55 dp over a hole of
- * 121 dp and wrote down what that was — ±45 % of the diameter. Production's casilla is 104 dp, and
- * 55 dp there would be ±53 %: a band that spends more time off the coin than on it, which reads as a
- * flicker at the extremes of the tilt. The proportion is also what survives the day a hole changes
- * size, and «Las cifras» brings one of its own.
+ * Every length is a fraction of the diameter, never dp, so the band behaves the same in holes of
+ * any size.
  */
 @Immutable
 data class CoinGloss(
     /**
-     * Half the prototype video's, because the photograph already carries its own light baked in from
-     * the upper left: piling white on an already pale picture does not give metal, it gives haze.
+     * Moderate because the photograph already has light baked in from the upper left; more white
+     * gives haze rather than metal.
      */
     val intensity: Float = 0.5f,
     /** How far the band travels from the centre, each way, as a fraction of the diameter. */
@@ -50,27 +44,15 @@ data class CoinGloss(
 }
 
 /**
- * How the coins of this tree gloss, or `null` where they must not.
- *
- * Null is the export rule of ADR 0026 §4 said in one place: what is alive does not travel to paper.
- * [com.jenarvaezg.coindex.ui.screens.OffScreenSheet] provides it for every sheet that composes
- * itself off screen, so no surface has to remember whether it is being photographed.
+ * How the coins of this tree gloss, or null where they must not: what moves doesn't go to paper
+ * (ADR 0026 §4). [com.jenarvaezg.coindex.ui.screens.OffScreenSheet] provides null.
  */
 val LocalCoinGloss = staticCompositionLocalOf<CoinGloss?> { CoinGloss.Default }
 
 /**
- * Marks a photograph as metal: the gloss goes over it and the accelerometer moves it.
- *
- * One modifier and not a list of screens (ADR 0026 §4): **every coin photograph glosses**, die-cut
- * or loose — the plate, the index, `PieceCard` and the side sheets.
- *
- * [isCoin] is where the other half of the rule lives, so that a third surface cannot forget it:
- * empty cardboard never glosses, for the direct reason that there is no coin there, and neither does
- * the desaturated design of an issue the collector is missing — that is the catalog's drawing, not
- * metal.
- *
- * Being composed is also what registers the sensor: while no coin is on screen the accelerometer is
- * not worth its battery, and no surface has to say so out loud.
+ * Marks a photograph as metal: the gloss goes over it and the accelerometer moves it. Every coin
+ * photograph glosses, die-cut or loose (ADR 0026 §4). Pass [isCoin] false for empty cardboard or
+ * the design of a missing issue. Being composed also keeps the sensor registered.
  */
 @Composable
 fun Modifier.coinGloss(isCoin: Boolean = true): Modifier {
@@ -84,10 +66,8 @@ fun Modifier.coinGloss(isCoin: Boolean = true): Modifier {
 }
 
 /**
- * The drawing on its own, for the bench, which governs both the parameters and the tilt itself.
- *
- * `drawWithContent` and not a layer of its own: the blend is against what is already under the band
- * — the photograph — and the clip of whoever owns the hole is what keeps it off the cardboard.
+ * The drawing alone, for the bench, which supplies both the parameters and the tilt. No layer of
+ * its own: it blends against the photograph, and the hole's clip keeps it off the cardboard.
  */
 fun Modifier.coinGloss(gloss: CoinGloss, tilt: CoinTilt): Modifier = drawWithContent {
     drawContent()
@@ -96,8 +76,7 @@ fun Modifier.coinGloss(gloss: CoinGloss, tilt: CoinTilt): Modifier = drawWithCon
     val centre = gloss.bandCentre(diameter, tilt.lateral)
     val half = gloss.bandHalfWidth(diameter)
     val shadow = Color.Black.copy(alpha = gloss.intensity)
-    // The rectangle is the square of the hole turned on its own centre, and a circle inscribed in a
-    // square stays inscribed however the square is turned: the band covers the whole coin.
+    // The hole's square turned on its centre still contains the inscribed coin.
     rotate(gloss.angleDegrees) {
         drawRect(
             brush = Brush.horizontalGradient(

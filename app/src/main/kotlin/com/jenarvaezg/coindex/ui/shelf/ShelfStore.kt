@@ -5,10 +5,8 @@ import com.jenarvaezg.coindex.data.text
 import com.jenarvaezg.coindex.data.writeText
 
 /**
- * Where the shelf of each hierarchy is remembered.
- *
- * Two properties and an interface, so that «a chip is written through the moment it is tapped» is
- * something a test can watch happen rather than something the code merely says (ADR 0021 §1).
+ * Where each hierarchy's shelf is remembered. An interface so tests can check that a chip is
+ * written through as soon as it is tapped (ADR 0021 §1).
  */
 interface ShelfStore {
     var index: IndexShelf
@@ -20,17 +18,11 @@ interface ShelfStore {
 const val SHELF_PREFERENCES: String = "coindex-shelves"
 
 /**
- * The filters and the sort of the two hierarchies, across launches (ADR 0021 §1).
+ * Both shelves' filters and sort, persisted across launches (ADR 0021 §1).
  *
- * On named values rather than in Room, for the same reason as `StoredSyncLog`: it is a handful of
- * values about this device and this collector's last look at their own notebook, and no query ever
- * joins against them. Nothing here is per card either, so ADR 0021 §7 is untouched — a filter is what the
- * collector is looking through, not something stored about a collection.
- *
- * It lives beside [ShelfCodec] and not in `data`, which is where it used to be (#221). A shelf's
- * storage format *is* the codec, so a store in the data layer had to import three presentation
- * types to do its job; what it actually needed from the data layer was [NamedValues], and that is
- * now the only thing it takes.
+ * Named values rather than Room, like `StoredSyncLog`: a few device-local values nothing joins
+ * against. Nothing is stored per card, so ADR 0021 §7 is unaffected. Lives beside [ShelfCodec]
+ * rather than in `data` (#221), since the codec is its storage format; it only needs [NamedValues].
  */
 class StoredShelves(private val values: NamedValues) : ShelfStore {
     override var index: IndexShelf

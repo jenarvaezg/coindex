@@ -3,11 +3,11 @@ package com.jenarvaezg.coindex.domain
 import kotlinx.serialization.Serializable
 
 /**
- * Physical finish of a coin type. Numista exposes no stable finish field, so this is
- * inferred from the type title with auditable rules (see [inferFinish]).
+ * Physical finish of a coin type. Numista exposes no stable finish field, so this is inferred from
+ * the type title and composition with auditable rules (see [inferFinish]).
  *
- * The entry names double as the on-disk representation of curated catalogs, which were
- * written by the frozen Rust implementation using these exact spellings.
+ * The entry names are the spelling curated catalogs use on disk, inherited from the retired Rust
+ * implementation.
  */
 @Serializable
 enum class Finish {
@@ -31,10 +31,8 @@ fun finishCode(finish: Finish?): String = when (finish) {
 }
 
 /**
- * Parses a canonical finish code.
- *
- * Returns a nested optional because "unknown" is a valid code for the absent finish:
- * `null` means the code itself was not recognised, `Optional(null)` means unknown finish.
+ * Parses a canonical finish code. Nested optional because "unknown" is a valid code for the absent
+ * finish: `null` means the code was not recognised, `FinishParse(null)` means unknown finish.
  */
 fun finishFromCode(code: String): FinishParse? = when (code) {
     "unknown" -> FinishParse(null)

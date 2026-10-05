@@ -50,41 +50,33 @@ import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 
 /**
- * A collection whose plate does not open, opened: the pieces it is made of.
+ * The pieces of a collection without a plate: a derived collection or a box, on one screen
+ * (ADR 0021 §9) since they differ only in what they have (a physical variant, upkeep actions).
  *
- * **One screen for the two cases** (ADR 0021 §9). A collection the inventory derives and a box the
- * collector typed used to have a screen each, and the measurement behind the merge is that they
- * differ in what they *have* — a physical variant, an upkeep — never in what they are. Two screens
- * would have drifted apart the first time one of them grew a line, and the difference the collector
- * would have read is the word of provenance the card had just dropped.
- *
- * What it never shows is a gap. A collection with no issue list has nothing to be missing from
- * (ADR 0021 §3), and a box cannot contain one by construction, so what goes where a plate's empty
- * cells would be is nothing at all — not a hole, not a promise, not a «could have a catalog».
+ * It never shows a gap: a collection without an issue list has nothing to be missing from
+ * (ADR 0021 §3), and neither does a box.
  */
 @Composable
 fun PiecesScreen(
     state: CollectionState,
     subject: PiecesSubject?,
-    /** The card's «Ver en Numista», the one label of this screen that leaves the app (#508). */
+    /** The card's «Ver en Numista», the only way out of the app from here (#508). */
     onOpenNumista: (typeId: Int) -> Unit,
     onMessage: (UiNotice) -> Unit,
     /**
-     * How old each piece's ficha is and how to ask Numista again for it (#185). One type per tap:
-     * there is no «refrescar la tarjeta entera» here, because a collection of twenty pieces would be
-     * twenty calls spent on the nineteen nobody said were wrong (ADR 0025).
+     * Each piece's ficha age and how to ask Numista for it again (#185). One type per tap, never
+     * the whole card, so calls aren't spent on fichas nobody flagged (ADR 0025).
      */
     ficha: (typeId: Int) -> FichaRefresh,
     notebookOptions: NotebookOptions,
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
-    /** Present exactly when the subject is a box: the same `if` all the way down. */
+    /** Non-null exactly when the subject is a box. */
     upkeep: BoxUpkeep? = null,
     /**
-     * Why there is nothing here, when there is nothing here. A box has been undone; a derived
-     * collection may also have moved, because refreshing a ficha can change the family its key is
-     * built from (#185), and the route still names the old one.
+     * Shown when there is no subject: a box was deleted, or a ficha refresh moved a derived
+     * collection to another family key (#185) while the route still names the old one.
      */
     missingExplanation: String = COLLECTION_NO_LONGER_EXISTS,
     modifier: Modifier = Modifier,
@@ -96,8 +88,7 @@ fun PiecesScreen(
 
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
 
-    // The machine itself is [SheetExportFlow] and lives in one place (#430), and since #431 the
-    // drawing does too: what a leaf of pieces brings is its name, its file and its own count.
+    // Export flow and drawing are shared (#430, #431); this supplies the name, file and count.
     SheetExportFlow(
         sheet = SharedSheet.PIECES,
         key = subject.title,
@@ -119,8 +110,7 @@ fun PiecesScreen(
                 PiecesHeading(
                     subject = subject,
                     upkeep = upkeep,
-                    // Absent while «Cómo se exporta» is open in the row below, which is its own
-                    // slot and not a second one (#512).
+                    // Absent while «Cómo se exporta» is open below (#512).
                     door = export.door,
                     renaming = renaming,
                     onToggleRename = { renaming = !renaming },
@@ -131,8 +121,7 @@ fun PiecesScreen(
 
             export.progress?.let { progress -> item { progress() } }
 
-            // The upkeep of a box is an `if` and not a screen: two actions in the heading above
-            // and one per row below.
+            // Box upkeep: two actions in the heading and one per row.
             if (renaming && upkeep != null) {
                 item {
                     RenameCard(subject.title, onRename = { upkeep.onRename(it); renaming = false })
@@ -145,11 +134,7 @@ fun PiecesScreen(
                 item {
                     Column {
                         HorizontalDivider(color = Paper.line)
-                        // The box-making gesture is **not** here any more. It was hung off this
-                        // screen and off «Sin clasificar», the two places §9 and §1 removed, and it
-                        // is born in Coins now (ADR 0021 §11, #173): whoever wants to group is
-                        // looking at the coins they want to group, not at a collection that already
-                        // holds them.
+                        // Boxes are created from Monedas, not here (ADR 0021 §11, #173).
                         Text(
                             PIECES_HEADING,
                             style = MaterialTheme.typography.titleMedium,
@@ -167,9 +152,8 @@ fun PiecesScreen(
                     onOpenNumista = onOpenNumista,
                     ficha = ficha(piece.item.typeId),
                 ) {
-                    // Dropping a type does not touch the piece (ADR 0013, §10): it stays in the
-                    // inventory and on the card its variant derives, which is what makes a box a
-                    // second membership rather than a move.
+                    // Removing a type from a box leaves the piece in the inventory and on its
+                    // derived card: a box is an extra membership, not a move (ADR 0021 §10).
                     upkeep?.let { box ->
                         CardAction(
                             text = REMOVE_TYPE_FROM_COLLECTION,
@@ -184,18 +168,11 @@ fun PiecesScreen(
 }
 
 /**
- * The heading: country, name, what it is made of, and what can be done to it.
+ * The heading: country, name, count, and actions.
  *
- * The eyebrow is **the country** — the same one the card carried — and not the species of
- * collection. That slot used to say «Propuesta de colección» or «Tu agrupación», which is the
- * distinction ADR 0021 §2 removed; the country was already the right answer and was being spent
- * on saying which of the two screens you had landed on.
- *
- * The count is the card's own sentence, ratio included where there is one: a collection whose
- * catalog it owns no issued member of yet says «0 de 12 · te faltan 12» on the card, and reading
- * «4 monedas · 3 tipos» one tap later would be the same collection contradicting itself. It is
- * [countSentence] and not the expression spelled out again — spelling it out is how the sheet this
- * screen exports came to contradict it (#226).
+ * The eyebrow is the country, as on the card, not the kind of collection (ADR 0021 §2). The count
+ * is [countSentence], the card's own sentence with its ratio, so the screen, the card and the
+ * exported sheet can't disagree (#226).
  */
 @Composable
 private fun PiecesHeading(
@@ -216,14 +193,12 @@ private fun PiecesHeading(
             style = MaterialTheme.typography.labelLarge,
             color = Paper.muted,
         )
-        // One door into «Cómo se exporta», the same shape the index has (#434): the panel owns
-        // Descargar / Compartir / Cancelar, and asking the destination on the way in as well was
-        // the whole defect.
+        // One button into «Cómo se exporta», as in the index (#434); the panel asks the
+        // destination.
         SheetExportDoorButton(
             door = door,
             modifier = Modifier.padding(top = 12.dp),
-            // A collection with no piece in it has no sheet to export, whatever the machine says
-            // about being free.
+            // No pieces, nothing to export, whatever the export flow's state.
             enabled = subject.pieces.isNotEmpty(),
         )
         if (upkeep != null) {
@@ -243,12 +218,8 @@ private fun PiecesHeading(
 }
 
 /**
- * Renaming a box: the same field, the same limit, the same counter as the baptism (ADR 0021 §4).
- *
- * The 40 characters are a property of the name and not of the act of typing it first, so a rename
- * cannot produce a name the card could not hold. Uniqueness is **not** rechecked, and that is the
- * ADR's own rule (§11): it is checked at creation and there it ends — two homonymous cards are a
- * signal to read, not a state to police.
+ * Renaming a box, with the same field, 40-character limit and counter as creating one
+ * (ADR 0021 §4). Uniqueness is checked only at creation (§11), not on rename.
  */
 @Composable
 private fun RenameCard(current: String, onRename: (String) -> Unit) {
@@ -278,11 +249,8 @@ private fun RenameCard(current: String, onRename: (String) -> Unit) {
 }
 
 /**
- * Empty, and why — which is not the same sentence in the two cases.
- *
- * A box survives with nothing in it, because it is the one thing the collector typed and having it
- * vanish would read as data loss (ADR 0021 §11). A derived collection cannot: with no pieces there
- * is nothing left to derive it from.
+ * The empty state. A box survives empty, since deleting it would read as data loss (ADR 0021 §11);
+ * a derived collection with no pieces no longer exists.
  */
 @Composable
 private fun EmptyCollection(isBox: Boolean) {
@@ -295,16 +263,10 @@ private fun EmptyCollection(isBox: Boolean) {
     }
 }
 
-/**
- * A route with nothing behind it: the collection was undone, sold away, or never described.
- *
- * Said plainly and never guessed at — the alternative is a screen about a collection that does not
- * exist, which reads as the app having lost it.
- */
+/** A route whose collection no longer exists or never did, said plainly. */
 @Composable
 fun MissingSubject(explanation: String, modifier: Modifier = Modifier) {
-    // No heading over the sentence: «Colección desconocida» was a fifth wording of the very fact
-    // the sentence states, and the masthead already says which hierarchy this route belongs to.
+    // No heading: it would restate the sentence, and the top bar names the section.
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(explanation, style = MaterialTheme.typography.bodyLarge, color = Paper.muted)
     }

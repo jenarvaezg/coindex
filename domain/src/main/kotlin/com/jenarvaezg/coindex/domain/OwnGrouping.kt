@@ -1,13 +1,9 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * A grouping the collector made themselves: a heading of their own and the types under it
- * (ADR 0013).
- *
- * It is not a derived collection and not a catalog. A derived collection comes from what
- * Numista says the pieces are, and a catalog is an editorial claim about a sequence; this is
- * neither, it is the collector saying «these go together» — which is the one authority neither
- * of the other two can overrule.
+ * A grouping the collector made: a heading of their own and the types under it (ADR 0021 §11). Neither
+ * a derived collection (what Numista says the pieces are) nor a catalog (an editorial claim about
+ * a sequence): it is the collector saying «these go together», which neither can overrule.
  */
 data class OwnGrouping(
     val id: Long,
@@ -27,16 +23,12 @@ data class OwnGroupingView(
 }
 
 /**
- * Fills each own grouping with the pieces currently owned of its types.
+ * Fills each own grouping with the owned pieces of its types. An extra view, not a move: a grouped
+ * piece stays in its derived collection.
  *
- * An extra view, not a move: a grouped piece stays in the collection it was derived into, so
- * nothing disappears from the index for having been organized. Only currently owned pieces
- * count, as everywhere else.
- *
- * A grouping whose types have all left the collection still comes back, empty, with its zero and
- * its place in the order (ADR 0021 §11). Nothing else in the app is stored per card, so this is the
- * one thing the collector typed, and having it vanish because a coin was sold would read as data
- * loss rather than as an empty shelf.
+ * A grouping whose types have all left the collection still comes back, empty, in its place (ADR
+ * 0021 §11): it is the one thing the collector typed, and losing it when a coin is sold would read
+ * as data loss.
  */
 fun buildOwnGroupingViews(
     groupings: List<OwnGrouping>,

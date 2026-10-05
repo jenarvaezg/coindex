@@ -6,9 +6,8 @@ const val GRAMS_PER_TROY_OUNCE: Double = 31.1034768
 fun gramsToOunces(grams: Double): Double = grams / GRAMS_PER_TROY_OUNCE
 
 /**
- * The weights the magnet pulls to. `internal` and not private because `MatchingDigestTest`
- * publishes them in the matching digest: `scripts/weight-deviations.py` keeps a copy of them, and
- * a copy nothing compares is a copy that drifts.
+ * The weights a measured weight snaps to. `internal` so `MatchingDigestTest` can publish them in
+ * the matching digest, against which the copy in `scripts/weight-deviations.py` is compared.
  */
 internal val COMMON_WEIGHTS_MILLIOZ = intArrayOf(250, 500, 1_000, 2_000, 5_000, 10_000)
 
@@ -16,21 +15,14 @@ internal val COMMON_WEIGHTS_MILLIOZ = intArrayOf(250, 500, 1_000, 2_000, 5_000, 
 internal const val SNAP_TOLERANCE_MILLIOZ = 10
 
 /**
- * Normalizes a weight in ounces to milli-ounces, snapping to the common bullion weights
- * when within 10 milli-ounces. 31.1 g becomes exactly 1000; 30 g stays at 965 so that a
- * near-ounce piece is never conflated with a true ounce. The nearest target wins and the
- * smaller one breaks a tie, which no two common weights can currently produce: they sit at
- * least 250 apart and the tolerance is 10, so at most one is ever in range. The comparator
- * stays anyway, so that adding a common weight is a one-line change and not a silent
- * dependence on declaration order.
+ * Normalizes a weight in ounces to milli-ounces, snapping to the common bullion weights when within
+ * [SNAP_TOLERANCE_MILLIOZ]: 31.1 g becomes exactly 1000, while 30 g stays 965 so a near-ounce piece
+ * is never read as an ounce. The nearest target wins and the smaller breaks a tie; no tie is
+ * possible today, but the comparator keeps a new target from depending on declaration order.
  *
- * The bullion weights are the only targets, because they are the only convention a coin can
- * belong to without anybody saying so. A weight a curated catalog declares is authority over
- * **its own members** (ADR 0016), and those never reach this function: their key comes from
- * the file. ADR 0012 also made declared weights global targets, back when every piece passed
- * through here — and once the catalog branch took its members out, all that reach was left
- * pointing at types no curator had ever weighed. It decided the variant of twenty-two of
- * them in silence, and got the Morgan dollar's true 26.73 g wrong (#288), so it is gone.
+ * Only bullion weights are targets. A curated catalog's declared weight governs its own members,
+ * which never come through here (ADR 0016). Declared weights used to be global targets too (ADR
+ * 0012), which misread uncurated types such as the Morgan dollar's 26.73 g; #288 removed that.
  */
 fun normalizeWeightMillioz(weightOz: Double): Int? {
     if (!weightOz.isFinite() || weightOz <= 0.0) return null
@@ -43,13 +35,9 @@ fun normalizeWeightMillioz(weightOz: Double): Int? {
 }
 
 /**
- * A variant weight written out in troy ounces: `1000` reads «1 oz», `386` reads «0,386 oz».
- *
- * It lives here and not in `Labels.kt` because it is arithmetic and not copy — the variant key of
- * ADR 0018 said in its own unit — and because two owners of that arithmetic is how «0,386 oz» on a
- * card and «0,39 oz» in a name begin to disagree about one coin. `weightLabel` is the
- * collector-facing reading built on top of it and keeps the one sentence there is to word: the set
- * that spans denominations and has no single weight to show (ADR 0012).
+ * A variant weight in troy ounces: `1000` reads «1 oz», `386` reads «0,386 oz». Here and not in
+ * `Labels.kt` because it is arithmetic on the variant key (ADR 0018), kept in one place so a card
+ * and a name cannot round differently. `weightLabel` builds the collector-facing wording on top.
  */
 fun ounceLabel(weightMillioz: Int): String {
     val whole = weightMillioz / 1_000

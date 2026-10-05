@@ -19,17 +19,15 @@ const val TYPE_SEED_PREFERENCES: String = "coindex-type-seed"
 
 private const val KEY_APPLIED_VERSION = "applied_version_code"
 
-/** What one top-up did, which is two different things and was worth telling apart (#606). */
+/** What one top-up did: fichas added and fichas overwritten (#606). */
 data class SeedReport(val added: Int, val overwritten: Int) {
     val touched: Int get() = added + overwritten
 }
 
 /**
- * Seeds the permanent type cache from the snapshot the curator records with their own key.
- *
- * That snapshot covers every type the curated catalogs name, so plates can show all designs —
- * including the ones the collector is missing — without any collector spending their own budget on
- * them. It costs the curator hundreds of consultas and it costs the two phones none.
+ * Seeds the permanent type cache from the snapshot the curator records with their own key. It
+ * covers every type the curated catalogs name, so plates show every design, missing ones included,
+ * without the collector spending budget on them.
  */
 class TypeCacheSeed(
     private val typeMeta: TypeMetaDao,
@@ -37,7 +35,7 @@ class TypeCacheSeed(
     private val values: NamedValues,
     /** The `versionCode` of the running APK, which is this snapshot's name (#606). */
     private val installedVersionCode: Int,
-    /** The snapshot, read only when there is something to do: it is 2,4 MB of JSON. */
+    /** The snapshot, read only when there is something to do: it is megabytes of JSON. */
     private val snapshot: () -> String,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
@@ -56,35 +54,14 @@ class TypeCacheSeed(
     }
 
     /**
-     * Tops the cache up with what a curated file names and the phone does not have, and — **once per
-     * installed version** — writes the snapshot over the fichas it already had (#606, ADR 0033).
+     * Adds the fichas the curated files name ([requiredTypeIds]) that the phone lacks, on every
+     * update and not just the first install (#67), and once per installed version writes the
+     * snapshot over the fichas already cached (#606, ADR 0033), so corrections the curator re-seeds
+     * with `scripts/seed-type-cache.py --refresh` reach every phone.
      *
-     * It used to seed only into an empty cache, which made the snapshot a **first-install** gift:
-     * every catalog curated afterwards shipped its fichas in the asset and none of them ever reached
-     * a phone that already had the app. That is most of the plate the collector reported with 7
-     * pictures out of 19 (issue #67), and adding the missing ones fixed it.
-     *
-     * What it did not fix is the ficha that is **there and wrong**. A corrected family, a weight the
-     * mint published, a submission the referee finally accepted: the curator re-seeds it with
-     * `scripts/seed-type-cache.py --refresh`, the asset travels in the APK, and the row does not
-     * move, because an `insertIfAbsent` ignores the conflict by design. Since #185 there is a route,
-     * but it is the collector's own gesture over one type he has already seen is wrong — no way to
-     * reach the nine Peruvian fichas of #603, and no way at all to reach what he cannot know is
-     * wrong.
-     *
-     * **The version is the clock, and it is the right one.** A snapshot travels inside exactly one
-     * APK, so «has this snapshot been applied here?» is «has this `versionCode` been applied here?»,
-     * and the answer is one integer in a preferences file. It also protects the gesture without a
-     * date: the seed writes once when the update lands, and a ficha the collector refreshes by hand
-     * afterwards stays his until the next release. What it cannot see is a hand refresh made between
-     * the curator taking the snapshot and the release shipping it — hours, in a repository where the
-     * snapshot and the release travel in the same pull request — and in that window what overwrites
-     * him is the curated datum, verified against numista.com before it was versioned.
-     *
-     * [requiredTypeIds] is what the curated files name, which is exactly what a plate can ask to
-     * draw. Comparing it against the cached ids costs one column of integers, and the 2,4 MB
-     * snapshot is parsed only on the starts that have something to do: a version already applied
-     * with nothing missing reads two cheap things and returns.
+     * A snapshot ships in exactly one APK, so the `versionCode` marks whether it was applied. A ficha
+     * the collector refreshes by hand after the update stays theirs until the next release. The
+     * snapshot is parsed only when something is missing or the version is new.
      */
     suspend fun topUp(requiredTypeIds: Set<Int>): SeedReport {
         val applied = values.int32(KEY_APPLIED_VERSION)
@@ -95,17 +72,15 @@ class TypeCacheSeed(
         val fichas = readSnapshot()
         val (known, fresh) = fichas.partition { it.typeId in cached }
         typeMeta.insertIfAbsent(fresh)
-        // The first install has nothing to overwrite, and saying so costs nothing: `cached` is empty,
-        // so `known` is empty and the batch is not even sent.
+        // On a first install `cached` is empty, so `known` is too and nothing is overwritten.
         val overwritten = if (applied != installedVersionCode) known else emptyList()
         typeMeta.overwrite(overwritten)
         rememberVersion()
         return SeedReport(added = fresh.size, overwritten = overwritten.size)
     }
 
-    // Written after the writes and not before, so a process killed halfway leaves the version
-    // unapplied and the next start does the whole of it again. Re-applying a snapshot is idempotent;
-    // skipping one is a wrong ficha that stays for a release.
+    // Written last, so a process killed halfway re-applies the whole snapshot next start, which is
+    // idempotent; skipping it would leave wrong fichas for a release.
     private fun rememberVersion() {
         if (values.int32(KEY_APPLIED_VERSION) == installedVersionCode) return
         values.write(mapOf(KEY_APPLIED_VERSION to Stored.Int32(installedVersionCode)))

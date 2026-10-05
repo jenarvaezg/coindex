@@ -4,11 +4,8 @@ package com.jenarvaezg.coindex.data.update
 const val UPDATE_CHECK_INTERVAL_MILLIS: Long = 6 * 60 * 60 * 1_000L
 
 /**
- * Whether enough time has passed to look for a new release again.
- *
- * The check happens on open, when the app comes back to the foreground and on a timer while it
- * stays open. This keeps all three from hammering GitHub: without a floor, every return to the
- * app would be another request.
+ * Whether enough time has passed to look for a new release again. The check runs on open, on every
+ * return to the foreground and on a timer; without a floor each return would be a request.
  */
 fun shouldCheckForUpdate(
     lastCheckMillis: Long?,

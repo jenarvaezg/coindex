@@ -5,29 +5,22 @@ import com.jenarvaezg.coindex.data.update.InstallOutcome
 /** Said the moment the APK starts coming down, and replaced by whatever the install did. */
 const val UPDATE_DOWNLOADING_MESSAGE: String = "Descargando la actualización…"
 
-/** What the update banner is about, which is a version number and the word for it. */
 fun updateAvailableLabel(versionName: String): String = "NUEVA VERSIÓN $versionName"
 
 /**
- * The banner's one button, in the two states it has.
- *
- * «Instalar» and not «Actualizar»: an app distributed outside a store is installed by the system's
- * own installer, and the four refusals of [installOutcomeMessage] all end in «vuelve a pulsar
- * Instalar» — the word on the button has to be the word in the message (ADR 0011).
+ * The banner's button. «Instalar», not «Actualizar», to match «vuelve a pulsar Instalar» in
+ * [installOutcomeMessage] (ADR 0011).
  */
 fun updateInstallLabel(downloading: Boolean): String =
     if (downloading) "Descargando…" else "Instalar"
 
 /**
- * What an install attempt leaves the collector to do, or nothing when the system took over.
- *
- * Every one of the four refusals ends in an action the collector can take on this phone, because
- * an app distributed outside a store has no other way out: grant the permission and press again,
- * or fetch the APK from GitHub and install it by hand (ADR 0011).
+ * What an install attempt leaves the collector to do, or null when the system installer took
+ * over. Where there is something to do on this phone it is said: grant the permission and press
+ * again, or install the APK by hand (ADR 0011).
  */
 fun installOutcomeMessage(outcome: InstallOutcome): String? = when (outcome) {
-    // Nothing to say: the system's own installer is on screen, asking for the confirmation that
-    // is the whole point of a sideloaded update.
+    // The system installer is on screen, asking for confirmation.
     InstallOutcome.Handed -> null
     InstallOutcome.PermissionAsked ->
         "Concede a Coindex permiso para instalar aplicaciones y vuelve a pulsar Instalar."

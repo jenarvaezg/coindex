@@ -9,14 +9,10 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 
 /**
- * The shared-element scopes of the navigation host, or null wherever there is no journey.
- *
- * Two locals and not one because they come from two different places: the layout is the whole
- * `NavHost` and lives for as long as the app does, while the visibility scope belongs to **one**
- * destination and is what tells Compose which of the two ends is arriving.
- *
- * Null by default so that anything composed outside the host — an exported sheet, a test, the
- * calibration bench — draws the same coin without a journey rather than crashing for lack of one.
+ * The shared-element scopes of the navigation host, or null wherever there is no journey. Two
+ * locals because the layout scope spans the whole `NavHost` while the visibility scope belongs to
+ * one destination. Null by default, so anything composed outside the host (an exported sheet, a
+ * test, the bench) draws the coin without flying it.
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 val LocalSharedTransition = compositionLocalOf<SharedTransitionScope?> { null }
@@ -30,29 +26,14 @@ fun travellingCatalogKey(catalogId: String): String = "coin-$catalogId"
 fun travellingTypeKey(typeId: Int): String = "type-$typeId"
 
 /**
- * Flies this coin between the index card of a collection and **its** casilla on the plate.
+ * Flies this coin between a collection's index card and its casilla on the plate (ADR 0026 §3). The
+ * key is [catalogId] alone, since both ends resolve the first owned member in album order. It is
+ * null where the coin must not fly: on `Pieces` and `Box` cards, which have no casilla (they carry
+ * no ratio, ADR 0021 §3), and on every casilla but the landing one. Nor does it fly with
+ * [LocalMotion] off.
  *
- * The fourth movement of ADR 0026 §3, and the one that says «es la misma moneda»: the photograph
- * takes off from the die-cut hole of the card and lands in the hole of the slot, with the grid
- * arriving behind it.
- *
- * [catalogId] is the whole key, and it is null wherever the coin must not fly:
- *
- * - **In `Pieces` and in `Box`** — 20 of the father's 69 cards — because on the other side there is
- *   no casilla of its own but inventory rows where `CoinSides` paints both faces at 150 dp. Which
- *   cards fly is visible before touching them: the ones that do not carry no ratio (ADR 0021 §3).
- * - **On any casilla but the landing one**, which the plate decides by the same rule the card's
- *   photograph was chosen by, so the coin that took off is the coin that lands.
- *
- * The catalog is enough of a key on its own: both ends resolve «the first owned member in album
- * order» from the same album, so a key that also carried the type would be two chances to disagree
- * about one coin.
- *
- * The overlay is clipped to a circle: without it the shared element's rectangular bounds flash a
- * square halo as the coin lands, which is the pop between the mid-flight and the settled casilla.
- *
- * A system asking for quiet is the fourth reason not to fly, and the only one that is not about
- * this coin: see [LocalMotion].
+ * The overlay is clipped to a circle, or the element's rectangular bounds flash a square on
+ * landing.
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -71,17 +52,10 @@ fun Modifier.travellingCoin(catalogId: String?): Modifier {
 }
 
 /**
- * Flies this coin between its hole in Monedas and the hole at the top of its ficha sheet (#370).
- *
- * The ficha is not a navigation destination — it stays a sheet over the grid — and
- * `ModalBottomSheet` cannot host a shared element (it is a dialog window). Visibility is therefore
- * caller-managed: the cell yields the coin when the sheet opens, and the sheet yields it back when
- * the sheet closes. [visible] is true on the end that currently owns the photograph.
- *
- * With [LocalMotion] false neither end yields: both draw their own photograph, which is what a
- * still album looks like anyway — the cell keeps its coin because nothing took it away, and the
- * grid behind the scrim is a picture and not a gap. The yield only ever meant «this one is in the
- * air», and there is nothing in the air (#514).
+ * Flies this coin between its hole in Monedas and the top of its ficha sheet (#370). The ficha is a
+ * sheet, not a destination, and `ModalBottomSheet` (a dialog window) can't host a shared element,
+ * so visibility is caller-managed: [visible] is true on the end that currently owns the photograph.
+ * With [LocalMotion] false neither end yields and both draw their photograph (#514).
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

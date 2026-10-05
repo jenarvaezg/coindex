@@ -5,24 +5,15 @@ import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.domain.readsAsACountry
 
 /**
- * How a shelf survives a launch (ADR 0021 §1).
+ * Persists a shelf across launches (ADR 0021 §1). Filters and sort persist; the search text
+ * doesn't, so neither shelf type holds a query and this codec has no key for one.
  *
- * Filters and sort persist and the search text does not, so the two live in different places by
- * construction: neither [CoinsShelf] nor [IndexShelf] holds a query, and this codec has no key for
- * one. Reopening the app with a stale word in the box and half the collection hidden was the
- * measured failure that decision came from.
+ * One key per facet holding the enum's name, so an unrecognised value from another version reads
+ * back as no filter rather than crashing or selecting the wrong chip.
  *
- * The encoding is one key per facet holding the enum's own name, rather than a packed string. It
- * costs nothing and buys the only property that matters here: a value written by an older or newer
- * version that this one does not recognise reads back as «no filter» instead of crashing or, worse,
- * silently selecting the wrong chip.
- *
- * **The country is the one facet that is not an enum**, so that property had to be earned rather than
- * inherited: it stores the label itself, and ADR 0023 retired nine of them. A phone that had
- * «Federación de Rusia (1991-presente)» selected would have reopened filtering on a string no row
- * produces any more — an empty list, a filter badge at 1 and no chip lit — so a stored country that
- * [readsAsACountry] rejects is read back as no filter. `russie` is the emisor of about a third of the
- * seeded fichas, which makes it the likeliest chip on the phone to have been left on.
+ * The country is stored as its label, so it gets the same treatment explicitly: a stored country
+ * that fails [readsAsACountry], such as a label retired by ADR 0023, reads back as no filter rather
+ * than filtering on a string no row produces.
  */
 object ShelfCodec {
     const val INDEX_SORT = "index_sort"
@@ -45,8 +36,7 @@ object ShelfCodec {
     private const val UNDATED_YEAR = "Undated"
 
     fun encode(shelf: IndexShelf): Map<String, String?> = mapOf(
-        // The default is written as the default and not as an absence, so «Más completas» chosen
-        // on purpose and never chosen at all read back the same — which they are.
+        // The default is written explicitly; chosen or not, it reads back the same.
         INDEX_SORT to shelf.sort.name,
         INDEX_AXIS to shelf.axis.name,
         INDEX_ISSUER to shelf.issuer,
@@ -87,21 +77,15 @@ object ShelfCodec {
     )
 
     /**
-     * A stored country, or nothing: a label this version no longer paints is not a filter either.
-     *
-     * The migration of the nine labels ADR 0023 retired, and it needs no version key to run — the
-     * chips are built from what the rows say, so nothing that fails [readsAsACountry] can be written
-     * here again.
+     * A stored country, or null if this version no longer produces that label. This is also the
+     * migration for the labels ADR 0023 retired; no version key needed.
      */
     private fun country(stored: String?): String? =
         stored?.takeIf { it.isNotBlank() && readsAsACountry(it) }
 
     /**
-     * A stored year filter: a Gregorian year, «Undated», or nothing.
-     *
-     * The year facet used to be four era names (`SinceTwoThousand`, …). Those strings are not years
-     * and are not «Undated», so a phone that still has one selected reopens with no year filter —
-     * the same bargain every unknown enum already made.
+     * A stored year filter: a year, «Undated», or null. Values from the old era facet
+     * (`SinceTwoThousand`, …) read back as null.
      */
     private fun year(stored: String?): YearFilter? = when {
         stored.isNullOrBlank() -> null
@@ -115,7 +99,7 @@ object ShelfCodec {
         null -> null
     }
 
-    /** An enum by name, or nothing: a name this version has never heard of is not a filter. */
+    /** An enum by name, or null for a name this version doesn't know. */
     private inline fun <reified T : Enum<T>> named(stored: String?): T? =
         stored?.let { name -> enumValues<T>().firstOrNull { it.name == name } }
 }

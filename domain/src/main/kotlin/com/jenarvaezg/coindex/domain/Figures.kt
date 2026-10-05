@@ -1,13 +1,9 @@
 package com.jenarvaezg.coindex.domain
 
 /**
- * One magnitude of the collection, with how much of the collection it was measured over.
- *
- * The coverage travels with the number because one of these is **extrapolated and the others are
- * not**: `thickness` is missing in a third of the types, so the stack is measured over the pieces
- * that have one and scaled to all of them, while the weight and the row are measured over 99 %
- * (`docs/ux/cifras-316.md`). A figure that had dropped its denominator would make those two look
- * like the same kind of claim.
+ * One magnitude of the collection, with how many pieces it was measured over. The coverage travels
+ * with the number because `thickness` is often missing, so the stack is extrapolated while the
+ * other magnitudes are near complete (`docs/ux/cifras-316.md`).
  *
  * @param measuredPieces how many pieces carried the datum.
  * @param pieces how many there are in total.
@@ -16,11 +12,8 @@ data class Magnitude(val value: Double, val measuredPieces: Int, val pieces: Int
     val complete: Boolean get() = measuredPieces == pieces
 
     /**
-     * The magnitude the whole collection would have if the unmeasured pieces were like the measured
-     * ones.
-     *
-     * The one figure the app gives extrapolated, and it says so: «unos 94 cm». Zero measured pieces
-     * extrapolate to nothing rather than to zero.
+     * The magnitude if the unmeasured pieces were like the measured ones; the screen marks it as
+     * approximate. Null when nothing was measured.
      */
     val extrapolated: Double?
         get() = when {
@@ -30,26 +23,20 @@ data class Magnitude(val value: Double, val measuredPieces: Int, val pieces: Int
         }
 }
 
-/** The mass of one metal in the collection, and what share of the measured mass it is. */
+/** The mass of one metal in the collection, in grams; [MetalSplit.shareOf] gives its share. */
 data class MetalMass(val metal: Metal, val grams: Double)
 
 /**
- * How the collection's mass divides between metals, **by mass and never by coin**.
+ * How the collection's mass divides between metals, by mass and never by coin: counted by coin a
+ * silver collection is one colour, while by mass the copper in its alloys shows
+ * (`docs/ux/cifras-326.md`).
  *
- * By coin it is a bar of one colour — 565 of his 574 pieces are silver — and by mass it says that
- * almost a kilo of the collection is not silver, because a .835 coin is 16,5 % copper
- * (`docs/ux/cifras-326.md`). That is the whole content of the figure.
- *
- * Three rules, and they are what make it grow on its own the day another metal arrives:
- *
- * - A piece of a precious metal contributes its **fine** mass to that metal, and the remainder of its
- *   alloy to copper — which is what Numista's own texts say the rest is: «Plata 835 (Copper .165)»,
- *   «Plata 925 (92.5 % silver, 7.5 % copper)».
- * - A piece of a **copper alloy** — copper, bronze, brass, cupronickel — contributes its whole mass
- *   to copper, which is what it mostly is. Every other base metal contributes to itself.
- * - A piece with **no dominant metal** (bimetallic, clad) or with a composition these rules do not
- *   read contributes to no metal at all. It is left out of [measuredGrams] rather than guessed at,
- *   which is 0,1 % of his collection.
+ * - A precious-metal piece gives its fine mass to that metal and the rest of its alloy to copper,
+ *   which is what Numista's texts say the rest is («Plata 835 (Copper .165)»).
+ * - A copper-alloy piece (copper, bronze, brass, cupronickel) gives its whole mass to copper. Any
+ *   other base metal gives it to itself.
+ * - A piece with no dominant metal (bimetallic, clad) or an unreadable composition gives to none
+ *   and is left out of [measuredGrams].
  */
 data class MetalSplit(val masses: List<MetalMass>, val measuredGrams: Double, val grams: Double) {
     fun shareOf(mass: MetalMass): Double =
@@ -73,13 +60,12 @@ fun metalSplit(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MetalSplit 
         when {
             metal == null || metal == Metal.Other -> Unit
             metal in PRECIOUS -> {
-                // No fineness declared is not «pure»: the whole mass goes to the metal named, because
-                // that is all the ficha supports, and nothing is credited to copper it did not say.
+                // No declared fineness: the whole mass goes to the named metal, since the ficha
+                // supports nothing for copper.
                 val fineness = meta.fineness ?: 1.0
                 val fine = mass * fineness
                 masses.merge(metal, fine, Double::plus)
-                // The remainder and not `mass × (1 − fineness)`: the two are the same number and only
-                // one of them is 16,5 rather than 16,500000000000004 on the label.
+                // Subtracting, not `mass × (1 − fineness)`, avoids labels like 16,500000000000004.
                 val alloy = mass - fine
                 if (alloy > 0.0) masses.merge(Metal.Copper, alloy, Double::plus)
                 measured += mass
@@ -95,8 +81,7 @@ fun metalSplit(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MetalSplit 
         }
     }
     return MetalSplit(
-        // Heaviest first, and on a tie the precious metal: two metals of the same mass would otherwise
-        // swap places between launches with the order of the inventory.
+        // Heaviest first, the precious metal on a tie, so the order is stable across launches.
         masses = masses.map { (metal, grams) -> MetalMass(metal, grams) }
             .sortedWith(compareByDescending<MetalMass> { it.grams }.thenBy { metalOrder(it.metal) }),
         measuredGrams = measured,
@@ -105,15 +90,8 @@ fun metalSplit(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MetalSplit 
 }
 
 /**
- * The oldest and the newest piece, and the years between them.
- *
- * The **Gregorian** year of each piece (ADR 0026 §9), which is what makes this an arc and not a
- * nonsense: two of his pieces are dated in Hijri years — 1316 and 1375 — and read literally they
- * stretched the axis to 711 years.
- *
- * And the 23 pieces that carry **no year at all** inherit their type's minimum. Without that rule the
- * arc is 246 years instead of 1.756: the undated Portuguese escudos and the Roman denarius are exactly
- * the pieces that make it long (#326).
+ * The oldest and the newest piece by [placementYear], and the years between them: Gregorian years,
+ * so Hijri dates do not stretch the arc, and undated pieces at their type's earliest year (#326).
  */
 data class YearArc(val oldest: Int, val newest: Int) {
     val years: Int get() = newest - oldest
@@ -125,18 +103,12 @@ fun yearArc(items: List<CollectedItem>, typeMeta: TypeMetaIndex): YearArc? {
     return YearArc(oldest, years.max())
 }
 
-/** One piece drawn at its real diameter, which is what the size block is: a drawing, not a figure. */
+/** One piece and its diameter, to be drawn at real scale. */
 data class DiameterExtreme(val item: CollectedItem, val meta: TypeMeta, val millimetres: Double)
 
 /**
- * The smallest and the largest coin of the collection, to be drawn at the same scale.
- *
- * **On a tie, the older piece**, and that tie is not hypothetical: four of his pieces are 42 mm, and
- * what the block is worth showing is the Maria Theresa thaler of 1780 rather than whichever 42 mm coin
- * the inventory happened to list last. `size` is present in 100 % of the types, so this costs nothing
- * (#326).
- *
- * Null when fewer than two pieces have a diameter: one coin drawn against itself is not a comparison.
+ * The smallest and the largest coin of the collection, drawn at the same scale (#326). Ties go to
+ * the older piece rather than to inventory order. Null when fewer than two pieces have a diameter.
  */
 data class SizeComparison(val smallest: DiameterExtreme, val largest: DiameterExtreme)
 
@@ -155,32 +127,25 @@ fun sizeComparison(items: List<CollectedItem>, typeMeta: TypeMetaIndex): SizeCom
 }
 
 /**
- * One of the four figures «al margen»: a count of pieces, out of a total, with something to open.
- *
- * Nobody asked for these. They come out of looking for what else the ficha already in the APK says,
- * and they are the reason the page is a field guide and not a dashboard: 75 % of his coins are no
- * longer money anywhere, 246 were engraved by the same hand, 296 came out of Paris, 210 are dated 1960.
+ * One of the four figures «al margen»: a count of pieces out of a total, with something to open.
  *
  * @param pieces how many pieces the figure counts.
- * @param subject the name the figure is about — a hand, a mint, a year — or null where it has none.
+ * @param subject the name the figure is about (a hand, a mint, a year), or null where it has none.
  */
 data class MarginFigure(val pieces: Int, val outOf: Int, val subject: String? = null)
 
 /**
  * The four figures at the margin, each measured over the whole collection.
  *
- * @param demonetized pieces Numista marks as no longer legal tender. Its denominator is the whole
- *   collection and not the types Numista answered for: a percentage over a moving denominator is a
- *   figure nobody can check.
+ * @param demonetized pieces Numista marks as no longer legal tender, over the whole collection
+ *   rather than the types Numista answered for, so the denominator does not move.
  * @param sameHand the hand that drew or engraved the most pieces.
  * @param mostMinted the mint that struck the most pieces.
- * @param distinctMints how many mints the collection has come out of, which is what makes the mint
- *   figure say something: 296 from Paris **of 51 mints**.
+ * @param distinctMints how many mints the collection comes from, the context for [mostMinted].
  * @param commonestYear the year the most pieces carry.
- * @param uncirculated pieces the collector graded `unc` or `au` — the only figure of the page that
- *   comes out of his own typing rather than out of a ficha. Null where none does, because a collection
- *   with nothing uncirculated says nothing rather than saying it has none; and a piece he never graded
- *   is not «circulated», so it counts in the denominator and nowhere else.
+ * @param uncirculated pieces the collector graded `unc` or `au`, the one figure taken from the
+ *   collector's grading rather than a ficha. Null when there are none; an ungraded piece counts
+ *   only in the denominator.
  */
 data class MarginFigures(
     val demonetized: MarginFigure,
@@ -191,12 +156,7 @@ data class MarginFigures(
     val uncirculated: MarginFigure?,
 )
 
-/**
- * The grades of a piece that has not been in a pocket: «sin circular» and «casi».
- *
- * Two and not one, and the second is what makes the figure worth a line: `au` is *about*
- * uncirculated, and the collector uses both — 121 rows `unc` and 57 `au` of his 229 (#491).
- */
+/** Grades of a piece that has not circulated, «sin circular» and «casi»; both are in use (#491). */
 private val UNCIRCULATED_GRADES = setOf(UNCIRCULATED, "au")
 
 fun marginFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MarginFigures {
@@ -209,8 +169,7 @@ fun marginFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MarginFi
     for (item in items) {
         val quantity = item.quantity.coerceAtLeast(1)
         pieces = saturatingAdd(pieces, quantity)
-        // Before the ficha and not after it: the grade is the collector's own, so a type Numista has
-        // never answered for still counts here.
+        // Before the ficha: the grade is the collector's own, so it counts even without one.
         if (item.grade?.lowercase() in UNCIRCULATED_GRADES) {
             uncirculated = saturatingAdd(uncirculated, quantity)
         }
@@ -233,31 +192,23 @@ fun marginFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): MarginFi
     )
 }
 
-/**
- * The winner, with the smaller key breaking a tie.
- *
- * Deterministic on purpose: two hands with the same count would otherwise swap places between
- * launches for no reason the collector can see.
- */
+/** The most frequent key; the smaller key breaks a tie, so the winner is stable across launches. */
 private fun <K : Comparable<K>> Map<K, Int>.commonest(): Pair<K, Int>? = entries
     .sortedWith(compareByDescending<Map.Entry<K, Int>> { it.value }.thenBy { it.key })
     .firstOrNull()
     ?.let { (key, count) -> key to count }
 
 /**
- * Everything «Las cifras» draws that comes out of the APK, with not a single call (ADR 0028 §7).
- *
- * The money is deliberately **not** here. It arrives late, it is the only thing on the page that
- * does, and a figure set that carried a nullable total would be the half-done total this page exists
- * not to show.
+ * Everything «Las cifras» draws from the APK alone, without any call (ADR 0028 §7). Money is not
+ * here: it arrives later, and a nullable total here would invite showing a partial one.
  */
 data class CollectionFigures(
     val pieces: Int,
     val types: Int,
     val issuers: Int,
-    /** Grams. The count the bottom bar's third cell prints, and never money. */
+    /** Grams; the bottom bar's third cell. */
     val weight: Magnitude,
-    /** Fine silver in grams, which is the figure spot multiplies and the metal bar's first bar. */
+    /** Fine silver in grams: what the spot multiplies, and the metal chart's first bar. */
     val fineSilver: Magnitude,
     /** Metres, laid side by side. */
     val row: Magnitude,
@@ -273,7 +224,7 @@ data class CollectionFigures(
 
 private const val SQUARE_METRES_PER_A4 = 0.06237
 
-/** How many A4 sheets the collection spread out would cover, which is what 0,35 m² means. */
+/** How many A4 sheets the collection would cover, spread out. */
 fun Magnitude.a4Sheets(): Double = value / SQUARE_METRES_PER_A4
 
 fun collectionFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): CollectionFigures {
@@ -301,12 +252,7 @@ fun collectionFigures(items: List<CollectedItem>, typeMeta: TypeMetaIndex): Coll
     )
 }
 
-/**
- * One running total and how many pieces have gone into it.
- *
- * Five of these instead of five pairs of local variables, because every one of them has the same
- * denominator problem and only one of them is allowed to be extrapolated.
- */
+/** One running total and how many pieces went into it. */
 private class MagnitudeSum {
     var value: Double = 0.0
     var measured: Int = 0

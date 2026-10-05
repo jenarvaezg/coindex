@@ -22,126 +22,81 @@ import java.text.Collator
 import java.util.Locale
 
 /**
- * One collection that claims a coin, as the door back to it (ADR 0021 §1).
- *
- * The claim itself is the domain's — [CoinClaims] resolves who claims what once per assembly — and
- * what is left here is the half that is navigation: turning the card into the destination a tap
- * lands on (ADR 0021 §9). It is drawn and not asked, which is why it carries the two words the
- * sheet paints and not the card behind them.
+ * A collection that claims a coin, as a link to it (ADR 0021 §1, §9). Who claims what is resolved
+ * by [CoinClaims]; this holds only the name and the destination.
  */
 data class CoinClaim(val name: String, val destination: CardDestination)
 
-/** The door a card of the index opens, which is the only reading of a claim the screen needs. */
 private fun doorTo(card: IndexCard) = CoinClaim(card.name, destinationOf(card))
 
 /**
- * One coin of Coins: a Numista **type** and every piece of it the collector owns.
+ * One coin in Monedas: a Numista type and every piece of it the collector owns. Also used, through
+ * [coinRowOf], for a type with no pieces, so the coin sheet reads the same from a casilla (#508).
  *
- * Since #508 it is also the reading of a coin the collector owns **none** of, because a casilla of a
- * lámina opens the same sheet and half of them are holes — see [coinRowOf], which is the only door
- * such a row comes through. It is one shape and not two on purpose: the sheet says the same sentences
- * about a coin whichever surface opened it.
+ * By type, not by collection row, as boxes store type ids: the selection (#173) picks coins, and
+ * chip counts count coins.
  *
- * **By type and not by row**, for the same reason a box stores type ids: two rows of the same type
- * are the same coin twice, and the gesture born here (#173) picks coins. It is also what makes the
- * chips countable — «6 de 191» is a number of coins, and a ×2 would have made it a number of
- * receipts.
- *
- * There is **no reason line** (ADR 0021 §12). «Nothing is discarded silently» became «nothing is
- * discarded» the moment a piece got a place of its own: what the «Sin colección» filter answers is
- * *which* coins no collection claims, and *why* migrated to the field report, which is where the
- * curator already looks.
+ * No reason line (ADR 0021 §12): «Sin colección» says which coins no collection claims; why is in
+ * the field report.
  */
 data class CoinRow(
     val typeId: Int,
     val name: CoinName,
-    /** The untouched ficha title: searchable even where the cartouche deliberately omits words. */
+    /** The untouched ficha title, searchable even where the cartouche omits words. */
     val rawTitle: String,
     /**
-     * The country, in Spanish, unsaid when the type is uncached.
-     *
-     * [TypeMeta.country] and not the ficha's `issuer.name`, because Numista names issuing entities
-     * with their period of validity: the country of a `russie` type is «Rusia», and «Federación de
-     * Rusia (1991-presente)» took a chip row to itself in the shelf below (ADR 0023).
+     * The country in Spanish, null when the type is uncached. [TypeMeta.country] rather than the
+     * ficha's `issuer.name`, which carries periods like «Federación de Rusia (1991-presente)»
+     * (ADR 0023).
      */
     val issuer: String?,
     /**
-     * The years of the coins the collector holds, oldest first — the ficha's when none of them is
-     * dated, and empty when there is neither (#448).
-     *
-     * **The piece and not the type.** `TypeMeta.minYear` is the year Numista's type *opens*, which is
-     * the year of a coin only where the type has one year. Measured over the father's collection, 63
-     * rows of 34 types said otherwise: his ¼ bolívar of 1948 printed 1894, his Libertad of 2024
-     * printed 2000, his Morgan of 1898 printed 1878. The rest of the app had it right all along —
-     * `pieceLine` reads `recordedYear` and `placementYear` prefers it over the ficha — and Coins was
-     * the one surface throwing away the year that arrives with the collection row itself.
-     *
-     * A list and not one year, because a type is one card however many of it there are: seven of his
-     * 170 dated types span several years and one of them spans twenty-one. [coinYearsLabel] prints
-     * the arc, and the chips below take **every** year in it, so filtering by 1904 still finds it.
+     * The years of the collector's pieces, oldest first; the ficha's when none is dated, empty when
+     * neither (#448). From the pieces, not `TypeMeta.minYear`, which is when the type opens, as
+     * `pieceLine` and `placementYear` already do. A list because one row covers every year held;
+     * [coinYearsLabel] prints the span and the chips take every year in it.
      */
     val years: List<Int>,
     val objectClass: ObjectClass,
     val weightOz: Double?,
-    /** How many pieces of this type there are, saturating rather than wrapping. */
+    /** Pieces of this type, saturating rather than overflowing. */
     val quantity: Int,
-    /** Every collection that claims it, in the order the index shows them (ADR 0021 §6). */
+    /** The collections that claim it, in index order (ADR 0021 §6). */
     val claims: List<CoinClaim>,
     /**
-     * How many pieces of this type no collection claims, which is **not** always zero when
-     * [claims] is not empty.
-     *
-     * Measured on the father's collection: the American Silver Eagle N#298883 is two rows, issues
-     * 760576 and 1059386, and its catalog qualifies members by issue (ADR 0019). One row fills a
-     * member and the other is unclassified residue — so the type is in a collection and one of his
-     * two coins is not. Counting membership off [claims] alone made that second coin invisible in
-     * the one place ADR 0021 §12 leaves for it, which is the whole job of the «Sin colección» chip.
+     * Pieces of this type no collection claims, which can be non-zero even when [claims] isn't: a
+     * catalog qualifying members by issue (ADR 0019) may claim one row of a type and not another.
+     * The «Sin colección» chip relies on it (ADR 0021 §12).
      */
     val unclaimedPieces: Int,
     /**
-     * The years of the axis that lead here without being printed on the cartouche (#550).
+     * Year-axis seats that lead to this coin without being printed on its cartouche (#550):
      *
-     * Two readings, and both are seats the collector can press on the year axis:
+     * - Where the axis places its pieces: `placementYear`, Gregorian first, can differ from the
+     *   engraved year on the card (ADR 0014).
+     * - The years of casillas on plates it is evidence for, so a date-run hole opens the coin the
+     *   collector does hold.
      *
-     * - **Where the axis places its pieces.** The axis places by `placementYear` — Gregorian first —
-     *   and the card is dated by the engraved year (ADR 0016), so the 100 pesetas «*67» is painted on
-     *   1967 and says 1966. Measured on the father's collection, nine pieces differ that way and four
-     *   years painted a coin whose own seat opened an empty page.
-     * - **The years of the casillas of its evidenced plates.** A hole of a date run is a year the
-     *   collector owns nothing of, so nothing but this makes the ghost of 1901 open the 2 bolívares
-     *   the collector does hold.
-     *
-     * What is deliberately **not** here is the ficha's `minYear`–`maxYear` run: the Maria Theresa
-     * Thaler is a posthumous restrike filed 1780–2024, and answering to its 245 years would put it
-     * under almost every seat of the axis. What answers is the curated knowledge, not Numista's
-     * min/max.
+     * Not the ficha's `minYear`–`maxYear` run: a restrike type filed over centuries would answer to
+     * almost every seat.
      */
     val axisYears: List<Int> = emptyList(),
 ) {
     val title: String get() = name.text
 
-    /**
-     * The oldest year this coin is placed by, and the newest — what «Más antiguas» and «Más nuevas»
-     * sort on. Null on a row with no year at all, which both orders put last.
-     */
+    /** What «Más antiguas» and «Más nuevas» sort on; null rows go last in both. */
     val oldestYear: Int? get() = years.firstOrNull()
     val newestYear: Int? get() = years.lastOrNull()
 
     /**
-     * Which year chips this row answers to: one per year it holds, or «Sin año» (#448), plus every
-     * [axisYears] seat that leads here (#550).
-     *
-     * The axis years **join** «Sin año» rather than replacing it: a piece with no date is still a
-     * piece with no date, whichever seat of the calendar its plate puts it on.
+     * The year chips this row matches: its years or «Sin año» (#448), plus [axisYears] (#550). Axis
+     * years add to «Sin año» rather than replacing it.
      */
     val yearFilters: List<YearFilter> = YearFilter.of(years) + axisYears.map(YearFilter::Of)
 
     /**
-     * What the search box compares against: everything printed on the row, folded once.
-     *
-     * **Every** year and not just the printed arc: a row that spans 1879 to 1936 is found by typing
-     * 1904, the same as tapping the 1904 chip finds it — [axisYears] included, because the promise
-     * is parity with the chips and the chips come from [yearFilters].
+     * What the search matches against, folded once. Includes every year, [axisYears] too, so typing
+     * a year finds what its chip finds.
      */
     val haystack: String = fold(
         listOf(rawTitle)
@@ -155,17 +110,14 @@ data class CoinRow(
 }
 
 /**
- * Every coin the collector owns, each with the collections that claim it.
- *
- * The list is built from [CollectionState] alone, like everything else on screen: Coins is the other
- * hierarchy (ADR 0021 §1), not a second store — no table was added for it, and a coin appears here
- * whether or not any collection claims it.
+ * Every coin the collector owns, with the collections that claim it, built from [CollectionState]
+ * alone (ADR 0021 §1). Includes coins no collection claims.
  */
 fun coinRows(state: CollectionState, slots: SlotYears = SlotYears.none): List<CoinRow> {
     val claimed = state.claims
     val byType = LinkedHashMap<Int, MutableList<CollectedItem>>()
-    // Same coerce as [collectionFigures]: a hostile zero is still one piece, so the bottom bar's
-    // type count and the rows Coins draws cannot drift (#426).
+    // [coinRow] counts a zero quantity as one piece, as [collectionFigures] does, so the bottom
+    // bar and Monedas agree (#426).
     for (item in state.items) {
         byType.getOrPut(item.typeId) { mutableListOf() }.add(item)
     }
@@ -175,25 +127,16 @@ fun coinRows(state: CollectionState, slots: SlotYears = SlotYears.none): List<Co
 }
 
 /**
- * The row of one type read on its own, **whether or not a piece of it is in the collection** (#508).
- *
- * The casilla of a lámina opens the coin's sheet inside the app now, and half of the casillas are
- * holes: the type is real, its ficha is on the phone — the packaged cache holds one for every one of
- * the 1.172 curated members — and the collector owns nothing of it. Such a row is **not** part of
- * [coinRows] and never reaches the shelf: it is one coin read for its own sheet, and `quantity` 0 with
- * an empty `claims` says exactly what it is, no piece and no collection.
- *
- * It goes through the same [coinRow] as the rows of the grid, which is the whole point of extracting
- * it: the sheet of a coin the collector holds must not word one thing when it is opened from Monedas
- * and another when it is opened from a casilla.
+ * The row for one type, whether or not the collector owns any of it (#508), for the coin sheet a
+ * casilla opens. Never part of [coinRows]; with no pieces it has `quantity` 0 and no `claims`.
+ * Built by the same [coinRow] so the sheet reads the same from Monedas and from a casilla.
  */
 fun coinRowOf(state: CollectionState, typeId: Int): CoinRow = coinRow(
     state = state,
     typeId = typeId,
     pieces = state.items.filter { it.typeId == typeId },
     claimed = state.claims,
-    // A sheet has no year chips to answer: [CoinRow.axisYears] exists for the shelf, and the sheet
-    // opened from a casilla is one coin already found.
+    // [CoinRow.axisYears] only serves the shelf's chips.
     slots = SlotYears.none,
 )
 
@@ -212,8 +155,7 @@ private fun coinRow(
         name = held?.let { pieceName(state, it) } ?: coinName(typeTitle(meta, typeId)),
         rawTitle = held?.let { pieceRawTitle(state, it) } ?: typeTitle(meta, typeId),
         issuer = meta?.country,
-        // A row with no piece has no coin to be dated by, so it says what the **type** says and both
-        // ends of it: see [typeYears]. Nothing changes for a row that does hold pieces.
+        // Without pieces, the type's span: see [typeYears].
         years = years,
         objectClass = objectClassOf(meta?.category),
         weightOz = meta?.weightOz,
@@ -227,11 +169,8 @@ private fun coinRow(
 }
 
 /**
- * The seats of the axis that lead to this coin without being printed on it — see [CoinRow.axisYears].
- *
- * The years already on the cartouche are dropped rather than repeated: they are the same chip, and a
- * row answering twice to 1936 would count itself twice on the facet that promises its number is what
- * the tap gives.
+ * See [CoinRow.axisYears]. Years already printed are dropped, or the row would count twice on that
+ * chip.
  */
 private fun axisYearsOf(
     pieces: List<CollectedItem>,
@@ -245,34 +184,22 @@ private fun axisYearsOf(
     .sorted()
 
 /**
- * What a type is called when no piece of it names it: the ficha's title, and its Numista number when
- * the phone has no ficha either.
- *
- * The number is the last resort and not an apology: every curated member has a ficha in the packaged
- * cache, so this reaches the screen only on a type nobody has ever read — and «N# 10338» is still the
- * one name such a coin has.
+ * A type's name when no piece names it: the ficha title, or its Numista number when there is no
+ * ficha (only for types outside the packaged cache).
  */
 private fun typeTitle(meta: TypeMeta?, typeId: Int): String =
     meta?.title ?: meta?.displayTitle ?: numistaCodeLabel(typeId)
 
 /**
- * The years the **type** covers, for a row the collector holds no piece of (#508).
- *
- * Both ends and not `minYear` alone, which is the very reading #448 took out of the cards of Monedas:
- * the year a type opens is the year of a coin only where the type has one year. With no piece there is
- * no coin's own year to prefer, and a date run's sheet saying «1879 – 1936» is true of the type where
- * «1879» would be a wrong answer about the casilla the collector just pressed.
+ * Both ends of a type's span, for a row without pieces (#508). Not `minYear` alone (#448): for a
+ * date run that would be the wrong year for the casilla just pressed.
  */
 private fun typeYears(meta: TypeMeta?): List<Int> =
     listOfNotNull(meta?.minYear, meta?.maxYear).filter { it > 0 }.distinct().sorted()
 
 /**
- * The years of a coin, as the card says them (#448).
- *
- * One year when the collector's pieces agree on one, the arc between the ends when they do not, and
- * «Sin año» when there is nothing to say. The arc and not the list: twenty-one years of a Venezuelan
- * 5 bolívares would be a paragraph in a cartouche that has one line, and the year the collector is
- * after is one chip away.
+ * A coin's years as the card prints them (#448): one year, the span between the ends, or «Sin año».
+ * A span rather than a list, since the cartouche has one line.
  */
 fun coinYearsLabel(years: List<Int>): String = when (years.size) {
     0 -> UNKNOWN_YEAR_LABEL
@@ -281,35 +208,26 @@ fun coinYearsLabel(years: List<Int>): String = when (years.size) {
 }
 
 /**
- * The years of the pieces of one type, oldest first, falling back on the ficha and then on nothing.
- *
- * [CollectedItem.recordedYear] and not the Gregorian reading, which is the same choice `pieceLine`
- * makes: what the card says is what is engraved on the coin, so a Moroccan dirham of 1316 says 1316
- * (ADR 0016) on both screens rather than 1899 on one of them.
+ * The pieces' years, oldest first, falling back on the ficha. Uses [CollectedItem.recordedYear],
+ * the engraved year, as `pieceLine` does, not the Gregorian one (ADR 0014).
  */
 private fun yearsOf(pieces: List<CollectedItem>, meta: TypeMeta?): List<Int> =
     pieces.mapNotNull { it.recordedYear }
-        // **Zero is not a year**, the same rule `placementYear` states: Numista stores `0` on an
-        // undated medal, and the father has two. Printing «0» on their cartouche would be worse than
-        // the «Sin año» it replaced — a wrong answer reads as an answer (#460).
+        // Numista stores 0 on undated medals; zero is not a year, as in `placementYear` (#460).
         .filter { it > 0 }
         .distinct()
         .sorted()
         .ifEmpty { listOfNotNull(meta?.minYear) }
 
-/** The only identity left in the grid below the two-range name: year and a non-singular count. */
+/** The grid line under the name: years, and the count when more than one. */
 fun coinAlbumFootnote(row: CoinRow): String = listOfNotNull(
     coinYearsLabel(row.years),
     "×${row.quantity}".takeIf { row.quantity > 1 },
 ).joinToString(" · ")
 
 /**
- * The order coins are read in: country, then year, then title.
- *
- * A field notebook's order and not the index's: Coins has no ratio to sort by, and the collector
- * arriving here is looking for a coin they can picture rather than for progress. Unknowns go last in
- * both slots — an uncached type says less than a dated one, and putting it first would open the list
- * on whatever the last sync had not finished.
+ * The default Monedas order: country, then year, then title. Unknowns go last in both, so the list
+ * doesn't open on whatever the last sync left uncached.
  */
 private fun coinReadingOrder(): Comparator<CoinRow> {
     val collator = Collator.getInstance(Locale.forLanguageTag("es"))
@@ -321,10 +239,8 @@ private fun coinReadingOrder(): Comparator<CoinRow> {
 }
 
 /**
- * Spanish alphabetical order on the coin's own title, for the «Alfabético» sort.
- *
- * The same [Collator] the index's names go through and for the same reason: comparing the strings
- * themselves orders by UTF-16 code unit, where «Álbum» lands after «Zeta».
+ * Spanish alphabetical order on the title, for «Alfabético». A [Collator], since raw string order
+ * puts «Álbum» after «Zeta».
  */
 internal fun coinTitleOrder(): Comparator<CoinRow> {
     val collator = Collator.getInstance(Locale.forLanguageTag("es"))

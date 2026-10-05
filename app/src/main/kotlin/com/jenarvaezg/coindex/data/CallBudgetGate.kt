@@ -6,16 +6,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
- * Counts every request against the monthly cap and records it *before* it is sent.
- *
- * The free API allows roughly 1.500-2.000 requests a month and it is easy to burn a month in
- * one debugging session, so the counter refusing a call is the normal, expected outcome once
- * the cap is reached — never a silent overrun.
- *
- * **The cap is not the same for everybody who asks** (#605): the valuation pass stops
- * [INVENTORY_RESERVE] short of it, so the two consultas the inventory costs are there in a month the
- * pass has otherwise emptied. Which ceiling applies is [ceilingFor]'s to say, and it reads the
- * endpoint — the one thing the gate is given and the one thing that already names the purpose.
+ * Counts every request against the monthly cap and records it before it is sent, so reaching the
+ * cap refuses the call instead of overrunning (ADR 0003). The valuation pass stops
+ * [INVENTORY_RESERVE] short of the cap (#605); [ceilingFor] picks the ceiling from the endpoint.
  */
 class CallBudgetGate(
     private val calls: ApiCallLedger,
@@ -29,8 +22,7 @@ class CallBudgetGate(
             val ceiling = ceilingFor(endpoint, monthlyBudget())
             val used = calls.spentThisMonth()
             if (used >= ceiling) {
-                // The ceiling and not the budget: what the caller is told it ran out of is the
-                // allowance it had, which for the pass is the one that stops short of the reserve.
+                // The caller's own ceiling, which for the pass stops short of the reserve.
                 throw NumistaException.BudgetExhausted(used, ceiling)
             }
             calls.record(endpoint)

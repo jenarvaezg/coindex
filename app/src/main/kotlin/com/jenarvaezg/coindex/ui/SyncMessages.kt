@@ -22,10 +22,8 @@ fun syncActionLabel(syncing: Boolean): String =
     if (syncing) "Sincronizando…" else "Sincronizar"
 
 /**
- * A run that stopped half-way, said on the índice rather than in a snackbar.
- *
- * What an incomplete sync left half-done is a property of the collection on screen and outlives the
- * four seconds a snackbar lasts, which is why it has a card of its own.
+ * A run that stopped half-way, said on a card in the índice rather than in a snackbar: it describes
+ * the collection on screen and outlasts the snackbar.
  */
 const val PARTIAL_SYNC_EYEBROW: String = "Sincronización incompleta"
 const val PARTIAL_SYNC_EXPLANATION: String =
@@ -60,16 +58,11 @@ fun lastSyncLabel(
 }
 
 /**
- * A failed sync translated into what the collector can do about it.
+ * A failed sync, in terms of what the collector can do about it: a rejected key points to
+ * «Credenciales». Anything unexpected keeps its original text.
  *
- * «Numista devolvió HTTP 401 en /oauth_token» is true and useless: the collector's problem is a
- * key that no longer works, and the way out is «Credenciales». Anything genuinely
- * unexpected keeps its original text rather than being flattened into a friendly nothing.
- *
- * The refusals that name that screen **interpolate its label** (#521): they said «en Ajustes»
- * while the fields lived at the top of it, and a message pointing at a screen that no longer holds
- * what it promises is worse than a message pointing at nothing. One string owns the name; these
- * three borrow it, so the next move cannot leave them behind.
+ * Messages that name the credentials screen interpolate [CREDENTIALS_LABEL] (#521), so they follow
+ * it if it moves or is renamed.
  */
 fun syncErrorLabel(error: Throwable): String = when (error) {
     is NumistaException.EmptyApiKey ->
@@ -79,18 +72,15 @@ fun syncErrorLabel(error: Throwable): String = when (error) {
     is NumistaException.Transport ->
         "Sin conexión con Numista. Tu colección local sigue disponible."
     is NumistaException.Api -> when {
-        // The three refusals are read by [rejectionCauseFor], the same function that picks the wall's
-        // clock, so the sentence and the wait can no longer disagree about what a status means (#600).
+        // [rejectionCauseFor] also sets how long a refusal stands, so the sentence and the wait
+        // agree on what a status means (#600).
         rejectionCauseFor(error.status, error.body) == RejectionCause.Credentials ->
             "Numista rechazó tu API key. Revísala en $CREDENTIALS_LABEL."
-        // «Este mes» and not «dentro de un rato»: the month of the key is gone, and the wait is until
-        // the 1st. It is the allowance **Numista** counts and not the one the app does, so it does not
-        // borrow the sentence of `BudgetExhausted` — that one is true of this phone, and this one is
-        // true of the key, which a second phone spends too (#562).
+        // Numista's count for the key, which another phone may also spend, not the app's own
+        // budget (`BudgetExhausted`); the wait is until the 1st (#562).
         rejectionCauseFor(error.status, error.body) == RejectionCause.Quota ->
             "Numista ha agotado las consultas de tu clave este mes. Espera al día 1 para volver a intentarlo."
-        // «Consultas» and not «peticiones» (#516): Numista throttling is the same object the monthly
-        // budget counts, and a third word for it would only be readable as a third thing.
+        // «Consultas», not «peticiones»: the same unit the monthly budget counts (#516).
         rejectionCauseFor(error.status, error.body) == RejectionCause.Throttled ->
             "Numista está limitando las consultas. Vuelve a intentarlo dentro de un rato."
         error.status == 404 ->

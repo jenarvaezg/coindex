@@ -4,22 +4,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * The dominant metal of a physical variant, and the third component of its key after weight and
- * finish (#40).
+ * The dominant metal of a physical variant, the last component of its key after family, weight and
+ * finish (#40). Without it a one-ounce silver coin and a gold one share a key, and a second catalog
+ * curated over the same family would be unreachable, since a plate is matched to its card by exact
+ * key.
  *
- * Weight and finish alone collapse a one-ounce silver coin and a one-ounce gold one into the same
- * key. That never mattered while a derived collection was only a suggestion, because it
- * claims no coverage; it matters the moment a **second catalog** is curated over the same
- * family, because a plate is matched to its card by exact key and the card keeps the first
- * catalog it finds — the gold one would be born unreachable.
- *
- * Deliberately wide from the start, so the enum does not have to grow every time a curation meets
- * a new alloy. [Other] is not «unknown»: it is for a composition with **no** dominant metal, which
- * in the 723 seeded fichas is the bimetallic 500 bolívares and one copper coin clad in
- * cupronickel. A composition nobody recorded, or one these rules do not recognise, is `null`.
- *
- * The entry names are not the on-disk representation — unlike [Finish], nothing was written by the
- * frozen Rust implementation — so curated files spell them as the lowercase codes below.
+ * Wide from the start, so curating a new alloy does not grow the enum. [Other] is not «unknown»: it
+ * is a composition with no dominant metal (bimetallic, clad). An unrecorded or unrecognised
+ * composition is `null`. Curated files spell entries as the lowercase codes below.
  */
 @Serializable
 enum class Metal {

@@ -10,17 +10,10 @@ import kotlinx.serialization.json.Json
 data class TypeRefreshReport(val typeId: Int, val changed: Boolean)
 
 /**
- * Asks Numista again for one type's ficha and writes it over the cached one (#185, ADR 0025).
- *
- * The type cache is permanent by design — a ficha costs an API call and catalog data barely ever
- * moves — and that was the right call for everything except the case that matters: **the data was
- * wrong and somebody fixed it**. A corrected family, a weight the mint published, a submission the
- * referee finally accepted; none of it had any way of reaching the two phones that exist, because a
- * cached type was never asked for again and the asset snapshot never overwrites a synced row
- * (ADR 0017).
- *
- * One type, one call, and the collector asks for it. There is no batch here and no schedule: the
- * cheapest way to spend a month's budget in an afternoon is to refresh what nobody said was wrong.
+ * Asks Numista again for one type's ficha and writes it over the cached one (#185, ADR 0025): the
+ * way a ficha corrected on Numista reaches a phone whose cache would otherwise keep it. One type,
+ * one call, on the collector's request; no batch or schedule, which could spend a month's budget on
+ * fichas nobody said were wrong.
  */
 class TypeRefresh(
     private val typeMeta: TypeMetaDao,
@@ -29,10 +22,8 @@ class TypeRefresh(
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
-     * Fetches the ficha and stores it. Throws whatever the client throws — an exhausted budget, a
-     * dead network, a type Numista no longer publishes — and in every one of those cases the ficha
-     * already on the phone is left exactly as it was: a refresh that fails is never worse than not
-     * having asked.
+     * Fetches the ficha and stores it. Throws whatever the client throws (budget, network, a type
+     * Numista no longer publishes), leaving the cached ficha untouched.
      */
     suspend fun refresh(client: NumistaClient, typeId: Int): TypeRefreshReport {
         val cached = typeMeta.byId(typeId)
@@ -43,19 +34,10 @@ class TypeRefresh(
     }
 
     /**
-     * Whether the ficha says anything different from the one that was there.
-     *
-     * The columns are compared as columns, and the bodies as **parsed JSON** rather than as bytes.
-     * Comparing the two strings would report a change on every seeded ficha, because the snapshot
-     * stores the asset re-encoded by this app and a refresh stores Numista's own body. A parsed
-     * [kotlinx.serialization.json.JsonObject] is a `Map`, so key order and whitespace stop counting
-     * and the fields start — and the issuer's name, the composition prose, the diameter and the
-     * category are inside it, so a corrected metal is a change even though no column moved.
-     *
-     * The cached row is re-read before the columns are compared. Those five *are* columns since
-     * version 6 (#221), and a row the backfill has not reached yet holds nulls in them: without
-     * this, the first refresh after an update would report «cambió» over a ficha that says exactly
-     * the same thing.
+     * Whether the ficha says anything different from the one that was there. Bodies are compared
+     * as parsed JSON, not bytes: the seed stores the asset re-encoded and a refresh stores
+     * Numista's own body. The cached row is read again first, so columns the backfill hasn't
+     * filled yet (#221) don't count as a change.
      */
     private fun differ(cached: TypeMetaEntity, fetched: TypeMetaEntity): Boolean {
         val reread = cached.withReading(readFichaBody(cached.raw))

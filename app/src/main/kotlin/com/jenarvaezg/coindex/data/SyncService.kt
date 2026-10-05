@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 
-/** Outcome of one explicit sync. */
+/** Outcome of one sync. */
 data class SyncReport(
     val collectionItems: Int,
     val typesFetched: Int,
@@ -19,12 +19,11 @@ data class SyncReport(
 )
 
 /**
- * Explicit, user-triggered sync. There is no estimator and no dry run: the pre-call budget
- * counter is the source of truth for what a sync costs.
+ * Syncs the collection and the fichas it lacks, on a press or as the daily refresh (#605). There is
+ * no estimator or dry run: the pre-call budget counter says what a sync cost.
  *
- * The collection snapshot is stored *before* type metadata is fetched, so a sync that runs out
- * of budget half way still leaves a fresh inventory; the types it could not fetch simply show
- * up as unclassified pieces until the next sync completes them.
+ * The snapshot is stored before the fichas are fetched, so a sync that runs out of budget halfway
+ * still leaves a fresh inventory; types it couldn't fetch show as unclassified until the next sync.
  */
 class SyncService(
     private val collectedItems: CollectedItemDao,
@@ -35,10 +34,9 @@ class SyncService(
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
-     * @param maxFichas how many missing fichas this run may buy. Unlimited for a press, and capped
-     *   for the automatic refresh of #605: whoever asked for it is not watching, so a cache emptied
-     *   by a reinstall must not turn one launch into two hundred consultas. What is left over is
-     *   still counted in [SyncReport.typesStillMissing] and is bought by the next run.
+     * @param maxFichas how many missing fichas this run may fetch: unlimited for a press, capped
+     *   for the automatic refresh (#605). The rest is counted in [SyncReport.typesStillMissing]
+     *   and fetched by a later run.
      */
     suspend fun run(client: NumistaClient, userId: Long, maxFichas: Int = Int.MAX_VALUE): SyncReport {
         val callsBefore = recordedCalls()

@@ -73,15 +73,10 @@ fun deriveCollection(
         }
     }
     /**
-     * A catalog that is not a set is authoritative about the complete variant key of the
-     * types it claims: family, weight, finish and metal are verified by hand, so Numista's per-type
-     * family or gram value does not get to split them.
-     *
-     * Snapping alone cannot do this. The nineteen 1000 escudos of Portugal are one coin whose
-     * weight Numista records as 27, 28 and 28.2 grams — 868, 900 and 907 milli-ounces, a spread
-     * of 39 against a snap tolerance of 10 that is deliberately tight so a 30 g piece is never
-     * read as an ounce. Without this, one curated catalog produced two cards and counted five
-     * pieces in both.
+     * A catalog that is not a set is authoritative about the whole variant key of the types it
+     * claims (ADR 0016), so Numista's per-type family or grams do not split them. Snapping alone
+     * cannot do this: Numista weighs the 1000 escudos of Portugal at 27, 28 and 28.2 g, a spread
+     * wider than the snap tolerance, which is kept tight so a 30 g piece never reads as an ounce.
      */
     val catalogsByType: Map<Int, List<CollectionCatalog>> = buildMap<Int, MutableList<CollectionCatalog>> {
         for (catalog in catalogs.filterNot { it.isSet }) {
@@ -114,11 +109,9 @@ fun deriveCollection(
             unclassifiedGrouped.record(item, UnclassifiedReason.MissingTypeMetadata)
             continue
         }
-        // A family made only of articles is the beginning of a name and not a name, so it is read
-        // as the absent field it is (#404). No reason of its own: «sin familia en Numista» is what
-        // the residue will say, and for a «The» that is the truth — whereas a card called «The»
-        // was not. A curated file still outranks it, as it does everywhere else, because
-        // [curatedFamily] answers precisely when Numista has nothing to give.
+        // A family made only of function words is read as absent (#404): the residue then says
+        // «sin familia en Numista», which is true, while a card called «The» was not. A curated
+        // file still outranks it through [curatedFamily].
         val numistaFamily = metadata.family?.let(::normalizeFamily)?.takeUnless(::isPlaceholderFamily)
         val candidateCatalogs = catalogsByType[item.typeId].orEmpty()
         val issueQualifiedClaim = candidateCatalogs.any { candidate ->
@@ -140,14 +133,11 @@ fun deriveCollection(
             unclassifiedGrouped.record(item, UnclassifiedReason.IssueNotClaimedByCatalog)
             continue
         }
-        // A submission in review is not verifiable, and what a curator could not sign does not get
-        // to invent a card either (#186). Two limits keep the check to the damage it repairs:
-        //
-        // - A curated file outranks it. If a versioned file names the type, someone verified it by
-        //   hand and the file rules (ADR 0016), so no plate slot is lost to a half-typed field.
-        // - Only a declared family triggers it. Without one the piece is already in the residue for
-        //   want of a family, and that reason does not lie — whereas «unpublished» would, for a
-        //   published type nobody has dated.
+        // A submission in review is not verifiable, so it does not make a card either (#186), with
+        // two limits:
+        // - a curated file that names the type outranks it (ADR 0016);
+        // - only a declared family triggers it. Without one the piece is already in the residue
+        //   for want of a family, and «unpublished» would be wrong for a published undated type.
         if (catalog == null && numistaFamily != null && metadata.looksUnpublished) {
             unclassifiedGrouped.record(item, UnclassifiedReason.UnpublishedType)
             continue
@@ -168,10 +158,8 @@ fun deriveCollection(
             grouped.record(catalog.key(), item)
             continue
         }
-        // Numista's own grams, snapped to the common bullion weights and to nothing a catalog
-        // declares: past this point the type is one no curated file has a weight for (#288). The
-        // shelf's loose row weighs that same coin by the very same property and no longer by a
-        // second call of its own (#540).
+        // Past this point no curated file weighs the type, so it takes Numista's grams snapped to
+        // the common bullion weights (#288), the same property the shelf's loose row reads (#540).
         val weightMillioz = metadata.weightMillioz
         if (weightMillioz == null) {
             unclassifiedGrouped.record(item, UnclassifiedReason.UnknownWeight(family))

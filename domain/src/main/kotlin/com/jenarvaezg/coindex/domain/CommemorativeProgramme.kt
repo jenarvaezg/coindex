@@ -4,25 +4,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * A curated statement that some Numista types were struck for the same commemoration, and
- * nothing more (ADR 0022).
+ * A curated statement that some Numista types were struck for the same commemoration, and nothing
+ * more (ADR 0022): a second reading across catalogs. The 2,50 escudos of 1977 belongs to the
+ * cupronickel 2,50 escudos and also to the three denominations struck for the centenary of
+ * Alexandre Herculano.
  *
- * It exists because a collection catalog answers one question — «how far along is this variant»
- * — and the collector asked a second one at the same time: the 2,50 escudos of 1977 belongs to
- * «los 2,50 escudos de cuproníquel», and it also completes, or not, the three denominations the
- * mint struck for the centenary of Alexandre Herculano. Both readings are true and they cut
- * across each other.
+ * Not a collection: it declares no family, weight, finish or metal, never reaches
+ * [deriveCollection] and makes no card. A set catalog (ADR 0012) would instead win the family
+ * precedence and move the coin off its denomination card.
  *
- * It is deliberately **not** a collection: it declares no family, no weight, no finish and no
- * metal, it never reaches [deriveCollection], and it produces no card in the index. That is the
- * whole point of it being a separate file kind — a set catalog (ADR 0012) would have *won* the
- * family precedence and moved the coin off its denomination card instead of adding a second
- * reading to it.
- *
- * Its members are types, not slots, and they are **not** bounded by what the catalogs hold: the
- * 25 escudos of both Portuguese programmes sit in no catalog and never will, because neither
- * collection owns one. A progress computed by joining catalogs would have printed «1 de 2» over
- * a programme of three.
+ * Its members are types, not slots, and need not appear in any catalog: the 25 escudos of both
+ * Portuguese programmes are in none, yet each programme counts three.
  */
 @Serializable
 data class CommemorativeProgramme(
@@ -32,26 +24,21 @@ data class CommemorativeProgramme(
     /** The card-sized name, under the same rules as a catalog's: required, prefix of [name]. */
     @SerialName("short_name") val shortName: String,
     @SerialName("issuer_code") val issuerCode: String,
-    /** The year of the commemoration, which is one year by construction. */
+    /** The year of the commemoration; a programme has exactly one. */
     val year: Int,
     /**
-     * What sustains the boundary. Any HTTPS host, unlike a catalog's `source`: a programme is
-     * never a Numista fact — Numista groups these types under a technical monetary system and
-     * nothing else — so requiring a Numista URL would have forced a citation that proves nothing.
+     * What sustains the boundary: any HTTPS URL, unlike a catalog's `source`, because Numista files
+     * these types only under a technical monetary system and cannot prove a programme.
      */
     val source: String,
-    /** What [source] proves, in prose so the claim outlives the link. Required, never optional. */
+    /** What [source] proves, in prose so the claim outlives the link. Required. */
     @SerialName("source_note") val sourceNote: String,
     @SerialName("updated_at") val updatedAt: String,
     val members: List<CommemorativeProgrammeMember>,
 ) {
     /**
-     * The Numista types this programme names, which is the shape every membership test wants.
-     *
-     * Held rather than rebuilt per question because the assembly asks it once per curated catalog
-     * (#539): «does this file touch this programme» used to be `members × members` for each of the
-     * forty-nine files, and it is a set lookup now. Outside the constructor, so it is not a field of
-     * the serialized form and a curated file cannot declare it.
+     * The Numista types this programme names, held because the assembly asks once per curated
+     * catalog (#539). Outside the constructor, so a curated file cannot declare it.
      */
     val typeIds: Set<Int> by lazy { members.mapTo(mutableSetOf()) { it.numistaTypeId } }
 
@@ -59,10 +46,8 @@ data class CommemorativeProgramme(
     fun progress(items: List<CollectedItem>): ProgrammeProgress = progressOver(ownedTypeIds(items))
 
     /**
-     * The same count against a set of owned types gathered once, which is what a whole assembly needs.
-     *
-     * The one arithmetic of the progress, so [progress] and [CatalogProgrammes] cannot drift: what a
-     * caller holding the whole inventory saves is the walk of it, never the rule.
+     * The same count against owned types gathered once for a whole assembly: the one arithmetic,
+     * shared with [CatalogProgrammes].
      */
     fun progressOver(owned: Set<Int>): ProgrammeProgress = ProgrammeProgress(
         owned = members.count { it.numistaTypeId in owned },
@@ -134,11 +119,9 @@ data class ProgrammeStanding(
 )
 
 /**
- * The types the collector owns at least one piece of, which is what a progress counts against.
- *
- * Its own function because two readings need the very same set — one programme's progress and the
- * standings of every catalog at once (#539) — and a quantity of zero is a piece the collector no
- * longer has, which is the one subtlety in it worth writing down once.
+ * The types the collector owns at least one piece of, which a progress counts against. Shared by
+ * one programme's progress and every catalog's standings (#539); a zero quantity is a piece no
+ * longer owned.
  */
 fun ownedTypeIds(items: List<CollectedItem>): Set<Int> =
     items.filter { it.quantity > 0 }.mapTo(mutableSetOf()) { it.typeId }

@@ -8,26 +8,19 @@ import com.jenarvaezg.coindex.domain.ShowcasePlate
 import com.jenarvaezg.coindex.domain.WishedSlot
 
 /**
- * One tile of «Explorar», whichever of the two populations it comes from (ADR 0030 §8).
+ * One tile of «Explorar», from either population (ADR 0030 §8). One shape, as ADR 0021 §2 does for
+ * the index: what differs between a collector's plate and a shelf-window plate is drawn from what
+ * the tile has (a fraction, an amount, marks), never from asking which kind it is.
  *
- * **One shape and not two**, which is the same answer ADR 0021 §2 gives the index: what varies between
- * a plate of the collector's and one of the shelf window is drawn from what the tile *has* — a fraction,
- * an amount, a count of marks — and never from a branch on which kind it is. A screen that asked would
- * be the second species of collection this shelf is careful not to create.
- *
- * @param footnote what the tile says under its name, and it is never empty: a plate of the window says
- *   how many casillas it is, or what entering it costs once it has been valued; one of the collector's
- *   says the fraction its card in the index says, because that is what it is.
- * @param marks «2 lo busco», on a plate of the collector's that is only here because of them. Null on a
- *   plate of the window, where every casilla is empty and the mark is not what put it on the shelf.
- * @param entryEur what entering costs, for the order that sorts by it — and null on a plate nobody has
- *   valued, which is what makes «por coste de entrar» an order that cannot be the default (§8).
- * @param coverOwned whether the coin in the tile's hole is one the collector has, which is what the hole
- *   is drawn from (#556). It is the fact the screen used to get by asking [mine], and asking was the one
- *   thing this file says a tile must not do: with the ghost on every window tile the grid read as sorted
- *   by ownership, which is what §8 clause 1 mixed the two populations to avoid. A plate of the window
- *   owns nothing by §1, so its cover is a catalog member; a plate of the collector's covers itself with
- *   an [IndexCover], which is an owned coin by construction.
+ * @param footnote never empty: a shelf-window plate says its casilla count, or its cost of entering
+ *   once valued; a collector's plate says its index card's fraction.
+ * @param marks «2 lo busco» when the plate has marked casillas, which is what puts a collector's
+ *   plate on the shelf.
+ * @param entryEur the cost of entering, for the order that sorts by it; null until valued, which is
+ *   why «por coste de entrar» can't be the default (§8).
+ * @param coverOwned whether the coin in the tile's hole is owned, which decides how the hole is
+ *   drawn (#556). Read from here, not from [mine], so the grid doesn't look sorted by ownership
+ *   (§8 clause 1).
  */
 data class ShowcaseTile(
     val catalogId: String,
@@ -43,15 +36,10 @@ data class ShowcaseTile(
 )
 
 /**
- * The whole shelf, worded once: the twenty and the collector's plates that hold a mark.
- *
- * Assembled here rather than in the screen for the reason `plateSubject` is: what a tile says is decided
- * by facts from three places — the curated file, the inventory and the price table — and a lazy grid that
- * asked for them per item would ask sixty times per scroll.
- *
- * **A plate of the collector's enters only through a mark** (§8 clause 1). It is not a second index: it
- * is the plate where something the collector is hunting is missing, and the shelf is the one screen that
- * says that about both régimes at once.
+ * The whole shelf, worded once: the shelf window and the collector's plates that hold a mark.
+ * Assembled here, like `plateSubject`, so the lazy grid doesn't read the curated files, the
+ * inventory and the price table per item. A collector's plate enters only through a mark
+ * (§8 clause 1).
  */
 fun showcaseTiles(
     window: List<ShowcasePlate>,
@@ -74,12 +62,9 @@ fun showcaseTiles(
                 typeId = card.cover?.typeId,
                 printedSide = card.cover?.printedSide ?: PrintedSide.Reverse,
                 mine = true,
-                // `IndexCover` is «the owned coin shown inside one index card's die-cut hole»: this
-                // tile covers itself with the same coin its card does, and that coin is in the
-                // collection.
+                // Covered by its card's `IndexCover`, which is an owned coin.
                 coverOwned = true,
-                // The fraction its own card prints, and the same one: this tile is that plate in a
-                // second order, so a second measurement of it is a second thing to keep in step.
+                // The same fraction its index card prints.
                 footnote = coverage?.let { "${it.owned}/${it.issued}" } ?: countLabel(
                     card.distinctTypes,
                     card.quantity,
@@ -96,12 +81,10 @@ fun showcaseTiles(
             typeId = cover?.numistaTypeId,
             printedSide = plate.catalog.printedSide,
             mine = false,
-            // The window is curated and unowned (§1), so its cover is a member of the catalog and not
-            // a piece: the hole holds no coin of the collector's, whatever the plate holds.
+            // The window is unowned (§1): its cover is a catalog member, not a piece.
             coverOwned = false,
-            // How many casillas it is until it has been valued, and what it costs afterwards. Never
-            // `0/12`: a fraction of a plate you are not collecting reads as a reproach for not having
-            // started (ADR 0030 §6).
+            // The casilla count until valued, then the cost. Never `0/12`, which would read as a
+            // reproach (ADR 0030 §6).
             footnote = money.entry
                 ?.let { showcaseTileCostLabel(it, nowMillis) }
                 ?: showcaseSlotsLabel(plate.slots),
@@ -114,21 +97,11 @@ fun showcaseTiles(
 }
 
 /**
- * The shelf in the order it was asked for, and narrowed by what was typed (ADR 0026 §8 clause 4).
+ * The shelf in the chosen order, narrowed by name (ADR 0026 §8 clause 4) with [fold] and
+ * [matchesQuery], like the other two search boxes (#515).
  *
- * The search is the name and nothing else, which is what the twenty have: no country facet earns its
- * place — twelve countries with nine of them holding a single plate — and there is nothing else on a
- * tile to match against.
- *
- * **It matches the way the other two boxes do** (#515): the same [fold] and [matchesQuery] the index
- * and Monedas run on, so «britannia» finds «Britannia» and «panda plata» finds «Panda de plata». The
- * three boxes are one drawing, and this one used to be a bare `contains` — accent-sensitive, and
- * blind to two words in any order — which is a difference nothing on screen could have declared.
- *
- * **The marked plates lead only in the default order.** «Por coste de entrar» is #282's order and it
- * sorts what has been valued, dearest first, leaving everything with no amount behind it by casillas:
- * asked for that order, a collector is asking about money, and answering with the plates that have none
- * would be answering a different question.
+ * Marked plates lead only in the default order. «Por coste de entrar» (#282) sorts valued plates
+ * dearest first and leaves the rest after them by casillas.
  */
 fun showcaseShelf(
     tiles: List<ShowcaseTile>,

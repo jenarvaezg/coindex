@@ -40,29 +40,20 @@ import com.jenarvaezg.coindex.ui.shelf.SEARCH_CLEAR_LABEL
 import com.jenarvaezg.coindex.ui.shelf.shelfDisclosure
 import com.jenarvaezg.coindex.ui.theme.Paper
 
-/** How tall the search box is, shared with the aspa that clears it and with the test of the pair. */
+/** Height of the search box, shared with its clear button and the test that checks them. */
 val SEARCH_FIELD_HEIGHT = 40.dp
 
 /**
- * The search box of a hierarchy: always visible, never persisted (ADR 0021 §1).
- *
- * Above the shelf and not inside it, because it is the one narrowing that answers while you type and
- * the only one that is gone next launch. Reopening the app with a stale word in this box and half the
- * collection hidden was measured as reading like a broken app, which is why the filters below it
- * survive a launch and this does not.
+ * The search box of a hierarchy: always visible, never persisted (ADR 0021 §1), so the app never
+ * reopens with a stale word hiding half the collection. The filters below it do persist.
  */
 @Composable
 fun SearchField(
     value: String,
     onValueChange: (String) -> Unit,
     /**
-     * What the empty box says, and **there is no default** (#515).
-     *
-     * Three screens draw this same box over three populations — the cards of the index, the types of
-     * the inventory, the curated plates the collector owns nothing of — and the placeholder is the
-     * only thing that can tell them apart. A default was what let two of the three say «Buscar» and
-     * leave the collector to find out by typing; required, it makes declaring the scope the price of
-     * drawing the box.
+     * What the empty box says. No default (#515): three screens search different things, and the
+     * placeholder is what tells the collector which.
      */
     placeholder: String,
     modifier: Modifier = Modifier,
@@ -81,8 +72,7 @@ fun SearchField(
         decorationBox = { field ->
             val clearable = value.isNotEmpty()
             Row(
-                // The end padding is the aspa's when there is one: the button carries its own air
-                // inside its square, and 10 dp more would push its ink off the field's margin.
+                // No end padding with the clear button, which has its own inside its square.
                 modifier = Modifier.padding(start = 10.dp, end = if (clearable) 0.dp else 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -107,12 +97,9 @@ fun SearchField(
 }
 
 /**
- * The aspa that empties the box, offered only while there is something to empty (#414).
- *
- * Its ink is [SEARCH_FIELD_HEIGHT] square because the field is that tall, and the drawn cross is
- * 16 dp of that — so the tap does not have to find the stroke. Android's 48 dp it buys the way the
- * year tag does ([RecessedYearTag]), with [minimumInteractiveComponentSize]: the target grows past
- * the field without the field growing with it, which is the whole reason that modifier exists.
+ * The cross that empties the box, shown only while it has text (#414). Drawn [SEARCH_FIELD_HEIGHT]
+ * square; [minimumInteractiveComponentSize] grows the touch target to 48 dp without growing the
+ * field, as for [RecessedYearTag].
  */
 @Composable
 private fun ClearGlyph(onClick: () -> Unit) {
@@ -149,22 +136,14 @@ private fun SearchGlyph() {
 }
 
 /**
- * Air, not punctuation, between the tally and the trailing action (#416).
- *
- * A « · » here read as the leftover seam of something that had been taken out: the button carries
- * its own border, so what it needed from the count beside it was distance and not a mark saying
- * «and then». Shared with the test that measures it, so the promise and the assertion are one
- * number.
+ * Space, not a « · », between the tally and the bordered trailing action (#416). Shared with its
+ * test.
  */
 val SHELF_ACTION_GAP = 12.dp
 
 /**
- * The shelf of filters, folded on entry.
- *
- * Folded because both hierarchies open on what the collector owns and not on a control panel: the
- * measured cost of an open shelf is the first card pushed below the fold. [summary] is the line that
- * keeps a filter set days ago from being invisible, and [tally] beside it is how much of the list is
- * showing right now.
+ * The shelf of filters, folded on entry so the first card stays above the fold. [summary] keeps
+ * active filters visible while folded; [tally] says how much of the list is showing.
  */
 @Composable
 fun FilterShelf(
@@ -178,11 +157,8 @@ fun FilterShelf(
     onAction: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    // For the action, whose 48 dp is a touch target: the button grows to it and centres its own
-    // label. A **Text** given the same modifier does not centre anything — it lays out one 13 dp
-    // line at the top of a 48 dp box, which is where the tally of this shelf was printed, 17 dp
-    // above the line it belongs to. The Row is 48 dp tall and centres its children already, so the
-    // labels need nothing here.
+    // Only for the button, which centres its label in the 48 dp target. A Text given this would sit
+    // at the top of the box; the 48 dp Row already centres the labels.
     val touchSizedAction = Modifier
         .wrapContentHeight(Alignment.CenterVertically)
         .heightIn(min = 48.dp)
@@ -194,8 +170,8 @@ fun FilterShelf(
                 .height(48.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // The summary and tally remain one large toggle target. A trailing action, when present,
-            // is its sibling rather than a clickable nested inside another clickable.
+            // The summary and tally remain one large toggle target. A trailing action, when
+            // present, is its sibling rather than a clickable nested inside another clickable.
             Row(
                 modifier = Modifier
                     .weight(1f)
@@ -204,12 +180,8 @@ fun FilterShelf(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Weighted, and weighted so that the tally is measured **first**: a Row hands the
-                // unweighted children the room they ask for and leaves this one the remainder. With
-                // both children unweighted the summary took the whole width and «170 de 678
-                // casillas» wrapped into eight lines inside a 48 dp row. The summary is the one that
-                // can afford to give: it truncates by design, and half a count is worse than a
-                // shortened line about the filters.
+                // Weighted so the tally is measured first and the summary truncates instead;
+                // unweighted, the summary took the whole width and the tally wrapped.
                 Text(
                     "${shelfDisclosure(expanded)}$summary",
                     style = MaterialTheme.typography.bodyLarge,
@@ -219,9 +191,8 @@ fun FilterShelf(
                         .weight(1f)
                         .padding(end = 12.dp),
                 )
-                // No `maxLines` of its own: the weight above is what keeps this on one line, and it
-                // keeps it there at twice the type size too — measured, because the Row is 48 dp
-                // tall and a tally that wraps is read through half of its own second line.
+                // No `maxLines`: the weight above keeps it on one line, even at twice the font
+                // size.
                 Text(
                     tally,
                     style = MaterialTheme.typography.labelMedium,
@@ -263,22 +234,13 @@ fun Facet(title: String, content: @Composable FlowRowScope.() -> Unit) {
 }
 
 /**
- * One chip of a facet, with the live count of what tapping it would leave.
+ * One chip of a facet, with the live count of what tapping it would leave. A null [count] is an
+ * «all» chip whose number would repeat the tally. Callers omit chips counting zero
+ * ([FacetCounts.populated] / [FacetCounts.populatedIn]).
  *
- * A [count] of null is the facet's «all» chip in the cases where a number beside it would be the
- * same number the tally already prints two lines up. Callers omit chips whose count is zero
- * ([FacetCounts.populated] / [FacetCounts.populatedIn]): offering a dead end costs a tap into an
- * empty list, and the other filters already condition the counts.
- *
- * **This is the album's one drawing of «elegido»**, which is why the pair of orders of «Explorar»
- * wears it too (#513) although that shelf has no facets at all (ADR 0030 §8 clause 4): a second
- * shape for the same state is a second thing to learn. Filled in moss with the paper's own ink on
- * it when it is the one in force, plain card when it is the one on offer. There a null [count] is
- * not the «all» chip of anything — an order narrows nothing, so there is no remainder to print.
- *
- * `selectable` and not `clickable`: the fill is what the eye reads, and the state it stands for is
- * what a screen reader has to hear — one of a set, and this one is on. It is also what lets a test
- * assert the state rather than the paint.
+ * The album's only drawing of a selected option, so «Explorar» uses it for its two orders too
+ * (#513, ADR 0030 §8 clause 4), with a null [count]. `selectable` rather than `clickable`, so
+ * screen readers and tests get the selected state.
  */
 @Composable
 fun FilterChip(
@@ -292,9 +254,7 @@ fun FilterChip(
         text = count?.let { "$label · $it" } ?: label,
         style = MaterialTheme.typography.labelLarge,
         color = if (selected) Paper.paper else Paper.ink,
-        // The longest labels are gone — «Federación de Rusia (1991-presente)» is «Rusia» since
-        // ADR 0023 — but a chip still truncates rather than wrap: a curated `short_name` may run to
-        // 40 characters, and one chip taking a row to itself pushes the rest off the shelf.
+        // Truncates rather than wraps: a curated `short_name` (ADR 0023) may run to 40 characters.
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier

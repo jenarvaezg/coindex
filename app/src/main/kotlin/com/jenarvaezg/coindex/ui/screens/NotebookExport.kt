@@ -32,52 +32,32 @@ import com.jenarvaezg.coindex.ui.sheetExportFailure
 import com.jenarvaezg.coindex.ui.sheetPdfExportMessage
 
 /**
- * How long one page of the notebook waits for its pictures.
+ * How long one notebook page waits for its pictures. Much shorter than a single plate's wait,
+ * because every photograph has already been fetched and cached: a page only waits for disk decodes,
+ * and one that hasn't landed in four seconds isn't coming.
  *
- * Far below the thirty seconds a single plate gets, because by now every photograph has been asked
- * for and cached: what a page is waiting for is a decode from disk, and one that has not landed in
- * four seconds is not coming. The old ceiling was what turned a notebook of seventy pages into
- * thirty-five minutes of waiting for pictures that were never going to arrive.
- *
- * **Unchanged by «ambas caras» (#230), and checked rather than assumed.** A page of both faces asks
- * for twice as many decodes, but four seconds was never a budget of twelve: today's own pages run to
- * thirty cells of Venezuelan medios, and this is a **ceiling and not a cost** — what is cached
- * settles in a frame. The seven pages of a Kookaburra plate at both faces, seventy-four photographs,
- * were exported without one page reaching this ceiling and without a hole in the PDF.
+ * It is a ceiling, not a per-photo budget, so «ambas caras» (#230) doubling the decodes doesn't
+ * need a longer one; this was checked on a both-faces export with no page reaching it.
  */
 private const val PAGE_WAIT_MILLIS = 4_000L
 
 /**
- * Draws the whole notebook into one PDF, one page at a time, and sends it to [destination].
+ * Draws the notebook into one PDF, one page at a time, and sends it to [destination] (Descargas or
+ * the share sheet, #285).
  *
- * **Photographs first, pages second.** Every picture the notebook needs is fetched once, up front
- * (`warmNotebookPhotographs`), and only then is the first page composed. Asking page by page is what
- * the first version did and it produced 64 photographs out of 600 in half an hour: see that
- * function for why the two are not equivalent.
+ * Photographs are fetched once, up front (`warmNotebookPhotographs`, which explains why asking page
+ * by page is much slower), before the first page is composed. With photographs off (#231) there is
+ * nothing to warm: `warm` starts true and no [NotebookExportStep.Warming] is reported.
  *
- * **Or no photographs at all** (#231), and then the whole of that step is skipped rather than run
- * over an empty list: `warm` starts true, no [NotebookExportStep.Warming] is ever reported, no page
- * waits for a decode, and the closing message has a denominator of zero — the one export of the three
- * that cannot come out incomplete. It falls out of the arithmetic and is not a branch: a cell with no
- * faces asks for nothing, so there is nothing to warm and nothing to count.
+ * Only one page is in composition at a time, so memory holds one full-page recording. Each page
+ * waits for its decodes, is appended to the document as drawing commands, and is dropped.
  *
- * **One page in composition at any moment**, which is the only thing that makes the drawing
- * affordable: composing every page at once would hold seventy full-page recordings in memory. Each
- * page waits for its own pictures — cached by now, so in practice for a decode — is appended to the
- * document as drawing commands, and is then dropped.
+ * Cancelling is leaving composition: the effect is cancelled and [DisposableEffect] closes the
+ * document; no file exists until the last page is in. The final step reports
+ * [NotebookExportStep.Writing] because `writeTo` is a blocking native call that ignores coroutine
+ * cancellation, so the parent must stop offering cancel while it runs.
  *
- * Cancelling is leaving composition: the parent stops drawing this, the effect is cancelled and
- * [DisposableEffect] closes the document. Nothing has to be cleaned up because nothing has been
- * written — the file appears only once the last page is in. That is also why the last step reports
- * [NotebookExportStep.Writing]: `writeTo` is a blocking native call that would not notice the
- * coroutine being cancelled, so the parent has to stop offering a cancel that would close the
- * document while it is being serialized.
- *
- * [destination] is Descargas by default and the share sheet beside it (#285): both buttons on the
- * options sheet reach this same drawing; only the last step differs.
- *
- * [sheet] turns the closing copy into a single lámina or hoja (#401): the drawing is the same PDF
- * path the notebook uses, and only the product named in the snackbar and the file stem change.
+ * [sheet] makes the closing copy and file stem name a single lámina or hoja (#401).
  */
 @Composable
 fun NotebookPdfExport(
@@ -91,8 +71,7 @@ fun NotebookPdfExport(
     val context = LocalContext.current
     val document = remember { PdfDocument() }
 
-    // Every photograph of the notebook, fetched once and before anything is drawn. Until it is
-    // done no page is composed at all: composing one would put its cells in the same queue.
+    // No page is composed until these are fetched: its cells would join the same queue.
     val photographs = remember(pages) { notebookPhotographs(pages) }
     var warm by remember(pages) { mutableStateOf(photographs.isEmpty()) }
 
@@ -103,8 +82,7 @@ fun NotebookPdfExport(
     val picture = remember(pageIndex) { Picture() }
     val settled = remember(pageIndex) { mutableIntStateOf(0) }
 
-    // Counted across the whole notebook, because that is what the closing message is about: how
-    // many of the photographs it asked for never arrived.
+    // Across the whole notebook, for the closing message's count of missing photographs.
     val expectedPhotographs = remember(pages) { pages.sumOf { it.photographs } }
     val loadedPhotographs = remember { mutableIntStateOf(0) }
 
@@ -122,10 +100,8 @@ fun NotebookPdfExport(
     LaunchedEffect(pageIndex, warm) {
         if (!warm) return@LaunchedEffect
         val current = pages.getOrNull(pageIndex) ?: return@LaunchedEffect
-        // The plate at the top of the folio, which since #232 may not be the only one on it: the
-        // progress line is what tells a stall from steady work, and it is the name the collector
-        // recognises as the page goes by. Naming every plate on a shared folio would put three
-        // titles in a line meant to be read at a glance.
+        // Only the folio's first plate, even when it shares the folio (#232): the progress line
+        // must stay short.
         onStep(NotebookExportStep.Drawing(pageIndex, current.blocks.first().section.title))
         awaitSettledImages(current.photographs, settled, PAGE_WAIT_MILLIS)
         val appended = runCatching {

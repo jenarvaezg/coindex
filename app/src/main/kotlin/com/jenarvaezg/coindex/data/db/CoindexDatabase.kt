@@ -42,25 +42,20 @@ abstract class CoindexDatabase : RoomDatabase() {
     abstract fun wishes(): WishDao
 
     /**
-     * Folds the write-ahead log back into [DATABASE_NAME], so one file holds every transaction (#548).
+     * Folds the write-ahead log into [DATABASE_NAME] so one file holds every transaction (#548):
+     * Room runs in WAL mode (hence the three files `scripts/avd-db.sh` copies), and an export
+     * through the share sheet is a single file. `TRUNCATE` rather than `PASSIVE`, which gives up
+     * silently when a reader is in the way.
      *
-     * Room opens in WAL mode, which is why `scripts/avd-db.sh` carries three files and not one. A
-     * dump that crosses the share sheet is a single file by design, so the log has to be spent before
-     * it is copied — `TRUNCATE` and not `PASSIVE`, because a passive checkpoint gives up whenever a
-     * reader is in the way and says nothing about having done so.
-     *
-     * **And the answer is read, not just the query run.** `PRAGMA wal_checkpoint` reports
-     * `(busy, log, checkpointed)` and never throws: a reader or a writer in the way — a sync in
-     * flight, the ledger stamping a call, the prefetch touching a table — comes back as `busy = 1`
-     * with the log where it was. Dropping that row is how an export taken during a sync becomes a
-     * dump missing exactly the coins that were just added, which is the one failure this whole
-     * gesture exists to avoid. So it is loud, and the collector taps again.
+     * `PRAGMA wal_checkpoint` never throws: a sync, the ledger or the prefetch in the way comes back
+     * as `busy = 1` with the log untouched, and ignoring it would export a dump missing the coins a
+     * sync just added. So it fails loudly and the collector taps again.
      */
     fun checkpoint() {
         openHelper.writableDatabase.query("PRAGMA wal_checkpoint(TRUNCATE)").use { row ->
             check(row.moveToFirst()) { "SQLite no contestó al plegar el diario" }
-            // Read by the collector, at the end of «No se pudieron exportar los datos: …», so it
-            // says what to do about it and not which pragma answered what.
+            // Shown to the collector after «No se pudieron exportar los datos: …», so it says what
+            // to do.
             check(row.getInt(0) == 0) { "la base estaba en uso, inténtalo otra vez" }
         }
     }
@@ -70,19 +65,11 @@ abstract class CoindexDatabase : RoomDatabase() {
         const val DATABASE_NAME: String = "coindex.db"
 
         /**
-         * Version 2 adds the collector's own groupings (ADR 0013) and touches nothing else.
-         *
-         * Explicitly, never destructively: on the other side of this migration there is a
-         * synced collection that cost API budget to fetch and a type cache that is never
-         * refetched. Dropping it to add two tables would be trading the data for the feature.
-         */
-        /**
-         * The two tables version 2 adds, verbatim as Room declares them.
-         *
-         * Kept as data rather than inline so a unit test can compare them against the schema
-         * Room exports from the entities: hand-written migration SQL that drifts from the
-         * entity by one keyword fails at runtime on the collector's phone, at which point the
-         * only remaining move is the destructive one.
+         * The two tables version 2 adds for the collector's groupings (ADR 0021 §11), verbatim as Room
+         * declares them. Migrations are explicit, never destructive: the synced collection and the
+         * type cache cost API budget. Kept as data so a unit test compares them against Room's
+         * exported schema; SQL that drifts from the entity fails at open time on the collector's
+         * phone.
          */
         internal val VERSION_2_TABLES: List<String> = listOf(
             "CREATE TABLE IF NOT EXISTS `own_groupings` " +
@@ -96,14 +83,9 @@ abstract class CoindexDatabase : RoomDatabase() {
         )
 
         /**
-         * Version 3 gives the type cache the thumbnail of each face (issue #67).
-         *
-         * Two nullable columns and nothing else: the rows themselves are filled in afterwards
-         * by `TypeThumbnailBackfill`, from the ficha each one already stores, because SQLite
-         * on the oldest phone this app supports cannot be trusted to have `json_extract`.
-         *
-         * Room compares the migrated table against the exported schema by column name, not by
-         * declaration order, so appended columns match an entity that declares them anywhere.
+         * Version 3 adds each face's thumbnail to the type cache (#67). `TypeThumbnailBackfill`
+         * fills them from the stored ficha afterwards, because SQLite on the oldest supported phone
+         * may lack `json_extract`. Room matches migrated columns by name, so appending them is fine.
          */
         internal val VERSION_3_COLUMNS: List<String> = listOf(
             "ALTER TABLE `type_meta` ADD COLUMN `obverseThumbnailUrl` TEXT",
@@ -111,21 +93,14 @@ abstract class CoindexDatabase : RoomDatabase() {
         )
 
         /**
-         * Version 4 puts the dominant metal into the variant key (#40, ADR 0018).
+         * Version 4 puts the dominant metal into the variant key (#40, ADR 0018). The key is the
+         * primary key of `collection_proposal_preferences`, so the table is rebuilt: renamed aside,
+         * recreated as Room declares it and refilled from the old one.
          *
-         * The key *is* the primary key of `collection_proposal_preferences`, and SQLite cannot
-         * add a column to one, so the table is rebuilt: renamed aside, recreated exactly as Room
-         * declares it, and refilled row by row from the old one.
-         *
-         * Only rows this app can name a metal for are carried across, and that is a literal list
-         * — [PRESERVED_KEYS], the thirty catalogs shipped at this version — rather than a lookup.
-         * A migration is frozen history: reading today's `data/` inside it would silently change
-         * what an old phone does the next time someone curates a catalog. Everything else is
-         * dropped and comes back as **Disponible**, which is the price #55 already named for
-         * touching a key: the two cupronickel cards of the father's Portuguese systems lose
-         * their card and are re-followed by hand.
+         * Only the keys of the catalogs shipped at this version are carried over, as a literal
+         * list: a migration is frozen history and must not read today's `data/`. Everything else
+         * comes back as Disponible (#55). The 1983 set has no metal.
          */
-        /** Every shipped catalog key at version 4: silver, and the 1983 set, which has no metal. */
         internal val PRESERVED_KEYS: List<PreservedKey> = listOf(
             PreservedKey("Architectural Monuments of Russia", 1_121, "unknown", "silver"),
             PreservedKey("Australian Koala", 1_000, "unknown", "silver"),
@@ -186,10 +161,7 @@ abstract class CoindexDatabase : RoomDatabase() {
 
         private const val PREFERENCES_BACKUP = "collection_proposal_preferences_pre_v4"
 
-        /**
-         * The rebuilt table, verbatim as Room declares it. Same reason [VERSION_2_TABLES] is kept
-         * as data: a keyword of drift here is a crash at open time on the collector's phone.
-         */
+        /** The rebuilt table, verbatim as Room declares it; kept as data like [VERSION_2_TABLES]. */
         internal val VERSION_4_PREFERENCES_TABLE: String =
             "CREATE TABLE IF NOT EXISTS `collection_proposal_preferences` " +
                 "(`family` TEXT NOT NULL, `weightMillioz` INTEGER NOT NULL, " +
@@ -221,17 +193,10 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         /**
-         * Version 5 retires the dispositions (ADR 0021 §7): one `DROP`, forward only, rescuing
-         * nothing.
-         *
-         * There is no data to save. The ~58 rows in the collector's phone are all `followed`
-         * because following was the toll the plate charged, so they express that the app charged
-         * it and not a preference — and ADR 0008 itself demanded a rollback drop the table rather
-         * than reinterpret it. It is **irreversible on purpose**: if archiving a card ever earns
-         * its case, the bit is rebuilt from zero rather than resurrected from these.
-         *
-         * `own_groupings` and `own_grouping_members` are untouched (ADR 0021 §11): a box is the one
-         * thing the collector typed.
+         * Version 5 retires the dispositions (ADR 0021 §7) with one irreversible `DROP`. Nothing is
+         * rescued: every row was `followed`, the toll the plate used to charge rather than a
+         * preference, and ADR 0008 asked for a rollback to drop the table, not reinterpret it. The
+         * groupings stay (ADR 0021 §11).
          */
         internal const val VERSION_5_DROP: String =
             "DROP TABLE `collection_proposal_preferences`"
@@ -267,16 +232,10 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         /**
-         * Version 6 gives the type cache the five fields that were being parsed out of the body on
-         * every read (#221).
-         *
-         * Additive and nullable, like version 3 and for the same reason: the rows are filled in
-         * afterwards by `FichaBackfill`, from the ficha each one already stores, because SQLite on
-         * the oldest phone this app supports cannot be trusted to have `json_extract`.
-         *
-         * `readVersion` defaults to zero, which is «this row's columns were written by nobody» —
-         * exactly what is true of every row on the other side of this migration, and what makes
-         * the backfill find them.
+         * Version 6 stores five fields that were parsed out of the body on every read (#221).
+         * Additive and nullable like version 3, and filled by `FichaBackfill` for the same reason.
+         * `readVersion` defaults to 0, «not filled yet», which is how the backfill finds every
+         * migrated row.
          */
         internal val VERSION_6_COLUMNS: List<String> = listOf(
             "ALTER TABLE `type_meta` ADD COLUMN `issuerName` TEXT",
@@ -294,16 +253,10 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         /**
-         * Version 7 gives money a place to live (ADR 0028), and it is additive from end to end.
-         *
-         * Three tables the phone has never had — the prices per grade, the reads that tell «asked and
-         * empty» from «not asked yet», and the last spot — and four more columns on the type cache,
-         * filled in afterwards by `FichaBackfill` from the fichas already stored, like version 3 and
-         * version 6 before it. Not one API call, and nothing about the collection snapshot: the
-         * `issue_id` #327 expected to migrate for is already read out of the stored body.
-         *
-         * Kept as data for the reason [VERSION_2_TABLES] is: a keyword of drift between this and what
-         * Room derives from the entities is a crash at open time on the collector's phone.
+         * Version 7 adds money (ADR 0028), all additive: prices per grade, the reads that tell
+         * «asked and empty» from «not asked», the last spot, and four type-cache columns that
+         * `FichaBackfill` fills from the stored fichas. No API call; a collected item's `issue_id`
+         * is already read from its stored body (#327). Kept as data like [VERSION_2_TABLES].
          */
         internal val VERSION_7_TABLES: List<String> = listOf(
             "CREATE TABLE IF NOT EXISTS `issue_price_reads` " +
@@ -333,14 +286,8 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         /**
-         * Version 8 gives the issue listings somewhere to be remembered (#452).
-         *
-         * Two tables, nothing dropped and nothing rewritten — the version 7 prices stay exactly as
-         * they were. The phone starts on the other side with no listing stored, so the first pass
-         * after the update spends the lookups once and no pass after it does.
-         *
-         * Kept as data for the reason [VERSION_2_TABLES] is: a keyword of drift between this and what
-         * Room derives from the entities is a crash at open time on the collector's phone.
+         * Version 8 stores the issue listings (#452): two new tables, nothing rewritten, so the
+         * first pass after the update lists the types once. Kept as data like [VERSION_2_TABLES].
          */
         internal val VERSION_8_TABLES: List<String> = listOf(
             "CREATE TABLE IF NOT EXISTS `type_issue_reads` " +
@@ -357,12 +304,8 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         /**
-         * Version 9 gives a medal's issue year a column of its own (#460).
-         *
-         * One nullable column, filled in afterwards by `FichaBackfill` from the fichas already
-         * stored — like version 3, version 6 and version 7 before it, and for the same reason: the
-         * body was kept precisely so a later reading could take a field this one ignored, without
-         * spending an API call on a phone whose month is already gone.
+         * Version 9 gives a medal's issue year its own column (#460), filled by `FichaBackfill` from
+         * the stored fichas like versions 3, 6 and 7.
          */
         internal val VERSION_9_COLUMNS: List<String> = listOf(
             "ALTER TABLE `type_meta` ADD COLUMN `issuedYear` INTEGER",
@@ -375,16 +318,9 @@ abstract class CoindexDatabase : RoomDatabase() {
         }
 
         /**
-         * Version 10 gives the marked casillas a table of their own (ADR 0029, #497).
-         *
-         * One table, additive like the eight before it, and it is the **first declarative row this
-         * schema has held since version 5 dropped the dispositions** — deliberately not that table
-         * coming back: it is keyed by the casilla and not by a variant, it says «lo busco» about a
-         * slot that is empty instead of «lo colecciono» about a plate, and it dies measured, so
-         * nothing here is a bit anybody has to maintain.
-         *
-         * Kept as data for the reason [VERSION_2_TABLES] is: a keyword of drift between this and what
-         * Room derives from the entity is a crash at open time on the collector's phone.
+         * Version 10 adds the marked casillas (ADR 0029, #497). Not the dispositions coming back: a
+         * wish is keyed by casilla rather than variant, and stops counting once the slot is filled
+         * (ADR 0029 §2). Kept as data like [VERSION_2_TABLES].
          */
         internal val VERSION_10_TABLES: List<String> = listOf(
             "CREATE TABLE IF NOT EXISTS `wishes` " +

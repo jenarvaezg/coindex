@@ -9,19 +9,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * How many of `CoinPhotoLoader`'s four slots the prefetch is allowed to hold.
- *
- * **Fewer than there are**, which is the point: the dispatcher serves requests in the order they
- * arrive, so a prefetch running at four would park the plate the collector just opened behind six
- * hundred pictures nobody asked for. At two, a screen always finds a slot.
+ * How many of `CoinPhotoLoader`'s four slots the prefetch may hold. The dispatcher serves requests
+ * in arrival order, so leaving slots free keeps an opened plate from queueing behind the prefetch.
  */
 private const val PREFETCH_CONCURRENCY = 2
 
 /**
  * What the phone holds of the catalog's photographs, and what it is still missing.
  *
- * @param wanted every photograph the index would draw, minus the ones Numista says are gone: this
- *   is the number that can actually be reached, so «faltan 0» means «faltan 0».
+ * @param wanted every photograph the index would draw, minus the ones Numista says are gone, so
+ *   «faltan 0» is reachable.
  * @param missing how many of those are not in the disk cache yet.
  * @param bytes what the picture cache weighs right now.
  * @param held why they are not being brought at this moment, or null while they are.
@@ -35,10 +32,8 @@ data class PhotoCacheStatus(
 
 /**
  * Whatever brings the catalog's photographs into the cache before anybody asks for them (#191).
- *
- * An interface because the real one needs Coil, a disk cache and a network: the *rules* around it —
- * when a pass is worth starting, what gives the network back to a sync — are [PhotoPrefetchLoop]'s,
- * and they are the part that had never been read by a test.
+ * An interface so the rules around it, in [PhotoPrefetchLoop], can be tested without Coil, a disk
+ * cache or a network.
  */
 interface PhotoPrefetch {
     /**
@@ -55,28 +50,18 @@ interface PhotoPrefetch {
 }
 
 /**
- * Brings the catalog's photographs into the cache before anybody asks for them (#191).
+ * Brings the catalog's photographs into the cache before anybody asks for them (#191), so a plate
+ * opens with its pictures and a notebook export (#190) starts drawing at once.
  *
- * The export of the notebook already fetches every picture it needs up front (#190), and that made
- * it reliable; this makes it free. The same photographs sitting in the disk cache mean an export
- * starts drawing straight away and — the reason this is worth doing at all — **a plate opens with
- * its pictures already on it** instead of filling in before the collector's eyes.
+ * - It only asks for what is missing: the disk cache is checked first, so a later launch costs no
+ *   network and the count in settings is exact.
+ * - It never outranks the screen ([PREFETCH_CONCURRENCY]).
+ * - It is resumable and idempotent: each photograph is independent and only the cache is written,
+ *   so what didn't arrive is asked for next launch. Hence no `WorkManager`.
+ * - It is silent: one line in settings, to tell «missing, on wifi» from «missing, on mobile data».
  *
- * Four properties hold it to being an optimization rather than a feature:
- *
- * - **It only asks for what is missing.** The disk cache is consulted first, so a second launch
- *   costs no network at all and the count in settings is the truth rather than an estimate.
- * - **It never outranks the screen.** [PREFETCH_CONCURRENCY] of the loader's four slots.
- * - **It is resumable and idempotent.** Every photograph is independent and nothing is written but
- *   the cache itself, so being killed halfway leaves nothing half-done: whatever did not arrive
- *   today is asked for on the next launch. That is also why there is no `WorkManager` here.
- * - **It is silent.** No snackbar, no banner, nothing to dismiss. The one line it is allowed to say
- *   is in the settings screen, and only because «faltan 320, hay wifi» and «faltan 320, estás con
- *   datos» are different situations for the collector.
- *
- * There is deliberately **no ceiling per launch**: the collection is some 30 MB once in the life of
- * the phone, over wifi, and a ceiling would have meant four or five launches before the plates stop
- * filling in — which is most of the wait this is trying to remove.
+ * No per-launch ceiling: the download happens once in the phone's life, over wifi, and a ceiling
+ * would spread the wait over several launches.
  */
 class CoilPhotoPrefetch(
     context: Context,
@@ -86,17 +71,13 @@ class CoilPhotoPrefetch(
     private val appContext = context.applicationContext
 
     /**
-     * Fetches whatever is missing, or reports why it did not.
+     * Fetches whatever is missing, or reports why it did not. A sync, a notebook export or leaving
+     * the app cancels it; the cache keeps what had already landed.
      *
-     * Cancelling is a first-class outcome: a sync cancels it, exporting the notebook cancels it, and
-     * leaving the app cancels it. The cache keeps every photograph that had already landed.
-     *
-     * @param held the reason not to ask for anything, already decided by [prefetchRefusal]. Passed
-     *   in rather than worked out here because the caller needs the same answer for its own state,
-     *   and two readings of a phone that is changing underneath would not have to agree.
-     * @param onStatus called with the counts **before** the first request — a settings screen
-     *   opened during the first pass must show what is happening rather than «no hay fotos que
-     *   traer» — and then every [PREFETCH_PROGRESS_EVERY] photographs.
+     * @param held the reason not to ask for anything, decided by [prefetchRefusal] in the caller so
+     *   both read the same state of a changing phone.
+     * @param onStatus called with the counts before the first request, so settings opened during
+     *   the first pass shows progress, and then every [PREFETCH_PROGRESS_EVERY] photographs.
      */
     override suspend fun run(
         images: Collection<TypeImages>,
@@ -118,13 +99,9 @@ class CoilPhotoPrefetch(
             memoryCache = CachePolicy.DISABLED,
         ) { _, ok ->
             if (ok) landed.incrementAndGet()
-            // Counted apart from the ones that arrived: a photograph that failed is still missing,
-            // and a progress line that counted it as brought would be a lie that settles itself
-            // only at the end of the pass.
+            // Counted apart from the ones that landed: a failed photograph is still missing.
             if (shouldReportPrefetchProgress(asked.incrementAndGet())) {
-                // The size is read again each time: on a first run it starts at zero, and a line
-                // that said «0,0 MB» while six hundred pictures landed would be the one number on
-                // the card that is checkable and wrong.
+                // The size is read again each time; on a first run it starts at zero.
                 onStatus(
                     opening.copy(
                         missing = prefetchMissingAfter(missing.size, landed.get()),
@@ -133,19 +110,16 @@ class CoilPhotoPrefetch(
                 )
             }
         }
-        // Counted again rather than derived from what landed: the interceptor may have learnt in
-        // the meantime that some of these are gone, and those stop being missing — they stop being
-        // wanted. Anything that merely failed is still missing, and is asked for on the next launch.
+        // Recounted rather than derived from what landed: photographs the interceptor found gone
+        // meanwhile stop being wanted, and failed ones are still missing.
         photoCacheStatus(photographsToPrefetch(images, gone.all()), ::isCached, cacheBytes(), held)
     }
 
     private fun cacheBytes(): Long = imageLoader().diskCache?.size ?: 0L
 
     /**
-     * Whether this URL is already on disk.
-     *
-     * The disk cache is keyed by the request's data — the URL — so this is the same key the screens
-     * will hit later. The snapshot has to be closed or the entry stays locked against eviction.
+     * Whether this URL is already on disk, under the same key the screens use. The snapshot must be
+     * closed or the entry stays locked against eviction.
      */
     private fun isCached(url: String): Boolean {
         val cache = imageLoader().diskCache ?: return false

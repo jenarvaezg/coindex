@@ -4,48 +4,33 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.CoinName
 
 /**
- * One cell of a printed page: one coin, at its own diameter, and what is written under it.
- *
- * The same shape for a plate's member and for a piece of a collection with no issue list, because
- * what a page draws is a coin and a caption either way (ADR 0021 §9): the difference is which of
- * them can be [filled] false, and a sheet of pieces simply never is.
+ * One cell of a printed page: a coin at its own diameter and its caption. Plate members and the
+ * pieces of a collection with no issue list share this shape (ADR 0021 §9); only a plate's cells
+ * can be unfilled.
  */
 data class PrintCell(
     /** Curator-authored whole label; mutually exclusive with [name]. */
     val curatedLabel: String? = null,
     /** Album-name ranges; mutually exclusive with [curatedLabel]. */
     val name: CoinName? = null,
-    /** The state on a plate — «Tengo», «Me falta» — and the piece's own line on a sheet. */
+    /** The state on a plate («Tengo», «Me falta»), or the piece's own line on a sheet. */
     val state: String?,
     /** What is left to tell this cell apart, usually the year. Null when nothing is. */
     val footnote: String?,
     /** The real diameter in millimetres, or null when nobody recorded one for this type. */
     val diameterMm: Float?,
     /**
-     * The faces this cell prints, side by side, in the order they are laid out.
-     *
-     * **One and it is the face the plate declared**, which is the notebook of #169 with the choice
-     * #227 gave it: an album page is the side you look at, and a second picture cannot be paid for by
-     * halving the diameter of a page measured with a ruler — but *which* side you look at is the
-     * curator's, `printed_side`, and the reverse only where no catalog says otherwise.
-     * **Two and they are the obverse and then the reverse** (#230), which is the
-     * collector documenting a piece rather than mounting an album — and the second face is paid for
-     * in width, so the cell doubles and a plate of ounces prints six to a page instead of twelve.
-     *
-     * A face with **no picture** is still a face and keeps its slot: what a plate needs is that its
-     * cells line up, and what an empty slot draws — a silhouette, a dashed mount — is the renderer's
-     * business, exactly as it always was for a reverse nobody had.
+     * The faces this cell prints, side by side, in layout order. One face is the side the plate
+     * declares (`printed_side`, #227), the reverse by default; two are obverse then reverse (#230).
+     * A face with no picture keeps its slot so the cells line up; the renderer decides what an
+     * empty slot draws.
      */
     val faces: List<CoinPhoto>,
     /** Whether the collector owns this cell. False is a hole, and only a plate has holes. */
     val filled: Boolean,
     /**
-     * The Numista page this coin's QR points at, or null where the cell carries no code (#234).
-     *
-     * Null in two different situations that come out the same on paper: the switch is off, so no cell
-     * in the notebook has one; or nothing backs this cell on Numista — an announced member, a ficha
-     * with no URL — so this one alone goes without. Both the millimetres and the cells are read off the
-     * one [NotebookOptions] the export was started under, which is what keeps them in step.
+     * The Numista page this coin's QR points at (#234). Null when the switch is off, or when
+     * nothing on Numista backs this cell (an announced member, a ficha with no URL).
      */
     val numistaUrl: String? = null,
 ) {
@@ -59,11 +44,8 @@ data class PrintCell(
 }
 
 /**
- * One card of the index as it goes to paper: its heading, its cells and the grid they get.
- *
- * A section is **not** an entity. The notebook has no cover, no name and no second order — the
- * export is what the index is showing at that moment, in the index's own order (ADR 0021 §6), and a
- * section is one card's turn at the printer and nothing more.
+ * One index card as it goes to paper: heading, cells and grid. Not an entity: the notebook is what
+ * the index shows at that moment, in the index's order (ADR 0021 §6).
  */
 data class PrintSection(
     /** «COINDEX · CATÁLOGO CURADO» or «COINDEX · COLECCIÓN», as the two sheets already say. */
@@ -72,66 +54,39 @@ data class PrintSection(
     val subtitle: String?,
     val facts: List<Pair<String, String>>,
     /**
-     * Where this plate came from, **bare**: «Numista» and not «Fuente: Numista».
-     *
-     * The wording belongs to `notebookSourceLabel` and not here, because since #232 a folio can hold
-     * plates from two catalogs and the strip at its foot is one line: a prefix baked into each
-     * section would print «Fuente: A · Fuente: B».
+     * Where this plate came from, bare: «Numista», not «Fuente: Numista». `notebookSourceLabel`
+     * words the foot line, which may name several plates' sources since #232.
      */
     val source: String,
     val cells: List<PrintCell>,
     /**
-     * The plate's already-counted `owned/issued` figure, or null for a page that is not a plate.
-     *
-     * [com.jenarvaezg.coindex.ui.PlateSubject] is the only place that measures coverage. Paper keeps
-     * that answer so the completion stamp can celebrate the same ratio without counting cells again.
+     * The plate's `owned/issued` figure as [com.jenarvaezg.coindex.ui.PlateSubject] counted it, or
+     * null for a page that is not a plate. The completion stamp prints it without recounting cells.
      */
     val ratio: String? = null,
     /**
-     * Every issued member owned — the completion stamp of ADR 0026 §3, which §4 sends to the PDF
-     * the same way it already travels to the PNG (#371).
-     *
-     * False for every page that is not a plate (pieces, box, unclaimed): there is no album to be
-     * complete against. The Progress row stays in [facts] either way; [ratio] belongs to the
-     * celebration inside the stamp and is not a substitute for the specification.
+     * Every issued member owned: the completion stamp of ADR 0026 §3, which §4 sends to the PDF as
+     * it does to the PNG (#371). Always false for pages that aren't plates. The Progress row stays
+     * in [facts] either way; [ratio] is for the stamp.
      */
     val complete: Boolean = false,
 )
 
-/**
- * The rejilla this section gets on [geometry]: fixed by its largest coin, so no page rescales a
- * coin (#169).
- *
- * It hangs off the geometry rather than off the section, because since #228 the same section prints
- * on more than one page shape: the grid is what the *configuration* makes of these cells, and a
- * section is only the cells and their heading.
- */
+/** The rejilla this section gets on [geometry], fitted to its largest coin (#169). */
 fun PrintSection.grid(geometry: PrintGeometry): PrintGrid =
     printGrid(cells.mapNotNull { it.diameterMm }.maxOrNull(), geometry)
 
 /**
- * How many pages this section takes on [geometry] **with a folio to itself**.
- *
- * «Alone» is in the name because since #232 it is a trap otherwise: a plate that starts halfway down
- * somebody else's folio can be cut into more pieces than this — the first of them is one short row
- * and the rest are whole folios — even though the notebook it belongs to comes out shorter. What the
- * notebook actually costs is `printPages(...).size` and always has been; this is the plate's own
- * length, which is what the field report ranks by.
+ * Pages this section takes on [geometry] with folios to itself: the plate's own length, which the
+ * field report ranks by. With shared folios (#232) a plate can be cut into more pieces; the
+ * notebook's real page count is `printPages(...).size`.
  */
 fun PrintSection.pagesAlone(geometry: PrintGeometry): Int = pageCount(cells.size, grid(geometry))
 
 /**
- * One plate's turn on a folio: a slice of its cells, under its own heading.
- *
- * A section that does not fit continues on the next folio **with its name repeated**, which is
- * why the heading is carried by the block and not by the section: on paper there is no scrolling
- * back to find out which collection you are looking at. Since #232 a folio can hold more than one of
- * these, and the heading is then also what tells the collector where one plate stops and the next
- * begins — so what repeats when the page turns is every heading on it, and not one.
- *
- * What repeats is the **thin** band and no longer the whole masthead (#480), and this is where that is
- * decided rather than in the geometry: a block already knows whether it is the plate's first turn or a
- * continuation of it, and the band follows from that one fact.
+ * One plate's turn on a folio: a slice of its cells under its own heading. A plate that spills
+ * repeats its name on every folio, and on a shared folio (#232) each heading marks where a plate
+ * starts, so the heading belongs to the block rather than the section.
  */
 data class PrintBlock(
     val section: PrintSection,
@@ -142,48 +97,33 @@ data class PrintBlock(
     val numberInSection: Int,
     val pagesInSection: Int,
 ) {
-    /** The millimetres this block is drawn with, which is what its configuration declared (#228). */
     val geometry: PrintGeometry get() = grid.geometry
 
     /**
-     * The band over this turn of the plate: the plate's own the first time, the thin one after (#480).
-     *
-     * Read off [numberInSection], which is the only place the notebook knows a page continues another —
-     * the packer counts the slices and the renderer draws what they say. The alternative was a field the
-     * packer sets, and a field can disagree with the number printed in the eyebrow beside it.
+     * The band over this turn of the plate: the plate's own the first time, the thin one after
+     * (#480). Derived from [numberInSection] so it can't disagree with the «2 de 4» beside it.
      */
     val heading: PrintHeading get() = geometry.headingFor(continuation = numberInSection > 1)
 
     /**
-     * The photographs this block will ask for, which is what the export waits on before capturing.
-     *
-     * **Faces and not cells** (#230): with both faces on, a cell asks for two, and a type whose
-     * obverse never arrives has to count as one photograph missing and not as a broken plate. That
-     * is the same number the closing message divides by.
+     * The photographs this block will ask for, which the export waits on before capturing. Counts
+     * faces, not cells (#230), the same number the closing message divides by.
      */
     val photographs: Int get() = cells.sumOf { cell -> cell.faces.count { it.hasPicture } }
 
-    /** How many rows of its grid this block holds, which is what the packer gave it. */
     val rows: Int get() = grid.rowsFor(cells.size)
 
-    /** The cells and the gutters between them, with no heading over them. */
+    /** The cells and the gutters between them, without the heading. */
     val cellsHeightMm: Float get() = grid.heightOfMm(rows)
 
-    /** What this block takes out of a folio: its own band, and the rows under it. */
+    /** What this block takes out of a folio: its band and the rows under it. */
     val heightMm: Float get() = grid.blockHeightMm(cells.size, heading)
 
     /**
-     * Columns this block is laid out on, which is the grid's except on a plate of one short row.
-     *
-     * A plate that spills keeps the grid's columns on every one of its blocks, even the tail one
-     * holding a single coin: the pages of one plate are read as a run, and a lone Kookaburra
-     * centred on page four would not line up with the column it continues. A plate that fits in one
-     * block has no run to line up with, so three coins in a four-column grid are laid out as three.
-     *
-     * **Unchanged by «compartir página», and it was re-read** (#232): the exception is about a
-     * *plate* having no continuation, not about a folio having one plate on it. Two plates sharing a
-     * folio each answer this for themselves, and each is centred on its own block — which is what
-     * keeps a plate of three escudos from being dragged out of centre by the plate under it.
+     * Columns this block is laid out on. A plate that spills keeps the grid's columns on every
+     * block, so a lone coin on its last page lines up with the column it continues; a plate that
+     * fits in one block uses only as many columns as it has cells. Sharing folios (#232) doesn't
+     * change this: each plate is centred on its own block.
      */
     val columnsUsed: Int
         get() = if (pagesInSection > 1) {
@@ -193,25 +133,19 @@ data class PrintBlock(
         }
 
     /**
-     * How wide the block of cells is, which is what gets centred on the folio.
-     *
-     * The **block** and not each row: centring row by row would move the short last row of a plate
-     * that does not fill it, and an album page is read down its columns.
+     * The width that gets centred on the folio. The whole block is centred rather than each row, so
+     * a short last row stays aligned with the columns above it.
      */
     val blockWidthMm: Float get() = grid.widthOfMm(columnsUsed)
 }
 
 /**
- * One printed folio: the plates on it, in the order they were packed, and one strip at its foot.
- *
- * It is a **list** and not one plate since #232, and that is the whole of what the switch changes
- * about the shape of the notebook: everything that was a page's — its grid, its heading, its «2 de 4»
- * — belongs to a [PrintBlock] and is asked of it, and what is left here is the paper itself.
+ * One printed folio: its plates in packing order (several since #232) and one strip at its foot.
+ * Grid, heading and «2 de 4» belong to each [PrintBlock].
  */
 data class PrintPage(val blocks: List<PrintBlock>) {
     init {
-        // A folio with nothing on it is not a folio: an empty collection is a block with no cells,
-        // which is the heading saying there is nothing in it, and never a page with no heading.
+        // An empty collection is a block with no cells, never a page with no blocks.
         require(blocks.isNotEmpty()) { "un folio sin ninguna lámina no es una página" }
     }
 
@@ -222,41 +156,27 @@ data class PrintPage(val blocks: List<PrintBlock>) {
     val cells: List<PrintCell> get() = blocks.flatMap { it.cells }
 
     /**
-     * The photographs this folio will ask for, which is what the export waits on before capturing.
-     *
-     * Counted per folio and not per notebook: the notebook is drawn one page at a time, so this is
-     * twelve pictures to wait for eighty-four times over and never a thousand at once.
+     * The photographs this folio will ask for. The notebook is drawn one page at a time, so the
+     * export waits for one folio's pictures at once, never the whole notebook's.
      */
     val photographs: Int get() = blocks.sumOf { it.photographs }
 
     /**
-     * Where the plates on this folio say they came from, in the order they are printed.
-     *
-     * Repeats and all: naming each catalog once is `notebookSourceLabel`'s job, so that the promise
-     * the word «Fuentes» makes is kept by whoever writes the line and not by whoever gathers it.
+     * The sources of the plates on this folio, in print order and with repeats;
+     * `notebookSourceLabel` names each one once.
      */
     val sources: List<String> get() = blocks.map { it.section.source }
 }
 
 /**
- * The whole notebook on [geometry], in the order the index handed its cards over.
+ * The whole notebook on [geometry], in the order the index handed its cards over. Its size is the
+ * export's page count, computed by adding up millimetres without drawing anything, so the export
+ * sheet can recount on every tap.
  *
- * The geometry comes in rather than being read off a constant (#228), and it is what makes this
- * function the whole of the notebook's arithmetic: how many pages the export will produce is
- * `printPages(sections, geometry).size` and nothing else, which is what lets the export sheet recount
- * on every tap without drawing anything. **That constraint is what «compartir página» had to be built
- * inside** (#232): this is a packer now, and it packs by adding up millimetres rather than by drawing
- * a folio and seeing what came off the bottom.
- *
- * It is **one packer and not two paths**. «No compartir» is not a different algorithm — it is the
- * same one under a rule that every plate opens a folio of its own: a fresh folio always offers the
- * whole of the grid, [PrintGrid.rows] of it under the plate's own band and [PrintGrid.continuationRows]
- * under the thin one a continuation gets (#480).
- *
- * Greedy and in the index's order, and deliberately not a bin-packer: the notebook is what the index
- * is showing, in the index's own order (ADR 0021 §6), so a folio takes the next plate or the next
- * plate opens a folio. Reordering the shelf to fill paper better would print a notebook the
- * collector did not ask for.
+ * One packer for both modes: without «compartir página» (#232) every plate simply opens a folio of
+ * its own, which offers [PrintGrid.rows] under the plate's band or [PrintGrid.continuationRows]
+ * under the thin one (#480). Greedy and in index order (ADR 0021 §6), not a bin-packer: reordering
+ * plates to save paper would print a notebook the collector didn't ask for.
  */
 fun printPages(
     sections: List<PrintSection>,
@@ -265,13 +185,11 @@ fun printPages(
     val folios = mutableListOf<MutableList<Placement>>()
     var freeMm = 0f
 
-    // What the folio already open can still take of a plate with [cellsLeft] cells to place: how
-    // many of its rows fit, or null where it has to open one of its own — there is no folio yet, the
-    // one open belongs to somebody else and sharing is off, or what is left of it is too little.
+    // How many rows of a plate with [cellsLeft] cells the open folio can still take, or null when
+    // the plate must open a new one: no folio yet, sharing off, or too little room left.
     //
-    // Zero rows is a real answer and not «it does not fit»: a collection with nothing in it is its
-    // heading and nothing else, and an emptied box (ADR 0021 §11) does not deserve a folio to itself
-    // for the fourteen millimetres that say so.
+    // Zero rows is a valid answer: an empty collection is just its heading, and an emptied box
+    // (ADR 0021 §11) shouldn't take a folio to itself for that.
     fun roomOnOpenFolio(grid: PrintGrid, heading: PrintHeading, cellsLeft: Int): Int? {
         if (folios.isEmpty() || !geometry.sharesPage) return null
         val freeForBlock = freeMm - geometry.blockGapMm
@@ -284,27 +202,22 @@ fun printPages(
         val grid = section.grid(geometry)
         var rest = section.cells
         var placed = false
-        // An empty collection still gets its block: the heading saying there is nothing in it is
-        // the honest page, not a section silently dropped. Hence «not placed yet» and not «cells
-        // left» as the condition to keep going.
+        // Loop on «not placed yet» as well as «cells left», so an empty collection still gets a
+        // block saying it is empty.
         while (!placed || rest.isNotEmpty()) {
-            // The band this turn pays for: the plate's own the first time it is printed, and the thin
-            // name band on every page it continues onto (#480). «Already placed» is the whole of the
-            // question, and it is the same one [PrintBlock.heading] asks of `numberInSection`.
+            // The same question [PrintBlock.heading] asks of `numberInSection` (#480).
             val heading = geometry.headingFor(continuation = placed)
             val room = roomOnOpenFolio(grid, heading, rest.size)
             if (room == null) {
                 folios += mutableListOf<Placement>()
                 freeMm = geometry.contentHeightMm
             }
-            // A folio nobody has written on gives the plate its whole grid, even where a single row
-            // of it would overflow the paper: a plate that opens a folio gets one page at least,
-            // which is the floor `pageCount` has always had, and the overflow is clipped. Which grid
-            // that is depends on the band: a continuation opens a folio with the thin one over it and
-            // gets the row of coins the repeated specification was costing.
+            // A fresh folio gives the plate its whole grid for the band it opens with, even if a
+            // single row overflows the paper: every plate gets at least one page (as in
+            // `pageCount`) and the overflow is clipped.
             val rows = room ?: if (placed) grid.continuationRows else grid.rows
             val slice = rest.take(rows * grid.columns)
-            // The seam is only paid for by a plate landing under another one.
+            // Only a plate landing under another one pays for the seam.
             val gapMm = if (room == null) 0f else geometry.blockGapMm
             freeMm -= gapMm + grid.blockHeightMm(slice.size, heading)
             folios.last() += Placement(order, section, grid, slice)
@@ -313,9 +226,8 @@ fun printPages(
         }
     }
 
-    // «2 de 4» can only be said once the packing is done: how many pieces a plate is cut into
-    // depends on how much room was left where it started, so the number and the total are read off
-    // the finished notebook rather than computed per plate up front.
+    // «2 de 4» is numbered after packing: how many pieces a plate is cut into depends on the room
+    // left where it started.
     val ofSection = folios.flatten().groupingBy { it.order }.eachCount()
     val numbered = mutableMapOf<Int, Int>()
     return folios.map { folio ->
@@ -337,9 +249,8 @@ fun printPages(
 
 /**
  * One plate's slice of cells on one folio, before the notebook knows how many slices it will be.
- *
- * [order] is the section's place in the index and not its title: two cards can be called the same
- * thing, and what «2 de 4» counts is the plate that was handed over and not the name it goes by.
+ * [order] is the section's place in the index rather than its title, since two cards can share a
+ * name.
  */
 private data class Placement(
     val order: Int,

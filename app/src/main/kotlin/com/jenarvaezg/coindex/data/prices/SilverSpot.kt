@@ -27,14 +27,10 @@ private data class GoldApiPrice(val price: Double? = null, @SerialName("symbol")
 private data class FrankfurterRates(val rates: Map<String, Double>? = null)
 
 /**
- * The troy ounce of silver in euros, from two calls that cost no API budget.
- *
- * `api.gold-api.com` gives the ounce in dollars and `api.frankfurter.dev` the ECB rate; **neither is
- * `api.numista.com`**, so neither is counted against the budget of ADR 0003 — the same distinction
- * ADR 0024 draws for CDN photographs, and it must not start being counted as one.
- *
- * Two calls and not one because there is no keyless source for the ounce in euros. The alternative was
- * a keyed provider, and a key in the APK of a two-user app is a key in a public repository.
+ * The troy ounce of silver in euros: `api.gold-api.com` gives the ounce in dollars and
+ * `api.frankfurter.dev` the ECB rate. Neither is `api.numista.com`, so neither counts against the
+ * budget of ADR 0003, as with the CDN photographs of ADR 0024. Two calls because there is no keyless
+ * source in euros, and a key in the APK would be a key in a public repository.
  */
 interface SpotReader {
     /** The spot right now, or null when either call fails. A failure writes nothing (ADR 0028 §4). */
@@ -50,12 +46,7 @@ class HttpSpotReader(private val httpClient: HttpClient) : SpotReader {
         return (usdPerOunce * eurPerUsd).takeIf { it.isFinite() && it > 0.0 }
     }
 
-    /**
-     * One call, and a failure of any kind is null.
-     *
-     * Nothing here throws: the spot is the one number on the page that arrives on its own, and a
-     * network that is down has to leave the money section absent rather than take the app with it.
-     */
+    /** One call; any failure is null, so a dead network leaves the money section absent. */
     private suspend inline fun <reified T> fetch(url: String): T? = runCatching {
         val response = httpClient.get(url)
         if (!response.status.isSuccess()) return null
@@ -64,11 +55,9 @@ class HttpSpotReader(private val httpClient: HttpClient) : SpotReader {
 }
 
 /**
- * The last spot this phone read, and whether it is worth reading again.
- *
- * **Expired is not deleted** (ADR 0028 §5): a spot from last month is still handed out, with the date
- * it was brought, and a phone with no network says an old total instead of emptying itself. That lies
- * very little — a 3 % swing in silver moves the total by 1,9 %, because the catalogue rules the mix.
+ * The last spot this phone read, and whether it is worth reading again. Expired is not deleted
+ * (ADR 0028 §5): an old spot is still used, with its date, so an offline phone shows an old total
+ * rather than none.
  */
 class SpotStore(
     private val prices: PriceDao,
@@ -76,10 +65,8 @@ class SpotStore(
     private val nowMillis: () -> Long = System::currentTimeMillis,
 ) {
     /**
-     * Reads a fresh spot if the stored one is a day old, and returns whichever one is now on the phone.
-     *
-     * The stored value is returned unchanged when the read fails, which is what makes this safe to call
-     * on every launch.
+     * Reads a fresh spot if the stored one is a day old, and returns whichever is now on the phone;
+     * the stored one if the read fails, so it is safe to call on every launch.
      */
     suspend fun refresh(): SilverSpot? {
         val stored = stored()

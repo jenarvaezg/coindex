@@ -1,14 +1,9 @@
 package com.jenarvaezg.coindex.data.photos
 
 /**
- * When a catalog photograph is worth asking for again, and how long to wait first.
- *
- * A sheet of nineteen issues asks Numista for thirty-eight photographs at once and its edge
- * answers some of them with `503`; the very same URLs, asked for one at a time, answer `200`.
- * Coil treats the first failure as final, so a throttled request left a cell empty for the rest
- * of the plate's life and the export froze that hole into the shared sheet (issue #67).
- *
- * Kept apart from OkHttp so the rule can be read and tested as what it is: arithmetic.
+ * When a catalog photograph is worth asking for again, and how long to wait first. Numista's edge
+ * answers bursts with `503` that succeed when asked again, and Coil treats the first failure as
+ * final, leaving cells empty, in exports too (#67). Kept apart from OkHttp so it can be tested.
  */
 object PhotoRetryPolicy {
     /** Attempts of one request, the first one included. */
@@ -18,35 +13,22 @@ object PhotoRetryPolicy {
     private const val BACKOFF_FACTOR = 3L
 
     /**
-     * The longest a server's own `Retry-After` is honoured.
-     *
-     * A plate export waits for every photograph before it can capture, so a request parked for
-     * a minute is a failed export, not a slow one: past this the wait is capped and the attempt
-     * is spent anyway.
+     * The longest a server's own `Retry-After` is honoured. A plate export waits for every
+     * photograph, so a long wait means a failed export; past this the wait is capped.
      */
     private const val MAX_DELAY_MILLIS = 5_000L
 
     /**
-     * Whether an HTTP status is worth a second try.
-     *
-     * `429` and `503` are the throttle saying «not now»; the rest of `5xx` is the edge having a
-     * bad moment. A `404` or a `403` is an answer about the picture itself and repeating it only
-     * wastes the collector's battery — with one exception left alone on purpose: `408`, which is
-     * the server timing the request out rather than judging it.
+     * Whether an HTTP status is worth a second try: `429` and `5xx` are throttling or a bad moment
+     * at the edge, and `408` is a timeout. Other `4xx` are answers about the picture itself.
      */
     fun isRetryable(status: Int): Boolean =
         status == 408 || status == 429 || status in 500..599
 
     /**
-     * Whether the answer means the picture is not there and is not coming back.
-     *
-     * Worth telling apart from «not retryable» because of the prefetch (#191), which runs on every
-     * launch: a photograph that is merely refused is asked for again another day, and one that is
-     * **gone** is remembered so it stops costing a request for ever.
-     *
-     * `403` is deliberately outside this. Without a `User-Agent` Cloudflare answers `403` to every
-     * photograph (ADR 0017), so remembering it would let one bad afternoon at the edge switch the
-     * whole catalog off on this phone, permanently and invisibly.
+     * Whether the picture is gone for good, so the prefetch (#191) remembers it instead of asking
+     * on every launch. Not `403`: Cloudflare answers it to every photograph when the `User-Agent`
+     * is missing (ADR 0017), and remembering it could switch off the whole catalog for good.
      */
     fun isGone(status: Int): Boolean = status == 404 || status == 410
 

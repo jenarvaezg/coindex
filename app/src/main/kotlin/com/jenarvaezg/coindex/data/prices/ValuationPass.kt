@@ -15,12 +15,12 @@ import com.jenarvaezg.coindex.data.numista.NumistaException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Why the prices are not being brought right now. Each one is said in the settings screen. */
+/** Why the prices are not being brought right now. Each one is shown in settings. */
 enum class ValuationRefusal {
-    /** A sync is in flight, and the two spend the **same** budget (ADR 0028 §6). */
+    /** A sync is running, and both spend the same budget (ADR 0028 §6). */
     Syncing,
 
-    /** The freshly installed app before onboarding, which is not an error to discover. */
+    /** No key yet, before onboarding; not an error. */
     NoApiKey,
 
     /** The month's allowance is gone. The pass writes nothing and «Este teléfono» says why. */
@@ -30,23 +30,14 @@ enum class ValuationRefusal {
     Offline,
 
     /**
-     * Numista is turning the calls away, and the pass stopped instead of spending the month at it (#560).
+     * Numista is turning the calls away, and the pass stopped rather than spend the month on it
+     * (#560): a `429` (throttling, or the key's monthly quota, which the local gate of ADR 0003
+     * can't see when another phone shares the key), a `401` or `403` (the key refused), or
+     * [BARREN_STREAK_LIMIT] answers in a row that wrote nothing.
      *
-     * Three answers arrive here. A `429` is Numista throttling the key **or** saying the month of that
-     * key is gone — 2.000 a month against the 1.500 of the local gate (ADR 0003), which cannot see
-     * what another phone spent of the same key; a `401` or a `403` is the key itself being turned
-     * away. And a run of answers that leave no row, whatever their status, because a pass that writes
-     * nothing five times running is not meeting bad luck.
-     *
-     * **The key being refused has another reading, and it is not this class's to give.**
-     * `syncErrorLabel` sends the collector to Ajustes to check it, which it can do because it is
-     * answering a press. This one is a state that appeared on its own over prices nobody asked for, and
-     * it says only what is true of all three: Numista is refusing. Whether the key is wrong is a
-     * question the next sync answers, in the sentence that already owns it.
-     *
-     * **And it is remembered** (#579). Stopping is half of it; the other half is not paying again to
-     * find out the same thing on the next launch. Which of the four causes it was picks how long
-     * that memory lasts, and nothing else: see [RejectionCause].
+     * The label only says that Numista is refusing; whether the key is wrong is for the next sync's
+     * error to say. The refusal is remembered across launches ([RejectionWall], #579), for as long as
+     * its [RejectionCause] dictates.
      */
     Rejected,
 }
@@ -54,13 +45,12 @@ enum class ValuationRefusal {
 /**
  * What this phone holds of the collection's prices.
  *
- * @param wanted how many issues the collection has to be valued by.
- * @param missing how many of those have never been answered for, or were answered more than ninety
- *   days ago. **This is the gate on the money section**: while it is not zero the total would be
- *   `max(silver, paid)`, which is 60 % of the real figure and therefore false rather than incomplete
+ * @param wanted how many issues the collection is valued by.
+ * @param missing how many of those were never answered or are older than ninety days. While it is
+ *   not zero the money section stays hidden: a partial total would be false, not incomplete
  *   (ADR 0028 §7).
- * @param spotRead when the silver spot on this phone was last read, or null if it never was.
- * @param held why nothing is being brought at this moment, or null while it is.
+ * @param spotRead when the silver spot was last read, or null if never.
+ * @param held why nothing is being brought now, or null while it is.
  */
 data class ValuationStatus(
     val wanted: Int = 0,
@@ -68,45 +58,25 @@ data class ValuationStatus(
     val spotRead: Long? = null,
     val held: ValuationRefusal? = null,
 ) {
-    /**
-     * Whether the market has finished arriving, which is the one question the money section asks.
-     *
-     * True with nothing left to ask, and that includes the collection whose pieces carry no issue at
-     * all: there is no market coming for it, so there is nothing to wait for either.
-     */
+    /** Nothing left to ask, which includes a collection whose pieces carry no issue at all. */
     val settled: Boolean get() = missing == 0
 
     /**
-     * Whether the missing money is worth a line on a notebook screen (#519).
-     *
-     * The money section is absent and not zero (ADR 0028 §7), and until now that absence was
-     * *silent* everywhere but settings — which left the reader of «Las cifras» with a page that
-     * promises «lo que vale» and then has no money on it, and no explanation either.
-     *
-     * **Not every absence is worth saying**, and this is where the two are told apart. With a pass
-     * on its way or a sync in front of it the money is arriving on its own, in seconds, with nobody
-     * doing anything: a line that appears and disappears by itself is furniture. The four that
-     * are said are the ones waiting on the collector or on the calendar — no network, no
-     * credentials, the month's allowance gone, and Numista refusing the calls (#560), which waits on
-     * a quota that turns over on the 1st or on a key the collector has to look at.
-     *
-     * It does **not** say which of the four, and that is deliberate: those six sentences are
-     * settings' own, and ADR 0026 §5 exempts settings from the pruning precisely on the promise
-     * that none of its explanations appear on a notebook screen.
+     * Whether the missing money deserves a line on a notebook screen (#519): only when it waits on
+     * the collector or the calendar (offline, no key, budget gone, Numista refusing). With a pass
+     * running or a sync ahead of it, the money arrives on its own. It doesn't say which cause: those
+     * sentences belong to settings (ADR 0026 §5).
      */
     val waiting: Boolean
         get() = !settled && held != null && held != ValuationRefusal.Syncing
 }
 
-/** How often the collector-visible count is updated while the pass runs. */
+/** How often, in issues, the visible count is updated while the pass runs. */
 const val VALUATION_PROGRESS_EVERY: Int = 25
 
 /**
- * Whatever brings Numista's catalog prices onto the phone (ADR 0028).
- *
- * An interface for the same reason [com.jenarvaezg.coindex.data.photos.PhotoPrefetch] is one: the real
- * one needs a network and a database, and the *rules* around it — when a pass is worth starting, who
- * gives the network back to a sync — are [ValuationLoop]'s.
+ * Whatever brings Numista's catalog prices onto the phone (ADR 0028). An interface so the rules
+ * around it, in [ValuationLoop], can be tested without network or database.
  */
 interface ValuationPass {
     suspend fun run(
@@ -117,24 +87,17 @@ interface ValuationPass {
 }
 
 /**
- * Asks Numista for the prices of the issues the collector owns and of the holes within reach.
+ * Asks Numista for the prices of the owned issues and of the holes within reach, under the same
+ * rules as the photograph prefetch (ADR 0024):
  *
- * Four properties, and they are the same four the photograph prefetch holds itself to (ADR 0024),
- * which is what makes this its sibling rather than a new mechanism:
+ * - It asks only for what is missing or expired, so a launch with everything cached costs nothing.
+ * - Three states: a price is stored; an issue with no prices is stored as such, or it would be asked
+ *   forever; a failure writes nothing and is retried next time.
+ * - Resumable: one issue is one transaction, so being cut short only loses the calls not yet made.
+ * - Silent: one line in settings, to tell «still arriving» from «no network».
  *
- * - **It only asks for what is missing or expired.** With everything cached the second launch of a
- *   month costs nothing at all, which is what makes «every launch» affordable.
- * - **Three states and not two.** A price is stored; an issue Numista answered for and had **no** price
- *   for is stored as a datum, or those 19 issues of his 223 would be asked for again for ever; a
- *   failure writes nothing and is retried next time.
- * - **It is resumable.** One issue is one row written in one transaction, so being cut short costs only
- *   the calls not yet made.
- * - **It is silent.** One line in the settings screen, and only because «faltan y están cayendo» and
- *   «faltan porque no hay red» need different things from the collector.
- *
- * The spot is read first and **outside all of that**: it is two keyless calls to hosts that are not
- * `api.numista.com`, so it is not counted against the budget of ADR 0003 and it is not held back by a
- * refusal that is about the budget.
+ * The spot goes first and outside all that: two keyless calls to hosts other than `api.numista.com`,
+ * neither counted against the budget (ADR 0003) nor held back by a refusal.
  */
 class NumistaValuationPass(
     private val prices: PriceDao,
@@ -154,10 +117,8 @@ class NumistaValuationPass(
         val numista = client()
         if (held != null || plan.isEmpty) return@withContext status
         if (numista == null) return@withContext status.copy(held = ValuationRefusal.NoApiKey)
-        // Before the first call and after the spot, which is keyless and outside the budget (ADR
-        // 0028 §9): the wall is about what `api.numista.com` will do, and the silver is not its to
-        // hold back. What the collector is told is `Rejected` either way — that this pass reached
-        // the answer by reading a file instead of paying for it is not a state of its own.
+        // After the spot, which is keyless (ADR 0028 §9), and before the first Numista call. A wall
+        // still standing reports `Rejected`, like a fresh refusal.
         if (wall.standing() != null) return@withContext status.copy(held = ValuationRefusal.Rejected)
 
         val now = nowMillis()
@@ -185,30 +146,19 @@ class NumistaValuationPass(
                 streak,
             )
         }
-        // The wall is written **after** the pass and not where the answer arrived, so what is stored
-        // is why the pass stopped rather than every rebuff it walked past. And a pass that got this
-        // far without one takes down whatever was standing: reaching Numista is the proof.
+        // Written after the pass, so the wall stores why it stopped; a pass that got through
+        // without a refusal takes the wall down.
         val cause = stopped?.cause
         if (cause != null) wall.raise(cause) else wall.clear()
-        // Counted from the table again rather than from what landed: an issue that failed is still
-        // missing, and one that answered with no prices has stopped being missing without a price.
+        // Recounted from the table: a failed issue is still missing, and one answered without
+        // prices no longer is.
         status(plan, spot.stored()?.readAtMillis, stopped?.refusal)
     }
 
     /**
-     * Lists the issues of each type still to be looked up, and prices the year each hole wants.
-     *
-     * One listing per **type** and not per hole: a plate's holes are years of one type nine times out
-     * of ten, and one `/types/{id}/issues` answers all of them.
-     *
-     * **The listing is written down before anything is priced** (#452). It used to be spent and
-     * thrown away, on the grounds that «this type has no 1904» is a claim about the catalogue and not
-     * about a price — true, and it is not what is stored: what is stored is that *this phone* has
-     * read the listing, which is the only thing that stops it reading it again on the next pass, and
-     * on every pass after that. Over the father's collection that was 102 lookups per cold start.
-     *
-     * A hole whose price is already fresh is skipped rather than re-priced, which is the other half
-     * of the same bill: 111 prices he had already paid for.
+     * Lists each type still to look up, once per type, and prices the year each hole wants. The
+     * listing is stored before pricing, empty or not (#452), so the next pass doesn't list it again;
+     * holes whose price is already fresh are skipped.
      */
     private suspend fun askHoles(
         numista: NumistaClient,
@@ -218,24 +168,19 @@ class NumistaValuationPass(
     ): Stop? {
         for ((typeId, holes) in lookups) {
             val listing = try {
-                // Only the issues that can be addressed: an entry Numista lists with no id of its own
-                // is not a candidate, and it must not be one here either — `storeListing` drops it,
-                // so counting it as the match would make this pass and the next one disagree about
-                // which issue a hole is priced by, and pay for both.
+                // Entries without an id are dropped, as `storeListing` drops them, so this pass and
+                // the next pick the same issue for a hole.
                 numista.fetchIssues(typeId).value.filter { it.id != null }
             } catch (error: NumistaException) {
-                // A type Numista does not have is not a wall: it is the same `404` a price gets, read
-                // over a listing, and it costs this type its lookup and nothing else.
+                // A type Numista doesn't have (`404`) costs its lookup and nothing else.
                 if (error is NumistaException.Api && error.status == HTTP_NOT_FOUND) continue
                 val stop = stopFor(error) ?: streak.noteBarren()
                 if (stop != null) return stop
                 continue
             }
-            // **The listing does not break the streak, and this is the asymmetry of [BarrenStreak].**
-            // A wall can stand in front of `/prices` alone — every listing answering 200 while every
-            // price answers 500 — and a listing that resets the count would leave the pass alternating
-            // stored/barren down the whole plan, which is the bill #560 exists to stop. It does not
-            // feed the streak either: it did write a row, and a run of them is a pass working.
+            // A listing neither breaks nor feeds the streak. A wall can stand in front of `/prices`
+            // alone (listings 200, prices 500), and resetting here would let the pass alternate
+            // stored and barren down the whole plan (#560).
             storeListing(typeId, listing)
             for (hole in holes) {
                 val issueId = listing
@@ -253,13 +198,10 @@ class NumistaValuationPass(
     }
 
     /**
-     * Asks about one issue and writes what came back, or returns why the pass has to stop.
-     *
-     * A `404` is **not** a stop and not a failure: it is Numista saying it has no prices for this
-     * issue, which is a datum and is stored as one — the same reading ADR 0024 gives a photograph's
-     * `404`. Anything else that is not about the budget, the network or a refusal is skipped without a
-     * row, and the next pass tries again — unless [BarrenStreak] has seen enough of them in a row to
-     * call it a wall.
+     * Asks about one issue and stores the answer, or returns why the pass has to stop. A `404` means
+     * Numista has no prices for the issue and is stored as such, as ADR 0024 reads a photograph's
+     * `404`. Other errors that aren't budget, network or a refusal skip the issue without a row,
+     * until [BarrenStreak] calls it a wall.
      */
     private suspend fun askOne(
         numista: NumistaClient,
@@ -282,16 +224,11 @@ class NumistaValuationPass(
         return null
     }
 
-    /** What the phone has already listed and has not expired, read once per pass (#452). */
+    /** The stored listings not yet expired, read once per pass (#452). */
     private suspend fun storedListings(now: Long): IssueListings =
         IssueListings.of(prices.typeIssueReads(), prices.typeIssues(), now)
 
-    /**
-     * Writes down one type's listing, empty answer included.
-     *
-     * An empty listing is as much a datum as an empty price: it is the answer that says this phone
-     * has nothing left to ask about this type, and without the row the lookup comes back for ever.
-     */
+    /** Stores one type's listing, an empty one too, or the lookup would be repeated forever. */
     private suspend fun storeListing(typeId: Int, listing: List<IssueDto>) {
         prices.putListing(
             read = TypeIssueReadEntity(typeId, nowMillis()),
@@ -334,33 +271,19 @@ class NumistaValuationPass(
 private const val HTTP_NOT_FOUND = 404
 
 /**
- * How many answers in a row may leave no row before the pass reads them as a wall (#560).
+ * How many answers in a row may write nothing before the pass reads them as a wall (#560). Fewer
+ * would stop a month's pass on ordinary bad luck (a malformed body, a passing `500`) until the next
+ * launch; more would spend calls to learn what the fifth already said.
  *
- * **Five**, and the number is a floor and a ceiling at once. Below it a whole month's plan would stop
- * on a run of bad luck that is real — a body Numista serialised wrong, one `500` while a shard of
- * theirs restarts — and stopping there costs the collector a month of prices for nothing, because
- * nothing on the phone will retry until the next launch. Above it the wall is charged for: every
- * answer past the fifth is a call of the month's allowance spent to learn what the fifth already
- * said. Five is 1 % of the ~487 calls a cold month costs (ADR 0028 §1), and that 1 % is the most a
- * wrong guess in either direction can cost: five calls thrown at a wall, or one healthy pass cut short
- * and resumed at the next launch.
- *
- * The streak counts **rows written and not statuses**, which is what keeps a `404` out of it: an issue
- * Numista has no price for is answered, stored and forgotten (ADR 0028 §4), so a collection of nothing
- * but those still costs one call each, once, and never trips this.
+ * It counts rows written, not statuses, so `404`s (stored as no-price, ADR 0028 §4) never trip it.
  */
 internal const val BARREN_STREAK_LIMIT: Int = 5
 
-/**
- * The run of answers that left no row, which is how the pass tells one absence from a refusal.
- *
- * One per pass and never a field of the pass itself: a streak that survived from one pass to the next
- * would stop a healthy one on its first stumble.
- */
+/** The run of answers that wrote nothing. One per pass, so a new pass never starts mid-streak. */
 private class BarrenStreak {
     private var run = 0
 
-    /** Notes an answer that landed — a price, an empty price, a listing. The run is over. */
+    /** An answer that stored a price, or the absence of one, ends the run. */
     fun noteStored() {
         run = 0
     }
@@ -377,19 +300,11 @@ private class BarrenStreak {
 }
 
 /**
- * Which refusals stop a whole pass, and which are one issue's bad luck.
- *
- * The budget stops it because every further call would throw the same way, and the network stops it
- * because four hundred timeouts in a row is two minutes of a dead radio. **The three statuses Numista
- * refuses with stop it for the first of those reasons and not for a new one** (#560): a throttled key
- * is throttled for the next call too, an exhausted month is exhausted for it too, and a key being
- * turned away is not a key the next of 442 calls gets in with. A malformed body or an unexpected
- * status is this issue's problem alone: null means «skip it and carry on», and it is [BarrenStreak]
- * that decides how many of those in a row stop being one issue's problem.
- *
- * **Which of the three it was is [rejectionCauseFor]'s to say and not this function's** (#600). What
- * is decided here is whether the pass stops; what that decides is how long it stays stopped, and the
- * status alone does not carry it — the `429` is both the throttle and the quota.
+ * Which errors stop a whole pass and which are one issue's bad luck. Budget, network and Numista's
+ * refusals (#560) stop it, because the next call would fail the same way. A malformed body or an
+ * unexpected status returns null (skip and go on), and [BarrenStreak] decides when a run of those is
+ * a wall. Which refusal it was, and so how long the wall stands, is [rejectionCauseFor]'s call
+ * (#600): `429` is both the throttle and the quota.
  */
 private fun stopFor(error: NumistaException): Stop? = when (error) {
     is NumistaException.BudgetExhausted -> Stop(ValuationRefusal.BudgetExhausted)
@@ -400,11 +315,7 @@ private fun stopFor(error: NumistaException): Stop? = when (error) {
 }
 
 /**
- * Why a pass stopped, and — when it was Numista refusing — what to write on the wall.
- *
- * The two travel together because they are read at the same instant and nowhere else: the status
- * carries the [refusal] to the settings line, and the [cause] carries the *clock* to the wall. Only
- * `Rejected` has one; a dead network and an exhausted budget are refusals nobody has to remember,
- * because the next launch can tell for itself and it costs no call to find out.
+ * Why a pass stopped: the [refusal] goes to the settings line and the [cause] to the wall. Only
+ * `Rejected` has a cause; network and budget need no memory, since the next launch can tell for free.
  */
 private data class Stop(val refusal: ValuationRefusal, val cause: RejectionCause? = null)

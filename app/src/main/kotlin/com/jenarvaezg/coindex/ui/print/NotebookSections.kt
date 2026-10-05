@@ -29,31 +29,15 @@ import com.jenarvaezg.coindex.ui.plateAmountLabel
 import com.jenarvaezg.coindex.ui.plateSubject
 
 /**
- * The whole notebook as pages: one section per card, in the order they were handed over.
+ * The whole notebook as pages: one section per card, in the order they were handed over. Which page
+ * a card gets is decided by [destinationOf] alone, so the paper matches what a tap opens: a plate,
+ * or the pieces of a card without an issue list, the box included (ADR 0021 §9).
  *
- * **`página(tarjeta) = su destino`.** Which page a card gets is decided by [destinationOf] and by
- * nothing else, so the paper cannot disagree with the tap: a card whose plate opens prints its
- * plate, a card without an issue list prints its pieces, and the collector's own box goes through
- * that same door (ADR 0021 §9). Adding a second rule here would be a second architecture of
- * information, kept only in the exporter.
- *
- * **[cards] is what the index is showing**, passed in rather than read off [CollectionState.index]:
- * the unit of the export is what is on screen at that moment, filters and search included, and
- * reading the whole index here would silently print what the collector had just narrowed away. One
- * card in, one section out — nothing is dropped, because what stays out of the notebook is a
- * question for the index and not for the printer (#147).
- *
- * **[options] reaches the cells and not only the millimetres** (#228). What a cell *is* depends on the
- * configuration: «QR de Numista» gives it a code to point a phone at (#234), «ambas caras» gives it a
- * second face (#230), and printing no photographs will give it neither (#231). That is the door #228
- * laid, and the ticket that opens one does not have to re-thread the ViewModel and the index screen
- * to get here.
- *
- * **[unclaimed] is the one thing on paper that is not a card** (#275), and it arrives already chosen
- * for the same reason [cards] does: which coins no collection claims is measured against the whole
- * index, and which of them survive the filter is the index screen's answer and not the printer's. It
- * comes in as pieces rather than as a switch over the state so that this function keeps having no
- * opinion about what belongs in the notebook — it only knows where it goes, which is last.
+ * [cards] is what the index is showing, filters and search included, rather than
+ * [CollectionState.index]: what stays out of the notebook is the index's decision (#147). [options]
+ * shapes the cells as well as the millimetres (#228): a code (#234), a second face (#230), or no
+ * photographs at all (#231). [unclaimed] (#275) arrives already filtered by the index screen for
+ * the same reason, and prints last.
  */
 fun notebookSections(
     state: CollectionState,
@@ -62,29 +46,22 @@ fun notebookSections(
     curation: Curation,
     options: NotebookOptions,
     /**
-     * What a plate is worth, or null for every plate when the money switch is off (#228, ADR 0021 §13).
-     *
-     * The switch is answered **here and once**, by handing this function nothing rather than by asking
-     * the options again further down: a drawer that has no amount cannot print one, which is what makes
-     * «apagarlo no deja escapar ninguna cifra derivada de dinero» a property of the code rather than a
-     * promise about it.
+     * What a plate is worth, or null for every plate when the money switch is off (#228,
+     * ADR 0021 §13). The caller applies the switch by passing the default, so no code below can
+     * print an amount it was never given.
      */
     plateValue: (PlateResult.Available) -> PlateValue? = { null },
     /**
      * The casillas the collector marked, so the marks reach the paper (ADR 0026 §4, ADR 0029 §7).
-     *
-     * A wish mark is a **state at rest** and travels with no exception written, and it travels as the
-     * cell's `state` — the line a printed caption has always reserved and never used — so the mark
-     * costs no millimetre and moves no page count. It is **not** behind the money switch: what is
-     * switchable is the amount, and «lo busco» is not an amount.
+     * The mark prints in the cell's otherwise unused `state` line, so it costs no millimetre. Not
+     * behind the money switch: «lo busco» is not an amount.
      */
     wished: Set<WishKey> = emptySet(),
 ): List<PrintSection> = cards.map { card ->
     when (val destination = destinationOf(card)) {
         is CardDestination.Plate ->
             plateSection(state, curation, destination.catalogId, options, plateValue, wished)
-            // A plate that will not resolve is not a reason to skip the card: its pieces are still
-            // a collection, and the same fallback the screens have is the one the paper gets.
+            // An unresolvable plate falls back to its pieces, as on screen.
             ?: piecesSection(state, card, options)
         is CardDestination.Pieces, is CardDestination.Box -> piecesSection(state, card, options)
     }
@@ -100,51 +77,39 @@ private fun plateSection(
 ): PrintSection? {
     val resolved = resolvePlate(state, curation, catalogId) as? PlateResult.Available
         ?: return null
-    // The same plate the screen and the exported sheet draw (#218), so the three cannot word one
-    // catalog three ways: the heading, the specification and what every cell says arrive settled.
+    // The same plate subject the screen and the exported sheet draw (#218), so heading,
+    // specification and cells are worded once.
     //
-    // The money is the one thing the paper words for itself (#493): the amount is the same figure the
-    // screen adds up, and it is printed as a row of a specification — with «Valor» in the label —
-    // rather than as the named line the header carries, and with «Tasación» under it saying the day it
-    // was priced (#594). The cost of closing and the price inside each hole are **not on paper at all**:
-    // the printed money is the sixth switch of the export (ADR 0021 §13) and what it does with two more
-    // figures is a decision of its own ticket, not a side effect of this one.
+    // Money is the one thing paper words for itself: the screen's amount as a «Valor» row, with
+    // «Tasación» under it (#493, #594). The closing cost and the price in each hole don't reach
+    // paper (ADR 0021 §13).
     val amount = plateValue(resolved)
     val plate = plateSubject(resolved, wished = wished)
     return PrintSection(
-        // The same claim the exported sheet makes, and for the same reason: the paper outlives the
-        // app, and a page that says «curado» about a list nobody curated cannot be taken back.
         eyebrow = PLATE_SECTION_EYEBROW,
         title = plate.title,
         subtitle = null,
-        // The value joins the specification rather than the heading, because the printed page has no
-        // header to raise a figure into — which is the same reason the ratio reaches paper as a row
-        // (`plateEntriesBesideRatio` is deliberately not called here).
+        // The printed page has no header to raise a figure into, so value and ratio are rows here
+        // (`plateEntriesBesideRatio` is deliberately not called).
         facts = plate.entries + listOfNotNull(
             amount?.let { VALUE_FACT_LABEL to plateAmountLabel(it) },
-            // And the day that amount was priced, right under it (#594). Off the amount and not off the
-            // book, so the money switch withholds the two together: a «Tasación» row over a page with no
-            // figure on it would be the date of something the reader cannot see.
+            // Read off the amount, so the money switch withholds the date with it (#594).
             amount?.catalogReadAt?.let { VALUATION_FACT_LABEL to printedValuationLabel(it) },
         ),
         source = plate.source,
-        // The stamp travels to the PDF because it is a state (ADR 0026 §4 / #371), together with
-        // the exact ratio the subject already measured. The paper must not reconstruct it from cells.
+        // The stamp is a state, so it reaches the PDF (ADR 0026 §4, #371) with the subject's ratio;
+        // paper never recounts it from cells.
         ratio = plate.ratio,
         complete = plate.complete,
         cells = plate.cells.map { cell ->
             PrintCell(
                 curatedLabel = cell.label,
-                // The one thing a printed casilla has ever put in this line: «lo busco», on the holes
-                // the collector marked (ADR 0029 §7). Null on every other cell, which is why the page
-                // is not suddenly a page of states — «TENGO» under every coin was measured and refused
-                // long before this.
+                // Only «lo busco» on the marked holes (ADR 0029 §7); a printed plate shows no other
+                // state, so the page isn't «TENGO» under every coin.
                 state = WishLabels.MARK_WORD.takeIf { cell.wished },
                 footnote = cell.footnote,
-                // A hole keeps **its own** real diameter: the type of a member the collector is
-                // missing is in the seeded cache like any other, so the empty mount is the size of
-                // the coin that goes in it. Only a member no Numista type backs at all — announced,
-                // unlisted — has nothing to be measured, and borrows the plate's.
+                // A hole keeps its own type's diameter; only a member with no Numista type
+                // (announced, unlisted) borrows the plate's.
                 diameterMm = state.diameterOf(cell.numistaTypeId),
                 faces = state.facesOf(cell.numistaTypeId, options, plate.printedSide),
                 filled = cell.owned,
@@ -177,11 +142,10 @@ private fun piecesSection(
                 state = null,
                 footnote = pieceLine(piece),
                 diameterMm = state.diameterOf(item.typeId),
-                // The reverse, spelled out: a piece printed off a card with no issue list has no
-                // plate to declare a face (#227), so the honest thing is what it printed yesterday.
+                // No plate to declare a face (#227), so the reverse.
                 faces = state.facesOf(item.typeId, options, PrintedSide.Reverse),
-                // Never a hole: a collection with no issue list has nothing to be missing from,
-                // and a box cannot contain one by construction (ADR 0020, ADR 0021 §11).
+                // Never a hole: without an issue list nothing can be missing, and a box can't hold
+                // one (ADR 0020, ADR 0021 §11).
                 filled = true,
                 numistaUrl = state.qrUrlOf(item.typeId, options),
             )
@@ -191,21 +155,9 @@ private fun piecesSection(
 
 /**
  * The last lámina: every coin no collection claims, so the notebook is the whole collection (#275).
- *
- * **It is a lámina and not a page of its own kind.** Same eyebrow, same heading, same cells with
- * their photograph and their real diameter, and it obeys the five switches of #228 like every other
- * page — the alternative, a compact list that always fits one folio, would be the only page of the
- * notebook that does not look like the notebook.
- *
- * **A cell per row**, as in [piecesSection] and for the sharper reason: being claimed is decided per
- * row, so the leftover row of a type whose sibling fills a member of its plate (ADR 0019) is what
- * prints, not the coin entire.
- *
- * **No cell says why it is here.** ADR 0021 §12 took the reason line off the screen and sent the why
- * to the field report, which is where the curator looks; «sin familia en Numista» under a thaler is
- * jargon in the one notebook that leaves the house.
- *
- * Null on an empty list, so no folio is ever spent on a heading with nothing under it.
+ * An ordinary lámina obeying the same switches (#228), with a cell per inventory row, since being
+ * claimed is decided per row (ADR 0019). No cell says why it is unclaimed: that reason lives in the
+ * field report (ADR 0021 §12). Null on an empty list, so no folio holds a bare heading.
  */
 private fun unclaimedSection(
     state: CollectionState,
@@ -217,12 +169,8 @@ private fun unclaimedSection(
         eyebrow = UNCLAIMED_SECTION_EYEBROW,
         title = UNCLAIMED_SECTION_TITLE,
         subtitle = null,
-        // No «País»: a page that spans twenty of them has none to name, and the countries are the
-        // order the coins are already in.
-        //
-        // [countLabel] and not the expression spelled out, which is the whole of #226: these coins
-        // have no issue list and therefore no ratio, so this is exactly what `countSentence` reduces
-        // to for them — the same function, reached without inventing a subject to hang it on.
+        // No «País»: the page spans many. [countLabel] is what `countSentence` reduces to for coins
+        // with no issue list, so the count matches the screen's (#226).
         facts = listOf(
             PIECES_FACT_LABEL to countLabel(
                 distinctTypes = unclaimed.distinctBy { it.typeId }.size,
@@ -235,15 +183,11 @@ private fun unclaimedSection(
             PrintCell(
                 name = name,
                 state = null,
-                // The emission label of a coin no catalog claims is normally nothing, but it is
-                // asked for rather than assumed: which emission a coin is is a fact about the coin,
-                // and a catalog keyed on issues can name a row it does not claim.
+                // Usually null, but a catalog keyed on issues can label a row it doesn't claim.
                 footnote = pieceLine(DrawnPiece(item, state.emissionLabels[item.id])),
                 diameterMm = state.diameterOf(item.typeId),
-                // The reverse, spelled out, exactly as a piece printed off a card with no issue
-                // list: there is no plate here to declare a face (#227).
+                // No plate to declare a face (#227), so the reverse.
                 faces = state.facesOf(item.typeId, options, PrintedSide.Reverse),
-                // Never a hole: every one of these is a coin the collector owns.
                 filled = true,
                 numistaUrl = state.qrUrlOf(item.typeId, options),
             )
@@ -252,23 +196,14 @@ private fun unclaimedSection(
 }
 
 /**
- * «La lista de lo que busco» on paper: the marked casillas of every plate, in one lámina (ADR 0029 §7).
+ * «La lista de lo que busco» on paper: the marked casillas of every plate in one lámina, with the
+ * same cells and switches as any other (ADR 0029 §7). Not an index card, so it is exported from the
+ * annex through this function. It is the only way to print marks on «Explorar» plates, which have
+ * no «Exportar» (#282, decision 8).
  *
- * **A lámina and not a page of its own kind**, exactly as the coins no collection claims are: same
- * eyebrow shape, same cells with their ghost and their real diameter, and the same five switches. What
- * it is not is a card of the index — the index prints what the index is showing, and these coins are
- * not in it — so it is exported from the annex and reached through this function alone.
- *
- * **It exists because ADR 0026 §4 alone was not enough.** The mark travels to the paper of any plate the
- * collector can open; the plate of «Explorar» has no «Exportar» at all (#282, decision 8), so without
- * this list the 157 slots of the shelf window could never be printed. It is also the thing that is
- * actually taken to a fair: the notebook is the collection, and this is the hunt.
- *
- * **No mark inside these cells**, and it is the frequency rule of ADR 0026 §5 rather than an omission:
- * every casilla on this sheet is marked, so «lo busco» under each of them would say the same two words
- * seven times to distinguish nothing. On a plate the same word is the whole point.
- *
- * Null on an empty list, so no folio is ever spent on a heading with nothing under it.
+ * The cells carry no «lo busco»: every casilla here is marked, so by the frequency rule of
+ * ADR 0026 §5 the word would distinguish nothing. Null on an empty list, so no folio holds a bare
+ * heading.
  */
 fun wishSections(
     state: CollectionState,
@@ -286,29 +221,24 @@ private fun wishSection(
         eyebrow = WISH_SECTION_EYEBROW,
         title = WishLabels.DESTINATION,
         subtitle = null,
-        // The same census the screen prints, out of the same function: a list that counted its
-        // casillas one way on the phone and another on paper would be two lists.
+        // The screen's census, from the same function.
         facts = listOf(
             WISH_SECTION_COUNT_LABEL to wishCensusLabel(
                 slots = slots.size,
                 plates = slots.distinctBy { it.catalog.id }.size,
             ),
         ),
-        // Where these coins are named, which is the curated shelf and not the collection: they are the
-        // one thing on paper that came from nobody's inventory.
         source = WISH_SECTION_SOURCE,
         cells = slots.map { slot ->
             PrintCell(
                 curatedLabel = slot.member.label.weldUnits(),
-                // Which lámina the casilla is a slot of, in the line the plate uses for the year: on
-                // its own plate that is what tells two casillas apart, and here it is what tells two
-                // hunts apart — the year is already in the label of nearly every date run.
+                // The footnote line, which on a plate holds the year, names the casilla's lámina;
+                // the year is already in nearly every date run's label.
                 state = null,
                 footnote = slot.catalog.shortName.weldUnits(),
                 diameterMm = state.diameterOf(slot.typeId),
                 faces = state.facesOf(slot.typeId, options, slot.catalog.printedSide),
-                // Never filled: this whole lámina is what the collector does not have, which is what
-                // makes every cell of it a ghost inside a die-cut rule.
+                // Every cell is a coin the collector doesn't have.
                 filled = false,
                 numistaUrl = state.qrUrlOf(slot.typeId, options),
             )
@@ -323,22 +253,10 @@ private fun CollectionState.diameterOf(typeId: Int?): Float? =
 /**
  * The faces this cell prints: none (#231), the declared one, or the obverse and the reverse (#230).
  *
- * **Which one, when it is one, is the plate's declaration and not this function's** (#227). Every
- * caller says which, with no default to fall through: a piece printed off a card with no issue list
- * has no plate to declare anything and asks for [PrintedSide.Reverse] out loud, so the day that
- * residue gets a face of its own — #216 is emptying it — the place to write it is the call and not a
- * silent parameter.
- *
- * **How many is the configuration's answer and not the cache's.** A type the cache has never seen —
- * an announced member, an unlisted one — gets its slots empty rather than fewer of them: the cells
- * of a plate have to line up, and one coin printed where its neighbours print a pair reads as a
- * misprint. What an empty slot draws is the renderer's business, and it is what it already drew for
- * a reverse nobody had.
- *
- * **An empty list is what makes «sin fotos» the export that cannot come out incomplete.** No face is
- * no candidate URL, so `notebookPhotographs` has nothing to warm, no page waits for a decode, and the
- * closing message divides by a denominator of zero photographs — it cannot claim that three of them
- * failed to load in a notebook that never asked for one.
+ * Which single face is the caller's [printedSide], with no default (#227). How many depends only on
+ * [options]: a type missing from the cache gets empty slots rather than fewer, so the cells of a
+ * plate line up. With the photographs off the list is empty, so `notebookPhotographs` has nothing
+ * to download and the export can't report missing pictures.
  */
 private fun CollectionState.facesOf(
     typeId: Int?,
@@ -357,20 +275,10 @@ private fun CollectionState.facesOf(
 }
 
 /**
- * The Numista page a cell's code points at, which is the page of its **type** (#234).
- *
- * **There is no URL per issue, and it was looked for.** The five paquillos are five members of one
- * type qualified by `numista_issue_ids` (ADR 0019), so this hands all five the same code — and the
- * alternative does not exist: a type page marks each issue only with the `id` of the empty row its
- * collection widget fills in (`collec_line8508`), no link on Numista points at one, and no `?issue=`
- * of any shape is read. The fragment that id would make is 42 characters, which is a version 3, and
- * because the caption is a constant of the layout the largest code in the notebook is what every page
- * pays for. So the promise the code makes is «esta moneda en Numista», and the ficha of a paquillo is
- * the ficha of the type.
- *
- * Null when the switch is off, so a default notebook holds no URL at all, and null for a member no
- * Numista type backs — an announced one, an unlisted one — because a code that leads nowhere is worse
- * than no code.
+ * The Numista page a cell's code points at: its type's page (#234). Numista has no per-issue URL
+ * (an issue is only an element `id` in the type page's collection widget, and no `?issue=`
+ * parameter is read), so members split by `numista_issue_ids` (ADR 0019) share one code. Null when
+ * the switch is off, or for a member no Numista type backs.
  */
 private fun CollectionState.qrUrlOf(typeId: Int?, options: NotebookOptions): String? =
     typeId?.takeIf { options.numistaQr }?.let { typeMeta[it]?.numistaUrl }

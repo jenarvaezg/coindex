@@ -3,442 +3,222 @@ package com.jenarvaezg.coindex.ui.print
 import kotlin.math.floor
 import kotlin.math.max
 
-/** The side the QR gets on paper, quiet zone included. See [PrintGeometry.qrMm]. */
+/** The QR's side on paper, quiet zone included. See [PrintGeometry.qrMm]. */
 private const val QR_SIDE_MM = 12f
 
-/** Between the last line of a caption and the code under it. Less than this and they read as one. */
+/** Between the last line of a caption and the code under it; any less and they read as one. */
 private const val QR_GAP_MM = 2f
 
 /**
- * One member of the notebook with its photographs off: a tick box, a state, a name, a year and a
- * diameter, on one line (#231).
- *
- * Seven millimetres is the line and ten is its pitch, because the gutter that separates two columns
- * separates two rows. It is not a measure of the type —2,9 mm of serif is what a caption is set in
- * everywhere else— but of the pencil: the box is ticked at a fair, and a line a pen cannot land in
- * is a checklist that gets marked in the wrong row.
+ * One line of the photo-less list (#231): tick box, state, name, year and diameter. Sized for a
+ * pencil tick rather than for the type, so the box isn't marked in the wrong row.
  */
 private const val LIST_LINE_MM = 7f
 
 /**
- * How many members a line-list page puts side by side.
- *
- * Two and not three, and the ticket already says why: three columns at a 6 mm line print the shelf
- * in twelve pages instead of nineteen, and what comes out is a list that is no longer read at a
- * glance. The width is what a name needs, and half a printable A4 is about thirty characters of it.
+ * Columns on a line-list page: half a printable A4 leaves about thirty characters per name (#231).
  */
 private const val LIST_COLUMNS = 2
 
 /**
- * The foot of a page with no ruler: room for the source line and no more. See [PrintGeometry.footMm].
- *
- * Shared by the two pages that print nothing at 1:1 — the list of #231 and the scaled album of #233 —
- * because it is the same subtraction: what the strip is for is the ruler, and what survives it is the
- * line that says where the page came from.
+ * The foot of a page with no ruler (the list of #231, the scaled album of #233): just the source
+ * line. See [PrintGeometry.footMm].
  */
 private const val BARE_FOOT_MM = 5f
 
 /**
- * The fraction of its real diameter a coin is printed at with «tamaño real» off (#233).
- *
- * Three fifths, and it is **fixed here rather than offered as a slider** — which is the switch being a
- * switch: the page count is arithmetic done before anything is drawn, so a millimetre the collector can
- * drag is a notebook recomputed on every step, and what they are actually choosing is «un catálogo
- * ilustrado» instead of «un álbum». One question, one answer.
- *
- * Sixty per cent is what the ticket measured and what the shelf confirms. It takes the largest coin of
- * the collection —a 45,6 mm Lunar— to 27 mm and the commonest —the 33 mm Russian roubles— to 19,8, and
- * that is still a coin whose design is read on paper rather than a token. The steps either side were
- * measured on the seventy-three shipped plates, sharing folios: 70 % costs 50 pages against these 43,
- * and 50 % buys 36 — seven pages for a further sixth off every diameter in the notebook, on a page
- * whose whole remaining claim is that the photograph can be looked at.
+ * The fraction of its real diameter a coin is printed at with «tamaño real» off (#233). Fixed
+ * rather than offered as a slider: the switch chooses an illustrated catalog over an album, not a
+ * size. At 0,6 a 45 mm coin prints at 27 mm, still big enough to read its design.
  */
 private const val SCALED_COIN_FRACTION = 0.6f
 
 /**
- * What a caption gets on a scaled page: eighteen millimetres, which is **two more** than at 1:1.
- *
- * **The measure this switch was expected to shrink and which grows instead**, and it grows for the same
- * reason the ruler went: the diameter has to be said in words on every cell, and it gets a line of its
- * own. Putting it at the end of the year's line was tried and printed — on the exported folio the cells
- * of a collection with no issue list already fill that line with «1977 · Numista 681», so what the
- * ellipsis ate was the millimetres: «1977 · Numista 681 · 4…». A caption that drops the one fact the
- * page promised in place of the ruler is worse than a caption a line taller.
- *
- * Measured on that folio: a state, a title over two lines and a year end at 13,3 mm, so a fourth line
- * lands at 16,1 and eighteen leaves 1,9 mm — the same margin `PrintHeading.Plain` keeps at 28 mm for a
- * worst case of 26,5. Seventeen would do and costs exactly the same paper (43 folios of the shelf either
- * way, against 41 at sixteen), so the wider margin is free.
- *
- * And **not the twelve the ticket proposed**, on the grounds that «el pie de una moneda de 24 mm no
- * necesita el mismo alto que el de una onza»: that premise is the part to answer, because the caption
- * does not vary with the coin above it by design — what pays for a two-line title is every cell of the
- * notebook or none of them — and twelve would have cut the year in half before any measure was added.
+ * A caption on a scaled page: two millimetres taller than at 1:1, because with no ruler the
+ * diameter is printed on a line of its own (appended to the year line, it was the part that got
+ * ellipsized). State, a two-line title and the year end at about 13,3 mm, so a fourth line ends
+ * near 16,1.
  */
 private const val SCALED_CAPTION_MM = 18f
 
 /**
- * The floor on a cell's width once the coins have shrunk (#233).
- *
- * At three fifths **every** coin of the collection prints narrower than the 28 mm of #169 — every
- * member the cache has a diameter for — so that floor would stop being an exception for the medios
- * and quietly become the width of every cell in the notebook: the shrinking would buy height and no
- * columns at all, worth about a fifth of the paper it buys now.
- *
- * Eighteen is where it lands, and the caption is what fixes it rather than the paper. What a cell must
- * print on **one** line whatever the coin is its state, and the longest thing `plateMemberStateLabel`
- * says — «SIN EMITIR», with «TENGO · ×9» just under it — is already measured at seventeen millimetres
- * for the list's own state column. A floor under that ellipsizes the one word that says whether the
- * collector has the coin, and going down to sixteen buys nothing at all: the shelf comes out at the
- * same 43 folios. Above it the title gets two lines of some twelve characters, which is a name and not
- * «una columna de tres palabras».
+ * The floor on a cell's width with «tamaño real» off (#233). At 0,6 every coin is narrower than the
+ * 28 mm floor of 1:1, which would then set every column and cancel most of the saving. The longest
+ * state label («SIN EMITIR» over «TENGO · ×9») takes about 17 mm and must stay on one line.
  */
 private const val SCALED_CELL_MM = 18f
 
 /**
- * The air between two plates that share a folio (#232). See [PrintGeometry.blockGapMm].
- *
- * Two gutters and not one. The gutter separates two rows of the same plate; what happens here is that
- * a plate ends and another begins, and the only thing marking it is the eyebrow of the next heading —
- * three millimetres of white between a caption and a line of small caps reads as a badly spaced row,
- * not as a seam. Six is the smallest gap that reads as one, and on the sixty-odd shipped plates it
- * costs nothing at all: the page count is quantised by whole rows, and a row of coins is forty
- * millimetres.
+ * The air between two plates that share a folio (#232): two gutters, so the seam between plates
+ * doesn't read as a badly spaced row. See [PrintGeometry.blockGapMm].
  */
 private const val BLOCK_GAP_MM = 6f
 
 /**
- * What the band at the top of a plate holds, and therefore how many millimetres it takes.
- *
- * **The height and the contents are one value and not two.** The page count is arithmetic done before
- * anything is drawn, so a band whose number said forty while its brush drew a subtitle it had no room
- * for would put the two out of step — and the band is clipped rather than measured precisely so that
- * a disagreement is impossible. Naming the three shapes once is what lets the renderer ask the same
- * question the arithmetic answered.
- *
- * All three are **measured off a printed folio**: on the exported notebook the rule under the heading
- * lands at 13,1 mm of the band for a one-line title, at 18,4 with a subtitle under it and at 21,2 for
- * a title over two lines, worst case 26,5 for both at once.
+ * The band at the top of a plate: what it holds and how tall it is, as one value. The page count is
+ * computed before drawing, and the renderer draws what this names and clips to its height, so the
+ * two can't disagree. On an exported folio the rule under the heading lands at 13,1 mm for a
+ * one-line title, 18,4 with a subtitle, 21,2 for a two-line title and 26,5 for both.
  */
 enum class PrintHeading(
     /** The band, from the eyebrow down to the rule under the title. */
     val millimetres: Float,
     /** How many lines the title gets before it is ellipsized. */
     val titleLines: Int,
-    /** Whether the variant line under the title is printed at all. */
+    /** Whether the variant line under the title is printed. */
     val subtitle: Boolean,
     /** Whether the plate's specification block is printed under the rule. */
     val facts: Boolean,
 ) {
-    /**
-     * The album's masthead of #169: everything a plate says about itself, over forty millimetres.
-     *
-     * Fixed rather than measured, and that is the load-bearing decision of the whole layout: a
-     * heading that grew with its catalog's specification would put the drawing and the arithmetic
-     * out of step. What does not fit in the band is clipped by the renderer.
-     */
+    /** The album masthead of #169: everything a plate says about itself. */
     Masthead(millimetres = 40f, titleLines = 2, subtitle = true, facts = true),
 
     /**
-     * What names the plate, and nothing that summarises it (#231).
-     *
-     * The masthead over twenty-three lines of text is a quarter of the page spent on a title. What
-     * is kept is the eyebrow, the title over its two lines and the subtitle — «reducida a la mínima
-     * que identifique la lámina», and *identify* is the word: the specification block goes, because
-     * **the list is the specification**. A checklist that says «Tengo» or «Me falta» on every one of
-     * its lines has already printed the coverage the band would have summarised.
-     *
-     * Twenty-eight and not less: the worst case measured is 26,5, which leaves a millimetre and a
-     * half. A title clipped half a line in is worse than a band with a millimetre spare.
+     * For the photo-less list (#231): eyebrow, title and subtitle, without the specification block,
+     * since the list's «Tengo» / «Me falta» already shows the coverage. 28 mm leaves 1,5 mm over
+     * the 26,5 mm worst case.
      */
     Plain(millimetres = 28f, titleLines = 2, subtitle = true, facts = false),
 
     /**
-     * The name band of «compartir página» (#232): a folio with two plates on it cannot give forty
-     * millimetres to each.
-     *
-     * It is derived from that switch and is not one of its own, and it is where most of the saving
-     * comes from — sharing pages with the masthead was measured at 90 pages against the 73 of this
-     * band. So what it holds is what the measurement allows: at 13,1 mm the rule already lands under
-     * a **one-line** title with no subtitle, and fourteen is that plus the margin of error of a
-     * printed folio. The subtitle and the second line of the title are what pays for the plate
-     * underneath.
-     *
-     * **And the band every page that continues a plate gets, whatever band its first page took**
-     * (#480). A plate that spills still repeats its name on every one of its pages, for the reason it
-     * always did — on paper there is no scrolling back to find out which collection you are looking at
-     * — but the specification under the rule says nothing on page two that page one has not just said,
-     * and it costs a row of coins. So what repeats is this band and not the masthead: the identity of
-     * the page survives, the summary does not. Measured over the seventy-five shipped catalogs with
-     * the collector's own switches it is 227 folios against 247, and 187 with the code beside the
-     * caption (#478).
+     * The name band of «compartir página» (#232) and of every page that continues a plate (#480): a
+     * one-line title and nothing else, 13,1 mm plus a margin. A continued plate repeats its name
+     * because on paper there is no scrolling back to see whose page it is.
      */
     Slim(millimetres = 14f, titleLines = 1, subtitle = false, facts = false),
 }
 
 /**
- * The page the notebook is printed on, in millimetres.
+ * The page the notebook is printed on, in millimetres: a coin has to come out of the printer at its
+ * real diameter (#169), so the layout's unit is the ruler's. Only the renderer converts to pixels.
  *
- * Millimetres and not dp, because the whole point of the printed notebook is that a coin comes out
- * of the printer at its real diameter (#169): the unit of the layout has to be the unit of the
- * ruler the collector holds against it. What converts millimetres into anything a canvas
- * understands is the renderer, once, and nothing else in here knows about pixels.
- *
- * **A value and no longer an `object` of constants** (#228). The band a heading gets, the strip the
- * ruler gets and the height of a caption are what the five switches of [NotebookOptions] move, and
- * they have to move *before* a cell is drawn: the page count is arithmetic done up front, so the
- * configuration enters the arithmetic and not the brush. The defaults are the notebook of today,
- * exactly, so a geometry nobody configured is the one #169 measured.
+ * A value rather than constants (#228) because the switches of [NotebookOptions] change these
+ * measures, and the page count is computed from them before anything is drawn. The defaults are the
+ * 1:1 album of #169.
  */
 data class PrintGeometry(
-    /** A4 vertical. There is no landscape page: a plate is read the way a page is read. */
+    /** A4 portrait; there is no landscape layout. */
     val widthMm: Float = 210f,
     val heightMm: Float = 297f,
     /** Wide enough that a domestic printer's unprintable border never eats a coin. */
     val marginMm: Float = 15f,
     /**
-     * The band a plate's heading gets on the **first** page it is printed on.
-     *
-     * It is the thin heading of «compartir página» (#232) that makes this a field rather than a
-     * constant: two plates in one folio cannot each take forty millimetres of band.
-     *
-     * First page and no longer every page since #480: what a plate that spills prints again after the
-     * page turns is [continuationHeading], and this is the band that says everything once.
+     * The band of a plate's heading on the first page it is printed on; pages that continue it get
+     * [continuationHeading]. A field because «compartir página» (#232) needs a thinner one.
      */
     val heading: PrintHeading = PrintHeading.Masthead,
     /**
-     * Whether a folio may hold more than one plate (#232).
-     *
-     * A packing rule and not a length, and it belongs among the millimetres for the same reason
-     * [facesPerCell] does: it is decided before a cell is drawn, and it is where most of the paper
-     * goes — nineteen of the sixty plates measured do not fill half a page and take a whole one
-     * anyway, and 29 % of the printed cells are empty.
-     *
-     * **Off by default, and that is a decision and not caution.** The printed pages are archived
-     * **by collection**: two plates on one folio break the archiving of whoever files them in a
-     * folder. Saving a third of the paper is the printer's call, not the programmer's.
+     * Whether a folio may hold more than one plate (#232). Off by default because printed pages are
+     * filed by collection, and two plates on one folio break that filing.
      */
     val sharesPage: Boolean = false,
     /**
-     * The strip at the foot of the page. Zero is no strip at all.
-     *
-     * It carries the ruler on the left and the source on the right, and the two are not the same
-     * decision: on a page with no coin at 1:1 on it — the list of #231, the scaled album of #233 —
-     * there is nothing to protect from a viewer's «ajustar a la página», so [rulerBarMm] goes to zero
-     * — but the provenance of the page does not, because the paper outlives the app. So the strip
-     * narrows to the line that says where the plate came from.
+     * The strip at the foot of the page: ruler on the left, source on the right. Zero is no strip.
+     * Pages with no coin at 1:1 drop the ruler ([rulerBarMm]) but keep the source line, because the
+     * paper outlives the app.
      */
     val footMm: Float = 14f,
     /**
-     * The ruler itself: a bar the collector can measure to catch a viewer's «fit to page». Zero is
-     * none, and there is nothing to catch on a page that prints no coin (#231) or prints it at a
-     * fraction of its diameter (#233) — a bar nobody is going to lay a coin against protects nothing,
-     * and beside a coin that is not at 1:1 it is a foot that lies. What replaces it is the diameter as
-     * a number: see [printsDiameterLabel].
+     * The ruler: a bar the collector measures to catch a viewer's «ajustar a la página». Zero is
+     * none, as on pages with no coin at 1:1 (#231, #233), which print the diameter as a number
+     * instead ([printsDiameterLabel]).
      */
     val rulerBarMm: Float = 50f,
     /** Between two cells, and between two rows. */
     val gutterMm: Float = 3f,
     /**
-     * What a cell holds under the coin: its state, its title over at most two lines, its year.
-     *
-     * It is fixed for the whole notebook and the diameter is not, which is what makes the cell
-     * taller for an ounce than for a half real without the type changing size from one plate to the
-     * next.
-     *
-     * With «QR de Numista» on it holds [qrMm] more of them (#234), and that is what the switch
-     * costs: the caption is a constant of the layout, so the code is the same size in every cell of
-     * every plate and the tallest one is what all of them pay for.
-     *
-     * With the photographs off it is the **whole** cell (#231), because there is no coin above it:
-     * seven millimetres of one line, and a cell that is a line is what turns a hundred pages into
-     * twenty-three lines a column.
+     * What a cell holds under the coin: state, title over at most two lines, year. Fixed for the
+     * whole notebook, so the type is the same size on every plate and only the coin band varies.
+     * With the photographs off (#231) it is the whole cell, one line; with codes on as well, at
+     * least [qrMm].
      */
     val captionMm: Float = 16f,
     /**
-     * The square the QR of the coin gets at the foot of a caption, quiet zone included. Zero is
-     * none.
-     *
-     * **Including the quiet zone**, because a code printed flush against a caption is a code that
-     * does not scan: what is reserved here is what the symbol needs, not what its dark part measures.
-     * Every URL of the cache is 33 modules across with its frame (`NumistaQr` says why), so twelve
-     * millimetres gives each module 0,364 mm. This is the conservative printed size: large enough to
-     * tolerate ordinary printer and camera variation, while still fitting under the caption without
-     * widening a cell or changing the vector drawing.
+     * The square the coin's QR gets, quiet zone included: a code flush against text doesn't scan.
+     * Zero is none. Every cached URL encodes to 33 modules with its frame (see `NumistaQr`), so
+     * 12 mm gives 0,364 mm per module, conservative for ordinary printers and phone cameras.
      */
     val qrMm: Float = 0f,
     /**
-     * The air between the last line of a caption and the code under it. Less and they read as one.
-     *
-     * **Zero on a page of lines** (#231), and not because the code needs no air: a row already spaces
-     * everything on it, and the twelve millimetres of [qrMm] carry the symbol's own quiet zone. What this
-     * buys on a page of coins is separation from a caption stacked directly above, which a line does
-     * not have.
-     *
-     * A field and not a constant of the renderer because it is part of the arithmetic: the caption is
-     * the sixteen millimetres of #169 **plus** this and [qrMm], so what the words may take is unchanged
-     * — a state, a title over two lines and a year still fill the caption exactly.
+     * The air between the last line of a caption and a code stacked under it. Zero on a page of
+     * lines (#231), where the code sits at the end of the row and [qrMm] carries its quiet zone.
      */
     val qrGapMm: Float = 0f,
     /**
-     * The floor on a cell's width, for the coins smaller than their own caption.
-     *
-     * The Venezuelan medios are 16 mm across: a cell that narrow would set its title in a column
-     * three words wide. The coin is still printed at 16 mm — the cell is what grows.
-     *
-     * With «tamaño real» off it is **every** coin that prints narrower than this, not just the medios,
-     * so the floor comes down with them (#233): see [SCALED_CELL_MM] for how far and what fixes it.
+     * The floor on a cell's width, for coins narrower than their caption: a 16 mm medio would set
+     * its title three words wide. The coin still prints at its size; the cell is what grows. Scaled
+     * pages lower it ([SCALED_CELL_MM]).
      */
     val minCellWidthMm: Float = 28f,
     /**
-     * How many faces of a coin one cell holds side by side: none, the declared one, or the two.
-     *
-     * **How many and never which**: which of the two a single face is belongs to the plate (#227),
-     * and it costs no width either way, so it never reaches these millimetres.
-     *
-     * A count and not a length, and it belongs among the millimetres all the same: at 1:1 a second
-     * face cannot be paid for by shrinking the coin, so it is paid for in **width**, and that is
-     * arithmetic done before a cell is drawn. A plate of ounces goes from a 40,9 mm cell to an
-     * 84,8 mm one and from twelve cells a page to six.
-     *
-     * It is «ambas caras» (#230), and it is where the notebook parts company with #169 on purpose:
-     * an album page is the side you look at, and this is the collector documenting a piece by both.
-     *
-     * **Zero is «sin fotos»** (#231), and it is the same arithmetic run the other way: a cell with no
-     * coin band is a line, its height is its caption alone and its width owes nothing to a diameter.
-     * The two switches cannot both apply — the sheet greys «ambas caras» while the photographs are off
-     * — so this stays one number and never a pair of them.
+     * Faces of a coin per cell, side by side: 0 for the photo-less list (#231), 1, or 2 for «ambas
+     * caras» (#230). Which face a single one is belongs to the plate (#227) and costs no width. At
+     * 1:1 a second face is paid for in width: an ounce's cell goes from 40,9 mm to 84,8 mm. The
+     * sheet disables «ambas caras» with the photographs off, so one count covers both switches.
      */
     val facesPerCell: Int = 1,
     /**
-     * The fraction of its real diameter a coin is printed at: one is the 1:1 of #169 (#233).
-     *
-     * **A fraction and not a millimetre**, which is what keeps a plate of ounces and a plate of medios
-     * the same notebook: every coin shrinks by the same factor, so the relative size of two pieces —
-     * the thing an album page shows that a list cannot — survives the switch. A cell drawn to a
-     * *fixed* size would print a medio and an ounce as the same coin.
-     *
-     * It multiplies into [coinBandWidthMm] and [cellHeightMm] and nowhere else, so [fallbackDiameterMm]
-     * and the diameter of a hole scale with their siblings without knowing this exists: a cell nobody
-     * measured comes out the size of the coin that goes in it, scaled (#169).
-     *
-     * A switch and not a slider: see [SCALED_COIN_FRACTION] for why the fraction is fixed here.
+     * The fraction of its real diameter a coin is printed at; 1 is the 1:1 of #169 (#233). Every
+     * coin shrinks by the same factor, so their relative sizes survive. Applied only through
+     * [printedDiameterMm], which scales [fallbackDiameterMm] too. See [SCALED_COIN_FRACTION].
      */
     val coinScale: Float = 1f,
     /**
-     * The diameter for a cell nobody recorded a size for.
-     *
-     * `size` covers 100 % of the seeded type cache, so in practice this is for the members no
-     * Numista type backs at all — an announced or unlisted one — and for those the cell is a hole,
-     * which by #169 takes the diameter of the coin the collector does have. The ounce is the
-     * commonest piece of this collection and the least surprising thing for a lone hole to be.
+     * The diameter for a cell with no recorded size. Numista types carry one, so in practice this
+     * is a member no type backs (announced or unlisted), drawn as a hole; an ounce is the least
+     * surprising thing for a lone hole to be.
      */
     val fallbackDiameterMm: Float = 40f,
 ) {
-    /**
-     * Whether this page draws coins at all, or is the list of #231.
-     *
-     * The two shapes of the printed notebook, named once so the four measures that follow from it —
-     * the coin band, the height of a cell, where the code goes and what the renderer draws — all ask
-     * the same question in the same words. It is [facesPerCell] and not a field of its own, because a
-     * page that prints zero faces and a page that prints no coins are one fact, not two that could
-     * ever disagree.
-     */
+    /** Whether this page draws coins, or is the list of #231. */
     val printsCoins: Boolean get() = facesPerCell > 0
 
     /**
-     * Whether a cell says its coin's diameter in words, which is every page that carries no ruler.
-     *
-     * The two are **one fact read from either end** (#233): what #169 put on paper is that the size of
-     * a coin can be checked, and a page keeps that promise with a bar the collector measures a coin
-     * against or with a number they read off the caption. So this is derived from [rulerBarMm] rather
-     * than being a switch of its own — a page offering both would be a caption arguing with a ruler,
-     * and a page offering neither would be a page whose coins have no size at all.
-     *
-     * It is the **page's** promise and not each cell's: a member no Numista type backs has no diameter
-     * to print either way, and prints none rather than a «0 mm» (`printedDiameterLabel`). That is what
-     * the list of #231 already decided, and the hole it leaves is the same one the list leaves.
+     * Whether captions print the coin's diameter in words: on every page without a ruler (#233), so
+     * that the size of a coin can always be checked one way. A member with no Numista type prints
+     * no diameter rather than «0 mm» (`printedDiameterLabel`).
      */
     val printsDiameterLabel: Boolean get() = rulerBarMm <= 0f
 
     /**
-     * The millimetres a coin of [realMm] actually comes out at, which is [coinScale] of it (#233).
-     *
-     * The one place the fraction is applied, and it is asked by the arithmetic and by the brush alike:
-     * the page count multiplies it into a cell's width and height, and the renderer draws the circle
-     * to it. Two spellings of this product would be a notebook whose pages do not hold what it counted.
+     * The millimetres a coin of [realMm] is drawn at (#233). The only place [coinScale] is applied,
+     * so the page count and the renderer agree.
      */
     fun printedDiameterMm(realMm: Float): Float = realMm * coinScale
 
-    /** The band the heading takes, which is what [heading] holds and nothing the brush decides. */
     val headingMm: Float get() = heading.millimetres
 
     /**
-     * The band a page that **continues** a plate gets, which is the thin one (#480).
-     *
-     * **Derived and not a field**, because it is not a question a configuration answers: whatever band
-     * a plate's first page took, its second page has already said everything that band summarises, and
-     * what a reader still needs from it once the page has turned is the name. [PrintHeading.Slim] is
-     * exactly that band — #232 designed it for the folios two plates share — so this is not a fourth
-     * shape but the one that was already there, asked for by a second question.
-     *
-     * Never taller than [heading], and it cannot be: fourteen millimetres is the shortest of the three,
-     * so a plate that continues can only gain rows. And «compartir página» already prints `Slim` on
-     * every page of everything, so that switch comes out cut for cut as #232 left it.
+     * The band of a page that continues a plate (#480): always the thin one, since the first page
+     * has already printed the summary and a later page only needs the name. Never taller than
+     * [heading], so a continued plate can only gain rows.
      */
     val continuationHeading: PrintHeading get() = PrintHeading.Slim
 
-    /**
-     * The band one turn of a plate gets: its own the first time it is printed, the thin one after.
-     *
-     * The one place that question is answered, asked by the packer before anything is drawn and by the
-     * renderer that draws it (#480) — the height and the contents of a band are one value, so a second
-     * spelling of *which* band would be a heading drawing what nobody counted.
-     */
+    /** The band for one page of a plate; both the packer and the renderer ask here (#480). */
     fun headingFor(continuation: Boolean): PrintHeading =
         if (continuation) continuationHeading else heading
 
-    /**
-     * The air between two plates on one folio, which is none at all where a folio holds one (#232).
-     *
-     * Derived from [sharesPage] rather than a field of its own, because a gap that could be set
-     * while nothing shares a page is a millimetre in the arithmetic that is nowhere on the paper.
-     */
+    /** The air between two plates on one folio (#232); zero when folios aren't shared. */
     val blockGapMm: Float get() = if (sharesPage) BLOCK_GAP_MM else 0f
 
     val gridWidthMm: Float get() = widthMm - marginMm * 2
 
     /**
-     * The whole of the folio the plates get: the page less its margins and the strip at the foot.
-     *
-     * **The foot is once per folio and the heading is once per plate**, which is the difference
-     * «compartir página» makes (#232) and the reason these are two measures and not one. What a
-     * plate takes out of this is its own band plus the rows it holds, so a folio's arithmetic is a
-     * sum over the plates on it and no longer a single subtraction.
+     * The folio less its margins and the foot strip. The foot is once per folio and the heading
+     * once per plate (#232), so a shared folio takes one band per plate out of this.
      */
     val contentHeightMm: Float get() = heightMm - marginMm * 2 - footMm
 
-    /** What one plate's rejilla gets when it has the folio to itself: everything under its band. */
+    /** The rejilla's height when a plate has the folio to itself, under its first-page band. */
     val gridHeightMm: Float get() = contentHeightMm - headingMm
 
-    /**
-     * The same folio when what opens it is a plate **continuing**, whose band is the thin one (#480).
-     *
-     * The twenty-six millimetres between the two are the row of coins the repeated specification was
-     * costing: an ounce's rejilla goes from three rows to four, and the Kookaburra from ten pages to
-     * five with the collector's switches on.
-     */
+    /** The same on a page that continues a plate, under the thin band (#480). */
     val continuationGridHeightMm: Float get() = contentHeightMm - continuationHeading.millimetres
 
     /**
-     * How wide the coins of one cell are: [facesPerCell] of them at [diameterMm], gutters between.
-     *
-     * The gutter that separates two cells is the one that separates the two faces of one, so a row
-     * of pairs is evenly spaced and what tells a pair from its neighbour is the caption underneath —
-     * one caption per coin, not one per face.
-     *
-     * Zero where the cell prints no coin at all (#231), and not a negative gutter: the arithmetic of
-     * «una moneda y las calles entre ellas» has nothing to say about none of them.
+     * Width of a cell's coins: [facesPerCell] faces at [diameterMm], scaled, with a gutter between
+     * faces. The faces of one coin share one caption. Zero on a page without coins (#231).
      */
     fun coinBandWidthMm(diameterMm: Float): Float =
         if (!printsCoins) {
@@ -448,25 +228,14 @@ data class PrintGeometry(
         }
 
     /**
-     * How wide a cell of coins this big is: the band they take, or the floor a caption needs.
-     *
-     * Here rather than on [PrintGrid], because the grid needs it before it exists — the number of
-     * columns is what this answer decides — and one place is what keeps the arithmetic of the page
-     * count and the drawing of the cell measuring the same thing.
+     * A cell's width: its coin band or the caption's floor, whichever is wider. Here rather than on
+     * [PrintGrid] because it decides the grid's column count.
      */
     fun cellWidthMm(diameterMm: Float): Float = max(coinBandWidthMm(diameterMm), minCellWidthMm)
 
     /**
-     * How tall a cell of coins this big is: the band they take, the caption under it, and the code
-     * where the code costs height.
-     *
-     * Here for the same reason [cellWidthMm] is: the number of rows is what this answer decides, and
-     * the drawing of the cell has to measure what the page count was computed from. With no coin band
-     * (#231) a cell is its caption and nothing else — one line, whatever the coin measures.
-     *
-     * The code is the one measure that depends on the coin (#478): a cell wide enough carries it
-     * **beside** the caption for nothing, and only a narrow one has to stack it underneath. That is
-     * why the QR is not simply added to [captionMm] any more.
+     * A cell's height: coin band, caption, and the code when it has to be stacked under the caption
+     * ([qrCostsHeight], #478). Without coins (#231) it is the caption alone.
      */
     fun cellHeightMm(diameterMm: Float): Float =
         (if (printsCoins) printedDiameterMm(diameterMm) else 0f) +
@@ -474,71 +243,36 @@ data class PrintGeometry(
             if (qrCostsHeight(diameterMm)) qrGapMm + qrMm else 0f
 
     /**
-     * Whether the code of a cell this wide sits **beside** the caption instead of under it (#478).
-     *
-     * The #234 put it under the name and said why: beside the name «forces a cell of 44 mm, and that
-     * takes a column away from almost every coin». True of a cell that holds one face — 40,9 mm for an
-     * ounce — and false of the same cell with «ambas caras» on, which is 84,8 and has the width to
-     * spare while paying fourteen millimetres of **height** per row for the code. On the shipped
-     * catalogs that is 42 folios of 247.
-     *
-     * The width it asks for is the code's band **on both sides**, so the caption keeps the middle of
-     * the cell and the name stays centred under the coin it belongs to. Asking for it on one side only
-     * would buy two more folios and print every name off-centre; sixty-six of the seventy-five plates
-     * clear this bar either way, and the nine that do not are the small coins, whose rows are short.
+     * Whether a cell is wide enough to carry its code beside the caption rather than under it
+     * (#478), as a cell with «ambas caras» is. The code's band is reserved on both sides so the
+     * caption stays centred under its coin.
      */
     fun qrBesideCaption(diameterMm: Float): Boolean =
         printsCoins &&
             qrMm > 0f &&
             cellWidthMm(diameterMm) - 2 * (qrMm + qrGapMm) >= minCellWidthMm
 
-    /** Whether the code of this cell is paid for in height, which is the same question turned round. */
+    /** Whether this cell's code is stacked under the caption, adding to the cell's height. */
     fun qrCostsHeight(diameterMm: Float): Boolean =
         printsCoins && qrMm > 0f && !qrBesideCaption(diameterMm)
 
     companion object {
         /**
-         * Pixels per millimetre a page is recorded at.
-         *
-         * Not a field of the geometry, because it is not about the layout: it is the resolution the
-         * page is recorded at, one per process, and no switch of the export has an opinion on it.
-         *
-         * The page reaches the PDF as drawing commands, so text, rules and circles come out
-         * vector-sharp whatever this is; what it buys is the resolution of the **photographs**,
-         * which are bitmaps decoded at the size the layout asks for.
-         *
-         * Six is not a resolution choice, and **measured** not to be one: whatever it is, Coil
-         * decodes a Numista thumbnail at its own 180 pixels (ADR 0017) and never upscales it, so the
-         * PDF ends up holding 180 × 180 images either way — verified identical at five and at six.
-         * What the number really buys is sub-pixel precision in the layout, and it keeps one page's
-         * recording small enough to hold in memory eighty-one times over.
-         *
-         * The weight of the file is therefore not here: a notebook of 623 photographs is 27 MB
-         * because Skia stores each of them losslessly, and the 623 draws are only 319 distinct
-         * pictures.
+         * Pixels per millimetre a page is recorded at, one value per process. Text and vectors
+         * reach the PDF sharp at any value, and photographs gain nothing from a higher one: Coil
+         * decodes Numista thumbnails at 180 px and doesn't upscale (ADR 0017). Six gives sub-pixel
+         * layout precision and keeps a page's recording small in memory. The PDF's size comes from
+         * Skia storing each photograph losslessly, not from this.
          */
         const val PX_PER_MM = 6f
     }
 }
 
 /**
- * The millimetres a configuration declares — the one place a switch becomes geometry.
- *
- * Every one of the five is a change to the arithmetic and not to the brush, so this is what the page
- * count is computed from and what the page is drawn with. The switches whose ticket has not landed
- * still return the notebook of #169: this function gaining a line is what «un interruptor funciona»
- * means, and «tamaño real» (#233) is the only one of the five that has not.
- *
- * They compose without knowing about each other, which is what «cinco interruptores y no tres modelos
- * con nombre» buys: the code grows the caption, the second face grows the cell's width, and a
- * notebook with both on pays for both. «Fotos» is the one that changes the *shape* of the page rather
- * than a measure of it — there is a page of coins and a page of lines, and which one the code goes on
- * is what decides whether it costs height or only shares it.
- *
- * **The order is the order of the sentences**: the shape of the page first, then the size of the coins
- * on it, then how many plates a folio takes, then the code on every cell. Each step is a change to
- * what it inherits and never a replacement of it — the code adds its band to whatever caption the page
- * arrived with, which is how a scaled notebook with codes on pays for both.
+ * The geometry a set of [NotebookOptions] declares: the one place a switch becomes millimetres. The
+ * switches compose in order (page shape, coin size, folio sharing, then the code), each step
+ * changing what it inherits rather than replacing it, so a notebook with two switches on pays for
+ * both.
  */
 fun printGeometry(options: NotebookOptions): PrintGeometry {
     val paper = if (options.photographs) albumPage(options) else listPage()
@@ -547,39 +281,22 @@ fun printGeometry(options: NotebookOptions): PrintGeometry {
 }
 
 /**
- * The notebook of #169: a coin at its real diameter, one face of it or two (#230) — or a fraction of
- * that diameter, which is «tamaño real» apagado (#233).
- *
- * The scale belongs to the album page and to no other, which is why the sheet greys the switch with the
- * photographs off: a page that draws no coin has no size to negotiate, and folding the question in here
- * makes that combination impossible rather than merely unavailable.
+ * The album page of #169: one face or both (#230), at 1:1 or scaled (#233). Scaling lives only
+ * here, so a list page can't be scaled; the sheet also disables «tamaño real» with the photographs
+ * off.
  */
 private fun albumPage(options: NotebookOptions): PrintGeometry {
     val album = PrintGeometry(
-        // One face or two, which is the width of the coin band and therefore of the whole cell (#230).
         facesPerCell = if (options.bothFaces) 2 else 1,
     )
     return if (options.actualSize) album else album.scaled()
 }
 
 /**
- * The album page with the coins drawn at a fraction of their diameter (#233).
- *
- * It is the switch that gives up the one promise #169 was built on, and everything it changes follows
- * from that: **the ruler goes**, because a bar the collector is no longer going to lay a coin against
- * protects nothing — its whole purpose was to catch a viewer's «ajustar a la página» on a page whose
- * claim was 1:1 — and the strip at the foot narrows to the line that says where the plate came from.
- * What takes the bar's place is the diameter as a **number** in every caption ([printsDiameterLabel]):
- * it is useful at any scale, it does not stop being true if a viewer rescales the page, and it is what
- * the list of #231 already prints for the same reason. It is also what makes the caption the one measure
- * here that *grows* — the number needs a line ([SCALED_CAPTION_MM]).
- *
- * What is **not** done is shrinking the coins and keeping the 50 mm bar: that is a page whose foot
- * lies. Keeping the strip costs two pages of the shelf at the compact end — 45 against 43 — so this was
- * never a decision about paper: it is about what the page promises.
- *
- * The floor on a cell's width comes down with the coins ([SCALED_CELL_MM]) or the saving is spent before
- * it is made.
+ * The album page with coins at [SCALED_COIN_FRACTION] of their diameter (#233). Without the 1:1
+ * promise the ruler goes too, since a ruler beside scaled coins would mislead, and every caption
+ * prints the diameter as a number instead ([SCALED_CAPTION_MM]). The cell-width floor comes down
+ * with the coins ([SCALED_CELL_MM]), or the smaller coins save no columns.
  */
 private fun PrintGeometry.scaled(): PrintGeometry = copy(
     coinScale = SCALED_COIN_FRACTION,
@@ -590,16 +307,9 @@ private fun PrintGeometry.scaled(): PrintGeometry = copy(
 )
 
 /**
- * The notebook with its photographs off: one line per member, two columns, no ruler (#231).
- *
- * It is the cheapest of the five switches and the one that goes furthest from the notebook of today,
- * and what it really buys is not paper: with no photograph on the page there is nothing to warm, so
- * the whole apparatus of #169 — the download up front, the four seconds a page waits, the count of
- * pictures that never arrived — has nothing to do. **This is the one export that cannot come out
- * incomplete.**
- *
- * The ruler goes with the coins: it is there to catch a viewer's «ajustar a la página», and a page
- * with nothing at 1:1 on it has nothing to protect. The diameter is still printed, as a number.
+ * The photo-less notebook: one line per member, [LIST_COLUMNS] columns, no ruler, the diameter as a
+ * number (#231). With no photographs to download it is the one export that can't come out with
+ * pictures missing.
  */
 private fun listPage(): PrintGeometry = PrintGeometry(
     facesPerCell = 0,
@@ -608,9 +318,8 @@ private fun listPage(): PrintGeometry = PrintGeometry(
     rulerBarMm = 0f,
     captionMm = LIST_LINE_MM,
 ).let { paper ->
-    // The floor on a cell's width is the *whole* of its width here, since no coin is pushing it
-    // wider: half the printable band, so exactly two columns fit and they fill the page rather than
-    // leaving a ragged margin the centring would only spread over both sides.
+    // With no coin, the floor is the whole cell width: an exact share of the printable band, so the
+    // columns fill it instead of leaving a margin.
     paper.copy(
         minCellWidthMm =
             (paper.gridWidthMm - paper.gutterMm * (LIST_COLUMNS - 1)) / LIST_COLUMNS,
@@ -618,18 +327,8 @@ private fun listPage(): PrintGeometry = PrintGeometry(
 }
 
 /**
- * The same paper with more than one plate allowed on a folio, and the thin band that pays for it.
- *
- * **The band comes with the switch and is not a switch of its own** (#232). Forty millimetres per
- * plate is the album's masthead, and two of them on one folio is eighty millimetres of title over a
- * page that holds twelve coins; it is also where most of the saving is — the sixty plates measured
- * come out at 90 pages sharing folios with the masthead and at **73** with this band, against 104
- * apart. The floor of «una lámina, un folio» is sixty pages whatever else is done to the coins, which
- * is why this is the lever and not the size of the pictures.
- *
- * It touches nothing else: the coins keep their diameter, the caption keeps its sixteen millimetres
- * and the strip at the foot keeps its ruler, because a folio shared by two plates is still a folio
- * printed at 1:1.
+ * Folios that may hold several plates (#232), with the thin [PrintHeading.Slim] band that comes
+ * with the switch: two mastheads would spend 80 mm of one folio on titles. Nothing else changes.
  */
 private fun PrintGeometry.shared(): PrintGeometry = copy(
     sharesPage = true,
@@ -637,22 +336,11 @@ private fun PrintGeometry.shared(): PrintGeometry = copy(
 )
 
 /**
- * The same page with a code on every cell (#234), and it no longer costs a row of coins to have one.
- *
- * On a page of coins the code costs **whatever the cell has spare**, and that is a question about the
- * coin rather than about the notebook: see [PrintGeometry.qrBesideCaption]. A wide cell — every plate
- * printed with «ambas caras» — carries it beside the caption and pays nothing at all; a narrow one
- * stacks it under the name as the #234 measured, and [PrintGeometry.cellHeightMm] is where that band
- * is added. The caption itself is untouched either way, so the words keep the sixteen millimetres of
- * #169.
- *
- * It used to be added to the caption here, before any diameter was known, which is why a plate of
- * 40 mm commemoratives printed four coins on a folio with room for six (#478).
- *
- * On a page of lines the code goes at the **end of the line**, where the width already runs left to
- * right and there is nothing to stack it under. So it costs no height of its own — the row is the
- * taller of the line and the code, and twelve millimetres of it is what the list pays — and no air
- * either: the row spaces what is on it, and the twelve millimetres carry the symbol's own quiet zone.
+ * A code on every cell (#234). On a page of coins the cell decides where it goes
+ * ([PrintGeometry.qrBesideCaption]): beside the caption at no cost when the cell is wide, stacked
+ * under it otherwise ([PrintGeometry.cellHeightMm]). Adding it to the caption here, before the
+ * diameter is known, wasted rows (#478). On a page of lines it goes at the end of the row, which
+ * becomes at least as tall as the code, with no gap: the code carries its own quiet zone.
  */
 private fun PrintGeometry.withNumistaCode(): PrintGeometry = copy(
     captionMm = if (printsCoins) captionMm else max(captionMm, QR_SIDE_MM),
@@ -661,88 +349,65 @@ private fun PrintGeometry.withNumistaCode(): PrintGeometry = copy(
 )
 
 /**
- * The rejilla of one plate: fixed by its largest coin, never by a constant of the notebook.
- *
- * The bitmap of a plate used to square its grid off and shrink its density as the catalog grew,
- * which is right for a picture and wrong for paper: at 1:1 the coin's size is given, so what varies
- * is how many of them fit. That drawing is gone (#431) and this is the rejilla both exports get. Two plates of different coins therefore get
- * different grids, and the same coin is the same size on every page of the notebook.
+ * The rejilla of one plate, fitted to its largest coin: at 1:1 the coin's size is given, so what
+ * varies between plates is how many fit, and the same coin is the same size on every page. Both
+ * exports use it (#431).
  */
 data class PrintGrid(
-    /** The page this grid was fitted to, which is what every measure below is taken from. */
+    /** The page this grid was fitted to. */
     val geometry: PrintGeometry,
-    /** The diameter the cells are measured against: the largest of the plate's own coins. */
+    /** The real diameter of the plate's largest coin, which the cells are fitted to. */
     val diameterMm: Float,
     val columns: Int,
     val rows: Int,
     /**
-     * The rows a folio gives this plate when what opens it is a **continuation** of it (#480).
-     *
-     * At least [rows] and usually more, because the band over a continuation page is the thin one:
-     * a plate of ounces gets three rows on its first folio and four on every one after it. Fitted here
-     * and not asked of the geometry twice, so the two counts are measured against the same cell.
+     * Rows on a page that continues the plate (#480): at least [rows], since its band is thinner.
      */
     val continuationRows: Int,
 ) {
     /**
-     * The millimetres that coin comes out at, which is the height of the band every cell reserves.
-     *
-     * The **real** diameter is what the grid is fitted to and what a caption may print as a number, and
-     * this is what the page draws (#233): keeping the two apart is what lets a scaled page still say
-     * «33 mm» about a circle 20 mm across.
+     * What the coin is drawn at (#233). [diameterMm] stays the real one, which a scaled caption
+     * prints: «33 mm» under a circle 20 mm across.
      */
     val printedDiameterMm: Float get() = geometry.printedDiameterMm(diameterMm)
 
-    /** The coins of the cell and their gutters, or the caption's floor where that is wider. */
     val cellWidthMm: Float get() = geometry.cellWidthMm(diameterMm)
 
-    /** The coin band and the caption under it, or the caption alone where no coin is printed. */
     val cellHeightMm: Float get() = geometry.cellHeightMm(diameterMm)
 
-    /** What the plate's **first** page holds, which is the band that says everything under it. */
+    /** Cells on the plate's first page. */
     val cellsPerPage: Int get() = columns * rows
 
-    /** And what each of the pages it continues onto holds, under the thin band (#480). */
+    /** Cells on each page that continues the plate (#480). */
     val continuationCellsPerPage: Int get() = columns * continuationRows
 
-    /**
-     * How wide a full row of this grid is, which is at most the printable width and usually less:
-     * a 45,6 mm coin fits three to a row and leaves 37 mm over.
-     */
+    /** Width of a full row, at most the printable width. */
     val blockWidthMm: Float get() = widthOfMm(columns)
 
-    /** The width of [columns] cells of this grid, with the gutters between them and not around. */
+    /** Width of [columns] cells, with gutters between them but not around. */
     fun widthOfMm(columns: Int): Float =
         columns * cellWidthMm + (columns - 1).coerceAtLeast(0) * geometry.gutterMm
 
-    /** The height of [rows] rows of this grid, with the gutters between them and not around. */
+    /** Height of [rows] rows, with gutters between them but not around. */
     fun heightOfMm(rows: Int): Float =
         if (rows <= 0) 0f else rows * cellHeightMm + (rows - 1) * geometry.gutterMm
 
-    /** How many rows [cellCount] cells take on this grid: the last one is allowed to be short. */
+    /** How many rows [cellCount] cells take; the last may be short. */
     fun rowsFor(cellCount: Int): Int = (cellCount + columns - 1) / columns
 
     /**
-     * What a block of [cellCount] cells takes out of a folio: [heading], and the rows under it.
-     *
-     * The one place that answer is given, because the packer and the block have to agree on it
-     * forever: the packer subtracts this from what is left of a folio *before* anything is drawn, and
-     * the block is drawn to it (#232). Two spellings of the same sum would be two page counts.
-     *
-     * The band comes in rather than being read off the geometry (#480): it is the plate's own the first
-     * time it is printed and the thin one on every page it continues onto, which is a fact about the
-     * *block* and not about the paper. Whoever asks has to say which turn of the plate this is.
+     * What a block of [cellCount] cells takes out of a folio: the [heading] band plus its rows. The
+     * packer subtracts this before drawing and the block is drawn to it (#232), so this must stay
+     * the only spelling of the sum. The caller passes the band because it depends on whether the
+     * page continues the plate (#480).
      */
     fun blockHeightMm(cellCount: Int, heading: PrintHeading): Float =
         heading.millimetres + heightOfMm(rowsFor(cellCount))
 
     /**
-     * How many rows of this plate fit in [availableMm] of a folio, [heading] included.
-     *
-     * **Zero is a real answer here**, and it is what [rows] can never be: a plate given the folio to
-     * itself always gets at least one row, however tall its coins, because the alternative is a page
-     * count of zero. A plate offered the tail of a folio somebody else started may simply not fit,
-     * and then it opens the next one (#232).
+     * Rows of this plate that fit in [availableMm] of a folio, [heading] included. Unlike [rows]
+     * this can be zero: a plate offered the tail of a shared folio may not fit, and opens the next
+     * (#232).
      */
     fun rowsIn(availableMm: Float, heading: PrintHeading): Int {
         val forCells = availableMm - heading.millimetres
@@ -767,15 +432,9 @@ fun printGrid(diameterMm: Float?, geometry: PrintGeometry): PrintGrid {
 }
 
 /**
- * How many pages a plate of [cellCount] cells takes on this grid.
- *
- * **Two capacities and no longer one** (#480): the first page pays for the band that says everything
- * and the ones after it pay for the thin one, so this is not a division — it is the first page and then
- * as many continuations as the rest of the cells need. A plate of ounces that used to be four pages of
- * twelve is twelve and then three sixteens.
- *
- * Never zero: a collection with nothing in it is still a page saying so, and a page count of zero
- * would drop the plate out of the notebook without telling anyone.
+ * Pages a plate of [cellCount] cells takes: the first page, then as many continuation pages (under
+ * the thinner band, #480) as the rest need. Never zero: an empty collection still prints a page
+ * saying so instead of silently dropping out of the notebook.
  */
 fun pageCount(cellCount: Int, grid: PrintGrid): Int {
     val onFirst = grid.cellsPerPage.coerceAtLeast(1)

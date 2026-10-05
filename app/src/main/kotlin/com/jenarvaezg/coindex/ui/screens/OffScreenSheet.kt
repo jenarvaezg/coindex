@@ -19,24 +19,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * How long an export waits for the pictures before capturing whatever is on the sheet.
- *
- * Twenty seconds was the whole budget when a refused picture failed instantly. Now a throttled one
- * is retried with a wait, and four at a time queue behind each other, so the old ceiling would have
- * cut the retries off exactly on the sheets that need them (issue #67).
+ * How long an export waits for its pictures before capturing whatever is on the sheet. Long enough
+ * for throttled pictures to be retried while queued four at a time (#67).
  */
 const val IMAGE_WAIT_MILLIS = 30_000L
 
 /**
- * Waits until every picture of what is being drawn has reported back, or until the budget runs out.
+ * Waits until every picture being drawn has reported back, or until [timeoutMillis]. Shared by the
+ * lámina PNG and the notebook PDF: whatever hasn't painted by then is a hole in the capture.
  *
- * One wait for the two exports there are, because the waiting is the delicate part and it does not
- * depend on what is being drawn: what is not painted when this returns is a hole in what is about to
- * be captured, whether that is the PNG of one lámina or a page of the notebook's PDF.
- *
- * [timeoutMillis] is a **ceiling and not a cost**: what is already cached settles in a frame. The
- * notebook passes a shorter one because it has warmed every photograph first, so a page that has
- * not settled by then is not going to.
+ * [timeoutMillis] is a ceiling, not a cost: cached pictures settle in a frame. The notebook passes
+ * a shorter one because it warms every photograph first.
  */
 suspend fun awaitSettledImages(
     expectedImages: Int,
@@ -52,10 +45,8 @@ suspend fun awaitSettledImages(
 }
 
 /**
- * Composes a page at the density of the paper and off the screen, so it can be measured whole.
- *
- * Unbounded, because the point of an export is that the sheet is taller than any screen, and sized
- * to nothing so it never lands on the page it is being exported from.
+ * Composes a page off screen at the paper's density, so it can be measured whole. Unbounded because
+ * an export is taller than any screen, and zero-sized so it never shows on the current screen.
  */
 @Composable
 fun OffScreenSheet(density: Density, content: @Composable () -> Unit) {
@@ -66,15 +57,10 @@ fun OffScreenSheet(density: Density, content: @Composable () -> Unit) {
     ) {
         CompositionLocalProvider(
             LocalDensity provides density,
-            // The export rule of ADR 0026 §4, in the one place both exports pass through: what is
-            // still travels to paper, what is alive does not. The gloss follows a sensor, so a PNG
-            // must not carry it — not even the pose it rests in. It is accepted knowingly that what
-            // the father shows other people carries no metal: the app is where he looks at his
-            // collection, the PNG is where he shows it.
+            // ADR 0026 §4: static things travel to paper, live ones don't. The gloss follows a
+            // sensor, so exports carry none, not even its resting pose.
             LocalCoinGloss provides null,
-            // The same rule, and the same line, cutting the other way (#339): the **stamp** is a
-            // state and travels, the **stamping** is alive and does not. A sheet composed off
-            // screen finds the ink already dry rather than watching it fall into a picture.
+            // Same rule (#339): the stamp is printed, its animation is not.
             LocalStamping provides null,
             content = content,
         )

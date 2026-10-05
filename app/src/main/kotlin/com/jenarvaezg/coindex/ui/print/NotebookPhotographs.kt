@@ -7,27 +7,16 @@ import com.jenarvaezg.coindex.data.photos.warmPhotographs
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * How many photographs of the warm-up are in flight at once.
- *
- * The same four as `CoinPhotoLoader`'s dispatcher, on purpose: asking for more would only pile
- * them up one layer higher, where the progress counter cannot see them and cancelling does not
- * reach them. The background prefetch takes two of the four for the opposite reason (#191) — the
- * export is what the collector is watching, and it is allowed to take the lot.
+ * Photographs in flight at once during the warm-up: all four slots of `CoinPhotoLoader`'s
+ * dispatcher. More would just queue there, out of reach of the progress counter and cancellation.
+ * The background prefetch takes only two (#191); the export is what the collector is waiting on.
  */
 private const val WARM_CONCURRENCY = 4
 
 /**
- * Every photograph the notebook needs, once.
- *
- * **Deduplicated**, which is most of the point: the same type shows up on several pages — two rows
- * of the same Southern Cross, a type two catalogs share — and the drawing pass would ask for it
- * once per cell. With «ambas caras» on (#230) a cell asks for two, which is two entries and not one:
- * a face that is not warmed is a hole frozen into the PDF, and that was the failure of #169.
- *
- * Only the **first** candidate of each face, which is the thumbnail. The original behind it is the
- * fallback for a thumbnail that is refused (#67), and warming both would double the requests to
- * pre-empt a failure that mostly does not happen; a page that does fall back still asks for it
- * itself.
+ * Every photograph the notebook needs, deduplicated: a type can appear in many cells. Each face
+ * counts (#230). Only the first candidate of each face, the thumbnail, is warmed; a page that falls
+ * back to the original (#67) fetches it itself.
  */
 fun notebookPhotographs(pages: List<PrintPage>): List<String> = pages
     .asSequence()
@@ -38,25 +27,13 @@ fun notebookPhotographs(pages: List<PrintPage>): List<String> = pages
     .toList()
 
 /**
- * Fetches every photograph of the notebook into the cache **before** any page is drawn.
+ * Fetches every photograph of the notebook into the cache before any page is drawn (#169). Fetching
+ * page by page lost photographs: whatever missed a page's time budget became a hole in the PDF, and
+ * once Numista answered `503`, throttled requests for pages already drawn held the four slots
+ * (`ThrottleRetryInterceptor`). One queue asks for each photograph once, and the pages then read
+ * from the cache.
  *
- * This is the fix for an export that came out with 64 photographs out of some 600 and took half an
- * hour doing it (#169, reported from the field). Asking page by page looked equivalent and is not:
- *
- * - **A photograph got one chance and it was a page's chance.** Whatever had not arrived when the
- *   page's budget ran out was frozen into the PDF as a hole, with no second try — unlike a single
- *   plate, which the collector simply exports again.
- * - **Seventy bursts compete with each other.** The photographs go through four slots on purpose,
- *   and a throttled one **blocks its slot** while it waits (`ThrottleRetryInterceptor`). Once
- *   Numista starts answering `503`, the slots are held by requests whose page has already moved on,
- *   so the next page starts already behind and never catches up.
- *
- * Warming first turns that into one queue with one progress counter: each photograph is asked for
- * exactly once, the pages that follow read from the cache in milliseconds, and a second export of
- * the same collection costs no network at all.
- *
- * A photograph that fails is **not** retried here and not reported as an error: the drawing pass is
- * what counts holes, because that is what ends up on the paper. This only makes them rare.
+ * Failures aren't retried or reported here; the drawing pass counts the holes that reach paper.
  */
 suspend fun warmNotebookPhotographs(
     context: Context,
@@ -64,18 +41,15 @@ suspend fun warmNotebookPhotographs(
     onProgress: (done: Int) -> Unit,
 ) {
     if (urls.isEmpty()) return
-    // Atomic because four coroutines report into it, and the counter is what the collector is
-    // watching: a lost increment is a progress bar that never reaches the end.
+    // Atomic: four coroutines report into it, and a lost increment leaves the progress bar short.
     val done = AtomicInteger(0)
-    // Whether each one landed is deliberately ignored here: success or failure, what matters is
-    // that the cache now holds whatever this URL is ever going to give, and the drawing pass is
-    // what counts holes because that is what ends up on the paper.
+    // Success or failure is ignored: the drawing pass counts holes.
     warmPhotographs(
         context = context,
         loader = SingletonImageLoader.get(context),
         urls = urls,
         concurrency = WARM_CONCURRENCY,
-        // Unchanged from #190: the page about to be drawn may want the same bitmap seconds later.
+        // As in #190: the page about to be drawn may want the same bitmap seconds later.
         memoryCache = CachePolicy.WRITE_ONLY,
     ) { _, _ -> onProgress(done.incrementAndGet()) }
 }

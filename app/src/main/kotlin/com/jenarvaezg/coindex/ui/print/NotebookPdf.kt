@@ -13,26 +13,21 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** A PostScript point is a seventy-second of an inch, which is the unit a PDF page is sized in. */
+/** PDF pages are sized in PostScript points, 1/72 inch. */
 private const val POINTS_PER_INCH = 72f
 
 private const val MM_PER_INCH = 25.4f
 
-/** How much the recorded page shrinks on its way into the PDF, uniformly on both axes. */
+/** The uniform scale from the recorded page to the PDF page. */
 private const val POINTS_PER_PIXEL = POINTS_PER_INCH / (MM_PER_INCH * PrintGeometry.PX_PER_MM)
 
 /**
- * Appends one recorded page to [document], as drawing commands and not as a bitmap.
+ * Appends one recorded page to [document] as drawing commands: a [Picture] replayed onto the page's
+ * canvas reaches the PDF as vectors, so only the photographs are bitmaps.
  *
- * A [Picture] replayed onto the page's canvas reaches the PDF as vectors — text, rules and circles
- * stay sharp at any zoom, and the file is a fraction of what eighty-four full-page bitmaps would
- * weigh. The photographs are still bitmaps, at whatever resolution [PRINT_PX_PER_MM] decoded them.
- *
- * The scale is the **same on both axes** on purpose. A4 is 595,28 × 841,89 points and a page is
- * sized in whole ones (595 × 842), so fitting the recording to that rounded rectangle would stretch
- * it by six hundredths of a percent on one axis alone — invisible, and a lie at 1:1. Keeping the
- * scale uniform leaves the third of a point of difference inside the fifteen-millimetre margin,
- * where nothing is drawn.
+ * The scale is the same on both axes on purpose. A4 is 595,28 × 841,89 points but a page is sized
+ * in whole points (595 × 842); fitting the recording to that would stretch one axis and break 1:1.
+ * The leftover fraction of a point falls inside the margin.
  */
 fun addNotebookPage(
     document: PdfDocument,
@@ -93,11 +88,8 @@ private suspend fun writeNotebookPdf(
 }
 
 /**
- * What the exported notebook is called.
- *
- * One name and no date: the notebook is not an entity with versions (ADR 0021 §1), it is what the
- * index was showing when the button was pressed, and a second export of the same collection
- * replacing the first in the cache is the honest outcome.
+ * The exported notebook's file name. Undated, so a new export replaces the previous one in the
+ * cache: the notebook has no versions (ADR 0021 §1).
  */
 fun notebookFileName(): String = "coindex-cuaderno"
 

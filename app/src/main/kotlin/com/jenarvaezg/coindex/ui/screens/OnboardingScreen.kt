@@ -32,13 +32,11 @@ import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * First launch: the collector's own Numista credentials.
+ * First launch: the collector enters their own Numista credentials (the app is local-first, with no
+ * shared account).
  *
- * Each user supplies their own API credentials, which is what makes the app local-first and
- * removes the shared account the web version needed.
- *
- * [validation] is the form's own channel, not the snackbar's: the two used to share one field,
- * so dismissing the snackbar also erased the text explaining what was wrong with the form.
+ * [validation] is the form's own message, separate from the snackbar, so dismissing one doesn't
+ * erase the other.
  */
 @Composable
 fun OnboardingScreen(
@@ -52,8 +50,7 @@ fun OnboardingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            // The keyboard covers the last third of this form: without it the button and the
-            // note explaining where the two values come from sit behind the keys typing them.
+            // Otherwise the keyboard hides the button and the note below the fields.
             .imePadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 28.dp),
@@ -84,8 +81,7 @@ fun OnboardingScreen(
         validation?.let { text ->
             Text(text, style = MaterialTheme.typography.bodyMedium, color = Paper.rust)
         }
-        // Pressing it with an empty form could only produce the complaint the form can already
-        // see coming, so it waits until there is something to save.
+        // Disabled until both fields have something.
         PrimaryAction(
             text = ONBOARDING_SAVE_ACTION,
             onClick = { onSave(apiKey, userId) },

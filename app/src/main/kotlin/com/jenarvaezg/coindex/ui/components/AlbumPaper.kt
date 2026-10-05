@@ -35,20 +35,12 @@ import com.jenarvaezg.coindex.ui.TURN_THE_COIN_OVER
 import com.jenarvaezg.coindex.ui.theme.Paper
 import kotlin.math.min
 
-/**
- * How long the coin takes to come round, decided on an HTML prototype at phone size (#302) and
- * confirmed on the AVD before this was written: half a turn is about twenty-four distinct frames
- * there, which is a turn and not a cut.
- */
+/** Half a turn of the coin (#302): about 24 frames, enough to read as a turn rather than a cut. */
 private const val COIN_TURN_MILLIS = 420
 
 /**
- * What the turn is called in the Compose animation inspector, and **not copy**.
- *
- * No collector ever reads it: it is a name for a tool. It is a constant rather than a literal
- * because `label =` is a visible slot as far as `CopyLivesInOnePlaceTest` can tell, and the way to
- * keep that test free of exemptions is for the one string that is genuinely not copy to say so here
- * instead of asking for a place on a whitelist.
+ * The turn's name in the Compose animation inspector, not copy. A constant so that
+ * `CopyLivesInOnePlaceTest`, which treats `label =` as visible text, needs no exemption.
  */
 private const val COIN_TURN_ANIMATION = "coin turn"
 
@@ -58,40 +50,18 @@ private const val HALF_TURN = 180f
 private const val COIN_CAMERA_DISTANCE = 12f
 
 /**
- * The smallest hole that can say «te falta» with a sunk design (#556).
- *
- * Not a size of anything: the floor under which the penumbra stops being a sentence. The ghost is a
- * drawing at 14 %, and a drawing needs room — at 40 dp on the row of #520 it measured as two grey discs
- * and the owner rejected it with the prototype in front of him. Above the floor the album has two
- * things to say about an empty casilla («te falta» and «esto lo buscas») and below it only one, so the
- * penumbra gives way to the coin whole under its dotted rule.
- *
- * Calibrated at the bench of ADR 0026 §15, whose ghost slot gained a diameter control for it; the
- * captures are in `docs/ux/implementacion-556/`.
+ * The smallest hole that draws [HoleAbsence.Missing] as the design sunk to 14 % (#556). Below it
+ * the faint design reads as a grey disc, so the hole shows the whole coin under its dotted rule
+ * instead. Calibrated at the bench of ADR 0026 §15; captures in `docs/ux/implementacion-556/`.
  */
 const val GHOST_MIN_DP = 72f
 
 /**
- * What a hole says about the coin that is not in it (ADR 0026 §15, #520).
- *
- * Two absences and not one, because they were never the same sentence. **[Missing]** is «te falta»: the
- * casilla belongs to a plate the collector is filling, and the design sunk to 14 % is the empty pocket
- * of an album — you see there is something to buy, not what it is. **[Wanted]** is «esto lo buscas»: the
- * casilla is on a list for a fair, and there the drawing has one job, which is letting a coin be
- * recognised across a table. So the coin is drawn whole and what says it is not yours is the dotted
- * rule, which both absences keep.
- *
- * The die-cut never glosses in either: the gloss is the metal's own light and there is no metal in the
- * hole, which is the rule `coinGloss` already states.
- *
- * **And the penumbra needs a diameter to be a sentence** (#556). The census of the six surfaces the
- * #520 amendment named came back smaller than it looked: the year axis draws its «ghost» with no
- * photograph at all, so there is nothing to sink, and the printed page desaturates instead of dimming.
- * What was left was one language spoken at two sizes — 104 dp, where the sunk design reads, and 34 dp on
- * the country axis, which is smaller than the 40 dp measured as two grey discs on the row of #520. So
- * [Missing] carries a floor, [GHOST_MIN_DP], and under it the hole says the absence the way that row
- * already does: the coin whole and the dotted rule. It is one rule in the one place the ghost is drawn,
- * not a list of exceptions per screen. The value belongs to the calibration bench of ADR 0026 §15.
+ * What a hole says about the coin that is not in it (ADR 0026 §15, #520). [Missing] («te falta») is
+ * a casilla of a plate being filled, its design sunk to 14 % like an album's empty pocket; [Wanted]
+ * («esto lo buscas») is a marked casilla, drawn whole so the coin can be recognised at a fair. Both
+ * keep the dotted rule and never gloss. [Missing] falls back to the whole coin below [GHOST_MIN_DP]
+ * (#556).
  */
 enum class HoleAbsence {
     /** The coin is in the collection: full colour, and the metal's own light over it. */
@@ -100,7 +70,7 @@ enum class HoleAbsence {
     /** An empty casilla of a plate being filled: the catalog design at 14 % under a dotted rule. */
     Missing,
 
-    /** An empty casilla the collector marked: the coin whole, and the dotted rule to say it is not theirs. */
+    /** An empty casilla the collector marked: the coin whole under a dotted rule. */
     Wanted,
 }
 
@@ -135,34 +105,26 @@ fun AlbumHole(
     /** False for a loose coin: the photograph remains, but there is no album board around it. */
     backed: Boolean = true,
     /**
-     * The face this coin is not showing. When it is here the body of the hole takes a tap and the
-     * coin turns over inside it (#337); when it is not, the hole is the still picture it always
-     * was — and the sheet that composes itself off screen never gets one, so an exported PNG
-     * cannot inherit a turned coin.
+     * The face this coin is not showing. When present, a tap turns the coin over inside the hole
+     * (#337). The off-screen sheet never passes one, so an exported PNG can't show a turned coin.
      */
     otherSide: CoinPhoto? = null,
     tone: AlbumToneConfig,
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
 ) {
-    // The hole is empty in both absences — the dotted rule and the dead gloss follow this — and only
-    // [HoleAbsence.Missing] sinks the design behind it, and only above [GHOST_MIN_DP] (`dimmed`, below,
-    // where the hole knows its own diameter).
+    // Both absences get the dotted rule and no gloss; only [HoleAbsence.Missing] dims (`dimmed`).
     val empty = absence != HoleAbsence.Filled
-    // Which face is up is the hole's own business and it is deliberately not hoisted: the plate
-    // goes back to `printed_side` on its own the moment the cell leaves the lazy grid, which is
-    // what keeps the sheet of mixed states from becoming a state the album has to remember.
+    // Deliberately not hoisted: a cell that leaves the lazy grid returns to `printed_side`.
     var turned by remember(photo, otherSide) { mutableStateOf(false) }
-    // Scaled by the system and not by us (#514, #337): at `animator_duration_scale 0` this tween is
-    // over on the frame it starts, so the coin is simply on its other face — and the one frame it
-    // can leak is the face that was already up, which is «not turned yet» and not a coin nowhere.
+    // Scaled by the system (#514, #337): at `animator_duration_scale 0` the coin just switches
+    // face.
     val turn by animateFloatAsState(
         targetValue = if (turned) HALF_TURN else 0f,
         animationSpec = tween(durationMillis = COIN_TURN_MILLIS),
         label = COIN_TURN_ANIMATION,
     )
-    // Past the quarter turn the far face comes round, and it is drawn from its own zero rather
-    // than from the mirror of the near one: a photograph seen through its own back would be a
-    // coin with its legend written backwards.
+    // Past the quarter turn the far face is drawn from its own zero, not mirrored, so its legend
+    // doesn't read backwards.
     val showsFront = turn <= HALF_TURN / 2
     val faceTurn = if (showsFront) turn else turn - HALF_TURN
     val face = if (showsFront) photo else otherSide
@@ -174,21 +136,16 @@ fun AlbumHole(
     var settled by remember(candidates) { mutableStateOf(false) }
     var sidePx by remember { mutableIntStateOf(0) }
     val url = candidates.getOrNull(attempt)
-    // 5 dp was measured on the 104 dp card (#357). Axis holes are 34 dp; scale the ring so the
-    // cardboard/coin ratio matches entrada-default instead of swallowing the metal.
+    // Scale the ring with the hole so small holes keep the 104 dp card's cardboard/coin ratio
+    // (#357) instead of swallowing the metal.
     val ringDp = if (!backed || sidePx == 0) {
         HOLE_CARD_PADDING_DP
     } else {
         val holeDp = sidePx / density.density
         holeCardPaddingDp(holeDp) * (tone.dieWall.widthDp / HOLE_CARD_PADDING_DP)
     }
-    // «Te falta» is a drawing seen at 14 %, so it is only a sentence where the drawing reads (#556).
-    // Below the floor the penumbra is withdrawn and what says the casilla is empty is the dotted rule,
-    // which is what the row of #520 chose at 40 dp with the prototype in front of the owner.
-    //
-    // The reserve is `ringDp`'s and for the same reason: on the first frame the hole has not been
-    // measured yet. It opens as the penumbra rather than as the coin because a casilla that flashed its
-    // metal before sinking would be announcing a coin the collector does not have.
+    // Only above [GHOST_MIN_DP] (#556). Before the first measure it starts dimmed, so a missing
+    // coin never flashes at full colour.
     val dimmed = absence == HoleAbsence.Missing &&
         (sidePx == 0 || sidePx / density.density >= GHOST_MIN_DP)
 
@@ -208,18 +165,15 @@ fun AlbumHole(
                 },
             ),
     ) {
-        // The cardboard ring remains visible around the inset window: the wall of the cut is dark
-        // at the top, where it shades itself, and pale at the bottom, where the die exposed a
-        // fresh edge. It is one sweep and not two half arcs, and it stops at the photograph.
+        // The cardboard ring around the window: the cut wall is dark at the top and pale at the
+        // bottom, one sweep that stops at the photograph.
         if (backed) {
             Canvas(Modifier.fillMaxSize()) {
                 drawCircle(Paper.card.copy(alpha = tone.cardAlpha))
                 val wallWidth = ringDp.dp.toPx()
                 val wallRadius = size.minDimension / 2f - wallWidth / 2f
-                // The hole declares which face it is showing with its own cardboard (#509): as the
-                // coin comes round, the light of the cut crosses to the other side and turns up.
-                // The two profiles are cross-faded on the turn's own progress, so the wall arrives
-                // exactly when the face does and nothing about the board moves.
+                // The wall's light flips with the face shown (#509), cross-faded on the turn's
+                // progress.
                 val overTurn = turn / HALF_TURN
                 drawCircle(
                     brush = Brush.sweepGradient(*tone.dieWall.stops(), center = center),
@@ -233,9 +187,7 @@ fun AlbumHole(
                     style = Stroke(width = wallWidth),
                     alpha = overTurn,
                 )
-                // A different job from the wall: this is the rule that separates cardboard from
-                // paper, and 1 dp of it at 3:1 is what #349 won. The wall does not have to be dark
-                // — or opaque — for the cardboard to read.
+                // The rule between cardboard and paper: 1 dp at 3:1 contrast (#349).
                 val hairlineWidth = 1.dp.toPx()
                 drawCircle(
                     color = tone.hairlineColor,
@@ -256,23 +208,16 @@ fun AlbumHole(
             if (!painted) {
                 Silhouette(Modifier.fillMaxSize())
             }
-            // A face that came round and never arrived says so, instead of leaving the mute disc
-            // the audit of 14 August 2026 found (#509). It waits for the turn to finish — mid-turn
-            // the photograph is simply still loading — and it is only ever the far face: the one at
-            // rest has the die-cut and the ghost to say what it is.
+            // A turned-to face with no photograph says so once the turn ends (#509), instead of
+            // showing a mute disc.
             val turnedToNothing = !showsFront && turn >= HALF_TURN &&
                 (silence == HoleSilence.NoPhotograph || silence == HoleSilence.NotOnThisPhone)
             if (turnedToNothing) {
                 FaceNotDownloaded(Modifier.fillMaxSize())
             }
-            // And a face at rest that was asked for and did not come says it too, in a mark rather
-            // than in a sentence (#510). Only [HoleSilence.NotOnThisPhone]: the disc on its own
-            // goes on meaning «still coming» and «Numista has no picture of this», which are the
-            // two silences that need nothing from the collector.
-            //
-            // «At rest» is the same guard the sentence keeps, and for the same reason: the mark is
-            // flat and does not turn, so mid-turn it would be a drawing pasted over a coin coming
-            // round. A face that arrives at nothing gets it once the turn is over.
+            // A face at rest whose photograph failed to download gets a mark (#510). The plain disc
+            // still means «loading» or «Numista has no picture». The mark doesn't turn, so it waits
+            // for the turn to end.
             val turnIsOver = turn <= 0f || turn >= HALF_TURN
             if (silence == HoleSilence.NotOnThisPhone && turnIsOver && !turnedToNothing) {
                 PhotoNotDownloaded(Modifier.fillMaxSize())
@@ -304,33 +249,21 @@ fun AlbumHole(
                     },
                     modifier = Modifier
                         .fillMaxSize()
-                        // The coin turns; the casilla does not. Only the photograph goes into the
-                        // layer, so the cardboard around it stays exactly where it is while the
-                        // metal comes round — and the gloss, which is inside the same layer, turns
-                        // with the face it belongs to (#338).
+                        // Only the photograph turns; the cardboard stays put, and the gloss turns
+                        // with its face (#338).
                         .graphicsLayer {
                             rotationY = faceTurn
                             cameraDistance = COIN_CAMERA_DISTANCE * density.density
                         }
                         .alpha(if (dimmed) 0.14f else 1f)
-                        // `painted` is the other half of a rule `coinGloss` already states —
-                        // «empty cardboard never glosses, for the direct reason that there is no
-                        // coin there» — and it was the whole of #510's title: the band blends
-                        // against whatever is under it, so on a hole whose photograph never came
-                        // it was lighting the stand-in disc and following the accelerometer while
-                        // it did. A brilliant disc that moves is the one thing «cargando» and «no
-                        // ha bajado» must not have in common (and the sensor, unregistered, is a
-                        // battery the empty hole was spending too).
+                        // No gloss until a photograph is painted, or it lights the stand-in disc
+                        // and keeps the accelerometer registered (#510).
                         .coinGloss(isCoin = !empty && painted),
                 )
             }
 
-            // Nothing else is painted over the photograph any more. The die's shadow went in #357 —
-            // eight dp inside the edge and therefore squarely on the coin's face — and the acetate's
-            // fixed reflection went here, in #338: leaving it under the gloss would have rebuilt
-            // #303's discarded variant D, two layers for the result of one. The wall of the cut
-            // lives on the cardboard, where the shadow of a cut wall belongs, and what is over the
-            // metal is the metal's own light.
+            // Nothing but the gloss goes over the photograph: the die shadow (#357) and the
+            // acetate reflection (#338) were removed on purpose.
             if (empty) {
                 Canvas(Modifier.fillMaxSize()) {
                     val holeDp = size.minDimension / density.density

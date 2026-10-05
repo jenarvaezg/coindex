@@ -7,16 +7,11 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.VariantKey
 
 /**
- * One piece as it is drawn, with what identifies it already resolved (#225).
- *
- * The three drawers of a piece — the card on screen, the exported sheet, the notebook page — are
- * handed this and not a bare [CollectedItem], because the emission label is the head of the line
- * and not an embellishment: where the row can only say 1966, the star *is* the identity. It was an
- * optional last parameter of [pieceLine] until the merge of #183 dropped it from all three drawers
- * at once with the suite green.
- *
- * Which is why [emissionLabel] has **no default**: whoever draws a piece has to say what names it,
- * even when the answer is «nothing but its year». A shape that can be forgotten gets forgotten.
+ * One piece as it is drawn, with what identifies it already resolved (#225). The screen card, the
+ * exported sheet and the notebook page all take this rather than a bare [CollectedItem], since the
+ * emission label can be the piece's identity (the star where the row only says 1966).
+ * [emissionLabel] has no default on purpose: as an optional parameter it was once silently
+ * dropped from all three.
  */
 data class DrawnPiece(
     val item: CollectedItem,
@@ -25,29 +20,19 @@ data class DrawnPiece(
 )
 
 /**
- * What `PiecesScreen` is looking at: one collection without an issue list, or a box.
- *
- * The merge of ADR 0021 §9 lives in this type. Two screens became one because the cases differ in
- * what they **have** — a physical variant, an upkeep — and not in what they are, so the screen is
- * handed one shape and reads the differences off its fields. The alternative, a screen that asks
- * which case it is, would be the word of provenance §2 removed from the card, said one level down.
- *
- * It is built from the same [IndexCard] the index drew, so the header of the screen and the card
- * that opened it cannot drift: same name, same country, same count.
+ * What `PiecesScreen` is looking at: one collection without an issue list, or a box (ADR 0021 §9).
+ * One shape, whose fields say what each case has (a variant, an upkeep), so the screen never asks
+ * which case it is. Built from the [IndexCard] the index drew, so the header matches the card.
  */
 data class PiecesSubject(
     val title: String,
-    /** The country, unsaid when nothing can name it without claiming more than it knows. */
+    /** Null when no single country can be named. */
     val issuer: String?,
     /** The physical variant, or null for a box: it spans whatever the collector put in it. */
     val variant: String?,
     /**
-     * The ratio the card showed, where there was one.
-     *
-     * Only a collection whose catalog it owns no issued member of yet can arrive here carrying one
-     * — with evidence the card opens its plate instead (ADR 0021 §7, §9) — and it has to keep
-     * saying «0 de 12 · te faltan 12», because the same collection cannot count one way on the
-     * card and another one tap later.
+     * The ratio the card showed, if any. Only a catalog with no owned issued member arrives here
+     * with one, since with evidence the card opens its plate (ADR 0021 §7, §9).
      */
     val coverage: CoverageRatio?,
     val distinctTypes: Int,
@@ -93,9 +78,7 @@ fun piecesSubject(state: CollectionState, card: IndexCard): PiecesSubject = when
 
 /**
  * What to call a piece: the catalog title if its type is cached, else what the row itself says.
- *
- * Shared by the three lists that draw a coin — a collection's pieces, its exported sheet, and Coins
- * (ADR 0021 §1) — so the same coin cannot be called two things one tap apart.
+ * Shared by every list that draws a coin, so it has one name everywhere (ADR 0021 §1).
  */
 fun pieceName(state: CollectionState, item: CollectedItem): CoinName =
     coinName(pieceRawTitle(state, item))
@@ -113,25 +96,16 @@ internal fun pieceTitle(state: CollectionState, item: CollectedItem): String =
     pieceName(state, item).text
 
 /**
- * The pieces of one collection, in reading order and each carrying what names it.
- *
- * The label comes from the assembly and not from the card the collector arrived through: which
- * emission a coin is is a fact about the coin, so the same 100 pesetas says «Estrella 67» whether
- * it is read from its own collection or from a box the collector put it in.
- *
- * The order is the year first, because it is what usually tells two rows of the same type apart,
- * and a row without one goes last — undated is the least identified a row gets.
+ * The pieces of one collection, by year with undated rows last, each with its emission label. The
+ * label is a fact about the coin, so it is the same whichever card the collector came through.
  */
 private fun CollectionState.drawnPieces(items: List<CollectedItem>): List<DrawnPiece> = items
     .sortedWith(compareBy({ it.recordedYear ?: Int.MAX_VALUE }, { it.title.orEmpty() }, { it.id }))
     .map { item -> DrawnPiece(item, emissionLabels[item.id]) }
 
 /**
- * The card a pieces route points at, or null if it no longer exists.
- *
- * A derived collection can vanish under the screen while it is open — a piece sold on Numista and
- * synced away leaves the route valid and its subject gone — and a box can be undone from the screen
- * itself. Neither is guessed at.
+ * The card a pieces route points at, or null if it no longer exists: a derived collection can
+ * vanish after a sync while open, and a box can be undone from its own screen.
  */
 fun CollectionState.piecesCardFor(key: VariantKey): IndexCard.Derived? =
     index.filterIsInstance<IndexCard.Derived>().firstOrNull { it.key == key }

@@ -17,11 +17,9 @@ import kotlinx.coroutines.withContext
 private const val UPDATE_DIR = "updates"
 
 /**
- * Whatever can put a published APK in front of the system installer.
- *
- * An interface because every branch of installing is a *refusal* — no permission, no Settings app,
- * no installer, a download that died — and each of those is a sentence the collector reads. They are
- * the reason [UpdateFlow] exists, and none of them can be provoked on a device on purpose.
+ * Whatever can put a published APK in front of the system installer. An interface so [UpdateFlow]'s
+ * refusals (no permission, no Settings app, no installer, a failed download), which can't be
+ * provoked on a device, can be tested.
  */
 interface UpdateInstaller {
     /** Whether the user has granted Coindex the special "install unknown apps" permission. */
@@ -51,10 +49,8 @@ class SystemUpdateInstaller(
     override fun canInstall(): Boolean = context.packageManager.canRequestPackageInstalls()
 
     /**
-     * Opens the system screen where that permission is granted.
-     *
-     * Returns false when no activity handles the intent — stripped-down builds exist and a
-     * missing Settings app must not take the whole app down with it.
+     * Opens the system screen where that permission is granted. Returns false when no activity
+     * handles the intent, as on stripped-down builds, instead of crashing.
      */
     override fun requestInstallPermission(): Boolean = startSafely(
         Intent(

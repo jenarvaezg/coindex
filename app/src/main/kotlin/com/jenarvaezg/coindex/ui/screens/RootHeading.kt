@@ -11,14 +11,8 @@ import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * The notebook's own label, and under it the name of the hierarchy you are in (ADR 0021 §1).
- *
- * «Cuaderno de colección · Láminas de plata» used to be an eyebrow and a `displayLarge` title, which
- * worked while the index *was* the app. With two sibling hierarchies the big line has to say which
- * one you are looking at, so the two halves of the root label fold into one eyebrow above it — the
- * notebook keeps its name, and «Colecciones» and «Monedas» get the slot that tells them apart.
- *
- * One composable and not two headings, so the two roots cannot drift into looking like two apps.
+ * The notebook's label as an eyebrow, and under it the name of the current hierarchy (ADR 0021 §1).
+ * Shared by the top-level roots so they look like one app.
  */
 @Composable
 fun RootHeading(destination: String, sentence: String, modifier: Modifier = Modifier) {

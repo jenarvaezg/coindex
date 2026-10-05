@@ -1,98 +1,68 @@
 package com.jenarvaezg.coindex.data
 
 /**
- * How long a wall that is only Numista saying «not now» is left standing.
- *
- * **Six hours**, and the number is a floor and a ceiling in the same way `BARREN_STREAK_LIMIT` is.
- * Below it the phone goes back to paying for the same answer several times a day — eight launches
- * is what a day of his looks like, so an hour would keep six of them. Above it a throttle that
- * lifted in minutes would cost a whole day of prices, and the pass is the only thing that brings
- * them.
- *
- * It is the answer to «ahora no» and not to «este mes no», which is why the quota does not use it.
+ * How long a «not now» from Numista is believed. Shorter, and the phone pays for the same answer
+ * several times a day; longer, and a throttle that lifted in minutes costs a day of prices. The quota
+ * («not this month») has its own clock.
  */
 private const val THROTTLE_WALL_MILLIS = 6L * 60 * 60 * 1_000
 
 /**
- * Why Numista is refusing, which is the only thing that decides how long the refusal is believed.
- *
- * [com.jenarvaezg.coindex.data.prices.ValuationRefusal.Rejected] deliberately says none of this to
- * the collector — the sentence «Este teléfono» prints is the same for the four, and ADR 0028 §6.1
- * settled that it is not a button either. What the cause is for is the **clock**: the four wait on
- * four different things, and remembering a `429` until the 1st would cost a month of prices for a
- * throttle that lifted in minutes.
+ * Why Numista is refusing, which decides only how long the refusal is believed. The collector sees
+ * the same sentence for all four, and no button (ADR 0028 §6.1).
  */
 enum class RejectionCause {
     /**
-     * `429` with the quota named in its body — the allowance **Numista** counts, which is not the one
-     * [CallBudgetGate] counts.
+     * `429` with the quota named in its body: Numista's own monthly count, not [CallBudgetGate]'s.
+     * The key is shared with another phone (#562), so this can arrive with local budget left. It
+     * lasts until the 1st, the same calendar month [startOfMonthMillis] draws for the gate.
      *
-     * Theirs is 2.000 a month against the 1.500 of ADR 0003, over a key that a second phone spends
-     * too (#562), so this arrives with budget still on the local counter. Their month is the
-     * calendar month, the same one [startOfMonthMillis] draws for the gate, so the wall falls on the
-     * 1st — the very sentence «Este teléfono» already says of the local budget.
-     *
-     * **It shares its status with [Throttled], and the body is the only thing that tells the two
-     * apart** (#600). The OpenAPI 3.36 declares the `429` as «too many simultaneous requests **or**
-     * you reached the limit of your monthly quota» on all five routes the app asks for, and documents
-     * no body at all — so what [rejectionCauseFor] reads is the one answer that was ever measured:
-     * `scripts/seed-type-cache.py --refresh` got `HTTP 429 «Quota exceeded»` out of `/types/{id}` with
-     * Jose's key on 14 August 2026. A body that stops saying it falls back to the six hours below,
-     * which is the reading that costs a day of prices instead of a month of them.
+     * The body is the only thing that tells it from [Throttled] (#600). Numista's OpenAPI 3.36
+     * declares the `429` as «too many simultaneous requests or you reached the limit of your monthly
+     * quota» on every route the app uses, and documents no body; the marker comes from the one
+     * observed answer, `HTTP 429 «Quota exceeded»` from `/types/{id}` to
+     * `scripts/seed-type-cache.py --refresh` on 14 August 2026. A body without it falls back to the
+     * six-hour wall.
      */
     Quota,
 
     /**
-     * `401`, and the `403` with it — the key is being refused, and no amount of waiting is going to
-     * fix a credential.
+     * `401` or `403`: the key is refused, and waiting won't fix it. No clock: the wall falls when the
+     * collector saves «Credenciales», the way out ADR 0028 §6.1 already shows in this state.
      *
-     * The only wall with no clock at all. It falls when the collector saves the field in
-     * «Credenciales», which is the gesture that means «prueba otra vez» — and it is the door ADR 0028
-     * §6.1 already prints in this state, so the way out is on the screen that reports it.
-     *
-     * **The `403` was read as the quota until #600, and the published contract says otherwise.** The
-     * OpenAPI 3.36 declares it on **two** routes and only two — `/types/{type_id}/sales_records` and
-     * `/search_by_image`, both paid — with the text «Your API key is not activated for using this API
-     * endpoint». The app asks for neither, so a `403` over the five routes it does ask for is a
-     * revoked key or Cloudflare turning the phone away, and the 1st of the month fixes neither of
-     * those. It is also the reading `syncErrorLabel` has always given it, one screen away.
+     * A `403` is not the quota (#600). The OpenAPI 3.36 declares it only on two paid routes the app
+     * never calls (`/types/{type_id}/sales_records`, `/search_by_image`: «Your API key is not
+     * activated for using this API endpoint»), so on the app's routes it means a revoked key or
+     * Cloudflare. `syncErrorLabel` reads it the same way.
      */
     Credentials,
 
     /**
-     * `429` without the quota in its body: the throttle saying «ahora no», hours and never a month.
-     *
-     * The doubt of #600 lands here on purpose. Both readings of the status are true — Numista says so
-     * in the same sentence — so the one that is believed without evidence is the short one: a throttle
-     * mistaken for the quota costs a month of prices, and the quota mistaken for a throttle costs six
-     * hours and a single call.
+     * `429` without the quota in its body: a throttle, lasting hours. A bare `429` can mean either,
+     * so the short reading is assumed: a quota taken for a throttle costs one call every six hours,
+     * the reverse would cost a month of prices.
      */
     Throttled,
 
     /**
-     * Five answers in a row that left no row (#560), whatever their statuses.
-     *
-     * Nobody knows what this is, so it is believed for the **shortest** of the three lives: a run of
-     * `5xx` while a shard of theirs restarts must not cost the collector a month of prices.
+     * Five answers in a row that wrote nothing (#560), whatever their statuses. The cause is unknown,
+     * so it gets the shortest clock: a run of `5xx` must not cost a month of prices.
      */
     Unreadable,
 }
 
-/** The three statuses Numista refuses with, read here because two surfaces read them. */
+/** The statuses Numista refuses with. */
 private const val HTTP_UNAUTHORIZED = 401
 private const val HTTP_FORBIDDEN = 403
 private const val HTTP_TOO_MANY_REQUESTS = 429
 
-/** What Numista wrote in the body of the one exhausted month anybody measured (#600). */
+/** What a quota `429` carried in its body, the one time it was observed (#600). */
 private const val QUOTA_MARKER = "quota"
 
 /**
- * What a refused answer means, and therefore which clock it is believed on.
- *
- * One function and not two branches in two files: the valuation pass reads the status to pick the
- * wall's clock and [com.jenarvaezg.coindex.ui.syncErrorLabel] reads it to pick the sentence, and while
- * those were separate the two disagreed about the `403` for seven weeks. Null is «this is not Numista
- * refusing», which is one issue's bad luck to the pass and an unexpected status to the snackbar.
+ * What a refused answer means, and so which clock it is believed on. Shared by the valuation pass
+ * (the wall's clock) and [com.jenarvaezg.coindex.ui.syncErrorLabel] (the sentence) so both read each
+ * status the same way. Null means it isn't Numista refusing.
  */
 fun rejectionCauseFor(status: Int, body: String): RejectionCause? = when (status) {
     HTTP_TOO_MANY_REQUESTS ->
@@ -101,39 +71,25 @@ fun rejectionCauseFor(status: Int, body: String): RejectionCause? = when (status
     else -> null
 }
 
-/**
- * Whether a wall raised at [raisedAtMillis] is still standing at [nowMillis].
- *
- * Kept apart from the file it is stored in so the forgetting can be read and tested as what it is:
- * arithmetic on a timestamp, the same shape [com.jenarvaezg.coindex.data.photos.stillGone] has.
- */
+/** Whether a wall raised at [raisedAtMillis] still stands at [nowMillis]. */
 fun rejectionStands(cause: RejectionCause, raisedAtMillis: Long, nowMillis: Long): Boolean =
     when (cause) {
         RejectionCause.Credentials -> true
-        // The month turning over is the whole condition, and it is asked of the *same* function the
-        // budget gate counts with: not «thirty days since», which would fall mid-month and ask again
-        // into a quota that has not reset.
+        // The quota resets with the calendar month, counted as the budget gate counts it; «thirty
+        // days since» would fall mid-month, into a quota that hasn't reset.
         RejectionCause.Quota -> startOfMonthMillis(nowMillis) <= raisedAtMillis
         RejectionCause.Throttled, RejectionCause.Unreadable ->
             nowMillis - raisedAtMillis in 0 until THROTTLE_WALL_MILLIS
     }
 
 /**
- * The wall the valuation pass stopped against, remembered so it stops costing a call to find (#579).
- *
- * #560 taught the pass to stop against a wall; without this it does not **remember** having stopped,
- * so the next pass rediscovers it by paying for it. That is one call — or five, against a streak —
- * on every launch, every sync, every marked casilla and every notebook export: some 240 to 1.200 a
- * month of an allowance of 1.500, spent to learn what the phone already knew. And each of them is
- * counted by [CallBudgetGate] **before** it is sent, so a `403` over a quota that is gone keeps
- * eating the budget that is still there.
- *
- * It is [com.jenarvaezg.coindex.data.photos.PhotoRetryPolicy]'s `isGone` read over a pass instead of
- * a photograph: some refusals are worth another try in a moment, and some are worth writing down so
- * they stop being asked for.
+ * The refusal the valuation pass stopped against, remembered so that finding it again doesn't cost a
+ * call on every launch, sync, marked casilla and export (#579). [CallBudgetGate] counts those calls
+ * before sending them, so without the wall a refused key keeps eating the local budget. It is
+ * `PhotoRetryPolicy`'s `isGone` applied to a pass.
  */
 interface RejectionWall {
-    /** The refusal still in the way at this moment, or null when there is nothing to stand against. */
+    /** The refusal still standing, or null. */
     fun standing(): RejectionCause?
 
     /** Writes down that Numista refused, and why. A second raise restarts the clock. */
@@ -150,15 +106,9 @@ private const val KEY_CAUSE = "rejection_cause"
 private const val KEY_RAISED_AT = "rejection_raised_at"
 
 /**
- * The wall on the device, because a pass runs on every launch (ADR 0028 §6).
- *
- * Surviving the launch is the whole point: `ValuationLoop.covered` already talks a second pass of one
- * process out of asking, and it is exactly what a cold start loses — so a wall that lived in memory
- * would be forgotten by the one trigger that fires most.
- *
- * Two named values and not one, because they are two different questions — *what* refused and *when*
- * — and the cause is what picks the clock. A cause written by a version this one does not know reads
- * back as no wall at all, which is a downgrade that costs one call rather than a crash.
+ * The wall on the device, so it survives the launch: a pass runs on every launch (ADR 0028 §6), and
+ * a cold start loses `ValuationLoop.covered`. A cause this version doesn't know reads as no wall,
+ * which costs one call rather than a crash.
  */
 class StoredRejectionWall(
     private val values: NamedValues,
@@ -177,8 +127,7 @@ class StoredRejectionWall(
         ),
     )
 
-    // Read before written, so the pass that goes well on a phone that has never been refused does
-    // not open the file to remove two keys that were never in it.
+    // Checked first, so a phone that was never refused doesn't rewrite the file on every pass.
     override fun clear() {
         if (values.read(KEY_CAUSE) == null) return
         values.write(mapOf(KEY_CAUSE to null, KEY_RAISED_AT to null))

@@ -3,27 +3,15 @@ package com.jenarvaezg.coindex.ui.shelf
 import com.jenarvaezg.coindex.domain.GRAMS_PER_TROY_OUNCE
 import com.jenarvaezg.coindex.ui.UNKNOWN_YEAR_LABEL
 
-// Every band in this file is **total**: each has a member for the rows that have no value, so no row
-// of a facet is unreachable. That is not tidiness — a row reachable by no chip of a facet is a row the
-// collector can only find by *not* using that facet, and nothing on screen would say so. The uncached
-// type, the coin nobody weighed and the box of types no ficha has arrived for are exactly the rows
-// worth reaching.
-//
-// Totality is «no row without a chip», and for every band here except the years it also means the
-// per-chip counts add up to the facet's total. The years are the exception since #448: a coin held in
-// three years is counted by three chips, because each of them has to find it. A chip still never
-// counts a row twice, and the facet's total is still the number of *coins*.
+// Every band here is total: each has a member for rows without a value, so every row is reachable
+// by some chip of every facet. For all bands but the years, chip counts also add up to the facet
+// total. Years are the exception (#448): a coin held in three years is counted by three chips, each
+// once, and the facet total still counts coins.
 
 /**
- * The weight of a coin, in the grams Numista records rather than in the ounces a card prints.
- *
- * Grams because this facet is about a *piece* and not about a variant: the collector reading Coins is
- * holding the thing, and «una onza» is the answer the ounce bands of the index already give. `weight`
- * covers every seeded type, so [Unweighed] is empty on a synced phone and fills only
- * between a sync landing and the fichas arriving.
- *
- * The upper bound of each band is inclusive, which is how its label reads: 25 g — the module of the
- * Venezuelan fuertes — belongs to «10 – 25 g» and not to the ounce.
+ * A coin's weight band in grams, as Numista records it (the index's collection facet uses ounces).
+ * [Unweighed] fills only between a sync and its fichas arriving, since every seeded type has a
+ * weight. Upper bounds are inclusive, as the labels read: 25 g is «10 – 25 g».
  */
 enum class GramBand(val label: String, private val upToGrams: Double) {
     UnderTen("Menos de 10 g", 10.0),
@@ -34,7 +22,7 @@ enum class GramBand(val label: String, private val upToGrams: Double) {
     ;
 
     companion object {
-        /** Where a weight in troy ounces falls. Nobody's weight is [Unweighed], never the smallest. */
+        /** The band for a weight in troy ounces; a missing weight is [Unweighed]. */
         fun of(weightOz: Double?): GramBand {
             val grams = weightOz?.takeIf { it.isFinite() && it > 0.0 }
                 ?.let { it * GRAMS_PER_TROY_OUNCE }
@@ -45,17 +33,11 @@ enum class GramBand(val label: String, private val upToGrams: Double) {
 }
 
 /**
- * The year facet of Coins: one year on the coin, or «Sin año».
+ * The Monedas year facet: an exact year, or «Sin año». Exact so that a seat on the notebook's year
+ * axis can open Monedas on that year.
  *
- * Exact years, not eras — the year axis of the notebook is a calendar of seats, and tapping one has
- * to open Monedas on that year, not on a band that swallows decades beside it.
- *
- * [Undated] stays a chip of its own even though **no ficha in the seeded cache needs it any more**.
- * The two that did were the unpublished submissions of #186, and both were medals whose year was in
- * `issue_terms.issue_date` all along, unread until #460. The chip stays because the state it names
- * has not stopped existing: a piece Numista has no issue for, a type still waiting on a referee, a
- * ficha this phone has not managed to fetch. A facet that drops the rows it cannot value is a facet
- * that hides them.
+ * [Undated] stays even when no cached ficha needs it: Numista may have no issue for a piece, a type
+ * may await review, or a ficha may not have been fetched yet.
  */
 sealed interface YearFilter {
     val label: String
@@ -69,30 +51,18 @@ sealed interface YearFilter {
     }
 
     companion object {
-        /**
-         * Every chip one coin answers to: one per year it holds, or «Sin año» (#448).
-         *
-         * A list because a coin is one card however many years of it the collector has, and each of
-         * those years is a chip that has to find it. It is the only reading of [YearFilter] there is:
-         * the row is what is being filtered, and the row has years in the plural.
-         */
+        /** Every chip a coin matches: one per year it holds, or «Sin año» (#448). */
         fun of(years: List<Int>): List<YearFilter> =
             years.map(::Of).ifEmpty { listOf(Undated) }
     }
 }
 
 /**
- * The weight of a *collection*, in the ounces its card prints (ADR 0018).
+ * A collection's weight band, in the ounces its card prints (ADR 0018).
  *
- * [Spanning] is not «unknown»: a set catalog and a collector's box both cover several physical
- * variants on purpose (ADR 0012, ADR 0021 §11), so they have one weight less than the others rather
- * than one weight missing. Giving them a chip of their own is what keeps them reachable from a shelf
- * that would otherwise only ever answer about ounces.
- *
- * Its label says **«Varias onzas»** and not «Conjunto o caja» (#516). Two reasons, and the second is
- * the one that would have made the rename necessary anyway: «caja» was a word of provenance the app
- * says nowhere else (ADR 0021 §2), and the old label answered *which kind of card* while the three
- * beside it answer *how much it weighs* — a chip row where one of the four changes the question.
+ * [Spanning] is a set catalog or a box covering several physical variants on purpose (ADR 0012,
+ * ADR 0021 §11), not an unknown weight. Labelled «Varias onzas» so the chip answers the same
+ * question as its neighbours and doesn't name the kind of collection (#516, ADR 0021 §2).
  */
 enum class OunceBand(val label: String) {
     UnderHalf("Menos de ½ oz"),
@@ -112,12 +82,8 @@ enum class OunceBand(val label: String) {
 }
 
 /**
- * The era a collection starts in, read off the earliest coin the collector owns of it.
- *
- * Deliberately measured and not declared: a catalog's first member year would answer about the
- * curation, and this facet is asked while looking at an index of what is in the house. [Unknown] is
- * a collection whose pieces have no cached ficha yet — one sync away from having a date, and no
- * reason to be unreachable in the meantime.
+ * The era a collection starts in, from the earliest coin the collector owns of it, not the
+ * catalog's first year. [Unknown] means no cached ficha yet.
  */
 enum class StartBand(val label: String, private val upToYear: Int) {
     BeforeFifty("Antes de 1950", 1_949),
