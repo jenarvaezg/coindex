@@ -9528,38 +9528,46 @@
   "weight": 14
  },
  "13046": {
-  "category": "coin",
-  "commemorated_topic": "Capital Europea de la Cultura",
-  "composition": {
-   "text": "Plata 500"
-  },
-  "demonetization": {
-   "is_demonetized": true
-  },
-  "edge": {
-   "description": "Reed",
-   "picture": "https://en.numista.com/catalogue/photos/portugal/687b902fb3cff6.63714528-original.jpg",
-   "picture_copyright": "Renato Lima",
-   "picture_license_name": "CC BY-NC",
-   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es",
-   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/687b902fb3cff6.63714528-180.jpg"
-  },
   "id": 13046,
+  "url": "https://es.numista.com/13046",
+  "title": "500 Escudos (European Culture Capital)",
+  "object_type": {
+   "id": 2,
+   "name": "Monedas circulantes conmemorativas"
+  },
   "issuer": {
    "code": "portugal",
    "name": "Portugal"
   },
-  "max_year": 2001,
   "min_year": 2001,
-  "mints": [
+  "max_year": 2001,
+  "ruler": [
    {
-    "id": 1337,
-    "name": "Imprensa Nacional - Casa da Moeda"
+    "id": 1295,
+    "name": "Tercera República",
+    "wikidata_id": "Q1259200"
    }
   ],
-  "object_type": {
-   "id": 2,
-   "name": "Monedas circulantes conmemorativas"
+  "value": {
+   "text": "500 escudos",
+   "numeric_value": 500,
+   "currency": {
+    "id": 65,
+    "name": "Escudo",
+    "full_name": "Escudo (1911-2001)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": true
+  },
+  "size": 30.1,
+  "thickness": 2.2,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 500"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
   },
   "obverse": {
    "description": "Armas y valor nacionales",
@@ -9570,50 +9578,9 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/portugal/3463-original.jpg",
-   "picture_copyright": "Ulmo",
-   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3463-180.jpg"
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3463-180.jpg",
+   "picture_copyright": "Ulmo"
   },
-  "orientation": "coin",
-  "references": [
-   {
-    "catalogue": {
-     "code": "KM",
-     "id": 3
-    },
-    "number": "733"
-   },
-   {
-    "catalogue": {
-     "code": "Gomes",
-     "id": 108
-    },
-    "number": "R 150.01"
-   }
-  ],
-  "related_types": [
-   {
-    "category": "coin",
-    "country": {
-     "code": "portugal",
-     "name": "Portugal"
-    },
-    "id": 68230,
-    "maxYear": 2001,
-    "minYear": 2001,
-    "title": "500 Escudos (Porto-European Culture Capital, Proof issue)"
-   },
-   {
-    "category": "coin",
-    "country": {
-     "code": "portugal",
-     "name": "Portugal"
-    },
-    "id": 130035,
-    "maxYear": 2001,
-    "minYear": 2001,
-    "title": "500 Escudos (European Culture Capital; Gold)"
-   }
-  ],
   "reverse": {
    "description": "Diseño estilizado",
    "lettering": "2001\r\nPorto\r\nCAPITAL EUROPEIA DA CULTURA",
@@ -9623,36 +9590,69 @@
     }
    ],
    "picture": "https://en.numista.com/catalogue/photos/portugal/3464-original.jpg",
-   "picture_copyright": "Ulmo",
-   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3464-180.jpg"
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/3464-180.jpg",
+   "picture_copyright": "Ulmo"
   },
-  "ruler": [
+  "series": "System 1981-2001",
+  "commemorated_topic": "Capital Europea de la Cultura",
+  "related_types": [
    {
-    "id": 1295,
-    "name": "Tercera República",
-    "wikidata_id": "Q1259200"
+    "id": 68230,
+    "title": "500 Escudos (Porto-European Culture Capital, Proof issue)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
+   },
+   {
+    "id": 130035,
+    "title": "500 Escudos (European Culture Capital; Gold)",
+    "category": "coin",
+    "country": {
+     "code": "portugal",
+     "name": "Portugal"
+    },
+    "minYear": 2001,
+    "maxYear": 2001
    }
   ],
-  "series": "System 1981-2001",
-  "shape": "Circular",
-  "size": 30.1,
-  "technique": {
-   "text": "Acuñación a máquina"
-  },
-  "thickness": 2.2,
-  "title": "500 Escudos (European Culture Capital)",
-  "type": "Monedas circulantes conmemorativas",
-  "url": "https://es.numista.com/13046",
-  "value": {
-   "currency": {
-    "full_name": "Escudo (1911-2001)",
-    "id": 65,
-    "name": "Escudo"
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "733"
    },
-   "numeric_value": 500,
-   "text": "500 escudos"
+   {
+    "catalogue": {
+     "id": 108,
+     "code": "Gomes"
+    },
+    "number": "R 150.01"
+   }
+  ],
+  "weight": 13.96,
+  "orientation": "coin",
+  "edge": {
+   "description": "Reed",
+   "picture": "https://en.numista.com/catalogue/photos/portugal/687b902fb3cff6.63714528-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/portugal/687b902fb3cff6.63714528-180.jpg",
+   "picture_copyright": "Renato Lima",
+   "picture_license_name": "CC BY-NC",
+   "picture_license_url": "https://creativecommons.org/licenses/by-nc/4.0/deed.es"
   },
-  "weight": 13.96
+  "mints": [
+   {
+    "id": 1337,
+    "name": "Imprensa Nacional - Casa da Moeda"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas circulantes conmemorativas"
  },
  "13173": {
   "category": "coin",
@@ -28345,6 +28345,7 @@
    "picture_copyright_url": "https://www.katzauction.com"
   },
   "commemorated_topic": "Centenario de la Biblioteca Parlamentaria de Ottawa",
+  "comments": "(en) <p>Two variants of case - black cases and blue VIP cases</p>",
   "related_types": [
    {
     "id": 98890,
