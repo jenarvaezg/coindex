@@ -107645,8 +107645,8 @@
    }
   ],
   "value": {
-   "text": "2 libras",
-   "numeric_value": 2,
+   "text": "5 libras",
+   "numeric_value": 5,
    "currency": {
     "id": 126,
     "name": "Pound sterling",
