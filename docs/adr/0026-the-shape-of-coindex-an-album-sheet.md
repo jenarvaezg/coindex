@@ -5,7 +5,7 @@
   [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (§4),
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (§8 clause 4), #508 (§3),
   #514 (§3, §4), #516 (§8), #520 (§8 clause 3, §15), #521 (§1, §5 clause 3, §14), #556 (§15),
-  #632 (§3, §13), #634 (§8)
+  #632 (§3, §13), #634 (§8), #635 (§13)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (three top-level hierarchies) and §9 (the card's eyebrow stops being the
   country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018, 0020, 0023
@@ -412,6 +412,10 @@ follows it. This is new mechanism, justified because otherwise the toll stays on
 **Amended by #632 (2026-10-11, with §3): plates, «Lo que busco» and the pieces open this sheet
 too.** A casilla opens it whole and a piece card from its coin, as a Monedas cell does, and the
 sheet's hole is the only one that flips.
+
+**Amended by #635 (2026-10-11): the sheet names every collection that claims the coin**, in index
+order, the one it was opened from included: in ink with «· aquí» and no link, the rest as links.
+Dropping it made a coin only that lámina claims look as if it were in none. The heading counts it.
 
 ### 14. Licence notices: three words at the foot, one screen with everything inside
 
