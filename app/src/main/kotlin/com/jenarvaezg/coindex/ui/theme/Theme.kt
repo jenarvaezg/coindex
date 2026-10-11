@@ -22,7 +22,8 @@ import com.jenarvaezg.coindex.R
 /** The field-guide palette, carried over from the web prototype. */
 object Paper {
     val ink = Color(0xFF2D3029)
-    val muted = Color(0xFF686A5D)
+    /** The only text grey, so it clears 4.5:1 on the deep paper and a mode's wash too (#633). */
+    val muted = Color(0xFF56584C)
     val paper = Color(0xFFEEE8D7)
     val paperDeep = Color(0xFFDDD3BB)
     val line = Color(0xFF7D806C)

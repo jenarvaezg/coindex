@@ -99,10 +99,25 @@ fun PrimaryAction(
         onClick = onClick,
         enabled = enabled,
         shape = RectangleShape,
+        colors = ButtonDefaults.buttonColors(
+            disabledContainerColor = DisabledAction.fill,
+            disabledContentColor = DisabledAction.label,
+        ),
+        border = if (enabled) null else DisabledAction.rule,
         modifier = modifier,
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
+}
+
+/**
+ * A button that can't be pressed yet: the fill and the rule say so, as the export panel's tick box
+ * does (#512), and the label keeps 4.5:1 instead of Material's faded 2:1 (#633).
+ */
+private object DisabledAction {
+    val fill = Paper.paperDeep
+    val label = Paper.muted
+    val rule = BorderStroke(1.dp, Paper.hairline)
 }
 
 /**
@@ -123,7 +138,11 @@ fun CardAction(
         enabled = enabled,
         shape = RectangleShape,
         border = BorderStroke(1.dp, Paper.hairline),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Paper.ink),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = Paper.ink,
+            disabledContainerColor = DisabledAction.fill,
+            disabledContentColor = DisabledAction.label,
+        ),
         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
         modifier = modifier,
     ) {

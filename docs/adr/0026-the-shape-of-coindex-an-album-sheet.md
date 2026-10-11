@@ -225,6 +225,9 @@ notification); `Eyebrow(` and `Facet(` are slots, since a wrapper moves the slot
 **The list only grows.** A literal whose only letters are inside interpolations (`"$label · $it"`)
 is not prose; `"Colecciones · $collections"` is.
 
+**Amended by [#633](https://github.com/jenarvaezg/coindex/issues/633) (2026-10-11).** `Paper.muted`
+is `#56584C`, and its 4.5:1 floor is held on `paperDeep` and the mode wash as well as the paper.
+
 ### 7. The name of a coin is two strings, and it is derived, not curated
 
 A coin's name is **the denomination and the theme**
