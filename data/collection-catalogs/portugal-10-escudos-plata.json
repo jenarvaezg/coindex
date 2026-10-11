@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "portugal-10-escudos-plata",
+  "name": "10 escudos de plata · Portugal 1928-1960 · conmemorativos circulantes",
+  "short_name": "10 escudos de plata",
+  "issuer_code": "portugal",
+  "family": "10 escudos conmemorativos de plata de Portugal",
+  "weight_millioz": 402,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "El 10 escudos no volvió a ser conmemorativo de plata después de 1960: el siguiente, el Consejo de Europa de 1987, es de latón de níquel, y el escudo desapareció con el euro el 1 de enero de 2002.",
+  "source": "https://en.numista.com/catalogue/pieces11156.html",
+  "source_note": "Ninguna serie de Numista propone esta lista: las dos fichas cuelgan de la familia técnica «System 1927-1968». El catálogo de conmemorativas de la Imprensa Nacional-Casa da Moeda («Moedas comemorativas portuguesas de 1910 à actualidade», 2009, https://museucasadamoeda.pt/storage/previousExhibit/file/5.pdf) da dos 10$00 de plata: el 8.º centenario de la batalla de Ourique (decreto de 1928) y el 5.º centenario de la muerte del Infante D. Henrique (decreto de 1959). Las conmemorativas circulantes de 10 escudos que cataloga Numista (catalogue/index.php?cat=y&st=2&e=portugal&v=10, medido el 11 de octubre de 2026) son esas dos y el Consejo de Europa de 1987. Las dos pesan 12,5 g y miden 30 mm; la ley baja de .835 a .680. Se imprime el anverso de Numista, que en el 1960 es el busto del Infante; en el 1928 es el escudo coronado con el valor, y la batalla queda en el reverso.",
+  "printed_side": "obverse",
+  "updated_at": "2026-10-11",
+  "members": [
+    {
+      "id": "1928-batalla-de-ourique",
+      "label": "Batalla de Ourique",
+      "year": 1928,
+      "numista_type_id": 11156
+    },
+    {
+      "id": "1960-infante-d-henrique",
+      "label": "Infante D. Henrique",
+      "year": 1960,
+      "numista_type_id": 11160
+    }
+  ]
+}

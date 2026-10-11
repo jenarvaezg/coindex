@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "portugal-1960-infante-d-henrique",
+  "name": "Serie Infante D. Henrique 1960 · Portugal · 5, 10 y 20 escudos de plata",
+  "short_name": "Serie Infante D. Henrique 1960",
+  "issuer_code": "portugal",
+  "year": 1960,
+  "source": "https://museucasadamoeda.pt/storage/previousExhibit/file/5.pdf",
+  "source_note": "El catálogo de conmemorativas de la Imprensa Nacional-Casa da Moeda («Moedas comemorativas portuguesas de 1910 à actualidade», 2009) da una sola entrada para el 5.º centenario de la muerte del Infante D. Henrique (1460): decreto de 1959, «5$00 - 10$00 - 20$00», plata, grabador Marcelino Norte de Almeida. Las monedas llevan fecha de 1960. Numista no las agrupa: las tres fichas cuelgan de la familia técnica «System 1927-1968».",
+  "updated_at": "2026-10-11",
+  "members": [
+    {
+      "label": "5 escudos",
+      "numista_type_id": 11159
+    },
+    {
+      "label": "10 escudos",
+      "numista_type_id": 11160
+    },
+    {
+      "label": "20 escudos",
+      "numista_type_id": 11161
+    }
+  ]
+}
