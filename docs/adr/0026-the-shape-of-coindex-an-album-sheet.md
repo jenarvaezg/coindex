@@ -5,7 +5,7 @@
   [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (§4),
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (§8 clause 4), #508 (§3),
   #514 (§3, §4), #516 (§8), #520 (§8 clause 3, §15), #521 (§1, §5 clause 3, §14), #556 (§15),
-  #632 (§3, §13), #634 (§8), #635 (§13)
+  #632 (§3, §13), #634 (§8), #635 (§13), #643 (§3, §13)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (three top-level hierarchies) and §9 (the card's eyebrow stops being the
   country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018, 0020, 0023
@@ -146,6 +146,15 @@ landing on the first of twelve would be a lie. The cards that do not fly carry n
   sheet. «Quitar» sits outside its casilla, and a piece card's buttons below the coin, so a missed
   tap can neither unmark, take a coin out of a box nor spend a consulta. The tag stays sunken in
   its 48 dp frame, so no spacing moves, and takes no tap.
+- **Amended by #643 (2026-10-11): the sheet is a screen, and its coin is 300 dp.** The ficha is a
+  destination of its own, opened from the same places, and «atrás» returns to where it was opened.
+  The #370 journey lands on the 300 dp hole, now a shared element between two destinations; a
+  casilla still flies nothing into it. The flip keeps its 420 ms, and a line under the coin names
+  the face that is up. **One movement is new: the compact bar** (back, the coin at 40 dp, the title
+  and the value) slides in once the title has scrolled off. Cause: scrolling; datum: which coin this
+  is, once its head is gone. It stays in the app. Neither the 300 dp hole nor the bar has been
+  through the bench of §15: both are approved in HTML (`prototipo/ficha-637`, variant E) and checked
+  on the AVD in `docs/ux/implementacion-643/`.
 
 ### 4. The export rule: what is still travels to paper, what is alive does not
 
@@ -416,6 +425,17 @@ sheet's hole is the only one that flips.
 **Amended by #635 (2026-10-11): the sheet names every collection that claims the coin**, in index
 order, the one it was opened from included: in ink with «· aquí» and no link, the rest as links.
 Dropping it made a coin only that lámina claims look as if it were in none. The heading counts it.
+
+**Amended by #643 (2026-10-11): the sheet becomes a screen**, variant E of #637. Top to bottom: back
+with the name of where it was opened; the coin, starting on the casilla's `printed_side`; its edge
+in profile, drawn from `edge.description` and to scale when the ficha has `thickness` («grosor sin
+dato» and a dashed rule when not); title, identity and value; folded sections, closed on entry, each
+saying its summary; and the foot with the ficha's age, the refresh and «Ver en Numista ↗». Each
+piece prints its three prices with the greatest marked and every empty rung saying why; a hole
+prints its two. The coin's figure stays the sum of the greatest, and no total by source is printed
+(ADR 0028 §7). The new fields are read from the stored bodies when the screen opens, at no consulta.
+Left out: Numista's price in every grade, and the catalog's `variant_note`, which is written for the
+curator.
 
 ### 14. Licence notices: three words at the foot, one screen with everything inside
 
