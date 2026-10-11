@@ -18,40 +18,39 @@ import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.CoinName
-import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * One piece of the collection as the collector recorded it: the coin in its hole, its title, the
- * year (or the emission where the year names nothing) and the quantity. The coin is one face that
- * turns over at a tap (#423); which face rests up comes from [coinAlbumFaces], since a box or a
- * collection without an issue list has no `printed_side`.
- *
- * An inventory row, never «me falta». [extra] holds what the hosting screen adds, such as a
- * selection control. [ficha] shows the age of the cached data and lets the collector refetch it
- * (#185).
+ * One piece as the collector recorded it, whose coin opens its sheet. The buttons, [extra]'s
+ * included, sit below it, so a missed tap can't take it out of a box or spend a consulta
+ * (ADR 0026 §3).
  */
 @Composable
 fun PieceCard(
     piece: DrawnPiece,
     name: CoinName,
     images: TypeImages?,
-    /** Opens this type's Numista page, by the app's single rule for it (#508). */
-    onOpenNumista: (typeId: Int) -> Unit,
+    /** Opens this coin's sheet (ADR 0026 §3). */
+    onOpenCoin: (typeId: Int) -> Unit,
+    /** The ficha's age and its refresh (#185). */
     ficha: FichaRefresh,
     modifier: Modifier = Modifier,
     extra: @Composable ColumnScope.() -> Unit = {},
 ) {
     FieldCard(modifier = modifier.fillMaxWidth()) {
-        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            val (face, otherSide) = coinAlbumFaces(images)
-            // The same 104 dp hole as a casilla and the Monedas ficha (#370).
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(PIECE_GAP),
+            modifier = Modifier
+                .fillMaxWidth()
+                .opensTheCoinSheet { onOpenCoin(piece.item.typeId) },
+        ) {
+            // The same 104 dp hole as a casilla and the Monedas ficha (#370). A box or a
+            // collection without an issue list has no `printed_side`.
             AlbumHole(
-                photo = face,
-                otherSide = otherSide,
-                modifier = Modifier.size(104.dp),
+                photo = coinAlbumFaces(images).first,
+                modifier = Modifier.size(PIECE_HOLE),
             )
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
@@ -79,14 +78,16 @@ fun PieceCard(
                     color = Paper.muted,
                     modifier = Modifier.padding(top = 4.dp),
                 )
-                extra()
-                ExternalLink(
-                    text = COIN_VIEW_ON_NUMISTA,
-                    onClick = { onOpenNumista(piece.item.typeId) },
-                )
-                // Under the link: the Numista page is where the collector notices it has changed.
-                FichaBrought(ficha, modifier = Modifier.padding(top = 2.dp))
             }
+        }
+        // In the text's column, so the card keeps its two columns.
+        Column(modifier = Modifier.padding(start = PIECE_HOLE + PIECE_GAP)) {
+            extra()
+            FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
         }
     }
 }
+
+private val PIECE_HOLE = 104.dp
+
+private val PIECE_GAP = 14.dp

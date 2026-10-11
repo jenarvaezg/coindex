@@ -1,7 +1,7 @@
 # ADR 0029: A wish is an empty slot marked on the phone
 
 - Status: accepted; §6 amended by [#520](https://github.com/jenarvaezg/coindex/issues/520) (see
-  ADR 0030 §8)
+  ADR 0030 §8); §5 by [#632](https://github.com/jenarvaezg/coindex/issues/632) (see ADR 0026 §3)
 - Date: 2026-08-14
 - Decides [#484](https://github.com/jenarvaezg/coindex/issues/484) and implements
   [#497](https://github.com/jenarvaezg/coindex/issues/497)
@@ -78,6 +78,9 @@ issue), and Ajustes adds «lo que busco · N al mes». No automatic cap (#282). 
 three**: the annex does not print the figure.
 
 `HoleStamp` shows the mark, the amount, or the mark over the amount: one chip per hole (#493).
+
+> Since #632 the whole empty casilla takes the mark, as outside the mode the whole casilla opens the
+> coin's sheet (ADR 0026 §3).
 
 ### 6. On screen: the annex of ADR 0026 §8, entered from Colecciones
 

@@ -25,7 +25,7 @@ private val CELL_WIDTH = 113.dp
 /** The hole the stamp is laid inside; the year's tag hangs off it (#473). */
 private val HOLE = 104.dp
 
-/** Any Numista type: it makes the tag clickable, as on real casillas. */
+/** Any Numista type: it makes the casilla open its sheet, as on real casillas. */
 private const val A_TYPE = 10338
 
 private const val VALUE_LINE = "Valor actual: 1.612 € · al mayor de tres precios"
@@ -55,7 +55,9 @@ class PlateMoneyTest {
 
         val cell = compose.onNodeWithTag("cell-1886", useUnmergedTree = true)
             .fetchSemanticsNode().boundsInRoot
-        val stamp = compose.onNodeWithText(HOLE_COST).fetchSemanticsNode().boundsInRoot
+        // Unmerged: the whole casilla is one merged target (ADR 0026 §3).
+        val stamp = compose.onNodeWithText(HOLE_COST, useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
         val hole = with(compose.density) { HOLE.toPx() }
 
         // Inside the hole on all four sides: a chip wider than the cardboard would hang over the

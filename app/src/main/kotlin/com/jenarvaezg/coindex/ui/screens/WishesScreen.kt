@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -38,6 +39,7 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
+import com.jenarvaezg.coindex.ui.components.opensTheCoinSheet
 import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
@@ -65,7 +67,7 @@ fun WishesScreen(
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
-    /** The coin sheet a row's year opens, the same one its plate opens (#508). */
+    /** The coin sheet a row opens, the same one its plate opens (ADR 0026 §3). */
     sheet: CoinSheetSurface,
     onRemove: (WishKey) -> Unit,
     onMessage: (UiNotice) -> Unit,
@@ -156,53 +158,59 @@ fun WishesScreen(
 private val WISH_MARGIN = 20.dp
 
 /**
- * One marked casilla in the list.
- *
- * No «lo busco» chip: every casilla here is marked, so it would distinguish nothing (ADR 0026 §5);
- * the chip only shows the price. «Quitar» on each row is fine here, unlike per-casilla toggles on a
- * plate (ADR 0029 §5): the list is just the marks, and removing one is its only upkeep, like a
- * box's per-piece action (ADR 0021 §9).
+ * One marked casilla, which opens its coin's sheet as on a plate (ADR 0026 §3). Its chip only shows
+ * the price, since every casilla here is marked (ADR 0026 §5). «Quitar» is the list's only upkeep
+ * (ADR 0029 §5) and sits outside the casilla, so a missed tap can't unmark.
  */
 @Composable
-private fun WishCell(
+internal fun WishCell(
     row: DrawnWish,
     images: TypeImages?,
     onOpenCoin: () -> Unit,
     onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            AlbumHole(
-                photo = images?.printedPhoto(row.printedSide),
-                // Drawn whole, not as a ghost, so the coin can be recognised at a fair; the dotted
-                // rule says it isn't owned (#520).
-                absence = HoleAbsence.Wanted,
-                otherSide = images?.printedPhoto(row.printedSide.other),
-                modifier = Modifier.size(104.dp),
-            )
-            HoleStamp(cost = row.cost, wished = false)
-        }
-        // The year's target height is reserved even without a year, as on the plate (#473).
-        Box(
-            modifier = Modifier.height(YearTagMetrics.target),
-            contentAlignment = Alignment.Center,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .opensTheCoinSheet(onOpenCoin),
         ) {
-            row.year?.let { year ->
-                RecessedYearTag(year = year, onOpen = onOpenCoin)
+            Box(contentAlignment = Alignment.Center) {
+                AlbumHole(
+                    photo = images?.printedPhoto(row.printedSide),
+                    // Drawn whole, not as a ghost, so the coin can be recognised at a fair; the
+                    // dotted rule says it isn't owned (#520).
+                    absence = HoleAbsence.Wanted,
+                    modifier = Modifier.size(104.dp),
+                )
+                HoleStamp(cost = row.cost, wished = false)
             }
+            // The year's height is reserved even without a year, as on the plate (#473).
+            Box(
+                modifier = Modifier.height(YearTagMetrics.frame),
+                contentAlignment = Alignment.Center,
+            ) {
+                row.year?.let { year -> RecessedYearTag(year = year) }
+            }
+            row.printedName?.let { name -> PlateCellName(name = name) }
+            // The lámina this casilla belongs to, since the list crosses plates.
+            Text(
+                row.plate,
+                style = MaterialTheme.typography.labelMedium,
+                color = Paper.muted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-        row.printedName?.let { name -> PlateCellName(name = name) }
-        // The lámina this casilla belongs to, since the list crosses plates.
-        Text(
-            row.plate,
-            style = MaterialTheme.typography.labelMedium,
-            color = Paper.muted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+        CardAction(
+            text = WishLabels.REMOVE_ACTION,
+            onClick = onRemove,
+            modifier = Modifier.padding(top = 8.dp),
         )
-        CardAction(text = WishLabels.REMOVE_ACTION, onClick = onRemove)
     }
 }

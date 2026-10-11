@@ -4,7 +4,8 @@
   #342 (§6), #351 (§15), #357 (§15), #370 (§3, §13), #371 (§4), #381 (§3), #473 (§3), #281 (§8),
   [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (§4),
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (§8 clause 4), #508 (§3),
-  #514 (§3, §4), #516 (§8), #520 (§8 clause 3, §15), #521 (§1, §5 clause 3, §14), #556 (§15)
+  #514 (§3, §4), #516 (§8), #520 (§8 clause 3, §15), #521 (§1, §5 clause 3, §14), #556 (§15),
+  #632 (§3, §13)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (three top-level hierarchies) and §9 (the card's eyebrow stops being the
   country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018, 0020, 0023
@@ -72,7 +73,7 @@ movements are approved:
 
 | movement | cause | datum | to paper? |
 | --- | --- | --- | --- |
-| **the flip** — `rotationY` + `cameraDistance`, 420 ms; the cardboard stays still | tapping the hole | the other face | no · the PNG comes out on `printed_side` |
+| **the flip** — `rotationY` + `cameraDistance`, 420 ms; the cardboard stays still | tapping the hole of the coin's sheet (#632) | the other face | no · the PNG comes out on `printed_side` |
 | **the gloss** — a black→transparent→white gradient at 105° in `BlendMode.Softlight`, moved by the accelerometer | tilting the phone | it is metal | **no** |
 | **the stamping** — the ink falls on the ratio when a complete sheet is opened | opening the sheet | it is complete | the stamp yes, the stamping no |
 | **the journey** — the coin flies from the card to **its** slot, `SharedTransitionLayout` | navigating | it is the same coin | no |
@@ -83,6 +84,7 @@ The gloss fails (a) and earns its place on (b): it is the one thing saying the c
 **two targets**: the hole flips, and the year tag opens the coin (#508 below). The tag is
 **sunken**, 48.3 × 28 dp, the one candidate whose drawing reaches Android's 48 dp. The resting face
 is `printed_side` (ADR 0020), as on paper; the flip is momentary and the PNG is never mixed.
+*Superseded by #632 below: a casilla has one target, and the flip lives in the coin's sheet.*
 
 **The gloss** (#303, `docs/ux/brillo-303.md`) tilts the surface rather than lighting it. No AGSL
 (`BlendMode` is API 29) and no metal tint (ADR 0018 puts metal in the variant key, so plates are
@@ -132,6 +134,18 @@ landing on the first of twelve would be a lie. The cards that do not fly carry n
   entrance, `rememberInkFall` finds the ink dry, and the sensor is not registered
   (`CoinTilt.Still`). The casilla flip (#337) and the return fade (#381) are left to Compose: their
   leaked frame shows the previous state. `docs/ux/implementacion-514/`.
+- **Amended by #632 (2026-10-11): a casilla has one target, the coin's sheet, and the flip moves
+  inside it.** The year tag was a tenth of a 113 × 200 dp casilla, and the father, tapping the name
+  as when it linked to Numista, needed three or four tries; in Monedas the whole cell already opened
+  the sheet. Now the whole casilla (hole, tag, name and the paper between them) opens the sheet on
+  every plate, shelf window included, and in «Lo que busco»; so does the card of a piece in
+  `Pieces` and boxes, which opened nothing and leaves «Ver en Numista ↗» to the sheet. The flip
+  keeps its 420 ms and its cause, a tap on a hole, but only the sheet's hole flips. Unchanged: in
+  the marking mode (ADR 0029 §5) a markable casilla marks and opens nothing, an announced member
+  opens nothing, and the journey still lands on the casilla's hole, with no coin flying into the
+  sheet. «Quitar» sits outside its casilla, and a piece card's buttons below the coin, so a missed
+  tap can neither unmark, take a coin out of a box nor spend a consulta. The tag stays sunken in
+  its 48 dp frame, so no spacing moves, and takes no tap.
 
 ### 4. The export rule: what is still travels to paper, what is alive does not
 
@@ -386,6 +400,10 @@ traída hoy` / `hace N meses` line, `Ver en Numista` and the links to its collec
 colección` stays outside **as form** — a hole with no cardboard behind it — and the landing hole
 follows it. This is new mechanism, justified because otherwise the toll stays on every row.
 
+**Amended by #632 (2026-10-11, with §3): plates, «Lo que busco» and the pieces open this sheet
+too.** A casilla opens it whole and a piece card from its coin, as a Monedas cell does, and the
+sheet's hole is the only one that flips.
+
 ### 14. Licence notices: three words at the foot, one screen with everything inside
 
 Three subjects (#323): **Numista** (seeded fichas and downloaded photographs), **software** from
@@ -424,7 +442,7 @@ is written**. Numbers for each amendment below are in its `docs/ux/implementacio
 | gloss intensity and travel | half the video's at 105°, and the travel as **±45 % of the diameter** rather than the prototype's ±55 dp (#338) | the bench |
 | flip duration | 420 ms | the bench |
 | stamping duration | 300 ms | the bench |
-| depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp) |
+| depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp; since #632 the tag takes no tap, and its 48 dp frame stays for the spacing) |
 | the ghost | design at 14 % with a dotted rule, **and never under 72 dp of hole** (#556) | the bench |
 | the wall of the die-cut | one 5 dp sweep on the cardboard: ink at 22 % at the top, white at 85 % at the bottom, nothing at the horizontals (#357) | the bench |
 | **the gesture, the place, the drawing** | — | **the map**: an implementation session never changes form without coming back |

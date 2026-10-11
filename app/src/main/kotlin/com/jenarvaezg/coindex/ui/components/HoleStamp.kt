@@ -19,7 +19,7 @@ import com.jenarvaezg.coindex.ui.theme.Paper
  * A paper chip inside an empty casilla (#493, ADR 0029): the wish mark, the price of the missing
  * coin, or the mark over the price. The header gives the plate's closing cost; the chip tells the
  * holes apart. It covers the 14 % ghost, accepted because the coin's identity is one tap away in
- * the year tag and the price isn't (#500). Never on a full casilla.
+ * its sheet and the price isn't (#500). Never on a full casilla.
  */
 @Composable
 fun HoleStamp(

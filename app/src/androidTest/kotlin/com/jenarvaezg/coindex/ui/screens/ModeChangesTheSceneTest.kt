@@ -29,6 +29,7 @@ import com.jenarvaezg.coindex.ui.plaqueOf
 import com.jenarvaezg.coindex.ui.selectionHintLabel
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +42,9 @@ private val CELL_WIDTH = 113.dp
 private const val A_TYPE = 10_338
 
 private const val A_YEAR = "1886"
+
+/** The name the casilla prints under its year. */
+private const val A_NAME = "Bolívar"
 
 private val A_KEY = WishKey(typeId = A_TYPE, year = 1_886, issueId = null)
 
@@ -86,7 +90,7 @@ class ModeChangesTheSceneTest {
             }
         }
 
-        // One target only: the year's tag stands down too.
+        // One target only: the whole casilla, which opens nothing.
         val targets = compose.onAllNodes(hasClickAction()).fetchSemanticsNodes()
         assertEquals(1, targets.size)
         assertEquals(
@@ -98,7 +102,7 @@ class ModeChangesTheSceneTest {
         assertEquals(A_KEY, marked)
     }
 
-    /** Neither the body (turns the coin over) nor the year (opens its sheet) answers. */
+    /** A full casilla can't be marked, and in the mode it doesn't open its sheet either. */
     @Test
     fun aFullCasillaAnswersNothingWhileTheModeIsOpen() {
         compose.setContent {
@@ -110,9 +114,26 @@ class ModeChangesTheSceneTest {
         assertTrue(compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().isEmpty())
     }
 
-    /** With the mode closed the year opens its coin's sheet again. */
+    /** Marking takes the whole casilla, as opening does outside the mode (ADR 0026 §3). */
     @Test
-    fun closingTheModeGivesTheCasillaItsOwnGesturesBack() {
+    fun theNameOfAnEmptyCasillaMarksItAndOpensNothing() {
+        var marked: WishKey? = null
+        var opened: Int? = null
+        compose.setContent {
+            CoindexTheme {
+                Casilla(picking = true, onMark = { marked = it }, onOpenCoin = { opened = it })
+            }
+        }
+
+        compose.onNodeWithText(A_NAME, useUnmergedTree = true).performClick()
+
+        assertEquals(A_KEY, marked)
+        assertNull(opened)
+    }
+
+    /** With the mode closed the casilla opens its coin's sheet again. */
+    @Test
+    fun closingTheModeLetsTheCasillaOpenItsSheetAgain() {
         var opened: Int? = null
         compose.setContent {
             CoindexTheme {
@@ -120,7 +141,7 @@ class ModeChangesTheSceneTest {
             }
         }
 
-        compose.onNodeWithText(A_YEAR).performClick()
+        compose.onNodeWithText(A_YEAR, useUnmergedTree = true).performClick()
 
         assertEquals(A_TYPE, opened)
     }
@@ -170,22 +191,21 @@ class ModeChangesTheSceneTest {
         PlateCell(
             cell = DrawnCell(
                 id = "casilla",
-                label = "Bolívar",
+                label = A_NAME,
                 numistaTypeId = A_TYPE,
                 footnote = null,
                 year = A_YEAR,
                 owned = !missing,
                 missing = missing,
                 wishKey = A_KEY,
-                // The tag comes from the plaque, not from `year` (#511); without one there is no
-                // year for the mode to take away.
-                plaque = plaqueOf(label = "Bolívar", year = A_YEAR, yearIsCommon = false),
+                // The tag comes from the plaque, not from `year` (#511).
+                plaque = plaqueOf(label = A_NAME, year = A_YEAR, yearIsCommon = false),
             ),
             images = null,
             printedSide = PrintedSide.Reverse,
             travellingFrom = null,
             onOpenCoin = onOpenCoin,
-            onMark = if (picking) onMark else null,
+            onMark = onMark,
             picking = picking,
             modifier = Modifier.width(CELL_WIDTH),
         )
