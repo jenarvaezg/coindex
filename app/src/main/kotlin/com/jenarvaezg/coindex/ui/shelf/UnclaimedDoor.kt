@@ -1,7 +1,7 @@
 package com.jenarvaezg.coindex.ui.shelf
 
 /** The row at the foot of the plate axis that opens Monedas on «Sin colección» (#634). */
-data class UnclaimedDoor(val shelf: CoinsShelf, val coins: Int)
+data class UnclaimedDoor(val shelf: CoinsShelf, val types: Int)
 
 /**
  * Only the index's country travels: its other chips have no counterpart in Monedas. The count is
@@ -10,6 +10,6 @@ data class UnclaimedDoor(val shelf: CoinsShelf, val coins: Int)
  */
 fun unclaimedDoor(rows: List<CoinRow>, index: IndexShelf): UnclaimedDoor? {
     val shelf = CoinsShelf(issuer = index.issuer, membership = Membership.InNone)
-    val coins = shelf.narrow(rows, "").size
-    return if (coins > 0) UnclaimedDoor(shelf, coins) else null
+    val types = shelf.narrow(rows, "").size
+    return if (types > 0) UnclaimedDoor(shelf, types) else null
 }

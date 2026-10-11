@@ -18,11 +18,11 @@ class UnclaimedDoorTest {
         val whole = assertNotNull(unclaimedDoor(rows, IndexShelf()))
         val british = assertNotNull(unclaimedDoor(rows, IndexShelf(issuer = "Reino Unido")))
 
-        assertEquals(2, whole.coins)
-        assertEquals(1, british.coins)
+        assertEquals(2, whole.types)
+        assertEquals(1, british.types)
         for (door in listOf(whole, british)) {
             val chip = coinsFacetCounts(rows, door.shelf, "").membership.of(Membership.InNone)
-            assertEquals(chip, door.coins, "la puerta y el chip discrepan con ${door.shelf}")
+            assertEquals(chip, door.types, "la puerta y el chip discrepan con ${door.shelf}")
         }
     }
 
@@ -38,7 +38,7 @@ class UnclaimedDoorTest {
         val door = assertNotNull(unclaimedDoor(rows, index))
 
         assertEquals(CoinsShelf(issuer = "Reino Unido", membership = Membership.InNone), door.shelf)
-        assertEquals(1, door.coins)
+        assertEquals(1, door.types)
     }
 
     /** ADR 0026 §8 cláusula 3. La onza mexicana la reclama su caja. */

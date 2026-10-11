@@ -115,7 +115,6 @@ import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
 import com.jenarvaezg.coindex.ui.shelf.shelfNarrowing
-import com.jenarvaezg.coindex.ui.shelf.slotYears
 import com.jenarvaezg.coindex.ui.shelf.unclaimedDoor
 import com.jenarvaezg.coindex.ui.shelf.unclaimedDoorLabel
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
@@ -236,8 +235,8 @@ fun IndexScreen(
     // can't make a boxed coin loose.
     val loose = remember(state) { unclaimedFacts(state) }
     val looseShown = remember(loose, shelf, query) { shelf.narrowUnclaimed(loose, query) }
-    // The rows Monedas counts, so the door at the foot says what its chip says (#634).
-    val coins = remember(state) { coinRows(state, slotYears(state)) }
+    // Slot years only feed the year chip and the search, which the door doesn't use (#634).
+    val coins = remember(state) { coinRows(state) }
     val looseDoor = remember(coins, shelf) { unclaimedDoor(coins, shelf) }
     // What survives the shelf, so the country and year axes honour the same chips as the plate
     // axis.
@@ -609,13 +608,9 @@ fun IndexScreen(
 }
 
 /**
- * A row leading to an annex screen: deeper paper, its name with a count, and a forward arrow.
- *
- * An annex is neither a bar cell nor an index collection, so its entrance is a row, not a card
- * (ADR 0026 §8 clause 3, amended by #520). The index has three (marks at the top; loose coins and
- * the shelf window at the foot) and «Explorar» a fourth into «Lo que busco»; all share this
- * composable so they can't drift apart. The loose-coin row crosses to Monedas, not to an annex
- * (#634).
+ * A row on deeper paper with a name, its count and a forward arrow: the entrance to an annex
+ * (ADR 0026 §8 clause 3, amended by #520), and the loose-coin row that crosses to Monedas (#634).
+ * Every such row uses this composable so they can't drift apart.
  *
  * The arrow is drawn because neither typeface has the glyph (#298); it is «Volver»'s chevron,
  * mirrored. [content] (the marked casillas on the index's row) sits inside the tap target.

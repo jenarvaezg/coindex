@@ -30,16 +30,25 @@ plegado nombra los filtros en ese mismo orden.
 El informe de campo (`FieldReportTest`) imprime ahora la puerta con y sin país. Con
 `COINDEX_FIELD_SNAPSHOT=.local/padre` y `COINDEX_FIELD_TYPES` apuntando a las siete fichas que la
 caché sembrada no trae (sacadas de la columna `raw` de `type_meta` de la misma base), da 72
-colecciones, **32 tipos sin colección** y **3 de España**.
+colecciones, 32 tipos sin colección y 3 de España.
 
 Sin esas siete fichas, el informe da 70 colecciones, 34 y 2. Le falta la ficha del 5 € Álvaro de
 Bazán, que se queda sin país, y dos familias (5 francs Semeuse y Semiquincentennial) que en el móvil
-sí derivan su tarjeta.
+sí derivan su tarjeta. Las fichas se sacan de la base sin gastar cuota:
+
+    mkdir -p /private/tmp/coindex-privado/padre-types && python3 - <<'EOF'
+    import json, sqlite3
+    cache = json.load(open('data/numista-type-cache.json'))
+    db = sqlite3.connect('file:.local/padre/coindex.db?mode=ro', uri=True)
+    for type_id, raw in db.execute('select typeId, raw from type_meta'):
+        if str(type_id) not in cache:
+            open(f'/private/tmp/coindex-privado/padre-types/type_{type_id}_es.json', 'w').write(raw)
+    EOF
 
 ## Lo que no se vio
 
-- **Un país que sólo tiene monedas sueltas.** El chip de país de Colecciones sólo ofrece países con
+- Un país que sólo tiene monedas sueltas. El chip de país de Colecciones sólo ofrece países con
   alguna tarjeta, así que la puerta acotada llega a 8 de los 21 países con sueltas del padre. Los
   otros 13 (Andorra, Colombia, «Imperio romano»…) se alcanzan con la puerta sin filtro.
-- **La cuota**: ninguna llamada llegó a Numista. El `api_call_log` del AVD anotó tres intentos
+- La cuota: ninguna llamada llegó a Numista. El `api_call_log` del AVD anotó tres intentos
   (`/oauth_token` y `/types/11156/issues`), con el modo avión puesto y una clave falsa.

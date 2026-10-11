@@ -242,12 +242,16 @@ fun indexTally(shown: Int, total: Int): String = tally(shown, total, "colección
 
 fun coinsTally(shown: Int, total: Int): String = tally(shown, total, COIN_ONE, COIN_MANY)
 
-/** The foot of the plate axis (#634), in [coinsTally]'s noun. The arrow is drawn (#298). */
+/**
+ * The foot of the plate axis (#634), in [coinsTally]'s noun and the chip's words. The arrow is
+ * drawn (#298).
+ */
 fun unclaimedDoorLabel(door: UnclaimedDoor): String {
     val country = door.shelf.issuer?.let { " de $it" }.orEmpty()
-    return "Y ${plural(door.coins, COIN_ONE, COIN_MANY)}$country sin colección"
+    val chip = Membership.InNone.label.lowercase()
+    return "Y ${plural(door.types, COIN_ONE, COIN_MANY)}$country $chip"
 }
 
-// Monedas counts types, not pieces (#516).
+// The grain Monedas counts in (#516).
 private const val COIN_ONE = "tipo"
 private const val COIN_MANY = "tipos"
