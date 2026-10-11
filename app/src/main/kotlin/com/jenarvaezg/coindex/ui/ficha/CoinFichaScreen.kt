@@ -80,7 +80,9 @@ fun CoinFichaScreen(
     modifier: Modifier = Modifier,
 ) {
     val scroll = rememberScrollState()
-    var headBottom by remember { mutableIntStateOf(Int.MAX_VALUE) }
+    // Where the title ends, in the scrolled column: the head's top plus the title's bottom in it.
+    var headTop by remember { mutableIntStateOf(Int.MAX_VALUE / 2) }
+    var titleBottom by remember { mutableIntStateOf(0) }
     var lightbox by remember { mutableStateOf<Lightbox?>(null) }
     val faces = remember(images[subject.typeId], side) { heroFaces(images[subject.typeId], side) }
 
@@ -92,8 +94,9 @@ fun CoinFichaScreen(
             Hero(subject, faces)
             Head(
                 subject = subject,
+                onTitlePlaced = { titleBottom = it },
                 modifier = Modifier.onGloballyPositioned { head ->
-                    headBottom = (head.positionInParent().y + head.size.height).toInt()
+                    headTop = head.positionInParent().y.toInt()
                 },
             )
             Folds(
@@ -106,7 +109,7 @@ fun CoinFichaScreen(
             Foot(ficha, onOpenNumista)
         }
         CompactBar(
-            visible = scroll.value > headBottom,
+            visible = scroll.value > headTop + titleBottom,
             subject = subject,
             photo = faces.up,
             onBack = onBack,
@@ -180,8 +183,13 @@ private fun Hero(subject: CoinFichaSubject, faces: HeroFaces) {
     }
 }
 
+/** [onTitlePlaced] is told where the title ends inside the head, for the compact bar. */
 @Composable
-private fun Head(subject: CoinFichaSubject, modifier: Modifier = Modifier) {
+private fun Head(
+    subject: CoinFichaSubject,
+    onTitlePlaced: (bottom: Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -191,6 +199,9 @@ private fun Head(subject: CoinFichaSubject, modifier: Modifier = Modifier) {
             subject.title,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
+            modifier = Modifier.onGloballyPositioned { title ->
+                onTitlePlaced((title.positionInParent().y + title.size.height).toInt())
+            },
         )
         Text(
             subject.identity,

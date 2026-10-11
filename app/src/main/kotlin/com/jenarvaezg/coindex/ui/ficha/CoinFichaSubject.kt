@@ -539,9 +539,8 @@ private fun facesSection(details: FichaDetails): FacesSection? {
         },
     )
     if (faces.isEmpty()) return null
-    val first = faces.firstNotNullOfOrNull { it.lettering } ?: faces.firstNotNullOf {
-        it.description ?: it.unabridgedLegend
-    }
+    val first = faces.firstNotNullOfOrNull { it.lettering }?.let(::flatLegend)
+        ?: faces.firstNotNullOf { it.description ?: it.unabridgedLegend }
     return FacesSection(FichaPageLabels.FACES, oneLine(first, FACES_SUMMARY_CHARACTERS), faces)
 }
 

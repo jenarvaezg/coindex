@@ -121,7 +121,11 @@ class ModeChangesTheSceneTest {
         var opened: Int? = null
         compose.setContent {
             CoindexTheme {
-                Casilla(picking = true, onMark = { marked = it }, onOpenCoin = { opened = it })
+                Casilla(
+                    picking = true,
+                    onMark = { marked = it },
+                    onOpenCoin = { opened = it.typeId },
+                )
             }
         }
 
@@ -137,7 +141,7 @@ class ModeChangesTheSceneTest {
         var opened: Int? = null
         compose.setContent {
             CoindexTheme {
-                Casilla(picking = false, missing = false, onOpenCoin = { opened = it })
+                Casilla(picking = false, missing = false, onOpenCoin = { opened = it.typeId })
             }
         }
 
@@ -186,7 +190,7 @@ class ModeChangesTheSceneTest {
         picking: Boolean,
         missing: Boolean = true,
         onMark: (WishKey) -> Unit = {},
-        onOpenCoin: (Int) -> Unit = {},
+        onOpenCoin: (CasillaTap.Open) -> Unit = {},
     ) {
         PlateCell(
             cell = DrawnCell(

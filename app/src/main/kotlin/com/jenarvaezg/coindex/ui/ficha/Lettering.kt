@@ -21,13 +21,13 @@ import androidx.compose.ui.unit.sp
 data class LetteringRun(val text: String, val turned: Boolean = false)
 
 /**
- * Splits a legend around Unicode's turned digits (`↊`, `↋`), which neither Bitter nor Barlow has:
- * each becomes its digit, drawn turned over (#643).
+ * Splits a legend around Unicode's turned digits (`↊`, `↋`), which no font on the phone has: each
+ * becomes its digit, drawn turned over (#643). A glyph no font has is first written as its nearest.
  */
 fun letteringRuns(text: String): List<LetteringRun> {
     val runs = mutableListOf<LetteringRun>()
     val plain = StringBuilder()
-    for (char in text) {
+    for (char in printable(text)) {
         val digit = TURNED_DIGITS[char]
         if (digit == null) {
             plain.append(char)
@@ -42,6 +42,21 @@ fun letteringRuns(text: String): List<LetteringRun> {
 }
 
 private val TURNED_DIGITS = mapOf('↊' to "2", '↋' to "3")
+
+/** A legend on one line, as a section's summary prints it: its turned digits upright. */
+fun flatLegend(text: String): String = letteringRuns(text).joinToString("") { it.text }
+
+private fun printable(text: String): String =
+    NEAREST.entries.fold(text) { legend, (missing, nearest) -> legend.replace(missing, nearest) }
+
+/**
+ * Glyphs of the collector's legends that no font on the phone has, measured on the AVD against
+ * Android's system fonts (#643), and the nearest one that it has.
+ */
+private val NEAREST = mapOf(
+    // U+1F7CC HEAVY SIX POINTED BLACK STAR, as U+2736 SIX POINTED BLACK STAR.
+    "\uD83D\uDFCC" to "\u2736",
+)
 
 /** A legend as struck, its turned digits drawn as their digit turned over. */
 @Composable

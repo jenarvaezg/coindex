@@ -13,6 +13,7 @@ object FichaPageLabels {
     const val TURN_HINT = "tócala para darle la vuelta"
     const val EDGE_PHOTO = "Ver la foto del canto"
     const val EDGE_PHOTO_CAPTION = "El canto, en la foto de Numista · toca para cerrar"
+    const val PIECE_PHOTO = "Tu foto de la pieza"
     const val PIECE_PHOTO_CAPTION = "Tu foto en Numista · toca para cerrar"
     const val MISSING = "Te falta"
     const val THIS_CASILLA = "· esta casilla"

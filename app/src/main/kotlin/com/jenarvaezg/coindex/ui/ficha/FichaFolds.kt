@@ -171,7 +171,8 @@ private fun PiecesBody(section: PiecesSection, onPhoto: (CoinPhoto) -> Unit) {
 @Composable
 private fun DateGrid(dates: List<DateTile>, selected: String?, onSelect: (String) -> Unit) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        val tile = (maxWidth - DATE_GAP * (DATES_PER_ROW - 1)) / DATES_PER_ROW
+        // Floored to the whole dp, or rounding pushes the seventh date to the next row.
+        val tile = ((maxWidth - DATE_GAP * (DATES_PER_ROW - 1)) / DATES_PER_ROW).value.toInt().dp
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(DATE_GAP),
             verticalArrangement = Arrangement.spacedBy(DATE_GAP),
@@ -270,7 +271,7 @@ private fun PieceBlock(piece: FichaPiece, onPhoto: (CoinPhoto) -> Unit) {
             piece.photo?.let { photo ->
                 AsyncImage(
                     model = photo.thumbnail ?: photo.picture,
-                    contentDescription = null,
+                    contentDescription = FichaPageLabels.PIECE_PHOTO,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(width = 40.dp, height = 56.dp)
@@ -301,42 +302,44 @@ private fun Ladder(rungs: List<FichaRung>) {
 @Composable
 private fun RungView(rung: FichaRung) {
     Column(verticalArrangement = Arrangement.spacedBy(3.dp), modifier = Modifier.fillMaxWidth()) {
+        // The amount, or why there is none, takes what it needs; the label wraps in the rest.
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                rung.label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (rung.amount == null) Paper.muted else Paper.ink,
-                modifier = Modifier.weight(1f, fill = false),
-            )
-            if (rung.greatest) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                 Text(
-                    FichaPageLabels.GREATEST,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Paper.rust,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .border(1.dp, Paper.rust)
-                        .padding(horizontal = 4.dp, vertical = 1.dp),
+                    rung.label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (rung.amount == null) Paper.muted else Paper.ink,
+                    modifier = Modifier.weight(1f, fill = false),
                 )
-            }
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
-                if (rung.amount != null) {
+                if (rung.greatest) {
                     Text(
-                        rung.amount,
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        ),
-                        color = if (rung.greatest) Paper.rust else Paper.ink,
-                    )
-                } else {
-                    Text(
-                        rung.why.orEmpty(),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Paper.muted,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.padding(start = 12.dp),
+                        FichaPageLabels.GREATEST,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Paper.rust,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .border(1.dp, Paper.rust)
+                            .padding(horizontal = 4.dp, vertical = 1.dp),
                     )
                 }
+            }
+            if (rung.amount != null) {
+                Text(
+                    rung.amount,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    ),
+                    color = if (rung.greatest) Paper.rust else Paper.ink,
+                    modifier = Modifier.padding(start = 12.dp),
+                )
+            } else {
+                Text(
+                    rung.why.orEmpty(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Paper.muted,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.padding(start = 12.dp),
+                )
             }
         }
         RungBar(rung)

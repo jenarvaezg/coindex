@@ -55,7 +55,7 @@ class QuietTravelTest {
     }
 
     @Composable
-    private fun typeCoin(): Modifier = Modifier.travellingTypeCoin(A_TYPE, visible = true)
+    private fun typeCoin(): Modifier = Modifier.travellingTypeCoin(A_TYPE)
 
     @Composable
     private fun catalogCoin(): Modifier = Modifier.travellingCoin(A_CATALOG)
