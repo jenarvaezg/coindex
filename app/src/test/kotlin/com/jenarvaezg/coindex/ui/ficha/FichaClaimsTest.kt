@@ -47,7 +47,7 @@ class FichaClaimsTest {
         )
     }
 
-    /** ADR 0026 §13. A hole is one, even opened from its own lámina. */
+    /** ADR 0026 §13. A hole opened from its lámina is named by the screen, not here (#643). */
     @Test
     fun `a coin no collection claims has no heading`() {
         assertNull(fichaClaimsHeading(fichaClaims(emptyList(), LAMINA.destination)))

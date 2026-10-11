@@ -15,11 +15,12 @@ misma navegación en `main` y en esta rama.
 | ![antes](antes-fuerte.jpg) | ![después](despues-fuerte.jpg) | ![abajo](despues-fuerte-abajo.jpg) |
 
 **Unicorn of Scotland 2 oz (N#127263), hueco de «The Queen's Beasts».** «Te falta», «Te costaría» y
-sus dos peldaños: Numista en `unc` y la plata.
+sus dos peldaños: Numista en `unc` y la plata. Ninguna colección lo reclama por sus piezas (#635), pero
+nombra la lámina desde la que se abrió, con «· aquí» y la lámina en miniatura, su casilla rodeada.
 
-| antes (`main`) | después | «Lo que costaría» |
-| --- | --- | --- |
-| ![antes](antes-hueco.jpg) | ![después](despues-hueco.jpg) | ![coste](despues-hueco-coste.jpg) |
+| antes (`main`) | después | «Lo que costaría» | «En esta colección» |
+| --- | --- | --- | --- |
+| ![antes](antes-hueco.jpg) | ![después](despues-hueco.jpg) | ![coste](despues-hueco-coste.jpg) | ![colección](despues-hueco-coleccion.jpg) |
 
 **Cuatricentenario de Caracas (N#578835), desde Monedas.** «Volver» dice «Tipos», como la celda de la
 barra (#516). Sin cartón, porque no la reclama ninguna colección. La cartela se titula «La medalla».
@@ -81,8 +82,8 @@ El 100 pesetas de Franco, con la estrella ya sustituida:
 - **Importes tapados**: valores, precios, lo pagado, notas privadas y fotos propias llevan una franja
   gris, porque el repo es público. Las capturas sin tapar están en
   `/private/tmp/coindex-privado/ficha-643/`.
-- **El hueco no tiene «En esta colección»**, como la hoja de antes: el #635 decidió que a un hueco no
-  lo reclama ninguna colección, ni la lámina desde la que se abre. La maqueta sí la enseñaba.
+- **La lámina en miniatura dibuja sus huecos enteros** bajo la línea de puntos y no como fantasma,
+  porque a 32 dp quedan por debajo de `GHOST_MIN_DP` (ADR 0026 §15, #556).
 - **«Tipos» y no «Monedas»**: el issue pedía «Monedas», pero la celda que el padre toca dice «Tipos»
   desde el #516.
 - **La cartela y las caras llegan un instante después** que la moneda y las piezas, porque se leen

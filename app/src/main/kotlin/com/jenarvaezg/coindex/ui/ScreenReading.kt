@@ -20,6 +20,7 @@ import com.jenarvaezg.coindex.domain.showcasePlates
 import com.jenarvaezg.coindex.domain.wishedSlots
 import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.ficha.CoinFichaSubject
+import com.jenarvaezg.coindex.ui.ficha.OriginPlate
 import com.jenarvaezg.coindex.ui.ficha.coinFichaSubject
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.shelf.coinRowOf
@@ -277,9 +278,11 @@ data class ScreenReading(
         request = request,
         bodies = bodies,
         here = here,
-        origin = (here as? CardDestination.Plate)
-            ?.let { plate(it.catalogId) as? PlateResult.Available }
-            ?.let { plateSubject(it, nowMillis = pricesArrivedAt) },
+        origin = (here as? CardDestination.Plate)?.let { destination ->
+            (plate(destination.catalogId) as? PlateResult.Available)
+                ?.let { plateSubject(it, nowMillis = pricesArrivedAt) }
+                ?.let { OriginPlate(catalogName(destination.catalogId) ?: it.title, it) }
+        },
         book = book,
         settled = settled,
         nowMillis = pricesArrivedAt,

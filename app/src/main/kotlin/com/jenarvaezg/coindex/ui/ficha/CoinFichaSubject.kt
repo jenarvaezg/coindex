@@ -23,6 +23,7 @@ import com.jenarvaezg.coindex.ui.coinFichaIdentity
 import com.jenarvaezg.coindex.ui.coinValue
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.eurosLabel
+import com.jenarvaezg.coindex.ui.shelf.CoinClaim
 import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 import com.jenarvaezg.coindex.ui.shelf.coinYearsLabel
 import java.time.LocalDate
@@ -53,7 +54,7 @@ const val MANY_ROWS: Int = 3
  * The coin's screen for [request] (#643).
  *
  * @param here the collection it was opened from, named among the claims but not linked (#635).
- * @param origin that collection's plate, drawn in miniature with the casilla marked.
+ * @param origin the plate it was opened from, drawn in miniature with the casilla marked.
  * @param settled whether the market has landed; until then no amount is shown (ADR 0028 §7).
  */
 fun coinFichaSubject(
@@ -61,7 +62,7 @@ fun coinFichaSubject(
     request: CoinFichaRequest,
     bodies: FichaBodies,
     here: CardDestination?,
-    origin: PlateSubject?,
+    origin: OriginPlate?,
     book: PriceBook,
     settled: Boolean,
     nowMillis: Long,
@@ -80,7 +81,10 @@ fun coinFichaSubject(
         HoleIssue(book.listings.issueOf(typeId, missing.year, listOfNotNull(missing.issueId)))
     }
     val hole = holeIssue?.let { holeLadder(typeId, it.issueId, meta, book.spot, book::of) }
-    val claims = fichaClaims(row.claims, here)
+    // No piece claims a hole for any collection (#635), but its lámina holds the casilla (#643).
+    val claims = fichaClaims(row.claims, here).ifEmpty {
+        listOfNotNull(origin?.let { FichaClaim(CoinClaim(it.name, it.destination), here = true) })
+    }
     return CoinFichaSubject(
         typeId = typeId,
         title = row.rawTitle,
@@ -95,13 +99,18 @@ fun coinFichaSubject(
         sections = listOfNotNull(
             hole?.let { costSection(prices.holeRungs(it, holeIssue.issueId)) },
             piecesSection(items, bodies.pieces, casilla, state.emissionLabels, prices),
-            claimsSection(claims, origin, typeId, casilla),
+            claimsSection(claims, origin?.plate, typeId, casilla),
             specSection(meta, details, zone),
             facesSection(details),
             commentsSection(details),
             relatedSection(details),
         ),
     )
+}
+
+/** The plate a coin's screen was opened from: its card name and the plate as drawn. */
+data class OriginPlate(val name: String, val plate: PlateSubject) {
+    val destination: CardDestination get() = CardDestination.Plate(plate.catalogId)
 }
 
 /** «Valor actual», with its origin when the pieces agree on one and its coverage when partial. */

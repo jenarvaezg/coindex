@@ -14,6 +14,10 @@ import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.gramsToOunces
+import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.PlateSubject
+import com.jenarvaezg.coindex.ui.shelf.CoinClaim
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import java.time.LocalDate
@@ -195,6 +199,58 @@ class CoinFichaSubjectTest {
         assertTrue(cost.rungs[0].greatest)
     }
 
+    /**
+     * No collection claims a hole by its pieces (#635), but the lámina it was opened from holds its
+     * casilla: the screen names it and draws it in miniature, the casilla marked (#643).
+     */
+    @Test
+    fun `a hole opened from its lamina names it and draws it with the casilla marked`() {
+        val beasts = CardDestination.Plate("queens-beasts")
+        val subject = coinFichaSubject(
+            state = state(UNICORN, items = emptyList()),
+            request = CoinFichaRequest(
+                typeId = 127_263,
+                casilla = CasillaOrigin(year = 2018, missing = true),
+            ),
+            bodies = bodies(127_263),
+            here = beasts,
+            origin = OriginPlate(name = "The Queen's Beasts", plate = queensBeasts()),
+            book = PriceBook(),
+            settled = true,
+            nowMillis = NOW,
+        )
+
+        val claims = subject.section<ClaimsSection>()
+        assertEquals("En esta colección", claims.title)
+        assertEquals(
+            listOf(FichaClaim(CoinClaim("The Queen's Beasts", beasts), here = true)),
+            claims.claims,
+        )
+        val strip = assertNotNull(claims.strip)
+        assertEquals(listOf(false, true), strip.cells.map { it.here })
+        assertEquals("1/2", strip.count)
+        assertEquals("The Queen's Beasts · 1/2", claims.summary)
+    }
+
+    @Test
+    fun `a hole opened from monedas or the wish list names no collection`() {
+        val subject = coinFichaSubject(
+            state = state(UNICORN, items = emptyList()),
+            request = CoinFichaRequest(
+                typeId = 127_263,
+                casilla = CasillaOrigin(year = 2018, missing = true),
+            ),
+            bodies = bodies(127_263),
+            here = null,
+            origin = null,
+            book = PriceBook(),
+            settled = true,
+            nowMillis = NOW,
+        )
+
+        assertNull(subject.sectionOrNull<ClaimsSection>())
+    }
+
     /** The edge is read, not drawn: Numista's thicknesses can't hold a drawing to scale (#644). */
     @Test
     fun `the edge is text among the faces, with its legend and its photograph`() {
@@ -270,6 +326,25 @@ class CoinFichaSubjectTest {
         settled = settled,
         nowMillis = NOW,
     )
+
+    /** Two casillas, the lion owned and the unicorn empty. */
+    private fun queensBeasts() = PlateSubject(
+        catalogId = "queens-beasts",
+        title = "The Queen's Beasts 2 oz",
+        source = "https://example.org",
+        printedSide = PrintedSide.Reverse,
+        entries = emptyList(),
+        cells = listOf(
+            casilla("lion", 127_000, "2016", missing = false),
+            casilla("unicorn", 127_263, "2018", missing = true),
+        ),
+        ratio = "1/2",
+        complete = false,
+        landingCell = 0,
+    )
+
+    private fun casilla(id: String, typeId: Int, year: String, missing: Boolean) =
+        DrawnCell(id, id, typeId, footnote = null, year, owned = !missing, missing = missing)
 
     private fun request(casilla: CasillaOrigin? = null) =
         CoinFichaRequest(typeId = 10_340, side = PrintedSide.Reverse, casilla = casilla)
