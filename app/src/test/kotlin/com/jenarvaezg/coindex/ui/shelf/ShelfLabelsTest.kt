@@ -52,6 +52,11 @@ class ShelfLabelsTest {
                 CoinsShelf(weight = GramBand.TenToTwentyFive, objectClass = ObjectClass.Coin),
             ),
         )
+        // «Colección» is the first row of the Monedas panel (#634).
+        assertEquals(
+            "2 filtros · Sin colección · España",
+            coinsShelfSummary(CoinsShelf(issuer = "España", membership = Membership.InNone)),
+        )
     }
 
     /** Alone, «Cerrada» is just an adjective and «Monedas» is the name of the screen itself. */
@@ -202,6 +207,19 @@ class ShelfLabelsTest {
         assertEquals("1 colección", indexTally(1, 1))
         assertEquals("191 tipos", coinsTally(191, 191))
         assertEquals("6 de 191 tipos", coinsTally(6, 191))
+    }
+
+    /** In the noun Monedas tallies in (#634), so the number reads the same on landing. */
+    @Test
+    fun `the door to the loose coins counts types, and names the country it carries`() {
+        val loose = CoinsShelf(membership = Membership.InNone)
+
+        assertEquals("Y 32 tipos sin colección", unclaimedDoorLabel(UnclaimedDoor(loose, 32)))
+        assertEquals("Y 1 tipo sin colección", unclaimedDoorLabel(UnclaimedDoor(loose, 1)))
+        assertEquals(
+            "Y 3 tipos de España sin colección",
+            unclaimedDoorLabel(UnclaimedDoor(loose.copy(issuer = "España"), 3)),
+        )
     }
 
     /** Reading the database takes a frame or two; «todavía no hay» in that gap would be false. */

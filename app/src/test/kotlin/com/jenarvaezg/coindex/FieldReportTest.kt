@@ -23,6 +23,11 @@ import com.jenarvaezg.coindex.ui.print.notebookSections
 import com.jenarvaezg.coindex.ui.print.pagesAlone
 import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
+import com.jenarvaezg.coindex.ui.shelf.IndexShelf
+import com.jenarvaezg.coindex.ui.shelf.coinRows
+import com.jenarvaezg.coindex.ui.shelf.slotYears
+import com.jenarvaezg.coindex.ui.shelf.unclaimedDoor
+import com.jenarvaezg.coindex.ui.shelf.unclaimedDoorLabel
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import java.io.File
 import kotlin.test.Test
@@ -82,6 +87,7 @@ class FieldReportTest {
         println(indexReport(collection))
         println(programmesReport(curation, items))
         println(notebookReport(state, curation))
+        println(unclaimedDoorReport(state))
         println(unclassifiedReport(collection.unclassified, typeMeta))
         println(unpublishedReport(items, typeMeta))
     }
@@ -115,6 +121,19 @@ class FieldReportTest {
                     "Ø ${grid.diameterMm} mm | " +
                     "${grid.columns}×${grid.rows} | ${section.title}",
             )
+        }
+    }
+
+    /** The door at the foot of the plate axis (#634), whole and narrowed to each country. */
+    private fun unclaimedDoorReport(state: CollectionState): String = buildString {
+        val rows = coinRows(state, slotYears(state))
+        appendLine()
+        appendLine("== PUERTA AL PIE DE COLECCIONES ==")
+        unclaimedDoor(rows, IndexShelf())?.let { appendLine(unclaimedDoorLabel(it)) }
+        for (country in rows.mapNotNull { it.issuer }.distinct().sorted()) {
+            unclaimedDoor(rows, IndexShelf(issuer = country))?.let {
+                appendLine("· ${unclaimedDoorLabel(it)}")
+            }
         }
     }
 

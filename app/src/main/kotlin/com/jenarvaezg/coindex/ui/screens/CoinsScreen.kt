@@ -228,8 +228,8 @@ fun CoinsScreen(
 }
 
 /**
- * The chip rows, each counted with its own choice dropped. «Colección» goes last because it is
- * about the rest of the app rather than the coin.
+ * The chip rows, each counted with its own choice dropped. «Colección» goes first, above axis and
+ * sort, so «Sin colección» is not below every country and year (#634).
  */
 @Composable
 private fun CoinsFacets(
@@ -240,6 +240,22 @@ private fun CoinsFacets(
 ) {
     val counts = coinsFacetCounts(rows, shelf, query)
 
+    Facet(MEMBERSHIP_FACET) {
+        FilterChip(
+            label = ANY_FILTER,
+            count = null,
+            selected = shelf.membership == null,
+            onClick = { onNarrow(shelf.copy(membership = null)) },
+        )
+        counts.membership.populatedIn(Membership.entries, keep = shelf.membership).forEach { (value, count) ->
+            FilterChip(
+                label = value.label,
+                count = count,
+                selected = shelf.membership == value,
+                onClick = { onNarrow(shelf.copy(membership = value)) },
+            )
+        }
+    }
     Facet(AXIS_FACET) {
         NotebookAxis.entries.forEach { axis ->
             FilterChip(
@@ -323,22 +339,6 @@ private fun CoinsFacets(
                 count = count,
                 selected = shelf.objectClass == value,
                 onClick = { onNarrow(shelf.copy(objectClass = value)) },
-            )
-        }
-    }
-    Facet(MEMBERSHIP_FACET) {
-        FilterChip(
-            label = ANY_FILTER,
-            count = null,
-            selected = shelf.membership == null,
-            onClick = { onNarrow(shelf.copy(membership = null)) },
-        )
-        counts.membership.populatedIn(Membership.entries, keep = shelf.membership).forEach { (value, count) ->
-            FilterChip(
-                label = value.label,
-                count = count,
-                selected = shelf.membership == value,
-                onClick = { onNarrow(shelf.copy(membership = value)) },
             )
         }
     }

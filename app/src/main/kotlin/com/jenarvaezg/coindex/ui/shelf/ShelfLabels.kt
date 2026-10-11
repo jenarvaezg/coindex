@@ -159,12 +159,12 @@ private fun IndexShelf.namedFilters(): List<String> = listOfNotNull(
 
 /** The Monedas chips by name, in [CoinsFacet] order. */
 private fun CoinsShelf.namedFilters(): List<String> = listOfNotNull(
+    membership?.let { named(MEMBERSHIP_FACET, it.label) },
     issuer?.let { named(COUNTRY_FACET, it) },
     weight?.let { named(WEIGHT_FACET, it.label) },
     year?.let { named(YEAR_FACET, it.label) },
     // Always prefixed: «Monedas» alone would read as the screen's name.
     objectClass?.let { "$CLASS_FACET ${objectClassChip(it)}" },
-    membership?.let { named(MEMBERSHIP_FACET, it.label) },
 )
 
 /**
@@ -240,4 +240,14 @@ fun countryAxisFoldAction(hidden: Int, expanded: Boolean): String = if (expanded
 
 fun indexTally(shown: Int, total: Int): String = tally(shown, total, "colección", "colecciones")
 
-fun coinsTally(shown: Int, total: Int): String = tally(shown, total, "tipo", "tipos")
+fun coinsTally(shown: Int, total: Int): String = tally(shown, total, COIN_ONE, COIN_MANY)
+
+/** The foot of the plate axis (#634), in [coinsTally]'s noun. The arrow is drawn (#298). */
+fun unclaimedDoorLabel(door: UnclaimedDoor): String {
+    val country = door.shelf.issuer?.let { " de $it" }.orEmpty()
+    return "Y ${plural(door.coins, COIN_ONE, COIN_MANY)}$country sin colección"
+}
+
+// Monedas counts types, not pieces (#516).
+private const val COIN_ONE = "tipo"
+private const val COIN_MANY = "tipos"
