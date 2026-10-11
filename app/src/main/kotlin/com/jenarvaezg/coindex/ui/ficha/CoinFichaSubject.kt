@@ -6,22 +6,16 @@ import com.jenarvaezg.coindex.data.ficha.FichaDetails
 import com.jenarvaezg.coindex.data.ficha.FichaFace
 import com.jenarvaezg.coindex.data.ficha.PieceReading
 import com.jenarvaezg.coindex.data.ficha.decodeEntities
-import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.domain.CollectedItem
-import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.NUMISTA_GRADES
 import com.jenarvaezg.coindex.domain.ObjectClass
-import com.jenarvaezg.coindex.domain.PieceValue
-import com.jenarvaezg.coindex.domain.PriceLadder
-import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.TypeMeta
-import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.fineSilverGrams
 import com.jenarvaezg.coindex.domain.gramsToOunces
 import com.jenarvaezg.coindex.domain.holeLadder
 import com.jenarvaezg.coindex.domain.objectClassOf
-import com.jenarvaezg.coindex.domain.pieceLadder
+import com.jenarvaezg.coindex.domain.saturatingAdd
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.PlateSubject
@@ -29,21 +23,15 @@ import com.jenarvaezg.coindex.ui.coinFichaIdentity
 import com.jenarvaezg.coindex.ui.coinValue
 import com.jenarvaezg.coindex.ui.coverageLabel
 import com.jenarvaezg.coindex.ui.eurosLabel
-import com.jenarvaezg.coindex.ui.numistaStampLabel
 import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 import com.jenarvaezg.coindex.ui.shelf.coinYearsLabel
-import com.jenarvaezg.coindex.ui.spotStampLabel
 import java.time.LocalDate
 import java.time.ZoneId
 
 /**
- * Everything the coin's screen draws, worded (#643, ADR 0026 §13). Built once per reading and
- * request, like [PlateSubject] for a plate, so the screen only lays it out.
- *
- * @param owned whether the collector holds the type, which decides how its hole is drawn.
- * @param value «Valor actual», the sum of each piece's greatest price; null on a hole and until the
- *   market lands (ADR 0028 §7).
- * @param missing opened from an empty casilla: «Te falta», and [cost] says what filling it costs.
+ * Everything the coin's screen draws, worded (#643, ADR 0026 §13), as [PlateSubject] is for a
+ * plate. [value] is null on a hole and until the market lands (ADR 0028 §7); [missing] is an empty
+ * casilla, whose [cost] the screen prints instead.
  */
 data class CoinFichaSubject(
     val typeId: Int,
@@ -57,130 +45,6 @@ data class CoinFichaSubject(
     val sections: List<FichaSection>,
 )
 
-/** One folded section: closed it says [summary] on one line (#643). */
-sealed interface FichaSection {
-    val title: String
-    val summary: String
-
-    /** Whether it enters open. Only the pieces ever do, from a date run's casilla. */
-    val open: Boolean get() = false
-}
-
-/**
- * The collector's pieces of the coin. With more than [MANY_ROWS] rows they are chosen by date:
- * [dates] is the grid, [selected] the date shown on entry.
- */
-data class PiecesSection(
-    override val title: String,
-    override val summary: String,
-    override val open: Boolean,
-    val pieces: List<FichaPiece>,
-    val dates: List<DateTile>,
-    val selected: String?,
-) : FichaSection
-
-/** What filling the casilla would cost: Numista in `unc` and the metal (ADR 0028 §8). */
-data class CostSection(
-    override val title: String,
-    override val summary: String,
-    val rungs: List<FichaRung>,
-) : FichaSection
-
-/** The collections that claim the coin (#635), and the plate it came from in miniature. */
-data class ClaimsSection(
-    override val title: String,
-    override val summary: String,
-    val claims: List<FichaClaim>,
-    val strip: FichaStrip?,
-) : FichaSection
-
-/** The cartouche: only the rows the ficha has. */
-data class SpecSection(
-    override val title: String,
-    override val summary: String,
-    val rows: List<Pair<String, String>>,
-) : FichaSection
-
-data class FacesSection(
-    override val title: String,
-    override val summary: String,
-    val faces: List<FaceBlock>,
-) : FichaSection
-
-/** Numista's comments, kept as HTML so their links still open the browser. */
-data class CommentsSection(
-    override val title: String,
-    override val summary: String,
-    val html: String,
-) : FichaSection
-
-data class RelatedSection(
-    override val title: String,
-    override val summary: String,
-    val rows: List<RelatedRow>,
-) : FichaSection
-
-/**
- * One collected row. [rungs] is empty until the market lands (ADR 0028 §7).
- *
- * @param dateKey the date tile it falls under.
- * @param here the piece of the casilla the screen was opened from.
- */
-data class FichaPiece(
-    val itemId: Long,
-    val dateKey: String,
-    val heading: String,
-    val grade: String?,
-    val quantity: String?,
-    val here: Boolean,
-    val facts: String?,
-    val rungs: List<FichaRung>,
-    val issueComment: String?,
-    val note: String?,
-    val photo: CoinPhoto?,
-)
-
-/**
- * One price of a piece or a hole, with its whole label and where it comes from; or, empty, why.
- *
- * @param share its length against the greatest rung, for the bar under it.
- */
-data class FichaRung(
-    val label: String,
-    val amount: String?,
-    val why: String?,
-    val source: String?,
-    val greatest: Boolean,
-    val share: Float,
-)
-
-/** One date of the grid, with its grades and how many pieces it holds. */
-data class DateTile(
-    val key: String,
-    val label: String,
-    val grades: String,
-    val quantity: String?,
-    /** Some piece of the date has a note or a photograph. */
-    val noted: Boolean,
-    /** The date of the casilla the screen was opened from. */
-    val casilla: Boolean,
-)
-
-/** The plate the screen was opened from, in miniature, on its own `printed_side`. */
-data class FichaStrip(val cells: List<StripCell>, val count: String?, val side: PrintedSide)
-
-data class StripCell(val typeId: Int?, val missing: Boolean, val here: Boolean)
-
-/** A face or the edge, as Numista writes it. [photo] is the edge's, shown apart on request. */
-data class FaceBlock(
-    val heading: String,
-    val lettering: String?,
-    val unabridgedLegend: String?,
-    val description: String?,
-    val photo: CoinPhoto? = null,
-)
-
-data class RelatedRow(val typeId: Int, val country: String?, val title: String, val years: String?)
 
 /** More rows than this and the pieces are chosen by date (#643). */
 const val MANY_ROWS: Int = 3
@@ -208,7 +72,7 @@ fun coinFichaSubject(
     val meta = state.typeMeta[typeId]
     val details = bodies.details
     val casilla = request.casilla
-    val prices = Prices(typeId, meta, book, settled, nowMillis, zone)
+    val prices = FichaPrices(typeId, meta, book, settled, nowMillis, zone)
     val items = state.items
         .filter { it.typeId == typeId }
         .sortedWith(compareBy(nullsLast()) { item: CollectedItem -> item.recordedYear })
@@ -240,7 +104,7 @@ fun coinFichaSubject(
     )
 }
 
-/** «Valor actual: 1.653 € · al mayor de tres precios», with its coverage when it isn't whole. */
+/** «Valor actual», with its origin when the pieces agree on one and its coverage when partial. */
 private fun coinValueLine(
     state: CollectionState,
     book: PriceBook,
@@ -270,7 +134,7 @@ private fun piecesSection(
     readings: Map<Long, PieceReading>,
     casilla: CasillaOrigin?,
     emissionLabels: Map<Long, String>,
-    prices: Prices,
+    prices: FichaPrices,
 ): PiecesSection? {
     if (items.isEmpty()) return null
     val dated = casilla?.takeIf { it.dated }?.year
@@ -294,7 +158,7 @@ private fun piecesSection(
             photo = reading.pictures.firstOrNull(),
         )
     }
-    val count = items.fold(0) { total, item -> total + item.quantity.coerceAtLeast(1) }
+    val count = pieceCount(items)
     val dates = if (items.size > MANY_ROWS) dateTiles(items, pieces, dated) else emptyList()
     val selected = dates.firstOrNull { it.casilla }?.key ?: dates.firstOrNull()?.key
     val years = items.mapNotNull { it.recordedYear }.distinct().sorted()
@@ -318,6 +182,10 @@ private fun piecesSection(
     )
 }
 
+/** A row of ×N is N pieces. */
+private fun pieceCount(items: List<CollectedItem>): Int =
+    items.fold(0) { total, item -> saturatingAdd(total, item.quantity.coerceAtLeast(1)) }
+
 private fun dateKey(year: Int?): String = year?.toString() ?: NO_DATE
 
 private const val NO_DATE = "—"
@@ -327,7 +195,7 @@ private fun dateTiles(
     pieces: List<FichaPiece>,
     dated: Int?,
 ): List<DateTile> = items.groupBy { dateKey(it.recordedYear) }.map { (key, rows) ->
-    val count = rows.fold(0) { total, item -> total + item.quantity.coerceAtLeast(1) }
+    val count = pieceCount(rows)
     val drawn = pieces.filter { it.dateKey == key }
     DateTile(
         key = key,
@@ -343,107 +211,18 @@ private fun dateTiles(
     )
 }
 
-/** «pagaste 400 € el 3 ago 2026 · tirada de 117.000 · para cambio». */
+/** What the collector recorded about the purchase, the issue's mintage and the swap flag. */
 private fun pieceFacts(item: CollectedItem, reading: PieceReading): String? {
-    val acquired = reading.acquiredOn?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
     val paid = item.price?.takeIf { it > 0.0 }
     return listOfNotNull(
         when {
-            paid != null -> FichaPageLabels.paid(paid, acquired)
-            acquired != null -> FichaPageLabels.arrived(acquired)
+            paid != null -> FichaPageLabels.paid(paid, item.quantity, reading.acquiredOn)
+            reading.acquiredOn != null -> FichaPageLabels.arrived(reading.acquiredOn)
             else -> null
         },
         reading.mintage?.let(FichaPageLabels::mintage),
         FichaPageLabels.FOR_SWAP.takeIf { item.forSwap == true },
     ).takeIf { it.isNotEmpty() }?.joinToString(" · ")
-}
-
-/** The rungs of every ladder on the screen, worded against one price book and one clock. */
-private class Prices(
-    private val typeId: Int,
-    private val meta: TypeMeta?,
-    private val book: PriceBook,
-    private val settled: Boolean,
-    private val nowMillis: Long,
-    private val zone: ZoneId,
-) {
-    fun pieceRungs(item: CollectedItem): List<FichaRung> {
-        if (!settled) return emptyList()
-        val ladder = pieceLadder(item, meta, book.spot, book::of)
-        return rungs(
-            ladder,
-            listOf(
-                marketRung(ladder.market, item.issueId, unknown = FichaPageLabels.NO_ISSUE),
-                Rung(ladder.paid, FichaPageLabels.PAID, FichaPageLabels.NOT_PAID, source = null),
-                silverRung(ladder.silver),
-            ),
-        )
-    }
-
-    fun holeRungs(ladder: PriceLadder, issueId: Int?): List<FichaRung> {
-        if (!settled) return emptyList()
-        // A hole's issue comes from a listing, so an unknown one was never asked about.
-        val market = marketRung(ladder.market, issueId, unknown = FichaPageLabels.NUMISTA_NOT_ASKED)
-        return rungs(ladder, listOf(market, silverRung(ladder.silver)))
-    }
-
-    private fun marketRung(market: PieceValue?, issueId: Int?, unknown: String): Rung {
-        val readAt = issueId?.let { book.readAt(typeId, it) }
-        return Rung(
-            value = market,
-            label = market?.grade
-                ?.let { FichaPageLabels.market(it, market.source == ValueSource.NeighbouringGrade) }
-                ?: FichaPageLabels.MARKET,
-            why = when {
-                issueId == null -> unknown
-                readAt == null -> FichaPageLabels.NUMISTA_NOT_ASKED
-                else -> FichaPageLabels.NUMISTA_HAS_NO_PRICE
-            },
-            source = readAt?.let { numistaStampLabel(it, nowMillis, zone) },
-        )
-    }
-
-    private fun silverRung(silver: PieceValue?): Rung {
-        val fine = fineSilverGrams(meta)
-        val spot = book.spot
-        return Rung(
-            value = silver,
-            label = FichaPageLabels.SILVER,
-            why = when {
-                meta?.metal != Metal.Silver -> FichaPageLabels.NO_SILVER
-                fine == null -> FichaPageLabels.NO_FINE_SILVER
-                else -> FichaPageLabels.NO_SPOT
-            },
-            source = if (fine != null && spot != null) {
-                FichaPageLabels.fineSilverSource(fine, spotStampLabel(spot, nowMillis, zone))
-            } else {
-                null
-            },
-        )
-    }
-
-    private fun rungs(ladder: PriceLadder, rungs: List<Rung>): List<FichaRung> {
-        val greatest = ladder.greatest
-        val top = rungs.mapNotNull { it.value?.eur }.maxOrNull()?.takeIf { it > 0.0 } ?: 1.0
-        return rungs.map { rung ->
-            val value = rung.value
-            FichaRung(
-                label = rung.label,
-                amount = value?.let { eurosLabel(it.eur) },
-                why = rung.why.takeIf { value == null },
-                source = rung.source.takeIf { value != null },
-                greatest = value != null && value == greatest,
-                share = ((value?.eur ?: 0.0) / top).toFloat(),
-            )
-        }
-    }
-
-    private class Rung(
-        val value: PieceValue?,
-        val label: String,
-        val why: String,
-        val source: String?,
-    )
 }
 
 private fun claimsSection(
@@ -515,10 +294,8 @@ private fun specSection(meta: TypeMeta?, details: FichaDetails, zone: ZoneId): S
 private fun List<String>.joinedOrNull(): String? = takeIf { it.isNotEmpty() }?.joinToString(", ")
 
 /** Silence is not «still money» (#221): no row when Numista doesn't say. */
-private fun legalTender(demonetized: Boolean?, on: String?): String? = when (demonetized) {
-    true -> on?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
-        ?.let(FichaPageLabels::demonetizedOn)
-        ?: FichaPageLabels.DEMONETIZED
+private fun legalTender(demonetized: Boolean?, on: LocalDate?): String? = when (demonetized) {
+    true -> on?.let(FichaPageLabels::demonetizedOn) ?: FichaPageLabels.DEMONETIZED
     false -> FichaPageLabels.STILL_MONEY
     null -> null
 }

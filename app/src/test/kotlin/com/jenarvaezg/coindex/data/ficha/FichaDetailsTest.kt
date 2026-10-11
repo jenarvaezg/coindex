@@ -3,6 +3,7 @@ package com.jenarvaezg.coindex.data.ficha
 import com.jenarvaezg.coindex.data.TypeCacheFile
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -53,7 +54,7 @@ class FichaDetailsTest {
 
     @Test
     fun `a demonetized coin keeps the date Numista gives`() {
-        assertEquals("2011-12-31", readFichaDetails(seeded(10_340)).demonetizedOn)
+        assertEquals(LocalDate.of(2011, 12, 31), readFichaDetails(seeded(10_340)).demonetizedOn)
         assertNull(readFichaDetails(seeded(127_263)).demonetizedOn)
     }
 

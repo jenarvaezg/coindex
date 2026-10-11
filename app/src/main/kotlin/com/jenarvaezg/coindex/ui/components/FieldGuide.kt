@@ -290,7 +290,7 @@ fun ShareGlyph(color: Color, modifier: Modifier = Modifier) {
  * [PathEffect.dashPathEffect]; inset by half the stroke so the dashes land inside the card
  * instead of straddling its edge.
  */
-private fun Modifier.dashedBorder(color: Color, width: Dp): Modifier = drawBehind {
+internal fun Modifier.dashedBorder(color: Color, width: Dp): Modifier = drawBehind {
     val stroke = width.toPx()
     val inset = stroke / 2
     drawRect(

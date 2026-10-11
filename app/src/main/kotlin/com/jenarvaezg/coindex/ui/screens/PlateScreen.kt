@@ -86,7 +86,7 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
  * The plate of a collection against its curated catalog.
  *
  * Owned members are in full colour; missing ones show the catalog design as a faint ghost inside a
- * dotted die-cut rule. A casilla opens that coin's sheet in the app (ADR 0026 §3), and the sheet
+ * dotted die-cut rule. A casilla opens that coin's screen in the app (ADR 0026 §3), and the screen
  * links out to Numista.
  *
  * The plate is worded once here as a [PlateSubject] and handed to both the grid and the exported
@@ -417,7 +417,7 @@ private fun PlateSheet(
                     travellingFrom = plate.catalogId.takeIf { index == plate.landingCell },
                     onOpenCoin = onOpenCoin,
                     // While the mode is open, tapping an empty casilla marks it instead of opening
-                    // its sheet (ADR 0029 §5).
+                    // its screen (ADR 0029 §5).
                     onMark = marking.onToggle,
                     picking = picking,
                 )
@@ -524,7 +524,7 @@ internal fun plateOpeningItem(landingCell: Int?, columns: Int): Int =
 
 /**
  * One casilla, top to bottom: the hole, the year sunk into the cardboard, and the name (#473). The
- * whole casilla is one target: its coin's sheet, or its mark in the marking mode (ADR 0026 §3).
+ * whole casilla is one target: its coin's screen, or its mark in the marking mode (ADR 0026 §3).
  *
  * Every tag sits [PlateSpacing.underTheHole] below its hole, so a row shares a baseline without
  * measuring anything; the name comes last, so its unused height falls at the foot of the casilla
@@ -538,7 +538,7 @@ internal fun PlateCell(
     printedSide: PrintedSide,
     /** The catalog whose index card flies its coin to this casilla; null for all others. */
     travellingFrom: String?,
-    /** Opens this coin's sheet, where the coin turns over (ADR 0026 §3). */
+    /** Opens this coin's screen, where the coin turns over (ADR 0026 §3). */
     onOpenCoin: (CasillaTap.Open) -> Unit,
     /** Toggles this casilla's mark while the marking mode is open (ADR 0029 §5). */
     onMark: (WishKey) -> Unit = {},

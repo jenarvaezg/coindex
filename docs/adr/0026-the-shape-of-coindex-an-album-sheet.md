@@ -430,8 +430,10 @@ Dropping it made a coin only that lámina claims look as if it were in none. The
 with the name of where it was opened; the coin, starting on the casilla's `printed_side`; title,
 identity and value; folded sections, closed on entry, each saying its summary; and the foot with
 the ficha's age, the refresh and «Ver en Numista ↗». Each piece prints its three prices with the
-greatest marked and every empty rung saying why; a hole prints its two. The coin's figure stays the
-sum of the greatest, and no total by source is printed (ADR 0028 §7). The edge is text among the
+greatest marked and every empty rung saying why; a hole prints its two. Those labels are printed
+per piece, against §5 clause 2, because a section shows at most three rows or one date's pieces, and
+only once the collector opens it. The coin's figure stays the sum of the greatest, and no total by
+source is printed (ADR 0028 §7). The edge is text among the
 faces, its photograph opened apart, and the thickness a row of the specification when the ficha has
 one. Neither is drawn: the mints never publish a thickness and Numista's are unsourced (#644), so a
 drawing to scale would claim a precision the data lacks. The new fields are read from the stored

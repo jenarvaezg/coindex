@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.data.ficha
 
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.domain.recordedText
+import java.time.LocalDate
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -22,8 +23,8 @@ data class FichaDetails(
     val topic: String? = null,
     val orientation: CoinOrientation? = null,
     val technique: String? = null,
-    /** `demonetization.demonetization_date`, ISO, only when Numista gives one. */
-    val demonetizedOn: String? = null,
+    /** `demonetization.demonetization_date`, only when Numista gives one. */
+    val demonetizedOn: LocalDate? = null,
     val references: List<FichaReference> = emptyList(),
     val obverse: FichaFace? = null,
     val reverse: FichaFace? = null,
@@ -82,7 +83,7 @@ fun readFichaDetails(raw: String): FichaDetails {
             else -> null
         },
         technique = body.plainAt("technique", "text"),
-        demonetizedOn = body.plainAt("demonetization", "demonetization_date"),
+        demonetizedOn = body.objectAt("demonetization")?.dateAt("demonetization_date"),
         references = body.objectsAt("references").mapNotNull { reference ->
             val catalogue = reference.objectAt("catalogue")?.plainAt("code")
                 ?: return@mapNotNull null

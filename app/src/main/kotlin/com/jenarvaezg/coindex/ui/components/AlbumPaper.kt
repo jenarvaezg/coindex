@@ -115,8 +115,8 @@ fun AlbumHole(
     backed: Boolean = true,
     /**
      * The face this coin is not showing. When present, a tap turns the coin over inside the hole
-     * (#337). Only the coin's sheet passes one (ADR 0026 §3), so an exported PNG can't show a turned
-     * coin.
+     * (#337). Only the coin's screen passes one (ADR 0026 §3), so an exported PNG can't show a
+     * turned coin.
      */
     otherSide: CoinPhoto? = null,
     tone: AlbumToneConfig,
@@ -126,7 +126,7 @@ fun AlbumHole(
 ) {
     // Both absences get the dotted rule and no gloss; only [HoleAbsence.Missing] dims (`dimmed`).
     val empty = absence != HoleAbsence.Filled
-    // Deliberately not hoisted: the sheet's hole starts on `printed_side` each time it opens.
+    // Deliberately not hoisted: the screen's hole starts on `printed_side` each time it opens.
     var turned by remember(photo, otherSide) { mutableStateOf(false) }
     // Scaled by the system (#514, #337): at `animator_duration_scale 0` the coin just switches
     // face.

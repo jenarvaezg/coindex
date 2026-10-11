@@ -83,7 +83,7 @@ data class CollectionReading(
     /** The card of one of the collector's boxes, or null once it has been undone. */
     fun boxCard(groupingId: Long): IndexCard.Box? = collection.piecesCardForBox(groupingId)
 
-    /** One coin as the sheet of #508 draws it; walks the inventory and the index. */
+    /** One coin as its screen draws it (#508, #643); walks the inventory and the index. */
     fun coin(typeId: Int): CoinRow = coinRowOf(collection, typeId)
 
     /** When this phone fetched one ficha, for the age a card shows (#185). */

@@ -2,6 +2,7 @@ package com.jenarvaezg.coindex.ui
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
@@ -88,6 +89,7 @@ import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.theme.Paper
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @Composable
@@ -140,7 +142,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     }
 
     val openTypeOnNumista: (Int) -> Unit = { typeId -> openUrl(reading.numistaUrl(typeId)) }
-    // Every card opens through here, and so does a claim on a coin's sheet (ADR 0021 §9).
+    // Every card opens through here, and so does a claim on a coin's screen (ADR 0021 §9).
     val openCard: (CardDestination) -> Unit = { destination ->
         navController.navigate(routeOf(destination))
     }
@@ -170,24 +172,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
     // The plate and the collections take their masthead title from the route's arguments; every
     // other destination's title comes from the route alone.
     val route = backStackEntry?.destination?.route
-    val subjectName = when {
-        Routes.isPlate(route) ->
-            reading.catalogName(backStackEntry?.arguments?.getString("catalogId"))
-        // The whole key, not just the family: three Britannias share one (#22). The name is read
-        // off the card so it keeps the disambiguation against its neighbours (#565).
-        Routes.isDerivedCollection(route) -> variantKeyFromRoute(
-            family = backStackEntry?.arguments?.getString("family"),
-            weight = backStackEntry?.arguments?.getString("weight"),
-            finish = backStackEntry?.arguments?.getString("finish"),
-            metal = backStackEntry?.arguments?.getString("metal"),
-        )?.let(reading::derivedName)
-        Routes.isOwnGrouping(route) -> backStackEntry
-            ?.arguments
-            ?.getString("groupingId")
-            ?.toLongOrNull()
-            ?.let(reading::boxName)
-        else -> null
-    }
+    val subjectName = routeSubject(backStackEntry, reading).name
 
     // A root has nothing to pop, so it offers «Este teléfono» instead of «Volver» (ADR 0021 §1).
     // Onboarding has no masthead actions.
@@ -575,7 +560,15 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 reading.fichaFetchedAt(typeId),
                                 rows,
                             ) {
-                                value = viewModel.fichaBodies(typeId)
+                                // A failed read leaves what the reading already has: the coin,
+                                // its pieces and its value.
+                                try {
+                                    value = viewModel.fichaBodies(typeId)
+                                } catch (cancelled: CancellationException) {
+                                    throw cancelled
+                                } catch (failure: Exception) {
+                                    Log.w(FICHA_LOG_TAG, "N# $typeId", failure)
+                                }
                             }
                             val subject = remember(reading, request, origin.here, bodies) {
                                 reading.coinFicha(request, origin.here, bodies)
@@ -590,11 +583,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                     onBack = { navController.popBackStack() },
                                     onOpenNumista = { openTypeOnNumista(typeId) },
                                     onOpenType = openTypeOnNumista,
-                                    // Popped first, so coming back doesn't land on this screen.
-                                    onOpenClaim = { destination ->
-                                        navController.popBackStack()
-                                        openCard(destination)
-                                    },
+                                    // «Atrás» from that collection comes back to this coin.
+                                    onOpenClaim = openCard,
                                 )
                             }
                         }
@@ -622,6 +612,36 @@ private fun crossToCoins(
     }
 }
 
+/** The collection a route shows, by its name and its destination; nothing for other routes. */
+private data class RouteSubject(val name: String?, val destination: CardDestination?)
+
+/**
+ * Read from the route's arguments. A derived collection is addressed by its whole key, not just the
+ * family: three Britannias share one (#22), and the name comes off the card so it keeps the
+ * disambiguation against its neighbours (#565).
+ */
+private fun routeSubject(entry: NavBackStackEntry?, reading: ScreenReading): RouteSubject {
+    val route = entry?.destination?.route
+    val arguments = entry?.arguments
+    return when {
+        Routes.isPlate(route) -> {
+            val catalogId = arguments?.getString("catalogId").orEmpty()
+            RouteSubject(reading.catalogName(catalogId), CardDestination.Plate(catalogId))
+        }
+        Routes.isDerivedCollection(route) -> variantKeyFromRoute(
+            family = arguments?.getString("family"),
+            weight = arguments?.getString("weight"),
+            finish = arguments?.getString("finish"),
+            metal = arguments?.getString("metal"),
+        ).let { key ->
+            RouteSubject(key?.let(reading::derivedName), key?.let(CardDestination::Pieces))
+        }
+        Routes.isOwnGrouping(route) -> arguments?.getString("groupingId")?.toLongOrNull()
+            .let { id -> RouteSubject(id?.let(reading::boxName), id?.let(CardDestination::Box)) }
+        else -> RouteSubject(name = null, destination = null)
+    }
+}
+
 /**
  * Where a coin's screen was opened from: the name its way back prints, and the collection its
  * claims mark «· aquí» (#635, #643).
@@ -630,38 +650,10 @@ private data class FichaOrigin(val label: String, val here: CardDestination?)
 
 private fun fichaOrigin(from: NavBackStackEntry?, reading: ScreenReading): FichaOrigin {
     val route = from?.destination?.route
-    val arguments = from?.arguments
-    return when {
-        Routes.isPlate(route) -> {
-            val catalogId = arguments?.getString("catalogId").orEmpty()
-            FichaOrigin(
-                label = reading.catalogName(catalogId) ?: screenTitle(route),
-                here = CardDestination.Plate(catalogId),
-            )
-        }
-        Routes.isDerivedCollection(route) -> {
-            val key = variantKeyFromRoute(
-                family = arguments?.getString("family"),
-                weight = arguments?.getString("weight"),
-                finish = arguments?.getString("finish"),
-                metal = arguments?.getString("metal"),
-            )
-            FichaOrigin(
-                label = key?.let(reading::derivedName) ?: screenTitle(route),
-                here = key?.let(CardDestination::Pieces),
-            )
-        }
-        Routes.isOwnGrouping(route) -> {
-            val boxId = arguments?.getString("groupingId")?.toLongOrNull()
-            FichaOrigin(
-                label = boxId?.let(reading::boxName) ?: screenTitle(route),
-                here = boxId?.let(CardDestination::Box),
-            )
-        }
-        // The cell the collector tapped in the bar says «Tipos» (#516).
-        route == Routes.COINS -> FichaOrigin(TYPES_CELL, here = null)
-        else -> FichaOrigin(screenTitle(route), here = null)
-    }
+    val subject = routeSubject(from, reading)
+    // The cell the collector tapped in the bar says «Tipos» (#516).
+    val label = if (route == Routes.COINS) TYPES_CELL else subject.name ?: screenTitle(route)
+    return FichaOrigin(label, subject.destination)
 }
 
 /**
@@ -681,6 +673,8 @@ private fun TravelLayout(modifier: Modifier, content: @Composable () -> Unit) {
 private fun Travelling(scope: AnimatedVisibilityScope, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalNavAnimation provides scope, content = content)
 }
+
+private const val FICHA_LOG_TAG = "CoinFicha"
 
 /** The fade of the page on top as it leaves on the way back. */
 private const val LIFT_MS = 180

@@ -84,7 +84,7 @@ class CoinFichaSubjectTest {
             bought.rungs.map { it.label },
         )
         assertEquals(FichaPageLabels.NUMISTA_HAS_NO_PRICE, bought.rungs[0].why)
-        assertEquals("400 €", bought.rungs[1].amount)
+        assertEquals("250 €", bought.rungs[1].amount)
         assertTrue(bought.rungs[1].greatest)
         assertEquals("22,5 g finos · plata: 54,39 €/oz · hoy 11:52", bought.rungs[2].source)
         assertEquals(1, bought.rungs.count { it.greatest })
@@ -107,9 +107,39 @@ class CoinFichaSubjectTest {
 
         assertEquals("1879 · A", bought.heading)
         assertEquals("vf", bought.grade)
-        assertEquals("pagaste 400 € el 3 ago 2026 · tirada de 117.000 · para cambio", bought.facts)
+        assertEquals("pagaste 250 € el 3 ago 2026 · tirada de 117.000 · para cambio", bought.facts)
         assertEquals("Numista: con punto", bought.issueComment)
         assertEquals("«De la feria»", bought.note)
+    }
+
+    /** A lot carries one price for the row; the rung compares one piece (ADR 0026 §10). */
+    @Test
+    fun `a row of several pieces says what was paid for all of them, and the rung for one`() {
+        val lot =
+            fuerte(id = 9, year = 1929, issueId = 3, grade = "xf", price = 100.0, quantity = 2)
+
+        val piece = fuertes(request(), items = listOf(lot)).section<PiecesSection>().pieces.single()
+
+        assertEquals("pagaste 100 € por las 2", piece.facts)
+        assertEquals("50 €", piece.rungs.single { it.label == FichaPageLabels.PAID }.amount)
+    }
+
+    /** A ficha with no composition says nothing about silver, so the rung can't say «no lleva». */
+    @Test
+    fun `an unknown metal is not called silverless`() {
+        val unknown = coinFichaSubject(
+            state = state(FUERTE.copy(metal = null, fineness = null), FUERTES.take(1)),
+            request = request(),
+            bodies = bodies(10_340),
+            here = null,
+            origin = null,
+            book = PriceBook(spot = SPOT),
+            settled = true,
+            nowMillis = NOW,
+        )
+
+        val silver = unknown.section<PiecesSection>().pieces.single().rungs.last()
+        assertEquals(FichaPageLabels.NO_FINE_SILVER, silver.why)
     }
 
     /** ADR 0028 §7: the figure is the sum of the greatest, and no source is totalled. */
@@ -305,7 +335,7 @@ class CoinFichaSubjectTest {
         )
 
         val FUERTES = listOf(
-            fuerte(id = 1, year = 1879, issueId = 1, grade = "vf", price = 400.0, forSwap = true),
+            fuerte(id = 1, year = 1879, issueId = 1, grade = "vf", price = 250.0, forSwap = true),
             fuerte(id = 2, year = 1886, issueId = 2, grade = "f"),
             fuerte(id = 3, year = 1929, issueId = 3, grade = "xf", quantity = 2),
             fuerte(id = 4, year = 1935, issueId = 4, grade = "xf"),
@@ -314,7 +344,7 @@ class CoinFichaSubjectTest {
 
         val BOUGHT = PieceReading(
             mintLetter = "A",
-            acquiredOn = "2026-08-03",
+            acquiredOn = LocalDate.of(2026, 8, 3),
             mintage = 117_000,
             issueComment = "con punto",
             privateComment = "De la feria",

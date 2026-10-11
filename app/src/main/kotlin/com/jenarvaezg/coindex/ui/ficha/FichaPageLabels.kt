@@ -92,9 +92,11 @@ object FichaPageLabels {
 
     fun fineSilverSource(grams: Double, spot: String): String = "${grams(grams)} finos · $spot"
 
-    /** «pagaste 141,58 € el 22 jul 2026»: what was typed, to the cent, for the whole row. */
-    fun paid(amount: Double, on: LocalDate?): String =
-        "pagaste ${exactEuros(amount)}" + (on?.let { " el ${dayMonthYearLabel(it)}" } ?: "")
+    /** What was typed, to the cent, for the whole row; with several pieces it says so. */
+    fun paid(amount: Double, pieces: Int, on: LocalDate?): String =
+        "pagaste ${exactEuros(amount)}" +
+            (if (pieces > 1) " por las $pieces" else "") +
+            (on?.let { " el ${dayMonthYearLabel(it)}" } ?: "")
 
     fun arrived(on: LocalDate): String = "llegó el ${dayMonthYearLabel(on)}"
 
@@ -106,7 +108,7 @@ object FichaPageLabels {
 
     fun privateNote(note: String): String = "«$note»"
 
-    /** «31 piezas en 21 fechas · 1879 – 1936». */
+    /** How many pieces, over how many dates, and the span of years. */
     fun piecesByDate(pieces: Int, dates: Int, span: String): String =
         "${plural(pieces, "pieza", "piezas")} en ${plural(dates, "fecha", "fechas")} · $span"
 

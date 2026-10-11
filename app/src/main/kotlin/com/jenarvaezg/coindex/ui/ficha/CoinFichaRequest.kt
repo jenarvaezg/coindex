@@ -14,14 +14,9 @@ data class CoinFichaRequest(
 )
 
 /**
- * The casilla a coin's screen was opened from, in the catalogue's terms rather than Numista's, as a
- * wish is keyed (ADR 0029 §1).
- *
- * @param year the casilla's year, which prices a hole through the stored listing.
- * @param issueId the issue the curated file names for it, if any.
- * @param missing whether the casilla is empty: the screen then says what it would cost.
- * @param dated whether the year is what tells the casilla apart, as on a date run: the screen then
- *   opens on that date's pieces.
+ * The casilla a coin's screen was opened from, in the catalogue's terms as a wish is keyed
+ * (ADR 0029 §1): its [year] and declared issue price a hole; [dated] is a date run's casilla, which
+ * opens on that date's pieces.
  */
 data class CasillaOrigin(
     val year: Int?,

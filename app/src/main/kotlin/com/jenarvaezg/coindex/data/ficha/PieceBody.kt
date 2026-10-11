@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.data.ficha
 
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import java.time.LocalDate
 
 /**
  * What one collected row says about its piece beyond the inventory's columns, for the coin's screen
@@ -8,8 +9,8 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
  */
 data class PieceReading(
     val mintLetter: String? = null,
-    /** `acquisition_date`, ISO. */
-    val acquiredOn: String? = null,
+    /** `acquisition_date`. */
+    val acquiredOn: LocalDate? = null,
     /** The mintage of the piece's issue. */
     val mintage: Long? = null,
     /** Numista's comment on the issue, such as «normal date; overdate variety exists». */
@@ -25,7 +26,7 @@ fun readPieceBody(raw: String): PieceReading {
     val issue = row.objectAt("issue")
     return PieceReading(
         mintLetter = issue?.plainAt("mint_letter"),
-        acquiredOn = row.plainAt("acquisition_date"),
+        acquiredOn = row.dateAt("acquisition_date"),
         mintage = issue?.longAt("mintage")?.takeIf { it > 0 },
         issueComment = issue?.plainAt("comment"),
         privateComment = row.plainAt("private_comment"),

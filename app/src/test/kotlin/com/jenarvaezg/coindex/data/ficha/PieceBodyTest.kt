@@ -5,6 +5,7 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,11 +18,11 @@ class PieceBodyTest {
     fun `a bought piece gives up its date, its mint letter, its issue and its notes`() {
         val reading = readPieceBody(
             """
-            {"id": 1, "quantity": 1, "type": {"id": 18852},
-             "issue": {"id": 96367, "year": 1805, "mint_letter": "TH", "mintage": 800000,
-                       "comment": "normal date; overdate variety exists"},
+            {"id": 1, "quantity": 1, "type": {"id": 7},
+             "issue": {"id": 3, "year": 1795, "mint_letter": "FM", "mintage": 1000000,
+                       "comment": "variante de fecha"},
              "grade": "xf", "private_comment": "Del mercadillo",
-             "price": {"value": 140, "currency": "EUR"}, "acquisition_date": "2026-07-22",
+             "price": {"value": 75, "currency": "EUR"}, "acquisition_date": "2026-03-14",
              "pictures": [{"url": "https://example.org/a.jpg",
                            "thumbnail_url": "https://example.org/a-360.jpg"}]}
             """,
@@ -29,10 +30,10 @@ class PieceBodyTest {
 
         assertEquals(
             PieceReading(
-                mintLetter = "TH",
-                acquiredOn = "2026-07-22",
-                mintage = 800_000L,
-                issueComment = "normal date; overdate variety exists",
+                mintLetter = "FM",
+                acquiredOn = LocalDate.of(2026, 3, 14),
+                mintage = 1_000_000L,
+                issueComment = "variante de fecha",
                 privateComment = "Del mercadillo",
                 pictures = listOf(
                     CoinPhoto(

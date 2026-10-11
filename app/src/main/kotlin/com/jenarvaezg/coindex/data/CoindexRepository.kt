@@ -180,7 +180,6 @@ class CoindexRepository(
         )
     }
 
-    /** Creates one of the collector's own groupings over the types they picked (ADR 0021 §11). */
     /** One coin's stored bodies, read for its screen (#643). The parse leaves the main thread. */
     suspend fun fichaBodies(typeId: Int): FichaBodies {
         val ficha = typeMetaDao.rawOf(typeId)
@@ -193,6 +192,7 @@ class CoindexRepository(
         }
     }
 
+    /** Creates one of the collector's own groupings over the types they picked (ADR 0021 §11). */
     suspend fun createOwnGrouping(name: String, typeIds: List<Int>): Long =
         ownGroupingDao.create(name, typeIds.distinct(), System.currentTimeMillis())
 

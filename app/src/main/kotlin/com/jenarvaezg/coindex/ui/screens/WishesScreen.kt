@@ -148,9 +148,9 @@ internal fun DrawnWish.fichaRequest(): CoinFichaRequest = CoinFichaRequest(
 private val WISH_MARGIN = 20.dp
 
 /**
- * One marked casilla, which opens its coin's sheet as on a plate (ADR 0026 §3). Its chip only shows
- * the price, since every casilla here is marked (ADR 0026 §5). «Quitar» is the list's only upkeep
- * (ADR 0029 §5) and sits outside the casilla, so a missed tap can't unmark.
+ * One marked casilla, which opens its coin's screen as on a plate (ADR 0026 §3). Its chip only
+ * shows the price, since every casilla here is marked (ADR 0026 §5). «Quitar» is the list's only
+ * upkeep (ADR 0029 §5) and sits outside the casilla, so a missed tap can't unmark.
  */
 @Composable
 internal fun WishCell(

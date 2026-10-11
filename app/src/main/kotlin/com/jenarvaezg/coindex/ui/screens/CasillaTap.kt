@@ -16,7 +16,7 @@ internal sealed interface CasillaTap {
 }
 
 /**
- * Outside the marking mode a casilla opens its coin's sheet; inside it, only an empty casilla with
+ * Outside the marking mode a casilla opens its coin's screen; inside it, only an empty casilla with
  * a wish key takes the tap, to mark (ADR 0029 §1, §5). An announced member has no ficha to open.
  */
 internal fun casillaTap(cell: DrawnCell, picking: Boolean): CasillaTap = when {

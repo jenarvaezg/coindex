@@ -50,7 +50,7 @@ private fun withLinkGlyphs(text: AnnotatedString): AnnotatedString {
         var cursor = 0
         links.forEach { link ->
             append(trimmed.subSequence(cursor, link.end))
-            append(' ')
+            append('\u00A0')
             appendInlineContent(LINK_GLYPH)
             cursor = link.end
         }

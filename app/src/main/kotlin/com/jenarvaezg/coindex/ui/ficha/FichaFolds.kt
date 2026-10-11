@@ -28,14 +28,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +45,7 @@ import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleAbsence
+import com.jenarvaezg.coindex.ui.components.dashedBorder
 import com.jenarvaezg.coindex.ui.components.LinkText
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -66,16 +61,16 @@ internal fun Folds(
     onPhoto: (CoinPhoto, String) -> Unit,
 ) {
     var open by rememberSaveable(subject.typeId) {
-        mutableStateOf(subject.sections.filter { it.open }.map { it.title })
+        mutableStateOf(subject.sections.filter { it.open }.map { it.key })
     }
     Column(modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 18.dp)) {
         HorizontalDivider(color = Paper.line)
         subject.sections.forEach { section ->
-            val isOpen = section.title in open
+            val isOpen = section.key in open
             Fold(
                 section = section,
                 open = isOpen,
-                onToggle = { open = if (isOpen) open - section.title else open + section.title },
+                onToggle = { open = if (isOpen) open - section.key else open + section.key },
             ) {
                 when (section) {
                     is PiecesSection -> PiecesBody(section) { photo ->
@@ -153,7 +148,10 @@ private fun Chevron(open: Boolean, modifier: Modifier = Modifier) {
 
 @Composable
 private fun PiecesBody(section: PiecesSection, onPhoto: (CoinPhoto) -> Unit) {
-    var selected by rememberSaveable(section.dates) { mutableStateOf(section.selected) }
+    // Keyed on the dates alone: a tile's note dot arrives with the stored bodies, a moment later.
+    var selected by rememberSaveable(section.dates.map { it.key }) {
+        mutableStateOf(section.selected)
+    }
     if (section.dates.isNotEmpty()) {
         DateGrid(section.dates, selected, onSelect = { selected = it })
     }
@@ -202,7 +200,9 @@ private fun DateTileView(
         modifier = modifier
             .background(if (selected) Paper.ink else Paper.card)
             .border(1.dp, if (selected) Paper.ink else Paper.line)
-            .then(if (date.casilla) Modifier.padding(3.dp).dashedOutline(Paper.rust) else Modifier)
+            .then(
+                if (date.casilla) Modifier.padding(3.dp).dashedBorder(Paper.rust, 1.dp) else Modifier,
+            )
             .clickable(role = Role.Tab, onClick = onClick),
     ) {
         Column(
@@ -353,7 +353,7 @@ private fun RungView(rung: FichaRung) {
 private fun RungBar(rung: FichaRung) {
     val bar = Modifier.fillMaxWidth().height(7.dp)
     if (rung.amount == null) {
-        Box(modifier = bar.dashedOutline(Paper.hairline))
+        Box(modifier = bar.dashedBorder(Paper.hairline, 1.dp))
         return
     }
     val colour = if (rung.greatest) Paper.rust else Paper.line
@@ -485,10 +485,15 @@ private fun FacesBody(faces: List<FaceBlock>, onPhoto: (CoinPhoto) -> Unit) {
                     ),
                 )
             }
-            face.unabridgedLegend?.let {
-                Text(it, style = MaterialTheme.typography.bodyMedium, color = Paper.muted)
+            face.unabridgedLegend?.let { legend ->
+                LetteringText(
+                    text = legend,
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Paper.muted),
+                )
             }
-            face.description?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+            face.description?.let { description ->
+                LetteringText(text = description, style = MaterialTheme.typography.bodyMedium)
+            }
             // Apart, never as a texture: each contributor shoots the edge differently.
             face.photo?.let { photo ->
                 LinkText(
@@ -527,20 +532,3 @@ private val DATE_GAP = 5.dp
 /** Up to this many casillas, the miniature is big enough to tell the coins apart. */
 private const val FEW_CASILLAS = 6
 
-/** Behind a photograph opened whole. */
-internal val LIGHTBOX_SCRIM = Color(0xE0141512)
-
-/** A rounded dashed rule around the content, the mark of something absent (#633). */
-internal fun Modifier.dashedOutline(color: Color): Modifier = drawBehind {
-    val stroke = 1.5.dp.toPx()
-    drawRoundRect(
-        color = color,
-        topLeft = Offset(stroke / 2, stroke / 2),
-        size = Size(size.width - stroke, size.height - stroke),
-        cornerRadius = CornerRadius(4.dp.toPx()),
-        style = Stroke(
-            width = stroke,
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 3.dp.toPx())),
-        ),
-    )
-}

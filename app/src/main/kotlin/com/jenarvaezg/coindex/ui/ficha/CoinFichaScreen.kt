@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
@@ -53,6 +54,7 @@ import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FichaBrought
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.HoleAbsence
+import com.jenarvaezg.coindex.ui.components.dashedBorder
 import com.jenarvaezg.coindex.ui.components.LocalMotion
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
 import com.jenarvaezg.coindex.ui.printedPhoto
@@ -230,7 +232,7 @@ private fun MissingTag() {
         color = Paper.rust,
         modifier = Modifier
             .padding(top = 4.dp)
-            .dashedOutline(Paper.rust)
+            .dashedBorder(Paper.rust, 1.dp)
             .padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }
@@ -266,8 +268,8 @@ private fun CompactBar(
     val moving = LocalMotion.current
     AnimatedVisibility(
         visible = visible,
-        enter = if (moving) slideInVertically { -it } + fadeIn() else EnterTransition.None,
-        exit = if (moving) slideOutVertically { -it } + fadeOut() else ExitTransition.None,
+        enter = compactBarEnter(moving),
+        exit = compactBarExit(moving),
     ) {
         Column(modifier = Modifier.fillMaxWidth().background(Paper.paper)) {
             Row(
@@ -308,6 +310,13 @@ private fun CompactBar(
     }
 }
 
+/** No transition at all with the system's animations off, not one of zero length (#514). */
+internal fun compactBarEnter(moving: Boolean): EnterTransition =
+    if (moving) slideInVertically { -it } + fadeIn() else EnterTransition.None
+
+internal fun compactBarExit(moving: Boolean): ExitTransition =
+    if (moving) slideOutVertically { -it } + fadeOut() else ExitTransition.None
+
 /** A photograph to look at whole: the edge's from Numista, or the collector's own. */
 private data class Lightbox(val photo: CoinPhoto, val caption: String)
 
@@ -332,6 +341,9 @@ private fun LightboxView(shown: Lightbox, onClose: () -> Unit) {
         Text(shown.caption, style = MaterialTheme.typography.labelMedium, color = Paper.paper)
     }
 }
+
+/** Behind a photograph opened whole. */
+private val LIGHTBOX_SCRIM = Color(0xE0141512)
 
 /** The hero hole: big enough to read a legend, and the title still in the first fold. */
 internal val HERO = 300.dp

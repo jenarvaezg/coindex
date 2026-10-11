@@ -9,11 +9,11 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
+import java.time.LocalDate
 
-/**
- * Field readers for the stored bodies the coin's screen reads (#643). Each field is read on its
- * own, so one malformed field doesn't lose the others.
- */
+// Field readers for the stored bodies of fichas and collected rows. Each field is read on its own,
+// so one malformed field doesn't lose the others.
+
 internal val bodyJson = Json { ignoreUnknownKeys = true }
 
 /** The body as an object, or null when it isn't JSON or isn't an object. */
@@ -43,6 +43,10 @@ internal fun JsonObject.plainAt(field: String): String? = recordedText(
 
 internal fun JsonObject.plainAt(field: String, nested: String): String? =
     objectAt(field)?.plainAt(nested)
+
+/** An ISO date, such as `acquisition_date`; null when absent or not a date. */
+internal fun JsonObject.dateAt(field: String): LocalDate? =
+    stringAt(field)?.let { attempt { LocalDate.parse(it) } }
 
 /** Numista prefixes a text nobody translated with «(en)». */
 internal fun untranslated(text: String): String = text.removePrefix(UNTRANSLATED).trimStart()
