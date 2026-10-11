@@ -10,7 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.ObjectClass
-import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE
+import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE_SUFFIX
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.DrawnPiece
@@ -104,7 +104,7 @@ class PiecesOpenTheSheetTest {
 
         compose.onNodeWithText(A_TITLE).assertIsDisplayed()
         compose.onNodeWithText("Las venezolanas").assertIsDisplayed()
-        compose.onNodeWithText(COIN_CLAIM_HERE, useUnmergedTree = true).assertIsDisplayed()
+        compose.onNodeWithText(COIN_CLAIM_HERE_SUFFIX, useUnmergedTree = true).assertIsDisplayed()
         compose.onNode(hasText(THIS_BOX) and hasClickAction(), useUnmergedTree = true)
             .assertDoesNotExist()
     }

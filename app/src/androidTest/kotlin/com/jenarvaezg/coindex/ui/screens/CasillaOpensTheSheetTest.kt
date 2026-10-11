@@ -27,7 +27,7 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.PrintedSide
-import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE
+import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE_SUFFIX
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.CardDestination
@@ -246,7 +246,7 @@ class CasillaOpensTheSheetTest {
 
         compose.onNodeWithText(COIN_IN_SEVERAL_COLLECTIONS).assertExists()
         compose.onNodeWithText("1 Bolívar", useUnmergedTree = true).assert(hasClickAction().not())
-        compose.onNodeWithText(COIN_CLAIM_HERE, useUnmergedTree = true).assertExists()
+        compose.onNodeWithText(COIN_CLAIM_HERE_SUFFIX, useUnmergedTree = true).assertExists()
         compose.onNodeWithText("Las venezolanas", useUnmergedTree = true).assert(hasClickAction())
     }
 

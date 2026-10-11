@@ -38,7 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
-import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE
+import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE_SUFFIX
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
@@ -155,14 +155,13 @@ internal fun sheetEnter(moving: Boolean): EnterTransition =
 internal fun sheetExit(moving: Boolean): ExitTransition =
     if (moving) fadeOut() + slideOutVertically { it } else ExitTransition.None
 
-/** A collection on the sheet; [here] is the one it was opened from, which takes no link (#635). */
 internal data class SheetClaim(val claim: CoinClaim, val here: Boolean)
 
-/** Every collection that claims the coin, in index order, [here] included (#635). */
+/** Every collection that claims the coin, in index order, [here] included and marked (#635). */
 internal fun sheetClaims(claims: List<CoinClaim>, here: CardDestination?): List<SheetClaim> =
     claims.map { SheetClaim(it, here = it.destination == here) }
 
-/** Null when no collection claims the coin: that one says so by form (ADR 0026 §13). */
+/** Null with no claims: ADR 0026 §13 gives that coin no heading. */
 internal fun sheetClaimsHeading(claims: List<SheetClaim>): String? = when (claims.size) {
     0 -> null
     1 -> COIN_IN_ONE_COLLECTION
@@ -313,10 +312,7 @@ private fun CoinFicha(
     }
 }
 
-/**
- * The collection the sheet was opened from, in ink rather than as a link, with the padding of
- * [LinkText] so the list keeps its rhythm. A long name is cut so the mark stays.
- */
+/** [LinkText]'s padding without the link; a long name is cut before the suffix (#635). */
 @Composable
 private fun ClaimHere(name: String) {
     Row(
@@ -331,7 +327,7 @@ private fun ClaimHere(name: String) {
             modifier = Modifier.weight(1f, fill = false),
         )
         Text(
-            COIN_CLAIM_HERE,
+            COIN_CLAIM_HERE_SUFFIX,
             style = MaterialTheme.typography.bodyLarge,
             color = Paper.muted,
             maxLines = 1,

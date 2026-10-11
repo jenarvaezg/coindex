@@ -47,7 +47,7 @@ class CoinSheetClaimsTest {
         )
     }
 
-    /** ADR 0026 §13: a coin no collection claims, a hole among them, says so by form, not words. */
+    /** ADR 0026 §13. A hole is one, even opened from its own lámina. */
     @Test
     fun `a coin no collection claims has no heading`() {
         assertNull(sheetClaimsHeading(sheetClaims(emptyList(), LAMINA.destination)))

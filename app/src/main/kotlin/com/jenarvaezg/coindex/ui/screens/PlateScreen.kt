@@ -176,7 +176,7 @@ fun PlateScreen(
                     // The plate's `printed_side` up, as on the casilla (ADR 0020, #227).
                     faces = { typeId -> printedFaces(images[typeId], plate.printedSide) },
                     onDismiss = { openTypeId = null },
-                    // Don't link back to this same lámina from its own casilla's sheet.
+                    // Its own casilla's sheet names this lámina without linking to it (#635).
                     here = CardDestination.Plate(plate.catalogId),
                 )
             }
