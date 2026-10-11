@@ -17,6 +17,10 @@ interface CollectedItemDao {
     @Query("SELECT * FROM collected_items ORDER BY id")
     suspend fun loadAll(): List<CollectedItemEntity>
 
+    /** The stored rows of one type, for the coin's screen (#643). */
+    @Query("SELECT id, raw FROM collected_items WHERE typeId = :typeId ORDER BY id")
+    suspend fun rawOfType(typeId: Int): List<ItemRawRow>
+
     @Query("DELETE FROM collected_items")
     suspend fun deleteAll()
 
@@ -47,6 +51,10 @@ interface TypeMetaDao {
 
     @Query("SELECT * FROM type_meta WHERE typeId = :typeId")
     suspend fun byId(typeId: Int): TypeMetaEntity?
+
+    /** One stored ficha's body, for the coin's screen (#643). */
+    @Query("SELECT raw FROM type_meta WHERE typeId = :typeId")
+    suspend fun rawOf(typeId: Int): String?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIfAbsent(types: List<TypeMetaEntity>)

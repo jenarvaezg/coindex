@@ -216,7 +216,8 @@ data class IssueListings(
     fun issueOf(member: CollectionCatalogMember): Int? =
         member.numistaTypeId?.let { issueOf(it, member.year, member.numistaIssueIds) }
 
-    private fun issueOf(typeId: Int, year: Int?, declared: List<Int>): Int? =
+    /** The same rule from a casilla's catalogue facts, as the coin's screen holds them (#643). */
+    fun issueOf(typeId: Int, year: Int?, declared: List<Int>): Int? =
         declared.firstOrNull() ?: year?.let { issueIdByTypeAndYear[typeId to it] }
 
     companion object {

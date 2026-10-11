@@ -15,6 +15,8 @@ data class FichaDetails(
     /** `value.currency.full_name`, with its period: «Bolívar (1879-2007)». */
     val currency: String? = null,
     val rulers: List<String> = emptyList(),
+    /** `composition.text`, which the cache stores for the metal but no screen printed. */
+    val composition: String? = null,
     val series: String? = null,
     /** `commemorated_topic`. */
     val topic: String? = null,
@@ -69,6 +71,7 @@ fun readFichaDetails(raw: String): FichaDetails {
         faceValue = body.plainAt("value", "text"),
         currency = body.objectAt("value")?.objectAt("currency")?.plainAt("full_name"),
         rulers = body.objectsAt("ruler").mapNotNull { it.plainAt("name") },
+        composition = body.plainAt("composition", "text"),
         series = body.plainAt("series"),
         topic = body.plainAt("commemorated_topic"),
         orientation = when (body.plainAt("orientation")) {

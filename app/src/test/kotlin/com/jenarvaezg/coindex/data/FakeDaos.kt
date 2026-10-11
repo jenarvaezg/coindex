@@ -17,6 +17,7 @@ import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
 import com.jenarvaezg.coindex.data.db.WishDao
+import com.jenarvaezg.coindex.data.db.ItemRawRow
 import com.jenarvaezg.coindex.data.db.WishEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,8 @@ class FakeCollectedItemDao : CollectedItemDao {
 
     override fun observeAll(): Flow<List<CollectedItemEntity>> = rows
     override suspend fun loadAll(): List<CollectedItemEntity> = rows.value
+    override suspend fun rawOfType(typeId: Int): List<ItemRawRow> =
+        rows.value.filter { it.typeId == typeId }.map { ItemRawRow(it.id, it.raw) }
     override suspend fun deleteAll() { rows.value = emptyList() }
     override suspend fun insertAll(items: List<CollectedItemEntity>) {
         rows.value = rows.value + items
@@ -49,6 +52,7 @@ class FakeTypeMetaDao : TypeMetaDao {
     }
     override suspend fun byId(typeId: Int): TypeMetaEntity? =
         rows.value.firstOrNull { it.typeId == typeId }
+    override suspend fun rawOf(typeId: Int): String? = byId(typeId)?.raw
     override suspend fun overwrite(type: TypeMetaEntity) {
         rows.value = rows.value.filterNot { it.typeId == type.typeId } + type
     }

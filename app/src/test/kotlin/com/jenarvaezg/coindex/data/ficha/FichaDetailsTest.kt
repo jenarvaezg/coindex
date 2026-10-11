@@ -60,6 +60,8 @@ class FichaDetailsTest {
         val medal = readFichaDetails(seeded(578_835))
 
         assertEquals("Cuatricentenario de Caracas", medal.topic)
+        // Entities decoded, as in every plain field.
+        assertEquals("Plata 999,9 (Marked \"PLATA 1000\")", medal.composition)
         assertTrue(medal.comments!!.startsWith("<p>The reverse shows"), medal.comments)
         assertTrue(medal.obverse!!.description!!.startsWith("Bust of Diego de Losada"))
     }

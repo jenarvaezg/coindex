@@ -87,6 +87,9 @@ data class TypeMetaEntity(
 /** The stored ficha of one type, for reading fields the columns never captured. */
 data class TypeRawRow(val typeId: Int, val raw: String)
 
+/** One collected row's stored body, for reading what its columns never captured (#643). */
+data class ItemRawRow(val id: Long, val raw: String)
+
 /**
  * A grouping the collector made themselves (ADR 0021 §11): a heading and the types under it.
  *
