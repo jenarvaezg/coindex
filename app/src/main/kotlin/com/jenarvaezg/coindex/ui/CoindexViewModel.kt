@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.InventoryRefresh
@@ -519,6 +520,9 @@ class CoindexViewModel(
             valuePrices(force = true)
         }
     }
+
+    /** The stored bodies the coin's screen reads (#643): no consulta, only the database. */
+    suspend fun fichaBodies(typeId: Int): FichaBodies = repository.fichaBodies(typeId)
 
     /**
      * Asks Numista again for one type's ficha (#185, ADR 0025). The collector asked, so every

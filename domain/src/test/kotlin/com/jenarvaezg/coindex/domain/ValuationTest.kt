@@ -330,6 +330,67 @@ class ValuationTest {
             )?.source,
         )
     }
+
+    /** The coin's screen prints every rung, and the greatest is the piece's value (#643). */
+    @Test
+    fun `a piece's ladder holds its three prices, per piece, and the greatest is its value`() {
+        val duro = meta(weightGrams = 25.0, fineness = 0.835)
+        val lot = item(grade = "vf", price = 90.0, quantity = 3)
+        val prices = priceOf(mapOf("vf" to 45.0))
+
+        val ladder = pieceLadder(lot, duro, SPOT, prices)
+
+        assertEquals(PieceValue(45.0, ValueSource.Market, "vf"), ladder.market)
+        assertEquals(37.07, ladder.silver?.eur?.let { Math.round(it * 100) / 100.0 })
+        assertEquals(PieceValue(30.0, ValueSource.Paid), ladder.paid)
+        assertEquals(ladder.market, ladder.greatest)
+        assertEquals(pieceValue(lot, duro, SPOT, prices), ladder.greatest)
+    }
+
+    /**
+     * Two euros bought at face value: Numista and what was paid agree, and the catalogue keeps the
+     * label it always had, so the screen marks one rung only.
+     */
+    @Test
+    fun `a tie goes to the catalogue, then to the metal, then to what was paid`() {
+        val ladder = pieceLadder(
+            item(grade = "unc", price = 2.0),
+            meta(weightGrams = 8.5, fineness = null),
+            SPOT,
+            priceOf(mapOf("unc" to 2.0)),
+        )
+
+        assertEquals(ValueSource.Market, ladder.greatest?.source)
+    }
+
+    @Test
+    fun `a missing rung is missing, not zero`() {
+        val ladder = pieceLadder(
+            item(grade = "xf", price = null, issueId = null),
+            meta(weightGrams = 8.5, fineness = null),
+            SPOT,
+            priceOf(mapOf("xf" to 5.0)),
+        )
+
+        assertNull(ladder.market)
+        assertNull(ladder.silver)
+        assertNull(ladder.paid)
+        assertNull(ladder.greatest)
+    }
+
+    /** A hole was paid by nobody: its ladder is Numista in `unc` and the metal (ADR 0028 §8). */
+    @Test
+    fun `a hole's ladder has two rungs and the greatest is its cost`() {
+        val duro = meta(weightGrams = 25.0, fineness = 0.835)
+        val prices = priceOf(mapOf(UNCIRCULATED to 80.0, "vf" to 30.0))
+
+        val ladder = holeLadder(typeId = 1, issueId = 7, meta = duro, spot = SPOT, prices = prices)
+
+        assertEquals(PieceValue(80.0, ValueSource.Market, UNCIRCULATED), ladder.market)
+        assertEquals(ValueSource.Silver, ladder.silver?.source)
+        assertNull(ladder.paid)
+        assertEquals(holeValue(1, 7, duro, SPOT, prices), ladder.greatest)
+    }
 }
 
 private fun meta(weightGrams: Double?, fineness: Double?) = TypeMeta(

@@ -82,6 +82,14 @@ class FichaBodyTest {
         assertEquals(FichaReading(), reading)
     }
 
+    /** The coin's screen prints it as a row of «La moneda», never drawn to scale (#643, #644). */
+    @Test
+    fun `the thickness is read when the ficha has one, and zero is none`() {
+        assertEquals(2.2, readFichaBody("""{"thickness": 2.2}""").thicknessMillimetres)
+        assertNull(readFichaBody("""{"thickness": 0}""").thicknessMillimetres)
+        assertNull(readFichaBody("""{"size": 25.75}""").thicknessMillimetres)
+    }
+
     @Test
     fun `a diameter of zero is not a diameter`() {
         assertNull(readFichaBody("""{"size": 0}""").sizeMillimetres)

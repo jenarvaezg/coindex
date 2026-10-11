@@ -50,6 +50,7 @@ import com.jenarvaezg.coindex.ui.components.SelectionDoor
 import com.jenarvaezg.coindex.ui.components.rememberPieceSelection
 import com.jenarvaezg.coindex.ui.components.sheetUnderMode
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.objectClassChip
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
 import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
@@ -102,11 +103,11 @@ fun CoinsScreen(
     sewnEdge: SewnEdgeCounts?,
     onOpenPhone: () -> Unit,
     /**
-     * The coin sheet (#508), which holds the ficha's upkeep (#185, ADR 0025). Pieces whose ficha
-     * derives no card (an unpublished draft, #186, or a placeholder family, #404) are reachable
-     * only from here, so this is where their ficha gets asked for again.
+     * Opens a coin's screen (#643), which holds the ficha's upkeep (#185, ADR 0025). Pieces whose
+     * ficha derives no card (an unpublished draft, #186, or a placeholder family, #404) are
+     * reachable only from here, so this is where their ficha gets asked for again.
      */
-    sheet: CoinSheetSurface,
+    onOpenCoin: (CoinFichaRequest) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Only when the collection changes, not per keystroke. A row also matches on the years of the
@@ -116,7 +117,6 @@ fun CoinsScreen(
     // half the collection.
     var query by rememberSaveable { mutableStateOf("") }
     var open by remember { mutableStateOf(false) }
-    var selectedTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
     val shown = remember(rows, shelf, query) { shelf.narrow(rows, query) }
     val selection = rememberPieceSelection()
     // Seeding a box from the shown coins only makes sense while something narrows the list;
@@ -192,14 +192,11 @@ fun CoinsScreen(
                         CoinAlbumCell(
                             row = row,
                             photo = photo,
-                            // The cell yields the coin while its sheet is open, so the shared
-                            // element has one owner at a time (#370).
-                            travelling = selectedTypeId != row.typeId,
                             picking = selection.active,
                             picked = selection.isPicked(row.typeId),
                             onTap = {
                                 if (selection.active) selection.toggle(row.typeId)
-                                else selectedTypeId = row.typeId
+                                else onOpenCoin(CoinFichaRequest(row.typeId))
                             },
                         )
                     }
@@ -215,15 +212,6 @@ fun CoinsScreen(
                 onAddTo = onAddToBox,
             )
         }
-
-        // Here the sheet is also the far end of ADR 0026 §3's transition from the cell.
-        CoinSheetOverlay(
-            typeId = selectedTypeId,
-            surface = sheet,
-            faces = { typeId -> coinAlbumFaces(state.images[typeId]) },
-            onDismiss = { selectedTypeId = null },
-            travelling = true,
-        )
     }
 }
 
@@ -348,7 +336,6 @@ private fun CoinsFacets(
 private fun CoinAlbumCell(
     row: CoinRow,
     photo: CoinPhoto?,
-    travelling: Boolean,
     picking: Boolean,
     picked: Boolean,
     onTap: () -> Unit,
@@ -367,7 +354,8 @@ private fun CoinAlbumCell(
             backed = row.claims.isNotEmpty(),
             modifier = Modifier
                 .size(104.dp)
-                .travellingTypeCoin(row.typeId, visible = travelling),
+                // The far end is the hole of the coin's screen (ADR 0026 §3, #370).
+                .travellingTypeCoin(row.typeId),
         )
         AlbumCartouche(row.name, modifier = Modifier.padding(top = 5.dp))
         // [CoinsSpacing] keeps the year reading as this card's, not the next row's.

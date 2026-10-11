@@ -84,6 +84,13 @@ fun AlbumHole(
     backed: Boolean = true,
     otherSide: CoinPhoto? = null,
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
+    /** Told the new state on each tap that turns the coin, so a caption can name the face up. */
+    onTurned: ((turned: Boolean) -> Unit)? = null,
+    /**
+     * Draws the original over the thumbnail once it arrives, for a hole wider than the thumbnail's
+     * 180 pixels (#643). The thumbnail stays underneath, so a journey never lands on an empty disc.
+     */
+    sharp: Boolean = false,
 ) {
     AlbumHole(
         photo = photo,
@@ -93,6 +100,8 @@ fun AlbumHole(
         otherSide = otherSide,
         tone = AlbumToneConfig.Default,
         onImageSettled = onImageSettled,
+        onTurned = onTurned,
+        sharp = sharp,
     )
 }
 
@@ -106,16 +115,18 @@ fun AlbumHole(
     backed: Boolean = true,
     /**
      * The face this coin is not showing. When present, a tap turns the coin over inside the hole
-     * (#337). Only the coin's sheet passes one (ADR 0026 §3), so an exported PNG can't show a turned
-     * coin.
+     * (#337). Only the coin's screen passes one (ADR 0026 §3), so an exported PNG can't show a
+     * turned coin.
      */
     otherSide: CoinPhoto? = null,
     tone: AlbumToneConfig,
     onImageSettled: ((painted: Boolean) -> Unit)? = null,
+    onTurned: ((turned: Boolean) -> Unit)? = null,
+    sharp: Boolean = false,
 ) {
     // Both absences get the dotted rule and no gloss; only [HoleAbsence.Missing] dims (`dimmed`).
     val empty = absence != HoleAbsence.Filled
-    // Deliberately not hoisted: the sheet's hole starts on `printed_side` each time it opens.
+    // Deliberately not hoisted: the screen's hole starts on `printed_side` each time it opens.
     var turned by remember(photo, otherSide) { mutableStateOf(false) }
     // Scaled by the system (#514, #337): at `animator_duration_scale 0` the coin just switches
     // face.
@@ -160,7 +171,10 @@ fun AlbumHole(
                         onClickLabel = TURN_THE_COIN_OVER,
                         indication = null,
                         interactionSource = null,
-                    ) { turned = !turned }
+                    ) {
+                        turned = !turned
+                        onTurned?.invoke(turned)
+                    }
                 } else {
                     Modifier
                 },
@@ -224,30 +238,7 @@ fun AlbumHole(
                 PhotoNotDownloaded(Modifier.fillMaxSize())
             }
             if (url != null) {
-                AsyncImage(
-                    model = url,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    onState = { state ->
-                        when (state) {
-                            is AsyncImagePainter.State.Success -> {
-                                painted = true
-                                if (!settled) {
-                                    settled = true
-                                    onImageSettled?.invoke(true)
-                                }
-                            }
-                            is AsyncImagePainter.State.Error -> {
-                                if (attempt < candidates.lastIndex) {
-                                    attempt += 1
-                                } else if (!settled) {
-                                    settled = true
-                                    onImageSettled?.invoke(false)
-                                }
-                            }
-                            else -> Unit
-                        }
-                    },
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         // Only the photograph turns; the cardboard stays put, and the gloss turns
@@ -260,7 +251,43 @@ fun AlbumHole(
                         // No gloss until a photograph is painted, or it lights the stand-in disc
                         // and keeps the accelerometer registered (#510).
                         .coinGloss(isCoin = !empty && painted),
-                )
+                ) {
+                    AsyncImage(
+                        model = url,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        onState = { state ->
+                            when (state) {
+                                is AsyncImagePainter.State.Success -> {
+                                    painted = true
+                                    if (!settled) {
+                                        settled = true
+                                        onImageSettled?.invoke(true)
+                                    }
+                                }
+                                is AsyncImagePainter.State.Error -> {
+                                    if (attempt < candidates.lastIndex) {
+                                        attempt += 1
+                                    } else if (!settled) {
+                                        settled = true
+                                        onImageSettled?.invoke(false)
+                                    }
+                                }
+                                else -> Unit
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    // Transparent until it arrives, and nothing if it never does.
+                    face?.picture?.takeIf { sharp && painted && it != url }?.let { original ->
+                        AsyncImage(
+                            model = original,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
             }
 
             // Nothing but the gloss goes over the photograph: the die shadow (#357) and the

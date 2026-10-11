@@ -2,6 +2,8 @@ package com.jenarvaezg.coindex.ui
 
 import android.net.Uri
 import com.jenarvaezg.coindex.domain.VariantKey
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
+import com.jenarvaezg.coindex.ui.ficha.routeCode
 
 /** Every destination the notebook has. The masthead reads these to name the current screen. */
 object Routes {
@@ -10,6 +12,7 @@ object Routes {
      * and the tap would silently go nowhere.
      */
     private const val DERIVED_COLLECTION_PATH = "derived-collection"
+    private const val COIN_PATH = "coin"
 
     const val INDEX = "index"
 
@@ -52,9 +55,28 @@ object Routes {
         "$DERIVED_COLLECTION_PATH?family={family}&weight={weight}&finish={finish}&metal={metal}"
     const val OWN_GROUPING = "own-grouping/{groupingId}"
 
+    /**
+     * A coin's screen (#643, ADR 0026 §13), opened from a casilla, a cell of Monedas or a
+     * piece. The query carries the face it arrives on and the casilla it was tapped in.
+     */
+    const val COIN =
+        "$COIN_PATH/{typeId}?side={side}&year={year}&issue={issue}&missing={missing}&dated={dated}"
+
     fun plate(catalogId: String): String = "plate/$catalogId"
 
     fun ownGrouping(groupingId: Long): String = "own-grouping/$groupingId"
+
+    /** Only what the request has: an absent query parameter reads back as null. */
+    fun coin(request: CoinFichaRequest): String = buildString {
+        append("$COIN_PATH/${request.typeId}?side=${request.side.routeCode()}")
+        request.casilla?.let { casilla ->
+            casilla.year?.let { append("&year=$it") }
+            casilla.issueId?.let { append("&issue=$it") }
+            append("&missing=${casilla.missing}&dated=${casilla.dated}")
+        }
+    }
+
+    fun isCoin(route: String?): Boolean = route == COIN
 
     /**
      * A derived collection is addressed by the same canonical parts its disposition is stored
@@ -81,9 +103,9 @@ object Routes {
 
     /**
      * The roots draw the sewn edge instead of the generic masthead, which would print COINDEX and
-     * the way into «Este teléfono» twice (ADR 0026 §1).
+     * the way into «Este teléfono» twice (ADR 0026 §1); a coin's screen draws its own way back.
      */
-    fun ownsChrome(route: String?): Boolean = isRoot(route)
+    fun ownsChrome(route: String?): Boolean = isRoot(route) || isCoin(route)
 
     /**
      * The two routes that open `PiecesScreen` (ADR 0021 §9): one addressed by a derived variant

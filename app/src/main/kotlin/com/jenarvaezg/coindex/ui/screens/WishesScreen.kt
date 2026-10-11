@@ -16,10 +16,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -28,10 +24,11 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.DrawnWish
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.ficha.CasillaOrigin
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.WishSubject
-import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -44,7 +41,6 @@ import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
-import com.jenarvaezg.coindex.ui.printedFaces
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.wishListFileName
 import com.jenarvaezg.coindex.ui.theme.Paper
@@ -67,16 +63,12 @@ fun WishesScreen(
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
-    /** The coin sheet a row opens, the same one its plate opens (ADR 0026 §3). */
-    sheet: CoinSheetSurface,
+    /** Opens a row's coin on its plate's face, as its casilla on the plate does (#643). */
+    onOpenCoin: (CoinFichaRequest) -> Unit,
     onRemove: (WishKey) -> Unit,
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // A row, not a type: the face up comes from the row's plate, and two plates can declare
-    // different sides for one type (ADR 0020, #227).
-    var openRowId by rememberSaveable { mutableStateOf<String?>(null) }
-    val openRow = subject.rows.firstOrNull { it.id == openRowId }
     Box(modifier = modifier) {
         // The shared export flow (#430), exporting «la lista».
         SheetExportFlow(
@@ -134,33 +126,31 @@ fun WishesScreen(
                     WishCell(
                         row = row,
                         images = images[row.typeId],
-                        onOpenCoin = { openRowId = row.id },
+                        // The row's plate's face: two plates can declare different sides for one
+                        // type (ADR 0020, #227).
+                        onOpenCoin = { onOpenCoin(row.fichaRequest()) },
                         onRemove = { onRemove(row.key) },
                     )
                 }
             }
         }
-        CoinSheetOverlay(
-            typeId = openRow?.typeId,
-            surface = sheet,
-            // The row's plate's side; if a sync removed the row while the sheet was open, the
-            // album's reverse-first rule.
-            faces = { typeId ->
-                val side = openRow?.printedSide
-                if (side == null) coinAlbumFaces(images[typeId]) else printedFaces(images[typeId], side)
-            },
-            onDismiss = { openRowId = null },
-        )
     }
 }
+
+/** A marked casilla is always empty (ADR 0029 §2); its catalogue facts price it on the screen. */
+internal fun DrawnWish.fichaRequest(): CoinFichaRequest = CoinFichaRequest(
+    typeId = typeId,
+    side = printedSide,
+    casilla = CasillaOrigin(year = key.year, issueId = key.issueId, missing = true),
+)
 
 /** Same page margin as the plate. */
 private val WISH_MARGIN = 20.dp
 
 /**
- * One marked casilla, which opens its coin's sheet as on a plate (ADR 0026 §3). Its chip only shows
- * the price, since every casilla here is marked (ADR 0026 §5). «Quitar» is the list's only upkeep
- * (ADR 0029 §5) and sits outside the casilla, so a missed tap can't unmark.
+ * One marked casilla, which opens its coin's screen as on a plate (ADR 0026 §3). Its chip only
+ * shows the price, since every casilla here is marked (ADR 0026 §5). «Quitar» is the list's only
+ * upkeep (ADR 0029 §5) and sits outside the casilla, so a missed tap can't unmark.
  */
 @Composable
 internal fun WishCell(

@@ -6,6 +6,10 @@ import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.WishDao
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
+import com.jenarvaezg.coindex.data.ficha.FichaDetails
+import com.jenarvaezg.coindex.data.ficha.readFichaDetails
+import com.jenarvaezg.coindex.data.ficha.readPieceBody
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.data.prices.IssueListings
 import com.jenarvaezg.coindex.data.prices.PriceBook
@@ -32,9 +36,11 @@ import com.jenarvaezg.coindex.domain.VariantKey
 import com.jenarvaezg.coindex.domain.Wish
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.showcasePlate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 /**
  * Everything the screens need, derived from the local snapshot alone: what [Curation.assemble] made
@@ -172,6 +178,18 @@ class CoindexRepository(
             images = types.associate { it.typeId to it.toImages() },
             fichaFetchedAt = types.associate { it.typeId to it.fetchedAt },
         )
+    }
+
+    /** One coin's stored bodies, read for its screen (#643). The parse leaves the main thread. */
+    suspend fun fichaBodies(typeId: Int): FichaBodies {
+        val ficha = typeMetaDao.rawOf(typeId)
+        val rows = collectedItemDao.rawOfType(typeId)
+        return withContext(Dispatchers.Default) {
+            FichaBodies(
+                details = ficha?.let(::readFichaDetails) ?: FichaDetails(),
+                pieces = rows.associate { it.id to readPieceBody(it.raw) },
+            )
+        }
     }
 
     /** Creates one of the collector's own groupings over the types they picked (ADR 0021 §11). */

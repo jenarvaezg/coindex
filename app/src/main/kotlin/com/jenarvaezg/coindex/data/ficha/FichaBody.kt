@@ -3,7 +3,6 @@ package com.jenarvaezg.coindex.data.ficha
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.domain.recordedDiameter
 import com.jenarvaezg.coindex.domain.recordedText
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
@@ -48,18 +47,17 @@ const val FICHA_READING: Int = 3
  * fact is written. A body that isn't JSON gives an empty reading rather than throwing.
  */
 fun readFichaBody(raw: String): FichaReading {
-    val body = runCatching { lenient.parseToJsonElement(raw).jsonObject }.getOrNull()
-        ?: return FichaReading()
+    val body = bodyOf(raw) ?: return FichaReading()
     return FichaReading(
         // The code is `australie` even in a Spanish catalogue; the name is what a card can print.
-        issuerName = recordedText(body.text("issuer", "name")),
+        issuerName = recordedText(body.objectAt("issuer")?.stringAt("name")),
         // The prose, not the metal, so `inferMetal` stays a rule that can be improved.
-        composition = recordedText(body.text("composition", "text")),
+        composition = recordedText(body.objectAt("composition")?.stringAt("text")),
         sizeMillimetres = recordedDiameter(body.number("size")),
         // `coin` or `exonumia`, again the prose rather than `objectClassOf`'s verdict.
-        category = recordedText(body.text("category")),
+        category = recordedText(body.stringAt("category")),
         // Read, never built: a guessed host or language would end up printed on paper.
-        numistaUrl = recordedText(body.text("url")),
+        numistaUrl = recordedText(body.stringAt("url")),
         // A zero thickness is no thickness, as with the diameter.
         thicknessMillimetres = recordedDiameter(body.number("thickness")),
         // Absent is not false: silence must not count as «still legal tender».
@@ -70,7 +68,7 @@ fun readFichaBody(raw: String): FichaReading {
         // depending on who typed the ficha.
         hands = body.names("engravers") + body.names("designers"),
         mints = body.namedList("mints"),
-        issuedYear = issuedYear(body.text("issue_terms", "issue_date")),
+        issuedYear = issuedYear(body.objectAt("issue_terms")?.stringAt("issue_date")),
     )
 }
 
@@ -94,20 +92,8 @@ private fun issuedYear(issueDate: String?): Int? = issueDate
     ?.toIntOrNull()
     ?.takeIf { it > 0 }
 
-private val lenient = Json { ignoreUnknownKeys = true }
-
-/** Each field is read on its own, so one malformed field doesn't lose the others. */
-private fun JsonObject.text(field: String): String? = runCatching {
-    this[field]?.jsonPrimitive?.contentOrNull
-}.getOrNull()
-
 private fun JsonObject.number(field: String): Double? = runCatching {
     this[field]?.jsonPrimitive?.doubleOrNull
-}.getOrNull()
-
-/** A string one object down, or null if any step of the way is missing or not a string. */
-private fun JsonObject.text(field: String, nested: String): String? = runCatching {
-    this[field]?.jsonObject?.get(nested)?.jsonPrimitive?.contentOrNull
 }.getOrNull()
 
 /**
