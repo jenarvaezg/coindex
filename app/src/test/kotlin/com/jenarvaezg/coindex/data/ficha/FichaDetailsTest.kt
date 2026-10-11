@@ -9,7 +9,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** What the coin's screen reads from a stored body beyond its columns (#643), over seeded fichas. */
+/** What the coin's screen reads from a stored body beyond its columns (#643), on seeded fichas. */
 class FichaDetailsTest {
     @Test
     fun `the national police two euros gives up its edge, faces and cartouche`() {
@@ -32,7 +32,10 @@ class FichaDetailsTest {
         )
 
         val obverse = assertNotNull(details.obverse)
-        assertEquals("POLICÍA NACIONAL 1824 - 2024\nPOLICIA\nNACIONAL\nM\nESPAÑA", obverse.lettering)
+        assertEquals(
+            "POLICÍA NACIONAL 1824 - 2024\nPOLICIA\nNACIONAL\nM\nESPAÑA",
+            obverse.lettering,
+        )
         assertTrue(obverse.description!!.startsWith("Sello del Cuerpo Nacional de Policía"))
         assertEquals("2 EURO\nLL", details.reverse?.lettering)
     }

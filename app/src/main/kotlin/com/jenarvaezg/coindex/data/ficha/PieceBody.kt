@@ -32,7 +32,8 @@ fun readPieceBody(raw: String): PieceReading {
         pictures = row.objectsAt("pictures").mapNotNull { picture ->
             val url = picture.plainAt("url")
             val thumbnail = picture.plainAt("thumbnail_url")
-            CoinPhoto(thumbnail = thumbnail, picture = url).takeIf { url != null || thumbnail != null }
+            CoinPhoto(thumbnail = thumbnail, picture = url)
+                .takeIf { url != null || thumbnail != null }
         },
     )
 }

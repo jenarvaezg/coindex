@@ -25,7 +25,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +40,6 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CURATED_CATALOG_EYEBROW
-import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CellPlaque
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.FiguresLabels
@@ -50,6 +48,7 @@ import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateFinance
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.components.AlbumHole
@@ -79,7 +78,6 @@ import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.printedName
-import com.jenarvaezg.coindex.ui.printedFaces
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
@@ -120,8 +118,8 @@ fun PlateScreen(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
-    /** The coin sheet a casilla opens over this lámina (ADR 0026 §3). */
-    sheet: CoinSheetSurface,
+    /** Opens a casilla's coin on its screen (ADR 0026 §3, #643). */
+    onOpenCoin: (CoinFichaRequest) -> Unit,
     onMessage: (UiNotice) -> Unit,
     /** For the age of a hand-asked price (ADR 0030 §4); read once per opening. */
     nowMillis: Long,
@@ -134,9 +132,10 @@ fun PlateScreen(
             val plate = remember(result, finance) {
                 plateSubject(result, finance.money(result), marking.wished, nowMillis)
             }
-            // Screen-local, like the marking mode (ADR 0029 §5), so a sheet left open doesn't
-            // reappear on the next lámina.
-            var openTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
+            // The plate's `printed_side` up, as on the casilla (ADR 0020, #227).
+            val openCoin: (CasillaTap.Open) -> Unit = { tap ->
+                onOpenCoin(CoinFichaRequest(tap.typeId, plate.printedSide, tap.casilla))
+            }
             Box(modifier = modifier) {
                 // ADR 0030 §6: the collector's plates get the export flow; shelf-window plates get
                 // the tasación button instead, since there is nothing of theirs to export.
@@ -150,7 +149,7 @@ fun PlateScreen(
                         notebookPages = notebookPages,
                         onExporting = onExporting,
                         onOpenSource = onOpenSource,
-                        onOpenCoin = { typeId -> openTypeId = typeId },
+                        onOpenCoin = openCoin,
                         onMessage = onMessage,
                         modifier = Modifier.fillMaxSize(),
                     )
@@ -166,19 +165,10 @@ fun PlateScreen(
                         ),
                         images = images,
                         onOpenSource = onOpenSource,
-                        onOpenCoin = { typeId -> openTypeId = typeId },
+                        onOpenCoin = openCoin,
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
-                CoinSheetOverlay(
-                    typeId = openTypeId,
-                    surface = sheet,
-                    // The plate's `printed_side` up, as on the casilla (ADR 0020, #227).
-                    faces = { typeId -> printedFaces(images[typeId], plate.printedSide) },
-                    onDismiss = { openTypeId = null },
-                    // Its own casilla's sheet names this lámina without linking to it (#635).
-                    here = CardDestination.Plate(plate.catalogId),
-                )
             }
         }
     }
@@ -195,7 +185,7 @@ private fun ShowcasePlateSheet(
     valuation: PlateValuation,
     images: Map<Int, TypeImages>,
     onOpenSource: (String) -> Unit,
-    onOpenCoin: (Int) -> Unit,
+    onOpenCoin: (CasillaTap.Open) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -248,7 +238,7 @@ private fun AvailablePlate(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
-    onOpenCoin: (Int) -> Unit,
+    onOpenCoin: (CasillaTap.Open) -> Unit,
     onMessage: (UiNotice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -300,8 +290,8 @@ private fun PlateGrid(
     valuation: PlateValuation? = null,
     /** The plate's «Fuente en Numista», the only link out of the app. */
     onOpenSource: (String) -> Unit,
-    /** Opens the coin's sheet from a casilla (ADR 0026 §3). */
-    onOpenCoin: (Int) -> Unit,
+    /** Opens the coin's screen from a casilla (ADR 0026 §3). */
+    onOpenCoin: (CasillaTap.Open) -> Unit,
 ) {
     var picking by remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxSize()) {
@@ -338,7 +328,7 @@ private fun PlateSheet(
     export: SheetExportSurface?,
     valuation: PlateValuation?,
     onOpenSource: (String) -> Unit,
-    onOpenCoin: (Int) -> Unit,
+    onOpenCoin: (CasillaTap.Open) -> Unit,
     /** Whether the marking mode is open (#517). */
     picking: Boolean,
     onPicking: (Boolean) -> Unit,
@@ -549,7 +539,7 @@ internal fun PlateCell(
     /** The catalog whose index card flies its coin to this casilla; null for all others. */
     travellingFrom: String?,
     /** Opens this coin's sheet, where the coin turns over (ADR 0026 §3). */
-    onOpenCoin: (Int) -> Unit,
+    onOpenCoin: (CasillaTap.Open) -> Unit,
     /** Toggles this casilla's mark while the marking mode is open (ADR 0029 §5). */
     onMark: (WishKey) -> Unit = {},
     /**
@@ -562,7 +552,7 @@ internal fun PlateCell(
     val tap = casillaTap(cell, picking)
     val marks = tap is CasillaTap.Mark
     val target = when (tap) {
-        is CasillaTap.Open -> Modifier.opensTheCoinSheet { onOpenCoin(tap.typeId) }
+        is CasillaTap.Open -> Modifier.opensTheCoinSheet { onOpenCoin(tap) }
         is CasillaTap.Mark -> Modifier.clickable(
             role = Role.Checkbox,
             onClickLabel = WishLabels.MARK_ACTION,

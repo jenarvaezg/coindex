@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,16 +27,15 @@ import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.BOX_NAME_SAVE_ACTION
 import com.jenarvaezg.coindex.ui.BoxUpkeep
 import com.jenarvaezg.coindex.ui.COLLECTION_NO_LONGER_EXISTS
-import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.DELETE_COLLECTION_ACTION
 import com.jenarvaezg.coindex.ui.EMPTY_BOX_EXPLANATION
 import com.jenarvaezg.coindex.ui.PIECES_HEADING
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
 import com.jenarvaezg.coindex.ui.SharedSheet
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.boxName
-import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.Eyebrow
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
@@ -64,10 +62,8 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 fun PiecesScreen(
     state: CollectionState,
     subject: PiecesSubject?,
-    /** The coin sheet a piece's card opens, the same one a casilla opens (ADR 0026 §3). */
-    sheet: CoinSheetSurface,
-    /** The collection on screen, whose claim the sheet doesn't draw as a link. */
-    here: CardDestination?,
+    /** Opens a coin's screen from a piece's card, as a casilla does (ADR 0026 §3, #643). */
+    onOpenCoin: (CoinFichaRequest) -> Unit,
     onMessage: (UiNotice) -> Unit,
     /**
      * Each piece's ficha age and how to ask Numista for it again (#185). One type per tap, never
@@ -93,7 +89,6 @@ fun PiecesScreen(
     }
 
     var renaming by remember(subject.boxId) { mutableStateOf(false) }
-    var openTypeId by rememberSaveable { mutableStateOf<Int?>(null) }
 
     Box(modifier = modifier.fillMaxSize()) {
         // Export flow and drawing are shared (#430, #431); this supplies the name, file and count.
@@ -157,7 +152,8 @@ fun PiecesScreen(
                         piece = piece,
                         name = pieceName(state, piece.item),
                         images = state.images[piece.item.typeId],
-                        onOpenCoin = { typeId -> openTypeId = typeId },
+                        // A collection without an issue list has no `printed_side`: reverse first.
+                        onOpenCoin = { typeId -> onOpenCoin(CoinFichaRequest(typeId)) },
                         ficha = ficha(piece.item.typeId),
                     ) {
                         // Removing a type from a box leaves the piece in the inventory and on its
@@ -173,14 +169,6 @@ fun PiecesScreen(
                 }
             }
         }
-        CoinSheetOverlay(
-            typeId = openTypeId,
-            surface = sheet,
-            // The card's face up: a collection without an issue list has no `printed_side`.
-            faces = { typeId -> coinAlbumFaces(state.images[typeId]) },
-            onDismiss = { openTypeId = null },
-            here = here,
-        )
     }
 }
 

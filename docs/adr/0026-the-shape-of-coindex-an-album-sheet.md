@@ -427,15 +427,16 @@ order, the one it was opened from included: in ink with «· aquí» and no link
 Dropping it made a coin only that lámina claims look as if it were in none. The heading counts it.
 
 **Amended by #643 (2026-10-11): the sheet becomes a screen**, variant E of #637. Top to bottom: back
-with the name of where it was opened; the coin, starting on the casilla's `printed_side`; its edge
-in profile, drawn from `edge.description` and to scale when the ficha has `thickness` («grosor sin
-dato» and a dashed rule when not); title, identity and value; folded sections, closed on entry, each
-saying its summary; and the foot with the ficha's age, the refresh and «Ver en Numista ↗». Each
-piece prints its three prices with the greatest marked and every empty rung saying why; a hole
-prints its two. The coin's figure stays the sum of the greatest, and no total by source is printed
-(ADR 0028 §7). The new fields are read from the stored bodies when the screen opens, at no consulta.
-Left out: Numista's price in every grade, and the catalog's `variant_note`, which is written for the
-curator.
+with the name of where it was opened; the coin, starting on the casilla's `printed_side`; title,
+identity and value; folded sections, closed on entry, each saying its summary; and the foot with
+the ficha's age, the refresh and «Ver en Numista ↗». Each piece prints its three prices with the
+greatest marked and every empty rung saying why; a hole prints its two. The coin's figure stays the
+sum of the greatest, and no total by source is printed (ADR 0028 §7). The edge is text among the
+faces, its photograph opened apart, and the thickness a row of the specification when the ficha has
+one. Neither is drawn: the mints never publish a thickness and Numista's are unsourced (#644), so a
+drawing to scale would claim a precision the data lacks. The new fields are read from the stored
+bodies when the screen opens, at no consulta. Left out: Numista's price in every grade, and the
+catalog's `variant_note`, which is written for the curator.
 
 ### 14. Licence notices: three words at the foot, one screen with everything inside
 

@@ -24,7 +24,10 @@ fun collectionsCellLabel(collections: Int?): String =
     "Colecciones · ${collections?.toString() ?: UNKNOWN_COUNT}"
 
 fun typesCellLabel(types: Int?): String =
-    "Tipos · ${types?.toString() ?: UNKNOWN_COUNT}"
+    "$TYPES_CELL · ${types?.toString() ?: UNKNOWN_COUNT}"
+
+/** The middle cell's word, which a coin's screen opened from it prints on its way back (#643). */
+const val TYPES_CELL: String = "Tipos"
 
 fun figuresCellLabel(count: String): String = "${FiguresLabels.DESTINATION} · $count"
 

@@ -1,7 +1,9 @@
 package com.jenarvaezg.coindex.ui.screens
 
 import com.jenarvaezg.coindex.domain.WishKey
+import com.jenarvaezg.coindex.ui.CellPlaque
 import com.jenarvaezg.coindex.ui.DrawnCell
+import com.jenarvaezg.coindex.ui.ficha.CasillaOrigin
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,6 +18,7 @@ class CasillaTapTest {
         typeId: Int? = 10_338,
         missing: Boolean = true,
         wishKey: WishKey? = bolivar,
+        plaque: CellPlaque? = null,
     ) = DrawnCell(
         id = "casilla",
         label = "Bolívar",
@@ -25,16 +28,39 @@ class CasillaTapTest {
         owned = !missing,
         missing = missing,
         wishKey = wishKey,
+        plaque = plaque,
+    )
+
+    /** What the coin's screen learns from the casilla (#643). */
+    private fun opened(missing: Boolean, dated: Boolean = false) = CasillaTap.Open(
+        typeId = 10_338,
+        casilla = CasillaOrigin(year = 1_886, issueId = null, missing = missing, dated = dated),
     )
 
     @Test
     fun `an empty casilla opens its coin's sheet`() {
-        assertEquals(CasillaTap.Open(10_338), casillaTap(casilla(), picking = false))
+        assertEquals(opened(missing = true), casillaTap(casilla(), picking = false))
     }
 
     @Test
     fun `a full casilla opens its coin's sheet`() {
-        assertEquals(CasillaTap.Open(10_338), casillaTap(casilla(missing = false), picking = false))
+        assertEquals(opened(missing = false), casillaTap(casilla(missing = false), picking = false))
+    }
+
+    /** On a date run the year is the casilla's name, so the screen opens on that date's pieces. */
+    @Test
+    fun `a casilla named by its year opens its date`() {
+        assertEquals(
+            opened(missing = false, dated = true),
+            casillaTap(casilla(missing = false, plaque = CellPlaque.Year("1886")), picking = false),
+        )
+        assertEquals(
+            opened(missing = false),
+            casillaTap(
+                casilla(missing = false, plaque = CellPlaque.Name("Estrella 86")),
+                picking = false,
+            ),
+        )
     }
 
     @Test

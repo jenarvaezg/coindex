@@ -4,6 +4,7 @@ import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
 import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum
@@ -17,6 +18,9 @@ import com.jenarvaezg.coindex.domain.WishedSlot
 import com.jenarvaezg.coindex.domain.showcasePlate
 import com.jenarvaezg.coindex.domain.showcasePlates
 import com.jenarvaezg.coindex.domain.wishedSlots
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaSubject
+import com.jenarvaezg.coindex.ui.ficha.coinFichaSubject
 import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.shelf.coinRowOf
 
@@ -258,6 +262,28 @@ data class ScreenReading(
      */
     fun coinValue(typeId: Int): CoinValue? =
         if (!settled) null else coinValue(typeId, collection, book)
+
+    /**
+     * A coin's screen (#643). [here] is the collection it was opened from: named among the claims,
+     * and drawn in miniature when it is a plate. Its money waits for the market like every other
+     * amount (ADR 0028 §7).
+     */
+    fun coinFicha(
+        request: CoinFichaRequest,
+        here: CardDestination?,
+        bodies: FichaBodies,
+    ): CoinFichaSubject = coinFichaSubject(
+        state = collection,
+        request = request,
+        bodies = bodies,
+        here = here,
+        origin = (here as? CardDestination.Plate)
+            ?.let { plate(it.catalogId) as? PlateResult.Available }
+            ?.let { plateSubject(it, nowMillis = pricesArrivedAt) },
+        book = book,
+        settled = settled,
+        nowMillis = pricesArrivedAt,
+    )
 
     /**
      * What one plate's own coins are worth, for the header the printer draws (#228). Null until the

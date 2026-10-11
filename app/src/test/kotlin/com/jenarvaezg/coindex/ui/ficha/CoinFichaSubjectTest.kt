@@ -70,7 +70,8 @@ class CoinFichaSubjectTest {
         assertEquals(emptyList(), pieces.dates)
         assertEquals("1879 A vf · 1886 f", pieces.summary)
         assertEquals("Tus piezas · 2", pieces.title)
-        assertEquals("Tu pieza", fuertes(request(), items = FUERTES.take(1)).section<PiecesSection>().title)
+        val one = fuertes(request(), items = FUERTES.take(1))
+        assertEquals("Tu pieza", one.section<PiecesSection>().title)
     }
 
     @Test
@@ -96,7 +97,8 @@ class CoinFichaSubjectTest {
         assertEquals(FichaPageLabels.NOT_PAID, priced.rungs[1].why)
 
         // Never asked is not «no price».
-        assertEquals(FichaPageLabels.NUMISTA_NOT_ASKED, pieces.single { it.itemId == 2L }.rungs[0].why)
+        val unasked = pieces.single { it.itemId == 2L }
+        assertEquals(FichaPageLabels.NUMISTA_NOT_ASKED, unasked.rungs[0].why)
     }
 
     @Test
@@ -156,14 +158,16 @@ class CoinFichaSubjectTest {
         assertNull(subject.value)
         assertNull(subject.sectionOrNull<PiecesSection>())
         val cost = subject.section<CostSection>()
-        assertEquals(listOf("Catálogo de Numista en unc", "Lo que vale su plata"), cost.rungs.map { it.label })
+        assertEquals(
+            listOf("Catálogo de Numista en unc", "Lo que vale su plata"),
+            cost.rungs.map { it.label },
+        )
         assertTrue(cost.rungs[0].greatest)
     }
 
+    /** The edge is read, not drawn: Numista's thicknesses can't hold a drawing to scale (#644). */
     @Test
-    fun `the edge caption says the thickness or that there is none`() {
-        assertEquals("37,2 mm · canto estriado · grosor sin dato", fuertes(request()).edgeCaption)
-
+    fun `the edge is text among the faces, with its legend and its photograph`() {
         val police = coinFichaSubject(
             state = state(POLICE, items = emptyList()),
             request = CoinFichaRequest(401_375),
@@ -174,8 +178,12 @@ class CoinFichaSubjectTest {
             settled = true,
             nowMillis = NOW,
         )
-        assertEquals("25,75 mm · canto estriado con leyenda · 2,2 mm de grosor", police.edgeCaption)
-        assertEquals(EdgePattern.Reeded, police.edge?.pattern)
+
+        val edge = police.section<FacesSection>().faces.single { it.heading == "Canto" }
+        assertEquals("2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★ 2 ★ ★ ↊ ★ ★", edge.lettering)
+        assertTrue(edge.description!!.startsWith("Letras sobre lengüeta."), edge.description)
+        assertNotNull(edge.photo?.picture)
+        assertEquals("2,2 mm", police.section<SpecSection>().rows.toMap()["Grosor"])
     }
 
     @Test
@@ -191,6 +199,7 @@ class CoinFichaSubjectTest {
         assertEquals("22,5 g · 0,72 oz", rows["Plata fina"])
         assertEquals("desmonetizada el 31 dic 2011", rows["Curso legal"])
         assertEquals("de moneda", rows["Orientación"])
+        // Never «grosor sin dato»: a row only when the ficha has the datum.
         assertNull(rows["Grosor"])
         assertNull(rows["Tema"])
     }
@@ -254,7 +263,8 @@ class CoinFichaSubjectTest {
         val seed by lazy { Json.parseToJsonElement(TypeCacheFile.read()).jsonObject }
 
         val ZONE: ZoneId = ZoneId.systemDefault()
-        val NOW: Long = LocalDate.of(2026, 10, 11).atTime(11, 52).atZone(ZONE).toInstant().toEpochMilli()
+        val NOW: Long =
+            LocalDate.of(2026, 10, 11).atTime(11, 52).atZone(ZONE).toInstant().toEpochMilli()
         val SPOT = SilverSpot(eurPerTroyOunce = 54.39, readAtMillis = NOW)
 
         val FUERTE = TypeMeta(

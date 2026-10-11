@@ -243,7 +243,7 @@ fun ForwardGlyph(color: Color = Paper.ink, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ExternalLinkGlyph(color: Color, modifier: Modifier = Modifier) {
+internal fun ExternalLinkGlyph(color: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
         val stroke = size.minDimension * 0.12f
         val corner = Offset(size.width * 0.84f, size.height * 0.16f)

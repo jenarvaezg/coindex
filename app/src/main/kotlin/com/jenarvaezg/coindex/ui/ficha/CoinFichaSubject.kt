@@ -14,6 +14,7 @@ import com.jenarvaezg.coindex.domain.NUMISTA_GRADES
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.PieceValue
 import com.jenarvaezg.coindex.domain.PriceLadder
+import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.fineSilverGrams
@@ -39,11 +40,10 @@ import java.time.ZoneId
  * Everything the coin's screen draws, worded (#643, ADR 0026 §13). Built once per reading and
  * request, like [PlateSubject] for a plate, so the screen only lays it out.
  *
- * @param owned whether the collector holds the type: its hole is drawn whole rather than as a ghost.
+ * @param owned whether the collector holds the type, which decides how its hole is drawn.
  * @param value «Valor actual», the sum of each piece's greatest price; null on a hole and until the
  *   market lands (ADR 0028 §7).
  * @param missing opened from an empty casilla: «Te falta», and [cost] says what filling it costs.
- * @param edgeCaption null when the ficha gives neither the diameter nor the edge.
  */
 data class CoinFichaSubject(
     val typeId: Int,
@@ -54,15 +54,8 @@ data class CoinFichaSubject(
     val value: String?,
     val missing: Boolean,
     val cost: String?,
-    val edge: EdgeProfile?,
-    val edgeCaption: String?,
-    val edgePhoto: CoinPhoto?,
-    val edgeTone: EdgeTone,
     val sections: List<FichaSection>,
 )
-
-/** The metal's colour for the drawn edge; a photograph would carry it, the drawing must choose. */
-enum class EdgeTone { Silver, Gold, Bronze }
 
 /** One folded section: closed it says [summary] on one line (#643). */
 sealed interface FichaSection {
@@ -173,15 +166,18 @@ data class DateTile(
     val casilla: Boolean,
 )
 
-data class FichaStrip(val cells: List<StripCell>, val count: String?)
+/** The plate the screen was opened from, in miniature, on its own `printed_side`. */
+data class FichaStrip(val cells: List<StripCell>, val count: String?, val side: PrintedSide)
 
 data class StripCell(val typeId: Int?, val missing: Boolean, val here: Boolean)
 
+/** A face or the edge, as Numista writes it. [photo] is the edge's, shown apart on request. */
 data class FaceBlock(
     val heading: String,
     val lettering: String?,
     val unabridgedLegend: String?,
     val description: String?,
+    val photo: CoinPhoto? = null,
 )
 
 data class RelatedRow(val typeId: Int, val country: String?, val title: String, val years: String?)
@@ -220,12 +216,6 @@ fun coinFichaSubject(
         HoleIssue(book.listings.issueOf(typeId, missing.year, listOfNotNull(missing.issueId)))
     }
     val hole = holeIssue?.let { holeLadder(typeId, it.issueId, meta, book.spot, book::of) }
-    val edge = edgeProfile(
-        description = details.edge?.description,
-        lettering = details.edge?.lettering,
-        thicknessMillimetres = meta?.thicknessMillimetres,
-        diameterMillimetres = meta?.sizeMillimetres,
-    )
     val claims = fichaClaims(row.claims, here)
     return CoinFichaSubject(
         typeId = typeId,
@@ -238,14 +228,6 @@ fun coinFichaSubject(
         cost = hole?.greatest?.takeIf { settled }?.let {
             FichaPageLabels.holeCost(eurosLabel(it.eur))
         },
-        edge = edge,
-        edgeCaption = if (edge == null && meta?.sizeMillimetres == null) {
-            null
-        } else {
-            FichaPageLabels.edgeCaption(meta?.sizeMillimetres, edge, meta?.thicknessMillimetres)
-        },
-        edgePhoto = details.edge?.photo,
-        edgeTone = edgeTone(meta?.metal),
         sections = listOfNotNull(
             hole?.let { costSection(prices.holeRungs(it, holeIssue.issueId)) },
             piecesSection(items, bodies.pieces, casilla, state.emissionLabels, prices),
@@ -482,6 +464,7 @@ private fun claimsSection(
                 )
             },
             count = plate.ratio,
+            side = plate.printedSide,
         )
     }
     return ClaimsSection(
@@ -545,8 +528,14 @@ private fun facesSection(details: FichaDetails): FacesSection? {
     val faces = listOfNotNull(
         details.obverse?.let { faceBlock(FichaPageLabels.OBVERSE, it) },
         details.reverse?.let { faceBlock(FichaPageLabels.REVERSE, it) },
-        edge?.takeIf { it.description != null || it.lettering != null }?.let {
-            FaceBlock(FichaPageLabels.EDGE, it.lettering, null, it.description)
+        edge?.let {
+            FaceBlock(
+                heading = FichaPageLabels.EDGE,
+                lettering = it.lettering,
+                unabridgedLegend = it.unabridgedLegend,
+                description = it.description,
+                photo = it.photo,
+            )
         },
     )
     if (faces.isEmpty()) return null
@@ -599,9 +588,3 @@ private val WHITESPACE = Regex("\\s+")
 
 private const val FACES_SUMMARY_CHARACTERS = 44
 private const val COMMENTS_SUMMARY_CHARACTERS = 70
-
-private fun edgeTone(metal: Metal?): EdgeTone = when (metal) {
-    Metal.Gold -> EdgeTone.Gold
-    Metal.Copper, Metal.Bronze, Metal.Brass -> EdgeTone.Bronze
-    else -> EdgeTone.Silver
-}

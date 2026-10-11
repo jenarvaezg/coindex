@@ -49,6 +49,7 @@ data class FichaFace(
 data class FichaEdge(
     val description: String? = null,
     val lettering: String? = null,
+    val unabridgedLegend: String? = null,
     /** Numista's photograph of the edge, shown apart because each one is shot differently. */
     val photo: CoinPhoto? = null,
 )
@@ -83,7 +84,8 @@ fun readFichaDetails(raw: String): FichaDetails {
         technique = body.plainAt("technique", "text"),
         demonetizedOn = body.plainAt("demonetization", "demonetization_date"),
         references = body.objectsAt("references").mapNotNull { reference ->
-            val catalogue = reference.objectAt("catalogue")?.plainAt("code") ?: return@mapNotNull null
+            val catalogue = reference.objectAt("catalogue")?.plainAt("code")
+                ?: return@mapNotNull null
             val number = reference.plainAt("number") ?: return@mapNotNull null
             FichaReference(catalogue, number)
         },
@@ -115,6 +117,8 @@ private fun JsonObject.edge(): FichaEdge? {
     return FichaEdge(
         description = plainAt("description"),
         lettering = plainAt("lettering"),
-        photo = if (picture == null && thumbnail == null) null else CoinPhoto(thumbnail = thumbnail, picture = picture),
+        unabridgedLegend = plainAt("unabridged_legend"),
+        photo = CoinPhoto(thumbnail = thumbnail, picture = picture)
+            .takeIf { picture != null || thumbnail != null },
     ).takeIf { it != FichaEdge() }
 }

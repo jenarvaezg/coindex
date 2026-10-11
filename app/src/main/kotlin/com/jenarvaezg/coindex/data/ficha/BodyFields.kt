@@ -27,7 +27,8 @@ internal fun JsonObject.objectAt(field: String): JsonObject? = attempt { this[fi
 internal fun JsonObject.stringAt(field: String): String? =
     attempt { this[field]?.jsonPrimitive?.contentOrNull }
 
-internal fun JsonObject.intAt(field: String): Int? = attempt { this[field]?.jsonPrimitive?.intOrNull }
+internal fun JsonObject.intAt(field: String): Int? =
+    attempt { this[field]?.jsonPrimitive?.intOrNull }
 
 internal fun JsonObject.longAt(field: String): Long? =
     attempt { this[field]?.jsonPrimitive?.longOrNull }

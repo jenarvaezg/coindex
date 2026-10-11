@@ -10,7 +10,6 @@ import java.util.Locale
 
 /** The words of the coin's screen (#643, ADR 0026 §13). */
 object FichaPageLabels {
-    const val MONEDAS = "Monedas"
     const val TURN_HINT = "tócala para darle la vuelta"
     const val EDGE_PHOTO = "Ver la foto del canto"
     const val EDGE_PHOTO_CAPTION = "El canto, en la foto de Numista · toca para cerrar"
@@ -115,23 +114,6 @@ object FichaPageLabels {
     fun grams(value: Double): String = "${trimmed(value, 2)} g"
 
     fun ounces(value: Double): String = "${trimmed(value, 2)} oz"
-
-    /** «39 mm · canto estriado · 2,5 mm de grosor», or «… · grosor sin dato». */
-    fun edgeCaption(diameter: Double?, edge: EdgeProfile?, thickness: Double?): String =
-        listOfNotNull(
-            diameter?.let(::millimetres),
-            edge?.let { "canto ${edgeWords(it)}" },
-            thickness?.let { "${millimetres(it)} de grosor" } ?: "grosor sin dato",
-        ).joinToString(" · ")
-
-    private fun edgeWords(edge: EdgeProfile): String {
-        val pattern = when (edge.pattern) {
-            EdgePattern.Reeded -> "estriado"
-            EdgePattern.Plain -> "liso"
-            EdgePattern.Ornamented -> "con motivos en relieve"
-        }
-        return if (edge.lettering != null) "$pattern con leyenda" else pattern
-    }
 
     fun orientation(orientation: CoinOrientation): String = when (orientation) {
         CoinOrientation.Medal -> "de medalla"

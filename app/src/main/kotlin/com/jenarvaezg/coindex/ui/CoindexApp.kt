@@ -34,6 +34,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -65,8 +66,11 @@ import com.jenarvaezg.coindex.ui.components.LocalNavAnimation
 import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaScreen
+import com.jenarvaezg.coindex.ui.ficha.coinFichaRequestOf
 import com.jenarvaezg.coindex.ui.print.NotebookSubject
-import com.jenarvaezg.coindex.ui.screens.CoinSheetSurface
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
 import com.jenarvaezg.coindex.ui.screens.ExploreScreen
 import com.jenarvaezg.coindex.ui.screens.WishesScreen
@@ -158,17 +162,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         )
     }
 
-    // The coin sheet of plates, «Lo que busco», Monedas and the pieces (ADR 0026 §3). Remembered so
-    // its lambdas are stable: a fresh one would rebuild the row on every frame of the entrance.
-    // `refreshingFichas` is the only key besides the reading because it is in flight, not derived.
-    val coinSheet = remember(reading, state.refreshingFichas) {
-        CoinSheetSurface(
-            coin = reading::coin,
-            ficha = ficha,
-            value = reading::coinValue,
-            onOpenNumista = openTypeOnNumista,
-            onOpenClaim = openCard,
-        )
+    // Plates, «Lo que busco», Monedas and the pieces all open a coin's screen (ADR 0026 §3, #643).
+    val openCoin: (CoinFichaRequest) -> Unit = { request ->
+        navController.navigate(Routes.coin(request))
     }
 
     // The plate and the collections take their masthead title from the route's arguments; every
@@ -318,6 +314,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         }
                     }
                     page(Routes.COINS) {
+                        // The far end of the journey into a coin's screen (#370).
+                        Travelling(this) {
                         CoinsScreen(
                             state = state.collection,
                             shelf = state.coinsShelf,
@@ -327,8 +325,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             onAddToBox = viewModel::addToOwnGrouping,
                             sewnEdge = reading.sewnEdge,
                             onOpenPhone = { navController.navigate(Routes.PHONE) },
-                            sheet = coinSheet,
+                            onOpenCoin = openCoin,
                         )
+                        }
                     }
                     page(Routes.FIGURES) {
                         FiguresScreen(
@@ -363,8 +362,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                         PiecesScreen(
                             state = state.collection,
                             subject = card?.let(reading::pieces),
-                            sheet = coinSheet,
-                            here = card?.let(::destinationOf),
+                            onOpenCoin = openCoin,
                             onMessage = viewModel::showMessage,
                             ficha = ficha,
                             notebookOptions = state.notebookOptions,
@@ -413,8 +411,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                             PiecesScreen(
                                 state = state.collection,
                                 subject = card?.let(reading::pieces),
-                                sheet = coinSheet,
-                                here = card?.let(::destinationOf),
+                                onOpenCoin = openCoin,
                                 onMessage = viewModel::showMessage,
                                 ficha = ficha,
                                 notebookOptions = state.notebookOptions,
@@ -453,7 +450,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 viewModel.notebookPages(NotebookSubject.Wishes, options)
                             },
                             onExporting = viewModel::notebookExporting,
-                            sheet = coinSheet,
+                            onOpenCoin = openCoin,
                             onRemove = viewModel::removeWish,
                             onMessage = viewModel::showMessage,
                             modifier = Modifier.fillMaxSize(),
@@ -541,11 +538,65 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                                 },
                                 onExporting = viewModel::notebookExporting,
                                 onOpenSource = openUrl,
-                                sheet = coinSheet,
+                                onOpenCoin = openCoin,
                                 onMessage = viewModel::showMessage,
                                 nowMillis = reading.pricesArrivedAt,
                                 modifier = Modifier.fillMaxSize(),
                             )
+                        }
+                    }
+                    page(Routes.COIN) { entry ->
+                        val request = remember(entry) {
+                            coinFichaRequestOf(
+                                typeId = entry.arguments?.getString("typeId"),
+                                side = entry.arguments?.getString("side"),
+                                year = entry.arguments?.getString("year"),
+                                issue = entry.arguments?.getString("issue"),
+                                missing = entry.arguments?.getString("missing"),
+                                dated = entry.arguments?.getString("dated"),
+                            )
+                        }
+                        // Read once, while this entry is on top: during the pop's fade the
+                        // controller already reports a different previous entry.
+                        val from = remember(entry) { navController.previousBackStackEntry }
+                        // Only `Routes.coin` writes these routes, and it always names a type.
+                        if (request != null) {
+                            val origin = fichaOrigin(from, reading)
+                            val typeId = request.typeId
+                            // Read again when a refresh restamps the ficha or a sync replaces rows.
+                            val rows = remember(reading) {
+                                reading.collection.items
+                                    .filter { it.typeId == typeId }
+                                    .map { it.id }
+                            }
+                            val bodies by produceState(
+                                FichaBodies(),
+                                typeId,
+                                reading.fichaFetchedAt(typeId),
+                                rows,
+                            ) {
+                                value = viewModel.fichaBodies(typeId)
+                            }
+                            val subject = remember(reading, request, origin.here, bodies) {
+                                reading.coinFicha(request, origin.here, bodies)
+                            }
+                            Travelling(this) {
+                                CoinFichaScreen(
+                                    subject = subject,
+                                    images = state.collection.images,
+                                    side = request.side,
+                                    back = origin.label,
+                                    ficha = ficha(typeId),
+                                    onBack = { navController.popBackStack() },
+                                    onOpenNumista = { openTypeOnNumista(typeId) },
+                                    onOpenType = openTypeOnNumista,
+                                    // Popped first, so coming back doesn't land on this screen.
+                                    onOpenClaim = { destination ->
+                                        navController.popBackStack()
+                                        openCard(destination)
+                                    },
+                                )
+                            }
                         }
                     }
                 }
@@ -568,6 +619,48 @@ private fun crossToCoins(
         popUpTo(Routes.INDEX) { saveState = true }
         launchSingleTop = true
         restoreState = true
+    }
+}
+
+/**
+ * Where a coin's screen was opened from: the name its way back prints, and the collection its
+ * claims mark «· aquí» (#635, #643).
+ */
+private data class FichaOrigin(val label: String, val here: CardDestination?)
+
+private fun fichaOrigin(from: NavBackStackEntry?, reading: ScreenReading): FichaOrigin {
+    val route = from?.destination?.route
+    val arguments = from?.arguments
+    return when {
+        Routes.isPlate(route) -> {
+            val catalogId = arguments?.getString("catalogId").orEmpty()
+            FichaOrigin(
+                label = reading.catalogName(catalogId) ?: screenTitle(route),
+                here = CardDestination.Plate(catalogId),
+            )
+        }
+        Routes.isDerivedCollection(route) -> {
+            val key = variantKeyFromRoute(
+                family = arguments?.getString("family"),
+                weight = arguments?.getString("weight"),
+                finish = arguments?.getString("finish"),
+                metal = arguments?.getString("metal"),
+            )
+            FichaOrigin(
+                label = key?.let(reading::derivedName) ?: screenTitle(route),
+                here = key?.let(CardDestination::Pieces),
+            )
+        }
+        Routes.isOwnGrouping(route) -> {
+            val boxId = arguments?.getString("groupingId")?.toLongOrNull()
+            FichaOrigin(
+                label = boxId?.let(reading::boxName) ?: screenTitle(route),
+                here = boxId?.let(CardDestination::Box),
+            )
+        }
+        // The cell the collector tapped in the bar says «Tipos» (#516).
+        route == Routes.COINS -> FichaOrigin(TYPES_CELL, here = null)
+        else -> FichaOrigin(screenTitle(route), here = null)
     }
 }
 

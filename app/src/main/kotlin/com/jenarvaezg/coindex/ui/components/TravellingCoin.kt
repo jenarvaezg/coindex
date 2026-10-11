@@ -22,7 +22,7 @@ val LocalNavAnimation = compositionLocalOf<AnimatedVisibilityScope?> { null }
 /** Shared-content key for the index → casilla journey (ADR 0026 §3). */
 fun travellingCatalogKey(catalogId: String): String = "coin-$catalogId"
 
-/** Shared-content key for the Monedas → ficha journey (ADR 0026 §3, #370). */
+/** Shared-content key for the Monedas → coin screen journey (ADR 0026 §3, #370). */
 fun travellingTypeKey(typeId: Int): String = "type-$typeId"
 
 /**
@@ -52,20 +52,20 @@ fun Modifier.travellingCoin(catalogId: String?): Modifier {
 }
 
 /**
- * Flies this coin between its hole in Monedas and the top of its ficha sheet (#370). The ficha is a
- * sheet, not a destination, and `ModalBottomSheet` (a dialog window) can't host a shared element,
- * so visibility is caller-managed: [visible] is true on the end that currently owns the photograph.
- * With [LocalMotion] false neither end yields and both draw their photograph (#514).
+ * Flies this coin between its cell in Monedas and the hole of its screen (#370, #643). Both ends
+ * are destinations, so the journey is the navigation's, as [travellingCoin]'s. Not with
+ * [LocalMotion] off (#514).
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Modifier.travellingTypeCoin(typeId: Int, visible: Boolean): Modifier {
+fun Modifier.travellingTypeCoin(typeId: Int): Modifier {
     if (!LocalMotion.current) return this
     val layout = LocalSharedTransition.current ?: return this
+    val destination = LocalNavAnimation.current ?: return this
     return with(layout) {
-        this@travellingTypeCoin.sharedElementWithCallerManagedVisibility(
+        this@travellingTypeCoin.sharedElement(
             sharedContentState = rememberSharedContentState(key = travellingTypeKey(typeId)),
-            visible = visible,
+            animatedVisibilityScope = destination,
             clipInOverlayDuringTransition = OverlayClip(CircleShape),
         )
     }
