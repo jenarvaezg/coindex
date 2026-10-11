@@ -24,10 +24,7 @@ import org.junit.runner.RunWith
 
 private const val SEARCH = "search"
 
-/**
- * The bar brings Monedas back as it was left; a cross with its own filters opens it without the
- * search left there (#645). Monedas here is only its saveable search box.
- */
+/** The bar and the crosses to Monedas (#645). Monedas here is only its saveable search box. */
 @RunWith(AndroidJUnit4::class)
 class RootCrossingTest {
     @get:Rule
@@ -35,7 +32,7 @@ class RootCrossingTest {
 
     private lateinit var nav: NavHostController
 
-    private fun roots() {
+    private fun setUpRoots() {
         compose.setContent {
             nav = rememberNavController()
             NavHost(navController = nav, startDestination = Routes.INDEX) {
@@ -67,7 +64,7 @@ class RootCrossingTest {
 
     @Test
     fun theBarBringsBackTheSearchLeftInCoins() {
-        roots()
+        setUpRoots()
         searchLeftInCoins("bazan")
 
         go { crossToRoot(Routes.INDEX) }
@@ -78,7 +75,7 @@ class RootCrossingTest {
 
     @Test
     fun aCrossFromColeccionesOpensCoinsWithoutTheSearch() {
-        roots()
+        setUpRoots()
         searchLeftInCoins("bazan")
 
         go { crossToRoot(Routes.INDEX) }
@@ -89,7 +86,7 @@ class RootCrossingTest {
 
     @Test
     fun theBarDoesNotBringBackTheSearchACrossLeftBehind() {
-        roots()
+        setUpRoots()
         searchLeftInCoins("bazan")
         go { crossToRoot(Routes.INDEX) }
         go { crossToFreshCoins() }
@@ -103,7 +100,7 @@ class RootCrossingTest {
 
     @Test
     fun aCrossFromLasCifrasOpensCoinsWithoutTheSearch() {
-        roots()
+        setUpRoots()
         searchLeftInCoins("bazan")
 
         go { crossToRoot(Routes.FIGURES) }
@@ -114,7 +111,7 @@ class RootCrossingTest {
 
     @Test
     fun afterACrossFromLasCifrasTheBarStillLandsOnColecciones() {
-        roots()
+        setUpRoots()
         go { crossToRoot(Routes.FIGURES) }
         go { crossToFreshCoins() }
 

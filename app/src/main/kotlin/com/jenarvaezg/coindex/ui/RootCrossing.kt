@@ -3,8 +3,8 @@ package com.jenarvaezg.coindex.ui
 import androidx.navigation.NavController
 
 /**
- * The bottom bar. The roots are siblings, not a stack: crossing piles up no entries and each root
- * comes back as it was left, search and scroll included.
+ * The bottom bar. Crossing piles up no entries, and each root comes back as it was left, search
+ * and scroll included.
  */
 internal fun NavController.crossToRoot(route: String) {
     navigate(route) {
@@ -15,12 +15,12 @@ internal fun NavController.crossToRoot(route: String) {
 }
 
 /**
- * A cross that brings its own filters to Monedas (#386, #634) opens it fresh: a search left there
- * would hide what the cross promised (#645). The saved Monedas is dropped rather than left
- * unrestored, which would keep it mapped and let the next bar crossing bring it back. By id: the
- * route overload also drops the mapping the bar keeps for Colecciones.
+ * A cross that brings its own filters to Monedas (#386, #634) opens it fresh, so a search left
+ * there cannot hide what the cross promised (#645).
  */
 internal fun NavController.crossToFreshCoins() {
+    // A Monedas left saved would come back on the next bar crossing. By id, because the route
+    // overload also drops the entry the bar keeps for Colecciones.
     graph.findNode(Routes.COINS)?.let { clearBackStack(it.id) }
     navigate(Routes.COINS) {
         popUpTo(Routes.INDEX) { saveState = true }
