@@ -5,7 +5,7 @@
   [ADR 0029](0029-a-wish-is-an-empty-slot-marked-on-the-phone.md) (§4),
   [ADR 0030](0030-the-shelf-window-of-explorar-is-valued-by-hand.md) (§8 clause 4), #508 (§3),
   #514 (§3, §4), #516 (§8), #520 (§8 clause 3, §15), #521 (§1, §5 clause 3, §14), #556 (§15),
-  #632 (§3, §13)
+  #632 (§3, §13), #634 (§8)
 - Date: 2026-08-08
 - Amends ADR 0021 §1 (three top-level hierarchies) and §9 (the card's eyebrow stops being the
   country). Extends ADR 0010 §8 and ADR 0021 §13 with an export rule. Upholds ADR 0018, 0020, 0023
@@ -310,6 +310,10 @@ An annex is not a way into the bar: no cell, no count there, and the top level r
   «Explorar». A shopping list goes where it is acted on, a window to browse where a page ends
   (`docs/ux/prototipo-dos-puertas-520/`). #515's note «Lo que escribes arriba no llega hasta aquí»
   goes once, on the head row.
+- **Amended by [#634](https://github.com/jenarvaezg/coindex/issues/634) (2026-10-11).** On the plate
+  axis, «Y N tipos sin colección →» sits above «Explorar»'s row and opens Monedas on «Sin colección»
+  with the index's country. It crosses to a root, like the country and year seats, so it is not an
+  annex; it borrows the row and the no-zero rule.
 
 ### 9. The country map and the timeline are two axes of the notebook, not two screens
 

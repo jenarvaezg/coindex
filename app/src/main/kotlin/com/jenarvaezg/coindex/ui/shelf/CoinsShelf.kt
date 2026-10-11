@@ -54,8 +54,11 @@ data class CoinsShelf(
             (except == CoinsFacet.Membership || membership == null || membershipOf(row) == membership)
 }
 
-/** The filter facets, named so each can be counted with its own choice dropped. */
-enum class CoinsFacet { Issuer, Weight, Year, Class, Membership }
+/**
+ * The filter facets, named so each can be counted with its own choice dropped. In the panel's row
+ * order (#634).
+ */
+enum class CoinsFacet { Membership, Issuer, Weight, Year, Class }
 
 private fun membershipOf(row: CoinRow): Membership =
     if (row.unclaimedPieces > 0) Membership.InNone else Membership.InSome

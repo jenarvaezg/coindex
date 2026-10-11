@@ -103,6 +103,7 @@ import com.jenarvaezg.coindex.ui.shelf.StartBand
 import com.jenarvaezg.coindex.ui.shelf.WEIGHT_FACET
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.clearNarrowingAction
+import com.jenarvaezg.coindex.ui.shelf.coinRows
 import com.jenarvaezg.coindex.ui.shelf.countryAxis
 import com.jenarvaezg.coindex.ui.shelf.countryAxisTally
 import com.jenarvaezg.coindex.ui.shelf.indexEmptyLabel
@@ -114,6 +115,8 @@ import com.jenarvaezg.coindex.ui.shelf.issuers
 import com.jenarvaezg.coindex.ui.shelf.narrow
 import com.jenarvaezg.coindex.ui.shelf.narrowUnclaimed
 import com.jenarvaezg.coindex.ui.shelf.shelfNarrowing
+import com.jenarvaezg.coindex.ui.shelf.unclaimedDoor
+import com.jenarvaezg.coindex.ui.shelf.unclaimedDoorLabel
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.shelf.yearAxis
 import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
@@ -160,7 +163,7 @@ fun IndexScreen(
     catalogs: List<CollectionCatalog>,
     onNarrow: (IndexShelf) -> Unit,
     onOpen: (CardDestination) -> Unit,
-    /** Opens Monedas pre-narrowed, from country or year axis seats. */
+    /** Opens Monedas pre-narrowed, from country or year axis seats and the loose-coin door. */
     onOpenCoins: (CoinsShelf) -> Unit,
     /** Computed once above the three roots so they all show the same counts. */
     sewnEdge: SewnEdgeCounts?,
@@ -232,6 +235,9 @@ fun IndexScreen(
     // can't make a boxed coin loose.
     val loose = remember(state) { unclaimedFacts(state) }
     val looseShown = remember(loose, shelf, query) { shelf.narrowUnclaimed(loose, query) }
+    // Slot years only feed the year chip and the search, which the door doesn't use (#634).
+    val coins = remember(state) { coinRows(state) }
+    val looseDoor = remember(coins, shelf) { unclaimedDoor(coins, shelf) }
     // What survives the shelf, so the country and year axes honour the same chips as the plate
     // axis.
     val keptCatalogIds = remember(shown) {
@@ -563,6 +569,19 @@ fun IndexScreen(
                 }
             }
 
+            // The country and year axes already place loose coins; the plate axis sends them to
+            // Monedas (#634).
+            if (shelf.axis == NotebookAxis.ByPlate) {
+                looseDoor?.let { door ->
+                    fullWidth {
+                        AnnexDoor(
+                            label = unclaimedDoorLabel(door),
+                            onOpen = { onOpenCoins(door.shelf) },
+                        )
+                    }
+                }
+            }
+
             // The door to «Explorar», last on every axis (ADR 0026 §8 clause 3). One name, one
             // destination (#520); absent at zero.
             showcaseDoorLabel(plates = showcase)?.let { label ->
@@ -589,12 +608,9 @@ fun IndexScreen(
 }
 
 /**
- * A row leading to an annex screen: deeper paper, its name with a count, and a forward arrow.
- *
- * An annex is neither a bar cell nor an index collection, so its entrance is a row, not a card
- * (ADR 0026 §8 clause 3, amended by #520). The index has two (marks at the top, the shelf window at
- * the foot) and «Explorar» a third into «Lo que busco»; all three share this composable so they
- * can't drift apart.
+ * A row on deeper paper with a name, its count and a forward arrow: the entrance to an annex
+ * (ADR 0026 §8 clause 3, amended by #520), and the loose-coin row that crosses to Monedas (#634).
+ * Every such row uses this composable so they can't drift apart.
  *
  * The arrow is drawn because neither typeface has the glyph (#298); it is «Volver»'s chevron,
  * mirrored. [content] (the marked casillas on the index's row) sits inside the tap target.
