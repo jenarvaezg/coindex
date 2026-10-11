@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -21,11 +23,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.DrawnWish
+import com.jenarvaezg.coindex.ui.OPEN_THE_COIN_SHEET
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
@@ -65,7 +69,7 @@ fun WishesScreen(
     onNotebookPrinted: (NotebookOptions) -> Unit,
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
-    /** The coin sheet a row's year opens, the same one its plate opens (#508). */
+    /** The coin sheet a row opens, the same one its plate opens (ADR 0026 §3). */
     sheet: CoinSheetSurface,
     onRemove: (WishKey) -> Unit,
     onMessage: (UiNotice) -> Unit,
@@ -156,53 +160,66 @@ fun WishesScreen(
 private val WISH_MARGIN = 20.dp
 
 /**
- * One marked casilla in the list.
+ * One marked casilla in the list, which opens its coin's sheet whole, as on a plate (ADR 0026 §3).
  *
  * No «lo busco» chip: every casilla here is marked, so it would distinguish nothing (ADR 0026 §5);
  * the chip only shows the price. «Quitar» on each row is fine here, unlike per-casilla toggles on a
  * plate (ADR 0029 §5): the list is just the marks, and removing one is its only upkeep, like a
- * box's per-piece action (ADR 0021 §9).
+ * box's per-piece action (ADR 0021 §9). It sits outside the casilla, so a missed tap can't unmark.
  */
 @Composable
-private fun WishCell(
+internal fun WishCell(
     row: DrawnWish,
     images: TypeImages?,
     onOpenCoin: () -> Unit,
     onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            AlbumHole(
-                photo = images?.printedPhoto(row.printedSide),
-                // Drawn whole, not as a ghost, so the coin can be recognised at a fair; the dotted
-                // rule says it isn't owned (#520).
-                absence = HoleAbsence.Wanted,
-                otherSide = images?.printedPhoto(row.printedSide.other),
-                modifier = Modifier.size(104.dp),
-            )
-            HoleStamp(cost = row.cost, wished = false)
-        }
-        // The year's target height is reserved even without a year, as on the plate (#473).
-        Box(
-            modifier = Modifier.height(YearTagMetrics.target),
-            contentAlignment = Alignment.Center,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    role = Role.Button,
+                    onClickLabel = OPEN_THE_COIN_SHEET,
+                    onClick = onOpenCoin,
+                ),
         ) {
-            row.year?.let { year ->
-                RecessedYearTag(year = year, onOpen = onOpenCoin)
+            Box(contentAlignment = Alignment.Center) {
+                AlbumHole(
+                    photo = images?.printedPhoto(row.printedSide),
+                    // Drawn whole, not as a ghost, so the coin can be recognised at a fair; the
+                    // dotted rule says it isn't owned (#520).
+                    absence = HoleAbsence.Wanted,
+                    modifier = Modifier.size(104.dp),
+                )
+                HoleStamp(cost = row.cost, wished = false)
             }
+            // The year's height is reserved even without a year, as on the plate (#473).
+            Box(
+                modifier = Modifier.height(YearTagMetrics.target),
+                contentAlignment = Alignment.Center,
+            ) {
+                row.year?.let { year -> RecessedYearTag(year = year) }
+            }
+            row.printedName?.let { name -> PlateCellName(name = name) }
+            // The lámina this casilla belongs to, since the list crosses plates.
+            Text(
+                row.plate,
+                style = MaterialTheme.typography.labelMedium,
+                color = Paper.muted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-        row.printedName?.let { name -> PlateCellName(name = name) }
-        // The lámina this casilla belongs to, since the list crosses plates.
-        Text(
-            row.plate,
-            style = MaterialTheme.typography.labelMedium,
-            color = Paper.muted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+        CardAction(
+            text = WishLabels.REMOVE_ACTION,
+            onClick = onRemove,
+            modifier = Modifier.padding(top = 8.dp),
         )
-        CardAction(text = WishLabels.REMOVE_ACTION, onClick = onRemove)
     }
 }

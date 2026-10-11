@@ -96,8 +96,8 @@ data class DrawnCell(
     val numistaTypeId: Int?,
     val footnote: String?,
     /**
-     * The year on the casilla's recessed tag, which on screen also opens the coin's ficha (#508). Unlike
-     * [footnote], it stays when the whole plate shares one year: it is the handle.
+     * The year on the casilla's recessed tag. Unlike [footnote], it stays when the whole plate shares
+     * one year, since [plaque] and [printedName] are decided from it (#511).
      */
     val year: String?,
     val owned: Boolean,
@@ -122,10 +122,9 @@ data class DrawnCell(
 )
 
 /**
- * What the piece sunk into the cardboard says: the casilla's identity in its plate and its door to
- * the ficha (#302, #508). On a date run, the year; where every casilla shares the year, what tells
- * it from its sisters, such as «Estrella 66» (#511). A shared year is printed once, in the
- * specification.
+ * What the piece sunk into the cardboard says: the casilla's identity in its plate (#302). On a date
+ * run, the year; where every casilla shares the year, what tells it from its sisters, such as
+ * «Estrella 66» (#511). A shared year is printed once, in the specification.
  */
 sealed interface CellPlaque {
     /** The year of a casilla that has one of its own. */

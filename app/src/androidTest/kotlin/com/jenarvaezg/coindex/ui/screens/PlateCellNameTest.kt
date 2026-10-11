@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
@@ -44,15 +46,16 @@ private const val THREE_LINE_LABEL = "V centenario de la primera vuelta al mundo
 /** A titled casilla of the 1 Bolívar row #473 was reported on. */
 private const val MINTED_LATER = "1945 (acuñada en 1947)"
 
-/** Any Numista type: it makes the tag clickable, as on real casillas. */
+/** Any Numista type: it makes the casilla open its sheet, as on real casillas. */
 private const val A_TYPE = 10338
 
 /**
  * The casilla of a plate, drawn: hole, sunken year, name (#473).
  *
- * The tag's node is its 28 dp drawing, not the 48 dp touch target, so hole-to-tag drops are read
- * straight off it. The name's node includes 6 dp of padding on each side, so names are compared box
- * to box; the ink-to-ink arithmetic is in `PlateSpacingTest`.
+ * The whole casilla is one merged target (ADR 0026 §3), so everything is read off the unmerged
+ * tree. A year is measured by its tag's 28 dp drawing, the box its text is centred in. The name's
+ * node includes 6 dp of padding on each side, so names are compared box to box; the ink-to-ink
+ * arithmetic is in `PlateSpacingTest`.
  */
 @RunWith(AndroidJUnit4::class)
 class PlateCellNameTest {
@@ -74,9 +77,9 @@ class PlateCellNameTest {
             }
         }
 
-        val first = topOfText("1945")
-        assertEquals(first, topOfText("1954"), 0.5f)
-        assertEquals(first, topOfText("1960"), 0.5f)
+        val first = tagOf("1945").top
+        assertEquals(first, tagOf("1954").top, 0.5f)
+        assertEquals(first, tagOf("1960").top, 0.5f)
     }
 
     @Test
@@ -125,7 +128,7 @@ class PlateCellNameTest {
     fun aNameStaysNearerItsOwnYearThanTheRowBelow() {
         compose.setContent { CoindexTheme { TwoRows() } }
 
-        val toItsYear = topOfText(MINTED_LATER) - bottomOfText("1945")
+        val toItsYear = topOfText(MINTED_LATER) - tagOf("1945").bottom
         val toTheNextRow = topOf("row-2") - bottomOfText(MINTED_LATER)
 
         assertTrue(
@@ -135,8 +138,8 @@ class PlateCellNameTest {
     }
 
     @Test
-    // An announced member has no year and an unclickable tag lacks the 48 dp target; the casilla
-    // reserves that height anyway so its name lines up with its neighbours'.
+    // An announced member has no year; the casilla reserves the tag's height anyway so its name
+    // lines up with its neighbours'.
     fun aCasillaWithNoYearStillLeavesTheTagsRoom() {
         compose.setContent {
             CoindexTheme {
@@ -220,22 +223,29 @@ class PlateCellNameTest {
         compose.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.top
 
     private fun topOfText(text: String): Float =
-        compose.onNodeWithText(text).fetchSemanticsNode().boundsInRoot.top
+        compose.onNodeWithText(text, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.top
 
     private fun bottomOfText(text: String): Float =
-        compose.onNodeWithText(text).fetchSemanticsNode().boundsInRoot.bottom
+        compose.onNodeWithText(text, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.bottom
+
+    /** The drawing of a year's tag: the layout its text sits in, which has no semantics of its own. */
+    private fun tagOf(year: String): Rect {
+        val text = compose.onNodeWithText(year, useUnmergedTree = true).fetchSemanticsNode()
+        val tag = requireNotNull(text.layoutInfo.parentInfo) { "«$year» no está en ninguna chapa" }
+        return tag.coordinates.boundsInRoot()
+    }
 
     /** From the cardboard under a coin down to the drawing of its year. */
     private fun underTheHole(year: String): Float =
-        topOfText(year) - (topOf("cell-$year") + with(compose.density) { HOLE.toPx() })
+        tagOf(year).top - (topOf("cell-$year") + with(compose.density) { HOLE.toPx() })
 
     /** From that same drawing down to the coins of the row underneath. */
-    private fun untilTheNextRow(year: String): Float = topOf("row-2") - bottomOfText(year)
+    private fun untilTheNextRow(year: String): Float = topOf("row-2") - tagOf(year).bottom
 
     /** How Bitter laid the name out: line count and whether it was cut. */
     private fun layoutOf(name: String): TextLayoutResult {
         val results = mutableListOf<TextLayoutResult>()
-        val node = compose.onNodeWithText(name).fetchSemanticsNode()
+        val node = compose.onNodeWithText(name, useUnmergedTree = true).fetchSemanticsNode()
         val layout = node.config.getOrElseNullable(SemanticsActions.GetTextLayoutResult) { null }
         requireNotNull(layout) { "«$name» no es un Text: nadie puede decir en qué líneas cayó" }
         layout.action?.invoke(results)

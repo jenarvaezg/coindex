@@ -31,7 +31,7 @@ data class DrawnWish(
     val key: WishKey,
     val typeId: Int,
     val label: String,
-    /** The year on the recessed tag, which also opens the coin's sheet, as on a plate (#508). */
+    /** The year on the recessed tag, as on a plate; null leaves the tag out. */
     val year: String?,
     /** The plate's short name (#22): the list crosses plates, and a bare «1966» means nothing. */
     val plate: String,

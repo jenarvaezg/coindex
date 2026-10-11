@@ -46,6 +46,7 @@ import com.jenarvaezg.coindex.ui.CellPlaque
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
+import com.jenarvaezg.coindex.ui.OPEN_THE_COIN_SHEET
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateFinance
 import com.jenarvaezg.coindex.ui.PlateSubject
@@ -87,7 +88,7 @@ import com.jenarvaezg.coindex.ui.theme.PlateMetrics
  * The plate of a collection against its curated catalog.
  *
  * Owned members are in full colour; missing ones show the catalog design as a faint ghost inside a
- * dotted die-cut rule. A casilla's year opens that coin's sheet in the app (#508), and the sheet
+ * dotted die-cut rule. A casilla opens that coin's sheet in the app (ADR 0026 §3), and the sheet
  * links out to Numista.
  *
  * The plate is worded once here as a [PlateSubject] and handed to both the grid and the exported
@@ -119,7 +120,7 @@ fun PlateScreen(
     notebookPages: (NotebookOptions) -> List<PrintPage>,
     onExporting: (Boolean) -> Unit,
     onOpenSource: (String) -> Unit,
-    /** The coin sheet a casilla's year opens over this lámina (#508). */
+    /** The coin sheet a casilla opens over this lámina (ADR 0026 §3). */
     sheet: CoinSheetSurface,
     onMessage: (UiNotice) -> Unit,
     /** For the age of a hand-asked price (ADR 0030 §4); read once per opening. */
@@ -299,7 +300,7 @@ private fun PlateGrid(
     valuation: PlateValuation? = null,
     /** The plate's «Fuente en Numista», the only link out of the app. */
     onOpenSource: (String) -> Unit,
-    /** Opens the coin's sheet from a casilla's year (#508). */
+    /** Opens the coin's sheet from a casilla (ADR 0026 §3). */
     onOpenCoin: (Int) -> Unit,
 ) {
     var picking by remember { mutableStateOf(false) }
@@ -425,8 +426,8 @@ private fun PlateSheet(
                     // (ADR 0026 §3).
                     travellingFrom = plate.catalogId.takeIf { index == plate.landingCell },
                     onOpenCoin = onOpenCoin,
-                    // While the mode is open, tapping an empty hole marks it instead of flipping
-                    // the coin (ADR 0029 §5).
+                    // While the mode is open, tapping an empty casilla marks it instead of opening
+                    // its sheet (ADR 0029 §5).
                     onMark = if (picking) marking.onToggle else null,
                     picking = picking,
                 )
@@ -532,7 +533,8 @@ internal fun plateOpeningItem(landingCell: Int?, columns: Int): Int =
     if (landingCell == null || landingCell < columns) 0 else PLATE_LEAD_ITEMS + landingCell
 
 /**
- * One casilla, top to bottom: the hole, the year sunk into the cardboard, and the name (#473).
+ * One casilla, top to bottom: the hole, the year sunk into the cardboard, and the name (#473). The
+ * whole casilla is one target: its coin's sheet, or its mark in the marking mode (ADR 0026 §3).
  *
  * Every tag sits [PlateSpacing.underTheHole] below its hole, so a row shares a baseline without
  * measuring anything; the name comes last, so its unused height falls at the foot of the casilla
@@ -546,71 +548,59 @@ internal fun PlateCell(
     printedSide: PrintedSide,
     /** The catalog whose index card flies its coin to this casilla; null for all others. */
     travellingFrom: String?,
-    /**
-     * Opens this coin's sheet from the year tag (#508). It used to open Numista directly, with
-     * nothing on the tag to say so (#298, #302).
-     */
+    /** Opens this coin's sheet, where the coin turns over (ADR 0026 §3). */
     onOpenCoin: (Int) -> Unit,
-    /**
-     * Toggles this casilla's mark while the marking mode is open (ADR 0029 §5); null otherwise.
-     * The hole has one tap target at a time: marking in the mode, flipping the coin outside it.
-     */
+    /** Toggles this casilla's mark while the marking mode is open (ADR 0029 §5); null otherwise. */
     onMark: ((WishKey) -> Unit)? = null,
     /**
      * Whether the marking mode is open, which is not the same as this casilla being markable
-     * (#517). Non-markable casillas step back while it is open: drawn faint, with their year and
-     * flip disabled.
+     * (#517). Non-markable casillas step back while it is open: drawn faint, answering nothing.
      */
     picking: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    // Only empty casillas with a wish key: not full ones, nor announced designs (ADR 0029 §1).
-    val mark = cell.wishKey
-        ?.takeIf { cell.missing }
-        ?.let { key -> onMark?.let { toggle -> { toggle(key) } } }
-    // No tap for an announced member (no Numista type) or while the marking mode is open.
-    val open = cell.numistaTypeId
-        ?.takeUnless { picking }
-        ?.let { typeId -> { onOpenCoin(typeId) } }
+    val tap = casillaTap(cell, picking)
+    val marks = tap is CasillaTap.Mark && onMark != null
+    val target = when (tap) {
+        is CasillaTap.Open -> Modifier.clickable(
+            role = Role.Button,
+            onClickLabel = OPEN_THE_COIN_SHEET,
+            onClick = { onOpenCoin(tap.typeId) },
+        )
+        is CasillaTap.Mark -> onMark?.let { toggle ->
+            Modifier.clickable(
+                role = Role.Checkbox,
+                onClickLabel = WishLabels.MARK_ACTION,
+                onClick = { toggle(tap.key) },
+            )
+        } ?: Modifier
+        CasillaTap.None -> Modifier
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxWidth().outsideTheMode(picking && mark == null),
+        modifier = modifier.fillMaxWidth().outsideTheMode(picking && !marks).then(target),
     ) {
         // The cost chip is drawn here, not in `AlbumHole`, which other surfaces share (#493).
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = mark?.let { toggle ->
-                Modifier.clickable(
-                    role = Role.Checkbox,
-                    onClickLabel = WishLabels.MARK_ACTION,
-                    onClick = toggle,
-                )
-            } ?: Modifier,
-        ) {
+        Box(contentAlignment = Alignment.Center) {
             AlbumHole(
                 photo = images?.printedPhoto(printedSide),
                 absence = if (cell.missing) HoleAbsence.Missing else HoleAbsence.Filled,
-                // The hole flips the coin and the year opens its sheet (#302, #508). `AlbumHole` is
-                // tappable only with a second face, so withholding it in the marking mode frees the
-                // tap for the mark, on every casilla (#517).
-                otherSide = if (!picking) images?.printedPhoto(printedSide.other) else null,
                 modifier = Modifier
                     .size(104.dp)
                     .travellingCoin(travellingFrom),
             )
             // In the marking mode, markable holes show a ghost of the chip (#517).
-            HoleStamp(cost = cell.cost, wished = cell.wished, markable = mark != null)
+            HoleStamp(cost = cell.cost, wished = cell.wished, markable = marks)
         }
-        // The tag's target height is reserved even without a tag or without a tap (announced
-        // members have no ficha), so names don't ride up against the hole.
+        // The tag's height is reserved even without a tag, so names don't ride up against the hole.
         Box(
             // A minimum, not exact (#511): a name tag replacing the year may be taller.
             modifier = Modifier.heightIn(min = YearTagMetrics.target),
             contentAlignment = Alignment.Center,
         ) {
             when (val plaque = cell.plaque) {
-                is CellPlaque.Year -> RecessedYearTag(year = plaque.year, onOpen = open)
-                is CellPlaque.Name -> RecessedNameTag(name = plaque.name, onOpen = open)
+                is CellPlaque.Year -> RecessedYearTag(year = plaque.year)
+                is CellPlaque.Name -> RecessedNameTag(name = plaque.name)
                 null -> Unit
             }
         }
@@ -622,8 +612,7 @@ internal fun PlateCell(
  * The name at the foot of a casilla, below its year. It shrinks before cutting, like the index
  * card (#348) and the Monedas cartouche (#350); being last, a tall name only lengthens its own row.
  *
- * The curator's label is never shortened here; only the type size gives. It is plain text, not a
- * link: the year tag opens the coin's sheet (#302, #508).
+ * The curator's label is never shortened here; only the type size gives.
  */
 @Composable
 internal fun PlateCellName(name: String, modifier: Modifier = Modifier) {

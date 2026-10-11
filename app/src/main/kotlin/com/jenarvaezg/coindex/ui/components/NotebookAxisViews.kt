@@ -138,8 +138,7 @@ fun CountryAxisRow(
 /**
  * The «… y faltan 66» that unfolds a country's absences in place, and folds them back (#417). Its
  * own click, so it doesn't open Monedas like the rest of the block; underlined so it reads as
- * pressable. [minimumInteractiveComponentSize] gives it a full touch target, as for a casilla's
- * year tag (#473).
+ * pressable. [minimumInteractiveComponentSize] gives it a full touch target.
  */
 @Composable
 private fun CountryAxisFoldMark(

@@ -106,7 +106,8 @@ fun AlbumHole(
     backed: Boolean = true,
     /**
      * The face this coin is not showing. When present, a tap turns the coin over inside the hole
-     * (#337). The off-screen sheet never passes one, so an exported PNG can't show a turned coin.
+     * (#337). Only the coin's sheet passes one (ADR 0026 §3), so an exported PNG can't show a turned
+     * coin.
      */
     otherSide: CoinPhoto? = null,
     tone: AlbumToneConfig,

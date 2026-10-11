@@ -56,9 +56,9 @@ import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * What a screen needs to open a coin sheet (#508), bundled so the three surfaces that draw casillas
- * word and link a coin the same way. What varies per surface (face up, current collection, flight)
- * stays a parameter of [CoinSheetOverlay].
+ * What a screen needs to open a coin sheet (#508), bundled so every surface that draws a coin words
+ * and links it the same way. What varies per surface (face up, current collection, flight) stays a
+ * parameter of [CoinSheetOverlay].
  *
  * @param coin the type's row; null only when the collection changed under an open sheet.
  * @param value null on a hole, where nothing is owned.
@@ -72,8 +72,8 @@ class CoinSheetSurface(
 )
 
 /**
- * The sheet of one coin, openable from any surface (#508). A casilla's year tag opens it instead of
- * leaving for Numista directly; leaving is the sheet's labelled «Ver en Numista» (ADR 0026 §3).
+ * The sheet of one coin, openable from any surface (#508). A whole casilla opens it, and its hole is
+ * the one that turns the coin over; leaving is the sheet's labelled «Ver en Numista» (ADR 0026 §3).
  *
  * Place it last inside a Box that fills the screen. It is an overlay rather than a
  * `ModalBottomSheet` because a dialog window cannot host a shared element (#370).

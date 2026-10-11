@@ -141,8 +141,14 @@ fun pieceLine(piece: DrawnPiece): String {
     return "$head · Numista ${item.typeId}$quantity"
 }
 
-/** What tapping a casilla does, for screen readers only; nothing on the sheet prints it. */
+/** What tapping the hole of a coin's sheet does, for screen readers only; nothing prints it. */
 const val TURN_THE_COIN_OVER: String = "Dar la vuelta a la moneda"
+
+/**
+ * What tapping a casilla or a piece's card does, for screen readers only: the one action of the
+ * whole casilla (ADR 0026 §3).
+ */
+const val OPEN_THE_COIN_SHEET: String = "Abrir la ficha de la moneda"
 
 /**
  * What a turned hole says when the face that came round has no photograph on this phone yet
