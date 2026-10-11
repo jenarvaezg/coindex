@@ -6,6 +6,7 @@ import com.jenarvaezg.coindex.ui.shelf.coinYearsLabel
 const val COIN_VIEW_ON_NUMISTA: String = "Ver en Numista"
 const val COIN_IN_ONE_COLLECTION: String = "En esta colección"
 const val COIN_IN_SEVERAL_COLLECTIONS: String = "En estas colecciones"
+const val COIN_CLAIM_HERE_SUFFIX: String = " · aquí"
 
 fun coinFichaIdentity(row: CoinRow): String = listOfNotNull(
     row.issuer,

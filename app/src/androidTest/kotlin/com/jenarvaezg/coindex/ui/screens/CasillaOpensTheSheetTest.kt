@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasClickAction
@@ -26,6 +27,8 @@ import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.ObjectClass
 import com.jenarvaezg.coindex.domain.PrintedSide
+import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE_SUFFIX
+import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
@@ -221,9 +224,9 @@ class CasillaOpensTheSheetTest {
         assertTrue(labels.toString(), TURN_THE_COIN_OVER in labels)
     }
 
-    /** Other collections that claim the coin keep their link; only the open lámina's is dropped. */
+    /** The open lámina is named and marked, without a link; the others keep theirs (#635). */
     @Test
-    fun theSheetDrawsNoDoorOntoTheLaminaItWasOpenedFrom() {
+    fun theSheetNamesTheLaminaItWasOpenedFromWithoutALink() {
         val plate = CardDestination.Plate("venezuela-bolivar")
         compose.setContent {
             CoindexTheme {
@@ -241,8 +244,10 @@ class CasillaOpensTheSheetTest {
             }
         }
 
-        compose.onNodeWithText("1 Bolívar").assertDoesNotExist()
-        compose.onNodeWithText("Las venezolanas").assertExists()
+        compose.onNodeWithText(COIN_IN_SEVERAL_COLLECTIONS).assertExists()
+        compose.onNodeWithText("1 Bolívar", useUnmergedTree = true).assert(hasClickAction().not())
+        compose.onNodeWithText(COIN_CLAIM_HERE_SUFFIX, useUnmergedTree = true).assertExists()
+        compose.onNodeWithText("Las venezolanas", useUnmergedTree = true).assert(hasClickAction())
     }
 
     private fun clickLabels(useUnmergedTree: Boolean = false): List<String?> = compose

@@ -1,15 +1,16 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.ObjectClass
+import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE_SUFFIX
 import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.CoinName
 import com.jenarvaezg.coindex.ui.DrawnPiece
@@ -55,7 +56,8 @@ private val A_COIN = CoinRow(
 
 /**
  * A piece of a box or of a collection without a plate opens its coin's sheet over the list
- * (ADR 0026 §3), which links to the collection's other claims but not to the one on screen.
+ * (ADR 0026 §3), which links to the collection's other claims and names the one on screen without
+ * a link (#635).
  */
 @RunWith(AndroidJUnit4::class)
 class PiecesOpenTheSheetTest {
@@ -64,7 +66,7 @@ class PiecesOpenTheSheetTest {
 
     @Test
     // D8 forbids spaces in method names below DEX 040, so instrumented tests cannot use backticks.
-    fun aPieceOpensItsCoinsSheetWithNoDoorBackToThisCollection() {
+    fun aPieceOpensItsCoinsSheetNamingThisCollectionWithoutALink() {
         compose.setContent {
             CoindexTheme {
                 PiecesScreen(
@@ -102,7 +104,8 @@ class PiecesOpenTheSheetTest {
 
         compose.onNodeWithText(A_TITLE).assertIsDisplayed()
         compose.onNodeWithText("Las venezolanas").assertIsDisplayed()
-        // Only the screen's own heading: the sheet draws no link to the box it was opened from.
-        compose.onAllNodesWithText(THIS_BOX).assertCountEquals(1)
+        compose.onNodeWithText(COIN_CLAIM_HERE_SUFFIX, useUnmergedTree = true).assertIsDisplayed()
+        compose.onNode(hasText(THIS_BOX) and hasClickAction(), useUnmergedTree = true)
+            .assertDoesNotExist()
     }
 }

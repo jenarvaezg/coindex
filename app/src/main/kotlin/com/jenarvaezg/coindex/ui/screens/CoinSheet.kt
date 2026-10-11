@@ -14,6 +14,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -34,8 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
+import com.jenarvaezg.coindex.ui.COIN_CLAIM_HERE_SUFFIX
 import com.jenarvaezg.coindex.ui.COIN_IN_ONE_COLLECTION
 import com.jenarvaezg.coindex.ui.COIN_IN_SEVERAL_COLLECTIONS
 import com.jenarvaezg.coindex.ui.COIN_VIEW_ON_NUMISTA
@@ -82,7 +85,8 @@ class CoinSheetSurface(
  * @param faces the photograph that rests up and the one behind it, matching what the surface was
  *   showing: a casilla follows its catalog's `printed_side` (ADR 0020), an album cell
  *   reverse-first.
- * @param here the collection the collector is in, whose claim is not drawn as a link.
+ * @param here the collection the sheet was opened from, named among the others but not linked
+ *   (#635).
  * @param travelling whether the coin flies between the sheet and the surface (ADR 0026 §3). False
  *   on a casilla: its hole is already one end of the index's transition, and one photograph cannot
  *   be two shared elements.
@@ -126,7 +130,7 @@ fun CoinSheetOverlay(
             ownsCoin = typeId == open,
             ficha = surface.ficha(open),
             value = surface.value(open),
-            doors = row.claims.filterNot { it.destination == here },
+            claims = sheetClaims(row.claims, here),
             onDismiss = onDismiss,
             // Both ways out close the sheet first, so coming back doesn't land on it still open.
             onOpenNumista = {
@@ -151,6 +155,19 @@ internal fun sheetEnter(moving: Boolean): EnterTransition =
 internal fun sheetExit(moving: Boolean): ExitTransition =
     if (moving) fadeOut() + slideOutVertically { it } else ExitTransition.None
 
+internal data class SheetClaim(val claim: CoinClaim, val here: Boolean)
+
+/** Every collection that claims the coin, in index order, [here] included and marked (#635). */
+internal fun sheetClaims(claims: List<CoinClaim>, here: CardDestination?): List<SheetClaim> =
+    claims.map { SheetClaim(it, here = it.destination == here) }
+
+/** Null with no claims: ADR 0026 §13 gives that coin no heading. */
+internal fun sheetClaimsHeading(claims: List<SheetClaim>): String? = when (claims.size) {
+    0 -> null
+    1 -> COIN_IN_ONE_COLLECTION
+    else -> COIN_IN_SEVERAL_COLLECTIONS
+}
+
 @Composable
 private fun CoinSheet(
     row: CoinRow,
@@ -160,7 +177,7 @@ private fun CoinSheet(
     ownsCoin: Boolean,
     ficha: FichaRefresh,
     value: CoinValue?,
-    doors: List<CoinClaim>,
+    claims: List<SheetClaim>,
     onDismiss: () -> Unit,
     onOpenNumista: () -> Unit,
     onOpenClaim: (CardDestination) -> Unit,
@@ -197,7 +214,7 @@ private fun CoinSheet(
                 ownsCoin = ownsCoin,
                 ficha = ficha,
                 value = value,
-                doors = doors,
+                claims = claims,
                 onOpenNumista = onOpenNumista,
                 onOpenClaim = onOpenClaim,
             )
@@ -221,7 +238,7 @@ private fun CoinFicha(
     ownsCoin: Boolean,
     ficha: FichaRefresh,
     value: CoinValue?,
-    doors: List<CoinClaim>,
+    claims: List<SheetClaim>,
     onOpenNumista: () -> Unit,
     onOpenClaim: (CardDestination) -> Unit,
 ) {
@@ -271,14 +288,18 @@ private fun CoinFicha(
             onClick = onOpenNumista,
             modifier = Modifier.padding(top = 2.dp).fillMaxWidth(),
         )
-        if (doors.isNotEmpty()) {
+        sheetClaimsHeading(claims)?.let { heading ->
             Text(
-                if (doors.size == 1) COIN_IN_ONE_COLLECTION else COIN_IN_SEVERAL_COLLECTIONS,
+                heading,
                 style = MaterialTheme.typography.labelLarge,
                 color = Paper.muted,
                 modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
             )
-            doors.forEach { claim ->
+        }
+        claims.forEach { (claim, here) ->
+            if (here) {
+                ClaimHere(claim.name)
+            } else {
                 LinkText(
                     text = claim.name,
                     style = MaterialTheme.typography.bodyLarge,
@@ -288,5 +309,28 @@ private fun CoinFicha(
                 )
             }
         }
+    }
+}
+
+/** [LinkText]'s padding without the link; a long name is cut before the suffix (#635). */
+@Composable
+private fun ClaimHere(name: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+    ) {
+        Text(
+            name,
+            style = MaterialTheme.typography.bodyLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        Text(
+            COIN_CLAIM_HERE_SUFFIX,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Paper.muted,
+            maxLines = 1,
+        )
     }
 }
