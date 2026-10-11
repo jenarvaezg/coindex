@@ -149,6 +149,15 @@ La E (`#E-real-tel`) es la B con:
 Alto de la E en dp: 1150 (real), 1240 (hueco), 1027 (medalla), 1107 (sin plata) y 1528
 (fuerte). La B cerrada medía 710–812 y la A, 1693–4903.
 
+### Las leyendas traen glifos que las fuentes de la app no tienen
+
+El canto de los 2 euros de la Policía Nacional se escribe «2 ★ ★ ↊ ★ ★…», y `↊` (U+218A, el 2
+girado) no está ni en Bitter ni en Barlow; el navegador de Jose lo pintó como una interrogación.
+No es el único: en las leyendas de los 245 tipos del padre faltan ★ (12 tipos), ⚜ (8), ✠ (4) y
+los alfabetos armenio, árabe, chino y cirílico (éste, sólo en Barlow). Android tira de la fuente
+del sistema para casi todos, pero `↊` no está garantizado: la E dibuja los dígitos girados
+girando el dígito, y el resto se comprueba en el emulador antes de imprimir una leyenda.
+
 ### El canto que falta
 
 Faltan 89 grosores y 7 descripciones de canto. Es dato de catálogo, no de la app: se investiga

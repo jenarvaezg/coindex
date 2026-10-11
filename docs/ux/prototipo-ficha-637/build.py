@@ -371,8 +371,19 @@ def footer(case, center=False):
             f'{ext("Ver en Numista")}</div>')
 
 
+# Dígitos girados de Unicode que ni Bitter ni Barlow traen: se dibujan girando el dígito.
+TURNED = {"↊": "2", "↋": "3"}
+
+
+def glyphs(text):
+    out = esc(text)
+    for turned, digit in TURNED.items():
+        out = out.replace(turned, f'<span class="turn">{digit}</span>')
+    return out
+
+
 def lettering(text):
-    return esc((text or "").replace("\r\n", "\n").strip())
+    return glyphs((text or "").replace("\r\n", "\n").strip())
 
 
 def faces(case, compact=False, legends=True):
@@ -916,7 +927,7 @@ def canto(case, width):
     text = ""
     if lettered and f["edge"].get("lettering"):
         t = re.sub(r"\s+", " ", f["edge"]["lettering"]).strip()
-        text = f'<span style="font-size:{max(7, min(11, h * .55)):.0f}px">{esc(t)}</span>'
+        text = f'<span style="font-size:{max(7, min(11, h * .55)):.0f}px">{glyphs(t)}</span>'
     cls = f"canto {kind} {metal_tone(f['composition'])}" + ("" if known else " nominal")
     return f'<div class="{cls}" style="width:{width}px;height:{h:.1f}px">{text}</div>'
 
@@ -1367,7 +1378,8 @@ table.ledger{width:100%;border-collapse:collapse;font:600 12px/1 Barlow;font-fea
   background:repeating-linear-gradient(90deg,rgba(255,255,255,.38) 0 1.1px,rgba(45,48,41,.32) 1.1px 2.3px)}
 .canto.ornament:before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='12'%3E%3Crect x='2' y='3' width='6' height='6' fill='none' stroke='%23555046' stroke-width='1.2'/%3E%3Ccircle cx='13' cy='6' r='3' fill='none' stroke='%23555046' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x left center/auto 72%}
 .canto.nominal{outline:1.5px dashed $RUST;outline-offset:3px;opacity:.75}
-.canto span{position:relative;font-family:Barlow,sans-serif;font-weight:600;letter-spacing:.35em;color:#3E3A31;
+.turn{display:inline-block;transform:rotate(180deg)}
+.canto>span{position:relative;font-family:Barlow,sans-serif;font-weight:600;letter-spacing:.35em;color:#3E3A31;
   white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .cantocap{font:600 11px/1.3 Barlow;font-feature-settings:'smcp','tnum';color:$MUTED;text-align:center;margin-top:4px}
 .lblink{font:400 14px/20px Bitter;color:$MOSS;text-decoration:underline;cursor:pointer}
