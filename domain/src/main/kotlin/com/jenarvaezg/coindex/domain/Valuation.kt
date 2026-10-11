@@ -77,17 +77,33 @@ fun pieceValue(
     meta: TypeMeta?,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
-): PieceValue? {
-    val candidates = mutableListOf<PieceValue>()
-    marketValue(item, prices)?.let(candidates::add)
-    silverFloor(meta, spot)?.let(candidates::add)
-    // `price` is what was paid for the whole row (a lot carries one figure for many pieces), and
-    // the maximum compares per piece.
-    item.price?.takeIf { it > 0.0 }?.let { paid ->
-        candidates.add(PieceValue(paid / item.quantity.coerceAtLeast(1), ValueSource.Paid))
-    }
-    return candidates.maxByOrNull { it.eur }
+): PieceValue? = pieceLadder(item, meta, spot, prices).greatest
+
+/**
+ * The prices [pieceValue] and [holeValue] choose from, each for one piece (#643). The coin's screen
+ * prints every rung; every total keeps only [greatest].
+ *
+ * @param paid always null on a hole, which nobody paid for.
+ */
+data class PriceLadder(val market: PieceValue?, val silver: PieceValue?, val paid: PieceValue?) {
+    /** The value: the greatest rung, ties going to the catalogue, then the metal, then paid. */
+    val greatest: PieceValue? get() = listOfNotNull(market, silver, paid).maxByOrNull { it.eur }
 }
+
+fun pieceLadder(
+    item: CollectedItem,
+    meta: TypeMeta?,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): PriceLadder = PriceLadder(
+    market = marketValue(item, prices),
+    silver = silverFloor(meta, spot),
+    // `price` is what was paid for the whole row (a lot carries one figure for many pieces), and
+    // the ladder compares per piece.
+    paid = item.price
+        ?.takeIf { it > 0.0 }
+        ?.let { paid -> PieceValue(paid / item.quantity.coerceAtLeast(1), ValueSource.Paid) },
+)
 
 /**
  * What one empty casilla would cost to fill: the greater of Numista's price and the metal (#493),
@@ -103,18 +119,26 @@ fun holeValue(
     meta: TypeMeta?,
     spot: SilverSpot?,
     prices: (Int, Int, String) -> Double?,
-): PieceValue? {
-    val candidates = mutableListOf<PieceValue>()
-    issueId
+): PieceValue? = holeLadder(typeId, issueId, meta, spot, prices).greatest
+
+/** The two rungs [holeValue] chooses from (#643). */
+fun holeLadder(
+    typeId: Int,
+    issueId: Int?,
+    meta: TypeMeta?,
+    spot: SilverSpot?,
+    prices: (Int, Int, String) -> Double?,
+): PriceLadder = PriceLadder(
+    market = issueId
         ?.let { prices(typeId, it, UNCIRCULATED) }
-        ?.let { candidates.add(PieceValue(it, ValueSource.Market, UNCIRCULATED)) }
-    silverFloor(meta, spot)?.let(candidates::add)
-    return candidates.maxByOrNull { it.eur }
-}
+        ?.let { PieceValue(it, ValueSource.Market, UNCIRCULATED) },
+    silver = silverFloor(meta, spot),
+    paid = null,
+)
 
 /**
  * What the metal of one piece is worth, or null where the ficha or the spot cannot support it.
- * Shared by [pieceValue] and [holeValue].
+ * Shared by [pieceLadder] and [holeLadder].
  */
 private fun silverFloor(meta: TypeMeta?, spot: SilverSpot?): PieceValue? {
     if (spot == null) return null
