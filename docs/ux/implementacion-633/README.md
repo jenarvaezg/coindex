@@ -1,8 +1,9 @@
 # El gris del texto se lee sobre todos los fondos (#633)
 
-`Paper.muted` pasa de `#686A5D` a `#56584C`, los botones desactivados dejan el 38 % de Material por
-el relleno `paperDeep` con regla `hairline` y la etiqueta en `muted`, y las magnitudes de la
-escalera de «Las cifras» dejan `Paper.line` por `muted`.
+`Paper.muted` pasa de `#686A5D` a `#56584C` y las magnitudes de la escalera de «Las cifras» dejan
+`Paper.line` por `muted`. Los botones desactivados dejan el 38 % de Material: van sin relleno, con
+la etiqueta en `muted` y una regla discontinua, la marca de la ausencia en `FieldCard`. Una acción
+desactivada es una acción ausente. Jose eligió la regla discontinua en la revisión del PR.
 
 ## Cómo se midió
 
@@ -10,7 +11,8 @@ AVD `coindex-633` (Pixel 7, 1080 × 2400 a 420 dpi, google_apis, render por soft
 desde antes de abrir la app por primera vez: cero consultas. La colección es la del padre,
 restaurada con `scripts/avd-db.sh restore`; las fotos no están porque el AVD nunca tuvo red. El APK
 de antes es `main` (6e3eb81) y el de después, esta rama instalada encima con `adb install -r`, así
-que los datos y la navegación son los mismos.
+que los datos y la navegación son los mismos. Los botones desactivados se recapturaron con la regla
+discontinua en la misma sesión y sobre los mismos datos.
 
 Cada contraste sale del PNG nativo a 1080 de `adb exec-out screencap -p`, nunca de una copia
 reescalada. En una caja ceñida al texto, el color del texto es la mediana de los píxeles más cerca
@@ -27,18 +29,26 @@ recortes de abajo los dejan fuera de cuadro.
 | --- | --- | ---: | ---: |
 | año bajo cada moneda («1924») | Monedas en «Hacer una colección», sobre el velo del modo | 4,06 | 5,34 |
 | «Nombrar la colección · 0», desactivado | listón de Monedas, sin ninguna elegida | 1,47 | 4,87 |
-| «Crear», desactivado | diálogo de la colección, sin nombre | 1,60 | 4,87 |
+| «Crear», desactivado | diálogo de la colección, sin nombre | 1,60 | 6,55 |
 | «0/40 · tiene que caber en una tarjeta» | el mismo diálogo | 4,98 | 6,55 |
 | «Alemania · 1937 · N# 3416» | ficha de la moneda | 4,51 | 5,93 |
 | «Ficha traída hace 5 días» | ficha de la moneda | 4,51 | 5,93 |
 | magnitud de la escalera («2,00 kg») | «Las cifras» | 3,32 | 5,93 |
 | referente de la escalera («ladrillo») | «Las cifras» | 4,51 | 5,93 |
 | «Lo que escribes arriba no llega hasta aquí.» | puerta de «Lo que busco» mientras se busca | 3,71 | 4,87 |
-| «Hacer una colección con estas 0», desactivado | Monedas con una búsqueda sin resultados | 1,63 | 4,87 |
-| «Guardar y empezar», desactivado | alta, con los campos vacíos | 1,55 | 4,87 |
+| «Hacer una colección con estas 0», desactivado | Monedas con una búsqueda sin resultados | 1,63 | 5,93 |
+| «Guardar y empezar», desactivado | alta, con los campos vacíos | 1,55 | 5,93 |
 | «Sin colección», interruptor desactivado | «Cómo se exporta» | 4,98 | 6,55 |
 | «Progreso» | cuaderno impreso, PDF rasterizado a 300 dpi | 4,51 | 5,93 |
 | «1876», pie de la moneda | cuaderno impreso | 4,01 | 5,08 |
+
+Sin relleno, la etiqueta desactivada se mide contra el fondo que tenga debajo: el listón
+(`paperDeep`, 4,87, el peor caso), la tarjeta del diálogo (6,55) o el papel (5,93).
+
+Que la regla sea discontinua se mide igual, sobre el PNG: en la fila superior del borde de cada
+botón se cuentan los tramos de regla. En el listón, «Nombrar la colección · 0» da 17 tramos y
+«Cancelar», 1, los dos en la misma fila de píxeles (y = 2064). La regla cae sobre la forma visible y
+no sobre la diana de 48 dp. En el diálogo, «Crear» da 8 y «Cancelar», 1.
 
 El pie impreso mide menos que la paleta (4,51 y 5,93) porque su trazo fino apenas tiene píxeles
 de color pleno a 300 dpi.

@@ -227,6 +227,8 @@ is not prose; `"Colecciones · $collections"` is.
 
 **Amended by [#633](https://github.com/jenarvaezg/coindex/issues/633) (2026-10-11).** `Paper.muted`
 is `#56584C`, and its 4.5:1 floor is held on `paperDeep` and the mode wash as well as the paper.
+A disabled button has no fill, a `muted` label and a dashed rule, the mark of absence on a
+`FieldCard`: a disabled action is an absent one.
 
 ### 7. The name of a coin is two strings, and it is derived, not curated
 
