@@ -9560,7 +9560,7 @@
   "demonetization": {
    "is_demonetized": true
   },
-  "size": 30.1,
+  "size": 30,
   "thickness": 2.2,
   "shape": "Circular",
   "composition": {
@@ -9635,7 +9635,7 @@
     "number": "R 150.01"
    }
   ],
-  "weight": 13.96,
+  "weight": 14,
   "orientation": "coin",
   "edge": {
    "description": "Reed",
@@ -88346,7 +88346,7 @@
    "Tren",
    "Escudo de armas"
   ],
-  "weight": 12.49,
+  "weight": 13.5,
   "category": "coin",
   "type": "Monedas no circulantes"
  },
@@ -89199,7 +89199,7 @@
     "number": "334"
    }
   ],
-  "weight": 24.98,
+  "weight": 27,
   "orientation": "coin",
   "edge": {
    "description": "Reed"
@@ -89396,7 +89396,7 @@
     "number": "339"
    }
   ],
-  "weight": 24.98,
+  "weight": 27,
   "orientation": "coin",
   "category": "coin",
   "type": "Monedas no circulantes"
@@ -89580,7 +89580,7 @@
     "number": "357"
    }
   ],
-  "weight": 24.98,
+  "weight": 27,
   "edge": {
    "description": "Reed"
   },
@@ -89742,17 +89742,6 @@
     },
     "minYear": 2010,
     "maxYear": 2010
-   },
-   {
-    "id": 99903,
-    "title": "Medal - Historical coins",
-    "category": "exonumia",
-    "country": {
-     "code": "espagne",
-     "name": "España"
-    },
-    "minYear": 2010,
-    "maxYear": 2010
    }
   ],
   "references": [
@@ -89764,7 +89753,7 @@
     "number": "359"
    }
   ],
-  "weight": 24.98,
+  "weight": 27,
   "edge": {
    "description": "Reed"
   },
@@ -89940,7 +89929,7 @@
     "number": "369"
    }
   ],
-  "weight": 24.98,
+  "weight": 27,
   "orientation": "coin",
   "edge": {
    "description": "Reed"
@@ -135589,7 +135578,7 @@
     "number": "385"
    }
   ],
-  "weight": 12.49,
+  "weight": 13.5,
   "orientation": "coin",
   "edge": {
    "description": "Reed"
