@@ -223,15 +223,7 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     // Grams, never money (#316). Null until the sewn edge is ready, so loading
                     // doesn't read as an empty collection (#418).
                     grams = reading.sewnEdge?.let { reading.figures.figures.weight.value },
-                    onCross = { destination ->
-                        navController.navigate(destination) {
-                            // The roots are siblings, not a stack: crossing piles up no entries
-                            // and each root keeps its scroll position.
-                            popUpTo(Routes.INDEX) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
+                    onCross = navController::crossToRoot,
                 )
             }
         },
@@ -596,8 +588,9 @@ fun CoindexApp(viewModel: CoindexViewModel) {
 }
 
 /**
- * Crosses to Coins with the shelf already narrowed, from the index's country and year axes (#386)
- * and from the figures of «Las cifras». Navigates like the bottom bar: no stacking, scroll kept.
+ * Crosses to Coins with the shelf already narrowed, from the index's country and year axes (#386),
+ * the figures of «Las cifras» and the unclaimed door (#634). Coins opens fresh, without the search
+ * or the scroll left there (#645).
  */
 private fun crossToCoins(
     navController: androidx.navigation.NavHostController,
@@ -605,11 +598,7 @@ private fun crossToCoins(
     shelf: CoinsShelf,
 ) {
     viewModel.narrowCoins(shelf)
-    navController.navigate(Routes.COINS) {
-        popUpTo(Routes.INDEX) { saveState = true }
-        launchSingleTop = true
-        restoreState = true
-    }
+    navController.crossToFreshCoins()
 }
 
 /** The collection a route shows, by its name and its destination; nothing for other routes. */
