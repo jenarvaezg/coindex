@@ -134,7 +134,8 @@ def ficha(tid):
         mints=[m["name"] for m in raw.get("mints") or []],
         references=[f'{r["catalogue"]["code"]}# {r["number"]}' for r in raw.get("references") or []],
         tags=raw.get("tags") or [],
-        edge=dict(description=text(edge.get("description")), lettering=edge.get("lettering")),
+        edge=dict(description=text(edge.get("description")), lettering=edge.get("lettering"),
+                  picture=bool(edge.get("picture"))),
         comments=raw.get("comments"),
         obverse=side("obverse"),
         reverse=side("reverse"),
@@ -209,7 +210,10 @@ for case in CASES:
     for side in ("obverse", "reverse"):
         u = face_url(tid, side, big=True)
         if u:
-            urls[f"{tid}-{side}"] = (u, 520)
+            urls[f"{tid}-{side}"] = (u, 640)
+    edge = (json.loads(meta[tid]["raw"]).get("edge") or {}).get("picture")
+    if edge:
+        urls[f"{tid}-edge"] = (edge, 640)
     for p in entry["pieces"]:
         for n, u in enumerate(p["pictures"]):
             urls[f"pieza-{p['id']}-{n}"] = (u, 520)

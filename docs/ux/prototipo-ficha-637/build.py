@@ -13,6 +13,10 @@ cada una defiende una tesis distinta sobre qué manda:
 - B · plegada: cabe en una pantalla; cada sección dice su resumen cerrada.
 - C · la escalera: el dinero manda; tres precios con su etiqueta entera y el grado como escala.
 - D · a tamaño real: el objeto manda; la moneda a 1:1, su canto y su leyenda, y una cartela.
+- E · la B con la moneda a 300 dp, su canto de perfil, la escalera dentro de cada pieza y las
+  piezas por fecha cuando son muchas (segunda vuelta, tras elegir Jose la B).
+
+La barra sólo enseña 0, B y E; A, C y D siguen aquí para el README.
 
 Los textos de la 0 son los literales del código; los de las otras cuatro, propuestas.
 
@@ -870,19 +874,177 @@ def vD(case):
     return f'<div class="scroll page">{"".join(parts)}</div>'
 
 
+# ── E · la plegada, con la moneda grande y su canto ─────────────────────────
+HERO = 300          # el hueco; la foto, 288
+MANY_ROWS = 3       # más filas que esto y las piezas se eligen por fecha
+
+
+def edge_kind(desc):
+    """El dibujo del canto, leído de la descripción de Numista (está en 238 de 245 tipos)."""
+    d = (desc or "").lower()
+    if not d:
+        return None
+    if any(k in d for k in ("relieve", "motivo", "diseño", "decor")):
+        kind = "ornament"
+    elif any(k in d for k in ("reed", "fresad", "ranura", "dentad", "carrizo", "estriad",
+                              "lengüeta", "milled")):
+        kind = "reed"
+    else:
+        kind = "plain"
+    return kind, any(k in d for k in ("letra", "inscri", "letter"))
+
+
+def edge_label(desc):
+    d = re.split(r"[.(]", (desc or "").strip())[0].strip()
+    return {"reed": "estriado", "llano": "liso", "plain": "liso"}.get(d.lower(), d[:1].lower() + d[1:])
+
+
+def metal_tone(comp):
+    c = (comp or "").lower()
+    return "bronze" if any(k in c for k in ("bronce", "latón", "cobre ", "cobre")) and "níquel" not in c else "silver"
+
+
+def canto(case, width):
+    """El canto de perfil bajo la moneda, a la escala de la foto si Numista da el grosor."""
+    f = case["ficha"]
+    k = edge_kind(f["edge"]["description"])
+    if not k or not f["size"]:
+        return ""
+    kind, lettered = k
+    known = bool(f["thickness"])
+    h = f["thickness"] * width / f["size"] if known else 16
+    text = ""
+    if lettered and f["edge"].get("lettering"):
+        t = re.sub(r"\s+", " ", f["edge"]["lettering"]).strip()
+        text = f'<span style="font-size:{max(7, min(11, h * .55)):.0f}px">{esc(t)}</span>'
+    cls = f"canto {kind} {metal_tone(f['composition'])}" + ("" if known else " nominal")
+    return f'<div class="{cls}" style="width:{width}px;height:{h:.1f}px">{text}</div>'
+
+
+def canto_caption(case):
+    f = case["ficha"]
+    bits = [f'{num(f["size"], 2).rstrip("0").rstrip(",")} mm'] if f["size"] else []
+    if f["edge"]["description"]:
+        bits.append(f'canto {edge_label(f["edge"]["description"])}')
+    bits.append(f'{num(f["thickness"], 1)} mm de grosor' if f["thickness"] else "grosor sin dato")
+    photo = (f'<span class="lblink" data-lb="1" role="button" tabindex="0">Ver la foto del canto</span>'
+             if f["edge"].get("picture") and photo_key(case["tid"], "edge") else "")
+    return f'<div class="cantocap">{esc(" · ".join(bits))}</div>{photo}'
+
+
+def first_side(case):
+    p = case["plate"]
+    return "obverse" if p and p["printed_side"] == "obverse" else "reverse"
+
+
+def piece_detail(case, p):
+    """Una pieza entera: qué es, cuándo llegó, sus tres precios en escalera y su nota."""
+    rows, win = three(case, p)
+    facts = piece_facts(p)
+    here = case.get("year") and p["year"] == case["year"]
+    stamp = numista_stamp(case, p)
+    return (f'<div class="pdet{" here" if here else ""}"><div class="pdhead"><div class="phead">{piece_head(p)}'
+            + ('<span class="aqui">· esta casilla</span>' if here else "") + "</div>"
+            + f'{piece_photo(p, 40)}</div>'
+            + (f'<div class="pfacts">{esc(" · ".join(facts))}</div>' if facts else "")
+            + f'<div class="ladder sm">{money_rows(case, rows, win)}</div>'
+            + (f'<div class="stamp">{esc(stamp)}</div>' if stamp else "")
+            + (f'<div class="pissue">Numista: {esc(p["issue_comment"])}</div>' if p["issue_comment"] else "")
+            + (f'<div class="pnote">«{esc(p["note"])}»</div>' if p["note"] else "")
+            + "</div>")
+
+
+def by_year(case):
+    groups = {}
+    for p in case["pieces"]:
+        groups.setdefault(p["year"], []).append(p)
+    return groups
+
+
+def year_picker(case):
+    """Muchas filas: una ficha por fecha, y debajo la pieza de la fecha elegida."""
+    groups = by_year(case)
+    sel = case.get("year") if case.get("year") in groups else next(iter(groups))
+    tiles, panels = [], []
+    for y, ps in groups.items():
+        n = sum(max(1, p["quantity"]) for p in ps)
+        grades = " ".join(sorted({p["grade"] or "—" for p in ps}, key=lambda g: GRADES.index(g) if g in GRADES else 9))
+        mark = '<i class="dot"></i>' if any(p["note"] or p["pictures"] for p in ps) else ""
+        tiles.append(f'<button class="ytile{" on" if y == sel else ""}{" casilla" if y == case.get("year") else ""}" data-y="{y}">'
+                     f'<b>{y or "—"}</b><span class="g">{esc(grades)}</span>'
+                     + (f'<em>×{n}</em>' if n > 1 else "") + f"{mark}</button>")
+        panels.append(f'<div class="ypanel" data-y="{y}"{"" if y == sel else " hidden"}>'
+                      + "".join(piece_detail(case, p) for p in ps) + "</div>")
+    return f'<div class="ytiles">{"".join(tiles)}</div>{"".join(panels)}'
+
+
+def vE(case):
+    f = case["ficha"]
+    missing = not case["pieces"]
+    side = first_side(case)
+    other = "obverse" if side == "reverse" else "reverse"
+    names = {"obverse": "anverso", "reverse": "reverso"}
+    hero = (f'<div class="ehero">'
+            f'{hole(case["tid"], HERO, side=side, other=other, missing=missing, lit=missing, flip=True, ring=6)}'
+            f'<div class="facelab" data-a="{names[side]}" data-b="{names[other]}">{names[side]} · tócala para darle la vuelta</div>'
+            f'{canto(case, HERO - 12)}{canto_caption(case)}</div>')
+    head = (f'<div class="ehead"><div class="btitle">{esc(f["title"])}</div>'
+            f'<div class="idl">{esc(identity(case))}</div>'
+            + ('<div class="falta">Te falta</div>' if missing else "")
+            + f'{value_head(case, "vline")}</div>')
+    folds = []
+    rows_n = len(case["pieces"])
+    if missing:
+        rows, win = hole_prices(case)
+        folds.append(fold("Lo que costaría", "Numista en <span class=\"g\">unc</span> · su plata",
+                          f'<div class="ladder sm">{money_rows(case, rows, win, hole_mode=True)}</div>'
+                          f'<div class="stamp">{esc(numista_stamp(case) or "")}</div>', sec="Lo que costaría"))
+    elif rows_n > MANY_ROWS:
+        ys = years(case)
+        summ = f'{quantity(case)} piezas en {len(by_year(case))} fechas · {years_label(ys)}'
+        folds.append(fold(f"Tus piezas · {quantity(case)}", esc(summ), year_picker(case),
+                          open_=bool(case.get("year")), sec="Tus piezas"))
+    else:
+        n = quantity(case)
+        summ = " · ".join(f'{p["year"] or "sin año"}{(" " + p["mint_letter"]) if p["mint_letter"] else ""} '
+                          f'<span class="g">{p["grade"] or ""}</span>' for p in case["pieces"])
+        folds.append(fold(f"Tus piezas · {n}" if n > 1 else "Tu pieza", summ,
+                          "".join(piece_detail(case, p) for p in case["pieces"]), sec="Tus piezas"))
+    claims = claims_block(case)
+    if claims:
+        h, rows_html = claims
+        p = case["plate"]
+        owned = sum(c["owned"] for c in p["cells"]) if p else 0
+        summ = esc(" · ".join(case["claims"])) + (f' · {owned} de {len(p["cells"])}' if p else "")
+        folds.append(fold(h, summ, rows_html + strip(case) + note(case)))
+    s = dict(spec(case))
+    summ = " · ".join(x for x in [s.get("Metal"), s.get("Peso"), s.get("Ceca")] if x)
+    folds.append(fold("La medalla" if f["category"] == "exonumia" else "La moneda", esc(summ), spec_card(spec(case))))
+    leg = f["obverse"].get("lettering") or f["reverse"].get("lettering") or ""
+    folds.append(fold("Las caras", f'<span class="caps">{esc(first_sentence(leg, 44))}</span>', faces(case)))
+    if f["comments"]:
+        folds.append(fold("Lo que cuenta Numista", esc(first_sentence(f["comments"], 70)), history(case)))
+    if f["related"]:
+        folds.append(fold(f"Emparentadas · {len(f['related'])}",
+                          esc(", ".join(r["country"] for r in f["related"])), related(case)))
+    lightbox = (f'<div class="lightbox" hidden><div class="lbimg p-{case["tid"]}-edge"></div>'
+                f'<div class="lbcap">El canto, en la foto de Numista · toca para cerrar</div></div>'
+                if photo_key(case["tid"], "edge") else "")
+    mini = (f'<div class="minibar"><u class="back"></u>{hole(case["tid"], 40, side=side, missing=missing, lit=missing, ring=2)}'
+            f'<div class="mbcol"><b>{esc(f["title"])}</b>{value_head(case, "mbval")}</div></div>')
+    return (f'<div class="scroll page" data-mini="{HERO + 60}">{back_row(case)}{hero}{head}<div class="folds">{"".join(folds)}</div>'
+            f'{footer(case)}</div>{mini}{lightbox}')
+
+
 VARIANTS = {
     "0": ("Hoy", v0, "La hoja de hoy (v1.7.4 con el #632): sube desde abajo sobre la lámina. "
           "Un valor, la ficha traída y las colecciones menos la de aquí."),
-    "A": ("Apilada", vA, "Pantalla entera y un solo documento: las dos caras a la vez, el valor, "
-          "tus piezas con sus tres precios, la lámina en miniatura con la nota del catálogo, la "
-          "cartela técnica, las leyendas, lo que cuenta Numista y las emparentadas. Nada plegado."),
-    "B": ("Plegada", vB, "Cabe en una pantalla. Cabecera con la moneda, el valor y la identidad; "
-          "debajo, una fila por sección que dice su resumen cerrada y se abre al tocarla."),
-    "C": ("La escalera", vC, "Manda el dinero. Cada pieza con sus tres precios en escalera, la "
-          "etiqueta entera y la procedencia pegada, y el precio de su emisión en cada grado con el "
-          "suyo marcado. Con muchas piezas, una tabla."),
-    "D": ("A tamaño real", vD, "Manda el objeto. La moneda a 1:1 con su regla y su canto, la "
-          "leyenda transcrita, una cartela de museo y el registro de tus piezas."),
+    "B": ("Plegada", vB, "La elegida de la primera vuelta. Cabe en una pantalla: cabecera con la "
+          "moneda, el valor y la identidad, y una fila por sección que dice su resumen cerrada."),
+    "E": ("Plegada, moneda grande", vE, "La B con lo que pidió Jose el 11 de octubre: la moneda a "
+          "300 dp con su canto de perfil debajo (a escala si Numista da el grosor, y dicho «sin dato» "
+          "si no), los tres precios en escalera dentro de cada pieza sin el gráfico de grados, y con "
+          "más de tres filas, las piezas se eligen por fecha."),
 }
 
 SLOTS = "".join(
@@ -898,7 +1060,7 @@ CTABS = "".join(f'<button data-axis="c" data-k="{c["key"]}">{esc(c["name"])}</bu
                 for c in D["cases"])
 MTABS = ('<button data-axis="m" data-k="tel">Teléfono</button>'
          '<button data-axis="m" data-k="tira">Tira entera</button>'
-         '<button data-axis="m" data-k="todas">Las cinco a la vez</button>')
+         '<button data-axis="m" data-k="todas">Las tres a la vez</button>')
 THESES = json.dumps({k: d for k, (_, _, d) in VARIANTS.items()}, ensure_ascii=False)
 CASES_NOTE = json.dumps({c["key"]: f'{c["ficha"]["title"]} · N# {c["tid"]} · '
                          + (f'abierta desde «{c["plate"]["name"]}»' if c["plate"] else "abierta desde Monedas")
@@ -1193,6 +1355,58 @@ table.ledger{width:100%;border-collapse:collapse;font:600 12px/1 Barlow;font-fea
 .reg.here{background:rgba(139,85,60,.08)}
 .rn{font:600 13px/22px Barlow;font-feature-settings:'tnum';color:$RUST;width:18px;text-align:right}
 .rb{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+
+/* E */
+.ehero{display:flex;flex-direction:column;align-items:center;gap:8px;padding:2px 0 0}
+.facelab{font:600 10px/1 Barlow;font-feature-settings:'smcp';color:$MUTED}
+.canto{position:relative;border-radius:3px;margin-top:6px;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;box-shadow:0 1px 2px rgba(45,48,41,.3),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(0,0,0,.18)}
+.canto.silver{background-color:#B9B5AA;background-image:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,0) 45%,rgba(0,0,0,.18))}
+.canto.bronze{background-color:#B08C57;background-image:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,0) 45%,rgba(0,0,0,.2))}
+.canto.reed:before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.38) 0 1.1px,rgba(45,48,41,.32) 1.1px 2.3px)}
+.canto.ornament:before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='12'%3E%3Crect x='2' y='3' width='6' height='6' fill='none' stroke='%23555046' stroke-width='1.2'/%3E%3Ccircle cx='13' cy='6' r='3' fill='none' stroke='%23555046' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x left center/auto 72%}
+.canto.nominal{outline:1.5px dashed $RUST;outline-offset:3px;opacity:.75}
+.canto span{position:relative;font-family:Barlow,sans-serif;font-weight:600;letter-spacing:.35em;color:#3E3A31;
+  white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.cantocap{font:600 11px/1.3 Barlow;font-feature-settings:'smcp','tnum';color:$MUTED;text-align:center;margin-top:4px}
+.lblink{font:400 14px/20px Bitter;color:$MOSS;text-decoration:underline;cursor:pointer}
+.ehead{display:flex;flex-direction:column;margin:18px 20px 0;align-items:center;text-align:center}
+.ehead .btitle{font-size:24px;line-height:28px}
+.ehead .falta{align-self:center}
+.lightbox{position:absolute;inset:0;z-index:40;background:rgba(20,21,18,.88);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;padding:20px;cursor:pointer}
+.lbimg{width:100%;aspect-ratio:1.4;background-size:contain;background-repeat:no-repeat;background-position:center}
+.lbcap{font:600 11px/1 Barlow;font-feature-settings:'smcp';color:$DEEP}
+.ladder.sm{gap:9px}
+.ladder.sm .rlab{font-size:14px}
+.ladder.sm .ramt{font-size:15px}
+.ladder.sm .rung.win .ramt{font-size:16px}
+.ladder.sm .bar{height:7px}
+.pdet{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid $DEEP}
+.pdet:first-child{border-top:0;padding-top:2px}
+.pdhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.ytiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:5px;margin-bottom:8px}
+.ytile{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 7px;
+  background:$CARD;border:1px solid $LINE;border-radius:0;color:$INK;cursor:pointer;font:inherit}
+.ytile b{font:400 14px/18px Bitter}
+.ytile .g{font-size:11px;color:$MUTED}
+.ytile em{position:absolute;top:2px;right:4px;font:600 10px/1 Barlow;font-style:normal;color:$RUST}
+.ytile .dot{position:absolute;top:5px;left:5px;width:5px;height:5px;border-radius:50%;background:$MOSS}
+.ytile.casilla{outline:1.5px dashed $RUST;outline-offset:-4px}
+.ytile.on{background:$INK;color:$PAPER;border-color:$INK}
+.ytile.on .g{color:$DEEP}
+.ytile.on em{color:#E8B89E}
+
+.minibar{position:absolute;left:0;right:0;top:0;z-index:20;background:$PAPER;display:flex;align-items:center;gap:12px;
+  padding:6px 20px;border-bottom:1px solid $LINE;box-shadow:0 2px 6px rgba(45,48,41,.12);
+  transform:translateY(-110%);transition:transform .18s ease-out}
+.minibar.show{transform:none}
+.mbcol{min-width:0;display:flex;flex-direction:column}
+.mbcol b{font:400 16px/20px Bitter;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbval{font:600 11px/1.3 Barlow;font-feature-settings:'smcp','tnum';color:$RUST;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.tira .minibar{display:none}
+@media (prefers-reduced-motion:reduce){.minibar{transition:none}}
 $PHOTOS
 """).substitute(
     BITTER=font("bitter_variable"), BARLOW4=font("barlow_condensed_regular"),
@@ -1202,7 +1416,7 @@ $PHOTOS
 
 JS = Template("""
 const THESES = $THESES, CASES = $CASES;
-const st = {v:'A', c:'real', m:'tel'};
+const st = {v:'E', c:'real', m:'tel'};
 const parse = () => {
   const h = location.hash.replace('#','').split('-');
   if (h[0] && THESES[h[0]]) st.v = h[0];
@@ -1242,7 +1456,7 @@ function render(){
     b.classList.toggle('on', st[b.dataset.axis] === b.dataset.k);
   });
   document.getElementById('cap').innerHTML = st.m === 'todas'
-    ? '<b>Las cinco, ' + CASES[st.c] + '.</b> Desplaza en horizontal.'
+    ? '<b>Las tres, ' + CASES[st.c] + '.</b> Desplaza en horizontal.'
     : '<b>' + st.v + '.</b> ' + THESES[st.v] + '<br><b>Moneda:</b> ' + CASES[st.c] + '.';
   requestAnimationFrame(() => {
     const out = [];
@@ -1258,12 +1472,27 @@ function go(axis, k){
   render();
 }
 document.querySelectorAll('header button').forEach(b => b.addEventListener('click', () => go(b.dataset.axis, b.dataset.k)));
+function turn(h){
+  h.classList.toggle('turned');
+  const lab = h.parentElement.querySelector('.facelab');
+  if (lab) lab.textContent = (h.classList.contains('turned') ? lab.dataset.b : lab.dataset.a) + ' · tócala para darle la vuelta';
+}
 document.addEventListener('click', e => {
-  const h = e.target.closest('.hole.flip'); if (h) h.classList.toggle('turned');
+  const h = e.target.closest('.hole.flip'); if (h) { turn(h); return; }
+  const ph = e.target.closest('.phone'); if (!ph) return;
+  if (e.target.closest('[data-lb]')) { const lb = ph.querySelector('.lightbox'); if (lb) lb.hidden = false; return; }
+  const lb = e.target.closest('.lightbox'); if (lb) { lb.hidden = true; return; }
+  const t = e.target.closest('.ytile');
+  if (t) {
+    const box = t.closest('.fb');
+    box.querySelectorAll('.ytile').forEach(x => x.classList.toggle('on', x === t));
+    box.querySelectorAll('.ypanel').forEach(x => { x.hidden = x.dataset.y !== t.dataset.y; });
+    render();
+  }
 });
 document.addEventListener('keydown', e => {
   const h = e.target.closest && e.target.closest('.hole.flip');
-  if (h && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); h.classList.toggle('turned'); return; }
+  if (h && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); turn(h); return; }
   if (e.target.closest && e.target.closest('input,textarea,[contenteditable]')) return;
   const ks = Object.keys(THESES), cs = Object.keys(CASES);
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
@@ -1277,6 +1506,13 @@ document.addEventListener('keydown', e => {
   }
 });
 document.addEventListener('toggle', () => render(), true);
+document.addEventListener('scroll', e => {
+  const sc = e.target; if (!sc.classList || !sc.dataset.mini) return;
+  const mb = sc.parentElement.querySelector('.minibar');
+  const head = sc.querySelector('.ehead');
+  const at = head ? head.offsetTop + head.offsetHeight - 56 : +sc.dataset.mini;
+  if (mb) mb.classList.toggle('show', sc.scrollTop > at);
+}, true);
 window.setState = (v, c, m) => { if (v) st.v = v; if (c) st.c = c; if (m) st.m = m; render(); };
 window.addEventListener('hashchange', () => { parse(); render(); });
 parse(); render();
@@ -1306,8 +1542,9 @@ lámina, escrita al curarla. Hoy sólo la lee la validación.</li>
 <h2>Cómo se mira</h2>
 <ul>
 <li>Barra de arriba: variante (← →), moneda (↑ ↓) y modo. <b>Tira entera</b> despliega el teléfono
-y marca cada pliegue de 914 dp; <b>Las cinco a la vez</b> las pone en fila.</li>
-<li>Toca la moneda donde lleva el giro (0, B, C y D). En B, toca una fila para abrirla.</li>
+y marca cada pliegue de 914 dp; <b>Las tres a la vez</b> las pone en fila.</li>
+<li>Toca la moneda para darle la vuelta, y una fila para abrirla. En E, «Ver la foto del canto»
+abre la de Numista cuando la hay, y con muchas piezas cada fecha abre la suya.</li>
 <li>Debajo del teléfono: lo que mide la ficha y qué secciones se ven sin tocar nada.</li>
 </ul>
 <h2>Lo que la maqueta no prueba</h2>

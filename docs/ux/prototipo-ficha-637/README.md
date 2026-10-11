@@ -106,6 +106,56 @@ Los importes, las notas privadas del padre y su foto no se versionan: `data.json
 medidas. `extract.py` y `build.py` son del prototipo y se tiran cuando el ticket se cierre; lo que
 sobrevive es este README.
 
+## Segunda vuelta: E, la plegada con la moneda grande
+
+Jose eligió la B el 11 de octubre de 2026, con cuatro enmiendas:
+
+- «Que la moneda se vea más grande. No tiene por qué ser tamaño real.»
+- Le gustan los cantos de la D, «pero a veces no está».
+- Con muchas piezas, como los 5 bolívares, la ficha «ahora mismo es inviable».
+- El precio de la emisión en cada grado (C) no aporta: «la mayoría de las monedas que tenemos
+  sólo se venden en un par de calidades».
+
+Lo medido antes de dibujar, sobre los 245 tipos que tiene el padre:
+
+| dato | tipos |
+| --- | ---: |
+| descripción del canto | 238 (97 %) |
+| grosor | 156 (64 %) |
+| foto del canto | 73 (30 %) |
+| leyenda en el canto | 21 |
+
+Y de las 337 emisiones con precio en Numista, 171 lo tienen en uno o dos grados y 135 en uno solo.
+Jose tenía razón: el gráfico de grados se va.
+
+La E (`#E-real-tel`) es la B con:
+
+- **La moneda a 300 dp**, con el giro y un rótulo que dice qué cara se ve.
+- **El canto de perfil debajo**, dibujado según la descripción: estriado, liso, con motivos o con
+  su leyenda impresa dentro. Con grosor, a la escala de la foto; sin él, a un grosor fijo con
+  filete discontinuo y «grosor sin dato». La foto de Numista no sirve de textura, porque cada
+  una está hecha a su manera (de perfil, inclinada, primer plano, tira), así que va aparte en «Ver
+  la foto del canto».
+- **Al bajar, una barra compacta** con la flecha, la moneda pequeña, el título y el valor, que
+  aparece cuando el título grande sale de pantalla. Así la moneda grande no se come la cabecera
+  de la B.
+- **Los tres precios en escalera dentro de cada pieza**, con su etiqueta entera y su
+  procedencia, y sin el gráfico de grados.
+- **Con más de tres filas, las piezas se eligen por fecha**: una rejilla de fechas con su grado
+  (y ×N si hay varias), y debajo, la pieza de la fecha elegida. Abierta desde una casilla de un
+  date run, la ficha entra con «Tus piezas» abierta y esa fecha elegida. El Fuerte son 21 fechas
+  en tres filas de siete.
+
+Alto de la E en dp: 1150 (real), 1240 (hueco), 1027 (medalla), 1107 (sin plata) y 1528
+(fuerte). La B cerrada medía 710–812 y la A, 1693–4903.
+
+### El canto que falta
+
+Faltan 89 grosores y 7 descripciones de canto. Es dato de catálogo, no de la app: se investiga
+moneda a moneda (ceca, catálogo de la emisión, la foto) y se propone a Numista, como el resto de
+correcciones. La ficha lo recoge sola al actualizarse. Mientras tanto, la E dice «grosor sin
+dato» en vez de inventarlo.
+
 ## Lo elegido
 
-Pendiente de Jose.
+La B, con las enmiendas de la segunda vuelta: falta que Jose vea la E.
