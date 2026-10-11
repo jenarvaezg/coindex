@@ -1,6 +1,8 @@
 package com.jenarvaezg.coindex.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import com.jenarvaezg.coindex.ui.components.MODE_WASH
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -29,8 +31,23 @@ class SinglePaletteTest {
     }
 
     @Test
-    fun `muted text and hairlines clear their contrast thresholds on paper`() {
-        assertTrue(contrastRatio(Paper.muted, Paper.paper) >= 4.5)
+    fun `muted text reads at 4,5 to 1 on every paper it is printed on`() {
+        // Not only the bare paper: banners and doors are paperDeep, and an open mode washes the
+        // sheet (#633).
+        val grounds = mapOf(
+            "paper" to Paper.paper,
+            "paperDeep" to Paper.paperDeep,
+            "mode wash" to MODE_WASH.compositeOver(Paper.paper),
+        )
+
+        grounds.forEach { (name, ground) ->
+            val ratio = contrastRatio(Paper.muted, ground)
+            assertTrue(ratio >= 4.5, "muted on $name: $ratio")
+        }
+    }
+
+    @Test
+    fun `hairlines clear the non-text threshold on paper`() {
         assertTrue(contrastRatio(Paper.hairline, Paper.paper) >= 3.0)
     }
 

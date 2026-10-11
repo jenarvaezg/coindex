@@ -136,7 +136,7 @@ private fun Rung(rung: DomainRung, unit: LadderUnit) {
         Text(
             ladderAmountLabel(unit, rung.amount, approximate = false),
             style = MaterialTheme.typography.labelSmall,
-            color = Paper.line,
+            color = Paper.muted,
             textAlign = TextAlign.Center,
         )
     }

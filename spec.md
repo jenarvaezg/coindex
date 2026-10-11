@@ -122,8 +122,8 @@ vive aquí es el **eje de identidad**, que los ADR y `docs/ux/` citan como veto:
   el reflejo del acetato.
 - **Papel a cualquier hora** (ADR 0026 §2): sin tema oscuro ni interruptor, y
   `android:forceDarkAllowed` a `false` en `Theme.Coindex`; de noche atenúa el sistema.
-  `SinglePaletteTest` lo fija y guarda los suelos de contraste sobre el papel: `muted` ≥ 4,50
-  (texto) y `hairline` ≥ 3,00 (no textual).
+  `SinglePaletteTest` lo fija y guarda los suelos de contraste: `muted` ≥ 4,50 (texto) sobre el
+  papel, `paperDeep` y el velo de un modo, y `hairline` ≥ 3,00 (no textual) sobre el papel.
 - **Dos tipografías dentro del APK**: **Bitter + Barlow Condensed**, con versalitas y cifras
   tabulares, sin itálica y sin subsetear. `←`, `✓` y `↗` son iconos vectoriales porque ninguna las
   trae.

@@ -61,7 +61,7 @@ fun ModeBand(
  * (#509).
  */
 fun Modifier.sheetUnderMode(open: Boolean): Modifier =
-    if (!open) this else drawBehind { drawRect(Paper.paperDeep.copy(alpha = MODE_WASH_OPACITY)) }
+    if (!open) this else drawBehind { drawRect(MODE_WASH) }
 
 /**
  * Fades what the open mode can't act on, such as a full casilla, so only the targets look pressable
@@ -74,7 +74,7 @@ fun Modifier.outsideTheMode(outside: Boolean): Modifier =
  * About ten luminance levels under the sheet: visible across the grid, too light to read as a scrim
  * or to darken an empty casilla's ghost.
  */
-private const val MODE_WASH_OPACITY = 0.55f
+internal val MODE_WASH = Paper.paperDeep.copy(alpha = 0.55f)
 
 /** Faint enough to recede, solid enough that the coin is still recognisable. */
 private const val MODE_ASIDE_OPACITY = 0.45f

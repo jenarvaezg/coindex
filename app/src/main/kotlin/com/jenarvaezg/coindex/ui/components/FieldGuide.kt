@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,10 +22,13 @@ import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -95,13 +99,19 @@ fun PrimaryAction(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RectangleShape,
-        modifier = modifier,
-    ) {
-        Text(text, style = MaterialTheme.typography.labelLarge)
+    DashedWhenDisabled(enabled, modifier) { buttonModifier ->
+        Button(
+            onClick = onClick,
+            enabled = enabled,
+            shape = RectangleShape,
+            colors = ButtonDefaults.buttonColors(
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = Paper.muted,
+            ),
+            modifier = buttonModifier,
+        ) {
+            Text(text, style = MaterialTheme.typography.labelLarge)
+        }
     }
 }
 
@@ -118,20 +128,50 @@ fun CardAction(
     enabled: Boolean = true,
     icon: (@Composable () -> Unit)? = null,
 ) {
-    OutlinedButton(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RectangleShape,
-        border = BorderStroke(1.dp, Paper.hairline),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Paper.ink),
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-        modifier = modifier,
-    ) {
-        icon?.let {
-            it()
-            Spacer(modifier = Modifier.size(8.dp))
+    DashedWhenDisabled(enabled, modifier) { buttonModifier ->
+        OutlinedButton(
+            onClick = onClick,
+            enabled = enabled,
+            shape = RectangleShape,
+            border = if (enabled) BorderStroke(1.dp, Paper.hairline) else null,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Paper.ink,
+                disabledContentColor = Paper.muted,
+            ),
+            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+            modifier = buttonModifier,
+        ) {
+            icon?.let {
+                it()
+                Spacer(modifier = Modifier.size(8.dp))
+            }
+            Text(text, style = MaterialTheme.typography.labelLarge)
         }
-        Text(text, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+/**
+ * A disabled action is an absent one, so it takes the dashed rule that marks absence on a
+ * [FieldCard] (#633). The 48 dp target is held outside the button, so the rule lands on its shape.
+ */
+@Composable
+private fun DashedWhenDisabled(
+    enabled: Boolean,
+    modifier: Modifier,
+    button: @Composable (Modifier) -> Unit,
+) {
+    if (enabled) {
+        button(modifier)
+    } else {
+        Box(
+            modifier = modifier.minimumInteractiveComponentSize(),
+            contentAlignment = Alignment.Center,
+            propagateMinConstraints = true,
+        ) {
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+                button(Modifier.dashedBorder(Paper.hairline, 1.dp))
+            }
+        }
     }
 }
 
