@@ -158,8 +158,8 @@ fun CoindexApp(viewModel: CoindexViewModel) {
         )
     }
 
-    // The coin sheet every surface that draws a coin opens (ADR 0026 §3). Remembered so its lambdas
-    // are stable: a fresh one per recomposition would rebuild the row on every frame of the entrance.
+    // The coin sheet of plates, «Lo que busco», Monedas and the pieces (ADR 0026 §3). Remembered so
+    // its lambdas are stable: a fresh one would rebuild the row on every frame of the entrance.
     // `refreshingFichas` is the only key besides the reading because it is in flight, not derived.
     val coinSheet = remember(reading, state.refreshingFichas) {
         CoinSheetSurface(

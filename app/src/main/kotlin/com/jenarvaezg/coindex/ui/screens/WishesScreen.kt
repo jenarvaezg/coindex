@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,13 +22,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.DrawnWish
-import com.jenarvaezg.coindex.ui.OPEN_THE_COIN_SHEET
 import com.jenarvaezg.coindex.ui.SharedSheet
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
@@ -42,6 +39,7 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
+import com.jenarvaezg.coindex.ui.components.opensTheCoinSheet
 import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
@@ -160,12 +158,9 @@ fun WishesScreen(
 private val WISH_MARGIN = 20.dp
 
 /**
- * One marked casilla in the list, which opens its coin's sheet whole, as on a plate (ADR 0026 §3).
- *
- * No «lo busco» chip: every casilla here is marked, so it would distinguish nothing (ADR 0026 §5);
- * the chip only shows the price. «Quitar» on each row is fine here, unlike per-casilla toggles on a
- * plate (ADR 0029 §5): the list is just the marks, and removing one is its only upkeep, like a
- * box's per-piece action (ADR 0021 §9). It sits outside the casilla, so a missed tap can't unmark.
+ * One marked casilla, which opens its coin's sheet as on a plate (ADR 0026 §3). Its chip only shows
+ * the price, since every casilla here is marked (ADR 0026 §5). «Quitar» is the list's only upkeep
+ * (ADR 0029 §5) and sits outside the casilla, so a missed tap can't unmark.
  */
 @Composable
 internal fun WishCell(
@@ -183,11 +178,7 @@ internal fun WishCell(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(
-                    role = Role.Button,
-                    onClickLabel = OPEN_THE_COIN_SHEET,
-                    onClick = onOpenCoin,
-                ),
+                .opensTheCoinSheet(onOpenCoin),
         ) {
             Box(contentAlignment = Alignment.Center) {
                 AlbumHole(
@@ -201,7 +192,7 @@ internal fun WishCell(
             }
             // The year's height is reserved even without a year, as on the plate (#473).
             Box(
-                modifier = Modifier.height(YearTagMetrics.target),
+                modifier = Modifier.height(YearTagMetrics.frame),
                 contentAlignment = Alignment.Center,
             ) {
                 row.year?.let { year -> RecessedYearTag(year = year) }

@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -13,28 +12,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.CoinName
-import com.jenarvaezg.coindex.ui.OPEN_THE_COIN_SHEET
 import com.jenarvaezg.coindex.ui.coinAlbumFaces
 import com.jenarvaezg.coindex.ui.pieceLine
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * One piece of the collection as the collector recorded it: the coin in its hole, its title, the
- * year (or the emission where the year names nothing) and the quantity. The whole card opens the
- * coin's sheet, where the coin turns over and Numista is one link away (ADR 0026 §3). Which face
- * rests up comes from [coinAlbumFaces], since a box or a collection without an issue list has no
- * `printed_side`.
- *
- * An inventory row, never «me falta». [extra] holds what the hosting screen adds, such as a
- * selection control. [ficha] shows the age of the cached data and lets the collector refetch it
- * (#185).
+ * One piece as the collector recorded it, whose coin opens its sheet. The buttons, [extra]'s
+ * included, sit below it, so a missed tap can't take it out of a box or spend a consulta
+ * (ADR 0026 §3).
  */
 @Composable
 fun PieceCard(
@@ -43,24 +34,23 @@ fun PieceCard(
     images: TypeImages?,
     /** Opens this coin's sheet (ADR 0026 §3). */
     onOpenCoin: (typeId: Int) -> Unit,
+    /** The ficha's age and its refresh (#185). */
     ficha: FichaRefresh,
     modifier: Modifier = Modifier,
     extra: @Composable ColumnScope.() -> Unit = {},
 ) {
-    FieldCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(
-                role = Role.Button,
-                onClickLabel = OPEN_THE_COIN_SHEET,
-                onClick = { onOpenCoin(piece.item.typeId) },
-            ),
-    ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            // The same 104 dp hole as a casilla and the Monedas ficha (#370).
+    FieldCard(modifier = modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(PIECE_GAP),
+            modifier = Modifier
+                .fillMaxWidth()
+                .opensTheCoinSheet { onOpenCoin(piece.item.typeId) },
+        ) {
+            // The same 104 dp hole as a casilla and the Monedas ficha (#370). A box or a
+            // collection without an issue list has no `printed_side`.
             AlbumHole(
                 photo = coinAlbumFaces(images).first,
-                modifier = Modifier.size(104.dp),
+                modifier = Modifier.size(PIECE_HOLE),
             )
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
@@ -88,9 +78,16 @@ fun PieceCard(
                     color = Paper.muted,
                     modifier = Modifier.padding(top = 4.dp),
                 )
-                extra()
-                FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
             }
+        }
+        // In the text's column, so the card keeps its two columns.
+        Column(modifier = Modifier.padding(start = PIECE_HOLE + PIECE_GAP)) {
+            extra()
+            FichaBrought(ficha, modifier = Modifier.padding(top = 8.dp))
         }
     }
 }
+
+private val PIECE_HOLE = 104.dp
+
+private val PIECE_GAP = 14.dp

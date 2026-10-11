@@ -102,7 +102,7 @@ class ModeChangesTheSceneTest {
         assertEquals(A_KEY, marked)
     }
 
-    /** Nor does it open its coin's sheet. */
+    /** A full casilla can't be marked, and in the mode it doesn't open its sheet either. */
     @Test
     fun aFullCasillaAnswersNothingWhileTheModeIsOpen() {
         compose.setContent {
@@ -133,7 +133,7 @@ class ModeChangesTheSceneTest {
 
     /** With the mode closed the casilla opens its coin's sheet again. */
     @Test
-    fun closingTheModeGivesTheCasillaItsOwnGesturesBack() {
+    fun closingTheModeLetsTheCasillaOpenItsSheetAgain() {
         var opened: Int? = null
         compose.setContent {
             CoindexTheme {
@@ -198,15 +198,14 @@ class ModeChangesTheSceneTest {
                 owned = !missing,
                 missing = missing,
                 wishKey = A_KEY,
-                // The tag comes from the plaque, not from `year` (#511); without one there is no
-                // year for the mode to take away.
+                // The tag comes from the plaque, not from `year` (#511).
                 plaque = plaqueOf(label = A_NAME, year = A_YEAR, yearIsCommon = false),
             ),
             images = null,
             printedSide = PrintedSide.Reverse,
             travellingFrom = null,
             onOpenCoin = onOpenCoin,
-            onMark = if (picking) onMark else null,
+            onMark = onMark,
             picking = picking,
             modifier = Modifier.width(CELL_WIDTH),
         )

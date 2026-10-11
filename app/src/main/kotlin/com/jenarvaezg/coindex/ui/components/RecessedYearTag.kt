@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * The year under a hole, as a tag sunk into the cardboard (#302). A label, not a target: the whole
- * casilla opens the coin's sheet (ADR 0026 §3).
+ * The year under a hole, as a tag sunk into the cardboard (#302). It takes no tap: the whole casilla
+ * opens the coin's sheet (ADR 0026 §3).
  */
 @Composable
 fun RecessedYearTag(
@@ -81,9 +81,9 @@ internal object YearTagMetrics {
     val width = 48.3.dp
     val height = 28.dp
 
-    /** The height a casilla reserves for its tag: Android's minimum target, centred on the tag. */
-    val target = 48.dp
+    /** The height a casilla reserves for its tag, centred in it: Android's 48 dp target (#302). */
+    val frame = 48.dp
 
     /** The transparent air above and below the tag's ink. */
-    val slack = (target - height) / 2
+    val slack = (frame - height) / 2
 }

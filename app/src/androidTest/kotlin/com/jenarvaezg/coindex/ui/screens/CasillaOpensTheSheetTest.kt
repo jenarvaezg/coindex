@@ -58,6 +58,8 @@ private const val A_TITLE = "1 Bolívar - Simón Bolívar"
 /** The name the casilla prints under its year. */
 private const val A_NAME = "Bolívar"
 
+private const val CASILLA = "casilla"
+
 /** Unreachable on purpose: two faces make a hole turnable, the pictures are beside the point. */
 private val TWO_FACES = TypeImages(
     obverse = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg"),
@@ -102,7 +104,7 @@ class CasillaOpensTheSheetTest {
         assertEquals(A_TYPE, opened)
     }
 
-    /** Where the father taps, and where the name once linked to Numista. */
+    /** The name is where a finger lands first (#632). */
     @Test
     fun theNameOfACasillaOpensItsCoin() {
         var opened: Int? = null
@@ -215,9 +217,7 @@ class CasillaOpensTheSheetTest {
             }
         }
 
-        val labels = compose.onAllNodes(hasClickAction(), useUnmergedTree = true)
-            .fetchSemanticsNodes()
-            .map { it.config[SemanticsActions.OnClick].label }
+        val labels = clickLabels(useUnmergedTree = true)
         assertTrue(labels.toString(), TURN_THE_COIN_OVER in labels)
     }
 
@@ -245,8 +245,8 @@ class CasillaOpensTheSheetTest {
         compose.onNodeWithText("Las venezolanas").assertExists()
     }
 
-    private fun clickLabels(): List<String?> = compose
-        .onAllNodes(hasClickAction())
+    private fun clickLabels(useUnmergedTree: Boolean = false): List<String?> = compose
+        .onAllNodes(hasClickAction(), useUnmergedTree)
         .fetchSemanticsNodes()
         .map { it.config[SemanticsActions.OnClick].label }
 
@@ -300,5 +300,3 @@ class CasillaOpensTheSheetTest {
         )
     }
 }
-
-private const val CASILLA = "casilla"

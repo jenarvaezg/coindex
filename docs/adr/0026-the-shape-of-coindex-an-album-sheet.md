@@ -143,8 +143,9 @@ landing on the first of twelve would be a lie. The cards that do not fly carry n
   keeps its 420 ms and its cause, a tap on a hole, but only the sheet's hole flips. Unchanged: in
   the marking mode (ADR 0029 §5) a markable casilla marks and opens nothing, an announced member
   opens nothing, and the journey still lands on the casilla's hole, with no coin flying into the
-  sheet. «Quitar» sits outside its casilla, so a missed tap cannot unmark. The tag stays sunken in
-  its 48 dp frame, so no spacing moves; it is a label now, not a target.
+  sheet. «Quitar» sits outside its casilla, and a piece card's buttons below the coin, so a missed
+  tap can neither unmark, take a coin out of a box nor spend a consulta. The tag stays sunken in
+  its 48 dp frame, so no spacing moves, and takes no tap.
 
 ### 4. The export rule: what is still travels to paper, what is alive does not
 
@@ -399,9 +400,9 @@ traída hoy` / `hace N meses` line, `Ver en Numista` and the links to its collec
 colección` stays outside **as form** — a hole with no cardboard behind it — and the landing hole
 follows it. This is new mechanism, justified because otherwise the toll stays on every row.
 
-**Amended by #632 (2026-10-11, with §3): every surface that draws a coin opens this sheet.** A
-casilla of a plate or of «Lo que busco» and the card of a piece open it whole, and the sheet's hole
-is the only one that flips.
+**Amended by #632 (2026-10-11, with §3): plates, «Lo que busco» and the pieces open this sheet
+too.** A casilla opens it whole and a piece card from its coin, as a Monedas cell does, and the
+sheet's hole is the only one that flips.
 
 ### 14. Licence notices: three words at the foot, one screen with everything inside
 
@@ -441,7 +442,7 @@ is written**. Numbers for each amendment below are in its `docs/ux/implementacio
 | gloss intensity and travel | half the video's at 105°, and the travel as **±45 % of the diameter** rather than the prototype's ±55 dp (#338) | the bench |
 | flip duration | 420 ms | the bench |
 | stamping duration | 300 ms | the bench |
-| depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp) |
+| depth of the tag's recess | sunken, 48.3 × 28 dp | the bench (the size is not a parameter: it is what reaches Android's 48 dp; since #632 the tag takes no tap, and its 48 dp frame stays for the spacing) |
 | the ghost | design at 14 % with a dotted rule, **and never under 72 dp of hole** (#556) | the bench |
 | the wall of the die-cut | one 5 dp sweep on the cardboard: ink at 22 % at the top, white at 85 % at the bottom, nothing at the horizontals (#357) | the bench |
 | **the gesture, the place, the drawing** | — | **the map**: an implementation session never changes form without coming back |

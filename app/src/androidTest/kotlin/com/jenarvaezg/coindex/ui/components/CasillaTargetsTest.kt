@@ -65,7 +65,7 @@ class CasillaTargetsTest {
 
     /** The whole casilla opens the sheet, so its tag takes no tap of its own. */
     @Test
-    fun theYearTagIsALabelNotATarget() {
+    fun theYearTagTakesNoTap() {
         compose.setContent {
             CoindexTheme {
                 RecessedYearTag(year = "1960", modifier = Modifier.testTag("tag"))

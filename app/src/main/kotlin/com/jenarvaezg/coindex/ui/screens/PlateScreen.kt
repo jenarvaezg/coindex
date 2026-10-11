@@ -46,7 +46,6 @@ import com.jenarvaezg.coindex.ui.CellPlaque
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.FiguresLabels
 import com.jenarvaezg.coindex.ui.NUMISTA_SOURCE_LINK
-import com.jenarvaezg.coindex.ui.OPEN_THE_COIN_SHEET
 import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateFinance
 import com.jenarvaezg.coindex.ui.PlateSubject
@@ -66,6 +65,7 @@ import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.SpecificationCard
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
+import com.jenarvaezg.coindex.ui.components.opensTheCoinSheet
 import com.jenarvaezg.coindex.ui.components.outsideTheMode
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.sheetUnderMode
@@ -428,7 +428,7 @@ private fun PlateSheet(
                     onOpenCoin = onOpenCoin,
                     // While the mode is open, tapping an empty casilla marks it instead of opening
                     // its sheet (ADR 0029 §5).
-                    onMark = if (picking) marking.onToggle else null,
+                    onMark = marking.onToggle,
                     picking = picking,
                 )
             }
@@ -550,8 +550,8 @@ internal fun PlateCell(
     travellingFrom: String?,
     /** Opens this coin's sheet, where the coin turns over (ADR 0026 §3). */
     onOpenCoin: (Int) -> Unit,
-    /** Toggles this casilla's mark while the marking mode is open (ADR 0029 §5); null otherwise. */
-    onMark: ((WishKey) -> Unit)? = null,
+    /** Toggles this casilla's mark while the marking mode is open (ADR 0029 §5). */
+    onMark: (WishKey) -> Unit = {},
     /**
      * Whether the marking mode is open, which is not the same as this casilla being markable
      * (#517). Non-markable casillas step back while it is open: drawn faint, answering nothing.
@@ -560,20 +560,14 @@ internal fun PlateCell(
     modifier: Modifier = Modifier,
 ) {
     val tap = casillaTap(cell, picking)
-    val marks = tap is CasillaTap.Mark && onMark != null
+    val marks = tap is CasillaTap.Mark
     val target = when (tap) {
-        is CasillaTap.Open -> Modifier.clickable(
-            role = Role.Button,
-            onClickLabel = OPEN_THE_COIN_SHEET,
-            onClick = { onOpenCoin(tap.typeId) },
+        is CasillaTap.Open -> Modifier.opensTheCoinSheet { onOpenCoin(tap.typeId) }
+        is CasillaTap.Mark -> Modifier.clickable(
+            role = Role.Checkbox,
+            onClickLabel = WishLabels.MARK_ACTION,
+            onClick = { onMark(tap.key) },
         )
-        is CasillaTap.Mark -> onMark?.let { toggle ->
-            Modifier.clickable(
-                role = Role.Checkbox,
-                onClickLabel = WishLabels.MARK_ACTION,
-                onClick = { toggle(tap.key) },
-            )
-        } ?: Modifier
         CasillaTap.None -> Modifier
     }
     Column(
@@ -595,7 +589,7 @@ internal fun PlateCell(
         // The tag's height is reserved even without a tag, so names don't ride up against the hole.
         Box(
             // A minimum, not exact (#511): a name tag replacing the year may be taller.
-            modifier = Modifier.heightIn(min = YearTagMetrics.target),
+            modifier = Modifier.heightIn(min = YearTagMetrics.frame),
             contentAlignment = Alignment.Center,
         ) {
             when (val plaque = cell.plaque) {

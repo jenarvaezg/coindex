@@ -56,9 +56,9 @@ import com.jenarvaezg.coindex.ui.shelf.CoinRow
 import com.jenarvaezg.coindex.ui.theme.Paper
 
 /**
- * What a screen needs to open a coin sheet (#508), bundled so every surface that draws a coin words
- * and links it the same way. What varies per surface (face up, current collection, flight) stays a
- * parameter of [CoinSheetOverlay].
+ * What a screen needs to open a coin sheet (#508), bundled so plates, «Lo que busco», Monedas and
+ * the pieces word and link a coin the same way. What varies per surface (face up, current
+ * collection, flight) stays a parameter of [CoinSheetOverlay].
  *
  * @param coin the type's row; null only when the collection changed under an open sheet.
  * @param value null on a hole, where nothing is owned.

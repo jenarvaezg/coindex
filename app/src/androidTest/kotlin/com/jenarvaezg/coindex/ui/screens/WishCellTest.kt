@@ -72,7 +72,7 @@ class WishCellTest {
         assertEquals(1, opened)
     }
 
-    /** Without a year there was no tag to press, and no way in. */
+    /** A casilla with no year has no tag, and opens all the same. */
     @Test
     fun aMarkedCasillaWithNoYearStillOpensItsCoin() {
         var opened = 0
