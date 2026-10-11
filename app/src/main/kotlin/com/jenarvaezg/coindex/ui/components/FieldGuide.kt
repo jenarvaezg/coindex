@@ -103,21 +103,11 @@ fun PrimaryAction(
             disabledContainerColor = DisabledAction.fill,
             disabledContentColor = DisabledAction.label,
         ),
-        border = if (enabled) null else DisabledAction.rule,
+        border = if (enabled) null else HAIRLINE_RULE,
         modifier = modifier,
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
-}
-
-/**
- * A button that can't be pressed yet: the fill and the rule say so, as the export panel's tick box
- * does (#512), and the label keeps 4.5:1 instead of Material's faded 2:1 (#633).
- */
-private object DisabledAction {
-    val fill = Paper.paperDeep
-    val label = Paper.muted
-    val rule = BorderStroke(1.dp, Paper.hairline)
 }
 
 /**
@@ -137,7 +127,7 @@ fun CardAction(
         onClick = onClick,
         enabled = enabled,
         shape = RectangleShape,
-        border = BorderStroke(1.dp, Paper.hairline),
+        border = HAIRLINE_RULE,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = Paper.ink,
             disabledContainerColor = DisabledAction.fill,
@@ -152,6 +142,17 @@ fun CardAction(
         }
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
+}
+
+private val HAIRLINE_RULE = BorderStroke(1.dp, Paper.hairline)
+
+/**
+ * A button that can't be pressed yet: the fill and the hairline rule say so, as the export panel's
+ * tick box does (#512), and the label keeps 4.5:1 instead of Material's faded 2:1 (#633).
+ */
+private object DisabledAction {
+    val fill = Paper.paperDeep
+    val label = Paper.muted
 }
 
 /**

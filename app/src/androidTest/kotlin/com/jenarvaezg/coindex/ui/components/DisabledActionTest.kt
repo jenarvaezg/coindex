@@ -9,6 +9,9 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.jenarvaezg.coindex.ui.CANCEL_ACTION
+import com.jenarvaezg.coindex.ui.ONBOARDING_SAVE_ACTION
+import com.jenarvaezg.coindex.ui.boxDoorLabel
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -30,10 +33,12 @@ class DisabledActionTest {
     // D8 forbids spaces in method names below DEX 040, so instrumented tests cannot use backticks.
     fun aDisabledPrimaryActionKeepsItsLabelLegible() {
         compose.setContent {
-            CoindexTheme { PrimaryAction(text = SIGN_UP, onClick = {}, enabled = false) }
+            CoindexTheme {
+                PrimaryAction(text = ONBOARDING_SAVE_ACTION, onClick = {}, enabled = false)
+            }
         }
 
-        val ratio = labelContrast(SIGN_UP)
+        val ratio = labelContrast(ONBOARDING_SAVE_ACTION)
 
         assertTrue("PrimaryAction desactivado midió $ratio", ratio >= 4.5)
     }
@@ -54,13 +59,13 @@ class DisabledActionTest {
         compose.setContent {
             CoindexTheme {
                 Column {
-                    CardAction(text = CANCEL, onClick = {})
+                    CardAction(text = CANCEL_ACTION, onClick = {})
                     CardAction(text = EMPTY_DOOR, onClick = {}, enabled = false)
                 }
             }
         }
 
-        val ratio = contrast(fillBehind(CANCEL), fillBehind(EMPTY_DOOR))
+        val ratio = contrast(fillBehind(CANCEL_ACTION), fillBehind(EMPTY_DOOR))
 
         // paper against paperDeep is 1.22; the same paper on both is 1.
         assertTrue("los dos rellenos midieron $ratio", ratio >= 1.1)
@@ -90,10 +95,7 @@ class DisabledActionTest {
     }
 
     private companion object {
-        // The app's own: the sign-up form's button before both fields are filled, and the door of
-        // Coins when a search finds nothing.
-        const val SIGN_UP = "Guardar y empezar"
-        const val EMPTY_DOOR = "Hacer una colección con estas 0"
-        const val CANCEL = "Cancelar"
+        /** The door of Coins when a search finds nothing. */
+        val EMPTY_DOOR = boxDoorLabel(seeded = true, shown = 0)
     }
 }
