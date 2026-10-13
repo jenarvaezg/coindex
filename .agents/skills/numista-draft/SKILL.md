@@ -1,6 +1,6 @@
 ---
 name: numista-draft
-description: Research and prepare sourced Numista catalogue contribution drafts, sent only on the user's explicit order. Use for creating or editing coin types, revising pending submissions, proposing series, adding date lines or varieties, resolving an ambiguous Numista request, and producing a field-by-field dossier for visible browser review without saving, uploading, or submitting.
+description: Research and prepare sourced Numista catalogue contribution drafts, sent only on the user's explicit order. Use for creating or editing coin types, revising pending submissions, proposing series, adding date lines or varieties, resolving an ambiguous Numista request, and producing a field-by-field dossier for visible browser review before anything is saved, uploaded, or submitted.
 ---
 
 # Numista Draft
@@ -17,12 +17,11 @@ Prepare evidence and a human-reviewable draft. Never make the contribution on yo
 ## Hard safety boundary
 
 - Never click or invoke Save, Upload, Submit, Send, Publish, Confirm, or equivalent controls.
-- Never upload an image or other file, even when its rights are verified.
 - Never call a mutation endpoint. The public Numista API is for catalogue lookup; treat all API use as read-only.
 - Open only a visible, interactive browser for final review and optional prefill. Do not use headless browser automation for the handoff.
 - Stop after prefilling. Tell the user what remains for their own review and manual action.
 
-One exception: when the user, in the current turn, explicitly orders a specific prefilled form to be sent, re-read its fields in a fresh snapshot and press that form's own submit control (for example «Modify data»). The order covers that form only; it never covers uploads, other forms, or later turns.
+One exception: when the user, in the current turn, explicitly orders a specific prefilled form to be sent, attach its pictures (see [Pictures](#pictures)), re-read its fields in a fresh snapshot and press that form's own submit control (for example «Modify data»). The order covers that form and its pictures only; never other forms or later turns. An order to add pictures to the user's own pending submission covers that edit the same way.
 
 After a form is sent, take the request id from `confirmation.php?…&prop[]=<id>`, add the `waiting-numista` label to the issue, and comment a table `N# | coin | change | request` linking `voir_prop.php?id=<id>`.
 
@@ -59,10 +58,17 @@ After a form is sent, take the request id from `confirmation.php?…&prop[]=<id>
    - For `create_type`, use `https://en.numista.com/catalogue/contributions/nouveau.php?type=coin` as the initial route. If it has changed, navigate from the current Numista help page or relevant catalogue entry instead of guessing a replacement URL.
 10. Leave the page open for the user. Do not save, upload, or submit unless the exception above applies.
 
+## Pictures
+
+- Upload a picture only when its `rights_basis` is verified in the dossier, and set Numista's picture source and credit to match it (for example «I copied the picture from a website that gave their permission» plus the authorised site).
+- The review browser only reads files under the checkout that launched it: download each picture to its `.playwright-mcp/uploads/` (git-ignored). A `File access denied` error names the allowed roots.
+- Click the form's file control, then call `browser_file_upload` with the absolute path. The click opens a file chooser that only that call closes; the user cannot pick a file by hand in that browser.
+- Open the report with each side's picture as uploaded or missing.
+
 ## Readiness rules
 
 Keep the draft `not_ready` when any required field is absent, unknown, inferred, conflicting, or lacks a direct source; when open questions/conflicts remain; when the duplicate check is stale or incomplete; when an API budget lacks explicit approval; when image rights are unclear; or when the route remains ambiguous. A blocked render is a research report only and must not be opened or prefilled in the browser.
 
-Images are optional when descriptions and lettering adequately identify both sides. Record external pictures as research evidence only unless authorship, an authorised Numista source, public domain, or a compatible licence is verified. Regardless of rights, never upload them.
+Images are optional when descriptions and lettering adequately identify both sides. Record external pictures as research evidence only unless authorship, an authorised Numista source, public domain, or a compatible licence is verified. A verified picture is uploaded under the exception above.
 
 Render a field table with value, status, and source links; date-line evidence; duplicate-check details; blockers; and the exact browser warning: “Abrir y rellenar; no guardar, subir ni enviar.”
