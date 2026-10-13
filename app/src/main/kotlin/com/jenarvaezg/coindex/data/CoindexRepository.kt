@@ -141,6 +141,7 @@ class CoindexRepository(
         // stay on screen (ADR 0028 §5).
         priceBook(prices, spot?.toDomain(), IssueListings.held(reads, issues), priceReads, reads)
     }
+
     /**
      * The marked casillas (ADR 0029). Kept apart from [observeState] like the prices: nothing that
      * reads the inventory joins this table (ADR 0029 §3), and toggling a mark must not re-assemble

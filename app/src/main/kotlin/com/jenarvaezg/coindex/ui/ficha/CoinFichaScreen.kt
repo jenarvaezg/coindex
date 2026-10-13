@@ -54,8 +54,8 @@ import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FichaBrought
 import com.jenarvaezg.coindex.ui.components.FichaRefresh
 import com.jenarvaezg.coindex.ui.components.HoleAbsence
-import com.jenarvaezg.coindex.ui.components.dashedBorder
 import com.jenarvaezg.coindex.ui.components.LocalMotion
+import com.jenarvaezg.coindex.ui.components.dashedBorder
 import com.jenarvaezg.coindex.ui.components.travellingTypeCoin
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper

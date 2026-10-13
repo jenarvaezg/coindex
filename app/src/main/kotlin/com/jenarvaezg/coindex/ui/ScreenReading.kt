@@ -2,9 +2,9 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.CollectionState
 import com.jenarvaezg.coindex.data.PlateResult
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.prices.PriceBook
 import com.jenarvaezg.coindex.data.prices.wishCallsPerMonth
-import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.resolvePlate
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogAlbum

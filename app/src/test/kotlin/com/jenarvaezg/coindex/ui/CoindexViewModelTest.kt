@@ -1,9 +1,9 @@
 package com.jenarvaezg.coindex.ui
 
+import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.data.ApiCallLedger
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
-import com.jenarvaezg.coindex.data.credentialsOnJvm
 import com.jenarvaezg.coindex.data.Credentials
 import com.jenarvaezg.coindex.data.FakeApiCallDao
 import com.jenarvaezg.coindex.data.FakeCollectedItemDao
@@ -15,14 +15,15 @@ import com.jenarvaezg.coindex.data.FakeShelfStore
 import com.jenarvaezg.coindex.data.FakeTypeMetaDao
 import com.jenarvaezg.coindex.data.FakeValuationPass
 import com.jenarvaezg.coindex.data.FakeWishDao
-import com.jenarvaezg.coindex.data.StoredNotebook
-import com.jenarvaezg.coindex.data.StoredSyncLog
-import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.InventoryRefresh
 import com.jenarvaezg.coindex.data.RejectionCause
+import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.StoredRejectionWall
+import com.jenarvaezg.coindex.data.StoredSyncLog
+import com.jenarvaezg.coindex.data.SyncRecord
 import com.jenarvaezg.coindex.data.SyncService
 import com.jenarvaezg.coindex.data.TypeRefresh
+import com.jenarvaezg.coindex.data.credentialsOnJvm
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.db.DatabaseExport
@@ -66,10 +67,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -145,6 +145,7 @@ class CoindexViewModelTest {
     private val types = FakeTypeMetaDao()
     private val ownGroupings = FakeOwnGroupingDao()
     private val apiCalls = FakeApiCallDao()
+
     /** The real store over a fake file, with a key the JVM can make (#546). */
     private val credentials = credentialsOnJvm().apply { save(apiKey = "key", userId = 2104) }
     private val shelves = FakeShelfStore()
@@ -324,7 +325,6 @@ class CoindexViewModelTest {
         }
     }
 
-
     /**
      * One piece of [ficha]'s type. Its issue id lives in `raw`, not in a column, as a real sync
      * stores it (ADR 0028).
@@ -494,7 +494,7 @@ class CoindexViewModelTest {
 
         // The snackbar names whichever of the two answered last, hence the shared prefix.
         assertEquals(2, requested.count { it.contains("/types/") })
-        assertTrue(state.message!!.text.startsWith("Ficha de Numista 99022"), state.message!!.text)
+        assertTrue(state.message!!.text.startsWith("Ficha de Numista 99022"), state.message.text)
     }
 
     @Test
@@ -707,7 +707,6 @@ class CoindexViewModelTest {
         )
         assertEquals(1, viewModel.state.value.photoCache.missing)
     }
-
 
     /**
      * Same trigger as the photographs, for the issues the collection carries (ADR 0028 §3). Running

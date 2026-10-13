@@ -18,7 +18,6 @@ import com.jenarvaezg.coindex.domain.SilverSpot
 import com.jenarvaezg.coindex.domain.ValueSource
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.domain.WishedSlot
-import com.jenarvaezg.coindex.domain.wishKey
 import com.jenarvaezg.coindex.domain.collectionFigures
 import com.jenarvaezg.coindex.domain.collectionValue
 import com.jenarvaezg.coindex.domain.fineSilverGrams
@@ -27,6 +26,7 @@ import com.jenarvaezg.coindex.domain.paidComparison
 import com.jenarvaezg.coindex.domain.pieceValue
 import com.jenarvaezg.coindex.domain.place
 import com.jenarvaezg.coindex.domain.saturatingAdd
+import com.jenarvaezg.coindex.domain.wishKey
 
 /**
  * What one ladder reads for this collection.

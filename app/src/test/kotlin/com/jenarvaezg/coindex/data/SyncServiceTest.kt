@@ -1,10 +1,10 @@
 package com.jenarvaezg.coindex.data
 
+import com.jenarvaezg.coindex.data.db.ApiCallEntity
+import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
-import com.jenarvaezg.coindex.data.db.ApiCallEntity
-import com.jenarvaezg.coindex.data.db.CollectedItemEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -129,7 +129,7 @@ class SyncServiceTest {
         assertEquals(2, report.collectionItems)
         assertEquals(0, report.typesFetched)
         assertEquals(2, report.typesStillMissing)
-        assertTrue(report.partialFailure!!.contains("Presupuesto"), report.partialFailure!!)
+        assertTrue(report.partialFailure!!.contains("Presupuesto"), report.partialFailure)
         assertEquals(2, items.rows.value.size)
     }
 

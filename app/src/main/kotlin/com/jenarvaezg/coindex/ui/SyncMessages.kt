@@ -2,8 +2,8 @@ package com.jenarvaezg.coindex.ui
 
 import com.jenarvaezg.coindex.data.RejectionCause
 import com.jenarvaezg.coindex.data.SyncRecord
-import com.jenarvaezg.coindex.data.rejectionCauseFor
 import com.jenarvaezg.coindex.data.numista.NumistaException
+import com.jenarvaezg.coindex.data.rejectionCauseFor
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime

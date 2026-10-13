@@ -1,5 +1,6 @@
 package com.jenarvaezg.coindex.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -19,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -31,9 +31,9 @@ import com.jenarvaezg.coindex.ui.ShowcaseLabels
 import com.jenarvaezg.coindex.ui.ShowcaseSort
 import com.jenarvaezg.coindex.ui.ShowcaseTile
 import com.jenarvaezg.coindex.ui.components.AlbumHole
-import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.FilterChip
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.SearchField
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.showcaseOrderNote
@@ -221,4 +221,3 @@ private fun ShelfOrder(
         }
     }
 }
-

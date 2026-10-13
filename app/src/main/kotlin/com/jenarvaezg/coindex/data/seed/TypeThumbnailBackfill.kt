@@ -1,8 +1,8 @@
 package com.jenarvaezg.coindex.data.seed
 
 import com.jenarvaezg.coindex.data.db.TypeMetaDao
-import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import com.jenarvaezg.coindex.data.ficha.thumbnails
+import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
 import kotlinx.serialization.json.Json
 
 /**

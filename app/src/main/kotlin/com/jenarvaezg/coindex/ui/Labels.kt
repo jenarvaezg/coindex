@@ -5,8 +5,8 @@ import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.ObjectClass
-import com.jenarvaezg.coindex.domain.ounceLabel
 import com.jenarvaezg.coindex.domain.SeriesStatus
+import com.jenarvaezg.coindex.domain.ounceLabel
 
 const val UNKNOWN_YEAR_LABEL: String = "Sin año"
 

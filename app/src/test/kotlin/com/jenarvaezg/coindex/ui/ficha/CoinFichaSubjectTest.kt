@@ -18,8 +18,6 @@ import com.jenarvaezg.coindex.ui.CardDestination
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.shelf.CoinClaim
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.test.Test
@@ -28,6 +26,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 
 /**
  * What the coin's screen says, as a value (#643). The pieces are invented in the shape of the

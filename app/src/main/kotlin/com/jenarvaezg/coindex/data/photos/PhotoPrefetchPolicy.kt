@@ -1,6 +1,5 @@
 package com.jenarvaezg.coindex.data.photos
 
-
 /**
  * What the phone says about spending the collector's data and battery on pictures nobody has asked
  * for yet.

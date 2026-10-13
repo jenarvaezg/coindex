@@ -321,8 +321,7 @@ private fun listPage(): PrintGeometry = PrintGeometry(
     // With no coin, the floor is the whole cell width: an exact share of the printable band, so the
     // columns fill it instead of leaving a margin.
     paper.copy(
-        minCellWidthMm =
-            (paper.gridWidthMm - paper.gutterMm * (LIST_COLUMNS - 1)) / LIST_COLUMNS,
+        minCellWidthMm = (paper.gridWidthMm - paper.gutterMm * (LIST_COLUMNS - 1)) / LIST_COLUMNS,
     )
 }
 

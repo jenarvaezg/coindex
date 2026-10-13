@@ -1,6 +1,7 @@
 package com.jenarvaezg.coindex.data.ficha
 
 import com.jenarvaezg.coindex.domain.recordedText
+import java.time.LocalDate
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
@@ -9,7 +10,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
-import java.time.LocalDate
 
 // Field readers for the stored bodies of fichas and collected rows. Each field is read on its own,
 // so one malformed field doesn't lose the others.

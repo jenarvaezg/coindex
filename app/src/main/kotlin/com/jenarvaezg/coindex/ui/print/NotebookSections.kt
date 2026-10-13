@@ -17,8 +17,6 @@ import com.jenarvaezg.coindex.ui.DrawnPiece
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.ui.WishLabels
-import com.jenarvaezg.coindex.ui.weldUnits
-import com.jenarvaezg.coindex.ui.wishCensusLabel
 import com.jenarvaezg.coindex.ui.countLabel
 import com.jenarvaezg.coindex.ui.countSentence
 import com.jenarvaezg.coindex.ui.destinationOf
@@ -27,6 +25,8 @@ import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesSubject
 import com.jenarvaezg.coindex.ui.plateAmountLabel
 import com.jenarvaezg.coindex.ui.plateSubject
+import com.jenarvaezg.coindex.ui.weldUnits
+import com.jenarvaezg.coindex.ui.wishCensusLabel
 
 /**
  * The whole notebook as pages: one section per card, in the order they were handed over. Which page
@@ -61,8 +61,8 @@ fun notebookSections(
     when (val destination = destinationOf(card)) {
         is CardDestination.Plate ->
             plateSection(state, curation, destination.catalogId, options, plateValue, wished)
-            // An unresolvable plate falls back to its pieces, as on screen.
-            ?: piecesSection(state, card, options)
+                // An unresolvable plate falls back to its pieces, as on screen.
+                ?: piecesSection(state, card, options)
         is CardDestination.Pieces, is CardDestination.Box -> piecesSection(state, card, options)
     }
 } + listOfNotNull(unclaimedSection(state, unclaimed, options).takeIf { options.unclaimed })

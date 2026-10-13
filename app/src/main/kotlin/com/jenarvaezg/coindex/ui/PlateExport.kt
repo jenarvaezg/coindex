@@ -8,8 +8,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Picture
 import android.graphics.Canvas as AndroidCanvas
+import android.graphics.Picture
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore

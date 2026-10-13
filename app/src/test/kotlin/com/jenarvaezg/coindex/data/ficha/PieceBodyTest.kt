@@ -2,12 +2,12 @@ package com.jenarvaezg.coindex.data.ficha
 
 import com.jenarvaezg.coindex.data.Fixtures
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 
 /**
  * What one collected row says about its piece beyond the inventory's columns (#643). Rows are

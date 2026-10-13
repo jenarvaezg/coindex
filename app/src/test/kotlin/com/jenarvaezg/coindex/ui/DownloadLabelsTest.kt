@@ -67,7 +67,7 @@ class DownloadLabelsTest {
         )
         assertEquals("Descargado en Descargas", notice.text)
         assertEquals("content://downloads/coindex-test.png", notice.openFile!!.uri)
-        assertEquals("image/png", notice.openFile!!.mimeType)
+        assertEquals("image/png", notice.openFile.mimeType)
         assertEquals("Abrir", DOWNLOAD_OPEN_ACTION)
     }
 

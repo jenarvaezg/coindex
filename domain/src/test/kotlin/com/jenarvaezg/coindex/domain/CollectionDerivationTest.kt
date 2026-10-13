@@ -379,7 +379,6 @@ class CollectionDerivationTest {
         assertEquals(1, derivation.unclassified.size)
         assertEquals(99, derivation.unclassified[0].item.typeId)
         assertEquals(UnclassifiedReason.NoFamilyOrCatalog, derivation.unclassified[0].reason)
-
     }
 
     @Test

@@ -20,13 +20,13 @@ import com.jenarvaezg.coindex.ui.ONBOARDING_SAVE_ACTION
 import com.jenarvaezg.coindex.ui.boxDoorLabel
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import com.jenarvaezg.coindex.ui.theme.Paper
+import kotlin.math.max
+import kotlin.math.min
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * A disabled button is ruled in dashes, the mark of absence, and its label reads at 4.5:1 (#633).

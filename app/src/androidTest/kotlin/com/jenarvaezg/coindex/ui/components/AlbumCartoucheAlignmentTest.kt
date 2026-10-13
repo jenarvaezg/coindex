@@ -4,18 +4,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.CoinName
-import com.jenarvaezg.coindex.ui.DrawnPiece
-import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintCell
 import com.jenarvaezg.coindex.ui.print.PrintSection
@@ -23,7 +21,6 @@ import com.jenarvaezg.coindex.ui.print.printGeometry
 import com.jenarvaezg.coindex.ui.print.printPages
 import com.jenarvaezg.coindex.ui.screens.NotebookPageSheet
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
-import com.jenarvaezg.coindex.domain.CollectedItem
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -102,7 +99,6 @@ class AlbumCartoucheAlignmentTest {
         assertEquals(yearTops[0], yearTops[1], 0.5f)
         assertEquals(yearTops[0], yearTops[2], 0.5f)
     }
-
 
     private fun printedCell(name: CoinName, year: String) = PrintCell(
         name = name,

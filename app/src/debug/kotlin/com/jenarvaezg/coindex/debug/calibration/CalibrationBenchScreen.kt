@@ -38,8 +38,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,13 +50,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -75,9 +76,9 @@ import com.jenarvaezg.coindex.ui.components.LocalCoinTilt
 import com.jenarvaezg.coindex.ui.components.LocalStamping
 import com.jenarvaezg.coindex.ui.components.StampedRatio
 import com.jenarvaezg.coindex.ui.components.Stamping
-import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.coinGloss
 import com.jenarvaezg.coindex.ui.components.paperSurface
+import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.Paper
 import java.util.Locale
@@ -436,10 +437,20 @@ private fun RecessedYearTag(depth: Dp, modifier: Modifier = Modifier) {
                 val light = Color.White.copy(alpha = 0.55f)
                 onDrawBehind {
                     drawRect(Paper.paperDeep)
-                    drawLine(dark, start = androidx.compose.ui.geometry.Offset.Zero, end = androidx.compose.ui.geometry.Offset(size.width, 0f), strokeWidth = depthPx)
-                    drawLine(dark, start = androidx.compose.ui.geometry.Offset.Zero, end = androidx.compose.ui.geometry.Offset(0f, size.height), strokeWidth = depthPx)
-                    drawLine(light, start = androidx.compose.ui.geometry.Offset(0f, size.height), end = androidx.compose.ui.geometry.Offset(size.width, size.height), strokeWidth = depthPx)
-                    drawLine(light, start = androidx.compose.ui.geometry.Offset(size.width, 0f), end = androidx.compose.ui.geometry.Offset(size.width, size.height), strokeWidth = depthPx)
+                    drawLine(dark, start = Offset.Zero, end = Offset(size.width, 0f), strokeWidth = depthPx)
+                    drawLine(dark, start = Offset.Zero, end = Offset(0f, size.height), strokeWidth = depthPx)
+                    drawLine(
+                        light,
+                        start = Offset(0f, size.height),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = depthPx,
+                    )
+                    drawLine(
+                        light,
+                        start = Offset(size.width, 0f),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = depthPx,
+                    )
                 }
             },
     ) {

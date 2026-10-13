@@ -27,6 +27,7 @@ object Routes {
      * shelf: the figure touched decides where it leads.
      */
     const val FIGURES = "figures"
+
     /**
      * «Explorar», the annex of ADR 0026 §8, entered only from the last row of the Colecciones list.
      * Not a root: no bar, left with «Volver». It holds the shelf window and a door to [WISHES].
@@ -38,6 +39,7 @@ object Routes {
      * from «Explorar». A screen of its own because it has its own export, the sheet taken to a fair.
      */
     const val WISHES = "wishes"
+
     /**
      * «Este teléfono», opened by the sewn edge's glyph: sync, the two queues and the data export
      * (#521). Credentials and notices hang off its foot (ADR 0026 §14).

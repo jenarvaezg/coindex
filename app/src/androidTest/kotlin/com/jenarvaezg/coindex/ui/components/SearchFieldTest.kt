@@ -11,8 +11,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.jenarvaezg.coindex.ui.shelf.SEARCH_CLEAR_LABEL
 import com.jenarvaezg.coindex.ui.shelf.INDEX_SEARCH_PLACEHOLDER
+import com.jenarvaezg.coindex.ui.shelf.SEARCH_CLEAR_LABEL
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule

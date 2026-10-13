@@ -21,14 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.domain.DiameterExtreme
-import com.jenarvaezg.coindex.domain.MarginFigure
 import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.MetalSplit
 import com.jenarvaezg.coindex.domain.a4Sheets
@@ -58,8 +55,8 @@ import com.jenarvaezg.coindex.ui.portraitSharesLabel
 import com.jenarvaezg.coindex.ui.sameHandSentence
 import com.jenarvaezg.coindex.ui.screenDiameterLabel
 import com.jenarvaezg.coindex.ui.squareMetresLabel
-import com.jenarvaezg.coindex.ui.uncirculatedSentence
 import com.jenarvaezg.coindex.ui.theme.Paper
+import com.jenarvaezg.coindex.ui.uncirculatedSentence
 
 /**
  * «Las cifras»: the third top-level cell, ordered by magnitude rather than by slots

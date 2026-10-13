@@ -27,8 +27,8 @@ import com.jenarvaezg.coindex.ui.BOX_NAME_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.BOX_NAME_LIMIT
 import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.boxDialogHeading
-import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.boxDoorLabel
+import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.namePickedBoxLabel
 import com.jenarvaezg.coindex.ui.selectionHintLabel
 import com.jenarvaezg.coindex.ui.theme.Paper

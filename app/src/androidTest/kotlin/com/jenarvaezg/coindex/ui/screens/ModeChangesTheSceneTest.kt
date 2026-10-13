@@ -18,12 +18,12 @@ import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.CANCEL_ACTION
 import com.jenarvaezg.coindex.ui.DrawnCell
 import com.jenarvaezg.coindex.ui.WishLabels
+import com.jenarvaezg.coindex.ui.boxDoorLabel
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ModeBand
 import com.jenarvaezg.coindex.ui.components.PieceSelection
 import com.jenarvaezg.coindex.ui.components.SelectionBand
 import com.jenarvaezg.coindex.ui.components.SelectionDoor
-import com.jenarvaezg.coindex.ui.boxDoorLabel
 import com.jenarvaezg.coindex.ui.namePickedBoxLabel
 import com.jenarvaezg.coindex.ui.plaqueOf
 import com.jenarvaezg.coindex.ui.selectionHintLabel

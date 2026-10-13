@@ -45,8 +45,8 @@ import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.HoleAbsence
-import com.jenarvaezg.coindex.ui.components.dashedBorder
 import com.jenarvaezg.coindex.ui.components.LinkText
+import com.jenarvaezg.coindex.ui.components.dashedBorder
 import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.theme.Paper
 
@@ -531,4 +531,3 @@ private val DATE_GAP = 5.dp
 
 /** Up to this many casillas, the miniature is big enough to tell the coins apart. */
 private const val FEW_CASILLAS = 6
-

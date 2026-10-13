@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +45,7 @@ import coil3.compose.AsyncImagePainter
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.components.Silhouette
 import com.jenarvaezg.coindex.ui.components.paperCoinFilter
+import com.jenarvaezg.coindex.ui.components.paperSurface
 import com.jenarvaezg.coindex.ui.print.PrintBlock
 import com.jenarvaezg.coindex.ui.print.PrintCell
 import com.jenarvaezg.coindex.ui.print.PrintGeometry
@@ -60,10 +61,9 @@ import com.jenarvaezg.coindex.ui.print.printedPageOfSection
 import com.jenarvaezg.coindex.ui.print.printedRulerLabel
 import com.jenarvaezg.coindex.ui.print.qrModulesWithQuietZone
 import com.jenarvaezg.coindex.ui.print.qrRuns
-import com.jenarvaezg.coindex.ui.components.paperSurface
-import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.BarlowCondensedFamily
 import com.jenarvaezg.coindex.ui.theme.BitterFamily
+import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** Makes one dp a millimetre of paper, so the page layout is written in millimetres. */
 val printDensity = Density(density = PrintGeometry.PX_PER_MM, fontScale = 1f)
@@ -128,6 +128,7 @@ private val PRINT_CELL_THEME = TextStyle(
     fontSize = 2.5f.sp,
     lineHeight = 2.9f.sp,
 )
+
 // Denomination plus at most two theme lines, within the 16 mm caption, so it can't change the page
 // count (#350).
 private const val PRINT_CARTOUCHE_MM = 9.1f

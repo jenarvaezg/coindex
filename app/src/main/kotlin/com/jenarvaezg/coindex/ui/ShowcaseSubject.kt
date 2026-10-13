@@ -77,7 +77,7 @@ fun showcaseTiles(
         val cover = plate.album.members.firstOrNull { it.member.numistaTypeId != null }?.member
         ShowcaseTile(
             catalogId = plate.catalog.id,
-            name = (plate.catalog.shortName ?: plate.catalog.name).weldUnits(),
+            name = plate.catalog.shortName.weldUnits(),
             typeId = cover?.numistaTypeId,
             printedSide = plate.catalog.printedSide,
             mine = false,

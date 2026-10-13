@@ -5,6 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 
@@ -15,6 +16,7 @@ private val PLAN = ValuationPlan(owned = listOf(OwnedIssue(30, 297)), holes = em
  * there is no wifi to wait for, but a sync draws on the same monthly budget, so a pass still
  * unwinding can make it fail with `BudgetExhausted`.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class ValuationLoopTest {
     private val pass = FakeValuationPass(ValuationStatus(wanted = 1, missing = 0))
     private var syncing = false

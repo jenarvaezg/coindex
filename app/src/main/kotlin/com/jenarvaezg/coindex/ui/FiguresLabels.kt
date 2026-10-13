@@ -477,4 +477,3 @@ fun plateCostLabel(
  * it (ADR 0029 §4), so its amount, like its row in «Lo que busco», stays undated.
  */
 fun holeCostLabel(eur: Double): String = eurosLabel(eur)
-

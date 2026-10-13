@@ -327,8 +327,8 @@ class FiguresSubjectTest {
 
         assertNotNull(money.value)
         assertNotNull(money.cost)
-        assertNull(money.value?.catalogReadAt)
-        assertNull(money.cost?.catalogReadAt)
+        assertNull(money.value.catalogReadAt)
+        assertNull(money.cost.catalogReadAt)
     }
 
     /** The plate's rule, which #561 relied on when it lengthened a catalogue price's life. */

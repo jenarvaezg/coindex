@@ -13,6 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
@@ -26,6 +27,7 @@ private const val HOUR = 60L * 60 * 1_000
  * the manual sync it borrows from: ask within the day, ask into a wall, fetch unlimited fichas or
  * show an error.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class InventoryRefreshTest {
     private val items = FakeCollectedItemDao()
     private val types = FakeTypeMetaDao()
