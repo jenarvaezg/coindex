@@ -6,8 +6,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -15,13 +15,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jenarvaezg.coindex.ui.components.paperSurface
 import androidx.compose.ui.unit.sp
 import com.jenarvaezg.coindex.R
+import com.jenarvaezg.coindex.ui.components.paperSurface
 
 /** The field-guide palette, carried over from the web prototype. */
 object Paper {
     val ink = Color(0xFF2D3029)
+
     /** The grey of text, so it clears 4.5:1 on the deep paper and a mode's wash too (#633). */
     val muted = Color(0xFF56584C)
     val paper = Color(0xFFEEE8D7)

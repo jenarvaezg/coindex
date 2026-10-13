@@ -2,8 +2,8 @@ package com.jenarvaezg.coindex.domain
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -798,7 +798,6 @@ class CollectionCatalogAlbumTest {
         assertFalse(definition.memberMatches(member, missingIssue))
         assertTrue(definition.isEvidencedBy(listOf(matching)))
         assertFalse(definition.isEvidencedBy(listOf(wrongIssue, missingIssue)))
-
     }
 
     /** Six issues in one year: keying on the year would fill one slot and miss the other five. */

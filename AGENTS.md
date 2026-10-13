@@ -15,3 +15,7 @@ Single-context repository: before exploring, read `CONTEXT.md` and the relevant 
 ### Curating catalogs
 
 Turning a coin sequence into a versioned catalog under `data/` is the `curate-catalog` project skill (`.agents/skills/curate-catalog/`). Preparing a correction for Numista itself is `numista-draft`.
+
+### Checks
+
+`.github/workflows/ci.yml` is the gate. Kotlin style is `./gradlew ktlintCheck` against `.editorconfig`; `./gradlew ktlintFormat` fixes most of it. Kotlin warnings are errors in both modules.

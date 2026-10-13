@@ -24,27 +24,27 @@ import com.jenarvaezg.coindex.data.photos.TypeImages
 import com.jenarvaezg.coindex.domain.WishKey
 import com.jenarvaezg.coindex.ui.DrawnWish
 import com.jenarvaezg.coindex.ui.SharedSheet
-import com.jenarvaezg.coindex.ui.ficha.CasillaOrigin
-import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.WishSubject
 import com.jenarvaezg.coindex.ui.components.AlbumHole
-import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.FieldCard
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.RecessedYearTag
 import com.jenarvaezg.coindex.ui.components.YearTagMetrics
 import com.jenarvaezg.coindex.ui.components.opensTheCoinSheet
-import com.jenarvaezg.coindex.ui.printedName
+import com.jenarvaezg.coindex.ui.ficha.CasillaOrigin
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.printedPhoto
-import com.jenarvaezg.coindex.ui.wishListFileName
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
+import com.jenarvaezg.coindex.ui.wishListFileName
 
 /**
  * «Lo que busco»: the casillas the collector marked, on one sheet (ADR 0029 §6). Part of the annex

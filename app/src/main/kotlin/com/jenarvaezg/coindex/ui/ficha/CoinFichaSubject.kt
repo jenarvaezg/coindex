@@ -46,7 +46,6 @@ data class CoinFichaSubject(
     val sections: List<FichaSection>,
 )
 
-
 /** More rows than this and the pieces are chosen by date (#643). */
 const val MANY_ROWS: Int = 3
 

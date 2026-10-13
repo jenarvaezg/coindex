@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.jenarvaezg.coindex.AppContainer
-import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.CoindexRepository
 import com.jenarvaezg.coindex.data.CollectionSync
 import com.jenarvaezg.coindex.data.InventoryRefresh
@@ -13,6 +12,7 @@ import com.jenarvaezg.coindex.data.StoredNotebook
 import com.jenarvaezg.coindex.data.SyncOutcome
 import com.jenarvaezg.coindex.data.TypeRefresh
 import com.jenarvaezg.coindex.data.db.DatabaseExport
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
 import com.jenarvaezg.coindex.data.photos.PhotoPrefetchLoop

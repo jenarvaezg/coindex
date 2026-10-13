@@ -58,6 +58,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jenarvaezg.coindex.data.db.DATABASE_MIME_TYPE
+import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.data.update.UpdateStatus
 import com.jenarvaezg.coindex.ui.APP_NAME
 import com.jenarvaezg.coindex.ui.components.BackGlyph
@@ -67,24 +68,23 @@ import com.jenarvaezg.coindex.ui.components.LocalNavAnimation
 import com.jenarvaezg.coindex.ui.components.LocalSharedTransition
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.components.paperSurface
-import com.jenarvaezg.coindex.data.ficha.FichaBodies
 import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.ficha.CoinFichaScreen
 import com.jenarvaezg.coindex.ui.ficha.coinFichaRequestOf
 import com.jenarvaezg.coindex.ui.print.NotebookSubject
 import com.jenarvaezg.coindex.ui.screens.CoinsScreen
+import com.jenarvaezg.coindex.ui.screens.CredentialsScreen
 import com.jenarvaezg.coindex.ui.screens.ExploreScreen
-import com.jenarvaezg.coindex.ui.screens.WishesScreen
 import com.jenarvaezg.coindex.ui.screens.FiguresScreen
 import com.jenarvaezg.coindex.ui.screens.IndexScreen
-import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
 import com.jenarvaezg.coindex.ui.screens.MissingSubject
 import com.jenarvaezg.coindex.ui.screens.NoticesScreen
+import com.jenarvaezg.coindex.ui.screens.OnboardingScreen
+import com.jenarvaezg.coindex.ui.screens.PhoneScreen
 import com.jenarvaezg.coindex.ui.screens.PiecesScreen
 import com.jenarvaezg.coindex.ui.screens.PlateMarking
 import com.jenarvaezg.coindex.ui.screens.PlateScreen
-import com.jenarvaezg.coindex.ui.screens.CredentialsScreen
-import com.jenarvaezg.coindex.ui.screens.PhoneScreen
+import com.jenarvaezg.coindex.ui.screens.WishesScreen
 import com.jenarvaezg.coindex.ui.shelf.CoinsShelf
 import com.jenarvaezg.coindex.ui.shelf.NotebookAxis
 import com.jenarvaezg.coindex.ui.shelf.YearFilter
@@ -293,17 +293,17 @@ fun CoindexApp(viewModel: CoindexViewModel) {
                     page(Routes.COINS) {
                         // The far end of the journey into a coin's screen (#370).
                         Travelling(this) {
-                        CoinsScreen(
-                            state = state.collection,
-                            shelf = state.coinsShelf,
-                            curatedNames = reading.curatedNames,
-                            onNarrow = viewModel::narrowCoins,
-                            onCreateBox = viewModel::createOwnGrouping,
-                            onAddToBox = viewModel::addToOwnGrouping,
-                            sewnEdge = reading.sewnEdge,
-                            onOpenPhone = { navController.navigate(Routes.PHONE) },
-                            onOpenCoin = openCoin,
-                        )
+                            CoinsScreen(
+                                state = state.collection,
+                                shelf = state.coinsShelf,
+                                curatedNames = reading.curatedNames,
+                                onNarrow = viewModel::narrowCoins,
+                                onCreateBox = viewModel::createOwnGrouping,
+                                onAddToBox = viewModel::addToOwnGrouping,
+                                sewnEdge = reading.sewnEdge,
+                                onOpenPhone = { navController.navigate(Routes.PHONE) },
+                                onOpenCoin = openCoin,
+                            )
                         }
                     }
                     page(Routes.FIGURES) {

@@ -19,6 +19,11 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      # Imports sin usar, líneas de más de 120 y sangría; las reglas viven en .editorconfig.
+      # `./gradlew ktlintFormat` arregla casi todo.
+      - name: Estilo de Kotlin
+        run: ./gradlew ktlintCheck
+
       # El dominio es Kotlin puro: sus tablas doradas no necesitan el SDK de Android.
       - name: Tests del dominio
         run: ./gradlew :domain:test
@@ -30,6 +35,10 @@ jobs:
 
       - name: Compilar el APK de depuración
         run: ./gradlew :app:assembleDebug
+
+      # Los instrumentados necesitan emulador para correr, pero no para compilar.
+      - name: Compilar los tests instrumentados
+        run: ./gradlew :app:compileDebugAndroidTestKotlin
 
       # Los informes de curación (Python) leen data/ como el dominio; sin este paso sus tests no
       # corren y un informe roto no se ve hasta que alguien lo ejecuta.

@@ -5,10 +5,10 @@ import com.jenarvaezg.coindex.data.SHIPPED_CURATION
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.numista.CollectedItemDto
 import com.jenarvaezg.coindex.data.numista.NumistaTypeDto
-import com.jenarvaezg.coindex.data.typeMetaEntity
 import com.jenarvaezg.coindex.data.toDomain
 import com.jenarvaezg.coindex.data.toEntity
 import com.jenarvaezg.coindex.data.toImages
+import com.jenarvaezg.coindex.data.typeMetaEntity
 import com.jenarvaezg.coindex.domain.AssembledCollection
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionSnapshot

@@ -51,10 +51,14 @@ import com.jenarvaezg.coindex.domain.IndexCard
 import com.jenarvaezg.coindex.domain.PrintedSide
 import com.jenarvaezg.coindex.domain.SeriesStatus
 import com.jenarvaezg.coindex.ui.CardDestination
+import com.jenarvaezg.coindex.ui.DrawnWish
 import com.jenarvaezg.coindex.ui.ExportDestination
+import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
+import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
+import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EXPLANATION
+import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EYEBROW
 import com.jenarvaezg.coindex.ui.SewnEdgeCounts
 import com.jenarvaezg.coindex.ui.UiNotice
-import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.components.AlbumChrome
 import com.jenarvaezg.coindex.ui.components.AlbumHole
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -70,10 +74,7 @@ import com.jenarvaezg.coindex.ui.components.countryAxisItems
 import com.jenarvaezg.coindex.ui.components.travellingCoin
 import com.jenarvaezg.coindex.ui.components.yearAxisItems
 import com.jenarvaezg.coindex.ui.countLabel
-import com.jenarvaezg.coindex.ui.NOTEBOOK_EXPORTING_LABEL
-import com.jenarvaezg.coindex.ui.NOTHING_TO_PRINT_MESSAGE
-import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EXPLANATION
-import com.jenarvaezg.coindex.ui.PARTIAL_SYNC_EYEBROW
+import com.jenarvaezg.coindex.ui.destinationOf
 import com.jenarvaezg.coindex.ui.indexCoverageLabel
 import com.jenarvaezg.coindex.ui.notebookCancelledMessage
 import com.jenarvaezg.coindex.ui.notebookExportLabel
@@ -81,6 +82,7 @@ import com.jenarvaezg.coindex.ui.notebookWarmCancelledMessage
 import com.jenarvaezg.coindex.ui.print.NotebookExportStep
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
+import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.seriesLabel
 import com.jenarvaezg.coindex.ui.shelf.ANY_FILTER
 import com.jenarvaezg.coindex.ui.shelf.AXIS_FACET
@@ -120,13 +122,11 @@ import com.jenarvaezg.coindex.ui.shelf.unclaimedDoorLabel
 import com.jenarvaezg.coindex.ui.shelf.unclaimedFacts
 import com.jenarvaezg.coindex.ui.shelf.yearAxis
 import com.jenarvaezg.coindex.ui.shelf.yearAxisTally
-import com.jenarvaezg.coindex.ui.DrawnWish
-import com.jenarvaezg.coindex.ui.printedPhoto
 import com.jenarvaezg.coindex.ui.showcaseDoorLabel
+import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.wishDoorLabel
 import com.jenarvaezg.coindex.ui.wishDoorMoreLabel
 import com.jenarvaezg.coindex.ui.wishDoorNote
-import com.jenarvaezg.coindex.ui.theme.Paper
 
 /** The album cell: one coin and two short lines under it. */
 private val MIN_CARD_WIDTH = 104.dp
@@ -312,7 +312,6 @@ fun IndexScreen(
             NotebookAxis.ByPlate -> indexColumns(maxWidth)
             NotebookAxis.ByCountry, NotebookAxis.ByYear -> 1
         }
-
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),

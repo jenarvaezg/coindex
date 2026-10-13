@@ -33,7 +33,6 @@ import com.jenarvaezg.coindex.ui.PIECES_HEADING
 import com.jenarvaezg.coindex.ui.PiecesSubject
 import com.jenarvaezg.coindex.ui.REMOVE_TYPE_FROM_COLLECTION
 import com.jenarvaezg.coindex.ui.SharedSheet
-import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.boxName
 import com.jenarvaezg.coindex.ui.components.CardAction
@@ -43,6 +42,7 @@ import com.jenarvaezg.coindex.ui.components.FieldCard
 import com.jenarvaezg.coindex.ui.components.PieceCard
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
 import com.jenarvaezg.coindex.ui.countSentence
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.pieceName
 import com.jenarvaezg.coindex.ui.piecesFileName
 import com.jenarvaezg.coindex.ui.print.NotebookOptions

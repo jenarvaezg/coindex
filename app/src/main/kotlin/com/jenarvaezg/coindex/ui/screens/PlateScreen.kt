@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,14 +47,13 @@ import com.jenarvaezg.coindex.ui.PLATE_UNAVAILABLE_EYEBROW
 import com.jenarvaezg.coindex.ui.PlateFinance
 import com.jenarvaezg.coindex.ui.PlateSubject
 import com.jenarvaezg.coindex.ui.SharedSheet
-import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.UiNotice
 import com.jenarvaezg.coindex.ui.WishLabels
 import com.jenarvaezg.coindex.ui.components.AlbumHole
-import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.CardAction
 import com.jenarvaezg.coindex.ui.components.ExternalLink
 import com.jenarvaezg.coindex.ui.components.Eyebrow
+import com.jenarvaezg.coindex.ui.components.HoleAbsence
 import com.jenarvaezg.coindex.ui.components.HoleStamp
 import com.jenarvaezg.coindex.ui.components.ModeBand
 import com.jenarvaezg.coindex.ui.components.PrimaryAction
@@ -69,16 +67,17 @@ import com.jenarvaezg.coindex.ui.components.outsideTheMode
 import com.jenarvaezg.coindex.ui.components.rememberInkFall
 import com.jenarvaezg.coindex.ui.components.sheetUnderMode
 import com.jenarvaezg.coindex.ui.components.travellingCoin
+import com.jenarvaezg.coindex.ui.ficha.CoinFichaRequest
 import com.jenarvaezg.coindex.ui.plateEntriesBesideRatio
 import com.jenarvaezg.coindex.ui.plateFileName
 import com.jenarvaezg.coindex.ui.plateSheetTally
 import com.jenarvaezg.coindex.ui.plateSubject
-import com.jenarvaezg.coindex.ui.showcaseValueAction
 import com.jenarvaezg.coindex.ui.plateUnavailableLabel
 import com.jenarvaezg.coindex.ui.print.NotebookOptions
 import com.jenarvaezg.coindex.ui.print.PrintPage
 import com.jenarvaezg.coindex.ui.printedName
 import com.jenarvaezg.coindex.ui.printedPhoto
+import com.jenarvaezg.coindex.ui.showcaseValueAction
 import com.jenarvaezg.coindex.ui.theme.Paper
 import com.jenarvaezg.coindex.ui.theme.PlateMetrics
 

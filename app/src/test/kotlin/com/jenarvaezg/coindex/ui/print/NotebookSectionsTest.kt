@@ -18,9 +18,9 @@ import com.jenarvaezg.coindex.domain.Metal
 import com.jenarvaezg.coindex.domain.OwnGrouping
 import com.jenarvaezg.coindex.domain.OwnGroupingView
 import com.jenarvaezg.coindex.domain.SeriesStatus
-import com.jenarvaezg.coindex.ui.PlateValue
 import com.jenarvaezg.coindex.domain.TypeMeta
 import com.jenarvaezg.coindex.domain.WishKey
+import com.jenarvaezg.coindex.ui.PlateValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -240,7 +240,6 @@ class NotebookSectionsTest {
         assertFalse(section.complete)
         assertEquals(null, section.ratio)
     }
-
 
     /** The printer is handed no amount at all, so no drawer can print one (#228, ADR 0021 §13). */
     @Test

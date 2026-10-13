@@ -83,6 +83,9 @@ android {
 
 kotlin {
     jvmToolchain(21)
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+    }
 }
 
 ksp {

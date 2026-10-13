@@ -98,7 +98,7 @@ class ShowcaseSubjectTest {
 
         assertEquals(2, requireNotNull(money.entry).holes)
         // A floor: the plate has three casillas and the amount covers two, as in `PlateCost`.
-        assertEquals(3, money.entry?.slots)
+        assertEquals(3, money.entry.slots)
     }
 
     /**

@@ -4,18 +4,18 @@ import com.jenarvaezg.coindex.data.FakeNamedValues
 import com.jenarvaezg.coindex.data.FakePriceDao
 import com.jenarvaezg.coindex.data.RejectionCause
 import com.jenarvaezg.coindex.data.RejectionWall
-import com.jenarvaezg.coindex.data.startOfMonthMillis
 import com.jenarvaezg.coindex.data.StoredRejectionWall
 import com.jenarvaezg.coindex.data.db.MetalSpotEntity
 import com.jenarvaezg.coindex.data.numista.CallBudget
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
+import com.jenarvaezg.coindex.data.startOfMonthMillis
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
-import io.ktor.http.HttpHeaders
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -171,7 +171,10 @@ class ValuationPassTest {
             .run(plan(OwnedIssue(30, 297)), held = null)
 
         val throttled = StoredRejectionWall(FakeNamedValues()) { NOW }
-        pass(handler = { respond("Too many simultaneous requests", HttpStatusCode.TooManyRequests, JSON) }, wall = throttled)
+        pass(
+            handler = { respond("Too many simultaneous requests", HttpStatusCode.TooManyRequests, JSON) },
+            wall = throttled,
+        )
             .run(plan(OwnedIssue(30, 297)), held = null)
 
         assertEquals(RejectionCause.Quota, exhausted.standing(), "el mes agotado espera al día 1")

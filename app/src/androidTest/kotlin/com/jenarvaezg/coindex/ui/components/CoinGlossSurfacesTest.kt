@@ -15,12 +15,12 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.jenarvaezg.coindex.data.photos.CoinPhoto
 import com.jenarvaezg.coindex.ui.screens.OffScreenSheet
 import com.jenarvaezg.coindex.ui.theme.CoindexTheme
+import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 
 private val OBVERSE = CoinPhoto(thumbnail = "https://example.invalid/a-180.jpg", picture = null)
 private val REVERSE = CoinPhoto(thumbnail = "https://example.invalid/b-180.jpg", picture = null)

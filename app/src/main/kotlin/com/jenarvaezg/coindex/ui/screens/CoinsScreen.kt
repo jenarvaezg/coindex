@@ -68,7 +68,6 @@ import com.jenarvaezg.coindex.ui.shelf.SORT_FACET
 import com.jenarvaezg.coindex.ui.shelf.ShelfNarrowing
 import com.jenarvaezg.coindex.ui.shelf.WEIGHT_FACET
 import com.jenarvaezg.coindex.ui.shelf.YEAR_FACET
-import com.jenarvaezg.coindex.ui.shelf.YearFilter
 import com.jenarvaezg.coindex.ui.shelf.clearNarrowingAction
 import com.jenarvaezg.coindex.ui.shelf.coinAlbumFootnote
 import com.jenarvaezg.coindex.ui.shelf.coinRows
@@ -195,8 +194,11 @@ fun CoinsScreen(
                             picking = selection.active,
                             picked = selection.isPicked(row.typeId),
                             onTap = {
-                                if (selection.active) selection.toggle(row.typeId)
-                                else onOpenCoin(CoinFichaRequest(row.typeId))
+                                if (selection.active) {
+                                    selection.toggle(row.typeId)
+                                } else {
+                                    onOpenCoin(CoinFichaRequest(row.typeId))
+                                }
                             },
                         )
                     }

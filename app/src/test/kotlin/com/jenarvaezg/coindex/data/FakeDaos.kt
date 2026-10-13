@@ -4,11 +4,12 @@ import com.jenarvaezg.coindex.data.db.ApiCallDao
 import com.jenarvaezg.coindex.data.db.ApiCallEntity
 import com.jenarvaezg.coindex.data.db.CollectedItemDao
 import com.jenarvaezg.coindex.data.db.CollectedItemEntity
-import com.jenarvaezg.coindex.data.db.OwnGroupingDao
-import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
+import com.jenarvaezg.coindex.data.db.ItemRawRow
 import com.jenarvaezg.coindex.data.db.MetalSpotEntity
+import com.jenarvaezg.coindex.data.db.OwnGroupingDao
+import com.jenarvaezg.coindex.data.db.OwnGroupingEntity
 import com.jenarvaezg.coindex.data.db.OwnGroupingMemberEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
 import com.jenarvaezg.coindex.data.db.TypeIssueEntity
@@ -17,7 +18,6 @@ import com.jenarvaezg.coindex.data.db.TypeMetaDao
 import com.jenarvaezg.coindex.data.db.TypeMetaEntity
 import com.jenarvaezg.coindex.data.db.TypeRawRow
 import com.jenarvaezg.coindex.data.db.WishDao
-import com.jenarvaezg.coindex.data.db.ItemRawRow
 import com.jenarvaezg.coindex.data.db.WishEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -129,9 +129,9 @@ class FakeOwnGroupingDao : OwnGroupingDao {
         groupings.value = groupings.value + grouping.copy(id = id)
         return id
     }
-    override suspend fun addMembers(added: List<OwnGroupingMemberEntity>) {
+    override suspend fun addMembers(members: List<OwnGroupingMemberEntity>) {
         // `IGNORE` sobre la clave (groupingId, typeId), también dentro de un mismo lote.
-        members.value = (members.value + added).distinct()
+        this.members.value = (this.members.value + members).distinct()
     }
     override suspend fun rename(id: Long, name: String, updatedAt: Long) {
         groupings.value = groupings.value.map { grouping ->
@@ -220,6 +220,7 @@ class FakePriceDao : PriceDao {
             .filterNot { it.typeId == read.typeId && it.issueId == read.issueId } + read
     }
     override suspend fun typeIssueReads(): List<TypeIssueReadEntity> = typeIssueReads.value
+
     // Ordenado como lo ordena la consulta de verdad: la posición decide qué emisión tasa un hueco.
     override suspend fun typeIssues(): List<TypeIssueEntity> =
         typeIssues.value.sortedWith(compareBy({ it.typeId }, { it.position }))

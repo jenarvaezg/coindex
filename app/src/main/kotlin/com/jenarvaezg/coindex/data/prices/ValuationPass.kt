@@ -2,7 +2,6 @@ package com.jenarvaezg.coindex.data.prices
 
 import com.jenarvaezg.coindex.data.RejectionCause
 import com.jenarvaezg.coindex.data.RejectionWall
-import com.jenarvaezg.coindex.data.rejectionCauseFor
 import com.jenarvaezg.coindex.data.db.IssuePriceEntity
 import com.jenarvaezg.coindex.data.db.IssuePriceReadEntity
 import com.jenarvaezg.coindex.data.db.PriceDao
@@ -12,6 +11,7 @@ import com.jenarvaezg.coindex.data.numista.IssueDto
 import com.jenarvaezg.coindex.data.numista.IssuePricesResponse
 import com.jenarvaezg.coindex.data.numista.NumistaClient
 import com.jenarvaezg.coindex.data.numista.NumistaException
+import com.jenarvaezg.coindex.data.rejectionCauseFor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

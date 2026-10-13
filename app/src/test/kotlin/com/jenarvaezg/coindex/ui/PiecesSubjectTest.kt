@@ -57,7 +57,10 @@ class PiecesSubjectTest {
     private fun boxCard(items: List<CollectedItem>) = IndexCard.Box(
         name = "Tribute to the Spanish Army",
         issuer = "España",
-        box = OwnGroupingView(OwnGrouping(id = 7, name = "Tribute to the Spanish Army", typeIds = items.map { it.typeId }), items),
+        box = OwnGroupingView(
+            OwnGrouping(id = 7, name = "Tribute to the Spanish Army", typeIds = items.map { it.typeId }),
+            items,
+        ),
     )
 
     @Test

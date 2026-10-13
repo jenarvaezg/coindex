@@ -6,15 +6,15 @@ import com.jenarvaezg.coindex.data.seed.SeedReport
 import com.jenarvaezg.coindex.data.seed.TypeCacheSeed
 import com.jenarvaezg.coindex.domain.Finish
 import com.jenarvaezg.coindex.domain.inferFinish
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * The seeded cache is how a plate draws the designs the collector is missing: nobody syncs a coin

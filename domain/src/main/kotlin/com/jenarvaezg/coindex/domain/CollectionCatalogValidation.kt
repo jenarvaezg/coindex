@@ -374,4 +374,3 @@ private fun isNumistaSeriesSource(source: String): Boolean {
     val id = source.removePrefix(SERIES_PREFIX)
     return id.isNotEmpty() && id.all(::isAsciiDigit)
 }
-

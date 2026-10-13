@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.jenarvaezg.coindex.ui.API_KEY_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.CREDENTIALS_EXPLANATION
 import com.jenarvaezg.coindex.ui.CREDENTIALS_SAVE_ACTION
+import com.jenarvaezg.coindex.ui.CredentialsValues
 import com.jenarvaezg.coindex.ui.SIGN_OUT_ACTION
 import com.jenarvaezg.coindex.ui.SIGN_OUT_EXPLANATION
-import com.jenarvaezg.coindex.ui.CredentialsValues
 import com.jenarvaezg.coindex.ui.USER_ID_FIELD_LABEL
 import com.jenarvaezg.coindex.ui.apiKeyRevealLabel
 import com.jenarvaezg.coindex.ui.components.CardAction

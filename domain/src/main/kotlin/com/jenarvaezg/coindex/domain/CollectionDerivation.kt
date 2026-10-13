@@ -72,6 +72,7 @@ fun deriveCollection(
             }
         }
     }
+
     /**
      * A catalog that is not a set is authoritative about the whole variant key of the types it
      * claims (ADR 0016), so Numista's per-type family or grams do not split them. Snapping alone

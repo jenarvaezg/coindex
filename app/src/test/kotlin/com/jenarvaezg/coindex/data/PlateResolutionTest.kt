@@ -5,9 +5,9 @@ import com.jenarvaezg.coindex.domain.CatalogAlbums
 import com.jenarvaezg.coindex.domain.CollectedItem
 import com.jenarvaezg.coindex.domain.CollectionCatalog
 import com.jenarvaezg.coindex.domain.CollectionCatalogMember
+import com.jenarvaezg.coindex.domain.CollectionSnapshot
 import com.jenarvaezg.coindex.domain.CommemorativeProgramme
 import com.jenarvaezg.coindex.domain.CommemorativeProgrammeMember
-import com.jenarvaezg.coindex.domain.CollectionSnapshot
 import com.jenarvaezg.coindex.domain.CoverageRatio
 import com.jenarvaezg.coindex.domain.Curation
 import com.jenarvaezg.coindex.domain.DerivedCollection
