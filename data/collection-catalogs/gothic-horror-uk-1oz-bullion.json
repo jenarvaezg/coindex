@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "gothic-horror-uk-1oz-bullion",
+  "name": "Gothic Horror · Reino Unido · 1 oz de plata bullion",
+  "short_name": "Gothic Horror",
+  "issuer_code": "royaume-uni",
+  "family": "Gothic Horror",
+  "weight_millioz": 1000,
+  "finish": "Bullion",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/series.php?id=12002",
+  "source_note": "La gama la delimita la Royal Mint, con página propia «Gothic Horror» donde el monstruo de Frankenstein «has been reanimated on gold and silver bullion coins», y Chards la vende como «the second release in The Royal Mint's Gothic Horror series following 2025's popular Count Dracula range». La serie 12002 de Numista sólo tiene el Drácula, en plata y en oro (verificada el 13 de octubre de 2026). La lámina vuelve con la condición que dejó el #77: la casa ha nombrado al segundo personaje y le ha puesto año. https://www.royalmint.com/invest/bullion-ranges/gothic-horror/",
+  "updated_at": "2026-10-13",
+  "members": [
+    {
+      "id": "2025-count-dracula",
+      "label": "Count Dracula",
+      "year": 2025,
+      "numista_type_id": 519925
+    },
+    {
+      "id": "2026-frankensteins-monster",
+      "label": "Frankenstein's Monster",
+      "year": 2026,
+      "status": "announced",
+      "source": "https://privycouncil.independent.gov.uk/wp-content/uploads/2026/06/2026-06-03-Proclamation-100-gold-coins-2-silver-coins.pdf",
+      "source_note": "La proclamación real del 3 de junio de 2026 crea la moneda: 2 libras de plata .999, 31,21 g y 38,61 mm, con «FRANKENSTEIN'S MONSTER» y «1OZ 999 FINE SILVER» en el reverso. El año 2026 se lee en el reverso de la imagen oficial de la página de la gama. Diseño de William Webb y 50.000 piezas según Chards, que la tiene en preventa. Sin ficha en Numista el 13 de octubre de 2026."
+    }
+  ]
+}
