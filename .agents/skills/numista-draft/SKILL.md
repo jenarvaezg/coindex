@@ -1,11 +1,11 @@
 ---
 name: numista-draft
-description: Research and prepare sourced, non-submitting Numista catalogue contribution drafts. Use for creating or editing coin types, revising pending submissions, proposing series, adding date lines or varieties, resolving an ambiguous Numista request, and producing a field-by-field dossier for visible browser review without saving, uploading, or submitting.
+description: Research and prepare sourced Numista catalogue contribution drafts, sent only on the user's explicit order. Use for creating or editing coin types, revising pending submissions, proposing series, adding date lines or varieties, resolving an ambiguous Numista request, and producing a field-by-field dossier for visible browser review without saving, uploading, or submitting.
 ---
 
 # Numista Draft
 
-Prepare evidence and a human-reviewable draft. Never make the contribution itself.
+Prepare evidence and a human-reviewable draft. Never make the contribution on your own initiative.
 
 ## Repository scope
 
@@ -22,7 +22,9 @@ Prepare evidence and a human-reviewable draft. Never make the contribution itsel
 - Open only a visible, interactive browser for final review and optional prefill. Do not use headless browser automation for the handoff.
 - Stop after prefilling. Tell the user what remains for their own review and manual action.
 
-These restrictions apply even if the user asks to “finish”, “publish”, or “submit”.
+One exception: when the user, in the current turn, explicitly orders a specific prefilled form to be sent, re-read its fields in a fresh snapshot and press that form's own submit control (for example «Modify data»). The order covers that form only; it never covers uploads, other forms, or later turns.
+
+After a form is sent, take the request id from `confirmation.php?…&prop[]=<id>`, add the `waiting-numista` label to the issue, and comment a table `N# | coin | change | request` linking `voir_prop.php?id=<id>`.
 
 ## Workflow
 
@@ -55,7 +57,7 @@ These restrictions apply even if the user asks to “finish”, “publish”, o
    - Never replace this fallback with a headless browser. If neither visible browser is available in the current session, keep the dossier ready and stop before prefilling.
    - The persistent browser profile is `.playwright-mcp/numista-review-profile`. Let the user log in manually when needed. Only one Codex or Claude session may control this profile at a time; if it is locked, stop and ask the user to close the other review-browser session.
    - For `create_type`, use `https://en.numista.com/catalogue/contributions/nouveau.php?type=coin` as the initial route. If it has changed, navigate from the current Numista help page or relevant catalogue entry instead of guessing a replacement URL.
-10. Leave the page open for the user. Do not save, upload, or submit.
+10. Leave the page open for the user. Do not save, upload, or submit unless the exception above applies.
 
 ## Readiness rules
 
