@@ -108204,6 +108204,714 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "607068": {
+  "id": 607068,
+  "url": "https://es.numista.com/607068",
+  "title": "2 Roubles (Akhmat-Khadzhi Kadyrov)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "2 Roubles",
+   "numeric_value": 2,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-07-14"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms on the left the chemical symbol and fineness of the metal and on the right the fine metal content and the mint mark, at the bottom centre in three lines the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘2 РУБЛЯ’ (2 RUBLES), and the year of issue ‘2026 г.’ (2026).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 15,55\r\nСПМД\r\nБАНК РОССИИ\r\n2 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace9132062e55.32501147-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace9132062e55.32501147-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Alexander Nikolaevich Bessonov"
+   ],
+   "designers": [
+    "Alexander Vasilyevich Baklanov"
+   ],
+   "description": "(en) Relief images of a portrait of Akhmat-Khadzhi Kadyrov and the city of Grozny against the background of an image of the Caucasus Mountains, laser treated for matte finishing, and the inscriptions ‘АХМАТ-ХАДЖИ АБДУЛХАМИДОВИЧ КАДЫРОВ’ (AKHMAT-KHADZHI KADYROV) around the lower circumference and the years of his birth and death ‘1951’ on the left and ‘2004’ on the right.",
+   "lettering": "1951 2004\r\nАХМАТ-ХАДЖИ АБДУЛХАМИДОВИЧ КАДЫРОВ",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace91323d08c1.88290030-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace91323d08c1.88290030-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "series": "Outstanding Personalities of Russia",
+  "commemorated_topic": "(en) 75th Anniversary of the Birth of Akhmat-Khadzhi Kadyrov",
+  "tags": [
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5110-0196"
+   }
+  ],
+  "weight": 17,
+  "edge": {
+   "description": "195 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "607070": {
+  "id": 607070,
+  "url": "https://es.numista.com/607070",
+  "title": "2 Roubles (Stepan Erzya)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "2 Roubles",
+   "numeric_value": 2,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-09-08"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms on the left the chemical symbol and fineness of the metal and on the right the fine metal content and the mint mark, at the bottom centre in three lines the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘2 РУБЛЯ’ (2 RUBLES), and the year of issue ‘2026 г.’ (2026).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 15,55\r\nММД\r\nБАНК РОССИИ\r\n2 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace917be23e25.64282717-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace917be23e25.64282717-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Alexey Vladimirovich Gnidin"
+   ],
+   "designers": [
+    "Alexey Vladimirovich Gnidin"
+   ],
+   "description": "(en) A relief field in the form of a tree cross-section with an outline self-portrait of Stepan Erzya on it, combined with his facsimile signature, and the years of his birth and death ‘1876’ and ‘1959’ in relief in two lines on the left.",
+   "lettering": "1876\r\n1959\r\nЭрзя",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace917c3017b5.95154339-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace917c3017b5.95154339-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "series": "Outstanding Personalities of Russia",
+  "commemorated_topic": "(en) 150th Anniversary of the Birth of Stepan Erzya",
+  "tags": [
+   "Aniversario de nacimiento"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5110-0200"
+   }
+  ],
+  "weight": 17,
+  "edge": {
+   "description": "195 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 6,
+    "name": "Moscow Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "607071": {
+  "id": 607071,
+  "url": "https://es.numista.com/607071",
+  "title": "2 Roubles (Caucasian Wildcat)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "2 Roubles",
+   "numeric_value": 2,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-08-04"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms on the left the chemical symbol and fineness of the metal and on the right the fine metal content and the mint mark, at the bottom centre in three lines the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘2 РУБЛЯ’ (2 RUBLES), and the year of issue ‘2026 г.’ (2026).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 15,55\r\nСПМД\r\nБАНК РОССИИ\r\n2 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace91c069cad8.47643843-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace91c069cad8.47643843-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Fedor Sergeevich Andronov"
+   ],
+   "designers": [
+    "Fedor Sergeevich Andronov"
+   ],
+   "description": "(en) A relief coloured image of a Caucasian wildcat standing on rocks against the background of the image of foliage, laser treated for matte finishing, and the inscription ‘КАВКАЗСКАЯ ЛЕСНАЯ КОШКА’ (CAUCASIAN WILDCAT) around the lower circumference on the left.",
+   "lettering": "КАВКАЗСКАЯ ЛЕСНАЯ КОШКА",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace91c0906ad5.02523238-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace91c0906ad5.02523238-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "series": "Red Data Book",
+  "tags": [
+   "Gato o felino"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5110-0197"
+   }
+  ],
+  "weight": 17,
+  "edge": {
+   "description": "195 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "607072": {
+  "id": 607072,
+  "url": "https://es.numista.com/607072",
+  "title": "2 Roubles (Spectacled Eider)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "2 Roubles",
+   "numeric_value": 2,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-08-04"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms on the left the chemical symbol and fineness of the metal and on the right the fine metal content and the mint mark, at the bottom centre in three lines the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘2 РУБЛЯ’ (2 RUBLES), and the year of issue ‘2026 г.’ (2026).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 15,55\r\nСПМД\r\nБАНК РОССИИ\r\n2 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace9204aa6227.70359330-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace9204aa6227.70359330-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Fedor Sergeevich Andronov"
+   ],
+   "designers": [
+    "Fedor Sergeevich Andronov"
+   ],
+   "description": "(en) A relief coloured image of a male spectacled eider standing on the ground against the background of the image of a water surface, laser treated for matte finishing, and the inscription ‘ОЧКОВАЯ ГАГА’ (SPECTACLED EIDER) around the upper circumference on the left.",
+   "lettering": "ОЧКОВАЯ ГАГА",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace9204d13766.00705768-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace9204d13766.00705768-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "series": "Red Data Book",
+  "tags": [
+   "Ave"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5110-0198"
+   }
+  ],
+  "weight": 17,
+  "edge": {
+   "description": "195 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "607074": {
+  "id": 607074,
+  "url": "https://es.numista.com/607074",
+  "title": "2 Roubles (Toad-headed Agama)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "2 Roubles",
+   "numeric_value": 2,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-08-04"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 33,
+  "thickness": 2.4,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Coloreado, Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms on the left the chemical symbol and fineness of the metal and on the right the fine metal content and the mint mark, at the bottom centre in three lines the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘2 РУБЛЯ’ (2 RUBLES), and the year of issue ‘2026 г.’ (2026).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 15,55\r\nСПМД\r\nБАНК РОССИИ\r\n2 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace924ae50845.46279928-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace924ae50845.46279928-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Fedor Sergeevich Andronov"
+   ],
+   "designers": [
+    "Fedor Sergeevich Andronov"
+   ],
+   "description": "(en) A relief coloured image of a toad-headed agama against the background of the image of sand, laser treated for matte finishing, and the inscription ‘УШАСТАЯ КРУГЛОГОЛОВКА’ (TOAD-HEADED AGAMA) around the upper circumference on the right.",
+   "lettering": "УШАСТАЯ КРУГЛОГОЛОВКА",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace924b331be6.09178436-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace924b331be6.09178436-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "series": "Red Data Book",
+  "tags": [
+   "Reptil"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5110-0199"
+   }
+  ],
+  "weight": 17,
+  "edge": {
+   "description": "195 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "607076": {
+  "id": 607076,
+  "url": "https://es.numista.com/607076",
+  "title": "3 Roubles (Holy Transfiguration Mirozhsky Monastery)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "russie",
+   "name": "Federación de Rusia (1991-presente)"
+  },
+  "issuing_entity": {
+   "id": 937,
+   "name": "Banco de Rusia",
+   "wikidata_id": "Q806651"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1573,
+    "name": "Russian Federation",
+    "wikidata_id": "Q159"
+   }
+  ],
+  "value": {
+   "text": "3 Roubles",
+   "numeric_value": 3,
+   "currency": {
+    "id": 169,
+    "name": "Rouble",
+    "full_name": "Rouble (1998-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-10-07"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 39,
+  "thickness": 3.3,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 925"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "engravers": [
+    "Alexandra Arsenyevna Dolgopolova"
+   ],
+   "designers": [
+    "Elena Viktorovna Kramskaya"
+   ],
+   "description": "(en) A relief image of the National Coat of Arms of the Russian Federation, above it along the rim the inscription in a semicircle ‘РОССИЙСКАЯ ФЕДЕРАЦИЯ’ (RUSSIAN FEDERATION) framed with paired diamonds on both sides, under the coat of arms on the left the chemical symbol and fineness of the metal and on the right the fine metal content and the mint mark, at the bottom centre in three lines the inscription ‘БАНК РОССИИ’ (BANK OF RUSSIA), the coin denomination ‘3 РУБЛЯ’ (3 RUBLES), and the year of issue ‘2026 г.’ (2026).",
+   "lettering": "РОССИЙСКАЯ ФЕДЕРАЦИЯ\r\nAg 925 31,1\r\nСПМД\r\nБАНК РОССИИ\r\n3 РУБЛЯ\r\n2026 г.",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace92952c5fb7.09141608-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace92952c5fb7.09141608-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "reverse": {
+   "engravers": [
+    "Alexey Vladimirovich Gnidin"
+   ],
+   "designers": [
+    "Andrey Anatolyevich Brynza"
+   ],
+   "description": "(en) The relief image of the Holy Transfiguration Mirozhsky Monastery against the background of the images of trees and water reflections, laser treated for matte finishing, and the relief inscriptions ‘СПАСО-ПРЕОБРАЖЕНСКИЙ МИРОЖСКИЙ МУЖСКОЙ МОНАСТЫРЬ’ (HOLY TRANSFIGURATION MIROZHSKY MONASTERY) around the circumference against the background of an ornament, laser treated for matte finishing, and ‘ПСКОВ’ (PSKOV) at the bottom.",
+   "lettering": "СПАСО-ПРЕОБРАЖЕНСКИЙ МИРОЖСКИЙ МУЖСКОЙ МОНАСТЫРЬ\r\nПСКОВ",
+   "lettering_scripts": [
+    {
+     "name": "Cirílica"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/russie/6ace92956cca13.18219394-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/russie/6ace92956cca13.18219394-180.jpg",
+   "picture_copyright": "Bank of Russia",
+   "picture_copyright_url": "http://www.cbr.ru"
+  },
+  "series": "Architectural Monuments of Russia",
+  "commemorated_topic": "(en) Holy Transfiguration Mirozhsky Monastery in Pskov",
+  "tags": [
+   "Construcción religiosa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 203,
+     "code": "CBR"
+    },
+    "number": "5111-0541"
+   }
+  ],
+  "weight": 33.94,
+  "edge": {
+   "description": "300 ondulaciones"
+  },
+  "mints": [
+   {
+    "id": 7,
+    "name": "Saint Petersburg"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "60709": {
   "category": "coin",
   "commemorated_topic": "Cocodrilo de agua salada",

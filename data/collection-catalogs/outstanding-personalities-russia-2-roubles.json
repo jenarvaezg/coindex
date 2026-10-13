@@ -11,7 +11,7 @@
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=5460",
   "source_note": "Las diecisiete primeras emisiones de la serie, 1994-1997, no están aquí: son otra variante física y viven en `outstanding-personalities-russia-2-roubles-plata-500` (15,87 g de plata .500, 7,78 g de plata fina, contra los 17,00 g de plata .925 y 15,55 g finos de esta lámina). El corte es el de la redenominación del rublo del 1 de enero de 1998 y lo fija el catálogo del Banco de Rusia entre sus números 5110-0020 y 5110-0021. La serie de Numista (id=5460) sigue proponiendo las dos épocas juntas: si el informe de desviaciones vuelve a levantar los 15,87 g contra los 17,00 g declarados aquí, es esto y está decidido en el #159. Esta lámina conserva el id y la familia de la serie entera a propósito, porque la familia es parte de la clave de `collection_proposal_preferences` y renombrarla cierra la lámina que el coleccionista ya seguía (#62). La otra ruta —un solo catálogo con la desviación declarada en `variant_note`, como los 20 escudos de 1966 en `portugal-20-escudos-plata`— se descartó porque allí es una moneda distinta entre tres y aquí es una época entera de diecisiete con la mitad de la plata: la variante física es la unidad de catálogo (ADR 0020), y el coleccionista que persigue plata no compra media onza fina y un cuarto en la misma lámina.",
-  "updated_at": "2026-10-13",
+  "updated_at": "2026-10-14",
   "members": [
     {
       "id": "1998-constantin-stanislavski",
@@ -641,17 +641,13 @@
       "id": "2026-akhmat-kadyrov",
       "label": "Akhmat-Khadzhi Kadyrov",
       "year": 2026,
-      "status": "unlisted",
-      "source": "https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5110-0196",
-      "source_note": "El Banco de Rusia la emitió el 14 de julio de 2026 con el número 5110-0196, en la serie «Выдающиеся личности России»: 2 rublos, plata 925, 17,00 g (±0,18), 15,55 g finos, 33 mm, proof, 3.000 piezas. Sin ficha en Numista el 13 de octubre de 2026."
+      "numista_type_id": 607068
     },
     {
       "id": "2026-stepan-erzya",
       "label": "Stepan Erzya",
       "year": 2026,
-      "status": "unlisted",
-      "source": "https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5110-0200",
-      "source_note": "El Banco de Rusia la emitió el 8 de septiembre de 2026 con el número 5110-0200, en la serie «Выдающиеся личности России»: 2 rublos, plata 925, 17,00 g (±0,18), 15,55 g finos, 33 mm, proof, 3.000 piezas. Sin ficha en Numista el 13 de octubre de 2026."
+      "numista_type_id": 607070
     },
     {
       "id": "2027-georgy-sedov",
