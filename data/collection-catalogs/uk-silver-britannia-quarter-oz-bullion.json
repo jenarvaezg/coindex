@@ -12,7 +12,7 @@
   "source": "https://en.numista.com/catalogue/pieces384610.html",
   "no_issue_years": [2016, 2017, 2018, 2019, 2020, 2022],
   "no_issue_note": "La Royal Mint no emitió la Britannia de ¼ oz en plata bullion en 2016–2020 ni 2022: en esos años el ¼ oz sólo existió en prueba, dentro de sets (Online Coin Club: «sets only, not individually»). britannia-uk.com lista bullion fraccionario en 2013/2014 y de nuevo desde 2021, sin esos seis años. Resuelto en #130.",
-  "updated_at": "2026-08-03",
+  "updated_at": "2026-10-13",
   "members": [
     {
       "id": "2013-silver-britannia-quarter",
@@ -94,6 +94,14 @@
       "numista_issue_ids": [
         979030
       ]
+    },
+    {
+      "id": "2027-silver-britannia-quarter",
+      "label": "Silver Britannia · 30th Anniversary",
+      "year": 2027,
+      "status": "unlisted",
+      "source": "https://www.royalmint.com/britannia/bullion/britannia-coins/britannia-2027-quarter-oz-silver-bullion-coin/",
+      "source_note": "A la venta en la Royal Mint el 13 de octubre de 2026 (BB27SQOC): 50 peniques, plata 999, 22 mm, bullion, «Year 2027». Sólo ese año lleva un privy de ola con un «30» y el fondo texturado por los 30 años de la Britannia de plata («Only for 2027, our Britannia bullion coins feature a special wave privy mark and numbered background texture»), así que no hay versión lisa. N#384610 llega a 2026 y Numista no tiene otro tipo de 2027."
     }
   ]
 }

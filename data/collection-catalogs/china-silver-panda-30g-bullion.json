@@ -10,7 +10,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/pieces80896.html",
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-10-13",
   "members": [
     {
       "id": "2016-silver-panda-30g",
@@ -110,6 +110,14 @@
       "numista_issue_ids": [
         1029431
       ]
+    },
+    {
+      "id": "2027-silver-panda-30g",
+      "label": "Panda de plata",
+      "year": 2027,
+      "status": "announced",
+      "source": "https://www.pbc.gov.cn/goutongjiaoliu/113456/113469/2025120809092970317/index.html",
+      "source_note": "El plan de emisión de 2026 del Banco Popular de China, publicado el 8 de diciembre de 2025, trae el «2027版熊猫贵金属纪念币» con una moneda de plata de calidad corriente, redonda y de 30 g (n.º 31, «普制银币 圆形 30 克»). El diseño, la ley y la tirada se publican al emitirla."
     }
   ]
 }

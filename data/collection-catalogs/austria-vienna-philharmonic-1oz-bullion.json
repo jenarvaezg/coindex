@@ -10,7 +10,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/pieces9165.html",
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-10-13",
   "members": [
     {
       "id": "2008-vienna-philharmonic",
@@ -125,6 +125,14 @@
       "label": "Vienna Philharmonic",
       "year": 2026,
       "numista_type_id": 9165
+    },
+    {
+      "id": "2027-vienna-philharmonic",
+      "label": "Vienna Philharmonic",
+      "year": 2027,
+      "status": "announced",
+      "source": "https://www.muenzeoesterreich.at/content/download/400440/file/Ausgabeprogramm%202027.pdf",
+      "source_note": "El programa de emisión de 2027 de Münze Österreich la anuncia: «Die Bullionmünze „Wiener Philharmoniker” wird mit geänderter Jahreszahl „2027” in den Größen 1, 1/2, 1/4, 1/10 und 1/25 Unze Gold, 1 Unze Silber sowie 1 und 1/25 Unze Platin ohne Limitierung geprägt». Sin fecha de salida."
     }
   ]
 }
