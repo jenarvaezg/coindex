@@ -10,8 +10,8 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=6888",
-  "source_note": "Las diez bestias están completas. La Seymour Panther abrió la gama proof en 2022 y la Royal Mint la dejó para el final del bullion: salió el 1 de septiembre de 2026 (N#604513), décima y última de las diez estatuas del puente de Hampton Court. La lámina sigue `open` por la completer: la casa cerró la gama conmemorativa con «The Tudor Beasts Completer» fechada en 2027 —el undécimo diseño, con las diez bestias en un reverso—, y de esa pieza hoy sólo hay proof y un BU de cuproníquel, ningún bullion de 2 oz anunciado ni a la venta. En The Queen’s Beasts sí lo hubo (N#299474, 2 oz bullion de 2021, que cierra `queens-beasts-uk-2oz`), así que la undécima casilla se espera, no se afirma: una casilla `announced` necesitaría que la Royal Mint nombrara la moneda, y no la ha nombrado (ADR 0020).",
-  "updated_at": "2026-10-05",
+  "source_note": "Las diez bestias están completas. La Seymour Panther abrió la gama proof en 2022 y la Royal Mint la dejó para el final del bullion: salió el 1 de septiembre de 2026 (N#604513), décima y última de las diez estatuas del puente de Hampton Court. La lámina sigue `open` por la completer: la casa cerró la gama conmemorativa con «The Tudor Beasts Completer» fechada en 2027 —el undécimo diseño, con las diez bestias en un reverso—, y de esa pieza la Royal Mint sólo vende proof y un BU de cuproníquel. El bullion de 2 oz existe en la proclamación real del 8 de julio de 2026, sin año ni producto, y es la undécima casilla, anunciada (ADR 0020), como lo hubo en The Queen’s Beasts (N#299474, 2 oz bullion de 2021, que cierra `queens-beasts-uk-2oz`).",
+  "updated_at": "2026-10-13",
   "members": [
     {
       "id": "2022-lion-of-england",
@@ -72,6 +72,14 @@
       "label": "Seymour Panther",
       "year": 2026,
       "numista_type_id": 604513
+    },
+    {
+      "id": "tudor-beasts-completer",
+      "label": "The Tudor Beasts Completer",
+      "status": "announced",
+      "source": "https://privycouncil.independent.gov.uk/wp-content/uploads/2026/07/2026-07-08-Proclamation-new-series-100-and-25-gold-coins_-and-10-an-5-silver-coins.pdf",
+      "source_note": "La proclamación real del 8 de julio de 2026 crea una moneda de 5 libras de plata de 62,42 g, 38,61 mm y ley 999,9 con «a depiction of ten heraldic Tudor beasts surrounding a Tudor Rose» y la leyenda «· THE ROYAL TUDOR BEASTS · 2OZ · FINE SILVER · 999.9 ·». Son las medidas del bullion de 2 oz, no las del proof (N#605123: 62,86 g, 40 mm, ley 999). Sin año, porque la proclamación dice «the date of the year», y la Royal Mint aún no la vende (13 de octubre de 2026).",
+      "design_type_id": 605123
     }
   ]
 }

@@ -10,7 +10,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=10445",
-  "updated_at": "2026-08-02",
+  "updated_at": "2026-10-13",
   "members": [
     {
       "id": "2007-australian-koala",
@@ -151,6 +151,14 @@
       "year": 2026,
       "numista_type_id": 576543,
       "numista_issue_ids": [1089274]
+    },
+    {
+      "id": "2027-australian-koala",
+      "label": "Australian Koala",
+      "year": 2027,
+      "status": "announced",
+      "source": "https://www.perthmint.com/bullion/information-for-bullion-buyers/upcoming-bullion-coin-releases/",
+      "source_note": "El calendario de bullion de 2027 de la Perth Mint la anuncia: «Australian Koala 2027 Bullion Coin Series — Release date: May 2027 (exact date TBC) — Silver – 1 kilo, 1oz». Sin diseño ni especificaciones el 13 de octubre de 2026, y el calendario avisa de que «may be subject to change»."
     }
   ]
 }

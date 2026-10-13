@@ -768,7 +768,9 @@ class CuratedCatalogsTest {
             listOf(2023),
             open999.members.groupBy { it.year }.filterValues { it.size > 1 }.keys.toList(),
         )
-        assertTrue(open999.members.all { it.numistaIssueIds.isNotEmpty() })
+        assertTrue(open999.members.filter { it.isIssued }.all { it.numistaIssueIds.isNotEmpty() })
+        // 2027 is on sale with the «30» privy and Numista has no row for it yet.
+        assertTrue(open999.members.single { it.year == 2027 }.isUnlisted)
         // Textured bullion is the 2015/2016 standard; plain-field BU must not fill.
         assertTrue(555_707 in open999.members.single { it.year == 2015 }.numistaIssueIds)
         assertTrue(open999.members.none { 254_785 in it.numistaIssueIds })
@@ -810,7 +812,8 @@ class CuratedCatalogsTest {
         assertEquals("https://en.numista.com/catalogue/pieces384610.html", quarter.source)
         // Ésta sí tiene huecos, y son la afirmación: los años en que Numista sólo lista proof.
         assertEquals(2013, quarter.members.mapNotNull { it.year }.min())
-        assertTrue(quarter.members.all { it.numistaIssueIds.isNotEmpty() })
+        assertTrue(quarter.members.filter { it.isIssued }.all { it.numistaIssueIds.isNotEmpty() })
+        assertTrue(quarter.members.single { it.year == 2027 }.isUnlisted)
         assertTrue(quarter.members.none { 726_963 in it.numistaIssueIds }) // Gairsoppa
         assertTrue(quarter.members.none { it.year in 2016..2020 })
         assertTrue(quarter.members.none { it.year == 2022 })
@@ -1241,14 +1244,20 @@ class CuratedCatalogsTest {
             listOf("Caucasian Wildcat", "Spectacled Eider", "Toad-headed Agama"),
             redDataBook.members.filter { it.year == 2026 }.map { it.label },
         )
-        assertTrue(redDataBook.members.filter { it.year == 2026 }.all { it.isAnnounced })
+        // Emitidas por el Banco de Rusia el 4 de agosto de 2026, sin ficha en Numista todavía.
+        assertTrue(redDataBook.members.filter { it.year == 2026 }.all { it.isUnlisted })
+        assertEquals(
+            listOf("Sakhalin Musk Deer", "Mountain Apollo", "Slavonian Grebe"),
+            redDataBook.members.filter { it.year == 2028 }.map { it.label },
+        )
+        assertTrue(redDataBook.members.filter { it.year == 2028 }.all { it.isAnnounced })
 
         val monuments = find("architectural-monuments-russia-3-roubles")
         val tulaMuseum = monuments.members.single { it.year == 2025 }
         assertEquals("Tula State Museum of Arms", tulaMuseum.label)
         assertEquals(583_338, tulaMuseum.numistaTypeId)
         val mirozhsky = monuments.members.single { it.year == 2026 }
-        assertTrue(mirozhsky.isAnnounced)
+        assertTrue(mirozhsky.isUnlisted)
         assertEquals("Holy Transfiguration Mirozhsky Monastery in Pskov", mirozhsky.label)
 
         val rwanda = find("rwanda-lunar-50-francs")
@@ -1569,10 +1578,12 @@ class CuratedCatalogsTest {
                 Triple(2024, 395_644, 835_712), Triple(2025, 451_849, 923_574),
                 Triple(2026, 552_773, 1_055_814),
             ),
-            kookaburra.members.map { member ->
+            kookaburra.members.filter { it.isIssued }.map { member ->
                 Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
             },
         )
+        // El calendario de bullion de la Perth Mint anuncia la de 2027 para enero.
+        assertEquals(listOf(2027), kookaburra.members.filter { it.isAnnounced }.map { it.year })
         // Tipos antes asignados por error a las casillas anuales de 1991 y 1998.
         val displacedTypes = listOf(571_411, 313_416)
         assertTrue(kookaburra.members.none { it.numistaTypeId in displacedTypes })
@@ -1612,10 +1623,12 @@ class CuratedCatalogsTest {
                 Triple(2023, 358_743, 775_700), Triple(2024, 413_950, 861_187),
                 Triple(2025, 459_669, 935_627), Triple(2026, 576_543, 1_089_274),
             ),
-            koala.members.map { member ->
+            koala.members.filter { it.isIssued }.map { member ->
                 Triple(member.year, member.numistaTypeId, member.numistaIssueIds.single())
             },
         )
+        // El calendario de bullion de la Perth Mint anuncia la de 2027 para mayo.
+        assertEquals(listOf(2027), koala.members.filter { it.isAnnounced }.map { it.year })
 
         // Alternativas del mismo año que no son la bullion anual estándar.
         val excludedTypes = listOf(
@@ -1717,20 +1730,25 @@ class CuratedCatalogsTest {
 
     /**
      * La Seymour Panther (N#604513, .9999, 62,42 g y ⌀38,61 mm como sus hermanas) cerró en 2026
-     * las diez bestias de bullion. La lámina sigue abierta por la completer de 2027, sin casilla
-     * anunciada porque la Royal Mint no ha nombrado un bullion de 2 oz de ella (en The Queen's
-     * Beasts sí lo hubo, N#299474). La proof de 2 oz de 2022, N#307800, es plata .999 de 40 mm:
-     * otra moneda, que no rellena un hueco de bullion.
+     * las diez bestias de bullion. La completer en bullion de 2 oz es la undécima casilla,
+     * anunciada sin año por la proclamación del 8 de julio de 2026 (en The Queen's Beasts también
+     * la hubo, N#299474). La proof de 2 oz de 2022, N#307800, es plata .999 de 40 mm: otra
+     * moneda, que no rellena un hueco de bullion.
      */
     @Test
     fun `the tenth tudor beast closes the ten and the plate stays open for the completer`() {
         val tudor = find("tudor-beasts-uk-2oz-bullion")
         assertEquals(SeriesStatus.Open, tudor.seriesStatus)
-        assertEquals(10, tudor.members.size)
-        assertEquals(10, tudor.members.count { !it.isAnnounced })
-        assertTrue(tudor.members.none { it.isAnnounced })
+        assertEquals(11, tudor.members.size)
+        assertEquals(10, tudor.members.count { it.isIssued })
 
-        val panther = tudor.members.last()
+        val completer = tudor.members.single { it.isAnnounced }
+        assertEquals("tudor-beasts-completer", completer.id)
+        assertNull(completer.year)
+        assertEquals(605_123, completer.designTypeId)
+        assertTrue(completer.source!!.contains("privycouncil"), completer.source!!)
+
+        val panther = tudor.members.single { it.id == "2026-seymour-panther" }
         assertEquals("2026-seymour-panther", panther.id)
         assertEquals(604_513, panther.numistaTypeId)
         assertEquals(2026, panther.year)
@@ -1745,10 +1763,10 @@ class CuratedCatalogsTest {
         )
         assertEquals(0, album.ownedMembers())
         assertEquals(10, album.issuedMembers())
-        assertEquals(0, album.announcedMembers())
+        assertEquals(1, album.announcedMembers())
         assertEquals(
             CollectionCatalogMemberStatus.Missing,
-            album.members.last().status,
+            album.members.single { it.member.id == "2026-seymour-panther" }.status,
         )
         assertFalse(tudor.isEvidencedBy(listOf(CollectedItem(id = 1, quantity = 1, typeId = 307_800))))
     }
@@ -1829,7 +1847,15 @@ class CuratedCatalogsTest {
         assertEquals("Outstanding Personalities of Russia", sterling.family)
         assertEquals(547, sterling.weightMillioz)
         assertEquals(SeriesStatus.Open, sterling.seriesStatus)
-        assertEquals(104, sterling.members.size)
+        assertEquals(104, sterling.members.count { it.isIssued })
+        assertEquals(
+            listOf("Akhmat-Khadzhi Kadyrov", "Stepan Erzya"),
+            sterling.members.filter { it.isUnlisted }.map { it.label },
+        )
+        assertEquals(
+            listOf("Georgy Sedov", "Mintimer Shaimiev"),
+            sterling.members.filter { it.isAnnounced }.map { it.label },
+        )
         assertEquals(1998, sterling.members.first().year)
 
         // 15,87 g son 510 millioz y `normalizeWeightMillioz` los ajusta a 500 por tolerancia:
@@ -1907,9 +1933,11 @@ class CuratedCatalogsTest {
                 80_896, 97_619, 127_720, 154_933, 183_654, 252_620, 311_723, 349_619,
                 390_608, 439_242, 531_574,
             ),
-            thirtyG.members.map { it.numistaTypeId },
+            thirtyG.members.filter { it.isIssued }.map { it.numistaTypeId },
         )
         assertEquals(listOf(1_029_431), thirtyG.members.single { it.year == 2026 }.numistaIssueIds)
+        // El plan del Banco Popular de China trae la de 2027 como plata corriente de 30 g.
+        assertEquals(listOf(2027), thirtyG.members.filter { it.isAnnounced }.map { it.year })
 
         // Early metric and gold lookalikes stay out of both plates.
         val excluded = listOf(19_602, 36_343, 19_637, 32_134, 17_600, 58_472, 17_689)
