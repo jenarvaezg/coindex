@@ -1,7 +1,7 @@
 # ADR 0020: What a collection catalog claims, and what it does not
 
-- Status: accepted; amended by #256 (the existence criterion), #227 (the printed face), #257 and
-  #616 (Consequences)
+- Status: accepted; amended by #256 (the existence criterion), #227 (the printed face), #257,
+  #616 and #77 (Consequences)
 - Date: 2026-08-03
 
 ## Context
@@ -149,7 +149,8 @@ grouping has no members to write the exception on.
   annual-bullion limit — deliberately reach **none** of it: a judgment that halts the app cannot be
   overridden.
 - The 49 catalogs shipped then declared 28 open and 21 closed; Gothic Horror was retired under the
-  existence criterion.
+  existence criterion, and returned on 13 October 2026 with a second row when the Royal Mint named
+  Frankenstein's Monster for 2026, before Numista could catalog it (#77).
 - **A plate can show what does not exist yet.** The first announced member, the Seymour Panther of
   the Tudor 2 oz bullion, stayed out of the denominator for over a year with no year to name, until
   it was struck on 1 September 2026 (N#604513, #616) and took its slot.

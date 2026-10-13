@@ -76,7 +76,7 @@ _Avoid_: Numista family, unclassified reason
 A coin the curator has recorded in `data/orphans.json`, with its Numista type and a prose reason, as
 one a collection-catalog plate would not make sense for: a verdict, not the lack of a catalog. A
 sequence Coindex will never plate (euro circulation by country) or a coin with a raw-family card can
-be one; a programme that may still grow (a lone Gothic Horror character) cannot. Distinct from the
+be one; a programme that may still grow cannot. Distinct from the
 **unclassified residue**, the rows `deriveCollection` could not place, which the «Sin colección»
 filter of Coins shows without a reason (ADR 0021 §12).
 _Avoid_: Unclassified, missing, stable orphan

@@ -65,10 +65,7 @@ class CuratedCatalogsTest {
         assertEquals(emptyList(), sinAño)
     }
 
-    /**
-     * Los cerrados llevan nota (#28). Gothic Horror no es catálogo: su único miembro, N#519925, ya
-     * trae `series` de Numista y la lista no añadía nada.
-     */
+    /** Los cerrados llevan nota (#28). */
     @Test
     fun `every shipped catalog declares whether its series is still open`() {
         val closed = catalogs.filter { it.seriesStatus == SeriesStatus.Closed }
@@ -78,7 +75,8 @@ class CuratedCatalogsTest {
                 "cerrado sin nota: ${catalog.id}",
             )
         }
-        assertTrue(catalogs.none { it.id == "gothic-horror-uk-1oz" })
+        // Gothic Horror volvió cuando la Royal Mint nombró al segundo personaje (#77).
+        assertEquals(SeriesStatus.Open, find("gothic-horror-uk-1oz-bullion").seriesStatus)
         // Abiertas aunque Numista se quede en 2024-2025: el plan de emisión del Banco de Rusia
         // para 2026 trae Libro Rojo y Monumentos arquitectónicos, y la Tesla de 2026 ya salió.
         listOf("red-data-book-russia", "architectural-monuments-russia-3-roubles", "nikola-tesla-serbia-1oz")
