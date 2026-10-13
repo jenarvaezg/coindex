@@ -1242,8 +1242,10 @@ class CuratedCatalogsTest {
             listOf("Caucasian Wildcat", "Spectacled Eider", "Toad-headed Agama"),
             redDataBook.members.filter { it.year == 2026 }.map { it.label },
         )
-        // Emitidas por el Banco de Rusia el 4 de agosto de 2026, sin ficha en Numista todavía.
-        assertTrue(redDataBook.members.filter { it.year == 2026 }.all { it.isUnlisted })
+        assertEquals(
+            listOf(607_071, 607_072, 607_074),
+            redDataBook.members.filter { it.year == 2026 }.map { it.numistaTypeId },
+        )
         assertEquals(
             listOf("Sakhalin Musk Deer", "Mountain Apollo", "Slavonian Grebe"),
             redDataBook.members.filter { it.year == 2028 }.map { it.label },
@@ -1255,7 +1257,7 @@ class CuratedCatalogsTest {
         assertEquals("Tula State Museum of Arms", tulaMuseum.label)
         assertEquals(583_338, tulaMuseum.numistaTypeId)
         val mirozhsky = monuments.members.single { it.year == 2026 }
-        assertTrue(mirozhsky.isUnlisted)
+        assertEquals(607_076, mirozhsky.numistaTypeId)
         assertEquals("Holy Transfiguration Mirozhsky Monastery in Pskov", mirozhsky.label)
 
         val rwanda = find("rwanda-lunar-50-francs")
@@ -1845,10 +1847,11 @@ class CuratedCatalogsTest {
         assertEquals("Outstanding Personalities of Russia", sterling.family)
         assertEquals(547, sterling.weightMillioz)
         assertEquals(SeriesStatus.Open, sterling.seriesStatus)
-        assertEquals(104, sterling.members.count { it.isIssued })
+        assertEquals(106, sterling.members.count { it.isIssued })
+        assertTrue(sterling.members.none { it.isUnlisted })
         assertEquals(
-            listOf("Akhmat-Khadzhi Kadyrov", "Stepan Erzya"),
-            sterling.members.filter { it.isUnlisted }.map { it.label },
+            listOf(583_175, 583_294, 607_068, 607_070),
+            sterling.members.filter { it.year == 2026 }.map { it.numistaTypeId },
         )
         assertEquals(
             listOf("Georgy Sedov", "Mintimer Shaimiev"),
