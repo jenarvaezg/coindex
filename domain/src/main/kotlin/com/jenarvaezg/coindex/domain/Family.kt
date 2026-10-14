@@ -76,7 +76,6 @@ private val curedFamilies: Map<String, String> = mapOf(
     "1190e anniversaire du couronnement de Charlemagne (800-1990)." to "Carlomagno",
     "Austria and its People" to "Austria y su pueblo",
     "Charlemagne - Mounted Knight" to "Carlomagno · el caballero",
-    "Contemporary Urban Art" to "Arte urbano contemporáneo",
     "French regions" to "Euros de las regiones francesas",
     "Hercules type" to "Tipo Hércules",
     "Millennium" to "Milenio",

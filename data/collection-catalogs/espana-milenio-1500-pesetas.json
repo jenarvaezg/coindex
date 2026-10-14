@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "espana-milenio-1500-pesetas",
+  "name": "1500 pesetas Milenio · España · plata proof",
+  "short_name": "1500 pesetas Milenio",
+  "issuer_code": "espagne",
+  "family": "1500 pesetas Milenio",
+  "weight_millioz": 643,
+  "finish": "Proof",
+  "metal": "silver",
+  "series_status": "closed",
+  "closed_note": "Tres monedas entre 1999 y 2000, y ninguna más: buscando en Numista todo lo español de 19,5 a 20,5 g (`catalogue/index.php?cat=y&st=all&e=espagne&w=19.5-20.5`, leído el 14 de octubre de 2026) no hay ningún 1500 pesetas de 2001, y la peseta acabó con el euro en 2002.",
+  "source": "https://en.numista.com/catalogue/pieces20717.html",
+  "source_note": "La FNMT acuñó tres 1500 pesetas de plata .925, de 20 g y 33 mm, por el cambio de milenio, todas en proof: Exploración (1999), Imprenta y Paz (2000). La serie 4943 de Numista, «Millennium», las recoge pero es de varios emisores (Reino Unido, Canadá…), así que propone y no delimita. Los comercios las venden con el mismo nombre, «1500 pesetas Milenio».",
+  "updated_at": "2026-10-14",
+  "members": [
+    {
+      "id": "1999-exploracion",
+      "label": "Exploración",
+      "year": 1999,
+      "numista_type_id": 20717
+    },
+    {
+      "id": "2000-imprenta",
+      "label": "Imprenta",
+      "year": 2000,
+      "numista_type_id": 22501
+    },
+    {
+      "id": "2000-paz",
+      "label": "Paz",
+      "year": 2000,
+      "numista_type_id": 22502
+    }
+  ]
+}
