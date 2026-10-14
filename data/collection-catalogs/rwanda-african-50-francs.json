@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "id": "rwanda-african-50-francs",
+  "name": "African Ounce de Ruanda · 50 francos de plata",
+  "short_name": "African Ounce de Ruanda",
+  "issuer_code": "rwanda",
+  "family": "African Ounce",
+  "weight_millioz": 1000,
+  "finish": null,
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/series.php?id=1266",
+  "source_note": "Un animal africano al año desde 2008, acuñado por BH Mayer, en 50 francos de plata .999 de 31,1 g. La serie 1266 de Numista tiene 31 tipos (leída el 14 de octubre de 2026), y doce se quedan fuera: los 100 francos de oro y platino, el 100 francos de plata del pelícano de 2022, el suricato chapado en rutenio y dorado de 2016 (N#373915) y el gorila del 15.º aniversario de 2023 (N#379669), que no es el animal de ese año. Las casillas con proof en su mismo tipo (2013 y 2015-2024) cualifican las emisiones corrientes, como la Nautical Ounce. Las filas con la marca privada F15 (2010, 2013 y 2015) sí llenan casilla, porque una marca privada no parte la lámina (ADR 0020). El único renglón del rinoceronte de 2012 lleva «Proof» en el comentario con la tirada de 5.000 de los años bullion, así que no se cualifica.",
+  "updated_at": "2026-10-14",
+  "members": [
+    {
+      "id": "2008-gorilla",
+      "label": "Gorilla",
+      "year": 2008,
+      "numista_type_id": 122121
+    },
+    {
+      "id": "2009-elephant",
+      "label": "Elephant",
+      "year": 2009,
+      "numista_type_id": 45678
+    },
+    {
+      "id": "2010-lion",
+      "label": "Lion",
+      "year": 2010,
+      "numista_type_id": 76513
+    },
+    {
+      "id": "2011-zebra",
+      "label": "Zebra",
+      "year": 2011,
+      "numista_type_id": 71519
+    },
+    {
+      "id": "2012-rhinoceros",
+      "label": "Rhinoceros",
+      "year": 2012,
+      "numista_type_id": 29982
+    },
+    {
+      "id": "2013-cheetah",
+      "label": "Cheetah",
+      "year": 2013,
+      "numista_type_id": 43994,
+      "numista_issue_ids": [
+        188588,
+        611002
+      ]
+    },
+    {
+      "id": "2014-impala",
+      "label": "Impala",
+      "year": 2014,
+      "numista_type_id": 56264
+    },
+    {
+      "id": "2015-cape-buffalo",
+      "label": "Cape Buffalo",
+      "year": 2015,
+      "numista_type_id": 69466,
+      "numista_issue_ids": [
+        250661,
+        829262
+      ]
+    },
+    {
+      "id": "2016-suricate",
+      "label": "Suricate",
+      "year": 2016,
+      "numista_type_id": 80038,
+      "numista_issue_ids": [
+        274656
+      ]
+    },
+    {
+      "id": "2017-hippopotamus",
+      "label": "Hippopotamus",
+      "year": 2017,
+      "numista_type_id": 96359,
+      "numista_issue_ids": [
+        313659
+      ]
+    },
+    {
+      "id": "2018-giraffe",
+      "label": "Giraffe",
+      "year": 2018,
+      "numista_type_id": 133315,
+      "numista_issue_ids": [
+        382140
+      ]
+    },
+    {
+      "id": "2019-shoebill",
+      "label": "Shoebill",
+      "year": 2019,
+      "numista_type_id": 156216,
+      "numista_issue_ids": [
+        421838
+      ]
+    },
+    {
+      "id": "2020-galago",
+      "label": "Galago",
+      "year": 2020,
+      "numista_type_id": 191383,
+      "numista_issue_ids": [
+        477627
+      ]
+    },
+    {
+      "id": "2021-okapi",
+      "label": "Okapi",
+      "year": 2021,
+      "numista_type_id": 259262,
+      "numista_issue_ids": [
+        610770
+      ]
+    },
+    {
+      "id": "2022-pelican",
+      "label": "Pelican",
+      "year": 2022,
+      "numista_type_id": 326138,
+      "numista_issue_ids": [
+        721488
+      ]
+    },
+    {
+      "id": "2023-crocodile",
+      "label": "Crocodile",
+      "year": 2023,
+      "numista_type_id": 349053,
+      "numista_issue_ids": [
+        758279
+      ]
+    },
+    {
+      "id": "2024-leopard",
+      "label": "Leopard",
+      "year": 2024,
+      "numista_type_id": 429532,
+      "numista_issue_ids": [
+        887991
+      ]
+    },
+    {
+      "id": "2025-martial-eagle",
+      "label": "Martial Eagle",
+      "year": 2025,
+      "numista_type_id": 453384
+    },
+    {
+      "id": "2026-hyena",
+      "label": "Hyena",
+      "year": 2026,
+      "numista_type_id": 551533
+    }
+  ]
+}
